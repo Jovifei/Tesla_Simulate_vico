@@ -1,6 +1,6 @@
 # Tesla Simulate Vico — Engineering Plan
 
-> Status: S0 in progress
+> Status: S0.1–S0.5 done, S0.6 verification gate pending
 
 ## Goal
 
@@ -21,11 +21,11 @@ tools, acceptance criteria, structured JSON reply.
 
 ### S0 — Repository & verification gate (current)
 
-- [ ] S0.1 child-claude: create `.gitignore` + `README.md` + `LICENSE` at prj root
-- [ ] S0.2 parent: write `PLAN.md` (this file)
-- [ ] S0.3 parent: `git init` + first commit
-- [ ] S0.4 Jovi: `gh auth login` (interactive, one-time)
-- [ ] S0.5 parent: `git remote add origin https://github.com/Jovifei/Tesla_Simulate_vico.git` + `git push -u origin main`
+- [x] S0.1 child-claude: create `.gitignore` + `README.md` + `LICENSE` at prj root
+- [x] S0.2 parent: write `PLAN.md` (this file)
+- [x] S0.3 parent: `git init` + first commit (`bb705dd`)
+- [x] S0.4 credentials: provided via Git Credential Manager (cached)
+- [x] S0.5 parent: `git remote add origin https://github.com/Jovifei/Tesla_Simulate_vico.git` + `git push -u origin main`
 - [ ] S0.6 parent/child: install PlatformIO, run `pio test -e native` + `pio run -e esp32s3dev`
 
 ### S1 — CAN listen-only layer
