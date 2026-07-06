@@ -1,0 +1,33 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piobuild/
+build/
+# Build artifacts
+*.elf
+*.bin
+*.hex
+*.map
+*.fw
+*.uf2
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+ehthumbs.db
+# Claude local
+.claude/settings.local.json
+.claude/projects/
+.claude/todos/
+# Node
+node_modules/
+package-lock.json
