@@ -3,8 +3,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "config/pin_map.h"
+#include "app/App.h"
 
 static const char* TAG = "main";
+
+static app::App app_instance;
 
 extern "C" void app_main(void)
 {
@@ -18,11 +21,15 @@ extern "C" void app_main(void)
 
     ESP_LOGI(TAG, "Tesla Simulate Vico boot - ESP-IDF v5.3");
 
+    const bool app_ok = app_instance.begin();
+    ESP_LOGI(TAG, "app.begin() = %s", app_ok ? "OK" : "FAIL");
+
     int level = 1;
     while (true) {
         gpio_set_level(config::pins::LED_PWR, level);
         ESP_LOGI(TAG, "heartbeat led=%d", level);
         level = !level;
+        app_instance.tick();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
