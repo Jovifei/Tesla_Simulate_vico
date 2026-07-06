@@ -1,6 +1,6 @@
 # Tesla Simulate Vico — Engineering Plan
 
-> Status: S0.1–S0.5 done, S0.6 verification gate pending
+> Status: S0.1–S0.5 done, S0.6a done, S0.6b pending
 
 ## Goal
 
@@ -26,7 +26,8 @@ tools, acceptance criteria, structured JSON reply.
 - [x] S0.3 parent: `git init` + first commit (`bb705dd`)
 - [x] S0.4 credentials: provided via Git Credential Manager (cached)
 - [x] S0.5 parent: `git remote add origin https://github.com/Jovifei/Tesla_Simulate_vico.git` + `git push -u origin main`
-- [ ] S0.6 parent/child: install PlatformIO, run `pio test -e native` + `pio run -e esp32s3dev`
+- [x] S0.6a child-claude: ESP-IDF v5.3 skeleton + config component (CMakeLists, sdkconfig, partitions, main/, components/config/)
+- [ ] S0.6b parent/child: migrate domain/can/audio/ble modules into ESP-IDF components (REQUIRES chain)
 
 ### S1 — CAN listen-only layer
 
@@ -47,7 +48,7 @@ tools, acceptance criteria, structured JSON reply.
 - [ ] S4.1 child-claude: SD card config store (load/save runtime config as JSON)
 - [ ] S4.2 child-claude: rotary encoder, WS2812 LED, throttle potentiometer drivers
 
-## Pin map (source of truth: `firmware/include/config/pin_map.h`)
+## Pin map (source of truth: `components/config/include/config/pin_map.h`)
 
 | Function | GPIO |
 |---|---|

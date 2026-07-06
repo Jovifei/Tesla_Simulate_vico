@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace tesla_speed::config::pins {
+namespace config::pins {
 
 constexpr std::uint8_t POT_IO1 = 1;
 
@@ -25,4 +25,4 @@ constexpr std::uint8_t SD_CLK = 39;
 constexpr std::uint8_t SD_MOSI = 40;
 constexpr std::uint8_t SD_MISO = 41;
 
-}  // namespace tesla_speed::config::pins
+}  // namespace config::pins

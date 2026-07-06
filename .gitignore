@@ -1,8 +1,10 @@
-# PlatformIO
-.pio/
-.pioenvs/
-.piobuild/
+# ESP-IDF
 build/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+.cache/
 # Build artifacts
 *.elf
 *.bin
@@ -15,6 +17,10 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+# PlatformIO (legacy, kept in case)
+.pio/
+.pioenvs/
+.piobuild/
 # IDE
 .vscode/
 .idea/
@@ -24,10 +30,27 @@ Thumbs.db
 .DS_Store
 desktop.ini
 ehthumbs.db
-# Claude local
-.claude/settings.local.json
-.claude/projects/
-.claude/todos/
+# AI tooling (auto-injected by OMC/hooks, NOT part of firmware)
+.agents/
+.claude/
+.codegraph/
+.code-review-graph/
+.comet/
+.cursor/
+.cursorrules
+.gemini/
+.github/
+.kiro/
+.mcp.json
+.opencode.json
+.qoder/
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+QODER.md
+skills-lock.json
+docs/
 # Node
 node_modules/
 package-lock.json

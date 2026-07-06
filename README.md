@@ -4,18 +4,26 @@ ESP32-S3 firmware for Tesla vehicle engine sound simulation. Reads vehicle speed
 
 ## Hardware
 - MCU: ESP32-S3-WROOM-1-N16R8
-- Pin map: see `firmware/include/config/pin_map.h`
+- Framework: ESP-IDF v5.3
+- Pin map: see `components/config/include/config/pin_map.h`
 
 ## Project Structure
-- `firmware/src/` - application entry point
-- `firmware/include/` - module headers (domain, can, audio, ble, config, app)
-- `firmware/test/native/` - native pure-logic tests
+- `main/` - application entry point (`app_main`)
+- `components/config/` - pin map and runtime configuration
+- `components/domain/` - engine model pure logic (S0.6b, pending)
+- `components/can/` - listen-only CAN source (S0.6b, pending)
+- `components/audio/` - I2S engine sound synthesis (S0.6b, pending)
+- `components/ble/` - GATT configuration service (S0.6b, pending)
 
 ## Build
-pio run -e esp32s3dev
+```
+idf.py build
+```
 
-## Test
-pio test -e native
+## Flash & Monitor
+```
+idf.py -p COMx flash monitor
+```
 
 ## Modules
 - `domain` - engine model pure logic (speed/throttle to virtual RPM)
@@ -23,7 +31,6 @@ pio test -e native
 - `audio` - I2S engine sound synthesis
 - `ble` - GATT configuration service
 - `config` - pin map and runtime configuration
-- `app` - module wiring and main loop
 
 ## Safety
 - CAN is listen-only: no transmit API exposed anywhere
