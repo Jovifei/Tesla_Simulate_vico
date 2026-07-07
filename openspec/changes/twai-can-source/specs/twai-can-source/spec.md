@@ -1,6 +1,6 @@
 # twai-can-source Specification
 
-## Requirements
+## ADDED Requirements
 
 ### Requirement: TWAI listen-only driver configuration
 
