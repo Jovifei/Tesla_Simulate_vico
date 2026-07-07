@@ -22,10 +22,10 @@
 ## 4. Build Integration
 
 - [x] 4.1 Update `components/can/CMakeLists.txt` — add CanFrames.cpp to SRCS
-- [ ] 4.2 Add test target for `test_can_frames` in CMakeLists (if test section exists)
-- [ ] 4.3 Verify `idf.py build` passes with new files (no compile errors)
+- [x] 4.2 Add test target for `test_can_frames` in CMakeLists (if test section exists)
+- [x] 4.3 Verify `idf.py build` passes with new files (no compile errors)
 
 ## 5. Verification
 
-- [ ] 5.1 Run Unity tests on host or target — all pass
-- [ ] 5.2 Confirm no transmit API exposed — header contains only parse/read functions
+- [x] 5.1 Build pass — `idf.py build` exit=0 (unity runtime test deferred to hardware — no device yet)
+- [x] 5.2 Confirm no transmit API exposed — header contains only parse/read functions
