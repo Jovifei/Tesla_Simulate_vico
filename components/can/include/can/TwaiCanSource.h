@@ -1,7 +1,10 @@
 #pragma once
 
 #include "can/CanSource.h"
+#include "can/CanFrames.h"
 #include "config/runtime_config.h"
+#include "config/pin_map.h"
+#include "driver/twai.h"
 
 namespace can {
 
@@ -12,11 +15,14 @@ public:
 
     bool begin() override;
     bool poll(domain::VehicleState& state) override;
-    bool isListenOnly() const override { return config_.can_listen_only; }
+    bool isListenOnly() const override { return true; }
 
 private:
     config::RuntimeConfig config_;
-    bool configured_ = false;
+    twai_general_config_t g_config_ = {};
+    twai_timing_config_t  t_config_ = {};
+    twai_filter_config_t  f_config_ = {};
+    bool installed_ = false;
 };
 
 }  // namespace can
