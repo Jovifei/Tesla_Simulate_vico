@@ -1,28 +1,28 @@
 #pragma once
 
-#include <cstdint>
+#include "driver/gpio.h"
 
 namespace config::pins {
 
-constexpr std::uint8_t POT_IO1 = 1;
+constexpr gpio_num_t POT_IO1 = GPIO_NUM_1;
 
-constexpr std::uint8_t I2S_BCK = 6;
-constexpr std::uint8_t I2S_LCK = 7;
-constexpr std::uint8_t I2S_DIN = 12;
+constexpr gpio_num_t I2S_BCK = GPIO_NUM_6;
+constexpr gpio_num_t I2S_LCK = GPIO_NUM_7;
+constexpr gpio_num_t I2S_DIN = GPIO_NUM_12;
 
-constexpr std::uint8_t CAN_RX = 13;
-constexpr std::uint8_t CAN_TX = 14;
-constexpr std::uint8_t CAN_RS = 38;
+constexpr gpio_num_t CAN_RX = GPIO_NUM_13;
+constexpr gpio_num_t CAN_TX = GPIO_NUM_14;
+constexpr gpio_num_t CAN_RS = GPIO_NUM_38;
 
-constexpr std::uint8_t ENC_CLK = 4;
-constexpr std::uint8_t ENC_DT = 5;
+constexpr gpio_num_t ENC_CLK = GPIO_NUM_4;
+constexpr gpio_num_t ENC_DT = GPIO_NUM_5;
 
-constexpr std::uint8_t LED_PWR = 21;
-constexpr std::uint8_t WS_DATA = 48;
+constexpr gpio_num_t LED_PWR = GPIO_NUM_21;
+constexpr gpio_num_t WS_DATA = GPIO_NUM_48;
 
-constexpr std::uint8_t SD_CS = 45;
-constexpr std::uint8_t SD_CLK = 39;
-constexpr std::uint8_t SD_MOSI = 40;
-constexpr std::uint8_t SD_MISO = 41;
+constexpr gpio_num_t SD_CS = GPIO_NUM_45;
+constexpr gpio_num_t SD_CLK = GPIO_NUM_39;
+constexpr gpio_num_t SD_MOSI = GPIO_NUM_40;
+constexpr gpio_num_t SD_MISO = GPIO_NUM_41;
 
 }  // namespace config::pins
