@@ -1,5 +1,5 @@
 workflow: full
-phase: verify
+phase: archive
 change: peripherals
 design_doc: docs/superpowers/specs/2026-07-08-peripherals-design.md
 plan: openspec/changes/peripherals/plan.md
@@ -15,8 +15,8 @@ verify_result: pass
 verification_report: openspec/changes/peripherals/verification_report.md
 branch_status: handled
 created_at: 2026-07-08
-verified_at: null
-archived: false
+verified_at: 2026-07-08
+archived: true
 handoff_context: openspec/changes/peripherals/.comet/handoff/design-context.json
 handoff_hash: 4eb9bda3a7ce633086800d40cbd954ecfd3f6ab044f02bf3eaec6ee793cb54e6
 direct_override: true
