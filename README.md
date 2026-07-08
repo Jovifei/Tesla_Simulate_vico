@@ -2,13 +2,11 @@
 
 Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 
----
-
 ## 中文说明
 
-`Tesla Simulate Vico` 是一个面向 ESP32-S3 的车载声浪模拟固件工程。目标是在不向车辆 CAN 总线发送报文的前提下，监听 Tesla CAN/OBD-II 车辆状态，生成可调的模拟发动机声浪，并通过 BLE、SD 卡、WiFi/IoT/OTA 与本地外设完成配置、诊断和升级闭环。
+`Tesla Simulate Vico` 是一个面向 ESP32-S3 的车载声浪模拟固件工程。目标是在不向车辆 CAN 总线发送报文的前提下，监听 Tesla CAN/OBD-II 车辆状态，生成可调的模拟发动机声浪，并通过 BLE、SD 卡、WiFi/IoT/OTA 和本地外设完成配置、诊断和升级闭环。
 
-当前工程已经具备可编译的 ESP-IDF baseline，并正在执行 S7“旧工程逻辑对齐”迁移：BLE 保持配置入口，Network/Link 管 WiFi，IoT/MQTT 管云端上下行，OTA 管后台升级，App 只保留车辆模拟主循环协调。
+当前工程已经具备可编译的 ESP-IDF baseline，并正在执行 S7 “旧工程逻辑对齐”迁移：BLE 保持配置入口，Network/Link 管 WiFi，IoT/MQTT 管云端上下行，OTA 管后台升级，App 只保留车辆模拟主循环协调。
 
 ### 当前结论
 
@@ -19,8 +17,8 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 | BLE GATT | 已实现，待实机验收 | 主服务 `0xfff0`，兼容服务 `0xffe0`，`ffe1..ffee` 已挂载 |
 | SD JSON 配置 | 已实现，待实机验收 | 保存 runtime config，缺卡/缺字段使用默认值 |
 | 外设 | 已接入，待实机验收 | encoder、throttle pot、WS2812 |
-| S7 Network/IoT/OTA | 代码迁移中 | 已新增 `status`、`network`、`iot`、`ota` 分层；硬件 WiFi/MQTT/OTA 仍未验收 |
-| 声浪算法 | 未完成产品化 | 当前不是速度/加速度差异化声浪模型，仍需 MATLAB 或等价仿真定参后再移植 |
+| S7 Network/IoT/OTA | 代码迁移中 | 已新增 `status`、`network`、`iot`、`ota` 分层；WiFi/MQTT/OTA 实机未验收 |
+| 声浪算法 | 未完成产品化 | 当前还不是速度/加速度差异化声浪模型，需要 MATLAB 或等价仿真定参后再移植 |
 
 ### 工程结构
 
@@ -40,8 +38,16 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 | `components/domain/` | 车辆状态与虚拟 RPM 模型 |
 | `components/input/` | encoder 与 throttle potentiometer |
 | `components/ui/` | WS2812 状态灯 |
+| `docs/` | 文档入口，目录使用 `NN-english-kebab` 命名 |
 | `openspec/` | 当前固件规格与变更提案 |
 | `scripts/esp-idf.ps1` | Windows PowerShell ESP-IDF v5.3.2 环境脚本 |
+
+### 文档入口
+
+- [文档总入口](docs/README.md)
+- [文档命名规则](docs/GUIDE.md)
+- [固件完成路线图](docs/04-planning/01-firmware-roadmap.md)
+- [固件待完成清单](docs/09-backlog/01-firmware-backlog.md)
 
 ### BLE 合约
 
@@ -92,8 +98,6 @@ cd E:\Tesla_speed\prj
 - 产品级声浪算法尚未完成：缺少速度/加速度/负载分层模型、MATLAB 或等价仿真、听感样本和固件定点化验证。
 - USB CDC 与高级调参工具推迟到 S8/S9。
 
----
-
 ## English Overview
 
 `Tesla Simulate Vico` is an ESP32-S3 firmware project for in-car engine-sound simulation. It listens to Tesla CAN/OBD-II vehicle state in listen-only mode, generates a configurable engine-like sound over I2S, and exposes runtime configuration, diagnostics, and upgrade hooks through BLE, SD-card persistence, WiFi/IoT/OTA, and local peripherals.
@@ -110,7 +114,14 @@ The current project is a buildable ESP-IDF baseline. S7 is migrating the firmwar
 | SD JSON config | Implemented, hardware pending | Runtime config persistence with defaults for missing fields |
 | Peripherals | Integrated, hardware pending | Encoder, throttle potentiometer, WS2812 |
 | S7 Network/IoT/OTA | In migration | `status`, `network`, `iot`, and `ota` layers exist; WiFi/MQTT/OTA hardware proof is still pending |
-| Sound model | Not product-complete | Current output is not yet a speed/acceleration layered sound model |
+| Sound model | Not product-complete | Current output is not yet a speed/acceleration/load layered sound model |
+
+### Documentation
+
+- [Documentation index](docs/README.md)
+- [Documentation guide](docs/GUIDE.md)
+- [Firmware roadmap](docs/04-planning/01-firmware-roadmap.md)
+- [Firmware backlog](docs/09-backlog/01-firmware-backlog.md)
 
 ### Build
 

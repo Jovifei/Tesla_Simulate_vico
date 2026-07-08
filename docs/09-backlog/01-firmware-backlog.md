@@ -1,8 +1,8 @@
 # Tesla Simulate Vico 固件待完成清单
 
-日期：2026-07-08
+日期：2026-07-09
 
-本清单用于 S7 之后持续追踪，不能被理解为所有功能已经完成。当前优先级是先完成 BLE / WiFi / IoT / OTA 架构迁移与门禁，再做硬件验收和声浪算法。
+本清单用于 S7 之后持续追踪。它不是“全部已经完成”的证明；当前优先级是先完成 BLE / WiFi / IoT / OTA 架构迁移与门禁，再做硬件验收和声浪算法。
 
 ## P0 必须完成
 
@@ -25,7 +25,7 @@
 |---|---|---|---|---|
 | S7-01 | 统一运行状态镜像 | 高 | 代码迁移中 | `ffe5` 包含 WiFi/IoT/OTA/版本/分区/错误 |
 | S7-02 | RuntimeConfig WiFi/OTA/IoT 字段 | 高 | 代码迁移中 | 旧 JSON 缺字段仍可加载，新字段可保存 |
-| S7-03 | NetworkManager WiFi 状态机 | 高 | 代码迁移中 | 未配置/连接中/已连接/失败/重连状态可见 |
+| S7-03 | NetworkManager WiFi 状态机 | 高 | 代码迁移中 | 未配置、连接中、已连接、失败/重连状态可见 |
 | S7-04 | IotManager MQTT 上线 | 高 | 代码迁移中 | 上报 device info / vehicle state |
 | S7-05 | MQTT 下行 `ota_start` | 高 | 代码迁移中 | accepted/rejected ack，accepted 转 OTA request |
 | S7-06 | HTTPS OTA 成功路径 | 高 | 待实机 | 下载、切分区、重启后版本变化 |
@@ -33,12 +33,12 @@
 | S7-08 | BLE 写配置不阻塞主循环 | 高 | 代码迁移中 | 写 `ffe8` 不在回调内执行 OTA |
 | S7-09 | App 25 ms 主循环不阻塞 | 高 | 待验证 | build + 代码审查 + 实机观察 |
 
-## 内存与 release hardening
+## 内存与 Release Hardening
 
 | ID | 待完成项 | 优先级 | 当前状态 | 验收证据 |
 |---|---|---|---|---|
-| MEM-01 | 复测 `idf.py size` | 高 | 待复测 | 记录 IRAM/DIRAM/Flash |
-| MEM-02 | 复测 `idf.py size-components` | 高 | 待复测 | 记录 top IRAM consumers |
+| MEM-01 | 复测 `idf.py size` | 高 | 持续复测 | 记录 IRAM/DIRAM/Flash |
+| MEM-02 | 复测 `idf.py size-components` | 高 | 持续复测 | 记录 top IRAM consumers |
 | MEM-03 | IRAM 1 byte margin 处理 | 高 | 阻塞 | 降低 margin 风险或形成接受记录 |
 | MEM-04 | BLE controller flash placement 压测 | 中 | 待实机 | BLE/WiFi/OTA 同时运行不崩溃 |
 
@@ -59,7 +59,7 @@
 |---|---|---|---|---|
 | DOC-01 | `PLAN.md` 状态同步 | 中 | 持续维护 | 每次阶段完成后更新 |
 | DOC-02 | OpenSpec 同步 | 高 | 持续维护 | `openspec validate --all --strict --json` 通过 |
-| DOC-03 | 硬件验收记录 | 高 | 待开始 | `docs/06-TST-测试` 有实测记录 |
+| DOC-03 | 硬件验收记录 | 高 | 待开始 | `docs/06-testing` 有实测记录 |
 | DOC-04 | 最终交付报告 | 中 | 待开始 | build/size/hardware/release 全部记录 |
 | DOC-05 | GitHub README 保持真实 | 中 | 持续维护 | 不夸大完成度 |
 

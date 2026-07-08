@@ -5,6 +5,7 @@ sdkconfig.old
 managed_components/
 dependencies.lock
 .cache/
+
 # Build artifacts
 *.elf
 *.bin
@@ -12,25 +13,31 @@ dependencies.lock
 *.map
 *.fw
 *.uf2
+
 # Python
 __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+
 # PlatformIO (legacy, kept in case)
 .pio/
 .pioenvs/
 .piobuild/
+
 # IDE
 .vscode/
 .idea/
 *.code-workspace
+
 # OS
 Thumbs.db
 .DS_Store
 desktop.ini
 ehthumbs.db
+
 # AI tooling (auto-injected by OMC/hooks, NOT part of firmware)
+.agent/
 .agents/
 .claude/
 .codegraph/
@@ -50,15 +57,47 @@ CLAUDE.md
 GEMINI.md
 QODER.md
 skills-lock.json
+
+# Project documentation: keep the public skeleton clean and versioned.
 docs/*
 !docs/README.md
-!docs/04-PLN-计划/
-docs/04-PLN-计划/*
-!docs/04-PLN-计划/01-PLN-固件完成路线图.md
-!docs/09-TOD-待完成/
-docs/09-TOD-待完成/*
-!docs/09-TOD-待完成/01-TOD-固件待完成清单.md
+!docs/GUIDE.md
+!docs/00-reference/
+docs/00-reference/*
+!docs/00-reference/00-guide.md
+!docs/01-architecture/
+docs/01-architecture/*
+!docs/01-architecture/00-guide.md
+!docs/02-requirements/
+docs/02-requirements/*
+!docs/02-requirements/00-guide.md
+!docs/03-protocols/
+docs/03-protocols/*
+!docs/03-protocols/00-guide.md
+!docs/04-planning/
+docs/04-planning/*
+!docs/04-planning/00-guide.md
+!docs/04-planning/01-firmware-roadmap.md
+!docs/05-execution/
+docs/05-execution/*
+!docs/05-execution/00-guide.md
+!docs/06-testing/
+docs/06-testing/*
+!docs/06-testing/00-guide.md
+!docs/07-debugging/
+docs/07-debugging/*
+!docs/07-debugging/00-guide.md
+!docs/08-reports/
+docs/08-reports/*
+!docs/08-reports/00-guide.md
+!docs/09-backlog/
+docs/09-backlog/*
+!docs/09-backlog/00-guide.md
+!docs/09-backlog/01-firmware-backlog.md
+!docs/10-learning/
+docs/10-learning/*
+!docs/10-learning/00-guide.md
+
 # Node
 node_modules/
 package-lock.json
-.agent/

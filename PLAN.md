@@ -21,6 +21,14 @@ ESP32-S3 firmware for Tesla vehicle engine sound simulation:
 - Target: esp32s3 / 16MB Flash / 8MB PSRAM
 - Repo: `https://github.com/Jovifei/Tesla_Simulate_vico`
 
+## Documentation Layout
+
+- Public docs live under `docs/` with ASCII paths: `NN-english-kebab`.
+- Active roadmap: `docs/04-planning/01-firmware-roadmap.md`.
+- Active backlog: `docs/09-backlog/01-firmware-backlog.md`.
+- Category guides are named `00-guide.md`.
+- Chinese descriptions belong in Markdown titles/body, not in path names.
+
 ## Execution Phases
 
 ### S0 Repository + Verification
