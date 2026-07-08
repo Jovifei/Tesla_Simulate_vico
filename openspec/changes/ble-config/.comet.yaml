@@ -1,5 +1,5 @@
 workflow: full
-phase: build
+phase: verify
 change: ble-config
 design_doc: docs/superpowers/specs/2026-07-08-ble-config-design.md
 plan: null
@@ -11,9 +11,9 @@ tdd_mode: direct
 review_mode: off
 isolation: branch
 verify_mode: null
-verify_result: pending
-verification_report: null
-branch_status: pending
+verify_result: pass
+verification_report: openspec/changes/ble-config/verification_report.md
+branch_status: handled
 created_at: 2026-07-08
 verified_at: null
 archived: false
