@@ -1,5 +1,5 @@
 workflow: full
-phase: verify
+phase: archive
 change: audio-engine
 design_doc: docs/superpowers/specs/2026-07-07-audio-engine-design.md
 plan: null
@@ -15,8 +15,8 @@ verify_result: pass
 verification_report: openspec/changes/audio-engine/verification_report.md
 branch_status: handled
 created_at: 2026-07-07
-verified_at: null
-archived: false
+verified_at: 2026-07-08
+archived: true
 handoff_context: openspec/changes/audio-engine/.comet/handoff/design-context.json
 handoff_hash: c8a3da5782f7979c1e61a05adaaf2e776fe89f6916127879d6aeb3b514ce03f5
 direct_override: true
