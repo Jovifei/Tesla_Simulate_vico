@@ -9,10 +9,15 @@ void tearDown() {}
 // === parseSpeed tests ===
 
 void test_parseSpeed_known_frame() {
-    // Frame: {0x00, 0x64} = 100 raw * 0.01 = 1.0 km/h
+    // Frame payload: {0x00, 0x64} = 100 raw * 0.01 = 1.0 km/h
     uint8_t data[8] = {0x00, 0x64, 0, 0, 0, 0, 0, 0};
     float speed = parseSpeed(data, 8);
     TEST_ASSERT_FLOAT_WITHIN(0.001f, 1.0f, speed);
+}
+
+void test_parser_ids_match_prd() {
+    TEST_ASSERT_EQUAL_UINT32(0x257, SPEED_CAN_ID_PRIMARY);
+    TEST_ASSERT_EQUAL_UINT32(0x118, THROTTLE_CAN_ID_PRIMARY);
 }
 
 void test_parseSpeed_zero_frame() {

@@ -25,6 +25,7 @@ public:
     bool begin() override;
     void render(const domain::VehicleState& state) override;
     void setMuted(bool muted) override;
+    void setVolumePercent(std::uint8_t volume_pct) override;
 
 private:
     static float rpmToFreq(float virtual_rpm);
@@ -32,6 +33,7 @@ private:
     i2s_chan_handle_t tx_chan_ = nullptr;
     bool  started_ = false;
     bool  muted_   = false;
+    std::uint8_t volume_pct_ = 100;
     float phase_   = 0.0f;  // radians, persists across render() calls
     int16_t samples_[FRAMES_PER_RENDER] = {};
 };

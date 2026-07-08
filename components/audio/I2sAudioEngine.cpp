@@ -1,5 +1,6 @@
 #include "audio/I2sAudioEngine.h"
 
+#include "audio/AudioVolume.h"
 #include "esp_log.h"
 
 #include <cmath>
@@ -66,8 +67,9 @@ void I2sAudioEngine::render(const domain::VehicleState& state) {
     } else {
         const float freq = rpmToFreq(state.virtual_rpm);
         const float dphi = TWO_PI * freq / SAMPLE_RATE;
+        const float amplitude = AMPLITUDE * volumeGain(volume_pct_);
         for (int i = 0; i < FRAMES_PER_RENDER; ++i) {
-            samples_[i] = static_cast<int16_t>(AMPLITUDE * sinf(phase_));
+            samples_[i] = static_cast<int16_t>(amplitude * sinf(phase_));
             phase_ += dphi;
             if (phase_ >= TWO_PI) phase_ -= TWO_PI;
         }
@@ -79,5 +81,9 @@ void I2sAudioEngine::render(const domain::VehicleState& state) {
 }
 
 void I2sAudioEngine::setMuted(bool muted) { muted_ = muted; }
+
+void I2sAudioEngine::setVolumePercent(std::uint8_t volume_pct) {
+    volume_pct_ = clampVolumePercent(volume_pct);
+}
 
 }  // namespace audio

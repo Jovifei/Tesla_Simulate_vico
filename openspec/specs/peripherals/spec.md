@@ -5,12 +5,13 @@ TBD - created by archiving change peripherals. Update Purpose after archive.
 ## Requirements
 ### Requirement: SD card configuration persistence
 
-The system SHALL persist `config::RuntimeConfig` to the SD card so that runtime configuration survives a power cycle. `SdConfigStore` SHALL mount the SD card over SPI using the pins defined in `config/pin_map.h` (CS=GPIO45, CLK=GPIO39, MOSI=GPIO40, MISO=GPIO41) with a FATFS filesystem at `/sdcard`, load `RuntimeConfig` from `/sdcard/config.json` on boot, and save the current `RuntimeConfig` back to that file when the configuration changes. When the card or config file is absent or the JSON is invalid, the system SHALL fall back to `config::kDefaultRuntimeConfig` and continue operating.
+The system SHALL persist `config::RuntimeConfig` to the SD card so that runtime configuration survives a power cycle. `SdConfigStore` SHALL mount the SD card over SPI using the pins defined in `config/pin_map.h` (CS=GPIO45, CLK=GPIO39, MOSI=GPIO40, MISO=GPIO41) with a FATFS filesystem at `/sdcard`, load `RuntimeConfig` from `/sdcard/config.json` on boot, and save the current `RuntimeConfig` back to that file when the configuration changes. Persisted runtime configuration SHALL include WiFi OTA fields used by BLE and boot-time OTA policy, including `ssid`, `password`, `ota_url`, and `auto_check`. When the card or config file is absent or the JSON is invalid, the system SHALL fall back to `config::kDefaultRuntimeConfig` and continue operating.
 
 #### Scenario: Config loaded from SD on boot
 
 - WHEN `SdConfigStore::begin()` succeeds and `/sdcard/config.json` exists with valid JSON
-- THEN `load()` parses the file into a `config::RuntimeConfig` and the loaded values (e.g. `audio_volume_pct`, active profile) are used instead of the compile-time defaults
+- THEN `load()` parses the file into a `config::RuntimeConfig` and the loaded values (e.g. `audio_volume_pct`, active profile, `ssid`, `password`, `ota_url`, `auto_check`) are used instead of the compile-time defaults
+- AND the loaded `audio_volume_pct` is applied to the audio engine before runtime rendering
 
 #### Scenario: Fallback to defaults when card missing
 
@@ -22,6 +23,27 @@ The system SHALL persist `config::RuntimeConfig` to the SD card so that runtime 
 - WHEN the in-RAM `RuntimeConfig` is modified (via encoder or BLE) and marked dirty
 - THEN `save()` serializes the current `RuntimeConfig` to JSON and writes it to `/sdcard/config.json`, and a subsequent boot loads the persisted values
 
+### Requirement: Boot-time OTA check uses persisted runtime config
+
+The system SHALL treat persisted OTA settings as configuration only until the next boot. If the loaded
+runtime configuration sets `auto_check=true`, the boot path MAY perform the OTA check using the persisted
+WiFi and URL fields; if `auto_check=false`, boot SHALL skip automatic OTA checking. BLE configuration writes
+alone SHALL NOT trigger OTA during the same runtime session.
+
+#### Scenario: Automatic OTA is deferred until next boot
+
+- GIVEN runtime configuration was saved with valid `ssid`, `password`, `ota_url`, and `auto_check=true`
+- WHEN the current session continues after the BLE write that changed those fields
+- THEN OTA does not start immediately from that write
+- AND WHEN the device next boots and loads the persisted configuration
+- THEN the boot path is allowed to evaluate automatic OTA using those saved fields
+
+#### Scenario: Hardware proof boundary for OTA contract
+
+- WHEN this specification is reviewed before device-side WiFi and OTA hardware validation is complete
+- THEN it defines the intended BLE and persistence contract only
+- AND any claim of successful on-device OTA execution remains blocked pending hardware validation evidence
+
 ### Requirement: Rotary encoder input
 
 The system SHALL read a rotary encoder on CLK=GPIO4 and DT=GPIO5 and translate rotation into configuration adjustments. `Encoder` SHALL configure both pins as pulled-up inputs, decode quadrature transitions with debounce, and expose a `poll()` that returns the signed detent delta accumulated since the previous call. The application SHALL apply the detent delta to a configuration target (audio volume, or the active engine profile selection).
@@ -30,6 +52,7 @@ The system SHALL read a rotary encoder on CLK=GPIO4 and DT=GPIO5 and translate r
 
 - WHEN the encoder is rotated one detent clockwise and `poll()` is called
 - THEN `poll()` returns a positive delta and the application increases the active target (e.g. `audio_volume_pct` up to its clamp)
+- AND when the active target is audio volume, the application immediately applies the updated value to the audio engine
 
 #### Scenario: Counter-clockwise rotation decreases target
 
@@ -73,4 +96,3 @@ The system SHALL read the throttle potentiometer on GPIO1 via ADC1 (channel 0) a
 
 - WHEN consecutive `read()` calls are made while the pot position is steady
 - THEN the returned values are stable (low-pass smoothed) rather than raw ADC jitter
-

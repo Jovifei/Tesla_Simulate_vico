@@ -54,10 +54,18 @@ bool TwaiCanSource::poll(domain::VehicleState& state) {
         return false;
     }
 
-    if (frame.identifier == 0x256) {
+    const bool speed_primary = frame.identifier == SPEED_CAN_ID_PRIMARY;
+    const bool throttle_primary = frame.identifier == THROTTLE_CAN_ID_PRIMARY;
+
+    const bool speed_legacy = config_.can_accept_legacy_can_ids && frame.identifier == SPEED_CAN_ID_LEGACY;
+    const bool throttle_legacy = config_.can_accept_legacy_can_ids && frame.identifier == THROTTLE_CAN_ID_LEGACY;
+
+    if (speed_primary || speed_legacy) {
         state.speed_kph = parseSpeed(frame.data, frame.data_length_code);
-    } else if (frame.identifier == 0x116) {
+    } else if (throttle_primary || throttle_legacy) {
         state.throttle = parseTorque(frame.data, frame.data_length_code);
+    } else {
+        return true;
     }
 
     state.can_valid = true;

@@ -24,12 +24,20 @@ extern "C" void app_main(void)
     const bool app_ok = app_instance.begin();
     ESP_LOGI(TAG, "app.begin() = %s", app_ok ? "OK" : "FAIL");
 
+    constexpr int kLoopDelayMs = 25;
+    constexpr int kHeartbeatIntervalMs = 1000;
+
     int level = 1;
+    int heartbeat_elapsed_ms = 0;
     while (true) {
-        gpio_set_level(config::pins::LED_PWR, level);
-        ESP_LOGI(TAG, "heartbeat led=%d", level);
-        level = !level;
         app_instance.tick();
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        heartbeat_elapsed_ms += kLoopDelayMs;
+        if (heartbeat_elapsed_ms >= kHeartbeatIntervalMs) {
+            heartbeat_elapsed_ms -= kHeartbeatIntervalMs;
+            gpio_set_level(config::pins::LED_PWR, level);
+            ESP_LOGI(TAG, "heartbeat led=%d", level);
+            level = !level;
+        }
+        vTaskDelay(pdMS_TO_TICKS(kLoopDelayMs));
     }
 }

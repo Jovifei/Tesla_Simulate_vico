@@ -38,16 +38,30 @@ The system SHALL call `twai_receive()` with zero timeout inside `poll()` to non-
 
 ### Requirement: Dispatch frames to CanFrames parser
 
-The system SHALL dispatch received CAN frames by identifier: frame ID 0x256 SHALL be parsed by `CanFrames::parseSpeed()` and written to `state.speed_kph`; frame ID 0x116 SHALL be parsed by `CanFrames::parseTorque()` and written to `state.throttle`. Unknown frame IDs SHALL be silently dropped. After a valid dispatch, `state.can_valid` SHALL be set to `true`.
+The system SHALL dispatch received CAN frames by identifier: primary frame ID 0x257 SHALL be parsed by `CanFrames::parseSpeed()` and written to `state.speed_kph`; primary frame ID 0x118 SHALL be parsed by `CanFrames::parseTorque()` and written to `state.throttle`. Unknown frame IDs SHALL be silently dropped. After a valid dispatch, `state.can_valid` SHALL be set to `true`.
 
 #### Scenario: Speed frame dispatched
 
-- WHEN a frame with id=0x256, dlc=8, data={0x00, 0x64, ...} is received
+- WHEN a frame with id=0x257, dlc=8, data={0x00, 0x64, ...} is received
 - THEN `state.speed_kph` is set to 1.0f and `state.can_valid` is `true`
 
 #### Scenario: Torque frame dispatched
 
-- WHEN a frame with id=0x116, dlc=8, data={0x07, 0xFF, ...} is received
+- WHEN a frame with id=0x118, dlc=8, data={0x07, 0xFF, ...} is received
+- THEN `state.throttle` is set to 1.0f and `state.can_valid` is `true`
+
+### Requirement: Backward-compatible legacy frame dispatch
+
+The system SHALL accept legacy IDs 0x256 and 0x116 with the same dispatch behavior when runtime config enables compatibility mode.
+
+#### Scenario: Legacy speed frame dispatched
+
+- WHEN config flag enables legacy and a frame with id=0x256, dlc=8, data={0x00, 0x64, ...} is received
+- THEN `state.speed_kph` is set to 1.0f and `state.can_valid` is `true`
+
+#### Scenario: Legacy torque frame dispatched
+
+- WHEN config flag enables legacy and a frame with id=0x116, dlc=8, data={0x07, 0xFF, ...} is received
 - THEN `state.throttle` is set to 1.0f and `state.can_valid` is `true`
 
 #### Scenario: Unknown frame ignored
@@ -68,4 +82,3 @@ The `can::` module SHALL NOT expose any transmit, send, or write-to-bus function
 
 - WHEN `twai_driver_install()` is called
 - THEN `general_config.mode` is `TWAI_MODE_LISTEN_ONLY`
-

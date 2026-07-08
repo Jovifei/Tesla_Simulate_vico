@@ -50,6 +50,21 @@ The system SHALL suppress audible output when muted. `setMuted(true)` SHALL set 
 - WHEN mute is cleared after a muted period and `render()` runs with a non-zero `virtual_rpm`
 - THEN synthesis resumes from the preserved phase accumulator without resetting it to zero
 
+### Requirement: Runtime volume control
+
+The system SHALL expose `AudioEngine::setVolumePercent()` so that persisted or locally adjusted runtime configuration can control output loudness. `I2sAudioEngine` SHALL clamp the volume percentage to the range 0..100 and scale generated PCM sample amplitude by `volume_pct / 100.0`. Volume 0 SHALL produce silence without resetting the phase accumulator; volume 100 SHALL preserve the nominal synthesis amplitude.
+
+#### Scenario: Persisted volume scales I2S samples
+
+- GIVEN `RuntimeConfig.audio_volume_pct` is 42
+- WHEN the application applies runtime config to the audio engine and `render()` generates non-muted samples
+- THEN the generated sample amplitude is scaled by 0.42 before being written to the I2S channel
+
+#### Scenario: Volume clamp protects the output range
+
+- WHEN a volume value below 0 or above 100 is applied through the audio volume helper
+- THEN the effective volume is clamped to 0 or 100 respectively
+
 ### Requirement: No Arduino audio libraries
 
 The `audio::` module SHALL NOT depend on any Arduino framework audio library or the deprecated legacy I2S driver (`driver/i2s.h`). Audio output SHALL use only the ESP-IDF v5.3 standard-mode I2S API (`driver/i2s_std.h`) with hand-rolled synthesis.
@@ -58,4 +73,3 @@ The `audio::` module SHALL NOT depend on any Arduino framework audio library or 
 
 - WHEN all source files under `components/audio/` are searched for `Arduino` and the legacy `driver/i2s.h` include
 - THEN zero matches are found and only `driver/i2s_std.h` is used for I2S
-

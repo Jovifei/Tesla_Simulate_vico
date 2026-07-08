@@ -112,6 +112,10 @@ bool SdConfigStore::load(config::RuntimeConfig& cfg) {
         && cJSON_IsBool(item)) {
         cfg.can_listen_only = cJSON_IsTrue(item);
     }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "can_accept_legacy_can_ids")) != nullptr
+        && cJSON_IsBool(item)) {
+        cfg.can_accept_legacy_can_ids = cJSON_IsTrue(item);
+    }
     if ((item = cJSON_GetObjectItemCaseSensitive(root, "audio_sample_rate")) != nullptr
         && cJSON_IsNumber(item)) {
         cfg.audio_sample_rate = static_cast<std::uint16_t>(item->valuedouble);
@@ -123,6 +127,22 @@ bool SdConfigStore::load(config::RuntimeConfig& cfg) {
     if ((item = cJSON_GetObjectItemCaseSensitive(root, "profile_index")) != nullptr
         && cJSON_IsNumber(item)) {
         cfg.profile_index = static_cast<std::uint8_t>(item->valuedouble);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "wifi_ssid")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.wifi_ssid, sizeof(cfg.wifi_ssid), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "wifi_password")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.wifi_password, sizeof(cfg.wifi_password), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "ota_url")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.ota_url, sizeof(cfg.ota_url), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "ota_auto_check")) != nullptr
+        && cJSON_IsBool(item)) {
+        cfg.ota_auto_check = cJSON_IsTrue(item);
     }
 
     cJSON_Delete(root);
@@ -141,9 +161,14 @@ bool SdConfigStore::save(const config::RuntimeConfig& cfg) {
     }
     cJSON_AddNumberToObject(root, "can_bitrate", cfg.can_bitrate);
     cJSON_AddBoolToObject(root, "can_listen_only", cfg.can_listen_only);
+    cJSON_AddBoolToObject(root, "can_accept_legacy_can_ids", cfg.can_accept_legacy_can_ids);
     cJSON_AddNumberToObject(root, "audio_sample_rate", cfg.audio_sample_rate);
     cJSON_AddNumberToObject(root, "audio_volume_pct", cfg.audio_volume_pct);
     cJSON_AddNumberToObject(root, "profile_index", cfg.profile_index);
+    cJSON_AddStringToObject(root, "wifi_ssid", cfg.wifi_ssid);
+    cJSON_AddStringToObject(root, "wifi_password", cfg.wifi_password);
+    cJSON_AddStringToObject(root, "ota_url", cfg.ota_url);
+    cJSON_AddBoolToObject(root, "ota_auto_check", cfg.ota_auto_check);
 
     char* json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
