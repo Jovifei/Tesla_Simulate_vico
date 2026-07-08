@@ -50,7 +50,14 @@ CLAUDE.md
 GEMINI.md
 QODER.md
 skills-lock.json
-docs/
+docs/*
+!docs/README.md
+!docs/04-PLN-计划/
+docs/04-PLN-计划/*
+!docs/04-PLN-计划/01-PLN-固件完成路线图.md
+!docs/09-TOD-待完成/
+docs/09-TOD-待完成/*
+!docs/09-TOD-待完成/01-TOD-固件待完成清单.md
 # Node
 node_modules/
 package-lock.json
