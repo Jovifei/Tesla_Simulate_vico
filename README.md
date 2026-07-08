@@ -83,6 +83,8 @@ cd E:\Tesla_speed\prj
 openspec validate --all --strict --json
 ```
 
+如果 PowerShell 或 VSCode 输出 `Not using an unsupported version of tool ninja found in PATH: 1.13.0`，说明系统 PATH 里有比 ESP-IDF 自带版本更靠前的 Ninja。请优先使用 `.\scripts\esp-idf.ps1 build`，该脚本会把 ESP-IDF v5.3.2 自带的 Python、Ninja 1.12.1 和 CMake 放到 PATH 前面。
+
 烧录与串口：
 
 ```powershell

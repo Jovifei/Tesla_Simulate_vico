@@ -15,6 +15,9 @@ if ($IdfArgs.Count -eq 0) {
 }
 
 $ExportScript = Join-Path $EspIdfPath 'export.ps1'
+$PythonScriptsPath = Join-Path $PythonEnvPath 'Scripts'
+$BundledNinjaPath = Join-Path $ToolsPath 'tools\ninja\1.12.1'
+$BundledCMakePath = Join-Path $ToolsPath 'tools\cmake\3.30.2\bin'
 if (-not (Test-Path -LiteralPath $ExportScript)) {
     throw "ESP-IDF export script not found: $ExportScript"
 }
@@ -24,10 +27,27 @@ if (-not (Test-Path -LiteralPath $ToolsPath)) {
 if (-not (Test-Path -LiteralPath $PythonEnvPath)) {
     throw "ESP-IDF Python environment not found: $PythonEnvPath"
 }
+if (-not (Test-Path -LiteralPath (Join-Path $PythonScriptsPath 'python.exe'))) {
+    throw "ESP-IDF Python executable not found: $PythonScriptsPath"
+}
+if (-not (Test-Path -LiteralPath (Join-Path $BundledNinjaPath 'ninja.exe'))) {
+    throw "ESP-IDF bundled ninja not found: $BundledNinjaPath"
+}
+if (-not (Test-Path -LiteralPath (Join-Path $BundledCMakePath 'cmake.exe'))) {
+    throw "ESP-IDF bundled cmake not found: $BundledCMakePath"
+}
 
 $env:IDF_PATH = $EspIdfPath
 $env:IDF_TOOLS_PATH = $ToolsPath
 $env:IDF_PYTHON_ENV_PATH = $PythonEnvPath
+
+$env:PATH = @(
+    $PythonScriptsPath
+    $BundledNinjaPath
+    $BundledCMakePath
+    (Join-Path $EspIdfPath 'tools')
+    $env:PATH
+) -join [System.IO.Path]::PathSeparator
 
 Push-Location $ProjectRoot
 try {
