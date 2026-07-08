@@ -1,7 +1,7 @@
 #pragma once
 
 #include "can/TwaiCanSource.h"
-#include "audio/StubAudioEngine.h"
+#include "audio/I2sAudioEngine.h"
 #include "ble/BleService.h"
 #include "domain/EngineModel.h"
 
@@ -26,7 +26,7 @@ public:
 
 private:
     can::TwaiCanSource     can_;
-    audio::StubAudioEngine audio_;
+    audio::I2sAudioEngine  audio_;
     ble::BleService        ble_;
     domain::EngineModel    engine_;
 };
