@@ -1,7 +1,7 @@
 # can-frame-parser Specification
 
 ## Purpose
-TBD - created by archiving change can-frame-parser. Update Purpose after archive.
+CAN frame parsing rules that convert Tesla speed and torque frames into normalized vehicle-state fields.
 
 ## Requirements
 ### Requirement: Parse vehicle speed from CAN frame 0x257

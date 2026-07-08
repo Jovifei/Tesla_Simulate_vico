@@ -144,6 +144,42 @@ bool SdConfigStore::load(config::RuntimeConfig& cfg) {
         && cJSON_IsBool(item)) {
         cfg.ota_auto_check = cJSON_IsTrue(item);
     }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "iot_enable")) != nullptr
+        && cJSON_IsBool(item)) {
+        cfg.iot_enable = cJSON_IsTrue(item);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_uri")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_uri, sizeof(cfg.mqtt_uri), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_client_id")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_client_id, sizeof(cfg.mqtt_client_id), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_username")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_username, sizeof(cfg.mqtt_username), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_password")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_password, sizeof(cfg.mqtt_password), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_topic_up")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_topic_up, sizeof(cfg.mqtt_topic_up), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "mqtt_topic_down")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.mqtt_topic_down, sizeof(cfg.mqtt_topic_down), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "device_id")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.device_id, sizeof(cfg.device_id), "%s", item->valuestring);
+    }
+    if ((item = cJSON_GetObjectItemCaseSensitive(root, "product_id")) != nullptr
+        && cJSON_IsString(item) && item->valuestring != nullptr) {
+        std::snprintf(cfg.product_id, sizeof(cfg.product_id), "%s", item->valuestring);
+    }
 
     cJSON_Delete(root);
     ESP_LOGI(kTag, "config loaded from %s", kPath);
@@ -169,6 +205,15 @@ bool SdConfigStore::save(const config::RuntimeConfig& cfg) {
     cJSON_AddStringToObject(root, "wifi_password", cfg.wifi_password);
     cJSON_AddStringToObject(root, "ota_url", cfg.ota_url);
     cJSON_AddBoolToObject(root, "ota_auto_check", cfg.ota_auto_check);
+    cJSON_AddBoolToObject(root, "iot_enable", cfg.iot_enable);
+    cJSON_AddStringToObject(root, "mqtt_uri", cfg.mqtt_uri);
+    cJSON_AddStringToObject(root, "mqtt_client_id", cfg.mqtt_client_id);
+    cJSON_AddStringToObject(root, "mqtt_username", cfg.mqtt_username);
+    cJSON_AddStringToObject(root, "mqtt_password", cfg.mqtt_password);
+    cJSON_AddStringToObject(root, "mqtt_topic_up", cfg.mqtt_topic_up);
+    cJSON_AddStringToObject(root, "mqtt_topic_down", cfg.mqtt_topic_down);
+    cJSON_AddStringToObject(root, "device_id", cfg.device_id);
+    cJSON_AddStringToObject(root, "product_id", cfg.product_id);
 
     char* json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);

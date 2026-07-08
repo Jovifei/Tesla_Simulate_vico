@@ -50,19 +50,28 @@ SHALL be writable as documented.
 - WHEN a GATT client enumerates the PRD table
 - THEN all listed UUIDs are present under `0xfff0` with expected access behavior.
 
-### Requirement: OTA settings characteristic contract on `ffe8`
+### Requirement: WiFi OTA IoT settings characteristic contract on `ffe8`
 
-`ffe8` SHALL keep the existing UUID assignment and SHALL expose OTA settings as UTF-8 JSON over BLE
-read/write. The JSON contract SHALL include `ssid`, `password`, `ota_url`, and `auto_check`, and BLE
-writes to `ffe8` SHALL update runtime configuration only. Writing `ffe8` SHALL NOT start OTA immediately;
-any OTA check governed by `auto_check` SHALL occur on a later boot.
+`ffe8` SHALL keep the existing UUID assignment and SHALL expose WiFi, OTA, and IoT settings as UTF-8 JSON
+over BLE read/write. The JSON contract SHALL include `ssid`, `password`, `ota_url`, and `auto_check`, and
+MAY include `iot_enable`, `mqtt_uri`, `client_id`, `mqtt_username`, `mqtt_password`, `topic_up`,
+`topic_down`, `device_id`, and `product_id`. BLE writes to `ffe8` SHALL update runtime configuration only.
+Writing `ffe8` SHALL NOT start OTA immediately; any automatic OTA check governed by `auto_check` SHALL
+occur on a later boot.
 
 #### Scenario: OTA settings read/write over BLE
 
 - WHEN a BLE client reads `ffe8`
-- THEN the response is UTF-8 JSON containing `ssid`, `password`, `ota_url`, and `auto_check`
+- THEN the response is UTF-8 JSON containing `ssid`, `password`, `ota_url`, `auto_check`, and any stored IoT fields
 - AND WHEN a BLE client writes valid UTF-8 JSON with those fields to `ffe8`
-- THEN the runtime OTA settings are updated without changing the characteristic UUID contract
+- THEN the runtime WiFi, OTA, and IoT settings are updated without changing the characteristic UUID contract
+
+#### Scenario: IoT settings remain optional and type-checked
+
+- WHEN a BLE client writes the original short OTA JSON with only `ssid`, `password`, `ota_url`, and `auto_check`
+- THEN the write remains valid
+- AND WHEN a known IoT key is present with the wrong JSON type
+- THEN the write is rejected with a BLE attribute error
 
 #### Scenario: BLE OTA write does not start OTA in-place
 
@@ -91,14 +100,20 @@ with read/write semantics described in previous firmware behavior.
 
 ### Requirement: Diagnostics and live status characteristics
 
-`ffe5` SHALL return UTF-8 JSON diagnostics on read with at least `version`, `partition`, `wifi_state`,
-`ota_last_result`, and `last_error`. `ffea` SHALL remain the live status characteristic and SHALL continue
-to support read + notify for current device status updates.
+`ffe5` SHALL return UTF-8 JSON diagnostics on read from `status::RuntimeStatus` with at least `version`,
+`partition`, `wifi_state`, `iot_state`, `ota_state`, `ota_progress`, `ota_last_result`, and `last_error`.
+`ffea` SHALL remain the live status characteristic and SHALL continue to support read + notify for current
+device status updates.
 
 #### Scenario: diagnostics snapshot includes OTA and WiFi state
 
 - WHEN a BLE client reads `ffe5`
-- THEN the response is UTF-8 JSON containing `version`, `partition`, `wifi_state`, `ota_last_result`, and `last_error`
+- THEN the response is UTF-8 JSON containing `version`, `partition`, `wifi_state`, `iot_state`, `ota_state`, `ota_progress`, `ota_last_result`, and `last_error`
+
+#### Scenario: live status bitfield includes network and OTA bits
+
+- WHEN `app::App` publishes the live status bitfield on `ffea`
+- THEN bit 0 represents BLE started, bit 1 SD mounted, bit 2 CAN valid, bit 3 overspeed mute, bit 4 OTA config ready, bit 5 WiFi connected, bit 6 IoT cloud connected, and bit 7 OTA in progress
 
 #### Scenario: live status channel remains unchanged
 

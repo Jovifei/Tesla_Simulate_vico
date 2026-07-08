@@ -66,8 +66,8 @@ const ble_uuid16_t g_tune_data_uuid = BLE_UUID16_INIT(kTuneDataUuid16);
 constexpr std::size_t kCfgBlobLen  = 64;
 constexpr std::size_t kAudioBlobLen = 32;
 constexpr std::size_t kCanBlobLen = 32;
-constexpr std::size_t kDiagJsonLen = 256;
-constexpr std::size_t kOtaJsonLen = 384;
+constexpr std::size_t kDiagJsonLen = 384;
+constexpr std::size_t kOtaJsonLen = 512;
 constexpr std::size_t kTuneDataLen = 32;
 
 uint8_t g_own_addr_type = 0;
@@ -77,7 +77,6 @@ portMUX_TYPE g_ble_cfg_lock   = portMUX_INITIALIZER_UNLOCKED;
 domain::VehicleState g_state_snapshot{};
 config::RuntimeConfig g_runtime_cfg{};
 config::RuntimeConfig g_pending_cfg{};
-ota::OtaStatus g_ota_status{};
 
 uint8_t g_config_blob[kCfgBlobLen] = {0};
 uint8_t g_audio_blob[kAudioBlobLen] = {0};
@@ -105,6 +104,39 @@ void copyString(char* dst, std::size_t dst_len, const char* src) {
     std::snprintf(dst, dst_len, "%s", src);
 }
 
+bool parseJsonBool(const cJSON* item, bool& out_value) {
+    if (item == nullptr) {
+        return true;
+    }
+    if (!cJSON_IsBool(item)) {
+        return false;
+    }
+    out_value = cJSON_IsTrue(item);
+    return true;
+}
+
+bool parseJsonString(const cJSON* item, char* dst, std::size_t dst_len, bool required) {
+    if (item == nullptr) {
+        return !required;
+    }
+    if (!cJSON_IsString(item) || item->valuestring == nullptr) {
+        return false;
+    }
+    copyString(dst, dst_len, item->valuestring);
+    return true;
+}
+
+bool parseJsonStringAlias(const cJSON* primary,
+                          const cJSON* secondary,
+                          char* dst,
+                          std::size_t dst_len,
+                          bool required) {
+    if (primary != nullptr) {
+        return parseJsonString(primary, dst, dst_len, required);
+    }
+    return parseJsonString(secondary, dst, dst_len, required);
+}
+
 bool serializeOtaJson(const config::RuntimeConfig& cfg, char* dst, std::size_t dst_len) {
     cJSON* root = cJSON_CreateObject();
     if (root == nullptr) {
@@ -115,6 +147,15 @@ bool serializeOtaJson(const config::RuntimeConfig& cfg, char* dst, std::size_t d
     cJSON_AddStringToObject(root, "password", cfg.wifi_password);
     cJSON_AddStringToObject(root, "ota_url", cfg.ota_url);
     cJSON_AddBoolToObject(root, "auto_check", cfg.ota_auto_check);
+    cJSON_AddBoolToObject(root, "iot_enable", cfg.iot_enable);
+    cJSON_AddStringToObject(root, "mqtt_uri", cfg.mqtt_uri);
+    cJSON_AddStringToObject(root, "client_id", cfg.mqtt_client_id);
+    cJSON_AddStringToObject(root, "mqtt_username", cfg.mqtt_username);
+    cJSON_AddStringToObject(root, "mqtt_password", cfg.mqtt_password);
+    cJSON_AddStringToObject(root, "topic_up", cfg.mqtt_topic_up);
+    cJSON_AddStringToObject(root, "topic_down", cfg.mqtt_topic_down);
+    cJSON_AddStringToObject(root, "device_id", cfg.device_id);
+    cJSON_AddStringToObject(root, "product_id", cfg.product_id);
 
     char* json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
@@ -145,46 +186,124 @@ bool parseOtaJson(const void* src, std::size_t len, config::RuntimeConfig& cfg) 
     }
 
     const cJSON* item = cJSON_GetObjectItemCaseSensitive(root, "ssid");
-    if (item != nullptr && (!cJSON_IsString(item) || item->valuestring == nullptr)) {
+    if (!parseJsonString(item, cfg.wifi_ssid, sizeof(cfg.wifi_ssid), true)) {
         cJSON_Delete(root);
         return false;
     }
-    if (item != nullptr) {
-        copyString(cfg.wifi_ssid, sizeof(cfg.wifi_ssid), item->valuestring);
-    }
-
     item = cJSON_GetObjectItemCaseSensitive(root, "password");
-    if (item != nullptr && (!cJSON_IsString(item) || item->valuestring == nullptr)) {
+    if (!parseJsonString(item, cfg.wifi_password, sizeof(cfg.wifi_password), true)) {
         cJSON_Delete(root);
         return false;
     }
-    if (item != nullptr) {
-        copyString(cfg.wifi_password, sizeof(cfg.wifi_password), item->valuestring);
-    }
-
     item = cJSON_GetObjectItemCaseSensitive(root, "ota_url");
-    if (item != nullptr && (!cJSON_IsString(item) || item->valuestring == nullptr)) {
+    if (!parseJsonString(item, cfg.ota_url, sizeof(cfg.ota_url), true)) {
         cJSON_Delete(root);
         return false;
-    }
-    if (item != nullptr) {
-        copyString(cfg.ota_url, sizeof(cfg.ota_url), item->valuestring);
     }
 
+    bool auto_check = cfg.ota_auto_check;
     item = cJSON_GetObjectItemCaseSensitive(root, "auto_check");
-    if (item != nullptr && !cJSON_IsBool(item)) {
+    if (!parseJsonBool(item, auto_check)) {
         cJSON_Delete(root);
         return false;
     }
-    if (item != nullptr) {
-        cfg.ota_auto_check = cJSON_IsTrue(item);
+    cfg.ota_auto_check = auto_check;
+
+    const cJSON* iot_enable_item = cJSON_GetObjectItemCaseSensitive(root, "iot_enable");
+    if (iot_enable_item != nullptr && !parseJsonBool(iot_enable_item, cfg.iot_enable)) {
+        cJSON_Delete(root);
+        return false;
+    }
+
+    if (!parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "mqtt_uri"),
+                        cfg.mqtt_uri,
+                        sizeof(cfg.mqtt_uri),
+                        false) ||
+        !parseJsonStringAlias(cJSON_GetObjectItemCaseSensitive(root, "client_id"),
+                              cJSON_GetObjectItemCaseSensitive(root, "mqtt_client_id"),
+                              cfg.mqtt_client_id,
+                              sizeof(cfg.mqtt_client_id),
+                              false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "mqtt_username"),
+                        cfg.mqtt_username,
+                        sizeof(cfg.mqtt_username),
+                        false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "mqtt_password"),
+                        cfg.mqtt_password,
+                        sizeof(cfg.mqtt_password),
+                        false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "topic_up"),
+                        cfg.mqtt_topic_up,
+                        sizeof(cfg.mqtt_topic_up),
+                        false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "topic_down"),
+                        cfg.mqtt_topic_down,
+                        sizeof(cfg.mqtt_topic_down),
+                        false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "device_id"),
+                        cfg.device_id,
+                        sizeof(cfg.device_id),
+                        false) ||
+        !parseJsonString(cJSON_GetObjectItemCaseSensitive(root, "product_id"),
+                        cfg.product_id,
+                        sizeof(cfg.product_id),
+                        false)) {
+        cJSON_Delete(root);
+        return false;
     }
 
     cJSON_Delete(root);
     return true;
 }
 
-bool serializeDiagnosticsJson(const ota::OtaStatus& status, char* dst, std::size_t dst_len) {
+status::WifiState parseWifiState(const char* wifi_state) {
+    if (wifi_state == nullptr) {
+        return status::WifiState::Disabled;
+    }
+    if (std::strcmp(wifi_state, "unconfigured") == 0) {
+        return status::WifiState::Unconfigured;
+    }
+    if (std::strcmp(wifi_state, "provisioned") == 0) {
+        return status::WifiState::Provisioned;
+    }
+    if (std::strcmp(wifi_state, "connecting") == 0) {
+        return status::WifiState::Connecting;
+    }
+    if (std::strcmp(wifi_state, "connected") == 0) {
+        return status::WifiState::Connected;
+    }
+    if (std::strcmp(wifi_state, "failed") == 0) {
+        return status::WifiState::Failed;
+    }
+    return status::WifiState::Disabled;
+}
+
+status::OtaState parseOtaState(const char* ota_result, bool ota_in_progress) {
+    if (ota_in_progress) {
+        if (ota_result == nullptr || std::strcmp(ota_result, "downloading") == 0) {
+            return status::OtaState::Downloading;
+        }
+        if (std::strcmp(ota_result, "applying") == 0) {
+            return status::OtaState::Applying;
+        }
+        return status::OtaState::Checking;
+    }
+    if (ota_result == nullptr) {
+        return status::OtaState::Idle;
+    }
+    if (std::strcmp(ota_result, "success") == 0) {
+        return status::OtaState::Success;
+    }
+    if (std::strcmp(ota_result, "failed") == 0) {
+        return status::OtaState::Failed;
+    }
+    if (std::strcmp(ota_result, "pending") == 0) {
+        return status::OtaState::Pending;
+    }
+    return status::OtaState::Idle;
+}
+
+bool serializeDiagnosticsJson(const status::RuntimeStatus& status, char* dst, std::size_t dst_len) {
     cJSON* root = cJSON_CreateObject();
     if (root == nullptr) {
         return false;
@@ -192,7 +311,10 @@ bool serializeDiagnosticsJson(const ota::OtaStatus& status, char* dst, std::size
 
     cJSON_AddStringToObject(root, "version", status.version);
     cJSON_AddStringToObject(root, "partition", status.partition);
-    cJSON_AddStringToObject(root, "wifi_state", status.wifi_state);
+    cJSON_AddStringToObject(root, "wifi_state", toString(status.wifi_state));
+    cJSON_AddStringToObject(root, "iot_state", toString(status.iot_state));
+    cJSON_AddStringToObject(root, "ota_state", toString(status.ota_state));
+    cJSON_AddNumberToObject(root, "ota_progress", status.ota_progress_pct);
     cJSON_AddStringToObject(root, "ota_last_result", status.ota_last_result);
     cJSON_AddStringToObject(root, "last_error", status.last_error);
 
@@ -585,13 +707,32 @@ void BleService::publishVehicleState(const domain::VehicleState& state) {
     taskEXIT_CRITICAL(&g_ble_state_lock);
 }
 
-void BleService::publishOtaStatus(const ota::OtaStatus& status) {
+void BleService::publishRuntimeStatus(const status::RuntimeStatus& status) {
     taskENTER_CRITICAL(&g_ble_cfg_lock);
-    g_ota_status = status;
-    if (!serializeDiagnosticsJson(g_ota_status, g_diagnostics_json, sizeof(g_diagnostics_json))) {
+    if (!serializeDiagnosticsJson(status, g_diagnostics_json, sizeof(g_diagnostics_json))) {
         std::snprintf(g_diagnostics_json, sizeof(g_diagnostics_json), "%s", "{}");
     }
     taskEXIT_CRITICAL(&g_ble_cfg_lock);
+}
+
+void BleService::publishOtaStatus(const ota::OtaStatus& status) {
+    status::RuntimeStatus normalized{};
+    copyString(normalized.version, sizeof(normalized.version), status.version);
+    copyString(normalized.partition, sizeof(normalized.partition), status.partition);
+    normalized.wifi_state = parseWifiState(status.wifi_state);
+    normalized.ota_state = parseOtaState(status.ota_last_result, status.ota_in_progress);
+    if (std::strcmp(status.ota_last_result, "success") == 0) {
+        copyString(normalized.ota_last_result, sizeof(normalized.ota_last_result), status.ota_last_result);
+    } else if (std::strcmp(status.ota_last_result, "failed") == 0) {
+        copyString(normalized.ota_last_result, sizeof(normalized.ota_last_result), status.ota_last_result);
+    } else if (std::strlen(status.ota_last_result) != 0) {
+        copyString(normalized.ota_last_result, sizeof(normalized.ota_last_result), status.ota_last_result);
+    }
+    copyString(normalized.last_error, sizeof(normalized.last_error), status.last_error);
+    normalized.iot_state = status::IotState::Disabled;
+    normalized.device_status_bits = 0;
+    normalized.ota_progress_pct = status.ota_in_progress ? 50u : 0u;
+    publishRuntimeStatus(normalized);
 }
 
 void BleService::publishDeviceStatus(std::uint32_t status) {

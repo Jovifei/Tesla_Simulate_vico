@@ -1,7 +1,7 @@
 # twai-can-source Specification
 
 ## Purpose
-TBD - created by archiving change twai-can-source. Update Purpose after archive.
+ESP32-S3 TWAI listen-only receive source and dispatch behavior for vehicle CAN frames.
 ## Requirements
 ### Requirement: TWAI listen-only driver configuration
 

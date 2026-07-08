@@ -1,17 +1,24 @@
 # peripherals Specification
 
 ## Purpose
-TBD - created by archiving change peripherals. Update Purpose after archive.
+
+Peripheral and local persistence behavior for Tesla Simulate Vico, including SD-card runtime configuration, encoder input, throttle potentiometer input, and WS2812 status indication.
 ## Requirements
 ### Requirement: SD card configuration persistence
 
-The system SHALL persist `config::RuntimeConfig` to the SD card so that runtime configuration survives a power cycle. `SdConfigStore` SHALL mount the SD card over SPI using the pins defined in `config/pin_map.h` (CS=GPIO45, CLK=GPIO39, MOSI=GPIO40, MISO=GPIO41) with a FATFS filesystem at `/sdcard`, load `RuntimeConfig` from `/sdcard/config.json` on boot, and save the current `RuntimeConfig` back to that file when the configuration changes. Persisted runtime configuration SHALL include WiFi OTA fields used by BLE and boot-time OTA policy, including `ssid`, `password`, `ota_url`, and `auto_check`. When the card or config file is absent or the JSON is invalid, the system SHALL fall back to `config::kDefaultRuntimeConfig` and continue operating.
+The system SHALL persist `config::RuntimeConfig` to the SD card so that runtime configuration survives a power cycle. `SdConfigStore` SHALL mount the SD card over SPI using the pins defined in `config/pin_map.h` (CS=GPIO45, CLK=GPIO39, MOSI=GPIO40, MISO=GPIO41) with a FATFS filesystem at `/sdcard`, load `RuntimeConfig` from `/sdcard/config.json` on boot, and save the current `RuntimeConfig` back to that file when the configuration changes. Persisted runtime configuration SHALL include WiFi, OTA, and IoT fields used by BLE and boot-time runtime policy, including SSID, password, OTA URL, OTA auto-check, IoT enable, MQTT URI, MQTT client ID, MQTT username, MQTT password, uplink topic, downlink topic, device ID, and product ID. When the card or config file is absent, lacks newer IoT keys, or contains invalid JSON, the system SHALL fall back to defaults for missing fields and continue operating.
 
 #### Scenario: Config loaded from SD on boot
 
 - WHEN `SdConfigStore::begin()` succeeds and `/sdcard/config.json` exists with valid JSON
-- THEN `load()` parses the file into a `config::RuntimeConfig` and the loaded values (e.g. `audio_volume_pct`, active profile, `ssid`, `password`, `ota_url`, `auto_check`) are used instead of the compile-time defaults
+- THEN `load()` parses the file into a `config::RuntimeConfig` and the loaded values (e.g. `audio_volume_pct`, active profile, WiFi credentials, OTA URL, OTA auto-check, MQTT settings, device ID, and product ID) are used instead of the compile-time defaults
 - AND the loaded `audio_volume_pct` is applied to the audio engine before runtime rendering
+
+#### Scenario: Older config files remain compatible
+
+- WHEN `/sdcard/config.json` lacks the newer WiFi, OTA, or IoT keys
+- THEN `load()` keeps default values for the missing fields
+- AND the device continues booting instead of rejecting the whole config file
 
 #### Scenario: Fallback to defaults when card missing
 

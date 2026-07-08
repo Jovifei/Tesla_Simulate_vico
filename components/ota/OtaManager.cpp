@@ -1,11 +1,12 @@
 #include "ota/OtaManager.h"
 
-#include <cstdio>
+#include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <cstring>
 
 #include "esp_app_desc.h"
-#include "esp_event.h"
+#include "esp_err.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
 #include "esp_log.h"
@@ -15,28 +16,20 @@
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
-#include "freertos/task.h"
 #include "freertos/portmacro.h"
+#include "freertos/task.h"
 
 namespace {
 
 constexpr const char* kTag = "ota";
-constexpr EventBits_t kWifiConnectedBit = BIT0;
-constexpr EventBits_t kWifiFailedBit    = BIT1;
-constexpr int kWifiMaxRetries           = 5;
-constexpr int kWifiConnectTimeoutMs     = 30000;
-constexpr int kOtaTaskStackWords        = 8192;
+constexpr int kTaskStackWords = 8192;
+constexpr UBaseType_t kTaskPriority = 5;
+constexpr int kOtaConnectTimeoutMs = 30000;
+constexpr EventBits_t kBitRequest = BIT0;
 
-portMUX_TYPE g_ota_lock = portMUX_INITIALIZER_UNLOCKED;
-ota::OtaStatus g_status{};
-config::RuntimeConfig g_cfg{};
-EventGroupHandle_t g_wifi_events = nullptr;
-esp_netif_t* g_wifi_sta_netif = nullptr;
-bool g_wifi_handlers_registered = false;
-int g_wifi_retry_count = 0;
-
-// ISRG Root X1, commonly used by HTTPS endpoints behind Let's Encrypt.
-constexpr const char kOtaRootCertPem[] = R"(-----BEGIN CERTIFICATE-----
+// ESP-IDF component `json` embeds cJSON symbols.
+constexpr const char kRootCertPem[] = R"(
+-----BEGIN CERTIFICATE-----
 MIIFazCCA1OgAwIBAgISA5tm0X7Zg8+Uo1O1Yz5lJQ6HMA0GCSqGSIb3DQEBCwUAMHwx
 CzAJBgNVBAYTAlVTMRMwEQYDVQQKEwpJbnRlcm5ldCBTZWN1cml0eSBSZXNlYXJjaCBH
 cm91cDEUMBIGA1UECxMLaXNlYXJjaC5vcmcxJTAjBgNVBAMTHElTUkcgUm9vdCBYMSBQ
@@ -48,7 +41,7 @@ eR4V6kRDeo63eVUsVTNff7kwh28ykVfoCEN0z7LxyzKDn5Xxh6OCAXowggF2MA4GA1Ud
 DwEB/wQEAwIBhjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTTJxL8fzjsEtC5nIof
 RwSEopgI0jAfBgNVHSMEGDAWgBTd/7E0dPfYZ7R6pujISiFDUFxIrjA0BggrBgEFBQcB
 AQQoMCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmlzZWFyY2gub3JnMDIGCCsGAQUF
-BzAChipodHRwOi8vY3J0LmlzZWFyY2gub3JnLzANBgkqhkiG9w0BAQsFAAOCAgEAQzA5
+BzAChipodHRwOi8vY3R0LmlzZWFyY2gub3JnLzANBgkqhkiG9w0BAQsFAAOCAgEAQzA5
 M+zP4h6AsVzTdDEr1xgG+ZpVbpsuRWpu9X6lzNN2O0oSbYqZ0qKXqQyV2pAonyz1K3iA
 24kTx5cDIe8JD7BqXc9E+u6KDAdAm8YGtS+wGGyRyvE4s46HoPazTA/gkGEXLJJLLq5y
 4rI6VOGGAaHo9dZYkTfLZNVVRFl1kYyqS/fWznuaCG2l9VmOAXoJ1i8LojRxurx8Wc58
@@ -56,10 +49,20 @@ g3z7jH9MuNoMNFc13JUO2c+hJ1ytY1/6V2vNhbbX6YsJhBKt3vnDnN/SUXOcDSBx/OVC
 XbkqVKgf/mBlC9ZwTe74MkRUYw35vj0IadB1iKsFcEYJIyaKOA1NVuMcZV8K4D4ew3E8
 3YKHyCuXapnwXCfJOLLmObAun1vDLteA94ppIqhzyapMI2vlA38nSxrdbidKfnUSsfx8
 bVsgcuyo6edSxnl2xe50Tzw9uQWGWpZKaYG1ChcxrFAxo0xO+ogzAm8h1Hn0pVITQW2N
-1srO2Qd6hw2yYB9H9n1tFoZT3zh0+BTtPlqvGjufH6G+jD/adJzi10BGSAdoo6gWQK/B
+1srO2Qd6hw2yB9H9n1tFoZT3zh0+BTtPlqvGjufH6G+jD/adJzi10BGSAdoo6gWQK/B
 ImQxGc1dQc5sKXc5teLoI0lp4rWuHwoMvVJE9idh+NROm4tW7x1YgnSUZXoqBYwygJyI
 QtdgQXl3k5ufADG7n2AFD+a83H8XTur2qxGn8pY=
------END CERTIFICATE-----)";
+-----END CERTIFICATE-----
+)";
+
+status::RuntimeStatus g_status{};
+ota::OtaRequest g_request{};
+bool g_has_request = false;
+bool g_running = false;
+bool g_task_started = false;
+EventGroupHandle_t g_events = nullptr;
+TaskHandle_t g_task_handle = nullptr;
+portMUX_TYPE g_status_lock = portMUX_INITIALIZER_UNLOCKED;
 
 void copyString(char* dst, std::size_t dst_len, const char* src) {
     if (dst_len == 0) {
@@ -69,224 +72,221 @@ void copyString(char* dst, std::size_t dst_len, const char* src) {
         dst[0] = '\0';
         return;
     }
-
-    std::size_t i = 0;
-    for (; i + 1 < dst_len && src[i] != '\0'; ++i) {
-        dst[i] = src[i];
-    }
-    dst[i] = '\0';
+    snprintf(dst, dst_len, "%s", src);
 }
 
-void copyWifiField(std::uint8_t* dst, std::size_t dst_len, const char* src) {
-    if (dst == nullptr || dst_len == 0) {
-        return;
-    }
-
-    std::memset(dst, 0, dst_len);
-    if (src == nullptr) {
-        return;
-    }
-
-    std::size_t i = 0;
-    for (; i < dst_len && src[i] != '\0'; ++i) {
-        dst[i] = static_cast<std::uint8_t>(src[i]);
-    }
-}
-
-void setStatusStrings(const char* wifi_state,
-                      const char* ota_result,
-                      const char* last_error,
-                      bool ota_in_progress) {
-    taskENTER_CRITICAL(&g_ota_lock);
-    if (wifi_state != nullptr) {
-        copyString(g_status.wifi_state, sizeof(g_status.wifi_state), wifi_state);
-    }
-    if (ota_result != nullptr) {
-        copyString(g_status.ota_last_result, sizeof(g_status.ota_last_result), ota_result);
-    }
-    if (last_error != nullptr) {
-        copyString(g_status.last_error, sizeof(g_status.last_error), last_error);
-    }
-    g_status.ota_in_progress = ota_in_progress;
-    taskEXIT_CRITICAL(&g_ota_lock);
-}
-
-void refreshImageMetadata() {
+void setRuntimeVersionFromRunningImage() {
     const esp_app_desc_t* app_desc = esp_app_get_description();
     const esp_partition_t* running = esp_ota_get_running_partition();
+    if (app_desc == nullptr || running == nullptr) {
+        return;
+    }
 
-    taskENTER_CRITICAL(&g_ota_lock);
+    taskENTER_CRITICAL(&g_status_lock);
     copyString(g_status.version, sizeof(g_status.version), app_desc->version);
-    copyString(g_status.partition, sizeof(g_status.partition), running != nullptr ? running->label : "unknown");
-    taskEXIT_CRITICAL(&g_ota_lock);
+    copyString(g_status.partition, sizeof(g_status.partition), running->label);
+    taskEXIT_CRITICAL(&g_status_lock);
 }
 
-void confirmRunningImageIfNeeded() {
+void setOtaStatus(status::OtaState state,
+                  const char* result,
+                  const char* error,
+                  std::uint8_t progress) {
+    taskENTER_CRITICAL(&g_status_lock);
+    g_status.ota_state = state;
+    if (result != nullptr) {
+        copyString(g_status.ota_last_result, sizeof(g_status.ota_last_result), result);
+    }
+    if (error != nullptr) {
+        copyString(g_status.last_error, sizeof(g_status.last_error), error);
+    }
+    g_status.ota_progress_pct = progress;
+    taskEXIT_CRITICAL(&g_status_lock);
+}
+
+bool awaitNetworkConnectivity(std::uint32_t timeout_ms) {
+    const TickType_t start = xTaskGetTickCount();
+    const TickType_t timeout_ticks = pdMS_TO_TICKS(timeout_ms);
+
+    wifi_ap_record_t station_info{};
+    while ((xTaskGetTickCount() - start) < timeout_ticks) {
+        if (esp_wifi_sta_get_ap_info(&station_info) == ESP_OK) {
+            return true;
+        }
+        vTaskDelay(pdMS_TO_TICKS(250));
+    }
+    return false;
+}
+
+bool markOldImageValidIfNeeded() {
     const esp_partition_t* running = esp_ota_get_running_partition();
     if (running == nullptr) {
-        return;
+        return false;
     }
-
     esp_ota_img_states_t state = ESP_OTA_IMG_UNDEFINED;
-    if (esp_ota_get_state_partition(running, &state) == ESP_OK &&
-        state == ESP_OTA_IMG_PENDING_VERIFY) {
-        const esp_err_t err = esp_ota_mark_app_valid_cancel_rollback();
-        if (err == ESP_OK) {
-            ESP_LOGI(kTag, "marked running OTA image as valid");
-        } else {
-            ESP_LOGW(kTag, "esp_ota_mark_app_valid_cancel_rollback failed: %s",
-                     esp_err_to_name(err));
-        }
+    const esp_err_t err = esp_ota_get_state_partition(running, &state);
+    if (err != ESP_OK || state != ESP_OTA_IMG_PENDING_VERIFY) {
+        return false;
     }
+    return esp_ota_mark_app_valid_cancel_rollback() == ESP_OK;
 }
 
-void wifiEventHandler(void* arg,
-                      esp_event_base_t event_base,
-                      int32_t event_id,
-                      void* event_data) {
-    (void)arg;
-    (void)event_data;
-
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-        setStatusStrings("connecting", "pending", "", true);
-        return;
-    }
-
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        if (g_wifi_retry_count < kWifiMaxRetries) {
-            ++g_wifi_retry_count;
-            esp_wifi_connect();
-            setStatusStrings("connecting", "pending", "", true);
-        } else {
-            xEventGroupSetBits(g_wifi_events, kWifiFailedBit);
-            setStatusStrings("failed", "failed", "wifi connect failed", false);
-        }
-        return;
-    }
-
-    if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        g_wifi_retry_count = 0;
-        xEventGroupSetBits(g_wifi_events, kWifiConnectedBit);
-        setStatusStrings("connected", "pending", "", true);
-    }
-}
-
-bool ensureWifiStackReady() {
-    esp_err_t err = esp_netif_init();
-    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
-        ESP_LOGE(kTag, "esp_netif_init failed: %s", esp_err_to_name(err));
+bool runHttpsOta(const ota::OtaRequest& request) {
+    if (!awaitNetworkConnectivity(kOtaConnectTimeoutMs)) {
+        setOtaStatus(status::OtaState::Failed, "failed", "wifi not connected", 0);
         return false;
     }
 
-    err = esp_event_loop_create_default();
-    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
-        ESP_LOGE(kTag, "esp_event_loop_create_default failed: %s", esp_err_to_name(err));
+    esp_http_client_config_t http_config{};
+    http_config.url = request.url;
+    http_config.cert_pem = kRootCertPem;
+    http_config.keep_alive_enable = true;
+    http_config.timeout_ms = 15000;
+
+    esp_https_ota_config_t ota_config{};
+    ota_config.http_config = &http_config;
+
+    setOtaStatus(status::OtaState::Checking, "checking", nullptr, 0);
+    esp_https_ota_handle_t ota_handle = nullptr;
+    const esp_err_t begin_err = esp_https_ota_begin(&ota_config, &ota_handle);
+    if (begin_err != ESP_OK) {
+        setOtaStatus(status::OtaState::Failed, "failed", "ota begin failed", 0);
+        ESP_LOGE(kTag, "esp_https_ota_begin failed: %s", esp_err_to_name(begin_err));
         return false;
     }
 
-    if (g_wifi_sta_netif == nullptr) {
-        g_wifi_sta_netif = esp_netif_create_default_wifi_sta();
-    }
+    esp_app_desc_t img_desc{};
+    if (esp_https_ota_get_img_desc(ota_handle, &img_desc) == ESP_OK) {
+        taskENTER_CRITICAL(&g_status_lock);
+        copyString(g_status.version, sizeof(g_status.version), img_desc.version);
+        taskEXIT_CRITICAL(&g_status_lock);
 
-    wifi_init_config_t wifi_init_cfg = WIFI_INIT_CONFIG_DEFAULT();
-    err = esp_wifi_init(&wifi_init_cfg);
-    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
-        ESP_LOGE(kTag, "esp_wifi_init failed: %s", esp_err_to_name(err));
-        return false;
-    }
-
-    if (!g_wifi_handlers_registered) {
-        ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifiEventHandler, nullptr));
-        ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifiEventHandler, nullptr));
-        g_wifi_handlers_registered = true;
-    }
-
-    if (g_wifi_events == nullptr) {
-        g_wifi_events = xEventGroupCreate();
-        if (g_wifi_events == nullptr) {
-            ESP_LOGE(kTag, "xEventGroupCreate failed");
+        if (request.version[0] != '\0' && std::strcmp(request.version, img_desc.version) != 0) {
+            setOtaStatus(status::OtaState::Failed, "failed", "ota version mismatch", 0);
+            esp_https_ota_abort(ota_handle);
             return false;
         }
     }
 
-    return true;
-}
+    while (true) {
+        const esp_err_t perform_err = esp_https_ota_perform(ota_handle);
+        if (perform_err == ESP_ERR_HTTPS_OTA_IN_PROGRESS) {
+            const int total = esp_https_ota_get_image_size(ota_handle);
+            const int loaded = esp_https_ota_get_image_len_read(ota_handle);
+            if (total > 0) {
+                const std::uint8_t pct = static_cast<std::uint8_t>(
+                    (static_cast<std::uint32_t>(loaded) * 100u) / static_cast<std::uint32_t>(total));
+                setOtaStatus(status::OtaState::Downloading,
+                             "downloading",
+                             nullptr,
+                             pct);
+            }
+            vTaskDelay(pdMS_TO_TICKS(20));
+            continue;
+        }
 
-bool connectWifi() {
-    if (!ensureWifiStackReady()) {
-        return false;
+        if (perform_err != ESP_OK) {
+            const int http_code = esp_https_ota_get_status_code(ota_handle);
+            if (http_code > 0) {
+                char err_msg[56]{};
+                snprintf(err_msg, sizeof(err_msg), "ota download failed (%d)", http_code);
+                setOtaStatus(status::OtaState::Failed, "failed", err_msg, 0);
+            } else {
+                setOtaStatus(status::OtaState::Failed,
+                             "failed",
+                             esp_err_to_name(perform_err),
+                             0);
+            }
+            esp_https_ota_abort(ota_handle);
+            return false;
+        }
+
+        setOtaStatus(status::OtaState::Applying, "applying", nullptr, 95);
+        const int loaded = esp_https_ota_get_image_len_read(ota_handle);
+        if (request.file_size != 0 && loaded != static_cast<int>(request.file_size)) {
+            setOtaStatus(status::OtaState::Failed, "failed", "ota size mismatch", 0);
+            esp_https_ota_abort(ota_handle);
+            return false;
+        }
+
+        const esp_err_t finish_err = esp_https_ota_finish(ota_handle);
+        if (finish_err == ESP_OK) {
+            setOtaStatus(status::OtaState::Success, "success", nullptr, 100);
+            vTaskDelay(pdMS_TO_TICKS(500));
+            esp_restart();
+            return true;
+        }
+
+        const char* finish_err_text = esp_err_to_name(finish_err);
+        setOtaStatus(status::OtaState::Failed,
+                     "failed",
+                     finish_err_text != nullptr ? finish_err_text : "ota finish failed",
+                     0);
+        ESP_LOGE(kTag, "esp_https_ota_finish failed: %s", finish_err_text);
+        break;
     }
 
-    xEventGroupClearBits(g_wifi_events, kWifiConnectedBit | kWifiFailedBit);
-    g_wifi_retry_count = 0;
-
-    wifi_config_t wifi_cfg = {};
-    copyWifiField(wifi_cfg.sta.ssid, sizeof(wifi_cfg.sta.ssid), g_cfg.wifi_ssid);
-    copyWifiField(wifi_cfg.sta.password, sizeof(wifi_cfg.sta.password), g_cfg.wifi_password);
-    wifi_cfg.sta.threshold.authmode = WIFI_AUTH_OPEN;
-    wifi_cfg.sta.pmf_cfg.capable = true;
-    wifi_cfg.sta.pmf_cfg.required = false;
-
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_cfg));
-    ESP_ERROR_CHECK(esp_wifi_start());
-
-    const EventBits_t bits = xEventGroupWaitBits(
-        g_wifi_events,
-        kWifiConnectedBit | kWifiFailedBit,
-        pdTRUE,
-        pdFALSE,
-        pdMS_TO_TICKS(kWifiConnectTimeoutMs));
-
-    if ((bits & kWifiConnectedBit) != 0) {
-        return true;
-    }
-
-    setStatusStrings("failed", "failed", "wifi connect timeout", false);
+    esp_https_ota_abort(ota_handle);
     return false;
 }
 
-void runHttpsOta() {
-    esp_http_client_config_t http_cfg = {};
-    http_cfg.url = g_cfg.ota_url;
-    http_cfg.cert_pem = kOtaRootCertPem;
-    http_cfg.timeout_ms = 15000;
-    http_cfg.keep_alive_enable = true;
+void otaTask(void*) {
+    while (true) {
+        const EventBits_t bits = xEventGroupWaitBits(g_events,
+                                                     kBitRequest,
+                                                     pdTRUE,
+                                                     pdFALSE,
+                                                     portMAX_DELAY);
+        if ((bits & kBitRequest) == 0) {
+            continue;
+        }
 
-    esp_https_ota_config_t ota_cfg = {};
-    ota_cfg.http_config = &http_cfg;
+        ota::OtaRequest request{};
+        bool has_request = false;
 
-    setStatusStrings("connected", "in_progress", "", true);
-    const esp_err_t err = esp_https_ota(&ota_cfg);
-    if (err == ESP_OK) {
-        setStatusStrings("connected", "success", "", false);
-        ESP_LOGI(kTag, "OTA applied successfully, restarting");
-        vTaskDelay(pdMS_TO_TICKS(500));
-        esp_restart();
-        return;
+        taskENTER_CRITICAL(&g_status_lock);
+        if (!g_running && g_has_request) {
+            request = g_request;
+            g_running = true;
+            g_has_request = false;
+            has_request = true;
+        }
+        taskEXIT_CRITICAL(&g_status_lock);
+
+        if (!has_request) {
+            taskENTER_CRITICAL(&g_status_lock);
+            g_running = false;
+            taskEXIT_CRITICAL(&g_status_lock);
+            continue;
+        }
+
+        setRuntimeVersionFromRunningImage();
+        setOtaStatus(status::OtaState::Pending, "pending", "", 0);
+        (void)runHttpsOta(request);
+
+        taskENTER_CRITICAL(&g_status_lock);
+        g_running = false;
+        taskEXIT_CRITICAL(&g_status_lock);
     }
-
-    setStatusStrings("connected", "failed", esp_err_to_name(err), false);
-    ESP_LOGE(kTag, "esp_https_ota failed: %s", esp_err_to_name(err));
 }
 
-void otaTask(void* param) {
-    (void)param;
-
-    if (!config::otaConfigReady(g_cfg)) {
-        setStatusStrings("disabled", "skipped", "ota config incomplete", false);
-        vTaskDelete(nullptr);
+void startOtaTask() {
+    if (g_task_started) {
         return;
     }
 
-    if (!connectWifi()) {
-        vTaskDelete(nullptr);
+    if (xTaskCreate(&otaTask,
+                    "ota_task",
+                    kTaskStackWords,
+                    nullptr,
+                    kTaskPriority,
+                    &g_task_handle) != pdPASS) {
+        ESP_LOGE(kTag, "failed to create ota task");
+        setOtaStatus(status::OtaState::Failed, "failed", "ota task create failed", 0);
         return;
     }
 
-    runHttpsOta();
-    vTaskDelete(nullptr);
+    g_task_started = true;
 }
 
 }  // namespace
@@ -294,35 +294,109 @@ void otaTask(void* param) {
 namespace ota {
 
 bool OtaManager::begin() {
-    refreshImageMetadata();
-    confirmRunningImageIfNeeded();
-    setStatusStrings("idle", "idle", "", false);
-    return true;
+    setRuntimeVersionFromRunningImage();
+    markOldImageValidIfNeeded();
+    setOtaStatus(status::OtaState::Idle, "idle", nullptr, 0);
+
+    if (g_events == nullptr) {
+        g_events = xEventGroupCreate();
+        if (g_events == nullptr) {
+            setOtaStatus(status::OtaState::Failed, "failed", "ota event create failed", 0);
+            return false;
+        }
+    }
+
+    startOtaTask();
+    return g_task_started;
 }
 
-void OtaManager::startIfConfigured(const config::RuntimeConfig& cfg) {
-    if (started_ || !cfg.ota_auto_check) {
-        return;
+bool OtaManager::startIfConfigured(const config::RuntimeConfig& cfg) {
+    if (!cfg.ota_auto_check) {
+        return false;
+    }
+    if (!config::otaConfigReady(cfg)) {
+        return false;
     }
 
-    taskENTER_CRITICAL(&g_ota_lock);
-    g_cfg = cfg;
-    taskEXIT_CRITICAL(&g_ota_lock);
+    ota::OtaRequest request{};
+    copyString(request.url, sizeof(request.url), cfg.ota_url);
+    request.trigger = OtaTrigger::BootConfig;
+    request.version[0] = '\0';
+    request.md5[0] = '\0';
+    request.file_size = 0;
+    return requestOta_(request);
+}
 
-    TaskHandle_t task = nullptr;
-    const BaseType_t ok = xTaskCreate(&otaTask, "ota_task", kOtaTaskStackWords, nullptr, 5, &task);
-    if (ok != pdPASS) {
-        setStatusStrings("disabled", "failed", "ota task create failed", false);
-        return;
+bool OtaManager::request(const OtaRequest& request) {
+    return requestOta_(request);
+}
+
+bool OtaManager::requestOta_(const OtaRequest& request) {
+    if (request.url[0] == '\0') {
+        setOtaStatus(status::OtaState::Failed, "failed", "request url empty", 0);
+        return false;
     }
 
-    started_ = true;
+    bool accepted = false;
+    taskENTER_CRITICAL(&g_status_lock);
+    if (!g_running && !g_has_request) {
+        g_request = request;
+        g_has_request = true;
+        accepted = true;
+    }
+    taskEXIT_CRITICAL(&g_status_lock);
+
+    if (!accepted) {
+        setOtaStatus(status::OtaState::Failed, "failed", "ota already running", 0);
+        return false;
+    }
+
+    setOtaStatus(status::OtaState::Pending, "pending", "", 0);
+
+    if (g_events != nullptr) {
+        xEventGroupSetBits(g_events, kBitRequest);
+        return true;
+    }
+
+    setOtaStatus(status::OtaState::Failed, "failed", "ota events missing", 0);
+    return false;
+}
+
+bool OtaManager::running() const {
+    taskENTER_CRITICAL(&g_status_lock);
+    const bool running = g_running;
+    taskEXIT_CRITICAL(&g_status_lock);
+    return running;
+}
+
+void OtaManager::copyStatus(status::RuntimeStatus& out) const {
+    taskENTER_CRITICAL(&g_status_lock);
+    out = g_status;
+    taskEXIT_CRITICAL(&g_status_lock);
 }
 
 void OtaManager::copyStatus(OtaStatus& out) const {
-    taskENTER_CRITICAL(&g_ota_lock);
-    out = g_status;
-    taskEXIT_CRITICAL(&g_ota_lock);
+    status::RuntimeStatus status_snapshot{};
+    copyStatus(status_snapshot);
+
+    snprintf(out.version, sizeof(out.version), "%s", status_snapshot.version);
+    snprintf(out.partition, sizeof(out.partition), "%s", status_snapshot.partition);
+    snprintf(out.wifi_state,
+                  sizeof(out.wifi_state),
+                  "%s",
+                  status::toString(status_snapshot.wifi_state));
+    snprintf(out.ota_last_result,
+                  sizeof(out.ota_last_result),
+                  "%s",
+                  status_snapshot.ota_last_result);
+    snprintf(out.last_error,
+                  sizeof(out.last_error),
+                  "%s",
+                  status_snapshot.last_error);
+    out.ota_in_progress = status_snapshot.ota_state == status::OtaState::Pending
+                           || status_snapshot.ota_state == status::OtaState::Checking
+                           || status_snapshot.ota_state == status::OtaState::Downloading
+                           || status_snapshot.ota_state == status::OtaState::Applying;
 }
 
 }  // namespace ota

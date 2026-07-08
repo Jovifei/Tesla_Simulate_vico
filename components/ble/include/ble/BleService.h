@@ -3,10 +3,11 @@
 #include <cstdint>
 
 #include "config/runtime_config.h"
+#include "status/RuntimeStatus.h"
+#include "ota/OtaStatus.h"
 // domain::VehicleState is intentionally included here so callers can stream
 // a snapshot into BLE state for read/notify flows.
 #include "domain/VehicleState.h"
-#include "ota/OtaStatus.h"
 
 struct ble_gatt_access_ctxt;
 
@@ -37,6 +38,7 @@ public:
 
     /// Pushes OTA / WiFi status for diagnostics and status characteristics.
     void publishOtaStatus(const ota::OtaStatus& status);
+    void publishRuntimeStatus(const status::RuntimeStatus& status);
 
     /// Pushes a compact device-status bitfield for `ffea`.
     void publishDeviceStatus(std::uint32_t status);

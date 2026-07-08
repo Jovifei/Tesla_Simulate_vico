@@ -1,7 +1,7 @@
 # audio-engine Specification
 
 ## Purpose
-TBD - created by archiving change audio-engine. Update Purpose after archive.
+I2S audio output and baseline engine-tone synthesis behavior for Tesla Simulate Vico.
 ## Requirements
 ### Requirement: I2S standard TX channel configuration
 
