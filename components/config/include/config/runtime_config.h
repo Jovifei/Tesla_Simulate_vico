@@ -9,6 +9,7 @@ struct RuntimeConfig {
     bool          can_listen_only    = true;
     std::uint16_t audio_sample_rate  = 44100;
     std::uint8_t  audio_volume_pct   = 70;
+    std::uint8_t  profile_index      = 0;
 };
 
 inline constexpr RuntimeConfig kDefaultRuntimeConfig{};
