@@ -6,7 +6,7 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 
 `Tesla Simulate Vico` 是一个面向 ESP32-S3 的车载声浪模拟固件工程。目标是在不向车辆 CAN 总线发送报文的前提下，监听 Tesla CAN/OBD-II 车辆状态，生成可调的模拟发动机声浪，并通过 BLE、SD 卡、WiFi/IoT/OTA 和本地外设完成配置、诊断和升级闭环。
 
-当前工程已经具备可编译的 ESP-IDF baseline，并正在执行 S7 “旧工程逻辑对齐”迁移：BLE 保持配置入口，Network/Link 管 WiFi，IoT/MQTT 管云端上下行，OTA 管后台升级，App 只保留车辆模拟主循环协调。
+当前工程已经具备可编译 ESP-IDF baseline，并完成 S7 架构迁移基线：BLE 作为配置入口，Network/Link 管 WiFi，IoT/MQTT 管云端上下行，OTA 管后台升级执行，App 保留 25 ms 车辆模拟主循环协调。
 
 ### 当前结论
 
@@ -15,10 +15,11 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 | CAN listen-only | 已实现 | TWAI listen-only，当前解析 `0x256` / `0x116` baseline，不提供 transmit API |
 | I2S audio baseline | 已实现 | RPM 驱动的基础合成、音量、overspeed mute |
 | BLE GATT | 已实现，待实机验收 | 主服务 `0xfff0`，兼容服务 `0xffe0`，`ffe1..ffee` 已挂载 |
-| SD JSON 配置 | 已实现，待实机验收 | 保存 runtime config，缺卡/缺字段使用默认值 |
+| SD JSON 配置 | 已实现，待实机验收 | 保存 runtime config，缺卡或缺字段使用默认值 |
 | 外设 | 已接入，待实机验收 | encoder、throttle pot、WS2812 |
-| S7 Network/IoT/OTA | 代码迁移中 | 已新增 `status`、`network`、`iot`、`ota` 分层；WiFi/MQTT/OTA 实机未验收 |
-| 声浪算法 | 未完成产品化 | 当前还不是速度/加速度差异化声浪模型，需要 MATLAB 或等价仿真定参后再移植 |
+| S7 Network/IoT/OTA | 代码基线已完成，待实机验收 | `status`、`network`、`iot`、`ota` 分层已存在 |
+| IRAM release gate | 风险未关闭 | 当前 ESP-IDF size 报告 IRAM `16383 / 16384`，需实机压测或功能分档 |
+| 声浪算法 | 未产品化 | 当前不是速度/加速度/负载差异化声浪模型，需要 MATLAB 或等效仿真定参 |
 
 ### 工程结构
 
@@ -31,14 +32,14 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 | `components/iot/` | MQTT 上下行、设备/车辆/OTA 进度发布、`ota_start` 下行解析 |
 | `components/ota/` | HTTPS OTA worker、请求队列、进度和失败原因 |
 | `components/ble/` | NimBLE GATT，`ffe8` 配置入口，`ffe5`/`ffea` 状态输出 |
-| `components/config/` | pin map 与 `RuntimeConfig` |
+| `components/config/` | pin map 和 `RuntimeConfig` |
 | `components/storage/` | SD FATFS JSON 配置持久化 |
-| `components/can/` | CAN parser 与 TWAI listen-only source |
+| `components/can/` | CAN parser 和 TWAI listen-only source |
 | `components/audio/` | I2S PCM 输出和基础声浪合成 |
 | `components/domain/` | 车辆状态与虚拟 RPM 模型 |
-| `components/input/` | encoder 与 throttle potentiometer |
+| `components/input/` | encoder 和 throttle potentiometer |
 | `components/ui/` | WS2812 状态灯 |
-| `docs/` | 文档入口，目录使用 `NN-english-kebab` 命名 |
+| `docs/` | 公开文档入口，目录使用 `NN-english-kebab` 命名 |
 | `openspec/` | 当前固件规格与变更提案 |
 | `scripts/esp-idf.ps1` | Windows PowerShell ESP-IDF v5.3.2 环境脚本 |
 
@@ -51,7 +52,7 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 
 ### BLE 合约
 
-BLE UUID 契约保持不变：
+BLE UUID 合约保持不变：
 
 | UUID | 当前用途 |
 |---|---|
@@ -83,8 +84,6 @@ cd E:\Tesla_speed\prj
 openspec validate --all --strict --json
 ```
 
-如果 PowerShell 或 VSCode 输出 `Not using an unsupported version of tool ninja found in PATH: 1.13.0`，说明系统 PATH 里有比 ESP-IDF 自带版本更靠前的 Ninja。请优先使用 `.\scripts\esp-idf.ps1 build`，该脚本会把 ESP-IDF v5.3.2 自带的 Python、Ninja 1.12.1 和 CMake 放到 PATH 前面。
-
 烧录与串口：
 
 ```powershell
@@ -92,19 +91,21 @@ cd E:\Tesla_speed\prj
 .\scripts\esp-idf.ps1 -p COMx flash monitor
 ```
 
+如果 PowerShell 或 VSCode 输出 `Not using an unsupported version of tool ninja found in PATH: 1.13.0`，说明系统 PATH 里有比 ESP-IDF 自带版本更靠前的 Ninja。优先使用 `.\scripts\esp-idf.ps1 build`，该脚本会把 ESP-IDF v5.3.2 自带 Python、Ninja 1.12.1 和 CMake 放到 PATH 前面。
+
 ### 当前未完成项
 
 - BLE 广播、连接、`ffe2`/`ffe5`/`ffe8`/`ffea` 读写需要 ESP32-S3 实机证明。
 - WiFi join、MQTT 上线、MQTT 下行 `ota_start`、HTTPS OTA 成功/失败路径需要实机证明。
-- IRAM release gate 仍有风险，历史记录显示 `16383 / 16384` 的 1 byte margin，必须继续复测和记录。
-- 产品级声浪算法尚未完成：缺少速度/加速度/负载分层模型、MATLAB 或等价仿真、听感样本和固件定点化验证。
+- IRAM release gate 仍有风险，当前 `size` 报告 `16383 / 16384`，需继续压测或形成明确接受记录。
+- 产品级声浪算法尚未完成，缺少速度/加速度/负载分层模型、MATLAB 或等效仿真、听感样本和固件定点化验证。
 - USB CDC 与高级调参工具推迟到 S8/S9。
 
 ## English Overview
 
 `Tesla Simulate Vico` is an ESP32-S3 firmware project for in-car engine-sound simulation. It listens to Tesla CAN/OBD-II vehicle state in listen-only mode, generates a configurable engine-like sound over I2S, and exposes runtime configuration, diagnostics, and upgrade hooks through BLE, SD-card persistence, WiFi/IoT/OTA, and local peripherals.
 
-The current project is a buildable ESP-IDF baseline. S7 is migrating the firmware toward the structure used by Jovi's earlier projects: BLE remains the configuration entry point, Network/Link owns WiFi, IoT/MQTT owns cloud interaction, OTA owns upgrade execution, and App keeps the 25 ms vehicle simulation loop focused.
+The current project is a buildable ESP-IDF baseline. S7 aligns the firmware with Jovi's earlier project architecture: BLE remains the configuration entry point, Network/Link owns WiFi, IoT/MQTT owns cloud interaction, OTA owns upgrade execution, and App keeps the 25 ms vehicle simulation loop focused.
 
 ### Current Status
 
@@ -115,15 +116,9 @@ The current project is a buildable ESP-IDF baseline. S7 is migrating the firmwar
 | BLE GATT | Implemented, hardware pending | Primary service `0xfff0`, compatibility service `0xffe0`, `ffe1..ffee` exposed |
 | SD JSON config | Implemented, hardware pending | Runtime config persistence with defaults for missing fields |
 | Peripherals | Integrated, hardware pending | Encoder, throttle potentiometer, WS2812 |
-| S7 Network/IoT/OTA | In migration | `status`, `network`, `iot`, and `ota` layers exist; WiFi/MQTT/OTA hardware proof is still pending |
+| S7 Network/IoT/OTA | Code baseline complete, hardware pending | `status`, `network`, `iot`, and `ota` layers exist |
+| IRAM release gate | Still risky | ESP-IDF size currently reports `16383 / 16384`; board stress testing or feature-tier acceptance is required |
 | Sound model | Not product-complete | Current output is not yet a speed/acceleration/load layered sound model |
-
-### Documentation
-
-- [Documentation index](docs/README.md)
-- [Documentation guide](docs/GUIDE.md)
-- [Firmware roadmap](docs/04-planning/01-firmware-roadmap.md)
-- [Firmware backlog](docs/09-backlog/01-firmware-backlog.md)
 
 ### Build
 
@@ -149,25 +144,10 @@ cd E:\Tesla_speed\prj
 .\scripts\esp-idf.ps1 -p COMx flash monitor
 ```
 
-### BLE Contract
-
-The BLE UUID contract is intentionally stable:
-
-| UUID | Purpose |
-|---|---|
-| `0xfff0` | Primary BLE GATT service |
-| `0xffe0` | Legacy compatibility service |
-| `ffe2` | Vehicle-state snapshot |
-| `ffe5` | Diagnostics JSON |
-| `ffe8` | WiFi / OTA / IoT settings JSON |
-| `ffea` | Live device-status read/notify |
-
-Writing `ffe8` updates configuration only. OTA execution runs from boot-time persisted config or MQTT downlink request, not directly inside the BLE write handler.
-
 ### Known Boundaries
 
 - BLE, WiFi, MQTT, and OTA still require on-device acceptance evidence.
-- IRAM remains a release-hardening risk until fresh `size` evidence shows enough margin or the risk is explicitly accepted after stress testing.
+- IRAM remains a release-hardening risk until fresh board testing accepts it or the feature set is split.
 - The production sound model still needs capture/modeling, MATLAB or equivalent simulation, firmware parameterization, and bench listening validation.
 - USB CDC and advanced tuning tools are deferred to S8/S9.
 

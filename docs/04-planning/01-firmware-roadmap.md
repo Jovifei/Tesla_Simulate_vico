@@ -28,19 +28,20 @@
 | SD JSON | 已实现，待实机验收 | `components/storage/` |
 | 外设 | 已接入，待实机验收 | `components/input/`, `components/ui/` |
 | S7 分层 | 已迁移到代码 baseline | `components/status`, `components/network`, `components/iot`, `components/ota` |
-| IRAM | 风险未关闭 | 历史记录 `16383 / 16384` |
-| 声浪算法 | 未产品化 | 缺少加速度/负载分层与 MATLAB 定参 |
+| IRAM | 风险未关闭 | `size` 报告 `16383 / 16384` |
+| 声浪算法 | 未产品化 | 缺少速度/加速度/负载分层和 MATLAB 定参 |
 
 ## 阶段计划
 
 | 阶段 | 目标 | 完成标准 | 状态 |
 |---|---|---|---|
-| S7.0 文档与架构对齐 | 写清旧工程到 Tesla_speed 的模块映射 | README/PLAN/docs/OpenSpec 口径一致 | 进行中 |
-| S7.1 状态与配置模型 | 引入统一状态和 WiFi/OTA/IoT 配置 | `RuntimeStatus`、`RuntimeConfig`、SD load/save 通过构建 | 进行中 |
-| S7.2 Link/WiFi | 独立 WiFi STA 与重连状态机 | WiFi 状态可复制到 BLE 诊断，主循环不阻塞 | 进行中 |
-| S7.3 IoT/MQTT | MQTT 上下行与 OTA 命令 | `ota_start` 可转为 OTA request，状态可上报 | 进行中 |
-| S7.4 OTA | 后台 OTA worker | boot/config/cloud request 均走后台任务 | 进行中 |
-| S7.5 App 集成验证 | App 只协调状态和车辆模拟 | build/size/OpenSpec 通过，硬件项单独标记 | 进行中 |
+| S7.0 文档与架构对齐 | 写清旧工程到 Tesla_speed 的模块映射 | README/PLAN/docs/OpenSpec 口径一致 | 代码已完成，文档持续修正 |
+| S7.1 状态与配置模型 | 引入统一状态和 WiFi/OTA/IoT 配置 | `RuntimeStatus`、`RuntimeConfig`、SD load/save 通过构建 | 已完成，待实机 |
+| S7.2 Link/WiFi | 独立 WiFi STA 与重连状态机 | WiFi 状态可复制到 BLE 诊断，主循环不阻塞 | 已完成，待实机 |
+| S7.3 IoT/MQTT | MQTT 上下行与 OTA 命令 | `ota_start` 可转为 OTA request，状态可上报 | 已完成，待实机 |
+| S7.4 OTA | 后台 OTA worker | boot/config/cloud request 均走后台任务 | 已完成，待实机 |
+| S7.5 App 集成验证 | App 只协调状态和车辆模拟 | build/size/OpenSpec 通过，硬件项单独标记 | 已完成，待实机 |
+| S7.6 Release hardening | 处理 IRAM 和文档交付风险 | IRAM 有接受记录或功能分档，公开文档无乱码 | 进行中 |
 | S8 声浪算法 | 速度/加速度/负载差异化模型 | MATLAB/仿真参数 + bench listening + 固件集成 | 待开始 |
 | S9 USB CDC/调参 | 主机侧诊断和参数调试 | host 可读写状态和配置并保存 | 待开始 |
 | S10 交付 | release 包和验收报告 | bin/分区/bootloader/测试记录/风险清单齐全 | 待开始 |
@@ -53,6 +54,17 @@
 4. 重跑 `build`、`size`、`size-components`、`openspec validate --all --strict --json`。
 5. 上板执行 BLE/WiFi/MQTT/OTA 验收。
 6. 把实机结果写入 `06-testing`，把剩余项写入 `09-backlog`。
+
+## IRAM 判断
+
+当前 IRAM 压力不是业务代码大常量或误用 `IRAM_ATTR` 导致。符号归因显示，主要来自 ESP-IDF 框架和必须常驻的系统路径：FreeRTOS、PHY、RTC clock、Xtensa vectors、RMT、PSRAM、flash、BT/WiFi。
+
+短期不建议因为 `16383 / 16384` 直接换 MCU。ESP32-S3 的 16 MB Flash 和 8 MB PSRAM 对当前镜像空间足够，问题集中在 ESP-IDF 报告的高优先级 IRAM 区域。更现实的路线是：
+
+1. 保留 ESP32-S3，先做实机压力测试。
+2. 如果 BLE + WiFi + OTA + WS2812 同时运行稳定，则把 IRAM 作为已知接受风险进入 S7.6。
+3. 如果实机出现 cache/flash erase/中断相关问题，再做功能分档：例如 OTA 时暂停声浪/LED 动画，或把 WS2812/RMT 作为可关闭功能。
+4. 只有在必须同时保留 BLE、WiFi、OTA、高级声浪和复杂 UI 且压力测试失败时，再评估换平台或双 MCU。
 
 ## Release Gate
 

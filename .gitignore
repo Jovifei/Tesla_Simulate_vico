@@ -13,6 +13,8 @@ dependencies.lock
 *.map
 *.fw
 *.uf2
+*.slxc
+slprj/
 
 # Python
 __pycache__/
