@@ -14,17 +14,24 @@ state = interpolate_state(scenario, time);
 [bankLeft, bankRight] = render_blowdown_banks(profile, state, sampleRate);
 [exhaustLeft, exhaustRight] = render_exhaust_network(profile, bankLeft, bankRight, ...
     time, state.sound_speed_mps);
-[afterfireLeft, afterfireRight, events] = render_afterfire(profile, scenario, time);
+[afterfireRawLeft, afterfireRawRight, events] = render_afterfire(profile, scenario, time);
+[afterfireLeft, afterfireRight] = render_exhaust_network(profile, ...
+    afterfireRawLeft, afterfireRawRight, time, state.sound_speed_mps);
 mechanical = render_mechanical(profile, state, sampleRate);
-exhaust = exhaustLeft + exhaustRight;
-afterfire = afterfireLeft + afterfireRight;
+exhaust = profile.mix.exhaust_gain * (exhaustLeft + exhaustRight);
+mechanical = profile.mix.mechanical_gain * mechanical;
+afterfire = profile.mix.afterfire_gain * (afterfireLeft + afterfireRight);
+exhaustRms = active_rms(exhaust);
+afterfirePeakLimit = exhaustRms * db_to_mag( ...
+    profile.mix.afterfire_peak_over_exhaust_db);
+afterfire = limit_peak(afterfire, afterfirePeakLimit);
 rawEngine = exhaust + mechanical + afterfire;
 [external, cabin, speaker] = propagate_sound(profile, rawEngine, time);
-peak = max(abs(external));
-normalizationGain = profile.audio.peak_limit / max(peak, eps);
-audio = normalizationGain * tanh(1.05 * external);
+audio = profile.audio.master_gain * tanh(external);
 audio = audio - mean(audio);
-audio = profile.audio.peak_limit * audio / max(max(abs(audio)), eps);
+peak = max(abs(audio));
+normalizationGain = min(1, profile.audio.peak_limit / max(peak, eps));
+audio = normalizationGain * audio;
 
 result = struct();
 result.time_s = time;
@@ -32,7 +39,8 @@ result.audio_sample_rate_hz = sampleRate;
 result.audio_pre_normalization = external;
 result.layers = struct("blowdown_left", bankLeft, "blowdown_right", bankRight, ...
     "exhaust_left", exhaustLeft, "exhaust_right", exhaustRight, ...
-    "exhaust", exhaust, "afterfire_left", afterfireLeft, ...
+    "exhaust", exhaust, "afterfire_raw_left", afterfireRawLeft, ...
+    "afterfire_raw_right", afterfireRawRight, "afterfire_left", afterfireLeft, ...
     "afterfire_right", afterfireRight, "afterfire", afterfire, ...
     "mechanical", mechanical, "external", external, "cabin", cabin, ...
     "speaker", speaker);
@@ -64,8 +72,13 @@ cyclePhase = 2 * pi * cumsum(state.rpm / ...
     (60 * profile.engine.cycle_revolutions)) / sampleRate;
 left = zeros(1, sampleCount);
 right = zeros(1, sampleCount);
-amplitude = (0.10 + 0.90 * state.load) .* state.torque_gain .* ...
-    (0.35 + 0.65 * state.egt_k / profile.blowdown.exhaust_temperature_k);
+torqueFraction = max(0, state.torque_nm) / max(profile.engine.torque_nm);
+pressureScale = sqrt(max(profile.blowdown.evo_pressure_pa - 101325, 1) / 250000);
+areaScale = sqrt(profile.blowdown.valve_area_m2 / 750e-6);
+temperatureScale = sqrt(max(300, state.egt_k) / ...
+    profile.blowdown.exhaust_temperature_k);
+amplitude = pressureScale * areaScale .* (0.08 + 0.92 * sqrt(torqueFraction)) .* ...
+    (0.30 + 0.70 * state.load) .* temperatureScale;
 for orderIndex = 1:profile.engine.cylinders
     cylinder = profile.engine.firing_order(orderIndex);
     firingAngle = 2 * pi * (orderIndex - 1) / profile.engine.cylinders;
@@ -128,6 +141,7 @@ eventTime = [];
 eventType = strings(1, 0);
 eventStrength = [];
 control = scenario;
+calibration = load_c63_calibration(profile.afterfire.calibration);
 liftIndices = find([false, diff(control.throttle) < -0.24]);
 shiftIndices = control.state.shift_indices;
 for index = 1:numel(shiftIndices)
@@ -137,7 +151,8 @@ for index = 1:numel(shiftIndices)
     end
     [left, right, eventTime, eventType, eventStrength] = add_afterfire_event( ...
         left, right, eventTime, eventType, eventStrength, profile, time, ...
-        control.time_s(trigger) + 0.018, "shift", 0.52);
+        control.time_s(trigger) + 0.018, shift_type(control.gear, trigger), ...
+        0.48, calibration, 0);
 end
 for index = 1:numel(liftIndices)
     trigger = liftIndices(index);
@@ -147,7 +162,9 @@ for index = 1:numel(liftIndices)
     end
     cursor = control.time_s(trigger) + 0.022;
     finish = cursor + profile.afterfire.overrun_duration_s;
-    for burstIndex = 1:profile.afterfire.cluster_size
+    maximumBursts = max(profile.afterfire.cluster_size, ...
+        ceil(profile.afterfire.overrun_duration_s / profile.afterfire.base_interval_s));
+    for burstIndex = 1:maximumBursts
         progress = (cursor - control.time_s(trigger)) / profile.afterfire.overrun_duration_s;
         if cursor > finish
             break
@@ -156,7 +173,7 @@ for index = 1:numel(liftIndices)
             min(1, control.state.fuel_residual(trigger) + 0.25);
         [left, right, eventTime, eventType, eventStrength] = add_afterfire_event( ...
             left, right, eventTime, eventType, eventStrength, profile, time, ...
-            cursor, "overrun", strength);
+            cursor, "overrun", strength, calibration, progress);
         cursor = cursor + profile.afterfire.base_interval_s * ...
             (0.82 + 0.68 * progress + 0.22 * rand);
     end
@@ -166,10 +183,11 @@ events = table(eventTime.', eventType.', eventStrength.', ...
 end
 
 function [left, right, eventTime, eventType, eventStrength] = add_afterfire_event( ...
-    left, right, eventTime, eventType, eventStrength, profile, time, startTime, type, strength)
+    left, right, eventTime, eventType, eventStrength, profile, time, startTime, ...
+    type, strength, calibration, progress)
 sampleRate = profile.audio.sample_rate_hz;
 startIndex = max(1, round(startTime * sampleRate) + 1);
-duration = 0.085;
+duration = min(0.14, max(0.055, 8 * profile.afterfire.body_decay_s));
 count = min(round(duration * sampleRate), numel(time) - startIndex + 1);
 if count < 4
     return
@@ -178,30 +196,52 @@ localTime = (0:count - 1) / sampleRate;
 attack = 1 - exp(-localTime / profile.afterfire.attack_s);
 body = zeros(1, count);
 metal = zeros(1, count);
+pitchScale = (0.91 + 0.18 * rand) * (1 - 0.07 * progress);
 for frequency = profile.afterfire.body_hz
-    body = body + sin(2 * pi * frequency * localTime + 2 * pi * rand);
+    body = body + sin(2 * pi * frequency * pitchScale * localTime + 2 * pi * rand);
 end
-for frequency = profile.afterfire.metal_hz
-    sweep = frequency * (0.94 + 0.12 * rand);
-    metal = metal + sin(2 * pi * sweep * localTime + 2 * pi * rand);
+for index = 1:numel(calibration.mode_hz)
+    frequency = calibration.mode_hz(index) * pitchScale;
+    sweep = frequency * (0.12 * rand - 0.06) / duration;
+    phase = 2 * pi * (frequency * localTime + 0.5 * sweep * localTime .^ 2);
+    metal = metal + calibration.mode_gain(index) * sin(phase + 2 * pi * rand);
 end
 body = body / max(max(abs(body)), eps);
 metal = metal / max(max(abs(metal)), eps);
-noise = filter([1, -2, 1], [1, -0.55], randn(1, count));
+noise = filter(reshape(calibration.fir, 1, []), 1, randn(1, count));
 noise = noise / max(max(abs(noise)), eps);
+crack = filter([1, -2, 1], [1, -0.42], randn(1, count));
+crack = crack / max(max(abs(crack)), eps);
 burst = strength * attack .* ( ...
     profile.afterfire.body_gain * exp(-localTime / profile.afterfire.body_decay_s) .* body + ...
     profile.afterfire.metal_gain * exp(-localTime / profile.afterfire.metal_decay_s) .* metal + ...
-    profile.afterfire.crack_gain * exp(-localTime / profile.afterfire.crack_decay_s) .* noise);
+    0.72 * profile.afterfire.crack_gain * exp(-localTime / ...
+    profile.afterfire.crack_decay_s) .* crack + 0.55 * noise);
 finishIndex = startIndex + count - 1;
 if rand < 0.5
     left(startIndex:finishIndex) = left(startIndex:finishIndex) + burst;
 else
     right(startIndex:finishIndex) = right(startIndex:finishIndex) + burst;
 end
+
 eventTime(end + 1) = time(startIndex);
 eventType(end + 1) = type;
 eventStrength(end + 1) = strength;
+end
+
+function type = shift_type(gear, trigger)
+if trigger > 1 && gear(trigger) < gear(trigger - 1)
+    type = "downshift";
+else
+    type = "upshift";
+end
+end
+
+function calibration = load_c63_calibration(name)
+if exist("load_backfire_calibration", "file") ~= 2
+    addpath(fileparts(fileparts(mfilename("fullpath"))));
+end
+calibration = load_backfire_calibration(name);
 end
 
 function mechanical = render_mechanical(profile, state, sampleRate)
@@ -231,4 +271,19 @@ end
 
 function value = db_to_mag(decibels)
 value = 10 .^ (decibels / 20);
+end
+
+function value = active_rms(signal)
+threshold = 0.05 * max(abs(signal));
+active = signal(abs(signal) >= threshold);
+if isempty(active)
+    value = 0;
+else
+    value = sqrt(mean(active .^ 2));
+end
+end
+
+function output = limit_peak(input, peakLimit)
+peak = max(abs(input));
+output = input * min(1, peakLimit / max(peak, eps));
 end

@@ -39,6 +39,48 @@ verifyGreaterThan(testCase, height(result.events), 1);
 verifyTrue(testCase, any(result.events.type == "overrun"));
 verifyGreaterThan(testCase, max(abs(result.layers.afterfire)), 0.001);
 verifyTrue(testCase, any(result.state.dfco));
+overrun = result.events(result.events.type == "overrun", :);
+verifyGreaterThanOrEqual(testCase, height(overrun), 24);
+verifyGreaterThanOrEqual(testCase, max(overrun.time_s) - min(overrun.time_s), 0.8);
+features = v6_reference_features(result.layers.afterfire, profile.audio.sample_rate_hz);
+verifyGreaterThan(testCase, features.band_shares(3), 0.05);
+verifyGreaterThan(testCase, features.band_shares(4), 5e-4);
+peakRatioDb = 20 * log10(max(abs(result.layers.afterfire)) / ...
+    sqrt(mean(result.layers.exhaust .^ 2)) + eps);
+verifyLessThan(testCase, peakRatioDb, 10);
+end
+
+function testTorqueDrivesMainExhaust(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+profile = v6_vehicle_profile("c63_w204");
+loaded = v6_build_cycle(profile, "steady_4000", 1000);
+unloaded = loaded;
+unloaded.state.torque_nm(:) = 0;
+[~, loadedResult] = v6_synthesize_engine_sound(profile, loaded);
+[~, unloadedResult] = v6_synthesize_engine_sound(profile, unloaded);
+verifyGreaterThan(testCase, sqrt(mean(loadedResult.layers.exhaust .^ 2)), ...
+    2 * sqrt(mean(unloadedResult.layers.exhaust .^ 2)));
+end
+
+function testFullDemoPreservesAccelerationBody(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+profile = v6_vehicle_profile("c63_w204");
+scenario = v6_build_cycle(profile, "full_demo", 1000);
+[audio, result] = v6_synthesize_engine_sound(profile, scenario);
+acceleration = result.time_s >= 1 & result.time_s < 3.5;
+verifyGreaterThanOrEqual(testCase, sqrt(mean(audio(acceleration) .^ 2)), 0.40);
+verifyEqual(testCase, result.normalization_gain, 1, AbsTol=1e-12);
+end
+
+function testProfileIsVehicleOwned(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+profilePath = fullfile(root, "vehicles", "c63_w204", "c63_w204_v6_profile.m");
+verifyTrue(testCase, isfile(profilePath));
+verifyError(testCase, @() v6_vehicle_profile("unknown_vehicle"), ...
+    "jovi:soundv6:UnsupportedProfile");
 end
 
 function testDeterministicRender(testCase)

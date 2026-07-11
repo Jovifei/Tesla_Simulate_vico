@@ -82,3 +82,11 @@ values are identification seeds. The low-frequency Simscape Gas plant is now
 executed separately; Powertrain Blockset is not yet coupled to the V6 solver.
 The next fidelity increase needs synchronized RPM, throttle, gear, microphone,
 and exhaust-temperature data.
+
+## V6.1 vehicle isolation
+
+- Shared synthesis stays in this directory.
+- C63 parameters and its render entry point live in `vehicles/c63_w204/`.
+- Its Simulink top model and `.sldd` dictionary live in
+  `tools/sound_sim/simulink/v6/vehicles/c63_w204/`.
+- Run `vehicles/c63_w204/run_c63_w204_v6_1.m` for the reviewed listening set.

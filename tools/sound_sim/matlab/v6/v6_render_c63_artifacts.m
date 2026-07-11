@@ -54,7 +54,8 @@ audiowrite(path, audio.', sampleRate, BitsPerSample=bits);
 end
 
 function write_stem(path, layer, sampleRate)
-layer = 0.90 * layer / max(max(abs(layer)), eps);
+peak = max(abs(layer));
+layer = layer * min(1, 0.98 / max(peak, eps));
 audiowrite(path, layer.', sampleRate, BitsPerSample=24);
 end
 
