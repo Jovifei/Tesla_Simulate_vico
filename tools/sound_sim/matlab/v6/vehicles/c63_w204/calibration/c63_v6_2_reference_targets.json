@@ -1,0 +1,258 @@
+{
+  "schema": "jovi.c63_reference_targets.v6_2",
+  "note": "Derived metrics only; raw public audio remains outside the repository.",
+  "sources": [
+    {
+      "id": "sbLXOEcAYMI",
+      "url": "https://www.youtube.com/watch?v=sbLXOEcAYMI",
+      "file": "sbLXOEcAYMI.wav",
+      "generation": "W204",
+      "setup": "unknown exhaust",
+      "acceleration_window_s": [
+        0,
+        8.8
+      ],
+      "afterfire_window_s": [
+        0,
+        8.8
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.4536332177052973,
+          0.30912875751009428,
+          0.21626140825459725,
+          0.019718932037610711
+        ],
+        "centroid_hz": 686.86350864165,
+        "flatness": 0.00077687125701804069,
+        "spectral_flux": 0.076715067560715319,
+        "active_frames": 247
+      },
+      "afterfire": {
+        "band_shares": [
+          0.4536332177052973,
+          0.30912875751009428,
+          0.21626140825459725,
+          0.019718932037610711
+        ],
+        "centroid_hz": 686.86350864165,
+        "flatness": 0.00077687125701804069,
+        "spectral_flux": 0.076715067560715319,
+        "active_frames": 247
+      }
+    },
+    {
+      "id": "MlQoLofl5qU",
+      "url": "https://www.youtube.com/watch?v=MlQoLofl5qU",
+      "file": "MlQoLofl5qU.mp3",
+      "generation": "W205 contrast",
+      "setup": "C63s Edition 1",
+      "acceleration_window_s": [
+        110,
+        130
+      ],
+      "afterfire_window_s": [
+        28,
+        50
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.77343040995149182,
+          0.13256874327980303,
+          0.090407066651346013,
+          0.00321697981955037
+        ],
+        "centroid_hz": 337.66252161778391,
+        "flatness": 0.00010546335514531225,
+        "spectral_flux": 0.099335445308984222,
+        "active_frames": 562
+      },
+      "afterfire": {
+        "band_shares": [
+          0.57863304561367435,
+          0.24139033608774788,
+          0.14887318216213763,
+          0.029101011667844057
+        ],
+        "centroid_hz": 693.47606107220281,
+        "flatness": 0.0010285114012573227,
+        "spectral_flux": 0.0851611032426901,
+        "active_frames": 618
+      }
+    },
+    {
+      "id": "m5junjbk2eY",
+      "url": "https://www.youtube.com/watch?v=m5junjbk2eY",
+      "file": "m5junjbk2eY.mp3",
+      "generation": "W204",
+      "setup": "iPE exhaust",
+      "acceleration_window_s": [
+        150,
+        198
+      ],
+      "afterfire_window_s": [
+        200,
+        250
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.80826966927874133,
+          0.081077850462498061,
+          0.092561577731639921,
+          0.015780048477259657
+        ],
+        "centroid_hz": 378.90146095749895,
+        "flatness": 0.0024404409487975322,
+        "spectral_flux": 0.044834479083620447,
+        "active_frames": 1349
+      },
+      "afterfire": {
+        "band_shares": [
+          0.87675648816939256,
+          0.093997404816371533,
+          0.0177407285097802,
+          0.0050785065876895992
+        ],
+        "centroid_hz": 186.86498012749874,
+        "flatness": 0.00031101518374565963,
+        "spectral_flux": 0.083264257282962814,
+        "active_frames": 1405
+      }
+    },
+    {
+      "id": "zR_c4wHPqQc",
+      "url": "https://www.youtube.com/watch?v=zR_c4wHPqQc",
+      "file": "zR_c4wHPqQc.mp3",
+      "generation": "W204",
+      "setup": "raspy backfire",
+      "acceleration_window_s": [
+        0,
+        8
+      ],
+      "afterfire_window_s": [
+        15,
+        21
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.19956414931021804,
+          0.68116314522828325,
+          0.11200563420929126,
+          0.0058317503304009038
+        ],
+        "centroid_hz": 596.98989201286042,
+        "flatness": 0.000274099213635522,
+        "spectral_flux": 0.064541207286084132,
+        "active_frames": 206
+      },
+      "afterfire": {
+        "band_shares": [
+          0.554577431318062,
+          0.31930842989288838,
+          0.06009701427312681,
+          0.00045456309051278569
+        ],
+        "centroid_hz": 303.92367389527243,
+        "flatness": 4.8984598143828254E-5,
+        "spectral_flux": 0.11684888942671706,
+        "active_frames": 154
+      }
+    },
+    {
+      "id": "R-pcSGjv8wM",
+      "url": "https://www.youtube.com/watch?v=R-pcSGjv8wM",
+      "file": "R-pcSGjv8wM.mp3",
+      "generation": "W204",
+      "setup": "catless headers",
+      "acceleration_window_s": [
+        15,
+        46
+      ],
+      "afterfire_window_s": [
+        47,
+        60
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.13339473659448936,
+          0.75355948262612138,
+          0.097281093975530156,
+          0.013723305964101915
+        ],
+        "centroid_hz": 708.59293180908344,
+        "flatness": 0.0014755055941123036,
+        "spectral_flux": 0.072825834811692775,
+        "active_frames": 871
+      },
+      "afterfire": {
+        "band_shares": [
+          0.200266827751775,
+          0.69526559213138284,
+          0.098486481275971482,
+          0.0052742182925682342
+        ],
+        "centroid_hz": 623.81051783055477,
+        "flatness": 0.00058629095203524008,
+        "spectral_flux": 0.086559149419690257,
+        "active_frames": 365
+      }
+    },
+    {
+      "id": "S4_ybvcunKU",
+      "url": "https://www.youtube.com/watch?v=S4_ybvcunKU",
+      "file": "S4_ybvcunKU.mp3",
+      "generation": "W204",
+      "setup": "de-catted",
+      "acceleration_window_s": [
+        13,
+        31
+      ],
+      "afterfire_window_s": [
+        1,
+        6
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.052683830839450621,
+          0.76148285107548286,
+          0.17926903070683098,
+          0.006429076165965
+        ],
+        "centroid_hz": 717.138986943749,
+        "flatness": 0.00088007395524746684,
+        "spectral_flux": 0.041858792373007207,
+        "active_frames": 464
+      },
+      "afterfire": {
+        "band_shares": [
+          0.086815882319994361,
+          0.70923391556671544,
+          0.19198642737796764,
+          0.011720914304451728
+        ],
+        "centroid_hz": 736.44495039450658,
+        "flatness": 0.0012569816294727323,
+        "spectral_flux": 0.0750381183415679,
+        "active_frames": 128
+      }
+    }
+  ],
+  "w204_median": {
+    "acceleration_band_shares": [
+      0.19956414931021804,
+      0.68116314522828325,
+      0.11200563420929126,
+      0.013723305964101915
+    ],
+    "acceleration_flatness": 0.00088007395524746684,
+    "acceleration_flux": 0.064541207286084132,
+    "afterfire_band_shares": [
+      0.4536332177052973,
+      0.31930842989288838,
+      0.098486481275971482,
+      0.0052742182925682342
+    ],
+    "afterfire_flatness": 0.00058629095203524008,
+    "afterfire_flux": 0.083264257282962814
+  }
+}

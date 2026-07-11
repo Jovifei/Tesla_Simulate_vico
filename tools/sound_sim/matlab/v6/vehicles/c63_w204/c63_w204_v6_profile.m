@@ -9,7 +9,7 @@ profile.seed = 6306;
 profile.audio.sample_rate_hz = 96000;
 profile.audio.export_sample_rate_hz = 48000;
 profile.audio.peak_limit = 0.89;
-profile.audio.master_gain = 1.0;
+profile.audio.master_gain = 0.98;
 
 profile.engine.cylinders = 8;
 profile.engine.cycle_revolutions = 2;
@@ -107,10 +107,20 @@ profile.afterfire.body_decay_s = 0.060;
 profile.afterfire.metal_decay_s = 0.018;
 profile.afterfire.crack_decay_s = 0.003;
 
-profile.mix.exhaust_gain = 5.8;
+profile.mix.exhaust_gain = 5.2;
 profile.mix.mechanical_gain = 0.55;
 profile.mix.afterfire_gain = 0.72;
-profile.mix.afterfire_peak_over_exhaust_db = 7.0;
+profile.mix.afterfire_peak_over_exhaust_db = 8.0;
+
+profile.rasp.start_rpm = 1700;
+profile.rasp.full_rpm = 5600;
+profile.rasp.nonlinear_drive = 3.0;
+profile.rasp.nonlinear_gain = 0.24;
+profile.rasp.texture_gain = 0.058;
+profile.rasp.jitter_gain = 0.22;
+profile.rasp.jitter_hz = 120;
+profile.rasp.highpass_hz = 1000;
+profile.rasp.lowpass_hz = 8500;
 
 profile.mechanical.orders = [32, 56, 88];
 profile.mechanical.band_gain_db = [-32, -38, -44];

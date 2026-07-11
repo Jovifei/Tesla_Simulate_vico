@@ -90,3 +90,5 @@ and exhaust-temperature data.
 - Its Simulink top model and `.sldd` dictionary live in
   `tools/sound_sim/simulink/v6/vehicles/c63_w204/`.
 - Run `vehicles/c63_w204/run_c63_w204_v6_1.m` for the reviewed listening set.
+- Run `vehicles/c63_w204/run_c63_w204_v6_2.m` for balanced and aggressive
+  pulse-synchronous rasp candidates. The V6.1 afterfire calibration is unchanged.

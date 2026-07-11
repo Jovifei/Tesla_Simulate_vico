@@ -21,11 +21,12 @@ mechanical = render_mechanical(profile, state, sampleRate);
 exhaust = profile.mix.exhaust_gain * (exhaustLeft + exhaustRight);
 mechanical = profile.mix.mechanical_gain * mechanical;
 afterfire = profile.mix.afterfire_gain * (afterfireLeft + afterfireRight);
+rasp = v6_render_combustion_rasp(profile, state, exhaust, sampleRate);
 exhaustRms = active_rms(exhaust);
 afterfirePeakLimit = exhaustRms * db_to_mag( ...
     profile.mix.afterfire_peak_over_exhaust_db);
 afterfire = limit_peak(afterfire, afterfirePeakLimit);
-rawEngine = exhaust + mechanical + afterfire;
+rawEngine = exhaust + mechanical + rasp + afterfire;
 [external, cabin, speaker] = propagate_sound(profile, rawEngine, time);
 audio = profile.audio.master_gain * tanh(external);
 audio = audio - mean(audio);
@@ -42,7 +43,7 @@ result.layers = struct("blowdown_left", bankLeft, "blowdown_right", bankRight, .
     "exhaust", exhaust, "afterfire_raw_left", afterfireRawLeft, ...
     "afterfire_raw_right", afterfireRawRight, "afterfire_left", afterfireLeft, ...
     "afterfire_right", afterfireRight, "afterfire", afterfire, ...
-    "mechanical", mechanical, "external", external, "cabin", cabin, ...
+    "mechanical", mechanical, "rasp", rasp, "external", external, "cabin", cabin, ...
     "speaker", speaker);
 result.events = events;
 result.normalization_gain = normalizationGain;

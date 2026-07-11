@@ -25,6 +25,7 @@ write_wav(fullfile(outputDir, "c63_w204_v6_external_48k.wav"), ...
 write_stem(fullfile(outputDir, "c63_w204_v6_exhaust.wav"), result.layers.exhaust, profile.audio.sample_rate_hz);
 write_stem(fullfile(outputDir, "c63_w204_v6_afterfire.wav"), result.layers.afterfire, profile.audio.sample_rate_hz);
 write_stem(fullfile(outputDir, "c63_w204_v6_mechanical.wav"), result.layers.mechanical, profile.audio.sample_rate_hz);
+write_stem(fullfile(outputDir, "c63_w204_v6_rasp.wav"), result.layers.rasp, profile.audio.sample_rate_hz);
 write_stem(fullfile(outputDir, "c63_w204_v6_cabin.wav"), result.layers.cabin, profile.audio.sample_rate_hz);
 write_stem(fullfile(outputDir, "c63_w204_v6_speaker.wav"), result.layers.speaker, profile.audio.sample_rate_hz);
 

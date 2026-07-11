@@ -11,6 +11,7 @@ verifyEqual(testCase, profile.engine.displacement_l, 6.208, AbsTol=1e-12);
 verifyEqual(testCase, profile.engine.firing_order, [1, 5, 4, 2, 6, 3, 7, 8]);
 verifyEqual(testCase, profile.audio.sample_rate_hz, 96000);
 verifyGreaterThan(testCase, profile.afterfire.crack_gain, 1.0);
+verifyGreaterThan(testCase, profile.rasp.nonlinear_gain, 0);
 end
 
 function testSteadyStateRender(testCase)
@@ -72,6 +73,22 @@ scenario = v6_build_cycle(profile, "full_demo", 1000);
 acceleration = result.time_s >= 1 & result.time_s < 3.5;
 verifyGreaterThanOrEqual(testCase, sqrt(mean(audio(acceleration) .^ 2)), 0.40);
 verifyEqual(testCase, result.normalization_gain, 1, AbsTol=1e-12);
+end
+
+function testRaspAddsLoadGatedMidBandEnergy(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+profile = v6_vehicle_profile("c63_w204");
+scenario = v6_build_cycle(profile, "full_demo", 1000);
+[~, result] = v6_synthesize_engine_sound(profile, scenario);
+acceleration = result.time_s >= 1 & result.time_s < 8.5;
+features = v6_reference_features(result.layers.rasp(acceleration), ...
+    profile.audio.sample_rate_hz);
+verifyGreaterThan(testCase, sqrt(mean(result.layers.rasp(acceleration) .^ 2)), 0.10);
+verifyGreaterThan(testCase, features.band_shares(3), 0.35);
+verifyGreaterThan(testCase, features.band_shares(4), 0.015);
+lowLoad = result.state.load < 0.08;
+verifyLessThan(testCase, sqrt(mean(result.layers.rasp(lowLoad) .^ 2)), 0.005);
 end
 
 function testProfileIsVehicleOwned(testCase)
