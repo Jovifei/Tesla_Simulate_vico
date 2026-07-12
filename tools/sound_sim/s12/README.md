@@ -30,6 +30,9 @@ audio and not yet App assets.
 - `models/pipe_ref/c63_primary_pipe_open_end_ref.slx`
   - Eight-cell pressure-release boundary with a probe 0.06 m from the inlet.
   - Separates the incident pulse from the negative open-end reflection.
+- `models/fvm_ref/s12_euler_hllc_flux_ref.slx`
+  - Embedded MATLAB Function implementation of the Euler HLLC interface flux.
+  - Exposes mass, momentum, energy fluxes and the three HLLC wave speeds.
 
 Property-table source:
 
@@ -62,6 +65,7 @@ Current acceptance covers:
 - Primary-pipe pulse propagation delay and attenuation.
 - Primary-pipe 4/8/16-cell grid convergence.
 - Open-end pressure-release boundary and negative reflected-wave timing.
+- Uniform-flow Euler flux, stationary-contact preservation, and HLLC mirror symmetry.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -101,6 +105,13 @@ reflected peak. The magnitude ratio is 0.603, and the negative wave crosses
 the 10% threshold at 1.996 ms. The ideal atmospheric boundary remains within
 1 Pa of its initial pressure. This validates the reference boundary behavior,
 not final tailpipe radiation impedance or free-field sound pressure.
+
+The embedded HLLC block returns `[36, 102405, 10655325]` for the accepted
+uniform-flow case and `[0, 100000, 0]` for a stationary contact at equal
+pressure. Mirrored left/right states preserve momentum flux and reverse mass,
+energy, and wave-speed directions. Finite-volume cell updates, MUSCL
+reconstruction, SSP-RK3 integration, positivity limiting, and the Sod shock
+tube remain pending.
 
 Research specifications live in:
 
