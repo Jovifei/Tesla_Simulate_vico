@@ -65,6 +65,20 @@ Current acceptance covers:
 - No 1D manifold, catalyst, muffler, tailpipe radiation, or audio export exists
   in S12 yet.
 
+## Tracked WIP
+
+- `models/pipe_ref/c63_primary_pipe_wave_ref.slx`
+  - Eight Simscape Gas `Pipe (G)` control volumes, 0.48 m total length.
+  - Physical pressure source, inlet/outlet sensors, compressibility, inertia,
+    friction, and thermal ports compile successfully.
+- `wip/test_c63_primary_pipe_wave_ref.m`
+  - Intended to verify pulse arrival and attenuation.
+  - Not included by the default `runtests('tests')` command.
+
+The first 5 ms solve exceeded three minutes and did not return. This WIP is
+tracked only as a rollback/debug checkpoint. It is not a passing 1D model and
+must not be used as evidence of wave-propagation accuracy.
+
 Research specifications live in:
 
 - `E:\Tesla_speed\docs\sound-simulation\S12_全物理Simulink一维发动机排气声学研究规格.md`
