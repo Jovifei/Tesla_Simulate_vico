@@ -27,6 +27,9 @@ audio and not yet App assets.
 - `models/pipe_ref/c63_primary_pipe_wave_ref_{4,16}cell.slx`
   - Coarse/fine variants around the eight-cell reference, all 0.48 m long.
   - Component-level propagation-delay and outlet-amplitude convergence check.
+- `models/pipe_ref/c63_primary_pipe_open_end_ref.slx`
+  - Eight-cell pressure-release boundary with a probe 0.06 m from the inlet.
+  - Separates the incident pulse from the negative open-end reflection.
 
 Property-table source:
 
@@ -58,6 +61,7 @@ Current acceptance covers:
 - Temperature-dependent fresh/burned mixture properties.
 - Primary-pipe pulse propagation delay and attenuation.
 - Primary-pipe 4/8/16-cell grid convergence.
+- Open-end pressure-release boundary and negative reflected-wave timing.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -89,8 +93,14 @@ test as the authoritative connectivity evidence.
 
 The 4/8/16-cell delays are 0.868, 0.891, and 0.895 ms. Their outlet pulse
 peaks are 2.459, 3.078, and 3.133 kPa. The 8-to-16-cell change is 0.46% for
-delay and 1.77% for peak amplitude. Open-end reflection and a custom
-finite-volume solver remain separate acceptance gates.
+delay and 1.77% for peak amplitude. Open-end reflection is validated
+separately below; the custom finite-volume solver remains pending.
+
+The open-end probe records a +5.653 kPa incident peak and a -3.409 kPa
+reflected peak. The magnitude ratio is 0.603, and the negative wave crosses
+the 10% threshold at 1.996 ms. The ideal atmospheric boundary remains within
+1 Pa of its initial pressure. This validates the reference boundary behavior,
+not final tailpipe radiation impedance or free-field sound pressure.
 
 Research specifications live in:
 
