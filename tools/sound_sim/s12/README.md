@@ -33,6 +33,9 @@ audio and not yet App assets.
 - `models/fvm_ref/s12_euler_hllc_flux_ref.slx`
   - Embedded MATLAB Function implementation of the Euler HLLC interface flux.
   - Exposes mass, momentum, energy fluxes and the three HLLC wave speeds.
+- `models/fvm_ref/s12_euler_fvm_periodic_step_ref.slx`
+  - First-order periodic finite-volume update for eight conservative cells.
+  - HLLC interfaces and automatic CFL time-step limiting are embedded in the model.
 
 Property-table source:
 
@@ -66,6 +69,7 @@ Current acceptance covers:
 - Primary-pipe 4/8/16-cell grid convergence.
 - Open-end pressure-release boundary and negative reflected-wave timing.
 - Uniform-flow Euler flux, stationary-contact preservation, and HLLC mirror symmetry.
+- Uniform-state preservation, periodic Euler conservation, and one-step Sod positivity.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -109,9 +113,16 @@ not final tailpipe radiation impedance or free-field sound pressure.
 The embedded HLLC block returns `[36, 102405, 10655325]` for the accepted
 uniform-flow case and `[0, 100000, 0]` for a stationary contact at equal
 pressure. Mirrored left/right states preserve momentum flux and reverse mass,
-energy, and wave-speed directions. Finite-volume cell updates, MUSCL
-reconstruction, SSP-RK3 integration, positivity limiting, and the Sod shock
-tube remain pending.
+energy, and wave-speed directions. A first-order finite-volume update is
+validated below; MUSCL reconstruction, SSP-RK3 integration, positivity
+limiting, and long-time Sod validation remain pending.
+
+The periodic FVM step preserves a uniform state and closes total mass,
+momentum, and energy over the periodic domain. For the accepted eight-cell Sod
+initial state, a requested 1 ms step is limited to 12.026756 us at CFL 0.45;
+density and pressure remain positive after the update. This is a first-order
+single-step reference. MUSCL reconstruction, multi-stage time integration,
+long-time shock-tube accuracy, and production boundary conditions remain pending.
 
 Research specifications live in:
 
