@@ -36,6 +36,10 @@ audio and not yet App assets.
 - `models/fvm_ref/s12_euler_fvm_periodic_step_ref.slx`
   - First-order periodic finite-volume update for eight conservative cells.
   - HLLC interfaces and automatic CFL time-step limiting are embedded in the model.
+- `models/fvm_ref/s12_euler_ssprk3_sod_ref.slx`
+  - First-order HLLC spatial operator with three-stage SSP-RK3 time integration.
+  - Transmissive ghost cells, per-step CFL control, exact end-time clipping, and
+    open-boundary flux accounting for the 200-cell Sod reference.
 
 Property-table source:
 
@@ -70,6 +74,7 @@ Current acceptance covers:
 - Open-end pressure-release boundary and negative reflected-wave timing.
 - Uniform-flow Euler flux, stationary-contact preservation, and HLLC mirror symmetry.
 - Uniform-state preservation, periodic Euler conservation, and one-step Sod positivity.
+- Long-time SSP-RK3 uniform-state preservation and Sod exact-Riemann comparison.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -102,7 +107,8 @@ test as the authoritative connectivity evidence.
 The 4/8/16-cell delays are 0.868, 0.891, and 0.895 ms. Their outlet pulse
 peaks are 2.459, 3.078, and 3.133 kPa. The 8-to-16-cell change is 0.46% for
 delay and 1.77% for peak amplitude. Open-end reflection is validated
-separately below; the custom finite-volume solver remains pending.
+separately below; the production full-exhaust finite-volume solver remains
+pending beyond the validated HLLC/SSP-RK3 reference models.
 
 The open-end probe records a +5.653 kPa incident peak and a -3.409 kPa
 reflected peak. The magnitude ratio is 0.603, and the negative wave crosses
@@ -113,16 +119,30 @@ not final tailpipe radiation impedance or free-field sound pressure.
 The embedded HLLC block returns `[36, 102405, 10655325]` for the accepted
 uniform-flow case and `[0, 100000, 0]` for a stationary contact at equal
 pressure. Mirrored left/right states preserve momentum flux and reverse mass,
-energy, and wave-speed directions. A first-order finite-volume update is
-validated below; MUSCL reconstruction, SSP-RK3 integration, positivity
-limiting, and long-time Sod validation remain pending.
+energy, and wave-speed directions. The first-order finite-volume update and
+SSP-RK3 long-time reference are validated below; MUSCL reconstruction,
+positivity limiting, and production boundary conditions remain pending.
 
 The periodic FVM step preserves a uniform state and closes total mass,
 momentum, and energy over the periodic domain. For the accepted eight-cell Sod
 initial state, a requested 1 ms step is limited to 12.026756 us at CFL 0.45;
 density and pressure remain positive after the update. This is a first-order
-single-step reference. MUSCL reconstruction, multi-stage time integration,
-long-time shock-tube accuracy, and production boundary conditions remain pending.
+single-step reference and remains unchanged as the spatial-update baseline.
+
+The separate SSP-RK3 model advances a 200-cell dimensionless Sod problem to
+`t=0.2` with transmissive boundaries. It accepts 191 global steps, reaches a
+maximum recorded Courant number of `0.45000000000000012`, and keeps minimum
+density and pressure at `0.1250000000005` and `0.1000000000006`. The numerical
+shock and contact positions are `0.855` and `0.680`, compared against an
+independent Toro-style exact Riemann solution with tolerances of `2*dx` and
+`4*dx`. The largest scaled open-boundary conservation residual is
+`1.03e-15`. A uniform-state case runs 119 steps with maximum state error
+`2.78e-17`.
+
+This establishes SSP-RK3 time integration on the existing first-order HLLC
+spatial operator. It does not establish second-order spatial accuracy or
+unconditional positivity. MUSCL reconstruction, a positivity limiter,
+FVM/Simscape cross-validation, and production exhaust boundaries remain pending.
 
 Research specifications live in:
 
