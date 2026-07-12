@@ -16,6 +16,16 @@ audio and not yet App assets.
 - `models/cylinder_ref/c63_exhaust_valve_flow_ref.slx`
   - Valve lift, effective curtain area, and port-area limit.
   - Choked and subcritical compressible-flow branches.
+- `models/cylinder_ref/c63_cylinder_blowdown_ref.slx`
+  - NASA-polynomial fresh-air and burned-product property tables.
+  - Temperature- and burn-fraction-dependent `cp`, `cv`, `R`, and `gamma`.
+  - Coupled cylinder mass, temperature, pressure, valve flow, and flow energy.
+
+Property-table source:
+
+- `library/properties/s12_nasa_mixture_tables.m`
+- NASA/TP-2002-211556, *NASA Glenn Coefficients for Calculating
+  Thermodynamic Properties of Individual Species*.
 
 All fixed and provisional values are stored as documented `Simulink.Parameter`
 objects in each model workspace. Grade D values are identification initial
@@ -36,14 +46,19 @@ Current acceptance covers:
 - TDC/BDC geometry and compression ratio.
 - Closed-cycle pressure, temperature, burn fraction, heat, and wall loss.
 - Analytic choked and subcritical valve mass flow.
-- Simulink connectivity checks for all three models.
+- Integrated exhaust mass flow against cylinder mass loss.
+- Temperature-dependent fresh/burned mixture properties.
+- Simulink connectivity checks for all four models.
 
 ## Known Boundaries
 
-- The closed-cylinder reference currently uses constant `cv`; the next model
-  replaces it with temperature- and composition-dependent properties.
-- Valve flow is independently verified but not yet coupled back into cylinder
-  mass and energy states.
+- The older closed-cylinder reference intentionally retains constant `cv` as a
+  comparison baseline. The coupled blowdown model uses NASA-derived tables.
+- The coupled model currently supports forward exhaust outflow. Reverse flow
+  and intake-valve exchange remain pending.
+- Burned composition currently assumes complete stoichiometric iso-octane
+  products (`N2`, `CO2`, `H2O`). Rich combustion species and dissociation must
+  be added before full-load M156 calibration.
 - M156 cam event angles, `Cd(lift)`, connecting-rod length, and exhaust geometry
   remain bounded identification parameters until stronger evidence is found.
 - No 1D manifold, catalyst, muffler, tailpipe radiation, or audio export exists
