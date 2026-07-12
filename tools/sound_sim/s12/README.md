@@ -14,8 +14,8 @@ audio and not yet App assets.
   - Closed-cylinder first law with boundary work and Woschni wall heat.
   - Pressure derived from cylinder mass, temperature, and volume.
 - `models/cylinder_ref/c63_exhaust_valve_flow_ref.slx`
-  - Valve lift, effective curtain area, and port-area limit.
-  - Choked and subcritical compressible-flow branches.
+  - Lift-dependent `Cd(lift)`, effective curtain area, and port-area limit.
+  - Bidirectional choked/subcritical mass flow and enthalpy-flow sign.
 - `models/cylinder_ref/c63_cylinder_blowdown_ref.slx`
   - NASA-polynomial fresh-air and burned-product property tables.
   - Temperature- and burn-fraction-dependent `cp`, `cv`, `R`, and `gamma`.
@@ -46,6 +46,7 @@ Current acceptance covers:
 - TDC/BDC geometry and compression ratio.
 - Closed-cycle pressure, temperature, burn fraction, heat, and wall loss.
 - Analytic choked and subcritical valve mass flow.
+- Forward/reverse valve-flow direction, `Cd(lift)`, and enthalpy flow.
 - Integrated exhaust mass flow against cylinder mass loss.
 - Temperature-dependent fresh/burned mixture properties.
 - Simulink connectivity checks for all four models.
@@ -69,3 +70,7 @@ Research specifications live in:
 - `E:\Tesla_speed\docs\sound-simulation\S12_全物理Simulink一维发动机排气声学研究规格.md`
 - `E:\Tesla_speed\docs\sound-simulation\S12_C63_Hellcat参数证据矩阵.md`
 - `E:\Tesla_speed\docs\sound-simulation\S12_Simulink一维气体动力学架构决策.md`
+
+The V1--V7 history and exact V7 reproduction record is indexed in Obsidian:
+
+- `E:\AI_Tools\Obsidian\data\notes-personal\tesla\2026-07-12-MATLAB发动机声浪V1-V7演进与V7操作记录.md`
