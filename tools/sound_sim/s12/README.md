@@ -24,6 +24,9 @@ audio and not yet App assets.
   - Eight Simscape Gas control volumes over a 0.48 m primary pipe.
   - 700 K wall boundary and finite-impedance outlet restriction.
   - Pressure-pulse propagation, compressibility, inertia, friction, and heat transfer.
+- `models/pipe_ref/c63_primary_pipe_wave_ref_{4,16}cell.slx`
+  - Coarse/fine variants around the eight-cell reference, all 0.48 m long.
+  - Component-level propagation-delay and outlet-amplitude convergence check.
 
 Property-table source:
 
@@ -54,6 +57,7 @@ Current acceptance covers:
 - Integrated exhaust mass flow against cylinder mass loss.
 - Temperature-dependent fresh/burned mixture properties.
 - Primary-pipe pulse propagation delay and attenuation.
+- Primary-pipe 4/8/16-cell grid convergence.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -82,6 +86,11 @@ The dedicated `model_check` tool currently reports false unconnected-port
 warnings on branched Simscape conserving-port networks. The pipe acceptance
 therefore uses successful model compilation plus the behavioral propagation
 test as the authoritative connectivity evidence.
+
+The 4/8/16-cell delays are 0.868, 0.891, and 0.895 ms. Their outlet pulse
+peaks are 2.459, 3.078, and 3.133 kPa. The 8-to-16-cell change is 0.46% for
+delay and 1.77% for peak amplitude. Open-end reflection and a custom
+finite-volume solver remain separate acceptance gates.
 
 Research specifications live in:
 
