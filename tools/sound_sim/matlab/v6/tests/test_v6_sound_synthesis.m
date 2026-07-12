@@ -84,11 +84,40 @@ scenario = v6_build_cycle(profile, "full_demo", 1000);
 acceleration = result.time_s >= 1 & result.time_s < 8.5;
 features = v6_reference_features(result.layers.rasp(acceleration), ...
     profile.audio.sample_rate_hz);
-verifyGreaterThan(testCase, sqrt(mean(result.layers.rasp(acceleration) .^ 2)), 0.10);
+verifyGreaterThan(testCase, sqrt(mean(result.layers.rasp(acceleration) .^ 2)), 0.03);
 verifyGreaterThan(testCase, features.band_shares(3), 0.35);
-verifyGreaterThan(testCase, features.band_shares(4), 0.015);
+verifyGreaterThan(testCase, features.band_shares(4), 0.005);
 lowLoad = result.state.load < 0.08;
 verifyLessThan(testCase, sqrt(mean(result.layers.rasp(lowLoad) .^ 2)), 0.005);
+end
+
+function testCombustionVariationBreaksPulseUniformity(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+profile = v6_vehicle_profile("c63_w204");
+scenario = v6_build_cycle(profile, "full_demo", 1000);
+[~, result] = v6_synthesize_engine_sound(profile, scenario);
+highLoad = result.state.load > 0.80 & result.state.rpm > 3500;
+variation = result.state.combustion_variation(highLoad);
+verifyGreaterThan(testCase, std(variation), 0.10);
+verifyLessThan(testCase, min(variation), 0.70);
+verifyGreaterThan(testCase, max(variation), 1.20);
+timing = result.state.combustion_timing_jitter_deg(highLoad);
+verifyGreaterThan(testCase, std(timing), 1.0);
+end
+
+function testCombustionTuningDoesNotMoveAfterfire(testCase)
+root = fileparts(fileparts(mfilename("fullpath")));
+addpath(root);
+baseline = v6_vehicle_profile("c63_w204");
+tuned = baseline;
+tuned.combustion_variation.depth = 0.35;
+tuned.combustion_variation.timing_jitter_deg = 3.2;
+scenario = v6_build_cycle(baseline, "tipout_5500", 1000);
+[~, baselineResult] = v6_synthesize_engine_sound(baseline, scenario);
+[~, tunedResult] = v6_synthesize_engine_sound(tuned, scenario);
+verifyEqual(testCase, tunedResult.events, baselineResult.events);
+verifyEqual(testCase, tunedResult.layers.afterfire, baselineResult.layers.afterfire);
 end
 
 function testProfileIsVehicleOwned(testCase)
@@ -123,4 +152,8 @@ columnFeatures = v6_reference_features(audio.', sampleRate);
 verifyEqual(testCase, rowFeatures.centroid_hz, columnFeatures.centroid_hz, AbsTol=1e-9);
 verifyGreaterThan(testCase, rowFeatures.centroid_hz, 500);
 verifyLessThan(testCase, rowFeatures.centroid_hz, 750);
+rowModulation = v6_modulation_features(audio, sampleRate);
+columnModulation = v6_modulation_features(audio.', sampleRate);
+verifyEqual(testCase, rowModulation.modulation_depth, ...
+    columnModulation.modulation_depth, AbsTol=1e-9);
 end

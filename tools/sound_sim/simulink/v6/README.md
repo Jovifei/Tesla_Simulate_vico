@@ -11,3 +11,6 @@ changing another vehicle's parameters.
 For C63, run `vehicles/c63_w204/open_c63_w204_engine_sound_v6.m`. The opener
 adds the vehicle directory to MATLAB's path before Simulink resolves the
 adjacent data dictionary.
+
+Hellcat follows the same isolation contract under `vehicles/hellcat/`, with
+its own top model, `.sldd`, build script, and opener.

@@ -11,14 +11,19 @@ sampleRate = profile.audio.sample_rate_hz;
 duration = scenario.time_s(end) + 1 / scenario.control_rate_hz;
 time = 0:1 / sampleRate:duration - 1 / sampleRate;
 state = interpolate_state(scenario, time);
-[bankLeft, bankRight] = render_blowdown_banks(profile, state, sampleRate);
+[bankLeft, bankRight, combustionVariation, combustionTiming] = render_blowdown_banks( ...
+    profile, state, sampleRate);
 [exhaustLeft, exhaustRight] = render_exhaust_network(profile, bankLeft, bankRight, ...
     time, state.sound_speed_mps);
 [afterfireRawLeft, afterfireRawRight, events] = render_afterfire(profile, scenario, time);
 [afterfireLeft, afterfireRight] = render_exhaust_network(profile, ...
     afterfireRawLeft, afterfireRawRight, time, state.sound_speed_mps);
 mechanical = render_mechanical(profile, state, sampleRate);
-exhaust = profile.mix.exhaust_gain * (exhaustLeft + exhaustRight);
+induction = render_induction(profile, state, sampleRate);
+exhaustDry = exhaustLeft + exhaustRight;
+exhaustBody = render_exhaust_body(profile, exhaustDry, sampleRate);
+exhaust = profile.mix.exhaust_gain * (profile.exhaust.dry_gain * ...
+    exhaustDry + exhaustBody);
 mechanical = profile.mix.mechanical_gain * mechanical;
 afterfire = profile.mix.afterfire_gain * (afterfireLeft + afterfireRight);
 rasp = v6_render_combustion_rasp(profile, state, exhaust, sampleRate);
@@ -26,7 +31,7 @@ exhaustRms = active_rms(exhaust);
 afterfirePeakLimit = exhaustRms * db_to_mag( ...
     profile.mix.afterfire_peak_over_exhaust_db);
 afterfire = limit_peak(afterfire, afterfirePeakLimit);
-rawEngine = exhaust + mechanical + rasp + afterfire;
+rawEngine = exhaust + mechanical + induction + rasp + afterfire;
 [external, cabin, speaker] = propagate_sound(profile, rawEngine, time);
 audio = profile.audio.master_gain * tanh(external);
 audio = audio - mean(audio);
@@ -40,13 +45,17 @@ result.audio_sample_rate_hz = sampleRate;
 result.audio_pre_normalization = external;
 result.layers = struct("blowdown_left", bankLeft, "blowdown_right", bankRight, ...
     "exhaust_left", exhaustLeft, "exhaust_right", exhaustRight, ...
+    "exhaust_dry", exhaustDry, "exhaust_body", exhaustBody, ...
     "exhaust", exhaust, "afterfire_raw_left", afterfireRawLeft, ...
     "afterfire_raw_right", afterfireRawRight, "afterfire_left", afterfireLeft, ...
     "afterfire_right", afterfireRight, "afterfire", afterfire, ...
-    "mechanical", mechanical, "rasp", rasp, "external", external, "cabin", cabin, ...
+    "mechanical", mechanical, "induction", induction, "rasp", rasp, ...
+    "external", external, "cabin", cabin, ...
     "speaker", speaker);
 result.events = events;
 result.normalization_gain = normalizationGain;
+state.combustion_variation = combustionVariation;
+state.combustion_timing_jitter_deg = combustionTiming * 360 / pi;
 result.state = state;
 result.metrics = v6_audio_metrics(external, time, state.rpm, sampleRate);
 end
@@ -67,7 +76,8 @@ state.gear = interp1(controlTime, scenario.gear, time, "previous", "extrap");
 state.sound_speed_mps = sqrt(1.33 * 287.0 * max(300, state.egt_k));
 end
 
-function [left, right] = render_blowdown_banks(profile, state, sampleRate)
+function [left, right, variation, timingJitter] = render_blowdown_banks( ...
+    profile, state, sampleRate)
 sampleCount = numel(state.rpm);
 cyclePhase = 2 * pi * cumsum(state.rpm / ...
     (60 * profile.engine.cycle_revolutions)) / sampleRate;
@@ -80,12 +90,13 @@ temperatureScale = sqrt(max(300, state.egt_k) / ...
     profile.blowdown.exhaust_temperature_k);
 amplitude = pressureScale * areaScale .* (0.08 + 0.92 * sqrt(torqueFraction)) .* ...
     (0.30 + 0.70 * state.load) .* temperatureScale;
+[variation, timingJitter] = render_combustion_variation(profile, state, sampleRate);
 for orderIndex = 1:profile.engine.cylinders
     cylinder = profile.engine.firing_order(orderIndex);
     firingAngle = 2 * pi * (orderIndex - 1) / profile.engine.cylinders;
     pulse = exp(profile.blowdown.pulse_sharpness * ...
-        (cos(cyclePhase - firingAngle) - 1));
-    blowdown = amplitude .* pulse;
+        (cos(cyclePhase - firingAngle - timingJitter) - 1));
+    blowdown = amplitude .* variation .* pulse;
     if profile.engine.bank_by_cylinder(cylinder) == 1
         left = left + blowdown;
     else
@@ -94,6 +105,44 @@ for orderIndex = 1:profile.engine.cylinders
 end
 left = left / 4;
 right = right / 4;
+end
+
+function [variation, timingJitter] = render_combustion_variation( ...
+    profile, state, sampleRate)
+eventProgress = cumsum(state.rpm / 60 * profile.engine.cylinders / ...
+    profile.engine.cycle_revolutions) / sampleRate;
+eventIndex = floor(eventProgress) + 1;
+eventCount = max(eventIndex);
+settings = profile.combustion_variation;
+stream = RandStream("mt19937ar", Seed=profile.seed + 1701);
+innovation = randn(stream, 1, eventCount);
+correlated = filter(1 - settings.correlation, ...
+    [1, -settings.correlation], innovation);
+correlated = correlated / max(std(correlated), eps);
+eventGain = 1 + settings.depth * correlated;
+notch = rand(stream, 1, eventCount) < settings.notch_probability;
+eventGain(notch) = eventGain(notch) .* (1 - settings.notch_depth .* ...
+    (0.65 + 0.35 * rand(stream, 1, sum(notch))));
+eventPosition = mod((1:eventCount) - 1, profile.engine.cylinders) + 1;
+cylinder = profile.engine.firing_order(eventPosition);
+eventGain = eventGain .* settings.cylinder_gain(cylinder);
+eventGain = min(settings.maximum_gain, max(settings.minimum_gain, eventGain));
+
+rpmGate = clamp01((state.rpm - settings.start_rpm) / ...
+    (settings.full_rpm - settings.start_rpm));
+loadGate = clamp01((state.load - 0.18) / 0.82);
+gate = rpmGate .* loadGate;
+variation = 1 + gate .* (eventGain(eventIndex) - 1);
+timingEvents = filter(1 - settings.timing_correlation, ...
+    [1, -settings.timing_correlation], randn(stream, 1, eventCount));
+timingEvents = timingEvents / max(std(timingEvents), eps);
+timingEvents = min(2.5, max(-2.5, timingEvents));
+timingJitter = gate .* timingEvents(eventIndex) * ...
+    settings.timing_jitter_deg * pi / 360;
+end
+
+function value = clamp01(value)
+value = min(1, max(0, value));
 end
 
 function [left, right] = render_exhaust_network(profile, inputLeft, inputRight, time, soundSpeed)
@@ -133,6 +182,20 @@ end
 function output = delay_time(input, time, delaySeconds)
 queryTime = time - delaySeconds;
 output = interp1(time, input, queryTime, "linear", 0);
+end
+
+function output = render_exhaust_body(profile, input, sampleRate)
+output = zeros(size(input));
+for index = 1:numel(profile.exhaust.body_modes_hz)
+    frequency = profile.exhaust.body_modes_hz(index);
+    radius = exp(-pi * frequency / ...
+        (profile.exhaust.body_q(index) * sampleRate));
+    angle = 2 * pi * frequency / sampleRate;
+    numerator = (1 - radius) * [1, 0, -1];
+    denominator = [1, -2 * radius * cos(angle), radius ^ 2];
+    output = output + profile.exhaust.body_gain(index) * ...
+        filter(numerator, denominator, input);
+end
 end
 
 function [left, right, events] = render_afterfire(profile, scenario, time)
@@ -253,10 +316,27 @@ for index = 1:numel(profile.mechanical.orders)
     mechanical = mechanical + gain * state.load .* ...
         sin(profile.mechanical.orders(index) * phase + 2 * pi * rand);
 end
+
 texture = filter([1, -1], [1, -0.82], randn(size(phase)));
 texture = texture / max(max(abs(texture)), eps);
 mechanical = mechanical + db_to_mag(profile.mechanical.noise_gain_db) .* ...
     state.load .* state.torque_gain .* texture;
+end
+
+function induction = render_induction(profile, state, sampleRate)
+induction = zeros(size(state.rpm));
+if ~isfield(profile, "induction") || ~profile.induction.enabled
+    return
+end
+rotorPhase = 2 * pi * cumsum(state.rpm / 60 * ...
+    profile.induction.speed_ratio) / sampleRate;
+rpmGate = clamp01((state.rpm - profile.induction.start_rpm) / ...
+    (profile.engine.redline_rpm - profile.induction.start_rpm));
+gate = rpmGate .^ 0.8 .* state.load .^ 1.25 .* state.torque_gain;
+for index = 1:numel(profile.induction.orders)
+    induction = induction + profile.induction.gains(index) * gate .* ...
+        sin(profile.induction.orders(index) * rotorPhase + 2 * pi * rand);
+end
 end
 
 function [external, cabin, speaker] = propagate_sound(profile, input, time)

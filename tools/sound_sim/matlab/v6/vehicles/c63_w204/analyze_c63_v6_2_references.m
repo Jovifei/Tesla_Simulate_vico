@@ -1,6 +1,8 @@
 %ANALYZE_C63_V6_2_REFERENCES Derive acceleration and afterfire targets.
 
 vehicleDir = fileparts(mfilename("fullpath"));
+v6Root = fileparts(fileparts(vehicleDir));
+addpath(v6Root);
 downloadRoot = "E:\Claude_allow\Download\tesla-sound-research\c63_v62";
 sources = [ ...
     source("sbLXOEcAYMI", "sbLXOEcAYMI.wav", "W204", "unknown exhaust", [0, 8.8], [0, 8.8]); ...
@@ -28,9 +30,19 @@ payload.sources = sources;
 payload.w204_median.acceleration_band_shares = median(vertcat(accelerationBands.band_shares), 1);
 payload.w204_median.acceleration_flatness = median([accelerationBands.flatness]);
 payload.w204_median.acceleration_flux = median([accelerationBands.spectral_flux]);
+payload.w204_median.acceleration_modulation_depth = ...
+    median([accelerationBands.modulation_depth]);
+payload.w204_median.acceleration_dropout_ratio = ...
+    median([accelerationBands.dropout_ratio]);
+payload.w204_median.acceleration_pulse_amplitude_cv = ...
+    median([accelerationBands.pulse_amplitude_cv]);
+payload.w204_median.acceleration_pulse_interval_cv = ...
+    median([accelerationBands.pulse_interval_cv]);
 payload.w204_median.afterfire_band_shares = median(vertcat(afterfireBands.band_shares), 1);
 payload.w204_median.afterfire_flatness = median([afterfireBands.flatness]);
 payload.w204_median.afterfire_flux = median([afterfireBands.spectral_flux]);
+payload.w204_median.afterfire_modulation_depth = median([afterfireBands.modulation_depth]);
+payload.w204_median.afterfire_dropout_ratio = median([afterfireBands.dropout_ratio]);
 
 calibrationDir = fullfile(vehicleDir, "calibration");
 if ~isfolder(calibrationDir)
@@ -75,4 +87,9 @@ features = struct("band_shares", shares, ...
     "centroid_hz", sum(frequency .* meanPower) / sum(meanPower), ...
     "flatness", exp(mean(log(meanPower))) / mean(meanPower), ...
     "spectral_flux", mean(flux), "active_frames", sum(active));
+modulation = v6_modulation_features(audio, sampleRate);
+names = fieldnames(modulation);
+for index = 1:numel(names)
+    features.(names{index}) = modulation.(names{index});
+end
 end

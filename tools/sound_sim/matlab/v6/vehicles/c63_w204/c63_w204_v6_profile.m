@@ -70,6 +70,19 @@ profile.blowdown.slow_decay_s = 0.0055;
 profile.blowdown.fast_weight = 0.72;
 profile.blowdown.pulse_sharpness = 54;
 
+profile.combustion_variation.start_rpm = 1400;
+profile.combustion_variation.full_rpm = 5200;
+profile.combustion_variation.depth = 0.25;
+profile.combustion_variation.correlation = 0.32;
+profile.combustion_variation.timing_jitter_deg = 2.4;
+profile.combustion_variation.timing_correlation = 0.20;
+profile.combustion_variation.notch_probability = 0.09;
+profile.combustion_variation.notch_depth = 0.55;
+profile.combustion_variation.minimum_gain = 0.35;
+profile.combustion_variation.maximum_gain = 1.42;
+profile.combustion_variation.cylinder_gain = ...
+    [1.03, 0.96, 1.01, 0.94, 1.04, 0.97, 1.00, 0.95];
+
 profile.exhaust.primary_left_m = [0.46, 0.50, 0.53, 0.57];
 profile.exhaust.primary_right_m = [0.47, 0.49, 0.54, 0.56];
 profile.exhaust.primary_diameter_m = 0.041;
@@ -90,6 +103,10 @@ profile.exhaust.muffler_reflection = -0.42;
 profile.exhaust.tail_reflection = -0.92;
 profile.exhaust.loss_frequency_hz = [125, 500, 2000, 8000, 16000];
 profile.exhaust.loss_db_per_m = [0.08, 0.18, 0.55, 1.80, 4.20];
+profile.exhaust.dry_gain = 1.0;
+profile.exhaust.body_modes_hz = [88, 178];
+profile.exhaust.body_q = [1.4, 2.1];
+profile.exhaust.body_gain = [0.05, 0.08];
 
 profile.afterfire.egt_threshold_k = 760;
 profile.afterfire.minimum_rpm = 2600;
@@ -107,20 +124,22 @@ profile.afterfire.body_decay_s = 0.060;
 profile.afterfire.metal_decay_s = 0.018;
 profile.afterfire.crack_decay_s = 0.003;
 
-profile.mix.exhaust_gain = 5.2;
+profile.mix.exhaust_gain = 5.4;
 profile.mix.mechanical_gain = 0.55;
 profile.mix.afterfire_gain = 0.72;
-profile.mix.afterfire_peak_over_exhaust_db = 8.0;
+profile.mix.afterfire_peak_over_exhaust_db = 7.67;
 
 profile.rasp.start_rpm = 1700;
 profile.rasp.full_rpm = 5600;
 profile.rasp.nonlinear_drive = 3.0;
-profile.rasp.nonlinear_gain = 0.24;
-profile.rasp.texture_gain = 0.058;
+profile.rasp.nonlinear_gain = 0.10;
+profile.rasp.texture_gain = 0.008;
 profile.rasp.jitter_gain = 0.22;
 profile.rasp.jitter_hz = 120;
 profile.rasp.highpass_hz = 1000;
 profile.rasp.lowpass_hz = 8500;
+
+profile.induction.enabled = false;
 
 profile.mechanical.orders = [32, 56, 88];
 profile.mechanical.band_gain_db = [-32, -38, -44];

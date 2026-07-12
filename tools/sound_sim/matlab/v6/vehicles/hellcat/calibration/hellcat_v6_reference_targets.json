@@ -1,0 +1,301 @@
+{
+  "schema": "jovi.hellcat_reference_targets.v6",
+  "note": "Derived metrics only; public audio remains outside the repository.",
+  "sources": [
+    {
+      "id": "eyzGRhXp0do",
+      "url": "https://www.youtube.com/watch?v=eyzGRhXp0do",
+      "setup": "stock road acceleration",
+      "include_in_stock_target": true,
+      "acceleration_window_s": [
+        85,
+        140
+      ],
+      "afterfire_window_s": [
+        20,
+        48
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.37920944310103688,
+          0.617453131717541,
+          0.0032122937681832208,
+          5.0283210884765162E-5
+        ],
+        "spectral_flux": 0.0684668977988182,
+        "modulation_depth": 0.54908542314932463,
+        "dropout_ratio": 0.04410909090909091,
+        "modulation_peak_hz": 81.0546875,
+        "modulation_energy": 0.595590084416119,
+        "pulse_amplitude_cv": 0.32323594266638384,
+        "pulse_interval_cv": 0.3265796520450106,
+        "crest_factor": 3.6279655314439418
+      },
+      "afterfire": {
+        "band_shares": [
+          0.68340056976998664,
+          0.31204798419556895,
+          0.0034384272610827838,
+          0.00050836006923758617
+        ],
+        "spectral_flux": 0.07703293069490541,
+        "modulation_depth": 0.91661738462376119,
+        "dropout_ratio": 0.14428571428571429,
+        "modulation_peak_hz": 24.4140625,
+        "modulation_energy": 0.14887555219954293,
+        "pulse_amplitude_cv": 0.8733388444438559,
+        "pulse_interval_cv": 3.9636344982476346,
+        "crest_factor": 11.172107226363215
+      }
+    },
+    {
+      "id": "FvORN7EH2cc",
+      "url": "https://www.youtube.com/watch?v=FvORN7EH2cc",
+      "setup": "Redeye downshifts",
+      "include_in_stock_target": true,
+      "acceleration_window_s": [
+        7,
+        14
+      ],
+      "afterfire_window_s": [
+        14,
+        25
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.82657822001887915,
+          0.13620787532230191,
+          0.00205436300388648,
+          5.9539782749085867E-6
+        ],
+        "spectral_flux": 0.10612541586972378,
+        "modulation_depth": 0.631756754232483,
+        "dropout_ratio": 0.083,
+        "modulation_peak_hz": 34.1796875,
+        "modulation_energy": 0.55585944762863926,
+        "pulse_amplitude_cv": 0.40844617943965356,
+        "pulse_interval_cv": 0.34828604735115204,
+        "crest_factor": 3.5712077437399041
+      },
+      "afterfire": {
+        "band_shares": [
+          0.97256734348017648,
+          0.0062859371319014335,
+          0.0004204656607123013,
+          2.4153162589826432E-6
+        ],
+        "spectral_flux": 0.068892215319625846,
+        "modulation_depth": 0.719735987317243,
+        "dropout_ratio": 0.13463636363636364,
+        "modulation_peak_hz": 29.296875,
+        "modulation_energy": 0.32807349792047091,
+        "pulse_amplitude_cv": 0.42442080823468975,
+        "pulse_interval_cv": 0.96026762261463883,
+        "crest_factor": 3.0875981897582405
+      }
+    },
+    {
+      "id": "nnEaamqsieM",
+      "url": "https://www.youtube.com/watch?v=nnEaamqsieM",
+      "setup": "near-field leave",
+      "include_in_stock_target": true,
+      "acceleration_window_s": [
+        4,
+        25
+      ],
+      "afterfire_window_s": [
+        30,
+        38
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.48225835816246709,
+          0.41030927211989132,
+          0.074617765239574071,
+          0.032284059818821466
+        ],
+        "spectral_flux": 0.0740407874894119,
+        "modulation_depth": 0.63737107536099569,
+        "dropout_ratio": 0.03966666666666667,
+        "modulation_peak_hz": 9.765625,
+        "modulation_energy": 0.38120511412340441,
+        "pulse_amplitude_cv": 0.55896823753370706,
+        "pulse_interval_cv": 0.37419556132814769,
+        "crest_factor": 6.3231395081074329
+      },
+      "afterfire": {
+        "band_shares": [
+          0.40301120567767829,
+          0.489062985660991,
+          0.10477722781465676,
+          0.0029352265408128116
+        ],
+        "spectral_flux": 0.0701394561307839,
+        "modulation_depth": 0.88133925616283071,
+        "dropout_ratio": 0.270375,
+        "modulation_peak_hz": 87.890625,
+        "modulation_energy": 0.16239662791158527,
+        "pulse_amplitude_cv": 0.70689443529010676,
+        "pulse_interval_cv": 0.87015419717382825,
+        "crest_factor": 6.8547734603663724
+      }
+    },
+    {
+      "id": "cKx-cb0fzeo",
+      "url": "https://www.youtube.com/watch?v=cKx-cb0fzeo",
+      "setup": "stock sound review",
+      "include_in_stock_target": true,
+      "acceleration_window_s": [
+        70,
+        90
+      ],
+      "afterfire_window_s": [
+        52,
+        68
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.81208546293484773,
+          0.14964587466281207,
+          0.036904579611201839,
+          0.00086046339997858249
+        ],
+        "spectral_flux": 0.097994077721516318,
+        "modulation_depth": 0.78267578021494988,
+        "dropout_ratio": 0.1481,
+        "modulation_peak_hz": 10.7421875,
+        "modulation_energy": 0.34024247111972505,
+        "pulse_amplitude_cv": 0.6288896322693821,
+        "pulse_interval_cv": 0.52438323264243158,
+        "crest_factor": 5.4056612754462581
+      },
+      "afterfire": {
+        "band_shares": [
+          0.79275763980656655,
+          0.17873426499545964,
+          0.027635582392048337,
+          0.00017658940178006828
+        ],
+        "spectral_flux": 0.080365994504447383,
+        "modulation_depth": 0.90280439254946032,
+        "dropout_ratio": 0.26975,
+        "modulation_peak_hz": 45.8984375,
+        "modulation_energy": 0.23798052599562849,
+        "pulse_amplitude_cv": 0.637202266751312,
+        "pulse_interval_cv": 1.0919092857563402,
+        "crest_factor": 3.9450504624532887
+      }
+    },
+    {
+      "id": "qiopd-QP2PE",
+      "url": "https://www.youtube.com/watch?v=qiopd-QP2PE",
+      "setup": "burble tune contrast",
+      "include_in_stock_target": false,
+      "acceleration_window_s": [
+        0,
+        11
+      ],
+      "afterfire_window_s": [
+        0,
+        11
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.77362544882408679,
+          0.20395367179511331,
+          0.018752464688136562,
+          0.00090474607987029527
+        ],
+        "spectral_flux": 0.10745008724347405,
+        "modulation_depth": 0.77491944527018009,
+        "dropout_ratio": 0.18936363636363637,
+        "modulation_peak_hz": 6.8359375,
+        "modulation_energy": 0.424127892881815,
+        "pulse_amplitude_cv": 0.504600793136834,
+        "pulse_interval_cv": 0.58342231733152949,
+        "crest_factor": 4.39825636793128
+      },
+      "afterfire": {
+        "band_shares": [
+          0.77362544882408679,
+          0.20395367179511331,
+          0.018752464688136562,
+          0.00090474607987029527
+        ],
+        "spectral_flux": 0.10745008724347405,
+        "modulation_depth": 0.77491944527018009,
+        "dropout_ratio": 0.18936363636363637,
+        "modulation_peak_hz": 6.8359375,
+        "modulation_energy": 0.424127892881815,
+        "pulse_amplitude_cv": 0.504600793136834,
+        "pulse_interval_cv": 0.58342231733152949,
+        "crest_factor": 4.39825636793128
+      }
+    },
+    {
+      "id": "A_hjItNZUAI",
+      "url": "https://www.youtube.com/watch?v=A_hjItNZUAI",
+      "setup": "exhaust and supercharger compilation",
+      "include_in_stock_target": true,
+      "acceleration_window_s": [
+        20,
+        31
+      ],
+      "afterfire_window_s": [
+        35,
+        40
+      ],
+      "acceleration": {
+        "band_shares": [
+          0.66210061138348009,
+          0.28338020518165136,
+          0.053632112652184365,
+          0.00027412865021214525
+        ],
+        "spectral_flux": 0.075125396170106565,
+        "modulation_depth": 0.78446075915750557,
+        "dropout_ratio": 0.14345454545454545,
+        "modulation_peak_hz": 5.859375,
+        "modulation_energy": 0.2268644384431584,
+        "pulse_amplitude_cv": 0.68149579741839461,
+        "pulse_interval_cv": 0.541976501981432,
+        "crest_factor": 5.7163659139184073
+      },
+      "afterfire": {
+        "band_shares": [
+          0.92987387965668022,
+          0.060507095509992469,
+          0.0091551577794027478,
+          8.0827794225043429E-5
+        ],
+        "spectral_flux": 0.046640345153559491,
+        "modulation_depth": 0.85114883398894,
+        "dropout_ratio": 0.2602,
+        "modulation_peak_hz": 225.5859375,
+        "modulation_energy": 0.23983882140952403,
+        "pulse_amplitude_cv": 0.49354313598671989,
+        "pulse_interval_cv": 0.446733559453164,
+        "crest_factor": 3.1601484348362763
+      }
+    }
+  ],
+  "stock_median": {
+    "acceleration_band_shares": [
+      0.66210061138348009,
+      0.28338020518165136,
+      0.036904579611201839,
+      0.00027412865021214525
+    ],
+    "acceleration_flux": 0.075125396170106565,
+    "acceleration_modulation_depth": 0.63737107536099569,
+    "acceleration_pulse_amplitude_cv": 0.55896823753370706,
+    "afterfire_band_shares": [
+      0.79275763980656655,
+      0.17873426499545964,
+      0.0091551577794027478,
+      0.00017658940178006828
+    ],
+    "afterfire_flux": 0.0701394561307839,
+    "afterfire_modulation_depth": 0.88133925616283071
+  }
+}
