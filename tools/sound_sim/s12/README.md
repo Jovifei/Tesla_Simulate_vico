@@ -20,6 +20,10 @@ audio and not yet App assets.
   - NASA-polynomial fresh-air and burned-product property tables.
   - Temperature- and burn-fraction-dependent `cp`, `cv`, `R`, and `gamma`.
   - Coupled cylinder mass, temperature, pressure, valve flow, and flow energy.
+- `models/pipe_ref/c63_primary_pipe_wave_ref.slx`
+  - Eight Simscape Gas control volumes over a 0.48 m primary pipe.
+  - 700 K wall boundary and finite-impedance outlet restriction.
+  - Pressure-pulse propagation, compressibility, inertia, friction, and heat transfer.
 
 Property-table source:
 
@@ -49,7 +53,9 @@ Current acceptance covers:
 - Forward/reverse valve-flow direction, `Cd(lift)`, and enthalpy flow.
 - Integrated exhaust mass flow against cylinder mass loss.
 - Temperature-dependent fresh/burned mixture properties.
-- Simulink connectivity checks for all four models.
+- Primary-pipe pulse propagation delay and attenuation.
+- Simulink connectivity checks for the four cylinder/property models.
+- Compile, simulation, and behavioral propagation checks for the pipe model.
 
 ## Known Boundaries
 
@@ -65,19 +71,17 @@ Current acceptance covers:
 - No 1D manifold, catalyst, muffler, tailpipe radiation, or audio export exists
   in S12 yet.
 
-## Tracked WIP
+## Primary-Pipe Reference Result
 
-- `models/pipe_ref/c63_primary_pipe_wave_ref.slx`
-  - Eight Simscape Gas `Pipe (G)` control volumes, 0.48 m total length.
-  - Physical pressure source, inlet/outlet sensors, compressibility, inertia,
-    friction, and thermal ports compile successfully.
-- `wip/test_c63_primary_pipe_wave_ref.m`
-  - Intended to verify pulse arrival and attenuation.
-  - Not included by the default `runtests('tests')` command.
+The 5 ms reference solve completes in about 5 seconds on the current machine.
+A 5 kPa inlet pulse produces a 3.078 kPa outlet response with a measured
+0.891 ms arrival delay. This is a component-level propagation reference, not
+yet the complete C63 exhaust network or calibrated tailpipe sound pressure.
 
-The first 5 ms solve exceeded three minutes and did not return. This WIP is
-tracked only as a rollback/debug checkpoint. It is not a passing 1D model and
-must not be used as evidence of wave-propagation accuracy.
+The dedicated `model_check` tool currently reports false unconnected-port
+warnings on branched Simscape conserving-port networks. The pipe acceptance
+therefore uses successful model compilation plus the behavioral propagation
+test as the authoritative connectivity evidence.
 
 Research specifications live in:
 
