@@ -1,0 +1,17 @@
+[
+  {
+    "id": "uniform_state",
+    "category": "conservation",
+    "factory": "s12_benchmark_case_uniform"
+  },
+  {
+    "id": "long_time_sod",
+    "category": "shock_tube",
+    "factory": "s12_benchmark_case_sod"
+  },
+  {
+    "id": "smooth_periodic_entropy_wave",
+    "category": "temporal_accuracy",
+    "factory": "s12_benchmark_case_smooth_periodic"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "id": "full",
+  "cfl_limit": 0.45,
+  "uniform": {
+    "cell_count": 200,
+    "end_time": 0.2
+  },
+  "sod": {
+    "cell_count": 200,
+    "end_time": 0.2
+  },
+  "smooth": {
+    "cell_count": 64,
+    "end_time": 0.01,
+    "base_dt": 0.0025,
+    "dt_divisors": [1, 2, 4, 8]
+  }
+}

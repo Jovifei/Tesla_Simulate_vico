@@ -40,6 +40,10 @@ audio and not yet App assets.
   - First-order HLLC spatial operator with three-stage SSP-RK3 time integration.
   - Transmissive ghost cells, per-step CFL control, exact end-time clipping, and
     open-boundary flux accounting for the 200-cell Sod reference.
+- `models/fvm_ref/s12_euler_ssprk3_periodic_ref.slx`
+  - Canonical SSP-RK3 stage convex combinations for periodic validation.
+  - Contains no duplicate HLLC/FVM implementation; the Benchmark adapter calls
+    the existing periodic Forward-Euler model for every stage.
 
 Property-table source:
 
@@ -75,6 +79,11 @@ Current acceptance covers:
 - Uniform-flow Euler flux, stationary-contact preservation, and HLLC mirror symmetry.
 - Uniform-state preservation, periodic Euler conservation, and one-step Sod positivity.
 - Long-time SSP-RK3 uniform-state preservation and Sod exact-Riemann comparison.
+- Config-driven Numerical Benchmark Suite with uniform, Sod, and smooth periodic
+  entropy-wave cases.
+- Fixed-grid `dt/dt/2/dt/4/dt/8` SSP-RK3 self-convergence near third order,
+  explicit no-CFL-clipping checks, deterministic reports, and gated baseline
+  promotion.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -144,11 +153,27 @@ spatial operator. It does not establish second-order spatial accuracy or
 unconditional positivity. MUSCL reconstruction, a positivity limiter,
 FVM/Simscape cross-validation, and production exhaust boundaries remain pending.
 
+## Numerical Benchmark Suite
+
+Sprint 0.5 is documented in `benchmark/README.md`. The default products are a
+Markdown report, deterministic PNG plots, CSV metric tables, and one canonical
+JSON manifest. Single-case, category, full-suite, and report-only entry points
+all use `run_s12_benchmarks`; report-only rendering preserves the acceptance
+stored in JSON.
+
+The accepted Full profile uses 200 cells for Sod and 64 cells for the smooth
+periodic wave. The validated Full result has Sod density/velocity/pressure L1
+errors `0.0133237/0.0236653/0.0114884`; Smooth observed orders are
+`3.00048/3.00024`, with maximum scaled conservation error `1.90e-15`. These
+figures qualify the current time integrator only; the spatial operator remains
+first order.
+
 Research specifications live in:
 
 - `E:\Tesla_speed\docs\sound-simulation\S12_全物理Simulink一维发动机排气声学研究规格.md`
 - `E:\Tesla_speed\docs\sound-simulation\S12_C63_Hellcat参数证据矩阵.md`
 - `E:\Tesla_speed\docs\sound-simulation\S12_Simulink一维气体动力学架构决策.md`
+- `E:\Tesla_speed\docs\sound-simulation\S12_Platform_Architecture_v1.md`
 
 The V1--V7 history and exact V7 reproduction record is indexed in Obsidian:
 

@@ -1,0 +1,13 @@
+{
+  "schema": "benchmark.schema.v1",
+  "required_top_level": [
+    "schema",
+    "suite",
+    "environment",
+    "cases",
+    "artifacts",
+    "acceptance"
+  ],
+  "numeric_format": "%.12g",
+  "report_recomputes_acceptance": false
+}

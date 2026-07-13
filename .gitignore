@@ -103,3 +103,6 @@ docs/10-learning/*
 # Node
 node_modules/
 package-lock.json
+
+# S12 benchmark working output (accepted baselines are stored separately).
+tools/sound_sim/s12/benchmark/out/
