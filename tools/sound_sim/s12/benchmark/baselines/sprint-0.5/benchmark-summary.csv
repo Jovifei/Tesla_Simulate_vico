@@ -1,0 +1,4 @@
+schema_version,case_id,category,status,finest_observed_order,max_conservation_error,runtime_seconds
+benchmark.schema.v1,uniform_state,conservation,passed,NaN,2.77555756156e-17,4.4280703
+benchmark.schema.v1,long_time_sod,shock_tube,passed,NaN,7.51482058344e-15,0.5264944
+benchmark.schema.v1,smooth_periodic_entropy_wave,temporal_accuracy,passed,3.00024402539,1.90125692967e-15,15.1949186
