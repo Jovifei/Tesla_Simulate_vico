@@ -1,0 +1,8 @@
+schema_version,case_id,cell_count,density_l1_error,shock_position,min_density,min_pressure,conservation_error,max_courant
+benchmark.schema.v1,lax_shock_tube,200,0.0360595736402,3.275,0.342564193254,0.571,6.46239087126e-14,0.45
+benchmark.schema.v1,lax_shock_tube,400,0.0230969955377,3.275,0.342564193254,0.571,6.46239087126e-14,0.45
+benchmark.schema.v1,shu_osher_shock_entropy,200,NaN,2.5,0.800000030813,1,2.77439383757e-13,0.45
+benchmark.schema.v1,shu_osher_shock_entropy,400,NaN,2.45,0.800000030813,1,2.77439383757e-13,0.45
+benchmark.schema.v1,shu_osher_shock_entropy,800,NaN,2.425,0.800000030813,1,2.77439383757e-13,0.45
+benchmark.schema.v1,woodward_colella_blast_wave,200,NaN,NaN,0.160225359054,17.6785341874,1.25055521494e-12,0.45
+benchmark.schema.v1,woodward_colella_blast_wave,400,NaN,NaN,0.160225359054,17.6785341874,1.25055521494e-12,0.45

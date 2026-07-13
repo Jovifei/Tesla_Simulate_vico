@@ -1,0 +1,5 @@
+schema_version,dt_requested,step_count,self_error,observed_order
+benchmark.schema.v1,0.0025,4,1.08300990808e-09,3.00047660536
+benchmark.schema.v1,0.00125,8,1.35331523319e-10,3.00024402539
+benchmark.schema.v1,0.000625,16,1.69135793168e-11,NaN
+benchmark.schema.v1,0.0003125,32,NaN,NaN
