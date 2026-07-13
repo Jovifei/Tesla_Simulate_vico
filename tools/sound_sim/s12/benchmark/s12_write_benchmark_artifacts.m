@@ -17,6 +17,28 @@ artifacts = [ ...
     artifact("smooth_time_scan", "csv", "smooth-time-scan.csv"), ...
     artifact("conservation", "png", "conservation-residual.png"), ...
     artifact("sod_analytic", "png", "sod-analytic-comparison.png")];
+if hasCase(result, "lax_shock_tube")
+    artifacts(end + 1) = artifact("standard_grid_scan", "csv", ...
+        "standard-grid-scan.csv");
+    artifacts(end + 1) = artifact("lax_analytic", "png", ...
+        "lax-analytic-comparison.png");
+end
+if hasCase(result, "shu_osher_shock_entropy")
+    if ~hasArtifact(artifacts, "standard_grid_scan")
+        artifacts(end + 1) = artifact("standard_grid_scan", "csv", ...
+            "standard-grid-scan.csv");
+    end
+    artifacts(end + 1) = artifact("shu_osher_density", "png", ...
+        "shu-osher-density.png");
+end
+if hasCase(result, "woodward_colella_blast_wave")
+    if ~hasArtifact(artifacts, "standard_grid_scan")
+        artifacts(end + 1) = artifact("standard_grid_scan", "csv", ...
+            "standard-grid-scan.csv");
+    end
+    artifacts(end + 1) = artifact("woodward_colella_density", "png", ...
+        "woodward-colella-density.png");
+end
 result.artifacts = artifacts;
 writeSummaryCsv(result, fullfile(outputDirectory, artifacts(3).path));
 writeSmoothScanCsv(result, fullfile(outputDirectory, artifacts(5).path));
@@ -24,8 +46,17 @@ writeMarkdown(result, fullfile(outputDirectory, artifacts(1).path));
 writeSmoothPlot(result, fullfile(outputDirectory, artifacts(4).path));
 writeConservationPlot(result, fullfile(outputDirectory, artifacts(6).path));
 writeSodPlot(result, fullfile(outputDirectory, artifacts(7).path));
+writeStandardArtifacts(result, outputDirectory);
 writeText(fullfile(outputDirectory, artifacts(2).path), ...
     string(jsonencode(result, "PrettyPrint", true)) + newline);
+end
+
+function value = hasCase(result, id)
+value = any(string({result.cases.id}) == id);
+end
+
+function value = hasArtifact(artifacts, id)
+value = any(string({artifacts.id}) == id);
 end
 
 function writeSmoothScanCsv(result, path)
@@ -202,6 +233,97 @@ ylabel(axesHandle, "density");
 title(axesHandle, "Sod Density: Numerical vs Exact");
 grid(axesHandle, "on");
 saveDeterministicFigure(figureHandle, path);
+end
+
+function writeStandardArtifacts(result, outputDirectory)
+artifacts = result.artifacts;
+if hasArtifact(artifacts, "standard_grid_scan")
+    index = find(string({artifacts.id}) == "standard_grid_scan", 1);
+    writeStandardGridScan(result, fullfile(outputDirectory, artifacts(index).path));
+end
+writeStandardDensityPlot(result, outputDirectory, "lax_shock_tube", ...
+    "lax_analytic", "Lax Density: Numerical vs Exact");
+writeStandardDensityPlot(result, outputDirectory, "shu_osher_shock_entropy", ...
+    "shu_osher_density", "Shu-Osher Density");
+writeStandardDensityPlot(result, outputDirectory, ...
+    "woodward_colella_blast_wave", "woodward_colella_density", ...
+    "Woodward-Colella Density");
+end
+
+function writeStandardGridScan(result, path)
+fileId = fopen(path, "wt", "n", "UTF-8");
+assert(fileId >= 0, "S12:Benchmark:FileOpen", ...
+    "Cannot open standard grid-scan CSV.");
+cleanup = onCleanup(@() fclose(fileId));
+fprintf(fileId, "%s\n", ...
+    "schema_version,case_id,cell_count,density_l1_error,shock_position," + ...
+    "min_density,min_pressure,conservation_error,max_courant");
+for caseIndex = 1:numel(result.cases)
+    benchmarkCase = result.cases(caseIndex);
+    if ~startsWith(benchmarkCase.category, "standard_")
+        continue
+    end
+    counts = benchmarkCase.metrics.grid_cell_counts;
+    for gridIndex = 1:numel(counts)
+        fprintf(fileId, ...
+            "benchmark.schema.v1,%s,%.12g,%.12g,%.12g,%.12g,%.12g,%.12g,%.12g\n", ...
+            benchmarkCase.id, counts(gridIndex), ...
+            metricAt(benchmarkCase.metrics, "density_l1_by_grid", ...
+                "density_l1_error", gridIndex), ...
+            metricAt(benchmarkCase.metrics, "shock_position_by_grid", ...
+                "shock_position", gridIndex), ...
+            metricAt(benchmarkCase.metrics, "min_density", "min_density", gridIndex), ...
+            metricAt(benchmarkCase.metrics, "min_pressure", "min_pressure", gridIndex), ...
+            metricAt(benchmarkCase.metrics, "conservation_error", ...
+                "conservation_error", gridIndex), ...
+            metricAt(benchmarkCase.metrics, "max_courant", "max_courant", gridIndex));
+    end
+end
+end
+
+function value = metricAt(metrics, preferredField, fallbackField, index)
+if isfield(metrics, preferredField)
+    values = metrics.(preferredField);
+elseif isfield(metrics, fallbackField)
+    values = metrics.(fallbackField);
+else
+    value = NaN;
+    return
+end
+if isscalar(values)
+    value = values;
+elseif index <= numel(values)
+    value = values(index);
+else
+    value = NaN;
+end
+end
+
+function writeStandardDensityPlot(result, outputDirectory, caseId, artifactId, titleText)
+caseIndex = find(string({result.cases.id}) == caseId, 1);
+artifactIndex = find(string({result.artifacts.id}) == artifactId, 1);
+if isempty(caseIndex) || isempty(artifactIndex)
+    return
+end
+plotData = result.cases(caseIndex).plot;
+figureHandle = figure("Visible", "off", "Color", "white", ...
+    "Position", [100, 100, 800, 500]);
+cleanup = onCleanup(@() close(figureHandle));
+axesHandle = axes(figureHandle);
+plot(axesHandle, plotData.x, plotData.numerical_density, ...
+    "-", "LineWidth", 1.5);
+if isfield(plotData, "exact_density")
+    hold(axesHandle, "on");
+    plot(axesHandle, plotData.x, plotData.exact_density, ...
+        "--", "LineWidth", 1.5);
+    legend(axesHandle, ["Numerical", "Exact"], "Location", "best");
+end
+xlabel(axesHandle, "x");
+ylabel(axesHandle, "density");
+title(axesHandle, titleText);
+grid(axesHandle, "on");
+saveDeterministicFigure(figureHandle, ...
+    fullfile(outputDirectory, result.artifacts(artifactIndex).path));
 end
 
 function saveDeterministicFigure(figureHandle, path)

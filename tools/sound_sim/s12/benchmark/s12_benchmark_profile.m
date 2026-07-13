@@ -12,4 +12,7 @@ end
 profile = jsondecode(fileread(profileFile));
 profile.id = string(profile.id);
 profile.smooth.dt_divisors = reshape(profile.smooth.dt_divisors, 1, []);
+for field = ["lax", "shu_osher", "woodward_colella"]
+    profile.(field).cell_counts = reshape(profile.(field).cell_counts, 1, []);
+end
 end

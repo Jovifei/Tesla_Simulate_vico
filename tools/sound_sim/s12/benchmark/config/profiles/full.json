@@ -14,5 +14,14 @@
     "end_time": 0.01,
     "base_dt": 0.0025,
     "dt_divisors": [1, 2, 4, 8]
+  },
+  "lax": {
+    "cell_counts": [200, 400]
+  },
+  "shu_osher": {
+    "cell_counts": [200, 400, 800]
+  },
+  "woodward_colella": {
+    "cell_counts": [200, 400]
   }
 }

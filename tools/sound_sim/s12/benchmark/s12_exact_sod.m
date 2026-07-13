@@ -1,4 +1,4 @@
-function [rho, velocity, pressure] = s12_exact_sod( ...
+function [rho, velocity, pressure, waves] = s12_exact_sod( ...
         x, x0, time, gamma, left, right)
 %S12_EXACT_SOD Sample the exact ideal-gas Sod Riemann solution.
 [starPressure, starVelocity] = solveStarRegion(gamma, left, right);
@@ -8,6 +8,8 @@ rhoLeftStar = starDensity(left, starPressure, gamma);
 rhoRightStar = starDensity(right, starPressure, gamma);
 aLeftStar = aLeft * (starPressure / left(3))^((gamma - 1) / (2 * gamma));
 aRightStar = aRight * (starPressure / right(3))^((gamma - 1) / (2 * gamma));
+waves = waveLocations(x0, time, gamma, left, right, starPressure, ...
+    starVelocity, aLeft, aRight, aLeftStar, aRightStar);
 similarity = (x - x0) / time;
 rho = zeros(size(x));
 velocity = rho;
@@ -22,6 +24,34 @@ for index = 1:numel(x)
             similarity(index), gamma, right, starPressure, starVelocity, ...
             aRight, aRightStar, rhoRightStar);
     end
+end
+
+function waves = waveLocations(x0, time, gamma, left, right, starPressure, ...
+        starVelocity, aLeft, aRight, aLeftStar, aRightStar)
+waves = struct( ...
+    "left_wave_type", "", "right_wave_type", "", ...
+    "rarefaction_head", NaN, "rarefaction_tail", NaN, ...
+    "contact", x0 + starVelocity * time, "shock", NaN);
+if starPressure > left(3)
+    waves.left_wave_type = "shock";
+    waves.shock = x0 + time * (left(2) - aLeft * sqrt((gamma + 1) / ...
+        (2 * gamma) * starPressure / left(3) + (gamma - 1) / (2 * gamma)));
+else
+    waves.left_wave_type = "rarefaction";
+    waves.rarefaction_head = x0 + time * (left(2) - aLeft);
+    waves.rarefaction_tail = x0 + time * (starVelocity - aLeftStar);
+end
+if starPressure > right(3)
+    waves.right_wave_type = "shock";
+    waves.shock = x0 + time * (right(2) + aRight * sqrt((gamma + 1) / ...
+        (2 * gamma) * starPressure / right(3) + (gamma - 1) / (2 * gamma)));
+else
+    waves.right_wave_type = "rarefaction";
+    if isnan(waves.rarefaction_head)
+        waves.rarefaction_head = x0 + time * (right(2) + aRight);
+        waves.rarefaction_tail = x0 + time * (starVelocity + aRightStar);
+    end
+end
 end
 end
 

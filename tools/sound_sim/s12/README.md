@@ -79,11 +79,16 @@ Current acceptance covers:
 - Uniform-flow Euler flux, stationary-contact preservation, and HLLC mirror symmetry.
 - Uniform-state preservation, periodic Euler conservation, and one-step Sod positivity.
 - Long-time SSP-RK3 uniform-state preservation and Sod exact-Riemann comparison.
-- Config-driven Numerical Benchmark Suite with uniform, Sod, and smooth periodic
-  entropy-wave cases.
+- Config-driven Numerical Benchmark Suite with uniform, Sod, smooth periodic
+  entropy-wave, Lax shock-tube, Shu--Osher shock--entropy, and
+  Woodward--Colella blast-wave cases.
 - Fixed-grid `dt/dt/2/dt/4/dt/8` SSP-RK3 self-convergence near third order,
   explicit no-CFL-clipping checks, deterministic reports, and gated baseline
   promotion.
+- Lax exact-Riemann errors and wave-location diagnostics; literature-defined
+  Shu--Osher and Woodward--Colella multi-grid, positivity, conservation, CFL,
+  and failure diagnostics without claiming unavailable external arrays as
+  analytic truth.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -155,11 +160,14 @@ FVM/Simscape cross-validation, and production exhaust boundaries remain pending.
 
 ## Numerical Benchmark Suite
 
-Sprint 0.5 is documented in `benchmark/README.md`. The default products are a
-Markdown report, deterministic PNG plots, CSV metric tables, and one canonical
-JSON manifest. Single-case, category, full-suite, and report-only entry points
-all use `run_s12_benchmarks`; report-only rendering preserves the acceptance
-stored in JSON.
+Sprint 0.5--1 is documented in `benchmark/README.md`. The default products are
+a Markdown report, deterministic PNG plots, CSV metric tables, and one
+canonical JSON manifest. Single-case, category, full-suite, and report-only
+entry points all use `run_s12_benchmarks`; report-only rendering preserves the
+acceptance stored in JSON. Lax is an exact-Riemann comparison; Shu--Osher and
+Woodward--Colella are clearly labelled literature-definition plus
+self-convergence/feature benchmarks until independently traceable reference
+arrays are incorporated.
 
 The accepted Full profile uses 200 cells for Sod and 64 cells for the smooth
 periodic wave. The validated Full result has Sod density/velocity/pressure L1

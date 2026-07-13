@@ -13,5 +13,20 @@
     "id": "smooth_periodic_entropy_wave",
     "category": "temporal_accuracy",
     "factory": "s12_benchmark_case_smooth_periodic"
+  },
+  {
+    "id": "lax_shock_tube",
+    "category": "standard_shock_tube",
+    "factory": "s12_benchmark_case_lax"
+  },
+  {
+    "id": "shu_osher_shock_entropy",
+    "category": "standard_shock_entropy",
+    "factory": "s12_benchmark_case_shu_osher"
+  },
+  {
+    "id": "woodward_colella_blast_wave",
+    "category": "standard_blast_wave",
+    "factory": "s12_benchmark_case_woodward_colella"
   }
 ]

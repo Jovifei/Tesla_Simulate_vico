@@ -14,7 +14,9 @@ end
 function testRegistryUsesFunctionalCaseContract(testCase)
 registry = s12_benchmark_registry();
 verifyEqual(testCase, string({registry.id}), ...
-    ["uniform_state", "long_time_sod", "smooth_periodic_entropy_wave"]);
+    ["uniform_state", "long_time_sod", "smooth_periodic_entropy_wave", ...
+    "lax_shock_tube", "shu_osher_shock_entropy", ...
+    "woodward_colella_blast_wave"]);
 
 requiredFields = ["id", "category", "factory"];
 verifyTrue(testCase, all(ismember(requiredFields, string(fieldnames(registry)))));
@@ -45,10 +47,12 @@ function testSelectorsCoverCaseCategoryAndSuite(testCase)
 registry = s12_benchmark_registry();
 single = s12_benchmark_select(registry, "case:long_time_sod");
 category = s12_benchmark_select(registry, "category:temporal_accuracy");
+standard = s12_benchmark_select(registry, "category:standard_shock_tube");
 suite = s12_benchmark_select(registry, "all");
 
 verifyEqual(testCase, string({single.id}), "long_time_sod");
 verifyEqual(testCase, string({category.id}), "smooth_periodic_entropy_wave");
+verifyEqual(testCase, string({standard.id}), "lax_shock_tube");
 verifyEqual(testCase, string({suite.id}), string({registry.id}));
 verifyError(testCase, @() s12_benchmark_select(registry, "case:missing"), ...
     "S12:Benchmark:UnknownSelector");
