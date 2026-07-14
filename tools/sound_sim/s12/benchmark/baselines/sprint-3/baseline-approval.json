@@ -1,0 +1,8 @@
+{
+  "schema": "benchmark.baseline.approval.v1",
+  "source_schema": "benchmark.schema.v1",
+  "source_git_commit": "d3986cf9aaad8e193e0f11574816f84466f410cf",
+  "source_manifest": "benchmark-result.json",
+  "status": "accepted",
+  "promotion_mode": "explicit_local_promotion"
+}

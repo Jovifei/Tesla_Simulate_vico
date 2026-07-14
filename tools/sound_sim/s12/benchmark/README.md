@@ -3,7 +3,9 @@
 Sprint 0.5 established a qualification and regression plane around the
 existing S12 solver models. Sprint 1 expands that plane with standard Euler
 benchmarks. Sprint 2 adds selectable minmod MUSCL validation without replacing
-the frozen first-order HLLC/FVM models or implementing a positivity limiter.
+the frozen first-order HLLC/FVM models. Sprint 3 adds a separate
+`muscl_minmod_pp` positivity-preserving mode and accepted baseline while
+keeping `first_order` and `muscl_minmod` frozen.
 
 ## Entry points
 
@@ -19,12 +21,16 @@ run_s12_benchmarks('case:lax_shock_tube', Profile='full', ...
 run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_muscl_final_qualification('run', Profile='full');
+run_s12_positivity_final_qualification('run', Profile='full');
 run_s12_benchmarks('report-only', ...
     SourceManifest='path/to/benchmark-result.json', ...
     OutputDirectory='path/to/rebuilt');
 run_s12_muscl_final_qualification('report-only', ...
     SourceManifest='path/to/sprint2/benchmark-result.json', ...
     OutputDirectory='path/to/rebuilt-sprint2');
+run_s12_positivity_final_qualification('report-only', ...
+    SourceManifest='path/to/sprint3/benchmark-result.json', ...
+    OutputDirectory='path/to/rebuilt-sprint3');
 ```
 
 The ordered registry is `config/registry.json`; deterministic `quick` and
@@ -32,16 +38,23 @@ The ordered registry is `config/registry.json`; deterministic `quick` and
 functional contract: `configure`, `run`, `analyze`, and `accept`.
 
 `Reconstruction` is a mode carried by the profile into each case config. It is
-either `first_order` (the default, using the frozen Sprint 1 models) or
-`muscl_minmod` (dedicated derived models). This is adapter-level model
-selection, not a second runner, reporter, result schema, or external FVM/HLLC
-implementation.
+either `first_order` (the default, using the frozen Sprint 1 models),
+`muscl_minmod` (dedicated Sprint 2 derived models), or `muscl_minmod_pp`
+(dedicated Sprint 3 positivity-preserving derived models). This is
+adapter-level model selection, not a second runner, reporter, result schema,
+or external FVM/HLLC implementation.
 
 `run_s12_muscl_final_qualification` is the Sprint 2 cross-mode gate. It runs
 the existing Full suite once in each mode, then writes a single
 `benchmark.schema.v1` minor-1 Canonical Result for the comparison. Its
 Markdown, PNG, CSV, and JSON are views of that result; report-only preserves
 the source manifest bytes and never reruns a case or recomputes acceptance.
+
+`run_s12_positivity_final_qualification` is the Sprint 3 gate. It compares
+the frozen Sprint 2 accepted baseline with the Full `muscl_minmod_pp` suite,
+records positivity evidence for every case, and writes a
+`benchmark.schema.v1` minor-2 Canonical Result. Report-only also preserves the
+source manifest bytes.
 
 ## Cases
 
@@ -70,6 +83,10 @@ the source manifest bytes and never reruns a case or recomputes acceptance.
   driven from a symmetric mirror extension, so the boundary contract is not
   modified. Positivity, finite-state, conservation, CFL, feature-position,
   and failure diagnostics remain visible in the Canonical Result.
+- `double_rarefaction`: Sprint 3 exact-vacuum stress case from Hu--Adams--Shu
+  style positivity literature. It is not an analytic pressure-value comparison;
+  it verifies positive cell/interface/partial states, actual PP activation,
+  finiteness, conservation, and honest no-clipping/no-fallback diagnostics.
 
 The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
 frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
@@ -89,6 +106,12 @@ Canonical Result produces:
   `sod-analytic-comparison.png`: deterministic foundation plots;
 - `lax-analytic-comparison.png`, `shu-osher-density.png`, and
   `woodward-colella-density.png` when their respective cases are selected.
+- Sprint 2 qualification adds `sprint2-cross-mode-comparison.csv` and the
+  smooth spatial convergence plot.
+- Sprint 3 qualification adds `sprint3-case-comparison.csv`,
+  `sprint3-positivity-diagnostics.csv`,
+  `sprint3-smooth-spatial-convergence.png`, and
+  `sprint3-double-rarefaction.png`.
 
 Report-only rendering never reruns a case or recomputes acceptance. JSON key
 order, case order, numeric formatting, filenames, and PNG metadata policy are
@@ -110,13 +133,16 @@ temporary fields and large simulation traces are not.
 
 ## Deferred gates
 
-Sprint 1 adds Lax, Shu-Osher, and Woodward-Colella without changing the solver.
-Sprint 2 has an accepted `benchmark/baselines/sprint-2` baseline from
+Sprint 1 added Lax, Shu-Osher, and Woodward-Colella without changing the
+solver. Sprint 2 has an accepted `benchmark/baselines/sprint-2` baseline from
 implementation commit `715f8cb`. Its Full qualification reports rho spatial
 orders of `0.99956` (first order) and `1.93607` (MUSCL/minmod) on the finest
 pair, with no smooth-wave CFL or end-time clipping. Constant u/p entropy-wave
 errors are at floating-point round-off and are reported, not used to infer an
-order. Minmod is still not a positivity limiter. Sprint 3 adds
-Zhang-Shu-style positivity preservation at reconstruction, RK-stage, and
-update levels. Sprint 4 performs FVM versus Simscape Pipe(G) and analytic
-Fanno cross-validation. Sprint 3--4 are not implemented here.
+order. Sprint 3 has an accepted `benchmark/baselines/sprint-3` baseline from
+qualification commit `d3986cf`. It validates `muscl_minmod_pp` over the
+current ideal-gas Euler benchmark domain with no clipping, no HLLC fallback,
+no invalid RK stage, and deterministic report-only SHA-256 regeneration.
+Sprint 4 performs FVM versus Simscape Pipe(G) and analytic Fanno
+cross-validation. Engine Library, exhaust network, radiation, and audio DSP
+remain blocked until Sprint 4 is complete.

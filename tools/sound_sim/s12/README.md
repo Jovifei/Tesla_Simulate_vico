@@ -51,6 +51,14 @@ audio and not yet App assets.
   - The Benchmark adapter selects this model only for
     `Reconstruction="muscl_minmod"`; `first_order` continues to use the
     frozen Sprint 1 model.
+- `models/fvm_ref/s12_euler_fvm_periodic_step_muscl_minmod_pp_ref.slx`
+  - Periodic MUSCL-minmod positivity-preserving derivative with primitive
+    slope scaling, global Lax--Friedrichs anchor flux, and shared conservative
+    interface flux limiting.
+- `models/fvm_ref/s12_euler_ssprk3_muscl_minmod_pp_ref.slx`
+  - Transmissive SSP-RK3 positivity-preserving mode. Each Forward-Euler stage
+    records cell, interface, anchor-partial, and final-partial rho/p evidence;
+    no clipping, HLLC fallback, hidden CFL rewriting, or silent retry is used.
 - `models/fvm_ref/s12_euler_ssprk3_periodic_ref.slx`
   - Canonical SSP-RK3 stage convex combinations for periodic validation.
   - Contains no duplicate HLLC/FVM implementation; the Benchmark adapter calls
@@ -107,6 +115,11 @@ Current acceptance covers:
   `N=50/100/200/400`, interface/limiter/RK-stage diagnostics, a cross-mode
   Canonical Result, deterministic report-only regeneration, and the explicit
   accepted baseline at `benchmark/baselines/sprint-2`.
+- Sprint 3 Positivity Preservation: explicit `muscl_minmod_pp` mode with
+  reconstruction positivity scaling, global LF anchor, Hu--Adams--Shu style
+  shared flux limiting, per-stage SSP-RK3 evidence, double-rarefaction stress,
+  deterministic report-only regeneration, and the accepted baseline at
+  `benchmark/baselines/sprint-3`.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -153,8 +166,8 @@ uniform-flow case and `[0, 100000, 0]` for a stationary contact at equal
 pressure. Mirrored left/right states preserve momentum flux and reverse mass,
 energy, and wave-speed directions. The frozen first-order finite-volume update
 and SSP-RK3 long-time reference remain validated; a dedicated MUSCL-minmod
-derivative is validated below. Positivity limiting and production boundary
-conditions remain pending.
+derivative and a separate positivity-preserving MUSCL mode are validated below.
+Production boundary conditions remain pending.
 
 The periodic FVM step preserves a uniform state and closes total mass,
 momentum, and energy over the periodic domain. For the accepted eight-cell Sod
@@ -176,8 +189,10 @@ This establishes SSP-RK3 time integration on the existing first-order HLLC
 spatial operator and a separately selectable second-order MUSCL-minmod spatial
 path. The 200-cell Sod density L1 changes from `0.0133237115957` in
 `first_order` to `0.00420537883454` in `muscl_minmod`; the derived model is
-not a proof of unconditional positivity. A Zhang--Shu-style positivity limiter,
-FVM/Simscape cross-validation, and production exhaust boundaries remain pending.
+not a proof of unconditional positivity. Sprint 3 adds a separate
+`muscl_minmod_pp` mode and accepted baseline for the ideal-gas Euler benchmark
+domain; FVM/Simscape cross-validation and production exhaust boundaries remain
+pending.
 
 ## Numerical Benchmark Suite
 
@@ -199,6 +214,16 @@ promoted `benchmark/baselines/sprint-2` from implementation commit `715f8cb`.
 The cross-mode report records the same-grid first/MUSCL comparison, interface
 minima, limiter counts, RK-stage validity, and explicit zero counts for
 clipping, flux fallback, automatic retry, and CFL rewriting.
+
+Sprint 3 extends the same benchmark/report pipeline with
+`Reconstruction="muscl_minmod_pp"`. The accepted baseline lives at
+`benchmark/baselines/sprint-3`; its manifest SHA-256 is
+`D45538BA31C65C467B8E47DACE8BC7A5BEB09434E5366B458C76A63E947ED08A` and its
+approval record binds to commit `d3986cf9aaad8e193e0f11574816f84466f410cf`.
+The Final Qualification report records 10/10 passing gates, smooth rho spatial
+order `1.93607`, no nominal retries, no clipping, no HLLC fallback, no invalid
+RK stage, and a double-rarefaction stress case that activates shared flux
+limiting while remaining finite and conservative.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

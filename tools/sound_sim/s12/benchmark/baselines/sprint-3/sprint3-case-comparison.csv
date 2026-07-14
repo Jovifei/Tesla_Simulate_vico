@@ -1,0 +1,16 @@
+schema_version,case_id,scheme,rho_l1_error,min_density,min_pressure,conservation_error,max_courant,step_count,reconstruction_pp_activation_count,flux_pp_activation_count,retry_count,rho_error_ratio
+benchmark.schema.v1,uniform_state,muscl_minmod,0,1.1,1,2.77555756156e-17,0.45,119,NaN,NaN,NaN,NaN
+benchmark.schema.v1,uniform_state,muscl_minmod_pp,0,1.1,1,2.77555756156e-17,0.35,152,0,0,0,NaN
+benchmark.schema.v1,long_time_sod,muscl_minmod,0.00420537883454,0.125,0.1,5.87388723519e-15,0.45,193,NaN,NaN,NaN,0.999689164126
+benchmark.schema.v1,long_time_sod,muscl_minmod_pp,0.00420407165193,0.125,0.1,7.80103254721e-15,0.467484874858,249,0,0,0,0.999689164126
+benchmark.schema.v1,smooth_periodic_entropy_wave,muscl_minmod,NaN,NaN,NaN,1.9931972739e-15,NaN,32,NaN,NaN,NaN,NaN
+benchmark.schema.v1,smooth_periodic_entropy_wave,muscl_minmod_pp,NaN,NaN,NaN,1.9931972739e-15,NaN,32,0,0,0,NaN
+benchmark.schema.v1,smooth_periodic_entropy_wave_spatial,muscl_minmod,1.23357809273e-06,NaN,NaN,NaN,NaN,80,NaN,NaN,NaN,1
+benchmark.schema.v1,smooth_periodic_entropy_wave_spatial,muscl_minmod_pp,1.23357809273e-06,NaN,NaN,NaN,NaN,80,0,0,0,1
+benchmark.schema.v1,lax_shock_tube,muscl_minmod,0.00936506958234,0.342928149297,0.571,6.0048764733e-14,0.45,816,NaN,NaN,NaN,1.00005576734
+benchmark.schema.v1,lax_shock_tube,muscl_minmod_pp,0.00936559184735,0.342927906342,0.571,7.32023036745e-14,0.358737734312,1049,0,0,0,1.00005576734
+benchmark.schema.v1,shu_osher_shock_entropy,muscl_minmod,NaN,0.800000030813,1,2.59223666641e-13,0.45,2640,NaN,NaN,NaN,NaN
+benchmark.schema.v1,shu_osher_shock_entropy,muscl_minmod_pp,NaN,0.800000030813,1,3.68517969333e-13,0.355369805741,3394,0,0,0,NaN
+benchmark.schema.v1,woodward_colella_blast_wave,muscl_minmod,NaN,0.152257198133,18.3821545989,1.22568621919e-12,0.45,2703,NaN,NaN,NaN,NaN
+benchmark.schema.v1,woodward_colella_blast_wave,muscl_minmod_pp,NaN,0.152256490931,18.3824943659,1.63780100593e-12,0.38142816271,3475,0,0,0,NaN
+benchmark.schema.v1,double_rarefaction,muscl_minmod_pp,NaN,0.00393242120818,0.000294365850632,2.49800180541e-15,0.455455403785,212,0,28,0,NaN
