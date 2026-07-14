@@ -15,6 +15,11 @@
     "factory": "s12_benchmark_case_smooth_periodic"
   },
   {
+    "id": "smooth_periodic_entropy_wave_spatial",
+    "category": "spatial_accuracy",
+    "factory": "s12_benchmark_case_smooth_spatial"
+  },
+  {
     "id": "lax_shock_tube",
     "category": "standard_shock_tube",
     "factory": "s12_benchmark_case_lax"

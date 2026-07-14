@@ -1,5 +1,6 @@
 {
   "schema": "benchmark.schema.v1",
+  "schema_minor": 1,
   "required_top_level": [
     "schema",
     "suite",
@@ -7,6 +8,16 @@
     "cases",
     "artifacts",
     "acceptance"
+  ],
+  "case_metric_fields": [
+    "spatial_scheme",
+    "reconstruction_variables",
+    "limiter",
+    "limiter_activation_count",
+    "limited_cell_fraction",
+    "minimum_reconstructed_density",
+    "minimum_reconstructed_pressure",
+    "invalid_reconstruction_count"
   ],
   "numeric_format": "%.12g",
   "report_recomputes_acceptance": false

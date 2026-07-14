@@ -15,6 +15,7 @@ function testRegistryUsesFunctionalCaseContract(testCase)
 registry = s12_benchmark_registry();
 verifyEqual(testCase, string({registry.id}), ...
     ["uniform_state", "long_time_sod", "smooth_periodic_entropy_wave", ...
+    "smooth_periodic_entropy_wave_spatial", ...
     "lax_shock_tube", "shu_osher_shock_entropy", ...
     "woodward_colella_blast_wave"]);
 
@@ -39,6 +40,7 @@ verifyEqual(testCase, full.id, "full");
 verifyLessThan(testCase, quick.smooth.cell_count, full.smooth.cell_count);
 verifyEqual(testCase, quick.smooth.dt_divisors, [1, 2, 4, 8]);
 verifyEqual(testCase, full.smooth.dt_divisors, [1, 2, 4, 8]);
+verifyEqual(testCase, full.smooth_spatial.cell_counts.', [50, 100, 200, 400]);
 verifyGreaterThan(testCase, quick.cfl_limit, 0);
 verifyLessThanOrEqual(testCase, quick.cfl_limit, 1);
 end
@@ -47,11 +49,13 @@ function testSelectorsCoverCaseCategoryAndSuite(testCase)
 registry = s12_benchmark_registry();
 single = s12_benchmark_select(registry, "case:long_time_sod");
 category = s12_benchmark_select(registry, "category:temporal_accuracy");
+spatial = s12_benchmark_select(registry, "category:spatial_accuracy");
 standard = s12_benchmark_select(registry, "category:standard_shock_tube");
 suite = s12_benchmark_select(registry, "all");
 
 verifyEqual(testCase, string({single.id}), "long_time_sod");
 verifyEqual(testCase, string({category.id}), "smooth_periodic_entropy_wave");
+verifyEqual(testCase, string({spatial.id}), "smooth_periodic_entropy_wave_spatial");
 verifyEqual(testCase, string({standard.id}), "lax_shock_tube");
 verifyEqual(testCase, string({suite.id}), string({registry.id}));
 verifyError(testCase, @() s12_benchmark_select(registry, "case:missing"), ...
@@ -65,7 +69,8 @@ result = s12_benchmark_new_result("quick", "all", environment);
 
 verifyEqual(testCase, result.schema, "benchmark.schema.v1");
 verifyEqual(testCase, string(fieldnames(result)).', [ ...
-    "schema", "suite", "environment", "cases", "artifacts", "acceptance"]);
+    "schema", "schema_minor", "suite", "environment", "cases", "artifacts", "acceptance"]);
+verifyEqual(testCase, result.schema_minor, 1);
 verifyEqual(testCase, result.suite.profile, "quick");
 verifyEqual(testCase, result.suite.selector, "all");
 verifyEmpty(testCase, result.cases);

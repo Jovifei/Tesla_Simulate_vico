@@ -86,6 +86,9 @@ end
 
 function result = normalizeStrings(result)
 result.schema = string(result.schema);
+if ~isfield(result, "schema_minor")
+    result.schema_minor = 0;
+end
 result.suite.profile = string(result.suite.profile);
 result.suite.selector = string(result.suite.selector);
 environmentFields = fieldnames(result.environment);
