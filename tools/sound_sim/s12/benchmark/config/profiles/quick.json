@@ -1,6 +1,7 @@
 {
   "id": "quick",
   "cfl_limit": 0.45,
+  "pp_requested_cfl": 0.35,
   "uniform": {
     "cell_count": 32,
     "end_time": 0.02
@@ -28,5 +29,10 @@
   },
   "woodward_colella": {
     "cell_counts": [50]
+  },
+  "double_rarefaction": {
+    "cell_count": 100,
+    "end_time": 0.02,
+    "require_pp_activation": false
   }
 }

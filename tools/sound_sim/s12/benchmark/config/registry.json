@@ -33,5 +33,10 @@
     "id": "woodward_colella_blast_wave",
     "category": "standard_blast_wave",
     "factory": "s12_benchmark_case_woodward_colella"
+  },
+  {
+    "id": "double_rarefaction",
+    "category": "positivity_stress",
+    "factory": "s12_benchmark_case_double_rarefaction"
   }
 ]

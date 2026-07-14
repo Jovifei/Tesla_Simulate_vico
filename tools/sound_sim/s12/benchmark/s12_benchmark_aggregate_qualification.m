@@ -31,4 +31,71 @@ summary = struct( ...
     "flux_fallback_count", sum([diagnostics.flux_fallback_count]), ...
     "automatic_retry_count", sum([diagnostics.automatic_retry_count]), ...
     "cfl_changed", any([diagnostics.cfl_changed]));
+if isfield(diagnostics, "positivity_mode")
+    summary = appendPpSummary(summary, diagnostics);
+end
+end
+
+function summary = appendPpSummary(summary, diagnostics)
+reconstructionPpSamples = sum([diagnostics.reconstruction_pp_sampled_cell_count]);
+reconstructionPpLimited = sum([diagnostics.reconstruction_pp_limited_cell_count]);
+fluxPpSamples = sum([diagnostics.flux_pp_sampled_interface_count]);
+fluxPpLimited = sum([diagnostics.flux_pp_limited_interface_count]);
+summary.positivity_mode = diagnostics(1).positivity_mode;
+summary.rho_floor = min([diagnostics.rho_floor]);
+summary.p_floor = min([diagnostics.p_floor]);
+summary.reconstruction_pp_id = diagnostics(1).reconstruction_pp_id;
+summary.high_order_flux_id = diagnostics(1).high_order_flux_id;
+summary.low_order_anchor_id = diagnostics(1).low_order_anchor_id;
+summary.flux_pp_id = diagnostics(1).flux_pp_id;
+summary.time_integrator = diagnostics(1).time_integrator;
+summary.cfl_target = diagnostics(1).cfl_target;
+summary.cfl_pp_hard_max = diagnostics(1).cfl_pp_hard_max;
+summary.reconstruction_pp_activation_count = ...
+    sum([diagnostics.reconstruction_pp_activation_count]);
+summary.reconstruction_pp_limited_cell_fraction = ...
+    reconstructionPpLimited / max(reconstructionPpSamples, 1);
+summary.reconstruction_pp_min_theta = ...
+    min([diagnostics.reconstruction_pp_min_theta]);
+summary.flux_pp_activation_count = sum([diagnostics.flux_pp_activation_count]);
+summary.flux_pp_limited_interface_fraction = ...
+    fluxPpLimited / max(fluxPpSamples, 1);
+summary.flux_pp_min_theta = min([diagnostics.flux_pp_min_theta]);
+summary.minimum_anchor_partial_density = ...
+    min([diagnostics.minimum_anchor_partial_density]);
+summary.minimum_anchor_partial_pressure = ...
+    min([diagnostics.minimum_anchor_partial_pressure]);
+summary.minimum_final_partial_density = ...
+    min([diagnostics.minimum_final_partial_density]);
+summary.minimum_final_partial_pressure = ...
+    min([diagnostics.minimum_final_partial_pressure]);
+summary.alpha_stage_max = max([diagnostics.alpha_stage_max]);
+summary.maximum_flux_correction_norm = ...
+    max([diagnostics.maximum_flux_correction_norm]);
+summary.rejected_step_count = sum([diagnostics.rejected_step_count]);
+summary.retry_count = sum([diagnostics.retry_count]);
+summary.minimum_cell_density_by_stage = stageMinimum( ...
+    diagnostics, "minimum_cell_density_by_stage");
+summary.minimum_cell_pressure_by_stage = stageMinimum( ...
+    diagnostics, "minimum_cell_pressure_by_stage");
+summary.minimum_interface_density_by_stage = stageMinimum( ...
+    diagnostics, "minimum_interface_density_by_stage");
+summary.minimum_interface_pressure_by_stage = stageMinimum( ...
+    diagnostics, "minimum_interface_pressure_by_stage");
+summary.minimum_anchor_partial_density_by_stage = stageMinimum( ...
+    diagnostics, "minimum_anchor_partial_density_by_stage");
+summary.minimum_anchor_partial_pressure_by_stage = stageMinimum( ...
+    diagnostics, "minimum_anchor_partial_pressure_by_stage");
+summary.minimum_final_partial_density_by_stage = stageMinimum( ...
+    diagnostics, "minimum_final_partial_density_by_stage");
+summary.minimum_final_partial_pressure_by_stage = stageMinimum( ...
+    diagnostics, "minimum_final_partial_pressure_by_stage");
+end
+
+function value = stageMinimum(diagnostics, field)
+values = zeros(numel(diagnostics), 3);
+for index = 1:numel(diagnostics)
+    values(index, :) = diagnostics(index).(field);
+end
+value = min(values, [], 1);
 end

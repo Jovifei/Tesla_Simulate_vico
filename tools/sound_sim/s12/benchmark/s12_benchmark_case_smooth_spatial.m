@@ -53,8 +53,22 @@ metrics = struct( ...
     "automatic_retry_count", raw.qualification.automatic_retry_count, ...
     "cfl_changed", raw.qualification.cfl_changed, ...
     "runtime_seconds", raw.runtime_seconds);
+metrics = appendPpMetrics(metrics, raw.qualification);
 analysis = struct("metrics", metrics, "plot", struct( ...
     "x", raw.cell_counts, "error", raw.rho_l1_error));
+end
+
+function metrics = appendPpMetrics(metrics, qualification)
+if ~isfield(qualification, "positivity_mode")
+    return
+end
+fields = fieldnames(qualification);
+for index = 1:numel(fields)
+    field = fields{index};
+    if ~isfield(metrics, field)
+        metrics.(field) = qualification.(field);
+    end
+end
 end
 
 function acceptance = acceptCase(metrics)

@@ -39,6 +39,14 @@ if hasCase(result, "woodward_colella_blast_wave")
     artifacts(end + 1) = artifact("woodward_colella_density", "png", ...
         "woodward-colella-density.png");
 end
+if hasPpCase(result)
+    artifacts(end + 1) = artifact("positivity_diagnostics", "csv", ...
+        "positivity-diagnostics.csv");
+end
+if hasCase(result, "double_rarefaction")
+    artifacts(end + 1) = artifact("double_rarefaction", "png", ...
+        "double-rarefaction.png");
+end
 result.artifacts = artifacts;
 writeSummaryCsv(result, fullfile(outputDirectory, artifacts(3).path));
 writeSmoothScanCsv(result, fullfile(outputDirectory, artifacts(5).path));
@@ -47,6 +55,7 @@ writeSmoothPlot(result, fullfile(outputDirectory, artifacts(4).path));
 writeConservationPlot(result, fullfile(outputDirectory, artifacts(6).path));
 writeSodPlot(result, fullfile(outputDirectory, artifacts(7).path));
 writeStandardArtifacts(result, outputDirectory);
+writePositivityArtifacts(result, outputDirectory);
 writeText(fullfile(outputDirectory, artifacts(2).path), ...
     string(jsonencode(result, "PrettyPrint", true)) + newline);
 end
@@ -57,6 +66,13 @@ end
 
 function value = hasArtifact(artifacts, id)
 value = any(string({artifacts.id}) == id);
+end
+
+function value = hasPpCase(result)
+value = false;
+for index = 1:numel(result.cases)
+    value = value || isfield(result.cases(index).metrics, "positivity_mode");
+end
 end
 
 function writeSmoothScanCsv(result, path)
@@ -164,6 +180,21 @@ for caseIndex = 1:numel(result.cases)
 end
 lines(end + 1:end + 4) = ["", "## Artifacts", "", ...
     "Machine acceptance is stored in `benchmark-result.json`; this report does not recompute it."];
+if hasPpCase(result)
+    lines(end + 1:end + 4) = ["", "## Positivity diagnostics", "", ...
+        "| Case | Recon PP activations | Flux PP activations | Min recon theta | Min flux theta | Retries |"];
+    lines(end + 1) = "|---|---:|---:|---:|---:|---:|";
+    for caseIndex = 1:numel(result.cases)
+        metrics = result.cases(caseIndex).metrics;
+        if ~isfield(metrics, "positivity_mode")
+            continue
+        end
+        lines(end + 1) = sprintf("| %s | %.12g | %.12g | %.12g | %.12g | %.12g |", ...
+            result.cases(caseIndex).id, metrics.reconstruction_pp_activation_count, ...
+            metrics.flux_pp_activation_count, metrics.reconstruction_pp_min_theta, ...
+            metrics.flux_pp_min_theta, metrics.retry_count); %#ok<AGROW>
+    end
+end
 writeText(path, strjoin(lines, newline) + newline);
 end
 
@@ -248,6 +279,81 @@ writeStandardDensityPlot(result, outputDirectory, "shu_osher_shock_entropy", ...
 writeStandardDensityPlot(result, outputDirectory, ...
     "woodward_colella_blast_wave", "woodward_colella_density", ...
     "Woodward-Colella Density");
+end
+
+function writePositivityArtifacts(result, outputDirectory)
+artifactIndex = find(string({result.artifacts.id}) == "positivity_diagnostics", 1);
+if ~isempty(artifactIndex)
+    writePositivityCsv(result, fullfile(outputDirectory, ...
+        result.artifacts(artifactIndex).path));
+end
+caseIndex = find(string({result.cases.id}) == "double_rarefaction", 1);
+artifactIndex = find(string({result.artifacts.id}) == "double_rarefaction", 1);
+if isempty(caseIndex) || isempty(artifactIndex)
+    return
+end
+plotData = result.cases(caseIndex).plot;
+figureHandle = figure("Visible", "off", "Color", "white", ...
+    "Position", [100, 100, 800, 500]);
+cleanup = onCleanup(@() close(figureHandle));
+axesHandle = axes(figureHandle);
+plot(axesHandle, plotData.x, plotData.numerical_density, ...
+    "-", "LineWidth", 1.5);
+hold(axesHandle, "on");
+plot(axesHandle, plotData.x, plotData.numerical_pressure, ...
+    "--", "LineWidth", 1.5);
+legend(axesHandle, ["Density", "Pressure"], "Location", "best");
+xlabel(axesHandle, "x");
+ylabel(axesHandle, "value");
+title(axesHandle, "Double Rarefaction Exact-Vacuum Stress");
+grid(axesHandle, "on");
+saveDeterministicFigure(figureHandle, ...
+    fullfile(outputDirectory, result.artifacts(artifactIndex).path));
+end
+
+function writePositivityCsv(result, path)
+fileId = fopen(path, "wt", "n", "UTF-8");
+assert(fileId >= 0, "S12:Benchmark:FileOpen", ...
+    "Cannot open positivity diagnostics CSV.");
+cleanup = onCleanup(@() fclose(fileId));
+fprintf(fileId, "%s\n", ...
+    "schema_version,case_id,rho_floor,p_floor,reconstruction_pp_activation_count," + ...
+    "flux_pp_activation_count,reconstruction_pp_min_theta,flux_pp_min_theta," + ...
+    "cell_rho_stage1,cell_rho_stage2,cell_rho_stage3," + ...
+    "cell_p_stage1,cell_p_stage2,cell_p_stage3," + ...
+    "interface_rho_stage1,interface_rho_stage2,interface_rho_stage3," + ...
+    "interface_p_stage1,interface_p_stage2,interface_p_stage3," + ...
+    "anchor_rho_stage1,anchor_rho_stage2,anchor_rho_stage3," + ...
+    "anchor_p_stage1,anchor_p_stage2,anchor_p_stage3," + ...
+    "final_partial_rho_stage1,final_partial_rho_stage2,final_partial_rho_stage3," + ...
+    "final_partial_p_stage1,final_partial_p_stage2,final_partial_p_stage3," + ...
+    "rejected_step_count,retry_count,maximum_flux_correction_norm");
+for caseIndex = 1:numel(result.cases)
+    metrics = result.cases(caseIndex).metrics;
+    if ~isfield(metrics, "positivity_mode")
+        continue
+    end
+    values = [metrics.rho_floor, metrics.p_floor, ...
+        metrics.reconstruction_pp_activation_count, metrics.flux_pp_activation_count, ...
+        metrics.reconstruction_pp_min_theta, metrics.flux_pp_min_theta, ...
+        numericRow(metrics.minimum_cell_density_by_stage), ...
+        numericRow(metrics.minimum_cell_pressure_by_stage), ...
+        numericRow(metrics.minimum_interface_density_by_stage), ...
+        numericRow(metrics.minimum_interface_pressure_by_stage), ...
+        numericRow(metrics.minimum_anchor_partial_density_by_stage), ...
+        numericRow(metrics.minimum_anchor_partial_pressure_by_stage), ...
+        numericRow(metrics.minimum_final_partial_density_by_stage), ...
+        numericRow(metrics.minimum_final_partial_pressure_by_stage), ...
+        metrics.rejected_step_count, metrics.retry_count, ...
+        metrics.maximum_flux_correction_norm];
+    fprintf(fileId, "benchmark.schema.v1,%s", result.cases(caseIndex).id);
+    fprintf(fileId, ",%.12g", values);
+    fprintf(fileId, "\n");
+end
+end
+
+function value = numericRow(value)
+value = reshape(value, 1, []);
 end
 
 function writeStandardGridScan(result, path)

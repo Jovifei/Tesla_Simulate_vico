@@ -67,11 +67,19 @@ end
 end
 
 function acceptance = acceptCase(metrics)
+cflLimit = cflAcceptanceLimit(metrics);
 checks = [ ...
     check("uniform_state_error", metrics.max_state_error, 1e-10), ...
     check("uniform_conservation", metrics.conservation_error, 1e-10), ...
-    check("uniform_cfl", metrics.max_courant, 0.45 * (1 + 1e-12))];
+    check("uniform_cfl", metrics.max_courant, cflLimit)];
 acceptance = struct("status", passStatus(checks), "checks", checks);
+end
+
+function limit = cflAcceptanceLimit(metrics)
+limit = 0.45 * (1 + 1e-12);
+if isfield(metrics, "positivity_mode")
+    limit = 0.5 * (1 + 1e-12);
+end
 end
 
 function value = check(id, actual, limit)

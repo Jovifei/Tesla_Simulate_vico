@@ -17,7 +17,7 @@ verifyEqual(testCase, string({registry.id}), ...
     ["uniform_state", "long_time_sod", "smooth_periodic_entropy_wave", ...
     "smooth_periodic_entropy_wave_spatial", ...
     "lax_shock_tube", "shu_osher_shock_entropy", ...
-    "woodward_colella_blast_wave"]);
+    "woodward_colella_blast_wave", "double_rarefaction"]);
 
 requiredFields = ["id", "category", "factory"];
 verifyTrue(testCase, all(ismember(requiredFields, string(fieldnames(registry)))));
@@ -43,6 +43,10 @@ verifyEqual(testCase, full.smooth.dt_divisors, [1, 2, 4, 8]);
 verifyEqual(testCase, full.smooth_spatial.cell_counts.', [50, 100, 200, 400]);
 verifyGreaterThan(testCase, quick.cfl_limit, 0);
 verifyLessThanOrEqual(testCase, quick.cfl_limit, 1);
+verifyGreaterThan(testCase, quick.pp_requested_cfl, 0);
+verifyLessThan(testCase, quick.pp_requested_cfl, quick.cfl_limit);
+verifyFalse(testCase, quick.double_rarefaction.require_pp_activation);
+verifyTrue(testCase, full.double_rarefaction.require_pp_activation);
 end
 
 function testSelectorsCoverCaseCategoryAndSuite(testCase)
@@ -70,7 +74,7 @@ result = s12_benchmark_new_result("quick", "all", environment);
 verifyEqual(testCase, result.schema, "benchmark.schema.v1");
 verifyEqual(testCase, string(fieldnames(result)).', [ ...
     "schema", "schema_minor", "suite", "environment", "cases", "artifacts", "acceptance"]);
-verifyEqual(testCase, result.schema_minor, 1);
+verifyEqual(testCase, result.schema_minor, 2);
 verifyEqual(testCase, result.suite.profile, "quick");
 verifyEqual(testCase, result.suite.selector, "all");
 verifyEmpty(testCase, result.cases);
