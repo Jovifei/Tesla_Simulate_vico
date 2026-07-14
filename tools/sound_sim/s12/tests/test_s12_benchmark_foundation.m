@@ -47,6 +47,8 @@ verifyGreaterThan(testCase, quick.pp_requested_cfl, 0);
 verifyLessThan(testCase, quick.pp_requested_cfl, quick.cfl_limit);
 verifyFalse(testCase, quick.double_rarefaction.require_pp_activation);
 verifyTrue(testCase, full.double_rarefaction.require_pp_activation);
+verifyEqual(testCase, quick.double_rarefaction.requested_cfl, 0.45);
+verifyEqual(testCase, full.double_rarefaction.requested_cfl, 0.45);
 end
 
 function testSelectorsCoverCaseCategoryAndSuite(testCase)
