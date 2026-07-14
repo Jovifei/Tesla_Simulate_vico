@@ -103,6 +103,10 @@ Current acceptance covers:
 - Componentwise primitive-variable MUSCL-minmod reconstruction with auditable
   `first_order` fallback; uniform periodic preservation, fixed three-stage dt,
   Sod and Lax L1 improvement, and complete-suite regression in both modes.
+- Sprint 2 Final Qualification: cell-average spatial entropy-wave evidence on
+  `N=50/100/200/400`, interface/limiter/RK-stage diagnostics, a cross-mode
+  Canonical Result, deterministic report-only regeneration, and the explicit
+  accepted baseline at `benchmark/baselines/sprint-2`.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -190,8 +194,20 @@ Sprint 2 extends the same entry point with
 `Reconstruction="first_order"|"muscl_minmod"`; the default remains
 `first_order`. The mode is recorded in every case config. The final Full Suite
 passes in both modes, and the first-order run has zero non-runtime metric drift
-against Sprint 1 accepted baseline `76f526b`. MUSCL accepted-baseline promotion
-has deliberately not been run.
+against Sprint 1 accepted baseline `76f526b`. Final Qualification subsequently
+promoted `benchmark/baselines/sprint-2` from implementation commit `715f8cb`.
+The cross-mode report records the same-grid first/MUSCL comparison, interface
+minima, limiter counts, RK-stage validity, and explicit zero counts for
+clipping, flux fallback, automatic retry, and CFL rewriting.
+
+For the periodic entropy wave, finite-volume cell averages are used for both
+the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are
+`[5.01334e-4, 2.50997e-4, 1.25591e-4, 6.28151e-5]` in first order and
+`[6.37171e-5, 1.79840e-5, 4.72043e-6, 1.23358e-6]` with MUSCL/minmod. The
+finest rho orders are `0.99956` and `1.93607`; requested and effective dt are
+identical, with no CFL or end-time clipping. Exact velocity and pressure are
+constant in this entropy wave, so their near-zero L1 values are round-off
+limited and do not provide a meaningful observed spatial order.
 
 The accepted Full profile uses 200 cells for Sod and 64 cells for the smooth
 periodic wave. The validated Full result has Sod density/velocity/pressure L1

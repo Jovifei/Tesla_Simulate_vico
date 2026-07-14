@@ -1,0 +1,854 @@
+{
+  "schema": "benchmark.schema.v1",
+  "schema_minor": 1,
+  "suite": {
+    "profile": "full",
+    "selector": "sprint2_muscl_final_qualification"
+  },
+  "environment": {
+    "git_commit": "715f8cb383acd8b62c0ab62c99b38c4f7f2612c4",
+    "matlab_release": "R2026a",
+    "matlab_version": "26.1.0.3203278 (R2026a)",
+    "platform": "win64"
+  },
+  "source_results": {
+    "first_order_acceptance": "passed",
+    "muscl_minmod_acceptance": "passed"
+  },
+  "cases": [
+    {
+      "id": "uniform_state",
+      "category": "conservation",
+      "first_order": {
+        "max_state_error": 2.7755575615628914E-17,
+        "density_l1_error": 0,
+        "velocity_l1_error": 2.7755575615628914E-17,
+        "pressure_l1_error": 0,
+        "min_density": 1.1,
+        "min_pressure": 1,
+        "density_total_variation": 0,
+        "conservation_error": 2.7755575615628914E-17,
+        "max_courant": 0.45000000000000007,
+        "step_count": 119,
+        "runtime_seconds": 1.6202715,
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 1.1,
+        "minimum_reconstructed_pressure": 1,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 357,
+        "end_time_clipping_count": 1,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "muscl_minmod": {
+        "max_state_error": 2.7755575615628914E-17,
+        "density_l1_error": 0,
+        "velocity_l1_error": 2.7755575615628914E-17,
+        "pressure_l1_error": 0,
+        "min_density": 1.1,
+        "min_pressure": 1,
+        "density_total_variation": 0,
+        "conservation_error": 2.7755575615628914E-17,
+        "max_courant": 0.45000000000000007,
+        "step_count": 119,
+        "runtime_seconds": 0.5656997,
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 1.1,
+        "minimum_reconstructed_pressure": 1,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 357,
+        "end_time_clipping_count": 1,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "rho_error_ratio": null
+    },
+    {
+      "id": "long_time_sod",
+      "category": "shock_tube",
+      "first_order": {
+        "density_l1_error": 0.013323711595666844,
+        "velocity_l1_error": 0.023665316528434507,
+        "pressure_l1_error": 0.011488376790688513,
+        "min_density": 0.12500000000051734,
+        "min_pressure": 0.1000000000005796,
+        "density_total_variation": 0.87538838720214407,
+        "shock_position": 0.8600000000000001,
+        "contact_position": 0.8600000000000001,
+        "conservation_error": 7.5148205834433376E-15,
+        "max_courant": 0.45000000000000012,
+        "step_count": 191,
+        "runtime_seconds": 0.5538173,
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.125,
+        "minimum_reconstructed_pressure": 0.099999999999999978,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 573,
+        "end_time_clipping_count": 1,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "muscl_minmod": {
+        "density_l1_error": 0.0042053788345350384,
+        "velocity_l1_error": 0.0076463833543301144,
+        "pressure_l1_error": 0.0031344445771405421,
+        "min_density": 0.125,
+        "min_pressure": 0.099999999999999978,
+        "density_total_variation": 0.877317900193948,
+        "shock_position": 0.855,
+        "contact_position": 0.855,
+        "conservation_error": 5.8738872351940773E-15,
+        "max_courant": 0.45000000000000012,
+        "step_count": 193,
+        "runtime_seconds": 0.3997527,
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 180535,
+        "limited_cell_fraction": 0.52898588649883982,
+        "minimum_reconstructed_density": 0.125,
+        "minimum_reconstructed_pressure": 0.099999999999999978,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 579,
+        "end_time_clipping_count": 1,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "rho_error_ratio": 0.31563118162229792
+    },
+    {
+      "id": "smooth_periodic_entropy_wave",
+      "category": "temporal_accuracy",
+      "first_order": {
+        "dt_requested": [
+          0.0025,
+          0.00125,
+          0.000625,
+          0.0003125
+        ],
+        "step_count": [
+          4,
+          8,
+          16,
+          32
+        ],
+        "self_error": [
+          1.0830099080762101E-9,
+          1.353315233187321E-10,
+          1.6913579316824364E-11
+        ],
+        "observed_order": [
+          3.000476605355991,
+          3.0002440253930338
+        ],
+        "exact_error": [
+          0.00037706090174657978,
+          0.00037705983091917831,
+          0.00037705969724904996,
+          0.00037705968055207277
+        ],
+        "conservation_error": 1.9012569296705806E-15,
+        "cfl_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "stage_dt_ratio": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.80024090875896547,
+        "minimum_reconstructed_pressure": 0.99999999999999645,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 180,
+        "end_time_clipping_count": 0,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false,
+        "runtime_seconds": 30.676947
+      },
+      "muscl_minmod": {
+        "dt_requested": [
+          0.0025,
+          0.00125,
+          0.000625,
+          0.0003125
+        ],
+        "step_count": [
+          4,
+          8,
+          16,
+          32
+        ],
+        "self_error": [
+          1.1224882540971209E-7,
+          1.1859071764612353E-8,
+          1.4760320150593261E-9
+        ],
+        "observed_order": [
+          3.2426373519144773,
+          3.0061951725862337
+        ],
+        "exact_error": [
+          7.30410333648567E-5,
+          7.3069541373727465E-5,
+          7.3073179015479059E-5,
+          7.30736529837032E-5
+        ],
+        "conservation_error": 1.993197273897351E-15,
+        "cfl_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "stage_dt_ratio": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 11520,
+        "limited_cell_fraction": 1,
+        "minimum_reconstructed_density": 0.80024090875896547,
+        "minimum_reconstructed_pressure": 0.99999999999999656,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 180,
+        "end_time_clipping_count": 0,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false,
+        "runtime_seconds": 37.2562364
+      },
+      "rho_error_ratio": null
+    },
+    {
+      "id": "smooth_periodic_entropy_wave_spatial",
+      "category": "spatial_accuracy",
+      "first_order": {
+        "cell_counts": [
+          50,
+          100,
+          200,
+          400
+        ],
+        "rho_l1_error": [
+          0.00050133442371338652,
+          0.00025099713446122604,
+          0.00012559139717707336,
+          6.2815061789565639E-5
+        ],
+        "velocity_l1_error": [
+          8.43769498715119E-17,
+          1.8540724511240113E-16,
+          2.8865798640254071E-16,
+          4.1244785364824564E-16
+        ],
+        "pressure_l1_error": [
+          6.8389738316909644E-16,
+          1.2112533198660458E-15,
+          2.3919755065549E-15,
+          4.8441806121957143E-15
+        ],
+        "rho_observed_order": [
+          0.99810240541289352,
+          0.9989332484090151,
+          0.99955521017088989
+        ],
+        "velocity_observed_order": [
+          -1.1357767790304667,
+          -0.63866352055440245,
+          -0.51485058751014157
+        ],
+        "pressure_observed_order": [
+          -0.82464884562870577,
+          -0.98170199678677561,
+          -1.018050039356722
+        ],
+        "observed_order": [
+          0.99810240541289352,
+          0.9989332484090151,
+          0.99955521017088989
+        ],
+        "dt_requested": [
+          0.001,
+          0.0005,
+          0.00025,
+          0.000125
+        ],
+        "dt_effective": [
+          0.001,
+          0.0005,
+          0.00025,
+          0.000125
+        ],
+        "step_count": [
+          10,
+          20,
+          40,
+          80
+        ],
+        "cfl_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "end_time_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "uses_cell_averages": true,
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.800008224568867,
+        "minimum_reconstructed_pressure": 0.999999999999992,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 450,
+        "end_time_clipping_count": 0,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false,
+        "runtime_seconds": 90.9500896
+      },
+      "muscl_minmod": {
+        "cell_counts": [
+          50,
+          100,
+          200,
+          400
+        ],
+        "rho_l1_error": [
+          6.3717082084726589E-5,
+          1.7983970641816116E-5,
+          4.7204255905863853E-6,
+          1.2335780927302808E-6
+        ],
+        "velocity_l1_error": [
+          1.1546319456101628E-16,
+          2.2093438190040615E-16,
+          3.4583447217073629E-16,
+          4.599098879509711E-16
+        ],
+        "pressure_l1_error": [
+          6.4392935428259077E-16,
+          1.2456702336294257E-15,
+          2.4302782009044677E-15,
+          4.864997293907436E-15
+        ],
+        "rho_observed_order": [
+          1.8249686148232978,
+          1.9297227424893821,
+          1.9360678883347477
+        ],
+        "velocity_observed_order": [
+          -0.93618490240255658,
+          -0.64646373248035327,
+          -0.41126953419744994
+        ],
+        "pressure_observed_order": [
+          -0.95194787059385866,
+          -0.96419927857215337,
+          -1.0013175298092762
+        ],
+        "observed_order": [
+          1.8249686148232978,
+          1.9297227424893821,
+          1.9360678883347477
+        ],
+        "dt_requested": [
+          0.001,
+          0.0005,
+          0.00025,
+          0.000125
+        ],
+        "dt_effective": [
+          0.001,
+          0.0005,
+          0.00025,
+          0.000125
+        ],
+        "step_count": [
+          10,
+          20,
+          40,
+          80
+        ],
+        "cfl_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "end_time_clipped": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "uses_cell_averages": true,
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 127498,
+        "limited_cell_fraction": 0.99998431372549024,
+        "minimum_reconstructed_density": 0.800008224568867,
+        "minimum_reconstructed_pressure": 0.99999999999999156,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 450,
+        "end_time_clipping_count": 0,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false,
+        "runtime_seconds": 96.7780142
+      },
+      "rho_error_ratio": [
+        0.12709496709356971,
+        0.071650103418189712,
+        0.037585580674215927,
+        0.019638253272166541
+      ]
+    },
+    {
+      "id": "lax_shock_tube",
+      "category": "standard_shock_tube",
+      "first_order": {
+        "density_l1_error": 0.0230969955377189,
+        "velocity_l1_error": 0.020667284069302235,
+        "pressure_l1_error": 0.024820321647020548,
+        "density_l1_by_grid": [
+          0.036059573640232011,
+          0.0230969955377189
+        ],
+        "velocity_l1_by_grid": [
+          0.039181420067932134,
+          0.020667284069302235
+        ],
+        "pressure_l1_by_grid": [
+          0.045562500107673272,
+          0.024820321647020548
+        ],
+        "shock_position_error": 0.051882074713207604,
+        "contact_position_error": 0.01266006537725084,
+        "rarefaction_head_position_error": 0.2638654037219581,
+        "shock_position": 3.2750000000000004,
+        "contact_position": 2.0000000000000004,
+        "rarefaction_head_position": -3.6875,
+        "rarefaction_head_locator": "five_percent_fan_amplitude",
+        "exact_shock_position": 3.2231179252867928,
+        "exact_contact_position": 1.9873399346227496,
+        "exact_rarefaction_head_position": -3.4236345962780419,
+        "min_density": 0.34256419325404613,
+        "min_pressure": 0.571,
+        "density_total_variation": 1.8654683957271243,
+        "conservation_error": 6.4623908712607171E-14,
+        "max_courant": 0.45000000000000012,
+        "step_count": 816,
+        "grid_cell_counts": [
+          200,
+          400
+        ],
+        "grid_error_nonincreasing": true,
+        "has_nonfinite": false,
+        "runtime_seconds": 4.9425856,
+        "failure_diagnostics": "",
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.33981017743933145,
+        "minimum_reconstructed_pressure": 0.571,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 2448,
+        "end_time_clipping_count": 2,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "muscl_minmod": {
+        "density_l1_error": 0.0093650695823440586,
+        "velocity_l1_error": 0.0057148125078354374,
+        "pressure_l1_error": 0.0066372821325270774,
+        "density_l1_by_grid": [
+          0.016296087397749032,
+          0.0093650695823440586
+        ],
+        "velocity_l1_by_grid": [
+          0.014336941098545039,
+          0.0057148125078354374
+        ],
+        "pressure_l1_by_grid": [
+          0.015790497289362885,
+          0.0066372821325270774
+        ],
+        "shock_position_error": 0.026882074713208137,
+        "contact_position_error": 0.037660065377250751,
+        "rarefaction_head_position_error": 0.011134596278042252,
+        "shock_position": 3.2500000000000009,
+        "contact_position": 2.0250000000000004,
+        "rarefaction_head_position": -3.4124999999999996,
+        "rarefaction_head_locator": "five_percent_fan_amplitude",
+        "exact_shock_position": 3.2231179252867928,
+        "exact_contact_position": 1.9873399346227496,
+        "exact_rarefaction_head_position": -3.4236345962780419,
+        "min_density": 0.34292814929673343,
+        "min_pressure": 0.571,
+        "density_total_variation": 1.867612505751342,
+        "conservation_error": 6.0048764732953565E-14,
+        "max_courant": 0.45000000000000012,
+        "step_count": 816,
+        "grid_cell_counts": [
+          200,
+          400
+        ],
+        "grid_error_nonincreasing": true,
+        "has_nonfinite": false,
+        "runtime_seconds": 5.5429334999999993,
+        "failure_diagnostics": "",
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 1.190163E+6,
+        "limited_cell_fraction": 0.49205897147591432,
+        "minimum_reconstructed_density": 0.32649574468570297,
+        "minimum_reconstructed_pressure": 0.571,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 2448,
+        "end_time_clipping_count": 2,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "rho_error_ratio": 0.40546700401142172
+    },
+    {
+      "id": "shu_osher_shock_entropy",
+      "category": "standard_shock_entropy",
+      "first_order": {
+        "shock_position": 2.4250000000000003,
+        "shock_position_by_grid": [
+          2.5000000000000004,
+          2.45,
+          2.4250000000000003
+        ],
+        "post_shock_window": [
+          0.42500000000000027,
+          2.3750000000000004
+        ],
+        "density_peak_to_trough": 1.1407527141850862,
+        "density_peak_to_trough_by_grid": [
+          0.65858890218577493,
+          0.94084730497082836,
+          1.1407527141850862
+        ],
+        "density_total_variation": 2.5377157264152181,
+        "density_total_variation_by_grid": [
+          1.3608883025967469,
+          1.9055091623357074,
+          2.5377157264152181
+        ],
+        "min_density": 0.80000003081338666,
+        "min_pressure": 1,
+        "conservation_error": 2.7743938375666177E-13,
+        "max_courant": 0.45000000000000012,
+        "step_count": 2615,
+        "grid_cell_counts": [
+          200,
+          400,
+          800
+        ],
+        "has_nonfinite": false,
+        "runtime_seconds": 5.2468770000000005,
+        "failure_diagnostics": "",
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.80000003081338666,
+        "minimum_reconstructed_pressure": 1,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 7845,
+        "end_time_clipping_count": 3,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "muscl_minmod": {
+        "shock_position": 2.4000000000000004,
+        "shock_position_by_grid": [
+          2.4500000000000006,
+          2.4250000000000003,
+          2.4000000000000004
+        ],
+        "post_shock_window": [
+          0.40000000000000036,
+          2.3500000000000005
+        ],
+        "density_peak_to_trough": 1.3271508813609074,
+        "density_peak_to_trough_by_grid": [
+          0.42804203192863932,
+          0.726396608029086,
+          1.3271508813609074
+        ],
+        "density_total_variation": 5.97488142164809,
+        "density_total_variation_by_grid": [
+          1.2945807896914077,
+          2.5124710880827461,
+          5.97488142164809
+        ],
+        "min_density": 0.80000003081338666,
+        "min_pressure": 1,
+        "conservation_error": 2.5922366664132535E-13,
+        "max_courant": 0.45000000000000012,
+        "step_count": 2640,
+        "grid_cell_counts": [
+          200,
+          400,
+          800
+        ],
+        "has_nonfinite": false,
+        "runtime_seconds": 6.7700981,
+        "failure_diagnostics": "",
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 7.262744E+6,
+        "limited_cell_fraction": 0.88317287039142844,
+        "minimum_reconstructed_density": 0.80000003081338666,
+        "minimum_reconstructed_pressure": 1,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 7920,
+        "end_time_clipping_count": 3,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "rho_error_ratio": null
+    },
+    {
+      "id": "woodward_colella_blast_wave",
+      "category": "standard_blast_wave",
+      "first_order": {
+        "min_density": 0.16022535905389396,
+        "min_pressure": 17.678534187401951,
+        "density_total_variation": 9.4091222888107744,
+        "has_nonfinite": false,
+        "conservation_error": 1.2505552149377763E-12,
+        "physical_mass_residual": 8.1001871876651424E-14,
+        "physical_energy_residual": 1.1018967152597569E-13,
+        "max_courant": 0.45000000000000007,
+        "step_count": 2703,
+        "major_gradient_positions": [
+          0.65000000000000013,
+          0.79,
+          0.8025
+        ],
+        "major_gradient_positions_by_grid": [
+          [
+            0.64999999999999991,
+            0.78,
+            0.8
+          ],
+          [
+            0.65000000000000013,
+            0.79,
+            0.8025
+          ]
+        ],
+        "grid_cell_counts": [
+          200,
+          400
+        ],
+        "runtime_seconds": 9.1600912,
+        "failure_diagnostics": "",
+        "spatial_scheme": "first_order",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "none",
+        "limiter_activation_count": 0,
+        "limited_cell_fraction": 0,
+        "minimum_reconstructed_density": 0.16022534825337165,
+        "minimum_reconstructed_pressure": 0.01,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 8109,
+        "end_time_clipping_count": 2,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "muscl_minmod": {
+        "min_density": 0.15225719813304017,
+        "min_pressure": 18.382154598863703,
+        "density_total_variation": 12.036374328273709,
+        "has_nonfinite": false,
+        "conservation_error": 1.2256862191861728E-12,
+        "physical_mass_residual": 7.815970093361102E-14,
+        "physical_energy_residual": 1.1045423256205247E-13,
+        "max_courant": 0.45000000000000007,
+        "step_count": 2703,
+        "major_gradient_positions": [
+          0.64750000000000019,
+          0.8025,
+          0.86749999999999994
+        ],
+        "major_gradient_positions_by_grid": [
+          [
+            0.645,
+            0.80500000000000016,
+            0.87000000000000011
+          ],
+          [
+            0.64750000000000019,
+            0.8025,
+            0.86749999999999994
+          ]
+        ],
+        "grid_cell_counts": [
+          200,
+          400
+        ],
+        "runtime_seconds": 12.6609809,
+        "failure_diagnostics": "",
+        "spatial_scheme": "muscl_minmod",
+        "reconstruction_variables": "primitive_rho_u_p",
+        "limiter": "minmod",
+        "limiter_activation_count": 3.0467294E+7,
+        "limited_cell_fraction": 0.75387050561427271,
+        "minimum_reconstructed_density": 0.15225719732297519,
+        "minimum_reconstructed_pressure": 0.01,
+        "invalid_reconstruction_count": 0,
+        "invalid_stage_count": 0,
+        "stage_validation_count": 8109,
+        "end_time_clipping_count": 2,
+        "clipping_count": 0,
+        "flux_fallback_count": 0,
+        "automatic_retry_count": 0,
+        "cfl_changed": false
+      },
+      "rho_error_ratio": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "report",
+      "type": "markdown",
+      "path": "benchmark-report.md"
+    },
+    {
+      "id": "manifest",
+      "type": "json",
+      "path": "benchmark-result.json"
+    },
+    {
+      "id": "case_comparison",
+      "type": "csv",
+      "path": "sprint2-case-comparison.csv"
+    },
+    {
+      "id": "smooth_spatial",
+      "type": "csv",
+      "path": "sprint2-smooth-spatial.csv"
+    },
+    {
+      "id": "smooth_spatial_convergence",
+      "type": "png",
+      "path": "sprint2-smooth-spatial-convergence.png"
+    }
+  ],
+  "acceptance": {
+    "status": "passed",
+    "checks": [
+      {
+        "id": "first_order_suite",
+        "passed": true
+      },
+      {
+        "id": "muscl_suite",
+        "passed": true
+      },
+      {
+        "id": "smooth_spatial_first_order",
+        "passed": true
+      },
+      {
+        "id": "smooth_spatial_muscl_order",
+        "passed": true
+      },
+      {
+        "id": "smooth_spatial_muscl_lower_error",
+        "passed": true
+      },
+      {
+        "id": "smooth_spatial_time_grid",
+        "passed": true
+      },
+      {
+        "id": "all_diagnostics_honest",
+        "passed": true
+      },
+      {
+        "id": "blast_wave_positive",
+        "passed": true
+      }
+    ]
+  }
+}

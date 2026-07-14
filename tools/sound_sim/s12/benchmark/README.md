@@ -18,9 +18,13 @@ run_s12_benchmarks('case:lax_shock_tube', Profile='full', ...
     Reconstruction='muscl_minmod');
 run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
+run_s12_muscl_final_qualification('run', Profile='full');
 run_s12_benchmarks('report-only', ...
     SourceManifest='path/to/benchmark-result.json', ...
     OutputDirectory='path/to/rebuilt');
+run_s12_muscl_final_qualification('report-only', ...
+    SourceManifest='path/to/sprint2/benchmark-result.json', ...
+    OutputDirectory='path/to/rebuilt-sprint2');
 ```
 
 The ordered registry is `config/registry.json`; deterministic `quick` and
@@ -33,6 +37,12 @@ either `first_order` (the default, using the frozen Sprint 1 models) or
 selection, not a second runner, reporter, result schema, or external FVM/HLLC
 implementation.
 
+`run_s12_muscl_final_qualification` is the Sprint 2 cross-mode gate. It runs
+the existing Full suite once in each mode, then writes a single
+`benchmark.schema.v1` minor-1 Canonical Result for the comparison. Its
+Markdown, PNG, CSV, and JSON are views of that result; report-only preserves
+the source manifest bytes and never reruns a case or recomputes acceptance.
+
 ## Cases
 
 - `uniform_state`: invokes the existing transmissive SSP-RK3 model and checks
@@ -43,6 +53,10 @@ implementation.
   FVM step with the dedicated SSP-RK3 stage model. It uses the same requested
   dt in all three stages and fails if any stage is CFL-clipped. Fixed-grid
   `dt`, `dt/2`, `dt/4`, and `dt/8` self-convergence establishes time order.
+- `smooth_periodic_entropy_wave_spatial`: uses finite-volume cell-average
+  initial data and cell-average analytic reference on `N=50/100/200/400` in
+  the Full profile. It records rho/u/p L1 values, observed rho spatial order,
+  requested/effective dt, and CFL/end-time-clipping evidence for both modes.
 - `lax_shock_tube`: uses the exact Euler Riemann sampler for `rho/u/p` L1
   errors, wave locations, positivity, conservation, CFL, and a two-grid error
   trend. The numerical rarefaction-front locator is a documented 5%-of-fan-
@@ -97,8 +111,12 @@ temporary fields and large simulation traces are not.
 ## Deferred gates
 
 Sprint 1 adds Lax, Shu-Osher, and Woodward-Colella without changing the solver.
-Sprint 2 implements minmod MUSCL with first-order fallback; final Full Suite
-passes in both modes, but no MUSCL accepted baseline has been promoted. Sprint 3 adds
+Sprint 2 has an accepted `benchmark/baselines/sprint-2` baseline from
+implementation commit `715f8cb`. Its Full qualification reports rho spatial
+orders of `0.99956` (first order) and `1.93607` (MUSCL/minmod) on the finest
+pair, with no smooth-wave CFL or end-time clipping. Constant u/p entropy-wave
+errors are at floating-point round-off and are reported, not used to infer an
+order. Minmod is still not a positivity limiter. Sprint 3 adds
 Zhang-Shu-style positivity preservation at reconstruction, RK-stage, and
 update levels. Sprint 4 performs FVM versus Simscape Pipe(G) and analytic
 Fanno cross-validation. Sprint 3--4 are not implemented here.
