@@ -40,6 +40,17 @@ audio and not yet App assets.
   - First-order HLLC spatial operator with three-stage SSP-RK3 time integration.
   - Transmissive ghost cells, per-step CFL control, exact end-time clipping, and
     open-boundary flux accounting for the 200-cell Sod reference.
+- `models/fvm_ref/s12_euler_fvm_periodic_step_muscl_minmod_ref.slx`
+  - Periodic piecewise-linear MUSCL reconstruction of primitive
+    `(rho,u,p)` variables with the minmod limiter and the same HLLC flux.
+  - A dedicated derivative of the frozen first-order step model; it does not
+    alter the accepted one-step reference or add a positivity fallback.
+- `models/fvm_ref/s12_euler_ssprk3_muscl_minmod_ref.slx`
+  - Transmissive MUSCL-minmod spatial operator coupled to the same SSP-RK3,
+    CFL, end-time, and open-boundary conservation accounting contract.
+  - The Benchmark adapter selects this model only for
+    `Reconstruction="muscl_minmod"`; `first_order` continues to use the
+    frozen Sprint 1 model.
 - `models/fvm_ref/s12_euler_ssprk3_periodic_ref.slx`
   - Canonical SSP-RK3 stage convex combinations for periodic validation.
   - Contains no duplicate HLLC/FVM implementation; the Benchmark adapter calls
@@ -89,6 +100,9 @@ Current acceptance covers:
   Shu--Osher and Woodward--Colella multi-grid, positivity, conservation, CFL,
   and failure diagnostics without claiming unavailable external arrays as
   analytic truth.
+- Componentwise primitive-variable MUSCL-minmod reconstruction with auditable
+  `first_order` fallback; uniform periodic preservation, fixed three-stage dt,
+  Sod and Lax L1 improvement, and complete-suite regression in both modes.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -133,9 +147,10 @@ not final tailpipe radiation impedance or free-field sound pressure.
 The embedded HLLC block returns `[36, 102405, 10655325]` for the accepted
 uniform-flow case and `[0, 100000, 0]` for a stationary contact at equal
 pressure. Mirrored left/right states preserve momentum flux and reverse mass,
-energy, and wave-speed directions. The first-order finite-volume update and
-SSP-RK3 long-time reference are validated below; MUSCL reconstruction,
-positivity limiting, and production boundary conditions remain pending.
+energy, and wave-speed directions. The frozen first-order finite-volume update
+and SSP-RK3 long-time reference remain validated; a dedicated MUSCL-minmod
+derivative is validated below. Positivity limiting and production boundary
+conditions remain pending.
 
 The periodic FVM step preserves a uniform state and closes total mass,
 momentum, and energy over the periodic domain. For the accepted eight-cell Sod
@@ -154,8 +169,10 @@ independent Toro-style exact Riemann solution with tolerances of `2*dx` and
 `2.78e-17`.
 
 This establishes SSP-RK3 time integration on the existing first-order HLLC
-spatial operator. It does not establish second-order spatial accuracy or
-unconditional positivity. MUSCL reconstruction, a positivity limiter,
+spatial operator and a separately selectable second-order MUSCL-minmod spatial
+path. The 200-cell Sod density L1 changes from `0.0133237115957` in
+`first_order` to `0.00420537883454` in `muscl_minmod`; the derived model is
+not a proof of unconditional positivity. A Zhang--Shu-style positivity limiter,
 FVM/Simscape cross-validation, and production exhaust boundaries remain pending.
 
 ## Numerical Benchmark Suite
@@ -168,6 +185,13 @@ acceptance stored in JSON. Lax is an exact-Riemann comparison; Shu--Osher and
 Woodward--Colella are clearly labelled literature-definition plus
 self-convergence/feature benchmarks until independently traceable reference
 arrays are incorporated.
+
+Sprint 2 extends the same entry point with
+`Reconstruction="first_order"|"muscl_minmod"`; the default remains
+`first_order`. The mode is recorded in every case config. The final Full Suite
+passes in both modes, and the first-order run has zero non-runtime metric drift
+against Sprint 1 accepted baseline `76f526b`. MUSCL accepted-baseline promotion
+has deliberately not been run.
 
 The accepted Full profile uses 200 cells for Sod and 64 cells for the smooth
 periodic wave. The validated Full result has Sod density/velocity/pressure L1

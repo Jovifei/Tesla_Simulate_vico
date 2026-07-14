@@ -12,6 +12,7 @@ config = profile.smooth;
 config.models = ["s12_euler_fvm_periodic_step_ref.slx", ...
     "s12_euler_ssprk3_periodic_ref.slx"];
 config.cfl = profile.cfl_limit;
+config.reconstruction = profile.reconstruction;
 end
 
 function raw = runCase(config)

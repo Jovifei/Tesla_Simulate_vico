@@ -2,8 +2,8 @@
 
 Sprint 0.5 established a qualification and regression plane around the
 existing S12 solver models. Sprint 1 expands that plane with standard Euler
-benchmarks; it does not replace HLLC/FVM code, add MUSCL, or implement a
-positivity limiter.
+benchmarks. Sprint 2 adds selectable minmod MUSCL validation without replacing
+the frozen first-order HLLC/FVM models or implementing a positivity limiter.
 
 ## Entry points
 
@@ -14,6 +14,8 @@ addpath('tools/sound_sim/s12/benchmark')
 run_s12_benchmarks('case:uniform_state', Profile='quick');
 run_s12_benchmarks('category:temporal_accuracy', Profile='quick');
 run_s12_benchmarks('case:lax_shock_tube', Profile='full');
+run_s12_benchmarks('case:lax_shock_tube', Profile='full', ...
+    Reconstruction='muscl_minmod');
 run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_benchmarks('report-only', ...
@@ -24,6 +26,12 @@ run_s12_benchmarks('report-only', ...
 The ordered registry is `config/registry.json`; deterministic `quick` and
 `full` profiles live in `config/profiles/`. Every factory returns the same
 functional contract: `configure`, `run`, `analyze`, and `accept`.
+
+`Reconstruction` is a mode carried by the profile into each case config. It is
+either `first_order` (the default, using the frozen Sprint 1 models) or
+`muscl_minmod` (dedicated derived models). This is adapter-level model
+selection, not a second runner, reporter, result schema, or external FVM/HLLC
+implementation.
 
 ## Cases
 
@@ -49,9 +57,10 @@ functional contract: `configure`, `run`, `analyze`, and `accept`.
   modified. Positivity, finite-state, conservation, CFL, feature-position,
   and failure diagnostics remain visible in the Canonical Result.
 
-The periodic adapter never copies HLLC/FVM equations. The original
-`s12_euler_fvm_periodic_step_ref.slx` remains the only Forward-Euler operator
-used by the benchmark path.
+The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
+frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
+minmod derivative. Both compose the same existing SSP-RK3 stage model and use
+one requested dt for all three stages.
 
 ## Result contract and artifacts
 
@@ -88,7 +97,8 @@ temporary fields and large simulation traces are not.
 ## Deferred gates
 
 Sprint 1 adds Lax, Shu-Osher, and Woodward-Colella without changing the solver.
-Sprint 2 adds minmod MUSCL with first-order fallback. Sprint 3 adds
+Sprint 2 implements minmod MUSCL with first-order fallback; final Full Suite
+passes in both modes, but no MUSCL accepted baseline has been promoted. Sprint 3 adds
 Zhang-Shu-style positivity preservation at reconstruction, RK-stage, and
 update levels. Sprint 4 performs FVM versus Simscape Pipe(G) and analytic
-Fanno cross-validation. Sprint 2--4 are not implemented here.
+Fanno cross-validation. Sprint 3--4 are not implemented here.

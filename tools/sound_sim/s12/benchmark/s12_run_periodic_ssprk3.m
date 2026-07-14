@@ -1,5 +1,5 @@
 function result = s12_run_periodic_ssprk3(initialState, gamma, dx, dt, ...
-        stepCount, cfl)
+        stepCount, cfl, options)
 %S12_RUN_PERIODIC_SSPRK3 Compose SSP-RK3 from the validated periodic step.
 arguments
     initialState (3,:) double
@@ -8,12 +8,14 @@ arguments
     dt (1,:) double {mustBePositive}
     stepCount (1,:) double {mustBeInteger, mustBeNonnegative}
     cfl (1,1) double {mustBePositive}
+    options.Reconstruction (1,1) string {mustBeMember( ...
+        options.Reconstruction, ["first_order", "muscl_minmod"])} = "first_order"
 end
 
 benchmarkRoot = fileparts(mfilename("fullpath"));
 s12Root = fileparts(benchmarkRoot);
 modelRoot = fullfile(s12Root, "models", "fvm_ref");
-stepModel = "s12_euler_fvm_periodic_step_ref";
+stepModel = periodicStepModel(options.Reconstruction);
 stageModel = "s12_euler_ssprk3_periodic_ref";
 stepWasLoaded = bdIsLoaded(stepModel);
 stageWasLoaded = bdIsLoaded(stageModel);
@@ -34,6 +36,9 @@ result = runOne(initialState, gamma, dx, dt(1), stepCount(1), cfl, ...
 for runIndex = 2:numel(dt)
     result(runIndex) = runOne(initialState, gamma, dx, dt(runIndex), ...
         stepCount(runIndex), cfl, stepModel, stageModel);
+end
+for runIndex = 1:numel(result)
+    result(runIndex).reconstruction = options.Reconstruction;
 end
 end
 
@@ -91,6 +96,15 @@ setParameterValue(workspace, "S12_FVM_CFL", cfl);
 output = sim(modelName);
 stateNext = squeeze(output.S12_FVMStateNext);
 dtUsed = output.S12_FVMDtUsed(end);
+end
+
+function modelName = periodicStepModel(reconstruction)
+switch reconstruction
+    case "first_order"
+        modelName = "s12_euler_fvm_periodic_step_ref";
+    case "muscl_minmod"
+        modelName = "s12_euler_fvm_periodic_step_muscl_minmod_ref";
+end
 end
 
 function stageState = combineStage(modelName, baseState, eulerState, stageIndex)

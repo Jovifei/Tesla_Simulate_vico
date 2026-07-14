@@ -5,6 +5,8 @@ arguments
     options.Profile (1,1) string = "quick"
     options.OutputDirectory (1,1) string = ""
     options.SourceManifest (1,1) string = ""
+    options.Reconstruction (1,1) string {mustBeMember( ...
+        options.Reconstruction, ["first_order", "muscl_minmod"])} = "first_order"
 end
 benchmarkRoot = fileparts(mfilename("fullpath"));
 if options.OutputDirectory == ""
@@ -23,6 +25,7 @@ if selector == "report-only"
 end
 
 profile = s12_benchmark_profile(options.Profile);
+profile.reconstruction = options.Reconstruction;
 registry = s12_benchmark_registry();
 selected = s12_benchmark_select(registry, selector);
 result = s12_benchmark_new_result(options.Profile, selector, environmentInfo());
