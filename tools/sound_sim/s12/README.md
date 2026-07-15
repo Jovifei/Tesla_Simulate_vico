@@ -68,6 +68,11 @@ audio and not yet App assets.
   - Canonical SSP-RK3 stage convex combinations for periodic validation.
   - Contains no duplicate HLLC/FVM implementation; the Benchmark adapter calls
     the existing periodic Forward-Euler model for every stage.
+- `models/fvm_ref/s12_euler_fvm_fanno_ref.slx`
+  - Exact local Darcy wall-friction source update with zero mass and total-
+    energy source under the adiabatic stationary-wall contract.
+  - Used only by the Sprint 4B Strang adapter; the frozen PP hyperbolic models
+    remain separate and unchanged.
 
 Property-table source:
 
@@ -241,6 +246,23 @@ Haaland Darcy friction factor, and adiabatic wall contract. Maximum relative
 error across outlet Mach/static pressure/static temperature is `0.0111417`
 for one lumped Pipe (G) and `0.00105168` for five serial segments. This is a
 validation foundation only; self-developed FVM comparison remains Sprint 4B.
+
+Sprint 4B adds `case:fanno_fvm_three_way_cross_validation` without changing
+the frozen HLLC/MUSCL/PP operators. The new balance-law mode is
+`fanno_constant_darcy`, with `darcy_wall_exact.v1`,
+`strang_exact_friction_ssprk3.v1`, and the validation-only
+`subsonic_fanno_validation.v1` boundary. Full qualification covers
+`L=1/76/156 m` on `N=50/100/200/400`; all 12 FVM runs reach the machine
+steady-state gate with maximum CFL `0.18`, zero retry/rejection/clipping/
+fallback, positive cell and reconstructed states, and monotone grid error.
+The moderate-pipe finest Mach order is `1.99841`; the long-pipe finest Mach
+L1/Linf errors are `1.00003e-5/0.00262612`, and the minimum sonic margin is
+`0.614656`. The exact uniform-friction decay error is `1.46e-16`; a separate
+linear-endpoint cold start reaches the same steady domain in three steps.
+Five actual segment-end log points from the frozen segmented Pipe (G) model
+are compared with analytical Fanno and finest-grid FVM, with maximum FVM /
+Simscape relative difference `0.00129991`. These boundaries remain validation
+only and are not production exhaust-network interfaces.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

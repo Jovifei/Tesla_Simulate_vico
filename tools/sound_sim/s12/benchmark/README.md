@@ -6,6 +6,8 @@ benchmarks. Sprint 2 adds selectable minmod MUSCL validation without replacing
 the frozen first-order HLLC/FVM models. Sprint 3 adds a separate
 `muscl_minmod_pp` positivity-preserving mode and accepted baseline while
 keeping `first_order` and `muscl_minmod` frozen.
+Sprint 4B adds a separate constant-Darcy balance-law adapter and three-way
+Analytical/Simscape/FVM qualification without modifying those frozen modes.
 
 ## Entry points
 
@@ -20,6 +22,8 @@ run_s12_benchmarks('case:lax_shock_tube', Profile='full', ...
     Reconstruction='muscl_minmod');
 run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
 run_s12_benchmarks('case:fanno_pipe_g_cross_validation', Profile='full');
+run_s12_benchmarks('case:fanno_fvm_three_way_cross_validation', ...
+    Profile='full', Reconstruction='muscl_minmod_pp');
 run_s12_benchmarks('category:cross_validation', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_muscl_final_qualification('run', Profile='full');
@@ -93,6 +97,11 @@ source manifest bytes.
   one and five serial built-in Simscape `Pipe (G)` blocks under identical
   steady, one-dimensional, constant-area, adiabatic, calorically-perfect,
   subsonic assumptions. It does not run or modify the S12 FVM.
+- `fanno_fvm_three_way_cross_validation`: Sprint 4B constant-Darcy FVM versus
+  the same analytical reference and frozen one/five-segment Pipe (G) models.
+  It includes exact periodic uniform-friction decay, a moderate linear-
+  endpoint cold start, four-grid convergence at `L=1/76/156 m`, boundary-flux
+  balance metrics, PP stage diagnostics, and five segment-end profile points.
 
 The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
 frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
@@ -120,6 +129,9 @@ Canonical Result produces:
   `sprint3-double-rarefaction.png`.
 - The Fanno case adds `fanno-comparison.csv` and
   `fanno-cross-validation.png` from the same Canonical Result.
+- The Sprint 4B Fanno case adds `fanno-fvm-grid-matrix.csv`,
+  `fanno-fvm-three-way.png`, `fanno-uniform-friction-decay.csv`,
+  `fanno-cold-start.csv`, and `fanno-five-station-comparison.csv`.
 
 Report-only rendering never reruns a case or recomputes acceptance. JSON key
 order, case order, numeric formatting, filenames, and PNG metadata policy are
@@ -152,7 +164,9 @@ qualification commit `d3986cf`. It validates `muscl_minmod_pp` over the
 current ideal-gas Euler benchmark domain with no clipping, no HLLC fallback,
 no invalid RK stage, and deterministic report-only SHA-256 regeneration.
 Sprint 4A establishes analytical Fanno versus Simscape Pipe(G)
-cross-validation without touching the production FVM. Sprint 4B must connect
-the self-developed FVM under the same physical assumptions and produce the
-three-way validation report. Engine Library, exhaust network, radiation, and
-audio DSP remain blocked until Sprint 4 is complete.
+cross-validation without touching the production FVM. Sprint 4B now qualifies
+the self-developed FVM under the same physical assumptions. The validation-
+only characteristic boundary, constant Darcy factor, calorically-perfect gas,
+constant area, adiabatic wall, and subsonic domain remain explicit limits.
+Engine Library, exhaust network, radiation, and audio DSP remain blocked until
+the remaining Sprint 4 release scope is approved.
