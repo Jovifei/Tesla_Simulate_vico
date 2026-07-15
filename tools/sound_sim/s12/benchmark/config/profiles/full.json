@@ -38,5 +38,32 @@
   },
   "fanno": {
     "validation_profile": "full"
+  },
+  "fanno_fvm": {
+    "validation_profile": "full",
+    "lengths_m": [1, 76, 156],
+    "grid_cell_counts": [50, 100, 200, 400],
+    "quadrature_nodes": 16,
+    "cfl": 0.2,
+    "cfl_safety_factor": 0.9,
+    "maximum_physical_time_s": 0.1,
+    "maximum_steps": 20,
+    "steady_criteria": {
+      "state_residual_limit": 0.006,
+      "mass_flow_uniformity_limit": 0.02,
+      "mass_balance_limit": 0.018,
+      "energy_balance_limit": 0.0012,
+      "momentum_balance_limit": 0.015,
+      "stagnation_temperature_spread_limit": 0.5,
+      "required_windows": 3
+    },
+    "acceptance": {
+      "profile_l1_relative_limit": 0.002,
+      "profile_linf_relative_limit": 0.01,
+      "outlet_relative_limit": 0.02,
+      "cold_start_profile_l1_limit": 0.02,
+      "minimum_sonic_margin": 0.1,
+      "minimum_moderate_observed_order": 1.1
+    }
   }
 }

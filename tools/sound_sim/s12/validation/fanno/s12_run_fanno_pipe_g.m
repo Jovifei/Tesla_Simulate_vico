@@ -80,6 +80,11 @@ mach = zeros(size(definition.lengths));
 pressure = zeros(size(definition.lengths));
 temperature = zeros(size(definition.lengths));
 steadySpan = zeros(numel(definition.lengths), 3);
+stationCount = 5 * double(modelName == "s12_fanno_pipe_g_segmented_ref");
+stationFractions = (1:stationCount) / 5;
+stationMach = zeros(numel(definition.lengths), stationCount);
+stationPressure = zeros(numel(definition.lengths), stationCount);
+stationTemperature = zeros(numel(definition.lengths), stationCount);
 for index = 1:numel(definition.lengths)
     input = Simulink.SimulationInput(modelName);
     input = setVariables(input, definition, definition.lengths(index));
@@ -87,6 +92,17 @@ for index = 1:numel(definition.lengths)
         "ReturnWorkspaceOutputs", "on");
     output = sim(input);
     logNode = output.get(string(get_param(modelName, "SimscapeLogName")));
+    if ~isempty(stationFractions)
+        for stationIndex = 1:numel(stationFractions)
+            pipeNode = logNode.("Pipe_" + stationIndex);
+            stationMach(index, stationIndex) = ...
+                finalSeriesValue(pipeNode.Mach_B.series, "1");
+            stationPressure(index, stationIndex) = ...
+                finalSeriesValue(pipeNode.B.p.series, "Pa");
+            stationTemperature(index, stationIndex) = ...
+                finalSeriesValue(pipeNode.B.T.series, "K");
+        end
+    end
     machSeries = logNode.Mach_Number_Sensor_G.Mach.series;
     pressureSeries = logNode.Pressure_Temperature_Sensor_G.Pa.series;
     temperatureSeries = logNode.Pressure_Temperature_Sensor_G.T.series;
@@ -118,10 +134,19 @@ summary = struct( ...
     "relative_error", relativeError, ...
     "maximum_relative_error", max(relativeError, [], "all"), ...
     "steady_relative_span", steadySpan, ...
+    "station_positions_fraction", stationFractions, ...
+    "station_mach", stationMach, ...
+    "station_static_pressure", stationPressure, ...
+    "station_static_temperature", stationTemperature, ...
     "steady", all(steadySpan < ...
         definition.steady_relative_span_tolerance, "all"), ...
     "all_finite", all(isfinite([mach, pressure, temperature]), "all"));
 clear cleanup
+end
+
+function value = finalSeriesValue(series, unit)
+values = double(series.values(unit));
+value = values(end);
 end
 
 function input = setVariables(input, definition, lengthValue)

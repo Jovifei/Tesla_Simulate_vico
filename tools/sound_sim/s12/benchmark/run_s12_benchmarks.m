@@ -22,6 +22,10 @@ if selector == "report-only"
     end
     result = normalizeStrings(jsondecode(fileread(options.SourceManifest)));
     result = s12_write_benchmark_artifacts(result, options.OutputDirectory);
+    manifestPath = fullfile(options.OutputDirectory, "benchmark-result.json");
+    if ~strcmpi(char(options.SourceManifest), char(manifestPath))
+        copyfile(options.SourceManifest, manifestPath, "f");
+    end
     return
 end
 

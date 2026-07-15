@@ -43,5 +43,10 @@
     "id": "fanno_pipe_g_cross_validation",
     "category": "cross_validation",
     "factory": "s12_benchmark_case_fanno_pipe_g"
+  },
+  {
+    "id": "fanno_fvm_three_way_cross_validation",
+    "category": "cross_validation",
+    "factory": "s12_benchmark_case_fanno_fvm_three_way"
   }
 ]
