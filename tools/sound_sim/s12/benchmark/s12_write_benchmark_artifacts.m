@@ -47,6 +47,12 @@ if hasCase(result, "double_rarefaction")
     artifacts(end + 1) = artifact("double_rarefaction", "png", ...
         "double-rarefaction.png");
 end
+if hasCase(result, "fanno_pipe_g_cross_validation")
+    artifacts(end + 1) = artifact("fanno_comparison", "csv", ...
+        "fanno-comparison.csv");
+    artifacts(end + 1) = artifact("fanno_cross_validation", "png", ...
+        "fanno-cross-validation.png");
+end
 result.artifacts = artifacts;
 writeSummaryCsv(result, fullfile(outputDirectory, artifacts(3).path));
 writeSmoothScanCsv(result, fullfile(outputDirectory, artifacts(5).path));
@@ -56,6 +62,7 @@ writeConservationPlot(result, fullfile(outputDirectory, artifacts(6).path));
 writeSodPlot(result, fullfile(outputDirectory, artifacts(7).path));
 writeStandardArtifacts(result, outputDirectory);
 writePositivityArtifacts(result, outputDirectory);
+writeFannoArtifacts(result, outputDirectory);
 writeText(fullfile(outputDirectory, artifacts(2).path), ...
     string(jsonencode(result, "PrettyPrint", true)) + newline);
 end
@@ -195,7 +202,85 @@ if hasPpCase(result)
             metrics.flux_pp_min_theta, metrics.retry_count); %#ok<AGROW>
     end
 end
+if hasCase(result, "fanno_pipe_g_cross_validation")
+    caseIndex = find(string({result.cases.id}) == ...
+        "fanno_pipe_g_cross_validation", 1);
+    metrics = result.cases(caseIndex).metrics;
+    lines(end + 1:end + 6) = ["", "## Fanno / Pipe (G) cross-validation", "", ...
+        "- Reference: `" + metrics.reference_type + "`", ...
+        sprintf("- Single-pipe maximum relative error: %.12g", ...
+            metrics.single_maximum_relative_error), ...
+        sprintf("- Five-segment maximum relative error: %.12g", ...
+            metrics.segmented_maximum_relative_error)];
+end
 writeText(path, strjoin(lines, newline) + newline);
+end
+
+function writeFannoArtifacts(result, outputDirectory)
+caseIndex = find(string({result.cases.id}) == ...
+    "fanno_pipe_g_cross_validation", 1);
+if isempty(caseIndex)
+    return
+end
+metrics = result.cases(caseIndex).metrics;
+csvIndex = find(string({result.artifacts.id}) == "fanno_comparison", 1);
+pngIndex = find(string({result.artifacts.id}) == ...
+    "fanno_cross_validation", 1);
+
+fileId = fopen(fullfile(outputDirectory, ...
+    result.artifacts(csvIndex).path), "wt", "n", "UTF-8");
+assert(fileId >= 0, "S12:Benchmark:FileOpen", ...
+    "Cannot open Fanno comparison CSV.");
+cleanup = onCleanup(@() fclose(fileId));
+fprintf(fileId, "%s\n", ...
+    "schema_version,length_m,source,mach,static_pressure_pa," + ...
+    "static_temperature_k,mach_relative_error,pressure_relative_error," + ...
+    "temperature_relative_error");
+for index = 1:numel(metrics.lengths)
+    fprintf(fileId, ...
+        "benchmark.schema.v1,%.12g,analytical,%.12g,%.12g,%.12g,0,0,0\n", ...
+        metrics.lengths(index), metrics.analytical_mach(index), ...
+        metrics.analytical_static_pressure(index), ...
+        metrics.analytical_static_temperature(index));
+    writeFannoCsvRow(fileId, metrics, index, "single");
+    writeFannoCsvRow(fileId, metrics, index, "segmented");
+end
+clear cleanup
+
+figureHandle = figure("Visible", "off", "Color", "white", ...
+    "Position", [100, 100, 800, 500]);
+figureCleanup = onCleanup(@() close(figureHandle));
+axesHandle = axes(figureHandle);
+plot(axesHandle, metrics.lengths, metrics.analytical_mach, ...
+    "o-", "LineWidth", 1.5);
+hold(axesHandle, "on");
+plot(axesHandle, metrics.lengths, metrics.single_mach, ...
+    "s--", "LineWidth", 1.5);
+plot(axesHandle, metrics.lengths, metrics.segmented_mach, ...
+    "d-.", "LineWidth", 1.5);
+legend(axesHandle, ["Analytical Fanno", "Pipe (G), one segment", ...
+    "Pipe (G), five segments"], "Location", "best");
+xlabel(axesHandle, "Pipe length (m)");
+ylabel(axesHandle, "Outlet Mach number");
+title(axesHandle, "Fanno / Simscape Pipe (G) Cross-Validation");
+grid(axesHandle, "on");
+saveDeterministicFigure(figureHandle, fullfile(outputDirectory, ...
+    result.artifacts(pngIndex).path));
+clear figureCleanup
+end
+
+function writeFannoCsvRow(fileId, metrics, index, source)
+source = string(source);
+mach = metrics.(source + "_mach");
+pressure = metrics.(source + "_static_pressure");
+temperature = metrics.(source + "_static_temperature");
+relativeError = metrics.(source + "_relative_error");
+fprintf(fileId, ...
+    "benchmark.schema.v1,%.12g,%s,%.12g,%.12g,%.12g,%.12g,%.12g,%.12g\n", ...
+    metrics.lengths(index), source, ...
+    mach(index), pressure(index), temperature(index), ...
+    relativeError(1, index), relativeError(2, index), ...
+    relativeError(3, index));
 end
 
 function writeSmoothPlot(result, path)

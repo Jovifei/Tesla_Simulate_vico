@@ -38,5 +38,10 @@
     "id": "double_rarefaction",
     "category": "positivity_stress",
     "factory": "s12_benchmark_case_double_rarefaction"
+  },
+  {
+    "id": "fanno_pipe_g_cross_validation",
+    "category": "cross_validation",
+    "factory": "s12_benchmark_case_fanno_pipe_g"
   }
 ]

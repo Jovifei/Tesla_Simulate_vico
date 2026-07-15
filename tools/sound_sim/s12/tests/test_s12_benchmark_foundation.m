@@ -17,7 +17,8 @@ verifyEqual(testCase, string({registry.id}), ...
     ["uniform_state", "long_time_sod", "smooth_periodic_entropy_wave", ...
     "smooth_periodic_entropy_wave_spatial", ...
     "lax_shock_tube", "shu_osher_shock_entropy", ...
-    "woodward_colella_blast_wave", "double_rarefaction"]);
+    "woodward_colella_blast_wave", "double_rarefaction", ...
+    "fanno_pipe_g_cross_validation"]);
 
 requiredFields = ["id", "category", "factory"];
 verifyTrue(testCase, all(ismember(requiredFields, string(fieldnames(registry)))));
@@ -49,6 +50,8 @@ verifyFalse(testCase, quick.double_rarefaction.require_pp_activation);
 verifyTrue(testCase, full.double_rarefaction.require_pp_activation);
 verifyEqual(testCase, quick.double_rarefaction.requested_cfl, 0.45);
 verifyEqual(testCase, full.double_rarefaction.requested_cfl, 0.45);
+verifyEqual(testCase, string(quick.fanno.validation_profile), "quick");
+verifyEqual(testCase, string(full.fanno.validation_profile), "full");
 end
 
 function testSelectorsCoverCaseCategoryAndSuite(testCase)
@@ -76,7 +79,7 @@ result = s12_benchmark_new_result("quick", "all", environment);
 verifyEqual(testCase, result.schema, "benchmark.schema.v1");
 verifyEqual(testCase, string(fieldnames(result)).', [ ...
     "schema", "schema_minor", "suite", "environment", "cases", "artifacts", "acceptance"]);
-verifyEqual(testCase, result.schema_minor, 2);
+verifyEqual(testCase, result.schema_minor, 3);
 verifyEqual(testCase, result.suite.profile, "quick");
 verifyEqual(testCase, result.suite.selector, "all");
 verifyEmpty(testCase, result.cases);

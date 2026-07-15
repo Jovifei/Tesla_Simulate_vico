@@ -30,6 +30,11 @@ audio and not yet App assets.
 - `models/pipe_ref/c63_primary_pipe_open_end_ref.slx`
   - Eight-cell pressure-release boundary with a probe 0.06 m from the inlet.
   - Separates the incident pulse from the negative open-end reflection.
+- `models/pipe_ref/s12_fanno_pipe_g_ref.slx`
+  - One built-in Simscape `Pipe (G)` matched to the analytical Fanno case.
+- `models/pipe_ref/s12_fanno_pipe_g_segmented_ref.slx`
+  - Five serial `Pipe (G)` blocks with independent adiabatic wall terminals.
+  - Qualifies the expected accuracy improvement for long subsonic pipes.
 - `models/fvm_ref/s12_euler_hllc_flux_ref.slx`
   - Embedded MATLAB Function implementation of the Euler HLLC interface flux.
   - Exposes mass, momentum, energy fluxes and the three HLLC wave speeds.
@@ -120,6 +125,10 @@ Current acceptance covers:
   shared flux limiting, per-stage SSP-RK3 evidence, double-rarefaction stress,
   deterministic report-only regeneration, and the accepted baseline at
   `benchmark/baselines/sprint-3`.
+- Sprint 4A Fanno/Simscape foundation: analytical Darcy-convention Fanno
+  relations and matched one-/five-segment `Pipe (G)` models, exposed through
+  the existing Benchmark registry and deterministic report pipeline. The S12
+  production FVM is deliberately not connected in Sprint 4A.
 - Simulink connectivity checks for the four cylinder/property models.
 - Compile, simulation, and behavioral propagation checks for the pipe model.
 
@@ -224,6 +233,14 @@ The Final Qualification report records 10/10 passing gates, smooth rho spatial
 order `1.93607`, no nominal retries, no clipping, no HLLC fallback, no invalid
 RK stage, and a double-rarefaction stress case that activates shared flux
 limiting while remaining finite and conservative.
+
+Sprint 4A adds `case:fanno_pipe_g_cross_validation` in category
+`cross_validation`. The Full profile compares pipe lengths `1/76/156 m` with
+the same ideal-gas properties, inlet static state, mass flow, geometry,
+Haaland Darcy friction factor, and adiabatic wall contract. Maximum relative
+error across outlet Mach/static pressure/static temperature is `0.0111417`
+for one lumped Pipe (G) and `0.00105168` for five serial segments. This is a
+validation foundation only; self-developed FVM comparison remains Sprint 4B.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

@@ -35,5 +35,8 @@
     "end_time": 0.02,
     "requested_cfl": 0.45,
     "require_pp_activation": false
+  },
+  "fanno": {
+    "validation_profile": "quick"
   }
 }

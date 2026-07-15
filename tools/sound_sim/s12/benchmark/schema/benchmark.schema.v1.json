@@ -1,6 +1,6 @@
 {
   "schema": "benchmark.schema.v1",
-  "schema_minor": 2,
+  "schema_minor": 3,
   "required_top_level": [
     "schema",
     "suite",
@@ -42,7 +42,13 @@
     "invalid_stage_count",
     "rejected_step_count",
     "retry_count",
-    "maximum_flux_correction_norm"
+    "maximum_flux_correction_norm",
+    "reference_type",
+    "friction_convention",
+    "single_maximum_relative_error",
+    "segmented_maximum_relative_error",
+    "minimum_choke_margin",
+    "retry_count"
   ],
   "numeric_format": "%.12g",
   "report_recomputes_acceptance": false

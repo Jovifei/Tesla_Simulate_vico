@@ -19,6 +19,8 @@ run_s12_benchmarks('case:lax_shock_tube', Profile='full');
 run_s12_benchmarks('case:lax_shock_tube', Profile='full', ...
     Reconstruction='muscl_minmod');
 run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
+run_s12_benchmarks('case:fanno_pipe_g_cross_validation', Profile='full');
+run_s12_benchmarks('category:cross_validation', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_muscl_final_qualification('run', Profile='full');
 run_s12_positivity_final_qualification('run', Profile='full');
@@ -87,6 +89,10 @@ source manifest bytes.
   style positivity literature. It is not an analytic pressure-value comparison;
   it verifies positive cell/interface/partial states, actual PP activation,
   finiteness, conservation, and honest no-clipping/no-fallback diagnostics.
+- `fanno_pipe_g_cross_validation`: Sprint 4A analytical Fanno reference versus
+  one and five serial built-in Simscape `Pipe (G)` blocks under identical
+  steady, one-dimensional, constant-area, adiabatic, calorically-perfect,
+  subsonic assumptions. It does not run or modify the S12 FVM.
 
 The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
 frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
@@ -112,6 +118,8 @@ Canonical Result produces:
   `sprint3-positivity-diagnostics.csv`,
   `sprint3-smooth-spatial-convergence.png`, and
   `sprint3-double-rarefaction.png`.
+- The Fanno case adds `fanno-comparison.csv` and
+  `fanno-cross-validation.png` from the same Canonical Result.
 
 Report-only rendering never reruns a case or recomputes acceptance. JSON key
 order, case order, numeric formatting, filenames, and PNG metadata policy are
@@ -143,6 +151,8 @@ order. Sprint 3 has an accepted `benchmark/baselines/sprint-3` baseline from
 qualification commit `d3986cf`. It validates `muscl_minmod_pp` over the
 current ideal-gas Euler benchmark domain with no clipping, no HLLC fallback,
 no invalid RK stage, and deterministic report-only SHA-256 regeneration.
-Sprint 4 performs FVM versus Simscape Pipe(G) and analytic Fanno
-cross-validation. Engine Library, exhaust network, radiation, and audio DSP
-remain blocked until Sprint 4 is complete.
+Sprint 4A establishes analytical Fanno versus Simscape Pipe(G)
+cross-validation without touching the production FVM. Sprint 4B must connect
+the self-developed FVM under the same physical assumptions and produce the
+three-way validation report. Engine Library, exhaust network, radiation, and
+audio DSP remain blocked until Sprint 4 is complete.

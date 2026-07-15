@@ -41,7 +41,8 @@ for caseIndex = 1:numel(selected)
     raw = definition.run(config);
     analysis = definition.analyze(raw);
     acceptance = definition.accept(analysis.metrics);
-    if options.Reconstruction == "muscl_minmod_pp"
+    if options.Reconstruction == "muscl_minmod_pp" && ...
+            selected(caseIndex).category ~= "cross_validation"
         acceptance = appendPpAcceptance(acceptance, analysis.metrics);
     end
     cases(caseIndex) = struct( ...
