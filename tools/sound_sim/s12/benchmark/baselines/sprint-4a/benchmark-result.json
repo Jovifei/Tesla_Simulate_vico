@@ -1,0 +1,297 @@
+{
+  "schema": "benchmark.schema.v1",
+  "schema_minor": 3,
+  "suite": {
+    "profile": "full",
+    "selector": "case:fanno_pipe_g_cross_validation"
+  },
+  "environment": {
+    "git_commit": "fcfe6deb2175237866633ee7804cfa3be64aef23",
+    "matlab_release": "R2026a",
+    "matlab_version": "26.1.0.3203278 (R2026a)",
+    "platform": "win64"
+  },
+  "cases": {
+    "id": "fanno_pipe_g_cross_validation",
+    "category": "cross_validation",
+    "status": "passed",
+    "config": {
+      "profile": "full",
+      "reference_type": "analytical_fanno_exact_relation",
+      "friction_convention": "darcy_f_D_L_over_D",
+      "lengths": [
+        1,
+        76,
+        156
+      ],
+      "segment_counts": [
+        1,
+        5
+      ],
+      "single_error_limit": 0.02,
+      "segmented_error_limit": 0.002
+    },
+    "metrics": {
+      "reference_type": "analytical_fanno_exact_relation",
+      "physical_assumptions": "steady_1d_constant_area_adiabatic_calorically_perfect_subsonic",
+      "friction_convention": "darcy_f_D_L_over_D",
+      "lengths": [
+        1,
+        76,
+        156
+      ],
+      "segment_counts": [
+        1,
+        5
+      ],
+      "reynolds_number": 707355.30263064581,
+      "darcy_friction_factor": 0.014356000699159729,
+      "inlet_mach": 0.157734416523149,
+      "analytical_mach": [
+        0.158143229593052,
+        0.20290506539469716,
+        0.38773705542096315
+      ],
+      "analytical_static_pressure": [
+        199480.40447117397,
+        155223.09040269026,
+        80358.3181067916
+      ],
+      "analytical_static_temperature": [
+        299.992242053409,
+        299.02449508459426,
+        292.64737212851117
+      ],
+      "single_mach": [
+        0.15814322958607974,
+        0.20289141688854331,
+        0.38358464107626927
+      ],
+      "single_static_pressure": [
+        199480.40448001269,
+        155233.61806842027,
+        81253.643463418644
+      ],
+      "single_static_temperature": [
+        299.99224205354153,
+        299.02482566663139,
+        292.83059055230353
+      ],
+      "single_relative_error": [
+        [
+          4.4088236491304968E-11,
+          6.7265477711443822E-5,
+          0.010709356474030146
+        ],
+        [
+          4.4308697477427877E-11,
+          6.7822807178372944E-5,
+          0.011141663709750707
+        ],
+        [
+          4.4187426940128751E-13,
+          1.1055349730760955E-6,
+          0.00062607233565695967
+        ]
+      ],
+      "single_maximum_relative_error": 0.011141663709750707,
+      "single_steady_relative_span": [
+        [
+          0,
+          1.4589819251970594E-16,
+          0
+        ],
+        [
+          5.74560616576894E-15,
+          6.3744583669550239E-15,
+          1.3306718970192132E-15
+        ],
+        [
+          2.5163896917946292E-10,
+          2.4844082713759644E-10,
+          6.396157750906432E-12
+        ]
+      ],
+      "single_steady": true,
+      "segmented_mach": [
+        0.15814322959277313,
+        0.20290447824697005,
+        0.38734131471079514
+      ],
+      "segmented_static_pressure": [
+        199480.40447152749,
+        155223.54326534169,
+        80442.829082962373
+      ],
+      "segmented_static_temperature": [
+        299.99224205341426,
+        299.02450930640958,
+        292.66490865070296
+      ],
+      "segmented_relative_error": [
+        [
+          1.76333990982612E-12,
+          2.8937066009787709E-6,
+          0.0010206419650511881
+        ],
+        [
+          1.772225344615393E-12,
+          2.9174953949295988E-6,
+          0.0010516767667842614
+        ],
+        [
+          1.7621915546449289E-14,
+          4.756070340005691E-8,
+          5.9923730270467485E-5
+        ]
+      ],
+      "segmented_maximum_relative_error": 0.0010516767667842614,
+      "segmented_steady_relative_span": [
+        [
+          0,
+          0,
+          1.8948296286504273E-16
+        ],
+        [
+          1.3679134071080258E-16,
+          3.7499247658563152E-16,
+          1.9009618640511073E-16
+        ],
+        [
+          1.7197592652166617E-15,
+          7.235904253620497E-16,
+          1.9422697146329527E-16
+        ]
+      ],
+      "segmented_steady": true,
+      "single_error_limit": 0.02,
+      "segmented_error_limit": 0.002,
+      "minimum_choke_margin": 0.10179731900261807,
+      "retry_count": 0,
+      "runtime_seconds": 29.6659162
+    },
+    "acceptance": {
+      "status": "passed",
+      "checks": [
+        {
+          "id": "single_pipe_accuracy",
+          "passed": true,
+          "actual": 0.011141663709750707,
+          "limit": 0.02
+        },
+        {
+          "id": "segmented_pipe_accuracy",
+          "passed": true,
+          "actual": 0.0010516767667842614,
+          "limit": 0.002
+        },
+        {
+          "id": "positive_choke_margin",
+          "passed": true,
+          "actual": 0.10179731900261807,
+          "limit": 0
+        },
+        {
+          "id": "steady_single_pipe",
+          "passed": true,
+          "actual": 0,
+          "limit": 0
+        },
+        {
+          "id": "steady_segmented_pipe",
+          "passed": true,
+          "actual": 0,
+          "limit": 0
+        },
+        {
+          "id": "no_retry",
+          "passed": true,
+          "actual": 0,
+          "limit": 0
+        },
+        {
+          "id": "segmentation_improves_accuracy",
+          "passed": true,
+          "actual": 0.0010516767667842614,
+          "limit": 0.011141663709750707
+        }
+      ]
+    },
+    "plot": {
+      "length": [
+        1,
+        76,
+        156
+      ],
+      "analytical_mach": [
+        0.158143229593052,
+        0.20290506539469716,
+        0.38773705542096315
+      ],
+      "single_mach": [
+        0.15814322958607974,
+        0.20289141688854331,
+        0.38358464107626927
+      ],
+      "segmented_mach": [
+        0.15814322959277313,
+        0.20290447824697005,
+        0.38734131471079514
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "id": "report",
+      "type": "markdown",
+      "path": "benchmark-report.md"
+    },
+    {
+      "id": "manifest",
+      "type": "json",
+      "path": "benchmark-result.json"
+    },
+    {
+      "id": "summary",
+      "type": "csv",
+      "path": "benchmark-summary.csv"
+    },
+    {
+      "id": "smooth_convergence",
+      "type": "png",
+      "path": "smooth-convergence.png"
+    },
+    {
+      "id": "smooth_time_scan",
+      "type": "csv",
+      "path": "smooth-time-scan.csv"
+    },
+    {
+      "id": "conservation",
+      "type": "png",
+      "path": "conservation-residual.png"
+    },
+    {
+      "id": "sod_analytic",
+      "type": "png",
+      "path": "sod-analytic-comparison.png"
+    },
+    {
+      "id": "fanno_comparison",
+      "type": "csv",
+      "path": "fanno-comparison.csv"
+    },
+    {
+      "id": "fanno_cross_validation",
+      "type": "png",
+      "path": "fanno-cross-validation.png"
+    }
+  ],
+  "acceptance": {
+    "status": "passed",
+    "checks": {
+      "id": "fanno_pipe_g_cross_validation",
+      "passed": true
+    }
+  }
+}
