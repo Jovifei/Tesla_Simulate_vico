@@ -1,6 +1,6 @@
 {
   "schema": "benchmark.schema.v1",
-  "schema_minor": 4,
+  "schema_minor": 6,
   "required_top_level": [
     "schema",
     "suite",
@@ -8,6 +8,13 @@
     "cases",
     "artifacts",
     "acceptance"
+  ],
+  "environment_provenance_fields": [
+    "git_commit",
+    "working_tree_dirty",
+    "matlab_release",
+    "matlab_version",
+    "platform"
   ],
   "case_metric_fields": [
     "spatial_scheme",
@@ -44,6 +51,7 @@
     "retry_count",
     "maximum_flux_correction_norm",
     "reference_type",
+    "reference_applicability",
     "friction_convention",
     "single_maximum_relative_error",
     "segmented_maximum_relative_error",
@@ -126,8 +134,32 @@
     "model_path",
     "model_sha256",
     "runtime_seconds",
+    "conservation_error",
     "acceptance_limits",
-    "threshold_evidence"
+    "threshold_evidence",
+    "transient_case_id",
+    "boundary_type",
+    "reference_wave_speed",
+    "measured_wave_speed",
+    "arrival_time_reference",
+    "arrival_time_measured",
+    "arrival_time_error",
+    "pressure_reflection_coefficient",
+    "velocity_reflection_coefficient",
+    "phase_error",
+    "amplitude_error",
+    "waveform_l1_error",
+    "waveform_linf_error",
+    "incident_energy",
+    "reflected_energy",
+    "transmitted_energy",
+    "boundary_energy_residual",
+    "probe_locations",
+    "probe_sampling_id",
+    "sample_rate",
+    "time_resolution",
+    "simscape_open_reference_id",
+    "simscape_closed_reference_id"
   ],
   "numeric_format": "%.12g",
   "report_recomputes_acceptance": false

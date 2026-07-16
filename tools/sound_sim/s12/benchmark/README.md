@@ -8,6 +8,9 @@ the frozen first-order HLLC/FVM models. Sprint 3 adds a separate
 keeping `first_order` and `muscl_minmod` frozen.
 Sprint 4B adds a separate constant-Darcy balance-law adapter and three-way
 Analytical/Simscape/FVM qualification without modifying those frozen modes.
+Sprint 4C adds a transient-pipe wave case using the same registry, profile,
+Canonical Result and report-only pipeline; it does not replace any frozen
+steady Fanno evidence.
 
 ## Entry points
 
@@ -24,6 +27,9 @@ run_s12_benchmarks('category:standard_shock_entropy', Profile='quick');
 run_s12_benchmarks('case:fanno_pipe_g_cross_validation', Profile='full');
 run_s12_benchmarks('case:fanno_fvm_three_way_cross_validation', ...
     Profile='full', Reconstruction='muscl_minmod_pp');
+run_s12_benchmarks('case:transient_pipe_wave_cross_validation', ...
+    Profile='full');
+run_s12_benchmarks('category:transient_wave', Profile='quick');
 run_s12_benchmarks('category:cross_validation', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_muscl_final_qualification('run', Profile='full');
@@ -102,6 +108,12 @@ source manifest bytes.
   It includes exact periodic uniform-friction decay, a moderate linear-
   endpoint cold start, four-grid convergence at `L=1/76/156 m`, boundary-flux
   balance metrics, PP stage diagnostics, and five segment-end profile points.
+- `transient_pipe_wave_cross_validation`: Sprint 4C small-perturbation
+  straight-pipe validation. It separates a rigid closed end, ideal
+  pressure-release open end, and a nonreflecting numerical reference. The
+  analytical linear wave is primary for its stated amplitude range; matched
+  Simscape Pipe(G) traces are auxiliary. Full uses `N=50/100/200/400/800` and
+  records waveform/arrival/phase/amplitude/reflection/energy diagnostics.
 
 The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
 frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
@@ -132,6 +144,10 @@ Canonical Result produces:
 - The Sprint 4B Fanno case adds `fanno-fvm-grid-matrix.csv`,
   `fanno-fvm-three-way.png`, `fanno-uniform-friction-decay.csv`,
   `fanno-cold-start.csv`, and `fanno-five-station-comparison.csv`.
+- The Sprint 4C transient case adds `transient-wave-probes.csv` and
+  `transient-wave-comparison.png`; its nine controlled artifacts are generated
+  from the same Canonical Result. Report-only renders them without running an
+  FVM, Simscape or analytical solver and without recomputing acceptance.
 
 Report-only rendering never reruns a case or recomputes acceptance. JSON key
 order, case order, numeric formatting, filenames, and PNG metadata policy are
@@ -170,3 +186,7 @@ only characteristic boundary, constant Darcy factor, calorically-perfect gas,
 constant area, adiabatic wall, and subsonic domain remain explicit limits.
 Engine Library, exhaust network, radiation, and audio DSP remain blocked until
 the remaining Sprint 4 release scope is approved.
+Sprint 4C is qualification-complete but not yet accepted until a clean
+qualification-commit Full rerun and explicit independent baseline promotion
+bind the source commit, `working_tree_dirty=false`, and nine deterministic
+artifacts.

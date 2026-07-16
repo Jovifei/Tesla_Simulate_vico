@@ -70,9 +70,18 @@ audio and not yet App assets.
     the existing periodic Forward-Euler model for every stage.
 - `models/fvm_ref/s12_euler_fvm_fanno_ref.slx`
   - Exact local Darcy wall-friction source update with zero mass and total-
-    energy source under the adiabatic stationary-wall contract.
+  energy source under the adiabatic stationary-wall contract.
   - Used only by the Sprint 4B Strang adapter; the frozen PP hyperbolic models
     remain separate and unchanged.
+- `models/fvm_ref/s12_euler_fvm_transient_wave_ref.slx`
+  - Independent finite-volume transient-pipe validation model; it reuses the
+    frozen numerical operators without changing their semantics.
+  - Records deterministic mid-pipe pressure/velocity probes, energy accounting
+    and positivity/retry diagnostics for the Sprint 4C benchmark.
+- `models/pipe_ref/s12_transient_pipe_g_{closed,open}_ref.slx`
+  - Matched built-in Simscape Gas cross-checks for a rigid end and an ideal
+    pressure-release end, respectively.
+  - They are validation references, not production tailpipe radiation models.
 
 Property-table source:
 
@@ -263,6 +272,19 @@ Five actual segment-end log points from the frozen segmented Pipe (G) model
 are compared with analytical Fanno and finest-grid FVM, with maximum FVM /
 Simscape relative difference `0.00129991`. These boundaries remain validation
 only and are not production exhaust-network interfaces.
+
+Sprint 4C adds `case:transient_pipe_wave_cross_validation` in category
+`transient_wave`. It keeps `closed_rigid_end`,
+`ideal_pressure_release_open_end`, and the numerical
+`nonreflecting_reference_boundary` distinct. The qualified candidate Full run
+uses `N=50/100/200/400/800`: at N=800 the closed/open waveform L1 values are
+`0.00587176/0.00553132` and their signed pressure reflection coefficients are
+`+0.995098/-0.994250`. The result is valid only for the documented small-
+perturbation linear-acoustic reference domain; finite-amplitude checks use
+feature, positivity and energy metrics rather than claiming linear truth.
+Promotion remains deliberately pending a clean qualification-commit rerun.
+Neither the ideal open end nor a transmissive reference is a complete tailpipe
+radiation impedance.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

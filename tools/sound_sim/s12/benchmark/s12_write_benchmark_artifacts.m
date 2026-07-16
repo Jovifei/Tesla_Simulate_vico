@@ -65,6 +65,12 @@ if hasCase(result, "fanno_fvm_three_way_cross_validation")
     artifacts(end + 1) = artifact("fanno_five_station_comparison", "csv", ...
         "fanno-five-station-comparison.csv");
 end
+if hasCase(result, "transient_pipe_wave_cross_validation")
+    artifacts(end + 1) = artifact("transient_wave_probes", "csv", ...
+        "transient-wave-probes.csv");
+    artifacts(end + 1) = artifact("transient_wave_comparison", "png", ...
+        "transient-wave-comparison.png");
+end
 result.artifacts = artifacts;
 writeSummaryCsv(result, fullfile(outputDirectory, artifacts(3).path));
 writeSmoothScanCsv(result, fullfile(outputDirectory, artifacts(5).path));
@@ -76,6 +82,7 @@ writeStandardArtifacts(result, outputDirectory);
 writePositivityArtifacts(result, outputDirectory);
 writeFannoArtifacts(result, outputDirectory);
 writeFannoFvmArtifacts(result, outputDirectory);
+writeTransientWaveArtifacts(result, outputDirectory);
 writeText(fullfile(outputDirectory, artifacts(2).path), ...
     string(jsonencode(result, "PrettyPrint", true)) + newline);
 end
@@ -275,7 +282,93 @@ if hasCase(result, "fanno_fvm_three_way_cross_validation")
         sprintf("- Maximum FVM / five-segment station difference: %.12g", ...
             max(metrics.fvm_simscape_station_relative_difference, [], "all"))];
 end
+if hasCase(result, "transient_pipe_wave_cross_validation")
+    caseIndex = find(string({result.cases.id}) == ...
+        "transient_pipe_wave_cross_validation", 1);
+    metrics = result.cases(caseIndex).metrics;
+    lines(end + 1:end + 8) = ["", "## Transient pipe-wave cross-validation", "", ...
+        sprintf("- Reference wave speed: %.12g m/s", metrics.reference_wave_speed), ...
+        sprintf("- Maximum arrival-time error: %.12g s", ...
+            max(abs(metrics.arrival_time_error), [], "all")), ...
+        sprintf("- Closed pressure reflection coefficient: %.12g", ...
+            metrics.pressure_reflection_coefficient( ...
+            find(metrics.boundary_type == "closed_rigid_end", 1), end)), ...
+        sprintf("- Open pressure reflection coefficient: %.12g", ...
+            metrics.pressure_reflection_coefficient( ...
+            find(metrics.boundary_type == "ideal_pressure_release_open_end", 1), end)), ...
+        "- Pipe(G) open end is an ambient-pressure reservoir approximation, not analytical truth."];
+end
 writeText(path, strjoin(lines, newline) + newline);
+end
+
+function writeTransientWaveArtifacts(result, outputDirectory)
+caseIndex = find(string({result.cases.id}) == ...
+    "transient_pipe_wave_cross_validation", 1);
+if isempty(caseIndex), return, end
+benchmarkCase = result.cases(caseIndex);
+metrics = benchmarkCase.metrics;
+csvIndex = find(string({result.artifacts.id}) == "transient_wave_probes", 1);
+pngIndex = find(string({result.artifacts.id}) == "transient_wave_comparison", 1);
+fileId = fopen(fullfile(outputDirectory, result.artifacts(csvIndex).path), "wt", "n", "UTF-8");
+assert(fileId >= 0, "S12:Benchmark:FileOpen", "Cannot open transient probe CSV.");
+cleanup = onCleanup(@() fclose(fileId));
+fprintf(fileId, "schema_version,transient_case_id,grid_cell_count,time_s,probe_pressure_pa\n");
+for i = 1:numel(metrics.transient_case_id)
+    for j = 1:numel(metrics.grid_cell_counts)
+        time = transientPlotSeries(benchmarkCase.plot.time, i, j, ...
+            numel(metrics.transient_case_id));
+        pressure = transientPlotSeries(benchmarkCase.plot.pressure, i, j, ...
+            numel(metrics.transient_case_id));
+        for k = 1:numel(time)
+            fprintf(fileId, "benchmark.schema.v1,%s,%d,%.12g,%.12g\n", ...
+                char(string(transientScalar(metrics.transient_case_id, i))), ...
+                double(transientScalar(metrics.grid_cell_counts, j)), time(k), pressure(k));
+        end
+    end
+end
+clear cleanup
+figureHandle = figure("Visible", "off", "Color", "white", "Position", [100, 100, 800, 500]);
+figureCleanup = onCleanup(@() close(figureHandle));
+axesHandle = axes(figureHandle); hold(axesHandle, "on");
+for i = 1:numel(metrics.transient_case_id)
+    time = transientPlotSeries(benchmarkCase.plot.time, i, ...
+        numel(metrics.grid_cell_counts), numel(metrics.transient_case_id));
+    pressure = transientPlotSeries(benchmarkCase.plot.pressure, i, ...
+        numel(metrics.grid_cell_counts), numel(metrics.transient_case_id));
+    plot(axesHandle, time, pressure, "LineWidth", 1.1);
+end
+legend(axesHandle, metrics.transient_case_id, "Location", "best");
+xlabel(axesHandle, "Time (s)"); ylabel(axesHandle, "Probe pressure (Pa)");
+title(axesHandle, "S12 transient Pipe-wave FVM probe traces"); grid(axesHandle, "on");
+saveDeterministicFigure(figureHandle, fullfile(outputDirectory, result.artifacts(pngIndex).path));
+clear figureCleanup
+end
+
+function value = transientSeries(value)
+while iscell(value)
+    assert(isscalar(value), "S12:Benchmark:InvalidTransientPlot", ...
+        "Transient plot series must contain one numeric vector.");
+    value = value{1};
+end
+value = reshape(value, 1, []);
+end
+
+function value = transientPlotSeries(values, caseIndex, gridIndex, caseCount)
+if size(values, 2) == 1
+    value = values{(gridIndex - 1) * caseCount + caseIndex};
+else
+    value = values{caseIndex, gridIndex};
+end
+value = transientSeries(value);
+end
+
+function value = transientScalar(values, index)
+value = values(index);
+while iscell(value)
+    assert(isscalar(value), "S12:Benchmark:InvalidTransientPlot", ...
+        "Transient metric values must be scalar.");
+    value = value{1};
+end
 end
 
 function writeFannoArtifacts(result, outputDirectory)

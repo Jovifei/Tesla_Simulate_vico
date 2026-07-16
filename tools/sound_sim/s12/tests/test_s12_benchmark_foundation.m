@@ -19,7 +19,8 @@ verifyEqual(testCase, string({registry.id}), ...
     "lax_shock_tube", "shu_osher_shock_entropy", ...
     "woodward_colella_blast_wave", "double_rarefaction", ...
     "fanno_pipe_g_cross_validation", ...
-    "fanno_fvm_three_way_cross_validation"]);
+    "fanno_fvm_three_way_cross_validation", ...
+    "transient_pipe_wave_cross_validation"]);
 
 requiredFields = ["id", "category", "factory"];
 verifyTrue(testCase, all(ismember(requiredFields, string(fieldnames(registry)))));
@@ -80,9 +81,29 @@ result = s12_benchmark_new_result("quick", "all", environment);
 verifyEqual(testCase, result.schema, "benchmark.schema.v1");
 verifyEqual(testCase, string(fieldnames(result)).', [ ...
     "schema", "schema_minor", "suite", "environment", "cases", "artifacts", "acceptance"]);
-verifyEqual(testCase, result.schema_minor, 4);
+verifyEqual(testCase, result.schema_minor, 6);
 verifyEqual(testCase, result.suite.profile, "quick");
 verifyEqual(testCase, result.suite.selector, "all");
 verifyEmpty(testCase, result.cases);
 verifyEqual(testCase, result.acceptance.status, "not_evaluated");
+end
+
+function testExecutedResultRecordsWorkingTreeProvenance(testCase)
+outputDirectory = string(tempname);
+testCase.addTeardown(@() removeOutputDirectory(outputDirectory));
+
+result = run_s12_benchmarks("case:uniform_state", ...
+    Profile="quick", OutputDirectory=outputDirectory);
+
+hasProvenance = isfield(result.environment, "working_tree_dirty");
+verifyTrue(testCase, hasProvenance);
+if hasProvenance
+    verifyClass(testCase, result.environment.working_tree_dirty, "logical");
+end
+end
+
+function removeOutputDirectory(path)
+if isfolder(path)
+    rmdir(path, "s");
+end
 end

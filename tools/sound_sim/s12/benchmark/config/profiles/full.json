@@ -65,5 +65,23 @@
       "minimum_sonic_margin": 0.1,
       "minimum_moderate_observed_order": 1.1
     }
+  },
+  "transient_wave": {
+    "grid_cell_counts": [50, 100, 200, 400, 800],
+    "cfl": 0.45,
+    "max_steps": 4095,
+    "temperature_k": 700,
+    "area_m2": 0.00132025,
+    "hydraulic_diameter_m": 0.041,
+    "roughness_m": 0.000015,
+    "acceptance": {
+      "maximum_cfl": 0.5,
+      "maximum_linear_waveform_l1_finest": 0.006,
+      "maximum_abs_arrival_error_s_finest": 8e-7,
+      "minimum_reflection_magnitude_finest": 0.95,
+      "maximum_boundary_energy_residual_finest": 0.03,
+      "maximum_simscape_fvm_arrival_difference_s": 8e-5,
+      "maximum_simscape_fvm_waveform_l1": 0.25
+    }
   }
 }

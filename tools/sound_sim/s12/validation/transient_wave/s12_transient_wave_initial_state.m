@@ -1,0 +1,36 @@
+function state = s12_transient_wave_initial_state(definition, cellCount)
+%S12_TRANSIENT_WAVE_INITIAL_STATE Conservative Gaussian cell averages.
+arguments
+    definition (1,1) struct
+    cellCount (1,1) double {mustBeInteger, mustBeGreaterThanOrEqual(cellCount, 3)}
+end
+required = ["gamma", "density", "ambient_pressure", "pipe_length_m", ...
+    "pulse_center_m", "pulse_sigma_m", "pulse_amplitude_pa"];
+if ~all(isfield(definition, required)) || definition.gamma <= 1 || ...
+        definition.density <= 0 || definition.ambient_pressure <= 0 || ...
+        definition.pipe_length_m <= 0 || definition.pulse_sigma_m <= 0
+    error("S12:TransientWave:InvalidDefinition", ...
+        "Gaussian transient-wave definition is invalid.");
+end
+dx = definition.pipe_length_m / cellCount;
+nodes = [-0.960289856497536, -0.796666477413627, -0.525532409916329, ...
+    -0.183434642495650, 0.183434642495650, 0.525532409916329, ...
+    0.796666477413627, 0.960289856497536];
+weights = [0.101228536290376, 0.222381034453374, 0.313706645877887, ...
+    0.362683783378362, 0.362683783378362, 0.313706645877887, ...
+    0.222381034453374, 0.101228536290376];
+centers = ((1:cellCount) - 0.5) * dx;
+pressurePerturbation = zeros(1, cellCount);
+for nodeIndex = 1:numel(nodes)
+    x = centers + 0.5 * dx * nodes(nodeIndex);
+    pressurePerturbation = pressurePerturbation + 0.5 * weights(nodeIndex) * ...
+        definition.pulse_amplitude_pa * exp(-0.5 * ((x - definition.pulse_center_m) / ...
+        definition.pulse_sigma_m).^2);
+end
+soundSpeed = sqrt(definition.gamma * definition.ambient_pressure / definition.density);
+density = definition.density + pressurePerturbation / soundSpeed^2;
+velocity = pressurePerturbation / (definition.density * soundSpeed);
+pressure = definition.ambient_pressure + pressurePerturbation;
+state = [density; density .* velocity; pressure / (definition.gamma - 1) + ...
+    0.5 * density .* velocity.^2];
+end

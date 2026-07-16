@@ -65,5 +65,15 @@
       "minimum_sonic_margin": 0.1,
       "minimum_moderate_observed_order": 0.0
     }
+  },
+  "transient_wave": {
+    "grid_cell_counts": [50],
+    "cfl": 0.45,
+    "max_steps": 2047,
+    "temperature_k": 700,
+    "area_m2": 0.00132025,
+    "hydraulic_diameter_m": 0.041,
+    "roughness_m": 0.000015,
+    "acceptance": {"maximum_cfl": 0.5}
   }
 }

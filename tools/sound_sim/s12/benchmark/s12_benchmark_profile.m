@@ -18,4 +18,6 @@ end
 profile.fanno_fvm.lengths_m = reshape(profile.fanno_fvm.lengths_m, 1, []);
 profile.fanno_fvm.grid_cell_counts = ...
     reshape(profile.fanno_fvm.grid_cell_counts, 1, []);
+profile.transient_wave.grid_cell_counts = ...
+    reshape(profile.transient_wave.grid_cell_counts, 1, []);
 end

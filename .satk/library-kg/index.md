@@ -33,3 +33,19 @@ gate without inventing library content.
 The model contains only the exact local Darcy-friction source update. The
 frozen HLLC, MUSCL-minmod, positivity-preserving, and SSP-RK3 models remain
 separate controlled dependencies selected by the adapter.
+
+## Sprint 4C Model Policy Audit
+
+- Audit date: 2026-07-16
+- Controlled models:
+  - `tools/sound_sim/s12/models/fvm_ref/s12_euler_fvm_transient_wave_ref.slx`
+  - `tools/sound_sim/s12/models/pipe_ref/s12_transient_pipe_g_closed_ref.slx`
+  - `tools/sound_sim/s12/models/pipe_ref/s12_transient_pipe_g_open_ref.slx`
+- Blocks used: built-in Simulink/Stateflow for the FVM reference and built-in
+  Simscape Gas blocks for the two Pipe(G) cross-checks.
+- Custom or third-party Block Library links: none. The existing
+  `confirmed_none` library decision and built-in fallback remain valid.
+- Structural evidence: the FVM model is `model_check(["all"])` healthy. The
+  two Pipe(G) models each reproduce the known conserving-port inspector false
+  positives; their complete connection graph and runtime behavior are verified
+  separately and the warnings are not suppressed or recast as healthy.
