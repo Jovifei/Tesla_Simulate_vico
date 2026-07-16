@@ -1,0 +1,2 @@
+schema_version,case_id,category,status,finest_observed_order,max_conservation_error,runtime_seconds
+benchmark.schema.v1,unflanged_open_end_radiation_impedance,radiation_impedance,passed,NaN,NaN,1.1853378

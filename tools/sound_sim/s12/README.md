@@ -296,13 +296,15 @@ open-end impedance reference against a published causal rational candidate;
 it is not connected to the transient FVM. The accepted band is
 `0.02 <= ka <= 2`, and the candidate package is a future Sprint 4D-B asset,
 not a production tailpipe-radiation boundary. The final accepted baseline is
-promoted only after a Full run from a clean qualification commit.
+`benchmark/baselines/sprint-4d-a`; its Canonical manifest SHA-256 is
+`20D6007D534B967A41BC925CB86C396EAF988EFD9FFF1D8E5AD345C994CCB693` and it
+binds the clean qualification commit `c3dcd9f` with
+`working_tree_dirty=false`.
 
 The 4D-A qualification candidate passes its direct-reference, benchmark and
 Foundation contracts, and the complete S12 regression is `123/123` at code
-commit `721722b`. The final baseline provenance is deliberately still pending:
-the accepted Full must be rerun from the clean qualification commit rather
-than promoted from this pre-commit evidence.
+commit `721722b`. The accepted Full was rerun from clean qualification commit
+`c3dcd9f`, then checked by report-only before explicit local promotion.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

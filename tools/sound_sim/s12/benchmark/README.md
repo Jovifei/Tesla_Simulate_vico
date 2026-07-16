@@ -209,8 +209,8 @@ run was created from clean qualification commit `48deed7`, records
 both report-only reconstruction paths. The manifest SHA-256 is
 `354930D70C03C8E2C0E0D907F1A15E5EC4B3BDC2B2CFDAD64010A3F60617120D`.
 
-Sprint 4D-A has a passing qualification candidate but is not yet an accepted
-baseline at this document revision. Its full case retains 12 controlled
-artifacts; promotion is permitted only after a Full run from the clean
-qualification commit records that commit and `working_tree_dirty=false` in
-the Canonical Result.
+Sprint 4D-A is accepted at `benchmark/baselines/sprint-4d-a`. Its Full run was
+created from clean qualification commit `c3dcd9f`, records
+`working_tree_dirty=false`, and has 12 artifacts byte-identical to report-only
+reconstruction. The manifest SHA-256 is
+`20D6007D534B967A41BC925CB86C396EAF988EFD9FFF1D8E5AD345C994CCB693`.

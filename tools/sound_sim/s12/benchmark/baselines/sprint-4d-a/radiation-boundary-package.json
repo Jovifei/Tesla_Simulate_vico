@@ -1,0 +1,39 @@
+{
+  "schema": "radiation_boundary_package.v1",
+  "geometry": "circular_unflanged",
+  "normalization": "rho0_c0_over_area.v1",
+  "valid_ka_band": [
+    0.02,
+    2
+  ],
+  "sample_rate_constraints": "integration_deferred_to_sprint_4d_b",
+  "state_space_A": [
+    [
+      0,
+      1
+    ],
+    [
+      -6.4359409190371978E+8,
+      -52275.601750547037
+    ]
+  ],
+  "state_space_B": [
+    0,
+    1
+  ],
+  "state_space_C": [
+    -6.4359409190371978E+8,
+    -6267.06783369803
+  ],
+  "state_space_D": 0,
+  "initial_state": [
+    0,
+    0
+  ],
+  "reference_plane": "bore_end",
+  "end_correction": 0.6133,
+  "passivity_evidence": "frequency_domain_contract_pending_benchmark",
+  "fit_error_summary": "frequency_domain_contract_pending_benchmark",
+  "source_commit": "c3dcd9f057635fea2a74fa7d8d6035f81e63f91d",
+  "asset_sha256": "7DA7AAFDF51BE57ECEE75D98948B7D6C94BEC0944A6316D8A29C9B675D621446"
+}
