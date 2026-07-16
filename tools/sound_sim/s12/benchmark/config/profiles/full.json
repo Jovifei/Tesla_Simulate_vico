@@ -83,5 +83,8 @@
       "maximum_simscape_fvm_arrival_difference_s": 8e-5,
       "maximum_simscape_fvm_waveform_l1": 0.25
     }
+  },
+  "radiation_impedance": {
+    "validation_profile": "full"
   }
 }

@@ -53,5 +53,10 @@
     "id": "transient_pipe_wave_cross_validation",
     "category": "transient_wave",
     "factory": "s12_benchmark_case_transient_pipe_wave"
+  },
+  {
+    "id": "unflanged_open_end_radiation_impedance",
+    "category": "radiation_impedance",
+    "factory": "s12_benchmark_case_radiation_impedance"
   }
 ]

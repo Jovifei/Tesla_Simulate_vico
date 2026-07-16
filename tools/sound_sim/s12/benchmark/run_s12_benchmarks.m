@@ -21,7 +21,8 @@ if selector == "report-only"
             "report-only requires an existing SourceManifest.");
     end
     result = normalizeStrings(jsondecode(fileread(options.SourceManifest)));
-    result = s12_write_benchmark_artifacts(result, options.OutputDirectory);
+    result = s12_write_benchmark_artifacts(result, options.OutputDirectory, ...
+        SourceDirectory=fileparts(options.SourceManifest));
     manifestPath = fullfile(options.OutputDirectory, "benchmark-result.json");
     if ~strcmpi(char(options.SourceManifest), char(manifestPath))
         copyfile(options.SourceManifest, manifestPath, "f");

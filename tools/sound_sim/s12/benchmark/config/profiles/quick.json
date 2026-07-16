@@ -75,5 +75,8 @@
     "hydraulic_diameter_m": 0.041,
     "roughness_m": 0.000015,
     "acceptance": {"maximum_cfl": 0.5}
+  },
+  "radiation_impedance": {
+    "validation_profile": "quick"
   }
 }
