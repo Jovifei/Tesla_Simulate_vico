@@ -46,6 +46,10 @@ separate controlled dependencies selected by the adapter.
 - Custom or third-party Block Library links: none. The existing
   `confirmed_none` library decision and built-in fallback remain valid.
 - Structural evidence: the FVM model is `model_check(["all"])` healthy. The
-  two Pipe(G) models each reproduce the known conserving-port inspector false
+  two Pipe(G) models each reproduce 21 known conserving-port inspector false
   positives; their complete connection graph and runtime behavior are verified
   separately and the warnings are not suppressed or recast as healthy.
+- Exact waiver: `.satk/model-check-waivers.json` is scoped to R2026a, the two
+  exact model SHA-256 values, and the complete 21-item warning signature for
+  each model. Its contract test rejects a model hash, tool-release, count, or
+  signature drift; it is not a global Simscape-warning allowlist.

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "tool": {
+    "id": "matlab_mcp.model_check",
+    "matlab_release": "R2026a",
+    "simulink_release": "R2026a"
+  },
+  "policy": {
+    "default": "fail_on_any_warning",
+    "scope": "exact_model_hash_and_signature_only",
+    "prohibited": [
+      "global_warning_suppression",
+      "wildcard_model_path",
+      "wildcard_warning_signature"
+    ]
+  },
+  "healthy_models": [
+    {
+      "model_path": "models/fvm_ref/s12_euler_fvm_transient_wave_ref.slx",
+      "model_sha256": "63D49906D37A82DDE883D088190056D5A8F06A8032A190381B85304BE02D8E41",
+      "expected_status": "healthy",
+      "expected_warning_count": 0
+    }
+  ],
+  "waivers": [
+    {
+      "model_path": "models/pipe_ref/s12_transient_pipe_g_closed_ref.slx",
+      "model_sha256": "24B681EE2BDA6BC8A056F9495796B5B2083620FFABC1EDBEB59BCD7B42819ED4",
+      "check_id": "unconnected_ports",
+      "warning_signature": {
+        "normalization": "type|relative_model_block_path|port|port_type; source-order preserved",
+        "sha256": "300320B6C6CC1D1C9A8BD4546754F02D7D651E026B66652BDB259639015F804E",
+        "items": [
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell01|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell01|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell01|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell02|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell02|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell02|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell03|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell03|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell03|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell04|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell04|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell04|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell05|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell05|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell05|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell06|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell06|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell06|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell07|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell07|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_closed_ref.slx/PrimaryCell07|B|RConn"
+        ]
+      },
+      "expected_count": 21,
+      "reason": "The R2026a inspector reports each Pipe (G) conserving A/H/B port as unconnected although the controlled model connection graph and runtime cross-validation are valid.",
+      "alternative_validation": [
+        "tests/test_s12_transient_wave_model_contract.m",
+        "tests/test_s12_transient_wave_benchmark_contract.m",
+        "benchmark/baselines/sprint-4c/benchmark-result.json"
+      ],
+      "review_status": "qualified_with_exact_tool_limitation_waiver"
+    },
+    {
+      "model_path": "models/pipe_ref/s12_transient_pipe_g_open_ref.slx",
+      "model_sha256": "BF682AEDA0F86426B6BDDD616B9A62E0C07ACF3231A71608736D2DBFA42183CF",
+      "check_id": "unconnected_ports",
+      "warning_signature": {
+        "normalization": "type|relative_model_block_path|port|port_type; source-order preserved",
+        "sha256": "5ECAD6922C51237A3C1685D25682DE7FE0D050C42412BBB1F6DCF412E19E35E0",
+        "items": [
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell01|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell01|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell01|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell02|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell02|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell02|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell03|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell03|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell03|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell04|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell04|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell04|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell05|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell05|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell05|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell06|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell06|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell06|B|RConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell07|A|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell07|H|LConn",
+          "unconnected_port|models/pipe_ref/s12_transient_pipe_g_open_ref.slx/PrimaryCell07|B|RConn"
+        ]
+      },
+      "expected_count": 21,
+      "reason": "The R2026a inspector reports each Pipe (G) conserving A/H/B port as unconnected although the controlled model connection graph and runtime cross-validation are valid.",
+      "alternative_validation": [
+        "tests/test_s12_transient_wave_model_contract.m",
+        "tests/test_s12_transient_wave_benchmark_contract.m",
+        "benchmark/baselines/sprint-4c/benchmark-result.json"
+      ],
+      "review_status": "qualified_with_exact_tool_limitation_waiver"
+    }
+  ]
+}
