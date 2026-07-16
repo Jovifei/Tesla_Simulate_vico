@@ -289,6 +289,21 @@ it binds the clean qualification commit
 `48deed79ce45cf0a3066d6bd264821d0105f1c6b`. Neither the ideal open end nor a
 transmissive reference is a complete tailpipe radiation impedance.
 
+Sprint 4D-A adds the frequency-domain
+`case:unflanged_open_end_radiation_impedance` in category
+`radiation_impedance`. It validates an unflanged, zero-mean-flow circular
+open-end impedance reference against a published causal rational candidate;
+it is not connected to the transient FVM. The accepted band is
+`0.02 <= ka <= 2`, and the candidate package is a future Sprint 4D-B asset,
+not a production tailpipe-radiation boundary. The final accepted baseline is
+promoted only after a Full run from a clean qualification commit.
+
+The 4D-A qualification candidate passes its direct-reference, benchmark and
+Foundation contracts, and the complete S12 regression is `123/123` at code
+commit `721722b`. The final baseline provenance is deliberately still pending:
+the accepted Full must be rerun from the clean qualification commit rather
+than promoted from this pre-commit evidence.
+
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are
 `[5.01334e-4, 2.50997e-4, 1.25591e-4, 6.28151e-5]` in first order and

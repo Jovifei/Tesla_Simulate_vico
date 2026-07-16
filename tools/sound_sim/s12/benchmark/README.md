@@ -11,6 +11,10 @@ Analytical/Simscape/FVM qualification without modifying those frozen modes.
 Sprint 4C adds a transient-pipe wave case using the same registry, profile,
 Canonical Result and report-only pipeline; it does not replace any frozen
 steady Fanno evidence.
+Sprint 4D-A adds an unflanged open-end radiation-impedance case to that same
+pipeline. It is frequency-domain validation only: it does not alter a frozen
+solver, connect a boundary to the FVM, or assert a complete tailpipe-radiation
+model.
 
 ## Entry points
 
@@ -30,6 +34,9 @@ run_s12_benchmarks('case:fanno_fvm_three_way_cross_validation', ...
 run_s12_benchmarks('case:transient_pipe_wave_cross_validation', ...
     Profile='full');
 run_s12_benchmarks('category:transient_wave', Profile='quick');
+run_s12_benchmarks('case:unflanged_open_end_radiation_impedance', ...
+    Profile='full');
+run_s12_benchmarks('category:radiation_impedance', Profile='quick');
 run_s12_benchmarks('category:cross_validation', Profile='quick');
 run_s12_benchmarks('all', Profile='full');
 run_s12_muscl_final_qualification('run', Profile='full');
@@ -114,6 +121,11 @@ source manifest bytes.
   analytical linear wave is primary for its stated amplitude range; matched
   Simscape Pipe(G) traces are auxiliary. Full uses `N=50/100/200/400/800` and
   records waveform/arrival/phase/amplitude/reflection/energy diagnostics.
+- `unflanged_open_end_radiation_impedance`: Sprint 4D-A frequency-domain
+  zero-mean-flow, circular-unflanged, plane-wave reference. It compares
+  direct Levine--Schwinger quadrature with the published Silva et al. causal
+  rational candidate on the frozen `0.02 <= ka <= 2` band and exports an
+  unconnected `radiation_boundary_package.v1` for a future integration sprint.
 
 The periodic adapter never copies HLLC/FVM equations. `first_order` uses the
 frozen `s12_euler_fvm_periodic_step_ref.slx`; `muscl_minmod` uses its dedicated
@@ -148,6 +160,11 @@ Canonical Result produces:
   `transient-wave-comparison.png`; its nine controlled artifacts are generated
   from the same Canonical Result. Report-only renders them without running an
   FVM, Simscape or analytical solver and without recomputing acceptance.
+- The Sprint 4D-A radiation case adds `radiation-impedance-frequency.csv`,
+  comparison/error/stability PNGs, and `radiation-boundary-package.json`.
+  Report-only copies the Canonical frequency CSV byte-for-byte, renders only
+  from that result, and never reruns reference quadrature or recomputes
+  acceptance.
 
 Report-only rendering never reruns a case or recomputes acceptance. JSON key
 order, case order, numeric formatting, filenames, and PNG metadata policy are
@@ -191,3 +208,9 @@ run was created from clean qualification commit `48deed7`, records
 `working_tree_dirty=false`, and has nine artifacts that are byte-identical to
 both report-only reconstruction paths. The manifest SHA-256 is
 `354930D70C03C8E2C0E0D907F1A15E5EC4B3BDC2B2CFDAD64010A3F60617120D`.
+
+Sprint 4D-A has a passing qualification candidate but is not yet an accepted
+baseline at this document revision. Its full case retains 12 controlled
+artifacts; promotion is permitted only after a Full run from the clean
+qualification commit records that commit and `working_tree_dirty=false` in
+the Canonical Result.
