@@ -282,9 +282,12 @@ uses `N=50/100/200/400/800`: at N=800 the closed/open waveform L1 values are
 `+0.995098/-0.994250`. The result is valid only for the documented small-
 perturbation linear-acoustic reference domain; finite-amplitude checks use
 feature, positivity and energy metrics rather than claiming linear truth.
-Promotion remains deliberately pending a clean qualification-commit rerun.
-Neither the ideal open end nor a transmissive reference is a complete tailpipe
-radiation impedance.
+The accepted baseline is `benchmark/baselines/sprint-4c`; its Canonical
+manifest SHA-256 is
+`354930D70C03C8E2C0E0D907F1A15E5EC4B3BDC2B2CFDAD64010A3F60617120D` and
+it binds the clean qualification commit
+`48deed79ce45cf0a3066d6bd264821d0105f1c6b`. Neither the ideal open end nor a
+transmissive reference is a complete tailpipe radiation impedance.
 
 For the periodic entropy wave, finite-volume cell averages are used for both
 the initial and analytic reference. At `N=50/100/200/400`, rho L1 errors are

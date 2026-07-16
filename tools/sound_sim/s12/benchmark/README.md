@@ -186,7 +186,8 @@ only characteristic boundary, constant Darcy factor, calorically-perfect gas,
 constant area, adiabatic wall, and subsonic domain remain explicit limits.
 Engine Library, exhaust network, radiation, and audio DSP remain blocked until
 the remaining Sprint 4 release scope is approved.
-Sprint 4C is qualification-complete but not yet accepted until a clean
-qualification-commit Full rerun and explicit independent baseline promotion
-bind the source commit, `working_tree_dirty=false`, and nine deterministic
-artifacts.
+Sprint 4C is explicitly accepted at `benchmark/baselines/sprint-4c`. Its Full
+run was created from clean qualification commit `48deed7`, records
+`working_tree_dirty=false`, and has nine artifacts that are byte-identical to
+both report-only reconstruction paths. The manifest SHA-256 is
+`354930D70C03C8E2C0E0D907F1A15E5EC4B3BDC2B2CFDAD64010A3F60617120D`.
