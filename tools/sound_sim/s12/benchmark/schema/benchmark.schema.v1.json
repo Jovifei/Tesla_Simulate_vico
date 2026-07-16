@@ -206,7 +206,6 @@
     "reference_quadrature_end_correction_difference",
     "training_validation_overlap_count",
     "radiation_boundary_package",
-    "reference_applicability",
     "fit_applicability"
   ],
   "numeric_format": "%.12g",

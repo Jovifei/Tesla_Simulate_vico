@@ -47,8 +47,7 @@ for caseIndex = 1:numel(selected)
     analysis = definition.analyze(raw);
     acceptance = definition.accept(analysis.metrics);
     if options.Reconstruction == "muscl_minmod_pp" && ...
-            selected(caseIndex).category ~= "cross_validation" && ...
-            selected(caseIndex).category ~= "transient_wave"
+            requiresPpAcceptance(selected(caseIndex).category)
         acceptance = appendPpAcceptance(acceptance, analysis.metrics);
     end
     cases(caseIndex) = struct( ...
@@ -63,6 +62,13 @@ end
 result.cases = cases;
 result.acceptance = suiteAcceptance(cases);
 result = s12_write_benchmark_artifacts(result, options.OutputDirectory);
+end
+
+function required = requiresPpAcceptance(category)
+eulerSolverCategories = ["conservation", "shock_tube", ...
+    "temporal_accuracy", "spatial_accuracy", "standard_shock_tube", ...
+    "standard_shock_entropy", "standard_blast_wave", "positivity_stress"];
+required = any(string(category) == eulerSolverCategories);
 end
 
 function acceptance = appendPpAcceptance(acceptance, metrics)

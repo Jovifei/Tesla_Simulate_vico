@@ -94,6 +94,18 @@ end
 verifyEqual(testCase, numel(result.artifacts), 12);
 end
 
+function testFrequencyOnlyCaseDoesNotInheritPpSolverContract(testCase)
+output = string(tempname);
+testCase.addTeardown(@() removeDirectory(output));
+result = run_s12_benchmarks("case:unflanged_open_end_radiation_impedance", ...
+    Profile="quick", Reconstruction="muscl_minmod_pp", OutputDirectory=output);
+verifyEqual(testCase, result.acceptance.status, "passed", ...
+    "A frequency-only radiation case must not inherit Euler PP checks.");
+checkIds = string({result.cases.acceptance.checks.id});
+verifyFalse(testCase, any(startsWith(checkIds, "pp_")), ...
+    "PP checks belong only to Euler solver cases that use the PP operator.");
+end
+
 function schema = readSchema
 s12Root = fileparts(fileparts(mfilename("fullpath")));
 schema = jsondecode(fileread(fullfile(s12Root, "benchmark", ...
