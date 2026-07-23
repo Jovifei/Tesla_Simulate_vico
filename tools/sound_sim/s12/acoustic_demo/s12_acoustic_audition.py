@@ -29,7 +29,8 @@ class PressureTrace:
 class AuditionResult:
     sample_rate_hz: int
     clipping_count: int
-    native_duration_s: float
+    source_duration_s: float
+    native_wav_duration_s: float
     native_frame_count: int
     source_pressure_csv_path: Path
     native_wav_path: Path
@@ -158,7 +159,8 @@ def write_controlled_artifacts(trace: PressureTrace, normalized: list[float], ou
     metadata = {
         "case_id": trace.case_id,
         "labels": LABELS,
-        "native_duration_s": trace.time_s[-1] - trace.time_s[0],
+        "source_duration_s": trace.time_s[-1] - trace.time_s[0],
+        "native_wav_duration_s": len(normalized) / sample_rate_hz,
         "native_frame_count": len(normalized),
         "normalization_gain_per_pa": gain,
         "preview": "looped audition preview; no time scaling",
@@ -170,7 +172,8 @@ def write_controlled_artifacts(trace: PressureTrace, normalized: list[float], ou
     files = [source_csv, native_wav, preview_wav, metadata_path, waveform_path, spectrum_path]
     hashes = {path.name: _sha256(path) for path in files}
     manifest_path.write_text(json.dumps({"files": hashes, "sha256": hashes[native_wav.name]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return AuditionResult(sample_rate_hz, clipping_count, trace.time_s[-1] - trace.time_s[0], len(normalized),
+    return AuditionResult(sample_rate_hz, clipping_count, trace.time_s[-1] - trace.time_s[0],
+                          len(normalized) / sample_rate_hz, len(normalized),
                           source_csv, native_wav, preview_wav, metadata_path, waveform_path, spectrum_path, manifest_path)
 
 

@@ -34,7 +34,15 @@ class S12AcousticAuditionTests(unittest.TestCase):
 
             self.assertEqual(result.sample_rate_hz, 48000)
             self.assertEqual(result.clipping_count, 0)
-            self.assertEqual(result.native_duration_s, trace.time_s[-1] - trace.time_s[0])
+            self.assertEqual(result.source_duration_s, trace.time_s[-1] - trace.time_s[0])
+            self.assertEqual(
+                result.native_wav_duration_s,
+                result.native_frame_count / result.sample_rate_hz,
+            )
+            self.assertLessEqual(
+                abs(result.native_wav_duration_s - result.source_duration_s),
+                0.5 / result.sample_rate_hz,
+            )
             self.assertEqual(result.manifest_path.read_bytes(), repeat.manifest_path.read_bytes())
             self.assertTrue(result.source_pressure_csv_path.is_file())
             self.assertEqual(result.waveform_png_path.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
@@ -43,6 +51,10 @@ class S12AcousticAuditionTests(unittest.TestCase):
             with wave.open(str(result.native_wav_path), "rb") as native:
                 self.assertEqual(native.getframerate(), 48000)
                 self.assertEqual(native.getnframes(), result.native_frame_count)
+                self.assertEqual(
+                    native.getnframes() / native.getframerate(),
+                    result.native_wav_duration_s,
+                )
             with wave.open(str(result.looped_preview_wav_path), "rb") as preview:
                 self.assertEqual(preview.getframerate(), 48000)
                 self.assertGreater(preview.getnframes(), result.native_frame_count)
@@ -50,6 +62,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
             metadata = json.loads(result.metadata_json_path.read_text(encoding="utf-8"))
             self.assertEqual(metadata["labels"], ["synthetic", "uncalibrated", "offline", "not_realtime_qualified"])
             self.assertEqual(metadata["preview"], "looped audition preview; no time scaling")
+            self.assertEqual(metadata["source_duration_s"], result.source_duration_s)
+            self.assertEqual(metadata["native_wav_duration_s"], result.native_wav_duration_s)
+            self.assertNotIn("native_duration_s", metadata)
             self.assertNotIn("generated_at", metadata)
             manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
             self.assertEqual(manifest["sha256"], hashlib.sha256(result.native_wav_path.read_bytes()).hexdigest())
