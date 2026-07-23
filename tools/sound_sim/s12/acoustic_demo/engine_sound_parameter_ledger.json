@@ -25,6 +25,36 @@
       "source": "synthetic",
       "value": 0.35
     },
+    "fundamental_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum first-order contribution at zero load.",
+      "source": "synthetic",
+      "value": 0.25
+    },
+    "fundamental_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous first-order contribution added across normalized load.",
+      "source": "synthetic",
+      "value": 0.5
+    },
+    "high_order_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum higher-order contribution at zero load.",
+      "source": "synthetic",
+      "value": 0.12
+    },
+    "high_order_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous higher-order contribution added across normalized load.",
+      "source": "synthetic",
+      "value": 0.88
+    },
+    "load_rate_reference": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic normalized-load rate that drives the transient target to unity.",
+      "source": "synthetic",
+      "value": 2.0
+    },
     "max_adjacent_step": {
       "classification": "C/synthetic",
       "rationale": "Automated discontinuity proxy threshold for normalized output samples.",
@@ -36,6 +66,36 @@
       "rationale": "Automated DC proxy threshold for normalized output samples.",
       "source": "synthetic",
       "value": 0.001
+    },
+    "rpm_rate_reference": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic RPM-per-second rate that drives the transient target to unity.",
+      "source": "synthetic",
+      "value": 5000.0
+    },
+    "stereo_order": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic engine order used for the bounded stereo side texture.",
+      "source": "synthetic",
+      "value": 3.0
+    },
+    "stereo_order_weight": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic weight of the order-driven stereo side component.",
+      "source": "synthetic",
+      "value": 0.22
+    },
+    "stereo_phase_rad": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic phase offset in radians for the stereo order component.",
+      "source": "synthetic",
+      "value": 0.7
+    },
+    "stereo_texture_weight": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic weight of the physical texture in the stereo side component.",
+      "source": "synthetic",
+      "value": 0.08
     },
     "stereo_width": {
       "classification": "C/synthetic",
@@ -54,6 +114,30 @@
       "rationale": "Synthetic bounded emphasis driven continuously by RPM and load derivatives.",
       "source": "synthetic",
       "value": 0.12
+    },
+    "transient_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum transient audibility at zero load.",
+      "source": "synthetic",
+      "value": 0.35
+    },
+    "transient_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous transient-intensity increase across normalized load.",
+      "source": "synthetic",
+      "value": 0.65
+    },
+    "transient_order": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic engine order carrying derivative-driven transient emphasis.",
+      "source": "synthetic",
+      "value": 4.0
+    },
+    "transient_phase_rad": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic phase offset in radians for transient emphasis.",
+      "source": "synthetic",
+      "value": 0.25
     }
   },
   "schema": "s12.engine_sound_parameter_ledger.v1"

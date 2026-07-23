@@ -274,6 +274,34 @@ class S12AcousticAuditionTests(unittest.TestCase):
         )
         self.assertTrue(all(entry["source"] == "synthetic" for entry in profile["orders"]))
         self.assertEqual(parameters["generator_version"], "Synthetic Engine Sound v0.2")
+        self.assertEqual(
+            set(parameters["parameters"]),
+            {
+                "attack_s",
+                "crossfade_s",
+                "decay_s",
+                "fixed_output_gain",
+                "fundamental_load_floor",
+                "fundamental_load_span",
+                "high_order_load_floor",
+                "high_order_load_span",
+                "load_rate_reference",
+                "max_adjacent_step",
+                "max_dc",
+                "rpm_rate_reference",
+                "stereo_order",
+                "stereo_order_weight",
+                "stereo_phase_rad",
+                "stereo_texture_weight",
+                "stereo_width",
+                "texture_mix",
+                "transient_gain",
+                "transient_load_floor",
+                "transient_load_span",
+                "transient_order",
+                "transient_phase_rad",
+            },
+        )
         for entry in parameters["parameters"].values():
             self.assertEqual(entry["classification"], "C/synthetic")
             self.assertEqual(entry["source"], "synthetic")
@@ -296,21 +324,29 @@ class S12AcousticAuditionTests(unittest.TestCase):
             all(math.isclose(value, 0.75, abs_tol=1.0e-12) for value in looped)
         )
 
-    def test_looped_texture_crossfade_is_continuous_at_wraps(self):
-        samples = [
-            math.sin(2.0 * math.pi * index / 2400.0)
-            for index in range(2400)
-        ]
-        crossfade_frames = 960
+    def test_looped_texture_crossfade_uses_true_tail_head_overlap(self):
+        samples = [-0.8, -0.6, 0.25, 0.4, -0.1, 0.3, -0.7, 0.9]
+        crossfade_frames = 2
         period_frames = len(samples) - crossfade_frames
         looped = [
             _looped_texture_at(samples, index, crossfade_frames)
-            for index in range(4 * period_frames)
+            for index in range(2 * period_frames + 1)
         ]
 
-        for wrap in range(1, 4):
-            index = wrap * period_frames
-            self.assertLessEqual(abs(looped[index] - looped[index - 1]), 0.01)
+        self.assertEqual(
+            looped[len(samples) - 2 * crossfade_frames],
+            0.5 * samples[-2] + 0.5 * samples[0],
+        )
+        self.assertEqual(
+            looped[len(samples) - 2 * crossfade_frames + 1],
+            samples[1],
+        )
+        self.assertEqual(looped[period_frames], samples[crossfade_frames])
+        crossfaded_wrap_jump = abs(
+            looped[period_frames] - looped[period_frames - 1]
+        )
+        direct_modulo_wrap_jump = abs(samples[0] - samples[-1])
+        self.assertLess(crossfaded_wrap_jump, direct_modulo_wrap_jump)
 
     def test_renders_fixed_rpm_load_orders_with_one_fixed_gain(self):
         texture = self._engine_sound_texture()
@@ -423,6 +459,44 @@ class S12AcousticAuditionTests(unittest.TestCase):
             load_design_parameters()["parameters"]["max_adjacent_step"]["value"],
         )
 
+    def test_load_continuously_scales_rpm_transient_intensity(self):
+        texture = self._engine_sound_texture()
+        profile = load_order_profile()
+        parameters = load_design_parameters()
+        low_load = render_sound_design(
+            texture,
+            OrderSchedule.ramp(1000.0, 6000.0, 0.0, 0.0, 0.20),
+            profile,
+            parameters,
+        )
+        high_load = render_sound_design(
+            texture,
+            OrderSchedule.ramp(1000.0, 6000.0, 1.0, 1.0, 0.20),
+            profile,
+            parameters,
+        )
+
+        self.assertGreater(high_load.transient_rms, low_load.transient_rms)
+        self.assertEqual(
+            high_load.fundamental_phase_rad,
+            low_load.fundamental_phase_rad,
+        )
+        for trace in (low_load, high_load):
+            self.assertLess(max(abs(value) for value in trace.left + trace.right), 1.0)
+            for index in range(1, len(trace.fundamental_phase_rad)):
+                expected = (
+                    2.0
+                    * math.pi
+                    * trace.instantaneous_rpm[index]
+                    / (60.0 * trace.sample_rate_hz)
+                )
+                self.assertAlmostEqual(
+                    trace.fundamental_phase_rad[index]
+                    - trace.fundamental_phase_rad[index - 1],
+                    expected,
+                    places=12,
+                )
+
     def test_writes_deterministic_24_bit_stereo_metadata(self):
         trace = render_sound_design(
             self._engine_sound_texture(),
@@ -453,6 +527,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 "fixed_output_gain", "clipping_count", "dc", "max_adjacent_step",
                 "sample_rate_hz", "channels", "sample_width",
                 "order_spectrum_rms", "source_component_rms",
+                "transient_rms",
             ):
                 self.assertIn(key, metadata)
             self.assertTrue(metadata["synthetic"])

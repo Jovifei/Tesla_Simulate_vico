@@ -70,6 +70,20 @@ def load_design_parameters(path: Path = DEFAULT_PARAMETER_LEDGER_PATH) -> dict:
         "decay_s",
         "crossfade_s",
         "transient_gain",
+        "fundamental_load_floor",
+        "fundamental_load_span",
+        "high_order_load_floor",
+        "high_order_load_span",
+        "rpm_rate_reference",
+        "load_rate_reference",
+        "transient_load_floor",
+        "transient_load_span",
+        "transient_order",
+        "transient_phase_rad",
+        "stereo_order",
+        "stereo_phase_rad",
+        "stereo_order_weight",
+        "stereo_texture_weight",
         "max_adjacent_step",
         "max_dc",
     }
@@ -204,6 +218,7 @@ class DesignedStereoTrace:
     profile_sha256: str
     parameter_ledger_sha256: str
     fixed_output_gain: float
+    transient_rms: float
     source_component_rms: dict[str, float]
     order_spectrum_rms: dict[str, float]
     max_adjacent_step_limit: float
@@ -304,12 +319,42 @@ def render_sound_design(
     decay_s = _parameter(parameters, "decay_s")
     crossfade_s = _parameter(parameters, "crossfade_s")
     transient_gain = _parameter(parameters, "transient_gain")
+    fundamental_load_floor = _parameter(parameters, "fundamental_load_floor")
+    fundamental_load_span = _parameter(parameters, "fundamental_load_span")
+    high_order_load_floor = _parameter(parameters, "high_order_load_floor")
+    high_order_load_span = _parameter(parameters, "high_order_load_span")
+    rpm_rate_reference = _parameter(parameters, "rpm_rate_reference")
+    load_rate_reference = _parameter(parameters, "load_rate_reference")
+    transient_load_floor = _parameter(parameters, "transient_load_floor")
+    transient_load_span = _parameter(parameters, "transient_load_span")
+    transient_order = _parameter(parameters, "transient_order")
+    transient_phase_rad = _parameter(parameters, "transient_phase_rad")
+    stereo_order = _parameter(parameters, "stereo_order")
+    stereo_phase_rad = _parameter(parameters, "stereo_phase_rad")
+    stereo_order_weight = _parameter(parameters, "stereo_order_weight")
+    stereo_texture_weight = _parameter(parameters, "stereo_texture_weight")
     if (
         gain <= 0.0
         or texture_mix < 0.0
         or not 0.0 <= stereo_width <= 1.0
         or min(attack_s, decay_s, crossfade_s) <= 0.0
         or transient_gain < 0.0
+        or min(
+            fundamental_load_floor,
+            fundamental_load_span,
+            high_order_load_floor,
+            high_order_load_span,
+            transient_load_floor,
+            transient_load_span,
+            stereo_order_weight,
+            stereo_texture_weight,
+        ) < 0.0
+        or min(
+            rpm_rate_reference,
+            load_rate_reference,
+            transient_order,
+            stereo_order,
+        ) <= 0.0
     ):
         raise ValueError("design gains and smoothing times are invalid")
 
@@ -332,6 +377,7 @@ def render_sound_design(
     fundamental_phase: list[float] = []
     mono: list[float] = []
     side_values: list[float] = []
+    transient_values: list[float] = []
     smoothed_load = schedule_samples[0][1]
     transient_state = 0.0
     previous_rpm, previous_load = schedule_samples[0]
@@ -343,7 +389,9 @@ def render_sound_design(
         rpm_rate = (rpm - previous_rpm) * schedule.sample_rate_hz
         load_rate = (load - previous_load) * schedule.sample_rate_hz
         transient_target = min(
-            1.0, abs(rpm_rate) / 5000.0 + abs(load_rate) / 2.0
+            1.0,
+            abs(rpm_rate) / rpm_rate_reference
+            + abs(load_rate) / load_rate_reference,
         )
         transient_state = _smooth(
             transient_state,
@@ -358,9 +406,9 @@ def render_sound_design(
                 2.0 * math.pi * order * rpm / (60.0 * schedule.sample_rate_hz)
             )
             load_weight = (
-                0.25 + 0.50 * smoothed_load
+                fundamental_load_floor + fundamental_load_span * smoothed_load
                 if order == 1.0
-                else 0.12 + 0.88 * smoothed_load
+                else high_order_load_floor + high_order_load_span * smoothed_load
             )
             component = amplitude * load_weight * math.sin(
                 order_phases[name] + phase_offset
@@ -372,15 +420,24 @@ def render_sound_design(
         global_edge = min(index, schedule.frame_count - 1 - index)
         physical *= min(1.0, global_edge / fade_frames)
         sample += texture_mix * physical
-        sample += transient_gain * transient_state * math.sin(
-            4.0 * order_phases["fundamental"] + 0.25
+        transient = (
+            transient_gain
+            * transient_state
+            * (transient_load_floor + transient_load_span * smoothed_load)
+            * math.sin(
+                transient_order * order_phases["fundamental"]
+                + transient_phase_rad
+            )
         )
+        sample += transient
         side = stereo_width * (
-            0.22 * math.sin(3.0 * order_phases["fundamental"] + 0.7)
-            + 0.08 * physical
+            stereo_order_weight
+            * math.sin(stereo_order * order_phases["fundamental"] + stereo_phase_rad)
+            + stereo_texture_weight * physical
         )
         mono.append(sample)
         side_values.append(side)
+        transient_values.append(transient * gain)
         previous_rpm, previous_load = rpm, load
 
     left_raw = [value + side for value, side in zip(mono, side_values)]
@@ -411,6 +468,7 @@ def render_sound_design(
         profile_sha256=str(profile["_sha256"]),
         parameter_ledger_sha256=str(parameters["_sha256"]),
         fixed_output_gain=gain,
+        transient_rms=_rms(transient_values),
         source_component_rms={
             name: _rms(component) for name, component in order_components.items()
         },

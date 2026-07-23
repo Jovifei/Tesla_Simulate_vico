@@ -95,6 +95,7 @@ def render_designed_wav(
         "source_hash": trace.source_hash,
         "source_component_rms": trace.source_component_rms,
         "synthetic": True,
+        "transient_rms": trace.transient_rms,
     }
     metadata_path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8"
