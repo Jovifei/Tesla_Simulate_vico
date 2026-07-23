@@ -11,7 +11,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEMO_ROOT = ROOT / "s12" / "acoustic_demo"
 sys.path.insert(0, str(DEMO_ROOT))
 
-from s12_acoustic_audition import load_trace, render_audition  # noqa: E402
+from s12_acoustic_audition import PressureTrace, load_trace, render_audition  # noqa: E402
 
 
 TRACE_CSV = (
@@ -25,6 +25,23 @@ TRACE_CSV = (
 
 
 class S12AcousticAuditionTests(unittest.TestCase):
+    def test_uniform_trace_preserves_shared_provenance_contract(self):
+        trace = PressureTrace.uniform(
+            "synthetic_four_stroke.v1",
+            [0.0, 0.25],
+            48000,
+            100.0,
+            "engine_exhaust_port",
+            ("synthetic", "uncalibrated"),
+        )
+
+        self.assertEqual(trace.time_s, [0.0, 1.0 / 48000.0])
+        self.assertEqual(trace.firing_frequency_hz, 100.0)
+        self.assertEqual(trace.reference_plane, "engine_exhaust_port")
+        self.assertEqual(trace.provenance, ("synthetic", "uncalibrated"))
+        self.assertEqual(trace.source_csv_sha256, "")
+        self.assertEqual(len(trace.source_identity_sha256), 64)
+
     def test_renders_deterministic_native_and_looped_audition_artifacts(self):
         trace = load_trace(TRACE_CSV, "radiation_chirp")
 

@@ -23,6 +23,58 @@ class PressureTrace:
     time_s: list[float]
     pressure_pa: list[float]
     source_csv_sha256: str
+    source_identity_sha256: str = ""
+    sample_rate_hz: int | None = None
+    firing_frequency_hz: float | None = None
+    reference_plane: str = "bore_end"
+    provenance: tuple[str, ...] = ()
+
+    @classmethod
+    def uniform(
+        cls,
+        case_id: str,
+        samples: list[float],
+        sample_rate_hz: int,
+        firing_frequency_hz: float,
+        reference_plane: str,
+        provenance: tuple[str, ...],
+    ) -> PressureTrace:
+        sample_list = list(samples)
+        if (
+            sample_rate_hz <= 0
+            or not sample_list
+            or not all(math.isfinite(value) for value in sample_list)
+        ):
+            raise ValueError("uniform trace requires finite samples and a positive sample rate")
+        if (
+            not math.isfinite(firing_frequency_hz)
+            or firing_frequency_hz <= 0
+            or not reference_plane
+            or not provenance
+        ):
+            raise ValueError("uniform trace requires finite provenance metadata")
+        identity = {
+            "case_id": case_id,
+            "samples": sample_list,
+            "sample_rate_hz": sample_rate_hz,
+            "firing_frequency_hz": firing_frequency_hz,
+            "reference_plane": reference_plane,
+            "provenance": list(provenance),
+        }
+        source_identity = hashlib.sha256(
+            json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        return cls(
+            case_id,
+            [index / sample_rate_hz for index in range(len(sample_list))],
+            sample_list,
+            "",
+            source_identity,
+            sample_rate_hz,
+            firing_frequency_hz,
+            reference_plane,
+            tuple(provenance),
+        )
 
 
 @dataclass(frozen=True)
@@ -58,7 +110,16 @@ def load_trace(csv_path: Path, case_id: str) -> PressureTrace:
         float(row["outgoing_pressure_pa"]) + float(row["incoming_pressure_pa"])
         for row in rows
     ]
-    return PressureTrace(case_id, time_s, pressure_pa, hashlib.sha256(csv_bytes).hexdigest())
+    source_csv_sha256 = hashlib.sha256(csv_bytes).hexdigest()
+    return PressureTrace(
+        case_id,
+        time_s,
+        pressure_pa,
+        source_csv_sha256,
+        source_csv_sha256,
+        reference_plane="bore_end",
+        provenance=("qualified_4d_b", "immutable_source_csv"),
+    )
 
 
 def resample_boxcar(trace: PressureTrace, sample_rate_hz: int) -> list[float]:
