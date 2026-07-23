@@ -58,17 +58,19 @@ def _write_review(
         "",
         "## Frequency-domain checks",
         "",
-        "| Case | Fundamental RMS | Second RMS | Third RMS | Firing RMS |",
-        "|---|---:|---:|---:|---:|",
+        "final-output order projection from the rendered stereo mono average:",
+        "",
+        "| Case | Order 1 RMS | Order 2 RMS | Order 3 RMS |",
+        "|---|---:|---:|---:|",
     ])
     for name, result in renders.items():
-        order_rms = json.loads(
+        order_spectrum_rms = json.loads(
             result.metadata_path.read_text(encoding="utf-8")
-        )["order_rms"]
+        )["order_spectrum_rms"]
         lines.append(
-            f"| {name} | {order_rms['fundamental']:.12g} | "
-            f"{order_rms['second']:.12g} | {order_rms['third']:.12g} | "
-            f"{order_rms['firing']:.12g} |"
+            f"| {name} | {order_spectrum_rms['order_1']:.12g} | "
+            f"{order_spectrum_rms['order_2']:.12g} | "
+            f"{order_spectrum_rms['order_3']:.12g} |"
         )
     lines.extend([
         "",
@@ -87,14 +89,17 @@ def _write_review(
     return path
 
 
-def _write_manifest(output_dir: Path) -> Path:
+def _write_manifest(
+    output_dir: Path, renders: dict[str, EngineSoundRenderResult]
+) -> Path:
     path = output_dir / "sha256-manifest.json"
     files = sorted(
-        candidate
-        for candidate in output_dir.iterdir()
-        if candidate.is_file()
-        and candidate != path
-        and candidate.name != "engine_sound_review.md"
+        (
+            candidate
+            for result in renders.values()
+            for candidate in (result.wav_path, result.metadata_path)
+        ),
+        key=lambda candidate: candidate.name,
     )
     payload = {
         candidate.name: _sha256(candidate)
@@ -135,7 +140,7 @@ def run_engine_sound_demo(output_dir: Path) -> EngineSoundDemoResult:
             output_dir / f"{name}.metadata.json",
         )
     review_path = _write_review(output_dir, renders)
-    manifest_path = _write_manifest(output_dir)
+    manifest_path = _write_manifest(output_dir, renders)
     return EngineSoundDemoResult(
         renders,
         sum(result.clipping_count for result in renders.values()),

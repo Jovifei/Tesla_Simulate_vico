@@ -204,7 +204,8 @@ class DesignedStereoTrace:
     profile_sha256: str
     parameter_ledger_sha256: str
     fixed_output_gain: float
-    order_rms: dict[str, float]
+    source_component_rms: dict[str, float]
+    order_spectrum_rms: dict[str, float]
     max_adjacent_step_limit: float
     max_dc_limit: float
 
@@ -236,17 +237,48 @@ def _rms(samples: list[float]) -> float:
     return math.sqrt(sum(value * value for value in samples) / len(samples))
 
 
+def _project_order_spectrum(
+    left: list[float],
+    right: list[float],
+    fundamental_phase_rad: list[float],
+    orders: set[float],
+) -> dict[str, float]:
+    mono = [(left_value + right_value) / 2.0
+            for left_value, right_value in zip(left, right)]
+    scale = 2.0 / len(mono)
+    spectrum = {}
+    for order in sorted(orders):
+        sine = scale * sum(
+            sample * math.sin(order * phase)
+            for sample, phase in zip(mono, fundamental_phase_rad)
+        )
+        cosine = scale * sum(
+            sample * math.cos(order * phase)
+            for sample, phase in zip(mono, fundamental_phase_rad)
+        )
+        spectrum[f"order_{order:g}"] = math.hypot(sine, cosine) / math.sqrt(2.0)
+    return spectrum
+
+
 def render_sound_design(
     texture: PressureTrace,
     schedule: OrderSchedule,
     profile: dict,
     parameters: dict,
 ) -> DesignedStereoTrace:
+    expected_interval_s = 1.0 / 48000.0
     if (
         texture.sample_rate_hz != 48000
         or schedule.sample_rate_hz != 48000
         or len(texture.pressure_pa) < 2
+        or len(texture.time_s) != len(texture.pressure_pa)
         or not all(math.isfinite(value) for value in texture.pressure_pa)
+        or not all(math.isfinite(value) for value in texture.time_s)
+        or any(
+            later <= earlier
+            or abs((later - earlier) - expected_interval_s) > 1.0e-12
+            for earlier, later in zip(texture.time_s, texture.time_s[1:])
+        )
     ):
         raise ValueError("sound design requires uniform finite 48 kHz texture")
     if not texture.source_identity_sha256:
@@ -312,8 +344,10 @@ def render_sound_design(
             order_phases[name] += (
                 2.0 * math.pi * order * rpm / (60.0 * schedule.sample_rate_hz)
             )
-            load_weight = 0.18 + 0.82 * (
-                smoothed_load ** (1.0 / max(1.0, order))
+            load_weight = (
+                0.25 + 0.50 * smoothed_load
+                if order == 1.0
+                else 0.12 + 0.88 * smoothed_load
             )
             component = amplitude * load_weight * math.sin(
                 order_phases[name] + phase_offset
@@ -364,9 +398,15 @@ def render_sound_design(
         profile_sha256=str(profile["_sha256"]),
         parameter_ledger_sha256=str(parameters["_sha256"]),
         fixed_output_gain=gain,
-        order_rms={
+        source_component_rms={
             name: _rms(component) for name, component in order_components.items()
         },
+        order_spectrum_rms=_project_order_spectrum(
+            left,
+            right,
+            fundamental_phase,
+            {order for _, order, _, _ in order_entries},
+        ),
         max_adjacent_step_limit=_parameter(parameters, "max_adjacent_step"),
         max_dc_limit=_parameter(parameters, "max_dc"),
     )

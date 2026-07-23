@@ -308,13 +308,56 @@ class S12AcousticAuditionTests(unittest.TestCase):
             texture, OrderSchedule.fixed(3000.0, 1.0, 0.10), profile, parameters
         )
         self.assertLess(
-            low_load.order_rms["third"],
-            medium_load.order_rms["third"],
+            low_load.source_component_rms["third"],
+            medium_load.source_component_rms["third"],
         )
         self.assertLess(
-            medium_load.order_rms["third"],
-            high_load.order_rms["third"],
+            medium_load.source_component_rms["third"],
+            high_load.source_component_rms["third"],
         )
+        for name in ("second", "third", "firing"):
+            relative_component = [
+                trace.source_component_rms[name]
+                / trace.source_component_rms["fundamental"]
+                for trace in (low_load, medium_load, high_load)
+            ]
+            self.assertLess(relative_component[0], relative_component[1])
+            self.assertLess(relative_component[1], relative_component[2])
+        final_third_to_fundamental = [
+            trace.order_spectrum_rms["order_3"]
+            / trace.order_spectrum_rms["order_1"]
+            for trace in (low_load, medium_load, high_load)
+        ]
+        self.assertLess(
+            final_third_to_fundamental[0],
+            final_third_to_fundamental[1],
+        )
+        self.assertLess(
+            final_third_to_fundamental[1],
+            final_third_to_fundamental[2],
+        )
+
+    def test_rejects_nonuniform_sound_design_texture(self):
+        texture = self._engine_sound_texture()
+        nonuniform = PressureTrace(
+            texture.case_id,
+            [0.0, 1.0 / 48000.0, 2.5 / 48000.0],
+            texture.pressure_pa[:3],
+            texture.source_csv_sha256,
+            texture.source_identity_sha256,
+            48000,
+            texture.firing_frequency_hz,
+            texture.reference_plane,
+            texture.provenance,
+        )
+
+        with self.assertRaises(ValueError):
+            render_sound_design(
+                nonuniform,
+                OrderSchedule.fixed(3000.0, 0.5, 0.10),
+                load_order_profile(),
+                load_design_parameters(),
+            )
 
     def test_rpm_ramp_preserves_phase_and_stays_click_free(self):
         trace = render_sound_design(
@@ -379,21 +422,39 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 "synthetic", "labels", "profile_sha256", "parameter_ledger_sha256",
                 "fixed_output_gain", "clipping_count", "dc", "max_adjacent_step",
                 "sample_rate_hz", "channels", "sample_width",
+                "order_spectrum_rms", "source_component_rms",
             ):
                 self.assertIn(key, metadata)
             self.assertTrue(metadata["synthetic"])
             self.assertEqual(metadata["clipping_count"], 0)
+            self.assertEqual(metadata["order_spectrum_rms"], trace.order_spectrum_rms)
+            self.assertEqual(
+                set(metadata["order_spectrum_rms"]),
+                {"order_1", "order_2", "order_3"},
+            )
 
     def test_builds_deterministic_five_case_engine_sound_demo(self):
         expected = {
             "idle", "cruise", "acceleration", "throttle_lift", "high_load"
         }
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
+            sentinel = pathlib.Path(first) / "sentinel.txt"
+            sentinel.write_text("unrelated user file", encoding="utf-8")
             left = run_engine_sound_demo(pathlib.Path(first))
             right = run_engine_sound_demo(pathlib.Path(second))
 
             self.assertEqual(set(left.renders), expected)
             self.assertEqual(left.manifest_path.read_bytes(), right.manifest_path.read_bytes())
+            manifest = json.loads(left.manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                set(manifest["files"]),
+                {
+                    f"{name}{suffix}"
+                    for name in expected
+                    for suffix in (".wav", ".metadata.json")
+                },
+            )
+            self.assertNotIn(sentinel.name, manifest["files"])
             self.assertEqual(left.total_clipping_count, 0)
             self.assertEqual(
                 {path.stem for path in pathlib.Path(first).glob("*.wav")},
@@ -408,6 +469,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertIn("Mechanical character: INCONCLUSIVE", review)
             self.assertIn("Electronic character: INCONCLUSIVE", review)
             self.assertIn("Continuity proxy: PASS", review)
+            self.assertIn("final-output order projection", review)
 
 
 if __name__ == "__main__":

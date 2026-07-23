@@ -86,13 +86,14 @@ def render_designed_wav(
         "labels": list(trace.labels),
         "load": load_value,
         "max_adjacent_step": max_step,
-        "order_rms": trace.order_rms,
+        "order_spectrum_rms": trace.order_spectrum_rms,
         "parameter_ledger_sha256": trace.parameter_ledger_sha256,
         "profile_sha256": trace.profile_sha256,
         "rpm_range": list(trace.rpm_range),
         "sample_rate_hz": trace.sample_rate_hz,
         "sample_width": 3,
         "source_hash": trace.source_hash,
+        "source_component_rms": trace.source_component_rms,
         "synthetic": True,
     }
     metadata_path.write_text(
