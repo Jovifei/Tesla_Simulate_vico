@@ -12,6 +12,8 @@ DEMO_ROOT = ROOT / "s12" / "acoustic_demo"
 sys.path.insert(0, str(DEMO_ROOT))
 
 from s12_acoustic_audition import PressureTrace, load_trace, render_audition  # noqa: E402
+from s12_operating_points import lookup_operating_point  # noqa: E402
+from s12_engine_source import EngineSourceConfig, synthesize_four_stroke  # noqa: E402
 
 
 TRACE_CSV = (
@@ -25,6 +27,40 @@ TRACE_CSV = (
 
 
 class S12AcousticAuditionTests(unittest.TestCase):
+    def test_looks_up_and_interpolates_synthetic_operating_points(self):
+        point = lookup_operating_point(4000.0, 0.60)
+        self.assertEqual(point.pressure_amplitude_pa, 4.5)
+
+        interpolated = lookup_operating_point(3000.0, 0.425)
+        self.assertEqual(interpolated.pressure_amplitude_pa, 2.875)
+
+        with self.assertRaises(ValueError):
+            lookup_operating_point(1999.0, 0.60)
+
+    def test_synthesizes_deterministic_zero_mean_four_stroke_trace(self):
+        config = EngineSourceConfig(rpm=3000.0, load=0.60)
+        trace = synthesize_four_stroke(config, 0.05)
+
+        self.assertEqual(trace.firing_frequency_hz, 100.0)
+        self.assertEqual(len(trace.pressure_pa), 2400)
+        self.assertLess(abs(sum(trace.pressure_pa) / len(trace.pressure_pa)), 1e-12)
+        self.assertLessEqual(max(abs(sample) for sample in trace.pressure_pa), 4.5)
+        self.assertEqual(trace.sample_rate_hz, 48000)
+        self.assertEqual(trace.reference_plane, "engine_exhaust_port")
+        self.assertEqual(
+            trace.provenance,
+            ("synthetic", "uncalibrated", "offline", "not_realtime_qualified"),
+        )
+        self.assertEqual(trace, synthesize_four_stroke(config, 0.05))
+
+        with self.assertRaises(ValueError):
+            synthesize_four_stroke(config, 0.0)
+        with self.assertRaises(ValueError):
+            synthesize_four_stroke(
+                EngineSourceConfig(rpm=3000.0, load=0.60, firing_order=(1, 3)),
+                0.05,
+            )
+
     def test_uniform_trace_preserves_shared_provenance_contract(self):
         trace = PressureTrace.uniform(
             "synthetic_four_stroke.v1",
