@@ -96,3 +96,80 @@ def synthesize_four_stroke(
         "engine_exhaust_port",
         SYNTHETIC_PROVENANCE + (firing_order_label,),
     )
+
+
+def _profile_point(
+    endpoints: tuple[EngineSourceConfig, ...], position: float, mode: str
+) -> tuple[float, float]:
+    if mode == "step":
+        endpoint = endpoints[min(int(position * len(endpoints)), len(endpoints) - 1)]
+        return endpoint.rpm, endpoint.load
+    segment_position = position * (len(endpoints) - 1)
+    segment = min(int(segment_position), len(endpoints) - 2)
+    fraction = segment_position - segment
+    start, stop = endpoints[segment], endpoints[segment + 1]
+    return (
+        start.rpm + (stop.rpm - start.rpm) * fraction,
+        start.load + (stop.load - start.load) * fraction,
+    )
+
+
+def _validate_profile(
+    endpoints: tuple[EngineSourceConfig, ...], frame_count: int, mode: str
+) -> EngineSourceConfig:
+    if len(endpoints) < 2 or frame_count < 2 or mode not in {"linear", "step"}:
+        raise ValueError("profile requires two endpoints, two frames, and a supported mode")
+    first = endpoints[0]
+    shared = (
+        "cylinder_count",
+        "firing_order",
+        "cycle_revolutions",
+        "sample_rate_hz",
+        "pulse_sharpness",
+    )
+    if any(
+        any(getattr(endpoint, name) != getattr(first, name) for name in shared)
+        for endpoint in endpoints[1:]
+    ):
+        raise ValueError("profile endpoints must share source geometry and sampling")
+    if first.cycle_revolutions <= 0 or first.sample_rate_hz <= 0:
+        raise ValueError("cycle revolutions and sample rate must be positive")
+    _firing_phases(first)
+    return first
+
+
+def synthesize_four_stroke_profile(
+    endpoints: tuple[EngineSourceConfig, ...], frame_count: int, mode: str
+) -> PressureTrace:
+    """Synthesize a zero-mean source across a time-varying operating profile."""
+    first = _validate_profile(endpoints, frame_count, mode)
+    phases = sorted(_firing_phases(first))
+    crank_phase = 0.0
+    raw: list[float] = []
+    for index in range(frame_count):
+        rpm, load = _profile_point(endpoints, index / (frame_count - 1), mode)
+        crank_phase += 2.0 * math.pi * rpm / (
+            first.cycle_revolutions * 60.0 * first.sample_rate_hz
+        )
+        pulse = sum(
+            math.exp(first.pulse_sharpness * (math.cos(crank_phase - phase) - 1.0))
+            for phase in phases
+        )
+        raw.append(pulse * lookup_operating_point(rpm, load).pressure_amplitude_pa)
+    mean = sum(raw) / len(raw)
+    centered = [value - mean for value in raw]
+    peak = max(max(abs(value) for value in centered), 1e-12)
+    amplitude = max(
+        lookup_operating_point(endpoint.rpm, endpoint.load).pressure_amplitude_pa
+        for endpoint in endpoints
+    )
+    scaled = [value * amplitude / peak for value in centered]
+    return PressureTrace.uniform(
+        "synthetic_four_stroke_profile.v1",
+        scaled,
+        first.sample_rate_hz,
+        None,
+        "engine_exhaust_port",
+        SYNTHETIC_PROVENANCE
+        + ("firing_frequency=variable", f"profile_mode={mode}"),
+    )

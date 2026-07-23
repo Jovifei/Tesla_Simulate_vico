@@ -13,7 +13,11 @@ sys.path.insert(0, str(DEMO_ROOT))
 
 from s12_acoustic_audition import PressureTrace, load_trace, render_audition  # noqa: E402
 from s12_operating_points import lookup_operating_point  # noqa: E402
-from s12_engine_source import EngineSourceConfig, synthesize_four_stroke  # noqa: E402
+from s12_engine_source import (  # noqa: E402
+    EngineSourceConfig,
+    synthesize_four_stroke,
+    synthesize_four_stroke_profile,
+)
 
 
 TRACE_CSV = (
@@ -133,6 +137,31 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertEqual(trace.provenance, ("synthetic", "uncalibrated"))
         self.assertEqual(trace.source_csv_sha256, "")
         self.assertEqual(len(trace.source_identity_sha256), 64)
+
+    def test_synthesizes_variable_operating_profile(self):
+        ramp = synthesize_four_stroke_profile(
+            (EngineSourceConfig(2000.0, 0.25), EngineSourceConfig(6000.0, 1.0)),
+            4800,
+            "linear",
+        )
+        step = synthesize_four_stroke_profile(
+            (EngineSourceConfig(4000.0, 0.25), EngineSourceConfig(4000.0, 1.0)),
+            4800,
+            "step",
+        )
+
+        self.assertIsNone(ramp.firing_frequency_hz)
+        self.assertEqual(len(ramp.pressure_pa), 4800)
+        self.assertLessEqual(max(abs(value) for value in ramp.pressure_pa), 8.0)
+        self.assertEqual(
+            ramp.provenance[-2:],
+            ("firing_frequency=variable", "profile_mode=linear"),
+        )
+        self.assertNotEqual(ramp, step)
+        with self.assertRaises(ValueError):
+            synthesize_four_stroke_profile(
+                (EngineSourceConfig(2000.0, 0.25),), 4800, "linear"
+            )
 
     def test_renders_deterministic_native_and_looped_audition_artifacts(self):
         trace = load_trace(TRACE_CSV, "radiation_chirp")

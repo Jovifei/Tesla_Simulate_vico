@@ -35,7 +35,7 @@ class PressureTrace:
         case_id: str,
         samples: list[float],
         sample_rate_hz: int,
-        firing_frequency_hz: float,
+        firing_frequency_hz: float | None,
         reference_plane: str,
         provenance: tuple[str, ...],
     ) -> PressureTrace:
@@ -47,11 +47,12 @@ class PressureTrace:
         ):
             raise ValueError("uniform trace requires finite samples and a positive sample rate")
         if (
-            not math.isfinite(firing_frequency_hz)
-            or firing_frequency_hz <= 0
-            or not reference_plane
-            or not provenance
-        ):
+            firing_frequency_hz is not None
+            and (
+                not math.isfinite(firing_frequency_hz)
+                or firing_frequency_hz <= 0
+            )
+        ) or not reference_plane or not provenance:
             raise ValueError("uniform trace requires finite provenance metadata")
         identity = {
             "case_id": case_id,
