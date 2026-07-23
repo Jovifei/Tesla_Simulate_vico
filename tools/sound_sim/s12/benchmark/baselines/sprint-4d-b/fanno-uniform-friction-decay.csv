@@ -1,0 +1,5 @@
+schema_version,quantity,initial,analytical,numerical,relative_error,final_time_s,end_time_clipping_count
+benchmark.schema.v1,density,1.2,1.2,1.2,0,5.74165830023e-05,0
+benchmark.schema.v1,velocity,50,49.9856499739,49.9856499739,2.84298688176e-16,5.74165830023e-05,0
+benchmark.schema.v1,pressure,100000,100000.346525,100000.346525,1.45518648026e-16,5.74165830023e-05,0
+benchmark.schema.v1,total_energy,249932.055749,249932.055749,249932.055749,1.16446969435e-16,5.74165830023e-05,0
