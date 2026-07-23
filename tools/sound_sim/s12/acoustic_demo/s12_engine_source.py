@@ -173,3 +173,48 @@ def synthesize_four_stroke_profile(
         SYNTHETIC_PROVENANCE
         + ("firing_frequency=variable", f"profile_mode={mode}"),
     )
+
+
+def synthesize_four_stroke_trajectory(
+    config: EngineSourceConfig,
+    rpm_samples: tuple[float, ...],
+    load_samples: tuple[float, ...],
+) -> PressureTrace:
+    """Synthesize a synthetic source from every vehicle-state RPM/load sample."""
+    if (
+        len(rpm_samples) < 2
+        or len(rpm_samples) != len(load_samples)
+        or not all(math.isfinite(value) and value > 0.0 for value in rpm_samples)
+        or not all(math.isfinite(value) and 0.0 <= value <= 1.0 for value in load_samples)
+    ):
+        raise ValueError("vehicle-state trajectory requires aligned finite RPM/load samples")
+    if config.cycle_revolutions <= 0 or config.sample_rate_hz <= 0:
+        raise ValueError("cycle revolutions and sample rate must be positive")
+    phases = sorted(_firing_phases(config))
+    crank_phase = 0.0
+    raw: list[float] = []
+    for rpm, load in zip(rpm_samples, load_samples):
+        crank_phase += 2.0 * math.pi * rpm / (
+            config.cycle_revolutions * 60.0 * config.sample_rate_hz
+        )
+        pulse = sum(
+            math.exp(config.pulse_sharpness * (math.cos(crank_phase - phase) - 1.0))
+            for phase in phases
+        )
+        raw.append(pulse * lookup_operating_point(rpm, load).pressure_amplitude_pa)
+    mean = sum(raw) / len(raw)
+    centered = [value - mean for value in raw]
+    amplitude = max(
+        lookup_operating_point(rpm, load).pressure_amplitude_pa
+        for rpm, load in zip(rpm_samples, load_samples)
+    )
+    peak = max(max(abs(value) for value in centered), 1.0e-12)
+    scaled = [value * amplitude / peak for value in centered]
+    return PressureTrace.uniform(
+        "synthetic_four_stroke_trajectory.v1",
+        scaled,
+        config.sample_rate_hz,
+        None,
+        "engine_exhaust_port",
+        SYNTHETIC_PROVENANCE + ("firing_frequency=variable", "profile_mode=vehicle_state"),
+    )

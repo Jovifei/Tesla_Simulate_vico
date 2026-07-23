@@ -53,7 +53,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertEqual(interpolated.pressure_amplitude_pa, 2.875)
 
         with self.assertRaises(ValueError):
-            lookup_operating_point(1999.0, 0.60)
+            lookup_operating_point(799.0, 0.60)
 
     def test_synthesizes_deterministic_zero_mean_four_stroke_trace(self):
         config = EngineSourceConfig(rpm=3000.0, load=0.60)

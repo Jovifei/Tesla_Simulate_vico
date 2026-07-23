@@ -1,16 +1,18 @@
-"""Synthetic, uncalibrated S12 operating-point amplitudes."""
+"""Synthetic, uncalibrated S12 operating-point amplitudes (not OEM data)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 
-RPM_GRID = (2000.0, 4000.0, 6000.0)
-LOAD_GRID = (0.25, 0.60, 1.00)
+RPM_GRID = (800.0, 1200.0, 2000.0, 4000.0, 6000.0)
+LOAD_GRID = (0.00, 0.25, 0.60, 1.00)
 PRESSURE_AMPLITUDE_PA = (
-    (1.5, 3.5, 6.0),
-    (2.0, 4.5, 7.0),
-    (2.5, 5.0, 8.0),
+    (0.50, 0.80, 2.00, 4.00),
+    (0.60, 0.90, 2.50, 4.50),
+    (0.80, 1.50, 3.50, 6.00),
+    (1.00, 2.00, 4.50, 7.00),
+    (1.20, 2.50, 5.00, 8.00),
 )
 
 
@@ -36,7 +38,7 @@ def _grid_value(rpm: float, load: float) -> float:
 
 def lookup_operating_point(rpm: float, load: float) -> OperatingPoint:
     """Return the exact or bilinearly interpolated synthetic amplitude."""
-    if not 2000.0 <= rpm <= 6000.0 or not 0.25 <= load <= 1.00:
+    if not RPM_GRID[0] <= rpm <= RPM_GRID[-1] or not LOAD_GRID[0] <= load <= LOAD_GRID[-1]:
         raise ValueError("RPM/load is outside the documented synthetic grid")
 
     lower_rpm, upper_rpm = _enclosing(RPM_GRID, rpm)
