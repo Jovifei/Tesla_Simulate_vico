@@ -1,5 +1,6 @@
 import hashlib
 import json
+import math
 import pathlib
 import sys
 import tempfile
@@ -20,6 +21,15 @@ from s12_engine_source import (  # noqa: E402
 )
 from s12_ptr_network import QUALIFICATION_COMMIT, load_radiation_package, run_ptr_network  # noqa: E402
 from s12_synthetic_engine_demo import run_demo  # noqa: E402
+from s12_engine_sound_design import (  # noqa: E402
+    OrderSchedule,
+    fundamental_frequency_hz,
+    load_design_parameters,
+    load_order_profile,
+    render_sound_design,
+)
+from s12_engine_sound_renderer import render_designed_wav  # noqa: E402
+from s12_engine_sound_demo import run_engine_sound_demo  # noqa: E402
 
 
 TRACE_CSV = (
@@ -241,6 +251,163 @@ class S12AcousticAuditionTests(unittest.TestCase):
             for result in left.cases.values():
                 with wave.open(str(result.native_wav_path), "rb") as rendered:
                     self.assertEqual(rendered.getframerate(), 48000)
+
+    @staticmethod
+    def _engine_sound_texture():
+        source = synthesize_four_stroke(
+            EngineSourceConfig(2000.0, 0.25), 0.05
+        )
+        return run_ptr_network(source)
+
+    def test_loads_synthetic_order_profile_and_parameter_provenance(self):
+        profile = load_order_profile()
+        parameters = load_design_parameters()
+
+        self.assertEqual(profile["schema"], "s12.engine_order_profile.v1")
+        self.assertEqual(profile["source"], "synthetic")
+        self.assertEqual(profile["engine_type"], "synthetic_four_cylinder_four_stroke_reference")
+        self.assertEqual(profile["firing_order"], "1-3-4-2")
+        self.assertEqual(
+            {entry["name"]: entry["order"] for entry in profile["orders"]},
+            {"fundamental": 1.0, "second": 2.0, "third": 3.0, "firing": 2.0},
+        )
+        self.assertTrue(all(entry["source"] == "synthetic" for entry in profile["orders"]))
+        self.assertEqual(parameters["generator_version"], "Synthetic Engine Sound v0.2")
+        for entry in parameters["parameters"].values():
+            self.assertEqual(entry["classification"], "C/synthetic")
+            self.assertEqual(entry["source"], "synthetic")
+            self.assertTrue(entry["rationale"])
+
+        self.assertEqual(fundamental_frequency_hz(3000.0), 50.0)
+        with self.assertRaises(ValueError):
+            fundamental_frequency_hz(0.0)
+
+    def test_renders_fixed_rpm_load_orders_with_one_fixed_gain(self):
+        texture = self._engine_sound_texture()
+        profile = load_order_profile()
+        parameters = load_design_parameters()
+        traces = {}
+        for rpm in (1000.0, 3000.0, 6000.0):
+            traces[rpm] = render_sound_design(
+                texture,
+                OrderSchedule.fixed(rpm, 0.5, 0.10),
+                profile,
+                parameters,
+            )
+            self.assertEqual(traces[rpm].firing_frequency_hz, 2.0 * rpm / 60.0)
+            self.assertEqual(traces[rpm].fixed_output_gain, parameters["parameters"]["fixed_output_gain"]["value"])
+            self.assertEqual(traces[rpm].generator_version, "Synthetic Engine Sound v0.2")
+
+        low_load = render_sound_design(
+            texture, OrderSchedule.fixed(3000.0, 0.0, 0.10), profile, parameters
+        )
+        medium_load = render_sound_design(
+            texture, OrderSchedule.fixed(3000.0, 0.5, 0.10), profile, parameters
+        )
+        high_load = render_sound_design(
+            texture, OrderSchedule.fixed(3000.0, 1.0, 0.10), profile, parameters
+        )
+        self.assertLess(
+            low_load.order_rms["third"],
+            medium_load.order_rms["third"],
+        )
+        self.assertLess(
+            medium_load.order_rms["third"],
+            high_load.order_rms["third"],
+        )
+
+    def test_rpm_ramp_preserves_phase_and_stays_click_free(self):
+        trace = render_sound_design(
+            self._engine_sound_texture(),
+            OrderSchedule.ramp(1000.0, 6000.0, 0.3, 0.95, 0.20),
+            load_order_profile(),
+            load_design_parameters(),
+        )
+
+        self.assertIsNone(trace.firing_frequency_hz)
+        self.assertEqual(len(trace.left), 9600)
+        self.assertEqual(len(trace.fundamental_phase_rad), 9600)
+        for index in range(1, len(trace.fundamental_phase_rad)):
+            expected = (
+                2.0
+                * math.pi
+                * trace.instantaneous_rpm[index]
+                / (60.0 * trace.sample_rate_hz)
+            )
+            self.assertAlmostEqual(
+                trace.fundamental_phase_rad[index]
+                - trace.fundamental_phase_rad[index - 1],
+                expected,
+                places=12,
+            )
+        max_step = max(
+            abs(current - previous)
+            for channel in (trace.left, trace.right)
+            for previous, current in zip(channel, channel[1:])
+        )
+        self.assertLessEqual(
+            max_step,
+            load_design_parameters()["parameters"]["max_adjacent_step"]["value"],
+        )
+
+    def test_writes_deterministic_24_bit_stereo_metadata(self):
+        trace = render_sound_design(
+            self._engine_sound_texture(),
+            OrderSchedule.fixed(3000.0, 0.5, 0.10),
+            load_order_profile(),
+            load_design_parameters(),
+        )
+        with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
+            first_root = pathlib.Path(first)
+            second_root = pathlib.Path(second)
+            result = render_designed_wav(
+                trace, first_root / "cruise.wav", first_root / "cruise.metadata.json"
+            )
+            repeat = render_designed_wav(
+                trace, second_root / "cruise.wav", second_root / "cruise.metadata.json"
+            )
+
+            self.assertEqual(result.wav_path.read_bytes(), repeat.wav_path.read_bytes())
+            self.assertEqual(result.metadata_path.read_bytes(), repeat.metadata_path.read_bytes())
+            with wave.open(str(result.wav_path), "rb") as rendered:
+                self.assertEqual(rendered.getframerate(), 48000)
+                self.assertEqual(rendered.getnchannels(), 2)
+                self.assertEqual(rendered.getsampwidth(), 3)
+            metadata = json.loads(result.metadata_path.read_text(encoding="utf-8"))
+            for key in (
+                "rpm_range", "load", "source_hash", "generator_version",
+                "synthetic", "labels", "profile_sha256", "parameter_ledger_sha256",
+                "fixed_output_gain", "clipping_count", "dc", "max_adjacent_step",
+                "sample_rate_hz", "channels", "sample_width",
+            ):
+                self.assertIn(key, metadata)
+            self.assertTrue(metadata["synthetic"])
+            self.assertEqual(metadata["clipping_count"], 0)
+
+    def test_builds_deterministic_five_case_engine_sound_demo(self):
+        expected = {
+            "idle", "cruise", "acceleration", "throttle_lift", "high_load"
+        }
+        with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
+            left = run_engine_sound_demo(pathlib.Path(first))
+            right = run_engine_sound_demo(pathlib.Path(second))
+
+            self.assertEqual(set(left.renders), expected)
+            self.assertEqual(left.manifest_path.read_bytes(), right.manifest_path.read_bytes())
+            self.assertEqual(left.total_clipping_count, 0)
+            self.assertEqual(
+                {path.stem for path in pathlib.Path(first).glob("*.wav")},
+                expected,
+            )
+            review = left.review_path.read_text(encoding="utf-8")
+            self.assertTrue(review.startswith("# Synthetic Engine Sound v0.2 Review"))
+            self.assertIn("automated proxies", review)
+            self.assertIn("human listening is not performed", review)
+            self.assertIn("not an OEM clone", review)
+            self.assertIn("Engine resemblance: INCONCLUSIVE", review)
+            self.assertIn("Mechanical character: INCONCLUSIVE", review)
+            self.assertIn("Electronic character: INCONCLUSIVE", review)
+            self.assertIn("Continuity proxy: PASS", review)
 
 
 if __name__ == "__main__":
