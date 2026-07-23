@@ -64,6 +64,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertEqual(metadata["preview"], "looped audition preview; no time scaling")
             self.assertEqual(metadata["source_duration_s"], result.source_duration_s)
             self.assertEqual(metadata["native_wav_duration_s"], result.native_wav_duration_s)
+            self.assertEqual(metadata["clipping_count"], 0)
             self.assertNotIn("native_duration_s", metadata)
             self.assertNotIn("generated_at", metadata)
             manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))

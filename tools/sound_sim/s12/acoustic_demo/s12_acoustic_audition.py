@@ -158,6 +158,7 @@ def write_controlled_artifacts(trace: PressureTrace, normalized: list[float], ou
     _write_png(spectrum_path, _chart(normalized, spectrum=True))
     metadata = {
         "case_id": trace.case_id,
+        "clipping_count": clipping_count,
         "labels": LABELS,
         "source_duration_s": trace.time_s[-1] - trace.time_s[0],
         "native_wav_duration_s": len(normalized) / sample_rate_hz,
