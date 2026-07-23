@@ -224,13 +224,26 @@ def _smooth(previous: float, target: float, attack_s: float, decay_s: float,
     return previous + coefficient * (target - previous)
 
 
-def _texture_at(samples: list[float], index: int, fade_frames: int) -> float:
-    position = index % len(samples)
+def _looped_texture_at(
+    samples: list[float], index: int, crossfade_frames: int
+) -> float:
     if len(samples) == 1:
         return samples[0]
-    edge = min(position, len(samples) - 1 - position)
-    envelope = min(1.0, edge / max(1, fade_frames))
-    return samples[position] * envelope
+    if (
+        crossfade_frames <= 0
+        or 2 * crossfade_frames >= len(samples)
+    ):
+        raise ValueError("crossfade must fit within the texture period")
+    period_frames = len(samples) - crossfade_frames
+    position = index % period_frames
+    if position < len(samples) - 2 * crossfade_frames:
+        return samples[crossfade_frames + position]
+    blend = position - (len(samples) - 2 * crossfade_frames)
+    alpha = (blend + 1) / crossfade_frames
+    return (
+        (1.0 - alpha) * samples[len(samples) - crossfade_frames + blend]
+        + alpha * samples[blend]
+    )
 
 
 def _rms(samples: list[float]) -> float:
@@ -355,7 +368,7 @@ def render_sound_design(
             order_components[name].append(component * gain)
             sample += component
         fundamental_phase.append(order_phases["fundamental"])
-        physical = _texture_at(texture_samples, index, fade_frames)
+        physical = _looped_texture_at(texture_samples, index, fade_frames)
         global_edge = min(index, schedule.frame_count - 1 - index)
         physical *= min(1.0, global_edge / fade_frames)
         sample += texture_mix * physical

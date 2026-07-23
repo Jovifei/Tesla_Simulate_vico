@@ -23,6 +23,7 @@ from s12_ptr_network import QUALIFICATION_COMMIT, load_radiation_package, run_pt
 from s12_synthetic_engine_demo import run_demo  # noqa: E402
 from s12_engine_sound_design import (  # noqa: E402
     OrderSchedule,
+    _looped_texture_at,
     fundamental_frequency_hz,
     load_design_parameters,
     load_order_profile,
@@ -281,6 +282,35 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertEqual(fundamental_frequency_hz(3000.0), 50.0)
         with self.assertRaises(ValueError):
             fundamental_frequency_hz(0.0)
+
+    def test_looped_texture_crossfade_preserves_constant_source_level(self):
+        samples = [0.75] * 2400
+        crossfade_frames = 960
+        period_frames = len(samples) - crossfade_frames
+        looped = [
+            _looped_texture_at(samples, index, crossfade_frames)
+            for index in range(3 * period_frames)
+        ]
+
+        self.assertTrue(
+            all(math.isclose(value, 0.75, abs_tol=1.0e-12) for value in looped)
+        )
+
+    def test_looped_texture_crossfade_is_continuous_at_wraps(self):
+        samples = [
+            math.sin(2.0 * math.pi * index / 2400.0)
+            for index in range(2400)
+        ]
+        crossfade_frames = 960
+        period_frames = len(samples) - crossfade_frames
+        looped = [
+            _looped_texture_at(samples, index, crossfade_frames)
+            for index in range(4 * period_frames)
+        ]
+
+        for wrap in range(1, 4):
+            index = wrap * period_frames
+            self.assertLessEqual(abs(looped[index] - looped[index - 1]), 0.01)
 
     def test_renders_fixed_rpm_load_orders_with_one_fixed_gain(self):
         texture = self._engine_sound_texture()
