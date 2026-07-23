@@ -28,14 +28,20 @@ def _pcm24(sample: float) -> bytes:
 
 
 def _maximum_step(channels: tuple[list[float], list[float]]) -> float:
-    return max(
-        (
-            abs(current - previous)
-            for channel in channels
-            for previous, current in zip(channel, channel[1:])
-        ),
-        default=0.0,
-    )
+    maximum = 0.0
+    for channel in channels:
+        maximum = max(maximum, abs(channel[0]), abs(channel[-1]))
+        maximum = max(
+            maximum,
+            max(
+                (
+                    abs(current - previous)
+                    for previous, current in zip(channel, channel[1:])
+                ),
+                default=0.0,
+            ),
+        )
+    return maximum
 
 
 def render_designed_wav(

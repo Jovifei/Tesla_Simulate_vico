@@ -86,13 +86,22 @@ def load_design_parameters(path: Path = DEFAULT_PARAMETER_LEDGER_PATH) -> dict:
         "stereo_texture_weight",
         "max_adjacent_step",
         "max_dc",
+        "output_edge_fade_s",
     }
     parameters = ledger.get("parameters")
+    order_profile_entries = ledger.get("order_profile_entries")
     if (
         ledger.get("schema") != "s12.engine_sound_parameter_ledger.v1"
         or ledger.get("generator_version") != GENERATOR_VERSION
         or not isinstance(parameters, dict)
         or set(parameters) != required
+        or not isinstance(order_profile_entries, list)
+        or len(order_profile_entries) != 4
+        or {
+            entry.get("name")
+            for entry in order_profile_entries
+            if isinstance(entry, dict)
+        } != {"fundamental", "second", "third", "firing"}
     ):
         raise ValueError("unsupported engine sound parameter ledger")
     for entry in parameters.values():
@@ -103,6 +112,28 @@ def load_design_parameters(path: Path = DEFAULT_PARAMETER_LEDGER_PATH) -> dict:
             or not math.isfinite(float(entry.get("value")))
         ):
             raise ValueError("design parameters require synthetic provenance")
+    required_order_fields = {
+        "name",
+        "order",
+        "amplitude",
+        "phase_rad",
+        "classification",
+        "source",
+        "rationale",
+    }
+    for entry in order_profile_entries:
+        if (
+            not isinstance(entry, dict)
+            or set(entry) != required_order_fields
+            or entry.get("classification") != "C/synthetic"
+            or entry.get("source") != "synthetic"
+            or not entry.get("rationale")
+            or not all(
+                math.isfinite(float(entry.get(name)))
+                for name in ("order", "amplitude", "phase_rad")
+            )
+        ):
+            raise ValueError("order profile ledger entries require synthetic provenance")
     return {**ledger, "_sha256": digest}
 
 
@@ -265,6 +296,24 @@ def _rms(samples: list[float]) -> float:
     return math.sqrt(sum(value * value for value in samples) / len(samples))
 
 
+def _output_edge_envelope(frame_count: int, fade_frames: int) -> list[float]:
+    if fade_frames < 2 or 2 * fade_frames > frame_count:
+        raise ValueError("output edge fade must fit within the rendered schedule")
+    denominator = fade_frames - 1
+    return [
+        (
+            index / denominator
+            if index < fade_frames
+            else (
+                (frame_count - 1 - index) / denominator
+                if index >= frame_count - fade_frames
+                else 1.0
+            )
+        )
+        for index in range(frame_count)
+    ]
+
+
 def _project_order_spectrum(
     left: list[float],
     right: list[float],
@@ -333,11 +382,12 @@ def render_sound_design(
     stereo_phase_rad = _parameter(parameters, "stereo_phase_rad")
     stereo_order_weight = _parameter(parameters, "stereo_order_weight")
     stereo_texture_weight = _parameter(parameters, "stereo_texture_weight")
+    output_edge_fade_s = _parameter(parameters, "output_edge_fade_s")
     if (
         gain <= 0.0
         or texture_mix < 0.0
         or not 0.0 <= stereo_width <= 1.0
-        or min(attack_s, decay_s, crossfade_s) <= 0.0
+        or min(attack_s, decay_s, crossfade_s, output_edge_fade_s) <= 0.0
         or transient_gain < 0.0
         or min(
             fundamental_load_floor,
@@ -367,6 +417,20 @@ def render_sound_design(
         )
         for entry in profile["orders"]
     ]
+    ledger_order_entries = {
+        str(entry["name"]): (
+            float(entry["order"]),
+            float(entry["amplitude"]),
+            float(entry["phase_rad"]),
+        )
+        for entry in parameters["order_profile_entries"]
+    }
+    profile_order_entries = {
+        name: (order, amplitude, phase_offset)
+        for name, order, amplitude, phase_offset in order_entries
+    }
+    if ledger_order_entries != profile_order_entries:
+        raise ValueError("order profile does not match the parameter ledger")
     order_phases = {name: 0.0 for name, _, _, _ in order_entries}
     order_components = {name: [] for name, _, _, _ in order_entries}
     texture_mean = sum(texture.pressure_pa) / len(texture.pressure_pa)
@@ -446,6 +510,10 @@ def render_sound_design(
     right_mean = sum(right_raw) / len(right_raw)
     left = [(value - left_mean) * gain for value in left_raw]
     right = [(value - right_mean) * gain for value in right_raw]
+    edge_fade_frames = round(output_edge_fade_s * schedule.sample_rate_hz)
+    envelope = _output_edge_envelope(schedule.frame_count, edge_fade_frames)
+    left = [value * edge for value, edge in zip(left, envelope)]
+    right = [value * edge for value, edge in zip(right, envelope)]
     if not all(-1.0 <= value <= 1.0 for value in left + right):
         raise ValueError("fixed output gain exceeds the unclipped output range")
 

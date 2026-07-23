@@ -90,15 +90,17 @@ def _write_review(
 
 
 def _write_manifest(
-    output_dir: Path, renders: dict[str, EngineSoundRenderResult]
+    output_dir: Path,
+    renders: dict[str, EngineSoundRenderResult],
+    review_path: Path,
 ) -> Path:
     path = output_dir / "sha256-manifest.json"
     files = sorted(
-        (
+        tuple(
             candidate
             for result in renders.values()
             for candidate in (result.wav_path, result.metadata_path)
-        ),
+        ) + (review_path,),
         key=lambda candidate: candidate.name,
     )
     payload = {
@@ -140,7 +142,7 @@ def run_engine_sound_demo(output_dir: Path) -> EngineSoundDemoResult:
             output_dir / f"{name}.metadata.json",
         )
     review_path = _write_review(output_dir, renders)
-    manifest_path = _write_manifest(output_dir, renders)
+    manifest_path = _write_manifest(output_dir, renders, review_path)
     return EngineSoundDemoResult(
         renders,
         sum(result.clipping_count for result in renders.values()),

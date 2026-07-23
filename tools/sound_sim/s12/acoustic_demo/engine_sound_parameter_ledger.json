@@ -67,6 +67,12 @@
       "source": "synthetic",
       "value": 0.001
     },
+    "output_edge_fade_s": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic one-time fade at final output boundaries to prevent start and stop clicks.",
+      "source": "synthetic",
+      "value": 0.02
+    },
     "rpm_rate_reference": {
       "classification": "C/synthetic",
       "rationale": "Synthetic RPM-per-second rate that drives the transient target to unity.",
@@ -140,5 +146,43 @@
       "value": 0.25
     }
   },
+  "order_profile_entries": [
+    {
+      "amplitude": 0.58,
+      "classification": "C/synthetic",
+      "name": "fundamental",
+      "order": 1.0,
+      "phase_rad": 0.0,
+      "rationale": "Synthetic first-order contribution for the non-OEM reference profile.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.20,
+      "classification": "C/synthetic",
+      "name": "second",
+      "order": 2.0,
+      "phase_rad": 0.45,
+      "rationale": "Synthetic second-order contribution for harmonic balance.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.10,
+      "classification": "C/synthetic",
+      "name": "third",
+      "order": 3.0,
+      "phase_rad": -0.35,
+      "rationale": "Synthetic third-order contribution for high-load harmonic emphasis.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.32,
+      "classification": "C/synthetic",
+      "name": "firing",
+      "order": 2.0,
+      "phase_rad": 1.1,
+      "rationale": "Synthetic two-events-per-revolution firing-order contribution.",
+      "source": "synthetic"
+    }
+  ],
   "schema": "s12.engine_sound_parameter_ledger.v1"
 }

@@ -24,6 +24,7 @@ from s12_synthetic_engine_demo import run_demo  # noqa: E402
 from s12_engine_sound_design import (  # noqa: E402
     OrderSchedule,
     _looped_texture_at,
+    _output_edge_envelope,
     fundamental_frequency_hz,
     load_design_parameters,
     load_order_profile,
@@ -288,6 +289,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 "load_rate_reference",
                 "max_adjacent_step",
                 "max_dc",
+                "output_edge_fade_s",
                 "rpm_rate_reference",
                 "stereo_order",
                 "stereo_order_weight",
@@ -306,10 +308,52 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertEqual(entry["classification"], "C/synthetic")
             self.assertEqual(entry["source"], "synthetic")
             self.assertTrue(entry["rationale"])
+        profile_entries = {
+            entry["name"]: (
+                entry["order"],
+                entry["amplitude"],
+                entry["phase_rad"],
+            )
+            for entry in profile["orders"]
+        }
+        ledger_entries = {
+            entry["name"]: (
+                entry["order"],
+                entry["amplitude"],
+                entry["phase_rad"],
+            )
+            for entry in parameters["order_profile_entries"]
+        }
+        self.assertEqual(ledger_entries, profile_entries)
+        for entry in parameters["order_profile_entries"]:
+            self.assertEqual(entry["classification"], "C/synthetic")
+            self.assertEqual(entry["source"], "synthetic")
+            self.assertTrue(entry["rationale"])
 
         self.assertEqual(fundamental_frequency_hz(3000.0), 50.0)
         with self.assertRaises(ValueError):
             fundamental_frequency_hz(0.0)
+
+    def test_rejects_order_profile_parameter_ledger_mismatch(self):
+        profile = load_order_profile()
+        parameters = load_design_parameters()
+        parameters["order_profile_entries"][0]["amplitude"] += 0.01
+        parameters.pop("_sha256")
+
+        with tempfile.TemporaryDirectory() as root:
+            ledger_path = pathlib.Path(root) / "mismatched-ledger.json"
+            ledger_path.write_text(
+                json.dumps(parameters, sort_keys=True),
+                encoding="utf-8",
+            )
+            mismatched = load_design_parameters(ledger_path)
+            with self.assertRaisesRegex(ValueError, "parameter ledger"):
+                render_sound_design(
+                    self._engine_sound_texture(),
+                    OrderSchedule.fixed(3000.0, 0.5, 0.10),
+                    profile,
+                    mismatched,
+                )
 
     def test_looped_texture_crossfade_preserves_constant_source_level(self):
         samples = [0.75] * 2400
@@ -538,6 +582,56 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 {"order_1", "order_2", "order_3"},
             )
 
+    def test_high_load_output_has_silent_edges_and_boundary_aware_step(self):
+        trace = render_sound_design(
+            self._engine_sound_texture(),
+            OrderSchedule.fixed(6000.0, 1.0, 0.10),
+            load_order_profile(),
+            load_design_parameters(),
+        )
+        with tempfile.TemporaryDirectory() as root:
+            result = render_designed_wav(
+                trace,
+                pathlib.Path(root) / "high_load.wav",
+                pathlib.Path(root) / "high_load.metadata.json",
+            )
+            with wave.open(str(result.wav_path), "rb") as rendered:
+                pcm = rendered.readframes(rendered.getnframes())
+            pcm_edges = (
+                int.from_bytes(pcm[0:3], "little", signed=True) / 8388607,
+                int.from_bytes(pcm[3:6], "little", signed=True) / 8388607,
+                int.from_bytes(pcm[-6:-3], "little", signed=True) / 8388607,
+                int.from_bytes(pcm[-3:], "little", signed=True) / 8388607,
+            )
+            self.assertEqual(pcm_edges, (0.0, 0.0, 0.0, 0.0))
+            expected_max_step = max(
+                value
+                for channel in (trace.left, trace.right)
+                for value in (
+                    abs(channel[0]),
+                    *(
+                        abs(current - previous)
+                        for previous, current in zip(channel, channel[1:])
+                    ),
+                    abs(channel[-1]),
+                )
+            )
+            self.assertEqual(result.max_adjacent_step, expected_max_step)
+            fade_frames = round(
+                load_design_parameters()["parameters"]["output_edge_fade_s"]["value"]
+                * 48000
+            )
+            self.assertEqual(trace.left[0], 0.0)
+            self.assertEqual(trace.right[0], 0.0)
+            self.assertEqual(trace.left[-1], 0.0)
+            self.assertEqual(trace.right[-1], 0.0)
+            envelope = _output_edge_envelope(len(trace.left), fade_frames)
+            self.assertEqual(envelope[:fade_frames], sorted(envelope[:fade_frames]))
+            self.assertEqual(
+                envelope[-fade_frames:],
+                sorted(envelope[-fade_frames:], reverse=True),
+            )
+
     def test_builds_deterministic_five_case_engine_sound_demo(self):
         expected = {
             "idle", "cruise", "acceleration", "throttle_lift", "high_load"
@@ -557,8 +651,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
                     f"{name}{suffix}"
                     for name in expected
                     for suffix in (".wav", ".metadata.json")
-                },
+                } | {"engine_sound_review.md"},
             )
+            self.assertEqual(len(manifest["files"]), 11)
             self.assertNotIn(sentinel.name, manifest["files"])
             self.assertEqual(left.total_clipping_count, 0)
             self.assertEqual(
