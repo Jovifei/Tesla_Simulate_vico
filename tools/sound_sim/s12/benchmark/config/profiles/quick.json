@@ -78,5 +78,36 @@
   },
   "radiation_impedance": {
     "validation_profile": "quick"
+  },
+  "radiation_boundary_time_domain": {
+    "validation_profile": "quick",
+    "grid_cell_counts": [50, 100],
+    "nominal_grid_cell_count": 50,
+    "time_convergence_grid_cell_count": 100,
+    "cfl": 0.30,
+    "cfl_scan": [0.45, 0.30],
+    "max_steps": 2048,
+    "sample_stride": 1,
+    "acceptance": {
+      "frozen": false,
+      "evidence_id": "sprint_4d_b_quick_screening_not_a_numerical_claim.v1",
+      "maximum_cfl": 0.5,
+      "maximum_radiation_stage_pole_amplification": 1.0000000001,
+      "maximum_reflection_magnitude_error": 1,
+      "maximum_reflection_phase_error": 3.141592653589793,
+      "maximum_complex_reflection_error": 1,
+      "maximum_waveform_l1": 1,
+      "maximum_waveform_linf": 1,
+      "maximum_arrival_time_error_s": 0.0001,
+      "maximum_prearrival_reflection": 1,
+      "maximum_energy_residual": 1,
+      "maximum_amplitude_linearity_error": 1,
+      "minimum_time_step_margin": -1,
+      "minimum_density": 0,
+      "minimum_pressure": 0,
+      "maximum_retry_count": 0,
+      "minimum_grid_order": -10,
+      "minimum_time_order": -10
+    }
   }
 }

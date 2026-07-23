@@ -1,14 +1,6 @@
-function result = run_s12_benchmarks(selector, options)
+function result = run_s12_benchmarks(varargin)
 %RUN_S12_BENCHMARKS Run one case, one category, the suite, or report-only.
-arguments
-    selector (1,1) string = "all"
-    options.Profile (1,1) string = "quick"
-    options.OutputDirectory (1,1) string = ""
-    options.SourceManifest (1,1) string = ""
-    options.Reconstruction (1,1) string {mustBeMember( ...
-        options.Reconstruction, ["first_order", "muscl_minmod", ...
-        "muscl_minmod_pp"])} = "first_order"
-end
+[selector, options] = parseBenchmarkInputs(varargin{:});
 benchmarkRoot = fileparts(mfilename("fullpath"));
 if options.OutputDirectory == ""
     safeSelector = replace(selector, [":", "\\", "/"], "_");
@@ -62,6 +54,65 @@ end
 result.cases = cases;
 result.acceptance = suiteAcceptance(cases);
 result = s12_write_benchmark_artifacts(result, options.OutputDirectory);
+end
+
+function [selector, options] = parseBenchmarkInputs(varargin)
+%PARSEBENCHMARKINPUTS Preserve legacy selectors and public Category/Case pairs.
+selector = "all";
+arguments = varargin;
+if ~isempty(arguments) && isSelectorToken(arguments{1})
+    selector = string(arguments{1});
+    arguments = arguments(2:end);
+end
+parser = inputParser;
+parser.FunctionName = "run_s12_benchmarks";
+parser.PartialMatching = false;
+addParameter(parser, "Profile", "quick");
+addParameter(parser, "OutputDirectory", "");
+addParameter(parser, "SourceManifest", "");
+addParameter(parser, "Reconstruction", "first_order");
+addParameter(parser, "Category", "");
+addParameter(parser, "Case", "");
+parse(parser, arguments{:});
+parsed = parser.Results;
+options = struct( ...
+    "Profile", string(parsed.Profile), ...
+    "OutputDirectory", string(parsed.OutputDirectory), ...
+    "SourceManifest", string(parsed.SourceManifest), ...
+    "Reconstruction", string(parsed.Reconstruction), ...
+    "Category", string(parsed.Category), ...
+    "Case", string(parsed.Case));
+if ~any(options.Reconstruction == ["first_order", "muscl_minmod", ...
+        "muscl_minmod_pp"])
+    error("S12:Benchmark:UnsupportedScheme", ...
+        "Unsupported reconstruction '%s'.", options.Reconstruction);
+end
+hasCategory = options.Category ~= "";
+hasCase = options.Case ~= "";
+if hasCategory && hasCase
+    error("S12:Benchmark:AmbiguousSelector", ...
+        "Specify exactly one of Category or Case.");
+end
+if (hasCategory || hasCase) && selector ~= "all"
+    error("S12:Benchmark:AmbiguousSelector", ...
+        "A positional selector cannot be combined with Category or Case.");
+end
+if hasCategory
+    selector = "category:" + options.Category;
+elseif hasCase
+    selector = "case:" + options.Case;
+end
+options = rmfield(options, {'Category', 'Case'});
+end
+
+function value = isSelectorToken(candidate)
+if ~(ischar(candidate) || isstring(candidate))
+    value = false;
+    return
+end
+candidate = string(candidate);
+value = candidate == "all" || candidate == "report-only" || ...
+    startsWith(candidate, "case:") || startsWith(candidate, "category:");
 end
 
 function required = requiresPpAcceptance(category)

@@ -86,5 +86,36 @@
   },
   "radiation_impedance": {
     "validation_profile": "full"
+  },
+  "radiation_boundary_time_domain": {
+    "validation_profile": "full",
+    "grid_cell_counts": [100, 200, 400, 800],
+    "nominal_grid_cell_count": 100,
+    "time_convergence_grid_cell_count": 800,
+    "cfl": 0.20,
+    "cfl_scan": [0.45, 0.30, 0.20, 0.10],
+    "max_steps": 32768,
+    "sample_stride": 1,
+    "acceptance": {
+      "frozen": true,
+      "evidence_id": "sprint_4d_b_error_budget_4da_fit_independent_reference_fvm_measurement.v1",
+      "maximum_cfl": 0.5,
+      "maximum_radiation_stage_pole_amplification": 1.0000000001,
+      "maximum_reflection_magnitude_error": 0.08,
+      "maximum_reflection_phase_error": 0.20,
+      "maximum_complex_reflection_error": 0.20,
+      "maximum_waveform_l1": 0.25,
+      "maximum_waveform_linf": 0.50,
+      "maximum_arrival_time_error_s": 0.00001,
+      "maximum_prearrival_reflection": 0.05,
+      "maximum_energy_residual": 0.05,
+      "maximum_amplitude_linearity_error": 0.05,
+      "minimum_time_step_margin": -0.0000000001,
+      "minimum_density": 0.000001,
+      "minimum_pressure": 1,
+      "maximum_retry_count": 0,
+      "minimum_grid_order": 0,
+      "minimum_time_order": 0
+    }
   }
 }

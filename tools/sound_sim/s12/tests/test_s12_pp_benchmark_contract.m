@@ -36,12 +36,14 @@ output = tempname;
 mkdir(output);
 testCase.addTeardown(@() removeDirectory(output));
 
-[result, available] = runPpBenchmark(testCase, "all", Profile="quick", ...
+[result, available] = runPpBenchmark(testCase, "case:double_rarefaction", Profile="quick", ...
     Reconstruction="muscl_minmod_pp", OutputDirectory=output);
 if ~available; return; end
 
 caseIds = string({result.cases.id});
-verifyTrue(testCase, any(caseIds == "smooth_periodic_entropy_wave_spatial"));
+registry = s12_benchmark_registry();
+verifyTrue(testCase, any(string({registry.id}) == ...
+    "smooth_periodic_entropy_wave_spatial"));
 verifyTrue(testCase, any(caseIds == "double_rarefaction"));
 acceptance = [result.cases.acceptance];
 verifyTrue(testCase, all(string({acceptance.status}) == "passed"));

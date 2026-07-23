@@ -84,6 +84,10 @@ if hasCase(result, "unflanged_open_end_radiation_impedance")
     artifacts(end + 1) = artifact("radiation_boundary_package", "json", ...
         "radiation-boundary-package.json");
 end
+if hasTimeDomainCase(result)
+    artifacts(end + 1) = artifact("radiation_time_domain_trace", "csv", ...
+        "radiation-time-domain-traces.csv");
+end
 result.artifacts = artifacts;
 writeSummaryCsv(result, fullfile(outputDirectory, artifacts(3).path));
 writeSmoothScanCsv(result, fullfile(outputDirectory, artifacts(5).path));
@@ -96,6 +100,8 @@ writeFannoArtifacts(result, outputDirectory);
 writeFannoFvmArtifacts(result, outputDirectory);
 writeTransientWaveArtifacts(result, outputDirectory);
 result = writeRadiationImpedanceArtifacts(result, outputDirectory, ...
+    options.SourceDirectory);
+result = writeRadiationTimeDomainArtifacts(result, outputDirectory, ...
     options.SourceDirectory);
 writeMarkdown(result, fullfile(outputDirectory, artifacts(1).path));
 writeText(fullfile(outputDirectory, artifacts(2).path), ...
@@ -114,6 +120,17 @@ function value = hasPpCase(result)
 value = false;
 for index = 1:numel(result.cases)
     value = value || isfield(result.cases(index).metrics, "positivity_mode");
+end
+end
+
+function value = hasTimeDomainCase(result)
+value = false;
+for index = 1:numel(result.cases)
+    benchmarkCase = result.cases(index);
+    if ~isTimeDomainCategory(string(benchmarkCase.category)), continue, end
+    value = isfield(benchmarkCase.plot, "traces") || ...
+        isfield(benchmarkCase.plot, "trace_csv_path");
+    if value, return, end
 end
 end
 
@@ -450,6 +467,72 @@ metrics.radiation_boundary_package = package;
 benchmarkCase.metrics = metrics;
 benchmarkCase.plot = struct("frequency_csv_path", metrics.frequency_csv_path);
 result.cases(caseIndex) = benchmarkCase;
+end
+
+function result = writeRadiationTimeDomainArtifacts(result, outputDirectory, sourceDirectory)
+artifactIndex = find(string({result.artifacts.id}) == ...
+    "radiation_time_domain_trace", 1);
+if isempty(artifactIndex), return, end
+relativePath = result.artifacts(artifactIndex).path;
+destination = fullfile(outputDirectory, relativePath);
+timeDomainIndices = find(isTimeDomainCategory(string({result.cases.category})));
+hasRawTraces = false;
+for index = reshape(timeDomainIndices, 1, [])
+    hasRawTraces = hasRawTraces || isfield(result.cases(index).plot, "traces");
+end
+if hasRawTraces
+    writeRadiationTimeDomainCsv(result, timeDomainIndices, destination);
+elseif sourceDirectory ~= ""
+    source = fullfile(sourceDirectory, relativePath);
+    if ~isfile(source)
+        error("S12:Benchmark:RadiationTraceSource", ...
+            "report-only requires the source radiation time-domain CSV.");
+    end
+    copyfile(source, destination, "f");
+else
+    error("S12:Benchmark:RadiationTraceSource", ...
+        "Time-domain rendering requires traces or a source CSV.");
+end
+for index = reshape(timeDomainIndices, 1, [])
+    benchmarkCase = result.cases(index);
+    benchmarkCase.plot = struct("trace_csv_path", relativePath);
+    if isfield(benchmarkCase.metrics, "execution_mode") && ...
+            string(benchmarkCase.metrics.execution_mode) == "unified_evidence"
+        benchmarkCase.plot = struct("evidence_id", benchmarkCase.metrics.evidence_id);
+    end
+    result.cases(index) = benchmarkCase;
+end
+end
+
+function value = isTimeDomainCategory(category)
+value = category == "radiation_boundary_time_domain" | ...
+    category == "transient_open_end_impedance";
+end
+
+function writeRadiationTimeDomainCsv(result, indices, path)
+fileId = fopen(path, "wt", "n", "UTF-8");
+assert(fileId >= 0, "S12:Benchmark:FileOpen", ...
+    "Cannot open radiation time-domain CSV.");
+cleanup = onCleanup(@() fclose(fileId));
+fprintf(fileId, "%s\n", ...
+    "schema_version,case_id,grid_cell_count,cfl,amplitude_scale,time_s," + ...
+    "outgoing_pressure_pa,incoming_pressure_pa,reference_incoming_pressure_pa");
+for caseIndex = reshape(indices, 1, [])
+    benchmarkCase = result.cases(caseIndex);
+    if ~isfield(benchmarkCase.plot, "traces"), continue, end
+    traces = benchmarkCase.plot.traces;
+    for traceIndex = 1:numel(traces)
+        trace = traces(traceIndex);
+        for sampleIndex = 1:numel(trace.time)
+            fprintf(fileId, "benchmark.schema.v1,%s,%.12g,%.12g,%.12g,%.12g,%.12g,%.12g,%.12g\n", ...
+                benchmarkCase.id, benchmarkCase.metrics.grid_cell_count(traceIndex), ...
+                benchmarkCase.metrics.maximum_cfl(traceIndex), ...
+                benchmarkCase.metrics.input_amplitude(traceIndex), ...
+                trace.time(sampleIndex), trace.outgoing(sampleIndex), ...
+                trace.incoming(sampleIndex), trace.reference(sampleIndex));
+        end
+    end
+end
 end
 
 function writeRadiationFrequencyCsv(plotData, path)

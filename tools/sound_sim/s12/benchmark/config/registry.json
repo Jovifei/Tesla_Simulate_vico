@@ -58,5 +58,65 @@
     "id": "unflanged_open_end_radiation_impedance",
     "category": "radiation_impedance",
     "factory": "s12_benchmark_case_radiation_impedance"
+  },
+  {
+    "id": "radiation_single_tone",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_single_tone"
+  },
+  {
+    "id": "radiation_multisine",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_multisine"
+  },
+  {
+    "id": "radiation_chirp",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_chirp"
+  },
+  {
+    "id": "radiation_pulse",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_pulse"
+  },
+  {
+    "id": "radiation_limit_open",
+    "category": "transient_open_end_impedance",
+    "factory": "s12_benchmark_case_radiation_limit_open"
+  },
+  {
+    "id": "radiation_limit_matched",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_limit_matched"
+  },
+  {
+    "id": "radiation_limit_rigid",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_limit_rigid"
+  },
+  {
+    "id": "radiation_amplitude_linearity",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_amplitude_linearity"
+  },
+  {
+    "id": "radiation_grid_convergence",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_grid_convergence"
+  },
+  {
+    "id": "radiation_time_convergence",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_time_convergence"
+  },
+  {
+    "id": "radiation_zero_input_decay",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_zero_input_decay"
+  },
+  {
+    "id": "radiation_retry_rollback",
+    "category": "radiation_boundary_time_domain",
+    "factory": "s12_benchmark_case_radiation_retry_rollback"
   }
 ]
