@@ -49,7 +49,13 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertEqual(trace.reference_plane, "engine_exhaust_port")
         self.assertEqual(
             trace.provenance,
-            ("synthetic", "uncalibrated", "offline", "not_realtime_qualified"),
+            (
+                "synthetic",
+                "uncalibrated",
+                "offline",
+                "not_realtime_qualified",
+                "firing_order=1-3-4-2",
+            ),
         )
         self.assertEqual(trace, synthesize_four_stroke(config, 0.05))
 
@@ -60,6 +66,56 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 EngineSourceConfig(rpm=3000.0, load=0.60, firing_order=(1, 3)),
                 0.05,
             )
+
+    def test_four_stroke_waveform_repeats_at_firing_frequency(self):
+        trace = synthesize_four_stroke(
+            EngineSourceConfig(rpm=3000.0, load=0.60), 0.05
+        )
+
+        period_at_100_hz = 480
+        period_at_400_hz = 120
+        self.assertLess(
+            max(
+                abs(first - second)
+                for first, second in zip(
+                    trace.pressure_pa,
+                    trace.pressure_pa[period_at_100_hz:],
+                )
+            ),
+            1e-12,
+        )
+        self.assertGreater(
+            max(
+                abs(first - second)
+                for first, second in zip(
+                    trace.pressure_pa,
+                    trace.pressure_pa[period_at_400_hz:],
+                )
+            ),
+            1e-6,
+        )
+
+    def test_firing_order_is_auditable_while_common_port_waveform_is_symmetric(self):
+        first = synthesize_four_stroke(
+            EngineSourceConfig(rpm=3000.0, load=0.60, firing_order=(1, 3, 4, 2)),
+            0.05,
+        )
+        second = synthesize_four_stroke(
+            EngineSourceConfig(rpm=3000.0, load=0.60, firing_order=(1, 2, 3, 4)),
+            0.05,
+        )
+
+        self.assertEqual(
+            first.case_id,
+            "synthetic_four_stroke.v1:firing_order=1-3-4-2",
+        )
+        self.assertEqual(
+            second.case_id,
+            "synthetic_four_stroke.v1:firing_order=1-2-3-4",
+        )
+        self.assertIn("firing_order=1-3-4-2", first.provenance)
+        self.assertIn("firing_order=1-2-3-4", second.provenance)
+        self.assertEqual(first.pressure_pa, second.pressure_pa)
 
     def test_uniform_trace_preserves_shared_provenance_contract(self):
         trace = PressureTrace.uniform(

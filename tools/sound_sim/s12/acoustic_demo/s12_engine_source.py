@@ -36,8 +36,8 @@ def _firing_phases(config: EngineSourceConfig) -> tuple[float, ...]:
     ):
         raise ValueError("firing order must contain each cylinder exactly once")
     return tuple(
-        2.0 * math.pi * index / config.cylinder_count
-        for index, _cylinder in enumerate(config.firing_order)
+        2.0 * math.pi * (cylinder - 1) / config.cylinder_count
+        for cylinder in config.firing_order
     )
 
 
@@ -51,22 +51,35 @@ def synthesize_four_stroke(
         raise ValueError("cycle revolutions and sample rate must be positive")
 
     firing_phases = _firing_phases(config)
+    firing_order_label = "firing_order=" + "-".join(
+        str(cylinder) for cylinder in config.firing_order
+    )
     frame_count = round(duration_s * config.sample_rate_hz)
     if frame_count <= 0:
         raise ValueError("duration_s is too short for the configured sample rate")
     firing_frequency_hz = (
         config.cylinder_count * config.rpm / (config.cycle_revolutions * 60.0)
     )
-    if not math.isfinite(firing_frequency_hz) or firing_frequency_hz <= 0:
+    crank_cycle_frequency_hz = config.rpm / (config.cycle_revolutions * 60.0)
+    if (
+        not math.isfinite(firing_frequency_hz)
+        or firing_frequency_hz <= 0
+        or not math.isfinite(crank_cycle_frequency_hz)
+        or crank_cycle_frequency_hz <= 0
+    ):
         raise ValueError("RPM must produce a positive finite firing frequency")
 
     pulses = [
         sum(
-            math.exp(
-                config.pulse_sharpness
-                * (math.cos(2.0 * math.pi * firing_frequency_hz * index / config.sample_rate_hz - event_phase) - 1.0)
-            )
-            for event_phase in firing_phases
+            math.exp(config.pulse_sharpness * (
+                math.cos(
+                    2.0 * math.pi * crank_cycle_frequency_hz * index
+                    / config.sample_rate_hz - event_phase
+                ) - 1.0
+            ))
+            # Canonical summation keeps a symmetric common-port aggregate
+            # bit-identical for valid permutations of the same cylinders.
+            for event_phase in sorted(firing_phases)
         )
         for index in range(frame_count)
     ]
@@ -76,10 +89,10 @@ def synthesize_four_stroke(
     peak = max(max(abs(value) for value in centered), 1e-12)
     scaled = [sample * amplitude / peak for sample in centered]
     return PressureTrace.uniform(
-        "synthetic_four_stroke.v1",
+        "synthetic_four_stroke.v1:" + firing_order_label,
         scaled,
         config.sample_rate_hz,
         firing_frequency_hz,
         "engine_exhaust_port",
-        SYNTHETIC_PROVENANCE,
+        SYNTHETIC_PROVENANCE + (firing_order_label,),
     )
