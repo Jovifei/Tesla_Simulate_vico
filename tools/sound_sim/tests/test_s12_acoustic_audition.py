@@ -18,6 +18,8 @@ from s12_engine_source import (  # noqa: E402
     synthesize_four_stroke,
     synthesize_four_stroke_profile,
 )
+from s12_ptr_network import QUALIFICATION_COMMIT, load_radiation_package, run_ptr_network  # noqa: E402
+from s12_synthetic_engine_demo import run_demo  # noqa: E402
 
 
 TRACE_CSV = (
@@ -207,6 +209,30 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertNotIn("generated_at", metadata)
             manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
             self.assertEqual(manifest["sha256"], hashlib.sha256(result.native_wav_path.read_bytes()).hexdigest())
+
+    def test_loads_accepted_package_and_applies_causal_finite_ptr(self):
+        package = load_radiation_package()
+        self.assertEqual(package.source_commit, QUALIFICATION_COMMIT)
+        trace = PressureTrace.uniform(
+            "one-sample", [1.0] + [0.0] * 63, 48000, 100.0,
+            "engine_exhaust_port", ("synthetic",),
+        )
+        result = run_ptr_network(trace)
+        self.assertEqual(result.reference_plane, "bore_end")
+        self.assertEqual(result, run_ptr_network(trace))
+        self.assertTrue(all(abs(value) == 0.0 for value in result.pressure_pa[:20]))
+        self.assertTrue(all(__import__("math").isfinite(value) for value in result.pressure_pa))
+
+    def test_renders_deterministic_synthetic_engine_demo(self):
+        with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
+            left = run_demo(pathlib.Path(first))
+            right = run_demo(pathlib.Path(second))
+            self.assertEqual(left.manifest_path.read_bytes(), right.manifest_path.read_bytes())
+            self.assertEqual(len(left.cases), 5)
+            self.assertEqual(left.total_clipping_count, 0)
+            for result in left.cases.values():
+                with wave.open(str(result.native_wav_path), "rb") as rendered:
+                    self.assertEqual(rendered.getframerate(), 48000)
 
 
 if __name__ == "__main__":
