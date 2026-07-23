@@ -223,6 +223,14 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertTrue(all(abs(value) == 0.0 for value in result.pressure_pa[:20]))
         self.assertTrue(all(__import__("math").isfinite(value) for value in result.pressure_pa))
 
+        short = PressureTrace.uniform(
+            "short", [1.0], 48000, 100.0, "engine_exhaust_port", ("synthetic",),
+        )
+        delayed_short = run_ptr_network(short)
+        self.assertEqual(len(delayed_short.pressure_pa), len(short.pressure_pa))
+        self.assertEqual(len(delayed_short.time_s), len(short.time_s))
+        self.assertEqual(delayed_short.pressure_pa, [0.0])
+
     def test_renders_deterministic_synthetic_engine_demo(self):
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
             left = run_demo(pathlib.Path(first))

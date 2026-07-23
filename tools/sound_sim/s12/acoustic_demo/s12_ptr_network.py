@@ -99,7 +99,10 @@ def load_radiation_package(path: Path = DEFAULT_PACKAGE_PATH) -> RadiationPackag
 
 
 def _delay_loss(samples: list[float], delay: int, loss: float) -> list[float]:
-    return [0.0] * delay + [loss * sample for sample in samples[:-delay or None]]
+    return [
+        0.0 if index < delay else loss * samples[index - delay]
+        for index in range(len(samples))
+    ]
 
 
 def _tustin_response(samples: list[float], sample_rate_hz: int,
