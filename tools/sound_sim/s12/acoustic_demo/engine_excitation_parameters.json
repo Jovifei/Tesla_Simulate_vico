@@ -1,0 +1,22 @@
+{
+  "schema": "s12.engine_excitation_parameters.v04",
+  "generator_version": "Synthetic Engine Sound Vertical Slice v0.4",
+  "parameters": {
+    "base_pressure_pa": {"value": 0.22, "source_level": "C", "source": "synthetic", "description": "Synthetic base exhaust pressure scale."},
+    "load_pressure_span_pa": {"value": 0.34, "source_level": "C", "source": "synthetic", "description": "Synthetic load-dependent pressure scale."},
+    "high_order_load_gain": {"value": 1.40, "source_level": "C", "source": "synthetic", "description": "Synthetic high-order gain at load."},
+    "speed_mode_floor": {"value": 0.82, "source_level": "C", "source": "synthetic", "description": "Synthetic idle-mode gain."},
+    "speed_mode_span": {"value": 0.18, "source_level": "C", "source": "synthetic", "description": "Synthetic speed-mode gain span."},
+    "speed_cruise_mps": {"value": 30.0, "source_level": "C", "source": "synthetic", "description": "Synthetic cruise speed reference."},
+    "acceleration_reference_mps2": {"value": 6.0, "source_level": "C", "source": "synthetic", "description": "Synthetic transient acceleration reference."},
+    "rpm_rate_reference": {"value": 12000.0, "source_level": "C", "source": "synthetic", "description": "Synthetic RPM-rate transient reference."},
+    "transient_gain": {"value": 0.20, "source_level": "C", "source": "synthetic", "description": "Synthetic attack and lift transient scale."},
+    "transient_carrier_order": {"value": 4.0, "source_level": "C", "source": "synthetic", "description": "Synthetic transient carrier order."},
+    "transient_load_floor": {"value": 0.50, "source_level": "C", "source": "synthetic", "description": "Synthetic transient gain at zero load."},
+    "transient_load_span": {"value": 0.50, "source_level": "C", "source": "synthetic", "description": "Synthetic transient gain increase across load."},
+    "attack_s": {"value": 0.008, "source_level": "C", "source": "synthetic", "description": "Synthetic transient attack time constant."},
+    "decay_s": {"value": 0.060, "source_level": "C", "source": "synthetic", "description": "Synthetic transient decay time constant."},
+    "renderer_gain": {"value": 0.70, "source_level": "C", "source": "synthetic", "description": "Fixed renderer pressure-to-audio gain."},
+    "output_edge_fade_s": {"value": 0.004, "source_level": "C", "source": "synthetic", "description": "Output-only edge fade duration."}
+  }
+}

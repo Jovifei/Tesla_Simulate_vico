@@ -1,0 +1,10 @@
+{
+  "schema": "s12.order_profile.v04",
+  "engine_type": "synthetic_four_cylinder_four_stroke",
+  "parameters": {
+    "fundamental": {"order": 1.0, "amplitude": 0.34, "phase_rad": 0.0, "source_level": "C", "source": "synthetic", "description": "Synthetic crankshaft fundamental."},
+    "ignition": {"order": 2.0, "amplitude": 0.44, "phase_rad": 0.30, "source_level": "C", "source": "synthetic", "description": "Synthetic two firing events per revolution."},
+    "third": {"order": 3.0, "amplitude": 0.20, "phase_rad": 1.10, "source_level": "C", "source": "synthetic", "description": "Synthetic third-order mechanical content."},
+    "fourth": {"order": 4.0, "amplitude": 0.10, "phase_rad": 1.80, "source_level": "C", "source": "synthetic", "description": "Synthetic high-order mechanical content."}
+  }
+}
