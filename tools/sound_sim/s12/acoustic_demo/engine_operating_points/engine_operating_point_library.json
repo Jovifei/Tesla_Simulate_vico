@@ -14,7 +14,7 @@
     "transient_gain": {"values": [[0.20, 0.26, 0.34, 0.44, 0.56], [0.24, 0.32, 0.42, 0.55, 0.70], [0.30, 0.40, 0.54, 0.72, 0.94], [0.38, 0.52, 0.72, 0.96, 1.24], [0.48, 0.66, 0.90, 1.20, 1.56]], "source_level": "C", "source": "synthetic", "description": "Synthetic acceleration/lift transient pre-PTR gain table."}
   },
   "ptr_configuration": {"value": "existing_immutable_v04_ptr_radiation", "source_level": "C", "source": "synthetic", "description": "v0.5 consumes the existing frozen PTR/radiation configuration without modification."},
-  "renderer_profile": {"sample_rate_hz": {"value": 48000, "source_level": "C", "source": "synthetic", "description": "Offline render sample rate."}, "gain_db": {"value": -3.0, "source_level": "C", "source": "synthetic", "description": "Fixed product renderer gain."}, "edge_fade_s": {"value": 0.004, "source_level": "C", "source": "synthetic", "description": "Output-only edge fade."}},
+  "renderer_profile": {"sample_rate_hz": {"value": 48000, "source_level": "C", "source": "synthetic", "description": "Offline render sample rate."}, "gain_db": {"value": -10.0, "source_level": "C", "source": "synthetic", "description": "Fixed product renderer gain selected to preserve no-clipping output."}, "edge_fade_s": {"value": 0.004, "source_level": "C", "source": "synthetic", "description": "Output-only edge fade."}},
   "demo_profiles": {
     "idle": {"rpm": [800.0, 800.0], "load": [0.12, 0.12], "duration_s": 0.20, "source_level": "C", "source": "synthetic", "description": "Synthetic 800 RPM idle demo."},
     "cruise": {"rpm": [2000.0, 2000.0], "load": [0.36, 0.36], "duration_s": 0.20, "source_level": "C", "source": "synthetic", "description": "Synthetic 2000 RPM cruise demo."},
@@ -23,5 +23,5 @@
     "lift": {"rpm": [5000.0, 1400.0], "load": [0.80, 0.05], "duration_s": 0.22, "source_level": "C", "source": "synthetic", "description": "Synthetic throttle-lift demo."}
   },
   "provenance": {"source_level": "C", "source": "synthetic", "description": "No OEM, vehicle measurement, or public calibration data is represented."},
-  "hash": "513da6825a9abd3bc7c27b465039498832b0557ac4df0407f3efa33203e8aec7"
+  "hash": "b4ead91c5586cc0cddcd2056db5dbc480ee63bf48666bb4bcb03524db269cc1f"
 }
