@@ -1,4 +1,8 @@
-"""Render PTR/radiation pressure traces without post-PTR sound design."""
+"""Render PTR/radiation pressure traces without post-PTR sound design.
+
+DC removal, endpoint crossfade, and fixed gain are output-format operations
+only. This layer must not add orders, EQ, limiter behavior, or synthesis.
+"""
 
 from __future__ import annotations
 
@@ -32,14 +36,31 @@ def _edge_crossfade(samples: list[float], frame_count: int) -> list[float]:
     return result
 
 
+def _linear_resample(samples: list[float], source_rate_hz: int, target_rate_hz: int) -> list[float]:
+    if source_rate_hz <= 0 or target_rate_hz <= 0 or not samples:
+        raise ValueError("resampling requires non-empty positive-rate audio")
+    if source_rate_hz == target_rate_hz:
+        return list(samples)
+    frame_count = max(1, round(len(samples) * target_rate_hz / source_rate_hz))
+    output = []
+    for frame in range(frame_count):
+        position = frame * source_rate_hz / target_rate_hz
+        lower = min(len(samples) - 1, int(position))
+        upper = min(len(samples) - 1, lower + 1)
+        fraction = position - lower
+        output.append(samples[lower] + (samples[upper] - samples[lower]) * fraction)
+    return output
+
+
 def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path, renderer_profile: dict) -> dict:
     """Write fixed-format stereo PCM from existing PTR/radiation pressure only."""
     sample_rate_hz = int(renderer_profile["sample_rate_hz"])
-    if trace.sample_rate_hz != sample_rate_hz:
-        raise ValueError("renderer requires contracted PTR sample rate; no implicit resample")
+    if trace.sample_rate_hz is None:
+        raise ValueError("renderer requires a uniform source trace")
     gain_db = float(renderer_profile["gain_db"])
     gain = 10.0 ** (gain_db / 20.0)
-    dc_free = [sample - sum(trace.pressure_pa) / len(trace.pressure_pa) for sample in trace.pressure_pa]
+    resampled = _linear_resample(trace.pressure_pa, trace.sample_rate_hz, sample_rate_hz)
+    dc_free = [sample - sum(resampled) / len(resampled) for sample in resampled]
     samples = _edge_crossfade(dc_free, round(float(renderer_profile["edge_fade_s"]) * sample_rate_hz))
     samples = [sample * gain for sample in samples]
     if any(abs(sample) > 1.0 for sample in samples):
@@ -57,9 +78,11 @@ def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path
         "clipping_count": 0,
         "gain_db": gain_db,
         "peak": max(abs(sample) for sample in samples),
-        "processing": ["contracted_resampling", "edge_crossfade", "fixed_gain"],
+        "post_ptr_processing_contract": "output_format_only_no_order_eq_limiter_or_synthesis",
+        "processing": ["linear_resampling", "edge_crossfade", "fixed_gain"],
         "renderer_version": RENDERER_VERSION,
         "rms": math.sqrt(sum(sample * sample for sample in samples) / len(samples)),
+        "resampled_from_hz": trace.sample_rate_hz,
         "sample_rate": sample_rate_hz,
         "source_hash": trace.source_identity_sha256,
         "synthetic": True,

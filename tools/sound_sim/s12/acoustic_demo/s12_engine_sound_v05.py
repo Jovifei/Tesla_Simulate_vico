@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 from audio_parameter_package.package import build_audio_parameter_package
 from engine_operating_points.library import load_operating_point_library
@@ -40,16 +41,27 @@ def _write_report(path: Path) -> Path:
     path.write_text("\n".join([
         "# S12 Engine Sound Product Vertical Slice v0.5 Report", "",
         "Synthetic, uncalibrated, offline, and not realtime-qualified. This is not an OEM or real-vehicle clone.", "",
-        "## Completed", "", "- v0.4 excitation-to-PTR/radiation architecture", "- RPM/load operating-point library", "- fixed-format renderer", "- AudioParameterPackage v0.1", "- deterministic offline demo", "- future DSP interface design", "",
+        "## Completed", "", "- v0.4 excitation-to-PTR/radiation architecture", "- RPM/load operating-point library", "- fixed-format renderer", "- AudioParameterPackage v0.1 with C/synthetic provenance and frozen radiation-package content pin", "- deterministic offline demo", "- future DSP interface design", "",
         "## Not completed", "", "- OEM calibration", "- real vehicle measurement", "- Android integration", "- ESP32 DSP", "- CAN input", "- realtime latency", "",
     ]), encoding="utf-8")
     return path
 
 
-def run_v05_demo(output_root: Path, source_commit: str) -> V05Result:
+def _current_source_commit() -> str:
+    project_root = Path(__file__).resolve().parents[4]
+    result = subprocess.run(["git", "-C", str(project_root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True)
+    source_commit = result.stdout.strip()
+    if len(source_commit) != 40:
+        raise ValueError("current source commit is unavailable")
+    return source_commit
+
+
+def run_v05_demo(output_root: Path, source_commit: str | None = None) -> V05Result:
     """Render exact v0.5 product cases through excitation -> PTR -> renderer."""
-    if not source_commit:
-        raise ValueError("source commit is required for an auditable package")
+    current_commit = _current_source_commit()
+    if source_commit is not None and source_commit != current_commit:
+        raise ValueError("caller-supplied source commit must equal current HEAD")
+    source_commit = current_commit
     demo = output_root / "v05_demo"
     demo.mkdir(parents=True, exist_ok=True)
     library = load_operating_point_library()

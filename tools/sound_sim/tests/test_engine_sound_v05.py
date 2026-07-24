@@ -2,9 +2,12 @@ import pathlib
 import sys
 import unittest
 import json
+import hashlib
 import tempfile
 import wave
+import subprocess
 from dataclasses import replace
+from copy import deepcopy
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -16,6 +19,16 @@ from s12_acoustic_audition import PressureTrace  # noqa: E402
 from sound_renderer.s12_product_renderer import renderer_profile_from_library, render_product_wav  # noqa: E402
 from audio_parameter_package.package import build_audio_parameter_package, validate_audio_parameter_package  # noqa: E402
 from engine_product_excitation import build_product_demo_states, generate_product_excitation, project_order_amplitude  # noqa: E402
+from frozen_ptr_contract import EXPECTED_RADIATION_PACKAGE_SHA256, verify_frozen_radiation_package  # noqa: E402
+
+
+SOURCE_COMMIT = "0123456789abcdef0123456789abcdef01234567"
+
+
+def rehash_package(package):
+    content = dict(package)
+    content.pop("hash", None)
+    package["hash"] = hashlib.sha256(json.dumps(content, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 class EngineOperatingPointLibraryTests(unittest.TestCase):
@@ -65,28 +78,56 @@ class ProductRendererAndPackageTests(unittest.TestCase):
             self.assertEqual(metadata["sample_rate"], 48000)
             self.assertEqual(metadata["gain_db"], -10.0)
             self.assertEqual(metadata["source_hash"], trace.source_identity_sha256)
+            self.assertEqual(metadata["post_ptr_processing_contract"], "output_format_only_no_order_eq_limiter_or_synthesis")
             self.assertTrue(metadata["synthetic"])
             self.assertEqual(json.loads((folder / "fixture.json").read_text(encoding="utf-8")), metadata)
 
-    def test_renderer_rejects_uncontracted_sample_rate(self):
+    def test_renderer_resamples_uncontracted_uniform_input_to_48khz(self):
         library = load_operating_point_library()
         trace = PressureTrace.uniform(
             "wrong-rate", [0.0, 0.1, -0.1, 0.0], 44100, 50.0,
             "engine_exhaust_port", ("synthetic",),
         )
         with tempfile.TemporaryDirectory() as root:
-            with self.assertRaises(ValueError):
-                render_product_wav(trace, pathlib.Path(root) / "bad.wav", pathlib.Path(root) / "bad.json", renderer_profile_from_library(library))
+            metadata = render_product_wav(trace, pathlib.Path(root) / "resampled.wav", pathlib.Path(root) / "resampled.json", renderer_profile_from_library(library))
+            with wave.open(str(pathlib.Path(root) / "resampled.wav"), "rb") as audio:
+                self.assertEqual(audio.getframerate(), 48000)
+            self.assertEqual(metadata["resampled_from_hz"], 44100)
+            self.assertIn("linear_resampling", metadata["processing"])
 
     def test_audio_parameter_package_is_versioned_json_with_a_hash(self):
         library = load_operating_point_library()
-        package = build_audio_parameter_package(library, renderer_profile_from_library(library), "test-commit")
+        package = build_audio_parameter_package(library, renderer_profile_from_library(library), SOURCE_COMMIT)
         validate_audio_parameter_package(package)
         self.assertEqual(package["version"], "AudioParameterPackage v0.1")
-        self.assertEqual(package["source_commit"], "test-commit")
+        self.assertEqual(package["source_commit"], SOURCE_COMMIT)
         self.assertEqual(package["engine_id"], "synthetic_four_cylinder_four_stroke")
         self.assertTrue(package["synthetic"])
+        self.assertEqual(package["provenance"]["source_level"], "C")
+        self.assertEqual(package["provenance"]["source"], "synthetic")
         self.assertEqual(json.loads(json.dumps(package, sort_keys=True)), package)
+
+    def test_audio_parameter_package_pins_frozen_radiation_content(self):
+        library = load_operating_point_library()
+        package = build_audio_parameter_package(library, renderer_profile_from_library(library), SOURCE_COMMIT)
+        ptr = verify_frozen_radiation_package()
+        self.assertEqual(ptr["radiation_package_sha256"], EXPECTED_RADIATION_PACKAGE_SHA256)
+        self.assertEqual(package["ptr_profile"]["radiation_package_sha256"], EXPECTED_RADIATION_PACKAGE_SHA256)
+        self.assertEqual(package["ptr_profile"]["radiation_source_commit"], "4afe65a67ed21822422f1eb6dbf43fdd627072d3")
+
+    def test_audio_parameter_package_rejects_nonportable_values_and_bad_commit(self):
+        library = load_operating_point_library()
+        package = build_audio_parameter_package(library, renderer_profile_from_library(library), SOURCE_COMMIT)
+        nonfinite = deepcopy(package)
+        nonfinite["renderer_profile"]["gain_db"] = float("nan")
+        invalid_bool = deepcopy(package)
+        invalid_bool["synthetic"] = "true"
+        invalid_commit = deepcopy(package)
+        invalid_commit["source_commit"] = "not-a-git-sha"
+        for invalid in (nonfinite, invalid_bool, invalid_commit):
+            rehash_package(invalid)
+            with self.assertRaises(ValueError):
+                validate_audio_parameter_package(invalid)
 
 
 class ProductVerticalSliceTests(unittest.TestCase):
@@ -117,8 +158,8 @@ class ProductVerticalSliceTests(unittest.TestCase):
         from s12_engine_sound_v05 import run_v05_demo
 
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
-            left = run_v05_demo(pathlib.Path(first), "test-commit")
-            right = run_v05_demo(pathlib.Path(second), "test-commit")
+            left = run_v05_demo(pathlib.Path(first))
+            right = run_v05_demo(pathlib.Path(second))
             self.assertEqual(left.manifest_path.read_bytes(), right.manifest_path.read_bytes())
             self.assertEqual(left.sha256_path.read_bytes(), right.sha256_path.read_bytes())
             root = pathlib.Path(first) / "v05_demo"
@@ -126,7 +167,15 @@ class ProductVerticalSliceTests(unittest.TestCase):
             self.assertTrue(required <= {path.name for path in root.iterdir()})
             package = json.loads((root / "audio_parameter_package.json").read_text(encoding="utf-8"))
             validate_audio_parameter_package(package)
-            self.assertEqual(package["source_commit"], "test-commit")
+            expected_commit = subprocess.check_output(["git", "-C", str(ROOT.parents[1]), "rev-parse", "HEAD"], text=True).strip()
+            self.assertEqual(package["source_commit"], expected_commit)
+
+    def test_v05_demo_rejects_a_caller_supplied_commit_that_is_not_head(self):
+        from s12_engine_sound_v05 import run_v05_demo
+
+        with tempfile.TemporaryDirectory() as root:
+            with self.assertRaises(ValueError):
+                run_v05_demo(pathlib.Path(root), SOURCE_COMMIT)
 
     def test_future_dsp_interface_is_documented_without_realtime_implementation(self):
         document = (DEMO_ROOT / "Realtime_DSP_Interface_v01.md").read_text(encoding="utf-8")
