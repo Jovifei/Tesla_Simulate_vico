@@ -4,6 +4,7 @@ import unittest
 import json
 import tempfile
 import wave
+from dataclasses import replace
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -14,6 +15,7 @@ from engine_operating_points.library import load_operating_point_library  # noqa
 from s12_acoustic_audition import PressureTrace  # noqa: E402
 from sound_renderer.s12_product_renderer import renderer_profile_from_library, render_product_wav  # noqa: E402
 from audio_parameter_package.package import build_audio_parameter_package, validate_audio_parameter_package  # noqa: E402
+from engine_product_excitation import build_product_demo_states, generate_product_excitation, project_order_amplitude  # noqa: E402
 
 
 class EngineOperatingPointLibraryTests(unittest.TestCase):
@@ -61,7 +63,7 @@ class ProductRendererAndPackageTests(unittest.TestCase):
             with wave.open(str(folder / "fixture.wav"), "rb") as audio:
                 self.assertEqual((audio.getframerate(), audio.getnchannels(), audio.getsampwidth()), (48000, 2, 3))
             self.assertEqual(metadata["sample_rate"], 48000)
-            self.assertEqual(metadata["gain_db"], -3.0)
+            self.assertEqual(metadata["gain_db"], -10.0)
             self.assertEqual(metadata["source_hash"], trace.source_identity_sha256)
             self.assertTrue(metadata["synthetic"])
             self.assertEqual(json.loads((folder / "fixture.json").read_text(encoding="utf-8")), metadata)
@@ -85,6 +87,52 @@ class ProductRendererAndPackageTests(unittest.TestCase):
         self.assertEqual(package["engine_id"], "synthetic_four_cylinder_four_stroke")
         self.assertTrue(package["synthetic"])
         self.assertEqual(json.loads(json.dumps(package, sort_keys=True)), package)
+
+
+class ProductVerticalSliceTests(unittest.TestCase):
+    def test_product_excitation_maps_rpm_load_and_acceleration_before_ptr(self):
+        library = load_operating_point_library()
+        states = build_product_demo_states(library)
+        idle = generate_product_excitation(states["idle"], library)
+        cruise = generate_product_excitation(states["cruise"], library)
+        self.assertAlmostEqual(idle.firing_frequency_hz, 800.0 / 60.0)
+        self.assertAlmostEqual(cruise.firing_frequency_hz, 2000.0 / 60.0)
+        quiet = replace(states["cruise"], case_id="quiet", acceleration=tuple(0.0 for _ in states["cruise"].acceleration))
+        active = replace(states["cruise"], case_id="active", acceleration=tuple(6.0 for _ in states["cruise"].acceleration))
+        self.assertNotEqual(generate_product_excitation(quiet, library).pressure_pa, generate_product_excitation(active, library).pressure_pa)
+
+    def test_load_changes_pre_ptr_harmonic_balance(self):
+        library = load_operating_point_library()
+        state = build_product_demo_states(library)["cruise"]
+        low = replace(state, case_id="low", load=tuple(0.05 for _ in state.load), throttle=tuple(0.05 for _ in state.throttle))
+        high = replace(state, case_id="high", load=tuple(1.0 for _ in state.load), throttle=tuple(1.0 for _ in state.throttle))
+        low_trace = generate_product_excitation(low, library)
+        high_trace = generate_product_excitation(high, library)
+        self.assertGreater(
+            project_order_amplitude(high_trace, high, 3.0) / project_order_amplitude(high_trace, high, 1.0),
+            project_order_amplitude(low_trace, low, 3.0) / project_order_amplitude(low_trace, low, 1.0),
+        )
+
+    def test_v05_demo_writes_portable_deterministic_product_bundle(self):
+        from s12_engine_sound_v05 import run_v05_demo
+
+        with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
+            left = run_v05_demo(pathlib.Path(first), "test-commit")
+            right = run_v05_demo(pathlib.Path(second), "test-commit")
+            self.assertEqual(left.manifest_path.read_bytes(), right.manifest_path.read_bytes())
+            self.assertEqual(left.sha256_path.read_bytes(), right.sha256_path.read_bytes())
+            root = pathlib.Path(first) / "v05_demo"
+            required = {"idle.wav", "cruise.wav", "acceleration.wav", "high_load.wav", "lift.wav", "vehicle_state.json", "audio_parameter_package.json", "manifest.json", "SHA256.txt"}
+            self.assertTrue(required <= {path.name for path in root.iterdir()})
+            package = json.loads((root / "audio_parameter_package.json").read_text(encoding="utf-8"))
+            validate_audio_parameter_package(package)
+            self.assertEqual(package["source_commit"], "test-commit")
+
+    def test_future_dsp_interface_is_documented_without_realtime_implementation(self):
+        document = (DEMO_ROOT / "Realtime_DSP_Interface_v01.md").read_text(encoding="utf-8")
+        for token in ("rpm", "speed", "acceleration", "load", "timestamp", "PCM frame", "latency budget", "Android", "ESP32", "CAN", "I2S"):
+            self.assertIn(token, document)
+        self.assertIn("not implemented", document)
 
 
 if __name__ == "__main__":
