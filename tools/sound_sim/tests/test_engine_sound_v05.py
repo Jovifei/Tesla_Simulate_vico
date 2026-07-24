@@ -79,6 +79,7 @@ class ProductRendererAndPackageTests(unittest.TestCase):
             self.assertEqual(metadata["gain_db"], -10.0)
             self.assertEqual(metadata["source_hash"], trace.source_identity_sha256)
             self.assertEqual(metadata["post_ptr_processing_contract"], "output_format_only_no_order_eq_limiter_or_synthesis")
+            self.assertIn("dc_removal", metadata["processing"])
             self.assertTrue(metadata["synthetic"])
             self.assertEqual(json.loads((folder / "fixture.json").read_text(encoding="utf-8")), metadata)
 

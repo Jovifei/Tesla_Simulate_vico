@@ -79,7 +79,7 @@ def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path
         "gain_db": gain_db,
         "peak": max(abs(sample) for sample in samples),
         "post_ptr_processing_contract": "output_format_only_no_order_eq_limiter_or_synthesis",
-        "processing": ["linear_resampling", "edge_crossfade", "fixed_gain"],
+        "processing": ["linear_resampling", "dc_removal", "edge_crossfade", "fixed_gain"],
         "renderer_version": RENDERER_VERSION,
         "rms": math.sqrt(sum(sample * sample for sample in samples) / len(samples)),
         "resampled_from_hz": trace.sample_rate_hz,
