@@ -21,11 +21,7 @@ class VehicleState:
     throttle: float
 
     def __post_init__(self) -> None:
-        values = (self.timestamp_s, self.rpm, self.speed_mps, self.acceleration_mps2, self.load, self.throttle)
-        if not all(math.isfinite(value) for value in values):
-            raise ValueError("vehicle state values must be finite")
-        if self.timestamp_s < 0.0:
-            raise ValueError("timestamps must be nonnegative")
+        """Keep raw ingress values intact; EngineSoundRuntime owns safety fallback."""
 
     @classmethod
     def synthetic_idle(cls, timestamp_s: float) -> "VehicleState":

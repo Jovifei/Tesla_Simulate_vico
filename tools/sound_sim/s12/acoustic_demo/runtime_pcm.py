@@ -4,8 +4,12 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
+import ctypes
+from ctypes import wintypes
 import math
+import os
 import struct
+import time
 from typing import Sequence
 
 
@@ -95,3 +99,86 @@ class SimulatedPcmSink:
         self._latency_sum_s += latency_s
         self.consumed_frames += 1
         return frame
+
+
+class _WaveFormatEx(ctypes.Structure):
+    _fields_ = [
+        ("wFormatTag", wintypes.WORD), ("nChannels", wintypes.WORD),
+        ("nSamplesPerSec", wintypes.DWORD), ("nAvgBytesPerSec", wintypes.DWORD),
+        ("nBlockAlign", wintypes.WORD), ("wBitsPerSample", wintypes.WORD),
+        ("cbSize", wintypes.WORD),
+    ]
+
+
+class _WaveHeader(ctypes.Structure):
+    _fields_ = [
+        ("lpData", ctypes.c_char_p), ("dwBufferLength", wintypes.DWORD),
+        ("dwBytesRecorded", wintypes.DWORD), ("dwUser", ctypes.c_size_t),
+        ("dwFlags", wintypes.DWORD), ("dwLoops", wintypes.DWORD),
+        ("lpNext", ctypes.c_void_p), ("reserved", ctypes.c_size_t),
+    ]
+
+
+class WindowsWaveOutSink:
+    """Optional Windows default-device sink for queued signed-24 PCM frames."""
+
+    WAVE_MAPPER = 0xFFFFFFFF
+    WHDR_DONE = 0x00000001
+
+    @staticmethod
+    def is_supported() -> bool:
+        try:
+            ctypes.WinDLL("winmm")
+            return os.name == "nt"
+        except (AttributeError, OSError):
+            return False
+
+    def __init__(self, max_pending_frames: int = 3) -> None:
+        if not self.is_supported() or max_pending_frames <= 0:
+            raise RuntimeError("Windows waveOut audio output is unavailable")
+        self.max_pending_frames = max_pending_frames
+        self._winmm = ctypes.WinDLL("winmm")
+        self._handle = ctypes.c_void_p()
+        self._pending: list[tuple[ctypes.Array, _WaveHeader]] = []
+        format_ex = _WaveFormatEx(1, 2, 48000, 48000 * 2 * 3, 2 * 3, 24, 0)
+        result = self._winmm.waveOutOpen(ctypes.byref(self._handle), self.WAVE_MAPPER, ctypes.byref(format_ex), 0, 0, 0)
+        if result != 0:
+            raise OSError(f"waveOutOpen failed with MMRESULT={result}")
+
+    @property
+    def pending_frames(self) -> int:
+        self._reap_completed()
+        return len(self._pending)
+
+    def _reap_completed(self) -> None:
+        remaining = []
+        for buffer, header in self._pending:
+            if header.dwFlags & self.WHDR_DONE:
+                self._winmm.waveOutUnprepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+            else:
+                remaining.append((buffer, header))
+        self._pending = remaining
+
+    def wait_for_capacity(self) -> None:
+        while self.pending_frames >= self.max_pending_frames:
+            time.sleep(0.001)
+
+    def submit(self, frame: PCMFrame) -> None:
+        if (frame.sample_rate_hz, frame.channels, frame.bits_per_sample) != (48000, 2, 24):
+            raise ValueError("waveOut sink accepts only the runtime PCM contract")
+        self.wait_for_capacity()
+        buffer = ctypes.create_string_buffer(frame.pcm_s24le_stereo)
+        header = _WaveHeader(ctypes.cast(buffer, ctypes.c_char_p), len(frame.pcm_s24le_stereo), 0, 0, 0, 0, None, 0)
+        result = self._winmm.waveOutPrepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+        if result != 0:
+            raise OSError(f"waveOutPrepareHeader failed with MMRESULT={result}")
+        result = self._winmm.waveOutWrite(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+        if result != 0:
+            self._winmm.waveOutUnprepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+            raise OSError(f"waveOutWrite failed with MMRESULT={result}")
+        self._pending.append((buffer, header))
+
+    def drain_and_close(self) -> None:
+        while self.pending_frames:
+            time.sleep(0.001)
+        self._winmm.waveOutClose(self._handle)

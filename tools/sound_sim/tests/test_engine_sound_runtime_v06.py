@@ -20,7 +20,7 @@ from audio_parameter_package.runtime_package import (  # noqa: E402
     build_runtime_audio_parameter_package,
     validate_runtime_audio_parameter_package,
 )
-from runtime_pcm import PcmRingBuffer, SimulatedPcmSink  # noqa: E402
+from runtime_pcm import PcmRingBuffer, SimulatedPcmSink, WindowsWaveOutSink  # noqa: E402
 from runtime_ptr_adapter import RuntimePtrAdapter  # noqa: E402
 from s12_acoustic_audition import PressureTrace  # noqa: E402
 from s12_engine_sound_runtime import run_runtime_demo  # noqa: E402
@@ -92,6 +92,16 @@ class RuntimeAudioTests(unittest.TestCase):
         self.assertLess(abs(second.normalized_samples[0] - first.normalized_samples[-1]), 0.10)
         self.assertFalse(first.fallback_applied)
 
+    def test_callback_consumes_two_100hz_state_updates_per_pcm_block(self):
+        runtime = EngineSoundRuntime()
+        runtime.update_vehicle_state(VehicleState.synthetic_idle(0.00))
+        runtime.update_vehicle_state(VehicleState.synthetic_idle(0.01))
+
+        frame = runtime.audio_callback()
+
+        self.assertEqual(len(frame.normalized_samples), 960)
+        self.assertEqual(runtime.state_updates_consumed, 2)
+
     def test_load_and_acceleration_change_runtime_pcm_before_ptr(self):
         steady = VehicleState(0.00, 2000.0, 60.0 / 3.6, 0.0, 0.30, 0.30)
         loaded = VehicleState(0.00, 2000.0, 60.0 / 3.6, 0.0, 1.00, 1.00)
@@ -105,11 +115,25 @@ class RuntimeAudioTests(unittest.TestCase):
         runtime.audio_callback(VehicleState.synthetic_idle(0.00))
 
         negative = runtime.audio_callback(VehicleState(0.02, -10.0, 0.0, 0.0, 0.0, 0.0))
-        jump = runtime.audio_callback(VehicleState(0.04, 6000.0, 60.0, 0.0, 1.0, 1.0))
+        nan = runtime.audio_callback(VehicleState(0.04, math.nan, 0.0, 0.0, 0.0, 0.0))
+        jump = runtime.audio_callback(VehicleState(0.06, 6000.0, 60.0, 0.0, 1.0, 1.0))
 
         self.assertTrue(negative.fallback_applied)
+        self.assertTrue(nan.fallback_applied)
         self.assertTrue(jump.fallback_applied)
-        self.assertEqual(runtime.fallback_count, 2)
+        self.assertEqual(runtime.fallback_count, 3)
+
+    def test_rpm_ramp_keeps_phase_continuous_at_block_boundaries(self):
+        runtime = EngineSoundRuntime()
+        previous = None
+        maximum_boundary_delta = 0.0
+        for index in range(101):
+            rpm = 1000.0 + 5000.0 * index / 100.0
+            frame = runtime.audio_callback(VehicleState(index * 0.02, rpm, 20.0, 2.0, 0.70, 0.70))
+            if previous is not None:
+                maximum_boundary_delta = max(maximum_boundary_delta, abs(frame.normalized_samples[0] - previous.normalized_samples[-1]))
+            previous = frame
+        self.assertLess(maximum_boundary_delta, 0.10)
 
     def test_stateful_ptr_adapter_matches_the_frozen_batch_network(self):
         samples = [0.15 * math.sin(index * 0.07) for index in range(1024)]
@@ -135,6 +159,10 @@ class RuntimeAudioTests(unittest.TestCase):
         self.assertEqual(sink.underrun_count, 1)
         self.assertEqual(queue.depth, 0)
 
+    @unittest.skipUnless(sys.platform == "win32", "Windows waveOut is a Windows-only PC audio adapter")
+    def test_windows_waveout_adapter_is_available_without_opening_a_device(self):
+        self.assertTrue(WindowsWaveOutSink.is_supported())
+
 
 class RuntimeProductContractTests(unittest.TestCase):
     def test_app_json_ingress_maps_the_documented_synthetic_fallback(self):
@@ -145,6 +173,11 @@ class RuntimeProductContractTests(unittest.TestCase):
         self.assertAlmostEqual(state.rpm, 2050.0)
         self.assertAlmostEqual(state.load, 0.35)
         self.assertAlmostEqual(state.throttle, 0.35)
+
+    def test_app_nan_payload_reaches_runtime_fallback(self):
+        state = parse_app_vehicle_state({"speed": math.nan, "acceleration": 0.5, "timestamp": 123.0})
+        frame = EngineSoundRuntime().audio_callback(state)
+        self.assertTrue(frame.fallback_applied)
 
     def test_audio_parameter_package_v02_contains_runtime_controls(self):
         library = load_operating_point_library()
@@ -173,6 +206,7 @@ class RuntimeProductContractTests(unittest.TestCase):
             report = json.loads(left.report_path.read_text(encoding="utf-8"))
             self.assertEqual(report["duration_s"], 2.0)
             self.assertEqual(report["pcm_frames"], 100)
+            self.assertEqual(report["state_updates_consumed"], 200)
             self.assertEqual(report["audio"]["clipping_count"], 0)
             self.assertEqual(report["buffer"]["underrun_count"], 0)
             self.assertIn("latency", report)

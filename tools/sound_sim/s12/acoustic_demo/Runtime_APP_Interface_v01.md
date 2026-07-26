@@ -1,6 +1,6 @@
 # S12 Runtime App Interface v0.1
 
-This document specifies a future App-to-runtime contract. It is a PC simulation contract only: no HTTP listener, WebSocket, Android client, CAN reader, phone hardware, or audio-device driver is implemented here.
+This document specifies a future App-to-runtime contract. It is a PC simulation contract only: no HTTP listener, WebSocket, Android client, CAN reader, or phone hardware is implemented here. The optional Windows `waveOut` adapter streams existing PCM frames to the default PC audio device; it does not add synthesis or provide realtime qualification.
 
 ## Vehicle-state ingress
 
@@ -43,4 +43,4 @@ Android sensor / future CAN adapter
         -> future audio device adapter
 ```
 
-The v0.6 implementation opens no transport and writes no full WAV file. Android integration, actual audio playback, realtime qualification, vehicle calibration, ESP32, I2S, and CAN hardware remain unimplemented.
+The v0.6 implementation opens no transport and writes no full WAV file. Android integration, realtime qualification, vehicle calibration, ESP32, I2S, and CAN hardware remain unimplemented.

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass, replace
 from enum import Enum
 import math
@@ -91,8 +92,11 @@ class _StateSanitizer:
         self.fallback_count = 0
 
     def accept(self, candidate: VehicleState, previous: VehicleState | None) -> tuple[VehicleState, bool]:
+        values = (candidate.timestamp_s, candidate.rpm, candidate.speed_mps, candidate.acceleration_mps2, candidate.load, candidate.throttle)
         valid = (
-            800.0 <= candidate.rpm <= 6000.0
+            all(math.isfinite(value) for value in values)
+            and candidate.timestamp_s >= 0.0
+            and 800.0 <= candidate.rpm <= 6000.0
             and 0.0 <= candidate.speed_mps <= 100.0
             and abs(candidate.acceleration_mps2) <= 20.0
             and 0.0 <= candidate.load <= 1.0
@@ -105,8 +109,9 @@ class _StateSanitizer:
             return candidate, False
         self.fallback_count += 1
         if previous is None:
-            return VehicleState.synthetic_idle(candidate.timestamp_s), True
-        timestamp_s = max(candidate.timestamp_s, previous.timestamp_s + BLOCK_SAMPLES / 48000.0)
+            timestamp_s = candidate.timestamp_s if math.isfinite(candidate.timestamp_s) and candidate.timestamp_s >= 0.0 else 0.0
+            return VehicleState.synthetic_idle(timestamp_s), True
+        timestamp_s = candidate.timestamp_s if math.isfinite(candidate.timestamp_s) and candidate.timestamp_s > previous.timestamp_s else previous.timestamp_s + BLOCK_SAMPLES / 48000.0
         return replace(previous, timestamp_s=timestamp_s), True
 
 
@@ -123,11 +128,11 @@ class _RuntimeExcitation:
         self.smoothed_load: float | None = None
         self.previous_rpm: float | None = None
 
-    def render_block(self, previous: VehicleState, current: VehicleState) -> list[float]:
+    def render_block(self, previous: VehicleState, current: VehicleState, frame_count: int = BLOCK_SAMPLES) -> list[float]:
         samples = []
         smoothing = 1.0 / (0.050 * self.sample_rate_hz)
-        for index in range(BLOCK_SAMPLES):
-            fraction = (index + 1) / BLOCK_SAMPLES
+        for index in range(frame_count):
+            fraction = (index + 1) / frame_count
             target_rpm = previous.rpm + (current.rpm - previous.rpm) * fraction
             target_load = (previous.load + (current.load - previous.load) * fraction + previous.throttle + (current.throttle - previous.throttle) * fraction) * 0.5
             self.smoothed_rpm = target_rpm if self.smoothed_rpm is None else self.smoothed_rpm + (target_rpm - self.smoothed_rpm) * smoothing
@@ -165,24 +170,55 @@ class EngineSoundRuntime:
         self._renderer = RuntimePcmRenderer(renderer_profile_from_library(library))
         self._state_machine = RuntimeStateMachine()
         self._sanitizer = _StateSanitizer()
-        self._previous_state: VehicleState | None = None
+        self._previous_audio_state: VehicleState | None = None
+        self._previous_ingested_state: VehicleState | None = None
+        self._pending_states: deque[tuple[VehicleState, bool, RuntimeTransition]] = deque()
         self._sequence_index = 0
+        self.state_updates_consumed = 0
 
     @property
     def fallback_count(self) -> int:
         return self._sanitizer.fallback_count
 
-    def audio_callback(self, state: VehicleState) -> PCMFrame:
-        accepted, fallback = self._sanitizer.accept(state, self._previous_state)
-        previous = self._previous_state or accepted
-        transition = self._state_machine.update(accepted)
-        pressure = self._ptr.process(self._excitation.render_block(previous, accepted))
+    def _accept_state(self, state: VehicleState) -> tuple[VehicleState, bool, RuntimeTransition]:
+        accepted, fallback = self._sanitizer.accept(state, self._previous_ingested_state)
+        self._previous_ingested_state = accepted
+        return accepted, fallback, self._state_machine.update(accepted)
+
+    def update_vehicle_state(self, state: VehicleState) -> None:
+        """Ingest one 100 Hz vehicle-state update for the next PCM callback."""
+        self._pending_states.append(self._accept_state(state))
+
+    def _render(self, segments: tuple[tuple[VehicleState, VehicleState, int], ...], fallback: bool, transition: RuntimeTransition) -> PCMFrame:
+        excitation = []
+        for previous, current, frame_count in segments:
+            excitation.extend(self._excitation.render_block(previous, current, frame_count))
+        pressure = self._ptr.process(excitation)
         frame = self._renderer.render(pressure, self._sequence_index)
         self._sequence_index += 1
-        self._previous_state = accepted
         return replace(
             frame,
             fallback_applied=fallback,
             runtime_mode=transition.mode.value,
             transition_progress=transition.progress,
+        )
+
+    def audio_callback(self, state: VehicleState | None = None) -> PCMFrame:
+        """Render one 20 ms PCM frame from a direct state or two 100 Hz updates."""
+        if state is not None:
+            accepted, fallback, transition = self._accept_state(state)
+            previous = self._previous_audio_state or accepted
+            self._previous_audio_state = accepted
+            return self._render(((previous, accepted, BLOCK_SAMPLES),), fallback, transition)
+        if len(self._pending_states) < 2:
+            raise RuntimeError("audio callback requires two queued 100 Hz state updates")
+        first, first_fallback, first_transition = self._pending_states.popleft()
+        second, second_fallback, second_transition = self._pending_states.popleft()
+        previous = self._previous_audio_state or first
+        self._previous_audio_state = second
+        self.state_updates_consumed += 2
+        return self._render(
+            ((previous, first, BLOCK_SAMPLES // 2), (first, second, BLOCK_SAMPLES // 2)),
+            first_fallback or second_fallback,
+            second_transition if second_transition.progress >= first_transition.progress else first_transition,
         )

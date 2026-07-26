@@ -16,7 +16,7 @@ import time
 from audio_parameter_package.runtime_package import build_runtime_audio_parameter_package, validate_runtime_audio_parameter_package
 from engine_operating_points.library import load_operating_point_library
 from engine_runtime import EngineSoundRuntime
-from runtime_pcm import PcmRingBuffer, SimulatedPcmSink
+from runtime_pcm import PcmRingBuffer, SimulatedPcmSink, WindowsWaveOutSink
 from sound_renderer.s12_product_renderer import renderer_profile_from_library
 from vehicle_state_runtime.stream import RuntimeDriveCycle
 
@@ -76,10 +76,11 @@ def _write_markdown_report(path: Path, report: dict) -> Path:
     return path
 
 
-def run_runtime_demo(output_root: Path, duration_s: float = 600.0) -> RuntimeReport:
+def run_runtime_demo(output_root: Path, duration_s: float = 600.0, device_output: bool = False) -> RuntimeReport:
     """Render a deterministic 20 ms PCM stream without retaining complete audio."""
     frame_count = round(duration_s / BLOCK_DURATION_S)
-    if not math.isfinite(duration_s) or duration_s <= 0.0 or not math.isclose(frame_count * BLOCK_DURATION_S, duration_s, abs_tol=1.0e-9):
+    update_count = round(duration_s * STATE_UPDATE_HZ)
+    if not math.isfinite(duration_s) or duration_s <= 0.0 or not math.isclose(frame_count * BLOCK_DURATION_S, duration_s, abs_tol=1.0e-9) or update_count != frame_count * 2:
         raise ValueError("runtime duration must be a positive multiple of 20 ms")
     cycle = RuntimeDriveCycle(duration_s=duration_s)
     library = load_operating_point_library()
@@ -88,6 +89,7 @@ def run_runtime_demo(output_root: Path, duration_s: float = 600.0) -> RuntimeRep
     runtime = EngineSoundRuntime()
     queue = PcmRingBuffer(capacity_frames=50)
     sink = SimulatedPcmSink(BLOCK_DURATION_S)
+    device_sink = WindowsWaveOutSink() if device_output else None
     audio_hash = hashlib.sha256()
     transitions = []
     last_mode = None
@@ -95,19 +97,31 @@ def run_runtime_demo(output_root: Path, duration_s: float = 600.0) -> RuntimeRep
     working_set_before = _process_working_set_bytes()
     wall_start = time.perf_counter()
     cpu_start = time.process_time()
-    for frame_index in range(frame_count):
-        state = cycle.sample_at(frame_index * BLOCK_DURATION_S)
-        frame = runtime.audio_callback(state)
+    for update_index in range(update_count):
+        state = cycle.sample_at(update_index / STATE_UPDATE_HZ)
+        runtime.update_vehicle_state(state)
+        if update_index % 2 == 0:
+            continue
+        frame_index = update_index // 2
+        frame = runtime.audio_callback()
         audio_hash.update(frame.pcm_s24le_stereo)
         clipping_count += sum(abs(sample) > 1.0 for sample in frame.normalized_samples)
         if frame.runtime_mode != last_mode:
             transitions.append({"frame_index": frame_index, "timestamp_s": state.timestamp_s, "mode": frame.runtime_mode})
             last_mode = frame.runtime_mode
         queue.push(frame)
-        if queue.depth > 3:
-            sink.consume(queue)
+        if device_sink is None:
+            if queue.depth > 3:
+                sink.consume(queue)
+        else:
+            device_sink.submit(queue.pop())
     while queue.depth:
-        sink.consume(queue)
+        if device_sink is None:
+            sink.consume(queue)
+        else:
+            device_sink.submit(queue.pop())
+    if device_sink is not None:
+        device_sink.drain_and_close()
     cpu_elapsed_s = time.process_time() - cpu_start
     wall_elapsed_s = time.perf_counter() - wall_start
     working_set_after = _process_working_set_bytes()
@@ -118,9 +132,10 @@ def run_runtime_demo(output_root: Path, duration_s: float = 600.0) -> RuntimeRep
         "synthetic": True,
         "calibrated": False,
         "realtime_qualified": False,
-        "device_output": "simulated_pc_pcm_sink",
+        "device_output": "windows_waveout" if device_output else "simulated_pc_pcm_sink",
         "duration_s": duration_s,
         "state_update_hz": STATE_UPDATE_HZ,
+        "state_updates_consumed": runtime.state_updates_consumed,
         "state_transitions": transitions,
         "pcm_frames": frame_count,
         "audio": {

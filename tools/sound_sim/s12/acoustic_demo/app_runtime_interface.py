@@ -9,10 +9,10 @@ from typing import Mapping
 from vehicle_state_runtime.stream import VehicleState
 
 
-def _finite_number(payload: Mapping[str, object], name: str) -> float:
+def _number(payload: Mapping[str, object], name: str) -> float:
     value = payload.get(name)
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)):
-        raise ValueError(f"App vehicle-state field {name!r} must be finite")
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"App vehicle-state field {name!r} must be numeric")
     return float(value)
 
 
@@ -35,12 +35,14 @@ def parse_app_vehicle_state(payload: Mapping[str, object] | str) -> VehicleState
         if not isinstance(decoded, dict):
             raise ValueError("App vehicle-state payload must be a JSON object")
         payload = decoded
-    speed_kmh = _finite_number(payload, "speed")
-    acceleration_mps2 = _finite_number(payload, "acceleration")
-    timestamp_s = _finite_number(payload, "timestamp")
-    if speed_kmh < 0.0 or timestamp_s < 0.0:
-        raise ValueError("App speed and timestamp must be nonnegative")
-    rpm = _finite_number(payload, "rpm") if "rpm" in payload else _clamp(800.0 + speed_kmh * 20.0 + acceleration_mps2 * 100.0, 800.0, 6000.0)
-    load = _finite_number(payload, "load") if "load" in payload else _clamp(0.30 + acceleration_mps2 * 0.10, 0.0, 1.0)
-    throttle = _finite_number(payload, "throttle") if "throttle" in payload else load
+    speed_kmh = _number(payload, "speed")
+    acceleration_mps2 = _number(payload, "acceleration")
+    timestamp_s = _number(payload, "timestamp")
+    rpm = _number(payload, "rpm") if "rpm" in payload else 800.0 + speed_kmh * 20.0 + acceleration_mps2 * 100.0
+    load = _number(payload, "load") if "load" in payload else 0.30 + acceleration_mps2 * 0.10
+    throttle = _number(payload, "throttle") if "throttle" in payload else load
+    if all(math.isfinite(value) for value in (speed_kmh, acceleration_mps2, timestamp_s, rpm, load, throttle)):
+        rpm = _clamp(rpm, 800.0, 6000.0)
+        load = _clamp(load, 0.0, 1.0)
+        throttle = _clamp(throttle, 0.0, 1.0)
     return VehicleState(timestamp_s, rpm, speed_kmh / 3.6, acceleration_mps2, load, throttle)
