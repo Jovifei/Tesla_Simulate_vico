@@ -212,6 +212,8 @@ class RuntimeProductContractTests(unittest.TestCase):
             self.assertIn("latency", report)
             self.assertIn("performance", report)
             self.assertIn("memory", report)
+            self.assertGreater(report["memory"]["process_working_set_before_bytes"], 0)
+            self.assertGreater(report["memory"]["process_working_set_after_bytes"], 0)
 
     def test_runtime_runner_avoids_per_sample_diagnostic_overhead(self):
         with tempfile.TemporaryDirectory() as folder:
