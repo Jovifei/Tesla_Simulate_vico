@@ -214,6 +214,9 @@ class RuntimeProductContractTests(unittest.TestCase):
             self.assertIn("memory", report)
             self.assertGreater(report["memory"]["process_working_set_before_bytes"], 0)
             self.assertGreater(report["memory"]["process_working_set_after_bytes"], 0)
+            markdown = left.report_path.with_name("S12_Runtime_Engine_Sound_v06_Report.md").read_text(encoding="utf-8")
+            self.assertIn("optional Windows waveOut PCM device adapter is implemented", markdown)
+            self.assertNotIn("- real audio-device playback", markdown)
 
     def test_runtime_runner_avoids_per_sample_diagnostic_overhead(self):
         with tempfile.TemporaryDirectory() as folder:

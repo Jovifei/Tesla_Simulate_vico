@@ -72,12 +72,17 @@ def _write_json(path: Path, payload: dict) -> Path:
 
 
 def _write_markdown_report(path: Path, report: dict) -> Path:
+    device_summary = (
+        "- Windows waveOut PCM device output used for this run"
+        if report["device_output"] == "windows_waveout"
+        else "- optional Windows waveOut PCM device adapter is implemented; this deterministic run uses the simulated PC PCM sink"
+    )
     path.write_text("\n".join([
         "# S12 Runtime Engine Sound v0.6 Report", "",
         "Synthetic PC runtime simulation only. It is uncalibrated and not realtime-qualified; it is not an OEM or real-vehicle clone.", "",
-        "## Completed", "", "- continuous virtual-time runtime", "- 20 ms 48 kHz/24-bit/stereo PCM streaming", "- 100 Hz synthetic vehicle-state interface", "- phase-continuous order tracking", "- stateful frozen PTR/radiation adapter", "- bounded simulated PCM queue with latency, underrun, CPU and memory metrics", "- future App JSON contract and AudioParameterPackage v0.2", "",
-        "## Evidence", "", f"- virtual duration: {report['duration_s']} s", f"- PCM frames: {report['pcm_frames']}", f"- underruns: {report['buffer']['underrun_count']}", f"- audio SHA-256: {report['audio']['sha256']}", "",
-        "## Not completed", "", "- Android integration", "- real audio-device playback", "- realtime qualification", "- vehicle calibration", "- ESP32, I2S, CAN, and phone hardware integration", "",
+        "## Completed", "", "- continuous virtual-time runtime", "- 20 ms 48 kHz/24-bit/stereo PCM streaming", "- 100 Hz synthetic vehicle-state interface", "- phase-continuous order tracking", "- stateful frozen PTR/radiation adapter", "- bounded simulated PCM queue with latency, underrun, CPU and memory metrics", device_summary, "- future App JSON contract and AudioParameterPackage v0.2", "",
+        "## Evidence", "", f"- virtual duration: {report['duration_s']} s", f"- PCM frames: {report['pcm_frames']}", f"- underruns: {report['buffer']['underrun_count']}", f"- audio SHA-256: {report['audio']['sha256']}", f"- output sink: {report['device_output']}", "",
+        "## Not completed", "", "- Android integration", "- end-to-end realtime audio-device qualification", "- vehicle calibration", "- ESP32, I2S, CAN, and phone hardware integration", "",
     ]), encoding="utf-8")
     return path
 
