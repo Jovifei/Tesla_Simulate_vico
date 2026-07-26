@@ -102,6 +102,20 @@ class RuntimeAudioTests(unittest.TestCase):
         self.assertEqual(len(frame.normalized_samples), 960)
         self.assertEqual(runtime.state_updates_consumed, 2)
 
+    def test_100hz_timestamp_fallback_recovers_on_the_next_valid_packet(self):
+        runtime = EngineSoundRuntime()
+        runtime.update_vehicle_state(VehicleState.synthetic_idle(0.00))
+        runtime.update_vehicle_state(VehicleState(0.00, -1.0, 0.0, 0.0, 0.0, 0.0))
+        runtime.update_vehicle_state(VehicleState.synthetic_idle(0.02))
+        runtime.update_vehicle_state(VehicleState.synthetic_idle(0.03))
+
+        first = runtime.audio_callback()
+        second = runtime.audio_callback()
+
+        self.assertTrue(first.fallback_applied)
+        self.assertFalse(second.fallback_applied)
+        self.assertEqual(runtime.fallback_count, 1)
+
     def test_load_and_acceleration_change_runtime_pcm_before_ptr(self):
         steady = VehicleState(0.00, 2000.0, 60.0 / 3.6, 0.0, 0.30, 0.30)
         loaded = VehicleState(0.00, 2000.0, 60.0 / 3.6, 0.0, 1.00, 1.00)

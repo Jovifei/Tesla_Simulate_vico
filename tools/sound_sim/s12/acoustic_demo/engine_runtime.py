@@ -12,7 +12,7 @@ from engine_operating_points.library import load_operating_point_library
 from runtime_pcm import BLOCK_SAMPLES, PCMFrame, RuntimePcmRenderer
 from runtime_ptr_adapter import RuntimePtrAdapter
 from sound_renderer.s12_product_renderer import renderer_profile_from_library
-from vehicle_state_runtime.stream import VehicleState
+from vehicle_state_runtime.stream import UPDATE_HZ, VehicleState
 
 
 class RuntimeMode(str, Enum):
@@ -91,7 +91,14 @@ class _StateSanitizer:
     def __init__(self) -> None:
         self.fallback_count = 0
 
-    def accept(self, candidate: VehicleState, previous: VehicleState | None) -> tuple[VehicleState, bool]:
+    def accept(
+        self,
+        candidate: VehicleState,
+        previous: VehicleState | None,
+        fallback_interval_s: float,
+    ) -> tuple[VehicleState, bool]:
+        if not math.isfinite(fallback_interval_s) or fallback_interval_s <= 0.0:
+            raise ValueError("fallback interval must be positive and finite")
         values = (candidate.timestamp_s, candidate.rpm, candidate.speed_mps, candidate.acceleration_mps2, candidate.load, candidate.throttle)
         valid = (
             all(math.isfinite(value) for value in values)
@@ -111,7 +118,7 @@ class _StateSanitizer:
         if previous is None:
             timestamp_s = candidate.timestamp_s if math.isfinite(candidate.timestamp_s) and candidate.timestamp_s >= 0.0 else 0.0
             return VehicleState.synthetic_idle(timestamp_s), True
-        timestamp_s = candidate.timestamp_s if math.isfinite(candidate.timestamp_s) and candidate.timestamp_s > previous.timestamp_s else previous.timestamp_s + BLOCK_SAMPLES / 48000.0
+        timestamp_s = candidate.timestamp_s if math.isfinite(candidate.timestamp_s) and candidate.timestamp_s > previous.timestamp_s else previous.timestamp_s + fallback_interval_s
         return replace(previous, timestamp_s=timestamp_s), True
 
 
@@ -180,14 +187,18 @@ class EngineSoundRuntime:
     def fallback_count(self) -> int:
         return self._sanitizer.fallback_count
 
-    def _accept_state(self, state: VehicleState) -> tuple[VehicleState, bool, RuntimeTransition]:
-        accepted, fallback = self._sanitizer.accept(state, self._previous_ingested_state)
+    def _accept_state(
+        self,
+        state: VehicleState,
+        fallback_interval_s: float,
+    ) -> tuple[VehicleState, bool, RuntimeTransition]:
+        accepted, fallback = self._sanitizer.accept(state, self._previous_ingested_state, fallback_interval_s)
         self._previous_ingested_state = accepted
         return accepted, fallback, self._state_machine.update(accepted)
 
     def update_vehicle_state(self, state: VehicleState) -> None:
         """Ingest one 100 Hz vehicle-state update for the next PCM callback."""
-        self._pending_states.append(self._accept_state(state))
+        self._pending_states.append(self._accept_state(state, 1.0 / UPDATE_HZ))
 
     def _render(self, segments: tuple[tuple[VehicleState, VehicleState, int], ...], fallback: bool, transition: RuntimeTransition) -> PCMFrame:
         excitation = []
@@ -206,7 +217,7 @@ class EngineSoundRuntime:
     def audio_callback(self, state: VehicleState | None = None) -> PCMFrame:
         """Render one 20 ms PCM frame from a direct state or two 100 Hz updates."""
         if state is not None:
-            accepted, fallback, transition = self._accept_state(state)
+            accepted, fallback, transition = self._accept_state(state, BLOCK_SAMPLES / 48000.0)
             previous = self._previous_audio_state or accepted
             self._previous_audio_state = accepted
             return self._render(((previous, accepted, BLOCK_SAMPLES),), fallback, transition)
