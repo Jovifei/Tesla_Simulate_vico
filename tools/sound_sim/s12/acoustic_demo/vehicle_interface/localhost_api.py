@@ -5,6 +5,7 @@ from __future__ import annotations
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from threading import RLock, Thread
+import time
 from typing import Any
 
 from vehicle_interface.engine_runtime_api import EngineRuntimeApi
@@ -41,6 +42,7 @@ class _VehicleRequestHandler(BaseHTTPRequestHandler):
         if self.path != "/vehicle_state":
             self._respond(404, {"error": "not_found"})
             return
+        ingress_started_s = time.perf_counter()
         try:
             content_length = int(self.headers.get("Content-Length", "0"))
             payload = json.loads(self.rfile.read(content_length).decode("utf-8"))
@@ -49,7 +51,7 @@ class _VehicleRequestHandler(BaseHTTPRequestHandler):
             self._respond(400, {"error": "invalid_packet"})
             return
         with self.server.api_lock:
-            result = self.server.api.process_state(packet)
+            result = self.server.api.process_state(packet, ingress_started_s=ingress_started_s)
         frame = result.pcm_frame
         self._respond(
             200,

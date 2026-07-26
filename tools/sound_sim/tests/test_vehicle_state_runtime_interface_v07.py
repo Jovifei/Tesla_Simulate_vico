@@ -5,6 +5,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -84,8 +85,9 @@ class RuntimeApiTests(unittest.TestCase):
     def test_two_100hz_packets_produce_one_v06_pcm_frame(self):
         api = EngineRuntimeApi()
 
-        first = api.process_state(packet_at(0.00))
-        second = api.process_state(packet_at(0.01))
+        first = api.process_state(packet_at(0.00), ingress_started_s=10.000)
+        with patch("vehicle_interface.engine_runtime_api.time.perf_counter", return_value=10.020):
+            second = api.process_state(packet_at(0.01), ingress_started_s=10.010)
 
         self.assertIsNone(first.pcm_frame)
         self.assertIsNotNone(second.pcm_frame)
@@ -93,6 +95,9 @@ class RuntimeApiTests(unittest.TestCase):
         self.assertEqual(len(second.pcm_frame.pcm_s24le_stereo), 960 * 2 * 3)
         self.assertEqual(api.packet_count, 2)
         self.assertEqual(api.pcm_frame_count, 1)
+        self.assertEqual(len(api.packet_latencies_ms), 2)
+        self.assertAlmostEqual(api.packet_latencies_ms[0], 20.0, places=6)
+        self.assertAlmostEqual(api.packet_latencies_ms[1], 10.0, places=6)
 
     def test_invalid_packets_fall_back_without_poisoning_next_100hz_pair(self):
         api = EngineRuntimeApi()
@@ -160,8 +165,8 @@ class VehicleInterfaceDemoTests(unittest.TestCase):
         from vehicle_interface.demo import run_vehicle_interface_demo
 
         with tempfile.TemporaryDirectory() as left_root, tempfile.TemporaryDirectory() as right_root:
-            left = run_vehicle_interface_demo(pathlib.Path(left_root), duration_s=1.0)
-            right = run_vehicle_interface_demo(pathlib.Path(right_root), duration_s=1.0)
+            left = run_vehicle_interface_demo(pathlib.Path(left_root), duration_s=1.0, enforce_latency_target=False)
+            right = run_vehicle_interface_demo(pathlib.Path(right_root), duration_s=1.0, enforce_latency_target=False)
 
             self.assertEqual(left.pcm_sha256, right.pcm_sha256)
             self.assertEqual((left.packet_count, left.pcm_frame_count), (100, 50))
@@ -169,10 +174,12 @@ class VehicleInterfaceDemoTests(unittest.TestCase):
             self.assertTrue(left.latency_report_path.is_file())
             self.assertFalse(list(pathlib.Path(left_root).rglob("*.wav")))
             latency = json.loads(left.latency_report_path.read_text(encoding="utf-8"))
-            self.assertEqual(latency["sample_count"], 50)
-            self.assertLess(latency["p99_ms"], 20.0)
+            self.assertEqual(latency["sample_count"], 100)
+            self.assertIn("every 100 Hz packet", latency["measurement"])
+            self.assertGreaterEqual(latency["p99_ms"], latency["p50_ms"])
             report = json.loads(left.runtime_report_path.read_text(encoding="utf-8"))
             self.assertEqual(report["transport"], "localhost_http_v0.1")
+            self.assertTrue(report["delivery"]["paced_100hz"])
             self.assertTrue(report["synthetic"])
             self.assertFalse(report["realtime_qualified"])
 

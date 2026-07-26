@@ -34,6 +34,8 @@ The runtime converts speed to m/s. Its synthesis safety envelope is 800 to 6000 
 
 The input updates at 100 Hz. The first packet of a pair is queued; the second produces exactly one 20 ms PCMFrame: 960 samples, 48 kHz, stereo signed 24-bit. The local runtime keeps the PCM frame in its bounded output path. The HTTP response acknowledges frame availability and never base64-encodes audio into the control endpoint.
 
+Latency evidence starts at server ingress before JSON parsing and ends when the corresponding PCMFrame is ready. Each two-packet block therefore records two measurements: the first packet includes its 10 ms cadence wait and the second records its direct path. The production demo paces localhost POSTs with a monotonic 100 Hz schedule and reports all packet measurements.
+
 Example response:
 
     {
