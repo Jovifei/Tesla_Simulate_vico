@@ -1,0 +1,48 @@
+{
+  "schema": "s12.vehicle_state_protocol.v0.8",
+  "synthetic": true,
+  "fields": {
+    "timestamp": {
+      "type": "number",
+      "unit": "s",
+      "range": [0, 1000000],
+      "source_level": "C",
+      "description": "synthetic monotonic sender timestamp"
+    },
+    "speed": {
+      "type": "number",
+      "unit": "km/h",
+      "range": [0, 300],
+      "source_level": "C",
+      "description": "synthetic vehicle speed"
+    },
+    "acceleration": {
+      "type": "number",
+      "unit": "m/s^2",
+      "range": [-20, 20],
+      "source_level": "C",
+      "description": "synthetic vehicle acceleration"
+    },
+    "rpm": {
+      "type": "number",
+      "unit": "rpm",
+      "range": [0, 8000],
+      "source_level": "C",
+      "description": "synthetic engine speed"
+    },
+    "load": {
+      "type": "number",
+      "unit": "fraction",
+      "range": [0, 1],
+      "source_level": "C",
+      "description": "synthetic engine load"
+    },
+    "throttle": {
+      "type": "number",
+      "unit": "fraction",
+      "range": [0, 1],
+      "source_level": "C",
+      "description": "synthetic throttle position"
+    }
+  }
+}
