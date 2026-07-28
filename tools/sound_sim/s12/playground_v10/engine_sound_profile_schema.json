@@ -1,0 +1,15 @@
+{
+  "schema_version": "s12_engine_sound_profile_v1",
+  "required_top_level": ["profile_id", "version", "synthetic", "calibrated", "offline", "realtime_qualified", "engine", "synthesis", "transient", "backfire", "ptr", "renderer"],
+  "groups": {
+    "engine": ["cylinder_count", "layout", "firing_order", "firing_phase_deg", "bank_map", "idle_rpm", "redline_rpm"],
+    "synthesis": ["order_gains", "pulse_sharpness", "harmonic_tilt", "intake_tone", "supercharger_tone"],
+    "transient": ["attack", "decay", "acceleration_gain", "lift_gain"],
+    "backfire": ["default_level", "pulse_decay", "subtle_gain", "aggressive_gain"],
+    "ptr": ["pipe_length_m", "area_m2", "reflection_coefficient", "damping"],
+    "renderer": ["gain_db", "sample_rate_hz", "frame_samples"]
+  },
+  "descriptor_fields": ["value", "unit", "range", "source_level", "source"],
+  "allowed_cylinder_counts": [3, 4, 5, 6, 8],
+  "allowed_backfire_levels": ["off", "subtle", "aggressive"]
+}
