@@ -1,0 +1,13 @@
+{
+  "schema_version": "s12-engine-sound-v11-provenance-1",
+  "vehicle_id": "supra_jza80_rz_stock",
+  "vehicle_identity": {"make": "Toyota", "model": "Supra", "generation": "JZA80", "model_year":1993, "market": "Japan", "trim": "RZ"},
+  "provenance": {"source_level": "A", "source_type": "manufacturer", "source_url": "https://global.toyota/en/detail/7868203", "claim": "Synthetic manifest catalogs identity evidence only; no recording or manufacturer calibration is claimed."},
+  "raw_reference_audio_in_git": false,
+  "research_status": "cataloged_not_acquired",
+  "analysis_boundary": {"raw_audio_state": "not_acquired", "spectral_order_analysis_state": "not_analyzed", "derived_metrics_state": "not_analyzed", "repository_audio_policy": "Repository stores URLs and derived future metadata only; no copyrighted audio, waveform, or media-content hash is stored."},
+  "references": [
+    {"reference_id": "official_configuration", "source_url": "https://global.toyota/en/detail/7868203", "source_url_sha256": "d777704cde0ac79e33b858a1e8832f7d849451eb374e66ecef6e0ba9962c402c", "publisher": "Toyota Motor Corporation", "source_classification": "official_manufacturer_configuration", "vehicle_binding": {"make": "Toyota", "model": "Supra", "generation": "JZA80", "model_year":1993, "market": "Japan", "trim": "RZ"}, "vehicle_binding_state": "identity_verified", "stock_modified_status": "manufacturer_identity_only", "listening_perspective": "not_applicable", "clip_time_metadata": {"state": "not_available", "start_s": "", "end_s": ""}, "content_hash_state": "not_acquired", "licensing_use_boundary": "Official configuration page is cataloged as URL metadata only; no media is acquired or reused.", "derived_analysis_state": "not_analyzed"},
+    {"reference_id": "public_candidate_discovery", "source_url": "https://www.youtube.com/results?search_query=1993+Toyota+Supra+JZA80+RZ+stock+exhaust+exterior+rear", "source_url_sha256": "c48eb01c6e4d97a62d9db07f426ab4eb8784940cc54bfe10606e6ddc4215f84e", "publisher": "YouTube search", "source_classification": "public_candidate_sound_reference_discovery", "vehicle_binding": {"make": "Toyota", "model": "Supra", "generation": "JZA80", "model_year":1993, "market": "Japan", "trim": "RZ"}, "vehicle_binding_state": "query_scoped_candidate_not_verified", "stock_modified_status": "unverified_candidate", "listening_perspective": "not_available", "clip_time_metadata": {"state": "not_available", "start_s": "", "end_s": ""}, "content_hash_state": "not_acquired", "licensing_use_boundary": "Discovery URL identifies candidates only; no candidate recording has been licensed, downloaded, or analyzed.", "derived_analysis_state": "not_analyzed"}
+  ]
+}

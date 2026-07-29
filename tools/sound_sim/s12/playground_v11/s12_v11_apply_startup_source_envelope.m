@@ -1,0 +1,39 @@
+function [sourceExcitation, diagnostics] = s12_v11_apply_startup_source_envelope( ...
+        baseExcitation, frameStartS, sampleRateHz)
+%S12_V11_APPLY_STARTUP_SOURCE_ENVELOPE Apply the fixed synthetic start transient.
+% The acceptance cycle owns a 0--2 second engine-source ramp.  It is applied
+% before the frozen PTR/Radiation adapter and is deliberately not a PCM effect.
+
+if ~isnumeric(baseExcitation) || ~isvector(baseExcitation) || isempty(baseExcitation) || ...
+        any(~isfinite(baseExcitation), "all")
+    error("S12:EngineSoundV11:Startup", ...
+        "baseExcitation must be one nonempty finite source-pressure frame.");
+end
+if ~isnumeric(frameStartS) || ~isscalar(frameStartS) || ~isfinite(frameStartS) || frameStartS < 0
+    error("S12:EngineSoundV11:Startup", "frameStartS must be one finite nonnegative scalar.");
+end
+if ~isnumeric(sampleRateHz) || ~isscalar(sampleRateHz) || ~isfinite(sampleRateHz) || sampleRateHz <= 0
+    error("S12:EngineSoundV11:Startup", "sampleRateHz must be one finite positive scalar.");
+end
+
+startupDurationS = 2;
+sampleTimeS = double(frameStartS) + (0:numel(baseExcitation) - 1).' / double(sampleRateHz);
+normalizedTime = min(max(sampleTimeS / startupDurationS, 0), 1);
+% Cubic smoothstep has zero slope at both edges, so the source remains
+% continuous at t=0 and when normal rendering takes over at t=2 seconds.
+envelope = normalizedTime .^ 2 .* (3 - 2 * normalizedTime);
+sourceExcitation = baseExcitation(:) .* envelope;
+if any(~isfinite(sourceExcitation), "all")
+    error("S12:EngineSoundV11:Startup", "Startup source excitation must remain finite.");
+end
+diagnostics = struct( ...
+    "stage", "engine_excitation_before_ptr_radiation", ...
+    "synthetic", true, ...
+    "start_s", 0, ...
+    "end_s", startupDurationS, ...
+    "frame_start_s", double(frameStartS), ...
+    "envelope_min", min(envelope), ...
+    "envelope_max", max(envelope), ...
+    "applied", any(sampleTimeS < startupDurationS), ...
+    "post_pcm_effect", false);
+end

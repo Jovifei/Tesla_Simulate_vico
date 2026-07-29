@@ -1,0 +1,1055 @@
+{
+  "schema_version": "s12-engine-sound-v11-provenance-1",
+  "vehicle_id": "lexus_lfa_stock",
+  "vehicle_identity": {
+    "make": "Lexus",
+    "model": "LFA",
+    "generation": "LFA",
+    "model_year":[2010,2012],
+    "market": "Japan",
+    "trim": "stock"
+  },
+  "provenance": {
+    "source_level": "A",
+    "source_type": "manufacturer",
+    "source_url": "https://global.toyota/en/detail/308263",
+    "claim": "Synthetic package identity uses a manufacturer source for the named vehicle; no recording or manufacturer calibration claimed."
+  },
+  "scope": {
+    "synthetic": true,
+    "uncalibrated": true,
+    "offline": true,
+    "perspective": "exterior-rear",
+    "orientation": "stock-oriented",
+    "oem_status": "non-OEM"
+  },
+  "engine": {
+    "configuration": {"value":"piston","unit":"enum","range":["piston","rotary"],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic event topology for S12 v1.1; not OEM firing data.","verification_state":"synthetic_assumption"},
+    "layout": {"value":"V","unit":"enum","range":["inline","V","rotary"],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic bank geometry for S12 v1.1; not OEM firing data.","verification_state":"synthetic_assumption"},
+    "firing_order": {"value":[1,6,2,7,3,8,4,9,5,10],"unit":"synthetic event identifiers","range":[1,10],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic event ordering for S12 v1.1; not OEM firing data.","verification_state":"synthetic_assumption"},
+    "firing_phases_deg": {"value":[0,72,144,216,288,360,432,504,576,648],"unit":"degrees per synthetic 720 degree cycle","range":[0,720],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic combustion-event phase geometry for S12 v1.1; not OEM firing data.","verification_state":"synthetic_assumption"},
+    "bank_map": {"value":[-1,1,-1,1,-1,1,-1,1,-1,1],"unit":"synthetic bank index by event identifier","range":[-1,1],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic left/right bank mapping for S12 v1.1; not OEM firing data.","verification_state":"synthetic_assumption"},
+    "redline_rpm": {"value":9000,"unit":"rpm","range":[4000,12000],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic render redline mirrored from v1.1 tuning; not OEM calibration.","verification_state":"synthetic_assumption"},
+    "ecu_logic": {"value":"synthetic state-driven source and afterfire eligibility","unit":"text","range":["synthetic state-driven source and afterfire eligibility"],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 control logic; not OEM ECU behavior.","verification_state":"synthetic_assumption"}
+  },
+  "render_tuning": {
+    "architecture": {
+      "engine_kind": {
+        "value": "piston",
+        "unit": "enum",
+        "range": [
+          "piston",
+          "rotary"
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cylinders": {
+        "value": 10,
+        "unit": "count",
+        "range": [
+          0,
+          12
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "rotor_count": {
+        "value": 0,
+        "unit": "count",
+        "range": [
+          0,
+          3
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "chambers_per_rotor": {
+        "value": 0,
+        "unit": "count",
+        "range": [
+          0,
+          4
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "shaft_turns_per_rotor_turn": {
+        "value": 1,
+        "unit": "ratio",
+        "range": [
+          1,
+          4
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "rpm_load": {
+      "idle_rpm": {
+        "value": 900,
+        "unit": "rpm",
+        "range": [
+          600,
+          1600
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "redline_rpm": {
+        "value": 9000,
+        "unit": "rpm",
+        "range": [
+          4000,
+          10000
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "minimum_load": {
+        "value": 0,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "maximum_load": {
+        "value": 1,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "order_harmonics": {
+      "order_gains": {
+        "value": [
+          0.34,
+          0.61,
+          0.95,
+          0.77,
+          0.48,
+          0.29
+        ],
+        "unit": "linear gain",
+        "range": [
+          0,
+          1.2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "firing_gain": {
+        "value": 0.18,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "firing_harmonic_gain": {
+        "value": 0.08,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "character": {
+      "pulse_sharpness": {
+        "value": 0.74,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "intake_tone": {
+        "value": 0.28,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "supercharger_tone": {
+        "value": 0,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "source_gain": {
+        "value": 0.11,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "output_gain": {
+        "value": 0.072,
+        "unit": "linear gain",
+        "range": [
+          0,
+          0.2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "stereo_offset": {
+        "value": 0.026,
+        "unit": "ratio",
+        "range": [
+          0,
+          0.1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "order_load_tilt_gain": {
+        "value": 0.2,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "intake_base_mix": {
+        "value": 0.3,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "intake_throttle_mix": {
+        "value": 0.7,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "supercharger_base_mix": {
+        "value": 0.2,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "supercharger_throttle_mix": {
+        "value": 0.8,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "source_base_mix": {
+        "value": 0.08,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "source_load_mix": {
+        "value": 0.22,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "rotary_apex_gain": {
+        "value": 0,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 rotary apex contribution; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "transient": {
+      "acceleration_gain": {
+        "value": 0.125,
+        "unit": "s2/m",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "throttle_delta_gain": {
+        "value": 0.5,
+        "unit": "linear gain",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "output_gain": {
+        "value": 0.006,
+        "unit": "linear gain",
+        "range": [
+          0,
+          0.1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "afterfire": {
+      "idle_rpm_ceiling": {
+        "value": 1450,
+        "unit": "rpm",
+        "range": [
+          900,
+          1800
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "minimum_event_rpm": {
+        "value": 2800,
+        "unit": "rpm",
+        "range": [
+          1500,
+          4000
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "upshift_max_throttle": {
+        "value": 0.18,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "downshift_min_throttle": {
+        "value": 0.2,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "overrun_max_throttle": {
+        "value": 0.1,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "overrun_max_acceleration": {
+        "value": -0.25,
+        "unit": "m/s2",
+        "range": [
+          -4,
+          0
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "minimum_shift_load": {
+        "value": 0.25,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "steady_acceleration_limit": {
+        "value": 0.15,
+        "unit": "m/s2",
+        "range": [
+          0,
+          2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cruise_min_throttle": {
+        "value": 0.15,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cruise_max_throttle": {
+        "value": 0.65,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "base_energy": {
+        "value": 0.075,
+        "unit": "relative pressure energy",
+        "range": [
+          0.01,
+          0.2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "onset_delay_s": {
+        "value": 0.0015,
+        "unit": "s",
+        "range": [
+          0.0001,
+          0.02
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cluster_interval_s": {
+        "value": 0.002,
+        "unit": "s",
+        "range": [
+          0.001,
+          0.01
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cluster_refractory_s": {
+        "value": 0.14,
+        "unit": "s",
+        "range": [
+          0.05,
+          0.5
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "refractory_jitter_fraction": {
+        "value": 0.2,
+        "unit": "ratio",
+        "range": [
+          0,
+          0.45
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "interval_jitter_fraction": {
+        "value": 0.22,
+        "unit": "ratio",
+        "range": [
+          0.01,
+          0.45
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "cluster_energy_decay": {
+        "value": 0.61,
+        "unit": "ratio",
+        "range": [
+          0.1,
+          0.89
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "upshift_max_throttle_rate_per_s": {"value": -0.1, "unit": "ratio/s", "range": [-100, 0], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "downshift_min_throttle_rate_per_s": {"value": 0.1, "unit": "ratio/s", "range": [0, 100], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "downshift_min_rpm_rate_per_s": {"value": 10, "unit": "rpm/s", "range": [0, 50000], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "overrun_max_throttle_rate_per_s": {"value": 0, "unit": "ratio/s", "range": [-100, 0], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "overrun_max_rpm_rate_per_s": {"value": -10, "unit": "rpm/s", "range": [-50000, 0], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "minimum_thermal_eligibility": {"value": 0.25, "unit": "ratio", "range": [0.05, 1], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "lift_energy_decay_rate_per_s": {"value": 0.18, "unit": "1/s", "range": [0.001, 5], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"},
+      "lift_refractory_growth_per_s": {"value": 0.12, "unit": "1/s", "range": [0, 5], "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic S12 v1.1 state-derived afterfire tuning; not OEM calibration.", "verification_state": "synthetic_assumption"}
+    },
+    "ptr": {
+      "pipe_length_m": {
+        "value": 0.92,
+        "unit": "m",
+        "range": [
+          0.5,
+          2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "area_m2": {
+        "value": 0.0135,
+        "unit": "m2",
+        "range": [
+          0.005,
+          0.05
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "reflection": {
+        "value": -0.19,
+        "unit": "ratio",
+        "range": [
+          -0.9,
+          0.2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "damping": {
+        "value": 0.071,
+        "unit": "ratio",
+        "range": [
+          0.01,
+          0.5
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "renderer": {
+      "sample_rate_hz": {
+        "value": 48000,
+        "unit": "Hz",
+        "range": [
+          48000,
+          48000
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "frame_samples": {
+        "value": 960,
+        "unit": "samples",
+        "range": [
+          960,
+          960
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "channels": {
+        "value": 2,
+        "unit": "count",
+        "range": [
+          2,
+          2
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "bits_per_sample": {
+        "value": 24,
+        "unit": "bits",
+        "range": [
+          24,
+          24
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "hard_limiter": {
+        "value": false,
+        "unit": "boolean",
+        "range": [
+          false,
+          true
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      }
+    },
+    "dashboard_defaults": {
+      "rpm": {
+        "value": 900,
+        "unit": "rpm",
+        "range": [
+          600,
+          10000
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "load": {
+        "value": 0.1,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "acceleration": {
+        "value": 0,
+        "unit": "m/s2",
+        "range": [
+          -4,
+          8
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "throttle": {
+        "value": 0.1,
+        "unit": "ratio",
+        "range": [
+          0,
+          1
+        ],
+        "source_level": "C",
+        "source": "synthetic",
+        "source_url": "",
+        "source_scope": "Synthetic S12 v1.1 exterior-rear stock-oriented tuning; not OEM calibration.",
+        "verification_state": "synthetic_assumption"
+      },
+      "order_balance":{"value":1,"unit":"ratio","range":[0,2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "transient":{"value":1,"unit":"ratio","range":[0,2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "backfire_level":{"value":1,"unit":"enum index off=0 subtle=1 aggressive=2","range":[0,2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "ptr_pipe_length_m":{"value":0.92,"unit":"m","range":[0.5,2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "ptr_area_m2":{"value":0.0135,"unit":"m2","range":[0.005,0.05],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "ptr_reflection":{"value":-0.19,"unit":"ratio","range":[-0.9,0.2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "ptr_damping":{"value":0.071,"unit":"ratio","range":[0.01,0.5],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"},
+      "gain":{"value":0.072,"unit":"linear gain","range":[0,0.2],"source_level":"C","source":"synthetic","source_url":"","source_scope":"Synthetic S12 v1.1 model Dashboard tuning.","verification_state":"synthetic_assumption"}
+    },
+    "vehicle_state": {
+      "speed_kph_per_rpm": {
+            "value": 0.026,
+            "unit": "kph/rpm",
+            "range": [
+                  0.005,
+                  0.1
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "speed_acceleration_gain": {
+            "value": 0.5,
+            "unit": "kph per m/s2",
+            "range": [
+                  0,
+                  10
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "gear_rpm_step": {
+            "value": 1200,
+            "unit": "rpm",
+            "range": [
+                  500,
+                  3000
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "minimum_gear": {
+            "value": 1,
+            "unit": "count",
+            "range": [
+                  1,
+                  8
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "maximum_gear": {
+            "value": 8,
+            "unit": "count",
+            "range": [
+                  1,
+                  8
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "upshift_rpm_threshold": {
+            "value": 4600,
+            "unit": "rpm",
+            "range": [
+                  1500,
+                  11000
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "downshift_rpm_threshold": {
+            "value": 1800,
+            "unit": "rpm",
+            "range": [
+                  800,
+                  8000
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "dfco_throttle_threshold": {
+            "value": 0.08,
+            "unit": "ratio",
+            "range": [
+                  0,
+                  1
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "dfco_acceleration_threshold": {
+            "value": -0.2,
+            "unit": "m/s2",
+            "range": [
+                  -8,
+                  0
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "shift_hold_s": {
+            "value": 0.12,
+            "unit": "s",
+            "range": [
+                  0.01,
+                  2
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 model vehicle-state tuning.",
+            "verification_state": "synthetic_assumption"
+      },
+      "derivative_min_dt_s": {
+            "value": 0.001,
+            "unit": "s",
+            "range": [
+                  0.0001,
+                  0.1
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      },
+      "thermal_initial_eligibility": {
+            "value": 0.85,
+            "unit": "ratio",
+            "range": [
+                  0,
+                  1
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      },
+      "thermal_heating_rate_per_s": {
+            "value": 0.35,
+            "unit": "1/s",
+            "range": [
+                  0.001,
+                  5
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      },
+      "thermal_cooling_rate_per_s": {
+            "value": 0.08,
+            "unit": "1/s",
+            "range": [
+                  0.001,
+                  5
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      },
+      "thermal_load_gain": {
+            "value": 0.65,
+            "unit": "ratio",
+            "range": [
+                  0,
+                  1
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      },
+      "thermal_rpm_reference_rpm": {
+            "value": 6000,
+            "unit": "rpm",
+            "range": [
+                  500,
+                  12000
+            ],
+            "source_level": "C",
+            "source": "synthetic",
+            "source_url": "",
+            "source_scope": "Synthetic S12 v1.1 vehicle-state thermal/derivative tuning; not OEM calibration.",
+            "verification_state": "synthetic_assumption"
+      }
+}
+  }
+}
