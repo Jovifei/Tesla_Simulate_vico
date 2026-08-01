@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-engine-sound-v12-reference-1",
+  "title": "S12 v1.2 reference inventory manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "reference_id",
+    "vehicle_id",
+    "quality_class",
+    "inventory_use",
+    "vehicle",
+    "source",
+    "clip_window",
+    "research_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12-engine-sound-v12-reference-1"},
+    "reference_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"type": "string", "minLength": 1},
+    "quality_class": {"enum": ["R1", "R2", "R3"]},
+    "inventory_use": {"enum": ["calibration", "listening_only", "rejected"]},
+    "vehicle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["make", "model", "model_year", "market", "trim"],
+      "properties": {
+        "make": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "model_year": {"type": "integer", "minimum": 1886, "maximum": 2100},
+        "market": {"type": "string", "minLength": 1},
+        "trim": {"type": "string", "minLength": 1}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "publisher", "source_url_sha256"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "publisher": {"type": "string", "minLength": 1},
+        "source_url_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "clip_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": "number", "minimum": 0},
+        "end_s": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "rpm_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "samples"],
+      "properties": {
+        "source": {"enum": ["tachometer_trace", "rpm_anchors"]},
+        "samples": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["time_s", "rpm"],
+            "properties": {
+              "time_s": {"type": "number", "minimum": 0},
+              "rpm": {"type": "number", "exclusiveMinimum": 0, "maximum": 30000}
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"source": {"const": "rpm_anchors"}}},
+          "then": {"properties": {"samples": {"minItems": 3}}}
+        }
+      ]
+    },
+    "stock_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["is_stock", "description", "evidence_url"],
+      "properties": {
+        "is_stock": {"const": true},
+        "description": {"type": "string", "minLength": 1},
+        "evidence_url": {"type": "string", "format": "uri"}
+      }
+    },
+    "perspective": {
+      "enum": ["exterior_rear", "exterior_side", "interior_cabin", "unknown"]
+    },
+    "rejection_reason": {"type": "string", "minLength": 1},
+    "research_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_media_root"],
+      "properties": {
+        "raw_media_root": {
+          "const": "E:\\Claude_allow\\Download\\tesla-sound-research-v12"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"quality_class": {"const": "R1"}}},
+      "then": {
+        "required": ["rpm_evidence", "stock_evidence", "perspective"],
+        "properties": {
+          "inventory_use": {"const": "calibration"},
+          "perspective": {"const": "exterior_rear"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"quality_class": {"const": "R2"}}},
+      "then": {
+        "required": ["perspective"],
+        "properties": {"inventory_use": {"const": "listening_only"}},
+        "not": {"required": ["rejection_reason"]}
+      }
+    },
+    {
+      "if": {"properties": {"quality_class": {"const": "R3"}}},
+      "then": {
+        "required": ["rejection_reason"],
+        "properties": {"inventory_use": {"const": "rejected"}},
+        "not": {
+          "anyOf": [
+            {"required": ["rpm_evidence"]},
+            {"required": ["stock_evidence"]}
+          ]
+        }
+      }
+    }
+  ]
+}

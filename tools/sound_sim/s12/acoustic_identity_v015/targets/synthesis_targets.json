@@ -1,0 +1,54 @@
+{
+  "schema_version": "s12-acoustic-identity-synthesis-targets-0.15",
+  "vehicles": {
+    "ferrari_458": {
+      "vehicle": "ferrari_458",
+      "engine_architecture": "4497 cc naturally aspirated 90-degree V8",
+      "dominant_character": "C-level synthetic design: distinct ignition/pulse attack and RPM-linked high-frequency growth.",
+      "missing_features": ["No OEM recording", "No calibrated microphone distance", "No measured exhaust transfer function"],
+      "field_provenance": {
+        "vehicle": {"provenance_class": "C", "source_level": "C", "source": "synthetic package identifier", "source_url": ""},
+        "engine_architecture": {"provenance_class": "A", "source_level": "M", "source": "Ferrari official model page", "source_url": "https://www.ferrari.com/en-EN/auto/458-italia"},
+        "dominant_character": {"provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": ""},
+        "missing_features": {"provenance_class": "C", "source_level": "C", "source": "synthetic scope boundary", "source_url": ""}
+      },
+      "target_metrics": {
+        "high_frequency_ratio_min": {"value": 1.35, "unit": "ratio", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"},
+        "order_sweep_correlation_min": {"value": 0.98, "unit": "correlation", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"}
+      }
+    },
+    "hellcat": {
+      "vehicle": "hellcat",
+      "engine_architecture": "6.2 L supercharged 90-degree V8 with 2.4 L twin-screw blower",
+      "dominant_character": "C-level synthetic design: independently structured exhaust, blower, mechanical, and intake stems with load-responsive low-band behavior.",
+      "missing_features": ["No OEM recording", "No calibrated bypass-valve curve", "No measured cabin or exterior transfer function"],
+      "field_provenance": {
+        "vehicle": {"provenance_class": "C", "source_level": "C", "source": "synthetic package identifier", "source_url": ""},
+        "engine_architecture": {"provenance_class": "A", "source_level": "M", "source": "FCA Canada powertrain material", "source_url": "https://www.fcapresskit.ca/2015/Contents/Press-Releases/PDFs/Chrysler-Canada/CN_2015_SAFETY-TECH_Powertrain.pdf"},
+        "dominant_character": {"provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": ""},
+        "missing_features": {"provenance_class": "C", "source_level": "C", "source": "synthetic scope boundary", "source_url": ""}
+      },
+      "target_metrics": {
+        "low_band_advantage_min": {"value": 0.1, "unit": "ratio_difference", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"},
+        "blower_load_energy_ratio_min": {"value": 3.0, "unit": "ratio", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"},
+        "blower_load_correlation_min": {"value": 0.8, "unit": "correlation", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"}
+      }
+    },
+    "rx7_fd": {
+      "vehicle": "rx7_fd",
+      "engine_architecture": "13B two-rotor rotary with sequential twin-turbocharging",
+      "dominant_character": "C-level synthetic design: non-piston phase-offset event trains, integer-order structure, and stateful turbo/lift behavior.",
+      "missing_features": ["No OEM recording", "No calibrated turbo acoustic map", "No measured blow-off or exhaust transfer function"],
+      "field_provenance": {
+        "vehicle": {"provenance_class": "C", "source_level": "C", "source": "synthetic package identifier", "source_url": ""},
+        "engine_architecture": {"provenance_class": "A", "source_level": "M", "source": "Mazda RX-7 history", "source_url": "https://www2.mazda.com/en/stories/craftmanship/greatcar/p15.html"},
+        "dominant_character": {"provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": ""},
+        "missing_features": {"provenance_class": "C", "source_level": "C", "source": "synthetic scope boundary", "source_url": ""}
+      },
+      "target_metrics": {
+        "integer_order_concentration_min": {"value": 0.58, "unit": "ratio", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"},
+        "half_order_leakage_max": {"value": 0.15, "unit": "ratio", "provenance_class": "C", "source_level": "C", "source": "synthetic", "source_url": "", "source_scope": "Synthetic separation target; not an OEM measurement.", "calibration_status": "uncalibrated"}
+      }
+    }
+  }
+}

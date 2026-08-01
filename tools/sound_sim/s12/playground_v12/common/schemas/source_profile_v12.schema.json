@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "S12 v1.2 synthetic pre-PTR source profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source", "transient", "gearbox", "afterfire"],
+  "properties": {
+    "schema_version": {"const": "s12-engine-sound-v12-source-profile-1"},
+    "source": {"$ref": "#/$defs/source"},
+    "transient": {"$ref": "#/$defs/transient"},
+    "gearbox": {"$ref": "#/$defs/gearbox"},
+    "afterfire": {"$ref": "#/$defs/afterfire"}
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "range", "source_level", "source", "source_url", "source_scope", "verification_state"],
+      "properties": {
+        "value": {},
+        "unit": {"type": "string", "minLength": 1},
+        "range": {"type": "array", "minItems": 2},
+        "source_level": {"const": "C"},
+        "source": {"const": "synthetic"},
+        "source_url": {"const": ""},
+        "source_scope": {"type": "string", "minLength": 1},
+        "verification_state": {"const": "synthetic_assumption"}
+      }
+    },
+    "numericParameter": {
+      "allOf": [
+        {"$ref": "#/$defs/parameter"},
+        {
+          "properties": {
+            "value": {"type": ["number", "array"]},
+            "range": {"type": "array", "minItems": 2, "items": {"type": "number"}}
+          }
+        }
+      ]
+    },
+    "enumParameter": {
+      "allOf": [
+        {"$ref": "#/$defs/parameter"},
+        {
+          "properties": {
+            "value": {"type": "string", "minLength": 1},
+            "range": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+          }
+        }
+      ]
+    },
+    "orderSurfaceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "rpm_nodes", "low_load_gains", "high_load_gains", "phase_rad"],
+      "properties": {
+        "order": {
+          "allOf": [
+            {"$ref": "#/$defs/numericParameter"},
+            {
+              "properties": {
+                "value": {"type": "number", "minimum": 0.5, "maximum": 18.0},
+                "range": {"type": "array", "minItems": 2, "items": {"type": "number", "minimum": 0.5, "maximum": 18.0}}
+              }
+            }
+          ]
+        },
+        "rpm_nodes": {"$ref": "#/$defs/numericParameter"},
+        "low_load_gains": {"$ref": "#/$defs/numericParameter"},
+        "high_load_gains": {"$ref": "#/$defs/numericParameter"},
+        "phase_rad": {"$ref": "#/$defs/numericParameter"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine_kind", "cylinders", "rotor_count", "chambers_per_rotor", "shaft_turns_per_rotor_turn", "layout",
+        "firing_order", "firing_phases_deg", "bank_map", "pulse_sharpness", "combustion_gain", "intake_gain",
+        "induction_gain", "mechanical_gain", "flow_gain", "order_surface"
+      ],
+      "properties": {
+        "engine_kind": {"$ref": "#/$defs/enumParameter"},
+        "cylinders": {"$ref": "#/$defs/numericParameter"},
+        "rotor_count": {"$ref": "#/$defs/numericParameter"},
+        "chambers_per_rotor": {"$ref": "#/$defs/numericParameter"},
+        "shaft_turns_per_rotor_turn": {"$ref": "#/$defs/numericParameter"},
+        "layout": {"$ref": "#/$defs/enumParameter"},
+        "firing_order": {
+          "allOf": [
+            {"$ref": "#/$defs/numericParameter"},
+            {"properties": {"value": {"type": "array", "minItems": 1, "uniqueItems": true}}}
+          ]
+        },
+        "firing_phases_deg": {
+          "allOf": [
+            {"$ref": "#/$defs/numericParameter"},
+            {"properties": {"value": {"type": "array", "minItems": 1, "uniqueItems": true}}}
+          ]
+        },
+        "bank_map": {"$ref": "#/$defs/numericParameter"},
+        "pulse_sharpness": {"$ref": "#/$defs/numericParameter"},
+        "combustion_gain": {"$ref": "#/$defs/numericParameter"},
+        "intake_gain": {"$ref": "#/$defs/numericParameter"},
+        "induction_gain": {"$ref": "#/$defs/numericParameter"},
+        "mechanical_gain": {"$ref": "#/$defs/numericParameter"},
+        "flow_gain": {"$ref": "#/$defs/numericParameter"},
+        "order_surface": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/orderSurfaceEntry"}}
+      }
+    },
+    "transient": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acceleration_attack_gain", "lift_decay_gain"],
+      "properties": {
+        "acceleration_attack_gain": {"$ref": "#/$defs/numericParameter"},
+        "lift_decay_gain": {"$ref": "#/$defs/numericParameter"}
+      }
+    },
+    "gearbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["torque_cut_gain", "shift_bark_gain"],
+      "properties": {
+        "torque_cut_gain": {"$ref": "#/$defs/numericParameter"},
+        "shift_bark_gain": {"$ref": "#/$defs/numericParameter"}
+      }
+    },
+    "afterfire": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["upshift_bark_gain", "downshift_blip_pop_gain", "overrun_crackle_gain"],
+      "properties": {
+        "upshift_bark_gain": {"$ref": "#/$defs/numericParameter"},
+        "downshift_blip_pop_gain": {"$ref": "#/$defs/numericParameter"},
+        "overrun_crackle_gain": {"$ref": "#/$defs/numericParameter"}
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-engine-identity-profile-v04",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "profile_id", "synthetic", "engine_type",
+    "cylinder_count", "combustion_type", "rpm_limit", "firing_character",
+    "order_profile", "harmonic_profile", "transient_profile",
+    "mechanical_noise_profile", "turbo_or_supercharger_profile",
+    "acoustic_color_profile"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12-engine-identity-profile-0.4"},
+    "profile_id": {"enum": ["hellcat_2022_stock", "ferrari_458_stock", "rx7_fd_1991_stock"]},
+    "synthetic": {"const": true},
+    "engine_type": {"$ref": "#/$defs/parameter"},
+    "cylinder_count": {"$ref": "#/$defs/parameter"},
+    "combustion_type": {"$ref": "#/$defs/parameter"},
+    "rpm_limit": {"$ref": "#/$defs/parameter"},
+    "firing_character": {"$ref": "#/$defs/firing_character"},
+    "order_profile": {"$ref": "#/$defs/order_profile"},
+    "harmonic_profile": {"$ref": "#/$defs/harmonic_profile"},
+    "transient_profile": {"$ref": "#/$defs/transient_profile"},
+    "mechanical_noise_profile": {"$ref": "#/$defs/mechanical_noise_profile"},
+    "turbo_or_supercharger_profile": {"$ref": "#/$defs/turbo_or_supercharger_profile"},
+    "acoustic_color_profile": {"$ref": "#/$defs/acoustic_color_profile"}
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "range", "source_level", "source", "source_url", "source_scope", "verification_state"],
+      "properties": {
+        "value": {}, "unit": {"type": "string"},
+        "range": {"type": "array", "minItems": 2},
+        "source_level": {"const": "C"}, "source": {"const": "synthetic"},
+        "source_url": {"const": ""}, "source_scope": {"type": "string", "minLength": 1},
+        "verification_state": {"const": "synthetic_assumption"}
+      }
+    },
+    "firing_character": {"$ref": "#/$defs/group_firing_character"},
+    "group_firing_character": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pulse_shape", "pulse_width", "bank_asymmetry"],
+      "properties": {"pulse_shape": {"$ref": "#/$defs/parameter"}, "pulse_width": {"$ref": "#/$defs/parameter"}, "bank_asymmetry": {"$ref": "#/$defs/parameter"}}
+    },
+    "order_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary_order", "secondary_order", "high_order"],
+      "properties": {"primary_order": {"$ref": "#/$defs/parameter"}, "secondary_order": {"$ref": "#/$defs/parameter"}, "high_order": {"$ref": "#/$defs/parameter"}}
+    },
+    "harmonic_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_gain", "high_rpm_gain", "rpm_exponent", "high_frequency_order"],
+      "properties": {"base_gain": {"$ref": "#/$defs/parameter"}, "high_rpm_gain": {"$ref": "#/$defs/parameter"}, "rpm_exponent": {"$ref": "#/$defs/parameter"}, "high_frequency_order": {"$ref": "#/$defs/parameter"}}
+    },
+    "transient_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attack_gain", "release_per_frame", "load_coupling"],
+      "properties": {"attack_gain": {"$ref": "#/$defs/parameter"}, "release_per_frame": {"$ref": "#/$defs/parameter"}, "load_coupling": {"$ref": "#/$defs/parameter"}}
+    },
+    "mechanical_noise_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_gain", "mechanical_order", "roughness"],
+      "properties": {"base_gain": {"$ref": "#/$defs/parameter"}, "mechanical_order": {"$ref": "#/$defs/parameter"}, "roughness": {"$ref": "#/$defs/parameter"}}
+    },
+    "turbo_or_supercharger_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["architecture", "drive_ratio", "whine_gain", "spool_rate", "turbine_gain"],
+      "properties": {"architecture": {"$ref": "#/$defs/parameter"}, "drive_ratio": {"$ref": "#/$defs/parameter"}, "whine_gain": {"$ref": "#/$defs/parameter"}, "spool_rate": {"$ref": "#/$defs/parameter"}, "turbine_gain": {"$ref": "#/$defs/parameter"}}
+    },
+    "acoustic_color_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["low_band_gain", "mid_band_gain", "high_band_gain"],
+      "properties": {"low_band_gain": {"$ref": "#/$defs/parameter"}, "mid_band_gain": {"$ref": "#/$defs/parameter"}, "high_band_gain": {"$ref": "#/$defs/parameter"}}
+    }
+  }
+}
