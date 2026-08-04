@@ -51,23 +51,31 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
 
     primary_spool = np.zeros(count)
     secondary_spool = np.zeros(count)
-    lift_state = np.zeros(count)
+    boost_state = np.zeros(count)
+    blow_off_state = np.zeros(count)
     primary_target = load * throttle * np.clip(rpm / 5200.0, 0.0, 1.1)
     secondary_gate = np.clip((rpm - 4300.0) / 1100.0, 0.0, 1.0) * np.clip((load - 0.35) / 0.45, 0.0, 1.0)
     secondary_target = primary_target * secondary_gate
     for sample in range(1, count):
         primary_spool[sample] = primary_spool[sample - 1] + (primary_target[sample] - primary_spool[sample - 1]) / (0.16 * sample_rate_hz)
         secondary_spool[sample] = secondary_spool[sample - 1] + (secondary_target[sample] - secondary_spool[sample - 1]) / (0.31 * sample_rate_hz)
+        boost_target = 0.62 * primary_spool[sample] + 0.90 * secondary_spool[sample]
+        boost_tau = 0.10 if boost_target >= boost_state[sample - 1] else 0.22
+        boost_state[sample] = boost_state[sample - 1] + (boost_target - boost_state[sample - 1]) / (boost_tau * sample_rate_hz)
         release = max((throttle[sample - 1] - throttle[sample]) * sample_rate_hz, 0.0)
-        lift_state[sample] = lift_state[sample - 1] + (0.12 * release - lift_state[sample - 1] / 0.28) / sample_rate_hz
-    turbo_phase = np.cumsum((7.0 + 10.0 * primary_spool + 12.0 * secondary_spool) * rpm / 60.0) / sample_rate_hz
-    turbo_mono = 0.146 * combustion_pressure_ratio * (0.55 * primary_spool + secondary_spool) * np.sin(2.0 * np.pi * turbo_phase)
+        blow_off_injection = 0.12 * release * (0.35 + 0.65 * boost_state[sample - 1])
+        blow_off_state[sample] = blow_off_state[sample - 1] + (blow_off_injection - blow_off_state[sample - 1] / 0.28) / sample_rate_hz
+    turbo_phase = np.cumsum((6.5 + 11.0 * boost_state + 8.0 * secondary_spool) * rpm / 60.0) / sample_rate_hz
+    turbo_mono = 0.150 * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
     turbo = np.column_stack((0.62 * turbo_mono, turbo_mono))
-    turbine_mono = 0.107 * combustion_pressure_ratio * (0.30 * primary_spool + 0.85 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
+    turbine_mono = 0.112 * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
     turbine = np.column_stack((turbine_mono, 0.58 * turbine_mono))
-    lift_mono = 0.101 * combustion_pressure_ratio * lift_state * np.sin(2.0 * np.pi * (900.0 + 1300.0 * lift_state) * time_s)
-    lift = np.column_stack((0.70 * lift_mono, lift_mono))
-    pressure = rotary + rotor_housing + turbo + turbine + lift
+    blow_off_phase = np.cumsum(650.0 + 1100.0 * boost_state + 900.0 * blow_off_state) / sample_rate_hz
+    blow_off_mono = 0.115 * combustion_pressure_ratio * blow_off_state * (
+        np.sin(2.0 * np.pi * blow_off_phase) + 0.24 * np.sin(2.0 * np.pi * blow_off_phase * 1.7)
+    )
+    blow_off = np.column_stack((0.70 * blow_off_mono, blow_off_mono))
+    pressure = rotary + rotor_housing + turbo + turbine + blow_off
     window_samples = min(count, sample_rate_hz // 2)
     steady = pressure[-window_samples:, 0] * np.hanning(window_samples)
     spectrum = np.square(np.abs(np.fft.rfft(steady)))
@@ -79,7 +87,7 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     engaged = np.flatnonzero(secondary_spool >= 0.05)
     render = SourceRender(
         pressure=pressure,
-        stems={"rotary": rotary, "rotor_housing": rotor_housing, "turbo": turbo, "turbine": turbine, "lift": lift},
+        stems={"rotary": rotary, "rotor_housing": rotor_housing, "turbo": turbo, "turbine": turbine, "blow_off": blow_off, "lift": blow_off},
         diagnostics={
             "vehicle_id": "rx7_fd",
             "scope": "synthetic; uncalibrated; not OEM reproduction",
@@ -93,8 +101,11 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
             "turbo_state_end": float(primary_spool[-1]),
             "turbo_state_peak": float(np.max(primary_spool)),
             "secondary_spool_peak": float(np.max(secondary_spool)),
+            "boost_state_peak": float(np.max(boost_state)),
             "secondary_engagement_time_s": float(time_s[engaged[0]] - time_s[0]) if engaged.size else 0.0,
-            "lift_state_peak": float(np.max(lift_state)),
+            "lift_state_peak": float(np.max(blow_off_state)),
+            "blow_off_state_peak": float(np.max(blow_off_state)),
+            "turbo_dynamic_model": "primary_secondary_spool_boost_onset_blow_off",
             "combustion_load_floor": 0.30,
             "rotor_housing_model": "event_excited_phase_coupled_housing_resonances",
         },

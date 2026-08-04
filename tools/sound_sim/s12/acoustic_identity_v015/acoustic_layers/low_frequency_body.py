@@ -6,7 +6,7 @@ from collections.abc import Mapping
 
 import numpy as np
 
-from ..contracts import SourceRender
+from ..contracts import SourceRender, VehicleStateTrace
 
 
 _BODY_PROFILES: Mapping[str, Mapping[str, tuple[tuple[float, float, float], ...]]] = {
@@ -44,17 +44,27 @@ _COMPONENT_INPUTS: Mapping[str, Mapping[str, tuple[str, ...]]] = {
     },
 }
 _SCOPE = "synthetic; uncalibrated; not OEM reproduction"
+_PRESSURE_PROFILES: Mapping[str, Mapping[str, float]] = {
+    "ferrari_458": {"pulse_gain": 0.26, "exhaust_hz": 132.0, "exhaust_gain": 0.68, "body_hz": 96.0, "body_gain": 0.34, "radiation_gain": 0.58},
+    "hellcat": {"pulse_gain": 1.12, "exhaust_hz": 74.0, "exhaust_gain": 1.05, "body_hz": 51.0, "body_gain": 0.92, "radiation_gain": 1.08},
+    "rx7_fd": {"pulse_gain": 0.31, "exhaust_hz": 128.0, "exhaust_gain": 0.48, "body_hz": 86.0, "body_gain": 0.28, "radiation_gain": 0.48},
+}
 
 
 def apply_low_frequency_body(
-    render: SourceRender, vehicle_id: str, sample_rate_hz: int = 48000
+    render: SourceRender,
+    vehicle_id: str,
+    trace: VehicleStateTrace | None = None,
+    sample_rate_hz: int = 48000,
 ) -> SourceRender:
-    """Add a causal 40--200 Hz resonator bank without changing source stems."""
+    """Add a causal low-frequency layer; a trace enables pressure coupling."""
     render.validate()
     if vehicle_id not in _BODY_PROFILES:
         raise ValueError(f"unsupported vehicle_id: {vehicle_id!r}")
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 1000:
         raise ValueError("sample_rate_hz must be an integer >= 1000")
+    if trace is not None:
+        return _apply_pressure_chain(render, vehicle_id, trace, sample_rate_hz)
 
     components = {}
     for name, modes in _BODY_PROFILES[vehicle_id].items():
@@ -80,6 +90,49 @@ def apply_low_frequency_body(
     return SourceRender(
         pressure=np.asarray(render.pressure, dtype=np.float64) + body,
         stems={**render.stems, **components, "low_frequency_body": body},
+        diagnostics=diagnostics,
+    ).validate()
+
+
+def _apply_pressure_chain(
+    render: SourceRender, vehicle_id: str, trace: VehicleStateTrace, sample_rate_hz: int
+) -> SourceRender:
+    """Route state-dependent pressure through exhaust, body, then radiation."""
+    trace.validate()
+    count = render.pressure.shape[0]
+    time_s = trace.time_s[0] + np.arange(count, dtype=np.float64) / sample_rate_hz
+    rpm = np.interp(time_s, trace.time_s, trace.rpm)
+    load = np.interp(time_s, trace.time_s, trace.load)
+    throttle = np.interp(time_s, trace.time_s, trace.throttle)
+    profile = _PRESSURE_PROFILES[vehicle_id]
+    source = _component_source(render, _COMPONENT_INPUTS[vehicle_id]["exhaust_pressure"])
+    pressure_state = (0.18 + 0.82 * load) * (0.35 + 0.65 * throttle) * np.clip(rpm / 1800.0, 0.45, 1.25)
+    pressure_pulse = profile["pulse_gain"] * pressure_state[:, np.newaxis] * source
+    exhaust_coupling = profile["exhaust_gain"] * _causal_resonator(pressure_pulse, profile["exhaust_hz"], 2.6, sample_rate_hz)
+    body_resonance = profile["body_gain"] * _causal_resonator(exhaust_coupling, profile["body_hz"], 2.1, sample_rate_hz)
+    radiation = profile["radiation_gain"] * (exhaust_coupling + body_resonance)
+    diagnostics = dict(render.diagnostics)
+    diagnostics.update(
+        {
+            "low_frequency_body_model": "state_dependent_pressure_exhaust_body_radiation",
+            "low_frequency_body_scope": _SCOPE,
+            "pressure_chain": "pressure_pulse -> exhaust_coupling -> body_resonance -> radiation",
+            "pressure_state_variation": float(np.std(pressure_pulse)),
+            "pressure_state_mean": float(np.mean(pressure_state)),
+            "pressure_exhaust_frequency_hz": profile["exhaust_hz"],
+            "pressure_body_frequency_hz": profile["body_hz"],
+        }
+    )
+    return SourceRender(
+        pressure=np.asarray(render.pressure, dtype=np.float64) + radiation,
+        stems={
+            **render.stems,
+            "pressure_pulse": pressure_pulse,
+            "exhaust_coupling": exhaust_coupling,
+            "body_resonance": body_resonance,
+            "radiation": radiation,
+            "low_frequency_body": radiation,
+        },
         diagnostics=diagnostics,
     ).validate()
 

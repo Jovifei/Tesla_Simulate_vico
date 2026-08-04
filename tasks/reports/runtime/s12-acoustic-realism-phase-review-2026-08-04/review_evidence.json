@@ -1,0 +1,86 @@
+{
+  "schema_version": "s12-acoustic-realism-phase-review-1.0",
+  "created_on": "2026-08-04",
+  "scope": "synthetic; uncalibrated; not OEM reproduction",
+  "formal_drive_cycle_root": "E:\\Tesla_speed\\tasks\\reports\\runtime\\s12-acoustic-realism-v10-complete-drive-cycle-30s",
+  "formal_manifest": {
+    "artifact_count_excluding_manifest": 13,
+    "sha256_recomputed_exact_match": true
+  },
+  "drive_cycle": {
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "pcm": "PCM_24",
+    "frames_per_vehicle": 1440001,
+    "duration_s": 30.000020833333334,
+    "sections_at_default_30s": "0-4 idle; 4-13 acceleration; 13-18 full pull; 18-23 high-RPM closed-throttle lift/afterfire; 23-26 coast; 26-30 idle return",
+    "lift_time_s": 18.0,
+    "loudness_target_lufs": -16.0,
+    "peak_limit_dbfs": -1.0
+  },
+  "vehicles": {
+    "ferrari_458": {
+      "integrated_lufs": -16.00000000076283,
+      "rms_dbfs": -25.27507205414466,
+      "peak_dbfs": -4.568614347634409,
+      "crest_factor_db": 20.70645770651025,
+      "clipping_count": 0,
+      "fixed_drive_cycle_gain_db": -1.8291721671181875,
+      "afterfire_event_count": 43,
+      "afterfire_stem_energy": 121.92570920745699,
+      "energy_fraction_40_200hz": 0.04463967167396779,
+      "spectral_centroid_hz": 1424.4532080949498
+    },
+    "hellcat": {
+      "integrated_lufs": -15.999999998162997,
+      "rms_dbfs": -20.771053872966615,
+      "peak_dbfs": -3.1205490510007223,
+      "crest_factor_db": 17.650504821965892,
+      "clipping_count": 0,
+      "fixed_drive_cycle_gain_db": 18.568750983528965,
+      "afterfire_event_count": 38,
+      "afterfire_stem_energy": 93.79554153019407,
+      "energy_fraction_40_200hz": 0.6912366316058464,
+      "spectral_centroid_hz": 267.38353803816096,
+      "blower_energy": 90.13682823765754,
+      "blower_boost_state_peak": 1.1149969296968747,
+      "blower_bypass_state_peak": 0.9698281480259598
+    },
+    "rx7_fd": {
+      "integrated_lufs": -16.00000000162944,
+      "rms_dbfs": -21.576704354608335,
+      "peak_dbfs": -3.0036133093816226,
+      "crest_factor_db": 18.57309104522671,
+      "clipping_count": 0,
+      "fixed_drive_cycle_gain_db": 1.316665817069822,
+      "afterfire_event_count": 30,
+      "afterfire_stem_energy": 44.788673924495846,
+      "energy_fraction_40_200hz": 0.04285677753504684,
+      "spectral_centroid_hz": 776.0047398300521,
+      "boost_state_peak": 1.526938758981444,
+      "turbo_energy": 5270.555484687223,
+      "blow_off_energy": 1.686223655293214
+    }
+  },
+  "verification": {
+    "focused_realism_tests": "9/9 PASS",
+    "v015_regression_tests": "58/58 PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "frozen_runtime_ptr_adapter_sha256": "fdb594838ada4e2867f0ee1d2ea64a53788c1feb6593f7f37c5caf7bae494cb5",
+    "protected_path_diff": "NONE"
+  },
+  "git": {
+    "worktree": "E:\\Tesla_speed\\worktrees\\s12-v12",
+    "branch": "feature/s12-v12-reference-calibration",
+    "head": "561b8fc77b32cb105b22bd5d498833f163d7f9e2",
+    "current_calibration_files": "7 modified tracked paths and 9 untracked source/data/test paths; no current v1.0 calibration commit"
+  },
+  "evidence_limits": [
+    "No R1 calibrated vehicle recording, RPM trace, microphone geometry, or absolute SPL target is available.",
+    "Third-party recordings are R2 listening/relative-feature context only.",
+    "Digital LUFS/peak health is not a Windows device, headphone, speaker, cabin, or dB SPL verification.",
+    "Human vehicle identity and audition loudness are pending Jovi review.",
+    "The frozen adapter is a lightweight audition adapter and is not the full FVM/PTR network."
+  ]
+}

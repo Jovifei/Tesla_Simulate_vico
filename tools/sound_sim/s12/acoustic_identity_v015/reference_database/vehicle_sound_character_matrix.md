@@ -54,3 +54,20 @@ signal processing, vehicle configuration, OEM calibration, or target level.
 They may support a blind listening discussion only. All numerical synthesis
 targets remain `C`, synthetic, uncalibrated, and not OEM measured; automated
 separation gates do not remove those limitations.
+
+## v1.0 externally held R2 review set
+
+The v1.0 review set is deliberately stored outside Git, with URL, SHA-256,
+decode format, candidate segment, and recording risk recorded in
+`realism_reference_manifest.json`. Ferrari 458 and Hellcat each include
+idle, acceleration, and candidate deceleration review windows; the extracted
+RX-7 FD clip is idle-only. The original RX-7 compilation returned HTTP 403
+during extraction and remains a listening-only exclusion. These are R2
+references, not stock/OEM assertions or numerical calibration data.
+
+For each usable segment the review method is: 48 kHz decode; STFT with a
+4096-sample Hann window and 75% overlap; relative 40–200 Hz, 200–500 Hz, and
+above-1200 Hz energy; and manual transient labels. An order map is generated
+only when an independent RPM timeline exists. `idle`, `steady rpm`,
+`acceleration`, and `deceleration` are separate labels because visual
+energy alone cannot infer throttle, gear, exhaust temperature, or RPM.

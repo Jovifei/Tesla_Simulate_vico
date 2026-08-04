@@ -1,0 +1,31 @@
+{
+  "schema_version": "s12-acoustic-realism-reference-1.0",
+  "scope": "synthetic; uncalibrated; not OEM reproduction",
+  "external_media_policy": "Raw third-party media is held only outside the repository for private research review. This manifest stores URL, content SHA-256, extraction configuration, risk, and derived relative features; it does not assert licence, stock state, microphone geometry, RPM, or absolute level.",
+  "vehicles": {
+    "ferrari_458": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"video_id": "4B3nGVJWmPg", "source_url": "https://www.youtube.com/watch?v=4B3nGVJWmPg", "title": "Ferrari 458 Italia SOUND - Start Up, Revs and Accelerations!", "sha256": "56b98ead29c9f0575bcfbd89f09a120dde9666559f5eacf0e7cf4c2c3f1f887a", "audio_format": "48 kHz, stereo, PCM16 WAV", "extraction": "yt-dlp bestaudio followed by ffmpeg WAV decode"},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, gear, and post-processing are unverified.", "permitted_use": "Relative high-RPM envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "0-15 s low-speed/start observation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "select after manual RPM evidence exists", "rpm_confidence": "none"}, "acceleration": {"intent": "150-165 s and 195-208 s high-energy candidate windows", "rpm_confidence": "none"}, "deceleration": {"intent": "manual event labelling required before target extraction", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "relative STFT/band feature extraction completed", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2"}
+    },
+    "hellcat": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"video_id": "9eh-Nq6NRmk", "source_url": "https://www.youtube.com/watch?v=9eh-Nq6NRmk", "title": "Stock Dodge HELLCAT CHALLENGER WIDEBODY Exhaust", "sha256": "a737b618e58ff0d05eaea127c3d04abd1f6e6e8d748531775b7935f99d6988b6", "audio_format": "48 kHz, stereo, PCM16 WAV", "extraction": "yt-dlp bestaudio followed by ffmpeg WAV decode"},
+      "recording": {"risk": "Third-party recording. Title claims stock but trim/year, microphone placement, gain control, environment, RPM, load, and exhaust state remain unverified.", "permitted_use": "Relative low-band, rev, and acceleration cue review only."},
+      "segments": {"idle": {"intent": "0-12 s candidate", "rpm_confidence": "none"}, "steady_rpm": {"intent": "20-45 s candidate", "rpm_confidence": "none"}, "acceleration": {"intent": "210-229 s high-energy candidate", "rpm_confidence": "none"}, "deceleration": {"intent": "manual closed-throttle event annotation required", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "relative STFT/band feature extraction completed", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2"}
+    },
+    "rx7_fd": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"video_id": "WYCWfroymIE", "source_url": "https://www.youtube.com/watch?v=WYCWfroymIE", "title": "rx7 fd3s stock / rough idle", "sha256": "8ab93fca8c23de0ff22acfac8f84024b086615ed308203e2fe202e27bceb55c7", "audio_format": "48 kHz, stereo, PCM16 WAV", "extraction": "yt-dlp bestaudio followed by ffmpeg WAV decode"},
+      "recording": {"risk": "Third-party title claims stock/rough idle; trim, engine condition, microphone placement, gain control, environment, RPM, load, and post-processing remain unverified. The prior broad RX-7 compilation was unavailable for extraction (HTTP 403) and remains excluded.", "permitted_use": "Relative rotary idle texture cue review only; no turbo or absolute-level calibration."},
+      "segments": {"idle": {"intent": "1-8 s candidate", "rpm_confidence": "none"}, "steady_rpm": {"intent": "12-16 s candidate", "rpm_confidence": "none"}, "acceleration": {"intent": "not available in this extracted clip", "rpm_confidence": "none"}, "deceleration": {"intent": "not available in this extracted clip", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "relative STFT/band feature extraction completed for idle only", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2"}
+    }
+  }
+}

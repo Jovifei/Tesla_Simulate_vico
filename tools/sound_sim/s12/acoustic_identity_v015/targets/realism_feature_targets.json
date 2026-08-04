@@ -1,0 +1,33 @@
+{
+  "schema_version": "s12-acoustic-realism-targets-1.0",
+  "scope": "synthetic; uncalibrated; not OEM reproduction",
+  "vehicles": {
+    "ferrari_458": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 qualitative and relative-derived; not a calibrated recording target",
+      "r2_recording_dependent_features": {"provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent", "idle_candidate": {"spectral_centroid_hz": 396.892, "energy_40_200hz": 0.056565, "energy_200_500hz": 0.808844, "energy_gt_1200hz": 0.035721, "transient_event_count": 14}, "acceleration_candidate_a": {"spectral_centroid_hz": 338.868, "energy_40_200hz": 0.782432, "energy_200_500hz": 0.100305, "energy_gt_1200hz": 0.030057, "transient_event_count": 10}, "acceleration_candidate_b": {"spectral_centroid_hz": 559.073, "energy_40_200hz": 0.696165, "energy_200_500hz": 0.066786, "energy_gt_1200hz": 0.074533, "transient_event_count": 3}},
+      "dominant_character": "clean naturally aspirated attack that becomes increasingly metallic and high-order at high RPM",
+      "idle": {"cycle_variation": "subtle", "mechanical_layers": ["valvetrain", "crank", "accessory"], "provenance": "C/synthetic"},
+      "acceleration": {"high_frequency_growth": "increasing", "low_frequency_weight": "restrained", "provenance": "C/synthetic"},
+      "deceleration": {"afterfire": "sparse, hot closed-throttle events", "provenance": "C/synthetic"}
+    },
+    "hellcat": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 qualitative and relative-derived; not a calibrated recording target",
+      "r2_recording_dependent_features": {"provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent", "idle_candidate": {"spectral_centroid_hz": 356.859, "energy_40_200hz": 0.613125, "energy_200_500hz": 0.202521, "energy_gt_1200hz": 0.078485, "transient_event_count": 14}, "steady_candidate": {"spectral_centroid_hz": 167.467, "energy_40_200hz": 0.761226, "energy_200_500hz": 0.224854, "energy_gt_1200hz": 0.000730, "transient_event_count": 4}, "acceleration_candidate": {"spectral_centroid_hz": 856.507, "energy_40_200hz": 0.497495, "energy_200_500hz": 0.066962, "energy_gt_1200hz": 0.211724, "transient_event_count": 4}},
+      "dominant_character": "large-displacement low-frequency exhaust pressure plus boost/load-dependent mechanical whine",
+      "idle": {"cycle_variation": "audible", "mechanical_layers": ["belt", "valvetrain", "crank"], "provenance": "C/synthetic"},
+      "acceleration": {"low_frequency_weight": "highest of the three", "blower": "RPM, load, and boost-state dependent", "provenance": "C/synthetic"},
+      "deceleration": {"afterfire": "clustered only when hot and closed throttle", "provenance": "C/synthetic"}
+    },
+    "rx7_fd": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 qualitative and relative-derived; not a calibrated recording target",
+      "r2_recording_dependent_features": {"provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent", "idle_candidate": {"spectral_centroid_hz": 75.825, "energy_40_200hz": 0.866333, "energy_200_500hz": 0.011419, "energy_gt_1200hz": 0.000710, "transient_event_count": 11}, "steady_candidate": {"spectral_centroid_hz": 75.755, "energy_40_200hz": 0.805061, "energy_200_500hz": 0.019687, "energy_gt_1200hz": 0.000403, "transient_event_count": 0}},
+      "dominant_character": "non-piston rotary event texture with turbo inertia, boost onset, and release",
+      "idle": {"cycle_variation": "light rotary flutter", "mechanical_layers": ["eccentric_crank", "housing", "accessory"], "provenance": "C/synthetic"},
+      "acceleration": {"low_frequency_weight": "lighter than Hellcat", "turbo": "stateful spool and boost onset", "provenance": "C/synthetic"},
+      "deceleration": {"afterfire": "light hot closed-throttle events and boost release", "provenance": "C/synthetic"}
+    }
+  }
+}

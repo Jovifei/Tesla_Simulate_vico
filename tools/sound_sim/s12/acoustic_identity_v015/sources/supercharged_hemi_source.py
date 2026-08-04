@@ -46,8 +46,22 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
     exhaust_right_bank = np.column_stack((0.48 * right_mono, right_mono))
     exhaust = exhaust_left_bank + exhaust_right_bank
 
-    shaft_phase = np.cumsum(rpm * 2.36) / (60.0 * sample_rate_hz)
-    blower_gain = 0.086 * pressure_compensation * np.square(load) * np.maximum(throttle, 0.05)
+    boost_target = load * throttle * np.clip((rpm - 1100.0) / 3800.0, 0.0, 1.15)
+    boost_state = np.zeros(count)
+    load_boost_state = np.zeros(count)
+    bypass_state = np.zeros(count)
+    for sample in range(1, count):
+        boost_tau = 0.075 if boost_target[sample] >= boost_state[sample - 1] else 0.22
+        boost_state[sample] = boost_state[sample - 1] + (boost_target[sample] - boost_state[sample - 1]) / (boost_tau * sample_rate_hz)
+        load_boost_target = load[sample] * throttle[sample]
+        load_boost_tau = 0.070 if load_boost_target >= load_boost_state[sample - 1] else 0.20
+        load_boost_state[sample] = load_boost_state[sample - 1] + (load_boost_target - load_boost_state[sample - 1]) / (load_boost_tau * sample_rate_hz)
+        bypass_target = (1.0 - throttle[sample]) * (0.35 + 0.65 * (1.0 - boost_state[sample]))
+        bypass_state[sample] = bypass_state[sample - 1] + (bypass_target - bypass_state[sample - 1]) / (0.050 * sample_rate_hz)
+    shaft_ratio = 2.36 * (0.93 + 0.16 * boost_state)
+    shaft_phase = np.cumsum(rpm * shaft_ratio) / (60.0 * sample_rate_hz)
+    blower_baseline = 0.086 * pressure_compensation * np.square(load) * np.maximum(throttle, 0.05)
+    blower_gain = blower_baseline * (0.85 + 0.30 * load_boost_state) * (1.0 - 0.30 * bypass_state)
     blower_mono = blower_gain * (
         0.34 * np.sin(2.0 * np.pi * shaft_phase)
         + 0.94 * np.sin(2.0 * np.pi * shaft_phase * 5.0)
@@ -92,8 +106,12 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
             "bank_timing": "cross_plane_irregular",
             "bank_interval_variation_s": float(np.std(bank_intervals)) if len(bank_intervals) >= 2 else 0.0,
             "blower_order_families": (2.36, 11.8, 23.6),
-            "blower_frequency_hz": float(np.mean(rpm) / 60.0 * 11.8),
+            "blower_frequency_hz": float(np.mean(rpm * shaft_ratio) / 60.0 * 5.0),
             "blower_energy": float(np.sum(np.square(blower))),
+            "blower_dynamic_model": "rpm_load_boost_bypass_inertia",
+            "blower_boost_state_peak": float(np.max(boost_state)),
+            "blower_load_state_peak": float(np.max(load_boost_state)),
+            "blower_bypass_state_peak": float(np.max(bypass_state)),
             "mechanical_model": "belt_compressor_valvetrain_texture",
             "casing_model": "rpm_phase_coupled_casing_orders",
             "pressure_compensation": "continuous RPM-derived physical source law",
