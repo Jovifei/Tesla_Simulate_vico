@@ -63,6 +63,11 @@ SOURCE_MODULES = {
     "flat_plane_v8_source.py",
     "supercharged_hemi_source.py",
     "rotary_turbo_source.py",
+    "lamborghini_v12_source.py",
+    "mercedes_v8_source.py",
+    "lexus_v10_source.py",
+    "nissan_v6_turbo_source.py",
+    "toyota_i6_turbo_source.py",
 }
 RENDERER_NAMES = ("render_ferrari_458", "render_hellcat", "render_rx7_fd")
 RENDERERS_PRESENT = all(hasattr(identity_v015, name) for name in RENDERER_NAMES)

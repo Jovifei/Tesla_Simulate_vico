@@ -15,11 +15,25 @@ from .render_identity_v02 import _apply_frozen_ptr, _edge_fade, _health, _loudne
 from .sources.flat_plane_v8_source import render_ferrari_458
 from .sources.rotary_turbo_source import render_rx7_fd
 from .sources.supercharged_hemi_source import render_hellcat
+from .sources.lamborghini_v12_source import render_aventador_lp700
+from .sources.mercedes_v8_source import render_c63_w204
+from .sources.nissan_v6_turbo_source import render_gtr_r35
+from .sources.lexus_v10_source import render_lfa
+from .sources.toyota_i6_turbo_source import render_supra_jza80
 
 
 _SAMPLE_RATE_HZ = 48000
 _CLIPS = ("idle", "acceleration", "deceleration", "full_pull")
-_RENDERERS = {"ferrari_458": render_ferrari_458, "hellcat": render_hellcat, "rx7_fd": render_rx7_fd}
+_RENDERERS = {
+    "ferrari_458": render_ferrari_458,
+    "hellcat": render_hellcat,
+    "rx7_fd": render_rx7_fd,
+    "aventador_lp700": render_aventador_lp700,
+    "c63_w204": render_c63_w204,
+    "gtr_r35": render_gtr_r35,
+    "lfa": render_lfa,
+    "supra_jza80": render_supra_jza80,
+}
 _SCOPE = "synthetic; uncalibrated; not OEM reproduction"
 
 
@@ -40,7 +54,7 @@ def publish_realism_v10(output_root: str | Path, scenario_duration_s: float = 3.
         traces = {clip: _scenario_trace(vehicle_id, clip, scenario_duration_s) for clip in _CLIPS}
         sources = {clip: _render_stateful(renderer, vehicle_id, trace) for clip, trace in traces.items()}
         ptr_audio = {clip: _edge_fade(_apply_frozen_ptr(render.pressure)) for clip, render in sources.items()}
-        managed = manage_bundle_loudness(ptr_audio, _SAMPLE_RATE_HZ, target_lufs=-16.0, peak_limit_dbfs=-1.0)
+        managed = manage_bundle_loudness(ptr_audio, _SAMPLE_RATE_HZ, target_lufs=-16.0, peak_limit_dbfs=-1.5)
         clips: dict[str, dict[str, object]] = {}
         for clip in _CLIPS:
             wav_path = _write_pcm24_wav(vehicle_root / f"{clip}.wav", managed.segments[clip])
@@ -95,6 +109,11 @@ def _scenario_trace(vehicle_id: str, clip: str, duration_s: float) -> VehicleSta
         "ferrari_458": {"idle": (1050.0, 1050.0, .14, .14), "acceleration": (3600.0, 8800.0, .48, .95), "deceleration": (7900.0, 5200.0, .90, .04), "full_pull": (2600.0, 8800.0, .42, .98)},
         "hellcat": {"idle": (820.0, 820.0, .16, .16), "acceleration": (2400.0, 6100.0, .56, .98), "deceleration": (5600.0, 3500.0, .94, .03), "full_pull": (1500.0, 6200.0, .46, 1.00)},
         "rx7_fd": {"idle": (920.0, 920.0, .15, .15), "acceleration": (3300.0, 7600.0, .46, .96), "deceleration": (6900.0, 4500.0, .90, .04), "full_pull": (2500.0, 7800.0, .42, .98)},
+        "aventador_lp700": {"idle": (950.0, 950.0, .14, .14), "acceleration": (3500.0, 8500.0, .50, .98), "deceleration": (8000.0, 5500.0, .90, .04), "full_pull": (2500.0, 8700.0, .45, .99)},
+        "c63_w204": {"idle": (750.0, 750.0, .16, .16), "acceleration": (2200.0, 6800.0, .55, .98), "deceleration": (6200.0, 4000.0, .92, .03), "full_pull": (1500.0, 7000.0, .45, 1.00)},
+        "gtr_r35": {"idle": (1000.0, 1000.0, .15, .15), "acceleration": (3000.0, 6800.0, .50, .97), "deceleration": (6400.0, 4200.0, .90, .04), "full_pull": (2200.0, 7000.0, .45, .99)},
+        "lfa": {"idle": (900.0, 900.0, .14, .14), "acceleration": (4000.0, 8800.0, .50, .99), "deceleration": (8200.0, 5500.0, .90, .04), "full_pull": (3000.0, 9000.0, .45, 1.00)},
+        "supra_jza80": {"idle": (800.0, 800.0, .15, .15), "acceleration": (2500.0, 7000.0, .50, .97), "deceleration": (6500.0, 4200.0, .90, .04), "full_pull": (1800.0, 7200.0, .45, .99)},
     }[vehicle_id][clip]
     count = int(round(duration_s * _SAMPLE_RATE_HZ)) + 1
     time_s = np.linspace(0.0, duration_s, count)

@@ -1,0 +1,273 @@
+{
+  "schema": "s12.hellcat_reference_targets.v1",
+  "vehicle": "hellcat",
+  "display_name": "Dodge Challenger SRT Hellcat",
+  "note": "Derived relative metrics only; public audio remains outside the repository.",
+  "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+  "boundary": "synthetic; uncalibrated; not OEM reproduction",
+  "band_edges_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "sources": [
+    {
+      "id": "eyzGRhXp0do",
+      "url": "https://www.youtube.com/watch?v=eyzGRhXp0do",
+      "setup": "AutoTopNL stock road acceleration",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 8.8,
+          "rms_dbfs": -37.658416102077105,
+          "spectral_centroid_hz": 290.4265180653445,
+          "band_shares": [
+            0.6982963883844214,
+            0.258487926282106,
+            0.040480731985018045,
+            0.002521409298935962
+          ],
+          "spectral_flux": 0.22652970034094957,
+          "modulation_depth": 0.9485634490491966,
+          "modulation_peak_hz": 5.113636363636364,
+          "modulation_energy": 0.002394963690793792,
+          "pulse_amplitude_cv": 0.3603555396754453,
+          "pulse_interval_cv": 1.8966776477384086,
+          "crest_factor": 15.913451416959692,
+          "dropout_ratio": 0.09318181818181819
+        },
+        "acceleration": {
+          "duration_s": 42.840833333333336,
+          "rms_dbfs": -13.364497407555636,
+          "spectral_centroid_hz": 264.8156970288378,
+          "band_shares": [
+            0.4837359017411123,
+            0.5131783510682452,
+            0.0030234596615554632,
+            3.662633574891643e-05
+          ],
+          "spectral_flux": 0.1537822751068679,
+          "modulation_depth": 0.4838866933188585,
+          "modulation_peak_hz": 81.30093952420783,
+          "modulation_energy": 0.0005716186164828244,
+          "pulse_amplitude_cv": 0.27960245697915725,
+          "pulse_interval_cv": 5.2043553304945505,
+          "crest_factor": 3.5202879826835143,
+          "dropout_ratio": 0.004901960784313725
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -13.088668906881153,
+          "spectral_centroid_hz": 303.31423402354545,
+          "band_shares": [
+            0.3415553711000106,
+            0.6529560819306744,
+            0.005390527386645004,
+            6.397324974389e-05
+          ],
+          "spectral_flux": 0.17915077058107898,
+          "modulation_depth": 0.4798021886169855,
+          "modulation_peak_hz": 79.625,
+          "modulation_energy": 0.0018629901300190647,
+          "pulse_amplitude_cv": 0.2433572502734219,
+          "pulse_interval_cv": 1.0745830081045167,
+          "crest_factor": 3.3108235739713345,
+          "dropout_ratio": 0.0
+        }
+      }
+    },
+    {
+      "id": "FvORN7EH2cc",
+      "url": "https://www.youtube.com/watch?v=FvORN7EH2cc",
+      "setup": "Hellcat Redeye brutal downshifts",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 6.253375,
+          "rms_dbfs": -16.454397234003217,
+          "spectral_centroid_hz": 115.74018551875494,
+          "band_shares": [
+            0.9803127332669139,
+            0.011133219497632213,
+            0.0005487843338045133,
+            9.360487156974435e-07
+          ],
+          "spectral_flux": 0.1943154905003689,
+          "modulation_depth": 0.501165211840959,
+          "modulation_peak_hz": 92.11026045935195,
+          "modulation_energy": 0.0029265839772515223,
+          "pulse_amplitude_cv": 0.2649680860101238,
+          "pulse_interval_cv": 1.3411278432617582,
+          "crest_factor": 3.399291731222988,
+          "dropout_ratio": 0.0384
+        },
+        "acceleration": {
+          "duration_s": 7.5040625,
+          "rms_dbfs": -15.850919352462975,
+          "spectral_centroid_hz": 115.1200158357556,
+          "band_shares": [
+            0.9398821652227757,
+            0.04193104395961281,
+            0.0015752956401177802,
+            6.8158962618583384e-06
+          ],
+          "spectral_flux": 0.18339915691352074,
+          "modulation_depth": 0.5200688904863646,
+          "modulation_peak_hz": 28.917669595635694,
+          "modulation_energy": 0.002431727507388349,
+          "pulse_amplitude_cv": 0.25136568607931215,
+          "pulse_interval_cv": 1.724155814045429,
+          "crest_factor": 3.481546618379069,
+          "dropout_ratio": 0.036
+        },
+        "afterfire": {
+          "duration_s": 6.504041666666667,
+          "rms_dbfs": -16.011077446055236,
+          "spectral_centroid_hz": 120.21304019335923,
+          "band_shares": [
+            0.9663268494527609,
+            0.012693548610864448,
+            0.0007473216447394532,
+            7.4935392169929855e-06
+          ],
+          "spectral_flux": 0.17449721216490804,
+          "modulation_depth": 0.48755398316820836,
+          "modulation_peak_hz": 20.910075145582553,
+          "modulation_energy": 0.0026156659433484246,
+          "pulse_amplitude_cv": 0.26547428921602734,
+          "pulse_interval_cv": 1.8133902709595995,
+          "crest_factor": 3.099623530266043,
+          "dropout_ratio": 0.0015384615384615385
+        }
+      }
+    },
+    {
+      "id": "nnEaamqsieM",
+      "url": "https://www.youtube.com/watch?v=nnEaamqsieM",
+      "setup": "Hellcat Redeye near-field leave",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 5.84,
+          "rms_dbfs": -35.103028604195636,
+          "spectral_centroid_hz": 399.6317327398552,
+          "band_shares": [
+            0.6941202733282971,
+            0.21734613132624625,
+            0.07935298169939135,
+            0.009052837141027963
+          ],
+          "spectral_flux": 0.22755197078740377,
+          "modulation_depth": 0.7160177586851845,
+          "modulation_peak_hz": 15.753424657534246,
+          "modulation_energy": 0.0025793532621240446,
+          "pulse_amplitude_cv": 0.31461446759715506,
+          "pulse_interval_cv": 3.277934726547743,
+          "crest_factor": 7.628913637284864,
+          "dropout_ratio": 0.003424657534246575
+        },
+        "acceleration": {
+          "duration_s": 11.7040625,
+          "rms_dbfs": -17.03892477874569,
+          "spectral_centroid_hz": 882.6011745789534,
+          "band_shares": [
+            0.33009593543697935,
+            0.48786976644131697,
+            0.11911394598623067,
+            0.0625470810701937
+          ],
+          "spectral_flux": 0.21989703813957026,
+          "modulation_depth": 0.8271528544483854,
+          "modulation_peak_hz": 8.714922703121246,
+          "modulation_energy": 0.0010658297906894116,
+          "pulse_amplitude_cv": 0.27254699442049096,
+          "pulse_interval_cv": 3.3588496436380826,
+          "crest_factor": 6.387498842021937,
+          "dropout_ratio": 0.14358974358974358
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -17.928200552769496,
+          "spectral_centroid_hz": 416.8803135663734,
+          "band_shares": [
+            0.41420395482704,
+            0.48263457446378577,
+            0.09981530452597202,
+            0.0032522648890488627
+          ],
+          "spectral_flux": 0.22103717986672947,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 224.875,
+          "modulation_energy": 0.0009870068655267665,
+          "pulse_amplitude_cv": 0.2894292674697116,
+          "pulse_interval_cv": 3.2386426620315323,
+          "crest_factor": 7.040048647445803,
+          "dropout_ratio": 0.14
+        }
+      }
+    }
+  ],
+  "stock_median": {
+    "idle_band_shares": [
+      0.6982963883844214,
+      0.21734613132624625,
+      0.040480731985018045,
+      0.002521409298935962
+    ],
+    "idle_spectral_flux": 0.22652970034094957,
+    "idle_modulation_depth": 0.7160177586851845,
+    "idle_modulation_peak_hz": 15.753424657534246,
+    "idle_modulation_energy": 0.0025793532621240446,
+    "idle_pulse_amplitude_cv": 0.31461446759715506,
+    "idle_pulse_interval_cv": 1.8966776477384086,
+    "idle_crest_factor": 7.628913637284864,
+    "idle_dropout_ratio": 0.0384,
+    "idle_spectral_centroid_hz": 290.4265180653445,
+    "idle_rms_dbfs": -35.103028604195636,
+    "acceleration_band_shares": [
+      0.4837359017411123,
+      0.48786976644131697,
+      0.0030234596615554632,
+      3.662633574891643e-05
+    ],
+    "acceleration_spectral_flux": 0.18339915691352074,
+    "acceleration_modulation_depth": 0.5200688904863646,
+    "acceleration_modulation_peak_hz": 28.917669595635694,
+    "acceleration_modulation_energy": 0.0010658297906894116,
+    "acceleration_pulse_amplitude_cv": 0.27254699442049096,
+    "acceleration_pulse_interval_cv": 3.3588496436380826,
+    "acceleration_crest_factor": 3.5202879826835143,
+    "acceleration_dropout_ratio": 0.036,
+    "acceleration_spectral_centroid_hz": 264.8156970288378,
+    "acceleration_rms_dbfs": -15.850919352462975,
+    "afterfire_band_shares": [
+      0.41420395482704,
+      0.48263457446378577,
+      0.005390527386645004,
+      6.397324974389e-05
+    ],
+    "afterfire_spectral_flux": 0.17915077058107898,
+    "afterfire_modulation_depth": 0.48755398316820836,
+    "afterfire_modulation_peak_hz": 79.625,
+    "afterfire_modulation_energy": 0.0018629901300190647,
+    "afterfire_pulse_amplitude_cv": 0.26547428921602734,
+    "afterfire_pulse_interval_cv": 1.8133902709595995,
+    "afterfire_crest_factor": 3.3108235739713345,
+    "afterfire_dropout_ratio": 0.0015384615384615385,
+    "afterfire_spectral_centroid_hz": 303.31423402354545,
+    "afterfire_rms_dbfs": -16.011077446055236
+  }
+}

@@ -43,7 +43,7 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     housing_event_rate_compensation = 30.0 / (np.maximum(rpm, 950.0) * housing_decay_s)
     housing_radiation_compensation = np.power(4000.0 / np.maximum(rpm, 950.0), 0.55)
     housing_activity = housing_envelope * housing_event_rate_compensation * housing_radiation_compensation
-    housing_mono = 0.20 * (rpm > 0.0) * housing_activity * (
+    housing_mono = 0.32 * (rpm > 0.0) * housing_activity * (
         np.sin(2.0 * np.pi * phase * 72.0)
         + 0.38 * np.sin(2.0 * np.pi * phase * 96.0)
     )
@@ -66,9 +66,9 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
         blow_off_injection = 0.12 * release * (0.35 + 0.65 * boost_state[sample - 1])
         blow_off_state[sample] = blow_off_state[sample - 1] + (blow_off_injection - blow_off_state[sample - 1] / 0.28) / sample_rate_hz
     turbo_phase = np.cumsum((6.5 + 11.0 * boost_state + 8.0 * secondary_spool) * rpm / 60.0) / sample_rate_hz
-    turbo_mono = 0.150 * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
+    turbo_mono = 0.200 * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
     turbo = np.column_stack((0.62 * turbo_mono, turbo_mono))
-    turbine_mono = 0.112 * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
+    turbine_mono = 0.150 * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
     turbine = np.column_stack((turbine_mono, 0.58 * turbine_mono))
     blow_off_phase = np.cumsum(650.0 + 1100.0 * boost_state + 900.0 * blow_off_state) / sample_rate_hz
     blow_off_mono = 0.115 * combustion_pressure_ratio * blow_off_state * (

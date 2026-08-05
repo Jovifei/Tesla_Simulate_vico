@@ -1,0 +1,273 @@
+{
+  "schema": "s12.gtr_reference_targets.v1",
+  "vehicle": "gtr_r35",
+  "display_name": "Nissan GT-R R35 (VR38DETT V6 twin-turbo)",
+  "note": "Derived relative metrics only; public audio remains outside the repository.",
+  "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+  "boundary": "synthetic; uncalibrated; not OEM reproduction",
+  "band_edges_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "sources": [
+    {
+      "id": "gtr_r35_nismo_accel",
+      "url": "local:tesla-sound-research/gtr_r35_nismo_accel.wav",
+      "setup": "GT-R R35 Nismo acceleration",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 4.44,
+          "rms_dbfs": -28.52093906285749,
+          "spectral_centroid_hz": 375.44024591628323,
+          "band_shares": [
+            0.19260518382422853,
+            0.7867479682239258,
+            0.020353251915206642,
+            0.00018670851416790397
+          ],
+          "spectral_flux": 0.20922195201806507,
+          "modulation_depth": 0.7631400159769832,
+          "modulation_peak_hz": 5.180180180180181,
+          "modulation_energy": 0.0031263773137877823,
+          "pulse_amplitude_cv": 0.28322379888204036,
+          "pulse_interval_cv": 3.768611896110627,
+          "crest_factor": 7.7194891919559465,
+          "dropout_ratio": 0.10585585585585586
+        },
+        "acceleration": {
+          "duration_s": 35.9980625,
+          "rms_dbfs": -18.741973057816843,
+          "spectral_centroid_hz": 641.1264006868602,
+          "band_shares": [
+            0.17956149688433154,
+            0.6645781767287583,
+            0.14977343170030846,
+            0.0057140532823146475
+          ],
+          "spectral_flux": 0.21172223928911715,
+          "modulation_depth": 0.6703075733294979,
+          "modulation_peak_hz": 5.305841112976567,
+          "modulation_energy": 0.00025261744133036354,
+          "pulse_amplitude_cv": 0.26319211371366835,
+          "pulse_interval_cv": 4.024634889526194,
+          "crest_factor": 5.863252676731281,
+          "dropout_ratio": 0.026951931091969993
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -14.110572773427833,
+          "spectral_centroid_hz": 169.81982655571875,
+          "band_shares": [
+            0.7746109911802183,
+            0.19023465375398352,
+            0.01064891166957718,
+            1.640654565030475e-05
+          ],
+          "spectral_flux": 0.18150023359560186,
+          "modulation_depth": 0.48696208444358496,
+          "modulation_peak_hz": 68.75,
+          "modulation_energy": 0.0016197228316585696,
+          "pulse_amplitude_cv": 0.22597885810350976,
+          "pulse_interval_cv": 1.9371636298389006,
+          "crest_factor": 3.5254356899172294,
+          "dropout_ratio": 0.02
+        }
+      }
+    },
+    {
+      "id": "gtr_r35_tomei_close",
+      "url": "local:tesla-sound-research/gtr_r35_tomei_close.wav",
+      "setup": "GT-R R35 Tomei exhaust close (afterfire)",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 7.503375,
+          "rms_dbfs": -13.061842380787132,
+          "spectral_centroid_hz": 424.30144324687524,
+          "band_shares": [
+            0.5728030610677466,
+            0.3323472739024452,
+            0.08876465500072608,
+            0.005831402993525485
+          ],
+          "spectral_flux": 0.19634698027684525,
+          "modulation_depth": 0.5898430436032546,
+          "modulation_peak_hz": 69.43542072733936,
+          "modulation_energy": 0.0014777003103278428,
+          "pulse_amplitude_cv": 0.27519170079548155,
+          "pulse_interval_cv": 4.168188869715192,
+          "crest_factor": 4.101295135922507,
+          "dropout_ratio": 0.014666666666666666
+        },
+        "acceleration": {
+          "duration_s": 7.73,
+          "rms_dbfs": -13.129971496416431,
+          "spectral_centroid_hz": 432.04024669328254,
+          "band_shares": [
+            0.5653688692553197,
+            0.33789726945765075,
+            0.09033957457997767,
+            0.006168656396794658
+          ],
+          "spectral_flux": 0.19276697341051957,
+          "modulation_depth": 0.5814583043330493,
+          "modulation_peak_hz": 69.46959896507116,
+          "modulation_energy": 0.0014660741187052318,
+          "pulse_amplitude_cv": 0.2737644282543005,
+          "pulse_interval_cv": 4.168188869715192,
+          "crest_factor": 4.1335907694764895,
+          "dropout_ratio": 0.0
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -20.59959056661194,
+          "spectral_centroid_hz": 789.7666421526428,
+          "band_shares": [
+            0.04310622915603785,
+            0.7270172328103774,
+            0.21729785336556262,
+            0.012079128481418611
+          ],
+          "spectral_flux": 0.1949370154498115,
+          "modulation_depth": 0.6643829839285654,
+          "modulation_peak_hz": 5.625,
+          "modulation_energy": 0.0014903436255547667,
+          "pulse_amplitude_cv": 0.39537999635017657,
+          "pulse_interval_cv": 2.1254190075428077,
+          "crest_factor": 8.856097689508099,
+          "dropout_ratio": 0.0025
+        }
+      }
+    },
+    {
+      "id": "gtr_r35_tuned_backfire",
+      "url": "local:tesla-sound-research/gtr_r35_tuned_backfire.wav",
+      "setup": "GT-R R35 tuned backfire pops",
+      "include_in_stock_target": false,
+      "segments": {
+        "idle": {
+          "duration_s": 8.0,
+          "rms_dbfs": -14.399746667689975,
+          "spectral_centroid_hz": 398.42754139045667,
+          "band_shares": [
+            0.39929714795397614,
+            0.5755206981516586,
+            0.020327731344197877,
+            0.0022755344408099966
+          ],
+          "spectral_flux": 0.19693356566964237,
+          "modulation_depth": 0.5365752103387212,
+          "modulation_peak_hz": 49.875,
+          "modulation_energy": 0.0015514238104376485,
+          "pulse_amplitude_cv": 0.28214749304134545,
+          "pulse_interval_cv": 1.3548577415976566,
+          "crest_factor": 4.8712396712751564,
+          "dropout_ratio": 0.0125
+        },
+        "acceleration": {
+          "duration_s": 20.5984375,
+          "rms_dbfs": -14.55951622081161,
+          "spectral_centroid_hz": 386.2008779602749,
+          "band_shares": [
+            0.44821582503154755,
+            0.5261074113604445,
+            0.02073951229312217,
+            0.0023701714457812434
+          ],
+          "spectral_flux": 0.20301179189813012,
+          "modulation_depth": 0.5346241195270984,
+          "modulation_peak_hz": 34.08025487370098,
+          "modulation_energy": 0.0006588371041833355,
+          "pulse_amplitude_cv": 0.22390695402624677,
+          "pulse_interval_cv": 1.1274064046166012,
+          "crest_factor": 5.0685193291659845,
+          "dropout_ratio": 0.0009713453132588635
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -13.912323694581941,
+          "spectral_centroid_hz": 434.8299746603539,
+          "band_shares": [
+            0.37255378825664753,
+            0.5928462966160224,
+            0.029516504562075985,
+            0.002759245164510603
+          ],
+          "spectral_flux": 0.2029845520848104,
+          "modulation_depth": 0.48764369645524414,
+          "modulation_peak_hz": 13.5,
+          "modulation_energy": 0.0015470111300699193,
+          "pulse_amplitude_cv": 0.23476384251270052,
+          "pulse_interval_cv": 1.4473171115026988,
+          "crest_factor": 4.94260967311669,
+          "dropout_ratio": 0.0025
+        }
+      }
+    }
+  ],
+  "stock_median": {
+    "idle_band_shares": [
+      0.38270412244598756,
+      0.5595476210631855,
+      0.054558953457966367,
+      0.0030090557538466948
+    ],
+    "idle_spectral_flux": 0.20278446614745516,
+    "idle_modulation_depth": 0.6764915297901188,
+    "idle_modulation_peak_hz": 37.307800453759775,
+    "idle_modulation_energy": 0.0023020388120578127,
+    "idle_pulse_amplitude_cv": 0.27920774983876095,
+    "idle_pulse_interval_cv": 3.9684003829129093,
+    "idle_crest_factor": 5.9103921639392265,
+    "idle_dropout_ratio": 0.06026126126126126,
+    "idle_spectral_centroid_hz": 399.87084458157926,
+    "idle_rms_dbfs": -20.79139072182231,
+    "acceleration_band_shares": [
+      0.3724651830698256,
+      0.5012377230932046,
+      0.12005650314014307,
+      0.005941354839554653
+    ],
+    "acceleration_spectral_flux": 0.20224460634981836,
+    "acceleration_modulation_depth": 0.6258829388312737,
+    "acceleration_modulation_peak_hz": 37.38772003902386,
+    "acceleration_modulation_energy": 0.0008593457800177976,
+    "acceleration_pulse_amplitude_cv": 0.2684782709839844,
+    "acceleration_pulse_interval_cv": 4.0964118796206925,
+    "acceleration_crest_factor": 4.998421723103885,
+    "acceleration_dropout_ratio": 0.013475965545984996,
+    "acceleration_spectral_centroid_hz": 536.5833236900713,
+    "acceleration_rms_dbfs": -15.935972277116637,
+    "afterfire_band_shares": [
+      0.4088586101681281,
+      0.4586259432821805,
+      0.1139733825175699,
+      0.006047767513534458
+    ],
+    "afterfire_spectral_flux": 0.18821862452270668,
+    "afterfire_modulation_depth": 0.5756725341860752,
+    "afterfire_modulation_peak_hz": 37.1875,
+    "afterfire_modulation_energy": 0.0015550332286066683,
+    "afterfire_pulse_amplitude_cv": 0.31067942722684316,
+    "afterfire_pulse_interval_cv": 2.031291318690854,
+    "afterfire_crest_factor": 6.190766689712664,
+    "afterfire_dropout_ratio": 0.01125,
+    "afterfire_spectral_centroid_hz": 479.79323435418075,
+    "afterfire_rms_dbfs": -17.355081670019885
+  }
+}

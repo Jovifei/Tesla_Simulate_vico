@@ -11,7 +11,11 @@ def compute_realism_metrics(
     vehicle_id: str, render: SourceRender, trace: VehicleStateTrace, sample_rate_hz: int = 48000
 ) -> dict[str, object]:
     """Measure pre-PTR realism cues without presenting them as vehicle calibration."""
-    if vehicle_id not in {"ferrari_458", "hellcat", "rx7_fd"}:
+    _SUPPORTED = {
+        "ferrari_458", "hellcat", "rx7_fd",
+        "aventador_lp700", "c63_w204", "gtr_r35", "lfa", "supra_jza80",
+    }
+    if vehicle_id not in _SUPPORTED:
         raise ValueError(f"unsupported vehicle_id: {vehicle_id!r}")
     render.validate()
     trace.validate()
@@ -47,6 +51,16 @@ def compute_realism_metrics(
         feature.update({"high_frequency_fraction_gt_1200hz": _band_fraction(energy, frequencies, 1200.0, None), "metallic_energy": _energy(_stem(render, "metallic"))})
     elif vehicle_id == "hellcat":
         feature.update({"blower_energy": _energy(_stem(render, "blower")), "blower_boost_state_peak": float(render.diagnostics.get("blower_boost_state_peak", 0.0)), "blower_bypass_state_peak": float(render.diagnostics.get("blower_bypass_state_peak", 0.0))})
+    elif vehicle_id == "aventador_lp700":
+        feature.update({"wail_energy": _energy(_stem(render, "wail"))})
+    elif vehicle_id == "c63_w204":
+        feature.update({"bark_energy": _energy(_stem(render, "bark")), "exhaust_bank_energy": _energy(_stem(render, "exhaust_left_bank")) + _energy(_stem(render, "exhaust_right_bank"))})
+    elif vehicle_id == "gtr_r35":
+        feature.update({"turbo_energy": _energy(_stem(render, "whistle")), "racy_energy": _energy(_stem(render, "racy"))})
+    elif vehicle_id == "lfa":
+        feature.update({"scream_energy": _energy(_stem(render, "scream"))})
+    elif vehicle_id == "supra_jza80":
+        feature.update({"turbo_energy": _energy(_stem(render, "whistle")), "edge_energy": _energy(_stem(render, "edge"))})
     else:
         feature.update({"rotary_energy": _energy(_stem(render, "rotary")), "turbo_energy": _energy(_stem(render, "turbo")), "blow_off_energy": _energy(_stem(render, "blow_off")), "boost_state_peak": float(render.diagnostics.get("boost_state_peak", 0.0))})
     return {

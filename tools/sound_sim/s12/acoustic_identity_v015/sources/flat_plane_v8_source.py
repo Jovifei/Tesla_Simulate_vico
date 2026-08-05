@@ -39,7 +39,7 @@ def render_ferrari_458(trace: VehicleStateTrace, sample_rate_hz: int = 48000) ->
         left_envelope[sample] = pole * left_envelope[sample - 1] + left_impulses[sample]
         right_envelope[sample] = pole * right_envelope[sample - 1] + right_impulses[sample]
     carrier = np.sin(2.0 * np.pi * phase * 2.0) + 0.38 * np.sin(2.0 * np.pi * phase * 6.0)
-    low_band_weight = 1.0 - 0.35 * high_rpm_mix
+    low_band_weight = 1.0 - 0.55 * high_rpm_mix
     left_mono = 0.085 * event_rate_compensation * energy_redistribution * low_band_weight * left_envelope * carrier
     right_mono = 0.085 * event_rate_compensation * energy_redistribution * low_band_weight * right_envelope * carrier
     left_bank = np.column_stack((left_mono, 0.32 * left_mono))
@@ -62,7 +62,7 @@ def render_ferrari_458(trace: VehicleStateTrace, sample_rate_hz: int = 48000) ->
 
     metallic_resonance = damped_mode(2350.0) + 0.32 * damped_mode(3820.0)
     idle_crack_mix = np.clip((3000.0 - rpm) / 2100.0, 0.0, 1.0)
-    metallic_gain = 0.063 * (1.0 + 2.5 * idle_crack_mix) * energy_redistribution * (1.10 + 0.90 * high_rpm_mix) * np.power(np.maximum(rpm, 500.0) / 3000.0, 0.75)
+    metallic_gain = 0.063 * (1.0 + 2.5 * idle_crack_mix) * energy_redistribution * (1.10 + 1.40 * high_rpm_mix) * np.power(np.maximum(rpm, 500.0) / 3000.0, 0.75)
     metallic_mono = metallic_gain * metallic_resonance
     metallic = np.column_stack((0.72 * metallic_mono, metallic_mono))
     render = SourceRender(

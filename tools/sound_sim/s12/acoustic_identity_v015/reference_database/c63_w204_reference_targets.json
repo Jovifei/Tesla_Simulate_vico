@@ -1,0 +1,273 @@
+{
+  "schema": "s12.c63_reference_targets.v1",
+  "vehicle": "c63_w204",
+  "display_name": "Mercedes C63 AMG W204 (M156 V8 NA)",
+  "note": "Derived relative metrics only; public audio remains outside the repository.",
+  "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+  "boundary": "synthetic; uncalibrated; not OEM reproduction",
+  "band_edges_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "sources": [
+    {
+      "id": "c63_w204_performance_accel",
+      "url": "local:tesla-sound-research/c63_w204_performance_accel.wav",
+      "setup": "C63 W204 performance acceleration",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 8.78,
+          "rms_dbfs": -34.35201278278273,
+          "spectral_centroid_hz": 177.81878406418267,
+          "band_shares": [
+            0.8606884090948485,
+            0.1080075827244034,
+            0.027620352123870973,
+            0.002617797638562525
+          ],
+          "spectral_flux": 0.07237165154734286,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 7.403189066059226,
+          "modulation_energy": 0.002037740875317256,
+          "pulse_amplitude_cv": 0.2759240707851532,
+          "pulse_interval_cv": 0.9962066981176319,
+          "crest_factor": 11.573003852824174,
+          "dropout_ratio": 0.0
+        },
+        "acceleration": {
+          "duration_s": 43.136,
+          "rms_dbfs": -13.993152474991579,
+          "spectral_centroid_hz": 623.3522040870974,
+          "band_shares": [
+            0.31366738446291004,
+            0.5415712624284055,
+            0.1275276540577156,
+            0.01654363244574465
+          ],
+          "spectral_flux": 0.20531718967234794,
+          "modulation_depth": 0.7985479858330735,
+          "modulation_peak_hz": 50.53783382789318,
+          "modulation_energy": 0.000282802662797217,
+          "pulse_amplitude_cv": 0.23986943718472173,
+          "pulse_interval_cv": 5.310869027588769,
+          "crest_factor": 5.007922781480205,
+          "dropout_ratio": 0.09065615580802226
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -10.711820169105074,
+          "spectral_centroid_hz": 288.4515427590398,
+          "band_shares": [
+            0.5249949988672838,
+            0.45300066347918383,
+            0.02084859252952929,
+            0.00014563325617296277
+          ],
+          "spectral_flux": 0.179851041673789,
+          "modulation_depth": 0.4961279865439577,
+          "modulation_peak_hz": 44.5,
+          "modulation_energy": 0.001024197596760418,
+          "pulse_amplitude_cv": 0.23945541790876732,
+          "pulse_interval_cv": 1.3011255643801105,
+          "crest_factor": 3.2800436311353924,
+          "dropout_ratio": 0.0
+        }
+      }
+    },
+    {
+      "id": "c63_w204_close_downshift",
+      "url": "local:tesla-sound-research/c63_w204_close_downshift.wav",
+      "setup": "C63 W204 close downshift (afterfire)",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 3.003375,
+          "rms_dbfs": -20.92714049928813,
+          "spectral_centroid_hz": 1196.4756767924603,
+          "band_shares": [
+            0.01960600684145076,
+            0.2967286393500777,
+            0.681777853898045,
+            0.0018666014555624097
+          ],
+          "spectral_flux": 0.22781051323845503,
+          "modulation_depth": 0.5637532429971253,
+          "modulation_peak_hz": 7.658051358887919,
+          "modulation_energy": 0.0029260908116476264,
+          "pulse_amplitude_cv": 0.2992300180965824,
+          "pulse_interval_cv": 0.7010636813187381,
+          "crest_factor": 4.721479226298118,
+          "dropout_ratio": 0.013333333333333334
+        },
+        "acceleration": {
+          "duration_s": 3.6040625,
+          "rms_dbfs": -14.950616520514368,
+          "spectral_centroid_hz": 851.4026992975744,
+          "band_shares": [
+            0.048551101740018865,
+            0.6329571380343104,
+            0.3167715824075436,
+            0.0017087945105333782
+          ],
+          "spectral_flux": 0.18668586654834451,
+          "modulation_depth": 0.6700623362323478,
+          "modulation_peak_hz": 59.93236798751409,
+          "modulation_energy": 0.003909586773052071,
+          "pulse_amplitude_cv": 0.29744327532288417,
+          "pulse_interval_cv": 0.6060333979784778,
+          "crest_factor": 5.004530480318932,
+          "dropout_ratio": 0.0
+        },
+        "afterfire": {
+          "duration_s": 4.0,
+          "rms_dbfs": -26.364670191104892,
+          "spectral_centroid_hz": 841.3128225265917,
+          "band_shares": [
+            0.009256918796146828,
+            0.6738948940059423,
+            0.3163766723078238,
+            0.0004585400864891474
+          ],
+          "spectral_flux": 0.20357631525650874,
+          "modulation_depth": 0.9537018855401972,
+          "modulation_peak_hz": 64.5,
+          "modulation_energy": 0.0044739298136632156,
+          "pulse_amplitude_cv": 0.3091366272916511,
+          "pulse_interval_cv": 0.2853808876777176,
+          "crest_factor": 9.51124570175931,
+          "dropout_ratio": 0.0
+        }
+      }
+    },
+    {
+      "id": "c63_w204_headers_backfire",
+      "url": "local:tesla-sound-research/c63_w204_headers_backfire.wav",
+      "setup": "C63 W204 headers backfire pops",
+      "include_in_stock_target": false,
+      "segments": {
+        "idle": {
+          "duration_s": 4.03,
+          "rms_dbfs": -30.700868941071533,
+          "spectral_centroid_hz": 187.10229417669765,
+          "band_shares": [
+            0.8616754926646261,
+            0.12003707656123228,
+            0.0176404226885581,
+            0.0004151706494155052
+          ],
+          "spectral_flux": 0.2103422696928416,
+          "modulation_depth": 0.5218972615777371,
+          "modulation_peak_hz": 99.75186104218362,
+          "modulation_energy": 0.005733240847682982,
+          "pulse_amplitude_cv": 0.30435232779801985,
+          "pulse_interval_cv": 0.9237150595033357,
+          "crest_factor": 6.767537379863288,
+          "dropout_ratio": 0.0024813895781637717
+        },
+        "acceleration": {
+          "duration_s": 18.602666666666668,
+          "rms_dbfs": -17.370818254445663,
+          "spectral_centroid_hz": 592.1631204858329,
+          "band_shares": [
+            0.08558671498335647,
+            0.8357695044606429,
+            0.07798319445898207,
+            0.0006394894264493318
+          ],
+          "spectral_flux": 0.1862846392179923,
+          "modulation_depth": 0.9398722656846037,
+          "modulation_peak_hz": 33.704845183486235,
+          "modulation_energy": 0.0005950133984759352,
+          "pulse_amplitude_cv": 0.2394742589289914,
+          "pulse_interval_cv": 7.9797783359274135,
+          "crest_factor": 5.56643172343814,
+          "dropout_ratio": 0.010752688172043012
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -24.985830628951,
+          "spectral_centroid_hz": 246.10753514619256,
+          "band_shares": [
+            0.7289431014732632,
+            0.24123692101883698,
+            0.02924316774367624,
+            0.0004398958133958308
+          ],
+          "spectral_flux": 0.21633778257414035,
+          "modulation_depth": 0.7528620030495307,
+          "modulation_peak_hz": 25.0,
+          "modulation_energy": 0.0015864582046754166,
+          "pulse_amplitude_cv": 0.2882040460705521,
+          "pulse_interval_cv": 2.040817634382065,
+          "crest_factor": 7.539733865072761,
+          "dropout_ratio": 0.0
+        }
+      }
+    }
+  ],
+  "stock_median": {
+    "idle_band_shares": [
+      0.4401472079681496,
+      0.20236811103724056,
+      0.354699103010958,
+      0.0022421995470624677
+    ],
+    "idle_spectral_flux": 0.15009108239289895,
+    "idle_modulation_depth": 0.7818766214985626,
+    "idle_modulation_peak_hz": 7.530620212473572,
+    "idle_modulation_energy": 0.0024819158434824413,
+    "idle_pulse_amplitude_cv": 0.2875770444408678,
+    "idle_pulse_interval_cv": 0.848635189718185,
+    "idle_crest_factor": 8.147241539561145,
+    "idle_dropout_ratio": 0.006666666666666667,
+    "idle_spectral_centroid_hz": 687.1472304283214,
+    "idle_rms_dbfs": -27.63957664103543,
+    "acceleration_band_shares": [
+      0.18110924310146445,
+      0.587264200231358,
+      0.2221496182326296,
+      0.009126213478139014
+    ],
+    "acceleration_spectral_flux": 0.1960015281103462,
+    "acceleration_modulation_depth": 0.7343051610327107,
+    "acceleration_modulation_peak_hz": 55.23510090770364,
+    "acceleration_modulation_energy": 0.002096194717924644,
+    "acceleration_pulse_amplitude_cv": 0.26865635625380296,
+    "acceleration_pulse_interval_cv": 2.9584512127836233,
+    "acceleration_crest_factor": 5.006226630899569,
+    "acceleration_dropout_ratio": 0.04532807790401113,
+    "acceleration_spectral_centroid_hz": 737.3774516923359,
+    "acceleration_rms_dbfs": -14.471884497752974,
+    "afterfire_band_shares": [
+      0.26712595883171536,
+      0.563447778742563,
+      0.16861263241867655,
+      0.0003020866713310551
+    ],
+    "afterfire_spectral_flux": 0.19171367846514886,
+    "afterfire_modulation_depth": 0.7249149360420775,
+    "afterfire_modulation_peak_hz": 54.5,
+    "afterfire_modulation_energy": 0.002749063705211817,
+    "afterfire_pulse_amplitude_cv": 0.2742960226002092,
+    "afterfire_pulse_interval_cv": 0.793253226028914,
+    "afterfire_crest_factor": 6.395644666447351,
+    "afterfire_dropout_ratio": 0.0,
+    "afterfire_spectral_centroid_hz": 564.8821826428158,
+    "afterfire_rms_dbfs": -18.538245180104983
+  }
+}

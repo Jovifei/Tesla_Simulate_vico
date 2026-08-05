@@ -13,6 +13,16 @@ _PROFILES: Mapping[str, Mapping[str, float]] = {
     "ferrari_458": {"min_rpm": 4200.0, "cluster_stride": 21.0, "gain": 0.060, "low_hz": 115.0, "high_hz": 1550.0, "stereo": 0.72},
     "hellcat": {"min_rpm": 3300.0, "cluster_stride": 17.0, "gain": 0.095, "low_hz": 78.0, "high_hz": 920.0, "stereo": 0.62},
     "rx7_fd": {"min_rpm": 4300.0, "cluster_stride": 25.0, "gain": 0.045, "low_hz": 135.0, "high_hz": 2050.0, "stereo": 0.70},
+    # Aventador V12 NA: high scream backfire, restrained low.
+    "aventador_lp700": {"min_rpm": 4200.0, "cluster_stride": 21.0, "gain": 0.055, "low_hz": 120.0, "high_hz": 1600.0, "stereo": 0.70},
+    # C63 V8 NA: AMG bark + headers backfire, deep.
+    "c63_w204": {"min_rpm": 3300.0, "cluster_stride": 17.0, "gain": 0.090, "low_hz": 80.0, "high_hz": 1000.0, "stereo": 0.62},
+    # GT-R V6 tt: tuned backfire pops.
+    "gtr_r35": {"min_rpm": 3300.0, "cluster_stride": 18.0, "gain": 0.080, "low_hz": 90.0, "high_hz": 1200.0, "stereo": 0.62},
+    # LFA V10 NA: refined, minimal backfire.
+    "lfa": {"min_rpm": 4500.0, "cluster_stride": 23.0, "gain": 0.040, "low_hz": 140.0, "high_hz": 1800.0, "stereo": 0.72},
+    # Supra I6 tt: 2JZ pops, deep.
+    "supra_jza80": {"min_rpm": 3300.0, "cluster_stride": 18.0, "gain": 0.085, "low_hz": 85.0, "high_hz": 1100.0, "stereo": 0.62},
 }
 _SCOPE = "synthetic; uncalibrated; not OEM reproduction"
 

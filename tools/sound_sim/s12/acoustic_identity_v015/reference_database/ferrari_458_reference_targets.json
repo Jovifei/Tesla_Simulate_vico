@@ -1,0 +1,143 @@
+{
+  "schema": "s12.ferrari_reference_targets.v1",
+  "vehicle": "ferrari_458",
+  "display_name": "Ferrari 458 Italia",
+  "note": "Derived relative metrics only; public audio remains outside the repository.",
+  "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+  "boundary": "synthetic; uncalibrated; not OEM reproduction",
+  "band_edges_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "sources": [
+    {
+      "id": "X0yiRilcKME",
+      "url": "https://www.youtube.com/watch?v=X0yiRilcKME",
+      "setup": "AutoTopNL stock-bias acceleration",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 8.35,
+          "rms_dbfs": -33.340751159997986,
+          "spectral_centroid_hz": 980.3976507274288,
+          "band_shares": [
+            0.009412885744692423,
+            0.5208484688516404,
+            0.4672908175841338,
+            0.0021387538797539335
+          ],
+          "spectral_flux": 0.22130021672893463,
+          "modulation_depth": 0.9962791931705195,
+          "modulation_peak_hz": 5.029940119760479,
+          "modulation_energy": 0.0021321003555920554,
+          "pulse_amplitude_cv": 0.20672231074928343,
+          "pulse_interval_cv": 4.314943225630427,
+          "crest_factor": 10.414502943272433,
+          "dropout_ratio": 0.0
+        },
+        "acceleration": {
+          "duration_s": 63.648,
+          "rms_dbfs": -15.701242183135168,
+          "spectral_centroid_hz": 420.8992027805071,
+          "band_shares": [
+            0.35644258575270665,
+            0.5691188537274235,
+            0.0683429356009734,
+            0.004455761161902445
+          ],
+          "spectral_flux": 0.20287836709134854,
+          "modulation_depth": 0.7907546302565105,
+          "modulation_peak_hz": 70.51282051282051,
+          "modulation_energy": 0.00018334771637971598,
+          "pulse_amplitude_cv": 0.23073386850549238,
+          "pulse_interval_cv": 7.4055002551624955,
+          "crest_factor": 6.0960547008157775,
+          "dropout_ratio": 0.16907605279698304
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -23.05607130988228,
+          "spectral_centroid_hz": 656.206083837152,
+          "band_shares": [
+            0.12237011206585566,
+            0.6861693826320329,
+            0.18306445713380184,
+            0.0073385650688819835
+          ],
+          "spectral_flux": 0.2192079508152186,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 5.0,
+          "modulation_energy": 0.0019447942434957963,
+          "pulse_amplitude_cv": 0.28270359100786735,
+          "pulse_interval_cv": 5.791220743169533,
+          "crest_factor": 8.893778435594893,
+          "dropout_ratio": 0.02875
+        }
+      }
+    }
+  ],
+  "stock_median": {
+    "idle_band_shares": [
+      0.009412885744692423,
+      0.5208484688516404,
+      0.4672908175841338,
+      0.0021387538797539335
+    ],
+    "idle_spectral_flux": 0.22130021672893463,
+    "idle_modulation_depth": 0.9962791931705195,
+    "idle_modulation_peak_hz": 5.029940119760479,
+    "idle_modulation_energy": 0.0021321003555920554,
+    "idle_pulse_amplitude_cv": 0.20672231074928343,
+    "idle_pulse_interval_cv": 4.314943225630427,
+    "idle_crest_factor": 10.414502943272433,
+    "idle_dropout_ratio": 0.0,
+    "idle_spectral_centroid_hz": 980.3976507274288,
+    "idle_rms_dbfs": -33.340751159997986,
+    "acceleration_band_shares": [
+      0.35644258575270665,
+      0.5691188537274235,
+      0.0683429356009734,
+      0.004455761161902445
+    ],
+    "acceleration_spectral_flux": 0.20287836709134854,
+    "acceleration_modulation_depth": 0.7907546302565105,
+    "acceleration_modulation_peak_hz": 70.51282051282051,
+    "acceleration_modulation_energy": 0.00018334771637971598,
+    "acceleration_pulse_amplitude_cv": 0.23073386850549238,
+    "acceleration_pulse_interval_cv": 7.4055002551624955,
+    "acceleration_crest_factor": 6.0960547008157775,
+    "acceleration_dropout_ratio": 0.16907605279698304,
+    "acceleration_spectral_centroid_hz": 420.8992027805071,
+    "acceleration_rms_dbfs": -15.701242183135168,
+    "afterfire_band_shares": [
+      0.12237011206585566,
+      0.6861693826320329,
+      0.18306445713380184,
+      0.0073385650688819835
+    ],
+    "afterfire_spectral_flux": 0.2192079508152186,
+    "afterfire_modulation_depth": 1.0,
+    "afterfire_modulation_peak_hz": 5.0,
+    "afterfire_modulation_energy": 0.0019447942434957963,
+    "afterfire_pulse_amplitude_cv": 0.28270359100786735,
+    "afterfire_pulse_interval_cv": 5.791220743169533,
+    "afterfire_crest_factor": 8.893778435594893,
+    "afterfire_dropout_ratio": 0.02875,
+    "afterfire_spectral_centroid_hz": 656.206083837152,
+    "afterfire_rms_dbfs": -23.05607130988228
+  }
+}
