@@ -112,6 +112,16 @@ _RESIDUAL_WEIGHT_FLOOR = 1e-3
 _CHAIN_GENERALISATION_RATIO_MAX = 3.0
 _CHAIN_RESIDUAL_MAX = 0.35
 
+# 物理先验偏差修正的可迁移性判据（见 `model_bias_correction`）。修正向量必须在
+# **两个以上**工况点上复现，否则它描述的是某个工况点的局部差异，而不是模型的
+# 系统性偏差——一个点无法证伪"与工况点无关"。残差口径与录音链检验一致。
+_BIAS_TRANSPORT_MIN_SEGMENTS = 2
+_BIAS_TRANSPORT_RESIDUAL_MAX = 0.35
+# 补偿参考在对数域的混合权重。0.5 = 物理先验与参考各占一半（几何平均），沿用
+# Task 3.0 起的 `sqrt(physics * compensated)` 口径：两个来源都不足以单独定案，
+# 折中比二选一更诚实。
+_REFERENCE_BLEND_WEIGHT = 0.5
+
 # 参考库分段 -> 该段的名义工况点 (rpm, load)。参考库没有记录 rpm（所有段
 # `rpm_confidence: "none"`），这里给的是与段语义相符的估计值，属于假设。
 REFERENCE_SEGMENT_OPERATING_POINTS = {
@@ -250,6 +260,24 @@ class ChainFit:
     unfittable_reason: str = ""
 
 
+@dataclass(frozen=True)
+class BiasCorrection:
+    """物理先验相对补偿参考的系统性偏差，及其跨工况点可迁移性的检验结果。
+
+    `correction[b]` 是 band b 上 `compensated / physics` 的几何均值——大于 1 表示
+    物理先验低估了该 band，小于 1 表示高估。`transportable` 为假时 `correction`
+    退化为全 1（无修正），`reason` 说明被拒的理由。
+    """
+
+    vehicle_id: str
+    segments: tuple[str, ...]
+    correction: tuple[float, ...]
+    transport_residual: float
+    per_band_dispersion: tuple[float, ...]
+    transportable: bool
+    reason: str = ""
+
+
 def firing_frequency_hz(vehicle_id: str, rpm: float) -> float:
     """主序点火频率：`rpm/60 * firing_order`。"""
     return rpm / 60.0 * ENGINE_PRIORS[vehicle_id].firing_order
@@ -365,35 +393,145 @@ def compensated_reference_shares(
     return [float(value) for value in restored / restored.sum()]
 
 
+def model_bias_correction(
+    vehicle_id: str, reference: dict | None = None, fit: ChainFit | None = None
+) -> BiasCorrection:
+    """测量物理先验相对补偿参考的**系统性偏差**，并检验它能否跨工况点迁移。
+
+    为什么不能直接把参考段塞给状态
+    ------------------------------
+    参考段有自己的工况点（`REFERENCE_SEGMENT_OPERATING_POINTS`），六态也有自己的
+    工况点（`STATE_OPERATING_POINTS`），两者**并不重合**：`acceleration` 段录在
+    5000 rpm / load 0.85，而 `acceleration` 态定义在 4200 rpm / load 0.80。早先的
+    实现把"5000 rpm 的参考"与"4200 rpm 的物理"几何混合后当作 4200 rpm 的目标，
+    等于断言"两个不同工况点的频谱可以互换"，这在阶次级数随 rpm 线性上移的模型下
+    直接自相矛盾。
+
+    正确的做法是把参考携带的信息当作**模型误差**而不是**状态频谱**：在参考段
+    自己的工况点上比较，得到逐 band 的比值
+
+        r_b(seg) = compensated_b(seg) / physics_b(seg 的工况点)
+
+    `r_b` 描述的是"物理先验在 band b 上系统性高估/低估了多少"。它是模型的属性，
+    与工况点无关，因此可以施加到全部六态；而 `compensated_b(seg)` 本身是该工况点
+    的频谱，不能。
+
+    可迁移性必须被检验，不能被假定
+    ------------------------------
+    "r_b 与工况点无关"是一个可证伪的断言，本函数就去证伪它：在每个可用参考段上
+    各算一份 `r_b`，若它们互相矛盾，说明差异是工况点局部效应而非模型偏差，修正
+    不可迁移，全态回落纯物理先验。判据是预先声明的
+    `_BIAS_TRANSPORT_MIN_SEGMENTS` / `_BIAS_TRANSPORT_RESIDUAL_MAX`，残差口径与
+    录音链检验一致（band 占比加权的 log10 误差 RMS）。
+
+    单段情形一律拒绝：一个工况点无法证伪"与工况点无关"，此时应用修正就是把未经
+    检验的假设写进目标，与本模块"检验而非假定"的立场相悖。
+    """
+    reference = reference or load_reference_targets(vehicle_id)
+    fit = fit or fit_recording_chain(vehicle_id, reference)
+    segments = usable_reference_segments(vehicle_id, reference, fit)
+
+    if len(segments) < _BIAS_TRANSPORT_MIN_SEGMENTS:
+        return BiasCorrection(
+            vehicle_id=vehicle_id,
+            segments=segments,
+            correction=(1.0, 1.0, 1.0, 1.0),
+            transport_residual=float("inf"),
+            per_band_dispersion=(float("inf"),) * len(BAND_EDGES),
+            transportable=False,
+            reason=(
+                f"only {len(segments)} corroborated reference segment(s) survived the recording-chain "
+                f"check; at least {_BIAS_TRANSPORT_MIN_SEGMENTS} operating points are needed before a "
+                "prior-bias correction can be shown to transport across rpm"
+            ),
+        )
+
+    ratios = []
+    weights = []
+    for segment in segments:
+        rpm, load = REFERENCE_SEGMENT_OPERATING_POINTS[segment]
+        physics = np.asarray(physics_band_shares(vehicle_id, rpm, load), dtype=np.float64)
+        compensated = np.asarray(
+            compensated_reference_shares(vehicle_id, segment, fit, reference), dtype=np.float64
+        )
+        ratios.append(np.maximum(compensated, 1e-12) / np.maximum(physics, 1e-12))
+        weights.append(np.maximum(compensated, _RESIDUAL_WEIGHT_FLOOR))
+    ratio_stack = np.asarray(ratios, dtype=np.float64)
+    weight_stack = np.asarray(weights, dtype=np.float64)
+
+    log_ratio = np.log10(ratio_stack)
+    correction = np.power(10.0, log_ratio.mean(axis=0))
+    deviation = log_ratio - np.log10(correction)
+    residual = math.sqrt(
+        float(np.sum(weight_stack * deviation**2)) / float(weight_stack.sum())
+    )
+    dispersion = np.power(10.0, np.abs(deviation).max(axis=0))
+    transportable = residual <= _BIAS_TRANSPORT_RESIDUAL_MAX
+    return BiasCorrection(
+        vehicle_id=vehicle_id,
+        segments=segments,
+        correction=tuple(float(value) for value in correction),
+        transport_residual=residual,
+        per_band_dispersion=tuple(float(value) for value in dispersion),
+        transportable=transportable,
+        reason=(
+            ""
+            if transportable
+            else (
+                "the prior-bias correction does not reproduce across the corroborated segments "
+                f"(transport residual {residual:.3f} > {_BIAS_TRANSPORT_RESIDUAL_MAX:.2f}), so the "
+                "difference is an operating-point effect rather than a systematic model bias"
+            )
+        ),
+    )
+
+
 def state_targets(vehicle_id: str) -> dict[str, dict]:
-    """组装该车六态的 band 目标与逐态 provenance。"""
+    """组装该车六态的 band 目标与逐态 provenance。
+
+    参考信息以**一条全态统一的先验偏差修正**的形式进入（见
+    :func:`model_bias_correction`），而不是逐态替换。统一施加不只是为了自洽，
+    它本身就是修正定义的直接后果：修正描述的是模型的系统性偏差，模型对六态是
+    同一个，偏差自然也对六态是同一份。
+
+    逐态替换的具体危害是把 manifest 的频谱趋势打断：只有挂到参考段的态被拉低，
+    没挂上的邻态维持原值，rpm 升序的高频占比序列因此出现真实发动机不存在的
+    锯齿（`ManifestSpectralTrendTests` 守的正是这条）。趋势断裂不是判据挑剔，
+    而是"同一辆车用了两套互不相容的估计量"在数据上的显影。
+    """
     reference = load_reference_targets(vehicle_id)
     fit = fit_recording_chain(vehicle_id, reference)
-    usable = usable_reference_segments(vehicle_id, reference, fit)
+    bias = model_bias_correction(vehicle_id, reference, fit)
+
+    # 对数域按 `_REFERENCE_BLEND_WEIGHT` 混合：0.5 即物理先验与补偿参考各占一半，
+    # 与 Task 3.0 起沿用的 `sqrt(physics * compensated)` 口径逐字节等价，只是比值
+    # 现在取自参考段自己的工况点。
+    blend = np.power(np.asarray(bias.correction, dtype=np.float64), _REFERENCE_BLEND_WEIGHT)
 
     targets: dict[str, dict] = {}
     for state in STATE_KEYS:
         rpm, load, _throttle = STATE_OPERATING_POINTS[state]
         physics = np.asarray(physics_band_shares(vehicle_id, rpm, load), dtype=np.float64)
-        segment = REFERENCE_SEGMENT_FOR_STATE.get(state)
-        if segment is not None and segment in usable:
-            compensated = np.asarray(
-                compensated_reference_shares(vehicle_id, segment, fit, reference), dtype=np.float64
-            )
-            blended = np.sqrt(physics * compensated)
-            shares = blended / blended.sum()
+        if bias.transportable:
+            corrected = physics * blend
             entry = {
-                "band_shares_target": _rounded_unit_sum(shares),
+                "band_shares_target": _rounded_unit_sum(corrected / corrected.sum()),
                 "provenance": "hybrid",
-                "reference_segment": segment,
-                "basis": "geometric blend of the physics prior and the roll-off compensated reference segment",
+                "reference_segment": None,
+                "basis": (
+                    "physics prior corrected by the systematic bias measured against the roll-off "
+                    f"compensated reference segments {list(bias.segments)} at their own operating "
+                    f"points (transport residual {bias.transport_residual:.3f}, reference weight "
+                    f"{_REFERENCE_BLEND_WEIGHT:.2f} in the log domain); the correction is a property "
+                    "of the model, so it applies to every state alike"
+                ),
             }
         else:
             entry = {
                 "band_shares_target": _rounded_unit_sum(physics),
                 "provenance": "physics_derived",
                 "reference_segment": None,
-                "basis": _physics_only_basis(vehicle_id, state, segment, fit),
+                "basis": _physics_only_basis(vehicle_id, fit, bias),
             }
         entry["operating_point"] = {"rpm": rpm, "load": load}
         targets[state] = entry
@@ -574,21 +712,17 @@ def _chain_residual(
     return math.sqrt(total / weight_sum)
 
 
-def _physics_only_basis(vehicle_id: str, state: str, segment: str | None, fit: ChainFit) -> str:
+def _physics_only_basis(vehicle_id: str, fit: ChainFit, bias: BiasCorrection) -> str:
+    """说明该车为什么拿不到参考修正。逐层给出最靠前的那个否决理由。"""
     if fit.unfittable_reason:
         return f"{fit.unfittable_reason}; derived from the physics prior"
-    if segment is None:
-        return "no reference segment corresponds to this operating state; derived from the physics prior"
     if not fit.single_chain_consistent:
         return (
-            "reference segment discarded: the single recording-chain roll-off fitted on idle "
+            "reference discarded: the single recording-chain roll-off fitted on idle "
             f"does not generalise (out-of-sample residual {fit.out_of_sample_residual:.3f} vs "
             f"in-sample {fit.in_sample_residual:.3f}); derived from the physics prior"
         )
-    return (
-        "reference segment not corroborated by realism_reference_manifest.json; "
-        "derived from the physics prior"
-    )
+    return f"{bias.reason}; derived from the physics prior"
 
 
 def _rounded_unit_sum(shares: np.ndarray, digits: int = 6) -> list[float]:

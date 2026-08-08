@@ -5,10 +5,23 @@ from __future__ import annotations
 import numpy as np
 
 from ..contracts import SourceRender, VehicleStateTrace
+from ..tuning.state_band_shaper import _inject_state_spectral_targets
 
 
-def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> SourceRender:
-    """Render finite stereo pre-PTR pressure; this is not OEM reproduction."""
+def render_hellcat(
+    trace: VehicleStateTrace,
+    sample_rate_hz: int = 48000,
+    apply_state_shaping: bool = True,
+) -> SourceRender:
+    """Render finite stereo pre-PTR pressure; this is not OEM reproduction.
+
+    `apply_state_shaping` runs the shared per-state 4-band injection
+    (`tuning/state_band_shaper.py`) that Ferrari already uses. Hand-tuning
+    harmonic weights cannot satisfy six states x four bands simultaneously --
+    a change that fixes idle moves full_pull -- so the closing correction is
+    done by the same bounded, energy-preserving equaliser for every anchor.
+    Set False to inspect the raw synthesiser output.
+    """
     trace.validate()
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 8000:
         raise ValueError("sample_rate_hz must be an integer >= 8000")
@@ -38,20 +51,21 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
         right_envelope[sample] = right_pole * right_envelope[sample - 1] + right_impulses[sample]
     # Exhaust: 90-degree cross-plane V8 tone. The fundamental + 2nd harmonic carry the
     # heavy low-end body; the 3rd/4th harmonics (5.4/7.2 and 6.9/9.2 orders) lift the
-    # 250-1000 Hz mid band so accel_low falls from ~0.91 and accel_mid rises toward ~0.49
-    # (per-car coarse-realism tuning, handover 5.7). Gain raised vs baseline to keep the
-    # characteristic Hellcat low-end weight while the upper harmonics shift energy low->mid.
-    left_mono = 0.080 * left_envelope * (
+    # 250-1000 Hz mid band. Phase 3 retune: the physics-prior (chain-rejected, so
+    # physics_derived) target wants accel band0 ~0.51, band1 ~0.41 -- the previous
+    # balance put too much into band1 (0.55). Boost the fundamental/2nd and cut the
+    # 3rd/4th so the characteristic Hellcat low-end weight sits in 20-250 Hz.
+    left_mono = 0.090 * left_envelope * (
         np.sin(2.0 * np.pi * phase * 1.8)
-        + 0.70 * np.sin(2.0 * np.pi * phase * 3.6)
-        + 0.85 * np.sin(2.0 * np.pi * phase * 5.4)
-        + 0.77 * np.sin(2.0 * np.pi * phase * 7.2)
+        + 0.95 * np.sin(2.0 * np.pi * phase * 3.6)
+        + 0.55 * np.sin(2.0 * np.pi * phase * 5.4)
+        + 0.50 * np.sin(2.0 * np.pi * phase * 7.2)
     )
-    right_mono = 0.080 * right_envelope * (
+    right_mono = 0.090 * right_envelope * (
         np.sin(2.0 * np.pi * phase * 2.3 + 0.2)
-        + 0.60 * np.sin(2.0 * np.pi * phase * 4.7)
-        + 0.85 * np.sin(2.0 * np.pi * phase * 6.9)
-        + 0.77 * np.sin(2.0 * np.pi * phase * 9.2)
+        + 0.85 * np.sin(2.0 * np.pi * phase * 4.7)
+        + 0.55 * np.sin(2.0 * np.pi * phase * 6.9)
+        + 0.50 * np.sin(2.0 * np.pi * phase * 9.2)
     )
     exhaust_left_bank = np.column_stack((left_mono, 0.48 * left_mono))
     exhaust_right_bank = np.column_stack((0.48 * right_mono, right_mono))
@@ -80,12 +94,14 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
     blower_baseline = 0.30 * pressure_compensation * np.square(load) * np.maximum(throttle, 0.05)
     blower_gain = blower_baseline * (0.85 + 0.30 * load_boost_state) * (1.0 - 0.30 * bypass_state)
     # TVS blower whine: 5th rotor harmonic dominates the 250-1000 Hz mid band; the 10th
-    # harmonic is trimmed (0.38 -> 0.10) so the gated 1000-4000 Hz band stays near 0.003
-    # instead of inflating the high band.
+    # (order 23.6, 944-2440 Hz over the accel sweep) is the only source that tracks the
+    # 1-4 kHz band across the whole rpm range, so it carries the band2 target the casing
+    # passband cannot reach at redline. Restored 0.10 -> 0.30 now that the corrected
+    # physics target asks for band2 ~0.063 (accel) / ~0.119 (full_pull) rather than ~0.003.
     blower_mono = blower_gain * (
         0.34 * np.sin(2.0 * np.pi * shaft_phase)
-        + 0.94 * np.sin(2.0 * np.pi * shaft_phase * 5.0)
-        + 0.10 * np.sin(2.0 * np.pi * shaft_phase * 10.0)
+        + 0.82 * np.sin(2.0 * np.pi * shaft_phase * 5.0)
+        + 0.30 * np.sin(2.0 * np.pi * shaft_phase * 10.0)
     )
     blower = np.column_stack((0.65 * blower_mono, blower_mono))
     compressor_envelope = np.zeros(count)
@@ -95,13 +111,30 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
     belt = np.sin(2.0 * np.pi * shaft_phase)
     compressor = compressor_envelope * np.sin(2.0 * np.pi * shaft_phase * 5.0 + 0.4)
     valvetrain = np.sin(2.0 * np.pi * phase * 7.0) * np.sin(2.0 * np.pi * phase * 0.5 + 0.3)
-    casing_pressure_compensation = np.power(3000.0 / np.maximum(rpm, 850.0), 0.55)
+    # Casing/valvetrain radiation is IMPACT driven: the excitation grows with shaft speed
+    # (valve seating velocity, piston slap, chain/belt impacts), it does not grow as the
+    # engine slows. The previous law reused the cylinder-pressure compensation
+    # (3000/rpm)^0.55, which peaks at 2.06x at idle -- backwards, and it parked ~20% of the
+    # idle energy at 984/1312 Hz. The corrected physics target wants a Hellcat idle that is
+    # 95.5% below 250 Hz (the lopey low-frequency chug), so the casing law is inverted to
+    # rise with rpm. Side benefit: more casing at 1500-3300 rpm fills the 1-4 kHz band that
+    # full_pull was starving (0.025 vs 0.119).
+    casing_pressure_compensation = np.power(np.clip(rpm / 3000.0, 0.0, 2.0), 0.55)
     # Casing/valvetrain resonance orders kept high (72/96) so they land in the 250-1000 Hz
-    # mid band at idle (raising the idle spectral centroid toward ~290 Hz) and in the
-    # 4k-12k band at redline (outside the gated 1000-4000 Hz band). Gain raised for idle
-    # centroid; 2nd-order weight nudged 0.35 -> 0.45.
-    casing_mono = 0.10 * casing_pressure_compensation * (rpm > 0.0) * (0.30 + 0.70 * load) * (
-        np.sin(2.0 * np.pi * phase * 72.0) + 0.45 * np.sin(2.0 * np.pi * phase * 96.0)
+    # mid band at low rpm and in the 4k-12k band at redline (outside the gated
+    # 1000-4000 Hz band). 2nd-order weight 0.45.
+    # Structural radiation passband. A cast block + valve cover radiates through its own
+    # modal band (roughly 1-4 kHz); an order that sweeps out of that band stops radiating
+    # efficiently instead of following the crank to 10 kHz. Without this weight the 72/96
+    # orders dumped energy into 4-12 kHz at redline (measured band3 0.052 against a 0.011
+    # target) while 1-4 kHz starved (0.020 against 0.119). Log-Gaussian centred at 2.2 kHz.
+    def _casing_radiation_weight(order: float) -> np.ndarray:
+        order_hz = np.maximum(rpm, 1.0) / 60.0 * order
+        return np.exp(-0.5 * np.square(np.log(order_hz / 2200.0) / 0.62))
+
+    casing_mono = 0.30 * casing_pressure_compensation * (rpm > 0.0) * (0.30 + 0.70 * load) * (
+        _casing_radiation_weight(72.0) * np.sin(2.0 * np.pi * phase * 72.0)
+        + 0.45 * _casing_radiation_weight(96.0) * np.sin(2.0 * np.pi * phase * 96.0)
     )
     casing = np.column_stack((casing_mono, 0.78 * casing_mono))
     mechanical_mono = pressure_compensation * (0.010 * belt + 0.008 * valvetrain) + 0.012 * compressor + casing_mono
@@ -158,4 +191,7 @@ def render_hellcat(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sou
             "pressure_compensation": "continuous RPM-derived physical source law",
         },
     )
-    return render.validate()
+    validated = render.validate()
+    if not apply_state_shaping:
+        return validated
+    return _inject_state_spectral_targets(validated, "hellcat", trace, sample_rate_hz=sample_rate_hz)

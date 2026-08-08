@@ -68,6 +68,66 @@ def compute_order_map(
     return OrderMap(time_s=time_s, orders=orders, power=power, engine_hz=engine_hz)
 
 
+def _order_fraction_frame(
+    trace: VehicleStateTrace, sample_rate_hz: int, sample_count: int, default_frame: int = 2048
+) -> int:
+    """Frame length that can actually RESOLVE the 0.25-order grid.
+
+    Args:
+        trace: State timeline supplying the rpm the order grid is keyed to.
+        sample_rate_hz: Sample rate of the audio being analysed.
+        sample_count: Length of the audio in samples.
+        default_frame: Lower bound, i.e. the visualisation frame size.
+
+    Returns:
+        A frame length in samples, inside `[default_frame, sample_count]`.
+
+    **Why this exists.** `compute_order_map` samples the spectrum on a 0.25-order
+    grid, so adjacent samples are `0.25 * engine_hz` apart -- 25 Hz at 6000 rpm.
+    A Hann window of N samples has a main lobe of half-width `2 * fs / N`, which
+    at the visualisation default (N = 2048, fs = 48 kHz) is 46.9 Hz. Every
+    integer-order tone therefore paints its two neighbouring QUARTER-order
+    samples at roughly half its own level, and `_integer_half_order_fractions`
+    reports "leakage" that is purely an artefact of the window. Measured on a
+    render whose content is 100 % integer-order by construction (RX-7 at
+    6000 rpm): N = 2048 -> 0.548, N = 4096 -> 0.990, N = 8192 -> 1.000.
+
+    Under-resolved, the metric saturates near 0.55 for a PERFECT signal, so a
+    0.58 gate is unreachable and the number carries no information. Resolved, it
+    is genuinely discriminating: pure integer-order content -> 1.0, broadband
+    noise -> 0.25 (one grid point in four), half-order (cross-plane V8) content
+    -> a large `half` share.
+
+    The resolution criterion is ``2 * fs / N <= 0.25 * engine_hz``, i.e.
+    ``N >= 8 * fs / engine_hz``, evaluated at the LOWEST rpm on the trace --
+    the worst case, because the order grid is finest in Hz terms there.
+
+    **Why it is capped for a sweep.** A long window only helps while the orders
+    stand still. Over N samples an order-k component moves by
+    ``k * d(engine_hz)/dt * N / fs``; once that exceeds a quarter order the
+    window smears more than it resolves. The cap holds the top of the map
+    (order 24) inside a quarter order, so a fast rpm sweep falls back to
+    `default_frame` and the fractions degrade honestly rather than being
+    fabricated by an over-long window.
+
+    `compute_order_map`'s own default is deliberately NOT changed: the plotted
+    map trades frequency resolution for the time resolution it needs.
+    """
+    engine_hz = np.asarray(trace.rpm, dtype=np.float64) / 60.0
+    lowest = float(np.min(engine_hz))
+    if lowest <= 0.0:
+        return default_frame
+    required = 8.0 * sample_rate_hz / lowest
+    span_s = float(trace.time_s[-1] - trace.time_s[0])
+    if engine_hz.size > 1 and span_s > 0.0:
+        step_s = span_s / float(engine_hz.size - 1)
+        slew_hz_per_s = float(np.max(np.abs(np.diff(engine_hz)))) / step_s
+        if slew_hz_per_s > 0.0:
+            required = min(required, 0.25 * lowest * sample_rate_hz / (24.0 * slew_hz_per_s))
+    frame = int(2 ** int(np.ceil(np.log2(max(required, float(default_frame))))))
+    return int(np.clip(frame, default_frame, max(sample_count, default_frame)))
+
+
 def compute_engine_identity_metrics(
     vehicle_id: str, render: SourceRender, trace: VehicleStateTrace, sample_rate_hz: int = 48000
 ) -> dict[str, object]:
@@ -110,7 +170,22 @@ def compute_engine_identity_metrics(
             "blower_load_correlation": _frame_energy_state_correlation(blower, trace, sample_rate_hz, "load"),
         }
     else:
-        integer, half = _integer_half_order_fractions(order_map)
+        # Integer/half fractions need a window that resolves the 0.25-order grid
+        # (see `_order_fraction_frame`); the plotted `order_map` above keeps the
+        # short, time-resolved window.
+        fraction_frame = _order_fraction_frame(trace, sample_rate_hz, signal.shape[0])
+        fraction_map = (
+            order_map
+            if fraction_frame <= 2048
+            else compute_order_map(
+                render.pressure,
+                trace,
+                sample_rate_hz,
+                frame_size=fraction_frame,
+                hop_size=max(fraction_frame // 4, 1),
+            )
+        )
+        integer, half = _integer_half_order_fractions(fraction_map)
         turbo = _stem(render, "turbo")
         turbine = _stem(render, "turbine")
         lift = _stem(render, "lift")

@@ -9,14 +9,14 @@
       "states": {
         "idle": {
           "band_shares_target": [
-            0.828572,
-            0.129491,
-            0.034324,
-            0.007613
+            0.840755,
+            0.13237,
+            0.024416,
+            0.002459
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.983 vs in-sample 0.087); derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 1100.0,
             "load": 0.12
@@ -29,14 +29,14 @@
         },
         "steady_cruise": {
           "band_shares_target": [
-            0.628079,
-            0.258218,
-            0.091074,
-            0.022629
+            0.654752,
+            0.271181,
+            0.066559,
+            0.007508
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 3600.0,
             "load": 0.42
@@ -48,14 +48,14 @@
         },
         "acceleration": {
           "band_shares_target": [
-            0.343016,
-            0.517481,
-            0.11444,
-            0.025063
+            0.360107,
+            0.547294,
+            0.084225,
+            0.008374
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.983 vs in-sample 0.087); derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 4200.0,
             "load": 0.8
@@ -67,14 +67,14 @@
         },
         "full_pull": {
           "band_shares_target": [
-            0.384567,
-            0.412064,
-            0.158883,
-            0.044486
+            0.415645,
+            0.448666,
+            0.120386,
+            0.015303
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 7200.0,
             "load": 0.94
@@ -86,14 +86,14 @@
         },
         "lift_afterfire": {
           "band_shares_target": [
-            0.045667,
-            0.735056,
-            0.18081,
-            0.038467
+            0.04936,
+            0.800399,
+            0.137008,
+            0.013233
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.983 vs in-sample 0.087); derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 6000.0,
             "load": 0.1
@@ -106,14 +106,14 @@
         },
         "idle_return": {
           "band_shares_target": [
-            0.763105,
-            0.171723,
-            0.05305,
-            0.012122
+            0.780949,
+            0.177043,
+            0.03806,
+            0.003948
           ],
-          "provenance": "physics_derived",
+          "provenance": "hybrid",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "physics prior corrected by the systematic bias measured against the roll-off compensated reference segments ['idle', 'acceleration'] at their own operating points (transport residual 0.021, reference weight 0.50 in the log domain); the correction is a property of the model, so it applies to every state alike",
           "operating_point": {
             "rpm": 1800.0,
             "load": 0.12
@@ -139,7 +139,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.315 vs in-sample 0.022); derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 1100.0,
             "load": 0.12
@@ -158,7 +158,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 3600.0,
             "load": 0.42
@@ -177,7 +177,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.315 vs in-sample 0.022); derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 4200.0,
             "load": 0.8
@@ -197,7 +197,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 7200.0,
             "load": 0.94
@@ -216,7 +216,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "reference segment discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.315 vs in-sample 0.022); derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 6000.0,
             "load": 0.1
@@ -236,7 +236,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.188 vs in-sample 0.014); derived from the physics prior",
           "operating_point": {
             "rpm": 1800.0,
             "load": 0.12
@@ -254,14 +254,14 @@
       "states": {
         "idle": {
           "band_shares_target": [
-            0.948088,
-            0.048661,
-            0.002687,
-            0.000564
+            0.90526,
+            0.073089,
+            0.017771,
+            0.00388
           ],
-          "provenance": "hybrid",
-          "reference_segment": "idle",
-          "basis": "geometric blend of the physics prior and the roll-off compensated reference segment",
+          "provenance": "physics_derived",
+          "reference_segment": null,
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 1100.0,
             "load": 0.12
@@ -281,7 +281,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 3600.0,
             "load": 0.42
@@ -300,7 +300,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "reference segment not corroborated by realism_reference_manifest.json; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 4200.0,
             "load": 0.8
@@ -320,7 +320,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 7200.0,
             "load": 0.94
@@ -340,7 +340,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "reference segment not corroborated by realism_reference_manifest.json; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 6000.0,
             "load": 0.1
@@ -361,7 +361,7 @@
           ],
           "provenance": "physics_derived",
           "reference_segment": null,
-          "basis": "no reference segment corresponds to this operating state; derived from the physics prior",
+          "basis": "reference discarded: the single recording-chain roll-off fitted on idle does not generalise (out-of-sample residual 0.217 vs in-sample 0.057); derived from the physics prior",
           "operating_point": {
             "rpm": 1800.0,
             "load": 0.12
@@ -398,11 +398,11 @@
     },
     "vehicles": {
       "ferrari_458": {
-        "fc_hz": 560.8679,
-        "order_n": 2.625,
-        "in_sample_residual": 0.086992,
-        "out_of_sample_residual": 0.983244,
-        "single_chain_consistent": false,
+        "fc_hz": 89.1238,
+        "order_n": 4.25,
+        "in_sample_residual": 0.070456,
+        "out_of_sample_residual": 0.126296,
+        "single_chain_consistent": true,
         "fitted_on": "idle",
         "validated_on": [
           "idle",
@@ -413,13 +413,13 @@
           "idle",
           "acceleration"
         ],
-        "applied": false
+        "applied": true
       },
       "hellcat": {
-        "fc_hz": 594.053,
-        "order_n": 0.75,
-        "in_sample_residual": 0.022447,
-        "out_of_sample_residual": 0.314759,
+        "fc_hz": 133.2741,
+        "order_n": 4.375,
+        "in_sample_residual": 0.013994,
+        "out_of_sample_residual": 0.188421,
         "single_chain_consistent": false,
         "fitted_on": "idle",
         "validated_on": [
@@ -436,9 +436,9 @@
       "rx7_fd": {
         "fc_hz": 15.0,
         "order_n": 5.0,
-        "in_sample_residual": 0.102798,
-        "out_of_sample_residual": 0.222747,
-        "single_chain_consistent": true,
+        "in_sample_residual": 0.056906,
+        "out_of_sample_residual": 0.217217,
+        "single_chain_consistent": false,
         "fitted_on": "idle",
         "validated_on": [
           "idle",
@@ -448,7 +448,69 @@
         "registry_corroborated_segments": [
           "idle"
         ],
-        "applied": true
+        "applied": false
+      }
+    }
+  },
+  "physics_prior_bias_correction": {
+    "method": "the compensated reference is compared against the physics prior AT THE REFERENCE SEGMENT'S OWN OPERATING POINT, yielding a per-band ratio that measures how far the prior is systematically off. That ratio is a property of the model, not of an operating point, so it is applied to all six states at once -- unlike the segment spectrum itself, which belongs to its own rpm and load and cannot be transplanted onto a different state",
+    "acceptance": {
+      "min_corroborated_segments": 2,
+      "transport_residual_max": 0.35,
+      "residual_metric": "band-share weighted RMS of the log10 spread of the per-segment ratios about their geometric mean",
+      "rationale": "a single segment cannot falsify the claim that the ratio is operating-point independent, so one segment is never enough"
+    },
+    "reference_blend_weight": 0.5,
+    "vehicles": {
+      "ferrari_458": {
+        "segments": [
+          "idle",
+          "acceleration"
+        ],
+        "correction": [
+          1.071599,
+          1.087558,
+          0.526655,
+          0.108548
+        ],
+        "transport_residual": 0.021034,
+        "per_band_dispersion": [
+          1.059683,
+          1.017164,
+          1.007706,
+          1.274566
+        ],
+        "transportable": true,
+        "applied": true,
+        "reason": ""
+      },
+      "hellcat": {
+        "segments": [],
+        "correction": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "transport_residual": null,
+        "per_band_dispersion": null,
+        "transportable": false,
+        "applied": false,
+        "reason": "only 0 corroborated reference segment(s) survived the recording-chain check; at least 2 operating points are needed before a prior-bias correction can be shown to transport across rpm"
+      },
+      "rx7_fd": {
+        "segments": [],
+        "correction": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "transport_residual": null,
+        "per_band_dispersion": null,
+        "transportable": false,
+        "applied": false,
+        "reason": "only 0 corroborated reference segment(s) survived the recording-chain check; at least 2 operating points are needed before a prior-bias correction can be shown to transport across rpm"
       }
     }
   },

@@ -29,10 +29,119 @@ from __future__ import annotations
 import numpy as np
 
 from ..contracts import SourceRender, VehicleStateTrace
+from ..tuning.state_band_shaper import _inject_state_spectral_targets
+
+# --- Exhaust blowdown pulse constants -------------------------------------
+# Mirror of the target-side physics prior in
+# `tuning/reference_reconstruction.py` (`_exhaust_pulse_shape`,
+# `ENGINE_PRIORS["rx7_fd"]`). The manifest targets were rebuilt in Task 3.1
+# WITH that pulse term, but the synthesiser never carried it, which is why the
+# raw render was mid-dominant (accel band0 0.205 against a 0.614 target) and
+# the shared equaliser had to do the whole job. See `_exhaust_pulse_weights`.
+_EXHAUST_RESONANCE_HZ = 95.0  # ENGINE_PRIORS["rx7_fd"].exhaust_resonance_hz
+_EXHAUST_RESONANCE_Q = 2.5  # reference_reconstruction._EXHAUST_RESONANCE_Q
+_EXHAUST_PULSE_ORDERS = np.arange(1.0, 17.0, 1.0)
+# Rotor-to-rotor variation: the two rotors are not acoustically identical, so
+# the 2/rev blowdown train carries a weak 1/rev asymmetry. This is the same
+# mechanism the prior credits for the RX-7's odd integer orders.
+_EXHAUST_ROTOR_IMBALANCE = 0.15
+# Level of the blowdown train relative to the order-series body at load 1.0.
+# Calibrated so the RAW render lands close to the manifest band targets at the
+# steady operating points; the shared equaliser is then a trim, not a rebuild.
+_EXHAUST_PULSE_GAIN = 1.0
+# Upper bound on the low-load turbo compensation (see `_turbo_pressure_drive`).
+_TURBO_DRIVE_CEILING = 1.5
+
+# --- Throttle-plate flow gate on the turbo stems ---------------------------
+# Compressor whine and turbine whistle are FLOW noise: they need gas moving
+# through the machine. The shaft has inertia and spins down over ~0.2 s (that
+# lag is real and is what `primary_spool` / `boost_state` model), but the moment
+# the throttle plate shuts, the charge is dumped through the blow-off valve and
+# the exhaust mass flow collapses to the pumping residual -- so the RADIATED
+# whine dies within a plenum-emptying time, not a shaft-run-down time.
+#
+# Without this gate the model kept the compressor whine at -9.9 dB under
+# `rotary` right through a throttle lift, which made it 46x louder than the
+# blow-off valve that was supposedly venting. Since the whine sits at order 18
+# (1.56 kHz at 5200 rpm) it single-handedly owned 1-4 kHz during
+# `lift_afterfire` (raw band2 0.223 against a 0.084 target), so the shared
+# equaliser answered with a -4.4 dB band2 cut that buried the `lift` stem.
+_FLOW_GATE_FLOOR = 0.10  # closed-plate pumping residual, fraction of full flow
+_FLOW_GATE_TAU_S = 0.060  # plenum blowdown / exhaust scavenge time constant
 
 
-def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> SourceRender:
-    """Render finite stereo pre-PTR pressure; this is not OEM reproduction."""
+def _exhaust_pulse_weights(firing_hz: np.ndarray) -> np.ndarray:
+    """Unit-energy per-order amplitude weights of the exhaust blowdown pulse.
+
+    Args:
+        firing_hz: Instantaneous eccentric-shaft frequency (rpm/60), shape [N].
+
+    Returns:
+        Amplitude weights, shape [len(`_EXHAUST_PULSE_ORDERS`), N]. Each column
+        has unit L2 norm.
+
+    The pipe is a second-order bandpass resonator, exactly as on the target
+    side: ``|H(f)|^2 = x^2 / ((1 - x^2)^2 + (x/Q)^2)`` with ``x = f / f_res``.
+    The ``x^2`` numerator is the monopole radiation efficiency of the open
+    tailpipe -- steady flow (DC) radiates no sound -- and the pole pair is the
+    pipe's fundamental standing wave.
+
+    **Why the columns are normalised.** The target model applies the pulse as
+    ``harmonic_total * pulse_fraction * load**2 * _broadband_band_shares(...)``
+    and `_broadband_band_shares` divides by its own total, i.e. the pipe sets
+    the pulse's SPECTRUM while the gas dynamics set its LEVEL. Mirroring that
+    normalisation here keeps the two models consistent and, as a side effect,
+    stops the resonance from producing an rpm-dependent level swing when an
+    order sweeps through 95 Hz (which would blow the cross-rpm LUFS spread
+    gate). Only the shape is rpm dependent.
+    """
+    orders = _EXHAUST_PULSE_ORDERS[:, np.newaxis]
+    parity = np.where(_EXHAUST_PULSE_ORDERS % 2.0 == 0.0, 1.0, _EXHAUST_ROTOR_IMBALANCE)
+    x = orders * np.asarray(firing_hz, dtype=np.float64)[np.newaxis, :] / _EXHAUST_RESONANCE_HZ
+    response = x * x / ((1.0 - x * x) ** 2 + (x / _EXHAUST_RESONANCE_Q) ** 2)
+    power = np.square(parity)[:, np.newaxis] * response
+    return np.sqrt(power / np.maximum(power.sum(axis=0, keepdims=True), 1e-30))
+
+
+def _turbo_pressure_drive(combustion_drive: np.ndarray, load: np.ndarray) -> np.ndarray:
+    """Bounded peak/mean exhaust-pressure ratio driving the turbo stems.
+
+    Args:
+        combustion_drive: Per-sample combustion intensity (0.30 + 0.70*load).
+        load: Per-sample engine load in [0, 1].
+
+    Returns:
+        Bounded drive multiplier, shape [N].
+
+    `combustion_drive / load` is unbounded as load -> 0: at load 0.12 it reaches
+    3.2, so a throttle lift made the compressor whine SURGE by 10 dB exactly
+    when the blow-off valve is venting and the compressor is spinning down.
+    That inverted band balance during `lift_afterfire` (raw band2 0.55 against
+    a 0.082 target) and forced the shared equaliser into an -8.5 dB band2 cut,
+    which is what buried the `lift` stem 33 dB under `rotary`. The peak/mean
+    exhaust pressure ratio of a real engine is bounded, so the compensation is
+    clipped at `_TURBO_DRIVE_CEILING`; the high-load behaviour (ratio <= 1.13
+    for load >= 0.7) is untouched.
+    """
+    return np.clip(combustion_drive / np.maximum(load, 0.05), 0.0, _TURBO_DRIVE_CEILING)
+
+
+def render_rx7_fd(
+    trace: VehicleStateTrace,
+    sample_rate_hz: int = 48000,
+    apply_state_shaping: bool = True,
+) -> SourceRender:
+    """Render finite stereo pre-PTR pressure; this is not OEM reproduction.
+
+    `apply_state_shaping` runs the shared per-state 4-band injection
+    (`tuning/state_band_shaper.py`) that Ferrari already uses. The raw
+    synthesiser is mid-dominant at the steady operating points (accel band0
+    0.205 against a 0.614 target) because the order weighting that keeps the
+    rotary "braap" texture also spreads energy across orders 2..12; the shared
+    equaliser restores the low-dominant balance the reference demands WITHOUT
+    collapsing the order structure that carries the non-piston character.
+    Set False to inspect the raw synthesiser output.
+    """
     trace.validate()
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 8000:
         raise ValueError("sample_rate_hz must be an integer >= 8000")
@@ -116,6 +225,23 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     )
     rotor_housing = np.column_stack((housing_mono, 0.70 * housing_mono))
 
+    # --- Exhaust blowdown pulse: the low-frequency backbone the synthesiser
+    # was missing. Each rotor's exhaust port opening dumps a pressure pulse
+    # into the header; the pipe's fundamental standing wave (95 Hz for the FD's
+    # ~2.9 m run) radiates it from the tailpipe. Because the train repeats at
+    # 2/rev, ALL of its energy lands on integer engine orders, so it lifts
+    # `integer_order_concentration` at the same time as it restores the
+    # low-dominant band balance -- the opposite of what a broadband noise bed
+    # would do. Energy scales as load^2 (cylinder pressure ~ charge ~ load,
+    # acoustic energy ~ pressure^2), matching `_PULSE_LOAD_EXPONENT` on the
+    # target side, so idle (load 0.12) is barely touched. ---
+    pulse_weights = _exhaust_pulse_weights(rpm / 60.0)
+    exhaust_mono = np.zeros(count)
+    for index, order in enumerate(_EXHAUST_PULSE_ORDERS):
+        exhaust_mono += pulse_weights[index] * np.sin(2.0 * np.pi * phase * order)
+    exhaust_mono *= _EXHAUST_PULSE_GAIN * load * (rpm > 0.0)
+    exhaust = np.column_stack((exhaust_mono, 0.78 * exhaust_mono))
+
     # --- Sequential twin-turbo: primary (always) + secondary (rpm/load gated)
     # spool, boost onset, and blow-off/lift on throttle release. Kept LOW gain
     # so it adds subtle character only; the reference carries ~0 energy >1 kHz. ---
@@ -123,10 +249,16 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     secondary_spool = np.zeros(count)
     boost_state = np.zeros(count)
     blow_off_state = np.zeros(count)
+    # Gas flow through both machines, lagged by the plenum blowdown time only --
+    # deliberately MUCH faster than the shaft states below. See `_FLOW_GATE_*`.
+    flow_target = _FLOW_GATE_FLOOR + (1.0 - _FLOW_GATE_FLOOR) * throttle
+    flow_gate = np.zeros(count)
+    flow_gate[0] = flow_target[0]
     primary_target = load * throttle * np.clip(rpm / 5200.0, 0.0, 1.1)
     secondary_gate = np.clip((rpm - 4300.0) / 1100.0, 0.0, 1.0) * np.clip((load - 0.35) / 0.45, 0.0, 1.0)
     secondary_target = primary_target * secondary_gate
     for sample in range(1, count):
+        flow_gate[sample] = flow_gate[sample - 1] + (flow_target[sample] - flow_gate[sample - 1]) / (_FLOW_GATE_TAU_S * sample_rate_hz)
         primary_spool[sample] = primary_spool[sample - 1] + (primary_target[sample] - primary_spool[sample - 1]) / (0.16 * sample_rate_hz)
         secondary_spool[sample] = secondary_spool[sample - 1] + (secondary_target[sample] - secondary_spool[sample - 1]) / (0.31 * sample_rate_hz)
         boost_target = 0.62 * primary_spool[sample] + 0.90 * secondary_spool[sample]
@@ -145,10 +277,10 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     # stays audible but does not dilute the order metric.
     turbo_order = 18.0
     turbo_phase = np.cumsum(turbo_order * rpm / 60.0) / sample_rate_hz
-    combustion_pressure_ratio = combustion_drive / np.maximum(load, 0.05)
-    turbo_mono = 0.44 * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
+    combustion_pressure_ratio = _turbo_pressure_drive(combustion_drive, load)
+    turbo_mono = 0.44 * flow_gate * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
     turbo = np.column_stack((0.62 * turbo_mono, turbo_mono))
-    turbine_mono = 0.22 * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
+    turbine_mono = 0.22 * flow_gate * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
     turbine = np.column_stack((turbine_mono, 0.58 * turbine_mono))
     blow_off_phase = np.cumsum(650.0 + 1100.0 * boost_state + 900.0 * blow_off_state) / sample_rate_hz
     blow_off_mono = 0.075 * blow_off_state * (
@@ -168,12 +300,26 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     # Boosted from 0.30 -> 1.00 (Track-S publication-floor recovery): the frozen
     # PTR low-cuts the 20-250 Hz rotary idle, collapsing idle K-weighted loudness
     # to ~-35 LUFS. A gated high-mid (~900 Hz, where the PTR still transmits)
-    # idle harmonic restores post-PTR idle loudness. No centroid target gate
-    # exists in the suite (centroid assertions are metric-correctness checks),
-    # so this upstream perceptual compensation is safe for every test while
-    # keeping the pre-PTR idle spectral character unchanged for acceleration.
+    # idle harmonic restores post-PTR idle loudness.
+    #
+    # BAND-PLACEMENT FIX (Phase 3): this used engine ORDERS 57.4/62.0, which
+    # only land on the intended ~880/950 Hz at 920 rpm. The acceptance harness
+    # evaluates idle at 1100 rpm (tuning.deep_realism.STATE_OPERATING_POINTS),
+    # where the same orders sit at 1052/1137 Hz -- i.e. inside 1000-4000 Hz, not
+    # the intended 250-1000 Hz. The stem carries a third of the idle energy, so
+    # it single-handedly pushed idle band2 to 0.304 against a 0.018 target and
+    # drove the shared band shaper into its -24 dB clip.
+    #
+    # A silencer/tailpipe standing wave is a FIXED acoustic resonance: its
+    # frequency is set by the pipe geometry and the speed of sound, not by shaft
+    # speed. Modelling it as a constant 880/950 Hz pair is both the physically
+    # correct form and inherently robust to whichever rpm the harness probes.
+    # Engine coupling is retained through the amplitude (idle gate x load).
+    idle_resonance_phase_a = 880.0 * time_s
+    idle_resonance_phase_b = 950.0 * time_s
     idle_loud_mono = 1.00 * idle_loud_gate * (rpm > 0.0) * (
-        0.6 * np.sin(2.0 * np.pi * phase * 57.4) + 0.4 * np.sin(2.0 * np.pi * phase * 62.0)
+        0.6 * np.sin(2.0 * np.pi * idle_resonance_phase_a)
+        + 0.4 * np.sin(2.0 * np.pi * idle_resonance_phase_b)
     ) * (0.4 + 0.6 * load)
     idle_loud = np.column_stack((idle_loud_mono, 0.72 * idle_loud_mono))
 
@@ -192,7 +338,7 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     hi_atten = np.clip((rpm - 4500.0) / 1500.0, 0.0, 1.0)
     high_level = 1.0 - 0.65 * hi_atten
     pressure = high_level[:, np.newaxis] * (
-        rotary + rotor_housing + turbo + turbine + blow_off + idle_loud
+        rotary + rotor_housing + exhaust + turbo + turbine + blow_off + idle_loud
     )
 
     # Diagnostics: confirm the inversion is gone (low orders, low centroid).
@@ -207,7 +353,7 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
     engaged = np.flatnonzero(secondary_spool >= 0.05)
     render = SourceRender(
         pressure=pressure,
-        stems={"rotary": rotary, "rotor_housing": rotor_housing, "turbo": turbo, "turbine": turbine, "blow_off": blow_off, "lift": blow_off, "idle_loud": idle_loud},
+        stems={"rotary": rotary, "rotor_housing": rotor_housing, "exhaust": exhaust, "turbo": turbo, "turbine": turbine, "blow_off": blow_off, "lift": blow_off, "idle_loud": idle_loud},
         diagnostics={
             "vehicle_id": "rx7_fd",
             "scope": "synthetic; uncalibrated; not OEM reproduction",
@@ -231,4 +377,7 @@ def render_rx7_fd(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> Sour
             "rotor_housing_model": "event_excited_phase_coupled_housing_resonances",
         },
     )
-    return render.validate()
+    validated = render.validate()
+    if not apply_state_shaping:
+        return validated
+    return _inject_state_spectral_targets(validated, "rx7_fd", trace, sample_rate_hz=sample_rate_hz)

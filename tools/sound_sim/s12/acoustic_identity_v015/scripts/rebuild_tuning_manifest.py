@@ -40,10 +40,14 @@ from acoustic_identity_v015.tuning.reference_reconstruction import (
     ENGINE_PRIORS,
     REFERENCE_SEGMENT_OPERATING_POINTS,
     VEHICLE_IDS,
+    _BIAS_TRANSPORT_MIN_SEGMENTS,
+    _BIAS_TRANSPORT_RESIDUAL_MAX,
     _EXHAUST_RESONANCE_Q,
     _PULSE_LOAD_EXPONENT,
+    _REFERENCE_BLEND_WEIGHT,
     fit_recording_chain,
     firing_frequency_hz,
+    model_bias_correction,
     registry_corroborated_segments,
     state_targets,
 )
@@ -86,6 +90,30 @@ def build_manifest(existing: dict) -> dict:
                 for segment, (rpm, load) in REFERENCE_SEGMENT_OPERATING_POINTS.items()
             },
             "vehicles": {vehicle: _chain_block(fits[vehicle]) for vehicle in VEHICLE_IDS},
+        },
+        "physics_prior_bias_correction": {
+            "method": (
+                "the compensated reference is compared against the physics prior AT THE "
+                "REFERENCE SEGMENT'S OWN OPERATING POINT, yielding a per-band ratio that "
+                "measures how far the prior is systematically off. That ratio is a property "
+                "of the model, not of an operating point, so it is applied to all six states "
+                "at once -- unlike the segment spectrum itself, which belongs to its own rpm "
+                "and load and cannot be transplanted onto a different state"
+            ),
+            "acceptance": {
+                "min_corroborated_segments": _BIAS_TRANSPORT_MIN_SEGMENTS,
+                "transport_residual_max": _BIAS_TRANSPORT_RESIDUAL_MAX,
+                "residual_metric": (
+                    "band-share weighted RMS of the log10 spread of the per-segment ratios "
+                    "about their geometric mean"
+                ),
+                "rationale": (
+                    "a single segment cannot falsify the claim that the ratio is "
+                    "operating-point independent, so one segment is never enough"
+                ),
+            },
+            "reference_blend_weight": _REFERENCE_BLEND_WEIGHT,
+            "vehicles": {vehicle: _bias_block(vehicle) for vehicle in VEHICLE_IDS},
         },
         "physics_prior": {
             "model": (
@@ -167,6 +195,22 @@ def _chain_block(fit) -> dict:
         "validated_on": list(fit.validated_on),
         "registry_corroborated_segments": list(registry_corroborated_segments(fit.vehicle_id)),
         "applied": fit.single_chain_consistent,
+    }
+
+
+def _bias_block(vehicle_id: str) -> dict:
+    bias = model_bias_correction(vehicle_id)
+    finite = bias.transportable or bias.segments
+    return {
+        "segments": list(bias.segments),
+        "correction": [round(value, 6) for value in bias.correction],
+        "transport_residual": round(bias.transport_residual, 6) if finite else None,
+        "per_band_dispersion": (
+            [round(value, 6) for value in bias.per_band_dispersion] if finite else None
+        ),
+        "transportable": bias.transportable,
+        "applied": bias.transportable,
+        "reason": bias.reason,
     }
 
 
