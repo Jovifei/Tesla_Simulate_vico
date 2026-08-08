@@ -243,6 +243,11 @@ class ChainFit:
     single_chain_consistent: bool
     fitted_on: str
     validated_on: tuple[str, ...] = field(default_factory=tuple)
+    # Non-empty when no chain could be fitted at all (the reference carries no
+    # trustworthy idle spectrum to fit on). Distinct from a fit that ran and was
+    # judged inconsistent: there is nothing to compensate with, so every state
+    # falls back to the physics prior.
+    unfittable_reason: str = ""
 
 
 def firing_frequency_hz(vehicle_id: str, rpm: float) -> float:
@@ -287,12 +292,36 @@ def physics_band_shares(vehicle_id: str, rpm: float, load: float) -> list[float]
     return [float(value) for value in energies / total]
 
 
+def _unfittable_chain(vehicle_id: str, reason: str) -> ChainFit:
+    """无法拟合录音链时的哨兵结果：残差记为 inf，一切回落物理先验。"""
+    return ChainFit(
+        vehicle_id=vehicle_id,
+        fc_hz=float("nan"),
+        order_n=float("nan"),
+        in_sample_residual=float("inf"),
+        out_of_sample_residual=float("inf"),
+        single_chain_consistent=False,
+        fitted_on="",
+        validated_on=(),
+        unfittable_reason=reason,
+    )
+
+
 def fit_recording_chain(vehicle_id: str, reference: dict | None = None) -> ChainFit:
-    """按 brief 的方法在 idle 段拟合高通 `(fc, n)`，并在其余段上检验它是否成立。"""
+    """按 brief 的方法在 idle 段拟合高通 `(fc, n)`，并在其余段上检验它是否成立。
+
+    参考库若没有可信的 idle 频谱（例如唯一音源被带宽闸门判为 codec 截断），
+    则返回 :func:`_unfittable_chain` 哨兵而不是抛错——"没有可信参考"是一个
+    正常的数据状态，其正确处置是全态回落物理先验，而不是让调用方崩溃。
+    """
     reference = reference or load_reference_targets(vehicle_id)
     segments = available_reference_segments(reference)
     if "idle" not in segments:
-        raise ValueError(f"{vehicle_id}: reference has no idle segment to fit the chain on")
+        return _unfittable_chain(
+            vehicle_id,
+            "reference carries no usable idle spectrum to fit the recording chain on "
+            "(no idle band shares survived the bandwidth gate)",
+        )
 
     grid = [
         (fc, order)
@@ -546,6 +575,8 @@ def _chain_residual(
 
 
 def _physics_only_basis(vehicle_id: str, state: str, segment: str | None, fit: ChainFit) -> str:
+    if fit.unfittable_reason:
+        return f"{fit.unfittable_reason}; derived from the physics prior"
     if segment is None:
         return "no reference segment corresponds to this operating state; derived from the physics prior"
     if not fit.single_chain_consistent:

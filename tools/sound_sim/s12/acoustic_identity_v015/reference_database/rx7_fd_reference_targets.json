@@ -47,7 +47,20 @@
           "pulse_amplitude_cv": 0.26437305230835156,
           "pulse_interval_cv": 0.6807063257083433,
           "crest_factor": 3.16467623491469,
-          "dropout_ratio": 0.0
+          "dropout_ratio": 0.0,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": true,
+            "cliff_hz": 14018.1,
+            "cliff_drop_db": 41.4,
+            "f99_hz": 489.9,
+            "rolloff_hi_hz": 8688.6,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 14018 Hz); note 99% of energy sits below 490 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+          }
         },
         "acceleration": {
           "duration_s": 19.184331065759636,
@@ -66,7 +79,20 @@
           "pulse_amplitude_cv": 0.2662493401630547,
           "pulse_interval_cv": 2.084779658966972,
           "crest_factor": 3.8725970195930506,
-          "dropout_ratio": 0.005213764337851929
+          "dropout_ratio": 0.005213764337851929,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": true,
+            "cliff_hz": 14152.7,
+            "cliff_drop_db": 44.7,
+            "f99_hz": 398.4,
+            "rolloff_hi_hz": 7746.6,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 14153 Hz); note 99% of energy sits below 398 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+          }
         },
         "afterfire": {
           "duration_s": 8.0,
@@ -85,7 +111,20 @@
           "pulse_amplitude_cv": 0.21544404756038746,
           "pulse_interval_cv": 2.4368626123324826,
           "crest_factor": 3.8846067415203986,
-          "dropout_ratio": 0.0025
+          "dropout_ratio": 0.0025,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 13910.4,
+            "cliff_drop_db": 46.1,
+            "f99_hz": 516.8,
+            "rolloff_hi_hz": 9948.3,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 13910 Hz)"
+          }
         }
       },
       "segment_quality": {
@@ -96,6 +135,7 @@
           "probe_windows": 124,
           "audible_windows": 124,
           "loud_p90_dbfs": -11.3,
+          "full_band_windows": 124,
           "lf_share_min": 0.45,
           "loud_margin_db": 8.0,
           "anchor_t_s": 60.0,
@@ -104,8 +144,22 @@
           "anchor_centroid_hz": 165.3,
           "candidate_windows": 2
         },
-        "acceleration": "energy_run",
+        "acceleration": "fallback_mid_clip",
+        "acceleration_full_band_fraction": 1.0,
         "afterfire": "flux_cluster"
+      },
+      "bandwidth": {
+        "spectral_shape_usable": true,
+        "codec_truncated": false,
+        "low_frequency_dominated": true,
+        "cliff_hz": 15019.4,
+        "cliff_drop_db": 41.7,
+        "f99_hz": 349.9,
+        "rolloff_hi_hz": 6260.8,
+        "cliff_floor_hz": 8000.0,
+        "cliff_drop_floor_db": 18.0,
+        "f99_diagnostic_floor_hz": 500.0,
+        "reason": "full-bandwidth recording (cliff 15019 Hz); note 99% of energy sits below 350 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
       }
     }
   ],
@@ -158,5 +212,19 @@
     "afterfire_dropout_ratio": 0.0025,
     "afterfire_spectral_centroid_hz": 179.96613316167495,
     "afterfire_rms_dbfs": -14.806045656803494
+  },
+  "bandwidth_gate": {
+    "f99_diagnostic_floor_hz": 500.0,
+    "cliff_floor_hz": 8000.0,
+    "cliff_drop_floor_db": 18.0,
+    "shape_rejected_sources": [],
+    "shape_metrics_available": [
+      "acceleration_band_shares",
+      "acceleration_spectral_centroid_hz",
+      "afterfire_band_shares",
+      "afterfire_spectral_centroid_hz",
+      "idle_band_shares",
+      "idle_spectral_centroid_hz"
+    ]
   }
 }

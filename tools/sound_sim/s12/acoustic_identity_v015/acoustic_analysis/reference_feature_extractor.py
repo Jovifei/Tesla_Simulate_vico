@@ -68,6 +68,7 @@ def extract_reference_features(
         "source_path": str(path.name),
         "sample_rate_hz": sample_rate_hz,
         "stft": {"window": "hann", "frame_size": frame_size, "hop_size": hop_size},
+        "bandwidth": assess_bandwidth(audio, sample_rate_hz),
         "segments": {},
     }
     if segment_quality is not None:
@@ -80,9 +81,49 @@ def extract_reference_features(
         seg = audio[start:end]
         if seg.size < frame_size:
             raise ValueError(f"segment {name!r} too short for analysis")
-        result["segments"][name] = _segment_metrics(seg, sample_rate_hz, frame_size, hop_size)
+        result["segments"][name] = _segment_metrics(
+            seg, sample_rate_hz, frame_size, hop_size
+        )
     return result
 
+
+# --- bandwidth acceptance thresholds (see assess_bandwidth) -----------------
+# A perceptual codec at low bitrate zeroes every bin above its cutoff, which
+# leaves a near-vertical wall in the spectrum. That wall is the only witness of
+# bandwidth destruction that does not also respond to the *content*, so it is
+# the sole gate. Measured as the steepest drop across one sixth of an octave
+# above _CLIFF_SEARCH_FROM_HZ.
+#
+# Rejected alternatives, and why (survey: scripts/_diag_cliff_survey.py over all
+# 15 research uploads, 4 s windows):
+#   * -60 dB roll-off < 8 kHz -- rejects 99 windows, of which only 3 carry a
+#     real cliff: a 97 % false-positive rate. The corner is measured relative to
+#     the window's own peak, so any window whose low band is large reads low.
+#     It threw away 25 of 53 Ferrari windows and 12 of 15 RX-7 windows while the
+#     encoders had in fact kept 12.3 kHz and 13.7 kHz respectively.
+#   * f99 < 500 Hz -- claimed to be a physical-impossibility bound for a loaded
+#     engine. It is not: a microphone at the tailpipe measures f99 = 285-840 Hz
+#     on the RX-7 because exhaust pulsation dominates the near field while
+#     combustion and mechanical noise radiate from further away. That is a
+#     recording-chain property, and reference_reconstruction already corrects
+#     for it; discarding the clip instead loses the only RX-7 source there is.
+# Both remain in the record as diagnostics, neither gates.
+_CLIFF_SEARCH_FROM_HZ = 3000.0
+# Band 3 spans 4-12 kHz. A cut below 8 kHz removes more than half of it, so the
+# band is unmeasured rather than measured-as-zero.
+_CODEC_CLIFF_FLOOR_HZ = 8000.0
+# Natural spectral roll-off in this corpus stays under ~15 dB per sixth octave;
+# the confirmed codec walls measure 21-23 dB.
+_CODEC_CLIFF_DROP_DB = 18.0
+# Retained for the diagnostic flag only -- see the note above.
+_MIN_WOT_F99_HZ = 500.0
+_BANDWIDTH_NFFT = 8192
+# Resolution of the short-time bandwidth mask. Codec truncation changes at edit
+# points in a compilation, not frame by frame, so one second is ample -- and it
+# must stay above _BANDWIDTH_NFFT samples at every supported sample rate.
+_BANDWIDTH_BLOCK_S = 1.0
+_CLIFF_OCTAVE_RATIO = 2.0 ** (1.0 / 6.0)
+_CLIFF_SMOOTH_HALFWIDTH = 3
 
 # --- idle acceptance thresholds (see _find_physical_idle) -------------------
 _IDLE_SILENCE_DBFS = -55.0      # below this a window is digital silence, not engine
@@ -91,6 +132,158 @@ _IDLE_LF_SHARE_RELAXED = 0.40   # last-resort relaxation
 _IDLE_LOUD_MARGINS_DB = (8.0, 5.0, 3.0, 1.0)  # progressive relaxation vs loud P90
 _IDLE_PROBE_WIN_S = 2.0
 _IDLE_PROBE_HOP_S = 0.5
+
+
+def _spectral_cliff(freqs: np.ndarray, power: np.ndarray) -> tuple[float, float]:
+    """Steepest drop across one sixth of an octave above :data:`_CLIFF_SEARCH_FROM_HZ`.
+
+    Returns ``(cliff_hz, drop_db)`` where ``cliff_hz`` is the frequency the drop
+    starts from. A lossy encoder that discards everything above its cutoff
+    produces a wall here; natural spectral roll-off does not, because it is
+    spread over octaves rather than concentrated in one sixth of one.
+    """
+    if freqs.size == 0:
+        return 0.0, 0.0
+    db = 10.0 * np.log10(np.maximum(power, 1e-30))
+    width = 2 * _CLIFF_SMOOTH_HALFWIDTH + 1
+    if db.size >= width:
+        db = np.convolve(db, np.ones(width) / width, mode="same")
+    lo_idx = np.where(freqs >= _CLIFF_SEARCH_FROM_HZ)[0]
+    if lo_idx.size == 0:
+        return 0.0, 0.0
+    hi_idx = np.searchsorted(freqs, freqs[lo_idx] * _CLIFF_OCTAVE_RATIO)
+    keep = hi_idx < freqs.size
+    lo_idx, hi_idx = lo_idx[keep], hi_idx[keep]
+    if lo_idx.size == 0:
+        return 0.0, 0.0
+    drops = db[lo_idx] - db[hi_idx]
+    best = int(np.argmax(drops))
+    return float(freqs[lo_idx[best]]), float(drops[best])
+
+
+def _is_codec_truncated(cliff_hz: float, drop_db: float) -> bool:
+    """A wall steep enough to be an encoder, low enough to eat into band 3."""
+    return bool(cliff_hz < _CODEC_CLIFF_FLOOR_HZ and drop_db >= _CODEC_CLIFF_DROP_DB)
+
+
+def _unmeasurable_bandwidth(reason: str) -> dict[str, object]:
+    """Verdict for a clip the measurement cannot be run on at all.
+
+    Unusable rather than usable: a window too short or too quiet to analyse has
+    not been shown to be intact, and letting it set a spectral target would be
+    asserting something never measured.
+    """
+    return {
+        "spectral_shape_usable": False,
+        "codec_truncated": False,
+        "low_frequency_dominated": False,
+        "cliff_hz": 0.0,
+        "cliff_drop_db": 0.0,
+        "f99_hz": 0.0,
+        "rolloff_hi_hz": 0.0,
+        "cliff_floor_hz": _CODEC_CLIFF_FLOOR_HZ,
+        "cliff_drop_floor_db": _CODEC_CLIFF_DROP_DB,
+        "f99_diagnostic_floor_hz": _MIN_WOT_F99_HZ,
+        "reason": reason,
+    }
+
+
+def assess_bandwidth(audio: np.ndarray, sample_rate_hz: int) -> dict[str, object]:
+    """Decide whether a recording can legitimately describe a spectral shape.
+
+    Why this gate exists
+    --------------------
+    The recording-chain fit only checks that a clip is *self-consistent*. A clip
+    that a lossy codec truncated at 4.4 kHz is perfectly self-consistent, so it
+    sails through that check and still poisons every band-share target it feeds:
+    because shares are normalised, the destroyed top band reads 0.000 and the
+    surviving bands are inflated by 1/(1 - missing).
+
+    What is measured
+    ----------------
+    ``cliff_hz`` / ``cliff_drop_db`` -- the encoder wall, via
+    :func:`_spectral_cliff`. This is the only gate. It is a property of the
+    *encode*: it appears at the same frequency in every window of a file the
+    codec truncated, and it does not move when the engine's own spectrum moves.
+
+    ``f99_hz`` and ``rolloff_hi_hz`` are still reported, but as diagnostics
+    only. Both respond to content: they read low on any clip whose low band is
+    large, which describes a tailpipe-adjacent microphone just as well as a
+    destroyed encode. Gating on them rejected 97 % of healthy material in this
+    corpus -- see the note beside :data:`_CODEC_CLIFF_FLOOR_HZ`. The near-field
+    tilt they detect is real and is corrected in ``reference_reconstruction``
+    by the recording-chain fit, which is where it belongs.
+
+    Args:
+        audio: mono float signal.
+        sample_rate_hz: sample rate in Hz.
+
+    Returns:
+        A record with the measurements, the verdict flags and a human-readable
+        ``reason``. ``spectral_shape_usable`` is the field callers should gate
+        on before letting the clip set a band-share or centroid target;
+        temporal features (modulation rate, pulse statistics) live in the low
+        band and survive truncation, so they are deliberately not gated here.
+    """
+    x = np.asarray(audio, dtype=np.float64)
+    peak = float(np.max(np.abs(x))) if x.size else 0.0
+    if peak <= 0.0 or x.size < _BANDWIDTH_NFFT:
+        return _unmeasurable_bandwidth("clip too short or silent to measure bandwidth")
+    x = x / peak
+
+    nfft = _BANDWIDTH_NFFT
+    hop = nfft // 2
+    win = np.hanning(nfft)
+    acc = np.zeros(nfft // 2 + 1)
+    used = 0
+    for start in range(0, x.size - nfft + 1, hop):
+        acc += np.square(np.abs(np.fft.rfft(x[start : start + nfft] * win)))
+        used += 1
+    acc /= max(used, 1)
+    freqs = np.fft.rfftfreq(nfft, 1.0 / sample_rate_hz)
+
+    band = (freqs >= 20.0) & (freqs <= min(20000.0, sample_rate_hz / 2 - 1))
+    f, p = freqs[band], acc[band]
+    total = float(p.sum())
+    if total <= 0.0:
+        return _unmeasurable_bandwidth("no energy in the 20 Hz-20 kHz analysis range")
+
+    cumulative = np.cumsum(p) / total
+    f99 = float(f[min(int(np.searchsorted(cumulative, 0.99)), f.size - 1)])
+    db = 10.0 * np.log10(np.maximum(p, 1e-30) / p.max())
+    above = np.where(db > -60.0)[0]
+    rolloff_hi = float(f[above[-1]]) if above.size else 0.0
+    cliff_hz, cliff_drop = _spectral_cliff(f, p)
+
+    truncated = _is_codec_truncated(cliff_hz, cliff_drop)
+    low_frequency_dominated = f99 < _MIN_WOT_F99_HZ
+    if truncated:
+        reason = (
+            f"{cliff_drop:.0f} dB wall across 1/6 octave at {cliff_hz:.0f} Hz "
+            f"(< {_CODEC_CLIFF_FLOOR_HZ:.0f} Hz): the encoder discarded most of "
+            "the 4-12 kHz band"
+        )
+    elif low_frequency_dominated:
+        reason = (
+            f"full-bandwidth recording (cliff {cliff_hz:.0f} Hz); note 99% of "
+            f"energy sits below {f99:.0f} Hz -- near-field bias for the "
+            "recording-chain fit to remove, not codec damage"
+        )
+    else:
+        reason = f"full-bandwidth recording (cliff {cliff_hz:.0f} Hz)"
+    return {
+        "spectral_shape_usable": not truncated,
+        "codec_truncated": bool(truncated),
+        "low_frequency_dominated": bool(low_frequency_dominated),
+        "cliff_hz": round(cliff_hz, 1),
+        "cliff_drop_db": round(cliff_drop, 1),
+        "f99_hz": round(f99, 1),
+        "rolloff_hi_hz": round(rolloff_hi, 1),
+        "cliff_floor_hz": _CODEC_CLIFF_FLOOR_HZ,
+        "cliff_drop_floor_db": _CODEC_CLIFF_DROP_DB,
+        "f99_diagnostic_floor_hz": _MIN_WOT_F99_HZ,
+        "reason": reason,
+    }
 
 
 def auto_annotate_segments(audio: np.ndarray, sample_rate_hz: int) -> dict[str, tuple[float, float]]:
@@ -139,12 +332,25 @@ def auto_annotate_segments_with_quality(
     flux_median = float(np.median(flux)) if flux.size else 0.0
     flux_std = float(np.std(flux)) if flux.size else 0.0
 
-    accel_win = _longest_run(rms > 1.3 * median_rms, frame_rate, 3.0, 25.0)
+    loud = rms > 1.3 * median_rms
+    full_band = _full_band_frame_mask(audio, sample_rate_hz, frame_rate, rms.size)
+
+    # A window may only set a spectral target if its spectrum was actually
+    # captured. Preferring loud-AND-full-band keeps the selector out of the
+    # truncated sub-sections of compilation clips; the plain loud run stays as
+    # a fallback so a fully truncated recording still yields a window (its
+    # segment-level bandwidth record then disqualifies it downstream).
+    accel_win = _longest_run(loud & full_band, frame_rate, 3.0, 25.0)
+    accel_verdict = "energy_run_full_band"
+    if accel_win is None:
+        accel_win = _longest_run(loud, frame_rate, 3.0, 25.0)
+        accel_verdict = "energy_run_bandwidth_unverified"
     after_win = _longest_run(flux > flux_median + 1.5 * flux_std, frame_rate, 2.0, 20.0) if flux.size else None
 
     duration = audio.size / sample_rate_hz
     if accel_win is None:
         accel_win = (max(0.0, duration * 0.4), min(duration, duration * 0.7))
+        accel_verdict = "fallback_mid_clip"
     if after_win is None:
         after_start = min(accel_win[1] + 1.0, duration - 4.0)
         after_win = (max(0.0, after_start), min(duration, after_start + 8.0))
@@ -160,20 +366,71 @@ def auto_annotate_segments_with_quality(
     quality: dict[str, object] = {
         "idle": idle_quality["verdict"],
         "idle_detail": idle_quality,
-        "acceleration": "energy_run",
+        "acceleration": accel_verdict,
+        "acceleration_full_band_fraction": round(float(np.mean(full_band)), 4),
         "afterfire": "flux_cluster",
     }
     return {k: (float(v[0]), float(v[1])) for k, v in segments.items()}, quality
 
 
-def _window_probe(seg: np.ndarray, sr: int) -> tuple[float, float, float]:
-    """Return (rms_dbfs, low_band_share, spectral_centroid_hz) for one window."""
+def _full_band_frame_mask(
+    audio: np.ndarray, sr: int, frame_rate: float, n_frames: int
+) -> np.ndarray:
+    """Per-RMS-frame mask: True where the local spectrum shows no codec wall.
+
+    Evaluated on coarse blocks (an FFT per block is plenty -- codec truncation
+    changes on the scale of an edit point, not a frame) and then broadcast onto
+    the RMS frame grid. A block is "full band" when :func:`_is_codec_truncated`
+    is False on it.
+    """
+    block = int(_BANDWIDTH_BLOCK_S * sr)
+    if block < _BANDWIDTH_NFFT or audio.size < block:
+        return np.ones(n_frames, dtype=bool)
+    n_blocks = audio.size // block
+    corners = np.zeros(n_blocks)
+    drops = np.zeros(n_blocks)
+    for i in range(n_blocks):
+        seg = audio[i * block : (i + 1) * block]
+        _rms, _lf, _centroid, corners[i], drops[i] = _window_probe_ext(seg, sr)
+    truncated = np.array(
+        [_is_codec_truncated(c, d) for c, d in zip(corners, drops)], dtype=bool
+    )
+    index = np.clip(
+        (np.arange(n_frames) / max(frame_rate, 1e-9) / _BANDWIDTH_BLOCK_S).astype(int),
+        0,
+        n_blocks - 1,
+    )
+    return ~truncated[index]
+
+
+def _window_probe_ext(seg: np.ndarray, sr: int) -> tuple[float, float, float, float, float]:
+    """Return (rms_dbfs, low_band_share, spectral_centroid_hz, cliff_hz, cliff_drop_db).
+
+    The cliff is the encoder-wall witness (see :func:`_spectral_cliff` /
+    :func:`assess_bandwidth`): the steepest drop across one sixth of an octave
+    above 3 kHz. A bandwidth-destroyed sub-section of a compilation file shows a
+    wall here even when the file as a whole reads healthy, so it is what the
+    window selectors use to stay out of truncated cuts.
+    """
     freqs, energy = _mean_stft_energy(seg, sr, 4096, 1024)
     total = float(energy.sum()) or 1e-15
     lf_share = _band_fraction(energy, freqs, *BAND_EDGES[0])
     centroid = float(np.sum(freqs * energy) / total)
     rms = float(np.sqrt(np.mean(np.square(seg))))
-    return 20.0 * math.log10(max(rms, 1e-15)), lf_share, centroid
+    cliff_hz, cliff_drop = _spectral_cliff(freqs, energy)
+    return (
+        20.0 * math.log10(max(rms, 1e-15)),
+        lf_share,
+        centroid,
+        float(cliff_hz),
+        float(cliff_drop),
+    )
+
+
+def _window_probe(seg: np.ndarray, sr: int) -> tuple[float, float, float]:
+    """Return (rms_dbfs, low_band_share, spectral_centroid_hz) for one window."""
+    rms_db, lf_share, centroid, _cliff_hz, _cliff_drop = _window_probe_ext(seg, sr)
+    return rms_db, lf_share, centroid
 
 
 def _find_physical_idle(
@@ -217,11 +474,12 @@ def _find_physical_idle(
     _, _, wot_centroid = _window_probe(wot_seg, sr)
     detail["wot_centroid_hz"] = round(wot_centroid, 1)
 
-    probes: list[tuple[float, float, float, float]] = []  # (t, rms_db, lf, centroid)
+    # (t, rms_db, lf, centroid, cliff_hz, cliff_drop_db)
+    probes: list[tuple[float, float, float, float, float, float]] = []
     for start in range(0, audio.size - win + 1, hop):
         seg = audio[start : start + win]
-        rms_db, lf, centroid = _window_probe(seg, sr)
-        probes.append((start / sr, rms_db, lf, centroid))
+        rms_db, lf, centroid, cliff_hz, cliff_drop = _window_probe_ext(seg, sr)
+        probes.append((start / sr, rms_db, lf, centroid, cliff_hz, cliff_drop))
     if not probes:
         return None, detail
 
@@ -232,6 +490,21 @@ def _find_physical_idle(
         return None, detail
     loud_p90 = float(np.percentile([p[1] for p in audible], 90))
     detail["loud_p90_dbfs"] = round(loud_p90, 1)
+
+    # A truncated window is disqualified before any of the loudness relaxations
+    # run: relaxing the margin must never be able to buy back a window whose
+    # spectrum was destroyed. On lfa_full_accel.wav the quietest idle-looking
+    # windows sit in the tail section that is cut at 5 kHz, and that is exactly
+    # where the old selector landed.
+    full_band_audible = [p for p in audible if not _is_codec_truncated(p[4], p[5])]
+    detail["full_band_windows"] = len(full_band_audible)
+    if full_band_audible:
+        audible = full_band_audible
+    else:
+        detail["bandwidth_note"] = (
+            "no audible window escapes a codec wall (see _is_codec_truncated); "
+            "idle spectrum is bandwidth-limited throughout this recording"
+        )
 
     for lf_min in (_IDLE_LF_SHARE_MIN, _IDLE_LF_SHARE_RELAXED):
         for margin in _IDLE_LOUD_MARGINS_DB:
@@ -270,7 +543,7 @@ def _find_physical_idle(
 
 
 def _grow_idle_window(
-    hits: list[tuple[float, float, float, float]],
+    hits: list[tuple[float, float, float, float, float, float]],
     anchor_t: float,
     duration: float,
     max_len_s: float = 10.0,
@@ -292,7 +565,9 @@ def _grow_idle_window(
     return (start_s, end_s)
 
 
-def _segment_metrics(seg: np.ndarray, sr: int, frame: int, hop: int) -> dict[str, float]:
+def _segment_metrics(
+    seg: np.ndarray, sr: int, frame: int, hop: int
+) -> dict[str, object]:
     freqs, energy = _mean_stft_energy(seg, sr, frame, hop)
     total = float(energy.sum()) or 1e-15
     band_shares = [_band_fraction(energy, freqs, lo, hi) for lo, hi in BAND_EDGES]
@@ -316,6 +591,11 @@ def _segment_metrics(seg: np.ndarray, sr: int, frame: int, hop: int) -> dict[str
         "pulse_interval_cv": pulse_int_cv,
         "crest_factor": crest,
         "dropout_ratio": dropout,
+        # Per-segment, not per-file: the references are compilation clips whose
+        # sub-sections come from different uploads. lfa_full_accel.wav measures
+        # 11 kHz over the whole file yet its selected idle and acceleration
+        # windows both sit in sections truncated near 5 kHz.
+        "bandwidth": assess_bandwidth(seg, sr),
     }
 
 
@@ -518,6 +798,7 @@ def build_vehicle_targets(
     acceleration and would drag the aggregate centroid below the idle centroid.
     """
     sources = []
+    shape_rejected = []
     for rec in recordings:
         feats = rec["features"]
         segs = feats["segments"]
@@ -532,12 +813,17 @@ def build_vehicle_targets(
             entry["stock_segments"] = list(rec["stock_segments"])
         if feats.get("segment_quality") is not None:
             entry["segment_quality"] = feats["segment_quality"]
+        bandwidth = feats.get("bandwidth")
+        if isinstance(bandwidth, Mapping):
+            entry["bandwidth"] = dict(bandwidth)
+            if not bandwidth.get("spectral_shape_usable", True):
+                shape_rejected.append({"id": rec["id"], "reason": bandwidth.get("reason", "")})
         sources.append(entry)
 
     stock = [r for r in recordings if r.get("include_in_stock_target", True)]
     stock_median = _compute_stock_median(stock) if stock else {}
 
-    return {
+    targets: dict[str, object] = {
         "schema": schema,
         "vehicle": vehicle_id,
         "display_name": display_name,
@@ -548,34 +834,100 @@ def build_vehicle_targets(
         "sources": sources,
         "stock_median": stock_median,
     }
+    # Auditability: a missing *_band_shares key must be traceable to a stated
+    # reason, never look like an extraction that silently forgot to run.
+    targets["bandwidth_gate"] = {
+        "f99_diagnostic_floor_hz": _MIN_WOT_F99_HZ,
+        "cliff_floor_hz": _CODEC_CLIFF_FLOOR_HZ,
+        "cliff_drop_floor_db": _CODEC_CLIFF_DROP_DB,
+        "shape_rejected_sources": shape_rejected,
+        "shape_metrics_available": sorted(
+            key for key in stock_median
+            if key.endswith("_band_shares") or key.endswith("_spectral_centroid_hz")
+        ),
+    }
+    return targets
+
+
+# Metrics that describe *where in frequency* the energy sits. A codec-truncated
+# recording reports these as confident numbers that are in fact artefacts: the
+# destroyed top bands normalise to ~0 and inflate the surviving low band by
+# 1/(1-missing). They must not vote on the aggregate.
+_SHAPE_METRICS = frozenset({"spectral_centroid_hz", "spectral_flux"})
+# Everything else is a time-domain / envelope statistic. Low-frequency
+# modulation, pulse regularity and crest factor survive a low-pass intact
+# (the firing pulses that carry them live below the truncation corner), so a
+# bandwidth-destroyed clip is still a valid witness for those.
 
 
 def _compute_stock_median(recordings: list[dict[str, object]]) -> dict[str, object]:
-    """Aggregate the full metric set over stock-biased recordings."""
+    """Aggregate the full metric set over stock-biased recordings.
 
-    def _contributes(r: dict[str, object], seg_field: str) -> bool:
+    Two independent gates decide whether a recording votes on a given metric:
+
+    * ``stock_segments`` -- a *segment* gate. A downshift clip has a real
+      afterfire window but no real acceleration window.
+    * ``bandwidth.spectral_shape_usable`` -- a *metric-class* gate. A
+      codec-truncated clip is excluded from :data:`_SHAPE_METRICS` and from
+      ``band_shares``, but still votes on the time-domain metrics.
+
+    When no recording is left to supply a shape metric the key is **omitted**
+    rather than written as zero. Zero would be read downstream as "measured and
+    found empty"; absence is read by
+    ``reference_reconstruction.available_reference_segments`` as "no reference
+    for this segment", which is what routes the state to ``physics_derived``.
+    """
+
+    def _verdict(record: object) -> bool:
+        if not isinstance(record, Mapping):
+            return True  # feature dicts extracted before the gate existed
+        return bool(record.get("spectral_shape_usable", True))
+
+    def _shape_usable(r: dict[str, object], seg_field: str) -> bool:
+        """Both the file-level and the segment-level verdict must pass.
+
+        They catch different damage and neither subsumes the other. Codec
+        truncation is a property of the *encode*, so a condemned file condemns
+        every window inside it -- a short window can measure a healthy roll-off
+        simply because its own noise floor is high enough to keep the -60 dB
+        corner up. Section-level damage is the converse: a compilation can be
+        healthy overall while the selected window sits in a truncated cut.
+        """
+        segment = r["features"]["segments"].get(seg_field)
+        segment_ok = True
+        if isinstance(segment, Mapping):
+            segment_ok = _verdict(segment.get("bandwidth"))
+        return _verdict(r["features"].get("bandwidth")) and segment_ok
+
+    def _contributes(r: dict[str, object], seg_field: str, *, shape: bool) -> bool:
         """True when recording ``r`` may feed segment ``seg_field`` into the median."""
         allowed = r.get("stock_segments")
         if allowed and seg_field not in allowed:
             return False
-        return field_in(r["features"]["segments"], seg_field)
+        if shape and not _shape_usable(r, seg_field):
+            return False
+        return seg_field in r["features"]["segments"]
 
-    def _band_median(seg_field: str) -> list[float]:
-        collected = [[] for _ in BAND_EDGES]
+    def _band_median(seg_field: str) -> list[float] | None:
+        collected: list[list[float]] = [[] for _ in BAND_EDGES]
         for r in recordings:
             segs = r["features"]["segments"]
-            if _contributes(r, seg_field) and "band_shares" in segs[seg_field]:
+            if _contributes(r, seg_field, shape=True) and "band_shares" in segs[seg_field]:
                 for i, b in enumerate(segs[seg_field]["band_shares"]):
                     collected[i].append(b)
+        if not any(collected):
+            return None
         return [float(np.median(c)) if c else 0.0 for c in collected]
 
-    def _scalar_median(seg_field: str, metric: str) -> float:
-        vals = [r["features"]["segments"][seg_field][metric] for r in recordings
-                if _contributes(r, seg_field) and metric in r["features"]["segments"][seg_field]]
-        return float(np.median(vals)) if vals else 0.0
-
-    def field_in(segs: dict, seg_field: str) -> bool:
-        return seg_field in segs
+    def _scalar_median(seg_field: str, metric: str) -> float | None:
+        shape = metric in _SHAPE_METRICS
+        vals = [
+            r["features"]["segments"][seg_field][metric]
+            for r in recordings
+            if _contributes(r, seg_field, shape=shape)
+            and metric in r["features"]["segments"][seg_field]
+        ]
+        return float(np.median(vals)) if vals else None
 
     result: dict[str, object] = {}
     scalar_metrics = [
@@ -584,9 +936,13 @@ def _compute_stock_median(recordings: list[dict[str, object]]) -> dict[str, obje
         "spectral_centroid_hz", "rms_dbfs",
     ]
     for seg in ["idle", "acceleration", "afterfire"]:
-        result[f"{seg}_band_shares"] = _band_median(seg)
+        shares = _band_median(seg)
+        if shares is not None:
+            result[f"{seg}_band_shares"] = shares
         for m in scalar_metrics:
-            result[f"{seg}_{m}"] = _scalar_median(seg, m)
+            value = _scalar_median(seg, m)
+            if value is not None:
+                result[f"{seg}_{m}"] = value
     return result
 
 
