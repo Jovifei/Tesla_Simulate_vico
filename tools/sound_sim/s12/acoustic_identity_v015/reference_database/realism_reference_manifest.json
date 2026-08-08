@@ -2,6 +2,14 @@
   "schema_version": "s12-acoustic-realism-reference-1.0",
   "scope": "synthetic; uncalibrated; not OEM reproduction",
   "external_media_policy": "Raw third-party media is held only outside the repository for private research review. This manifest stores URL, content SHA-256, extraction configuration, risk, and derived relative features; it does not assert licence, stock state, microphone geometry, RPM, or absolute level.",
+  "deep_realism_thresholds": {
+    "identity_separation_min_distance": 0.20,
+    "per_state_band_abs_error": 0.05,
+    "per_state_centroid_abs_error_hz": 40.0,
+    "afterfire_onset_tolerance_s": 0.05,
+    "afterfire_decay_tolerance_s": 0.10,
+    "reference_provenance": "relative recording features only; not calibration; C/synthetic tuning bands"
+  },
   "vehicles": {
     "ferrari_458": {
       "source_level": "R2",
@@ -26,6 +34,46 @@
       "recording": {"risk": "Third-party title claims stock/rough idle; trim, engine condition, microphone placement, gain control, environment, RPM, load, and post-processing remain unverified. The prior broad RX-7 compilation was unavailable for extraction (HTTP 403) and remains excluded.", "permitted_use": "Relative rotary idle texture cue review only; no turbo or absolute-level calibration."},
       "segments": {"idle": {"intent": "1-8 s candidate", "rpm_confidence": "none"}, "steady_rpm": {"intent": "12-16 s candidate", "rpm_confidence": "none"}, "acceleration": {"intent": "not available in this extracted clip", "rpm_confidence": "none"}, "deceleration": {"intent": "not available in this extracted clip", "rpm_confidence": "none"}},
       "feature_extraction": {"status": "relative STFT/band feature extraction completed for idle only", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2"}
+    },
+    "aventador_lp700": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"note": "pending_online_research: real recording URL/title/SHA256 to be filled by the per-car research agent."},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, and post-processing are unverified.", "permitted_use": "Relative envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "acceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "deceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "pending_online_research", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2", "reference_targets_file": "aventador_lp700_reference_targets.json", "note": "real recording URL/title/SHA256 will be populated by the per-car research agent; no copyrighted audio is stored in the repository."}
+    },
+    "c63_w204": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"note": "pending_online_research: real recording URL/title/SHA256 to be filled by the per-car research agent."},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, and post-processing are unverified.", "permitted_use": "Relative envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "acceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "deceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "pending_online_research", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2", "reference_targets_file": "c63_w204_reference_targets.json", "note": "real recording URL/title/SHA256 will be populated by the per-car research agent; no copyrighted audio is stored in the repository."}
+    },
+    "gtr_r35": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"note": "pending_online_research: real recording URL/title/SHA256 to be filled by the per-car research agent."},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, and post-processing are unverified.", "permitted_use": "Relative envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "acceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "deceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "pending_online_research", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2", "reference_targets_file": "gtr_r35_reference_targets.json", "note": "real recording URL/title/SHA256 will be populated by the per-car research agent; no copyrighted audio is stored in the repository."}
+    },
+    "lfa": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"note": "pending_online_research: real recording URL/title/SHA256 to be filled by the per-car research agent."},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, and post-processing are unverified.", "permitted_use": "Relative envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "acceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "deceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "pending_online_research", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2", "reference_targets_file": "lfa_reference_targets.json", "note": "real recording URL/title/SHA256 will be populated by the per-car research agent; no copyrighted audio is stored in the repository."}
+    },
+    "supra_jza80": {
+      "source_level": "R2",
+      "calibration_status": "uncalibrated",
+      "external_media": {"note": "pending_online_research: real recording URL/title/SHA256 to be filled by the per-car research agent."},
+      "recording": {"risk": "Third-party exterior recording; source configuration, microphone distance, automatic gain, environment, RPM, and post-processing are unverified.", "permitted_use": "Relative envelope, attack, and transient listening cues only."},
+      "segments": {"idle": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "steady_rpm": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "acceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}, "deceleration": {"intent": "pending manual annotation", "rpm_confidence": "none"}},
+      "feature_extraction": {"status": "pending_online_research", "stft": "Hann 4096, 75% overlap; order map requires external RPM trace", "provenance_class": "B/R2", "reference_targets_file": "supra_jza80_reference_targets.json", "note": "real recording URL/title/SHA256 will be populated by the per-car research agent; no copyrighted audio is stored in the repository."}
     }
   }
 }

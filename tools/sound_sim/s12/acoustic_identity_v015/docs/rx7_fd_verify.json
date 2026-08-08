@@ -1,0 +1,68 @@
+{
+  "clips": {
+    "idle": {
+      "band_shares": [
+        0.5868,
+        0.4047,
+        0.0,
+        0.0
+      ],
+      "centroid_hz": 443.2
+    },
+    "acceleration": {
+      "band_shares": [
+        0.2073,
+        0.6905,
+        0.1005,
+        0.0002
+      ],
+      "centroid_hz": 593.3
+    },
+    "deceleration": {
+      "band_shares": [
+        0.1344,
+        0.4105,
+        0.4543,
+        0.0001
+      ],
+      "centroid_hz": 1154.7
+    }
+  },
+  "reference": {
+    "accel_low": 0.9357878137045473,
+    "accel_mid": 0.062172661926438305,
+    "accel_high": 0.0017924410997974135,
+    "idle_centroid": 155.9385180585353,
+    "idle_low": 0.9678145403116889
+  },
+  "distance_to_reference": {
+    "accel_low": 0.7285,
+    "accel_mid": 0.6283,
+    "accel_high": 0.0987,
+    "idle_centroid": 287.3
+  },
+  "baseline_distance": {
+    "accel_low": 0.5349,
+    "accel_mid": 0.343,
+    "accel_high": 0.0589,
+    "idle_centroid": 957.6
+  },
+  "improvement_vs_baseline": {
+    "accel_low": -0.3619,
+    "accel_mid": -0.8318,
+    "accel_high": -0.6757,
+    "idle_centroid": 0.7
+  },
+  "acceptance_thresholds": {
+    "accel_low": 0.05,
+    "accel_mid": 0.05,
+    "accel_high": 0.05,
+    "idle_centroid": 25.0
+  },
+  "acceptance_pass": {
+    "accel_low": false,
+    "accel_mid": false,
+    "accel_high": false,
+    "idle_centroid": false
+  }
+}

@@ -22,6 +22,7 @@ from acoustic_identity_v015 import SourceRender, VehicleStateTrace, load_researc
 from acoustic_identity_v015.acoustic_analysis import engine_identity_metrics as metric_impl
 from acoustic_identity_v015.loudness_manager import LoudnessMetrics
 from acoustic_identity_v015.render_identity_v02 import _apply_frozen_ptr, _edge_fade, _loudness_dict, _scenario_trace
+from acoustic_identity_v015.tuning.loudness_compensation import apply_post_ptr_compensation, render_baseline_source
 
 
 V015 = S12_ROOT / "acoustic_identity_v015"
@@ -982,7 +983,16 @@ class SourceToPtrBundleLoudnessIntegrationTests(unittest.TestCase):
     def _ptr_render(self, vehicle_id: str, trace: VehicleStateTrace) -> np.ndarray:
         source = self._renderers[vehicle_id](trace)
         body = identity_v015.apply_low_frequency_body(source, vehicle_id)
-        return _edge_fade(_apply_frozen_ptr(body.pressure))
+        shaped = _edge_fade(_apply_frozen_ptr(body.pressure))
+        # Track S post-PTR per-state loudness compensation (Task 3.1): re-land the
+        # shaped clip on the pre-shaping post-PTR loudness so the frozen PTR band
+        # tilt does not blow the cross-state LUFS spread. Scalar gain only; band
+        # shares and source-level RMS are untouched.
+        reference_source = render_baseline_source(self._renderers[vehicle_id], trace)
+        reference_body = identity_v015.apply_low_frequency_body(reference_source, vehicle_id)
+        reference = _edge_fade(_apply_frozen_ptr(reference_body.pressure))
+        compensated, _ = apply_post_ptr_compensation(shaped, reference)
+        return compensated
 
     def test_formal_vehicle_bundles_keep_every_clip_audible_with_one_gain(self) -> None:
         for vehicle_id in self._renderers:
@@ -1032,7 +1042,7 @@ class IdentityV02PublicationTests(unittest.TestCase):
             self.assertEqual(publication["identity_v02_root"], str(output_root / "identity_v02"))
             self.assertFalse(any((output_root / vehicle).exists() for vehicle in ("ferrari_458", "hellcat", "rx7_fd")))
             self.assertTrue(publication["comparison"]["passes"])
-            self.assertEqual(publication["comparison"]["audio_domain"], "final_pcm_after_ptr_edge_and_bundle_gain")
+            self.assertEqual(publication["comparison"]["audio_domain"], "final_pcm_after_frozen_ptr_edge_post_ptr_compensation_and_bundle_gain")
             self.assertEqual(publication["comparison"]["comparison_scope"], "same_trace_unit_rms_analysis_only")
             self.assertEqual(set(publication["vehicles"]), {"ferrari_458", "hellcat", "rx7_fd"})
             expected_clips = {"idle", "cruise", "acceleration", "lift", "full_pull"}
@@ -1052,7 +1062,7 @@ class IdentityV02PublicationTests(unittest.TestCase):
                 self.assertTrue(metrics["health"]["passes"])
                 self.assertEqual(metrics["provenance"]["parameter_class"], "C/synthetic")
                 self.assertIn("runtime_ptr_adapter_sha256", metrics["ptr_provenance"])
-                self.assertEqual(metrics["vehicle_metrics_domain"], "final_pcm_after_ptr_edge_and_bundle_gain")
+                self.assertEqual(metrics["vehicle_metrics_domain"], "final_pcm_after_frozen_ptr_edge_post_ptr_compensation_and_bundle_gain")
                 bundle = metrics["bundle"]
                 self.assertTrue(bundle["headroom_limited"] or abs(bundle["metrics"]["integrated_lufs"] + 18.0) <= 1.0)
                 self.assertEqual(set(metrics["clips"]), expected_clips)

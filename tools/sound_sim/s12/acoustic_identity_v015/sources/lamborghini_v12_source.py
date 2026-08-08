@@ -42,25 +42,61 @@ def render_aventador_lp700(trace: VehicleStateTrace, sample_rate_hz: int = 48000
 
     # Even-fire exhaust: low fundamental only, modulated at the 1st engine order
     # (stays <= ~850 Hz at redline). Short decay so the periodic retrigger stays tight.
-    # Slightly trimmed so the idle low band does not over-dominate (idle is mid per ref).
+    # Throttle-gated (idle floor 0.15) so the 92 Hz fundamental does not over-dominate
+    # the idle low band -- the idle clip must be mid-dominant per reference (idle_low
+    # target 0.240, currently source pushes low too high). At acceleration throttle~1 so
+    # the exhaust fundamental is essentially unchanged (accel_low stays on target).
     exhaust_env = decaying_tone(impulses, 92.0, 0.050, sample_rate_hz)
-    exhaust_mono = 0.030 * exhaust_env * np.sin(2.0 * np.pi * phase * 1.0)
+    exhaust_mono = 0.040 * (0.18 + 0.82 * throttle) * exhaust_env * np.sin(2.0 * np.pi * phase * 1.0)
 
     # The "operatic wail" — fixed-center mid tones (400/540 Hz), longer decay, no
     # engine-order modulation. Kept below 1 kHz so energy stays in the 250-1k mid
     # band (reference accel mid = 0.571) instead of spilling into 1-4 kHz. The
     # longer decay makes the wail a near-continuous tone so the impulse AM
     # sidebands collapse into the 250-1k mid band (less 1-4 kHz spill). Louder
-    # overall to lift the mid share; softer idle floor so the idle centroid stays ~648.
+    # overall to lift the mid share; HIGH idle floor (0.60) so the mid wail carries
+    # the idle clip toward the 648 Hz reference centroid (idle_dynamics already adds
+    # a 648 Hz combustion ring; this lifts the mid share to match idle_mid~0.638).
     wail_env = (
         0.6 * decaying_tone(impulses, 400.0, 0.060, sample_rate_hz)
         + 0.4 * decaying_tone(impulses, 540.0, 0.051, sample_rate_hz)
     )
-    wail_mono = 0.118 * (0.15 + 0.85 * throttle) * wail_env
+    wail_mono = 0.118 * (0.60 + 0.40 * throttle) * wail_env
 
     # Intake roar — 12 individual throttle bodies behind the cabin (fixed mid center).
+    # Throttle-gated (idle floor 0.30) so the 240 Hz intake does not bloat the idle
+    # low band; at acceleration it is essentially unchanged.
     intake_env = decaying_tone(impulses, 240.0, 0.022, sample_rate_hz)
-    intake_mono = 0.016 * (0.4 + 0.6 * throttle) * intake_env
+    intake_mono = 0.016 * (0.30 + 0.70 * throttle) * intake_env
+
+    # High-frequency "operatic shriek" upper harmonics — genuine 1-4 kHz excitation.
+    # The frozen radiation model is unvalidated >5.5 kHz, so high-freq realism is
+    # compensated ONLY via upstream excitation (declared perceptual compensation).
+    # The scream is gated to high RPM/throttle so it lifts the acceleration HIGH
+    # band (1-4 kHz) without disturbing the idle clip (high_rpm=0 at idle, so the
+    # idle centroid/low-band are untouched). These are fixed-center decaying tones
+    # (no engine-order modulation) so their energy stays in the 1-4 kHz band.
+    scream_env = (
+        0.50 * decaying_tone(impulses, 2000.0, 0.040, sample_rate_hz)
+        + 0.30 * decaying_tone(impulses, 2800.0, 0.035, sample_rate_hz)
+        + 0.20 * decaying_tone(impulses, 3600.0, 0.030, sample_rate_hz)
+    )
+    scream_mono = 0.045 * (0.10 + 0.90 * high_rpm) * (0.25 + 0.75 * throttle) * scream_env
+
+    # Idle-only mid + high excitation to lift the idle spectral centroid toward the
+    # 648 Hz reference. Gated to idle RPM only (idle_factor=0 at accel/throttle-up),
+    # so it does NOT contaminate the acceleration bands. This complements the frozen
+    # idle_dynamics 648 Hz combustion ring (which alone could not pull idle centroid
+    # up because the source's low-freq exhaust/intake dominated). Per plan §5.1,
+    # idle mid/high content is boosted via idle-gated source stems (not the shared
+    # idle_dynamics profile). The reference idle itself carries ~0.11 of its energy
+    # in the 1-4 kHz band, so an idle-gated high tone is required to reach the 648 Hz
+    # centroid (mid-only excitation caps out well below 648).
+    idle_mid_env = decaying_tone(impulses, 700.0, 0.045, sample_rate_hz)
+    idle_high_env = decaying_tone(impulses, 1700.0, 0.035, sample_rate_hz)
+    idle_factor = np.clip((1850.0 - rpm) / 850.0, 0.0, 1.0)
+    idle_mid_mono = 0.085 * idle_factor * idle_mid_env
+    idle_high_mono = 0.026 * idle_factor * idle_high_env
 
     # Valvetrain + accessory mechanical texture (V12 is mechanically busy but smooth).
     # Kept low so the broadband tail does not inflate the 1-4 kHz high band; trimming
@@ -72,14 +108,20 @@ def render_aventador_lp700(trace: VehicleStateTrace, sample_rate_hz: int = 48000
     exhaust = to_stereo(exhaust_mono, 0.5)
     wail = to_stereo(wail_mono, 0.35)
     intake = to_stereo(intake_mono, 0.55)
+    scream = to_stereo(scream_mono, 0.40)
+    idle_mid = to_stereo(idle_mid_mono, 0.50)
+    idle_high = to_stereo(idle_high_mono, 0.50)
     mechanical = to_stereo(mechanical_mono, 0.5)
 
     render = SourceRender(
-        pressure=exhaust + wail + intake + mechanical,
+        pressure=exhaust + wail + intake + scream + idle_mid + idle_high + mechanical,
         stems={
             "exhaust": exhaust,
             "wail": wail,
             "intake": intake,
+            "scream": scream,
+            "idle_mid": idle_mid,
+            "idle_high": idle_high,
             "mechanical": mechanical,
         },
         diagnostics={
@@ -88,9 +130,10 @@ def render_aventador_lp700(trace: VehicleStateTrace, sample_rate_hz: int = 48000
             "engine": "L539 6.5L V12 NA",
             "firing": "even_fire_12_cylinder",
             "events_per_rev": 6.0,
-            "identity": "smooth dense operatic wail, mid-dominant, NA",
+            "identity": "smooth dense operatic wail + high-RPM 1-4 kHz shriek, mid-dominant, NA",
             "exhaust_fundamental_hz": 92.0,
             "wail_band": "mid (520-760 Hz)",
+            "scream_band": "high (2000-3600 Hz), high-RPM gated perceptual compensation",
         },
     )
     return render.validate()

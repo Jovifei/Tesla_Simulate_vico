@@ -42,31 +42,34 @@ def render_c63_w204(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> So
     right = ev["right_impulses"]
 
     # Cross-plane exhaust: mid-low fundamental (140/180 Hz), 1st engine order only.
-    # Kept off the deep low band so the reference mid-dominance is achievable.
+    # Raised gain so the combustion low band (20-250 Hz) carries the reference
+    # accel_low (~0.18); exhaust scales with load via the impulse amplitude, so
+    # this also stays restrained at idle (keeps idle centroid from sinking).
     left_env = decaying_tone(left, 140.0, 0.040, sample_rate_hz)
     right_env = decaying_tone(right, 180.0, 0.034, sample_rate_hz)
-    exhaust_left_bank = 0.030 * to_stereo(left_env * np.sin(2.0 * np.pi * phase * 1.0), 0.48)
-    exhaust_right_bank = 0.030 * to_stereo(right_env * np.sin(2.0 * np.pi * phase * 1.0 + 0.2), 0.48)
+    exhaust_left_bank = 0.072 * to_stereo(left_env * np.sin(2.0 * np.pi * phase * 1.0), 0.48)
+    exhaust_right_bank = 0.072 * to_stereo(right_env * np.sin(2.0 * np.pi * phase * 1.0 + 0.2), 0.48)
     exhaust = exhaust_left_bank + exhaust_right_bank
 
-    # AMG "blip-bark": fixed-center tone stack (540/820/1300 Hz), NO engine-order
-    # modulation. The 540/820 carry mid; the 1300 Hz component supplies the
-    # reference's substantial 1-4k bark (high=0.222). Hard-gated at idle so the
-    # idle centroid stays deep (~178 Hz); fully present under throttle.
-    # Longer decays so the bark is a cleaner mid/high tone (less 1-4 kHz sideband spill).
-    # The 1300 Hz component supplies the reference's high share; idle floor raised so the
-    # bark is loud at idle (idle high band = 0.355, carried partly by idle_dynamics too).
+    # AMG "blip-bark": fixed-center tone stack. The 1100/1500 Hz components are
+    # emphasized (and 540/820 trimmed) because higher-freq resonators ring louder
+    # (sin(w) onset gain), moving accel energy from the swollen mid band into the
+    # high band. 1500 Hz is a perceptual high-band compensation (upstream only;
+    # radiation >5.5 kHz unvalidated). The lower throttle-slope + higher floor
+    # lifts the idle bark (and thus idle centroid) without changing accel much.
     bark_env = (
-        0.6 * decaying_tone(impulses, 540.0, 0.045, sample_rate_hz)
-        + 0.45 * decaying_tone(impulses, 820.0, 0.038, sample_rate_hz)
-        + 0.30 * decaying_tone(impulses, 1100.0, 0.034, sample_rate_hz)
+        0.50 * decaying_tone(impulses, 540.0, 0.045, sample_rate_hz)
+        + 0.40 * decaying_tone(impulses, 820.0, 0.038, sample_rate_hz)
+        + 0.42 * decaying_tone(impulses, 1100.0, 0.034, sample_rate_hz)
+        + 0.10 * decaying_tone(impulses, 1500.0, 0.030, sample_rate_hz)
     )
-    bark_mono = 0.095 * (0.50 + 0.50 * throttle) * bark_env
+    bark_mono = 0.125 * (0.60 + 0.40 * throttle) * bark_env
     bark = to_stereo(bark_mono, 0.4)
 
-    # Intake roar (NA, immediate) — fixed mid center, softened at idle.
-    intake_env = decaying_tone(impulses, 220.0, 0.022, sample_rate_hz)
-    intake_mono = 0.018 * (0.1 + 0.9 * throttle) * intake_env
+    # Intake roar (NA, immediate) — low-band center (200 Hz), load-gated so it
+    # adds accel_low without dragging the idle centroid down.
+    intake_env = decaying_tone(impulses, 200.0, 0.022, sample_rate_hz)
+    intake_mono = 0.040 * (0.1 + 0.9 * throttle) * intake_env
     intake = to_stereo(intake_mono, 0.55)
 
     # Mechanical: valvetrain + accessory, lighter than Hellcat (no blower).
@@ -93,7 +96,7 @@ def render_c63_w204(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> So
             "events_per_rev": 4.0,
             "identity": "deep muscular NA V8, AMG blip-bark, mid-dominant",
             "exhaust_fundamental_hz": 140.0,
-            "bark_band": "mid (540-700 Hz)",
+            "bark_band": "mid-high (540-1500 Hz)",
         },
     )
     return render.validate()

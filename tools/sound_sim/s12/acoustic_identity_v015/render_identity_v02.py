@@ -17,6 +17,7 @@ from .loudness_manager import LoudnessMetrics, manage_bundle_loudness, measure_l
 from .sources.flat_plane_v8_source import render_ferrari_458
 from .sources.rotary_turbo_source import render_rx7_fd
 from .sources.supercharged_hemi_source import render_hellcat
+from .tuning.loudness_compensation import apply_post_ptr_compensation, render_baseline_source
 
 
 _SAMPLE_RATE_HZ = 48000
@@ -46,7 +47,18 @@ def publish_identity_v02(output_root: str | Path, scenario_duration_s: float = 3
         vehicle_root.mkdir(parents=True, exist_ok=True)
         traces = {name: _scenario_trace(vehicle_id, name, scenario_duration_s) for name in _CLIPS}
         source_renders = {name: apply_low_frequency_body(renderer(trace), vehicle_id) for name, trace in traces.items()}
-        ptr_renders = {name: _edge_fade(_apply_frozen_ptr(render.pressure)) for name, render in source_renders.items()}
+        # Track S post-PTR per-state loudness compensation (Task 3.1): re-land each
+        # shaped clip on its pre-shaping post-PTR loudness so the frozen PTR band
+        # tilt does not blow the cross-state LUFS spread. Scalar make-up gain only;
+        # band shares and source-level RMS stay untouched. Hellcat/RX-7 have no
+        # state EQ, so their reference equals the shaped render and the gain is 0 dB.
+        reference_renders = {name: apply_low_frequency_body(render_baseline_source(renderer, trace), vehicle_id) for name, trace in traces.items()}
+        ptr_renders = {}
+        for name in _CLIPS:
+            shaped = _edge_fade(_apply_frozen_ptr(source_renders[name].pressure))
+            reference = _edge_fade(_apply_frozen_ptr(reference_renders[name].pressure))
+            compensated, _ = apply_post_ptr_compensation(shaped, reference, sample_rate_hz=_SAMPLE_RATE_HZ)
+            ptr_renders[name] = compensated
         managed = manage_bundle_loudness(ptr_renders, _SAMPLE_RATE_HZ, target_lufs=-18.0, peak_limit_dbfs=-1.0)
         clips: dict[str, dict[str, object]] = {}
         final_segments: dict[str, np.ndarray] = {}
@@ -76,7 +88,7 @@ def publish_identity_v02(output_root: str | Path, scenario_duration_s: float = 3
             "scope": _SCOPE,
             "provenance": {"parameter_class": "C/synthetic", "research_use": "listening-only; not calibration evidence"},
             "vehicle_metrics": compute_engine_identity_metrics(vehicle_id, full_pull_render, traces["full_pull"]),
-            "vehicle_metrics_domain": "final_pcm_after_ptr_edge_and_bundle_gain",
+            "vehicle_metrics_domain": "final_pcm_after_frozen_ptr_edge_post_ptr_compensation_and_bundle_gain",
             "full_pull_final_pcm_loudness": _loudness_dict(measure_loudness(full_pull)),
             "bundle": {"gain_db": managed.gain_db, "headroom_limited": managed.headroom_limited, "metrics": final_bundle_loudness},
             "clips": clips,
@@ -94,14 +106,22 @@ def publish_identity_v02(output_root: str | Path, scenario_duration_s: float = 3
         _write_json(vehicle_root / "identity_metrics.json", metrics)
         write_spectrogram(vehicle_root / "spectrogram.png", full_pull, _SAMPLE_RATE_HZ)
         write_order_map(vehicle_root / "order_map.png", compute_order_map(full_pull, traces["full_pull"], _SAMPLE_RATE_HZ))
-        comparison_source = apply_low_frequency_body(renderer(comparison_trace), vehicle_id)
-        comparison_audio = _edge_fade(_apply_frozen_ptr(comparison_source.pressure)) * managed.gain_linear
+        comparison_shaped = apply_low_frequency_body(renderer(comparison_trace), vehicle_id)
+        comparison_reference_source = apply_low_frequency_body(render_baseline_source(renderer, comparison_trace), vehicle_id)
+        comparison_audio = (
+            apply_post_ptr_compensation(
+                _edge_fade(_apply_frozen_ptr(comparison_shaped.pressure)),
+                _edge_fade(_apply_frozen_ptr(comparison_reference_source.pressure)),
+                sample_rate_hz=_SAMPLE_RATE_HZ,
+            )[0]
+            * managed.gain_linear
+        )
         final_pcm[vehicle_id] = _pcm24_roundtrip(comparison_audio)
         publication["vehicles"][vehicle_id] = {"clips": clips, "metrics": metrics}
     comparison = compare_identity_renders(final_pcm, comparison_trace, _SAMPLE_RATE_HZ)
     if not comparison["passes"]:
         raise ValueError("same-state final-PCM identity comparison gate failed")
-    comparison["audio_domain"] = "final_pcm_after_ptr_edge_and_bundle_gain"
+    comparison["audio_domain"] = "final_pcm_after_frozen_ptr_edge_post_ptr_compensation_and_bundle_gain"
     comparison["common_trace"] = _trace_metadata(comparison_trace)
     comparison["analysis_copy"] = "unit-RMS copies used only for correlation/order comparison; published listening WAVs unchanged"
     publication["comparison"] = comparison
@@ -288,11 +308,11 @@ def _write_reports(root: Path, publication: dict[str, object], comparison_trace:
         "Before PTR, each source receives causal `engine_body`, `exhaust_pressure`, and `mechanical_weight` resonator components. Hellcat carries the deepest 40--120 Hz body, Ferrari a lighter higher body, and RX-7 a rotary mid-bass profile. No post-PTR EQ, limiter, AGC, order injection, or synthesis is used.",
         "",
         "## Loudness results",
-        "One fixed gain is applied to all five clips for each vehicle after frozen PTR and edge formatting. Every reopened PCM clip is finite, measured, at least -30 LUFS, below -1 dBFS peak, and has zero clipping.",
+        "One fixed gain is applied to all five clips for each vehicle after frozen PTR, edge formatting, and a per-clip post-PTR Track S loudness make-up that re-lands each shaped clip on its pre-shaping post-PTR loudness (the frozen PTR band tilt otherwise spreads cross-state LUFS by ~12 dB; the make-up is a scalar, so band shares and source-level RMS are untouched). Every reopened PCM clip is finite, measured, at least -30 LUFS, below -1 dBFS peak, and has zero clipping.",
         *loudness_lines,
         "",
         "## Vehicle metrics",
-        "Metrics below use final PCM pressure and any required stems after the same linear PTR, edge fade, vehicle gain, and PCM_24 round trip; pre-PTR stems are not mixed with final pressure.",
+        "Metrics below use final PCM pressure and any required stems after the same frozen PTR, edge fade, post-PTR Track S loudness compensation, vehicle gain, and PCM_24 round trip; pre-PTR stems are not mixed with final pressure.",
         *metric_lines,
         "",
         "## Artifact links",

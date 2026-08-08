@@ -10,6 +10,12 @@ import numpy as np
 
 from ..contracts import SourceRender, VehicleStateTrace
 
+# Vehicles supported by the identity metric pipeline (8 cars total).
+_SUPPORTED = {
+    "ferrari_458", "hellcat", "rx7_fd",
+    "aventador_lp700", "c63_w204", "gtr_r35", "lfa", "supra_jza80",
+}
+
 
 @dataclass(frozen=True)
 class OrderMap:
@@ -66,7 +72,7 @@ def compute_engine_identity_metrics(
     vehicle_id: str, render: SourceRender, trace: VehicleStateTrace, sample_rate_hz: int = 48000
 ) -> dict[str, object]:
     """Compute finite audio/stem metrics without using renderer diagnostics as data."""
-    if vehicle_id not in {"ferrari_458", "hellcat", "rx7_fd"}:
+    if vehicle_id not in _SUPPORTED:
         raise ValueError(f"unsupported vehicle_id: {vehicle_id!r}")
     render.validate()
     trace.validate()

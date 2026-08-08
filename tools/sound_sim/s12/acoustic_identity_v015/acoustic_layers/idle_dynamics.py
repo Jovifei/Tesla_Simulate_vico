@@ -30,7 +30,9 @@ _PROFILES: Mapping[str, Mapping[str, float]] = {
     # GT-R V6 tt: reference idle centroid=400Hz (mid-dominant, near-zero 4k+ tail). valve_hz
     # 440 (combustion ring ~207 Hz) keeps the idle low/mid; mechanical + valvetrain high tail
     # trimmed so the 4k-12k tail does not lift the centroid above 400.
-    "gtr_r35": {"events_per_rev": 3.0, "seed": 8.8, "variation": 0.20, "jitter_ms": 2.0, "combustion_gain": 0.080, "combustion_decay_s": 0.045, "accessory_order": 1.8, "valve_hz": 200.0, "valvetrain_gain": 0.0, "crank_order": 1.2, "mechanical_texture": 0.02, "idle_crest_target": 7.72, "idle_modulation_peak_hz": 5.0},
+    # FIX (handover Stage A): valve_hz corrected 200.0 -> 440.0 (matches design comment;
+    # the 94 Hz ring was a latent bug dragging the idle centroid to ~93 Hz instead of ~207 Hz).
+    "gtr_r35": {"events_per_rev": 3.0, "seed": 8.8, "variation": 0.20, "jitter_ms": 2.0, "combustion_gain": 0.080, "combustion_decay_s": 0.045, "accessory_order": 1.8, "valve_hz": 440.0, "valvetrain_gain": 0.0, "crank_order": 1.2, "mechanical_texture": 0.02, "idle_crest_target": 7.72, "idle_modulation_peak_hz": 5.0},
     # LFA V10: even-fire, centroid=1366Hz (highest), low=0.005, crest=7.34 (high scream, smooth).
     # Strong combustion ring + louder valvetrain ring so the idle high band (combustion ~1363 Hz,
     # valvetrain ~2900 Hz) carries the reference high=0.295 / highest=0.106 once the source low

@@ -52,13 +52,49 @@ def render_lfa(trace: VehicleStateTrace, sample_rate_hz: int = 48000) -> SourceR
     )
     exhaust_mono = 0.060 * exhaust_env
 
-    # The scream: clean, smooth mid tone, present at idle (target idle centroid
-    # ~1366 Hz). Fixed-center so it stays mid-dominant across rpm.
-    scream_env = (
+    # Idle-biased high-scream floor: the angel's cry upper partials must stay
+    # audible at idle (target idle centroid ~1366 Hz) but must collapse to ZERO
+    # by mid-throttle so the acceleration band stays mid-dominant. The floor is
+    # ~0.58 at idle (throttle~0.14) and reaches 0 by throttle 0.45 — the idle
+    # dynamics layer is itself idle-gated, so this never contaminates accel.
+    # This is upstream PERCEPTUAL high-freq compensation — the frozen radiation
+    # model does not cover >5.5 kHz, so we compensate only via excitation (see
+    # docs/research_brief_lfa.md).
+    high_floor = 0.58 * np.clip((0.45 - throttle) / 0.32, 0.0, 1.0)
+
+    # The scream mid partials: clean, smooth mid tone that DOES grow with
+    # throttle, so acceleration stays mid-dominant ([~0.001, ~0.974, ~0.023]).
+    scream_mid_env = (
         0.6 * np.sin(2.0 * np.pi * 600.0 * t)
         + 0.4 * np.sin(2.0 * np.pi * 720.0 * t)
     )
-    scream_mono = 0.110 * (0.5 + 0.5 * throttle) * scream_env
+    scream_mid = 0.110 * (0.5 + 0.5 * throttle) * scream_mid_env
+
+    # The scream upper partials (1.1-1.8 kHz): concentrated just above 1 kHz so
+    # the idle centroid lands near 1366 Hz. Idle-biased floor (no throttle
+    # growth) -> present at idle, suppressed at acceleration.
+    scream_high_env = (
+        0.55 * np.sin(2.0 * np.pi * 1100.0 * t)
+        + 0.45 * np.sin(2.0 * np.pi * 1300.0 * t)
+        + 0.30 * np.sin(2.0 * np.pi * 1500.0 * t)
+        + 0.20 * np.sin(2.0 * np.pi * 1800.0 * t)
+        + 0.12 * np.sin(2.0 * np.pi * 2200.0 * t)
+    )
+    scream_high = 0.33 * high_floor * scream_high_env
+
+    # Very-high "angel's cry" extension (4.8-7.2 kHz): upstream PERCEPTUAL
+    # compensation for the 5.5-12 kHz scream region the frozen radiation model
+    # cannot reproduce. Declared compensation, not physical correction. Concentrated
+    # near 4.8-6 kHz (just above the radiation band edge) so it lifts the idle
+    # centroid and supplies the 5.5-12 kHz perceptual tail. Same idle-biased floor.
+    scream_vhigh_env = (
+        0.35 * np.sin(2.0 * np.pi * 4800.0 * t)
+        + 0.22 * np.sin(2.0 * np.pi * 6000.0 * t)
+        + 0.10 * np.sin(2.0 * np.pi * 7200.0 * t)
+    )
+    scream_vhigh = 0.288 * high_floor * scream_vhigh_env
+
+    scream_mono = scream_mid + scream_high + scream_vhigh
 
     # Intake roar (individual throttle bodies) — fixed-center mid.
     intake_env = np.sin(2.0 * np.pi * 480.0 * t)
