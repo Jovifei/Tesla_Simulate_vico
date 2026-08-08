@@ -31,22 +31,22 @@
       "include_in_stock_target": true,
       "segments": {
         "idle": {
-          "duration_s": 4.173791666666666,
-          "rms_dbfs": -24.220347205939095,
-          "spectral_centroid_hz": 117.63046757629245,
+          "duration_s": 4.5,
+          "rms_dbfs": -23.533865430267223,
+          "spectral_centroid_hz": 201.2267226875611,
           "band_shares": [
-            0.9746724063559326,
-            0.024603511195839277,
-            0.0004779647507291174,
-            0.0001124037876032094
+            0.9193476594555847,
+            0.056641862798530576,
+            0.019042797020491945,
+            0.003302749553569983
           ],
-          "spectral_flux": 0.18336905270312537,
-          "modulation_depth": 0.8969472128477671,
-          "modulation_peak_hz": 5.270986612891955,
-          "modulation_energy": 0.005536075681955622,
-          "pulse_amplitude_cv": 0.3112128712510292,
-          "pulse_interval_cv": 1.3966499006704813,
-          "crest_factor": 7.113052290978004,
+          "spectral_flux": 0.18980525204624712,
+          "modulation_depth": 0.9174578501671435,
+          "modulation_peak_hz": 8.222222222222221,
+          "modulation_energy": 0.004218542788963804,
+          "pulse_amplitude_cv": 0.33997323570096866,
+          "pulse_interval_cv": 1.3430259570713856,
+          "crest_factor": 12.474402652162455,
           "dropout_ratio": 0.0
         },
         "acceleration": {
@@ -87,26 +87,45 @@
           "crest_factor": 3.5418516642657534,
           "dropout_ratio": 0.0025
         }
+      },
+      "segment_quality": {
+        "idle": "physical",
+        "idle_detail": {
+          "verdict": "physical",
+          "wot_centroid_hz": 231.6,
+          "probe_windows": 30,
+          "audible_windows": 30,
+          "loud_p90_dbfs": -11.3,
+          "lf_share_min": 0.45,
+          "loud_margin_db": 8.0,
+          "anchor_t_s": 0.0,
+          "anchor_rms_dbfs": -31.2,
+          "anchor_low_band_share": 0.9835,
+          "anchor_centroid_hz": 97.9,
+          "candidate_windows": 6
+        },
+        "acceleration": "energy_run",
+        "afterfire": "flux_cluster"
       }
     }
   ],
   "stock_median": {
     "idle_band_shares": [
-      0.9746724063559326,
-      0.024603511195839277,
-      0.0004779647507291174,
-      0.0001124037876032094
+      0.9193476594555847,
+      0.056641862798530576,
+      0.019042797020491945,
+      0.003302749553569983
     ],
-    "idle_spectral_flux": 0.18336905270312537,
-    "idle_modulation_depth": 0.8969472128477671,
-    "idle_modulation_peak_hz": 5.270986612891955,
-    "idle_modulation_energy": 0.005536075681955622,
-    "idle_pulse_amplitude_cv": 0.3112128712510292,
-    "idle_pulse_interval_cv": 1.3966499006704813,
-    "idle_crest_factor": 7.113052290978004,
+    "idle_spectral_flux": 0.18980525204624712,
+    "idle_modulation_depth": 0.9174578501671435,
+    "idle_modulation_peak_hz": 8.222222222222221,
+    "idle_modulation_energy": 0.004218542788963804,
+    "idle_pulse_amplitude_cv": 0.33997323570096866,
+    "idle_pulse_interval_cv": 1.3430259570713856,
+    "idle_crest_factor": 12.474402652162455,
     "idle_dropout_ratio": 0.0,
-    "idle_spectral_centroid_hz": 117.63046757629245,
-    "idle_rms_dbfs": -24.220347205939095,
+    "idle_spectral_centroid_hz": 201.2267226875611,
+    "idle_rms_dbfs": -23.533865430267223,
     "acceleration_band_shares": [
       0.7297555267643584,
       0.2534473074903587,

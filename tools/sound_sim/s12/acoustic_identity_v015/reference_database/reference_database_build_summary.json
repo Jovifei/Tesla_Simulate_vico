@@ -45,10 +45,10 @@
     "recordings": 3,
     "out_path": "E:\\Tesla_speed\\worktrees\\s12-v12\\tools\\sound_sim\\s12\\acoustic_identity_v015\\reference_database\\hellcat_reference_targets.json",
     "stock_median_accel_band_shares": [
-      0.4837,
-      0.4879,
-      0.003,
-      0.0
+      0.4069,
+      0.5005,
+      0.0611,
+      0.0313
     ],
     "stock_median_accel_flux": 0.0,
     "stock_median_afterfire_band_shares": [
@@ -85,10 +85,10 @@
     "recordings": 3,
     "out_path": "E:\\Tesla_speed\\worktrees\\s12-v12\\tools\\sound_sim\\s12\\acoustic_identity_v015\\reference_database\\c63_w204_reference_targets.json",
     "stock_median_accel_band_shares": [
-      0.1811,
-      0.5873,
-      0.2221,
-      0.0091
+      0.3137,
+      0.5416,
+      0.1275,
+      0.0165
     ],
     "stock_median_accel_flux": 0.0,
     "stock_median_afterfire_band_shares": [
@@ -105,10 +105,10 @@
     "recordings": 3,
     "out_path": "E:\\Tesla_speed\\worktrees\\s12-v12\\tools\\sound_sim\\s12\\acoustic_identity_v015\\reference_database\\gtr_r35_reference_targets.json",
     "stock_median_accel_band_shares": [
-      0.3725,
-      0.5012,
-      0.1201,
-      0.0059
+      0.1796,
+      0.6646,
+      0.1498,
+      0.0057
     ],
     "stock_median_accel_flux": 0.0,
     "stock_median_afterfire_band_shares": [

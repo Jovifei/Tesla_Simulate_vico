@@ -236,11 +236,33 @@ class RecordingChainFitTests(unittest.TestCase):
                 fit = fit_recording_chain(vehicle)
                 self.assertGreaterEqual(fit.out_of_sample_residual, fit.in_sample_residual)
 
-    def test_ferrari_single_chain_assumption_is_rejected(self) -> None:
-        """Ferrari 的 idle 与 acceleration 段无法由同一条 LTI 高通同时解释。"""
+    def test_ferrari_single_chain_holds_after_reference_repair(self) -> None:
+        """Ferrari 的 idle 与 acceleration 段现在可由同一条 LTI 高通解释。
+
+        历史：本用例原先断言「单链假设必须被拒绝」（out/in > 3）。那个结论是坏
+        参考数据的产物，而非物理事实——旧的 idle 靶子并不是引擎怠速，而是 pull
+        之间的风噪（谱心 980 Hz，20-250 Hz 仅占 0.9%）。风噪与引擎当然不可能由
+        同一条录音链解释，于是拟合器忠实地报告了「多链」。
+
+        修正切段（见 test_s12_reference_idle_physics.py）后，idle 与 acceleration
+        取自同一段录音的同一条链，残差比从 >3 降到约 1.8，单链假设成立。该反转
+        本身就是参考修复正确性的独立佐证，因此这里把它固化为正向断言。
+        """
         fit = fit_recording_chain("ferrari_458")
-        self.assertGreater(fit.out_of_sample_residual, 3.0 * fit.in_sample_residual)
-        self.assertFalse(fit.single_chain_consistent)
+        self.assertLess(fit.out_of_sample_residual, 3.0 * fit.in_sample_residual)
+        self.assertTrue(fit.single_chain_consistent)
+
+    def test_multi_source_vehicles_still_report_multiple_chains(self) -> None:
+        """确认单链检测器没有退化成恒真——多源车辆仍须被判为多链。
+
+        hellcat 混合了三段不同录音，rx7_fd 的单一音源被严重低通（8.4 kHz 截止），
+        两者都不应通过单链检验。
+        """
+        for vehicle in ("hellcat", "rx7_fd"):
+            with self.subTest(vehicle=vehicle):
+                fit = fit_recording_chain(vehicle)
+                self.assertGreater(fit.out_of_sample_residual, 3.0 * fit.in_sample_residual)
+                self.assertFalse(fit.single_chain_consistent)
 
 
 class StateTargetAssemblyTests(unittest.TestCase):

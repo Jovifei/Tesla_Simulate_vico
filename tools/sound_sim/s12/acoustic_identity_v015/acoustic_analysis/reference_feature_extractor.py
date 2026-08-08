@@ -58,8 +58,9 @@ def extract_reference_features(
     """
     path = Path(audio_path)
     sample_rate_hz, audio = _read_pcm_wav(path)
+    segment_quality: dict[str, object] | None = None
     if segments is None:
-        segments = auto_annotate_segments(audio, sample_rate_hz)
+        segments, segment_quality = auto_annotate_segments_with_quality(audio, sample_rate_hz)
 
     result: dict[str, object] = {
         "analysis_domain": "relative_recording_features_only",
@@ -69,6 +70,8 @@ def extract_reference_features(
         "stft": {"window": "hann", "frame_size": frame_size, "hop_size": hop_size},
         "segments": {},
     }
+    if segment_quality is not None:
+        result["segment_quality"] = segment_quality
     for name, (start_s, end_s) in segments.items():
         if not 0.0 <= start_s < end_s <= audio.size / sample_rate_hz:
             raise ValueError(f"invalid segment {name!r}: ({start_s}, {end_s}) for {audio.size / sample_rate_hz:.2f}s clip")
@@ -81,15 +84,52 @@ def extract_reference_features(
     return result
 
 
+# --- idle acceptance thresholds (see _find_physical_idle) -------------------
+_IDLE_SILENCE_DBFS = -55.0      # below this a window is digital silence, not engine
+_IDLE_LF_SHARE_MIN = 0.45       # 20-250 Hz must dominate a true idle window
+_IDLE_LF_SHARE_RELAXED = 0.40   # last-resort relaxation
+_IDLE_LOUD_MARGINS_DB = (8.0, 5.0, 3.0, 1.0)  # progressive relaxation vs loud P90
+_IDLE_PROBE_WIN_S = 2.0
+_IDLE_PROBE_HOP_S = 0.5
+
+
 def auto_annotate_segments(audio: np.ndarray, sample_rate_hz: int) -> dict[str, tuple[float, float]]:
     """Auto-label idle / acceleration / afterfire windows from the signal.
 
+    Thin wrapper over :func:`auto_annotate_segments_with_quality` kept for API
+    compatibility; returns the windows only.
+    """
+    segments, _quality = auto_annotate_segments_with_quality(audio, sample_rate_hz)
+    return segments
+
+
+def auto_annotate_segments_with_quality(
+    audio: np.ndarray, sample_rate_hz: int
+) -> tuple[dict[str, tuple[float, float]], dict[str, object]]:
+    """Auto-label idle / acceleration / afterfire windows plus a quality record.
+
     Strategy:
-      idle         - lowest-energy stable region (longest run below 0.6 x median RMS)
       acceleration - highest-energy sustained region (longest run above 1.3 x median RMS)
+      idle         - *physically validated* low-load window, see ``_find_physical_idle``
       afterfire    - densest spectral-flux transient cluster
-    Each window is at least 3 s and at most 25 s; falls back to thirds if the
-    signal is too uniform.
+
+    Why idle is not simply "the quietest region"
+    --------------------------------------------
+    The previous implementation labelled the lowest-energy stable run as idle and,
+    when that failed, fell back to the first 8 s of the clip. On ``*_accel.wav``
+    compilation recordings the quietest region is **not** engine idle -- it is
+    digital silence at the file head/tail, or wind / gap noise between pulls.
+    Those windows are broadband, so their spectral centroid lands *above* the
+    wide-open-throttle centroid, which is impossible for a reciprocating engine
+    and produces a poisoned tuning target (Ferrari 458 idle centroid came out at
+    980 Hz with only 0.9 % of its energy below 250 Hz).
+
+    Returns:
+        (segments, quality) where ``quality["idle"]`` is one of ``"physical"``
+        (met the strict criteria), ``"relaxed"`` (met them only after widening
+        the loudness margin) or ``"unavailable"`` (no window in the recording
+        looks like idle at all -- the segment is then omitted entirely rather
+        than silently faked).
     """
     rms = _envelope_rms(audio, max(sample_rate_hz // 100, 1))
     frame_rate = sample_rate_hz / max(sample_rate_hz // 100, 1)
@@ -99,21 +139,157 @@ def auto_annotate_segments(audio: np.ndarray, sample_rate_hz: int) -> dict[str, 
     flux_median = float(np.median(flux)) if flux.size else 0.0
     flux_std = float(np.std(flux)) if flux.size else 0.0
 
-    idle_win = _longest_run(rms < 0.6 * median_rms, frame_rate, 3.0, 25.0)
     accel_win = _longest_run(rms > 1.3 * median_rms, frame_rate, 3.0, 25.0)
     after_win = _longest_run(flux > flux_median + 1.5 * flux_std, frame_rate, 2.0, 20.0) if flux.size else None
 
     duration = audio.size / sample_rate_hz
-    if idle_win is None:
-        idle_win = (0.0, min(8.0, duration * 0.25))
     if accel_win is None:
         accel_win = (max(0.0, duration * 0.4), min(duration, duration * 0.7))
     if after_win is None:
         after_start = min(accel_win[1] + 1.0, duration - 4.0)
         after_win = (max(0.0, after_start), min(duration, after_start + 8.0))
 
-    segments = {"idle": idle_win, "acceleration": accel_win, "afterfire": after_win}
-    return {k: (float(v[0]), float(v[1])) for k, v in segments.items()}
+    idle_win, idle_quality = _find_physical_idle(audio, sample_rate_hz, accel_win)
+
+    segments: dict[str, tuple[float, float]] = {}
+    if idle_win is not None:
+        segments["idle"] = idle_win
+    segments["acceleration"] = accel_win
+    segments["afterfire"] = after_win
+
+    quality: dict[str, object] = {
+        "idle": idle_quality["verdict"],
+        "idle_detail": idle_quality,
+        "acceleration": "energy_run",
+        "afterfire": "flux_cluster",
+    }
+    return {k: (float(v[0]), float(v[1])) for k, v in segments.items()}, quality
+
+
+def _window_probe(seg: np.ndarray, sr: int) -> tuple[float, float, float]:
+    """Return (rms_dbfs, low_band_share, spectral_centroid_hz) for one window."""
+    freqs, energy = _mean_stft_energy(seg, sr, 4096, 1024)
+    total = float(energy.sum()) or 1e-15
+    lf_share = _band_fraction(energy, freqs, *BAND_EDGES[0])
+    centroid = float(np.sum(freqs * energy) / total)
+    rms = float(np.sqrt(np.mean(np.square(seg))))
+    return 20.0 * math.log10(max(rms, 1e-15)), lf_share, centroid
+
+
+def _find_physical_idle(
+    audio: np.ndarray,
+    sr: int,
+    accel_win: tuple[float, float],
+) -> tuple[tuple[float, float] | None, dict[str, object]]:
+    """Locate a window that is physically consistent with engine idle.
+
+    A candidate window must satisfy, in order:
+      1. ``rms_dbfs > _IDLE_SILENCE_DBFS``     - not digital silence
+      2. ``rms_dbfs < loud_p90 - margin``      - engine is off-throttle
+      3. ``low_band_share >= lf_min``          - 20-250 Hz dominates, as the idle
+         firing fundamental of any four-stroke sits at 25-80 Hz
+      4. ``centroid < wot_centroid``           - spectral monotonicity with load
+
+    The loudness margin is relaxed progressively so that heavily compressed
+    recordings (small dynamic range) still yield a candidate; the relaxation
+    level is reported so the caller can mark the provenance.
+
+    Args:
+        audio: mono float signal.
+        sr: sample rate in Hz.
+        accel_win: the acceleration window, used to derive the WOT centroid.
+
+    Returns:
+        ``(window, detail)``; ``window`` is None when nothing qualifies.
+    """
+    duration = audio.size / sr
+    win = int(_IDLE_PROBE_WIN_S * sr)
+    hop = int(_IDLE_PROBE_HOP_S * sr)
+    detail: dict[str, object] = {"verdict": "unavailable"}
+    if win <= 0 or audio.size < win:
+        return None, detail
+
+    a0 = int(max(0.0, accel_win[0]) * sr)
+    a1 = int(min(duration, accel_win[1]) * sr)
+    wot_seg = audio[a0:a1]
+    if wot_seg.size < 4096:
+        wot_seg = audio
+    _, _, wot_centroid = _window_probe(wot_seg, sr)
+    detail["wot_centroid_hz"] = round(wot_centroid, 1)
+
+    probes: list[tuple[float, float, float, float]] = []  # (t, rms_db, lf, centroid)
+    for start in range(0, audio.size - win + 1, hop):
+        seg = audio[start : start + win]
+        rms_db, lf, centroid = _window_probe(seg, sr)
+        probes.append((start / sr, rms_db, lf, centroid))
+    if not probes:
+        return None, detail
+
+    audible = [p for p in probes if p[1] > _IDLE_SILENCE_DBFS]
+    detail["probe_windows"] = len(probes)
+    detail["audible_windows"] = len(audible)
+    if not audible:
+        return None, detail
+    loud_p90 = float(np.percentile([p[1] for p in audible], 90))
+    detail["loud_p90_dbfs"] = round(loud_p90, 1)
+
+    for lf_min in (_IDLE_LF_SHARE_MIN, _IDLE_LF_SHARE_RELAXED):
+        for margin in _IDLE_LOUD_MARGINS_DB:
+            hits = [
+                p
+                for p in audible
+                if p[1] < loud_p90 - margin and p[2] >= lf_min and p[3] < wot_centroid
+            ]
+            if not hits:
+                continue
+            strict = lf_min == _IDLE_LF_SHARE_MIN and margin == _IDLE_LOUD_MARGINS_DB[0]
+            # quietest hit wins; ties broken by strongest low-frequency dominance
+            hits.sort(key=lambda p: (p[1], -p[2]))
+            anchor_t = hits[0][0]
+            window = _grow_idle_window(hits, anchor_t, duration)
+            detail.update(
+                {
+                    "verdict": "physical" if strict else "relaxed",
+                    "lf_share_min": lf_min,
+                    "loud_margin_db": margin,
+                    "anchor_t_s": round(anchor_t, 2),
+                    "anchor_rms_dbfs": round(hits[0][1], 1),
+                    "anchor_low_band_share": round(hits[0][2], 4),
+                    "anchor_centroid_hz": round(hits[0][3], 1),
+                    "candidate_windows": len(hits),
+                }
+            )
+            return window, detail
+
+    # Nothing in this recording behaves like idle. Report it instead of
+    # falling back to the first 8 s, which is what poisoned the old database.
+    nonsilent_lf_max = max((p[2] for p in audible), default=0.0)
+    detail["max_low_band_share"] = round(nonsilent_lf_max, 4)
+    detail["reason"] = "no window is low-frequency dominated and quieter than WOT"
+    return None, detail
+
+
+def _grow_idle_window(
+    hits: list[tuple[float, float, float, float]],
+    anchor_t: float,
+    duration: float,
+    max_len_s: float = 10.0,
+) -> tuple[float, float]:
+    """Extend the anchor over neighbouring qualifying probes (contiguous run)."""
+    times = sorted(p[0] for p in hits)
+    step = _IDLE_PROBE_HOP_S
+    start = end = anchor_t
+    tset = set(round(t, 3) for t in times)
+    while round(start - step, 3) in tset and (end - (start - step)) < max_len_s:
+        start = round(start - step, 3)
+    while round(end + step, 3) in tset and ((end + step) - start) < max_len_s:
+        end = round(end + step, 3)
+    end_s = min(duration, end + _IDLE_PROBE_WIN_S)
+    start_s = max(0.0, start)
+    # keep at least one full probe window
+    if end_s - start_s < _IDLE_PROBE_WIN_S:
+        end_s = min(duration, start_s + _IDLE_PROBE_WIN_S)
+    return (start_s, end_s)
 
 
 def _segment_metrics(seg: np.ndarray, sr: int, frame: int, hop: int) -> dict[str, float]:
@@ -335,8 +511,11 @@ def build_vehicle_targets(
     Each recording entry: {"id", "url", "setup", "include_in_stock_target",
     "features": <extract_reference_features output>}.
 
-    Computes ``stock_median`` over recordings where ``include_in_stock_target`` is True,
-    using the acceleration/afterfire windows.
+    Computes ``stock_median`` over recordings where ``include_in_stock_target`` is True.
+    A recording may additionally declare ``"stock_segments": [...]`` to restrict
+    which of its windows feed the aggregate -- a downshift or backfire clip has a
+    meaningful ``afterfire`` window but its ``acceleration`` window is not real
+    acceleration and would drag the aggregate centroid below the idle centroid.
     """
     sources = []
     for rec in recordings:
@@ -349,6 +528,10 @@ def build_vehicle_targets(
             "include_in_stock_target": rec.get("include_in_stock_target", True),
             "segments": segs,
         }
+        if rec.get("stock_segments"):
+            entry["stock_segments"] = list(rec["stock_segments"])
+        if feats.get("segment_quality") is not None:
+            entry["segment_quality"] = feats["segment_quality"]
         sources.append(entry)
 
     stock = [r for r in recordings if r.get("include_in_stock_target", True)]
@@ -370,18 +553,25 @@ def build_vehicle_targets(
 def _compute_stock_median(recordings: list[dict[str, object]]) -> dict[str, object]:
     """Aggregate the full metric set over stock-biased recordings."""
 
+    def _contributes(r: dict[str, object], seg_field: str) -> bool:
+        """True when recording ``r`` may feed segment ``seg_field`` into the median."""
+        allowed = r.get("stock_segments")
+        if allowed and seg_field not in allowed:
+            return False
+        return field_in(r["features"]["segments"], seg_field)
+
     def _band_median(seg_field: str) -> list[float]:
         collected = [[] for _ in BAND_EDGES]
         for r in recordings:
             segs = r["features"]["segments"]
-            if field_in(segs, seg_field) and "band_shares" in segs[seg_field]:
+            if _contributes(r, seg_field) and "band_shares" in segs[seg_field]:
                 for i, b in enumerate(segs[seg_field]["band_shares"]):
                     collected[i].append(b)
         return [float(np.median(c)) if c else 0.0 for c in collected]
 
     def _scalar_median(seg_field: str, metric: str) -> float:
         vals = [r["features"]["segments"][seg_field][metric] for r in recordings
-                if field_in(r["features"]["segments"], seg_field) and metric in r["features"]["segments"][seg_field]]
+                if _contributes(r, seg_field) and metric in r["features"]["segments"][seg_field]]
         return float(np.median(vals)) if vals else 0.0
 
     def field_in(segs: dict, seg_field: str) -> bool:
@@ -403,4 +593,9 @@ def _compute_stock_median(recordings: list[dict[str, object]]) -> dict[str, obje
 def write_targets_json(targets: dict[str, object], out_path: str | Path) -> None:
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(targets, indent=2, ensure_ascii=False), encoding="utf-8")
+    # newline="\n" keeps the repo LF-only; the Windows default (CRLF) would make
+    # `git diff --check` report trailing whitespace on every line and trip the
+    # Track-P assertion (see docs/S12_TrackP_Baseline_v2.md, section 7).
+    out.write_text(
+        json.dumps(targets, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )

@@ -32,14 +32,14 @@
     "accel_low": 0.0010572995119039715,
     "accel_mid": 0.9744985983392996,
     "accel_high": 0.02347093479126181,
-    "idle_centroid": 1365.6517803759223,
-    "idle_low": 0.005023579133726994
+    "idle_centroid": 239.77276023381333,
+    "idle_low": 0.7174810362104375
   },
   "distance_to_reference": {
     "accel_low": 0.0011,
     "accel_mid": 0.0255,
     "accel_high": 0.0235,
-    "idle_centroid": 0.1
+    "idle_centroid": 1125.8
   },
   "baseline_distance": {
     "accel_low": 0.0011,
@@ -51,18 +51,18 @@
     "accel_low": 0.0,
     "accel_mid": 0.0,
     "accel_high": 0.0,
-    "idle_centroid": 0.9998
+    "idle_centroid": -0.8214
   },
   "acceptance_thresholds": {
     "accel_low": 0.05,
     "accel_mid": 0.05,
     "accel_high": 0.05,
-    "idle_centroid": 136.56517803759223
+    "idle_centroid": 25.0
   },
   "acceptance_pass": {
     "accel_low": true,
     "accel_mid": true,
     "accel_high": true,
-    "idle_centroid": true
+    "idle_centroid": false
   }
 }

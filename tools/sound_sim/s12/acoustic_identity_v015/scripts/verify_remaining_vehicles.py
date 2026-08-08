@@ -195,14 +195,21 @@ def main() -> None:
         }
         # Canonical per-vehicle verify JSON (kept in sync with the unified report).
         doc_path = Path(__file__).resolve().parent.parent / "docs" / f"{vid}_verify.json"
-        doc_path.write_text(json.dumps(report[vid], indent=2, ensure_ascii=False), encoding="utf-8")
+        # newline="\n": on Windows the default would translate to CRLF, which makes
+        # `git diff --check` flag every line as trailing whitespace and trips the
+        # Track-P assertion (see docs/S12_TrackP_Baseline_v2.md, section 7).
+        doc_path.write_text(
+            json.dumps(report[vid], indent=2, ensure_ascii=False),
+            encoding="utf-8",
+            newline="\n",
+        )
         print(f"  ref accel low/mid/high = {ref.get('accel_low'):.3f}/{ref.get('accel_mid'):.3f}/{ref.get('accel_high'):.3f}")
         print(f"  distance: {dist}")
         print(f"  improvement vs baseline: {improvement}")
         print(f"  acceptance (idle gate {idle_threshold:.1f}Hz, accel gate {_ACCEL_BAND_GATE}): "
               f"{'PASS' if all(acceptance.values()) else 'FAIL'} {acceptance}")
     (OUT_DIR / "remaining_vehicles_report.json").write_text(
-        json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
     )
     print(f"\nreport -> {OUT_DIR / 'remaining_vehicles_report.json'}")
 

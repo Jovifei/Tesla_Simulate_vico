@@ -74,6 +74,9 @@ VEHICLES = [
                 "setup": "Hellcat Redeye brutal downshifts",
                 "include_in_stock_target": True,
                 "file": "hellcat_redeye_downshift.wav",
+                # A downshift clip has no genuine acceleration window; letting it
+                # vote would drag the aggregate accel centroid below idle.
+                "stock_segments": ["idle", "afterfire"],
             },
             {
                 "id": "nnEaamqsieM",
@@ -116,6 +119,7 @@ VEHICLES = [
                 "setup": "C63 W204 close downshift (afterfire)",
                 "include_in_stock_target": True,
                 "file": "c63_w204_close_downshift.wav",
+                "stock_segments": ["idle", "afterfire"],
             },
             {
                 "id": "c63_w204_headers_backfire",
@@ -144,6 +148,7 @@ VEHICLES = [
                 "setup": "GT-R R35 Tomei exhaust close (afterfire)",
                 "include_in_stock_target": True,
                 "file": "gtr_r35_tomei_close.wav",
+                "stock_segments": ["idle", "afterfire"],
             },
             {
                 "id": "gtr_r35_tuned_backfire",
@@ -230,7 +235,9 @@ def main() -> None:
         })
 
     summary_path = OUT_DIR / "reference_database_build_summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    summary_path.write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
     print(f"\n=== build summary -> {summary_path} ===")
     for s in summary:
         print(f"  {s['display_name']}: {s['recordings']} rec, "
