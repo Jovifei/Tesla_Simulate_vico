@@ -7,6 +7,22 @@ import numpy as np
 from ..contracts import SourceRender, VehicleStateTrace
 from ..tuning.state_band_shaper import _inject_state_spectral_targets
 
+# PTR counter-tilt, as a cubic in ln(rpm / pivot). See the derivation in
+# `render_hellcat` where it is applied. Fitted in two passes on a measured
+# 850-6800 rpm sweep: pass 1 against the baseline post-PTR loudness, pass 2
+# against the post-compensation RMS (the tighter of the two gates). Residual
+# spread 1.39 dB against a 4.0 dB gate.
+_PTR_TILT_PIVOT_RPM = 2600.0
+_PTR_TILT_A3 = 0.7937
+_PTR_TILT_A = 9.3023
+_PTR_TILT_B = -1.2786
+_PTR_TILT_C = -9.2000
+# The polynomial diverges below idle, so the correction is clamped. The +3.0 dB
+# ceiling is reached just under 850 rpm, i.e. the fit is never extrapolated into
+# an unbounded boost; the -18 dB floor bounds the mid-range cut.
+_PTR_TILT_MAX_DB = 3.0
+_PTR_TILT_MIN_DB = -18.0
+
 
 def render_hellcat(
     trace: VehicleStateTrace,
@@ -148,21 +164,45 @@ def render_hellcat(
         positions = np.flatnonzero(impulses)
         if positions.size > 1:
             bank_intervals.extend(np.diff(positions) / sample_rate_hz)
-    # Low-rpm loudness support (Track-S same-load spread / publication-floor
-    # recovery). The frozen K-weighted loudness plus the PTR high-pass (~48 Hz)
-    # suppress the low-rpm (idle 850 RPM) low-frequency content, leaving the 850
-    # RPM probe ~4 dB quieter than the mid-range and failing the
-    # test_same_load <=4 dB LUFS spread. pressure_compensation already raises
-    # raw low-rpm amplitude, but frequency -- not level -- is the limiter. A
-    # UNIFORM low-rpm boost on the pre-PTR pressure (ramping in below ~1800 RPM,
-    # beyond the cruise floor of 1800) lifts the 850 point without touching the
-    # 3000/6000 probes or any stem ratio the contract depends on (blower order
-    # families 2.36/11.8/23.6, casing phase correlation). It is a pure level
-    # change that preserves the idle spectral shape and all ratios; Track-P
-    # (PTR / loudness_manager) is untouched.
-    low_atten = np.clip((1800.0 - rpm) / 950.0, 0.0, 1.0)
-    low_level = 1.0 + 0.45 * low_atten
-    pressure = low_level[:, np.newaxis] * (exhaust + blower + mechanical + intake)
+    # PTR counter-tilt (Track-S, ratio-invariant).
+    #
+    # The frozen PTR is not a high-pass with a knee, it is a broadband ~+4.6
+    # dB/oct tilt: measured against 1 kHz it sits at -24.4 dB @ 57 Hz, -19.5 dB
+    # @ 100 Hz, -13.5 dB @ 200 Hz, -5.7 dB @ 500 Hz, +4.8 dB @ 2 kHz. The HEMI
+    # spectral centroid rises linearly with rpm, so the NET attenuation the PTR
+    # applies to this source shrinks by ~13 dB between 850 and 6800 rpm.
+    #
+    # The source level law above does not track that. `pressure_compensation`
+    # falls at -7.5 dB/oct while the exhaust events see it clipped to 2.0 below
+    # ~1720 rpm, so idle is under-compensated by ~7.7 dB relative to the rest of
+    # the range. Summed with the PTR tilt the measured baseline post-PTR
+    # loudness traces a 12 dB inverted U peaking near 2600 rpm -- and the
+    # cross-rpm lock probes 850 / 3000 / 6000, i.e. trough / peak / trough,
+    # which is exactly why it read an 11.75 dB LUFS spread against a 4.0 dB gate.
+    #
+    # This layer applies the measured inverse of that curve. It is a UNIFORM
+    # scalar envelope: at every instant the same value multiplies `pressure` and
+    # every stem, so stem ratios, band-energy shares and all order metrics are
+    # exactly invariant (a scalar cannot move a ratio). It subsumes the previous
+    # `low_level` ramp, which was the <1800 rpm special case of this same
+    # correction. Track-P (PTR / loudness_manager) is untouched.
+    tilt_u = np.log(np.maximum(rpm, 1.0) / _PTR_TILT_PIVOT_RPM)
+    tilt_db = (
+        _PTR_TILT_A3 * np.power(tilt_u, 3.0)
+        + _PTR_TILT_A * np.square(tilt_u)
+        + _PTR_TILT_B * tilt_u
+        + _PTR_TILT_C
+    )
+    radiation_makeup = np.power(10.0, np.clip(tilt_db, _PTR_TILT_MIN_DB, _PTR_TILT_MAX_DB) / 20.0)
+    makeup = radiation_makeup[:, np.newaxis]
+    exhaust_left_bank = makeup * exhaust_left_bank
+    exhaust_right_bank = makeup * exhaust_right_bank
+    exhaust = exhaust_left_bank + exhaust_right_bank
+    blower = makeup * blower
+    mechanical = makeup * mechanical
+    casing = makeup * casing
+    intake = makeup * intake
+    pressure = exhaust + blower + mechanical + intake
     render = SourceRender(
         pressure=pressure,
         stems={
