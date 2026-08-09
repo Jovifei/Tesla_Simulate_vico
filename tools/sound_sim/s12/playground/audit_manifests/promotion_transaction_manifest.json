@@ -1,0 +1,8 @@
+{
+  "scope": "future_only",
+  "pre_record": ["run_id", "temporary_sha256", "formal_before_sha256", "evidence_sha256", "manifest_sha256"],
+  "post_assertions": ["formal_after_equals_temporary_before", "evidence_after_equals_frozen_evidence"],
+  "backup_identity": "audit_only + run_id + formal_before_sha256",
+  "rollback": "required_on_post_move_verification_failure",
+  "runtime_status": "NOT_RUN"
+}

@@ -10,7 +10,10 @@ from pathlib import Path
 import subprocess
 import time
 
-from audio_parameter_package.runtime_package import build_runtime_audio_parameter_package, validate_runtime_audio_parameter_package
+from audio_parameter_package.runtime_package import (
+    build_runtime_audio_parameter_package,
+    validate_runtime_audio_parameter_package,
+)
 from engine_operating_points.library import load_operating_point_library
 from sound_renderer.s12_product_renderer import renderer_profile_from_library
 from vehicle_interface.engine_runtime_api import EngineRuntimeApi
@@ -32,7 +35,12 @@ class VehicleInterfaceReport:
 
 def _source_commit() -> str:
     project_root = Path(__file__).resolve().parents[5]
-    return subprocess.run(["git", "-C", str(project_root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+    return subprocess.run(
+        ["git", "-C", str(project_root), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
 
 
 def _percentile(values: tuple[float, ...], fraction: float) -> float:
@@ -45,13 +53,17 @@ def _percentile(values: tuple[float, ...], fraction: float) -> float:
 
 def _write_json(path: Path, payload: dict[str, object]) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8"
+    )
     return path
 
 
 def _runtime_parameter_package(source_commit: str) -> dict[str, object]:
     library = load_operating_point_library()
-    package = build_runtime_audio_parameter_package(library, renderer_profile_from_library(library), source_commit)
+    package = build_runtime_audio_parameter_package(
+        library, renderer_profile_from_library(library), source_commit
+    )
     validate_runtime_audio_parameter_package(package)
     return package
 
@@ -119,11 +131,18 @@ def run_vehicle_interface_demo(
                         time.sleep(remaining_s)
                     schedule_lag_ms.append(max(0.0, (time.perf_counter() - deadline_s) * 1000.0))
                 body = json.dumps(packet.as_mapping(), separators=(",", ":"), allow_nan=False)
-                connection.request("POST", "/vehicle_state", body=body, headers={"Content-Type": "application/json"})
+                connection.request(
+                    "POST",
+                    "/vehicle_state",
+                    body=body,
+                    headers={"Content-Type": "application/json"},
+                )
                 response = connection.getresponse()
                 payload = json.loads(response.read().decode("utf-8"))
                 if response.status != 200 or payload["packet_index"] != api.packet_count:
-                    raise RuntimeError("localhost vehicle-state API rejected a synthetic demo packet")
+                    raise RuntimeError(
+                        "localhost vehicle-state API rejected a synthetic demo packet"
+                    )
         finally:
             connection.close()
     delivery_elapsed_s = time.perf_counter() - delivery_started_s
@@ -162,7 +181,9 @@ def run_vehicle_interface_demo(
         "delivery": {
             "paced_100hz": pace_100hz,
             "wall_elapsed_s": delivery_elapsed_s,
-            "schedule_lag_p99_ms": _percentile(tuple(schedule_lag_ms), 0.99) if schedule_lag_ms else None,
+            "schedule_lag_p99_ms": _percentile(tuple(schedule_lag_ms), 0.99)
+            if schedule_lag_ms
+            else None,
             "schedule_lag_max_ms": max(schedule_lag_ms) if schedule_lag_ms else None,
             "ingress_interval_p99_ms": _percentile(ingress_intervals, 0.99),
             "ingress_interval_max_ms": max(ingress_intervals),
@@ -190,4 +211,10 @@ def run_vehicle_interface_demo(
     runtime_report_path = _write_json(root / "runtime_report.json", report)
     latency_report_path = _write_json(root / "latency_report.json", latency)
     _write_markdown(root / "S12_Runtime_Vehicle_Interface_v07_Report.md", report, latency)
-    return VehicleInterfaceReport(runtime_report_path, latency_report_path, api.pcm_sha256, api.packet_count, api.pcm_frame_count)
+    return VehicleInterfaceReport(
+        runtime_report_path,
+        latency_report_path,
+        api.pcm_sha256,
+        api.packet_count,
+        api.pcm_frame_count,
+    )

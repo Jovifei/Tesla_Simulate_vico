@@ -1,0 +1,27 @@
+{
+  "schema": "s12.simulink.playground.environment-preflight.v1",
+  "source": "external_read_only_evidence",
+  "runtime_writeback": "PROHIBITED",
+  "required_fields": [
+    "desktop_root_count",
+    "desktop_pid",
+    "desktop_command_line",
+    "desktop_responding",
+    "catapult_child_count",
+    "catapult_child_pids",
+    "catapult_parent_pid",
+    "other_matlab_process_count",
+    "other_matlab_pids",
+    "mcp_root_count",
+    "watchdog_count",
+    "batch_process_count",
+    "engine_process_count",
+    "crash_dump_latest_time",
+    "new_crash_detected",
+    "active_run_lock",
+    "captured_at",
+    "expires_at"
+  ],
+  "gate_failure": "ENVIRONMENT_GATE_FAIL",
+  "acceptance": "exactly one responsive visible Desktop root; Catapult children only in that Desktop tree; no other MATLAB, batch, headless, Engine, active run, or new crash; authorized MCP/watchdog counts only"
+}

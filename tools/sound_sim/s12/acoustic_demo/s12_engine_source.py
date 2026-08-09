@@ -36,14 +36,11 @@ def _firing_phases(config: EngineSourceConfig) -> tuple[float, ...]:
     ):
         raise ValueError("firing order must contain each cylinder exactly once")
     return tuple(
-        2.0 * math.pi * (cylinder - 1) / config.cylinder_count
-        for cylinder in config.firing_order
+        2.0 * math.pi * (cylinder - 1) / config.cylinder_count for cylinder in config.firing_order
     )
 
 
-def synthesize_four_stroke(
-    config: EngineSourceConfig, duration_s: float
-) -> PressureTrace:
+def synthesize_four_stroke(config: EngineSourceConfig, duration_s: float) -> PressureTrace:
     """Synthesize a repeatable zero-mean pulse train from a synthetic grid."""
     if duration_s <= 0:
         raise ValueError("duration_s must be positive")
@@ -57,9 +54,7 @@ def synthesize_four_stroke(
     frame_count = round(duration_s * config.sample_rate_hz)
     if frame_count <= 0:
         raise ValueError("duration_s is too short for the configured sample rate")
-    firing_frequency_hz = (
-        config.cylinder_count * config.rpm / (config.cycle_revolutions * 60.0)
-    )
+    firing_frequency_hz = config.cylinder_count * config.rpm / (config.cycle_revolutions * 60.0)
     crank_cycle_frequency_hz = config.rpm / (config.cycle_revolutions * 60.0)
     if (
         not math.isfinite(firing_frequency_hz)
@@ -71,12 +66,16 @@ def synthesize_four_stroke(
 
     pulses = [
         sum(
-            math.exp(config.pulse_sharpness * (
-                math.cos(
-                    2.0 * math.pi * crank_cycle_frequency_hz * index
-                    / config.sample_rate_hz - event_phase
-                ) - 1.0
-            ))
+            math.exp(
+                config.pulse_sharpness
+                * (
+                    math.cos(
+                        2.0 * math.pi * crank_cycle_frequency_hz * index / config.sample_rate_hz
+                        - event_phase
+                    )
+                    - 1.0
+                )
+            )
             # Canonical summation keeps a symmetric common-port aggregate
             # bit-identical for valid permutations of the same cylinders.
             for event_phase in sorted(firing_phases)
@@ -148,9 +147,7 @@ def synthesize_four_stroke_profile(
     raw: list[float] = []
     for index in range(frame_count):
         rpm, load = _profile_point(endpoints, index / (frame_count - 1), mode)
-        crank_phase += 2.0 * math.pi * rpm / (
-            first.cycle_revolutions * 60.0 * first.sample_rate_hz
-        )
+        crank_phase += 2.0 * math.pi * rpm / (first.cycle_revolutions * 60.0 * first.sample_rate_hz)
         pulse = sum(
             math.exp(first.pulse_sharpness * (math.cos(crank_phase - phase) - 1.0))
             for phase in phases
@@ -170,8 +167,7 @@ def synthesize_four_stroke_profile(
         first.sample_rate_hz,
         None,
         "engine_exhaust_port",
-        SYNTHETIC_PROVENANCE
-        + ("firing_frequency=variable", f"profile_mode={mode}"),
+        SYNTHETIC_PROVENANCE + ("firing_frequency=variable", f"profile_mode={mode}"),
     )
 
 
@@ -194,8 +190,8 @@ def synthesize_four_stroke_trajectory(
     crank_phase = 0.0
     raw: list[float] = []
     for rpm, load in zip(rpm_samples, load_samples):
-        crank_phase += 2.0 * math.pi * rpm / (
-            config.cycle_revolutions * 60.0 * config.sample_rate_hz
+        crank_phase += (
+            2.0 * math.pi * rpm / (config.cycle_revolutions * 60.0 * config.sample_rate_hz)
         )
         pulse = sum(
             math.exp(config.pulse_sharpness * (math.cos(crank_phase - phase) - 1.0))

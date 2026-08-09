@@ -117,12 +117,10 @@ def _linear_state(
         raise ValueError("vehicle-state duration must contain two frames")
     denominator = frame_count - 1
     rpm = tuple(
-        rpm_start + (rpm_end - rpm_start) * index / denominator
-        for index in range(frame_count)
+        rpm_start + (rpm_end - rpm_start) * index / denominator for index in range(frame_count)
     )
     load = tuple(
-        load_start + (load_end - load_start) * index / denominator
-        for index in range(frame_count)
+        load_start + (load_end - load_start) * index / denominator for index in range(frame_count)
     )
     speed = tuple(value * SPEED_PER_RPM_MPS for value in rpm)
     acceleration_value = (speed[1] - speed[0]) * SAMPLE_RATE_HZ
@@ -219,22 +217,29 @@ def load_vehicle_state_bundle(path: Path) -> dict[str, VehicleStateSeries]:
     for name in DEFAULT_CASES:
         values = data["cases"][name]
         if not isinstance(values, dict) or set(values) != {
-            "timestamp", "rpm", "speed", "acceleration", "load", "throttle"
+            "timestamp",
+            "rpm",
+            "speed",
+            "acceleration",
+            "load",
+            "throttle",
         }:
             raise ValueError("vehicle-state case has an invalid schema")
         state = VehicleStateSeries(
             name,
-            *(tuple(float(value) for value in values[field]) for field in (
-                "timestamp", "rpm", "speed", "acceleration", "load", "throttle"
-            )),
+            *(
+                tuple(float(value) for value in values[field])
+                for field in ("timestamp", "rpm", "speed", "acceleration", "load", "throttle")
+            ),
         )
         state.validate()
         cases[name] = state
     primary = VehicleStateSeries(
         data["case_id"],
-        *(tuple(float(value) for value in data[field]) for field in (
-            "timestamp", "rpm", "speed", "acceleration", "load", "throttle"
-        )),
+        *(
+            tuple(float(value) for value in data[field])
+            for field in ("timestamp", "rpm", "speed", "acceleration", "load", "throttle")
+        ),
     )
     primary.validate()
     if primary != cases["acceleration"]:

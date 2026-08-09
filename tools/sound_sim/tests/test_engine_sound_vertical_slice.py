@@ -29,9 +29,7 @@ from vehicle_state import (  # noqa: E402
 class EngineSoundVerticalSliceTests(unittest.TestCase):
     def test_vehicle_state_cases_are_continuous_and_round_trip(self):
         cases = build_default_vehicle_state_cases()
-        self.assertEqual(
-            set(cases), {"idle", "cruise", "acceleration", "lift", "high_load"}
-        )
+        self.assertEqual(set(cases), {"idle", "cruise", "acceleration", "lift", "high_load"})
         for state in cases.values():
             state.validate()
             self.assertEqual(state.sample_rate_hz, 48000)
@@ -76,12 +74,13 @@ class EngineSoundVerticalSliceTests(unittest.TestCase):
     def test_non_linear_vehicle_state_schedule_preserves_every_rpm_and_load_sample(self):
         frame_count = 480
         timestamp = tuple(index / 48000.0 for index in range(frame_count))
-        rpm = tuple(1000.0 + 5000.0 * (index / (frame_count - 1)) ** 2 for index in range(frame_count))
+        rpm = tuple(
+            1000.0 + 5000.0 * (index / (frame_count - 1)) ** 2 for index in range(frame_count)
+        )
         load = tuple(0.25 + 0.70 * (index / (frame_count - 1)) ** 2 for index in range(frame_count))
         speed = tuple(value * 0.01 for value in rpm)
         acceleration = ((speed[1] - speed[0]) * 48000.0,) + tuple(
-            (current - previous) * 48000.0
-            for previous, current in zip(speed, speed[1:])
+            (current - previous) * 48000.0 for previous, current in zip(speed, speed[1:])
         )
         state = VehicleStateSeries("nonlinear", timestamp, rpm, speed, acceleration, load, load)
         state.validate()
@@ -118,15 +117,22 @@ class EngineSoundVerticalSliceTests(unittest.TestCase):
             self.assertTrue(required <= {path.name for path in pathlib.Path(first).iterdir()})
 
             manifest = json.loads(left.manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(manifest["generator_version"], "Synthetic Engine Sound Vertical Slice v0.3")
-            self.assertEqual(manifest["labels"], ["synthetic", "uncalibrated", "offline", "not_realtime_qualified"])
+            self.assertEqual(
+                manifest["generator_version"], "Synthetic Engine Sound Vertical Slice v0.3"
+            )
+            self.assertEqual(
+                manifest["labels"],
+                ["synthetic", "uncalibrated", "offline", "not_realtime_qualified"],
+            )
             for name, digest in manifest["files"].items():
                 self.assertEqual(
                     hashlib.sha256((pathlib.Path(first) / name).read_bytes()).hexdigest(),
                     digest,
                 )
 
-            analysis = json.loads((pathlib.Path(first) / "sound_analysis.json").read_text(encoding="utf-8"))
+            analysis = json.loads(
+                (pathlib.Path(first) / "sound_analysis.json").read_text(encoding="utf-8")
+            )
             self.assertEqual(set(analysis["cases"]), set(left.renders))
             for name, case in analysis["cases"].items():
                 self.assertEqual(case["sample_rate"], 48000)
@@ -138,14 +144,22 @@ class EngineSoundVerticalSliceTests(unittest.TestCase):
                     image = pathlib.Path(first) / "analysis" / name / image_name
                     self.assertEqual(image.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
                 with wave.open(str(pathlib.Path(first) / f"{name}.wav"), "rb") as rendered:
-                    self.assertEqual((rendered.getframerate(), rendered.getnchannels(), rendered.getsampwidth()), (48000, 2, 3))
+                    self.assertEqual(
+                        (rendered.getframerate(), rendered.getnchannels(), rendered.getsampwidth()),
+                        (48000, 2, 3),
+                    )
 
             for name in ("low_load.wav", "mid_load.wav", "high_load.wav"):
                 with wave.open(str(pathlib.Path(first) / "load_map" / name), "rb") as rendered:
-                    self.assertEqual((rendered.getframerate(), rendered.getnchannels(), rendered.getsampwidth()), (48000, 2, 3))
+                    self.assertEqual(
+                        (rendered.getframerate(), rendered.getnchannels(), rendered.getsampwidth()),
+                        (48000, 2, 3),
+                    )
             self.assertEqual(len(list((pathlib.Path(first) / "analysis").rglob("*.png"))), 10)
 
-            report = (pathlib.Path(first) / "S12 Engine Sound Vertical Slice Report.md").read_text(encoding="utf-8")
+            report = (pathlib.Path(first) / "S12 Engine Sound Vertical Slice Report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertIn("PTR coupling", report)
             self.assertIn("OEM calibration: NOT COMPLETED", report)
             self.assertIn("Realtime DSP: NOT COMPLETED", report)

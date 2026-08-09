@@ -1,0 +1,20 @@
+{
+  "engine_id": "synthetic_four_cylinder_four_stroke",
+  "excitation_profile": {"interpolation": "bilinear", "operating_point_library_hash": "b4ead91c5586cc0cddcd2056db5dbc480ee63bf48666bb4bcb03524db269cc1f", "synthetic": true},
+  "hash": "ff960439e3cb415bbb6be6648ced26ee4c6716910ff4b55cd44a250527f7214f",
+  "load_range": [0.0, 1.0],
+  "provenance": {"description": "Portable classification for a synthetic operating-point and renderer package; no OEM or vehicle measurement data.", "source": "synthetic", "source_level": "C"},
+  "ptr_profile": {"configuration": "existing_immutable_v04_ptr_radiation", "frozen_math": true, "radiation_package_sha256": "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f", "radiation_source_commit": "4afe65a67ed21822422f1eb6dbf43fdd627072d3"},
+  "renderer_profile": {"edge_fade_s": 0.004, "gain_db": -10.0, "sample_rate_hz": 48000},
+  "rpm_range": [800.0, 6000.0],
+  "runtime_profile": {
+    "load_map": {"maximum_load": 1.0, "minimum_load": 0.0, "smoothing_time_constant_s": 0.05},
+    "pcm": {"bits_per_sample": 24, "block_samples": 960, "channels": 2, "sample_rate_hz": 48000},
+    "renderer_config": {"edge_fade_s": 0.004, "gain_db": -10.0, "sample_rate_hz": 48000},
+    "rpm_map": {"interpolation": "bilinear_operating_point", "maximum_rpm": 6000.0, "minimum_rpm": 800.0},
+    "transition_curve": {"kind": "first_order", "time_constant_s": 0.25}
+  },
+  "source_commit": "1bf88fb7475819df4afda36e250ef2b282f4c677",
+  "synthetic": true,
+  "version": "AudioParameterPackage v0.2"
+}

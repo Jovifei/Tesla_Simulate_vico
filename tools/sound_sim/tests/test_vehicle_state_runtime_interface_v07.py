@@ -49,7 +49,9 @@ class VehiclePacketContractTests(unittest.TestCase):
 
         self.assertEqual(schema["schema"], "s12.vehicle_state_packet.v0.1")
         self.assertTrue(schema["synthetic"])
-        self.assertEqual(set(schema["fields"]), {"timestamp", "rpm", "speed", "acceleration", "load", "throttle"})
+        self.assertEqual(
+            set(schema["fields"]), {"timestamp", "rpm", "speed", "acceleration", "load", "throttle"}
+        )
         for field in schema["fields"].values():
             self.assertEqual(field["type"], "number")
             self.assertEqual(field["source_level"], "C")
@@ -58,7 +60,14 @@ class VehiclePacketContractTests(unittest.TestCase):
 
     def test_packet_converts_documented_kmh_to_runtime_mps_without_clamping(self):
         packet = VehicleStatePacket.from_mapping(
-            {"timestamp": 0.0, "rpm": 7000.0, "speed": 80.0, "acceleration": 1.2, "load": 0.6, "throttle": 0.5}
+            {
+                "timestamp": 0.0,
+                "rpm": 7000.0,
+                "speed": 80.0,
+                "acceleration": 1.2,
+                "load": 0.6,
+                "throttle": 0.5,
+            }
         )
         state = packet.to_runtime_state()
 
@@ -69,16 +78,35 @@ class VehiclePacketContractTests(unittest.TestCase):
         packets = list(SyntheticVehicleStateStream(duration_s=10.0).iter_packets())
 
         self.assertEqual(len(packets), 1000)
-        self.assertTrue(all(right.timestamp_s > left.timestamp_s for left, right in zip(packets, packets[1:])))
-        self.assertTrue(all(
-            math.isfinite(value)
-            for packet in packets
-            for value in (packet.rpm, packet.speed_kmh, packet.acceleration_mps2, packet.load, packet.throttle)
-        ))
-        self.assertTrue(any(abs(packet.rpm - 800.0) < 1.0e-9 and packet.speed_kmh == 0.0 for packet in packets))
-        self.assertTrue(any(abs(packet.rpm - 2200.0) < 1.0e-9 and abs(packet.speed_kmh - 60.0) < 1.0e-9 for packet in packets))
+        self.assertTrue(
+            all(right.timestamp_s > left.timestamp_s for left, right in zip(packets, packets[1:]))
+        )
+        self.assertTrue(
+            all(
+                math.isfinite(value)
+                for packet in packets
+                for value in (
+                    packet.rpm,
+                    packet.speed_kmh,
+                    packet.acceleration_mps2,
+                    packet.load,
+                    packet.throttle,
+                )
+            )
+        )
+        self.assertTrue(
+            any(abs(packet.rpm - 800.0) < 1.0e-9 and packet.speed_kmh == 0.0 for packet in packets)
+        )
+        self.assertTrue(
+            any(
+                abs(packet.rpm - 2200.0) < 1.0e-9 and abs(packet.speed_kmh - 60.0) < 1.0e-9
+                for packet in packets
+            )
+        )
         self.assertGreaterEqual(max(packet.rpm for packet in packets), 6000.0)
-        self.assertLess(max(abs(right.rpm - left.rpm) for left, right in zip(packets, packets[1:])), 100.0)
+        self.assertLess(
+            max(abs(right.rpm - left.rpm) for left, right in zip(packets, packets[1:])), 100.0
+        )
 
 
 class RuntimeApiTests(unittest.TestCase):
@@ -149,7 +177,9 @@ class LocalhostApiTests(unittest.TestCase):
         with LocalhostVehicleStateServer(EngineRuntimeApi()) as server:
             host_port = server.url.removeprefix("http://")
             connection = http.client.HTTPConnection(host_port, timeout=5.0)
-            connection.request("POST", "/vehicle_state", body="{", headers={"Content-Type": "application/json"})
+            connection.request(
+                "POST", "/vehicle_state", body="{", headers={"Content-Type": "application/json"}
+            )
             malformed = connection.getresponse()
             malformed.read()
             connection.close()
@@ -164,9 +194,16 @@ class VehicleInterfaceDemoTests(unittest.TestCase):
     def test_demo_is_deterministic_records_latency_and_writes_no_wav(self):
         from vehicle_interface.demo import run_vehicle_interface_demo
 
-        with tempfile.TemporaryDirectory() as left_root, tempfile.TemporaryDirectory() as right_root:
-            left = run_vehicle_interface_demo(pathlib.Path(left_root), duration_s=1.0, enforce_latency_target=False)
-            right = run_vehicle_interface_demo(pathlib.Path(right_root), duration_s=1.0, enforce_latency_target=False)
+        with (
+            tempfile.TemporaryDirectory() as left_root,
+            tempfile.TemporaryDirectory() as right_root,
+        ):
+            left = run_vehicle_interface_demo(
+                pathlib.Path(left_root), duration_s=1.0, enforce_latency_target=False
+            )
+            right = run_vehicle_interface_demo(
+                pathlib.Path(right_root), duration_s=1.0, enforce_latency_target=False
+            )
 
             self.assertEqual(left.pcm_sha256, right.pcm_sha256)
             self.assertEqual((left.packet_count, left.pcm_frame_count), (100, 50))

@@ -1,0 +1,30 @@
+{
+  "status": "TEMPLATE_ONLY_NOT_AN_AUTHORIZATION",
+  "decision": "PENDING_EXTERNAL_INDEPENDENT_APPROVAL",
+  "authorization_schema_version": "s12.playground.controlled-rebuild-authorization.v1",
+  "review_ordinal": "EXTERNAL_METADATA_NOT_EVALUATED_BY_SOURCE",
+  "reviewed_package_path": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "reviewed_package_sha256": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "reviewed_source_tree_sha256": "TO_BE_CAPTURED_FROM_APPROVED_PACKAGE_SOURCE_IDENTITY",
+  "approving_audit_report_path": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "approving_audit_report_sha256": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "historical_invalid_sha256": "FA91F46A2F8F6D78586FAE407E795BCEB99AD529F76925A4AF806F9AC73595C0",
+  "workspace_intermediate_sha256": "43241395121AD9D71073B030B328195D7D0F28140DEAB8CED41681D1DB853CC5",
+  "preflight_evidence_sha256": "TO_BE_CAPTURED_FROM_FRESH_READ_ONLY_PREFLIGHT",
+  "allowed_mcp_root_count": 0,
+  "allowed_watchdog_count": 0,
+  "authorized_operations": [
+    "environment_preflight",
+    "temporary_build",
+    "structure_inspection",
+    "compile",
+    "promotion",
+    "qualification_simulation",
+    "sensitivity",
+    "repeatability",
+    "final_report"
+  ],
+  "authorized_by": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "authorization_id": "TO_BE_SUPPLIED_BY_APPROVING_REVIEWER",
+  "prohibition": "No controlled rebuild is authorized by this template. Only a future external independent decision READY_FOR_CONTROLLED_REBUILD bound to the reviewed package, source identity, report, evidence, preflight, exact operations, and one authorization ID can authorize execution."
+}

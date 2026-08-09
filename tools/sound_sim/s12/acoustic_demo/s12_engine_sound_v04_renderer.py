@@ -11,10 +11,19 @@ import wave
 from s12_acoustic_audition import PressureTrace
 
 
-def render_ptr_trace_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path, sample_rate_hz: int, renderer_gain: float, fade_s: float) -> dict:
+def render_ptr_trace_wav(
+    trace: PressureTrace,
+    wav_path: Path,
+    metadata_path: Path,
+    sample_rate_hz: int,
+    renderer_gain: float,
+    fade_s: float,
+) -> dict:
     if trace.sample_rate_hz != sample_rate_hz:
         raise ValueError("v0.4 renderer requires contracted PTR sample rate")
-    mono = [sample - sum(trace.pressure_pa) / len(trace.pressure_pa) for sample in trace.pressure_pa]
+    mono = [
+        sample - sum(trace.pressure_pa) / len(trace.pressure_pa) for sample in trace.pressure_pa
+    ]
     fade_frames = max(1, round(fade_s * trace.sample_rate_hz))
     for index in range(min(fade_frames, len(mono))):
         weight = index / max(1, fade_frames - 1)

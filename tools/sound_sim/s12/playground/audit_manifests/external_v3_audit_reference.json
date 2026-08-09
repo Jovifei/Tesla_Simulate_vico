@@ -1,0 +1,7 @@
+{
+  "report_name": "S12_Simulink_Playground_v09_Offline_Audit_v3_ChatGPT.md",
+  "sha256": "AED9CA9A6876422F3039E0321F15ABA64D09093911163FBA1A490236F88458BC",
+  "content_status": "NOT_FABRICATED",
+  "package_status": "REFERENCE_ONLY_REPORT_BYTES_NOT_PRESENT_IN_WORKSPACE",
+  "conclusion": "Overall = FAIL; generated but not validated; NOT_READY_FOR_CONTROLLED_REBUILD"
+}

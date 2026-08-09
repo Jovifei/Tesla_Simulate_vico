@@ -1,0 +1,8 @@
+{
+  "implementation": "Manual Switch",
+  "input_1": "Dashboard Constants",
+  "input_2": "Qualification Scenario",
+  "qualification": {"selected_input": 2, "sw": "0"},
+  "interactive": {"selected_input": 1, "sw": "1"},
+  "runtime_status": "NOT_RUN"
+}

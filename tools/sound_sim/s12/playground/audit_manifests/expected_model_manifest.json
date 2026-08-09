@@ -1,0 +1,14 @@
+{
+  "product_name": "S12 Script-Configured Simulink Audition Model",
+  "state": "generated but not validated",
+  "readiness": "NOT_READY_FOR_CONTROLLED_REBUILD",
+  "topology": [
+    "Dashboard configuration source",
+    "Vehicle State packed pass-through",
+    "Engine excitation",
+    "PTR radiation tuning adapter",
+    "Audio renderer",
+    "Qualification PCM sink"
+  ],
+  "forbidden_claims": ["compiled", "simulated", "audio validated", "Dashboard HMI validated"]
+}

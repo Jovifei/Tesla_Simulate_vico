@@ -1,0 +1,28 @@
+{
+  "schema": "s12.simulink.playground.controlled-stage-plan.v7",
+  "runtime_execution": "NOT_EXECUTED_IN_V7_OFFLINE_CLOSEOUT",
+  "readiness": "NOT_READY_FOR_CONTROLLED_REBUILD",
+  "allowed_statuses": ["COMPLETED", "FAILED", "SKIPPED_NOT_AUTHORIZED"],
+  "ordering": [
+    "environment_preflight",
+    "global_lock_acquire",
+    "authorization_verification",
+    "evidence_sha_verification",
+    "temporary_build",
+    "post_build_port_contract",
+    "cold_reload_compile",
+    "promote_repaired_candidate",
+    "idle_simulation",
+    "cruise_simulation",
+    "acceleration_simulation",
+    "pcm_validation",
+    "rpm_sensitivity",
+    "load_sensitivity",
+    "acceleration_sensitivity",
+    "repeatability",
+    "optional_device_smoke_skipped",
+    "formal_qualification",
+    "final_report",
+    "global_lock_release"
+  ]
+}

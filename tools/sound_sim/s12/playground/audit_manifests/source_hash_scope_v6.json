@@ -1,0 +1,23 @@
+{
+  "schema": "s12.simulink.playground.source-hash-scope.v6",
+  "canonical_workspace_source_root": "E:/Tesla_speed/prj/tools/sound_sim/s12",
+  "runtime_data_location": "OUTSIDE_SOURCE_TREE",
+  "included": [
+    "playground top-level .m/.json/.py",
+    "playground/audit_manifests/*.json",
+    "ten named playground tests"
+  ],
+  "excluded": [
+    "SLX evidence",
+    "generated package reports and identity manifests",
+    "slprj",
+    "cache",
+    "WAV",
+    "PCM",
+    "transaction JSON",
+    "authorization claims",
+    "active-run lock",
+    "temporary candidate outputs"
+  ],
+  "identity_rule": "Copy canonical source once, hash it, then generate every declaration from that one SHA."
+}

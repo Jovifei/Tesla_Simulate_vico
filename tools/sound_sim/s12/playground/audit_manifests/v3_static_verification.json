@@ -1,0 +1,9 @@
+{
+  "executed_without_matlab": true,
+  "python_static_contract_tests": {"passed": 10, "failed": 0},
+  "python_compileall": "passed",
+  "git_diff_check": "passed",
+  "matlab_tests": "NOT_RUN_BY_OFFLINE_POLICY",
+  "simulink_compile": "NOT_RUN_BY_OFFLINE_POLICY",
+  "simulink_simulation": "NOT_RUN_BY_OFFLINE_POLICY"
+}

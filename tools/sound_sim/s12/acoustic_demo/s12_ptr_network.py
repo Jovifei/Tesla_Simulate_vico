@@ -93,25 +93,34 @@ def load_radiation_package(path: Path = DEFAULT_PACKAGE_PATH) -> RadiationPackag
     if not isinstance(reference_plane, str) or not reference_plane:
         raise ValueError("radiation package reference plane is required")
     return RadiationPackage(
-        Path(path), hashlib.sha256(raw).hexdigest(), QUALIFICATION_COMMIT,
-        reference_plane, a, b, c, d, initial_state,
+        Path(path),
+        hashlib.sha256(raw).hexdigest(),
+        QUALIFICATION_COMMIT,
+        reference_plane,
+        a,
+        b,
+        c,
+        d,
+        initial_state,
     )
 
 
 def _delay_loss(samples: list[float], delay: int, loss: float) -> list[float]:
     return [
-        0.0 if index < delay else loss * samples[index - delay]
-        for index in range(len(samples))
+        0.0 if index < delay else loss * samples[index - delay] for index in range(len(samples))
     ]
 
 
-def _tustin_response(samples: list[float], sample_rate_hz: int,
-                     package: RadiationPackage) -> list[float]:
+def _tustin_response(
+    samples: list[float], sample_rate_hz: int, package: RadiationPackage
+) -> list[float]:
     if sample_rate_hz <= 0:
         raise ValueError("PTR trace must have a positive sample rate")
     dt = 1.0 / sample_rate_hz
     (a00, a01), (a10, a11) = package.a
-    determinant = (1.0 - dt * a00 / 2.0) * (1.0 - dt * a11 / 2.0) - (dt * a01 / 2.0) * (dt * a10 / 2.0)
+    determinant = (1.0 - dt * a00 / 2.0) * (1.0 - dt * a11 / 2.0) - (dt * a01 / 2.0) * (
+        dt * a10 / 2.0
+    )
     if not math.isfinite(determinant) or abs(determinant) < 1e-15:
         raise ValueError("PTR Tustin update is singular")
     x0, x1 = package.initial_state
@@ -127,7 +136,9 @@ def _tustin_response(samples: list[float], sample_rate_hz: int,
     return output
 
 
-def run_ptr_network(trace: PressureTrace, config: PtrNetworkConfig = PtrNetworkConfig()) -> PressureTrace:
+def run_ptr_network(
+    trace: PressureTrace, config: PtrNetworkConfig = PtrNetworkConfig()
+) -> PressureTrace:
     """Apply two causal transport sections and a two-state radiation reflection."""
     if trace.sample_rate_hz is None:
         raise ValueError("PTR trace requires a uniform sample rate")

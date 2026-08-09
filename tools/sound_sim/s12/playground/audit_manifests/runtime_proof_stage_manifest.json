@@ -1,0 +1,24 @@
+{
+  "schema": "s12.simulink.playground.runtime-proof.v1",
+  "initial_status": "MANUAL_RUNTIME_REQUIRED",
+  "success_status": "RUNTIME_PROOF_PASSED",
+  "fail_fast": true,
+  "candidate_policy": "RUN_SPECIFIC_TEMPORARY_CANDIDATE_ONLY",
+  "ordering": [
+    "temporary_build",
+    "port_contract",
+    "cold_reload",
+    "update_diagram",
+    "active_compile_dimension_readback",
+    "idle_simulation",
+    "cruise_simulation",
+    "acceleration_simulation",
+    "pcm_validation",
+    "parameter_sensitivity",
+    "repeatability",
+    "device_audio_smoke",
+    "runtime_proof_report"
+  ],
+  "runtime_only": true,
+  "launcher": "PROHIBITED_USER_STARTED_EXISTING_SESSION_ONLY"
+}

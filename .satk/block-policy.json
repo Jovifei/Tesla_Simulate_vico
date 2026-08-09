@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "policyMode": "prefer_customer_libraries",
-  "fallbackToBuiltins": true,
-  "blockedBlocks": [],
-  "deprecatedBlocks": [],
-  "blockRules": []
-}

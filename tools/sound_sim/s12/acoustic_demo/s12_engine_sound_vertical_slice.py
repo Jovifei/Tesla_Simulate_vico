@@ -54,8 +54,7 @@ def _sha256(path: Path) -> str:
 def _write_png(path: Path, pixels: list[list[tuple[int, int, int]]]) -> None:
     height, width = len(pixels), len(pixels[0])
     raw = b"".join(
-        b"\x00" + bytes(component for pixel in row for component in pixel)
-        for row in pixels
+        b"\x00" + bytes(component for pixel in row for component in pixel) for row in pixels
     )
 
     def chunk(kind: bytes, data: bytes) -> bytes:
@@ -73,7 +72,9 @@ def _write_png(path: Path, pixels: list[list[tuple[int, int, int]]]) -> None:
     path.write_bytes(content + chunk(b"IDAT", zlib.compress(raw, level=9)) + chunk(b"IEND", b""))
 
 
-def _bar_chart(values: list[float], color: tuple[int, int, int]) -> list[list[tuple[int, int, int]]]:
+def _bar_chart(
+    values: list[float], color: tuple[int, int, int]
+) -> list[list[tuple[int, int, int]]]:
     width, height = 360, 180
     pixels = [[(255, 255, 255) for _ in range(width)] for _ in range(height)]
     maximum = max(values) if values else 1.0
@@ -90,8 +91,7 @@ def _write_case_images(output_dir: Path, case: str, harmonics: list[dict]) -> No
     values = [float(item["rms"]) for item in harmonics]
     _write_png(output_dir / "analysis" / case / "spectrum.png", _bar_chart(values, (33, 102, 172)))
     spans = [
-        abs(float(item["frequency_hz"][1]) - float(item["frequency_hz"][0]))
-        for item in harmonics
+        abs(float(item["frequency_hz"][1]) - float(item["frequency_hz"][0])) for item in harmonics
     ]
     _write_png(output_dir / "analysis" / case / "order_map.png", _bar_chart(spans, (42, 140, 80)))
 
@@ -141,9 +141,7 @@ def _edge_envelope(frame_count: int, fade_frames: int) -> list[float]:
         index / denominator
         if index < fade_frames
         else (
-            (frame_count - 1 - index) / denominator
-            if index >= frame_count - fade_frames
-            else 1.0
+            (frame_count - 1 - index) / denominator if index >= frame_count - fade_frames else 1.0
         )
         for index in range(frame_count)
     ]
@@ -192,9 +190,7 @@ def _render_case(
     write_images: bool = True,
 ) -> CaseRender:
     state.validate()
-    source = synthesize_four_stroke_trajectory(
-        state.source_config(), state.rpm, state.load
-    )
+    source = synthesize_four_stroke_trajectory(state.source_config(), state.rpm, state.load)
     ptr = run_ptr_network(source)
     designed = render_sound_design(
         ptr, state.to_order_schedule(), load_order_profile(), load_design_parameters()
@@ -220,8 +216,12 @@ def _write_rpm_trace(path: Path, cases: dict[str, VehicleStateSeries]) -> Path:
             writer.writerows(
                 (name, *values)
                 for values in zip(
-                    state.timestamp, state.rpm, state.speed, state.acceleration,
-                    state.load, state.throttle,
+                    state.timestamp,
+                    state.rpm,
+                    state.speed,
+                    state.acceleration,
+                    state.load,
+                    state.throttle,
                 )
             )
     return path
@@ -229,38 +229,40 @@ def _write_rpm_trace(path: Path, cases: dict[str, VehicleStateSeries]) -> Path:
 
 def _write_report(path: Path, renders: dict[str, CaseRender]) -> Path:
     path.write_text(
-        "\n".join([
-            "# S12 Engine Sound Vertical Slice Report",
-            "",
-            f"Generator: {GENERATOR_VERSION}",
-            "",
-            "This is a synthetic, uncalibrated, offline prototype and is not realtime-qualified.",
-            "It is not an OEM engine clone and contains no recording or real vehicle measurement.",
-            "",
-            "## Completed",
-            "",
-            "- Engine order synthesis: COMPLETED",
-            "- RPM mapping: COMPLETED",
-            "- Load mapping: COMPLETED",
-            "- Transient processing: COMPLETED",
-            "- PTR coupling: COMPLETED through the existing immutable radiation package",
-            "- Offline 48 kHz WAV: COMPLETED",
-            "",
-            "## Not completed",
-            "",
-            "- OEM calibration: NOT COMPLETED",
-            "- Real vehicle measurement: NOT COMPLETED",
-            "- Realtime DSP: NOT COMPLETED",
-            "- Phone integration: NOT COMPLETED",
-            "",
-            "## Cases",
-            "",
-            *[
-                f"- {name}: engine_source_hash={case.engine_source_hash}; ptr_hash={case.ptr_hash}"
-                for name, case in renders.items()
-            ],
-            "",
-        ]),
+        "\n".join(
+            [
+                "# S12 Engine Sound Vertical Slice Report",
+                "",
+                f"Generator: {GENERATOR_VERSION}",
+                "",
+                "This is a synthetic, uncalibrated, offline prototype and is not realtime-qualified.",
+                "It is not an OEM engine clone and contains no recording or real vehicle measurement.",
+                "",
+                "## Completed",
+                "",
+                "- Engine order synthesis: COMPLETED",
+                "- RPM mapping: COMPLETED",
+                "- Load mapping: COMPLETED",
+                "- Transient processing: COMPLETED",
+                "- PTR coupling: COMPLETED through the existing immutable radiation package",
+                "- Offline 48 kHz WAV: COMPLETED",
+                "",
+                "## Not completed",
+                "",
+                "- OEM calibration: NOT COMPLETED",
+                "- Real vehicle measurement: NOT COMPLETED",
+                "- Realtime DSP: NOT COMPLETED",
+                "- Phone integration: NOT COMPLETED",
+                "",
+                "## Cases",
+                "",
+                *[
+                    f"- {name}: engine_source_hash={case.engine_source_hash}; ptr_hash={case.ptr_hash}"
+                    for name, case in renders.items()
+                ],
+                "",
+            ]
+        ),
         encoding="utf-8",
     )
     return path
@@ -282,7 +284,8 @@ def _write_manifest(output_dir: Path, controlled: list[Path]) -> Path:
             },
             indent=2,
             sort_keys=True,
-        ) + "\n",
+        )
+        + "\n",
         encoding="utf-8",
     )
     return manifest_path
@@ -329,7 +332,8 @@ def run_vertical_slice(output_dir: Path) -> VerticalSliceResult:
             },
             indent=2,
             sort_keys=True,
-        ) + "\n",
+        )
+        + "\n",
         encoding="utf-8",
     )
     report_path = _write_report(output_dir / "S12 Engine Sound Vertical Slice Report.md", renders)

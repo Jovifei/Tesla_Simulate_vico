@@ -50,9 +50,17 @@ class _Segment:
     end_load: float
 
     def sample(self, normalized_time: float, duration_s: float) -> VehicleState:
-        fraction = 0.0 if self.end == self.start else (normalized_time - self.start) / (self.end - self.start)
+        fraction = (
+            0.0
+            if self.end == self.start
+            else (normalized_time - self.start) / (self.end - self.start)
+        )
         blend = _smoothstep(fraction)
-        derivative = _smoothstep_derivative(fraction) / ((self.end - self.start) * duration_s) if self.end > self.start else 0.0
+        derivative = (
+            _smoothstep_derivative(fraction) / ((self.end - self.start) * duration_s)
+            if self.end > self.start
+            else 0.0
+        )
         rpm = self.start_rpm + (self.end_rpm - self.start_rpm) * blend
         speed_mps = self.start_speed_mps + (self.end_speed_mps - self.start_speed_mps) * blend
         load = self.start_load + (self.end_load - self.start_load) * blend
@@ -71,7 +79,11 @@ class RuntimeDriveCycle:
 
     def __init__(self, duration_s: float = 600.0) -> None:
         update_count = round(duration_s * UPDATE_HZ)
-        if not math.isfinite(duration_s) or duration_s <= 0.0 or not math.isclose(duration_s * UPDATE_HZ, update_count, abs_tol=1.0e-9):
+        if (
+            not math.isfinite(duration_s)
+            or duration_s <= 0.0
+            or not math.isclose(duration_s * UPDATE_HZ, update_count, abs_tol=1.0e-9)
+        ):
             raise ValueError("duration must be positive and aligned to the 100 Hz stream")
         self.duration_s = float(duration_s)
         self._update_count = update_count

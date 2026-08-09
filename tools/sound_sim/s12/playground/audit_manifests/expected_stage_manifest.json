@@ -1,0 +1,30 @@
+{
+  "schema": "s12.simulink.playground.controlled-stage-plan.v1",
+  "status": "FUTURE_ONLY_NOT_EXECUTED",
+  "fail_fast": true,
+  "progress_record_fields": ["run_id", "stage", "status", "started_at", "ended_at", "artifact", "error_identifier", "error_message", "error_stack"],
+  "allowed_statuses": ["COMPLETED", "FAILED", "SKIPPED_NOT_AUTHORIZED"],
+  "ordering": [
+    "environment_preflight",
+    "global_lock_acquire",
+    "authorization_verification",
+    "evidence_sha_verification",
+    "temporary_build",
+    "post_build_port_contract",
+    "cold_reload_compile",
+    "promote_repaired_candidate",
+    "idle_simulation",
+    "cruise_simulation",
+    "acceleration_simulation",
+    "pcm_validation",
+    "rpm_sensitivity",
+    "load_sensitivity",
+    "acceleration_sensitivity",
+    "repeatability",
+    "optional_device_smoke_skipped",
+    "formal_qualification",
+    "qualification_report",
+    "global_lock_release",
+    "completion_receipt"
+  ]
+}

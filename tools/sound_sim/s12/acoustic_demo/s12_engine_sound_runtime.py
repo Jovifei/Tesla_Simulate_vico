@@ -13,7 +13,10 @@ from pathlib import Path
 import subprocess
 import time
 
-from audio_parameter_package.runtime_package import build_runtime_audio_parameter_package, validate_runtime_audio_parameter_package
+from audio_parameter_package.runtime_package import (
+    build_runtime_audio_parameter_package,
+    validate_runtime_audio_parameter_package,
+)
 from engine_operating_points.library import load_operating_point_library
 from engine_runtime import EngineSoundRuntime
 from runtime_pcm import PcmRingBuffer, SimulatedPcmSink, WindowsWaveOutSink
@@ -37,7 +40,12 @@ class RuntimeReport:
 
 def _current_source_commit() -> str:
     project_root = Path(__file__).resolve().parents[4]
-    return subprocess.run(["git", "-C", str(project_root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+    return subprocess.run(
+        ["git", "-C", str(project_root), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
 
 
 def _process_working_set_bytes() -> int | None:
@@ -46,11 +54,17 @@ def _process_working_set_bytes() -> int | None:
 
     class ProcessMemoryCountersEx(ctypes.Structure):
         _fields_ = [
-            ("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD),
-            ("PeakWorkingSetSize", ctypes.c_size_t), ("WorkingSetSize", ctypes.c_size_t),
-            ("QuotaPeakPagedPoolUsage", ctypes.c_size_t), ("QuotaPagedPoolUsage", ctypes.c_size_t),
-            ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t), ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
-            ("PagefileUsage", ctypes.c_size_t), ("PeakPagefileUsage", ctypes.c_size_t), ("PrivateUsage", ctypes.c_size_t),
+            ("cb", wintypes.DWORD),
+            ("PageFaultCount", wintypes.DWORD),
+            ("PeakWorkingSetSize", ctypes.c_size_t),
+            ("WorkingSetSize", ctypes.c_size_t),
+            ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+            ("QuotaPagedPoolUsage", ctypes.c_size_t),
+            ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+            ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+            ("PagefileUsage", ctypes.c_size_t),
+            ("PeakPagefileUsage", ctypes.c_size_t),
+            ("PrivateUsage", ctypes.c_size_t),
         ]
 
     counters = ProcessMemoryCountersEx()
@@ -59,9 +73,15 @@ def _process_working_set_bytes() -> int | None:
     psapi = ctypes.WinDLL("psapi", use_last_error=True)
     kernel32.GetCurrentProcess.argtypes = []
     kernel32.GetCurrentProcess.restype = wintypes.HANDLE
-    psapi.GetProcessMemoryInfo.argtypes = [wintypes.HANDLE, ctypes.POINTER(ProcessMemoryCountersEx), wintypes.DWORD]
+    psapi.GetProcessMemoryInfo.argtypes = [
+        wintypes.HANDLE,
+        ctypes.POINTER(ProcessMemoryCountersEx),
+        wintypes.DWORD,
+    ]
     psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
-    result = psapi.GetProcessMemoryInfo(kernel32.GetCurrentProcess(), ctypes.byref(counters), counters.cb)
+    result = psapi.GetProcessMemoryInfo(
+        kernel32.GetCurrentProcess(), ctypes.byref(counters), counters.cb
+    )
     return int(counters.WorkingSetSize) if result else None
 
 
@@ -77,25 +97,64 @@ def _write_markdown_report(path: Path, report: dict) -> Path:
         if report["device_output"] == "windows_waveout"
         else "- optional Windows waveOut PCM device adapter is implemented; this deterministic run uses the simulated PC PCM sink"
     )
-    path.write_text("\n".join([
-        "# S12 Runtime Engine Sound v0.6 Report", "",
-        "Synthetic PC runtime simulation only. It is uncalibrated and not realtime-qualified; it is not an OEM or real-vehicle clone.", "",
-        "## Completed", "", "- continuous virtual-time runtime", "- 20 ms 48 kHz/24-bit/stereo PCM streaming", "- 100 Hz synthetic vehicle-state interface", "- phase-continuous order tracking", "- stateful frozen PTR/radiation adapter", "- bounded simulated PCM queue with latency, underrun, CPU and memory metrics", device_summary, "- future App JSON contract and AudioParameterPackage v0.2", "",
-        "## Evidence", "", f"- virtual duration: {report['duration_s']} s", f"- PCM frames: {report['pcm_frames']}", f"- underruns: {report['buffer']['underrun_count']}", f"- audio SHA-256: {report['audio']['sha256']}", f"- output sink: {report['device_output']}", "",
-        "## Not completed", "", "- Android integration", "- end-to-end realtime audio-device qualification", "- vehicle calibration", "- ESP32, I2S, CAN, and phone hardware integration", "",
-    ]), encoding="utf-8")
+    path.write_text(
+        "\n".join(
+            [
+                "# S12 Runtime Engine Sound v0.6 Report",
+                "",
+                "Synthetic PC runtime simulation only. It is uncalibrated and not realtime-qualified; it is not an OEM or real-vehicle clone.",
+                "",
+                "## Completed",
+                "",
+                "- continuous virtual-time runtime",
+                "- 20 ms 48 kHz/24-bit/stereo PCM streaming",
+                "- 100 Hz synthetic vehicle-state interface",
+                "- phase-continuous order tracking",
+                "- stateful frozen PTR/radiation adapter",
+                "- bounded simulated PCM queue with latency, underrun, CPU and memory metrics",
+                device_summary,
+                "- future App JSON contract and AudioParameterPackage v0.2",
+                "",
+                "## Evidence",
+                "",
+                f"- virtual duration: {report['duration_s']} s",
+                f"- PCM frames: {report['pcm_frames']}",
+                f"- underruns: {report['buffer']['underrun_count']}",
+                f"- audio SHA-256: {report['audio']['sha256']}",
+                f"- output sink: {report['device_output']}",
+                "",
+                "## Not completed",
+                "",
+                "- Android integration",
+                "- end-to-end realtime audio-device qualification",
+                "- vehicle calibration",
+                "- ESP32, I2S, CAN, and phone hardware integration",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
     return path
 
 
-def run_runtime_demo(output_root: Path, duration_s: float = 600.0, device_output: bool = False) -> RuntimeReport:
+def run_runtime_demo(
+    output_root: Path, duration_s: float = 600.0, device_output: bool = False
+) -> RuntimeReport:
     """Render a deterministic 20 ms PCM stream without retaining complete audio."""
     frame_count = round(duration_s / BLOCK_DURATION_S)
     update_count = round(duration_s * STATE_UPDATE_HZ)
-    if not math.isfinite(duration_s) or duration_s <= 0.0 or not math.isclose(frame_count * BLOCK_DURATION_S, duration_s, abs_tol=1.0e-9) or update_count != frame_count * 2:
+    if (
+        not math.isfinite(duration_s)
+        or duration_s <= 0.0
+        or not math.isclose(frame_count * BLOCK_DURATION_S, duration_s, abs_tol=1.0e-9)
+        or update_count != frame_count * 2
+    ):
         raise ValueError("runtime duration must be a positive multiple of 20 ms")
     cycle = RuntimeDriveCycle(duration_s=duration_s)
     library = load_operating_point_library()
-    parameter_package = build_runtime_audio_parameter_package(library, renderer_profile_from_library(library), _current_source_commit())
+    parameter_package = build_runtime_audio_parameter_package(
+        library, renderer_profile_from_library(library), _current_source_commit()
+    )
     validate_runtime_audio_parameter_package(parameter_package)
     runtime = EngineSoundRuntime()
     queue = PcmRingBuffer(capacity_frames=50)
@@ -118,7 +177,13 @@ def run_runtime_demo(output_root: Path, duration_s: float = 600.0, device_output
         audio_hash.update(frame.pcm_s24le_stereo)
         clipping_count += sum(abs(sample) > 1.0 for sample in frame.normalized_samples)
         if frame.runtime_mode != last_mode:
-            transitions.append({"frame_index": frame_index, "timestamp_s": state.timestamp_s, "mode": frame.runtime_mode})
+            transitions.append(
+                {
+                    "frame_index": frame_index,
+                    "timestamp_s": state.timestamp_s,
+                    "mode": frame.runtime_mode,
+                }
+            )
             last_mode = frame.runtime_mode
         queue.push(frame)
         if device_sink is None:
@@ -183,4 +248,6 @@ def run_runtime_demo(output_root: Path, duration_s: float = 600.0, device_output
     output_root = Path(output_root)
     report_path = _write_json(output_root / "runtime_report.json", report)
     _write_markdown_report(output_root / "S12_Runtime_Engine_Sound_v06_Report.md", report)
-    return RuntimeReport(report_path, report["audio"]["sha256"], frame_count, sink.underrun_count, STATE_UPDATE_HZ)
+    return RuntimeReport(
+        report_path, report["audio"]["sha256"], frame_count, sink.underrun_count, STATE_UPDATE_HZ
+    )

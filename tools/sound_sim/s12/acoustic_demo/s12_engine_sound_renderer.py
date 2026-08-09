@@ -34,10 +34,7 @@ def _maximum_step(channels: tuple[list[float], list[float]]) -> float:
         maximum = max(
             maximum,
             max(
-                (
-                    abs(current - previous)
-                    for previous, current in zip(channel, channel[1:])
-                ),
+                (abs(current - previous) for previous, current in zip(channel, channel[1:])),
                 default=0.0,
             ),
         )
@@ -49,11 +46,7 @@ def render_designed_wav(
     output_path: Path,
     metadata_path: Path,
 ) -> EngineSoundRenderResult:
-    if (
-        trace.sample_rate_hz != 48000
-        or not trace.left
-        or len(trace.left) != len(trace.right)
-    ):
+    if trace.sample_rate_hz != 48000 or not trace.left or len(trace.left) != len(trace.right):
         raise ValueError("renderer requires matching nonempty 48 kHz stereo channels")
     channels = (trace.left, trace.right)
     dc = {
@@ -68,10 +61,7 @@ def render_designed_wav(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     metadata_path.parent.mkdir(parents=True, exist_ok=True)
-    frames = b"".join(
-        _pcm24(left) + _pcm24(right)
-        for left, right in zip(trace.left, trace.right)
-    )
+    frames = b"".join(_pcm24(left) + _pcm24(right) for left, right in zip(trace.left, trace.right))
     with wave.open(str(output_path), "wb") as writer:
         writer.setnchannels(2)
         writer.setsampwidth(3)

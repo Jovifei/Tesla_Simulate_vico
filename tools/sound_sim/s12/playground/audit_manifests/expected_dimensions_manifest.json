@@ -1,0 +1,13 @@
+{
+  "configuration": [18, 1],
+  "excitation": [960, 1],
+  "pressure": [960, 1],
+  "pcm": [960, 2],
+  "sample_rate_hz": 48000,
+  "frame_samples": 960,
+  "frame_period_s": 0.02,
+  "frame_count": 500,
+  "stop_time_s": 9.98,
+  "audio_duration_s": 10.0,
+  "runtime_status": "NOT_RUN"
+}

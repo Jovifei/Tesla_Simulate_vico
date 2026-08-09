@@ -40,12 +40,16 @@ class RuntimePcmRenderer:
             raise ValueError("runtime PCM contract is exactly 960 samples at 48 kHz")
 
     def render(self, pressure_samples: Sequence[float], sequence_index: int) -> PCMFrame:
-        if len(pressure_samples) != BLOCK_SAMPLES or not all(math.isfinite(sample) for sample in pressure_samples):
+        if len(pressure_samples) != BLOCK_SAMPLES or not all(
+            math.isfinite(sample) for sample in pressure_samples
+        ):
             raise ValueError("runtime renderer requires one finite 20 ms pressure block")
         normalized = tuple(float(sample) * self._gain for sample in pressure_samples)
         if any(abs(sample) > 1.0 for sample in normalized):
             raise ValueError("runtime renderer refuses clipping; no limiter is applied")
-        payload = b"".join(struct.pack("<i", round(sample * 8388607))[0:3] * 2 for sample in normalized)
+        payload = b"".join(
+            struct.pack("<i", round(sample * 8388607))[0:3] * 2 for sample in normalized
+        )
         return PCMFrame(sequence_index, self.sample_rate_hz, 2, 24, normalized, payload)
 
 
@@ -103,19 +107,26 @@ class SimulatedPcmSink:
 
 class _WaveFormatEx(ctypes.Structure):
     _fields_ = [
-        ("wFormatTag", wintypes.WORD), ("nChannels", wintypes.WORD),
-        ("nSamplesPerSec", wintypes.DWORD), ("nAvgBytesPerSec", wintypes.DWORD),
-        ("nBlockAlign", wintypes.WORD), ("wBitsPerSample", wintypes.WORD),
+        ("wFormatTag", wintypes.WORD),
+        ("nChannels", wintypes.WORD),
+        ("nSamplesPerSec", wintypes.DWORD),
+        ("nAvgBytesPerSec", wintypes.DWORD),
+        ("nBlockAlign", wintypes.WORD),
+        ("wBitsPerSample", wintypes.WORD),
         ("cbSize", wintypes.WORD),
     ]
 
 
 class _WaveHeader(ctypes.Structure):
     _fields_ = [
-        ("lpData", ctypes.c_char_p), ("dwBufferLength", wintypes.DWORD),
-        ("dwBytesRecorded", wintypes.DWORD), ("dwUser", ctypes.c_size_t),
-        ("dwFlags", wintypes.DWORD), ("dwLoops", wintypes.DWORD),
-        ("lpNext", ctypes.c_void_p), ("reserved", ctypes.c_size_t),
+        ("lpData", ctypes.c_char_p),
+        ("dwBufferLength", wintypes.DWORD),
+        ("dwBytesRecorded", wintypes.DWORD),
+        ("dwUser", ctypes.c_size_t),
+        ("dwFlags", wintypes.DWORD),
+        ("dwLoops", wintypes.DWORD),
+        ("lpNext", ctypes.c_void_p),
+        ("reserved", ctypes.c_size_t),
     ]
 
 
@@ -141,7 +152,9 @@ class WindowsWaveOutSink:
         self._handle = ctypes.c_void_p()
         self._pending: list[tuple[ctypes.Array, _WaveHeader]] = []
         format_ex = _WaveFormatEx(1, 2, 48000, 48000 * 2 * 3, 2 * 3, 24, 0)
-        result = self._winmm.waveOutOpen(ctypes.byref(self._handle), self.WAVE_MAPPER, ctypes.byref(format_ex), 0, 0, 0)
+        result = self._winmm.waveOutOpen(
+            ctypes.byref(self._handle), self.WAVE_MAPPER, ctypes.byref(format_ex), 0, 0, 0
+        )
         if result != 0:
             raise OSError(f"waveOutOpen failed with MMRESULT={result}")
 
@@ -154,7 +167,9 @@ class WindowsWaveOutSink:
         remaining = []
         for buffer, header in self._pending:
             if header.dwFlags & self.WHDR_DONE:
-                self._winmm.waveOutUnprepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+                self._winmm.waveOutUnprepareHeader(
+                    self._handle, ctypes.byref(header), ctypes.sizeof(header)
+                )
             else:
                 remaining.append((buffer, header))
         self._pending = remaining
@@ -168,13 +183,19 @@ class WindowsWaveOutSink:
             raise ValueError("waveOut sink accepts only the runtime PCM contract")
         self.wait_for_capacity()
         buffer = ctypes.create_string_buffer(frame.pcm_s24le_stereo)
-        header = _WaveHeader(ctypes.cast(buffer, ctypes.c_char_p), len(frame.pcm_s24le_stereo), 0, 0, 0, 0, None, 0)
-        result = self._winmm.waveOutPrepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+        header = _WaveHeader(
+            ctypes.cast(buffer, ctypes.c_char_p), len(frame.pcm_s24le_stereo), 0, 0, 0, 0, None, 0
+        )
+        result = self._winmm.waveOutPrepareHeader(
+            self._handle, ctypes.byref(header), ctypes.sizeof(header)
+        )
         if result != 0:
             raise OSError(f"waveOutPrepareHeader failed with MMRESULT={result}")
         result = self._winmm.waveOutWrite(self._handle, ctypes.byref(header), ctypes.sizeof(header))
         if result != 0:
-            self._winmm.waveOutUnprepareHeader(self._handle, ctypes.byref(header), ctypes.sizeof(header))
+            self._winmm.waveOutUnprepareHeader(
+                self._handle, ctypes.byref(header), ctypes.sizeof(header)
+            )
             raise OSError(f"waveOutWrite failed with MMRESULT={result}")
         self._pending.append((buffer, header))
 

@@ -1,0 +1,13 @@
+{
+  "schema": "s12.simulink.playground.controlled-stage-plan.v5",
+  "runtime_execution": "NOT_EXECUTED_IN_V5_OFFLINE_REPAIR",
+  "top_level_states": [
+    "PLAN_ONLY_NOT_EXECUTED",
+    "CONTROLLED_FLOW_RUNNING",
+    "CONTROLLED_FLOW_FAILED",
+    "CONTROLLED_FLOW_PASSED"
+  ],
+  "fail_fast": true,
+  "device_smoke_without_authorization": "NOT_AUTHORIZED_NOT_RUN",
+  "direct_listening_gate": "INCOMPLETE"
+}

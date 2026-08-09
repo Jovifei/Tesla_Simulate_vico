@@ -1,0 +1,13 @@
+{
+  "validation_scope": "STATIC_ONLY_NO_MATLAB_OR_SIMULINK_EXECUTION",
+  "command": "python -m unittest tools.sound_sim.s12.tests.test_s12_sound_playground_v3_static tools.sound_sim.s12.tests.test_s12_sound_playground_v4_static -v",
+  "result": "PASS",
+  "passed": 28,
+  "failed": 0,
+  "matlab_started": false,
+  "simulink_loaded": false,
+  "mcp_called": false,
+  "model_operations": "NOT_PERFORMED",
+  "runtime_status": "generated but not validated",
+  "controlled_rebuild_readiness": "NOT_READY_FOR_CONTROLLED_REBUILD"
+}

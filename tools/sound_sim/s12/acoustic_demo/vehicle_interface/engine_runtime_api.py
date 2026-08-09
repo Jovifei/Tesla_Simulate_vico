@@ -80,7 +80,9 @@ class EngineRuntimeApi:
     def queue_max_depth_frames(self) -> int:
         return self._queue.max_depth
 
-    def process_state(self, packet: VehicleStatePacket, ingress_started_s: float | None = None) -> RuntimeApiResult:
+    def process_state(
+        self, packet: VehicleStatePacket, ingress_started_s: float | None = None
+    ) -> RuntimeApiResult:
         """Ingest one packet; every second 100 Hz packet emits one PCM frame."""
         started = time.perf_counter() if ingress_started_s is None else float(ingress_started_s)
         if not math.isfinite(started):

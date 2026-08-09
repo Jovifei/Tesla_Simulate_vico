@@ -52,7 +52,9 @@ def _linear_resample(samples: list[float], source_rate_hz: int, target_rate_hz: 
     return output
 
 
-def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path, renderer_profile: dict) -> dict:
+def render_product_wav(
+    trace: PressureTrace, wav_path: Path, metadata_path: Path, renderer_profile: dict
+) -> dict:
     """Write fixed-format stereo PCM from existing PTR/radiation pressure only."""
     sample_rate_hz = int(renderer_profile["sample_rate_hz"])
     if trace.sample_rate_hz is None:
@@ -61,7 +63,9 @@ def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path
     gain = 10.0 ** (gain_db / 20.0)
     resampled = _linear_resample(trace.pressure_pa, trace.sample_rate_hz, sample_rate_hz)
     dc_free = [sample - sum(resampled) / len(resampled) for sample in resampled]
-    samples = _edge_crossfade(dc_free, round(float(renderer_profile["edge_fade_s"]) * sample_rate_hz))
+    samples = _edge_crossfade(
+        dc_free, round(float(renderer_profile["edge_fade_s"]) * sample_rate_hz)
+    )
     samples = [sample * gain for sample in samples]
     if any(abs(sample) > 1.0 for sample in samples):
         raise ValueError("renderer refuses clipping; no limiter is applied")
@@ -87,5 +91,7 @@ def render_product_wav(trace: PressureTrace, wav_path: Path, metadata_path: Path
         "source_hash": trace.source_identity_sha256,
         "synthetic": True,
     }
-    metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return metadata

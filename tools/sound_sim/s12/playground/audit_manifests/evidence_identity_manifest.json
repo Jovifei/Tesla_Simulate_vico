@@ -1,0 +1,44 @@
+{
+  "state": "EVIDENCE_ROLES_RECONCILED_NOT_RUNTIME_AUTHORIZATION",
+  "historical_pre_repair_invalid": {
+    "package_relative_path": "evidence/S12_Sound_Playground_PRE_REPAIR_INVALID.slx",
+    "sha256": "FA91F46A2F8F6D78586FAE407E795BCEB99AD529F76925A4AF806F9AC73595C0",
+    "size_bytes": 73921,
+    "role": "HISTORICAL_PRE_REPAIR_INVALID_AUDIT_EVIDENCE",
+    "mutable": false,
+    "allowed_operations": ["read", "package"]
+  },
+  "workspace_unvalidated_intermediate": {
+    "package_relative_path": "evidence/S12_Sound_Playground_WORKSPACE_UNVALIDATED_INTERMEDIATE.slx",
+    "sha256": "43241395121AD9D71073B030B328195D7D0F28140DEAB8CED41681D1DB853CC5",
+    "size_bytes": 87428,
+    "role": "WORKSPACE_UNVALIDATED_INTERMEDIATE",
+    "mutable": false,
+    "allowed_operations": ["read", "package"]
+  },
+  "temporary_candidate": {
+    "package_relative_path": "not_present_until_authorized_runtime",
+    "sha256": "",
+    "size_bytes": 0,
+    "role": "TEMPORARY_REPAIRED_CANDIDATE",
+    "mutable": true,
+    "allowed_operations": ["create", "inspect", "compile", "delete_on_failure"]
+  },
+  "formal_repaired_candidate": {
+    "package_relative_path": "not_present_until_authorized_runtime",
+    "sha256": "",
+    "size_bytes": 0,
+    "role": "FORMAL_REPAIRED_CANDIDATE",
+    "mutable": true,
+    "allowed_operations": ["promote", "qualify", "package"]
+  },
+  "future_canonical": {
+    "package_relative_path": "not_present_until_separately_authorized_migration",
+    "sha256": "",
+    "size_bytes": 0,
+    "role": "FUTURE_CANONICAL_AFTER_SEPARATE_MIGRATION",
+    "mutable": true,
+    "allowed_operations": ["separate_authorized_canonical_migration"]
+  },
+  "controlled_rebuild": "BLOCKED_PENDING_EXPLICIT_AUTHORIZATION_AND_INDEPENDENT_REVIEW"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "s12.simulink.playground.v5-static-verification",
+  "validation_scope": "STATIC_ONLY_NO_MATLAB_SIMULINK_MCP_OR_SLX_OPERATION",
+  "python_static_contract_tests": {
+    "expected": 22,
+    "status": "PASSED_22_OF_22"
+  },
+  "runtime_status": "generated but not validated",
+  "controlled_rebuild_readiness": "NOT_READY_FOR_CONTROLLED_REBUILD"
+}

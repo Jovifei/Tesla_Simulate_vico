@@ -1,0 +1,8 @@
+{
+  "schema": "s12.android_vehicle_trace.v0.8",
+  "source_level": "C",
+  "reference_sha256": "04B0C1BF358843BA4C1E5486F3939F8354BB6D2DDEF723998C87F7355A9E540C",
+  "packet_cadence_hz": 100,
+  "fields": ["timestamp", "rpm", "speed", "acceleration", "load", "throttle"],
+  "status": "REFERENCE_DESCRIPTOR_ONLY_NO_EMBEDDED_VEHICLE_DATA"
+}

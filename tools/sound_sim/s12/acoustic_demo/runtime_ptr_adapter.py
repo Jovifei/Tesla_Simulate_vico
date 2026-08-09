@@ -17,7 +17,9 @@ from s12_ptr_network import PtrNetworkConfig, load_radiation_package
 class RuntimePtrAdapter:
     """Apply the frozen PTR/radiation recurrence to consecutive sample blocks."""
 
-    def __init__(self, config: PtrNetworkConfig = PtrNetworkConfig(), sample_rate_hz: int = 48000) -> None:
+    def __init__(
+        self, config: PtrNetworkConfig = PtrNetworkConfig(), sample_rate_hz: int = 48000
+    ) -> None:
         if sample_rate_hz <= 0:
             raise ValueError("runtime PTR requires a positive sample rate")
         self.config = config
@@ -25,10 +27,9 @@ class RuntimePtrAdapter:
         self.package = load_radiation_package(config.package_path)
         self._dt = 1.0 / sample_rate_hz
         (self._a00, self._a01), (self._a10, self._a11) = self.package.a
-        self._determinant = (
-            (1.0 - self._dt * self._a00 / 2.0) * (1.0 - self._dt * self._a11 / 2.0)
-            - (self._dt * self._a01 / 2.0) * (self._dt * self._a10 / 2.0)
-        )
+        self._determinant = (1.0 - self._dt * self._a00 / 2.0) * (
+            1.0 - self._dt * self._a11 / 2.0
+        ) - (self._dt * self._a01 / 2.0) * (self._dt * self._a10 / 2.0)
         if not math.isfinite(self._determinant) or abs(self._determinant) < 1.0e-15:
             raise ValueError("frozen PTR Tustin update is singular")
         self._upstream = deque([0.0] * config.upstream_delay_frames)
@@ -44,11 +45,21 @@ class RuntimePtrAdapter:
         return loss * delayed
 
     def _tustin(self, sample: float) -> float:
-        rhs0 = (1.0 + self._dt * self._a00 / 2.0) * self._x0 + self._dt * self._a01 * self._x1 / 2.0 + self._dt * self.package.b[0] * sample
-        rhs1 = self._dt * self._a10 * self._x0 / 2.0 + (1.0 + self._dt * self._a11 / 2.0) * self._x1 + self._dt * self.package.b[1] * sample
+        rhs0 = (
+            (1.0 + self._dt * self._a00 / 2.0) * self._x0
+            + self._dt * self._a01 * self._x1 / 2.0
+            + self._dt * self.package.b[0] * sample
+        )
+        rhs1 = (
+            self._dt * self._a10 * self._x0 / 2.0
+            + (1.0 + self._dt * self._a11 / 2.0) * self._x1
+            + self._dt * self.package.b[1] * sample
+        )
         self._x0, self._x1 = (
-            ((1.0 - self._dt * self._a11 / 2.0) * rhs0 + self._dt * self._a01 * rhs1 / 2.0) / self._determinant,
-            (self._dt * self._a10 * rhs0 / 2.0 + (1.0 - self._dt * self._a00 / 2.0) * rhs1) / self._determinant,
+            ((1.0 - self._dt * self._a11 / 2.0) * rhs0 + self._dt * self._a01 * rhs1 / 2.0)
+            / self._determinant,
+            (self._dt * self._a10 * rhs0 / 2.0 + (1.0 - self._dt * self._a00 / 2.0) * rhs1)
+            / self._determinant,
         )
         return self.package.c[0] * self._x0 + self.package.c[1] * self._x1 + self.package.d * sample
 

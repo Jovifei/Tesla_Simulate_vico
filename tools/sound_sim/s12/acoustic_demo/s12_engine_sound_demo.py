@@ -34,9 +34,7 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _write_review(
-    output_dir: Path, renders: dict[str, EngineSoundRenderResult]
-) -> Path:
+def _write_review(output_dir: Path, renders: dict[str, EngineSoundRenderResult]) -> Path:
     path = output_dir / "engine_sound_review.md"
     lines = [
         "# Synthetic Engine Sound v0.2 Review",
@@ -54,37 +52,41 @@ def _write_review(
             f"{result.dc['left']:.12g} | {result.dc['right']:.12g} | "
             f"{result.max_adjacent_step:.12g} |"
         )
-    lines.extend([
-        "",
-        "## Frequency-domain checks",
-        "",
-        "final-output order projection from the rendered stereo mono average:",
-        "",
-        "| Case | Order 1 RMS | Order 2 RMS | Order 3 RMS |",
-        "|---|---:|---:|---:|",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Frequency-domain checks",
+            "",
+            "final-output order projection from the rendered stereo mono average:",
+            "",
+            "| Case | Order 1 RMS | Order 2 RMS | Order 3 RMS |",
+            "|---|---:|---:|---:|",
+        ]
+    )
     for name, result in renders.items():
-        order_spectrum_rms = json.loads(
-            result.metadata_path.read_text(encoding="utf-8")
-        )["order_spectrum_rms"]
+        order_spectrum_rms = json.loads(result.metadata_path.read_text(encoding="utf-8"))[
+            "order_spectrum_rms"
+        ]
         lines.append(
             f"| {name} | {order_spectrum_rms['order_1']:.12g} | "
             f"{order_spectrum_rms['order_2']:.12g} | "
             f"{order_spectrum_rms['order_3']:.12g} |"
         )
-    lines.extend([
-        "",
-        "## Hearing review",
-        "",
-        "These are automated proxies only; human listening is not performed.",
-        "",
-        "- Engine resemblance: INCONCLUSIVE without human listening.",
-        "- Mechanical character: INCONCLUSIVE without human listening.",
-        "- Electronic character: INCONCLUSIVE without human listening.",
-        "- Continuity proxy: PASS; all rendered cases satisfy the configured "
-        "adjacent-step threshold.",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Hearing review",
+            "",
+            "These are automated proxies only; human listening is not performed.",
+            "",
+            "- Engine resemblance: INCONCLUSIVE without human listening.",
+            "- Mechanical character: INCONCLUSIVE without human listening.",
+            "- Electronic character: INCONCLUSIVE without human listening.",
+            "- Continuity proxy: PASS; all rendered cases satisfy the configured "
+            "adjacent-step threshold.",
+            "",
+        ]
+    )
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
@@ -100,13 +102,11 @@ def _write_manifest(
             candidate
             for result in renders.values()
             for candidate in (result.wav_path, result.metadata_path)
-        ) + (review_path,),
+        )
+        + (review_path,),
         key=lambda candidate: candidate.name,
     )
-    payload = {
-        candidate.name: _sha256(candidate)
-        for candidate in files
-    }
+    payload = {candidate.name: _sha256(candidate) for candidate in files}
     path.write_text(
         json.dumps(
             {"files": payload, "schema": "s12.engine_sound_demo_manifest.v1"},
@@ -121,9 +121,7 @@ def _write_manifest(
 
 def run_engine_sound_demo(output_dir: Path) -> EngineSoundDemoResult:
     output_dir.mkdir(parents=True, exist_ok=True)
-    texture = run_ptr_network(
-        synthesize_four_stroke(EngineSourceConfig(2000.0, 0.25), 0.05)
-    )
+    texture = run_ptr_network(synthesize_four_stroke(EngineSourceConfig(2000.0, 0.25), 0.05))
     profile = load_order_profile()
     parameters = load_design_parameters()
     schedules = {

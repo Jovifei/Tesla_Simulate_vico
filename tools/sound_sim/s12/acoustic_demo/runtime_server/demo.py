@@ -11,7 +11,10 @@ import time
 
 from websockets.sync.client import ClientConnection, connect
 
-from audio_parameter_package.runtime_package import build_runtime_audio_parameter_package, validate_runtime_audio_parameter_package
+from audio_parameter_package.runtime_package import (
+    build_runtime_audio_parameter_package,
+    validate_runtime_audio_parameter_package,
+)
 from engine_operating_points.library import load_operating_point_library
 from runtime_server.websocket_server import VehicleRuntimeWebSocketServer
 from sound_renderer.s12_product_renderer import renderer_profile_from_library
@@ -34,7 +37,12 @@ class AndroidProtocolDemoReport:
 
 def _source_commit() -> str:
     project_root = Path(__file__).resolve().parents[5]
-    return subprocess.run(["git", "-C", str(project_root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+    return subprocess.run(
+        ["git", "-C", str(project_root), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
 
 
 def _percentile(values: list[float], fraction: float) -> float:
@@ -46,13 +54,17 @@ def _percentile(values: list[float], fraction: float) -> float:
 
 def _write_json(path: Path, payload: dict[str, object]) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8"
+    )
     return path
 
 
 def _runtime_parameter_package(source_commit: str) -> dict[str, object]:
     library = load_operating_point_library()
-    package = build_runtime_audio_parameter_package(library, renderer_profile_from_library(library), source_commit)
+    package = build_runtime_audio_parameter_package(
+        library, renderer_profile_from_library(library), source_commit
+    )
     validate_runtime_audio_parameter_package(package)
     return package
 
@@ -126,13 +138,20 @@ def run_android_protocol_demo(
                 connection.send(json.dumps(mapping, separators=(",", ":"), allow_nan=False))
                 response = json.loads(connection.recv())
                 completed_s = time.perf_counter()
-                if response.get("status") != "ok" or response.get("timestamp") != packet.timestamp_s:
-                    raise RuntimeError("Android protocol client received an invalid runtime acknowledgement")
+                if (
+                    response.get("status") != "ok"
+                    or response.get("timestamp") != packet.timestamp_s
+                ):
+                    raise RuntimeError(
+                        "Android protocol client received an invalid runtime acknowledgement"
+                    )
                 pending_sent_s.append(sent_s)
                 trace.append(mapping)
                 if response["pcm_available"]:
                     if len(pending_sent_s) != 2:
-                        raise RuntimeError("WebSocket PCM acknowledgement lost the two-packet cadence")
+                        raise RuntimeError(
+                            "WebSocket PCM acknowledgement lost the two-packet cadence"
+                        )
                     packet_latencies_ms.append((completed_s - pending_sent_s[0]) * 1000.0)
                     packet_latencies_ms.append((completed_s - pending_sent_s[1]) * 1000.0)
                     pending_sent_s.clear()
@@ -141,7 +160,10 @@ def run_android_protocol_demo(
             connection.close()
     delivery_elapsed_s = time.perf_counter() - delivery_started_s
 
-    if pending_sent_s or (api.packet_count, api.pcm_frame_count) != (stream.update_count, stream.update_count // 2):
+    if pending_sent_s or (api.packet_count, api.pcm_frame_count) != (
+        stream.update_count,
+        stream.update_count // 2,
+    ):
         raise RuntimeError("Android protocol packet-to-PCM cadence is incorrect")
     if api.clipping_count or api.underrun_count:
         raise RuntimeError("Android protocol demo must not clip or underrun")
@@ -214,4 +236,10 @@ def run_android_protocol_demo(
         },
     )
     _write_readme(root / "README.md", runtime, latency)
-    return AndroidProtocolDemoReport(runtime_report_path, latency_report_path, api.pcm_sha256, api.packet_count, api.pcm_frame_count)
+    return AndroidProtocolDemoReport(
+        runtime_report_path,
+        latency_report_path,
+        api.pcm_sha256,
+        api.packet_count,
+        api.pcm_frame_count,
+    )

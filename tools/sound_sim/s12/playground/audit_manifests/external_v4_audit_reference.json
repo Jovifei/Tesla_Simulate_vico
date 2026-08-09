@@ -1,0 +1,8 @@
+{
+  "schema": "s12.simulink.playground.external-audit-reference.v5",
+  "name": "S12_Simulink_Playground_v09_Offline_Audit_v4_ChatGPT.md",
+  "declared_sha256": "50A1E0678E3A238DA088010DAAA4B9C584A77A6D9967FC25BCDD96C3F3905902",
+  "content_status": "NOT_AVAILABLE_NOT_FABRICATED",
+  "package_behavior": "reference_descriptor_only",
+  "reason": "The named fourth independent report bytes are absent from the workspace and prior audit packages."
+}

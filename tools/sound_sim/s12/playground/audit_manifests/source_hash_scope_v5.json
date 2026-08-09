@@ -1,0 +1,24 @@
+{
+  "schema": "s12.simulink.playground.source-hash-scope.v5",
+  "runtime_data_location": "OUTSIDE_SOURCE_TREE",
+  "included": [
+    "playground top-level .m/.json/.py",
+    "playground/audit_manifests/*.json",
+    "six named playground tests"
+  ],
+  "excluded": [
+    ".slx",
+    "slprj",
+    "cache",
+    "WAV",
+    "PCM",
+    "transaction JSON",
+    "authorization claims",
+    "temporary candidate outputs"
+  ],
+  "required_identity_checks": [
+    "blocked_plan_source_tree_sha256",
+    "authorization_source_tree_sha256",
+    "actual_immutable_source_tree_sha256"
+  ]
+}

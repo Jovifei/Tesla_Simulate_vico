@@ -174,7 +174,9 @@ def render_drive_cycle(
     return samples, trace
 
 
-def write_wav(path: pathlib.Path, samples: Sequence[int], sample_rate: int = DEFAULT_SAMPLE_RATE) -> None:
+def write_wav(
+    path: pathlib.Path, samples: Sequence[int], sample_rate: int = DEFAULT_SAMPLE_RATE
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = b"".join(struct.pack("<h", int(_clamp(sample, -32768, 32767))) for sample in samples)
     with wave.open(str(path), "wb") as writer:
@@ -189,7 +191,19 @@ def write_trace_csv(path: pathlib.Path, trace: Iterable[SoundState]) -> None:
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
         writer.writerow(
-            ["time_s", "rpm", "frequency_hz", "amplitude", "brightness", "muted", "h1", "h2", "h3", "h4", "h5"]
+            [
+                "time_s",
+                "rpm",
+                "frequency_hz",
+                "amplitude",
+                "brightness",
+                "muted",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+            ]
         )
         for state in trace:
             writer.writerow(
@@ -211,7 +225,10 @@ def export_firmware_params(path: pathlib.Path, trace: Sequence[SoundState]) -> N
 
     sorted_trace = sorted(trace, key=lambda item: item.rpm)
     picks = [0.0, 0.33, 0.66, 1.0]
-    selected = [sorted_trace[min(len(sorted_trace) - 1, int(pick * (len(sorted_trace) - 1)))] for pick in picks]
+    selected = [
+        sorted_trace[min(len(sorted_trace) - 1, int(pick * (len(sorted_trace) - 1)))]
+        for pick in picks
+    ]
     avg_harmonics = [
         sum(state.harmonics[index] for state in selected) / len(selected)
         for index in range(len(selected[0].harmonics))
@@ -233,7 +250,9 @@ def export_firmware_params(path: pathlib.Path, trace: Sequence[SoundState]) -> N
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
-def run_demo(output_dir: pathlib.Path, sample_rate: int = DEFAULT_SAMPLE_RATE) -> dict[str, pathlib.Path]:
+def run_demo(
+    output_dir: pathlib.Path, sample_rate: int = DEFAULT_SAMPLE_RATE
+) -> dict[str, pathlib.Path]:
     cycle = build_demo_drive_cycle()
     samples, trace = render_drive_cycle(cycle, sample_rate=sample_rate)
 

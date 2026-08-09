@@ -1,0 +1,20 @@
+{
+  "schema": "s12.simulink.playground.global-active-run-lock.v1",
+  "path": "E:/Tesla_speed/tasks/reports/runtime/s12-simulink-playground-v09/ACTIVE_RUN_LOCK.json",
+  "creation": "exclusive_atomic_create",
+  "required_fields": [
+    "run_id",
+    "authorization_id",
+    "desktop_pid",
+    "source_tree_sha256",
+    "audit_zip_sha256",
+    "start_time",
+    "owner_process"
+  ],
+  "ordering": ["preflight_pass", "acquire_global_lock", "consume_authorization"],
+  "existing_lock": "ACTIVE_RUN_LOCKED_NO_TRANSACTION_NO_AUTHORIZATION_CONSUMPTION",
+  "release": "owner validation, run-specific RELEASE_IN_PROGRESS intent, primary lock delete, release receipt, then intent removal",
+  "blocking_sentinels": ["RELEASE_IN_PROGRESS.*.json", "RELEASE_FAILED.*.json"],
+  "receipt_failure": "retain blocking sentinel, write run-specific RELEASE_FAILED emergency receipt, and report controlled flow incomplete",
+  "stale_cleanup": "external_process_absence_proof_with_sha256_and_separate_audit_record_required"
+}

@@ -1,0 +1,7 @@
+{
+  "strategy": "B",
+  "future_pre_repair_evidence_path": "S12_Sound_Playground_PRE_REPAIR_INVALID.slx",
+  "future_canonical_path": "S12_Sound_Playground.slx",
+  "offline_repair_action": "NO_FILE_OPERATION",
+  "authorization_required": true
+}

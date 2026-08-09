@@ -1,0 +1,10 @@
+{
+  "variable_name": "playground_pcm",
+  "save_format": "Array",
+  "save_2d_signal": "2-D array (concatenate along first dimension)",
+  "max_data_points": "inf",
+  "decimation": 1,
+  "accepted_shape": "500*960 by 2 numeric real finite",
+  "unapproved_layouts": "rejected",
+  "runtime_status": "NOT_RUN"
+}
