@@ -9,6 +9,7 @@ This is a synthetic, uncalibrated candidate package. It is not an OEM reproducti
 ## Evidence freeze
 
 - Stage E branch: `agent/s12-stage-e-human-calibration`
+- Stage E current commit: `2b58bf5` (full `2b58bf5` in Git; local-only)
 - Stage E base: `4e363c66b92e51848a35700650ee1464925c479a`
 - Stage C reference baseline: `a5d048145c29b20d687376c0b73226bc4a2435c7`
 - Stage D local/remote relation: local `4e363c6` is eight commits ahead of remote `a5d0481`; it is not remote-synchronized.
