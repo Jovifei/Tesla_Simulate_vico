@@ -1,0 +1,13 @@
+{
+  "schema_version": "s12-engine-sound-v12-reference-1",
+  "reference_id": "hellcat-2022-r3-wrong-vehicle-candidate",
+  "vehicle_id": "hellcat_2022_stock",
+  "quality_class": "R3",
+  "inventory_use": "rejected",
+  "vehicle": {"make": "Dodge", "model": "Challenger SRT Hellcat", "model_year": 2022, "market": "US", "trim": "717 hp 8HP90 automatic baseline"},
+  "source": {"url": "https://www.youtube.com/watch?v=eyzGRhXp0do", "publisher": "AutoTopNL; public title identifies a Dodge Charger, not the target Challenger package.", "source_url_sha256": "14deee0f31de9293b36a2027f6a3f18f4bf830404dca3913a132f76c2d79dede"},
+  "clip_window": {"start_s": 0, "end_s": 1},
+  "perspective": "unknown",
+  "rejection_reason": "Public title identifies a Charger rather than the target Challenger; year, stock state, rear perspective, and RPM evidence are also unverified.",
+  "research_boundary": {"raw_media_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12"}
+}

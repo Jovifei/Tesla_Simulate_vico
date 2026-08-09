@@ -11,9 +11,7 @@ import hashlib
 from s12_ptr_network import DEFAULT_PACKAGE_PATH, QUALIFICATION_COMMIT, load_radiation_package
 
 
-EXPECTED_RADIATION_PACKAGE_SHA256 = (
-    "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f"
-)
+EXPECTED_RADIATION_PACKAGE_SHA256 = "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f"
 
 
 def verify_frozen_radiation_package() -> dict:

@@ -1,0 +1,510 @@
+{
+  "schema": "s12.hellcat_reference_targets.v1",
+  "vehicle": "hellcat",
+  "display_name": "Dodge Challenger SRT Hellcat",
+  "note": "Derived relative metrics only; public audio remains outside the repository.",
+  "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+  "boundary": "synthetic; uncalibrated; not OEM reproduction",
+  "band_edges_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "sources": [
+    {
+      "id": "eyzGRhXp0do",
+      "url": "https://www.youtube.com/watch?v=eyzGRhXp0do",
+      "setup": "AutoTopNL stock road acceleration",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 3.5,
+          "rms_dbfs": -30.43152241298372,
+          "spectral_centroid_hz": 266.69029129647316,
+          "band_shares": [
+            0.7207374888294567,
+            0.2594505994928897,
+            0.017952043122312532,
+            0.0018482037953297076
+          ],
+          "spectral_flux": 0.23421166975720728,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 5.142857142857142,
+          "modulation_energy": 0.005161346271541182,
+          "pulse_amplitude_cv": 0.23104296779234546,
+          "pulse_interval_cv": 0.23843361220230538,
+          "crest_factor": 11.80738652937085,
+          "dropout_ratio": 0.0,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 12515.6,
+            "cliff_drop_db": 14.6,
+            "f99_hz": 1517.6,
+            "rolloff_hi_hz": 10552.7,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 12516 Hz)"
+          }
+        },
+        "acceleration": {
+          "duration_s": 42.840833333333336,
+          "rms_dbfs": -13.364497407555636,
+          "spectral_centroid_hz": 264.8156970288378,
+          "band_shares": [
+            0.4837359017411123,
+            0.5131783510682452,
+            0.0030234596615554632,
+            3.662633574891643e-05
+          ],
+          "spectral_flux": 0.1537822751068679,
+          "modulation_depth": 0.4838866933188585,
+          "modulation_peak_hz": 81.30093952420783,
+          "modulation_energy": 0.0005716186164828244,
+          "pulse_amplitude_cv": 0.27960245697915725,
+          "pulse_interval_cv": 5.2043553304945505,
+          "crest_factor": 3.5202879826835143,
+          "dropout_ratio": 0.004901960784313725,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 15580.1,
+            "cliff_drop_db": 10.0,
+            "f99_hz": 644.5,
+            "rolloff_hi_hz": 4904.3,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 15580 Hz)"
+          }
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -13.088668906881153,
+          "spectral_centroid_hz": 303.31423402354545,
+          "band_shares": [
+            0.3415553711000106,
+            0.6529560819306744,
+            0.005390527386645004,
+            6.397324974389e-05
+          ],
+          "spectral_flux": 0.17915077058107898,
+          "modulation_depth": 0.4798021886169855,
+          "modulation_peak_hz": 79.625,
+          "modulation_energy": 0.0018629901300190647,
+          "pulse_amplitude_cv": 0.2433572502734219,
+          "pulse_interval_cv": 1.0745830081045167,
+          "crest_factor": 3.3108235739713345,
+          "dropout_ratio": 0.0,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 12123.0,
+            "cliff_drop_db": 17.1,
+            "f99_hz": 779.3,
+            "rolloff_hi_hz": 6146.5,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 12123 Hz)"
+          }
+        }
+      },
+      "segment_quality": {
+        "idle": "physical",
+        "idle_detail": {
+          "verdict": "physical",
+          "wot_centroid_hz": 264.8,
+          "probe_windows": 282,
+          "audible_windows": 282,
+          "loud_p90_dbfs": -12.1,
+          "full_band_windows": 282,
+          "lf_share_min": 0.45,
+          "loud_margin_db": 8.0,
+          "anchor_t_s": 27.0,
+          "anchor_rms_dbfs": -29.2,
+          "anchor_low_band_share": 0.7518,
+          "anchor_centroid_hz": 236.9,
+          "candidate_windows": 15
+        },
+        "acceleration": "fallback_mid_clip",
+        "acceleration_full_band_fraction": 1.0,
+        "afterfire": "flux_cluster"
+      },
+      "bandwidth": {
+        "spectral_shape_usable": true,
+        "codec_truncated": false,
+        "low_frequency_dominated": false,
+        "cliff_hz": 14543.0,
+        "cliff_drop_db": 27.1,
+        "f99_hz": 955.1,
+        "rolloff_hi_hz": 8209.0,
+        "cliff_floor_hz": 8000.0,
+        "cliff_drop_floor_db": 18.0,
+        "f99_diagnostic_floor_hz": 500.0,
+        "reason": "full-bandwidth recording (cliff 14543 Hz)"
+      }
+    },
+    {
+      "id": "FvORN7EH2cc",
+      "url": "https://www.youtube.com/watch?v=FvORN7EH2cc",
+      "setup": "Hellcat Redeye brutal downshifts",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 5.0,
+          "rms_dbfs": -16.709599528669422,
+          "spectral_centroid_hz": 100.19566385688327,
+          "band_shares": [
+            0.9592656819763069,
+            0.016931355612614437,
+            0.0015656598135335431,
+            8.569532756693447e-06
+          ],
+          "spectral_flux": 0.19910337140065423,
+          "modulation_depth": 0.5548141670499155,
+          "modulation_peak_hz": 29.0,
+          "modulation_energy": 0.003909800421801808,
+          "pulse_amplitude_cv": 0.2666618733331455,
+          "pulse_interval_cv": 1.3063635286189326,
+          "crest_factor": 3.8433171478660024,
+          "dropout_ratio": 0.05,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": true,
+            "cliff_hz": 17794.9,
+            "cliff_drop_db": 8.1,
+            "f99_hz": 310.5,
+            "rolloff_hi_hz": 4019.5,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 17795 Hz); note 99% of energy sits below 311 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+          }
+        },
+        "acceleration": {
+          "duration_s": 7.5040625,
+          "rms_dbfs": -15.850919352462975,
+          "spectral_centroid_hz": 115.1200158357556,
+          "band_shares": [
+            0.9398821652227757,
+            0.04193104395961281,
+            0.0015752956401177802,
+            6.8158962618583384e-06
+          ],
+          "spectral_flux": 0.18339915691352074,
+          "modulation_depth": 0.5200688904863646,
+          "modulation_peak_hz": 28.917669595635694,
+          "modulation_energy": 0.002431727507388349,
+          "pulse_amplitude_cv": 0.25136568607931215,
+          "pulse_interval_cv": 1.724155814045429,
+          "crest_factor": 3.481546618379069,
+          "dropout_ratio": 0.036,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": true,
+            "cliff_hz": 17794.9,
+            "cliff_drop_db": 7.5,
+            "f99_hz": 474.6,
+            "rolloff_hi_hz": 3931.6,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 17795 Hz); note 99% of energy sits below 475 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+          }
+        },
+        "afterfire": {
+          "duration_s": 6.504041666666667,
+          "rms_dbfs": -16.011077446055236,
+          "spectral_centroid_hz": 120.21304019335923,
+          "band_shares": [
+            0.9663268494527609,
+            0.012693548610864448,
+            0.0007473216447394532,
+            7.4935392169929855e-06
+          ],
+          "spectral_flux": 0.17449721216490804,
+          "modulation_depth": 0.48755398316820836,
+          "modulation_peak_hz": 20.910075145582553,
+          "modulation_energy": 0.0026156659433484246,
+          "pulse_amplitude_cv": 0.26547428921602734,
+          "pulse_interval_cv": 1.8133902709595995,
+          "crest_factor": 3.099623530266043,
+          "dropout_ratio": 0.0015384615384615385,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": true,
+            "cliff_hz": 11865.2,
+            "cliff_drop_db": 11.1,
+            "f99_hz": 287.1,
+            "rolloff_hi_hz": 3580.1,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 11865 Hz); note 99% of energy sits below 287 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+          }
+        }
+      },
+      "stock_segments": [
+        "idle",
+        "afterfire"
+      ],
+      "segment_quality": {
+        "idle": "relaxed",
+        "idle_detail": {
+          "verdict": "relaxed",
+          "wot_centroid_hz": 115.1,
+          "probe_windows": 47,
+          "audible_windows": 47,
+          "loud_p90_dbfs": -14.9,
+          "full_band_windows": 47,
+          "lf_share_min": 0.45,
+          "loud_margin_db": 1.0,
+          "anchor_t_s": 14.5,
+          "anchor_rms_dbfs": -17.4,
+          "anchor_low_band_share": 0.9606,
+          "anchor_centroid_hz": 90.3,
+          "candidate_windows": 14
+        },
+        "acceleration": "fallback_mid_clip",
+        "acceleration_full_band_fraction": 1.0,
+        "afterfire": "flux_cluster"
+      },
+      "bandwidth": {
+        "spectral_shape_usable": true,
+        "codec_truncated": false,
+        "low_frequency_dominated": true,
+        "cliff_hz": 17794.9,
+        "cliff_drop_db": 6.4,
+        "f99_hz": 351.6,
+        "rolloff_hi_hz": 3931.6,
+        "cliff_floor_hz": 8000.0,
+        "cliff_drop_floor_db": 18.0,
+        "f99_diagnostic_floor_hz": 500.0,
+        "reason": "full-bandwidth recording (cliff 17795 Hz); note 99% of energy sits below 352 Hz -- near-field bias for the recording-chain fit to remove, not codec damage"
+      }
+    },
+    {
+      "id": "nnEaamqsieM",
+      "url": "https://www.youtube.com/watch?v=nnEaamqsieM",
+      "setup": "Hellcat Redeye near-field leave",
+      "include_in_stock_target": true,
+      "segments": {
+        "idle": {
+          "duration_s": 6.5,
+          "rms_dbfs": -31.397215406540937,
+          "spectral_centroid_hz": 402.2290210877558,
+          "band_shares": [
+            0.5753515816808684,
+            0.33267331126889277,
+            0.08393794865654396,
+            0.007925050693108466
+          ],
+          "spectral_flux": 0.22583799029840235,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 130.30769230769232,
+          "modulation_energy": 0.0017462828710110654,
+          "pulse_amplitude_cv": 0.3732533932310773,
+          "pulse_interval_cv": 2.885839734018625,
+          "crest_factor": 10.868863986235677,
+          "dropout_ratio": 0.006153846153846154,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 11203.1,
+            "cliff_drop_db": 37.2,
+            "f99_hz": 3668.0,
+            "rolloff_hi_hz": 11619.1,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 11203 Hz)"
+          }
+        },
+        "acceleration": {
+          "duration_s": 11.7040625,
+          "rms_dbfs": -17.03892477874569,
+          "spectral_centroid_hz": 882.6011745789534,
+          "band_shares": [
+            0.33009593543697935,
+            0.48786976644131697,
+            0.11911394598623067,
+            0.0625470810701937
+          ],
+          "spectral_flux": 0.21989703813957026,
+          "modulation_depth": 0.8271528544483854,
+          "modulation_peak_hz": 8.714922703121246,
+          "modulation_energy": 0.0010658297906894116,
+          "pulse_amplitude_cv": 0.27254699442049096,
+          "pulse_interval_cv": 3.3588496436380826,
+          "crest_factor": 6.387498842021937,
+          "dropout_ratio": 0.14358974358974358,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 12005.9,
+            "cliff_drop_db": 27.3,
+            "f99_hz": 8970.7,
+            "rolloff_hi_hz": 16880.9,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 12006 Hz)"
+          }
+        },
+        "afterfire": {
+          "duration_s": 8.0,
+          "rms_dbfs": -17.928200552769496,
+          "spectral_centroid_hz": 416.8803135663734,
+          "band_shares": [
+            0.41420395482704,
+            0.48263457446378577,
+            0.09981530452597202,
+            0.0032522648890488627
+          ],
+          "spectral_flux": 0.22103717986672947,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 224.875,
+          "modulation_energy": 0.0009870068655267665,
+          "pulse_amplitude_cv": 0.2894292674697116,
+          "pulse_interval_cv": 3.2386426620315323,
+          "crest_factor": 7.040048647445803,
+          "dropout_ratio": 0.14,
+          "bandwidth": {
+            "spectral_shape_usable": true,
+            "codec_truncated": false,
+            "low_frequency_dominated": false,
+            "cliff_hz": 11812.5,
+            "cliff_drop_db": 34.4,
+            "f99_hz": 1839.8,
+            "rolloff_hi_hz": 11941.4,
+            "cliff_floor_hz": 8000.0,
+            "cliff_drop_floor_db": 18.0,
+            "f99_diagnostic_floor_hz": 500.0,
+            "reason": "full-bandwidth recording (cliff 11812 Hz)"
+          }
+        }
+      },
+      "segment_quality": {
+        "idle": "physical",
+        "idle_detail": {
+          "verdict": "physical",
+          "wot_centroid_hz": 882.6,
+          "probe_windows": 75,
+          "audible_windows": 75,
+          "loud_p90_dbfs": -14.3,
+          "full_band_windows": 75,
+          "lf_share_min": 0.45,
+          "loud_margin_db": 8.0,
+          "anchor_t_s": 27.0,
+          "anchor_rms_dbfs": -40.1,
+          "anchor_low_band_share": 0.904,
+          "anchor_centroid_hz": 191.1,
+          "candidate_windows": 13
+        },
+        "acceleration": "fallback_mid_clip",
+        "acceleration_full_band_fraction": 1.0,
+        "afterfire": "flux_cluster"
+      },
+      "bandwidth": {
+        "spectral_shape_usable": true,
+        "codec_truncated": false,
+        "low_frequency_dominated": false,
+        "cliff_hz": 11923.8,
+        "cliff_drop_db": 25.2,
+        "f99_hz": 8238.3,
+        "rolloff_hi_hz": 16634.8,
+        "cliff_floor_hz": 8000.0,
+        "cliff_drop_floor_db": 18.0,
+        "f99_diagnostic_floor_hz": 500.0,
+        "reason": "full-bandwidth recording (cliff 11924 Hz)"
+      }
+    }
+  ],
+  "stock_median": {
+    "idle_band_shares": [
+      0.7207374888294567,
+      0.2594505994928897,
+      0.017952043122312532,
+      0.0018482037953297076
+    ],
+    "idle_spectral_flux": 0.22583799029840235,
+    "idle_modulation_depth": 1.0,
+    "idle_modulation_peak_hz": 29.0,
+    "idle_modulation_energy": 0.003909800421801808,
+    "idle_pulse_amplitude_cv": 0.2666618733331455,
+    "idle_pulse_interval_cv": 1.3063635286189326,
+    "idle_crest_factor": 10.868863986235677,
+    "idle_dropout_ratio": 0.006153846153846154,
+    "idle_spectral_centroid_hz": 266.69029129647316,
+    "idle_rms_dbfs": -30.43152241298372,
+    "acceleration_band_shares": [
+      0.40691591858904586,
+      0.500524058754781,
+      0.06106870282389307,
+      0.03129185370297131
+    ],
+    "acceleration_spectral_flux": 0.18683965662321908,
+    "acceleration_modulation_depth": 0.6555197738836219,
+    "acceleration_modulation_peak_hz": 45.00793111366454,
+    "acceleration_modulation_energy": 0.0008187242035861181,
+    "acceleration_pulse_amplitude_cv": 0.2760747256998241,
+    "acceleration_pulse_interval_cv": 4.2816024870663165,
+    "acceleration_crest_factor": 4.953893412352726,
+    "acceleration_dropout_ratio": 0.07424585218702866,
+    "acceleration_spectral_centroid_hz": 573.7084358038956,
+    "acceleration_rms_dbfs": -15.201711093150664,
+    "afterfire_band_shares": [
+      0.41420395482704,
+      0.48263457446378577,
+      0.005390527386645004,
+      6.397324974389e-05
+    ],
+    "afterfire_spectral_flux": 0.17915077058107898,
+    "afterfire_modulation_depth": 0.48755398316820836,
+    "afterfire_modulation_peak_hz": 79.625,
+    "afterfire_modulation_energy": 0.0018629901300190647,
+    "afterfire_pulse_amplitude_cv": 0.26547428921602734,
+    "afterfire_pulse_interval_cv": 1.8133902709595995,
+    "afterfire_crest_factor": 3.3108235739713345,
+    "afterfire_dropout_ratio": 0.0015384615384615385,
+    "afterfire_spectral_centroid_hz": 303.31423402354545,
+    "afterfire_rms_dbfs": -16.011077446055236
+  },
+  "bandwidth_gate": {
+    "f99_diagnostic_floor_hz": 500.0,
+    "cliff_floor_hz": 8000.0,
+    "cliff_drop_floor_db": 18.0,
+    "shape_rejected_sources": [],
+    "shape_metrics_available": [
+      "acceleration_band_shares",
+      "acceleration_spectral_centroid_hz",
+      "afterfire_band_shares",
+      "afterfire_spectral_centroid_hz",
+      "idle_band_shares",
+      "idle_spectral_centroid_hz"
+    ]
+  }
+}

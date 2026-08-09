@@ -47,13 +47,12 @@ class PressureTrace:
         ):
             raise ValueError("uniform trace requires finite samples and a positive sample rate")
         if (
-            (
-                firing_frequency_hz is not None
-                and (not math.isfinite(firing_frequency_hz) or firing_frequency_hz <= 0)
+            firing_frequency_hz is not None
+            and (
+                not math.isfinite(firing_frequency_hz)
+                or firing_frequency_hz <= 0
             )
-            or not reference_plane
-            or not provenance
-        ):
+        ) or not reference_plane or not provenance:
             raise ValueError("uniform trace requires finite provenance metadata")
         identity = {
             "case_id": case_id,
@@ -109,7 +108,8 @@ def load_trace(csv_path: Path, case_id: str) -> PressureTrace:
     if any(later <= earlier for earlier, later in zip(time_s, time_s[1:])):
         raise ValueError("trace times must be strictly increasing")
     pressure_pa = [
-        float(row["outgoing_pressure_pa"]) + float(row["incoming_pressure_pa"]) for row in rows
+        float(row["outgoing_pressure_pa"]) + float(row["incoming_pressure_pa"])
+        for row in rows
     ]
     source_csv_sha256 = hashlib.sha256(csv_bytes).hexdigest()
     return PressureTrace(
@@ -157,21 +157,10 @@ def _write_wav(path: Path, samples: list[float], sample_rate_hz: int) -> int:
 
 def _write_png(path: Path, pixels: list[list[tuple[int, int, int]]]) -> None:
     height, width = len(pixels), len(pixels[0])
-    raw = b"".join(
-        b"\x00" + bytes(component for pixel in row for component in pixel) for row in pixels
-    )
-
+    raw = b"".join(b"\x00" + bytes(component for pixel in row for component in pixel) for row in pixels)
     def chunk(kind: bytes, data: bytes) -> bytes:
-        return (
-            struct.pack(">I", len(data))
-            + kind
-            + data
-            + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
-        )
-
-    content = b"\x89PNG\r\n\x1a\n" + chunk(
-        b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
-    )
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+    content = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
     path.write_bytes(content + chunk(b"IDAT", zlib.compress(raw, level=9)) + chunk(b"IEND", b""))
 
 
@@ -185,14 +174,8 @@ def _chart(samples: list[float], spectrum: bool) -> list[list[tuple[int, int, in
         bins = min(128, max(1, len(samples) // 2))
         values = []
         for bin_index in range(bins):
-            real = sum(
-                value * math.cos(2 * math.pi * bin_index * index / len(samples))
-                for index, value in enumerate(samples)
-            )
-            imag = sum(
-                value * math.sin(2 * math.pi * bin_index * index / len(samples))
-                for index, value in enumerate(samples)
-            )
+            real = sum(value * math.cos(2 * math.pi * bin_index * index / len(samples)) for index, value in enumerate(samples))
+            imag = sum(value * math.sin(2 * math.pi * bin_index * index / len(samples)) for index, value in enumerate(samples))
             values.append(math.hypot(real, imag))
         peak = max(values) or 1.0
         for x in range(width):
@@ -219,13 +202,8 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def write_controlled_artifacts(
-    trace: PressureTrace,
-    normalized: list[float],
-    output_dir: Path,
-    sample_rate_hz: int,
-    gain: float,
-) -> AuditionResult:
+def write_controlled_artifacts(trace: PressureTrace, normalized: list[float], output_dir: Path,
+                               sample_rate_hz: int, gain: float) -> AuditionResult:
     output_dir.mkdir(parents=True, exist_ok=True)
     source_csv = output_dir / "source-pressure.csv"
     native_wav = output_dir / "native-duration.wav"
@@ -253,35 +231,16 @@ def write_controlled_artifacts(
         "sample_rate_hz": sample_rate_hz,
         "source_csv_sha256": trace.source_csv_sha256,
     }
-    metadata_path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     files = [source_csv, native_wav, preview_wav, metadata_path, waveform_path, spectrum_path]
     hashes = {path.name: _sha256(path) for path in files}
-    manifest_path.write_text(
-        json.dumps({"files": hashes, "sha256": hashes[native_wav.name]}, indent=2, sort_keys=True)
-        + "\n",
-        encoding="utf-8",
-    )
-    return AuditionResult(
-        sample_rate_hz,
-        clipping_count,
-        trace.time_s[-1] - trace.time_s[0],
-        len(normalized) / sample_rate_hz,
-        len(normalized),
-        source_csv,
-        native_wav,
-        preview_wav,
-        metadata_path,
-        waveform_path,
-        spectrum_path,
-        manifest_path,
-    )
+    manifest_path.write_text(json.dumps({"files": hashes, "sha256": hashes[native_wav.name]}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return AuditionResult(sample_rate_hz, clipping_count, trace.time_s[-1] - trace.time_s[0],
+                          len(normalized) / sample_rate_hz, len(normalized),
+                          source_csv, native_wav, preview_wav, metadata_path, waveform_path, spectrum_path, manifest_path)
 
 
-def render_audition(
-    trace: PressureTrace, output_dir: Path, target_sample_rate_hz: int = 48000
-) -> AuditionResult:
+def render_audition(trace: PressureTrace, output_dir: Path, target_sample_rate_hz: int = 48000) -> AuditionResult:
     if target_sample_rate_hz <= 0:
         raise ValueError("target_sample_rate_hz must be positive")
     raw_samples = resample_boxcar(trace, target_sample_rate_hz)
@@ -297,13 +256,7 @@ def main() -> None:
     parser.add_argument("--case", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    source_csv = (
-        Path(__file__).resolve().parents[1]
-        / "benchmark"
-        / "baselines"
-        / "sprint-4d-b"
-        / "radiation-time-domain-traces.csv"
-    )
+    source_csv = Path(__file__).resolve().parents[1] / "benchmark" / "baselines" / "sprint-4d-b" / "radiation-time-domain-traces.csv"
     result = render_audition(load_trace(source_csv, args.case), args.output)
     print(f"rendered {result.native_frame_count} native frames at {result.sample_rate_hz} Hz")
 

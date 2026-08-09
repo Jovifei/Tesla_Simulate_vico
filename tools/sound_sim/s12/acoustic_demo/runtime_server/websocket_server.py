@@ -69,9 +69,7 @@ class VehicleRuntimeWebSocketServer:
                         "packet_to_pcm_ms": result.packet_to_pcm_ms,
                         "server_received_monotonic_ms": ingress_started_s * 1000.0,
                         "pcm_ready_server_monotonic_ms": (
-                            None
-                            if result.packet_to_pcm_ms is None
-                            else ingress_started_s * 1000.0 + result.packet_to_pcm_ms
+                            None if result.packet_to_pcm_ms is None else ingress_started_s * 1000.0 + result.packet_to_pcm_ms
                         ),
                     }
                 )
@@ -79,11 +77,7 @@ class VehicleRuntimeWebSocketServer:
 
     def _fill_missing_packets(self, packet: VehicleStatePacket, ingress_started_s: float) -> bool:
         previous = self._last_protocol_packet
-        if (
-            previous is None
-            or not math.isfinite(previous.timestamp_s)
-            or not math.isfinite(packet.timestamp_s)
-        ):
+        if previous is None or not math.isfinite(previous.timestamp_s) or not math.isfinite(packet.timestamp_s):
             return False
         interval_s = 1.0 / UPDATE_HZ
         next_timestamp_s = previous.timestamp_s + interval_s
@@ -92,10 +86,7 @@ class VehicleRuntimeWebSocketServer:
             fallback_mapping = previous.as_mapping()
             fallback_mapping["timestamp"] = next_timestamp_s
             fallback_mapping["rpm"] = -1.0
-            self.api.process_state(
-                VehicleStatePacket.from_mapping(fallback_mapping),
-                ingress_started_s=ingress_started_s,
-            )
+            self.api.process_state(VehicleStatePacket.from_mapping(fallback_mapping), ingress_started_s=ingress_started_s)
             gap_fallback_applied = True
         return gap_fallback_applied
 

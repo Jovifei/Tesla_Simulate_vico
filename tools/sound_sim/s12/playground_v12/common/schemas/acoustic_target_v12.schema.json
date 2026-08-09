@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-engine-sound-v12-acoustic-target-1",
+  "title": "S12 v1.2 derived acoustic target",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "vehicle_id",
+    "reference_id",
+    "reference_quality",
+    "source_url_sha256",
+    "analysis_sha256",
+    "reference_binding",
+    "analysis_method",
+    "derived_metrics",
+    "scope"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12-engine-sound-v12-acoustic-target-1"},
+    "vehicle_id": {"type": "string", "minLength": 1},
+    "reference_id": {"type": "string", "minLength": 1},
+    "reference_quality": {"const": "R1"},
+    "source_url_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "analysis_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reference_binding": {"$ref": "#/$defs/referenceBinding"},
+    "analysis_method": {"$ref": "#/$defs/analysisMethod"},
+    "derived_metrics": {"$ref": "#/$defs/derivedMetrics"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["synthetic", "uncalibrated", "offline", "oem_clone"],
+      "properties": {
+        "synthetic": {"const": true},
+        "uncalibrated": {"const": true},
+        "offline": {"const": true},
+        "oem_clone": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "finiteNumber": {"type": "number"},
+    "nonnegativeNumber": {"type": "number", "minimum": 0},
+    "referenceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference_manifest_sha256"],
+      "properties": {
+        "reference_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "analysisMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain",
+        "cycle_degrees",
+        "order_range",
+        "order_step",
+        "samples_per_revolution",
+        "ordinary_average_rpm_fft",
+        "source_sample_rate_hz",
+        "frequency_limit_hz",
+        "window_duration_s",
+        "hop_duration_s",
+        "envelope_block_duration_s",
+        "formant_envelope_smoothing_hz",
+        "formant_min_peak_spacing_hz",
+        "formant_order_ridge_exclusion_hz",
+        "formant_tracking",
+        "formant_persistence_fraction"
+      ],
+      "properties": {
+        "domain": {"const": "windowed_dynamic_crank_angle_order_map"},
+        "cycle_degrees": {"const": 720},
+        "order_range": {"const": [0.5, 18.0]},
+        "order_step": {"const": 0.5},
+        "samples_per_revolution": {"type": "integer", "minimum": 64},
+        "ordinary_average_rpm_fft": {"const": false},
+        "source_sample_rate_hz": {"type": "number", "minimum": 32000},
+        "frequency_limit_hz": {"const": 16000},
+        "window_duration_s": {"type": "number", "exclusiveMinimum": 0},
+        "hop_duration_s": {"type": "number", "exclusiveMinimum": 0},
+        "envelope_block_duration_s": {"type": "number", "exclusiveMinimum": 0},
+        "formant_envelope_smoothing_hz": {"type": "number", "minimum": 1},
+        "formant_min_peak_spacing_hz": {"type": "number", "minimum": 1},
+        "formant_order_ridge_exclusion_hz": {"type": "number", "minimum": 1},
+        "formant_tracking": {"const": "time_windowed_local_rpm_order_ridge_exclusion"},
+        "formant_persistence_fraction": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "orderVector": {
+      "const": [
+        0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5,
+        5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0,
+        9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0,
+        13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0,
+        17.5, 18.0
+      ]
+    },
+    "amplitudeVector": {
+      "type": "array",
+      "minItems": 36,
+      "maxItems": 36,
+      "items": {"type": "number", "minimum": 0}
+    },
+    "phaseVector": {
+      "type": "array",
+      "minItems": 36,
+      "maxItems": 36,
+      "items": {"type": "number", "minimum": -3.14159265359, "maximum": 3.14159265359}
+    },
+    "orderFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_time_s",
+        "center_time_s",
+        "end_time_s",
+        "center_rpm",
+        "amplitudes",
+        "phases_rad"
+      ],
+      "properties": {
+        "start_time_s": {"type": "number", "minimum": 0},
+        "center_time_s": {"type": "number", "minimum": 0},
+        "end_time_s": {"type": "number", "exclusiveMinimum": 0},
+        "center_rpm": {"type": "number", "exclusiveMinimum": 0},
+        "amplitudes": {"$ref": "#/$defs/amplitudeVector"},
+        "phases_rad": {"$ref": "#/$defs/phaseVector"}
+      }
+    },
+    "orderMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["orders", "frames"],
+      "properties": {
+        "orders": {"$ref": "#/$defs/orderVector"},
+        "frames": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/orderFrame"}
+        }
+      }
+    },
+    "clusterStatistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cluster_id",
+        "event_count",
+        "total_energy",
+        "start_delay_s",
+        "energy_decay_ratio",
+        "tail_duration_s"
+      ],
+      "properties": {
+        "cluster_id": {"type": "string", "minLength": 1},
+        "event_count": {"type": "integer", "minimum": 1},
+        "total_energy": {"$ref": "#/$defs/nonnegativeNumber"},
+        "start_delay_s": {"$ref": "#/$defs/nonnegativeNumber"},
+        "energy_decay_ratio": {"$ref": "#/$defs/nonnegativeNumber"},
+        "tail_duration_s": {"$ref": "#/$defs/nonnegativeNumber"}
+      }
+    },
+    "eventStatistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_count",
+        "cluster_count",
+        "clusters",
+        "first_event_delay_s",
+        "total_energy",
+        "interval_cv",
+        "energy_decay_ratio",
+        "tail_duration_s"
+      ],
+      "properties": {
+        "event_count": {"type": "integer", "minimum": 0},
+        "cluster_count": {"type": "integer", "minimum": 0},
+        "clusters": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/clusterStatistics"}
+        },
+        "first_event_delay_s": {"$ref": "#/$defs/nonnegativeNumber"},
+        "total_energy": {"$ref": "#/$defs/nonnegativeNumber"},
+        "interval_cv": {"$ref": "#/$defs/nonnegativeNumber"},
+        "energy_decay_ratio": {"$ref": "#/$defs/nonnegativeNumber"},
+        "tail_duration_s": {"$ref": "#/$defs/nonnegativeNumber"}
+      }
+    },
+    "derivedMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "orders",
+        "order_amplitudes",
+        "order_phases_rad",
+        "order_map",
+        "fixed_bands_hz",
+        "band_energy_ratios",
+        "formants_hz",
+        "spectral_centroid_hz",
+        "spectral_rolloff_hz",
+        "spectral_flatness",
+        "modulation_depth",
+        "pulse_amplitude_cv",
+        "shift_statistics",
+        "afterfire_statistics"
+      ],
+      "properties": {
+        "orders": {"$ref": "#/$defs/orderVector"},
+        "order_amplitudes": {"$ref": "#/$defs/amplitudeVector"},
+        "order_phases_rad": {"$ref": "#/$defs/phaseVector"},
+        "order_map": {"$ref": "#/$defs/orderMap"},
+        "fixed_bands_hz": {
+          "const": [[20, 120], [120, 500], [500, 2000], [2000, 8000], [8000, 16000]]
+        },
+        "band_energy_ratios": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "formants_hz": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {"type": "number", "minimum": 20, "maximum": 16000}
+        },
+        "spectral_centroid_hz": {"type": "number", "minimum": 0, "maximum": 16000},
+        "spectral_rolloff_hz": {"type": "number", "minimum": 0, "maximum": 16000},
+        "spectral_flatness": {"type": "number", "minimum": 0},
+        "modulation_depth": {"type": "number", "minimum": 0, "maximum": 1},
+        "pulse_amplitude_cv": {"type": "number", "minimum": 0},
+        "shift_statistics": {"$ref": "#/$defs/eventStatistics"},
+        "afterfire_statistics": {"$ref": "#/$defs/eventStatistics"}
+      }
+    }
+  }
+}

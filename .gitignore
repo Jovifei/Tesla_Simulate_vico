@@ -41,6 +41,7 @@ ehthumbs.db
 # AI tooling (auto-injected by OMC/hooks, NOT part of firmware)
 .agent/
 .agents/
+.superpowers/
 .claude/
 .codegraph/
 .code-review-graph/

@@ -43,15 +43,23 @@ def lookup_operating_point(rpm: float, load: float) -> OperatingPoint:
 
     lower_rpm, upper_rpm = _enclosing(RPM_GRID, rpm)
     lower_load, upper_load = _enclosing(LOAD_GRID, load)
-    rpm_fraction = 0.0 if lower_rpm == upper_rpm else (rpm - lower_rpm) / (upper_rpm - lower_rpm)
+    rpm_fraction = (
+        0.0
+        if lower_rpm == upper_rpm
+        else (rpm - lower_rpm) / (upper_rpm - lower_rpm)
+    )
     load_fraction = (
-        0.0 if lower_load == upper_load else (load - lower_load) / (upper_load - lower_load)
+        0.0
+        if lower_load == upper_load
+        else (load - lower_load) / (upper_load - lower_load)
     )
-    low = (1.0 - load_fraction) * _grid_value(lower_rpm, lower_load) + load_fraction * _grid_value(
-        lower_rpm, upper_load
+    low = (
+        (1.0 - load_fraction) * _grid_value(lower_rpm, lower_load)
+        + load_fraction * _grid_value(lower_rpm, upper_load)
     )
-    high = (1.0 - load_fraction) * _grid_value(upper_rpm, lower_load) + load_fraction * _grid_value(
-        upper_rpm, upper_load
+    high = (
+        (1.0 - load_fraction) * _grid_value(upper_rpm, lower_load)
+        + load_fraction * _grid_value(upper_rpm, upper_load)
     )
     return OperatingPoint(
         rpm=rpm,

@@ -15,9 +15,7 @@ LIBRARY_PATH = Path(__file__).with_name("engine_operating_point_library.json")
 def _canonical_hash(payload: dict) -> str:
     canonical = dict(payload)
     canonical.pop("hash", None)
-    return hashlib.sha256(
-        json.dumps(canonical, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()
+    return hashlib.sha256(json.dumps(canonical, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 def _provenance_entries(value: object) -> list[dict]:
@@ -58,42 +56,21 @@ class OperatingPointLibrary:
     def evaluate(self, rpm: float, load: float) -> OperatingPointParameters:
         if not math.isfinite(rpm) or not math.isfinite(load):
             raise ValueError("RPM and load must be finite")
-        if (
-            not self.rpm_grid[0] <= rpm <= self.rpm_grid[-1]
-            or not self.load_grid[0] <= load <= self.load_grid[-1]
-        ):
+        if not self.rpm_grid[0] <= rpm <= self.rpm_grid[-1] or not self.load_grid[0] <= load <= self.load_grid[-1]:
             raise ValueError("RPM/load is outside the documented synthetic grid")
         rpm_low, rpm_high = _bounds(self.rpm_grid, rpm)
         load_low, load_high = _bounds(self.load_grid, load)
         return OperatingPointParameters(
-            rpm,
-            load,
+            rpm, load,
             self._interpolate("excitation_gain", rpm_low, rpm_high, load_low, load_high, rpm, load),
             self._interpolate("harmonic_gain", rpm_low, rpm_high, load_low, load_high, rpm, load),
             self._interpolate("transient_gain", rpm_low, rpm_high, load_low, load_high, rpm, load),
         )
 
-    def _interpolate(
-        self,
-        name: str,
-        rpm_low: float,
-        rpm_high: float,
-        load_low: float,
-        load_high: float,
-        rpm: float,
-        load: float,
-    ) -> float:
+    def _interpolate(self, name: str, rpm_low: float, rpm_high: float, load_low: float, load_high: float, rpm: float, load: float) -> float:
         table = self.raw["excitation_parameters"][name]["values"]
-        lower = _blend(
-            table[self.rpm_grid.index(rpm_low)][self.load_grid.index(load_low)],
-            table[self.rpm_grid.index(rpm_low)][self.load_grid.index(load_high)],
-            _fraction(load_low, load_high, load),
-        )
-        upper = _blend(
-            table[self.rpm_grid.index(rpm_high)][self.load_grid.index(load_low)],
-            table[self.rpm_grid.index(rpm_high)][self.load_grid.index(load_high)],
-            _fraction(load_low, load_high, load),
-        )
+        lower = _blend(table[self.rpm_grid.index(rpm_low)][self.load_grid.index(load_low)], table[self.rpm_grid.index(rpm_low)][self.load_grid.index(load_high)], _fraction(load_low, load_high, load))
+        upper = _blend(table[self.rpm_grid.index(rpm_high)][self.load_grid.index(load_low)], table[self.rpm_grid.index(rpm_high)][self.load_grid.index(load_high)], _fraction(load_low, load_high, load))
         return _blend(lower, upper, _fraction(rpm_low, rpm_high, rpm))
 
 
@@ -117,24 +94,14 @@ def load_operating_point_library(path: Path = LIBRARY_PATH) -> OperatingPointLib
     if raw.get("schema") != "s12.engine_operating_point_library.v01":
         raise ValueError("unsupported operating-point schema")
     entries = tuple(_provenance_entries(raw))
-    if not entries or any(
-        entry.get("source_level") not in {"A", "B", "C"}
-        or not entry.get("source")
-        or not entry.get("description")
-        for entry in entries
-    ):
+    if not entries or any(entry.get("source_level") not in {"A", "B", "C"} or not entry.get("source") or not entry.get("description") for entry in entries):
         raise ValueError("operating-point provenance is incomplete")
     digest = _canonical_hash(raw)
     if raw.get("hash") != digest:
         raise ValueError("operating-point library hash mismatch")
     rpm_grid = tuple(float(value) for value in raw["rpm_grid"]["values"])
     load_grid = tuple(float(value) for value in raw["load_grid"]["values"])
-    if (
-        rpm_grid != tuple(sorted(rpm_grid))
-        or load_grid != tuple(sorted(load_grid))
-        or len(set(rpm_grid)) != len(rpm_grid)
-        or len(set(load_grid)) != len(load_grid)
-    ):
+    if rpm_grid != tuple(sorted(rpm_grid)) or load_grid != tuple(sorted(load_grid)) or len(set(rpm_grid)) != len(rpm_grid) or len(set(load_grid)) != len(load_grid):
         raise ValueError("operating-point grids must be strictly increasing")
     for name in ("excitation_gain", "harmonic_gain", "transient_gain"):
         table = raw["excitation_parameters"][name]["values"]

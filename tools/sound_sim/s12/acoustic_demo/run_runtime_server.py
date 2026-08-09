@@ -10,9 +10,7 @@ from vehicle_interface.engine_runtime_api import EngineRuntimeApi
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Run the S12 v0.8 localhost WebSocket runtime server."
-    )
+    parser = argparse.ArgumentParser(description="Run the S12 v0.8 localhost WebSocket runtime server.")
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
     with VehicleRuntimeWebSocketServer(EngineRuntimeApi(), port=args.port) as server:

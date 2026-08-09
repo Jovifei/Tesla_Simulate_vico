@@ -136,10 +136,7 @@ class RuntimeWebSocketTests(unittest.TestCase):
 
 class AndroidProtocolDemoTests(unittest.TestCase):
     def test_paced_protocol_demo_records_all_packets_and_is_deterministic(self):
-        with (
-            tempfile.TemporaryDirectory() as left_root,
-            tempfile.TemporaryDirectory() as right_root,
-        ):
+        with tempfile.TemporaryDirectory() as left_root, tempfile.TemporaryDirectory() as right_root:
             left = run_android_protocol_demo(
                 pathlib.Path(left_root),
                 duration_s=1.0,
@@ -168,17 +165,7 @@ class AndroidProtocolDemoTests(unittest.TestCase):
 class AndroidDemoContractTests(unittest.TestCase):
     def test_minimal_controller_declares_network_and_required_actions(self):
         manifest_path = ANDROID_ROOT / "app" / "src" / "main" / "AndroidManifest.xml"
-        activity_path = (
-            ANDROID_ROOT
-            / "app"
-            / "src"
-            / "main"
-            / "java"
-            / "com"
-            / "jovi"
-            / "s12sound"
-            / "MainActivity.java"
-        )
+        activity_path = ANDROID_ROOT / "app" / "src" / "main" / "java" / "com" / "jovi" / "s12sound" / "MainActivity.java"
 
         self.assertTrue(manifest_path.is_file())
         self.assertTrue(activity_path.is_file())
@@ -188,23 +175,13 @@ class AndroidDemoContractTests(unittest.TestCase):
         for label in ("Start", "Stop", "Send Vehicle State"):
             self.assertIn(label, source)
         self.assertIn("ws://", source)
-        self.assertIn('\\"rpm\\":3200', source)
+        self.assertIn("\\\"rpm\\\":3200", source)
         self.assertIn("ScheduledFuture", source)
         self.assertIn("stateTask.cancel", source)
         self.assertIn("lastAcknowledgementMs", source)
 
     def test_android_transport_has_bounded_reads_and_a_nonblocking_close_path(self):
-        activity_path = (
-            ANDROID_ROOT
-            / "app"
-            / "src"
-            / "main"
-            / "java"
-            / "com"
-            / "jovi"
-            / "s12sound"
-            / "MainActivity.java"
-        )
+        activity_path = ANDROID_ROOT / "app" / "src" / "main" / "java" / "com" / "jovi" / "s12sound" / "MainActivity.java"
         source = activity_path.read_text(encoding="utf-8")
 
         self.assertIn("SOCKET_TIMEOUT_MS", source)
@@ -228,7 +205,6 @@ class AndroidDemoContractTests(unittest.TestCase):
 
         self.assertIn("Debug-signed", readme)
         self.assertNotIn("unsigned debug artifact", readme.lower())
-
 
 if __name__ == "__main__":
     unittest.main()

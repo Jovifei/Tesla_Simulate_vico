@@ -1,0 +1,12 @@
+{
+  "schema_version": "s12-engine-sound-v12-reference-1",
+  "reference_id": "rx7-fd-1991-r2-public-listening-candidate",
+  "vehicle_id": "rx7_fd_1991_stock",
+  "quality_class": "R2",
+  "inventory_use": "listening_only",
+  "vehicle": {"make": "Mazda", "model": "RX-7 FD", "model_year": 1991, "market": "Japan", "trim": "255 ps baseline"},
+  "source": {"url": "https://www.youtube.com/watch?v=Thh69Wc5uco", "publisher": "Public candidate; vehicle identity, stock state, RPM, and perspective remain pending R1 audit.", "source_url_sha256": "e878da5e16e4da13a9023defb6c4f7d9ab26a3c56cfaa4646053ec7ea4e98b00"},
+  "clip_window": {"start_s": 0, "end_s": 1},
+  "perspective": "unknown",
+  "research_boundary": {"raw_media_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12"}
+}

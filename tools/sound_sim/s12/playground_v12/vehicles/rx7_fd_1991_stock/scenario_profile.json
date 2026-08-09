@@ -1,0 +1,10 @@
+{
+  "schema_version": "s12-engine-sound-v12-scenario-1",
+  "profile_id": "rx7_fd_1991_stock",
+  "synthetic": true,
+  "parameters": {
+    "idle_rpm": {"value": 850, "unit": "rpm", "range": [500, 1500], "source_level": "C", "source": "synthetic"},
+    "redline_rpm": {"value": 8000, "unit": "rpm", "range": [4000, 10000], "source_level": "C", "source": "synthetic"},
+    "cruise_rpm": {"value": 2500, "unit": "rpm", "range": [1000, 5000], "source_level": "C", "source": "synthetic"}
+  }
+}

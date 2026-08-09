@@ -1,0 +1,39 @@
+{
+  "schema_version": "s12-acoustic-identity-reference-0.15",
+  "vehicles": {
+    "ferrari_458": {
+      "display_name": "Ferrari 458 Italia",
+      "topology": {"engine": "4497 cc 90-degree V8", "power_peak_rpm": 9000, "exhaust": "load-dependent bypass exhaust path"},
+      "topology_sources": [{"source_level": "M", "provenance_class": "A", "source": "Ferrari official 458 Italia model page", "source_url": "https://www.ferrari.com/en-EN/auto/458-italia", "source_scope": "Manufacturer topology evidence only; not acoustic calibration."}],
+      "public_video_observations": [
+        {"video_id": "1fzUnAUarNI", "source_url": "https://www.youtube.com/watch?v=1fzUnAUarNI", "title": "POV: Novitec Exhaust on a Ferrari 812 GTS (V12 Heaven)", "source_level": "R2", "provenance_class": "B", "source": "listening-only", "calibration_status": "inconclusive", "configuration_caveat": "Modified Novitec-exhaust Ferrari 812 GTS V12, not a 458 stock configuration.", "qualitative_cues": "High-RPM tonal aspiration only.", "permitted_use": "Listening-only inspiration for high-RPM tonal aspiration.", "exclusion": "Non-target, non-calibration, non-OEM evidence; not evidence for 458 architecture."},
+        {"video_id": "R6e_5v2aps4", "source_url": "https://www.youtube.com/watch?v=R6e_5v2aps4", "title": "Ferrari 458 Italia stock exhaust note and acceleration", "source_level": "R2", "provenance_class": "B", "source": "listening-only", "calibration_status": "inconclusive", "configuration_caveat": "Description says what seems to be stock; configuration is unverified and inconclusive.", "qualitative_cues": "Qualitative acceleration and exhaust-note observation.", "permitted_use": "Qualitative acceleration observation only.", "exclusion": "Not calibration, not OEM measurement, and not proof of stock configuration."},
+        {"video_id": "GzeRNBmH2vY", "source_url": "https://www.youtube.com/watch?v=GzeRNBmH2vY", "title": "Ferrari 458 straight-pipe comparison", "source_level": "R2", "provenance_class": "B", "source": "listening-only", "calibration_status": "inconclusive", "configuration_caveat": "Full straight pipe; description says the sound is manipulated.", "qualitative_cues": "Modified-comparison contrast only.", "permitted_use": "Contrast and exclusion review only.", "exclusion": "Excluded from calibration and stock-target inference."}
+      ],
+      "legal_scope": "Manufacturer facts support topology only. This offline source is synthetic, uncalibrated, and not OEM reproduction."
+    },
+    "hellcat": {
+      "display_name": "Dodge Challenger SRT Hellcat",
+      "topology": {"engine": "6.2 L 90-degree V8", "supercharger": "2.4 L twin-screw supercharger", "drive_ratio": 2.36},
+      "topology_sources": [{"source_level": "M", "provenance_class": "A", "source": "FCA Canada 2015 Challenger SRT powertrain press material", "source_url": "https://www.fcapresskit.ca/2015/Contents/Press-Releases/PDFs/Chrysler-Canada/CN_2015_SAFETY-TECH_Powertrain.pdf", "source_scope": "Manufacturer topology evidence only; not acoustic calibration."}],
+      "public_video_observations": [
+        {"video_id": "cKx-cb0fzeo", "source_url": "https://www.youtube.com/watch?v=cKx-cb0fzeo", "title": "2016 Dodge Challenger SRT Hellcat - SOUND!", "source_level": "R2", "provenance_class": "B", "source": "listening-only", "calibration_status": "inconclusive", "configuration_caveat": "Uploader claim of stock exhaust revving/accelerating; configuration is unverified.", "qualitative_cues": "Qualitative revving and accelerating contrast only.", "permitted_use": "Listening-only qualitative revving/acceleration observation.", "exclusion": "Not calibration, not OEM measurement, and uploader claim is unverified."}
+      ],
+      "legal_scope": "Manufacturer facts support topology only. This offline source is synthetic, uncalibrated, and not OEM reproduction."
+    },
+    "rx7_fd": {
+      "display_name": "Mazda RX-7 FD",
+      "topology": {"engine": "13B two-rotor rotary", "turbo": "sequential twin-turbo", "rotary_order_character": "integer-order rotary"},
+      "topology_sources": [
+        {"source_level": "M", "provenance_class": "A", "source": "Mazda history: Savanna RX-7 second and third generations", "source_url": "https://www2.mazda.com/en/stories/craftmanship/greatcar/p15.html", "source_scope": "Manufacturer topology evidence only; not acoustic calibration."},
+        {"source_level": "SAE", "provenance_class": "B", "source": "SAE Technical Paper 941030", "source_url": "https://doi.org/10.4271/941030", "source_scope": "Published topology context for rotary-engine research; not acoustic calibration."},
+        {"source_level": "service", "provenance_class": "B", "source": "Mazda service-information portal", "source_url": "https://www.mazdaserviceinfo.com/", "source_scope": "Service topology-context reference only; not acoustic calibration."},
+        {"source_level": "NV", "provenance_class": "B", "source": "Mazda NVH engineering discussion index", "source_url": "https://www.mazda.com/en/innovation/technology/", "source_scope": "Manufacturer NVH topology-context reference only; not acoustic calibration."}
+      ],
+      "public_video_observations": [
+        {"video_id": "hCz1YS5yJkw", "source_url": "https://www.youtube.com/watch?v=hCz1YS5yJkw", "title": "Mazda RX-7 sound compilation", "source_level": "R2", "provenance_class": "B", "source": "listening-only", "calibration_status": "inconclusive", "configuration_caveat": "Compilation includes modified, bridgeported, and antilag clips; stock configuration is not isolated.", "qualitative_cues": "Rotary/turbo contrast and exclusion review only.", "permitted_use": "Contrast-only listening discussion.", "exclusion": "Excluded from stock calibration, numerical targets, and OEM inference."}
+      ],
+      "legal_scope": "Manufacturer facts support topology only. This offline source is synthetic, uncalibrated, and not OEM reproduction."
+    }
+  }
+}

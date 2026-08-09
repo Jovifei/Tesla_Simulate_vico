@@ -1,0 +1,13 @@
+{
+  "schema_version": "s12-engine-sound-v11-provenance-1",
+  "vehicle_id": "ferrari_458_stock",
+  "vehicle_identity": {"make": "Ferrari", "model": "458 Italia", "generation": "458", "model_year":[2009,2015], "market": "Europe", "trim": "stock"},
+  "provenance": {"source_level": "A", "source_type": "manufacturer", "source_url": "https://www.ferrari.com/en-EN/auto/458-italia", "claim": "Synthetic manifest catalogs identity evidence only; no recording or manufacturer calibration is claimed."},
+  "raw_reference_audio_in_git": false,
+  "research_status": "cataloged_not_acquired",
+  "analysis_boundary": {"raw_audio_state": "not_acquired", "spectral_order_analysis_state": "not_analyzed", "derived_metrics_state": "not_analyzed", "repository_audio_policy": "Repository stores URLs and derived future metadata only; no copyrighted audio, waveform, or media-content hash is stored."},
+  "references": [
+    {"reference_id": "official_configuration", "source_url": "https://www.ferrari.com/en-EN/auto/458-italia", "source_url_sha256": "a363985f80754913084ebfaf598b9c3ccb959969162cde2496a0e58dd5ea8f89", "publisher": "Ferrari", "source_classification": "official_manufacturer_configuration", "vehicle_binding": {"make": "Ferrari", "model": "458 Italia", "generation": "458", "model_year":[2009,2015], "market": "Europe", "trim": "stock"}, "vehicle_binding_state": "identity_verified", "stock_modified_status": "manufacturer_identity_only", "listening_perspective": "not_applicable", "clip_time_metadata": {"state": "not_available", "start_s": "", "end_s": ""}, "content_hash_state": "not_acquired", "licensing_use_boundary": "Official configuration page is cataloged as URL metadata only; no media is acquired or reused.", "derived_analysis_state": "not_analyzed"},
+    {"reference_id": "public_candidate_discovery", "source_url": "https://www.youtube.com/results?search_query=Ferrari+458+Italia+stock+exhaust+exterior+rear", "source_url_sha256": "ce848aee45fc0534385b30918e7e90c2956ae1d9d16f946b96ab0b5dc5697ab4", "publisher": "YouTube search", "source_classification": "public_candidate_sound_reference_discovery", "vehicle_binding": {"make": "Ferrari", "model": "458 Italia", "generation": "458", "model_year":[2009,2015], "market": "Europe", "trim": "stock"}, "vehicle_binding_state": "query_scoped_candidate_not_verified", "stock_modified_status": "unverified_candidate", "listening_perspective": "not_available", "clip_time_metadata": {"state": "not_available", "start_s": "", "end_s": ""}, "content_hash_state": "not_acquired", "licensing_use_boundary": "Discovery URL identifies candidates only; no candidate recording has been licensed, downloaded, or analyzed.", "derived_analysis_state": "not_analyzed"}
+  ]
+}

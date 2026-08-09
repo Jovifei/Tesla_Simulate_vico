@@ -13,7 +13,9 @@ from s12_acoustic_audition import PressureTrace
 
 
 DEFAULT_ORDER_PROFILE_PATH = Path(__file__).with_name("engine_order_profile.json")
-DEFAULT_PARAMETER_LEDGER_PATH = Path(__file__).with_name("engine_sound_parameter_ledger.json")
+DEFAULT_PARAMETER_LEDGER_PATH = Path(__file__).with_name(
+    "engine_sound_parameter_ledger.json"
+)
 LABELS = ("synthetic", "uncalibrated", "offline", "not_realtime_qualified")
 GENERATOR_VERSION = "Synthetic Engine Sound v0.2"
 
@@ -95,8 +97,11 @@ def load_design_parameters(path: Path = DEFAULT_PARAMETER_LEDGER_PATH) -> dict:
         or set(parameters) != required
         or not isinstance(order_profile_entries, list)
         or len(order_profile_entries) != 4
-        or {entry.get("name") for entry in order_profile_entries if isinstance(entry, dict)}
-        != {"fundamental", "second", "third", "firing"}
+        or {
+            entry.get("name")
+            for entry in order_profile_entries
+            if isinstance(entry, dict)
+        } != {"fundamental", "second", "third", "firing"}
     ):
         raise ValueError("unsupported engine sound parameter ledger")
     for entry in parameters.values():
@@ -156,7 +161,9 @@ class OrderSchedule:
         duration_s: float,
         sample_rate_hz: int = 48000,
     ) -> OrderSchedule:
-        return cls._create(rpm, rpm, load, load, duration_s, sample_rate_hz, "fixed")
+        return cls._create(
+            rpm, rpm, load, load, duration_s, sample_rate_hz, "fixed"
+        )
 
     @classmethod
     def ramp(
@@ -193,7 +200,8 @@ class OrderSchedule:
             not all(math.isfinite(value) for value in (rpm_start, rpm_end))
             or min(rpm_start, rpm_end) <= 0.0
             or not all(
-                math.isfinite(value) and 0.0 <= value <= 1.0 for value in (load_start, load_end)
+                math.isfinite(value) and 0.0 <= value <= 1.0
+                for value in (load_start, load_end)
             )
             or not math.isfinite(duration_s)
             or duration_s <= 0.0
@@ -255,18 +263,22 @@ def _parameter(parameters: dict, name: str) -> float:
         raise ValueError(f"missing design parameter {name}") from error
 
 
-def _smooth(
-    previous: float, target: float, attack_s: float, decay_s: float, sample_rate_hz: int
-) -> float:
+def _smooth(previous: float, target: float, attack_s: float, decay_s: float,
+            sample_rate_hz: int) -> float:
     time_s = attack_s if target >= previous else decay_s
     coefficient = 1.0 - math.exp(-1.0 / (time_s * sample_rate_hz))
     return previous + coefficient * (target - previous)
 
 
-def _looped_texture_at(samples: list[float], index: int, crossfade_frames: int) -> float:
+def _looped_texture_at(
+    samples: list[float], index: int, crossfade_frames: int
+) -> float:
     if len(samples) == 1:
         return samples[0]
-    if crossfade_frames <= 0 or 2 * crossfade_frames >= len(samples):
+    if (
+        crossfade_frames <= 0
+        or 2 * crossfade_frames >= len(samples)
+    ):
         raise ValueError("crossfade must fit within the texture period")
     period_frames = len(samples) - crossfade_frames
     position = index % period_frames
@@ -274,7 +286,10 @@ def _looped_texture_at(samples: list[float], index: int, crossfade_frames: int) 
         return samples[crossfade_frames + position]
     blend = position - (len(samples) - 2 * crossfade_frames)
     alpha = (blend + 1) / crossfade_frames
-    return (1.0 - alpha) * samples[len(samples) - crossfade_frames + blend] + alpha * samples[blend]
+    return (
+        (1.0 - alpha) * samples[len(samples) - crossfade_frames + blend]
+        + alpha * samples[blend]
+    )
 
 
 def _rms(samples: list[float]) -> float:
@@ -305,15 +320,18 @@ def _project_order_spectrum(
     fundamental_phase_rad: list[float],
     orders: set[float],
 ) -> dict[str, float]:
-    mono = [(left_value + right_value) / 2.0 for left_value, right_value in zip(left, right)]
+    mono = [(left_value + right_value) / 2.0
+            for left_value, right_value in zip(left, right)]
     scale = 2.0 / len(mono)
     spectrum = {}
     for order in sorted(orders):
         sine = scale * sum(
-            sample * math.sin(order * phase) for sample, phase in zip(mono, fundamental_phase_rad)
+            sample * math.sin(order * phase)
+            for sample, phase in zip(mono, fundamental_phase_rad)
         )
         cosine = scale * sum(
-            sample * math.cos(order * phase) for sample, phase in zip(mono, fundamental_phase_rad)
+            sample * math.cos(order * phase)
+            for sample, phase in zip(mono, fundamental_phase_rad)
         )
         spectrum[f"order_{order:g}"] = math.hypot(sine, cosine) / math.sqrt(2.0)
     return spectrum
@@ -334,7 +352,8 @@ def render_sound_design(
         or not all(math.isfinite(value) for value in texture.pressure_pa)
         or not all(math.isfinite(value) for value in texture.time_s)
         or any(
-            later <= earlier or abs((later - earlier) - expected_interval_s) > 1.0e-12
+            later <= earlier
+            or abs((later - earlier) - expected_interval_s) > 1.0e-12
             for earlier, later in zip(texture.time_s, texture.time_s[1:])
         )
     ):
@@ -379,15 +398,13 @@ def render_sound_design(
             transient_load_span,
             stereo_order_weight,
             stereo_texture_weight,
-        )
-        < 0.0
+        ) < 0.0
         or min(
             rpm_rate_reference,
             load_rate_reference,
             transient_order,
             stereo_order,
-        )
-        <= 0.0
+        ) <= 0.0
     ):
         raise ValueError("design gains and smoothing times are invalid")
 
@@ -430,12 +447,15 @@ def render_sound_design(
     previous_rpm, previous_load = schedule_samples[0]
 
     for index, (rpm, load) in enumerate(schedule_samples):
-        smoothed_load = _smooth(smoothed_load, load, attack_s, decay_s, schedule.sample_rate_hz)
+        smoothed_load = _smooth(
+            smoothed_load, load, attack_s, decay_s, schedule.sample_rate_hz
+        )
         rpm_rate = (rpm - previous_rpm) * schedule.sample_rate_hz
         load_rate = (load - previous_load) * schedule.sample_rate_hz
         transient_target = min(
             1.0,
-            abs(rpm_rate) / rpm_rate_reference + abs(load_rate) / load_rate_reference,
+            abs(rpm_rate) / rpm_rate_reference
+            + abs(load_rate) / load_rate_reference,
         )
         transient_state = _smooth(
             transient_state,
@@ -446,13 +466,17 @@ def render_sound_design(
         )
         sample = 0.0
         for name, order, amplitude, phase_offset in order_entries:
-            order_phases[name] += 2.0 * math.pi * order * rpm / (60.0 * schedule.sample_rate_hz)
+            order_phases[name] += (
+                2.0 * math.pi * order * rpm / (60.0 * schedule.sample_rate_hz)
+            )
             load_weight = (
                 fundamental_load_floor + fundamental_load_span * smoothed_load
                 if order == 1.0
                 else high_order_load_floor + high_order_load_span * smoothed_load
             )
-            component = amplitude * load_weight * math.sin(order_phases[name] + phase_offset)
+            component = amplitude * load_weight * math.sin(
+                order_phases[name] + phase_offset
+            )
             order_components[name].append(component * gain)
             sample += component
         fundamental_phase.append(order_phases["fundamental"])
@@ -464,7 +488,10 @@ def render_sound_design(
             transient_gain
             * transient_state
             * (transient_load_floor + transient_load_span * smoothed_load)
-            * math.sin(transient_order * order_phases["fundamental"] + transient_phase_rad)
+            * math.sin(
+                transient_order * order_phases["fundamental"]
+                + transient_phase_rad
+            )
         )
         sample += transient
         side = stereo_width * (
@@ -498,11 +525,11 @@ def render_sound_design(
         instantaneous_rpm=instantaneous_rpm,
         fundamental_phase_rad=fundamental_phase,
         rpm_range=(min(instantaneous_rpm), max(instantaneous_rpm)),
-        load_range=(
-            min(load for _, load in schedule_samples),
-            max(load for _, load in schedule_samples),
+        load_range=(min(load for _, load in schedule_samples),
+                    max(load for _, load in schedule_samples)),
+        firing_frequency_hz=(
+            2.0 * schedule.rpm_start / 60.0 if fixed else None
         ),
-        firing_frequency_hz=(2.0 * schedule.rpm_start / 60.0 if fixed else None),
         generator_version=GENERATOR_VERSION,
         labels=LABELS,
         source_hash=texture.source_identity_sha256,

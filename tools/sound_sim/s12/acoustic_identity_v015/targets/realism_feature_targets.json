@@ -1,0 +1,241 @@
+{
+  "schema_version": "s12-acoustic-realism-targets-1.1",
+  "scope": "synthetic; uncalibrated; not OEM reproduction",
+  "vehicles": {
+    "ferrari_458": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 full-metric extraction v1; relative recording features only; not a calibrated recording target",
+      "r2_recording_dependent_features": {
+        "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; full metric set v1",
+        "schema": "s12.realism_feature_targets.full_v1",
+        "idle": {
+          "band_shares": [
+            0.009412885744692423,
+            0.5208484688516404,
+            0.4672908175841338,
+            0.0021387538797539335
+          ],
+          "spectral_flux": 0.22130021672893463,
+          "modulation_depth": 0.9962791931705195,
+          "modulation_peak_hz": 5.029940119760479,
+          "modulation_energy": 0.0021321003555920554,
+          "pulse_amplitude_cv": 0.20672231074928343,
+          "pulse_interval_cv": 4.314943225630427,
+          "crest_factor": 10.414502943272433,
+          "dropout_ratio": 0.0,
+          "spectral_centroid_hz": 980.3976507274288
+        },
+        "acceleration": {
+          "band_shares": [
+            0.35644258575270665,
+            0.5691188537274235,
+            0.0683429356009734,
+            0.004455761161902445
+          ],
+          "spectral_flux": 0.20287836709134854,
+          "modulation_depth": 0.7907546302565105,
+          "modulation_peak_hz": 70.51282051282051,
+          "modulation_energy": 0.00018334771637971598,
+          "pulse_amplitude_cv": 0.23073386850549238,
+          "pulse_interval_cv": 7.4055002551624955,
+          "crest_factor": 6.0960547008157775,
+          "dropout_ratio": 0.16907605279698304,
+          "spectral_centroid_hz": 420.8992027805071
+        },
+        "afterfire": {
+          "band_shares": [
+            0.12237011206585566,
+            0.6861693826320329,
+            0.18306445713380184,
+            0.0073385650688819835
+          ],
+          "spectral_flux": 0.2192079508152186,
+          "modulation_depth": 1.0,
+          "modulation_peak_hz": 5.0,
+          "modulation_energy": 0.0019447942434957963,
+          "pulse_amplitude_cv": 0.28270359100786735,
+          "pulse_interval_cv": 5.791220743169533,
+          "crest_factor": 8.893778435594893,
+          "dropout_ratio": 0.02875,
+          "spectral_centroid_hz": 656.206083837152
+        }
+      },
+      "dominant_character": "clean naturally aspirated attack that becomes increasingly metallic and high-order at high RPM",
+      "idle": {
+        "cycle_variation": "subtle",
+        "mechanical_layers": [
+          "valvetrain",
+          "crank",
+          "accessory"
+        ],
+        "provenance": "C/synthetic"
+      },
+      "acceleration": {
+        "high_frequency_growth": "increasing",
+        "low_frequency_weight": "restrained",
+        "provenance": "C/synthetic"
+      },
+      "deceleration": {
+        "afterfire": "sparse, hot closed-throttle events",
+        "provenance": "C/synthetic"
+      }
+    },
+    "hellcat": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 full-metric extraction v1; relative recording features only; not a calibrated recording target",
+      "r2_recording_dependent_features": {
+        "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; full metric set v1",
+        "schema": "s12.realism_feature_targets.full_v1",
+        "idle": {
+          "band_shares": [
+            0.6982963883844214,
+            0.21734613132624625,
+            0.040480731985018045,
+            0.002521409298935962
+          ],
+          "spectral_flux": 0.22652970034094957,
+          "modulation_depth": 0.7160177586851845,
+          "modulation_peak_hz": 15.753424657534246,
+          "modulation_energy": 0.0025793532621240446,
+          "pulse_amplitude_cv": 0.31461446759715506,
+          "pulse_interval_cv": 1.8966776477384086,
+          "crest_factor": 7.628913637284864,
+          "dropout_ratio": 0.0384,
+          "spectral_centroid_hz": 290.4265180653445
+        },
+        "acceleration": {
+          "band_shares": [
+            0.4837359017411123,
+            0.48786976644131697,
+            0.0030234596615554632,
+            3.662633574891643e-05
+          ],
+          "spectral_flux": 0.18339915691352074,
+          "modulation_depth": 0.5200688904863646,
+          "modulation_peak_hz": 28.917669595635694,
+          "modulation_energy": 0.0010658297906894116,
+          "pulse_amplitude_cv": 0.27254699442049096,
+          "pulse_interval_cv": 3.3588496436380826,
+          "crest_factor": 3.5202879826835143,
+          "dropout_ratio": 0.036,
+          "spectral_centroid_hz": 264.8156970288378
+        },
+        "afterfire": {
+          "band_shares": [
+            0.41420395482704,
+            0.48263457446378577,
+            0.005390527386645004,
+            6.397324974389e-05
+          ],
+          "spectral_flux": 0.17915077058107898,
+          "modulation_depth": 0.48755398316820836,
+          "modulation_peak_hz": 79.625,
+          "modulation_energy": 0.0018629901300190647,
+          "pulse_amplitude_cv": 0.26547428921602734,
+          "pulse_interval_cv": 1.8133902709595995,
+          "crest_factor": 3.3108235739713345,
+          "dropout_ratio": 0.0015384615384615385,
+          "spectral_centroid_hz": 303.31423402354545
+        }
+      },
+      "dominant_character": "large-displacement low-frequency exhaust pressure plus boost/load-dependent mechanical whine",
+      "idle": {
+        "cycle_variation": "audible",
+        "mechanical_layers": [
+          "belt",
+          "valvetrain",
+          "crank"
+        ],
+        "provenance": "C/synthetic"
+      },
+      "acceleration": {
+        "low_frequency_weight": "highest of the three",
+        "blower": "RPM, load, and boost-state dependent",
+        "provenance": "C/synthetic"
+      },
+      "deceleration": {
+        "afterfire": "clustered only when hot and closed throttle",
+        "provenance": "C/synthetic"
+      }
+    },
+    "rx7_fd": {
+      "targets_are_relative_only": true,
+      "reference_provenance": "B/R2 full-metric extraction v1; relative recording features only; not a calibrated recording target",
+      "r2_recording_dependent_features": {
+        "provenance": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; full metric set v1",
+        "schema": "s12.realism_feature_targets.full_v1",
+        "idle": {
+          "band_shares": [
+            0.9678145403116889,
+            0.03158008300226102,
+            0.0003960158024740219,
+            7.995973273847567e-05
+          ],
+          "spectral_flux": 0.1298529981634195,
+          "modulation_depth": 0.6642705686414346,
+          "modulation_peak_hz": 60.125,
+          "modulation_energy": 0.006216864456547871,
+          "pulse_amplitude_cv": 0.260101446239627,
+          "pulse_interval_cv": 0.5648365424721633,
+          "crest_factor": 2.7802259855154565,
+          "dropout_ratio": 0.05375,
+          "spectral_centroid_hz": 155.9385180585353
+        },
+        "acceleration": {
+          "band_shares": [
+            0.9357878137045473,
+            0.062172661926438305,
+            0.0017924410997974135,
+            0.00016488514929352573
+          ],
+          "spectral_flux": 0.16411082333632895,
+          "modulation_depth": 0.6428361949114817,
+          "modulation_peak_hz": 58.693732720745984,
+          "modulation_energy": 0.0018726511980628254,
+          "pulse_amplitude_cv": 0.2662493401630547,
+          "pulse_interval_cv": 2.084779658966972,
+          "crest_factor": 3.8725970195930506,
+          "dropout_ratio": 0.005213764337851929,
+          "spectral_centroid_hz": 169.56156380259594
+        },
+        "afterfire": {
+          "band_shares": [
+            0.952603413770949,
+            0.04435808069835203,
+            0.002699928709796799,
+            0.00026048181710754646
+          ],
+          "spectral_flux": 0.1743172276469544,
+          "modulation_depth": 0.597687180163985,
+          "modulation_peak_hz": 44.875,
+          "modulation_energy": 0.005808249678770931,
+          "pulse_amplitude_cv": 0.21544404756038746,
+          "pulse_interval_cv": 2.4368626123324826,
+          "crest_factor": 3.8846067415203986,
+          "dropout_ratio": 0.0025,
+          "spectral_centroid_hz": 179.96613316167495
+        }
+      },
+      "dominant_character": "non-piston rotary event texture with turbo inertia, boost onset, and release",
+      "idle": {
+        "cycle_variation": "light rotary flutter",
+        "mechanical_layers": [
+          "eccentric_crank",
+          "housing",
+          "accessory"
+        ],
+        "provenance": "C/synthetic"
+      },
+      "acceleration": {
+        "low_frequency_weight": "lighter than Hellcat",
+        "turbo": "stateful spool and boost onset",
+        "provenance": "C/synthetic"
+      },
+      "deceleration": {
+        "afterfire": "light hot closed-throttle events and boost release",
+        "provenance": "C/synthetic"
+      }
+    }
+  },
+  "metric_set": "full_v1: band_shares(4) + spectral_flux + modulation_depth/peak_hz/energy + pulse_amplitude_cv/interval_cv + crest_factor + dropout_ratio"
+}

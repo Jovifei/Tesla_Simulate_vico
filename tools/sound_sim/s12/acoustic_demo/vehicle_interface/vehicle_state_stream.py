@@ -49,11 +49,7 @@ class SyntheticVehicleStateStream:
 
     def __init__(self, duration_s: float = 600.0) -> None:
         update_count = round(duration_s * UPDATE_HZ)
-        if (
-            not math.isfinite(duration_s)
-            or duration_s <= 0.0
-            or not math.isclose(duration_s * UPDATE_HZ, update_count, abs_tol=1.0e-9)
-        ):
+        if not math.isfinite(duration_s) or duration_s <= 0.0 or not math.isclose(duration_s * UPDATE_HZ, update_count, abs_tol=1.0e-9):
             raise ValueError("duration must be a positive 100 Hz multiple")
         self.duration_s = float(duration_s)
         self.update_count = update_count

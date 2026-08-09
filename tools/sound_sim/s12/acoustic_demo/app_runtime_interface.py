@@ -38,17 +38,10 @@ def parse_app_vehicle_state(payload: Mapping[str, object] | str) -> VehicleState
     speed_kmh = _number(payload, "speed")
     acceleration_mps2 = _number(payload, "acceleration")
     timestamp_s = _number(payload, "timestamp")
-    rpm = (
-        _number(payload, "rpm")
-        if "rpm" in payload
-        else 800.0 + speed_kmh * 20.0 + acceleration_mps2 * 100.0
-    )
+    rpm = _number(payload, "rpm") if "rpm" in payload else 800.0 + speed_kmh * 20.0 + acceleration_mps2 * 100.0
     load = _number(payload, "load") if "load" in payload else 0.30 + acceleration_mps2 * 0.10
     throttle = _number(payload, "throttle") if "throttle" in payload else load
-    if all(
-        math.isfinite(value)
-        for value in (speed_kmh, acceleration_mps2, timestamp_s, rpm, load, throttle)
-    ):
+    if all(math.isfinite(value) for value in (speed_kmh, acceleration_mps2, timestamp_s, rpm, load, throttle)):
         rpm = _clamp(rpm, 800.0, 6000.0)
         load = _clamp(load, 0.0, 1.0)
         throttle = _clamp(throttle, 0.0, 1.0)

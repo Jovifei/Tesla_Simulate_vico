@@ -35,7 +35,12 @@ from s12_engine_sound_demo import run_engine_sound_demo  # noqa: E402
 
 
 TRACE_CSV = (
-    ROOT / "s12" / "benchmark" / "baselines" / "sprint-4d-b" / "radiation-time-domain-traces.csv"
+    ROOT
+    / "s12"
+    / "benchmark"
+    / "baselines"
+    / "sprint-4d-b"
+    / "radiation-time-domain-traces.csv"
 )
 
 
@@ -81,7 +86,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
             )
 
     def test_four_stroke_waveform_repeats_at_firing_frequency(self):
-        trace = synthesize_four_stroke(EngineSourceConfig(rpm=3000.0, load=0.60), 0.05)
+        trace = synthesize_four_stroke(
+            EngineSourceConfig(rpm=3000.0, load=0.60), 0.05
+        )
 
         period_at_100_hz = 480
         period_at_400_hz = 120
@@ -166,7 +173,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
         )
         self.assertNotEqual(ramp, step)
         with self.assertRaises(ValueError):
-            synthesize_four_stroke_profile((EngineSourceConfig(2000.0, 0.25),), 4800, "linear")
+            synthesize_four_stroke_profile(
+                (EngineSourceConfig(2000.0, 0.25),), 4800, "linear"
+            )
 
     def test_renders_deterministic_native_and_looped_audition_artifacts(self):
         trace = load_trace(TRACE_CSV, "radiation_chirp")
@@ -203,10 +212,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 self.assertGreater(preview.getnframes(), result.native_frame_count)
 
             metadata = json.loads(result.metadata_json_path.read_text(encoding="utf-8"))
-            self.assertEqual(
-                metadata["labels"],
-                ["synthetic", "uncalibrated", "offline", "not_realtime_qualified"],
-            )
+            self.assertEqual(metadata["labels"], ["synthetic", "uncalibrated", "offline", "not_realtime_qualified"])
             self.assertEqual(metadata["preview"], "looped audition preview; no time scaling")
             self.assertEqual(metadata["source_duration_s"], result.source_duration_s)
             self.assertEqual(metadata["native_wav_duration_s"], result.native_wav_duration_s)
@@ -214,20 +220,14 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertNotIn("native_duration_s", metadata)
             self.assertNotIn("generated_at", metadata)
             manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(
-                manifest["sha256"], hashlib.sha256(result.native_wav_path.read_bytes()).hexdigest()
-            )
+            self.assertEqual(manifest["sha256"], hashlib.sha256(result.native_wav_path.read_bytes()).hexdigest())
 
     def test_loads_accepted_package_and_applies_causal_finite_ptr(self):
         package = load_radiation_package()
         self.assertEqual(package.source_commit, QUALIFICATION_COMMIT)
         trace = PressureTrace.uniform(
-            "one-sample",
-            [1.0] + [0.0] * 63,
-            48000,
-            100.0,
-            "engine_exhaust_port",
-            ("synthetic",),
+            "one-sample", [1.0] + [0.0] * 63, 48000, 100.0,
+            "engine_exhaust_port", ("synthetic",),
         )
         result = run_ptr_network(trace)
         self.assertEqual(result.reference_plane, "bore_end")
@@ -236,12 +236,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertTrue(all(__import__("math").isfinite(value) for value in result.pressure_pa))
 
         short = PressureTrace.uniform(
-            "short",
-            [1.0],
-            48000,
-            100.0,
-            "engine_exhaust_port",
-            ("synthetic",),
+            "short", [1.0], 48000, 100.0, "engine_exhaust_port", ("synthetic",),
         )
         delayed_short = run_ptr_network(short)
         self.assertEqual(len(delayed_short.pressure_pa), len(short.pressure_pa))
@@ -261,7 +256,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
 
     @staticmethod
     def _engine_sound_texture():
-        source = synthesize_four_stroke(EngineSourceConfig(2000.0, 0.25), 0.05)
+        source = synthesize_four_stroke(
+            EngineSourceConfig(2000.0, 0.25), 0.05
+        )
         return run_ptr_network(source)
 
     def test_loads_synthetic_order_profile_and_parameter_provenance(self):
@@ -367,7 +364,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
             for index in range(3 * period_frames)
         ]
 
-        self.assertTrue(all(math.isclose(value, 0.75, abs_tol=1.0e-12) for value in looped))
+        self.assertTrue(
+            all(math.isclose(value, 0.75, abs_tol=1.0e-12) for value in looped)
+        )
 
     def test_looped_texture_crossfade_uses_true_tail_head_overlap(self):
         samples = [-0.8, -0.6, 0.25, 0.4, -0.1, 0.3, -0.7, 0.9]
@@ -387,7 +386,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
             samples[1],
         )
         self.assertEqual(looped[period_frames], samples[crossfade_frames])
-        crossfaded_wrap_jump = abs(looped[period_frames] - looped[period_frames - 1])
+        crossfaded_wrap_jump = abs(
+            looped[period_frames] - looped[period_frames - 1]
+        )
         direct_modulo_wrap_jump = abs(samples[0] - samples[-1])
         self.assertLess(crossfaded_wrap_jump, direct_modulo_wrap_jump)
 
@@ -404,10 +405,7 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 parameters,
             )
             self.assertEqual(traces[rpm].firing_frequency_hz, 2.0 * rpm / 60.0)
-            self.assertEqual(
-                traces[rpm].fixed_output_gain,
-                parameters["parameters"]["fixed_output_gain"]["value"],
-            )
+            self.assertEqual(traces[rpm].fixed_output_gain, parameters["parameters"]["fixed_output_gain"]["value"])
             self.assertEqual(traces[rpm].generator_version, "Synthetic Engine Sound v0.2")
 
         low_load = render_sound_design(
@@ -429,13 +427,15 @@ class S12AcousticAuditionTests(unittest.TestCase):
         )
         for name in ("second", "third", "firing"):
             relative_component = [
-                trace.source_component_rms[name] / trace.source_component_rms["fundamental"]
+                trace.source_component_rms[name]
+                / trace.source_component_rms["fundamental"]
                 for trace in (low_load, medium_load, high_load)
             ]
             self.assertLess(relative_component[0], relative_component[1])
             self.assertLess(relative_component[1], relative_component[2])
         final_third_to_fundamental = [
-            trace.order_spectrum_rms["order_3"] / trace.order_spectrum_rms["order_1"]
+            trace.order_spectrum_rms["order_3"]
+            / trace.order_spectrum_rms["order_1"]
             for trace in (low_load, medium_load, high_load)
         ]
         self.assertLess(
@@ -482,10 +482,14 @@ class S12AcousticAuditionTests(unittest.TestCase):
         self.assertEqual(len(trace.fundamental_phase_rad), 9600)
         for index in range(1, len(trace.fundamental_phase_rad)):
             expected = (
-                2.0 * math.pi * trace.instantaneous_rpm[index] / (60.0 * trace.sample_rate_hz)
+                2.0
+                * math.pi
+                * trace.instantaneous_rpm[index]
+                / (60.0 * trace.sample_rate_hz)
             )
             self.assertAlmostEqual(
-                trace.fundamental_phase_rad[index] - trace.fundamental_phase_rad[index - 1],
+                trace.fundamental_phase_rad[index]
+                - trace.fundamental_phase_rad[index - 1],
                 expected,
                 places=12,
             )
@@ -525,10 +529,14 @@ class S12AcousticAuditionTests(unittest.TestCase):
             self.assertLess(max(abs(value) for value in trace.left + trace.right), 1.0)
             for index in range(1, len(trace.fundamental_phase_rad)):
                 expected = (
-                    2.0 * math.pi * trace.instantaneous_rpm[index] / (60.0 * trace.sample_rate_hz)
+                    2.0
+                    * math.pi
+                    * trace.instantaneous_rpm[index]
+                    / (60.0 * trace.sample_rate_hz)
                 )
                 self.assertAlmostEqual(
-                    trace.fundamental_phase_rad[index] - trace.fundamental_phase_rad[index - 1],
+                    trace.fundamental_phase_rad[index]
+                    - trace.fundamental_phase_rad[index - 1],
                     expected,
                     places=12,
                 )
@@ -558,23 +566,11 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 self.assertEqual(rendered.getsampwidth(), 3)
             metadata = json.loads(result.metadata_path.read_text(encoding="utf-8"))
             for key in (
-                "rpm_range",
-                "load",
-                "source_hash",
-                "generator_version",
-                "synthetic",
-                "labels",
-                "profile_sha256",
-                "parameter_ledger_sha256",
-                "fixed_output_gain",
-                "clipping_count",
-                "dc",
-                "max_adjacent_step",
-                "sample_rate_hz",
-                "channels",
-                "sample_width",
-                "order_spectrum_rms",
-                "source_component_rms",
+                "rpm_range", "load", "source_hash", "generator_version",
+                "synthetic", "labels", "profile_sha256", "parameter_ledger_sha256",
+                "fixed_output_gain", "clipping_count", "dc", "max_adjacent_step",
+                "sample_rate_hz", "channels", "sample_width",
+                "order_spectrum_rms", "source_component_rms",
                 "transient_rms",
             ):
                 self.assertIn(key, metadata)
@@ -613,13 +609,17 @@ class S12AcousticAuditionTests(unittest.TestCase):
                 for channel in (trace.left, trace.right)
                 for value in (
                     abs(channel[0]),
-                    *(abs(current - previous) for previous, current in zip(channel, channel[1:])),
+                    *(
+                        abs(current - previous)
+                        for previous, current in zip(channel, channel[1:])
+                    ),
                     abs(channel[-1]),
                 )
             )
             self.assertEqual(result.max_adjacent_step, expected_max_step)
             fade_frames = round(
-                load_design_parameters()["parameters"]["output_edge_fade_s"]["value"] * 48000
+                load_design_parameters()["parameters"]["output_edge_fade_s"]["value"]
+                * 48000
             )
             self.assertEqual(trace.left[0], 0.0)
             self.assertEqual(trace.right[0], 0.0)
@@ -633,7 +633,9 @@ class S12AcousticAuditionTests(unittest.TestCase):
             )
 
     def test_builds_deterministic_five_case_engine_sound_demo(self):
-        expected = {"idle", "cruise", "acceleration", "throttle_lift", "high_load"}
+        expected = {
+            "idle", "cruise", "acceleration", "throttle_lift", "high_load"
+        }
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
             sentinel = pathlib.Path(first) / "sentinel.txt"
             sentinel.write_text("unrelated user file", encoding="utf-8")
@@ -645,8 +647,11 @@ class S12AcousticAuditionTests(unittest.TestCase):
             manifest = json.loads(left.manifest_path.read_text(encoding="utf-8"))
             self.assertEqual(
                 set(manifest["files"]),
-                {f"{name}{suffix}" for name in expected for suffix in (".wav", ".metadata.json")}
-                | {"engine_sound_review.md"},
+                {
+                    f"{name}{suffix}"
+                    for name in expected
+                    for suffix in (".wav", ".metadata.json")
+                } | {"engine_sound_review.md"},
             )
             self.assertEqual(len(manifest["files"]), 11)
             self.assertNotIn(sentinel.name, manifest["files"])
