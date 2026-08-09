@@ -1,0 +1,34 @@
+{
+  "package_root": "E:/Tesla_speed/review_packages/s12-stage-d-human-audition-v1",
+  "listener_zip": "S12_Stage_D_Listener_Package.zip",
+  "answer_key_zip": "S12_Stage_D_Answer_Key.zip",
+  "listener_zip_sha256": "6aa0ab0e23d986da9f4698d560e20acd78d5fbc70bdc0a2941f99833fed1495a",
+  "answer_key_zip_sha256": "f2f6bb0f5a7b7eaabba69eb7f05c1b1bf45489a0a7c409c421df7e52a7d91203",
+  "listener_trial_count": 30,
+  "listener_wav_count": 36,
+  "source_wav_count": 36,
+  "full_cycle_ab_pair_count": 3,
+  "full_cycle_pair_key_sha256": "e45db100286f2fdceb87f0cbf4b5af24c4ef01c883eb00a9c37a1f58c07610d9",
+  "answer_key_commitment_sha256": "52ec36474dc39265cd46b1c09398a417d5d3073237f683603e283969bd8605ff",
+  "listener_zip_leaks": [],
+  "pcm_format": {"sample_rate_hz": 48000, "channels": 2, "bits": 24, "finite": true, "clipping_count": 0},
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "provenance": "synthetic / uncalibrated / not OEM reproduction",
+  "obsidian_update": {
+    "vault": "E:/AI_Tools/Obsidian/Data/notes-personal",
+    "notes_updated": 10,
+    "post_update_sha256": {
+      "codex_memory/03-项目记忆/tesla-speed/00-项目概览.md": "179ac4ac68e38113ae6fe44d8603ffb4231db34aae772dadb6162334b9fb5375",
+      "codex_memory/03-项目记忆/tesla-speed/01-总体计划.md": "904c30e03eb315a2e1dca4c81143d0986523c52012a48e58568ce823b3bb3b60",
+      "codex_memory/03-项目记忆/tesla-speed/02-当前进度.md": "cf4ce4c11ff167061999332cb3e7c1adba05d05e0f08da1d6c3de0b56b13a04e",
+      "codex_memory/03-项目记忆/tesla-speed/04-工作流与知识.md": "2df9088f755a15f661f33ebb62ee0ab07821facd1a9a1a7e267abdd33435700b",
+      "tesla/S12-Engine-Sound-v11/12-S12-v015-独立声源与车型复用经验.md": "71759beff1de8497c99031c262d423cb581d2e21fce577c76f126b8de455752e",
+      "tesla/S12-Engine-Sound-v11/13-S12-Stage-D-人耳盲听与真实感校准.md": "b19a8e54ccc5164ea73c378fe107930d79432691a569ad116934a1cf4c7952c9",
+      "tesla/S12-Engine-Sound-v11/01-Hellcat.md": "e0d104e31ed550a6b1d9a1530410efe790eef9bb0286003036e137eb5b19c20c",
+      "tesla/S12-Engine-Sound-v11/05-RX-7-FD.md": "640a94616d4e6e826957ad59dc30c995bcff5e5a1059a4d672ac43de52f2022b",
+      "tesla/S12-Engine-Sound-v11/07-Ferrari-458-Italia.md": "397d0cd5970b184d9f0bce43a9514fa8731f1c3268615b1b2336c580a4470762",
+      "tesla/index.md": "2ef363371a8a19eefeb9219314fe2d5b8edfbde2f76220a96735b3b45a1bbb3d"
+    },
+    "contradictory_status_search": "No positive REALISM PASS, HUMAN PASS, or merged-main claim found in the updated S12 status scope; negative gate explanations are intentional."
+  }
+}

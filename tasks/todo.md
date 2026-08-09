@@ -3472,3 +3472,16 @@ until driver and performance gates pass.
 - [ ] Phase 5: run full verification, write report/lessons, and make local commits only.
 
 Review: focused Stage C, realism, identity, deep-realism, and Track-P gates are green. Full repository verification and local commit split remain.
+
+## S12 Stage D Human Listening Deep Realism Calibration (2026-08-09)
+
+- [x] D0：锁定 `a5d0481` 基线、参考 target/manifest SHA、Stage C 试听包和 fresh test evidence。
+- [x] D1：以 TDD 建立 Stage-D candidate schema、typed loader、candidate renderer 和 `candidate=None` bit-identical 合同。
+- [x] D2：实现 Ferrari idle/metallic、Hellcat PTR 前 transient peak shaping、RX-7 rotary/turbo candidate overlay。
+- [x] D3：建立 final-PCM reference-distance evaluator，修复 RX-7 target/manifest 可用状态一致性并执行 30% improvement gate（结果 PARTIAL，未降低门禁）。
+- [x] D4：建立两轮 15 题匿名盲听包、sealed answer key、response validator、confusion matrix 和 3 组 60 秒 full-cycle A/B 附加包。
+- [x] D5：生成三份 candidate JSON、试听包和自动报告；停止等待 Jovi 答卷。
+- [ ] D6：按答卷进行最多三轮窄范围候选迭代；不伪造人耳结果，不降低门禁。
+- [x] D7：写入 Stage-D 报告并同步 Obsidian 项目影子知识库；最终 fresh verification 与 local commits 仍待执行。
+
+Review：Stage D 的自动指标、身份 confusion matrix 和人耳真实性偏好是三个独立证据层；没有 Jovi 答卷时只能标记 `WAITING_FOR_JOVI_AUDITION`。

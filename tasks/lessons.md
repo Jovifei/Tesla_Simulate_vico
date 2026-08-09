@@ -1208,3 +1208,8 @@ Rules:
 - The standalone 60-second prototype is a direction probe, not production evidence: its shift count was false, its 70 Hz boom used the wrong time base, its centroid claims were hard-coded, and it duplicated the formal afterfire layer.
 - Python `hash(vehicle_id)` is process-salted; deterministic audio must use explicit stable profile data or fixed integer seeds.
 - Track-P path freezing uses substring matching. A Track-S file whose path contains `ptr` can fail the guard, so equalizer naming must avoid that substring without changing governance.
+
+# 2026-08-09 S12 Stage D human listening lessons
+
+- Automatic source/PCM metrics and a closed-set confusion matrix prove implementation health and identity separability; they do not prove that a listener hears Ferrari, Hellcat, or RX-7 as a realistic engine.
+- Identity recognition and “candidate sounds more realistic than Stage C” are separate human gates. A candidate may pass one and fail the other, so both results must be recorded independently and no human PASS may be inferred from automated tests.
