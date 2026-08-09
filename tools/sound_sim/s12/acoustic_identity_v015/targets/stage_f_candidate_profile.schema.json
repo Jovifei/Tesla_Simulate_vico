@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "S12 Stage F candidate profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "vehicle_id", "base_commit", "parent_candidate_id", "status", "hypothesis", "reference_target", "canonical_trace_version", "source", "idle", "afterfire", "shift", "loudness", "locked_layers", "provenance"],
+  "properties": {"schema_version": {"const": "s12-stage-f-candidate-profile-1"}, "status": {"const": "Candidate"}, "vehicle_id": {"enum": ["ferrari_458", "hellcat", "rx7_fd"]}}
+}
