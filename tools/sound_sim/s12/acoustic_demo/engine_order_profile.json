@@ -1,0 +1,38 @@
+{
+  "cylinders": 4,
+  "engine_type": "synthetic_four_cylinder_four_stroke_reference",
+  "firing_order": "1-3-4-2",
+  "orders": [
+    {
+      "amplitude": 0.58,
+      "name": "fundamental",
+      "order": 1.0,
+      "phase_rad": 0.0,
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.20,
+      "name": "second",
+      "order": 2.0,
+      "phase_rad": 0.45,
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.10,
+      "name": "third",
+      "order": 3.0,
+      "phase_rad": -0.35,
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.32,
+      "description": "Synthetic four-cylinder four-stroke excitation with two firing events per revolution.",
+      "name": "firing",
+      "order": 2.0,
+      "phase_rad": 1.1,
+      "source": "synthetic"
+    }
+  ],
+  "schema": "s12.engine_order_profile.v1",
+  "source": "synthetic"
+}

@@ -1,0 +1,188 @@
+{
+  "generator_version": "Synthetic Engine Sound v0.2",
+  "parameters": {
+    "attack_s": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic smoothing time for increasing load and transient intensity.",
+      "source": "synthetic",
+      "value": 0.035
+    },
+    "crossfade_s": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic edge blend for the bounded looping physical texture.",
+      "source": "synthetic",
+      "value": 0.02
+    },
+    "decay_s": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic smoothing time for decreasing load and transient intensity.",
+      "source": "synthetic",
+      "value": 0.12
+    },
+    "fixed_output_gain": {
+      "classification": "C/synthetic",
+      "rationale": "One conservative fixed gain shared by every offline schedule.",
+      "source": "synthetic",
+      "value": 0.35
+    },
+    "fundamental_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum first-order contribution at zero load.",
+      "source": "synthetic",
+      "value": 0.25
+    },
+    "fundamental_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous first-order contribution added across normalized load.",
+      "source": "synthetic",
+      "value": 0.5
+    },
+    "high_order_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum higher-order contribution at zero load.",
+      "source": "synthetic",
+      "value": 0.12
+    },
+    "high_order_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous higher-order contribution added across normalized load.",
+      "source": "synthetic",
+      "value": 0.88
+    },
+    "load_rate_reference": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic normalized-load rate that drives the transient target to unity.",
+      "source": "synthetic",
+      "value": 2.0
+    },
+    "max_adjacent_step": {
+      "classification": "C/synthetic",
+      "rationale": "Automated discontinuity proxy threshold for normalized output samples.",
+      "source": "synthetic",
+      "value": 0.15
+    },
+    "max_dc": {
+      "classification": "C/synthetic",
+      "rationale": "Automated DC proxy threshold for normalized output samples.",
+      "source": "synthetic",
+      "value": 0.001
+    },
+    "output_edge_fade_s": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic one-time fade at final output boundaries to prevent start and stop clicks.",
+      "source": "synthetic",
+      "value": 0.02
+    },
+    "rpm_rate_reference": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic RPM-per-second rate that drives the transient target to unity.",
+      "source": "synthetic",
+      "value": 5000.0
+    },
+    "stereo_order": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic engine order used for the bounded stereo side texture.",
+      "source": "synthetic",
+      "value": 3.0
+    },
+    "stereo_order_weight": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic weight of the order-driven stereo side component.",
+      "source": "synthetic",
+      "value": 0.22
+    },
+    "stereo_phase_rad": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic phase offset in radians for the stereo order component.",
+      "source": "synthetic",
+      "value": 0.7
+    },
+    "stereo_texture_weight": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic weight of the physical texture in the stereo side component.",
+      "source": "synthetic",
+      "value": 0.08
+    },
+    "stereo_width": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic bounded side-component width without spatial calibration.",
+      "source": "synthetic",
+      "value": 0.08
+    },
+    "texture_mix": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic fixed pressure-to-audition mix for the accepted PTR texture.",
+      "source": "synthetic",
+      "value": 0.12
+    },
+    "transient_gain": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic bounded emphasis driven continuously by RPM and load derivatives.",
+      "source": "synthetic",
+      "value": 0.12
+    },
+    "transient_load_floor": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic minimum transient audibility at zero load.",
+      "source": "synthetic",
+      "value": 0.35
+    },
+    "transient_load_span": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic continuous transient-intensity increase across normalized load.",
+      "source": "synthetic",
+      "value": 0.65
+    },
+    "transient_order": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic engine order carrying derivative-driven transient emphasis.",
+      "source": "synthetic",
+      "value": 4.0
+    },
+    "transient_phase_rad": {
+      "classification": "C/synthetic",
+      "rationale": "Synthetic phase offset in radians for transient emphasis.",
+      "source": "synthetic",
+      "value": 0.25
+    }
+  },
+  "order_profile_entries": [
+    {
+      "amplitude": 0.58,
+      "classification": "C/synthetic",
+      "name": "fundamental",
+      "order": 1.0,
+      "phase_rad": 0.0,
+      "rationale": "Synthetic first-order contribution for the non-OEM reference profile.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.20,
+      "classification": "C/synthetic",
+      "name": "second",
+      "order": 2.0,
+      "phase_rad": 0.45,
+      "rationale": "Synthetic second-order contribution for harmonic balance.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.10,
+      "classification": "C/synthetic",
+      "name": "third",
+      "order": 3.0,
+      "phase_rad": -0.35,
+      "rationale": "Synthetic third-order contribution for high-load harmonic emphasis.",
+      "source": "synthetic"
+    },
+    {
+      "amplitude": 0.32,
+      "classification": "C/synthetic",
+      "name": "firing",
+      "order": 2.0,
+      "phase_rad": 1.1,
+      "rationale": "Synthetic two-events-per-revolution firing-order contribution.",
+      "source": "synthetic"
+    }
+  ],
+  "schema": "s12.engine_sound_parameter_ledger.v1"
+}
