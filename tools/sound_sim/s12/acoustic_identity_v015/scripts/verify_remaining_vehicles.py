@@ -114,9 +114,10 @@ def _write_wav(path: Path, signal: np.ndarray, sr: int) -> None:
     stereo = np.column_stack([normalized, 0.79 * normalized])
     pcm = np.clip(stereo * (1 << 23), -(1 << 23), (1 << 23) - 1).astype("<i4")
     raw = np.empty((pcm.size, 3), dtype=np.uint8)
-    raw[:, 0] = (pcm.view(np.uint8).reshape(pcm.size, 4)[:, 0])
-    raw[:, 1] = (pcm.view(np.uint8).reshape(pcm.size, 4)[:, 1])
-    raw[:, 2] = (pcm.view(np.uint8).reshape(pcm.size, 4)[:, 2])
+    byte_view = np.ascontiguousarray(pcm).view(np.uint8).reshape(pcm.size, 4)
+    raw[:, 0] = byte_view[:, 0]
+    raw[:, 1] = byte_view[:, 1]
+    raw[:, 2] = byte_view[:, 2]
     with wave.open(str(path), "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(3)

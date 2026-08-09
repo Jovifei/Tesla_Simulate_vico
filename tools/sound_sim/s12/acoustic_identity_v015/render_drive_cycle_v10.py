@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from .acoustic_analysis import compute_order_map, compute_realism_metrics, write_order_map, write_spectrogram
+from .acoustic_layers.realism_profiles import SUPPORTED_REALISM_VEHICLE_IDS
 from .contracts import SourceRender, VehicleStateTrace
 from .loudness_manager import manage_bundle_loudness, measure_loudness
 from .render_identity_v02 import _apply_frozen_ptr, _edge_fade, _health, _loudness_dict, _ptr_provenance, _read_pcm24_wav, _trace_metadata, _write_json, _write_manifest, _write_pcm24_wav
@@ -16,16 +17,21 @@ from .render_realism_v10 import _RENDERERS, _SAMPLE_RATE_HZ, _SCOPE, _render_sta
 
 _LIFT_PHASE = 18.0 / 30.0
 _PROFILE = {
-    "ferrari_458": {"rpm": (1050.0, 1050.0, 7800.0, 9000.0, 5500.0, 1800.0, 1050.0), "load": (.14, .14, .35, .98, .12, .08, .14)},
-    "hellcat": {"rpm": (820.0, 820.0, 5200.0, 6200.0, 3600.0, 1300.0, 820.0), "load": (.16, .16, .35, 1.00, .12, .08, .16)},
-    "rx7_fd": {"rpm": (920.0, 920.0, 6500.0, 7800.0, 4800.0, 1700.0, 920.0), "load": (.15, .15, .35, .98, .12, .08, .15)},
+    "ferrari_458": {"rpm": (1050.0, 1050.0, 7800.0, 9000.0, 5500.0, 1800.0, 1050.0), "load": (.14, .14, .35, .98, .12, .08, .14), "shift_drop": 920.0},
+    "hellcat": {"rpm": (820.0, 820.0, 5200.0, 6200.0, 3600.0, 1300.0, 820.0), "load": (.16, .16, .35, 1.00, .12, .08, .16), "shift_drop": 780.0},
+    "rx7_fd": {"rpm": (920.0, 920.0, 6500.0, 7800.0, 4800.0, 1700.0, 920.0), "load": (.15, .15, .35, .98, .12, .08, .15), "shift_drop": 860.0},
+    "aventador_lp700": {"rpm": (950.0, 950.0, 7600.0, 8700.0, 5600.0, 1500.0, 950.0), "load": (.14, .14, .34, .99, .12, .08, .14), "shift_drop": 900.0},
+    "c63_w204": {"rpm": (750.0, 750.0, 5600.0, 7000.0, 4200.0, 1400.0, 750.0), "load": (.16, .16, .34, .98, .12, .08, .16), "shift_drop": 700.0},
+    "gtr_r35": {"rpm": (1000.0, 1000.0, 5700.0, 7000.0, 4300.0, 1450.0, 1000.0), "load": (.15, .15, .35, .99, .12, .08, .15), "shift_drop": 820.0},
+    "lfa": {"rpm": (900.0, 900.0, 7700.0, 9000.0, 5700.0, 1600.0, 900.0), "load": (.14, .14, .35, .99, .12, .08, .14), "shift_drop": 880.0},
+    "supra_jza80": {"rpm": (800.0, 800.0, 5600.0, 7200.0, 4300.0, 1450.0, 800.0), "load": (.15, .15, .34, .98, .12, .08, .15), "shift_drop": 760.0},
 }
 _PHASES = np.asarray((0.0, 4.0 / 30.0, 13.0 / 30.0, _LIFT_PHASE, 23.0 / 30.0, 26.0 / 30.0, 1.0))
 
 
 def build_drive_cycle_trace(vehicle_id: str, duration_s: float = 30.0) -> VehicleStateTrace:
     """Build one continuous idle, pull, lift, coast, and idle-return state trace."""
-    if vehicle_id not in _PROFILE:
+    if vehicle_id not in SUPPORTED_REALISM_VEHICLE_IDS or vehicle_id not in _PROFILE:
         raise ValueError(f"unsupported vehicle_id: {vehicle_id!r}")
     if not np.isfinite(duration_s) or duration_s < 1.0:
         raise ValueError("duration_s must be finite and >= 1.0")
@@ -34,6 +40,14 @@ def build_drive_cycle_trace(vehicle_id: str, duration_s: float = 30.0) -> Vehicl
     phase = time_s / duration_s
     profile = _PROFILE[vehicle_id]
     rpm = np.interp(phase, _PHASES, profile["rpm"])
+    acceleration_start = _PHASES[1] * duration_s
+    acceleration_end = _PHASES[2] * duration_s
+    acceleration_span = acceleration_end - acceleration_start
+    centers = acceleration_start + acceleration_span * np.asarray((0.24, 0.52, 0.80), dtype=np.float64)
+    half_width_s = 0.060
+    for center in centers:
+        distance = np.abs(time_s - center)
+        rpm -= np.where(distance < half_width_s, profile["shift_drop"] * (1.0 - distance / half_width_s), 0.0)
     load = np.where(
         phase < _LIFT_PHASE,
         np.interp(phase, _PHASES[:4], profile["load"][:4]),
@@ -65,16 +79,23 @@ def render_drive_cycle_source(vehicle_id: str, trace: VehicleStateTrace) -> Sour
     ).validate()
 
 
-def publish_drive_cycle_v10(output_root: str | Path, duration_s: float = 30.0) -> dict[str, object]:
-    """Publish three standalone continuous audition WAVs with one fixed gain each."""
+def publish_drive_cycle_v10(
+    output_root: str | Path,
+    duration_s: float = 30.0,
+    vehicle_ids: tuple[str, ...] | None = None,
+) -> dict[str, object]:
+    """Publish continuous audition WAVs with one fixed gain per vehicle."""
     if not np.isfinite(duration_s) or duration_s < 1.0:
         raise ValueError("duration_s must be finite and >= 1.0")
     root = Path(output_root)
     cycle_root = root / "drive_cycle_v10"
     cycle_root.mkdir(parents=True, exist_ok=True)
     ptr = _ptr_provenance()
-    publication: dict[str, object] = {"scope": _SCOPE, "duration_s": duration_s, "ptr_provenance": ptr, "vehicles": {}}
-    for vehicle_id in _RENDERERS:
+    selected = tuple(SUPPORTED_REALISM_VEHICLE_IDS if vehicle_ids is None else vehicle_ids)
+    if not selected or any(vehicle_id not in _RENDERERS for vehicle_id in selected) or len(set(selected)) != len(selected):
+        raise ValueError("vehicle_ids must be a non-empty tuple of supported unique vehicle IDs")
+    publication: dict[str, object] = {"scope": _SCOPE, "duration_s": duration_s, "vehicle_ids": selected, "ptr_provenance": ptr, "vehicles": {}}
+    for vehicle_id in selected:
         vehicle_root = cycle_root / vehicle_id
         vehicle_root.mkdir(parents=True, exist_ok=True)
         trace = build_drive_cycle_trace(vehicle_id, duration_s)
@@ -84,7 +105,7 @@ def publish_drive_cycle_v10(output_root: str | Path, duration_s: float = 30.0) -
         if transients["afterfire_event_count"] <= 0 or transients["afterfire_stem_energy"] <= 0.0:
             raise ValueError(f"complete drive-cycle afterfire gate failed for {vehicle_id}")
         ptr_audio = _edge_fade(_apply_frozen_ptr(source.pressure))
-        managed = manage_bundle_loudness({"drive_cycle": ptr_audio}, _SAMPLE_RATE_HZ, target_lufs=-16.0, peak_limit_dbfs=-1.0)
+        managed = manage_bundle_loudness({"drive_cycle": ptr_audio}, _SAMPLE_RATE_HZ, target_lufs=-16.0, peak_limit_dbfs=-1.5)
         wav_path = _write_pcm24_wav(vehicle_root / "drive_cycle.wav", managed.segments["drive_cycle"])
         reopened = _read_pcm24_wav(wav_path)
         health = _health(reopened)
@@ -97,7 +118,7 @@ def publish_drive_cycle_v10(output_root: str | Path, duration_s: float = 30.0) -
             "wav": wav_path.name,
             "scenario": {
                 **_trace_metadata(trace),
-                "sections": "0-4 idle; 4-13 acceleration; 13-18 full pull; 18-23 lift/afterfire; 23-26 coast; 26-30 idle return (seconds at the 30-second default)",
+                "sections": _section_description(duration_s),
                 "lift_time_s": source.diagnostics["drive_cycle_lift_time_s"],
             },
             "loudness": {"target_lufs": -16.0, "one_fixed_drive_cycle_gain_db": managed.gain_db, "headroom_limited": managed.headroom_limited, "drive_cycle": _loudness_dict(measure_loudness(reopened))},
@@ -130,6 +151,7 @@ def _write_cycle_report(root: Path, publication: dict[str, object]) -> None:
         "## Per-vehicle automated gates",
         "",
     ]
+    lines[6] = f"`{_section_description(float(publication['duration_s']))}`."
     for vehicle_id, metrics in publication["vehicles"].items():
         loudness = metrics["loudness"]["drive_cycle"]
         afterfire = metrics["afterfire_gate"]
@@ -148,3 +170,12 @@ def _write_cycle_report(root: Path, publication: dict[str, object]) -> None:
         "",
     ))
     (root / "S12_Complete_Drive_Cycle_Audition_Report.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def _section_description(duration_s: float) -> str:
+    values = np.asarray((0.0, 4.0 / 30.0, 13.0 / 30.0, 18.0 / 30.0, 23.0 / 30.0, 26.0 / 30.0, 1.0)) * duration_s
+    return (
+        f"{values[0]:g}-{values[1]:g} idle; {values[1]:g}-{values[2]:g} acceleration (3 shifts); "
+        f"{values[2]:g}-{values[3]:g} full pull; {values[3]:g}-{values[4]:g} lift/afterfire; "
+        f"{values[4]:g}-{values[5]:g} coast; {values[5]:g}-{values[6]:g} idle return"
+    )
