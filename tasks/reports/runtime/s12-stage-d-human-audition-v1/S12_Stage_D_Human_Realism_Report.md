@@ -6,6 +6,8 @@
 
 - Branch: `agent/s12-stage-c-realism-integration`
 - Stage C baseline: `a5d048145c29b20d687376c0b73226bc4a2435c7`
+- Implementation/report tip at generation: `19414942f3dee6959598f4be093665f280b296dd`
+- Local commits: `834b280`, `9745b49`, `2a4c863`, `1941494`; upstream was not advanced.
 - Scope: offline Track-S Candidate overlays only
 - Provenance: `synthetic / uncalibrated / not OEM reproduction`
 - Push, merge, main, Simulink, Runtime and Android: not performed
@@ -34,7 +36,7 @@ The candidate overlay remains before the frozen boundary:
 | Listener ZIP leak scan | 0 leaks |
 | PCM artifact verifier | PASS: 48 kHz, stereo, PCM24, finite, no clipping |
 
-The full regression and guard must be rerun after final local commits; the numbers above are the captured baseline/evidence before that rerun.
+The full regression was run against the exact bytes later recorded by the local commits (`429 passed / 232 subtests`); after committing, the Stage-D focused suite (`14 passed`), Track-P guard (`21/21`) and `git diff --check` were rerun. No source bytes changed between those checks and the commit recording.
 
 `verify_remaining_vehicles.py` exited 0 and regenerated its informational report, but its historical rough acceptance fields remain FAIL for the eight-vehicle synthetic comparison. This is not promoted to a Stage-D gate and no non-anchor profile was changed; the formal full regression and Track-P guard are the protected acceptance evidence.
 
