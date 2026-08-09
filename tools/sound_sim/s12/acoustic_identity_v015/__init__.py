@@ -22,6 +22,7 @@ from .loudness_manager import LoudnessManagedBundle, LoudnessMetrics, manage_bun
 from .render_identity_v02 import publish_identity_v02
 from .render_drive_cycle_v10 import build_drive_cycle_trace, publish_drive_cycle_v10, render_drive_cycle_source
 from .render_realism_v10 import publish_realism_v10
+from .stage_d import BASE_COMMIT, StageDCandidateProfile, build_blind_package, load_stage_d_candidate, render_stage_d_candidate, score_blind_responses
 from .sources.flat_plane_v8_source import render_ferrari_458
 from .sources.lamborghini_v12_source import render_aventador_lp700
 from .sources.lexus_v10_source import render_lfa
@@ -61,6 +62,12 @@ __all__ = (
     "publish_identity_v02",
     "publish_drive_cycle_v10",
     "publish_realism_v10",
+    "BASE_COMMIT",
+    "StageDCandidateProfile",
+    "build_blind_package",
+    "load_stage_d_candidate",
+    "render_stage_d_candidate",
+    "score_blind_responses",
     "render_ferrari_458",
     "render_aventador_lp700",
     "render_c63_w204",
