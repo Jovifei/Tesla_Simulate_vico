@@ -197,7 +197,7 @@ def main() -> None:
         doc_path = Path(__file__).resolve().parent.parent / "docs" / f"{vid}_verify.json"
         # newline="\n": on Windows the default would translate to CRLF, which makes
         # `git diff --check` flag every line as trailing whitespace and trips the
-        # Track-P assertion (see docs/S12_TrackP_Baseline_v2.md, section 7).
+        # Track-P assertion (see docs/S12_TrackP_Baseline_v3.md).
         doc_path.write_text(
             json.dumps(report[vid], indent=2, ensure_ascii=False),
             encoding="utf-8",

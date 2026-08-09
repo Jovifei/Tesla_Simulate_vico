@@ -1,9 +1,8 @@
-"""Track-P 冻结边界断言（S12 Track-P Baseline v2）。
+"""Track-P 冻结边界断言（S12 Track-P Baseline v3）。
 
-基线：`S12 Track-P Baseline v2`，BASE = 41d819a。
-（旧基线 301fed4 的 git 对象在 2026-08-08 的仓库损坏事件中永久丢失，
-  故重新以 41d819a 作为 Track-P 冻结快照；详见
-  tools/sound_sim/s12/acoustic_identity_v015/docs/S12_TrackP_Baseline_v2.md。）
+基线：`S12 Track-P Baseline v3`，BASE = ea586bc。
+（v3 固化 main 与声学分支的统一合并结果，并新增 HY3 恢复的 PTR 试听适配器；
+  详见 tools/sound_sim/s12/acoustic_identity_v015/docs/S12_TrackP_Baseline_v3.md。）
 
 设计目标（相对 v1 的改进）：
   v1 只做 `git diff --name-only BASE` 的路径子串匹配，有两个致命弱点：
@@ -41,13 +40,13 @@ import sys
 from pathlib import Path
 
 # --------------------------------------------------------------------------
-# 基线常量（S12 Track-P Baseline v2）
+# 基线常量（S12 Track-P Baseline v3）
 # --------------------------------------------------------------------------
 
-BASELINE_NAME = "S12 Track-P Baseline v2"
+BASELINE_NAME = "S12 Track-P Baseline v3"
 
 # 本 change 的 base 提交（= assertion baseline SHA）
-BASE = "41d819ad0b99bb24b10d46e235b8b85f9e46359e"
+BASE = "ea586bc53d8e115324db586035823cbc4f605c8c"
 
 # Track P 冻结路径模式（子串匹配，任意命中即 FAIL）
 FROZEN_SUBSTRINGS = (
@@ -70,8 +69,8 @@ TRACK_S_ALLOWLIST = frozenset({
 
 # 冻结文件清单摘要：sha256 over sorted "mode SP type SP blobsha TAB path" 行。
 # 由 --print-baseline 生成；内容寻址，不依赖 BASE commit 对象存活。
-FROZEN_MANIFEST_SHA256 = "6456ad63bd042d95f95af3d6363dd0f59b5887a8e95de8a44658fc9a33d3c158"
-FROZEN_MANIFEST_COUNT = 179
+FROZEN_MANIFEST_SHA256 = "94281467e14a66780232fb6ae04bd01917a58a3332721967a80c41f4d6217a8a"
+FROZEN_MANIFEST_COUNT = 180
 
 # 符号级冻结守卫：(相对仓库根的路径, 符号名, 模式)
 #   模式 "signature" 仅冻结签名（参数 + 返回标注）；

@@ -951,7 +951,7 @@ def write_targets_json(targets: dict[str, object], out_path: str | Path) -> None
     out.parent.mkdir(parents=True, exist_ok=True)
     # newline="\n" keeps the repo LF-only; the Windows default (CRLF) would make
     # `git diff --check` report trailing whitespace on every line and trip the
-    # Track-P assertion (see docs/S12_TrackP_Baseline_v2.md, section 7).
+    # Track-P assertion (see docs/S12_TrackP_Baseline_v3.md).
     out.write_text(
         json.dumps(targets, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
     )

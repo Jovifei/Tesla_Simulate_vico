@@ -4,7 +4,7 @@
 Track-P 断言随之失效且无诊断信息。重建为 Baseline v2 时，断言脚本从
 「纯路径子串匹配 + 依赖 BASE commit 存活」升级为「内容寻址摘要 + 符号级
 守卫」。本测试把当时手工做的三个负向验证固化下来，避免守卫在后续改动中
-被悄悄削弱。
+被悄悄削弱。Baseline v3 只重固化统一分支的冻结快照，不改变守卫算法。
 
 覆盖：
   - 冻结路径分类（含 Track-S 豁免、未跟踪文件的目录段规则）
@@ -179,7 +179,7 @@ def test_missing_symbol_raises() -> None:
 # --------------------------------------------------------------------------
 
 def test_baseline_constants_are_populated() -> None:
-    assert guard.BASE == "41d819ad0b99bb24b10d46e235b8b85f9e46359e"
+    assert guard.BASE == "ea586bc53d8e115324db586035823cbc4f605c8c"
     assert len(guard.FROZEN_MANIFEST_SHA256) == 64
     assert len(guard.FROZEN_SYMBOL_SHA256) == 64
     assert "PLACEHOLDER" not in guard.FROZEN_MANIFEST_SHA256
