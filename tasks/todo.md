@@ -3498,3 +3498,16 @@ Review：Stage D 的自动指标、身份 confusion matrix 和人耳真实性偏
 - [x] E7：更新 Obsidian 并生成 cleanup inventory；本轮不删除任何文件。
 
 Review: Stage E candidate v2 and anonymous listener package are generated. Focused Stage E `11 passed`; Stage C realism `9 passed`; identity `58 passed / 78 subtests`; full regression `440 passed / 232 subtests`; Track-P guard `21/21`. No Jovi response has been supplied, so no confusion matrix or human realism PASS is claimed. Cleanup inventory is review-only with `approved=false`.
+
+## 2026-08-10 S12 Stage F human audition qualification
+
+- [x] F0：从 Stage E `3c2c891b` 建立独立 `agent/s12-stage-f-audition-qualification` worktree，保持 Stage E v2 证据只读。
+- [x] F1：新增 Stage-F vehicle-specific candidate contract、source/idle/layer parameter usage diagnostics、RX-7 rotary pulse-width/release reachability。
+- [x] F2：新增 final-PCM band-distance helpers；参考门禁仍需以实际 v3 evidence 重新测量，不能沿用历史 PARTIAL 数字。
+- [x] F3：新增 v3 listener package builder，生成匿名双轮模板和三组真实 A/B 文件；首次包交付后停止等待 Jovi。
+- [x] F4：新增 fail-closed response validator、sealed-role scorer 和分轮人耳门禁。
+- [ ] F5：收到 Jovi 真实答卷后最多 v3→v4→v5 窄范围迭代；当前无答卷，禁止执行。
+- [ ] F6：自动+人耳同时通过后生成 ProfileFreezeCandidate；当前 `NOT_PERFORMED`。
+- [x] F7：完成 Stage-F 全套回归、Obsidian frontmatter 修复和知识库同步；生成 v3 报告、证据清单与本地待提交变更。
+
+Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步已完成；reference-distance 保持 `PARTIAL / AUTOMATED_GATE_FAIL`，人耳答卷尚未返回。在 Jovi 返回三份真实输入前，最终状态只能是 `WAITING_FOR_JOVI_AUDITION`。

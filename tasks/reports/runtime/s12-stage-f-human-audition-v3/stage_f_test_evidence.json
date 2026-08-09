@@ -1,0 +1,16 @@
+{
+  "base_commit": "3c2c891b469adc7a507870c71ee94319e7125226",
+  "branch": "agent/s12-stage-f-audition-qualification",
+  "results": [
+    {"scope": "Stage-F focused contracts", "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_candidate_contract.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_parameter_reachability.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_pipeline_order.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_reference_distance.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_package_contract.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_response_validation.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_scoring.py -q", "result": "15 passed", "elapsed": "129.28s"},
+    {"scope": "Stage-F plus Stage-E focused contracts", "command": "same focused command with Stage-E candidate and blind audition contracts", "result": "26 passed", "elapsed": "161.90s"},
+    {"scope": "Stage-F package contract after final evidence output", "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_f_package_contract.py -q", "result": "1 passed", "elapsed": "43.30s"},
+    {"scope": "Stage-C realism", "command": "python -m pytest tools/sound_sim/s12/tests/test_s12_engine_acoustic_realism_v10.py -q", "result": "9 passed", "elapsed": "64.12s"},
+    {"scope": "Identity", "command": "python -m pytest tools/sound_sim/s12/tests/test_s12_engine_acoustic_identity_v015.py -q", "result": "58 passed / 78 subtests", "elapsed": "93.56s"},
+    {"scope": "Full repository S12 suites", "command": "python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q", "result": "455 passed / 232 subtests", "elapsed": "410.51s"},
+    {"scope": "Track-P guard", "command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py", "result": "21/21; frozen files 180, symbols 2; protected paths unchanged", "elapsed": "recorded"},
+    {"scope": "diff hygiene", "command": "git diff --check", "result": "PASS", "elapsed": "recorded"}
+  ],
+  "status": "PASS_WITH_REFERENCE_DISTANCE_PARTIAL",
+  "integrity": "Stage-E v2 files remain untouched; no FVM, PTR core, Radiation, Runtime, Android, MATLAB, Simulink or Track-P files were changed."
+}

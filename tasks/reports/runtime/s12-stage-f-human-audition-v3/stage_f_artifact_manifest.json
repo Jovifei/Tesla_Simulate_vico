@@ -1,0 +1,27 @@
+{
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "repo_branch": "agent/s12-stage-f-audition-qualification",
+  "repo_head_at_evidence": "3c2c891b469adc7a507870c71ee94319e7125226",
+  "external_package_root": "E:/Tesla_speed/review_packages/s12-stage-f-human-audition-v3",
+  "artifacts": [
+    {"path": "S12_Stage_F_Listener_Package.zip", "sha256": "e96b62e31cf9860a2c28670a12a4ae93aba1386146e8d9e253f2ca23692ddf56", "scope": "listener-only ZIP; sealed material excluded"},
+    {"path": "S12_Stage_F_Answer_Key.zip", "sha256": "464416ed8da6c749359c6308bcffce6dd2e616d6dca966c882e9b63d39b7c604", "scope": "sealed answer/pair key ZIP; do not open before valid submission"},
+    {"path": "source_evidence/stage_f_package_evidence.json", "sha256": "deae97a80b722d587615b114824c17eaa849642356369a165255c26fb30f1033", "scope": "non-sealed build and trace evidence"},
+    {"path": "reference_distance/distance_contract.json", "sha256": "c39e64d2fce3fdf6cf6177e6ee1a643a5b780d65db3b67b29abaa89cb32d5c44", "scope": "reference-distance contract; current result remains PARTIAL"},
+    {"path": "SHA256SUMS.txt", "sha256": "df3e38554bdfbee383cfcf5601acdb5ce6dc8cee677b8d612b0fdaa7b510e1aa", "scope": "external package manifest"},
+    {"path": "candidates/ferrari_458_candidate_v3.json", "sha256": "7940626902b876096a9058acb62b16dfcf7266077a93a08c1165123e5b788155", "scope": "synthetic Candidate"},
+    {"path": "candidates/hellcat_candidate_v3.json", "sha256": "d4b26ce578760c12f8b5ac2127aed04a9511c03c3785060c68111d60ef292cad", "scope": "synthetic Candidate"},
+    {"path": "candidates/rx7_fd_candidate_v3.json", "sha256": "5f6d38fc9d85030e95b21c5a1f9a8c4e8134ac1f0fe96e14d30fed920309426b", "scope": "synthetic Candidate"}
+  ],
+  "required_next_inputs": ["listener/blind_responses.csv", "listener/ab_responses.csv", "listener/playback_context.json"],
+  "obsidian_current_sha256": {
+    "tesla-speed/00-项目概览.md": "abbe4b4ae79cbe183bfddc556357e7a5f3aa03923a63ba40e7db7bb2995c7887",
+    "tesla-speed/01-总体计划.md": "934d3668d8d3ae3009da2185645181f47837bd2fa164be52822e648112758000",
+    "tesla-speed/02-当前进度.md": "a053cf1328dcae3536412da73d82835950d1835bc56928c75013d6233a2f4249",
+    "tesla-speed/04-工作流与知识.md": "c12b6b9e411ac33f35df23e9b4e546ddb5f36b5a66803912801d7a5bd20b9b0c",
+    "tesla/index.md": "9c15dc88d97792123c779cdf41ec21522db6aed14c1089003097348eabcbc55a",
+    "tesla/S12-Engine-Sound-v11/16-S12-Stage-F-盲听资格与Profile冻结审核.md": "004a77a575aef4b975dc279f23f9d0ab4a12d0e6b2644e9fa7aeffc09aebc996"
+  },
+  "obsidian_note": "Pre-update hashes were not captured before the interrupted run; hashes above are the post-update verification values.",
+  "prohibited_claims": ["Approved Profile", "Production Calibrated", "OEM Reproduction", "Universal Human PASS"]
+}

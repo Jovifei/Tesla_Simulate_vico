@@ -1220,3 +1220,9 @@ Rules:
 - The documented layer order is evidence: Candidate overlays and named transient shaping must be applied before the shared Pre-PTR EQ. Diagnostics that only claim the order are insufficient without a regression test.
 - Two blind rounds must be scored separately. Per-vehicle recall is five trials per round and ten only when the two rounds are intentionally combined; a scorer must never divide combined counts by five.
 - Playback context and qualitative A/B preference are independent evidence from identity confusion. Missing context or missing A/B notes keeps the status at `WAITING_FOR_JOVI_AUDITION`.
+
+# 2026-08-10 S12 Stage F lessons
+
+- A listener package is not complete when it has only anonymous short clips: every promised qualitative A/B pair must contain actual PCM files, and public forms must be prefilled with exact trial/pair rows so missing submissions fail closed.
+- Candidate diagnostics must report requested, consumed, and unused parameter names from the renderer/layer return path. Presence in JSON is never proof of reachability.
+- A/B preference and identity confusion are separate gates. The scorer must resolve baseline/candidate roles from the sealed key and keep each round's five-trial-per-vehicle denominator independent.

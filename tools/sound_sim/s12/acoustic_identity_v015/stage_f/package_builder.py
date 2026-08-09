@@ -42,6 +42,22 @@ def build_stage_f_package(output_root: str | Path, candidate_paths: dict[str, st
     candidates = {vehicle: load_stage_f_candidate(path) for vehicle, path in candidate_paths.items()}
     for vehicle, candidate in candidates.items():
         (candidates_root / f"{vehicle}_candidate_v3.json").write_text(json.dumps(candidate.payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    (evidence / "stage_f_package_evidence.json").write_text(json.dumps({
+        "package_id": PACKAGE_ID,
+        "base_commit": "3c2c891b469adc7a507870c71ee94319e7125226",
+        "trace_version": "stage-f-audition-trace-1",
+        "scene_trace_duration_s": 8.0 if float(duration_s) >= 60.0 else max(float(duration_s), 0.10),
+        "full_cycle_trace": "build_drive_cycle_trace v10" if float(duration_s) >= 60.0 else "compact contract sweep",
+        "candidate_sha256": {v: _sha256(Path(p)) for v, p in candidate_paths.items()},
+        "provenance": "C/synthetic; uncalibrated; not OEM reproduction"
+    }, indent=2), encoding="utf-8")
+    (reference / "distance_contract.json").write_text(json.dumps({
+        "domain": "final_pcm",
+        "eligible_states": ["idle", "acceleration", "afterfire"],
+        "bands_hz": [[20, 250], [250, 1000], [1000, 4000], [4000, 12000]],
+        "missing_reference_policy": "N/A; never zero-fill",
+        "status": "PARTIAL until labelled final-PCM state windows are supplied"
+    }, indent=2), encoding="utf-8")
     rng = np.random.Generator(np.random.PCG64(int(seed)))
     roles = ["baseline", "candidate"]
     if int(rng.integers(0, 2)): roles.reverse()
