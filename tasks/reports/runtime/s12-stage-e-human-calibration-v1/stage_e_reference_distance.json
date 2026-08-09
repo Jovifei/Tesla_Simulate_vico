@@ -1,0 +1,7 @@
+{
+  "status": "PARTIAL",
+  "formula": "sqrt(0.25 * sum((actual_band_share - target_band_share)^2))",
+  "eligible_states": ["idle", "acceleration", "afterfire"],
+  "gate": "mean improvement >= 30%; any eligible state degradation <= 10%",
+  "result": "not claimed until final PCM package evidence is measured"
+}

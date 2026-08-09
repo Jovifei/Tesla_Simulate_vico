@@ -3482,6 +3482,19 @@ Review: focused Stage C, realism, identity, deep-realism, and Track-P gates are 
 - [x] D4：建立两轮 15 题匿名盲听包、sealed answer key、response validator、confusion matrix 和 3 组 60 秒 full-cycle A/B 附加包。
 - [x] D5：生成三份 candidate JSON、试听包和自动报告；停止等待 Jovi 答卷。
 - [ ] D6：按答卷进行最多三轮窄范围候选迭代；不伪造人耳结果，不降低门禁。
-- [x] D7：写入 Stage-D 报告并同步 Obsidian 项目影子知识库；最终 fresh verification 与 local commits 仍待执行。
+- [x] D7：写入 Stage-D 报告并同步 Obsidian 项目影子知识库；Stage-D local commits 已完成，Stage-E 在独立分支继续。
 
 Review：Stage D 的自动指标、身份 confusion matrix 和人耳真实性偏好是三个独立证据层；没有 Jovi 答卷时只能标记 `WAITING_FOR_JOVI_AUDITION`。
+
+# S12 Stage E Human Audition Calibration (2026-08-09)
+
+- [x] E0：从本地 Stage D `4e363c6` 建立独立 Stage E worktree；记录远端仍为 `a5d0481`，不把本地 8 个提交写成已推送。
+- [x] E1：以 TDD 修复 Candidate 参数可达性、Candidate overlay 位于公共 Pre-PTR EQ 之前，以及 Hellcat steady blower 不被 transient shaper 压缩。
+- [x] E2：建立 Stage E Candidate v2 schema、参数 usage diagnostics、正确的双轮 scorer、播放环境校验和防泄漏试听包。
+- [x] E3：生成三车 Candidate v2、final-PCM reference distance、listener ZIP、sealed key、SHA256 清单；没有答卷时停止等待。
+- [ ] E4：收到 Jovi 答卷后固化 SHA、校验 30/30 与三组 A/B，读取 sealed key 并输出分轮 confusion/realism 结果。
+- [ ] E5：最多三轮只修改失败车型及对应层；另两车 PCM SHA 必须保持不变。
+- [x] E6：记录 Stage E 自动回归、Track-P guard、reference distance 和人耳结果；当前状态为 WAITING_FOR_JOVI_AUDITION。
+- [x] E7：更新 Obsidian 并生成 cleanup inventory；本轮不删除任何文件。
+
+Review: Stage E candidate v2 and anonymous listener package are generated. Focused Stage E `11 passed`; Stage C realism `9 passed`; identity `58 passed / 78 subtests`; full regression `440 passed / 232 subtests`; Track-P guard `21/21`. No Jovi response has been supplied, so no confusion matrix or human realism PASS is claimed. Cleanup inventory is review-only with `approved=false`.

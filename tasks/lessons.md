@@ -1213,3 +1213,10 @@ Rules:
 
 - Automatic source/PCM metrics and a closed-set confusion matrix prove implementation health and identity separability; they do not prove that a listener hears Ferrari, Hellcat, or RX-7 as a realistic engine.
 - Identity recognition and “candidate sounds more realistic than Stage C” are separate human gates. A candidate may pass one and fail the other, so both results must be recorded independently and no human PASS may be inferred from automated tests.
+
+# 2026-08-09 S12 Stage E lessons
+
+- A candidate JSON field is not a tunable parameter until a deterministic perturbation changes the intended stem, event timing, or metric. Stage E must fail closed on dead fields.
+- The documented layer order is evidence: Candidate overlays and named transient shaping must be applied before the shared Pre-PTR EQ. Diagnostics that only claim the order are insufficient without a regression test.
+- Two blind rounds must be scored separately. Per-vehicle recall is five trials per round and ten only when the two rounds are intentionally combined; a scorer must never divide combined counts by five.
+- Playback context and qualitative A/B preference are independent evidence from identity confusion. Missing context or missing A/B notes keeps the status at `WAITING_FOR_JOVI_AUDITION`.

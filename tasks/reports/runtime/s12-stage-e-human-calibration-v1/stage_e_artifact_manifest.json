@@ -1,0 +1,10 @@
+{
+  "scope": "repository evidence only; audio package is Git-external",
+  "candidate_profiles": [
+    "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_e_candidates/Ferrari_candidate_v2.json",
+    "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_e_candidates/Hellcat_candidate_v2.json",
+    "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_e_candidates/RX7_candidate_v2.json"
+  ],
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "scope_note": "synthetic; uncalibrated; not OEM reproduction"
+}

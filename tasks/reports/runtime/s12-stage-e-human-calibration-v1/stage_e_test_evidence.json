@@ -1,0 +1,12 @@
+{
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "focused_stage_e": "11 passed",
+  "stage_c_realism": "9 passed in 64.87s",
+  "stage_c_identity": "58 passed, 78 subtests passed in 90.26s",
+  "track_p_guard": "21 passed in 1.51s",
+  "full_regression": "440 passed, 232 subtests passed in 443.64s",
+  "historical_stage_d_focused": "14 passed",
+  "human_response": "NOT_PERFORMED",
+  "reference_distance": "PARTIAL; no 30% improvement claim",
+  "scope": "synthetic; uncalibrated; not OEM reproduction"
+}

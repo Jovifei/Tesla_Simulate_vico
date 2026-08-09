@@ -1,0 +1,20 @@
+{
+  "status": "verified_by_focused_tests",
+  "parameters": [
+    "ferrari_458.source.bank_phase_offset_deg",
+    "ferrari_458.source.pulse_width_scale",
+    "ferrari_458.source.metallic_decay_scale",
+    "hellcat.source.blower_boost_mix",
+    "hellcat.source.boost_attack_s",
+    "hellcat.source.boost_release_s",
+    "rx7_fd.source.rotary_phase_offset_deg",
+    "rx7_fd.source.primary_spool_tau_s",
+    "rx7_fd.source.secondary_spool_tau_s",
+    "rx7_fd.source.blow_off_gain_scale",
+    "anchor.idle.variation",
+    "anchor.idle.jitter_ms",
+    "anchor.idle.mechanical_texture"
+  ],
+  "dead_fields_removed": true,
+  "provenance": "C/synthetic candidate assumptions"
+}
