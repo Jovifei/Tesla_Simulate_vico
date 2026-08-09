@@ -1,0 +1,10 @@
+{
+  "scope": "synthetic; uncalibrated; not OEM reproduction",
+  "timeline_60s": "0-8 idle; 8-26 acceleration with 3 shifts; 26-36 full pull; 36-46 lift/afterfire; 46-52 coast; 52-60 idle return",
+  "vehicles": {
+    "ferrari_458": {"before_lufs": -16.0000000001, "after_lufs": -16.0000000007, "before_afterfire_events": 43, "after_afterfire_events": 45, "after_shift_events": 3, "after_peak_dbfs": -1.615629},
+    "hellcat": {"before_lufs": -17.9893577849, "after_lufs": -19.3487327494, "before_afterfire_events": 38, "after_afterfire_events": 37, "after_shift_events": 3, "after_peak_dbfs": -1.500000},
+    "rx7_fd": {"before_lufs": -16.0000000041, "after_lufs": -16.0000000006, "before_afterfire_events": 32, "after_afterfire_events": 25, "after_shift_events": 3, "after_peak_dbfs": -1.624673}
+  },
+  "interpretation": "Ferrari and RX-7 remain within the 0.5 LU before/after audition tolerance. Hellcat is headroom-limited by the fixed peak gate and remains 1.359 LU below its old package; this is reported as a calibration/audition item, not an automatic realism PASS."
+}
