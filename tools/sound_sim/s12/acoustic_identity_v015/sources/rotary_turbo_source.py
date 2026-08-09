@@ -27,6 +27,7 @@ Boundary: synthetic; uncalibrated; not OEM reproduction.
 from __future__ import annotations
 
 import numpy as np
+from collections.abc import Mapping
 
 from ..contracts import SourceRender, VehicleStateTrace
 from ..tuning.state_band_shaper import _inject_state_spectral_targets
@@ -130,6 +131,7 @@ def render_rx7_fd(
     trace: VehicleStateTrace,
     sample_rate_hz: int = 48000,
     apply_state_shaping: bool = True,
+    overrides: Mapping[str, float] | None = None,
 ) -> SourceRender:
     """Render finite stereo pre-PTR pressure; this is not OEM reproduction.
 
@@ -143,6 +145,7 @@ def render_rx7_fd(
     Set False to inspect the raw synthesiser output.
     """
     trace.validate()
+    overrides = {} if overrides is None else dict(overrides)
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 8000:
         raise ValueError("sample_rate_hz must be an integer >= 8000")
     count = int(round((trace.time_s[-1] - trace.time_s[0]) * sample_rate_hz)) + 1
@@ -150,7 +153,7 @@ def render_rx7_fd(
     rpm = np.interp(time_s, trace.time_s, trace.rpm)
     load = np.interp(time_s, trace.time_s, trace.load)
     throttle = np.interp(time_s, trace.time_s, trace.throttle)
-    phase = np.cumsum(rpm) / (60.0 * sample_rate_hz)
+    phase = np.cumsum(rpm) / (60.0 * sample_rate_hz) + float(overrides.get("rotary_phase_offset_deg", 0.0)) / 360.0
 
     # --- Rotary combustion: 2 firing events per eccentric-shaft rev (even,
     # non-piston). Two offset impulse trains at phase and phase+0.5. ---
@@ -259,10 +262,10 @@ def render_rx7_fd(
     secondary_target = primary_target * secondary_gate
     for sample in range(1, count):
         flow_gate[sample] = flow_gate[sample - 1] + (flow_target[sample] - flow_gate[sample - 1]) / (_FLOW_GATE_TAU_S * sample_rate_hz)
-        primary_spool[sample] = primary_spool[sample - 1] + (primary_target[sample] - primary_spool[sample - 1]) / (0.16 * sample_rate_hz)
-        secondary_spool[sample] = secondary_spool[sample - 1] + (secondary_target[sample] - secondary_spool[sample - 1]) / (0.31 * sample_rate_hz)
+        primary_spool[sample] = primary_spool[sample - 1] + (primary_target[sample] - primary_spool[sample - 1]) / (float(overrides.get("primary_spool_tau_s", 0.16)) * sample_rate_hz)
+        secondary_spool[sample] = secondary_spool[sample - 1] + (secondary_target[sample] - secondary_spool[sample - 1]) / (float(overrides.get("secondary_spool_tau_s", 0.31)) * sample_rate_hz)
         boost_target = 0.62 * primary_spool[sample] + 0.90 * secondary_spool[sample]
-        boost_tau = 0.10 if boost_target >= boost_state[sample - 1] else 0.22
+        boost_tau = float(overrides.get("boost_attack_s", 0.10)) if boost_target >= boost_state[sample - 1] else float(overrides.get("boost_release_s", 0.22))
         boost_state[sample] = boost_state[sample - 1] + (boost_target - boost_state[sample - 1]) / (boost_tau * sample_rate_hz)
         release = max((throttle[sample - 1] - throttle[sample]) * sample_rate_hz, 0.0)
         blow_off_injection = 1.4 * release * (0.35 + 0.65 * boost_state[sample - 1])
@@ -286,7 +289,7 @@ def render_rx7_fd(
     blow_off_mono = 0.075 * blow_off_state * (
         np.sin(2.0 * np.pi * blow_off_phase) + 0.24 * np.sin(2.0 * np.pi * blow_off_phase * 1.7)
     )
-    blow_off = np.column_stack((0.70 * blow_off_mono, blow_off_mono))
+    blow_off = np.column_stack((0.70 * blow_off_mono, blow_off_mono)) * float(overrides.get("blow_off_gain_scale", 1.0))
 
     # Idle loudness support (handover §6 publication floor). The frozen PTR
     # low-cuts the 20-250 Hz rotary idle (~123-185 Hz), collapsing K-weighted
@@ -375,6 +378,7 @@ def render_rx7_fd(
             "turbo_dynamic_model": "primary_secondary_spool_boost_onset_blow_off",
             "combustion_load_floor": 0.30,
             "rotor_housing_model": "event_excited_phase_coupled_housing_resonances",
+            "candidate_source_overrides": dict(overrides),
         },
     )
     validated = render.validate()

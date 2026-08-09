@@ -28,7 +28,10 @@ def apply_transient_peak_shaping(
     if not shaper["enabled"]:
         return render
     result = render
-    for stem_name in ("shift_impact", "shift_recovery_boom", "afterfire", "blower"):
+    # Steady blower energy is an identity carrier, not a transient.  Only a
+    # separately named attack stem may be shaped; older renders without that
+    # stem therefore pass through unchanged.
+    for stem_name in ("shift_impact", "shift_recovery_boom", "afterfire", "blower_attack"):
         result = _shape_stem(result, stem_name, float(shaper["attack_ms"]), float(shaper["release_ms"]), float(shaper["max_reduction_db"]), sample_rate_hz)
     return result
 

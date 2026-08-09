@@ -49,7 +49,7 @@ _SCOPE = "synthetic; uncalibrated; not OEM reproduction"
 
 
 def apply_idle_dynamics(
-    render: SourceRender, vehicle_id: str, trace: VehicleStateTrace, sample_rate_hz: int = 48000
+    render: SourceRender, vehicle_id: str, trace: VehicleStateTrace, sample_rate_hz: int = 48000, overrides: Mapping[str, float] | None = None
 ) -> SourceRender:
     """Add vehicle-specific cycle fluctuation and engine-phase mechanical idle layers."""
     render.validate()
@@ -63,6 +63,10 @@ def apply_idle_dynamics(
     rpm = np.interp(time_s, trace.time_s, trace.rpm)
     load = np.interp(time_s, trace.time_s, trace.load)
     profile = _PROFILES[vehicle_id]
+    overrides = {} if overrides is None else dict(overrides)
+    variation_scale = float(overrides.get("variation", profile["variation"])) / max(profile["variation"], 1e-12)
+    jitter_scale = float(overrides.get("jitter_ms", profile["jitter_ms"])) / max(profile["jitter_ms"], 1e-12)
+    texture_strength = float(overrides.get("mechanical_texture", profile["mechanical_texture"]))
     idle = np.clip((1850.0 - rpm) / 850.0, 0.0, 1.0)
     phase = np.cumsum(rpm) / (60.0 * sample_rate_hz)
     event_id = np.floor(phase * profile["events_per_rev"]).astype(np.int64)
@@ -79,22 +83,22 @@ def apply_idle_dynamics(
             np.sin(cycle * 12.9898 + seed) * 0.45
             + np.sin(cycle * 7.3137 + seed * 2.1) * 0.30
             + np.sin(cycle * 23.7173 + seed * 0.7) * 0.25
-        ) * profile["variation"]
+        ) * float(overrides.get("variation", profile["variation"]))
         variation = np.tanh(variation * 1.2)
         # Multi-frequency phase jitter: ECU timing micro-fluctuation + sensor noise.
         jitter = int(round((
             np.sin(cycle * 78.233 + seed * 3.0) * 0.55
             + np.sin(cycle * 137.51 + seed * 1.7) * 0.30
             + np.sin(cycle * 43.91 + seed * 5.3) * 0.15
-        ) * profile["jitter_ms"] * sample_rate_hz / 1000.0))
+        ) * float(overrides.get("jitter_ms", profile["jitter_ms"])) * sample_rate_hz / 1000.0))
         target = min(max(sample + jitter, 0), count - 1)
         impulses[target] += idle[sample] * (0.55 + 0.45 * load[sample]) * (1.0 + variation)
         variation_values.append(float(variation))
         jitter_values.append(jitter)
     combustion_mono = profile["combustion_gain"] * _ring(impulses, profile["valve_hz"] * 0.47, profile["combustion_decay_s"], sample_rate_hz)
     combustion = np.column_stack((combustion_mono, 0.79 * combustion_mono))
-    texture = _mechanical_texture(count, sample_rate_hz, profile["mechanical_texture"], profile["seed"])
-    tex_weight = profile["mechanical_texture"]
+    texture = _mechanical_texture(count, sample_rate_hz, texture_strength, profile["seed"])
+    tex_weight = texture_strength
     accessory_mono = profile.get("accessory_gain", 0.006) * idle * (0.55 + load) * (
         np.sin(2.0 * np.pi * phase * profile["accessory_order"]) * (1.0 - tex_weight)
         + 0.28 * np.sin(2.0 * np.pi * phase * profile["accessory_order"] * 2.0)
@@ -118,6 +122,9 @@ def apply_idle_dynamics(
             "idle_modulation_peak_target_hz": profile["idle_modulation_peak_hz"],
             "idle_variation_frequencies": 3,
             "idle_mechanical_texture_weight": profile["mechanical_texture"],
+            "candidate_idle_overrides": dict(overrides),
+            "candidate_idle_variation_scale": variation_scale,
+            "candidate_idle_jitter_scale": jitter_scale,
         }
     )
     return SourceRender(

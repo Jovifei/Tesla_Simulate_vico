@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+from collections.abc import Mapping
 
 from ..contracts import SourceRender, VehicleStateTrace
 from ..tuning.state_band_shaper import _inject_state_spectral_targets
@@ -28,6 +29,7 @@ def render_hellcat(
     trace: VehicleStateTrace,
     sample_rate_hz: int = 48000,
     apply_state_shaping: bool = True,
+    overrides: Mapping[str, float] | None = None,
 ) -> SourceRender:
     """Render finite stereo pre-PTR pressure; this is not OEM reproduction.
 
@@ -39,6 +41,7 @@ def render_hellcat(
     Set False to inspect the raw synthesiser output.
     """
     trace.validate()
+    overrides = {} if overrides is None else dict(overrides)
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 8000:
         raise ValueError("sample_rate_hz must be an integer >= 8000")
     count = int(round((trace.time_s[-1] - trace.time_s[0]) * sample_rate_hz)) + 1
@@ -87,12 +90,14 @@ def render_hellcat(
     exhaust_right_bank = np.column_stack((0.48 * right_mono, right_mono))
     exhaust = exhaust_left_bank + exhaust_right_bank
 
-    boost_target = load * throttle * np.clip((rpm - 1100.0) / 3800.0, 0.0, 1.15)
+    boost_target = load * throttle * np.clip((rpm - 1100.0) / 3800.0, 0.0, 1.15) * float(overrides.get("blower_boost_mix", 1.0))
     boost_state = np.zeros(count)
     load_boost_state = np.zeros(count)
     bypass_state = np.zeros(count)
     for sample in range(1, count):
-        boost_tau = 0.075 if boost_target[sample] >= boost_state[sample - 1] else 0.22
+        attack = float(overrides.get("boost_attack_s", 0.075))
+        release = float(overrides.get("boost_release_s", 0.22))
+        boost_tau = attack if boost_target[sample] >= boost_state[sample - 1] else release
         boost_state[sample] = boost_state[sample - 1] + (boost_target[sample] - boost_state[sample - 1]) / (boost_tau * sample_rate_hz)
         load_boost_target = load[sample] * throttle[sample]
         load_boost_tau = 0.070 if load_boost_target >= load_boost_state[sample - 1] else 0.20
@@ -112,7 +117,7 @@ def render_hellcat(
     # above the correlation gate without changing whole-bundle loudness.
     blower_pressure_compensation = np.power(3000.0 / np.maximum(rpm, 850.0), 1.25)
     blower_baseline = 0.30 * blower_pressure_compensation * np.power(load, 0.35) * np.maximum(throttle, 0.05)
-    blower_gain = blower_baseline * (0.85 + 0.30 * load_boost_state)
+    blower_gain = float(overrides.get("blower_gain_scale", 1.0)) * blower_baseline * (0.85 + 0.30 * load_boost_state)
     # TVS blower whine: 5th rotor harmonic dominates the 250-1000 Hz mid band; the 10th
     # (order 23.6, 944-2440 Hz over the accel sweep) is the only source that tracks the
     # 1-4 kHz band across the whole rpm range, so it carries the band2 target the casing
@@ -233,6 +238,7 @@ def render_hellcat(
             "mechanical_model": "belt_compressor_valvetrain_texture",
             "casing_model": "rpm_phase_coupled_casing_orders",
             "pressure_compensation": "continuous RPM-derived physical source law",
+            "candidate_source_overrides": dict(overrides),
         },
     )
     validated = render.validate()
