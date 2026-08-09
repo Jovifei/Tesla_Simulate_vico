@@ -235,5 +235,16 @@ def render_ferrari_458(
     )
     tuned = apply_deep_realism(render.validate(), "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
     if not apply_state_shaping:
-        return tuned
-    return _inject_state_spectral_targets(tuned, "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
+        shaped = tuned
+    else:
+        shaped = _inject_state_spectral_targets(tuned, "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
+    # Idle-only source trim: keep the 1050 rpm combustion/mechanical identity
+    # audible after the frozen PTR without changing the high-rpm pull.
+    idle_time = trace.time_s[0] + np.arange(shaped.pressure.shape[0], dtype=np.float64) / sample_rate_hz
+    idle_rpm = np.interp(idle_time, trace.time_s, trace.rpm)
+    idle_gain = np.where(idle_rpm <= 1300.0, 1.06, 1.0)[:, np.newaxis]
+    return SourceRender(
+        pressure=shaped.pressure * idle_gain,
+        stems={name: np.asarray(stem, dtype=np.float64) * idle_gain for name, stem in shaped.stems.items()},
+        diagnostics={**shaped.diagnostics, "idle_source_gain": 1.06, "idle_source_gate_rpm": 1300.0},
+    ).validate()

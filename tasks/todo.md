@@ -3462,3 +3462,13 @@ until driver and performance gates pass.
 
 - Jovi feedback recorded: Hellcat low-frequency character is partially convincing, but the actual playback level is still too low. This is an audition calibration gap, not proof that the engine source or the current fixed digital master should be blindly amplified.
 - Next action awaits Jovi's review of the package and authorization for a narrowly bounded Hellcat fixed-master A/B or a source-level low-frequency articulation experiment.
+# S12 Stage C Deep Realism Integration (2026-08-09)
+
+- [x] Phase 0: record `c08eb4c` baseline tests and three-anchor old-pipeline audition.
+- [x] Phase 1: add eight-vehicle realism profiles and RED contracts.
+- [x] Phase 2: implement pre-equalization, pressure-coupled rumble, shift dynamics, and deterministic afterfire refactor.
+- [x] Phase 3: integrate `_render_stateful`, extend drive cycles and metrics to eight vehicles.
+- [x] Phase 4: generate before/after/A-B and eight-vehicle review artifacts.
+- [ ] Phase 5: run full verification, write report/lessons, and make local commits only.
+
+Review: focused Stage C, realism, identity, deep-realism, and Track-P gates are green. Full repository verification and local commit split remain.

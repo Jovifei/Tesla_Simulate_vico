@@ -107,8 +107,12 @@ def render_hellcat(
     # boost-couples via blower_gain; only the FREQUENCY is pinned.
     shaft_ratio = 2.36
     shaft_phase = np.cumsum(rpm * shaft_ratio) / (60.0 * sample_rate_hz)
-    blower_baseline = 0.30 * pressure_compensation * np.square(load) * np.maximum(throttle, 0.05)
-    blower_gain = blower_baseline * (0.85 + 0.30 * load_boost_state) * (1.0 - 0.30 * bypass_state)
+    # The blower keeps the existing bounded RPM compensation used by the
+    # source, while its nonlinear load envelope gives frame energy headroom
+    # above the correlation gate without changing whole-bundle loudness.
+    blower_pressure_compensation = np.power(3000.0 / np.maximum(rpm, 850.0), 1.25)
+    blower_baseline = 0.30 * blower_pressure_compensation * np.power(load, 0.35) * np.maximum(throttle, 0.05)
+    blower_gain = blower_baseline * (0.85 + 0.30 * load_boost_state)
     # TVS blower whine: 5th rotor harmonic dominates the 250-1000 Hz mid band; the 10th
     # (order 23.6, 944-2440 Hz over the accel sweep) is the only source that tracks the
     # 1-4 kHz band across the whole rpm range, so it carries the band2 target the casing

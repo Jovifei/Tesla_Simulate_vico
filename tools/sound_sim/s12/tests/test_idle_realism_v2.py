@@ -9,8 +9,12 @@ direction measured from Phase 1 real recordings:
 from __future__ import annotations
 
 import unittest
+import sys
+from pathlib import Path
 
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from acoustic_identity_v015.contracts import SourceRender, VehicleStateTrace
 from acoustic_identity_v015.acoustic_layers.idle_dynamics import apply_idle_dynamics

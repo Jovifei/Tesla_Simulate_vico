@@ -1203,3 +1203,8 @@ Rules:
 
 - Pattern: Hellcat 完整试听已测得 `-16 LUFS`、`-3.12 dBFS` peak、零削波，且低频轰鸣获得 Jovi 部分认可；但 Jovi 在实际播放时仍明确感到整体音量偏小。数字健康/响度指标没有覆盖 Windows 音量、声卡、耳机/扬声器低频滚降、环境和人耳感知。
 - Rule: 后续响度阶段必须把“数字 master 合格”和“设备/人耳合格”分开报告。先以单一全程固定 gain 的小幅 audition-master A/B（例如 Hellcat `-16` 与 `-14 LUFS`，并保持 peak/headroom）诊断播放级别；不得用 RPM 音量耦合、per-clip AGC、削波或盲目增加 50 Hz 低频替代设备与人耳审核。
+# 2026-08-09 S12 Stage C integration lessons
+
+- The standalone 60-second prototype is a direction probe, not production evidence: its shift count was false, its 70 Hz boom used the wrong time base, its centroid claims were hard-coded, and it duplicated the formal afterfire layer.
+- Python `hash(vehicle_id)` is process-salted; deterministic audio must use explicit stable profile data or fixed integer seeds.
+- Track-P path freezing uses substring matching. A Track-S file whose path contains `ptr` can fail the guard, so equalizer naming must avoid that substring without changing governance.
