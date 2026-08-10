@@ -29,6 +29,7 @@ from .stage_g.candidate_profiles import StageGCandidateProfile, load_stage_g_can
 from .stage_g.package_builder import build_stage_g_package
 from .stage_g.render_candidate import render_stage_g_candidate
 from .stage_g.response_contract import score_stage_g_submission, validate_stage_g_submission
+from .stage_h import StageHCandidateProfile, load_stage_h_candidate, render_stage_h_candidate
 from .sources.flat_plane_v8_source import render_ferrari_458
 from .sources.lamborghini_v12_source import render_aventador_lp700
 from .sources.lexus_v10_source import render_lfa
@@ -36,6 +37,7 @@ from .sources.mercedes_v8_source import render_c63_w204
 from .sources.nissan_v6_turbo_source import render_gtr_r35
 from .sources.rotary_turbo_source import render_rx7_fd
 from .sources.supercharged_hemi_source import render_hellcat
+from .sources.supercharger_whine_v2 import render_supercharger_whine_v2
 from .sources.toyota_i6_turbo_source import render_supra_jza80
 
 __all__ = (
@@ -86,11 +88,15 @@ __all__ = (
     "build_stage_g_package",
     "validate_stage_g_submission",
     "score_stage_g_submission",
+    "StageHCandidateProfile",
+    "load_stage_h_candidate",
+    "render_stage_h_candidate",
     "render_ferrari_458",
     "render_aventador_lp700",
     "render_c63_w204",
     "render_drive_cycle_source",
     "render_hellcat",
+    "render_supercharger_whine_v2",
     "render_gtr_r35",
     "render_lfa",
     "render_rx7_fd",

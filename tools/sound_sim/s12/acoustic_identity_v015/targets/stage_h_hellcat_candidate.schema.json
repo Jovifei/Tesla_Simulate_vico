@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "S12 Stage H Hellcat Candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "vehicle_id", "base_commit", "parent_candidate_id", "status", "hypothesis", "reference_target", "canonical_trace_version", "source", "idle", "afterfire", "shift", "loudness", "locked_layers", "provenance"],
+  "properties": {
+    "schema_version": {"const": "s12-stage-h-hellcat-candidate-profile-1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"const": "hellcat"},
+    "base_commit": {"const": "60bca7cccac91c520a12c0b058f3f70d56dcf4b8"},
+    "parent_candidate_id": {"type": "string", "minLength": 1},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "canonical_trace_version": {"type": "string", "minLength": 1},
+    "reference_target": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "eligible_states"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "eligible_states": {"const": ["idle", "acceleration", "afterfire"]}}},
+    "source": {"type": "object", "additionalProperties": false},
+    "idle": {"type": "object", "additionalProperties": false},
+    "afterfire": {"type": "object", "additionalProperties": false},
+    "shift": {"type": "object", "additionalProperties": false},
+    "loudness": {"type": "object"},
+    "locked_layers": {"type": "object"},
+    "provenance": {"type": "object"}
+  }
+}
