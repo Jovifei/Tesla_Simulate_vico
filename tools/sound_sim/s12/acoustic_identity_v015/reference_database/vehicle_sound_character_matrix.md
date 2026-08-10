@@ -22,7 +22,31 @@ without supporting timing, bank pattern, level, spectrum, or calibration.
 | Architecture | 6.2 L 90-degree V8, 2.4 L twin-screw blower, and 2.36 drive ratio. | A — [FCA Canada powertrain material](https://www.fcapresskit.ca/2015/Contents/Press-Releases/PDFs/Chrysler-Canada/CN_2015_SAFETY-TECH_Powertrain.pdf) | Supports components, not bank acoustic behavior. |
 | Exhaust and bank pattern | Cross-plane/bank pattern and a low-band exhaust body are C source-design directions. | C — synthetic/uncalibrated | No direct evidence in this package establishes bank timing or exhaust spectrum. |
 | Blower, mechanical, and intake | Separate blower, mechanical, and intake stems; RPM-derived blower phase and load/bypass energy are C design directions. | C — synthetic/uncalibrated | [Stellantis technical blog](https://blog.stellantisnorthamerica.com/2014/05/23/2015-dodge-challenger-srt-by-the-numbers/) supports hardware context only. |
-| Low-band and load | The 0.10 low-band, 3.0 energy-ratio, and 0.80 correlation gates are C. | C — synthetic target profile | Not OEM measured behavior or hardware audibility. |
+| Low-band and load | Low-band body, blower/exhaust ratio, and load-correlation gates are C. | C — synthetic target profile | Not OEM measured behavior or hardware audibility. |
+| Supercharger identity (Stage H) | A twin-screw family is represented as a fixed 2.36:1 drive-ratio shaft family with 11.8/23.6 order families, deterministic V8 sidebands, and a boost-history-dependent bypass-release stem. | A hardware facts + C synthetic source | Order amplitudes, rotor geometry, gear mesh and transfer function are not measured; no exact tooth count is inferred. |
+
+### Stage H Hellcat supercharger target
+
+The Stage H target separates official hardware facts, public listening context,
+and synthetic candidate assumptions. Official material establishes hardware
+only: a twin-screw blower, the published 2.36:1 drive ratio, approximately
+14,600 rpm maximum blower speed, and an electronic bypass path. Public driving
+descriptions support the qualitative combination of deep exhaust pressure and a
+distinct blower whine. Order amplitudes, sidebands, attack/release constants
+and bypass level remain `C/synthetic/candidate_assumption`.
+
+| State | V8 exhaust target | Supercharger target | Evidence boundary |
+|---|---|---|---|
+| idle | Dominant, thick low-frequency body | Low and partly masked | C listening direction; not an absolute level target |
+| cruise | Stable low-frequency and mechanical floor | Light continuous whine | C listening direction |
+| acceleration | Low-frequency weight remains primary | Continuous RPM/load/boost rise | C model target; no OEM transfer calibration |
+| shift | Torque interruption and impact remain audible | Short dip then re-establish | C state-behavior target |
+| full pull | Exhaust remains the anchor | Clear order family without harsh upper-band spike | C perceptual gate |
+| lift | Exhaust decays with deterministic afterfire | Boost-history-dependent bypass release and decay | C state-behavior target |
+
+The Stage H online evidence record is
+`reference_database/Hellcat_Supercharger_Acoustic_Study_v1.md`; its numeric
+target companion is `targets/hellcat_supercharger_target_v1.json`.
 
 ## Mazda RX-7 FD
 
