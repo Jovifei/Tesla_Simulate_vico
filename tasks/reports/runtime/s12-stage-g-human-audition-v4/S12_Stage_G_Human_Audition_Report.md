@@ -9,7 +9,8 @@ PROFILE FREEZE: NOT_PERFORMED / WAITING_FOR_JOVI_AUDITION
 ```
 
 本报告的证据快照来自本地分支 `agent/s12-stage-g-qualification-closure`，基线为
-`e38fe62f423b1fb220e9daedf5f4ef291bcc5849`。本轮禁止 push、merge、rebase、main、
+`e38fe62f423b1fb220e9daedf5f4ef291bcc5849`；代码证据提交为 `dd7bc41`，当前文档交接提交为
+`ed82694`（后续若仅更新本报告，Git tip 会相应前移）。本轮禁止 push、merge、rebase、main、
 Simulink、Runtime、Android 和任何冻结 Track-P 文件修改。
 
 ## 已完成

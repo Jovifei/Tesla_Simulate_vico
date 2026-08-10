@@ -2,6 +2,8 @@
   "schema_version": "s12-stage-g-artifact-manifest-1",
   "repo_branch": "agent/s12-stage-g-qualification-closure",
   "base_commit": "e38fe62f423b1fb220e9daedf5f4ef291bcc5849",
+  "code_evidence_commit": "dd7bc41",
+  "documentation_commit_at_snapshot": "ed82694",
   "external_package_root": "E:/Tesla_speed/review_packages/s12-stage-g-human-audition-v4",
   "artifacts": {
     "listener_zip": {"path": "S12_Stage_G_Listener_Package.zip", "sha256": "031520b74d80d277f29fa1444df22fdb22249dfa248d9b6b2de0f53adb567f64"},
