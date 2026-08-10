@@ -1,0 +1,201 @@
+{
+  "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "average_improvement_ratio": 0.08479019847696756,
+  "bands_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "domain": "final_pcm",
+  "provenance": "B/R2 relative features; microphone/AGC dependent; synthetic candidate; uncalibrated; not OEM reproduction",
+  "reference_target_sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+  "schema_version": "s12-stage-h-reference-distance-1",
+  "vehicle_id": "hellcat",
+  "vehicles": {
+    "hellcat": {
+      "acceleration": {
+        "absolute_error": [
+          0.08429955217249013,
+          0.122359251170231,
+          0.06341342274404473,
+          0.0251961648193174
+        ],
+        "actual_stage_g": {
+          "band_shares": [
+            0.5121610058441229,
+            0.35960358080610866,
+            0.12224762970269692,
+            0.0059461322877128455
+          ],
+          "spectral_centroid_hz": 580.3005114808848
+        },
+        "actual_stage_h": {
+          "band_shares": [
+            0.491215470761536,
+            0.37816480758455,
+            0.12448212556793779,
+            0.006095688883653907
+          ],
+          "spectral_centroid_hz": 600.1177786625144
+        },
+        "availability": "eligible",
+        "improvement_ratio": 0.12999484173250545,
+        "reference_provenance": {
+          "boundary": "synthetic; uncalibrated; not OEM reproduction",
+          "level": "B/R2 relative features",
+          "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+          "schema": "s12.hellcat_reference_targets.v1",
+          "source_file": "hellcat_reference_targets.json"
+        },
+        "signed_error": [
+          0.08429955217249013,
+          -0.122359251170231,
+          0.06341342274404473,
+          -0.0251961648193174
+        ],
+        "stage_g_distance": 0.09396858010089458,
+        "stage_h_distance": 0.08175314940285053,
+        "target": {
+          "band_shares": [
+            0.40691591858904586,
+            0.500524058754781,
+            0.06106870282389307,
+            0.03129185370297131
+          ],
+          "spectral_centroid_hz": 573.7084358038956
+        }
+      },
+      "afterfire": {
+        "absolute_error": [
+          0.2649784144783589,
+          0.20740523108056663,
+          0.15260797808279808,
+          0.0026665276010652186
+        ],
+        "actual_stage_g": {
+          "band_shares": [
+            0.1515537036063778,
+            0.7075088753233746,
+            0.1381369793909856,
+            0.002794623383028378
+          ],
+          "spectral_centroid_hz": 570.926507001948
+        },
+        "actual_stage_h": {
+          "band_shares": [
+            0.14922554034868107,
+            0.6900398055443524,
+            0.15799850546944308,
+            0.0027305008508091083
+          ],
+          "spectral_centroid_hz": 587.0285396716782
+        },
+        "availability": "eligible",
+        "improvement_ratio": 0.0023934256745255997,
+        "reference_provenance": {
+          "boundary": "synthetic; uncalibrated; not OEM reproduction",
+          "level": "B/R2 relative features",
+          "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+          "schema": "s12.hellcat_reference_targets.v1",
+          "source_file": "hellcat_reference_targets.json"
+        },
+        "signed_error": [
+          -0.2649784144783589,
+          0.20740523108056663,
+          0.15260797808279808,
+          0.0026665276010652186
+        ],
+        "stage_g_distance": 0.18519090327501034,
+        "stage_h_distance": 0.18474766261242334,
+        "target": {
+          "band_shares": [
+            0.41420395482704,
+            0.48263457446378577,
+            0.005390527386645004,
+            6.397324974389e-05
+          ],
+          "spectral_centroid_hz": 303.31423402354545
+        }
+      },
+      "idle": {
+        "absolute_error": [
+          0.05927398872539624,
+          0.060052601765811675,
+          0.002537656493542909,
+          4.90307604410563e-05
+        ],
+        "actual_stage_g": {
+          "band_shares": [
+            0.6583402109255975,
+            0.33188870275425664,
+            0.007841464151594065,
+            0.0009267150637585075
+          ],
+          "spectral_centroid_hz": 284.80834908216474
+        },
+        "actual_stage_h": {
+          "band_shares": [
+            0.6614635001040604,
+            0.31950320125870135,
+            0.015414386628769624,
+            0.0017991730348886513
+          ],
+          "spectral_centroid_hz": 329.72580794224933
+        },
+        "availability": "eligible",
+        "improvement_ratio": 0.1219823280238716,
+        "reference_provenance": {
+          "boundary": "synthetic; uncalibrated; not OEM reproduction",
+          "level": "B/R2 relative features",
+          "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+          "schema": "s12.hellcat_reference_targets.v1",
+          "source_file": "hellcat_reference_targets.json"
+        },
+        "signed_error": [
+          -0.05927398872539624,
+          0.060052601765811675,
+          -0.002537656493542909,
+          -4.90307604410563e-05
+        ],
+        "stage_g_distance": 0.048072268623712375,
+        "stage_h_distance": 0.04220830138360302,
+        "target": {
+          "band_shares": [
+            0.7207374888294567,
+            0.2594505994928897,
+            0.017952043122312532,
+            0.0018482037953297076
+          ],
+          "spectral_centroid_hz": 266.69029129647316
+        }
+      }
+    }
+  },
+  "windows_s": {
+    "acceleration": [
+      8.0,
+      26.0
+    ],
+    "afterfire": [
+      36.0,
+      46.0
+    ],
+    "idle": [
+      0.0,
+      8.0
+    ]
+  }
+}

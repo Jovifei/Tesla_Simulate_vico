@@ -1,0 +1,12 @@
+{
+  "status": "WAITING_FOR_JOVI_NAMED_CALIBRATION",
+  "feedback_file": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/04_Feedback/Jovi_Stage_H_Named_Feedback.csv",
+  "expected_rows": 7,
+  "completed_rows": 0,
+  "responses_complete": false,
+  "feedback_sha256": "d4284ef413e7c1820116e5218db45e986fbecdb89cb5e5d2d99bc965508977d8",
+  "sealed_key_read": false,
+  "confusion_matrix": null,
+  "human_scores": null,
+  "provenance": "no human result has been fabricated; named engineering package only"
+}

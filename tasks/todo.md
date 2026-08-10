@@ -3533,3 +3533,23 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 - Package：30 anonymous clips、6 full-cycle A/B WAV、listener ZIP `031520b7...567f64`、answer-key ZIP `038e06ae...a96dd5`；sealed key 未读取，confusion matrix 未生成。
 - Reference evidence：9/9 state available，但 mean improvement 未达到 30%，因此没有 ProfileFreezeCandidate。
 - 禁止：读取 sealed key、虚构答卷、删除历史/缓存、push、merge、rebase、进入 Approved/Simulink/Runtime/Android。
+
+## 2026-08-10 S12 Stage H Hellcat perceptual calibration
+
+- [x] H0：从 Stage G `60bca7c` 建立独立工作树，冻结 Stage G v4 字节和 SHA；匿名 P01/P02/P03 反馈保持未映射。
+- [x] H1：补充 Hellcat 双螺杆/旁通公开事实与 B/R2 合成目标，所有调音参数保持 C/synthetic。
+- [x] H2：以 TDD 实现确定性的负载/增压耦合 whine、sideband、bypass release 和 Stage-H Candidate v5。
+- [x] H3：执行 Hellcat 专属阶次、侧带、whine/load、低频和峰值门禁；不替换 Stage-G 30% reference gate。
+- [x] H4：生成具名工程试听包，明确每个 WAV 的绝对路径，并停止等待 Jovi 具名反馈。
+- [ ] H5：收到具名反馈后最多三轮，只修改失败车型，另外两车 PCM SHA 保持不变；当前尚未收到反馈。
+- [ ] H6：具名校准通过后再生成 Stage-H 匿名盲听/A-B 包；没有三份正式答卷前不解封评分。
+- [x] H7：完成实际测试、报告、知识库同步和本地提交准备；禁止 push/merge/rebase/Simulink。
+
+### Stage H review
+
+- Base commit：`60bca7cccac91c520a12c0b058f3f70d56dcf4b8`；branch/worktree：`agent/s12-stage-h-hellcat-perceptual-calibration` / `E:\Tesla_speed\worktrees\s12-stage-h-hellcat-perceptual-calibration`。
+- Current status：`WAITING_FOR_JOVI_NAMED_CALIBRATION`；Stage G sealed key 未读取，匿名 P01/P02/P03 未映射。
+- Tests：Stage-H focused `14 passed`；Stage-G focused `12 passed`；Stage-C realism/identity `67 passed / 78 subtests`；full S12 `488 passed / 232 subtests`；Track-P `21 passed`；guard script OK。
+- Named package：`E:\Tesla_speed\review_packages\s12-stage-h-hellcat-perceptual-calibration-v1\`；first automatic-fail render preserved separately as `...-v1-r1-automated-fail`。
+- Final PCM reference distance：Hellcat average improvement `8.479%`，未达到 30%，所以自动状态仍为 `PARTIAL / AUTOMATED_GATE_FAIL`；这不阻止具名试听，但不允许 Profile Freeze。
+- Review：Stage H 首次执行目标是 `WAITING_FOR_JOVI_NAMED_CALIBRATION`，不是 Human PASS、Approved 或 Profile Freeze。

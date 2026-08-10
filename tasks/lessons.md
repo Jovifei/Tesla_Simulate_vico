@@ -1233,3 +1233,8 @@ Rules:
 - A listener package is not complete when it has only anonymous short clips: every promised qualitative A/B pair must contain actual PCM files, and public forms must be prefilled with exact trial/pair rows so missing submissions fail closed.
 - Candidate diagnostics must report requested, consumed, and unused parameter names from the renderer/layer return path. Presence in JSON is never proof of reachability.
 - A/B preference and identity confusion are separate gates. The scorer must resolve baseline/candidate roles from the sealed key and keep each round's five-trial-per-vehicle denominator independent.
+
+# 2026-08-10 S12 Stage H lessons
+
+- A positive isolated stem/L2 delta proves parameter reachability only; it does not prove that a listener hears the intended Hellcat identity or that the sound is natural.
+- Anonymous blind packages and named engineering calibration packages are separate evidence products. Resolve file-to-vehicle feedback with a labelled package instead of opening sealed keys or guessing the mapping.
