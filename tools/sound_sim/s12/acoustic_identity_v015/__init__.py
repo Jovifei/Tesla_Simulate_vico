@@ -25,6 +25,10 @@ from .render_realism_v10 import publish_realism_v10
 from .stage_d import BASE_COMMIT, StageDCandidateProfile, build_blind_package, load_stage_d_candidate, render_stage_d_candidate, score_blind_responses
 from .stage_e import StageECandidateProfile, load_stage_e_candidate, render_stage_e_candidate
 from .stage_e.blind_audition import build_stage_e_blind_package, score_stage_e_blind_responses, validate_stage_e_responses
+from .stage_g.candidate_profiles import StageGCandidateProfile, load_stage_g_candidate
+from .stage_g.package_builder import build_stage_g_package
+from .stage_g.render_candidate import render_stage_g_candidate
+from .stage_g.response_contract import score_stage_g_submission, validate_stage_g_submission
 from .sources.flat_plane_v8_source import render_ferrari_458
 from .sources.lamborghini_v12_source import render_aventador_lp700
 from .sources.lexus_v10_source import render_lfa
@@ -76,6 +80,12 @@ __all__ = (
     "build_stage_e_blind_package",
     "score_stage_e_blind_responses",
     "validate_stage_e_responses",
+    "StageGCandidateProfile",
+    "load_stage_g_candidate",
+    "render_stage_g_candidate",
+    "build_stage_g_package",
+    "validate_stage_g_submission",
+    "score_stage_g_submission",
     "render_ferrari_458",
     "render_aventador_lp700",
     "render_c63_w204",

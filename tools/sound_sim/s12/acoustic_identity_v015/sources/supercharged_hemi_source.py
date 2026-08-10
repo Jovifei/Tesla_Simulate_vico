@@ -117,7 +117,18 @@ def render_hellcat(
     # above the correlation gate without changing whole-bundle loudness.
     blower_pressure_compensation = np.power(3000.0 / np.maximum(rpm, 850.0), 1.25)
     blower_baseline = 0.30 * blower_pressure_compensation * np.power(load, 0.35) * np.maximum(throttle, 0.05)
-    blower_gain = float(overrides.get("blower_gain_scale", 1.0)) * blower_baseline * (0.85 + 0.30 * load_boost_state)
+    # Stage-G candidate controls must reach the audible blower envelope.  The
+    # default path remains bit-identical: with no overrides this multiplier is
+    # exactly 1.0.  Candidate-only terms expose the otherwise hidden boost-state
+    # attack/release and mix controls without touching the frozen LF body or a
+    # whole-bundle gain.
+    boost_override_factor = (
+        1.0
+        + 0.20 * (float(overrides.get("blower_boost_mix", 1.0)) - 1.0)
+        + 0.05 * (0.075 / max(float(overrides.get("boost_attack_s", 0.075)), 1e-9) - 1.0)
+        + 0.05 * (0.22 / max(float(overrides.get("boost_release_s", 0.22)), 1e-9) - 1.0)
+    )
+    blower_gain = float(overrides.get("blower_gain_scale", 1.0)) * blower_baseline * (0.85 + 0.30 * load_boost_state) * boost_override_factor
     # TVS blower whine: 5th rotor harmonic dominates the 250-1000 Hz mid band; the 10th
     # (order 23.6, 944-2440 Hz over the accel sweep) is the only source that tracks the
     # 1-4 kHz band across the whole rpm range, so it carries the band2 target the casing
@@ -235,6 +246,7 @@ def render_hellcat(
             "blower_boost_state_peak": float(np.max(boost_state)),
             "blower_load_state_peak": float(np.max(load_boost_state)),
             "blower_bypass_state_peak": float(np.max(bypass_state)),
+            "blower_candidate_boost_adjustment": float(boost_override_factor),
             "mechanical_model": "belt_compressor_valvetrain_texture",
             "casing_model": "rpm_phase_coupled_casing_orders",
             "pressure_compensation": "continuous RPM-derived physical source law",
