@@ -1,0 +1,17 @@
+{
+  "package_id": "S12_Blind_Audition_Package_v4",
+  "listener_package_sha256": "031520b74d80d277f29fa1444df22fdb22249dfa248d9b6b2de0f53adb567f64",
+  "answer_key_zip_sha256": "038e06aeacd8f165df72fe43f7ce5c0b8ec40dbe7bc44c5d9779c67f88a96dd5",
+  "trial_count": 30,
+  "full_cycle_ab_pair_count": 3,
+  "listener_wav_count": 30,
+  "listener_zip_leak_scan": {"vehicle_labels": 0, "role_labels": 0, "seed": 0, "source_hash": 0, "private_answer_token": 0},
+  "sealed_key_read": false,
+  "responses_received": false,
+  "confusion_matrix": null,
+  "ab_results": null,
+  "playback_context_validated": false,
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "provenance": "synthetic; uncalibrated; not OEM reproduction",
+  "next_input": ["listener/blind_responses.csv", "listener/ab_responses.csv", "listener/playback_context.json"]
+}

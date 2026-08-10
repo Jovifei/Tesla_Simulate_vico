@@ -1,0 +1,29 @@
+{
+  "schema_version": "s12-stage-g-reference-distance-1",
+  "domain": "final_pcm",
+  "bands_hz": [[20, 250], [250, 1000], [1000, 4000], [4000, 12000]],
+  "formula": "sqrt(0.25 * sum((actual-target)^2))",
+  "reference_distance_external_sha256": "27c7fb155b4b00f0efd98af56ecb527775e10b3ba0f4f7f3b2796070009fd963",
+  "reference_evidence_index_sha256": "49adb3a89f32a40836abacc84c2c02cbe0b082d3511604a9e2d75adfe110d6c2",
+  "provenance": "B/R2 relative features; C/synthetic candidate; uncalibrated; not OEM reproduction",
+  "state_improvement_ratio": {
+    "ferrari_458/idle": 0.004651823238436307,
+    "ferrari_458/acceleration": -0.00567305769726448,
+    "ferrari_458/afterfire": -0.0011046569599702505,
+    "hellcat/idle": -8.372075433117835e-10,
+    "hellcat/acceleration": 0.002649936001050955,
+    "hellcat/afterfire": -0.004039290125237314,
+    "rx7_fd/idle": -0.0006520237000393173,
+    "rx7_fd/acceleration": -0.017983639046696046,
+    "rx7_fd/afterfire": 0.00001659478345134809
+  },
+  "mean_improvement_ratio": -0.00245936826038626,
+  "missing_states": [],
+  "gates": {
+    "all_nine_states_available": true,
+    "mean_improvement_at_least_30_percent": false,
+    "no_state_worse_than_10_percent": true
+  },
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "interpretation": "All nine eligible state targets were measured in final PCM. The candidate is not promoted because the mean improvement is -0.2459%, not >=30%; no threshold or formula was weakened."
+}

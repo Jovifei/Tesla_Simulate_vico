@@ -1,0 +1,64 @@
+{
+  "schema_version": "s12-stage-g-parameter-reachability-1",
+  "trace_duration_s": 2.0,
+  "method": "isolated in-range deterministic perturbation; target stem L2 delta",
+  "provenance": "C/synthetic; candidate perturbation evidence; uncalibrated; not OEM reproduction",
+  "vehicles": {
+    "ferrari_458": {
+      "candidate_id": "ferrari_458_stage_g_v4",
+      "requested_count": 10,
+      "consumed_count": 10,
+      "unused": [],
+      "parameters": {
+        "afterfire.gain_scale": {"target_stems": ["afterfire"], "target_l2_delta": 0.08000000000000006},
+        "idle.jitter_ms": {"target_stems": ["idle_combustion_variation", "idle_accessory", "idle_valvetrain", "idle_crank"], "target_l2_delta": 0.5914961054505622},
+        "idle.mechanical_texture": {"target_stems": ["idle_combustion_variation", "idle_accessory", "idle_valvetrain", "idle_crank"], "target_l2_delta": 0.033443514237285},
+        "idle.variation": {"target_stems": ["idle_combustion_variation", "idle_accessory", "idle_valvetrain", "idle_crank"], "target_l2_delta": 0.021920098115802457},
+        "shift.impact_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.01757571142204935},
+        "shift.recovery_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.0699999999999997},
+        "source.bank_phase_offset_deg": {"target_stems": ["left_bank", "right_bank", "metallic"], "target_l2_delta": 1.78510341224852},
+        "source.high_rpm_growth_scale": {"target_stems": ["left_bank", "right_bank", "metallic"], "target_l2_delta": 0.03811604448979977},
+        "source.metallic_decay_scale": {"target_stems": ["left_bank", "right_bank", "metallic"], "target_l2_delta": 0.023896638173768196},
+        "source.pulse_width_scale": {"target_stems": ["left_bank", "right_bank", "metallic"], "target_l2_delta": 0.07726056230815156}
+      }
+    },
+    "hellcat": {
+      "candidate_id": "hellcat_stage_g_v4",
+      "requested_count": 10,
+      "consumed_count": 10,
+      "unused": [],
+      "parameters": {
+        "afterfire.gain_scale": {"target_stems": ["afterfire"], "target_l2_delta": 0.08000000000000017},
+        "loudness.transient_peak_shaper.attack_ms": {"target_stems": ["shift_impact", "shift_recovery_boom", "afterfire", "blower_attack"], "target_l2_delta": 0.0001679391162616471},
+        "loudness.transient_peak_shaper.max_reduction_db": {"target_stems": ["shift_impact", "shift_recovery_boom", "afterfire", "blower_attack"], "target_l2_delta": 0.2044067698749672},
+        "loudness.transient_peak_shaper.release_ms": {"target_stems": ["shift_impact", "shift_recovery_boom", "afterfire", "blower_attack"], "target_l2_delta": 0.0004345763733911945},
+        "shift.impact_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.025129590890219915},
+        "shift.recovery_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.05263157894736862},
+        "source.blower_boost_mix": {"target_stems": ["blower"], "target_l2_delta": 0.011244504469981693},
+        "source.blower_gain_scale": {"target_stems": ["blower"], "target_l2_delta": 0.05620632974381032},
+        "source.boost_attack_s": {"target_stems": ["blower"], "target_l2_delta": 0.0045164325446372475},
+        "source.boost_release_s": {"target_stems": ["blower"], "target_l2_delta": 0.0039048122871195162}
+      }
+    },
+    "rx7_fd": {
+      "candidate_id": "rx7_fd_stage_g_v4",
+      "requested_count": 11,
+      "consumed_count": 11,
+      "unused": [],
+      "parameters": {
+        "afterfire.gain_scale": {"target_stems": ["afterfire"], "target_l2_delta": 0.08000000000000003},
+        "shift.impact_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.024605995990869486},
+        "shift.recovery_scale": {"target_stems": ["shift_impact", "shift_recovery_boom"], "target_l2_delta": 0.0777777777777776},
+        "source.blow_off_gain_scale": {"target_stems": ["blow_off", "lift"], "target_l2_delta": 0.1311567544604091},
+        "source.blow_off_release_s": {"target_stems": ["blow_off", "lift"], "target_l2_delta": 2.836833639449863},
+        "source.boost_attack_s": {"target_stems": ["turbo", "turbine"], "target_l2_delta": 0.02240091474449944},
+        "source.boost_release_s": {"target_stems": ["turbo", "turbine"], "target_l2_delta": 0.018189766706145645},
+        "source.primary_spool_tau_s": {"target_stems": ["turbo", "turbine"], "target_l2_delta": 0.05144301568661252},
+        "source.rotary_phase_offset_deg": {"target_stems": ["rotary"], "target_l2_delta": 0.33627956282827115},
+        "source.rotary_pulse_width_scale": {"target_stems": ["rotary"], "target_l2_delta": 0.06401711192550935},
+        "source.secondary_spool_tau_s": {"target_stems": ["turbo", "turbine"], "target_l2_delta": 0.021546000622310914}
+      }
+    }
+  },
+  "gate": {"all_requested_consumed": true, "all_deltas_positive": true}
+}

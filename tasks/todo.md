@@ -3511,3 +3511,25 @@ Review: Stage E candidate v2 and anonymous listener package are generated. Focus
 - [x] F7：完成 Stage-F 全套回归、Obsidian frontmatter 修复和知识库同步；生成 v3 报告、证据清单与本地待提交变更。
 
 Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步已完成；reference-distance 保持 `PARTIAL / AUTOMATED_GATE_FAIL`，人耳答卷尚未返回。在 Jovi 返回三份真实输入前，最终状态只能是 `WAITING_FOR_JOVI_AUDITION`。
+
+## S12 Stage G automatic qualification closure and blind audition v4 (2026-08-10)
+
+- [x] G0：核验 Stage F `e38fe62f`、工作树 clean、Stage F v3/Stage E source manifest/候选/报告/Obsidian SHA；标记 v3 historical/unscored，不修改旧字节。
+- [x] G1：新增 state-specific reference target loader；每个车型三状态独立读取，SHA 和 availability fail-closed。
+- [x] G2：输出 labelled final PCM reference evidence；同一 60 秒 trace、明确窗口、extractor provenance、双跑确定性。
+- [x] G3：新增 Stage G candidate contract、v4 profiles、逐参数 requested/consumed/unused 和单参数扰动证据。
+- [x] G4：修正 final-PCM band-distance 域，执行 9 状态、identity、Hellcat、RX-7、Ferrari 自动门禁；结果为 `PARTIAL / AUTOMATED_GATE_FAIL`，未降低门禁。
+- [x] G5：新增严格 Stage G response validator/scorer；答卷缺失时保持等待，不读 sealed。
+- [x] G6：生成匿名 v4 listener/answer-key ZIP、三组连续 60 秒 A/B、预填 30/3 表、SHA256SUMS，并完成防泄漏扫描。
+- [x] G7：首次包交付后硬停止；当前没有真实答卷，不执行评分/调音/ProfileFreezeCandidate。
+- [x] G8：运行 focused/full/Track-P/diff 验证，生成仓库报告和 Obsidian 更新，只提交本地。
+
+### Stage G review
+
+- Base commit：`e38fe62f423b1fb220e9daedf5f4ef291bcc5849`。
+- Branch/worktree：`agent/s12-stage-g-qualification-closure` / `E:\Tesla_speed\worktrees\s12-stage-g-qualification-closure`。
+- Current status：`WAITING_FOR_JOVI_AUDITION`；自动参考距离为 `PARTIAL / AUTOMATED_GATE_FAIL`，mean improvement `-0.2459%`。
+- Tests：Stage-G focused `17 passed`；package contract `2 passed`；Stage-C realism `9 passed`；Identity `58 passed / 78 subtests`；full S12 `474 passed / 232 subtests`；Track-P `21/21`。
+- Package：30 anonymous clips、6 full-cycle A/B WAV、listener ZIP `031520b7...567f64`、answer-key ZIP `038e06ae...a96dd5`；sealed key 未读取，confusion matrix 未生成。
+- Reference evidence：9/9 state available，但 mean improvement 未达到 30%，因此没有 ProfileFreezeCandidate。
+- 禁止：读取 sealed key、虚构答卷、删除历史/缓存、push、merge、rebase、进入 Approved/Simulink/Runtime/Android。

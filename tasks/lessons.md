@@ -1221,6 +1221,13 @@ Rules:
 - Two blind rounds must be scored separately. Per-vehicle recall is five trials per round and ten only when the two rounds are intentionally combined; a scorer must never divide combined counts by five.
 - Playback context and qualitative A/B preference are independent evidence from identity confusion. Missing context or missing A/B notes keeps the status at `WAITING_FOR_JOVI_AUDITION`.
 
+# 2026-08-10 S12 Stage G lessons
+
+- Reference fitting must use the target state actually being measured. A loader that falls back from acceleration/afterfire to idle, or normalizes the four bands to sum to one when the extractor denominator includes out-of-band energy, can create a numerically neat but invalid distance.
+- A final-PCM gate needs labelled state windows and a trace manifest. A report that only names a publisher and a full-cycle WAV cannot prove which samples produced idle, acceleration, or afterfire metrics.
+- Candidate parameter reachability is an execution property: every public field requires an isolated deterministic perturbation that changes its intended stem/event/metric. JSON presence and a hand-written consumed list are not evidence.
+- Blind identity, candidate-vs-baseline preference, and automatic reference distance remain separate gates. Until a complete, context-bound Jovi submission is validated, the only valid human state is `WAITING_FOR_JOVI_AUDITION`.
+
 # 2026-08-10 S12 Stage F lessons
 
 - A listener package is not complete when it has only anonymous short clips: every promised qualitative A/B pair must contain actual PCM files, and public forms must be prefilled with exact trial/pair rows so missing submissions fail closed.
