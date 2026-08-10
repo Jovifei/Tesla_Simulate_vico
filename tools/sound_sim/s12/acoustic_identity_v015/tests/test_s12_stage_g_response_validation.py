@@ -20,4 +20,3 @@ def test_blank_prefilled_stage_g_forms_fail_closed(tmp_path: Path) -> None:
     (tmp_path / "context.json").write_text(json.dumps({"package_id": manifest["package_id"], "listener_id": "jovi"}), encoding="utf-8")
     with pytest.raises(ValueError, match="playback context"):
         validate_stage_g_submission(tmp_path / "manifest.json", tmp_path / "blind.csv", tmp_path / "pairs.csv", tmp_path / "context.json")
-

@@ -27,4 +27,3 @@
 
 首次交付只能是：`WAITING_FOR_JOVI_AUDITION`，或因自动门禁失败而附带 `PARTIAL / AUTOMATED_GATE_FAIL`。
 没有完整答卷不得读 sealed key、生成 confusion matrix、声称 Human PASS 或进入 Simulink。
-
