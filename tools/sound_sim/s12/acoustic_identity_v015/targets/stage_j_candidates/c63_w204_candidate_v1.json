@@ -1,0 +1,31 @@
+{
+  "schema_version": "s12-stage-j-candidate-profile-1",
+  "candidate_id": "c63_w204_stage_j_v1",
+  "vehicle_id": "c63_w204",
+  "base_commit": "d8b8c24530eafc354d420c95e1ff071034e51707",
+  "parent_candidate_id": "stage_i_baseline",
+  "status": "Candidate",
+  "hypothesis": "Event-driven cross-plane M156 bark with mechanical texture and moderate high-RPM growth separates the C63 from turbo and high-rev identities.",
+  "reference_target": {"path": "reference_database/c63_w204_reference_targets.json", "sha256": "cd86c17a281883d0786a1ba80f4462171dd0040aeb244a6fe032f73d3c96f18a", "eligible_states": ["idle", "acceleration", "afterfire"]},
+  "canonical_trace_version": "stage-j-three-vehicle-cycle-v1",
+  "source": {
+    "bank_phase_offset_deg": {"value": 0.0, "unit": "deg", "range": [-12.0, 12.0], "source_level": "C", "source": "synthetic", "source_scope": "cross_plane_bank_event_timing", "verification_state": "candidate_assumption"},
+    "pulse_width_scale": {"value": 1.0, "unit": "ratio", "range": [0.9, 1.1], "source_level": "C", "source": "synthetic", "source_scope": "combustion_pressure_event_width", "verification_state": "candidate_assumption"},
+    "bark_resonance_scale": {"value": 1.1, "unit": "ratio", "range": [0.8, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "event_driven_amg_bark_modes", "verification_state": "candidate_assumption"},
+    "mechanical_texture_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "valvetrain_accessory_texture", "verification_state": "candidate_assumption"},
+    "high_rpm_growth_scale": {"value": 1.1, "unit": "ratio", "range": [0.8, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "naturally_aspirated_high_rpm_growth", "verification_state": "candidate_assumption"}
+  },
+  "idle": {
+    "variation": {"value": 0.3, "unit": "ratio", "range": [0.24, 0.38], "source_level": "C", "source": "synthetic", "source_scope": "idle_cycle_variation", "verification_state": "candidate_assumption"},
+    "jitter_ms": {"value": 3.0, "unit": "ms", "range": [1.0, 4.5], "source_level": "C", "source": "synthetic", "source_scope": "idle_phase_jitter", "verification_state": "candidate_assumption"},
+    "mechanical_texture": {"value": 0.04, "unit": "ratio", "range": [0.02, 0.08], "source_level": "C", "source": "synthetic", "source_scope": "idle_mechanical_texture", "verification_state": "candidate_assumption"}
+  },
+  "afterfire": {"gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.8, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_hot_lift_cluster", "verification_state": "candidate_assumption"}},
+  "shift": {
+    "impact_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "wet_clutch_shift_impact", "verification_state": "candidate_assumption"},
+    "recovery_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "wet_clutch_shift_recovery", "verification_state": "candidate_assumption"}
+  },
+  "loudness": {"target_lufs": -16.0, "peak_limit_dbfs": -1.5, "whole_cycle_gain_only": true},
+  "locked_layers": {"low_frequency_body": {"unchanged": true, "fingerprint": "stage-c-low-frequency-body"}, "rumble": {"unchanged": true, "fingerprint": "stage-c-exhaust-rumble"}, "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage-c-pre-ptr-eq"}, "frozen_ptr": {"unchanged": true, "fingerprint": "stage-c-frozen-ptr"}},
+  "provenance": {"source_level": "C", "source": "synthetic", "calibration": "uncalibrated", "claim": "not OEM reproduction"}
+}

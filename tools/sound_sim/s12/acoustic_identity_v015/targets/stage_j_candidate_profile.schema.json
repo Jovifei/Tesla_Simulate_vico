@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-j-candidate-profile-1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "vehicle_id", "base_commit", "parent_candidate_id", "status", "hypothesis", "reference_target", "canonical_trace_version", "source", "idle", "afterfire", "shift", "loudness", "locked_layers", "provenance"],
+  "properties": {
+    "schema_version": {"const": "s12-stage-j-candidate-profile-1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"enum": ["c63_w204", "gtr_r35", "lfa"]},
+    "base_commit": {"const": "d8b8c24530eafc354d420c95e1ff071034e51707"},
+    "parent_candidate_id": {"type": "string", "minLength": 1},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "reference_target": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "eligible_states"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "eligible_states": {"const": ["idle", "acceleration", "afterfire"]}}},
+    "canonical_trace_version": {"type": "string", "minLength": 1},
+    "source": {"type": "object"},
+    "idle": {"type": "object"},
+    "afterfire": {"type": "object"},
+    "shift": {"type": "object"},
+    "loudness": {"type": "object", "additionalProperties": false, "required": ["target_lufs", "peak_limit_dbfs", "whole_cycle_gain_only"]},
+    "locked_layers": {"type": "object"},
+    "provenance": {"type": "object", "additionalProperties": false, "required": ["source_level", "source", "calibration", "claim"]}
+  }
+}
