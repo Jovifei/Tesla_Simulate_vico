@@ -1,0 +1,61 @@
+{
+  "schema_version": "s12-stage-i-hellcat-candidate-profile-1",
+  "candidate_id": "hellcat_stage_i_v6_a_balanced",
+  "vehicle_id": "hellcat",
+  "base_commit": "6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2",
+  "parent_candidate_id": "hellcat_stage_h_v5",
+  "status": "Candidate",
+  "hypothesis": "Balanced Stage-I seed: preserve HEMI low-frequency weight while making the moving blower cluster clearly audible under acceleration and full pull without upper-band harshness.",
+  "reference_target": {
+    "path": "reference_database/hellcat_reference_targets.json",
+    "sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "canonical_trace_version": "stage-i-named-calibration-trace-1",
+  "source": {
+    "blower_gain_scale": {"value": 1.18, "unit": "ratio", "range": [1.0, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "boost_coupled_whine_envelope", "verification_state": "candidate_assumption"},
+    "blower_boost_mix": {"value": 1.18, "unit": "ratio", "range": [0.95, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "boost_state_mix", "verification_state": "candidate_assumption"},
+    "lobe_family_mix": {"value": 1.12, "unit": "ratio", "range": [0.9, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "rotor_lobe_family", "verification_state": "candidate_assumption"},
+    "upper_family_tilt_db": {"value": -5.0, "unit": "dB", "range": [-8.0, -2.0], "source_level": "C", "source": "synthetic", "source_scope": "upper_whine_harshness_guard", "verification_state": "candidate_assumption"},
+    "sideband_depth": {"value": 0.14, "unit": "ratio", "range": [0.08, 0.22], "source_level": "C", "source": "synthetic", "source_scope": "v8_synchronous_symmetric_sidebands", "verification_state": "candidate_assumption"},
+    "phase_ripple_depth": {"value": 0.004, "unit": "cycle_ratio", "range": [0.001, 0.01], "source_level": "C", "source": "synthetic", "source_scope": "four_event_per_rev_torsional_phase_ripple", "verification_state": "candidate_assumption"},
+    "order_cluster_spread_ratio": {"value": 0.012, "unit": "ratio", "range": [0.004, 0.025], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_moving_order_cluster", "verification_state": "candidate_assumption"},
+    "intake_voicing_mix": {"value": 0.18, "unit": "ratio", "range": [0.05, 0.3], "source_level": "C", "source": "synthetic", "source_scope": "bounded_intake_casing_transfer", "verification_state": "candidate_assumption"},
+    "boost_attack_s": {"value": 0.075, "unit": "s", "range": [0.06, 0.12], "source_level": "C", "source": "synthetic", "source_scope": "source_domain_boost_build_attack", "verification_state": "candidate_assumption"},
+    "boost_release_s": {"value": 0.24, "unit": "s", "range": [0.18, 0.35], "source_level": "C", "source": "synthetic", "source_scope": "source_domain_boost_release", "verification_state": "candidate_assumption"},
+    "bypass_release_gain": {"value": 0.12, "unit": "ratio", "range": [0.06, 0.2], "source_level": "C", "source": "synthetic", "source_scope": "closed_throttle_boost_history_release", "verification_state": "candidate_assumption"},
+    "bypass_pitch_fall_ratio": {"value": 0.8, "unit": "ratio", "range": [0.65, 0.95], "source_level": "C", "source": "synthetic", "source_scope": "bypass_release_pitch_fall", "verification_state": "candidate_assumption"},
+    "bypass_decay_s": {"value": 0.16, "unit": "s", "range": [0.08, 0.3], "source_level": "C", "source": "synthetic", "source_scope": "bypass_release_tail", "verification_state": "candidate_assumption"}
+  },
+  "idle": {},
+  "afterfire": {
+    "gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.8, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_hot_lift_cluster", "verification_state": "candidate_assumption"}
+  },
+  "shift": {
+    "impact_scale": {"value": 0.9, "unit": "ratio", "range": [0.65, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "torque_converter_shift_impact", "verification_state": "candidate_assumption"},
+    "recovery_scale": {"value": 0.95, "unit": "ratio", "range": [0.65, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "torque_converter_shift_recovery", "verification_state": "candidate_assumption"}
+  },
+  "loudness": {
+    "target_lufs": -16.0,
+    "peak_limit_dbfs": -1.5,
+    "whole_cycle_gain_only": true,
+    "transient_peak_shaper": {
+      "enabled": true,
+      "attack_ms": {"value": 1.0, "unit": "ms", "range": [0.5, 2.0], "source_level": "C", "source": "synthetic", "source_scope": "named_transient_peak_shaping", "verification_state": "candidate_assumption"},
+      "release_ms": {"value": 40.0, "unit": "ms", "range": [20.0, 80.0], "source_level": "C", "source": "synthetic", "source_scope": "named_transient_peak_shaping", "verification_state": "candidate_assumption"},
+      "max_reduction_db": {"value": 2.0, "unit": "dB", "range": [0.0, 4.0], "source_level": "C", "source": "synthetic", "source_scope": "named_transient_peak_shaping", "verification_state": "candidate_assumption"}
+    }
+  },
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage_c_low_frequency_body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage_c_exhaust_rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage_c_pre_equalization"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage_c_frozen_ptr"}
+  },
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "calibration": "uncalibrated",
+    "claim": "not OEM reproduction"
+  }
+}
