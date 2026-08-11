@@ -1,0 +1,543 @@
+{
+  "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "bands_hz": [
+    [
+      20.0,
+      250.0
+    ],
+    [
+      250.0,
+      1000.0
+    ],
+    [
+      1000.0,
+      4000.0
+    ],
+    [
+      4000.0,
+      12000.0
+    ]
+  ],
+  "candidates": {
+    "I6-A Balanced": {
+      "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+      "gates": {
+        "all_required_states_available": true,
+        "mean_improvement_at_least_30_percent": false,
+        "no_state_worse_than_10_percent": false
+      },
+      "mean_improvement_ratio": -0.17504581445151712,
+      "states": {
+        "acceleration": {
+          "absolute_error": [
+            0.10168645108947139,
+            0.1455191384441598,
+            0.06896160483216618,
+            0.024973674716590004
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.491215470761536,
+              0.37816480758455,
+              0.12448212556793779,
+              0.006095688883653907
+            ],
+            "spectral_centroid_hz": 600.1177786625144
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.5086023696785172,
+              0.3550049203106212,
+              0.13003030765605925,
+              0.0063181789863813054
+            ],
+            "spectral_centroid_hz": 593.7464038685206
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.17476575632860275,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            0.10168645108947139,
+            -0.1455191384441598,
+            0.06896160483216618,
+            -0.024973674716590004
+          ],
+          "stage_h_distance": 0.08175314940285053,
+          "stage_i_distance": 0.09604080039048496,
+          "target": {
+            "band_shares": [
+              0.40691591858904586,
+              0.500524058754781,
+              0.06106870282389307,
+              0.03129185370297131
+            ],
+            "spectral_centroid_hz": 573.7084358038956
+          }
+        },
+        "afterfire": {
+          "absolute_error": [
+            0.26135356466860404,
+            0.2287443202488334,
+            0.12756411181064545,
+            0.002746250937780811
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.14922554034868107,
+              0.6900398055443524,
+              0.15799850546944308,
+              0.0027305008508091083
+            ],
+            "spectral_centroid_hz": 587.0285396716782
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.1528503901584359,
+              0.7113788947126192,
+              0.13295463919729045,
+              0.002810224187524701
+            ],
+            "spectral_centroid_hz": 568.0856194894964
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.0014016689266679364,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.26135356466860404,
+            0.2287443202488334,
+            0.12756411181064545,
+            0.002746250937780811
+          ],
+          "stage_h_distance": 0.18474766261242334,
+          "stage_i_distance": 0.1850066176703817,
+          "target": {
+            "band_shares": [
+              0.41420395482704,
+              0.48263457446378577,
+              0.005390527386645004,
+              6.397324974389e-05
+            ],
+            "spectral_centroid_hz": 303.31423402354545
+          }
+        },
+        "idle": {
+          "absolute_error": [
+            0.07936483989984822,
+            0.08157474841166418,
+            0.0037912919392340955,
+            0.0001746667170054166
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.6614635001040604,
+              0.31950320125870135,
+              0.015414386628769624,
+              0.0017991730348886513
+            ],
+            "spectral_centroid_hz": 329.72580794224933
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.6413726489296084,
+              0.34102534790455385,
+              0.014160751183078437,
+              0.001673537078324291
+            ],
+            "spectral_centroid_hz": 344.736960077487
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.34897001809928063,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.07936483989984822,
+            0.08157474841166418,
+            -0.0037912919392340955,
+            -0.0001746667170054166
+          ],
+          "stage_h_distance": 0.04220830138360302,
+          "stage_i_distance": 0.05693773308137886,
+          "target": {
+            "band_shares": [
+              0.7207374888294567,
+              0.2594505994928897,
+              0.017952043122312532,
+              0.0018482037953297076
+            ],
+            "spectral_centroid_hz": 266.69029129647316
+          }
+        }
+      }
+    },
+    "I6-B Whine Forward": {
+      "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+      "gates": {
+        "all_required_states_available": true,
+        "mean_improvement_at_least_30_percent": false,
+        "no_state_worse_than_10_percent": false
+      },
+      "mean_improvement_ratio": -0.13520468954317844,
+      "states": {
+        "acceleration": {
+          "absolute_error": [
+            0.0797034389755727,
+            0.13047534323183274,
+            0.07618632181434495,
+            0.025257191149568634
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.491215470761536,
+              0.37816480758455,
+              0.12448212556793779,
+              0.006095688883653907
+            ],
+            "spectral_centroid_hz": 600.1177786625144
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.48661935756461855,
+              0.37004871552294827,
+              0.13725502463823802,
+              0.006034662553402672
+            ],
+            "spectral_centroid_hz": 610.8516770581022
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.05611234178174794,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            0.0797034389755727,
+            -0.13047534323183274,
+            0.07618632181434495,
+            -0.025257191149568634
+          ],
+          "stage_h_distance": 0.08175314940285053,
+          "stage_i_distance": 0.08634051006387758,
+          "target": {
+            "band_shares": [
+              0.40691591858904586,
+              0.500524058754781,
+              0.06106870282389307,
+              0.03129185370297131
+            ],
+            "spectral_centroid_hz": 573.7084358038956
+          }
+        },
+        "afterfire": {
+          "absolute_error": [
+            0.262897684956071,
+            0.22147468028841588,
+            0.13640832090753643,
+            0.002715865199893158
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.14922554034868107,
+              0.6900398055443524,
+              0.15799850546944308,
+              0.0027305008508091083
+            ],
+            "spectral_centroid_hz": 587.0285396716782
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.15130626987096893,
+              0.7041092547522017,
+              0.14179884829418143,
+              0.002779838449637048
+            ],
+            "spectral_centroid_hz": 574.6659211625791
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.0009299246866654134,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.262897684956071,
+            0.22147468028841588,
+            0.13640832090753643,
+            0.002715865199893158
+          ],
+          "stage_h_distance": 0.18474766261242334,
+          "stage_i_distance": 0.18491946402469037,
+          "target": {
+            "band_shares": [
+              0.41420395482704,
+              0.48263457446378577,
+              0.005390527386645004,
+              6.397324974389e-05
+            ],
+            "spectral_centroid_hz": 303.31423402354545
+          }
+        },
+        "idle": {
+          "absolute_error": [
+            0.0793406403091701,
+            0.08155133567024375,
+            0.0037919323527033956,
+            0.00017474236441028545
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.6614635001040604,
+              0.31950320125870135,
+              0.015414386628769624,
+              0.0017991730348886513
+            ],
+            "spectral_centroid_hz": 329.72580794224933
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.6413968485202866,
+              0.34100193516313343,
+              0.014160110769609137,
+              0.0016734614309194221
+            ],
+            "spectral_centroid_hz": 344.72713469775914
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.34857180216112194,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.0793406403091701,
+            0.08155133567024375,
+            -0.0037919323527033956,
+            -0.00017474236441028545
+          ],
+          "stage_h_distance": 0.04220830138360302,
+          "stage_i_distance": 0.0569209250630453,
+          "target": {
+            "band_shares": [
+              0.7207374888294567,
+              0.2594505994928897,
+              0.017952043122312532,
+              0.0018482037953297076
+            ],
+            "spectral_centroid_hz": 266.69029129647316
+          }
+        }
+      }
+    },
+    "I6-C Softer Mechanical": {
+      "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+      "gates": {
+        "all_required_states_available": true,
+        "mean_improvement_at_least_30_percent": false,
+        "no_state_worse_than_10_percent": false
+      },
+      "mean_improvement_ratio": -0.18987904348417392,
+      "states": {
+        "acceleration": {
+          "absolute_error": [
+            0.09988368411189552,
+            0.15208902347251568,
+            0.07735340336322516,
+            0.024992694305157284
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.491215470761536,
+              0.37816480758455,
+              0.12448212556793779,
+              0.006095688883653907
+            ],
+            "spectral_centroid_hz": 600.1177786625144
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.5067996027009414,
+              0.3484350352822653,
+              0.13842210618711823,
+              0.006299159397814025
+            ],
+            "spectral_centroid_hz": 598.3559359150354
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.2188444710747737,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            0.09988368411189552,
+            -0.15208902347251568,
+            0.07735340336322516,
+            -0.024992694305157284
+          ],
+          "stage_h_distance": 0.08175314940285053,
+          "stage_i_distance": 0.0996443741426143,
+          "target": {
+            "band_shares": [
+              0.40691591858904586,
+              0.500524058754781,
+              0.06106870282389307,
+              0.03129185370297131
+            ],
+            "spectral_centroid_hz": 573.7084358038956
+          }
+        },
+        "afterfire": {
+          "absolute_error": [
+            0.26170354743410806,
+            0.22817023188474794,
+            0.1284915316373478,
+            0.002742906984156023
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.14922554034868107,
+              0.6900398055443524,
+              0.15799850546944308,
+              0.0027305008508091083
+            ],
+            "spectral_centroid_hz": 587.0285396716782
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.15250040739293189,
+              0.7108048063485337,
+              0.1338820590239928,
+              0.002806880233899913
+            ],
+            "spectral_centroid_hz": 569.3625107100347
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.0019800803630568163,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.26170354743410806,
+            0.22817023188474794,
+            0.1284915316373478,
+            0.002742906984156023
+          ],
+          "stage_h_distance": 0.18474766261242334,
+          "stage_i_distance": 0.18511347783128285,
+          "target": {
+            "band_shares": [
+              0.41420395482704,
+              0.48263457446378577,
+              0.005390527386645004,
+              6.397324974389e-05
+            ],
+            "spectral_centroid_hz": 303.31423402354545
+          }
+        },
+        "idle": {
+          "absolute_error": [
+            0.07935556260097854,
+            0.08156523078535649,
+            0.003791090070091563,
+            0.00017464299577367145
+          ],
+          "actual_stage_h": {
+            "band_shares": [
+              0.6614635001040604,
+              0.31950320125870135,
+              0.015414386628769624,
+              0.0017991730348886513
+            ],
+            "spectral_centroid_hz": 329.72580794224933
+          },
+          "actual_stage_i": {
+            "band_shares": [
+              0.6413819262284781,
+              0.34101583027824617,
+              0.01416095305222097,
+              0.0016735607995560361
+            ],
+            "spectral_centroid_hz": 344.7378786853507
+          },
+          "availability": "eligible",
+          "improvement_ratio": -0.34881257901469115,
+          "reference_provenance": {
+            "boundary": "synthetic; uncalibrated; not OEM reproduction",
+            "level": "B/R2 relative features",
+            "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+            "schema": "s12.hellcat_reference_targets.v1",
+            "source_file": "hellcat_reference_targets.json"
+          },
+          "signed_error": [
+            -0.07935556260097854,
+            0.08156523078535649,
+            -0.003791090070091563,
+            -0.00017464299577367145
+          ],
+          "stage_h_distance": 0.04220830138360302,
+          "stage_i_distance": 0.05693108784504695,
+          "target": {
+            "band_shares": [
+              0.7207374888294567,
+              0.2594505994928897,
+              0.017952043122312532,
+              0.0018482037953297076
+            ],
+            "spectral_centroid_hz": 266.69029129647316
+          }
+        }
+      }
+    }
+  },
+  "domain": "final_pcm",
+  "provenance": "B/R2 relative features; microphone/AGC dependent; synthetic candidates; uncalibrated; not OEM reproduction",
+  "reference_target_sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+  "schema_version": "s12-stage-i-reference-distance-1",
+  "vehicle_id": "hellcat",
+  "windows_s": {
+    "acceleration": [
+      8.0,
+      26.0
+    ],
+    "afterfire": [
+      36.0,
+      46.0
+    ],
+    "idle": [
+      0.0,
+      8.0
+    ]
+  }
+}

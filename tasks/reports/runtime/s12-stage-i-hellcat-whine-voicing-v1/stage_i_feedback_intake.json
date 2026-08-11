@@ -1,0 +1,34 @@
+{
+  "schema_version": "s12-stage-i-feedback-intake-1",
+  "recorded_at": "2026-08-11T00:00:00+08:00",
+  "source": "current_codex_conversation",
+  "hellcat_target_explicit": true,
+  "raw_feedback_zh": "听了你交付的三个声音，第1个声音不是很像地狱猫，第2个声音高频的声音有点刺耳，低频的声音轰鸣声很可以，第3个声音特别的好，但是还有优化的空间。地狱猫的车的声音，它是有滋滋哟的声音；特别想要模仿出地狱猫的声音。",
+  "bound_feedback": [
+    {
+      "target": "hellcat",
+      "binding_status": "EXPLICIT_TARGET",
+      "requested_identity": "RPM/load/boost-coupled supercharger whine with preserved low-frequency HEMI weight"
+    }
+  ],
+  "unbound_pair_feedback": [
+    {
+      "ordinal": 2,
+      "file_id": null,
+      "binding_status": "UNBOUND",
+      "feedback_zh": "高频有点刺耳，低频轰鸣很好"
+    },
+    {
+      "ordinal": 3,
+      "file_id": null,
+      "binding_status": "UNBOUND",
+      "feedback_zh": "特别好，但还有优化空间"
+    }
+  ],
+  "governance": {
+    "sealed_key_read": false,
+    "may_modify_ferrari": false,
+    "may_modify_rx7": false,
+    "status": "UNBOUND_STAGE_G_PAIR_FEEDBACK"
+  }
+}

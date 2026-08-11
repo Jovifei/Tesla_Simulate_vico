@@ -3553,3 +3553,29 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 - Named package：`E:\Tesla_speed\review_packages\s12-stage-h-hellcat-perceptual-calibration-v1\`；first automatic-fail render preserved separately as `...-v1-r1-automated-fail`。
 - Final PCM reference distance：Hellcat average improvement `8.479%`，未达到 30%，所以自动状态仍为 `PARTIAL / AUTOMATED_GATE_FAIL`；这不阻止具名试听，但不允许 Profile Freeze。
 - Review：Stage H 首次执行目标是 `WAITING_FOR_JOVI_NAMED_CALIBRATION`，不是 Human PASS、Approved 或 Profile Freeze。
+
+## 2026-08-11 S12 Stage I Hellcat whine voicing planning
+
+- [x] I-P0：核对 Stage H `6ee4b1a`、干净 Git 状态、自动指标、试听包、任务账本和 Obsidian 当前状态。
+- [x] I-P1：把 Jovi 的 Hellcat 不像、目标“滋滋哟”、第 2 个高频刺耳/低频很好、第 3 个很好但可优化拆成明确车型目标与未绑定编号反馈。
+- [x] I-P2：检索 Stellantis/Dodge 官方资料和 SAE 增压器 NVH/进气传播资料，明确 2.36:1、14,600 rpm、电子旁通以及“排气轰鸣 + blower whine”的证据边界。
+- [x] I-P3：生成 Stage I 详细执行计划，限定为 Hellcat Track-S 音色/遮蔽/时序校准；Ferrari/RX-7 在 file_id 绑定前保持 SHA 冻结。
+- [x] I0：收到 Jovi“执行此计划”授权后，从 `6ee4b1a` 建立独立 Stage I 工作树并冻结证据；Stage H focused `9 passed`、Track-P `21 passed`。
+- [x] I1：以 RED/GREEN 测试修正 attack/release/bypass 和纯音集中度的可观测性，并生成绑定 response probe 证据。
+- [x] I2：实现 deterministic phase ripple、order cluster、intake/casing voicing 和 boost-history bypass。
+- [x] I2-R1：关闭独立审查的 strict bool gate、probe/profile/PCM SHA 绑定、顺序低内存 60 秒渲染、四图进入 ZIP、requested/read/active 参数诊断等问题。
+- [x] I3：执行有界候选搜索并输出 A/B/C 三种诊断取向；三者 `all_pass=false`，没有硬门合格候选、没有自动选择，不得把诊断取向写成合格候选。
+- [x] I4：正式 builder 已改为默认 fail-closed；因 A/B/C 均未合格，只生成 `UNQUALIFIED_DIAGNOSTIC_ONLY / PARTIAL / AUTOMATED_GATE_FAIL` 诊断包，正式人耳门未解锁。
+- [ ] I5：收到具名反馈后最多三轮 v6→v7→v8；没有反馈不继续。
+- [ ] I6：具名门禁通过后才生成匿名包；自动 30% reference gate 失败时仍不得 Profile Freeze。
+
+### Stage I review
+
+- Base/branch/worktree：`6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2` / `agent/s12-stage-i-hellcat-whine-voicing` / `E:\Tesla_speed\worktrees\s12-stage-i-hellcat-whine-voicing`。
+- Current status：`PARTIAL / AUTOMATED_GATE_FAIL`。当前只有未合格诊断包，不存在 `WAITING_FOR_JOVI...` 的正式人耳状态。
+- Candidate qualification：A/B/C 的 `all_pass` 均为 false；参考距离平均改善分别为 `-17.5046% / -13.5205% / -18.9879%`；未自动选中候选，未生成 Profile Freeze Candidate。
+- Fresh tests：Stage I focused `108 passed / 56.34 s`；regression isolation `3 passed`；full S12 `596 passed / 232 subtests / 740.41 s`；Track-P guard script PASS（`180 files / 2 symbols`），Track-P guard pytest `21/21 passed / 1.23 s`。旧 `583/232` 仅是 pre-P1 审查过程历史。
+- Current diagnostic package：`E:\Tesla_speed\review_packages\s12-stage-i-hellcat-whine-voicing-v1-unqualified-diagnostic`，27 files / 223.35 MiB；ZIP SHA-256 `98fcdc21d5208b7a43c1522a08ba063ee855023c134203e1389587dc23e507bc`；SHA sums `26/26`。
+- Historical invalid package：旧 `f6997bab...45f5d7` 包已移动到 `E:\Tesla_speed\review_packages\_invalid_s12-stage-i-hellcat-whine-voicing-v1_pre-p1-review`，只可恢复审计，不是当前交付。
+- Evidence boundary：sealed key 未读取；Stage G 第 2/第 3 条编号反馈仍未绑定车型；Ferrari/RX-7 冻结不变；所有输出为 `synthetic / uncalibrated / Hellcat-inspired / not OEM reproduction`。
+- Next：Jovi 可以用显式 `file_id` 提供诊断反馈，但该反馈不构成正式人耳门。I5/I6 保持未完成；必须先关闭自动资格失败，才可发布正式人耳包，且不得自行进入匿名盲听、Profile Freeze、Simulink、Runtime 或 Android。

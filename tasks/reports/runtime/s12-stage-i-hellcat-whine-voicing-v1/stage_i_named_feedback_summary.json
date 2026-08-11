@@ -1,0 +1,28 @@
+{
+  "schema_version": "s12-stage-i-named-feedback-summary-1",
+  "status": "UNQUALIFIED_DIAGNOSTIC_ONLY / PARTIAL / AUTOMATED_GATE_FAIL",
+  "scope": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+  "named_feedback_received": false,
+  "completed_feedback_row_count": 0,
+  "sealed_key_read": false,
+  "stage_g_pair_feedback": {
+    "status": "UNBOUND_STAGE_G_PAIR_FEEDBACK",
+    "ordinal_2": "high frequency sounds somewhat harsh; low-frequency rumble is good",
+    "ordinal_3": "particularly good, with remaining optimization room",
+    "bound_vehicle_id": "NONE"
+  },
+  "explicit_hellcat_target": "preserve low-frequency HEMI weight while adding a natural RPM/load/boost-coupled supercharger whine",
+  "ferrari_458": {
+    "status": "UNCHANGED_FROZEN_ANCHOR",
+    "sha256": "7f50e75e09ea54b40cd6ebdc6cb184156273950bdca61a427216ae9e82e11d80"
+  },
+  "rx7_fd": {
+    "status": "UNCHANGED_FROZEN_ANCHOR",
+    "sha256": "0f4680c370f378dff4286f93fbcf5074d7b8511e9e7dc54dd137fb4cddb0bce8"
+  },
+  "candidate_selection": "NOT_PERFORMED",
+  "human_gate": "LOCKED_BY_AUTOMATED_GATE_FAIL",
+  "diagnostic_feedback_allowed": true,
+  "diagnostic_feedback_is_formal_human_gate_evidence": false,
+  "next_required_input": "optional diagnostic feedback with explicit file_id; a formally qualified candidate is required before human-gate publication"
+}

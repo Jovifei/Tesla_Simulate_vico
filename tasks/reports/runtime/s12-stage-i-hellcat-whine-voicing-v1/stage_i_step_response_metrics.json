@@ -1,0 +1,46 @@
+{
+  "schema_version": "s12-stage-i-step-response-report-1",
+  "status": "MEASURED_WITH_GATE_FAILURES",
+  "scope": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+  "measurement_domain": "isolated boost and lift response probes bound to candidate/profile/trace/render/stem SHA",
+  "stage_h_baseline": {
+    "availability": "NOT_AVAILABLE_LEGACY_STAGE_H",
+    "reason": "Stage H full-cycle metrics did not contain authoritative response-probe attack, release or bypass decay values"
+  },
+  "candidates": [
+    {
+      "label": "I6-A Balanced",
+      "candidate_id": "hellcat_stage_i_v6_a_balanced",
+      "boost_attack_10_90_s": 0.25404166666666667,
+      "boost_release_90_10_s": 0.160375,
+      "bypass_decay_90_10_s": 0.3165,
+      "bypass_event_count": 1,
+      "boost_attack_gate": false,
+      "boost_release_gate": false,
+      "bypass_decay_gate": false
+    },
+    {
+      "label": "I6-B Whine Forward",
+      "candidate_id": "hellcat_stage_i_v6_b_whine_forward",
+      "boost_attack_10_90_s": 0.2539166666666667,
+      "boost_release_90_10_s": 0.1721875,
+      "bypass_decay_90_10_s": 0.3165,
+      "bypass_event_count": 1,
+      "boost_attack_gate": false,
+      "boost_release_gate": false,
+      "bypass_decay_gate": false
+    },
+    {
+      "label": "I6-C Softer Mechanical",
+      "candidate_id": "hellcat_stage_i_v6_c_softer_mechanical",
+      "boost_attack_10_90_s": 0.48814583333333333,
+      "boost_release_90_10_s": 0.15139583333333334,
+      "bypass_decay_90_10_s": 0.37847916666666664,
+      "bypass_event_count": 1,
+      "boost_attack_gate": false,
+      "boost_release_gate": false,
+      "bypass_decay_gate": false
+    }
+  ],
+  "interpretation": "response events are observable and deterministic, but none of the three diagnostic orientations satisfies all response-time gates"
+}

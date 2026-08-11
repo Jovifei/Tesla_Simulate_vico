@@ -1,0 +1,68 @@
+{
+  "schema_version": "s12-stage-i-test-evidence-1",
+  "status": "FRESH_CURRENT_TREE_TEST_EVIDENCE / AUTOMATED_QUALIFICATION_FAIL",
+  "scope": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+  "branch": "agent/s12-stage-i-hellcat-whine-voicing",
+  "base_commit": "6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2",
+  "suites": [
+    {
+      "name": "Stage I focused",
+      "passed": 108,
+      "failed": 0,
+      "duration_s": 56.34,
+      "fresh": true
+    },
+    {
+      "name": "regression isolation",
+      "passed": 3,
+      "failed": 0,
+      "fresh": true
+    },
+    {
+      "name": "Track-P guard pytest",
+      "passed": 21,
+      "failed": 0,
+      "fresh": true,
+      "duration_s": 1.23
+    },
+    {
+      "name": "Track-P guard script",
+      "passed": 1,
+      "failed": 0,
+      "files_checked": 180,
+      "symbols_checked": 2,
+      "fresh": true
+    },
+    {
+      "name": "full S12 regression",
+      "passed": 596,
+      "failed": 0,
+      "subtests_passed": 232,
+      "duration_s": 740.41,
+      "fresh": true
+    }
+  ],
+  "artifact_checks": {
+    "current_diagnostic_package_file_count": 27,
+    "current_diagnostic_package_size_mib": 223.35,
+    "current_diagnostic_package_zip_sha256": "98fcdc21d5208b7a43c1522a08ba063ee855023c134203e1389587dc23e507bc",
+    "current_sha256sums_entries": 26,
+    "source_evidence_wav_count": 13,
+    "source_evidence_wav_size_bytes": 122112650,
+    "pcm_48khz_stereo_pcm24_finite_no_clip": true,
+    "ferrari_rx7_unchanged": true,
+    "sealed_key_read": false
+  },
+  "qualification": {
+    "formal_candidate_all_pass_count": 0,
+    "automatic_reference_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+    "profile_freeze_permitted": false
+  },
+  "historical_pre_p1_full_regression": {
+    "passed": 583,
+    "subtests_passed": 232,
+    "status": "HISTORICAL_ONLY"
+  },
+  "refresh_required": false,
+  "interpretation": "fresh current-tree tests prove implementation and guard health. They do not override failed acoustic qualification, unlock the human gate, select a candidate or permit Profile Freeze."
+}

@@ -1238,3 +1238,17 @@ Rules:
 
 - A positive isolated stem/L2 delta proves parameter reachability only; it does not prove that a listener hears the intended Hellcat identity or that the sound is natural.
 - Anonymous blind packages and named engineering calibration packages are separate evidence products. Resolve file-to-vehicle feedback with a labelled package instead of opening sealed keys or guessing the mapping.
+
+# 2026-08-11 S12 Stage I planning lessons
+
+- A near-perfect blower/load correlation and sub-one-percent order error can coexist with a failed Hellcat likeness judgement. Order tracking proves motion and state coupling; the recognisable identity also depends on cluster width, intake/casing transfer, masking against the V8 exhaust and transient voicing.
+- A supercharger whine made more audible by upper-band gain can become a sharp electronic tone. Increase recognisability through deterministic phase ripple, moving sideband clusters and state-specific mixing while keeping 4–12 kHz guarded; do not substitute broadband treble, global gain or white noise.
+- Numbered listening feedback is not a vehicle binding. Persist the original words, require a named file ID before modifying Ferrari or RX-7, and freeze the SHA of any vehicle described only as “good but improvable” until Jovi supplies a concrete defect.
+
+# 2026-08-11 S12 Stage I execution lessons
+
+- `read != active`: 参数被 loader 读取或列入 consumed 清单，不等于它在本次 trace 中产生了可测作用。Stage I 候选必须分别记录 requested/read/configured/consumed/active/inactive/unused；legacy 阶段没有 active 证据时应写 `NOT_AVAILABLE`，不得伪造通过。
+- `fixture != production`: 单元测试 fixture、短探针和注入 renderer 只能验证契约。正式报告必须绑定真实候选/profile/trace/render/final-PCM SHA，并从生产打包路径重新计算健康和声学指标。
+- Manifest 是资格状态的持久记忆：后续资格判定应读取冻结 manifest 中的 candidate/profile/render/PCM 绑定、source metrics 和 gate 结果，不应为了省内存而依赖仍驻留的 SourceRender，也不能从文件名猜测候选身份。
+- Shared attenuation preserves audible difference：同组 blower-only 或 A/B 诊断必须使用一个共同 attenuation-only 目标，且每个 gain 都不大于 0；逐文件归一化会抹平候选间真正的存在感差异，破坏人耳比较。
+- 未通过自动资格的包只能标为 `UNQUALIFIED_DIAGNOSTIC_ONLY`。即使 Jovi 可以试听和反馈，也不得使用 `WAITING_FOR_JOVI...`、正式人耳门或候选选择措辞；builder 必须默认 fail-closed，诊断发布必须通过显式开关。

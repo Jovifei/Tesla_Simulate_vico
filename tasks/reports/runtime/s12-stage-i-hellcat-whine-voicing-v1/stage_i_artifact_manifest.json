@@ -1,0 +1,99 @@
+{
+  "schema_version": "s12-stage-i-artifact-manifest-1",
+  "status": "UNQUALIFIED_DIAGNOSTIC_ONLY / PARTIAL / AUTOMATED_GATE_FAIL",
+  "base_commit": "6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2",
+  "branch": "agent/s12-stage-i-hellcat-whine-voicing",
+  "stage_h_frozen_evidence": [
+    {
+      "path": "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_h_candidates/Hellcat_candidate_v5.json",
+      "sha256": "8ae89a580e2935168ad5bd707a6afdb19264ca036ad254ec152c6aeb62eb7b14",
+      "bytes": 4470
+    },
+    {
+      "path": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/01_Hellcat/01_Hellcat_StageG_Baseline_60s.wav",
+      "sha256": "8fbf28f8136c661f59f85d0002d96af361a295413c26f19ed20116f9bc69bb47",
+      "bytes": 17280050
+    },
+    {
+      "path": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/01_Hellcat/02_Hellcat_StageH_Candidate_60s.wav",
+      "sha256": "6eacaad7ff2e0fb52734d130d597d43efb6573a5491d93b0f4a70e505232c486",
+      "bytes": 17280050
+    },
+    {
+      "path": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/02_Anchor_Mapping/Ferrari_458_StageG_Unchanged_60s.wav",
+      "sha256": "7f50e75e09ea54b40cd6ebdc6cb184156273950bdca61a427216ae9e82e11d80",
+      "bytes": 17280050
+    },
+    {
+      "path": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/02_Anchor_Mapping/RX7_FD_StageG_Unchanged_60s.wav",
+      "sha256": "0f4680c370f378dff4286f93fbcf5074d7b8511e9e7dc54dd137fb4cddb0bce8",
+      "bytes": 17280050
+    },
+    {
+      "path": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1/S12_Stage_H_Named_Review.zip",
+      "sha256": "5a459753cc41bd1be046bd076cc524ad08f52eca08bd43dc80e9776d06320d3a",
+      "bytes": 83332914
+    },
+    {
+      "path": "tasks/reports/runtime/s12-stage-h-hellcat-calibration-v1/S12_Stage_H_Hellcat_Perceptual_Calibration_Report.md",
+      "sha256": "47256e92468fa2176835ea26a10692d14cbad33e3284f5d14a767cc93617fb61",
+      "bytes": 4988
+    },
+    {
+      "path": "tasks/reports/runtime/s12-stage-h-hellcat-calibration-v1/stage_h_hellcat_metrics.json",
+      "sha256": "6b844aee1ac6cc7c20c947e6ee66114c26cd8927078896cbc766c53596731d20",
+      "bytes": 1927
+    },
+    {
+      "path": "tasks/reports/runtime/s12-stage-h-hellcat-calibration-v1/stage_h_reference_distance.json",
+      "sha256": "151411d62066172f382b99cf6f11d1916fb41cd6b5f1f226f2cc6bea2a12319d",
+      "bytes": 5986
+    },
+    {
+      "path": "tasks/reports/runtime/s12-stage-h-hellcat-calibration-v1/stage_h_test_evidence.json",
+      "sha256": "23cdc8259457639d3ae812ed22ab018f8aaf24d5d511e54fc7b26566f5f5654b",
+      "bytes": 1283
+    }
+  ],
+  "obsidian_pre_update_sha256": {
+    "codex_memory/03-项目记忆/tesla-speed/00-项目概览.md": "d46d21f98eb5dd6128a7126c8f94fa278d3df7e1f167d0bd47d7855cb487d5bc",
+    "codex_memory/03-项目记忆/tesla-speed/01-总体计划.md": "39e9f262c039d618cde074b08d2b80ee07eeeacc3f50595e292b053bbbbc6eb7",
+    "codex_memory/03-项目记忆/tesla-speed/02-当前进度.md": "de4b2e022a8c880175cde2106f54e1e6fb7bece890203842a5e99e764221d7c0",
+    "codex_memory/03-项目记忆/tesla-speed/04-工作流与知识.md": "1c8f9934887e5ef090852c48af45f1b65ed41b14b64504aafd2a2b6dcf3b62a4",
+    "tesla/index.md": "cefbc8f43995444ebc96cc98d7495f7e7bc1969a8ab3830a60ac50152733769a",
+    "tesla/S12-Engine-Sound-v11/01-Hellcat.md": "ca69b1720bdbebf3611dcbf9ba5f9b7973cba42e8b6fb3120479e13ec7570a32",
+    "tesla/S12-Engine-Sound-v11/12-S12-v015-独立声源与车型复用经验.md": "f658f1fa68d35a678e1ae7ab20ccf603d902280b4c7dd42510bac7ac6dbec656",
+    "tesla/S12-Engine-Sound-v11/18-S12-Stage-H-Hellcat增压器声学与定向听感校准.md": "9fa4560067b9eb77300092a413ba2c1ca8c08438630ba74756a0e4a6605de8fa"
+  },
+  "frozen_paths_unchanged": true,
+  "sealed_key_read": false,
+  "current_diagnostic_package": {
+    "package_id": "S12_Stage_I_Unqualified_Diagnostic_v1",
+    "root": "E:/Tesla_speed/review_packages/s12-stage-i-hellcat-whine-voicing-v1-unqualified-diagnostic",
+    "zip_path": "E:/Tesla_speed/review_packages/s12-stage-i-hellcat-whine-voicing-v1-unqualified-diagnostic/S12_Stage_I_Unqualified_Diagnostic.zip",
+    "zip_sha256": "98fcdc21d5208b7a43c1522a08ba063ee855023c134203e1389587dc23e507bc",
+    "file_count": 27,
+    "size_mib": 223.35,
+    "sha256sums_entries": 26,
+    "sha256sums_verified": 26,
+    "source_evidence_root": "E:/Tesla_speed/review_packages/s12-stage-i-hellcat-whine-voicing-v1-source-evidence-r6",
+    "source_manifest_sha256": "0fce37d83da5e750a6897941d87031ff1ad5b0c82bd5e72d7a01b6d43d6441ea",
+    "reference_canonical_sha256": "43f93d2ded66a6df06240266db9a59d18b6ff49c89173d4aecc852aff601b623",
+    "source_wav_count": 13,
+    "source_wav_size_bytes": 122112650,
+    "provenance": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+    "engineering_stems_are_product_audio": false,
+    "status": "UNQUALIFIED_DIAGNOSTIC_ONLY / PARTIAL / AUTOMATED_GATE_FAIL",
+    "formal_qualified_candidate_count": 0,
+    "selected_candidate": "NONE",
+    "profile_freeze_permitted": false,
+    "formal_human_gate_unlocked": false
+  },
+  "historical_invalid_pre_p1_package": {
+    "status": "HISTORICAL / INVALID_PRE_P1_REVIEW",
+    "root": "E:/Tesla_speed/review_packages/_invalid_s12-stage-i-hellcat-whine-voicing-v1_pre-p1-review",
+    "zip_sha256": "f6997bab1b6af424e24a4f4fa4436a2c3b4cff0c99cdfa4f51a3fee71645f5d7",
+    "recoverable": true,
+    "current_delivery": false
+  }
+}
