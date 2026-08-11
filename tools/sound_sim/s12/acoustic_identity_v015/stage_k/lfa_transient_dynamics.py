@@ -101,7 +101,13 @@ def apply_lfa_transient_dynamics(
             "lfa_overrun": overrun,
         }
     )
-    pressure = sum(stems.values(), np.zeros_like(render.pressure))
+    # Base stems already carry the torque-cut and lift-decay envelopes.  The
+    # named cut/decay stems are diagnostic deltas, so including them again in
+    # the pressure sum would apply each attenuation twice.  Only re-engagement,
+    # intake reopen and history-gated overrun add new pressure energy.
+    base_names = tuple(name for name in render.stems)
+    pressure = sum((stems[name] for name in base_names), np.zeros_like(render.pressure))
+    pressure += reengagement + intake_reopen + overrun
     shift_dip_db = float(-20.0 * np.log10(max(min_gain, 1e-9))) if events else 0.0
     diagnostics = dict(render.diagnostics)
     diagnostics.update(

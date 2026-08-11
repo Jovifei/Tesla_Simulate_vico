@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender, VehicleStateTrace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_k.source_level import (
@@ -58,3 +59,9 @@ def test_zero_input_stays_zero_and_trim_is_finite() -> None:
     result = apply_source_operating_trim(zero, _trace(), stem_names=("exhaust",), trim=trim)
     assert np.array_equal(result.pressure, zero.pressure)
     assert np.all(np.isfinite(result.pressure))
+
+
+def test_event_stems_are_rejected_even_when_passed_directly() -> None:
+    trim = OperatingLevelTrim(1.5, -1.5, (0.25, 0.75), 0.15)
+    with pytest.raises(ValueError, match="event stem"):
+        apply_source_operating_trim(_render(), _trace(), stem_names=("shift_impact",), trim=trim)

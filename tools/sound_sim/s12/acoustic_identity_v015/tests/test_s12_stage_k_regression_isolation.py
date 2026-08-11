@@ -9,7 +9,7 @@ import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import VehicleStateTrace
 from tools.sound_sim.s12.acoustic_identity_v015.render_realism_v10 import _RENDERERS, _render_stateful
-from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_profiles import STAGE_K_VEHICLES
+from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_profiles import STAGE_K_VEHICLES, load_stage_k_candidate
 from tools.sound_sim.s12.acoustic_identity_v015.stage_k.render_candidate import render_stage_k_candidate
 
 
@@ -61,3 +61,12 @@ def test_stage_k_pipeline_declares_pre_ptr_overlay_boundary() -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_k.render_candidate import _SOURCE_RENDERERS
 
     assert set(_SOURCE_RENDERERS) == set(STAGE_K_VEHICLES)
+
+
+def test_hellcat_blower_aggregate_is_not_double_counted() -> None:
+    root = __import__("pathlib").Path(__file__).resolve().parents[1]
+    candidate = load_stage_k_candidate(root / "targets" / "stage_k_candidates" / "hellcat_candidate_v7.json")
+    render = render_stage_k_candidate("hellcat", _trace(), candidate)
+    primitive = tuple(name for name in render.stems if name.startswith("blower_") and name != "blower")
+    aggregate = sum((render.stems[name] for name in primitive), np.zeros_like(render.pressure))
+    assert np.allclose(render.stems["blower"], aggregate, rtol=0.0, atol=1e-14)

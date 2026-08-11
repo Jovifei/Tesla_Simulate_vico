@@ -55,6 +55,7 @@
     "source_level": "C",
     "source": "synthetic",
     "calibration": "uncalibrated",
-    "claim": "not OEM reproduction"
+    "claim": "not OEM reproduction",
+    "parent_status": "STAGE_J_CANDIDATE_PARENT"
   }
 }

@@ -81,6 +81,30 @@ def test_named_review_manifest_sums_and_zip_are_consistent(named_package: tuple[
     assert Path(result["zip"]).is_file()
 
 
+def test_named_review_records_automatic_status_and_file_level_loudness(named_package: tuple[Path, dict[str, object]]) -> None:
+    root, result = named_package
+    manifest = json.loads((root / "artifact_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["automatic_gate_status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert manifest["qualified_for_profile_freeze"] is False
+    for vehicle_id in STAGE_K_REVIEW_VEHICLES:
+        vehicle = result["vehicles"][vehicle_id]
+        files = vehicle["review_loudness"]["files"]
+        expected = {
+            "Baseline_60s.wav",
+            "StageK_Candidate_60s.wav",
+            "Low_Load_12s.wav",
+            "High_Load_12s.wav",
+            "Shift_12s.wav",
+            "Lift_Deceleration_12s.wav",
+        } | set(vehicle["diagnostic_wavs"])
+        assert set(files) == expected
+        for evidence in files.values():
+            assert set(evidence) >= {
+                "raw_lufs", "final_lufs", "raw_peak_dbfs", "final_peak_dbfs",
+                "requested_gain_db", "actual_gain_db", "headroom_limited",
+            }
+
+
 def test_named_review_rejects_invalid_gain_without_creating_template(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="review gain"):
         build_stage_k_named_review(tmp_path / "review", duration_s=2.0, requested_review_gain_linear=0.0)

@@ -5,8 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
 
-from ..stage_k.named_review import build_stage_k_named_review
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[5]))
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_k.named_review import build_stage_k_named_review
+else:
+    from ..stage_k.named_review import build_stage_k_named_review
 
 
 def main() -> int:

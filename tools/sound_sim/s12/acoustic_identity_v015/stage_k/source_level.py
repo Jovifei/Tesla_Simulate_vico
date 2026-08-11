@@ -55,6 +55,15 @@ def apply_source_operating_trim(
         raise ValueError("sample_rate_hz must be an integer >= 8000")
     if not stem_names:
         raise ValueError("stem_names must not be empty")
+    event_stems = {
+        "afterfire", "shift_impact", "shift_recovery_boom", "shift_torque_interruption",
+        "lfa_shift_torque_cut", "lfa_shift_exhaust_reengagement", "lfa_shift_intake_reopen",
+        "lfa_intake_lift_decay", "lfa_overrun", "blower_bypass_release", "bov", "wastegate",
+        "closed_throttle_tail",
+    }
+    invalid_events = sorted(set(stem_names) & event_stems)
+    if invalid_events:
+        raise ValueError(f"event stem cannot receive operating trim: {invalid_events[0]}")
     missing = set(stem_names) - set(render.stems)
     if missing:
         raise ValueError(f"operating trim stems are missing: {sorted(missing)}")

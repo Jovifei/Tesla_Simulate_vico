@@ -12,6 +12,10 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_k.perceptual_metrics impor
 from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_search import (
     select_stage_k_candidate,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.contracts import VehicleStateTrace
+from tools.sound_sim.s12.acoustic_identity_v015.sources.mercedes_na_v8_source_v3 import render_c63_w204_v3
+from tools.sound_sim.s12.acoustic_identity_v015.sources.nissan_parallel_twin_turbo_v6_source_v3 import render_gtr_r35_v3
+from tools.sound_sim.s12.acoustic_identity_v015.sources.supercharger_whine_v4 import render_supercharger_whine_v4
 
 
 def _fixture(duration_s: float = 1.0, sample_rate_hz: int = 4000):
@@ -110,3 +114,40 @@ def test_search_rejects_unbounded_candidate_lists() -> None:
             {},
             "c63_w204",
         )
+
+
+def test_vehicle_metrics_use_the_stage_k_source_stem_names() -> None:
+    time_s = np.linspace(0.0, 1.0, 81)
+    trace = VehicleStateTrace(
+        time_s,
+        np.linspace(1800.0, 6200.0, time_s.size),
+        np.linspace(0.25, 0.90, time_s.size),
+        np.linspace(0.30, 0.95, time_s.size),
+        np.gradient(np.linspace(1800.0, 6200.0, time_s.size) / 60.0, time_s),
+    )
+    c63 = render_c63_w204_v3(trace, sample_rate_hz=8000)
+    gtr = render_gtr_r35_v3(trace, sample_rate_hz=8000)
+    c63_metrics = compute_stage_k_perceptual_metrics(c63, trace, 8000, vehicle_id="c63_w204")
+    gtr_metrics = compute_stage_k_perceptual_metrics(gtr, trace, 8000, vehicle_id="gtr_r35")
+    assert c63_metrics["vehicle_metrics"]["bark_upper_partial_ratio"] > 0.0
+    assert gtr_metrics["vehicle_metrics"]["turbo_a_activity"] > 0.0
+    assert gtr_metrics["vehicle_metrics"]["turbo_b_activity"] > 0.0
+    assert gtr_metrics["vehicle_metrics"]["turbo_exhaust_ratio_db"] > -100.0
+
+
+def test_hellcat_sideband_metric_is_an_rms_ratio() -> None:
+    count = 8000
+    rpm = np.full(count, 4200.0)
+    load = np.full(count, 0.85)
+    throttle = np.full(count, 0.90)
+    phase = np.cumsum(rpm) / (60.0 * count)
+    render = render_supercharger_whine_v4(rpm, load, throttle, phase, 8000, {"sideband_main_ratio": 0.12})
+    trace = VehicleStateTrace(
+        np.arange(count, dtype=np.float64) / 8000.0,
+        rpm,
+        load,
+        throttle,
+        np.zeros(count),
+    )
+    metrics = compute_stage_k_perceptual_metrics(render, trace, 8000, vehicle_id="hellcat")
+    assert 0.08 <= metrics["vehicle_metrics"]["sideband_main_ratio"] <= 0.18

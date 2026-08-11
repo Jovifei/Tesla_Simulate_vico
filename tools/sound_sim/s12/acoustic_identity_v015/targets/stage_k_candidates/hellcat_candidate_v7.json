@@ -52,6 +52,7 @@
     "source_level": "C",
     "source": "synthetic",
     "calibration": "uncalibrated",
-    "claim": "Hellcat-inspired; not OEM reproduction"
+    "claim": "Hellcat-inspired; not OEM reproduction",
+    "parent_status": "UNQUALIFIED_DIAGNOSTIC_PARENT"
   }
 }

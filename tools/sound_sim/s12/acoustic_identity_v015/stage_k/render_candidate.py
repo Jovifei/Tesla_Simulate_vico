@@ -92,15 +92,28 @@ def render_stage_k_candidate(
             ),
             smoothing_s=candidate.parameter("operating_level", "smoothing_s"),
         )
-        event_stems = {
-            "afterfire", "shift_impact", "shift_recovery_boom", "shift_torque_interruption",
-            "bov", "wastegate", "blower_bypass_release", "lfa_overrun",
-        }
-        continuous_stems = tuple(name for name in source.stems if name not in event_stems)
+        continuous_stems = _operating_trim_stems(vehicle_id, source.stems)
         if continuous_stems:
             source = apply_source_operating_trim(
                 source, trace, stem_names=continuous_stems, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ
             )
+            # ``blower`` is a diagnostic aggregate, not an additional pressure
+            # source.  Rebuild it after its primitive children are trimmed so
+            # the aggregate remains exact without double-counting energy.
+            if vehicle_id == "hellcat" and "blower" in source.stems:
+                primitive = tuple(name for name in source.stems if name.startswith("blower_") and name != "blower")
+                stems = dict(source.stems)
+                stems["blower"] = sum((stems[name] for name in primitive), np.zeros_like(stems["blower"]))
+                source = replace(source, stems=stems).validate()
+            if vehicle_id == "c63_w204" and "bark" in source.stems and "bark_primary" in source.stems:
+                # bark_primary is a diagnostic component of bark, not a second
+                # pressure contributor. Keep its decomposition synchronized
+                # with the operating trim without adding its delta to pressure.
+                gain_db = np.asarray(source.diagnostics["operating_trim_gain_db"], dtype=np.float64)
+                gain = np.power(10.0, gain_db / 20.0)[:, None]
+                stems = dict(source.stems)
+                stems["bark_primary"] = np.asarray(stems["bark_primary"], dtype=np.float64) * gain
+                source = replace(source, stems=stems).validate()
         read.update(f"operating_level.{name}" for name in operating_values)
 
     idle_overrides = candidate.section_values("idle")
@@ -214,7 +227,8 @@ def _render_source(vehicle_id: str, trace: VehicleStateTrace, overrides: Mapping
         )
         stems = {name: np.asarray(stem, dtype=np.float64) for name, stem in base.stems.items() if name != "blower"}
         stems.update({name: np.asarray(stem, dtype=np.float64) for name, stem in blower.stems.items()})
-        pressure = sum(stems.values(), np.zeros_like(base.pressure))
+        old_blower = np.asarray(base.stems.get("blower", np.zeros_like(base.pressure)), dtype=np.float64)
+        pressure = np.asarray(base.pressure, dtype=np.float64) - old_blower + stems["blower"]
         diagnostics = dict(base.diagnostics)
         diagnostics.update(blower.diagnostics)
         return SourceRender(pressure=pressure, stems=stems, diagnostics=diagnostics).validate(), set(blower_keys & set(overrides))
@@ -243,6 +257,22 @@ def _render_source(vehicle_id: str, trace: VehicleStateTrace, overrides: Mapping
     if not consumed:
         consumed.update(overrides)
     return source, consumed
+
+
+def _operating_trim_stems(vehicle_id: str, stems: Mapping[str, np.ndarray]) -> tuple[str, ...]:
+    """Return pressure-contributing continuous stems, excluding aliases/events."""
+
+    primitive_by_vehicle = {
+        "hellcat": (
+            "exhaust", "mechanical", "intake",
+            "blower_shaft", "blower_rotor_family", "blower_gear_casing",
+            "blower_sidebands",
+        ),
+        "c63_w204": ("exhaust", "bark", "mechanical"),
+        "gtr_r35": ("exhaust", "order_family", "turbo_primary", "turbo_secondary", "turbo_sidebands", "intake_duct", "mechanical"),
+        "lfa": ("exhaust", "order_family", "intake", "mechanical", "metallic"),
+    }
+    return tuple(name for name in primitive_by_vehicle.get(vehicle_id, ()) if name in stems)
 
 
 def _parameter_value(candidate: StageKCandidateProfile, qualified_name: str) -> float | None:

@@ -91,19 +91,14 @@ SOURCE_KEYS = {
     "hellcat": {
         "blower_gain_scale",
         "blower_boost_mix",
-        "lobe_family_mix",
         "upper_family_tilt_db",
         "cluster_spread_ratio",
         "sideband_main_ratio",
-        "phase_ripple_depth",
         "intake_voicing_mix",
         "boost_attack_10_90_s",
         "boost_release_90_10_s",
         "bypass_release_gain",
         "bypass_decay_90_10_s",
-        "shaft_gain_scale",
-        "gear_casing_mix",
-        "torsional_modulation_depth",
     },
     "c63_w204": {
         "bank_phase_offset_deg",
@@ -307,8 +302,8 @@ def _validate_payload(payload: Any) -> None:
     claim = provenance.get("claim")
     if provenance.get("source_level") != "C" or provenance.get("source") != "synthetic" or provenance.get("calibration") != "uncalibrated" or not isinstance(claim, str) or not claim.endswith("not OEM reproduction"):
         raise ValueError("candidate provenance must remain C/synthetic/uncalibrated/not OEM")
-    if vehicle_id == "hellcat" and provenance.get("parent_status") not in (None, "UNQUALIFIED_DIAGNOSTIC_PARENT"):
-        raise ValueError("Hellcat parent status must remain an unqualified diagnostic parent")
+    if provenance.get("parent_status") != parent["status"]:
+        raise ValueError("candidate provenance parent_status does not match Stage-K parent mapping")
 
 
 def _validate_loudness(value: Any) -> None:

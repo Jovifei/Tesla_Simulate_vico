@@ -38,6 +38,12 @@ _PARENTS = {
     "gtr_r35": ("targets/stage_j_candidates/gtr_r35_candidate_v1.json", "gtr_r35_stage_j_v1"),
     "lfa": ("targets/stage_j_candidates/lfa_candidate_v1.json", "lfa_stage_j_v1"),
 }
+_PARENT_STATUSES = {
+    "hellcat": "UNQUALIFIED_DIAGNOSTIC_PARENT",
+    "c63_w204": "STAGE_J_CANDIDATE_PARENT",
+    "gtr_r35": "STAGE_J_CANDIDATE_PARENT",
+    "lfa": "STAGE_J_CANDIDATE_PARENT",
+}
 _REFERENCES = {
     "hellcat": "reference_database/hellcat_reference_targets.json",
     "c63_w204": "reference_database/c63_w204_reference_targets.json",
@@ -93,6 +99,7 @@ def _payload(vehicle_id: str) -> dict[str, object]:
             "source": "synthetic",
             "calibration": "uncalibrated",
             "claim": "not OEM reproduction",
+            "parent_status": _PARENT_STATUSES[vehicle_id],
         },
     }
 

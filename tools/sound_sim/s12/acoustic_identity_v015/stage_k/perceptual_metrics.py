@@ -60,7 +60,7 @@ def compute_stage_k_perceptual_metrics(
         raise ValueError("render arrays must be finite")
 
     rpm, load, throttle = _audio_state(trace, pressure.shape[0], sample_rate_hz)
-    masks = _state_masks(state_masks, rpm, load, throttle)
+    masks = _state_masks(state_masks, rpm, load, throttle, sample_rate_hz)
     mono = np.mean(pressure, axis=1)
     rms_by_state = {name: _rms(mono[mask]) for name, mask in masks.items()}
     lufs_by_state = {name: _synthetic_lufs(value) for name, value in rms_by_state.items()}
@@ -157,18 +157,29 @@ def _vehicle_metrics(
     stem = lambda name: stems.get(name, np.zeros_like(pressure))
     if vehicle_id == "hellcat":
         main = _energy(stem("blower_shaft")) + _energy(stem("blower_rotor_family")) + _energy(stem("blower_upper_family"))
+        sideband = stem("blower_sidebands")
+        # Stage-K v4 defines the field in the output domain as an RMS ratio.
+        # Keep the energy-domain diagnostics elsewhere, but do not square this
+        # contract a second time when evaluating the hard gate.
+        sideband_rms = _rms(sideband)
+        main_rms = _rms(stem("blower_shaft") + stem("blower_rotor_family") + stem("blower_gear_casing"))
         return {
             "blower_exhaust_ratio_db": _energy_db_ratio(stem("blower"), stem("exhaust")),
             "blower_exhaust_ratio_acceleration_db": _masked_energy_db_ratio(stem("blower"), stem("exhaust"), masks.get("acceleration")),
             "blower_load_correlation": _state_correlation(stem("blower"), load * throttle, sample_rate_hz),
-            "sideband_main_ratio": _energy(stem("blower_sidebands")) / max(main, 1.0e-18),
+            "sideband_main_ratio": sideband_rms / max(main_rms, 1.0e-18),
             "shaft_order_error": _order_ridge_error(np.mean(stem("blower_shaft"), axis=1), rpm, (2.36,), sample_rate_hz)[0],
             "lobe_order_error": _order_ridge_error(np.mean(stem("blower_rotor_family"), axis=1), rpm, (11.8,), sample_rate_hz)[0],
             "rumble_energy": _energy(stem("exhaust_rumble")),
         }
     if vehicle_id == "c63_w204":
         bark = stem("bark")
-        upper = stem("bark_upper_partial")
+        upper = stems.get("bark_upper_partial")
+        if upper is None:
+            # v3 exposes bark_primary and the total bark event.  The residual
+            # is the named upper-partial energy and keeps the metric tied to
+            # the actual Stage-K source contract without adding an alias stem.
+            upper = bark - stem("bark_primary")
         return {
             "bark_upper_partial_ratio": _energy(upper) / max(_energy(bark), 1.0e-18),
             "roughness": _spectral_roughness(np.mean(pressure, axis=1), sample_rate_hz),
@@ -176,9 +187,11 @@ def _vehicle_metrics(
             "low_frequency_share_40_200hz": _band_share(*_spectrum(np.mean(pressure, axis=1), sample_rate_hz), 40.0, 200.0),
         }
     if vehicle_id == "gtr_r35":
-        shaft_a = stem("turbo_a_shaft")
-        shaft_b = stem("turbo_b_shaft")
-        turbo = stem("turbo")
+        shaft_a = stems.get("turbo_a_shaft", stem("turbo_primary"))
+        shaft_b = stems.get("turbo_b_shaft", stem("turbo_secondary"))
+        turbo = stems.get("turbo")
+        if turbo is None:
+            turbo = shaft_a + shaft_b + stem("turbo_sidebands") + stem("intake_duct")
         return {
             "bank_phase_offset_deg": _diagnostic_number(diagnostics, "bank_phase_offset_deg", 120.0),
             "turbo_a_activity": _rms(np.mean(shaft_a, axis=1)),
@@ -237,7 +250,13 @@ def _audio_state(trace: object, count: int, sample_rate_hz: int) -> tuple[np.nda
     return values[0], np.clip(values[1], 0.0, 1.0), np.clip(values[2], 0.0, 1.0)
 
 
-def _state_masks(provided: Mapping[str, np.ndarray] | None, rpm: np.ndarray, load: np.ndarray, throttle: np.ndarray) -> dict[str, np.ndarray]:
+def _state_masks(
+    provided: Mapping[str, np.ndarray] | None,
+    rpm: np.ndarray,
+    load: np.ndarray,
+    throttle: np.ndarray,
+    sample_rate_hz: int,
+) -> dict[str, np.ndarray]:
     if provided is not None:
         result = {}
         for name, value in provided.items():
@@ -246,7 +265,7 @@ def _state_masks(provided: Mapping[str, np.ndarray] | None, rpm: np.ndarray, loa
                 raise ValueError(f"state mask {name!r} must match rendered sample count")
             result[str(name)] = mask
         return result
-    derivative = np.gradient(rpm) if rpm.size > 1 else np.zeros_like(rpm)
+    derivative = np.gradient(rpm) * float(sample_rate_hz) if rpm.size > 1 else np.zeros_like(rpm)
     redline = max(float(np.max(rpm)), 1.0)
     return {
         "idle": (rpm <= 1400.0) & (load <= 0.30) & (throttle <= 0.30),
