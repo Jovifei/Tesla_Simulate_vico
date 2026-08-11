@@ -1252,3 +1252,8 @@ Rules:
 - Manifest 是资格状态的持久记忆：后续资格判定应读取冻结 manifest 中的 candidate/profile/render/PCM 绑定、source metrics 和 gate 结果，不应为了省内存而依赖仍驻留的 SourceRender，也不能从文件名猜测候选身份。
 - Shared attenuation preserves audible difference：同组 blower-only 或 A/B 诊断必须使用一个共同 attenuation-only 目标，且每个 gain 都不大于 0；逐文件归一化会抹平候选间真正的存在感差异，破坏人耳比较。
 - 未通过自动资格的包只能标为 `UNQUALIFIED_DIAGNOSTIC_ONLY`。即使 Jovi 可以试听和反馈，也不得使用 `WAITING_FOR_JOVI...`、正式人耳门或候选选择措辞；builder 必须默认 fail-closed，诊断发布必须通过显式开关。
+# 2026-08-11 S12 Stage J execution rules
+
+- A louder review copy is not a louder product PCM: apply the requested 1.25 linear review gain only after formal PCM metrics, use one common peak-safe gain, and record the actual applied value.
+- C63, GT-R, and LFA must use independent event/time/order excitation. Fixed tones, broadband noise, or global gain are not identity models.
+- Existing target JSON is the numeric truth when an older research brief conflicts; correct the brief and record the conflict instead of silently tuning to both.

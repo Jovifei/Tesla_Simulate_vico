@@ -1,0 +1,12 @@
+{
+  "schema_version": "s12-stage-j-reference-distance-summary-1",
+  "domain": "final_pcm",
+  "bands_hz": [[20, 250], [250, 1000], [1000, 4000], [4000, 12000]],
+  "windows_s": {"idle": [0, 8], "acceleration": [8, 26], "afterfire": [36, 46]},
+  "vehicles": {
+    "c63_w204": {"mean_improvement_ratio": 0.19677367352442018, "status": "PARTIAL / AUTOMATED_GATE_FAIL"},
+    "gtr_r35": {"mean_improvement_ratio": -2.108770240587647, "status": "PARTIAL / AUTOMATED_GATE_FAIL"},
+    "lfa": {"mean_improvement_ratio": 0.1405257122862836, "status": "PARTIAL / AUTOMATED_GATE_FAIL"}
+  },
+  "provenance": "B/R2 relative features; microphone/AGC dependent; synthetic; uncalibrated; not OEM reproduction"
+}
