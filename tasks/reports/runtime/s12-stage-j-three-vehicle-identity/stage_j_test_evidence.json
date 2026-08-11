@@ -6,7 +6,7 @@
   "stage_i_compatibility": {"passed": 108, "duration_s": 55.98},
   "realism_identity": {"passed": 67, "subtests": 78, "duration_s": 137.64},
   "full_s12_tests": {"passed": 321, "subtests": 114, "duration_s": 138.82},
-  "full_acoustic_identity_tests": {"passed": 313, "subtests": 118, "duration_s": 615.22},
+  "full_acoustic_identity_tests": {"passed": 314, "subtests": 118, "duration_s": 626.50},
   "track_p_pytest": {"passed": 21},
   "track_p_guard": {"frozen_files": 180, "frozen_symbols": 2, "status": "PASS"},
   "git_diff_check": "PASS",

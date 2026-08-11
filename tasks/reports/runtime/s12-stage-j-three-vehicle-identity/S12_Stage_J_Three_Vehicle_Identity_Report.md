@@ -39,7 +39,7 @@ Stage J 以现有三份 `reference_database/*_reference_targets.json` 的 `stock
 - Stage I 兼容回归：`108 passed / 55.98 s`。
 - Realism/identity：`67 passed, 78 subtests / 137.64 s`。
 - 完整 `tools/sound_sim/s12/tests`：`321 passed, 114 subtests / 138.82 s`。
-- 完整 `acoustic_identity_v015/tests`：`313 passed, 118 subtests / 615.22 s`。
+- 完整 `acoustic_identity_v015/tests`：`314 passed, 118 subtests / 626.50 s`。
 - Track-P pytest：`21 passed`；guard：`180 frozen files / 2 symbols`。
 - `git diff --check`：通过。
 - 三车 60 秒最终 PCM：48 kHz、stereo、PCM24、2,880,001 frames、finite、clipping 0。

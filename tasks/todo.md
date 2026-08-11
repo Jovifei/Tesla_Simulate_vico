@@ -3588,13 +3588,13 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 - [x] J4: final-PCM qualification and identity separation; fixed bands/windows measured, automatic status remains PARTIAL where 30% is unmet
 - [x] J5: louder named review package and SHA evidence; 3×60 s pairs plus 12 s diagnostics, review request +1.9382 dB, peak-safe applied gain recorded; ZIP SHA `2c2054dcdd8e96eab6cabc9724ed9a1edc7ff72e5632fcf5051ed13fbd94ac38`
 - [ ] J6: real Jovi feedback iterations (maximum v1→v2→v3)
-- [x] J7: reports, Obsidian handoff, local commits, final verification; full S12 `321 passed / 114 subtests`, full acoustic identity `313 passed / 118 subtests`
+- [x] J7: reports, Obsidian handoff, local commits, final verification; full S12 `321 passed / 114 subtests`, full acoustic identity `314 passed / 118 subtests`
 
 ## Stage J review (2026-08-11)
 
 - Worktree: `E:\Tesla_speed\worktrees\s12-stage-j-three-vehicle-identity`; branch `agent/s12-stage-j-three-vehicle-identity`; base `d8b8c24530eafc354d420c95e1ff071034e51707`.
 - Stage J focused suite: `39 passed / 27.99 s`; Stage I focused: `108 passed / 55.98 s`; realism/identity: `67 passed, 78 subtests / 137.64 s`; Track-P pytest `21 passed`, guard `180 files / 2 symbols`.
-- Full regression: `tools/sound_sim/s12/tests` = `321 passed, 114 subtests / 138.82 s`; `acoustic_identity_v015/tests` = `313 passed, 118 subtests / 615.22 s`.
+- Full regression: `tools/sound_sim/s12/tests` = `321 passed, 114 subtests / 138.82 s`; `acoustic_identity_v015/tests` = `314 passed, 118 subtests / 626.50 s`.
 - External package: `E:\Tesla_speed\review_packages\s12-stage-j-three-vehicle-identity-v1\`; state `PARTIAL / AUTOMATED_GATE_FAIL` plus `WAITING_FOR_JOVI_STAGE_J_NAMED_REVIEW`; no answer or feedback was invented.
 - Review copy requested `1.25x` (`+1.9382002601611283 dB`). C63 and GT-R pair peaks were already headroom-limited at `-1.5 dBFS`; actual applied gain is recorded as approximately `1.0x`. LFA applied approximately `1.2475x`. Formal `-16 LUFS / -1.5 dBFS` policy was not changed.
 - Reference-distance means: C63 `19.68%`, GT-R `-210.88%`, LFA `14.05%`; none reaches the 30% automatic gate, so no Profile Freeze or Human PASS claim is allowed.
