@@ -1,0 +1,67 @@
+{
+  "schema_version": "s12-stage-k-candidate-profile-1",
+  "candidate_id": "gtr_r35_stage_k_v2",
+  "vehicle_id": "gtr_r35",
+  "base_commit": "b78b6c3031269eae1a0b917ce7bbaaed2af81c76",
+  "parent_candidate_id": "gtr_r35_stage_j_v1",
+  "parent_candidate_path": "targets/stage_j_candidates/gtr_r35_candidate_v1.json",
+  "parent_candidate_sha256": "2dfaa540f4a3c5107a88670e7ea4552f973cb11cca22c974b8cd9eb1f93b7793",
+  "status": "Candidate",
+  "hypothesis": "A concurrent, slightly detuned twin-turbo shaft model with shaft-phase BPF, V6 sidebands and boost-history release will restore GT-R time structure without the Stage-J gain blow-up.",
+  "reference_target": {
+    "path": "reference_database/gtr_r35_reference_targets.json",
+    "sha256": "cd916301b57ec6ce263db352451777933966d74a04c51dcd138b6f52b9a248e8",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "canonical_trace_version": "stage-k-four-vehicle-cycle-v1",
+  "source": {
+    "pulse_width_scale": {"value": 1.0, "unit": "ratio", "range": [0.85, 1.15], "source_level": "C", "source": "synthetic", "source_scope": "v6_combustion_pressure_event_width", "verification_state": "candidate_assumption"},
+    "bank_phase_offset_deg": {"value": 120.0, "unit": "deg", "range": [108.0, 132.0], "source_level": "C", "source": "synthetic", "source_scope": "even_fire_v6_bank_phase_relationship", "verification_state": "candidate_assumption"},
+    "primary_spool_tau_s": {"value": 0.16, "unit": "s", "range": [0.12, 0.22], "source_level": "C", "source": "synthetic", "source_scope": "turbo_a_state_response", "verification_state": "candidate_assumption"},
+    "secondary_spool_tau_s": {"value": 0.30, "unit": "s", "range": [0.24, 0.40], "source_level": "C", "source": "synthetic", "source_scope": "turbo_b_state_response", "verification_state": "candidate_assumption"},
+    "boost_attack_s": {"value": 0.09, "unit": "s", "range": [0.07, 0.14], "source_level": "C", "source": "synthetic", "source_scope": "boost_state_onset", "verification_state": "candidate_assumption"},
+    "boost_release_s": {"value": 0.24, "unit": "s", "range": [0.18, 0.32], "source_level": "C", "source": "synthetic", "source_scope": "boost_history_release", "verification_state": "candidate_assumption"},
+    "turbo_whistle_mix": {"value": 0.18, "unit": "absolute_ratio", "range": [0.12, 0.24], "source_level": "C", "source": "synthetic", "source_scope": "parallel_turbo_absolute_source_mix", "verification_state": "candidate_assumption"},
+    "turbo_a_inertia_s": {"value": 0.16, "unit": "s", "range": [0.12, 0.24], "source_level": "C", "source": "synthetic", "source_scope": "turbo_a_rotor_inertia_proxy", "verification_state": "candidate_assumption"},
+    "turbo_b_inertia_s": {"value": 0.30, "unit": "s", "range": [0.24, 0.40], "source_level": "C", "source": "synthetic", "source_scope": "turbo_b_rotor_inertia_proxy", "verification_state": "candidate_assumption"},
+    "shaft_detune_ratio": {"value": 0.016, "unit": "ratio", "range": [0.008, 0.030], "source_level": "C", "source": "synthetic", "source_scope": "twin_shaft_beating", "verification_state": "candidate_assumption"},
+    "shaft_bpf_order": {"value": 6.8, "unit": "order", "range": [5.5, 8.0], "source_level": "C", "source": "synthetic", "source_scope": "synthetic_shaft_blade_pass_family", "verification_state": "candidate_assumption"},
+    "intake_duct_mix": {"value": 0.24, "unit": "ratio", "range": [0.18, 0.35], "source_level": "C", "source": "synthetic", "source_scope": "intake_duct_transfer_bank", "verification_state": "candidate_assumption"},
+    "bov_release_gain": {"value": 0.10, "unit": "ratio", "range": [0.05, 0.20], "source_level": "C", "source": "synthetic", "source_scope": "boost_history_bov_release", "verification_state": "candidate_assumption"},
+    "bov_release_s": {"value": 0.16, "unit": "s", "range": [0.08, 0.30], "source_level": "C", "source": "synthetic", "source_scope": "bov_release_decay", "verification_state": "candidate_assumption"},
+    "wastegate_gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.70, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "named_lift_release_scale", "verification_state": "candidate_assumption"}
+  },
+  "operating_level": {
+    "low_load_gain_db": {"value": 1.5, "unit": "dB", "range": [0.0, 3.0], "source_level": "C", "source": "synthetic", "source_scope": "stage_k_operating_state_balance", "verification_state": "candidate_assumption"},
+    "high_load_gain_db": {"value": -1.5, "unit": "dB", "range": [-3.0, 0.0], "source_level": "C", "source": "synthetic", "source_scope": "stage_k_operating_state_balance", "verification_state": "candidate_assumption"},
+    "blend_load_low": {"value": 0.25, "unit": "ratio", "range": [0.0, 0.5], "source_level": "C", "source": "synthetic", "source_scope": "stage_k_operating_state_balance", "verification_state": "candidate_assumption"},
+    "blend_load_high": {"value": 0.75, "unit": "ratio", "range": [0.5, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "stage_k_operating_state_balance", "verification_state": "candidate_assumption"},
+    "smoothing_s": {"value": 0.15, "unit": "s", "range": [0.05, 0.30], "source_level": "C", "source": "synthetic", "source_scope": "stage_k_operating_state_balance", "verification_state": "candidate_assumption"}
+  },
+  "idle": {
+    "variation": {"value": 0.20, "unit": "ratio", "range": [0.12, 0.28], "source_level": "C", "source": "synthetic", "source_scope": "idle_cycle_variation", "verification_state": "candidate_assumption"},
+    "jitter_ms": {"value": 2.0, "unit": "ms", "range": [0.8, 3.0], "source_level": "C", "source": "synthetic", "source_scope": "idle_phase_jitter", "verification_state": "candidate_assumption"},
+    "mechanical_texture": {"value": 0.02, "unit": "ratio", "range": [0.01, 0.05], "source_level": "C", "source": "synthetic", "source_scope": "idle_mechanical_texture", "verification_state": "candidate_assumption"}
+  },
+  "afterfire": {
+    "gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.8, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_hot_lift_cluster", "verification_state": "candidate_assumption"}
+  },
+  "shift_or_transient": {
+    "impact_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "shift_impact_scale", "verification_state": "candidate_assumption"},
+    "recovery_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "shift_recovery_scale", "verification_state": "candidate_assumption"}
+  },
+  "loudness": {"target_lufs": -16.0, "peak_limit_dbfs": -1.5, "whole_cycle_gain_only": true},
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage-c-low-frequency-body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage-c-exhaust-rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage-c-pre-ptr-eq"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage-c-frozen-ptr"}
+  },
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "calibration": "uncalibrated",
+    "claim": "not OEM reproduction",
+    "parent_status": "STAGE_J_CANDIDATE_PARENT"
+  }
+}
