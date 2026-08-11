@@ -1257,3 +1257,10 @@ Rules:
 - A louder review copy is not a louder product PCM: apply the requested 1.25 linear review gain only after formal PCM metrics, use one common peak-safe gain, and record the actual applied value.
 - C63, GT-R, and LFA must use independent event/time/order excitation. Fixed tones, broadband noise, or global gain are not identity models.
 - Existing target JSON is the numeric truth when an older research brief conflicts; correct the brief and record the conflict instead of silently tuning to both.
+
+# 2026-08-11 S12 Stage K planning rules
+
+- RPM determines order frequency, not automatic large loudness growth. Source energy must be driven by load, throttle, combustion events and mechanical state; any audition-level gain must remain a single whole-cycle, peak-safe operation.
+- When Jovi accepts a vehicle's main identity but rejects its shift or deceleration behavior, modify only the vehicle-specific transient layer. Do not rewrite a source that already has a useful listening direction.
+- Named engineering calibration packages and sealed anonymous blind packages are separate evidence products. Do not unseal or infer anonymous mappings to accelerate a named repair.
+- A social-media page being reachable does not mean its audio is available or measurable. Without a legally auditable track, record `NOT_AVAILABLE` and keep the page at R2 qualitative evidence; never fit absolute loudness or claim OEM measurement.

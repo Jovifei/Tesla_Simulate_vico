@@ -3598,3 +3598,17 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 - External package: `E:\Tesla_speed\review_packages\s12-stage-j-three-vehicle-identity-v1\`; state `PARTIAL / AUTOMATED_GATE_FAIL` plus `WAITING_FOR_JOVI_STAGE_J_NAMED_REVIEW`; no answer or feedback was invented.
 - Review copy requested `1.25x` (`+1.9382002601611283 dB`). C63 and GT-R pair peaks were already headroom-limited at `-1.5 dBFS`; actual applied gain is recorded as approximately `1.0x`. LFA applied approximately `1.2475x`. Formal `-16 LUFS / -1.5 dBFS` policy was not changed.
 - Reference-distance means: C63 `19.68%`, GT-R `-210.88%`, LFA `14.05%`; none reaches the 30% automatic gate, so no Profile Freeze or Human PASS claim is allowed.
+
+# S12 Stage K four-vehicle perceptual repair (2026-08-11)
+
+- [x] K0-Task1：冻结 Stage J `b78b6c3`、新 Stage K 分支、Jovi 具名反馈和两个视频页面的证据边界；未下载或提交原始媒体。
+- [ ] K1：建立 Stage K candidate schema、父候选 lineage、`candidate=None` Stage C bit-identical 回归和 requested/read/configured/active/inactive/unused 诊断。
+- [ ] K2：新增只依赖 load/throttle 的 operating-state trim；验证低负载略增、高负载略减、RPM 不直接控制响度、事件 stem 不被 trim。
+- [ ] K3：重建 Hellcat twin-screw whine v4/v7；修复 sideband 隐式倍率、真实 attack/release、进气/壳体传递和 boost-history bypass。
+- [ ] K4：重建 C63 bark v3；保留低频排气，降低事件驱动的高频 roughness，不使用宽带噪声或全局增益。
+- [ ] K5：重建 GT-R 并行双涡轮 v3；两套 shaft state 同时建立，BPF 由 shaft phase 驱动，保留 V6 三事件/转结构。
+- [ ] K6：新增 LFA 专属 ASG 换挡、进气重开和 V10 overrun/lift 层；替换通用深切与固定 70 Hz boom。
+- [ ] K7：建立车型专属指标、有界候选搜索、最终 PCM reference-distance 和四车具名试听包；自动失败时保持诊断状态。
+- [ ] K8：执行 focused/full/Track-P 回归，生成报告与 Stage K Obsidian handoff；收到具名反馈后最多 v1→v2→v3 窄范围迭代，禁止自行 Profile Freeze/Approved/Simulink。
+
+Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候选资格、人耳 PASS 或 Profile Freeze 结论。视频页面的可访问性不等同于音轨可测量性；若音轨不可审计，必须保持 `NOT_AVAILABLE`。
