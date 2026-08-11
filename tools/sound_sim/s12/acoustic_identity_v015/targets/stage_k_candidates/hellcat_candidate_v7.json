@@ -26,10 +26,16 @@
     "bypass_release_gain": {"value": 0.10, "unit": "ratio", "range": [0.00, 0.20], "source_level": "C", "source": "synthetic", "source_scope": "boost_history_bypass_release", "verification_state": "candidate_assumption"},
     "bypass_decay_90_10_s": {"value": 0.16, "unit": "s", "range": [0.08, 0.30], "source_level": "C", "source": "synthetic", "source_scope": "measured_90_to_10_bypass_decay", "verification_state": "candidate_assumption"}
   },
+  "operating_level": {
+    "low_load_gain_db": {"value": 1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "high_load_gain_db": {"value": -1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_low": {"value": 0.25, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_high": {"value": 0.75, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "smoothing_s": {"value": 0.15, "unit": "s", "range": [0.02, 0.5], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"}
+  },
   "idle": {},
   "afterfire": {},
   "shift_or_transient": {},
-  "operating_level": {},
   "loudness": {
     "target_lufs": -16.0,
     "peak_limit_dbfs": -1.5,

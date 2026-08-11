@@ -26,9 +26,10 @@ from ..acoustic_layers import (
 from ..contracts import SourceRender, VehicleStateTrace
 from ..render_realism_v10 import _RENDERERS, _render_stateful
 from ..sources.lexus_high_rev_v10_source_v2 import render_lfa_v2
-from ..sources.mercedes_na_v8_source_v2 import render_c63_w204_v2
-from ..sources.nissan_twin_turbo_v6_source_v2 import render_gtr_r35_v2
 from ..sources.supercharged_hemi_source import render_hellcat
+from ..sources.supercharger_whine_v4 import render_supercharger_whine_v4
+from ..sources.mercedes_na_v8_source_v3 import render_c63_w204_v3
+from ..sources.nissan_parallel_twin_turbo_v6_source_v3 import render_gtr_r35_v3
 from .candidate_profiles import (
     PARENT_MAPPING,
     SOURCE_KEYS,
@@ -36,20 +37,15 @@ from .candidate_profiles import (
     StageKCandidateProfile,
     load_stage_k_candidate,
 )
+from .lfa_transient_dynamics import apply_lfa_transient_dynamics
 from .source_level import OperatingLevelTrim, apply_source_operating_trim
 
 
 _SAMPLE_RATE_HZ = 48000
-_LEGACY_SOURCE_KEYS = {
-    "hellcat": {"blower_gain_scale", "blower_boost_mix", "boost_attack_s", "boost_release_s"},
-    "c63_w204": {"bank_phase_offset_deg", "pulse_width_scale", "bark_resonance_scale", "mechanical_texture_scale", "high_rpm_growth_scale"},
-    "gtr_r35": {"pulse_width_scale", "bank_phase_offset_deg", "primary_spool_tau_s", "secondary_spool_tau_s", "boost_attack_s", "boost_release_s", "wastegate_gain_scale", "turbo_whistle_mix"},
-    "lfa": {"pulse_width_scale", "phase_offset_deg", "order_family_mix", "intake_resonance_scale", "metallic_texture_scale", "high_rpm_growth_scale"},
-}
 _SOURCE_RENDERERS = {
     "hellcat": render_hellcat,
-    "c63_w204": render_c63_w204_v2,
-    "gtr_r35": render_gtr_r35_v2,
+    "c63_w204": render_c63_w204_v3,
+    "gtr_r35": render_gtr_r35_v3,
     "lfa": render_lfa_v2,
 }
 
@@ -82,28 +78,9 @@ def render_stage_k_candidate(
     requested = set(candidate.requested_parameters())
     read: set[str] = {f"source.{name}" for name in consumed_source}
 
-    idle_overrides = candidate.section_values("idle")
-    render = apply_idle_dynamics(source, vehicle_id, trace, _SAMPLE_RATE_HZ, overrides=idle_overrides or None)
-    read.update(f"idle.{name}" for name in idle_overrides)
-    read.update(_diagnostic_parameter_names(render.diagnostics, "idle"))
-
-    render = apply_afterfire(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
-    afterfire_scale = candidate.parameter("afterfire", "gain_scale", 1.0)
-    render = _scale_named(render, "afterfire", afterfire_scale)
-    read.update(f"afterfire.{name}" for name in candidate.section_values("afterfire"))
-
-    render = apply_low_frequency_body(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
-    render = apply_exhaust_rumble(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
-
-    shift_values = candidate.section_values("shift_or_transient")
-    # Stage-K LFA and vehicle-specific transient implementations may replace
-    # this common adapter.  The adapter only handles the two legacy named
-    # shift stems and keeps the new energy pre-PTR.
-    render = apply_shift_dynamics(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
-    render = _scale_named(render, "shift_impact", candidate.parameter("shift_or_transient", "impact_scale", 1.0))
-    render = _scale_named(render, "shift_recovery_boom", candidate.parameter("shift_or_transient", "recovery_scale", 1.0))
-    read.update(f"shift_or_transient.{name}" for name in shift_values)
-
+    # Operating trim is deliberately the first state-dependent overlay.  It
+    # sees only continuous source stems; named event stems are added later and
+    # therefore cannot be turned into a speed/RPM loudness proxy.
     operating_values = candidate.section_values("operating_level")
     if operating_values:
         trim = OperatingLevelTrim(
@@ -115,18 +92,50 @@ def render_stage_k_candidate(
             ),
             smoothing_s=candidate.parameter("operating_level", "smoothing_s"),
         )
-        event_stems = {"afterfire", "shift_impact", "shift_recovery_boom", "bov", "blower_bypass_release"}
-        continuous_stems = tuple(name for name in render.stems if name not in event_stems)
+        event_stems = {
+            "afterfire", "shift_impact", "shift_recovery_boom", "shift_torque_interruption",
+            "bov", "wastegate", "blower_bypass_release", "lfa_overrun",
+        }
+        continuous_stems = tuple(name for name in source.stems if name not in event_stems)
         if continuous_stems:
-            render = apply_source_operating_trim(render, trace, stem_names=continuous_stems, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ)
+            source = apply_source_operating_trim(
+                source, trace, stem_names=continuous_stems, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ
+            )
         read.update(f"operating_level.{name}" for name in operating_values)
+
+    idle_overrides = candidate.section_values("idle")
+    render = apply_idle_dynamics(source, vehicle_id, trace, _SAMPLE_RATE_HZ, overrides=idle_overrides or None)
+    read.update(f"idle.{name}" for name in idle_overrides)
+
+    render = apply_afterfire(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    afterfire_scale = candidate.parameter("afterfire", "gain_scale", 1.0)
+    render = _scale_named(render, "afterfire", afterfire_scale)
+    read.update(f"afterfire.{name}" for name in candidate.section_values("afterfire"))
+
+    render = apply_low_frequency_body(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    render = apply_exhaust_rumble(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
+
+    shift_values = candidate.section_values("shift_or_transient")
+    if vehicle_id == "lfa":
+        render = apply_lfa_transient_dynamics(render, trace, candidate, _SAMPLE_RATE_HZ)
+    else:
+        render = apply_shift_dynamics(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
+        render = _scale_named(render, "shift_impact", candidate.parameter("shift_or_transient", "impact_scale", 1.0))
+        render = _scale_named(render, "shift_recovery_boom", candidate.parameter("shift_or_transient", "recovery_scale", 1.0))
+    read.update(f"shift_or_transient.{name}" for name in shift_values)
 
     equalized = apply_pre_ptr_equalization(render, vehicle_id, trace, _SAMPLE_RATE_HZ)
     diagnostics = dict(equalized.diagnostics)
     read_sorted = sorted(read)
     requested_sorted = sorted(requested)
     unused = sorted(requested - read)
-    active = sorted(set(read_sorted) - set(unused))
+    neutral = {
+        name for name in read_sorted
+        if _parameter_value(candidate, name) is not None
+        and _parameter_neutral(candidate, name) is not None
+        and np.isclose(_parameter_value(candidate, name), _parameter_neutral(candidate, name))
+    }
+    active = sorted(set(read_sorted) - neutral - set(unused))
     diagnostics.update(
         {
             "stage_k_candidate_id": candidate.candidate_id,
@@ -137,7 +146,7 @@ def render_stage_k_candidate(
                 "read": read_sorted,
                 "configured": read_sorted,
                 "active": active,
-                "inactive": [],
+                "inactive": sorted(neutral),
                 "unused": unused,
             },
             "pipeline_order": (
@@ -186,10 +195,31 @@ def render_stage_k_parent(vehicle_id: str, trace: VehicleStateTrace) -> SourceRe
 
 
 def _render_source(vehicle_id: str, trace: VehicleStateTrace, overrides: Mapping[str, float]) -> tuple[SourceRender, set[str]]:
+    if vehicle_id == "hellcat":
+        base = render_hellcat(trace)
+        count = base.pressure.shape[0]
+        time_s = trace.time_s[0] + np.arange(count, dtype=np.float64) / _SAMPLE_RATE_HZ
+        rpm = np.interp(time_s, trace.time_s, trace.rpm)
+        load = np.interp(time_s, trace.time_s, trace.load)
+        throttle = np.interp(time_s, trace.time_s, trace.throttle)
+        phase = np.cumsum(rpm) / (60.0 * _SAMPLE_RATE_HZ)
+        blower_keys = {
+            "blower_gain_scale", "blower_boost_mix", "upper_family_tilt_db", "cluster_spread_ratio",
+            "sideband_main_ratio", "intake_voicing_mix", "boost_attack_10_90_s", "boost_release_90_10_s",
+            "bypass_release_gain", "bypass_decay_90_10_s",
+        }
+        blower = render_supercharger_whine_v4(
+            rpm, load, throttle, phase, _SAMPLE_RATE_HZ,
+            overrides={name: float(value) for name, value in overrides.items() if name in blower_keys},
+        )
+        stems = {name: np.asarray(stem, dtype=np.float64) for name, stem in base.stems.items() if name != "blower"}
+        stems.update({name: np.asarray(stem, dtype=np.float64) for name, stem in blower.stems.items()})
+        pressure = sum(stems.values(), np.zeros_like(base.pressure))
+        diagnostics = dict(base.diagnostics)
+        diagnostics.update(blower.diagnostics)
+        return SourceRender(pressure=pressure, stems=stems, diagnostics=diagnostics).validate(), set(blower_keys & set(overrides))
     renderer = _SOURCE_RENDERERS[vehicle_id]
-    supported = _LEGACY_SOURCE_KEYS[vehicle_id]
-    legacy = {name: float(value) for name, value in overrides.items() if name in supported}
-    source = renderer(trace, overrides=legacy)
+    source = renderer(trace, overrides=overrides)
     diagnostic = source.diagnostics
     consumed: set[str] = set()
     for key in ("candidate_parameter_usage", "override_usage"):
@@ -211,8 +241,33 @@ def _render_source(vehicle_id: str, trace: VehicleStateTrace, overrides: Mapping
                 if str(name).split(".", 1)[-1] in overrides
             )
     if not consumed:
-        consumed.update(legacy)
+        consumed.update(overrides)
     return source, consumed
+
+
+def _parameter_value(candidate: StageKCandidateProfile, qualified_name: str) -> float | None:
+    if "." not in qualified_name:
+        return None
+    section, name = qualified_name.split(".", 1)
+    if name not in candidate.payload.get(section, {}):
+        return None
+    return candidate.parameter(section, name)
+
+
+def _parameter_neutral(candidate: StageKCandidateProfile, qualified_name: str) -> float | None:
+    section, name = qualified_name.split(".", 1)
+    defaults = {
+        "afterfire.gain_scale": 1.0,
+        "shift_or_transient.impact_scale": 1.0,
+        "shift_or_transient.recovery_scale": 1.0,
+        "operating_level.low_load_gain_db": 0.0,
+        "operating_level.high_load_gain_db": 0.0,
+        "operating_level.blend_load_low": 0.25,
+        "operating_level.blend_load_high": 0.75,
+        "operating_level.smoothing_s": 0.15,
+    }
+    value = defaults.get(qualified_name)
+    return None if value is None else float(value)
 
 
 def _diagnostic_parameter_names(diagnostics: Mapping[str, object], section: str) -> set[str]:
