@@ -16,7 +16,7 @@ WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW
 ## 起点、分支与边界
 
 - Stage J 基线：`b78b6c3031269eae1a0b917ce7bbaaed2af81c76`。
-- Stage K 当前提交：`4261bbfe34b11980fcb15a0a9b01bd6d5f75c9e6`。
+- Stage K 实现提交：`4261bbfe34b11980fcb15a0a9b01bd6d5f75c9e6`；当前分支 tip（含报告/知识库提交）：`4b9818c6741c57bf1910c78900d5eae09b08ed1c`。
 - 分支：`agent/s12-stage-k-four-vehicle-perceptual-repair`。
 - 工作树：`E:\Tesla_speed\worktrees\s12-stage-k-four-vehicle-perceptual-repair`。
 - Stage J 工作树起点核验：clean，`origin/main...HEAD = 0 42`。
