@@ -3602,13 +3602,22 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 # S12 Stage K four-vehicle perceptual repair (2026-08-11)
 
 - [x] K0-Task1：冻结 Stage J `b78b6c3`、新 Stage K 分支、Jovi 具名反馈和两个视频页面的证据边界；未下载或提交原始媒体。
-- [ ] K1：建立 Stage K candidate schema、父候选 lineage、`candidate=None` Stage C bit-identical 回归和 requested/read/configured/active/inactive/unused 诊断。
-- [ ] K2：新增只依赖 load/throttle 的 operating-state trim；验证低负载略增、高负载略减、RPM 不直接控制响度、事件 stem 不被 trim。
-- [ ] K3：重建 Hellcat twin-screw whine v4/v7；修复 sideband 隐式倍率、真实 attack/release、进气/壳体传递和 boost-history bypass。
-- [ ] K4：重建 C63 bark v3；保留低频排气，降低事件驱动的高频 roughness，不使用宽带噪声或全局增益。
-- [ ] K5：重建 GT-R 并行双涡轮 v3；两套 shaft state 同时建立，BPF 由 shaft phase 驱动，保留 V6 三事件/转结构。
-- [ ] K6：新增 LFA 专属 ASG 换挡、进气重开和 V10 overrun/lift 层；替换通用深切与固定 70 Hz boom。
-- [ ] K7：建立车型专属指标、有界候选搜索、最终 PCM reference-distance 和四车具名试听包；自动失败时保持诊断状态。
-- [ ] K8：执行 focused/full/Track-P 回归，生成报告与 Stage K Obsidian handoff；收到具名反馈后最多 v1→v2→v3 窄范围迭代，禁止自行 Profile Freeze/Approved/Simulink。
+- [x] K1：建立 Stage K candidate schema、父候选 lineage、`candidate=None` Stage C bit-identical 回归和 requested/read/configured/active/inactive/unused 诊断。
+- [x] K2：新增只依赖 load/throttle 的 operating-state trim；验证低负载略增、高负载略减、RPM 不直接控制响度、事件 stem 不被 trim。
+- [x] K3：重建 Hellcat twin-screw whine v4/v7；修复 sideband 隐式倍率、真实 attack/release、进气/壳体传递和 boost-history bypass。
+- [x] K4：重建 C63 bark v3；保留低频排气，降低事件驱动的高频 roughness，不使用宽带噪声或全局增益。
+- [x] K5：重建 GT-R 并行双涡轮 v3；两套 shaft state 同时建立，BPF 由 shaft phase 驱动，保留 V6 三事件/转结构。
+- [x] K6：新增 LFA 专属 ASG 换挡、进气重开和 V10 overrun/lift 层；替换通用深切与固定 70 Hz boom。
+- [x] K7：建立车型专属指标、有界候选搜索、最终 PCM reference-distance 和四车具名试听包；自动失败时保持诊断状态。
+- [x] K8：执行 focused/分组回归/Track-P，生成报告与 Stage K Obsidian handoff；完整盲听资格和后续 v1→v2→v3 迭代仍等待 Jovi 具名反馈。
 
 Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候选资格、人耳 PASS 或 Profile Freeze 结论。视频页面的可访问性不等同于音轨可测量性；若音轨不可审计，必须保持 `NOT_AVAILABLE`。
+
+## Stage K review (2026-08-12)
+
+- Base/current：Stage J `b78b6c3031269eae1a0b917ce7bbaaed2af81c76`；Stage K `4261bbfe34b11980fcb15a0a9b01bd6d5f75c9e6`；branch `agent/s12-stage-k-four-vehicle-perceptual-repair`。
+- Focused：Stage K `84 passed / 18.10 s`；Stage J C63/GTR/LFA `8/11/9 passed`；Stage C realism `7 passed`；Track-P pytest `21 passed`。
+- Identity：58 个测试按研究/源、body/loudness、metrics、publication 分组均通过（合计 `58 passed / 78 subtests`）；整文件 Windows 进程运行曾在输出末端被中止，因此不将该一次性命令写成单次 PASS。
+- Package：四车 60 s + 场景/诊断 WAV、ZIP SHA `d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef`；状态 `PARTIAL / AUTOMATED_GATE_FAIL` + `WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW`；sealed key 未读取。
+- Reference distance：Hellcat `4.2019%`、C63 `-209.1852%`、GT-R `-64.6546%`、LFA `18.5617%` 平均改善，均未达到 30%；不得进入 Profile Freeze。
+- Remaining：真实 Jovi 具名 CSV 反馈、最多三轮窄范围调音、匿名盲听和 Profile Freeze 均未开始；禁止 Human PASS、Approved、OEM reproduction、Simulink/Runtime/Android。

@@ -1264,3 +1264,10 @@ Rules:
 - When Jovi accepts a vehicle's main identity but rejects its shift or deceleration behavior, modify only the vehicle-specific transient layer. Do not rewrite a source that already has a useful listening direction.
 - Named engineering calibration packages and sealed anonymous blind packages are separate evidence products. Do not unseal or infer anonymous mappings to accelerate a named repair.
 - A social-media page being reachable does not mean its audio is available or measurable. Without a legally auditable track, record `NOT_AVAILABLE` and keep the page at R2 qualitative evidence; never fit absolute loudness or claim OEM measurement.
+
+# 2026-08-12 S12 Stage K execution lessons
+
+- Diagnostic aliases and aggregate stems are not independent pressure contributors. Rebuild aggregates after trimming primitive continuous stems, and assert pressure equals the primitive sum exactly; otherwise a valid-looking trim can double-count blower, bark, or bank aliases.
+- Source-domain metrics are not final-PCM gates. Reopen the rendered WAV and bind its PCM24/finite/peak/clipping evidence to the package; keep pre-PTR source metrics explicitly labelled as diagnostic.
+- Long 60-second PTR/native numerical renders need isolated workers and streaming release. Do not retain four full `SourceRender` objects or treat a native worker termination as a test failure/pass without recording the actual process result.
+- `read`/`configured` is not `active`: neutral parameters and untriggered event layers must be recorded inactive; active reachability requires a deterministic event and a nonzero before/after effect.

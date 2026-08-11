@@ -1,0 +1,87 @@
+{
+  "schema_version": "s12-stage-k-obsidian-sha-receipt-1",
+  "pre_sha256_status": "NOT_CAPTURED_BEFORE_STAGE_K_WRITE; no byte-level preimage was available",
+  "post_write": [
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\00-项目概览.md",
+      "post_sha256": "f4832a2eea84f86fe26d084c620c31c2530740c618f2ad145eec8ec97ed3c36e",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\01-总体计划.md",
+      "post_sha256": "694656d032189a2594d0fa4b1b942c73bbd1e276b8d8c61726e7ea2da9a6196e",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\02-当前进度.md",
+      "post_sha256": "0ad6e2437c63bf7e965ec43ab36d1897e7159a1136b27453f4946b4eaf198f4e",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\04-工作流与知识.md",
+      "post_sha256": "e5898c3c62ee07bed98af3d653323dfd58dc2e4c2326c86107d1239401b39a67",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\index.md",
+      "post_sha256": "0a3b234e05597f787695e50c2647bb1e67fdcb5941ed75db0b8bcd5c4235053b",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\12-S12-v015-独立声源与车型复用经验.md",
+      "post_sha256": "ceebfd3920ab753b7786e8d0bdc9d3f2e80a937c13fb39526b5de825e257a9bf",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\19-S12-Stage-I-Hellcat啸叫音色与遮蔽校准.md",
+      "post_sha256": "3944615a256a3e6a631fd58ee58ef104c33ccf93aad3f7883bd0a1db5c26c99e",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\20-S12-Stage-J-C63-GTR-LFA三车型身份扩展.md",
+      "post_sha256": "45ec9f3664ba8678a3415c91769e2db82292b3c9a47c0ea8716ae556f007b581",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\01-Hellcat.md",
+      "post_sha256": "63bb17df0ee97ded0df3fd6c072e295325b5b00a7ba71d0598f04ddc96b3eaa3",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\03-C63-W204.md",
+      "post_sha256": "ebb5e040590d35aad5d9fa7368de56069490bcb06b3f6e2fe15ced1687e491e1",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\02-GT-R-R35.md",
+      "post_sha256": "0d34bfcb3993fbf9e4bc309a77a715386681aef4aa7c405a97af08c72fc522bf",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\06-LFA.md",
+      "post_sha256": "30db25aa48adf52c74b958c28ca6302d52e5c87f6270d08bfb3184a75ba79ab1",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    },
+    {
+      "path": "E:\\AI_Tools\\Obsidian\\Data\\notes-personal\\tesla\\S12-Engine-Sound-v11\\21-S12-Stage-K-四车声学修复与状态响度校准.md",
+      "post_sha256": "d6b60bcc40f204e906784c1361aedc6f28f55e2e5af650101a4457aea76468e3",
+      "yaml_frontmatter_ok": true,
+      "yaml_error": null
+    }
+  ],
+  "wikilinks_checked": 41,
+  "broken_wikilinks": [],
+  "status": "PASS"
+}

@@ -1,0 +1,136 @@
+{
+  "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "bands_hz": [
+    [
+      20,
+      250
+    ],
+    [
+      250,
+      1000
+    ],
+    [
+      1000,
+      4000
+    ],
+    [
+      4000,
+      12000
+    ]
+  ],
+  "domain": "final_pcm",
+  "provenance": "B/R2 relative band shares; microphone/AGC dependent; not absolute loudness or OEM calibration",
+  "schema_version": "s12-stage-k-reference-distance-summary-1",
+  "vehicles": {
+    "c63_w204": {
+      "automatic_gate": "FAIL",
+      "eligible_state_mean_improvement": -2.091852369451088,
+      "states": {
+        "acceleration": {
+          "availability": "eligible",
+          "improvement_ratio": -1.67141818828033,
+          "stage_j_distance": 0.08961254558260379,
+          "stage_k_distance": 0.2393925841674679
+        },
+        "afterfire": {
+          "availability": "eligible",
+          "improvement_ratio": -4.598778851558449,
+          "stage_j_distance": 0.029361842354103097,
+          "stage_k_distance": 0.16439046201494556
+        },
+        "idle": {
+          "availability": "eligible",
+          "improvement_ratio": -0.005360068514486657,
+          "stage_j_distance": 0.17502624929576843,
+          "stage_k_distance": 0.17596440198382737
+        }
+      }
+    },
+    "gtr_r35": {
+      "automatic_gate": "FAIL",
+      "eligible_state_mean_improvement": -0.6465456177216634,
+      "states": {
+        "acceleration": {
+          "availability": "eligible",
+          "improvement_ratio": -1.9921415961565383,
+          "stage_j_distance": 0.10545265755081788,
+          "stage_k_distance": 0.31552928308305306
+        },
+        "afterfire": {
+          "availability": "eligible",
+          "improvement_ratio": 0.007721863138350923,
+          "stage_j_distance": 0.33925061409048113,
+          "stage_k_distance": 0.33663096727887293
+        },
+        "idle": {
+          "availability": "eligible",
+          "improvement_ratio": 0.04478287985319726,
+          "stage_j_distance": 0.06392406385119939,
+          "stage_k_distance": 0.06106136018002302
+        }
+      }
+    },
+    "hellcat": {
+      "automatic_gate": "FAIL",
+      "eligible_state_mean_improvement": 0.04201946198919553,
+      "states": {
+        "acceleration": {
+          "availability": "eligible",
+          "improvement_ratio": -0.062001669339764524,
+          "stage_j_distance": 0.16664735431014696,
+          "stage_k_distance": 0.17697976846843128
+        },
+        "afterfire": {
+          "availability": "eligible",
+          "improvement_ratio": -0.003963621964567248,
+          "stage_j_distance": 0.20524244992715762,
+          "stage_k_distance": 0.2060559534097505
+        },
+        "idle": {
+          "availability": "eligible",
+          "improvement_ratio": 0.19202367727191838,
+          "stage_j_distance": 0.055355224929622325,
+          "stage_k_distance": 0.04472571108242208
+        }
+      }
+    },
+    "lfa": {
+      "automatic_gate": "FAIL",
+      "eligible_state_mean_improvement": 0.18561729851955447,
+      "states": {
+        "acceleration": {
+          "availability": "eligible",
+          "improvement_ratio": 0.5434526935241208,
+          "stage_j_distance": 0.13210673489137603,
+          "stage_k_distance": 0.060312973981980766
+        },
+        "afterfire": {
+          "availability": "eligible",
+          "improvement_ratio": 0.013085794080254185,
+          "stage_j_distance": 0.18988228074555819,
+          "stage_k_distance": 0.1873975203202328
+        },
+        "idle": {
+          "availability": "eligible",
+          "improvement_ratio": 0.0003134079542883794,
+          "stage_j_distance": 0.5040282059254639,
+          "stage_k_distance": 0.5038702394765412
+        }
+      }
+    }
+  },
+  "window_seconds": {
+    "acceleration": [
+      8,
+      26
+    ],
+    "afterfire": [
+      36,
+      46
+    ],
+    "idle": [
+      0,
+      8
+    ]
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "automatic_gate_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "historical_incomplete_recovery_path": "E:\\Tesla_speed\\review_packages\\_incomplete_stage_k_four_vehicle_perceptual_repair_v1_previous",
+  "named_review_status": "WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW",
+  "obsidian_sha_receipt": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair\\tasks\\reports\\runtime\\s12-stage-k-four-vehicle-repair-v1\\stage_k_obsidian_sha_receipt.json",
+  "obsidian_sha_receipt_sha256": "b2469198eb8cbae6c8e91580de37221cd3191eba5a8fbd510b5aeacec6e81b9c",
+  "obsidian_validation": "13/13 YAML frontmatter valid; 41 wikilinks checked; 0 broken",
+  "package_id": "S12_Stage_K_Named_Review_v1",
+  "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1",
+  "package_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "provenance": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "qualified_for_profile_freeze": false,
+  "report_files": {
+    "S12_Stage_K_Four_Vehicle_Perceptual_Repair_Report.md": "4c171fd688d7bb4b0ffa5fca8d6812c002dbc5c7dc321d15e006e40f9533c4c0",
+    "stage_k_jovi_input_feedback.json": "0ff477c95b8f83617db42ca9f674a29a334ecf5e7751abd5c3ee01470ead57fa",
+    "stage_k_loudness_state_balance.json": "6c65bc1c8dace9728d4ed1f74462d99cdf4414ffa0b369b306d5e05f60afbd08",
+    "stage_k_obsidian_sha_receipt.json": "4dfbffcefd3d15e5cda8c18f76b4975c6d5fc548de87d552ee28b9ff661c19c9",
+    "stage_k_parameter_reachability.json": "419c95015245a96620360a9a3d5722400f211f4f38850a2bcd68166a90ce6a3f",
+    "stage_k_perceptual_metrics.json": "be388fa63c84de85c199608ba1061b24b0a58da946f9117a33d261879386fc2b",
+    "stage_k_reference_distance.json": "14d9e761c31f32fea597c5f2049fad3a59f7c4b6d79b81dc343a53df133f72d4",
+    "stage_k_reference_distance_summary.json": "e9e12bbe073f62aea50feaf0e607ba2863937ee445a4873d7418dac1b15dd06c",
+    "stage_k_test_evidence.json": "a3975f296876c79c38a1bbdde89e8b301320e665f1258884c4aacd69d65f1733",
+    "stage_k_video_reference_evidence.json": "41a999a1786556ea86a104a06e9584c87d7c6d732b687bec9b29e8be54859be0"
+  },
+  "report_files_note": "artifact manifest intentionally excludes its own self-hash",
+  "schema_version": "s12-stage-k-artifact-manifest-1",
+  "sealed_key_read": false,
+  "sha256sums_entries": [
+    {
+      "actual_sha256": "f0f420440f9035f26519f65583e253171bf2648c77f2fbbbd23802a83d6140e5",
+      "expected_sha256": "f0f420440f9035f26519f65583e253171bf2648c77f2fbbbd23802a83d6140e5",
+      "match": true,
+      "path": "00_OPEN_ME_FIRST.md"
+    },
+    {
+      "actual_sha256": "36fafbc4d90138a15e095ea9b80cda0fe18f18abe232cc930890a3f4ea47c953",
+      "expected_sha256": "36fafbc4d90138a15e095ea9b80cda0fe18f18abe232cc930890a3f4ea47c953",
+      "match": true,
+      "path": "01_Hellcat/Baseline_60s.wav"
+    },
+    {
+      "actual_sha256": "e80778fe6c441944770516c2421b2fb978114db58aa05ed8ffda18e96ba898d5",
+      "expected_sha256": "e80778fe6c441944770516c2421b2fb978114db58aa05ed8ffda18e96ba898d5",
+      "match": true,
+      "path": "01_Hellcat/Hellcat_BlowerOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "26d1a45d6c5f1d5af9b51517b40f38563fd44a193aa2f76eed46fbc4805ca2ae",
+      "expected_sha256": "26d1a45d6c5f1d5af9b51517b40f38563fd44a193aa2f76eed46fbc4805ca2ae",
+      "match": true,
+      "path": "01_Hellcat/Hellcat_BypassOnly_Lift.wav"
+    },
+    {
+      "actual_sha256": "27b5adeda4a8106d59f0c5d8a78751902318eb907bbbfac8b06a17bb8a077d87",
+      "expected_sha256": "27b5adeda4a8106d59f0c5d8a78751902318eb907bbbfac8b06a17bb8a077d87",
+      "match": true,
+      "path": "01_Hellcat/Hellcat_ExhaustOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "6d20c56499058df028aa4d5133871b41403e2478c038e0bef1eba6e4b70c1d9f",
+      "expected_sha256": "6d20c56499058df028aa4d5133871b41403e2478c038e0bef1eba6e4b70c1d9f",
+      "match": true,
+      "path": "01_Hellcat/High_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "635e78104ad8f2f6f5bcdea285c9dd5f36bb8b0ae8b5db89f3d42c50172d1ba6",
+      "expected_sha256": "635e78104ad8f2f6f5bcdea285c9dd5f36bb8b0ae8b5db89f3d42c50172d1ba6",
+      "match": true,
+      "path": "01_Hellcat/Lift_Deceleration_12s.wav"
+    },
+    {
+      "actual_sha256": "09050d666b56f239759d406287fdf2cfb40a77524a05f87da21fdd2244915e21",
+      "expected_sha256": "09050d666b56f239759d406287fdf2cfb40a77524a05f87da21fdd2244915e21",
+      "match": true,
+      "path": "01_Hellcat/Low_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "dcc83f894dabc4699a8932510e9e16112482b2c6bb825f7a2d7591a20a2f2256",
+      "expected_sha256": "dcc83f894dabc4699a8932510e9e16112482b2c6bb825f7a2d7591a20a2f2256",
+      "match": true,
+      "path": "01_Hellcat/Shift_12s.wav"
+    },
+    {
+      "actual_sha256": "239692db2d11ca0349998dce6a8515e810000be957dff990a66ce0b871e2c345",
+      "expected_sha256": "239692db2d11ca0349998dce6a8515e810000be957dff990a66ce0b871e2c345",
+      "match": true,
+      "path": "01_Hellcat/StageK_Candidate_60s.wav"
+    },
+    {
+      "actual_sha256": "a3f7e049a03d4af67e72ccce5f953600e1e6a29282ff5bfef6310c5950a73473",
+      "expected_sha256": "a3f7e049a03d4af67e72ccce5f953600e1e6a29282ff5bfef6310c5950a73473",
+      "match": true,
+      "path": "02_C63_W204/Baseline_60s.wav"
+    },
+    {
+      "actual_sha256": "fb1f0072429a314c2863cf334b456d52fe37aa3a78227d372b2a1fc3989f5b72",
+      "expected_sha256": "fb1f0072429a314c2863cf334b456d52fe37aa3a78227d372b2a1fc3989f5b72",
+      "match": true,
+      "path": "02_C63_W204/C63_BarkOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "76cb5d751ebd89427d6a804eae9f045a8c516544d2bc48ba99e5eadabb3fcc4c",
+      "expected_sha256": "76cb5d751ebd89427d6a804eae9f045a8c516544d2bc48ba99e5eadabb3fcc4c",
+      "match": true,
+      "path": "02_C63_W204/C63_ExhaustOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "629a09d780be3d13127487cb24920868e3b96d15751468f310bb9d962ab68df0",
+      "expected_sha256": "629a09d780be3d13127487cb24920868e3b96d15751468f310bb9d962ab68df0",
+      "match": true,
+      "path": "02_C63_W204/C63_MechanicalOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "e6f4fe19046c61a1339009579a4bacc88d30884e92c24c1b48306af7abe59ded",
+      "expected_sha256": "e6f4fe19046c61a1339009579a4bacc88d30884e92c24c1b48306af7abe59ded",
+      "match": true,
+      "path": "02_C63_W204/High_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "f6f72b90c9966766229d91bb0c75e82616befeac1ef4d520718c959ab36a90a6",
+      "expected_sha256": "f6f72b90c9966766229d91bb0c75e82616befeac1ef4d520718c959ab36a90a6",
+      "match": true,
+      "path": "02_C63_W204/Lift_Deceleration_12s.wav"
+    },
+    {
+      "actual_sha256": "ea217ef8d23c3ec47d5d1c13c6800d7e311347b35b0b16aa4c0edd3e056bba39",
+      "expected_sha256": "ea217ef8d23c3ec47d5d1c13c6800d7e311347b35b0b16aa4c0edd3e056bba39",
+      "match": true,
+      "path": "02_C63_W204/Low_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "458f09ad97cf9571f3356afe1ea91c0f6351cfb32a349ea3816d452ff58a1c77",
+      "expected_sha256": "458f09ad97cf9571f3356afe1ea91c0f6351cfb32a349ea3816d452ff58a1c77",
+      "match": true,
+      "path": "02_C63_W204/Shift_12s.wav"
+    },
+    {
+      "actual_sha256": "4c5d4613b8cc9f5cc05ff108613d9233c3441d34ad5ac9507346861e36850e94",
+      "expected_sha256": "4c5d4613b8cc9f5cc05ff108613d9233c3441d34ad5ac9507346861e36850e94",
+      "match": true,
+      "path": "02_C63_W204/StageK_Candidate_60s.wav"
+    },
+    {
+      "actual_sha256": "9cc6a9f93baaf97823caceadfe8a99662098f7c9bc6f79f6dfda1562abb6aa5b",
+      "expected_sha256": "9cc6a9f93baaf97823caceadfe8a99662098f7c9bc6f79f6dfda1562abb6aa5b",
+      "match": true,
+      "path": "03_GT-R_R35/Baseline_60s.wav"
+    },
+    {
+      "actual_sha256": "fc4ebf1469b20276c8cb75b4e8a8cf39994e38b5007013a11637b88ee4b8745d",
+      "expected_sha256": "fc4ebf1469b20276c8cb75b4e8a8cf39994e38b5007013a11637b88ee4b8745d",
+      "match": true,
+      "path": "03_GT-R_R35/GTR_BOVOnly_Lift.wav"
+    },
+    {
+      "actual_sha256": "1d4cf8c9a8d5585b7dbc3e080a95945c1e59ab0a8329d17679df2ed2b84968df",
+      "expected_sha256": "1d4cf8c9a8d5585b7dbc3e080a95945c1e59ab0a8329d17679df2ed2b84968df",
+      "match": true,
+      "path": "03_GT-R_R35/GTR_ExhaustOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "5dde5e4f73b892c576f40ea325b5c2dc6fe676812a0116a9f34b9ee7d92e5eed",
+      "expected_sha256": "5dde5e4f73b892c576f40ea325b5c2dc6fe676812a0116a9f34b9ee7d92e5eed",
+      "match": true,
+      "path": "03_GT-R_R35/GTR_TwoTurboOnly_Acceleration.wav"
+    },
+    {
+      "actual_sha256": "cff5458efbe36365ddcaa80fc16f29955b6832716f0fb11d1264bcd811e537c8",
+      "expected_sha256": "cff5458efbe36365ddcaa80fc16f29955b6832716f0fb11d1264bcd811e537c8",
+      "match": true,
+      "path": "03_GT-R_R35/High_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "b14dcb11809275608357ba99684d59fef493d5b13b03876396694964542211cc",
+      "expected_sha256": "b14dcb11809275608357ba99684d59fef493d5b13b03876396694964542211cc",
+      "match": true,
+      "path": "03_GT-R_R35/Lift_Deceleration_12s.wav"
+    },
+    {
+      "actual_sha256": "9494223538d76a567fcb21c3c187ee4411b6b6d1e7bc9292098523e5ad780fdc",
+      "expected_sha256": "9494223538d76a567fcb21c3c187ee4411b6b6d1e7bc9292098523e5ad780fdc",
+      "match": true,
+      "path": "03_GT-R_R35/Low_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "03804635fe313ff2515a33f933fb54431031c5dcde29c98bb64e11a2b992fa88",
+      "expected_sha256": "03804635fe313ff2515a33f933fb54431031c5dcde29c98bb64e11a2b992fa88",
+      "match": true,
+      "path": "03_GT-R_R35/Shift_12s.wav"
+    },
+    {
+      "actual_sha256": "52ccc85e2dc8e787d030b8881df1ce270fe5f166ab26cfcbd144a656d78b40d1",
+      "expected_sha256": "52ccc85e2dc8e787d030b8881df1ce270fe5f166ab26cfcbd144a656d78b40d1",
+      "match": true,
+      "path": "03_GT-R_R35/StageK_Candidate_60s.wav"
+    },
+    {
+      "actual_sha256": "891d3d7332ae797e9e88e8da08a0738aa60226bb438830c0e58550964088847e",
+      "expected_sha256": "891d3d7332ae797e9e88e8da08a0738aa60226bb438830c0e58550964088847e",
+      "match": true,
+      "path": "04_LFA/Baseline_60s.wav"
+    },
+    {
+      "actual_sha256": "d1a83c0c02816b48a6ff13f3a3e0bda9effa03f488fcb57c4d2593ab72b17fdf",
+      "expected_sha256": "d1a83c0c02816b48a6ff13f3a3e0bda9effa03f488fcb57c4d2593ab72b17fdf",
+      "match": true,
+      "path": "04_LFA/High_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "b3eda3351df28b88249666ba2526370a11ddebf5fa1ae77c3e762d56ea6389d3",
+      "expected_sha256": "b3eda3351df28b88249666ba2526370a11ddebf5fa1ae77c3e762d56ea6389d3",
+      "match": true,
+      "path": "04_LFA/LFA_ASG_Shift.wav"
+    },
+    {
+      "actual_sha256": "209b0473a4bd07cf29cf588330afa037dadbbb87e37ead52009c841b0f2b0a35",
+      "expected_sha256": "209b0473a4bd07cf29cf588330afa037dadbbb87e37ead52009c841b0f2b0a35",
+      "match": true,
+      "path": "04_LFA/LFA_IntakeReopen_Shift.wav"
+    },
+    {
+      "actual_sha256": "6edd9930769d21b075d58bd5b3d682bfb82b784c5649b341f7960fdd622152ac",
+      "expected_sha256": "6edd9930769d21b075d58bd5b3d682bfb82b784c5649b341f7960fdd622152ac",
+      "match": true,
+      "path": "04_LFA/LFA_Overrun_Lift.wav"
+    },
+    {
+      "actual_sha256": "c7a14c663c63607d508bf50d180206bb23ee5514902d7b4dbd90e56a8ad8d9b0",
+      "expected_sha256": "c7a14c663c63607d508bf50d180206bb23ee5514902d7b4dbd90e56a8ad8d9b0",
+      "match": true,
+      "path": "04_LFA/Lift_Deceleration_12s.wav"
+    },
+    {
+      "actual_sha256": "0536a3e4e52815618d1968cf04c528a325db4d076dd38075ba4ead697aaa52c8",
+      "expected_sha256": "0536a3e4e52815618d1968cf04c528a325db4d076dd38075ba4ead697aaa52c8",
+      "match": true,
+      "path": "04_LFA/Low_Load_12s.wav"
+    },
+    {
+      "actual_sha256": "3133341374fbdf5ba6be116cc81698f1fd0e854752b5839ae030868f913395bf",
+      "expected_sha256": "3133341374fbdf5ba6be116cc81698f1fd0e854752b5839ae030868f913395bf",
+      "match": true,
+      "path": "04_LFA/Shift_12s.wav"
+    },
+    {
+      "actual_sha256": "629b3279bc304aead52a6413390ef116889a059dec927b434e34359a69bcde7a",
+      "expected_sha256": "629b3279bc304aead52a6413390ef116889a059dec927b434e34359a69bcde7a",
+      "match": true,
+      "path": "04_LFA/StageK_Candidate_60s.wav"
+    },
+    {
+      "actual_sha256": "c191bd68bc54fa1b3933a6bc7875002b619c70ec3cf8a768671ebe2298180780",
+      "expected_sha256": "c191bd68bc54fa1b3933a6bc7875002b619c70ec3cf8a768671ebe2298180780",
+      "match": true,
+      "path": "05_Metrics/c63_w204_order_map.png"
+    },
+    {
+      "actual_sha256": "7e1b854aa4374b3dfa6d259d895b12280164cd68e35b8d1d6d4a82c6b9ab87ea",
+      "expected_sha256": "7e1b854aa4374b3dfa6d259d895b12280164cd68e35b8d1d6d4a82c6b9ab87ea",
+      "match": true,
+      "path": "05_Metrics/c63_w204_spectrogram.png"
+    },
+    {
+      "actual_sha256": "b592a4cf5ea3ae14422279839780efa761c76b7035dc65c8bf7f126db6dd8d51",
+      "expected_sha256": "b592a4cf5ea3ae14422279839780efa761c76b7035dc65c8bf7f126db6dd8d51",
+      "match": true,
+      "path": "05_Metrics/c63_w204_stage_k_metrics.json"
+    },
+    {
+      "actual_sha256": "6dc3619ec3bbe2960bdd408f077413c117561036e84f5354d86d0a3e859dbfbd",
+      "expected_sha256": "6dc3619ec3bbe2960bdd408f077413c117561036e84f5354d86d0a3e859dbfbd",
+      "match": true,
+      "path": "05_Metrics/gtr_r35_order_map.png"
+    },
+    {
+      "actual_sha256": "aa7247e244a9a07e42a21a43b31dff9d4cc6ae6cd5ee9e3017d0581f5ce527ec",
+      "expected_sha256": "aa7247e244a9a07e42a21a43b31dff9d4cc6ae6cd5ee9e3017d0581f5ce527ec",
+      "match": true,
+      "path": "05_Metrics/gtr_r35_spectrogram.png"
+    },
+    {
+      "actual_sha256": "a9bc81bccf5373440831b72dfc6328f6ae5059b08ffb8a3fb952ee5de425e523",
+      "expected_sha256": "a9bc81bccf5373440831b72dfc6328f6ae5059b08ffb8a3fb952ee5de425e523",
+      "match": true,
+      "path": "05_Metrics/gtr_r35_stage_k_metrics.json"
+    },
+    {
+      "actual_sha256": "ba3663177ff08582448d3dd201d2504437ce46ae7ef8eaecefc048e348f6742a",
+      "expected_sha256": "ba3663177ff08582448d3dd201d2504437ce46ae7ef8eaecefc048e348f6742a",
+      "match": true,
+      "path": "05_Metrics/hellcat_order_map.png"
+    },
+    {
+      "actual_sha256": "16ec314568b3fb1a121e94b19521950ba8092d806f39f1a91b0778e5935ef20c",
+      "expected_sha256": "16ec314568b3fb1a121e94b19521950ba8092d806f39f1a91b0778e5935ef20c",
+      "match": true,
+      "path": "05_Metrics/hellcat_spectrogram.png"
+    },
+    {
+      "actual_sha256": "bfada855ea165c5fbcc78d9af5b4e701168378e233d3f5c06454052f8a7ff4bb",
+      "expected_sha256": "bfada855ea165c5fbcc78d9af5b4e701168378e233d3f5c06454052f8a7ff4bb",
+      "match": true,
+      "path": "05_Metrics/hellcat_stage_k_metrics.json"
+    },
+    {
+      "actual_sha256": "91d0233494a7e721e574b1e36693f88de85c56f41206b7499d7d00a7c3b455ae",
+      "expected_sha256": "91d0233494a7e721e574b1e36693f88de85c56f41206b7499d7d00a7c3b455ae",
+      "match": true,
+      "path": "05_Metrics/lfa_order_map.png"
+    },
+    {
+      "actual_sha256": "cec3285c92ea4cbf633629db270c8eab289f04998e355d61bec6967c0624a9f3",
+      "expected_sha256": "cec3285c92ea4cbf633629db270c8eab289f04998e355d61bec6967c0624a9f3",
+      "match": true,
+      "path": "05_Metrics/lfa_spectrogram.png"
+    },
+    {
+      "actual_sha256": "c3fee94e9d5c375c2d667e3edbb7d68f310ea081510b4439178978ce8a16e407",
+      "expected_sha256": "c3fee94e9d5c375c2d667e3edbb7d68f310ea081510b4439178978ce8a16e407",
+      "match": true,
+      "path": "05_Metrics/lfa_stage_k_metrics.json"
+    },
+    {
+      "actual_sha256": "de55eb154e05530f2905aa0cfc5c247ee7d6f81158119cb2a8fe2535e60f374e",
+      "expected_sha256": "de55eb154e05530f2905aa0cfc5c247ee7d6f81158119cb2a8fe2535e60f374e",
+      "match": true,
+      "path": "06_Feedback/Jovi_Stage_K_Named_Feedback.csv"
+    },
+    {
+      "actual_sha256": "8a3831bc9fbd71c3a56d7fe85520683fba9012c64eef7b66c5d7789c7dac1c79",
+      "expected_sha256": "8a3831bc9fbd71c3a56d7fe85520683fba9012c64eef7b66c5d7789c7dac1c79",
+      "match": true,
+      "path": "artifact_manifest.json"
+    }
+  ],
+  "sha256sums_mismatch": [],
+  "sha256sums_path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\SHA256SUMS.txt",
+  "zip_path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\S12_Stage_K_Named_Review.zip",
+  "zip_sha256": "d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef"
+}
