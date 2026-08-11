@@ -1,7 +1,7 @@
 {
   "schema_version": "s12-stage-j-test-evidence-1",
   "base_commit": "d8b8c24530eafc354d420c95e1ff071034e51707",
-  "current_commit": "44dfaa6f3b8cdffa86db4d55ff7775f79a5f0b15",
+  "current_commit": "4351e30257bac1699798749b5f9a7077c5699c7e",
   "stage_j_focused": {"passed": 39, "duration_s": 27.99},
   "stage_i_compatibility": {"passed": 108, "duration_s": 55.98},
   "realism_identity": {"passed": 67, "subtests": 78, "duration_s": 137.64},
