@@ -18,7 +18,7 @@
     "automatic_gate_status": "PARTIAL / AUTOMATED_GATE_FAIL",
     "named_review_status": "WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW",
     "sealed_key_read": false,
-    "provenance": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+    "provenance": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction"
   },
   "frozen_artifacts": [
     {
