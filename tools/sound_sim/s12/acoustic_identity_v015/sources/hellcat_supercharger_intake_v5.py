@@ -9,6 +9,7 @@ does not put supercharger orders into the exhaust path.
 from __future__ import annotations
 
 from collections.abc import Mapping
+import hashlib
 
 import numpy as np
 
@@ -79,8 +80,12 @@ def render_hellcat_supercharger_intake_v5(
         0.78 * np.sin(2.0 * np.pi * gear_phase)
         + 0.22 * np.sin(2.0 * np.pi * (1.5 * gear_phase + 0.31))
     )
+    # Keep the mechanically radiated family calibrated to the common boost
+    # envelope, not to the realised aero waveform.  Otherwise changing an aero
+    # order/cluster silently changes the gear path through RMS normalisation.
+    ideal_carrier_rms = _rms(source_envelope) / np.sqrt(2.0)
     gear_raw_mono = _scale_to_rms(
-        gear_shape, params["gear_to_aero_ratio"] * _rms(aero_raw_mono)
+        gear_shape, params["gear_to_aero_ratio"] * ideal_carrier_rms
     )
 
     aero_raw = _stereo(aero_raw_mono, 0.91)
@@ -149,12 +154,15 @@ def render_hellcat_supercharger_intake_v5(
         "boost_state_peak": float(np.max(boost_state)) if count else 0.0,
         "boost_attack_requested_10_90_s": params["boost_attack_10_90_s"],
         "boost_release_requested_90_10_s": params["boost_release_90_10_s"],
-        "boost_attack_measured_10_90_s": _measure_smoother_time(
-            params["boost_attack_10_90_s"], sample_rate_hz, rising=True
+        "boost_attack_measured_10_90_s": _measure_current_trace_transition(
+            boost_target, boost_state, sample_rate_hz, rising=True,
         ),
-        "boost_release_measured_90_10_s": _measure_smoother_time(
-            params["boost_release_90_10_s"], sample_rate_hz, rising=False
+        "boost_release_measured_90_10_s": _measure_current_trace_transition(
+            boost_target, boost_state, sample_rate_hz, rising=False,
         ),
+        "boost_timing_measurement_source": "current_trace_boost_state",
+        "boost_state_sha256": _array_sha256(boost_state),
+        "source_envelope_sha256": _array_sha256(source_envelope),
         "bypass_decay_requested_90_10_s": params["bypass_decay_90_10_s"],
         "bypass_decay_measured_90_10_s": bypass_decay_measured,
         "bypass_event_count": int(bypass_events),
@@ -297,29 +305,49 @@ def _render_bypass_release(
     return result, events, measured
 
 
-def _measure_smoother_time(configured_s: float, sample_rate_hz: int, *, rising: bool) -> float:
-    lead = max(4, int(0.04 * sample_rate_hz))
-    tail = max(8, int(2.5 * configured_s * sample_rate_hz))
-    target = np.zeros(lead + tail, dtype=np.float64)
-    if rising:
-        target[lead:] = 1.0
-        state = _asymmetric_smoother(target, configured_s, configured_s, sample_rate_hz)
-        local = state[lead:]
-        first = np.flatnonzero(local >= 0.10)
-        second = np.flatnonzero(local >= 0.90)
-    else:
-        target[:lead] = 1.0
-        state = np.ones_like(target)
-        tau = configured_s / _LN9
-        alpha = 1.0 - np.exp(-1.0 / max(tau * sample_rate_hz, 1.0))
-        for index in range(lead, target.size):
-            state[index] = state[index - 1] + alpha * (target[index] - state[index - 1])
-        local = state[lead:]
-        first = np.flatnonzero(local <= 0.90)
-        second = np.flatnonzero(local <= 0.10)
-    if not first.size or not second.size:
+def _measure_current_trace_transition(
+    target: np.ndarray,
+    state: np.ndarray,
+    sample_rate_hz: int,
+    *,
+    rising: bool,
+) -> float:
+    """Measure 10-90/90-10 from the actual state generated for this trace."""
+    target = np.asarray(target, dtype=np.float64)
+    state = np.asarray(state, dtype=np.float64)
+    if target.size < 2:
         return 0.0
-    return float((second[0] - first[0]) / sample_rate_hz)
+    if rising:
+        onsets = np.concatenate((np.array([0], dtype=np.int64), np.flatnonzero(np.diff(target) > 1e-8) + 1))
+        for onset in onsets:
+            start = float(state[onset - 1]) if onset else 0.0
+            finish = float(target[onset])
+            span = finish - start
+            if span <= 1e-8:
+                continue
+            local = state[onset:]
+            at_10 = np.flatnonzero(local >= start + 0.10 * span)
+            at_90 = np.flatnonzero(local >= start + 0.90 * span)
+            if at_10.size and at_90.size:
+                return float((at_90[0] - at_10[0]) / sample_rate_hz)
+    else:
+        onsets = np.flatnonzero(np.diff(target) < -1e-8) + 1
+        for onset in onsets:
+            start = float(state[onset - 1])
+            finish = float(target[onset])
+            span = start - finish
+            if span <= 1e-8:
+                continue
+            local = state[onset:]
+            at_90 = np.flatnonzero(local <= finish + 0.90 * span)
+            at_10 = np.flatnonzero(local <= finish + 0.10 * span)
+            if at_90.size and at_10.size:
+                return float((at_10[0] - at_90[0]) / sample_rate_hz)
+    return 0.0
+
+
+def _array_sha256(value: np.ndarray) -> str:
+    return hashlib.sha256(np.asarray(value, dtype="<f8").tobytes(order="C")).hexdigest()
 
 
 def _measure_decay_envelope(envelope: np.ndarray, sample_rate_hz: int) -> float:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -29,6 +30,21 @@ _DEFAULTS = {
     for name, record in _CANDIDATE.payload["supercharger_intake"].items()
 }
 _CONTRIBUTORS = ("sc_intake_radiated", "sc_casing_radiated", "sc_bypass_release")
+
+_PERTURBATIONS = {
+    "aero_family_order_ratio": 6.2,
+    "aero_harmonic_mix": 0.36,
+    "aero_cluster_spread_ratio": 0.028,
+    "gear_family_order_ratio": 15.0,
+    "gear_to_aero_ratio": 0.18,
+    "torque_ripple_to_gear_depth": 0.17,
+    "intake_transfer_mix": 0.50,
+    "casing_transfer_mix": 0.22,
+    "boost_attack_10_90_s": 0.13,
+    "boost_release_90_10_s": 0.38,
+    "bypass_release_gain": 0.17,
+    "bypass_decay_90_10_s": 0.28,
+}
 
 
 def _trace(*, seconds: float = 1.1, lifting: bool = True) -> VehicleStateTrace:
@@ -59,6 +75,44 @@ def _render(overrides: dict[str, float] | None = None, *, trace: VehicleStateTra
 
 def _rms(value: np.ndarray) -> float:
     return float(np.sqrt(np.mean(np.square(np.asarray(value, dtype=np.float64)))))
+
+
+def _sha256(value: np.ndarray) -> str:
+    return hashlib.sha256(np.asarray(value, dtype="<f8").tobytes(order="C")).hexdigest()
+
+
+def _expected_boost_state(trace: VehicleStateTrace, attack_s: float, release_s: float) -> np.ndarray:
+    target = np.power(trace.load, 1.08) * np.power(trace.throttle, 1.04)
+    state = np.zeros_like(target)
+    for index in range(1, target.size):
+        configured = attack_s if target[index] >= state[index - 1] else release_s
+        tau = configured / np.log(9.0)
+        alpha = 1.0 - np.exp(-1.0 / max(tau * _SR, 1.0))
+        state[index] = state[index - 1] + alpha * (target[index] - state[index - 1])
+    return state
+
+
+def _steady_trace(rpm: float, load: float, *, seconds: float = 2.5) -> VehicleStateTrace:
+    count = int(seconds * _SR) + 1
+    time_s = np.arange(count, dtype=np.float64) / _SR
+    return VehicleStateTrace(
+        time_s,
+        np.full(count, rpm),
+        np.full(count, load),
+        np.full(count, load),
+        np.zeros(count),
+    ).validate()
+
+
+def _fft_ridge_hz(value: np.ndarray, expected_hz: float, *, span: float = 0.18) -> float:
+    mono = np.mean(np.asarray(value, dtype=np.float64), axis=1)
+    mono = mono[len(mono) // 2 :]
+    spectrum = np.abs(np.fft.rfft(mono * np.hanning(mono.size)))
+    frequencies = np.fft.rfftfreq(mono.size, 1.0 / _SR)
+    mask = (frequencies >= expected_hz * (1.0 - span)) & (frequencies <= expected_hz * (1.0 + span))
+    assert np.any(mask)
+    candidates = np.flatnonzero(mask)
+    return float(frequencies[candidates[int(np.argmax(spectrum[candidates]))]])
 
 
 def test_shaft_phase_is_exact_236_engine_phase_without_6200_clamp() -> None:
@@ -129,6 +183,31 @@ def test_rpm_moves_ridges_while_load_changes_amplitude_not_family_ratio() -> Non
     assert _rms(high_rpm.stems["sc_intake_radiated"]) > _rms(low_load.stems["sc_intake_radiated"])
 
 
+def test_actual_source_waveforms_move_with_orders_and_not_with_load() -> None:
+    rpm = 2_400.0
+    baseline, _ = _render(trace=_steady_trace(rpm, 0.88))
+    low_load, _ = _render(trace=_steady_trace(rpm, 0.32))
+    moved_aero, _ = _render({"aero_family_order_ratio": 6.2}, trace=_steady_trace(rpm, 0.88))
+    moved_gear, _ = _render({"gear_family_order_ratio": 15.0}, trace=_steady_trace(rpm, 0.88))
+
+    shaft_hz = rpm * 2.36 / 60.0
+    aero_expected = shaft_hz * _DEFAULTS["aero_family_order_ratio"]
+    gear_expected = shaft_hz * _DEFAULTS["gear_family_order_ratio"]
+    aero_ridge = _fft_ridge_hz(baseline.stems["sc_aero_raw"], aero_expected)
+    aero_low_load_ridge = _fft_ridge_hz(low_load.stems["sc_aero_raw"], aero_expected)
+    aero_moved_ridge = _fft_ridge_hz(moved_aero.stems["sc_aero_raw"], shaft_hz * 6.2)
+    gear_ridge = _fft_ridge_hz(baseline.stems["sc_gear_raw"], gear_expected)
+    gear_moved_ridge = _fft_ridge_hz(moved_gear.stems["sc_gear_raw"], shaft_hz * 15.0)
+
+    bin_hz = _SR / (baseline.stems["sc_aero_raw"].shape[0] // 2)
+    assert aero_ridge == pytest.approx(aero_expected, abs=2.0 * bin_hz)
+    assert gear_ridge == pytest.approx(gear_expected, abs=2.0 * bin_hz)
+    assert aero_low_load_ridge == pytest.approx(aero_ridge, abs=bin_hz)
+    assert aero_moved_ridge / aero_ridge == pytest.approx(6.2 / 5.0, rel=0.01)
+    assert gear_moved_ridge / gear_ridge == pytest.approx(15.0 / 10.0, rel=0.01)
+    assert _rms(baseline.stems["sc_aero_raw"]) > 2.0 * _rms(low_load.stems["sc_aero_raw"])
+
+
 def test_bypass_requires_boost_history_and_true_throttle_close() -> None:
     no_history = _trace(seconds=0.6, lifting=False)
     no_history = VehicleStateTrace(
@@ -176,6 +255,31 @@ def test_attack_release_and_bypass_diagnostics_are_measured_time_contracts() -> 
     assert changed.diagnostics["bypass_decay_measured_90_10_s"] > diagnostics["bypass_decay_measured_90_10_s"]
 
 
+def test_attack_release_measurements_and_hashes_come_from_current_trace_state() -> None:
+    trace = _trace()
+    baseline, _ = _render(trace=trace)
+    diagnostics = baseline.diagnostics
+    expected_state = _expected_boost_state(
+        trace, _DEFAULTS["boost_attack_10_90_s"], _DEFAULTS["boost_release_90_10_s"],
+    )
+    shaft_speed = 2.36 * trace.rpm
+    expected_envelope = expected_state * (
+        0.72 + 0.28 * np.clip((shaft_speed - 1_800.0) / 12_000.0, 0.0, 1.0)
+    )
+    assert diagnostics["boost_timing_measurement_source"] == "current_trace_boost_state"
+    assert diagnostics["boost_state_sha256"] == _sha256(expected_state)
+    assert diagnostics["source_envelope_sha256"] == _sha256(expected_envelope)
+    assert diagnostics["boost_attack_measured_10_90_s"] == pytest.approx(
+        _DEFAULTS["boost_attack_10_90_s"], abs=4.0 / _SR,
+    )
+    assert diagnostics["boost_release_measured_90_10_s"] == pytest.approx(
+        _DEFAULTS["boost_release_90_10_s"], abs=4.0 / _SR,
+    )
+    changed, _ = _render({"boost_attack_10_90_s": 0.13, "boost_release_90_10_s": 0.38})
+    assert changed.diagnostics["boost_state_sha256"] != diagnostics["boost_state_sha256"]
+    assert changed.diagnostics["source_envelope_sha256"] != diagnostics["source_envelope_sha256"]
+
+
 @pytest.mark.parametrize(
     ("name", "changed"),
     (
@@ -199,6 +303,70 @@ def test_each_public_parameter_is_reachable_and_usage_is_measured(name: str, cha
     assert set(usage["active"]).isdisjoint(usage["inactive"])
     assert usage["unused"] == []
     assert name in usage["active"]
+
+
+@pytest.mark.parametrize(
+    ("name", "target_stems", "unchanged_stems"),
+    (
+        ("aero_family_order_ratio", ("sc_aero_raw", "sc_intake_radiated"), ("sc_gear_raw", "sc_casing_radiated", "sc_bypass_release")),
+        ("aero_harmonic_mix", ("sc_aero_raw", "sc_intake_radiated"), ("sc_gear_raw", "sc_casing_radiated", "sc_bypass_release")),
+        ("aero_cluster_spread_ratio", ("sc_aero_raw", "sc_intake_radiated"), ("sc_gear_raw", "sc_casing_radiated", "sc_bypass_release")),
+        ("intake_transfer_mix", ("sc_intake_radiated",), ("sc_aero_raw", "sc_gear_raw", "sc_casing_radiated", "sc_bypass_release")),
+        ("gear_family_order_ratio", ("sc_gear_raw", "sc_casing_radiated"), ("sc_aero_raw", "sc_intake_radiated", "sc_bypass_release")),
+        ("gear_to_aero_ratio", ("sc_gear_raw", "sc_casing_radiated"), ("sc_aero_raw", "sc_intake_radiated", "sc_bypass_release")),
+        ("torque_ripple_to_gear_depth", ("sc_gear_raw", "sc_casing_radiated"), ("sc_aero_raw", "sc_intake_radiated", "sc_bypass_release")),
+        ("casing_transfer_mix", ("sc_casing_radiated",), ("sc_aero_raw", "sc_intake_radiated", "sc_gear_raw", "sc_bypass_release")),
+        ("bypass_release_gain", ("sc_bypass_release",), ("sc_aero_raw", "sc_intake_radiated", "sc_gear_raw", "sc_casing_radiated")),
+        ("bypass_decay_90_10_s", ("sc_bypass_release",), ("sc_aero_raw", "sc_intake_radiated", "sc_gear_raw", "sc_casing_radiated")),
+    ),
+)
+def test_source_family_parameters_change_only_their_target_path(
+    name: str, target_stems: tuple[str, ...], unchanged_stems: tuple[str, ...],
+) -> None:
+    baseline, _ = _render()
+    perturbed, _ = _render({name: _PERTURBATIONS[name]})
+    for stem in target_stems:
+        assert not np.array_equal(perturbed.stems[stem], baseline.stems[stem]), (name, stem)
+    for stem in unchanged_stems:
+        np.testing.assert_array_equal(perturbed.stems[stem], baseline.stems[stem], err_msg=f"{name} leaked into {stem}")
+
+
+@pytest.mark.parametrize("name", ("boost_attack_10_90_s", "boost_release_90_10_s"))
+def test_boost_time_parameter_reaches_actual_state_and_only_continuous_sc_paths(name: str) -> None:
+    baseline, _ = _render()
+    perturbed, _ = _render({name: _PERTURBATIONS[name]})
+    assert perturbed.diagnostics["boost_state_sha256"] != baseline.diagnostics["boost_state_sha256"]
+    for stem in ("sc_aero_raw", "sc_intake_radiated", "sc_gear_raw", "sc_casing_radiated"):
+        assert not np.array_equal(perturbed.stems[stem], baseline.stems[stem]), (name, stem)
+
+
+@pytest.mark.parametrize("name,changed", tuple(_PERTURBATIONS.items()))
+def test_stage_l_supercharger_perturbations_leave_l2_hemi_and_exhaust_bytes_unchanged(
+    name: str, changed: float, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
+
+    trace = _trace(seconds=0.35, lifting=False)
+    observed = []
+    original = module.render_crossplane_combustion_l2_with_clock
+
+    def observe(*args, **kwargs):
+        rendered = original(*args, **kwargs)
+        observed.append(rendered)
+        return rendered
+
+    monkeypatch.setattr(module, "render_crossplane_combustion_l2_with_clock", observe)
+    render_stage_l_candidate(trace, _CANDIDATE)
+    render_stage_l_candidate(
+        trace, _CANDIDATE.with_parameter("supercharger_intake", name, changed),
+    )
+    assert len(observed) == 2
+    baseline, repeated = observed
+    for stem in (
+        "hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body",
+        "hemi_structure_shock", "hemi_mechanical_torque_ripple",
+    ):
+        np.testing.assert_array_equal(repeated.stems[stem], baseline.stems[stem], err_msg=f"{name} altered L2 {stem}")
 
 
 def test_zero_transfer_and_untriggered_bypass_are_reported_inactive() -> None:
