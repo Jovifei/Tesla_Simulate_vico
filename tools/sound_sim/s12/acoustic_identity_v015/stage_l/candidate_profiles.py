@@ -54,6 +54,11 @@ PARAMETER_KEYS = {
 }
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _REPO_ROOT = Path(__file__).resolve().parents[5]
+_L0_RECEIPT_ROOT = _REPO_ROOT / "tasks" / "reports" / "runtime" / "s12-stage-l-hellcat-calibration-v1"
+_L0_EVIDENCE_RECEIPT_PATH = _L0_RECEIPT_ROOT / "stage_l_stage_k_evidence_receipt.json"
+_L0_FEEDBACK_RECEIPT_PATH = _L0_RECEIPT_ROOT / "stage_l_jovi_feedback_intake.json"
+_L0_EVIDENCE_RECEIPT_SHA256 = "963cbb02afe3cc67deb49f31c2bb5fe5b5a9667e9d02916d8690d004f1519cec"
+_L0_FEEDBACK_RECEIPT_SHA256 = "0f8e55cd4020d43e23b773d3844057444fda8fab5efa4b0b779e892fc976ca70"
 _FEEDBACK_PATH = "tasks/reports/runtime/s12-stage-l-hellcat-calibration-v1/stage_l_jovi_feedback_intake.json"
 _FEEDBACK_KEYS = {
     "stage_k_package_sha256", "formal_template_sha256", "formal_template_status",
@@ -75,6 +80,15 @@ _OFFICIAL_FACT_KEYS = {
     "engine_displacement_l", "engine_configuration", "supercharger_type",
     "supercharger_drive_ratio", "published_max_supercharger_rpm",
     "published_max_boost_psi", "provenance_note",
+}
+_EXPECTED_OFFICIAL_FACTS = {
+    "engine_displacement_l": 6.2,
+    "engine_configuration": "90-degree V8",
+    "supercharger_type": "twin-screw",
+    "supercharger_drive_ratio": 2.36,
+    "published_max_supercharger_rpm": 14600,
+    "published_max_boost_psi": 11.6,
+    "provenance_note": "Hardware context only; no rotor pocket count, timing gear tooth count, SPL, or synthetic timbre amplitude is asserted as official.",
 }
 
 
@@ -131,12 +145,10 @@ def load_stage_l_candidate(path: str | Path) -> StageLCandidateProfile:
         raise ValueError("parent candidate SHA-256 does not match Stage-L lineage")
     if _sha256(reference) != REFERENCE_TARGET_SHA256:
         raise ValueError("reference target SHA-256 does not match Stage-L candidate")
-    feedback_path = (_REPO_ROOT / payload["feedback_receipt"]["named_text_feedback_path"]).resolve()
-    try:
-        feedback_path.relative_to(_REPO_ROOT)
-    except ValueError as exc:
-        raise ValueError("named text feedback path escapes repository") from exc
-    if _sha256(feedback_path) != _EXPECTED_FEEDBACK["named_text_feedback_sha256"]:
+    l0_feedback = _load_l0_feedback_bindings()
+    if dict(payload["feedback_receipt"]) != l0_feedback:
+        raise ValueError("candidate feedback_receipt does not match validated repository L0 receipts")
+    if _sha256(_L0_FEEDBACK_RECEIPT_PATH) != l0_feedback["named_text_feedback_sha256"]:
         raise ValueError("named text feedback SHA-256 does not match Stage-L receipt")
     return StageLCandidateProfile(payload, candidate_path)
 
@@ -235,8 +247,105 @@ def _validate_provenance(value: Any) -> None:
     facts = value["official_facts"]
     if not isinstance(facts, Mapping) or set(facts) != _OFFICIAL_FACT_KEYS:
         raise ValueError("provenance official_facts keys mismatch")
-    if facts["supercharger_drive_ratio"] != 2.36 or facts["published_max_supercharger_rpm"] != 14600 or facts["engine_configuration"] != "90-degree V8":
+    if dict(facts) != _EXPECTED_OFFICIAL_FACTS:
         raise ValueError("provenance official_facts values mismatch")
+
+
+def _load_l0_feedback_bindings() -> dict[str, object]:
+    """Validate frozen repository L0 receipts and return the candidate binding."""
+    evidence = _load_l0_receipt(
+        _L0_EVIDENCE_RECEIPT_PATH, _L0_EVIDENCE_RECEIPT_SHA256, "Stage-K evidence",
+    )
+    feedback = _load_l0_receipt(
+        _L0_FEEDBACK_RECEIPT_PATH, _L0_FEEDBACK_RECEIPT_SHA256, "named feedback",
+    )
+    if evidence.get("schema_version") != "s12-stage-l-stage-k-evidence-receipt-1" or evidence.get("receipt_status") != "FROZEN":
+        raise ValueError("L0 Stage-K evidence receipt status/schema mismatch")
+    bootstrap = evidence.get("stage_l_bootstrap")
+    package = evidence.get("stage_k_package")
+    if not isinstance(bootstrap, Mapping) or bootstrap.get("stage_k_pre_bootstrap_head") != BASE_COMMIT:
+        raise ValueError("L0 Stage-K evidence baseline mismatch")
+    expected_package = {
+        "package_id": "S12_Stage_K_Named_Review_v1",
+        "package_root": r"E:\Tesla_speed\review_packages\s12-stage-k-four-vehicle-perceptual-repair-v1",
+        "automatic_gate_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+        "named_review_status": "WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW",
+        "sealed_key_read": False,
+        "provenance": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+    }
+    if package != expected_package:
+        raise ValueError("L0 Stage-K package receipt values mismatch")
+    artifacts = evidence.get("frozen_artifacts")
+    if not isinstance(artifacts, list):
+        raise ValueError("L0 Stage-K frozen artifacts are missing")
+    by_name = {item.get("name"): item for item in artifacts if isinstance(item, Mapping)}
+    candidate_artifact = by_name.get("hellcat_candidate_v7.json")
+    package_artifact = by_name.get("S12_Stage_K_Named_Review.zip")
+    if not isinstance(candidate_artifact, Mapping) or (
+        str(candidate_artifact.get("sha256", "")).lower() != PARENT_CANDIDATE_SHA256
+        or str(candidate_artifact.get("expected_sha256", "")).lower() != PARENT_CANDIDATE_SHA256
+        or candidate_artifact.get("sha256_match") is not True
+    ):
+        raise ValueError("L0 Stage-K candidate artifact binding mismatch")
+    package_sha = str(_EXPECTED_FEEDBACK["stage_k_package_sha256"])
+    if not isinstance(package_artifact, Mapping) or (
+        str(package_artifact.get("sha256", "")).lower() != package_sha
+        or str(package_artifact.get("expected_sha256", "")).lower() != package_sha
+        or package_artifact.get("sha256_match") is not True
+        or package_artifact.get("sha256sums_binding") != "NOT_LISTED"
+    ):
+        raise ValueError("L0 Stage-K package archive binding mismatch")
+    if feedback.get("schema_version") != "s12-stage-l-jovi-feedback-intake-1":
+        raise ValueError("L0 named feedback receipt schema mismatch")
+    if feedback.get("feedback_scope") != "named_engineering_direction" or feedback.get("human_pass") is not False or feedback.get("human_result_status") != "NOT_A_FORMAL_HUMAN_SCORE":
+        raise ValueError("L0 named feedback status mismatch")
+    bindings = feedback.get("stage_k_bindings")
+    if not isinstance(bindings, Mapping) or (
+        bindings.get("package_id") != "S12_Stage_K_Named_Review_v1"
+        or str(bindings.get("package_zip_sha256", "")).lower() != package_sha
+        or str(bindings.get("hellcat_candidate_sha256", "")).lower() != PARENT_CANDIDATE_SHA256
+    ):
+        raise ValueError("L0 named feedback Stage-K binding mismatch")
+    csv_inputs = feedback.get("csv_inputs")
+    if not isinstance(csv_inputs, Mapping):
+        raise ValueError("L0 named feedback CSV inputs are missing")
+    formal = csv_inputs.get("formal_stage_k_csv")
+    nested = csv_inputs.get("nested_same_name_csv")
+    if not isinstance(formal, Mapping) or (
+        str(formal.get("sha256", "")).lower() != _EXPECTED_FEEDBACK["formal_template_sha256"]
+        or formal.get("sha256sums_binding") != "BOUND"
+        or formal.get("row_count") != 24
+        or formal.get("filled_score_row_count") != 0
+        or formal.get("out_of_range_score_count") != 0
+        or formal.get("legal_conclusion") != "UNSUBMITTED_TEMPLATE"
+        or formal.get("eligible_as_formal_human_feedback") is not False
+        or feedback.get("formal_stage_k_csv_status") != "UNSUBMITTED_TEMPLATE"
+    ):
+        raise ValueError("L0 formal feedback component values mismatch")
+    if not isinstance(nested, Mapping) or (
+        str(nested.get("sha256", "")).lower() != _EXPECTED_FEEDBACK["nested_copy_sha256"]
+        or nested.get("sha256sums_binding") != "NOT_BOUND"
+        or nested.get("row_count") != 24
+        or nested.get("filled_score_row_count") != 24
+        or nested.get("literal_zero_score_count") != 6
+        or nested.get("legal_conclusion") != "INVALID_UNBOUND_DIAGNOSTIC_COPY"
+        or nested.get("eligible_as_formal_human_feedback") is not False
+        or feedback.get("nested_csv_status") != "INVALID_UNBOUND_DIAGNOSTIC_COPY"
+    ):
+        raise ValueError("L0 nested feedback component values mismatch")
+    return dict(_EXPECTED_FEEDBACK)
+
+
+def _load_l0_receipt(path: Path, expected_sha256: str, label: str) -> Mapping[str, Any]:
+    if _sha256(path) != expected_sha256:
+        raise ValueError(f"L0 {label} receipt SHA-256 mismatch")
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read L0 {label} receipt") from exc
+    if not isinstance(value, Mapping):
+        raise ValueError(f"L0 {label} receipt must be an object")
+    return value
 
 
 def _package_file(relative_path: str) -> Path:

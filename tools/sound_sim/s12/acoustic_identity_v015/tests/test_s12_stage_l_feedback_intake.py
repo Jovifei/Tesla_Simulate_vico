@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 import pytest
 
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l import feedback_intake as module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.feedback_intake import inspect_stage_l_feedback_inputs
 
 
@@ -48,3 +50,79 @@ def test_named_text_feedback_scope_is_exact(tmp_path: Path) -> None:
     bad.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="feedback_scope"):
         inspect_stage_l_feedback_inputs(PACKAGE_ROOT, bad)
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _synthetic_inputs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path, dict[str, object]]:
+    archive = tmp_path / "S12_Stage_K_Named_Review.zip"
+    formal = tmp_path / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv"
+    nested = tmp_path / "S12_Stage_K_Named_Review" / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv"
+    text = tmp_path / "stage_l_jovi_feedback_intake.json"
+    formal.parent.mkdir(parents=True)
+    nested.parent.mkdir(parents=True)
+    archive.write_bytes(b"synthetic archive")
+    formal.write_text("clip,quality_1_5\nidle,\n", encoding="utf-8")
+    nested.write_text("clip,quality_1_5\nidle,0\n", encoding="utf-8")
+    text.write_text(json.dumps({"human_pass": False, "feedback_scope": "named_engineering_direction"}), encoding="utf-8")
+    expected = {
+        "stage_k_package_sha256": _sha(archive),
+        "formal_template_sha256": _sha(formal),
+        "formal_template_status": "UNSUBMITTED_TEMPLATE",
+        "nested_copy_sha256": _sha(nested),
+        "nested_copy_status": "INVALID_UNBOUND_DIAGNOSTIC_COPY",
+        "named_text_feedback_path": str(text),
+        "named_text_feedback_sha256": _sha(text),
+        "feedback_scope": "named_engineering_direction",
+        "human_pass": False,
+    }
+    sums = tmp_path / "SHA256SUMS.txt"
+    sums.write_text(f"{expected['formal_template_sha256']}  06_Feedback/Jovi_Stage_K_Named_Feedback.csv\n", encoding="utf-8")
+    monkeypatch.setattr(module, "_load_l0_feedback_bindings", lambda: expected, raising=False)
+    return tmp_path, text, expected
+
+
+@pytest.mark.parametrize("component", ("archive", "formal", "nested", "named_text"))
+def test_feedback_inspector_rejects_mutated_frozen_component(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, component: str,
+) -> None:
+    root, text, _ = _synthetic_inputs(tmp_path, monkeypatch)
+    paths = {
+        "archive": root / "S12_Stage_K_Named_Review.zip",
+        "formal": root / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv",
+        "nested": root / "S12_Stage_K_Named_Review" / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv",
+        "named_text": text,
+    }
+    with paths[component].open("ab") as stream:
+        stream.write(b"\n")
+    with pytest.raises(ValueError, match="SHA-256|hash|frozen"):
+        inspect_stage_l_feedback_inputs(root, text)
+
+
+@pytest.mark.parametrize("component", ("archive", "formal", "nested", "named_text"))
+def test_feedback_inspector_rejects_missing_frozen_component(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, component: str,
+) -> None:
+    root, text, _ = _synthetic_inputs(tmp_path, monkeypatch)
+    paths = {
+        "archive": root / "S12_Stage_K_Named_Review.zip",
+        "formal": root / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv",
+        "nested": root / "S12_Stage_K_Named_Review" / "06_Feedback" / "Jovi_Stage_K_Named_Feedback.csv",
+        "named_text": text,
+    }
+    paths[component].unlink()
+    with pytest.raises(ValueError, match="canonical|cannot read|missing"):
+        inspect_stage_l_feedback_inputs(root, text)
+
+
+def test_sha256sums_requires_exact_path_to_hash_binding(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    root, text, expected = _synthetic_inputs(tmp_path, monkeypatch)
+    (root / "SHA256SUMS.txt").write_text(
+        f"{expected['formal_template_sha256']}  decoy.csv\n"
+        f"{'0' * 64}  06_Feedback/Jovi_Stage_K_Named_Feedback.csv\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="SHA256SUMS|bound"):
+        inspect_stage_l_feedback_inputs(root, text)

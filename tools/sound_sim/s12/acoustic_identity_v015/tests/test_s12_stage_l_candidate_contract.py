@@ -8,6 +8,10 @@ import math
 from pathlib import Path
 
 import pytest
+import jsonschema
+from jsonschema import ValidationError
+
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l import candidate_profiles as module
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles import (
     BASE_COMMIT,
@@ -21,6 +25,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles impor
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[5]
 CANDIDATE_PATH = ROOT / "targets" / "stage_l_candidates" / "hellcat_candidate_v8.json"
 SCHEMA_PATH = ROOT / "targets" / "stage_l_hellcat_candidate.schema.json"
 
@@ -127,3 +132,68 @@ def test_with_parameter_revalidates_the_immutable_candidate() -> None:
     assert candidate.parameter("operating_level", "low_load_gain_db") != 0.0
     with pytest.raises(ValueError, match="unknown Stage-L parameter"):
         candidate.with_parameter("combustion_and_blowdown", "not_public", 1.0)
+
+
+@pytest.mark.parametrize(
+    "name,value",
+    [
+        ("engine_displacement_l", 6.4),
+        ("engine_configuration", "V8"),
+        ("supercharger_type", "roots"),
+        ("supercharger_drive_ratio", 2.35),
+        ("published_max_supercharger_rpm", 14599),
+        ("published_max_boost_psi", 11.5),
+        ("provenance_note", "drifted boundary"),
+    ],
+)
+def test_every_official_fact_value_is_exact(tmp_path: Path, name: str, value: object) -> None:
+    payload = _payload()
+    payload["provenance"]["official_facts"][name] = value  # type: ignore[index]
+    with pytest.raises(ValueError, match="official_facts"):
+        load_stage_l_candidate(_write(tmp_path, payload))
+
+
+def test_candidate_load_fails_if_repository_l0_evidence_receipt_bytes_drift(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = REPO_ROOT / "tasks" / "reports" / "runtime" / "s12-stage-l-hellcat-calibration-v1" / "stage_l_stage_k_evidence_receipt.json"
+    drifted = tmp_path / source.name
+    drifted.write_bytes(source.read_bytes() + b"\n")
+    monkeypatch.setattr(module, "_L0_EVIDENCE_RECEIPT_PATH", drifted, raising=False)
+    with pytest.raises(ValueError, match="L0|receipt|SHA-256"):
+        load_stage_l_candidate(CANDIDATE_PATH)
+
+
+def test_candidate_load_binds_component_values_to_repository_l0_feedback_receipt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = REPO_ROOT / "tasks" / "reports" / "runtime" / "s12-stage-l-hellcat-calibration-v1" / "stage_l_jovi_feedback_intake.json"
+    receipt = json.loads(source.read_text(encoding="utf-8"))
+    receipt["csv_inputs"]["formal_stage_k_csv"]["sha256"] = "0" * 64
+    drifted = tmp_path / source.name
+    drifted.write_text(json.dumps(receipt), encoding="utf-8")
+    monkeypatch.setattr(module, "_L0_FEEDBACK_RECEIPT_PATH", drifted, raising=False)
+    with pytest.raises(ValueError, match="L0|receipt|SHA-256"):
+        load_stage_l_candidate(CANDIDATE_PATH)
+
+
+@pytest.mark.parametrize(
+    "mutator",
+    [
+        lambda value: value["reference_target"].update({"unknown": True}),
+        lambda value: value["feedback_receipt"].pop("formal_template_status"),
+        lambda value: value["crank_clock"].update({"unknown": True}),
+        lambda value: value["combustion_and_blowdown"].pop("cylinder_strength_variation"),
+        lambda value: value["supercharger_intake"].update({"unknown": value["supercharger_intake"]["gear_to_aero_ratio"]}),
+        lambda value: value["loudness"].update({"unknown": True}),
+        lambda value: value["locked_layers"]["rumble"].update({"unknown": True}),
+        lambda value: value["provenance"]["official_facts"].update({"unknown": True}),
+    ],
+)
+def test_json_schema_fails_closed_for_every_nested_contract(mutator) -> None:
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    jsonschema.Draft202012Validator.check_schema(schema)
+    payload = _payload()
+    mutator(payload)
+    with pytest.raises(ValidationError):
+        jsonschema.Draft202012Validator(schema).validate(payload)

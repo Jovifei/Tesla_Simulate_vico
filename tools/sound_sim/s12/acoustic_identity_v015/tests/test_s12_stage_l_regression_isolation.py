@@ -169,3 +169,68 @@ print(d.hexdigest())
 def test_stage_l_does_not_accept_an_ambiguous_none_candidate() -> None:
     with pytest.raises((TypeError, ValueError), match="candidate"):
         render_stage_l_candidate(_trace(), None)  # type: ignore[arg-type]
+
+
+def test_legacy_hemi_and_v4_blower_adapters_receive_the_identical_clock_object(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
+
+    legacy_adapter = getattr(module, "render_legacy_hellcat_raw_with_clock", None)
+    blower_adapter = getattr(module, "render_stage_k_v4_blower_with_clock", None)
+    assert callable(legacy_adapter)
+    assert callable(blower_adapter)
+    observed: list[object] = []
+
+    def observe_legacy(trace, clock, sample_rate_hz=48000):
+        observed.append(clock)
+        return legacy_adapter(trace, clock, sample_rate_hz)
+
+    def observe_blower(trace, clock, sample_rate_hz=48000):
+        observed.append(clock)
+        return blower_adapter(trace, clock, sample_rate_hz)
+
+    monkeypatch.setattr(module, "render_legacy_hellcat_raw_with_clock", observe_legacy)
+    monkeypatch.setattr(module, "render_stage_k_v4_blower_with_clock", observe_blower)
+    rendered = module.render_stage_l_candidate(_trace(), load_stage_l_candidate(CANDIDATE_PATH))
+    assert len(observed) == 2
+    assert observed[0] is observed[1]
+    evidence = rendered.diagnostics["shared_clock_consumers"]
+    assert evidence["legacy_raw_hemi"]["clock_object_shared"] is True
+    assert evidence["stage_k_v4_blower"]["clock_object_shared"] is True
+    assert evidence["legacy_raw_hemi"]["internal_event_scheduling"] == "PENDING_L2"
+
+
+def test_legacy_raw_adapter_validates_phase_contract_without_claiming_event_consumption() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l.crank_clock import build_hellcat_crank_clock
+
+    adapter = getattr(module, "render_legacy_hellcat_raw_with_clock", None)
+    assert callable(adapter)
+    trace = _trace()
+    clock = build_hellcat_crank_clock(trace, 48000)
+    rendered = adapter(trace, clock, 48000)
+    contract = rendered.diagnostics["shared_crank_clock_contract"]
+    assert contract["phase_and_sample_contract_validated"] is True
+    assert contract["legacy_internal_event_schedule_from_shared_clock"] is False
+    assert contract["l2_event_consumption_status"] == "PENDING"
+
+
+def test_v4_blower_adapter_passes_the_clock_phase_array_by_identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l.crank_clock import build_hellcat_crank_clock
+
+    adapter = getattr(module, "render_stage_k_v4_blower_with_clock", None)
+    assert callable(adapter)
+    trace = _trace()
+    clock = build_hellcat_crank_clock(trace, 48000)
+    original = module.render_supercharger_whine_v4
+    observed: list[np.ndarray] = []
+
+    def observe(rpm, load, throttle, phase, sample_rate_hz, overrides=None):
+        observed.append(phase)
+        return original(rpm, load, throttle, phase, sample_rate_hz, overrides=overrides)
+
+    monkeypatch.setattr(module, "render_supercharger_whine_v4", observe)
+    adapter(trace, clock, 48000)
+    assert observed == [clock.engine_phase_cycles]

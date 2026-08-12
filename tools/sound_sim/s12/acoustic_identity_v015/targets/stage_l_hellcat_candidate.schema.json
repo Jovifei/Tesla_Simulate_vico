@@ -21,35 +21,145 @@
     "parent_candidate_sha256": {"const": "b730090daa6274c9e6501e9cdf6894ea00f8ccfff535af3f887ec00721d6d358"},
     "status": {"const": "Candidate"},
     "hypothesis": {"type": "string", "minLength": 1},
-    "reference_target": {"type": "object"},
-    "feedback_receipt": {"type": "object"},
-    "crank_clock": {"type": "object"},
-    "combustion_and_blowdown": {"$ref": "#/$defs/parameterSection"},
-    "supercharger_intake": {"$ref": "#/$defs/parameterSection"},
-    "shift_and_load_transient": {"$ref": "#/$defs/parameterSection"},
-    "operating_level": {"$ref": "#/$defs/parameterSection"},
-    "afterfire": {"$ref": "#/$defs/parameterSection"},
-    "loudness": {"type": "object"},
-    "locked_layers": {"type": "object"},
-    "provenance": {"type": "object"}
+    "reference_target": {"$ref": "#/$defs/referenceTarget"},
+    "feedback_receipt": {"$ref": "#/$defs/feedbackReceipt"},
+    "crank_clock": {"$ref": "#/$defs/crankClock"},
+    "combustion_and_blowdown": {"$ref": "#/$defs/combustionAndBlowdown"},
+    "supercharger_intake": {"$ref": "#/$defs/superchargerIntake"},
+    "shift_and_load_transient": {"$ref": "#/$defs/shiftAndLoadTransient"},
+    "operating_level": {"$ref": "#/$defs/operatingLevel"},
+    "afterfire": {"$ref": "#/$defs/afterfire"},
+    "loudness": {"$ref": "#/$defs/loudness"},
+    "locked_layers": {"$ref": "#/$defs/lockedLayers"},
+    "provenance": {"$ref": "#/$defs/provenance"}
   },
   "$defs": {
-    "parameterSection": {
-      "type": "object",
-      "additionalProperties": {"$ref": "#/$defs/parameter"}
+    "referenceTarget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "eligible_states"],
+      "properties": {
+        "path": {"const": "reference_database/hellcat_reference_targets.json"},
+        "sha256": {"const": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff"},
+        "eligible_states": {"const": ["idle", "acceleration", "afterfire"]}
+      }
+    },
+    "feedbackReceipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["stage_k_package_sha256", "formal_template_sha256", "formal_template_status", "nested_copy_sha256", "nested_copy_status", "named_text_feedback_path", "named_text_feedback_sha256", "feedback_scope", "human_pass"],
+      "properties": {
+        "stage_k_package_sha256": {"const": "d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef"},
+        "formal_template_sha256": {"const": "de55eb154e05530f2905aa0cfc5c247ee7d6f81158119cb2a8fe2535e60f374e"},
+        "formal_template_status": {"const": "UNSUBMITTED_TEMPLATE"},
+        "nested_copy_sha256": {"const": "88f9636511233c04014b848bdc4a9c2cb49b188d23f964bbf3c337c1783faf95"},
+        "nested_copy_status": {"const": "INVALID_UNBOUND_DIAGNOSTIC_COPY"},
+        "named_text_feedback_path": {"const": "tasks/reports/runtime/s12-stage-l-hellcat-calibration-v1/stage_l_jovi_feedback_intake.json"},
+        "named_text_feedback_sha256": {"const": "0f8e55cd4020d43e23b773d3844057444fda8fab5efa4b0b779e892fc976ca70"},
+        "feedback_scope": {"const": "named_engineering_direction"},
+        "human_pass": {"const": false}
+      }
+    },
+    "crankClock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["firing_order", "bank_pattern", "events_per_revolution", "cycle_revolutions", "scope"],
+      "properties": {
+        "firing_order": {"const": [1, 8, 4, 3, 6, 5, 7, 2]},
+        "bank_pattern": {"const": ["left", "right", "left", "right", "right", "left", "right", "left"]},
+        "events_per_revolution": {"const": 4.0},
+        "cycle_revolutions": {"const": 2.0},
+        "scope": {"const": "architecture_contract"}
+      }
+    },
+    "combustionAndBlowdown": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cylinder_strength_variation", "bank_amplitude_asymmetry", "blowdown_attack_ms", "blowdown_fast_decay_ms", "blowdown_slow_decay_ms", "blowdown_slow_weight", "low_frequency_blowdown_gain", "structure_shock_mix", "torque_ripple_modulation_depth", "xpipe_cross_coupling", "xpipe_delay_ms"],
+      "properties": {
+        "cylinder_strength_variation": {"$ref": "#/$defs/parameter"}, "bank_amplitude_asymmetry": {"$ref": "#/$defs/parameter"},
+        "blowdown_attack_ms": {"$ref": "#/$defs/parameter"}, "blowdown_fast_decay_ms": {"$ref": "#/$defs/parameter"},
+        "blowdown_slow_decay_ms": {"$ref": "#/$defs/parameter"}, "blowdown_slow_weight": {"$ref": "#/$defs/parameter"},
+        "low_frequency_blowdown_gain": {"$ref": "#/$defs/parameter"}, "structure_shock_mix": {"$ref": "#/$defs/parameter"},
+        "torque_ripple_modulation_depth": {"$ref": "#/$defs/parameter"}, "xpipe_cross_coupling": {"$ref": "#/$defs/parameter"},
+        "xpipe_delay_ms": {"$ref": "#/$defs/parameter"}
+      }
+    },
+    "superchargerIntake": {
+      "type": "object", "additionalProperties": false,
+      "required": ["aero_family_order_ratio", "aero_harmonic_mix", "aero_cluster_spread_ratio", "gear_family_order_ratio", "gear_to_aero_ratio", "torque_ripple_to_gear_depth", "intake_transfer_mix", "casing_transfer_mix", "boost_attack_10_90_s", "boost_release_90_10_s", "bypass_release_gain", "bypass_decay_90_10_s"],
+      "properties": {
+        "aero_family_order_ratio": {"$ref": "#/$defs/parameter"}, "aero_harmonic_mix": {"$ref": "#/$defs/parameter"},
+        "aero_cluster_spread_ratio": {"$ref": "#/$defs/parameter"}, "gear_family_order_ratio": {"$ref": "#/$defs/parameter"},
+        "gear_to_aero_ratio": {"$ref": "#/$defs/parameter"}, "torque_ripple_to_gear_depth": {"$ref": "#/$defs/parameter"},
+        "intake_transfer_mix": {"$ref": "#/$defs/parameter"}, "casing_transfer_mix": {"$ref": "#/$defs/parameter"},
+        "boost_attack_10_90_s": {"$ref": "#/$defs/parameter"}, "boost_release_90_10_s": {"$ref": "#/$defs/parameter"},
+        "bypass_release_gain": {"$ref": "#/$defs/parameter"}, "bypass_decay_90_10_s": {"$ref": "#/$defs/parameter"}
+      }
+    },
+    "shiftAndLoadTransient": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shift_interruption_s", "shift_min_exhaust_gain", "shift_min_sc_gain", "reengagement_decay_s", "sc_drive_modulation_depth", "tip_in_blowdown_gain"],
+      "properties": {
+        "shift_interruption_s": {"$ref": "#/$defs/parameter"}, "shift_min_exhaust_gain": {"$ref": "#/$defs/parameter"},
+        "shift_min_sc_gain": {"$ref": "#/$defs/parameter"}, "reengagement_decay_s": {"$ref": "#/$defs/parameter"},
+        "sc_drive_modulation_depth": {"$ref": "#/$defs/parameter"}, "tip_in_blowdown_gain": {"$ref": "#/$defs/parameter"}
+      }
+    },
+    "operatingLevel": {
+      "type": "object", "additionalProperties": false,
+      "required": ["low_load_gain_db", "high_load_gain_db", "blend_load_low", "blend_load_high", "smoothing_s"],
+      "properties": {
+        "low_load_gain_db": {"$ref": "#/$defs/parameter"}, "high_load_gain_db": {"$ref": "#/$defs/parameter"},
+        "blend_load_low": {"$ref": "#/$defs/parameter"}, "blend_load_high": {"$ref": "#/$defs/parameter"},
+        "smoothing_s": {"$ref": "#/$defs/parameter"}
+      }
+    },
+    "afterfire": {
+      "type": "object", "additionalProperties": false, "required": ["gain_scale"],
+      "properties": {"gain_scale": {"$ref": "#/$defs/parameter"}}
     },
     "parameter": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["value", "unit", "range", "source_level", "source", "source_scope", "verification_state"],
       "properties": {
-        "value": {"type": "number"},
-        "unit": {"type": "string"},
+        "value": {"type": "number"}, "unit": {"type": "string"},
         "range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
-        "source_level": {"const": "C"},
-        "source": {"const": "synthetic"},
-        "source_scope": {"type": "string", "minLength": 1},
-        "verification_state": {"const": "candidate_assumption"}
+        "source_level": {"const": "C"}, "source": {"const": "synthetic"},
+        "source_scope": {"type": "string", "minLength": 1}, "verification_state": {"const": "candidate_assumption"}
+      }
+    },
+    "loudness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_lufs", "peak_limit_dbfs", "whole_cycle_gain_only"],
+      "properties": {"target_lufs": {"const": -16.0}, "peak_limit_dbfs": {"const": -1.5}, "whole_cycle_gain_only": {"const": true}}
+    },
+    "lockedLayer": {
+      "type": "object", "additionalProperties": false, "required": ["unchanged", "fingerprint"],
+      "properties": {"unchanged": {"const": true}, "fingerprint": {"type": "string", "minLength": 1}}
+    },
+    "lockedLayers": {
+      "type": "object", "additionalProperties": false,
+      "required": ["low_frequency_body", "rumble", "pre_ptr_eq", "frozen_ptr", "formal_loudness_manager", "reference_target"],
+      "properties": {
+        "low_frequency_body": {"$ref": "#/$defs/lockedLayer"}, "rumble": {"$ref": "#/$defs/lockedLayer"},
+        "pre_ptr_eq": {"$ref": "#/$defs/lockedLayer"}, "frozen_ptr": {"$ref": "#/$defs/lockedLayer"},
+        "formal_loudness_manager": {"$ref": "#/$defs/lockedLayer"}, "reference_target": {"$ref": "#/$defs/lockedLayer"}
+      }
+    },
+    "officialFacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["engine_displacement_l", "engine_configuration", "supercharger_type", "supercharger_drive_ratio", "published_max_supercharger_rpm", "published_max_boost_psi", "provenance_note"],
+      "properties": {
+        "engine_displacement_l": {"const": 6.2}, "engine_configuration": {"const": "90-degree V8"},
+        "supercharger_type": {"const": "twin-screw"}, "supercharger_drive_ratio": {"const": 2.36},
+        "published_max_supercharger_rpm": {"const": 14600}, "published_max_boost_psi": {"const": 11.6},
+        "provenance_note": {"const": "Hardware context only; no rotor pocket count, timing gear tooth count, SPL, or synthetic timbre amplitude is asserted as official."}
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_level", "source", "calibration", "claim", "parent_status", "official_facts"],
+      "properties": {
+        "source_level": {"const": "C"}, "source": {"const": "synthetic"}, "calibration": {"const": "uncalibrated"},
+        "claim": {"const": "Hellcat-inspired; not OEM reproduction"}, "parent_status": {"const": "STAGE_K_CANDIDATE_PARENT"},
+        "official_facts": {"$ref": "#/$defs/officialFacts"}
       }
     }
   }
