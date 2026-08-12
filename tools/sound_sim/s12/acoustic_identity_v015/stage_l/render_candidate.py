@@ -14,6 +14,7 @@ from ..acoustic_layers import (
 )
 from ..contracts import SourceRender, VehicleStateTrace
 from ..loudness_manager import manage_bundle_loudness
+from ..loudness_manager import measure_loudness
 from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade, _pcm24_roundtrip
 from ..sources.hellcat_crossplane_combustion_v2 import render_hellcat_crossplane_combustion_v2
 from ..sources.hellcat_supercharger_intake_v5 import render_hellcat_supercharger_intake_v5
@@ -26,6 +27,8 @@ from ..stage_k.source_level import OperatingLevelTrim, apply_source_operating_tr
 from ..tuning.state_band_shaper import _inject_state_spectral_targets
 from .candidate_profiles import PARENT_CANDIDATE_PATH, StageLCandidateProfile
 from .crank_clock import HellcatCrankClock, build_hellcat_crank_clock
+from .hellcat_peak_budget import apply_hellcat_named_peak_budget
+from .hellcat_transient_dynamics import apply_hellcat_transient_dynamics
 
 
 _SAMPLE_RATE_HZ = 48000
@@ -380,8 +383,44 @@ def render_stage_l_l3_final_pcm_probe(
     }
 
 
+def render_stage_l_l4_final_pcm_probe(
+    trace: VehicleStateTrace, candidate: StageLCandidateProfile,
+) -> dict[str, object]:
+    """Measure the real L2+L3+L4 path through the frozen final-PCM chain."""
+    trace.validate()
+    source = render_stage_l_candidate(trace, candidate)
+    rendered = _apply_current_frozen_layers(source, trace, candidate, include_l4=True)
+    parent = render_stage_l_parent(trace)
+    pre_gain = {
+        "parent": _edge_fade(_apply_frozen_ptr(parent.pressure)),
+        "candidate": _edge_fade(_apply_frozen_ptr(rendered.pressure)),
+    }
+    managed = manage_bundle_loudness(
+        pre_gain, _SAMPLE_RATE_HZ,
+        target_lufs=float(candidate.payload["loudness"]["target_lufs"]),
+        peak_limit_dbfs=float(candidate.payload["loudness"]["peak_limit_dbfs"]),
+    )
+    parent_pcm = _pcm24_roundtrip(managed.segments["parent"])
+    candidate_pcm = _pcm24_roundtrip(managed.segments["candidate"])
+    parent_loudness = measure_loudness(parent_pcm, _SAMPLE_RATE_HZ)
+    candidate_loudness = measure_loudness(candidate_pcm, _SAMPLE_RATE_HZ)
+    return {
+        "finite": bool(np.all(np.isfinite(candidate_pcm))),
+        "candidate_peak_dbfs": float(candidate_loudness.peak_dbfs),
+        "candidate_clipping_count": int(candidate_loudness.clipping_count),
+        "candidate_lufs": float(candidate_loudness.integrated_lufs),
+        "parent_lufs": float(parent_loudness.integrated_lufs),
+        "one_fixed_whole_cycle_gain_db": float(managed.gain_db),
+        "formal_compressor_or_limiter_used": False,
+        "l4_before_pre_ptr_equalization": True,
+        "l4_shift_event_count": int(rendered.diagnostics["hellcat_shift_event_count"]),
+        "l3_full_mix_low_frequency_status": "DIAGNOSTIC_REGRESSION_PENDING_L5_PRESERVED",
+    }
+
+
 def _apply_current_frozen_layers(
     source: SourceRender, trace: VehicleStateTrace, candidate: StageLCandidateProfile,
+    *, include_l4: bool = False,
 ) -> SourceRender:
     """Apply current common pre-PTR layers without changing their implementations."""
     operating = candidate.payload["operating_level"]
@@ -401,14 +440,48 @@ def _apply_current_frozen_layers(
     )
     render = _rebuild_source_aggregates(render)
     render = apply_idle_dynamics(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = _append_pressure_contributors(
+        render, ("idle_combustion_variation", "idle_accessory", "idle_valvetrain", "idle_crank")
+    )
     render = apply_afterfire(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = _append_pressure_contributors(render, ("afterfire",))
     render = _scale_event_stem(
         render, "afterfire", float(candidate.payload["afterfire"]["gain_scale"]["value"])
     )
+    if include_l4:
+        render = apply_hellcat_transient_dynamics(render, trace, candidate, _SAMPLE_RATE_HZ)
+        render = apply_hellcat_named_peak_budget(render, trace, candidate, _SAMPLE_RATE_HZ)
     render = apply_low_frequency_body(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = _append_pressure_contributors(
+        render, ("radiation",), diagnostic=("pressure_pulse", "exhaust_coupling", "body_resonance", "low_frequency_body")
+    )
     render = apply_exhaust_rumble(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = _append_pressure_contributors(render, ("exhaust_rumble",))
     render = apply_pre_ptr_equalization(render, "hellcat", trace, _SAMPLE_RATE_HZ)
     return render
+
+
+def _append_pressure_contributors(
+    render: SourceRender,
+    contributors: tuple[str, ...],
+    *,
+    diagnostic: tuple[str, ...] = (),
+) -> SourceRender:
+    diagnostics = dict(render.diagnostics)
+    contract = dict(diagnostics["pressure_stem_contract"])
+    names = list(contract["contributors"])
+    aggregates = list(contract["diagnostic_aggregates"])
+    for name in contributors:
+        if name not in render.stems:
+            raise ValueError(f"pressure contributor stem is missing: {name}")
+        if name not in names:
+            names.append(name)
+    for name in diagnostic:
+        if name not in aggregates:
+            aggregates.append(name)
+    contract.update({"contributors": names, "diagnostic_aggregates": aggregates})
+    diagnostics["pressure_stem_contract"] = contract
+    return replace(render, diagnostics=diagnostics).validate()
 
 
 def _render_l2_task3_source(
@@ -526,5 +599,6 @@ __all__ = (
     "render_crossplane_combustion_l2_with_clock", "render_legacy_hellcat_raw_with_clock",
     "render_stage_k_v4_blower_with_clock", "render_supercharger_intake_l3_with_clock",
     "render_stage_l_candidate", "render_stage_l_final_pcm_probe",
-    "render_stage_l_l3_final_pcm_probe", "render_stage_l_parent",
+    "render_stage_l_l3_final_pcm_probe", "render_stage_l_l4_final_pcm_probe",
+    "render_stage_l_parent",
 )
