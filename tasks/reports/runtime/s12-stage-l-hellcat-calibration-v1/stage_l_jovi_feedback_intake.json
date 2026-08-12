@@ -1,0 +1,65 @@
+{
+  "schema_version": "s12-stage-l-jovi-feedback-intake-1",
+  "recorded_at": "2026-08-12T21:53:25.9294150+08:00",
+  "source": "Jovi feedback supplied verbatim through the controlled Stage L Task 1 brief",
+  "message_time": "2026-08-12",
+  "message_time_precision": "date_only",
+  "message_time_exact_clock_available": false,
+  "message_time_note": "The controlled brief supplies the 2026-08-12 task date but no clock timestamp; no clock value is invented.",
+  "raw_feedback_zh": [
+    "Hellcat “猫叫”来自机械增压器和进气传播，不是排气；",
+    "当前 Hellcat 低频重量不足；",
+    "高频过于平滑，缺少顿挫轰鸣感；",
+    "希望结合发动机声浪机理重新判断是否需要 Simulink。"
+  ],
+  "feedback_scope": "named_engineering_direction",
+  "human_pass": false,
+  "human_result_status": "NOT_A_FORMAL_HUMAN_SCORE",
+  "stage_k_bindings": {
+    "package_id": "S12_Stage_K_Named_Review_v1",
+    "package_path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1",
+    "package_zip_sha256": "D81BC9E77276BF6066C73BF3444239800067F1A1545F43460061C37BD88FDEEF",
+    "package_artifact_manifest_sha256": "8A3831BC9FBD71C3A56D7FE85520683FBA9012C64EEF7B66C5D7789C7DAC1C79",
+    "hellcat_candidate_path": "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_k_candidates/hellcat_candidate_v7.json",
+    "hellcat_candidate_sha256": "B730090DAA6274C9E6501E9CDF6894EA00F8CCFFF535AF3F887EC00721D6D358"
+  },
+  "formal_stage_k_csv_status": "UNSUBMITTED_TEMPLATE",
+  "nested_csv_status": "INVALID_UNBOUND_DIAGNOSTIC_COPY",
+  "csv_inputs": {
+    "formal_stage_k_csv": {
+      "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\06_Feedback\\Jovi_Stage_K_Named_Feedback.csv",
+      "sha256": "DE55EB154E05530F2905AA0CFC5C247EE7D6F81158119CB2A8FE2535E60F374E",
+      "sha256sums_binding": "BOUND",
+      "row_count": 24,
+      "filled_score_row_count": 0,
+      "header_column_count": 11,
+      "out_of_range_score_count": 0,
+      "legal_conclusion": "UNSUBMITTED_TEMPLATE",
+      "eligible_as_formal_human_feedback": false,
+      "reason": "The canonical SHA256SUMS-bound file is a blank 24-row template, not a submitted scorecard."
+    },
+    "nested_same_name_csv": {
+      "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\S12_Stage_K_Named_Review\\06_Feedback\\Jovi_Stage_K_Named_Feedback.csv",
+      "sha256": "88F9636511233C04014B848BDC4A9C2CB49B188D23F964BBF3C337C1783FAF95",
+      "sha256sums_binding": "NOT_BOUND",
+      "row_count": 24,
+      "filled_score_row_count": 24,
+      "header_column_count": 11,
+      "literal_zero_score_count": 6,
+      "legal_score_range": "integer 1-5",
+      "legal_conclusion": "INVALID_UNBOUND_DIAGNOSTIC_COPY",
+      "eligible_as_formal_human_feedback": false,
+      "reason": "The same-name nested copy is absent from SHA256SUMS and contains six score values of 0, which are outside the 1-5 feedback contract."
+    }
+  },
+  "governance": {
+    "may_use": "Named engineering direction for a future Hellcat-only source/transient investigation.",
+    "must_not_use": [
+      "Human PASS inference",
+      "Formal Stage K score submission",
+      "Profile Freeze",
+      "Candidate selection based on the invalid nested CSV",
+      "Sealed-key inference or anonymous mapping"
+    ]
+  }
+}

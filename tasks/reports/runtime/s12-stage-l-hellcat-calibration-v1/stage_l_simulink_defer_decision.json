@@ -1,0 +1,40 @@
+{
+  "schema_version": "s12-stage-l-simulink-defer-decision-1",
+  "recorded_at": "2026-08-12T21:53:25.9294150+08:00",
+  "stage": "S12 Stage L / Phase L0",
+  "decision": "DEFER",
+  "status": "BLOCKED / SIMULINK_CANONICAL_TARGET_UNSELECTED",
+  "task_l0_change_scope": {
+    "matlab_files_changed": false,
+    "simulink_files_changed": false,
+    "model_rebuild_started": false,
+    "matlab_or_simulink_runtime_started": false
+  },
+  "decision_basis": [
+    "The reported Hellcat defects are scoped to the Python Track-S source, transient, and operating-state layers.",
+    "Stage K automatic reference-distance qualification remains PARTIAL / AUTOMATED_GATE_FAIL and the canonical Stage K CSV is still an unsubmitted template.",
+    "No approved Profile Freeze candidate or approved profile exists.",
+    "The existing v6, v11, and v12 model stacks are not bound to the Stage K candidate, Stage K stem schema, or Python supercharger_whine_v4 implementation.",
+    "A canonical Simulink target and its SHA-bound Python-to-Simulink equivalence contract have not been selected."
+  ],
+  "existing_model_boundary": {
+    "v6": "Historical procedural-layer and calibration concept; not Stage K final-PCM equivalent.",
+    "v11": "Historical build/compile and offline-audio evidence; not Stage K candidate evidence.",
+    "v12": "Historical three-vehicle runtime evidence; not Stage K reference-fit, human-approval, or final-PCM-equivalence evidence.",
+    "default_future_candidate": "v12 may be evaluated only in a separate future ADR; no target is selected by this receipt."
+  },
+  "future_entry_gates": [
+    "Stage L final-PCM automatic gate reaches at least 30 percent eligible-state mean improvement with no state worsening by more than 10 percent.",
+    "A complete, context-bound Jovi named feedback submission is validated.",
+    "The formal anonymous human gate and Profile Freeze Review pass.",
+    "Jovi explicitly approves the exact candidate/profile SHA.",
+    "A separate ADR selects one canonical v6, v11, or v12 target and records the model, builder, and profile SHA-256 bindings.",
+    "A SHA-bound Python-to-Simulink equivalence contract is frozen before any implementation."
+  ],
+  "prohibitions_until_future_task": [
+    "No .m, .mlx, .slx, .sldd, or .mdl change.",
+    "No MATLAB or Simulink model rebuild, compile, simulation, or runtime claim.",
+    "No change to FVM, PTR core, Radiation Boundary, Runtime, Android, or ESP32."
+  ],
+  "conclusion": "Phase L0 records a defer decision only. It does not establish Simulink readiness or modify any MATLAB/Simulink artifact."
+}

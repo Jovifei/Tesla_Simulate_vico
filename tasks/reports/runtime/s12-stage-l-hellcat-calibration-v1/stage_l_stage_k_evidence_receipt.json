@@ -1,0 +1,84 @@
+{
+  "schema_version": "s12-stage-l-stage-k-evidence-receipt-1",
+  "receipt_status": "FROZEN",
+  "recorded_at": "2026-08-12T21:53:25.9294150+08:00",
+  "stage_l_bootstrap": {
+    "stage_k_pre_bootstrap_head": "bf653c6f7a3779314d9891aaa801b29a4874db40",
+    "stage_k_stable_implementation_commit": "4261bbfe34b11980fcb15a0a9b01bd6d5f75c9e6",
+    "bootstrap_commit": "5f10d1392fcfe7e095e8b0f7157c0c698bde46bb",
+    "bootstrap_commit_message": "docs(s12): define Stage L Hellcat calibration plan",
+    "branch": "agent/s12-stage-l-hellcat-intake-roughness-calibration",
+    "worktree_path": "E:\\Tesla_speed\\worktrees\\s12-stage-l-hellcat-intake-roughness-calibration",
+    "bootstrap_scope_status": "PASS",
+    "bootstrap_only_changed_path": "tasks/plans/2026-08-12-s12-stage-l-hellcat-intake-combustion-roughness-calibration.md"
+  },
+  "stage_k_package": {
+    "package_id": "S12_Stage_K_Named_Review_v1",
+    "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1",
+    "automatic_gate_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+    "named_review_status": "WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW",
+    "sealed_key_read": false,
+    "provenance": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+  },
+  "frozen_artifacts": [
+    {
+      "name": "hellcat_candidate_v7.json",
+      "role": "Stage K Hellcat candidate",
+      "canonical_stage_k_path": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair\\tools\\sound_sim\\s12\\acoustic_identity_v015\\targets\\stage_k_candidates\\hellcat_candidate_v7.json",
+      "verified_stage_l_path": "E:\\Tesla_speed\\worktrees\\s12-stage-l-hellcat-intake-roughness-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\targets\\stage_k_candidates\\hellcat_candidate_v7.json",
+      "sha256": "B730090DAA6274C9E6501E9CDF6894EA00F8CCFFF535AF3F887EC00721D6D358",
+      "expected_sha256": "B730090DAA6274C9E6501E9CDF6894EA00F8CCFFF535AF3F887EC00721D6D358",
+      "sha256_match": true
+    },
+    {
+      "name": "S12_Stage_K_Named_Review.zip",
+      "role": "Stage K named review package",
+      "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\S12_Stage_K_Named_Review.zip",
+      "sha256": "D81BC9E77276BF6066C73BF3444239800067F1A1545F43460061C37BD88FDEEF",
+      "expected_sha256": "D81BC9E77276BF6066C73BF3444239800067F1A1545F43460061C37BD88FDEEF",
+      "sha256_match": true,
+      "sha256sums_binding": "NOT_LISTED"
+    },
+    {
+      "name": "artifact_manifest.json",
+      "role": "Stage K package manifest",
+      "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\artifact_manifest.json",
+      "sha256": "8A3831BC9FBD71C3A56D7FE85520683FBA9012C64EEF7B66C5D7789C7DAC1C79",
+      "expected_sha256": "8A3831BC9FBD71C3A56D7FE85520683FBA9012C64EEF7B66C5D7789C7DAC1C79",
+      "sha256_match": true,
+      "sha256sums_binding": "BOUND"
+    },
+    {
+      "name": "stage_k_reference_distance.json",
+      "role": "Stage K final-PCM reference-distance evidence",
+      "canonical_stage_k_path": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair\\tasks\\reports\\runtime\\s12-stage-k-four-vehicle-repair-v1\\stage_k_reference_distance.json",
+      "verified_stage_l_path": "E:\\Tesla_speed\\worktrees\\s12-stage-l-hellcat-intake-roughness-calibration\\tasks\\reports\\runtime\\s12-stage-k-four-vehicle-repair-v1\\stage_k_reference_distance.json",
+      "sha256": "14D9E761C31F32FEA597C5F2049FAD3A59F7C4B6D79B81DC343A53DF133F72D4",
+      "expected_sha256": "14D9E761C31F32FEA597C5F2049FAD3A59F7C4B6D79B81DC343A53DF133F72D4",
+      "sha256_match": true
+    },
+    {
+      "name": "supercharger_whine_v4.py",
+      "role": "Stage K twin-screw whine source",
+      "canonical_stage_k_path": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair\\tools\\sound_sim\\s12\\acoustic_identity_v015\\sources\\supercharger_whine_v4.py",
+      "verified_stage_l_path": "E:\\Tesla_speed\\worktrees\\s12-stage-l-hellcat-intake-roughness-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\sources\\supercharger_whine_v4.py",
+      "sha256": "F41CFBBC92CF54F59CEB0645A266FC6D9530233D236841490F9BA8890917F2A6",
+      "expected_sha256": "F41CFBBC92CF54F59CEB0645A266FC6D9530233D236841490F9BA8890917F2A6",
+      "sha256_match": true
+    },
+    {
+      "name": "supercharged_hemi_source.py",
+      "role": "Stage K HEMI source",
+      "canonical_stage_k_path": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair\\tools\\sound_sim\\s12\\acoustic_identity_v015\\sources\\supercharged_hemi_source.py",
+      "verified_stage_l_path": "E:\\Tesla_speed\\worktrees\\s12-stage-l-hellcat-intake-roughness-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\sources\\supercharged_hemi_source.py",
+      "sha256": "C0F8D8FD038BD8495B355BCD81A04E216F330E2F64A4415B4AD9090A2C3F5EDD",
+      "expected_sha256": "C0F8D8FD038BD8495B355BCD81A04E216F330E2F64A4415B4AD9090A2C3F5EDD",
+      "sha256_match": true
+    }
+  ],
+  "evidence_guardrails": [
+    "No package member, candidate, source, reference-distance evidence, or historical review artifact was modified during Phase L0.",
+    "No sealed key was read.",
+    "This receipt freezes audit inputs only; it is not an automatic qualification, human pass, Profile Freeze, or OEM calibration claim."
+  ]
+}

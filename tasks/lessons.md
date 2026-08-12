@@ -1271,3 +1271,9 @@ Rules:
 - Source-domain metrics are not final-PCM gates. Reopen the rendered WAV and bind its PCM24/finite/peak/clipping evidence to the package; keep pre-PTR source metrics explicitly labelled as diagnostic.
 - Long 60-second PTR/native numerical renders need isolated workers and streaming release. Do not retain four full `SourceRender` objects or treat a native worker termination as a test failure/pass without recording the actual process result.
 - `read`/`configured` is not `active`: neutral parameters and untriggered event layers must be recorded inactive; active reachability requires a deterministic event and a nonzero before/after effect.
+
+# 2026-08-12 S12 Stage L evidence-freeze lessons
+
+- Supercharger intake whine and exhaust low-frequency roar must be modeled and exported as separate stems; neither may be used as a proxy for the other.
+- “Louder” is not acoustic identity: a stem with higher LUFS can still fail to resemble the target vehicle, so gain cannot substitute for source, propagation, or transient evidence.
+- Same-name feedback copies must bind to the canonical manifest/SHA and pass the stated score-range validation; an illegal `0` cannot be interpreted as a real listening score.
