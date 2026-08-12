@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-l-hellcat-candidate-profile-1",
+  "title": "S12 Stage L Hellcat Candidate Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "candidate_id", "vehicle_id", "base_commit",
+    "parent_candidate_id", "parent_candidate_path", "parent_candidate_sha256",
+    "status", "hypothesis", "reference_target", "feedback_receipt", "crank_clock",
+    "combustion_and_blowdown", "supercharger_intake", "shift_and_load_transient",
+    "operating_level", "afterfire", "loudness", "locked_layers", "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12-stage-l-hellcat-candidate-profile-1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"const": "hellcat"},
+    "base_commit": {"const": "bf653c6f7a3779314d9891aaa801b29a4874db40"},
+    "parent_candidate_id": {"const": "hellcat_stage_k_v7"},
+    "parent_candidate_path": {"const": "targets/stage_k_candidates/hellcat_candidate_v7.json"},
+    "parent_candidate_sha256": {"const": "b730090daa6274c9e6501e9cdf6894ea00f8ccfff535af3f887ec00721d6d358"},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "reference_target": {"type": "object"},
+    "feedback_receipt": {"type": "object"},
+    "crank_clock": {"type": "object"},
+    "combustion_and_blowdown": {"$ref": "#/$defs/parameterSection"},
+    "supercharger_intake": {"$ref": "#/$defs/parameterSection"},
+    "shift_and_load_transient": {"$ref": "#/$defs/parameterSection"},
+    "operating_level": {"$ref": "#/$defs/parameterSection"},
+    "afterfire": {"$ref": "#/$defs/parameterSection"},
+    "loudness": {"type": "object"},
+    "locked_layers": {"type": "object"},
+    "provenance": {"type": "object"}
+  },
+  "$defs": {
+    "parameterSection": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/parameter"}
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "range", "source_level", "source", "source_scope", "verification_state"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string"},
+        "range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "source_level": {"const": "C"},
+        "source": {"const": "synthetic"},
+        "source_scope": {"type": "string", "minLength": 1},
+        "verification_state": {"const": "candidate_assumption"}
+      }
+    }
+  }
+}
