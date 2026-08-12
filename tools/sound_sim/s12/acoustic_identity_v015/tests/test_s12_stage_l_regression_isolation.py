@@ -17,7 +17,11 @@ from tools.sound_sim.s12.acoustic_identity_v015.render_identity_v02 import _appl
 from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_profiles import load_stage_k_candidate
 from tools.sound_sim.s12.acoustic_identity_v015.stage_k.render_candidate import render_stage_k_candidate
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles import load_stage_l_candidate
-from tools.sound_sim.s12.acoustic_identity_v015.stage_l.render_candidate import render_stage_l_candidate, render_stage_l_parent
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l.render_candidate import (
+    render_stage_l_candidate,
+    render_stage_l_l4_final_pcm_probe,
+    render_stage_l_parent,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -151,6 +155,49 @@ def test_stage_l_preserves_inactive_combustion_usage_from_the_source() -> None:
     assert any(item.startswith("shift_and_load_transient.") for item in unused)
     assert any(item.startswith("operating_level.") for item in unused)
     assert any(item.startswith("afterfire.") for item in unused)
+
+
+def test_stage_l_final_l4_probe_merges_actual_layer_parameter_usage() -> None:
+    candidate = load_stage_l_candidate(CANDIDATE_PATH)
+    probe = render_stage_l_l4_final_pcm_probe(_trace(), candidate)
+    usage = probe["candidate_parameter_usage"]
+    requested = set(candidate.requested_parameters())
+    read = set(usage["read"])
+    active = set(usage["active"])
+    inactive = set(usage["inactive"])
+
+    assert set(usage) == {"requested", "read", "configured", "active", "inactive", "unused"}
+    assert set(usage["requested"]) == requested
+    assert read == requested
+    assert set(usage["configured"]) == read
+    assert active | inactive == read
+    assert active.isdisjoint(inactive)
+    assert usage["unused"] == []
+    assert {
+        "operating_level.low_load_gain_db",
+        "operating_level.high_load_gain_db",
+        "operating_level.blend_load_low",
+        "operating_level.blend_load_high",
+        "operating_level.smoothing_s",
+    } <= active
+    assert {
+        f"shift_and_load_transient.{name}"
+        for name in candidate.payload["shift_and_load_transient"]
+    } <= active
+    # The event exists, but the configured 1.0 scale produces no audio delta.
+    assert "afterfire.gain_scale" in inactive
+    assert "afterfire.gain_scale" not in active
+
+
+def test_stage_l_afterfire_gain_is_active_only_when_it_changes_an_event_stem() -> None:
+    candidate = load_stage_l_candidate(CANDIDATE_PATH).with_parameter(
+        "afterfire", "gain_scale", 1.25
+    )
+    usage = render_stage_l_l4_final_pcm_probe(_trace(), candidate)[
+        "candidate_parameter_usage"
+    ]
+    assert "afterfire.gain_scale" in usage["active"]
+    assert "afterfire.gain_scale" not in usage["inactive"]
 
 
 @pytest.mark.parametrize(

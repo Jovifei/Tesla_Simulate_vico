@@ -429,6 +429,7 @@ def render_stage_l_l4_final_pcm_probe(
         "l4_afterfire_event_count": int(rendered.diagnostics["afterfire_event_count"]),
         "l4_named_nonzero_stems": named_nonzero,
         "l4_peak_budget_stem_evidence": rendered.diagnostics["peak_budget_stem_evidence"],
+        "candidate_parameter_usage": rendered.diagnostics["candidate_parameter_usage"],
         "l3_full_mix_low_frequency_status": "DIAGNOSTIC_REGRESSION_PENDING_L5_PRESERVED",
     }
 
@@ -469,6 +470,37 @@ def _apply_current_frozen_layers(
     render = apply_source_operating_trim(
         source, trace, stem_names=continuous, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ,
     )
+    operating_names = {
+        f"operating_level.{name}" for name in candidate.payload["operating_level"]
+    }
+    gain_db = np.asarray(render.diagnostics["operating_trim_gain_db"], dtype=np.float64)
+    operating_state = np.asarray(render.diagnostics["operating_trim_state"], dtype=np.float64)
+    low, high = trim.blend_load
+    unsmoothed_gain_db = trim.low_load_gain_db + np.clip(
+        (operating_state - low) / (high - low), 0.0, 1.0,
+    ) * (trim.high_load_gain_db - trim.low_load_gain_db)
+    trim_delta = max(
+        (float(np.max(np.abs(render.stems[name] - source.stems[name]))) for name in continuous),
+        default=0.0,
+    )
+    operating_active: set[str] = set()
+    if trim_delta > 1.0e-15:
+        if np.any(operating_state <= low) and trim.low_load_gain_db != 0.0:
+            operating_active.add("operating_level.low_load_gain_db")
+        if np.any(operating_state >= high) and trim.high_load_gain_db != 0.0:
+            operating_active.add("operating_level.high_load_gain_db")
+        if (
+            trim.low_load_gain_db != trim.high_load_gain_db
+            and np.any((operating_state > low) & (operating_state < high))
+        ):
+            operating_active.update({
+                "operating_level.blend_load_low", "operating_level.blend_load_high",
+            })
+        if np.max(np.abs(gain_db - unsmoothed_gain_db)) > 1.0e-12:
+            operating_active.add("operating_level.smoothing_s")
+    render = _merge_candidate_parameter_usage(
+        render, candidate, read=operating_names, active=operating_active,
+    )
     render = _rebuild_source_aggregates(render)
     render = apply_idle_dynamics(render, "hellcat", trace, _SAMPLE_RATE_HZ)
     render = _append_pressure_contributors(
@@ -476,8 +508,20 @@ def _apply_current_frozen_layers(
     )
     render = apply_afterfire(render, "hellcat", trace, _SAMPLE_RATE_HZ)
     render = _append_pressure_contributors(render, ("afterfire",))
+    afterfire_before = np.asarray(render.stems["afterfire"], dtype=np.float64).copy()
+    afterfire_scale = float(candidate.payload["afterfire"]["gain_scale"]["value"])
     render = _scale_event_stem(
-        render, "afterfire", float(candidate.payload["afterfire"]["gain_scale"]["value"])
+        render, "afterfire", afterfire_scale
+    )
+    afterfire_active = (
+        bool(np.any(afterfire_before))
+        and bool(np.max(np.abs(np.asarray(render.stems["afterfire"]) - afterfire_before)) > 1.0e-15)
+    )
+    render = _merge_candidate_parameter_usage(
+        render,
+        candidate,
+        read={"afterfire.gain_scale"},
+        active={"afterfire.gain_scale"} if afterfire_active else set(),
     )
     if include_l4:
         render = apply_hellcat_transient_dynamics(render, trace, candidate, _SAMPLE_RATE_HZ)
@@ -490,6 +534,37 @@ def _apply_current_frozen_layers(
     render = _append_pressure_contributors(render, ("exhaust_rumble",))
     render = apply_pre_ptr_equalization(render, "hellcat", trace, _SAMPLE_RATE_HZ)
     return render
+
+
+def _merge_candidate_parameter_usage(
+    render: SourceRender,
+    candidate: StageLCandidateProfile,
+    *,
+    read: set[str],
+    active: set[str],
+) -> SourceRender:
+    """Merge one layer's measured parameter consumption into the render receipt."""
+    if not active <= read:
+        raise ValueError("active candidate parameters must be a subset of read parameters")
+    requested = set(candidate.requested_parameters())
+    if not read <= requested:
+        raise ValueError("layer read parameters outside the Stage-L candidate contract")
+    previous = render.diagnostics.get("candidate_parameter_usage", {})
+    merged_read = set(previous.get("read", ())) | read
+    merged_active = set(previous.get("active", ())) | active
+    merged_inactive = (
+        set(previous.get("inactive", ())) | (read - active)
+    ) - merged_active
+    diagnostics = dict(render.diagnostics)
+    diagnostics["candidate_parameter_usage"] = {
+        "requested": sorted(requested),
+        "read": sorted(merged_read),
+        "configured": sorted(merged_read),
+        "active": sorted(merged_active),
+        "inactive": sorted(merged_inactive),
+        "unused": sorted(requested - merged_read),
+    }
+    return replace(render, diagnostics=diagnostics).validate()
 
 
 def _append_pressure_contributors(
