@@ -39,9 +39,9 @@ _CONTRIBUTORS = (
 _AGGREGATES = ("hemi_exhaust", "hemi_combustion_and_blowdown")
 _COMBUSTION_PRESSURE_STRUCTURAL_SCALE = 0.75
 # A deterministic strong/weak grouping over the eight-event firing
-# cycle.  The zero mean keeps ``cylinder_strength_variation`` an energy-shape
-# control rather than a hidden gain, while the grouped pressure rises preserve
-# the audible cross-plane burst/pause cadence after the banks merge.
+# cycle. The zero-mean offsets keep event amplitude mean normalized; mean-square
+# energy still changes with variation. Grouped pressure rises preserve the
+# audible cross-plane burst/pause cadence after the banks merge.
 _CYLINDER_PATTERN = np.asarray((1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0))
 _PARAMETER_EFFECT_REFERENCES = {
     "cylinder_strength_variation": 0.06,
@@ -104,12 +104,17 @@ def render_hellcat_crossplane_combustion_v2(
     stems["hemi_combustion_and_blowdown"] = pressure.copy()
     requested = sorted(values)
     effect_energy: dict[str, float] = {}
+    reference_rendered_stems: dict[str, list[str]] = {}
     for name, reference_value in _PARAMETER_EFFECT_REFERENCES.items():
         reference_values = dict(values)
         reference_values[name] = reference_value
         reference_stems, _ = _render_primitive_stems(
-            rpm, load, throttle, clock, sample_rate_hz, reference_values
+            rpm, load, throttle, clock, sample_rate_hz, reference_values,
+            requested_stems=frozenset(_AFFECTED_STEMS[name]),
         )
+        reference_rendered_stems[name] = [
+            stem for stem in _AFFECTED_STEMS[name] if stem in reference_stems
+        ]
         effect_energy[name] = float(sum(
             np.sum(np.square(stems[stem] - reference_stems[stem]))
             for stem in _AFFECTED_STEMS[name]
@@ -175,6 +180,7 @@ def render_hellcat_crossplane_combustion_v2(
         },
         "parameter_effect_energy": effect_energy,
         "parameter_effect_reference_values": dict(_PARAMETER_EFFECT_REFERENCES),
+        "parameter_reference_rendered_stems": reference_rendered_stems,
         "parameter_affected_stems": {name: list(stems) for name, stems in _AFFECTED_STEMS.items()},
         "xpipe_delay_samples": delay_samples,
         **kernel_diagnostics,
@@ -233,8 +239,12 @@ def _render_primitive_stems(
     clock: "HellcatCrankClock",
     sample_rate_hz: int,
     values: Mapping[str, float],
+    requested_stems: frozenset[str] | None = None,
 ) -> tuple[dict[str, np.ndarray], dict[str, object]]:
-    """Render primitive contributors without diagnostics or recursive probes."""
+    """Render only requested primitive paths, without recursive diagnostics."""
+    requested = frozenset(_CONTRIBUTORS) if requested_stems is None else requested_stems
+    if not requested <= frozenset(_CONTRIBUTORS):
+        raise ValueError("requested_stems contains a non-primitive stem")
     count = rpm.size
     event_indices = np.asarray(clock.event_sample_indices, dtype=np.int64)
     event_count = event_indices.size
@@ -250,50 +260,66 @@ def _render_primitive_stems(
 
     all_impulses = np.zeros(count, dtype=np.float64)
     all_impulses[event_indices] = event_amplitudes
-    left_impulses = np.zeros(count, dtype=np.float64)
-    right_impulses = np.zeros(count, dtype=np.float64)
-    asymmetry = values["bank_amplitude_asymmetry"]
-    for ordinal, (index, label) in enumerate(
-        zip(event_indices, clock.bank_labels, strict=True)
-    ):
-        if label == "left":
-            left_impulses[index] = event_amplitudes[ordinal] * (1.0 + asymmetry)
-        else:
-            right_impulses[index] = event_amplitudes[ordinal] * (1.0 - asymmetry)
-
-    kernel, kernel_diagnostics = _blowdown_kernel(sample_rate_hz, values)
-    left_local = _finite_convolve(left_impulses, kernel)
-    right_local = _finite_convolve(right_impulses, kernel)
     left_group_delay = max(1, int(round(0.08e-3 * sample_rate_hz)))
     right_group_delay = max(left_group_delay + 1, int(round(0.50e-3 * sample_rate_hz)))
-    left_response = _delay(left_local, left_group_delay)
-    right_response = _delay(right_local, right_group_delay)
     delay_samples = max(
         1, int(round(values["xpipe_delay_ms"] * sample_rate_hz / 1000.0))
     )
-    cross = values["xpipe_cross_coupling"]
-    left_cross = cross * _delay(right_response, delay_samples)
-    right_cross = cross * _delay(left_response, delay_samples)
-    left_pressure = left_response + left_cross
-    right_pressure = right_response + right_cross
-
-    body_kernel = _body_kernel(sample_rate_hz, values)
-    body_mono = values["low_frequency_blowdown_gain"] * _finite_convolve(
-        all_impulses, body_kernel
-    )
-    shock_mono = values["structure_shock_mix"] * _finite_convolve(
-        all_impulses, _structure_kernel(sample_rate_hz)
-    )
-    torque_mono = values["torque_ripple_modulation_depth"] * _finite_convolve(
-        all_impulses, _torque_kernel(sample_rate_hz)
-    )
-    stems = {
-        "hemi_exhaust_left": np.column_stack((left_pressure, 0.34 * left_pressure)),
-        "hemi_exhaust_right": np.column_stack((0.34 * right_pressure, right_pressure)),
-        "hemi_blowdown_body": np.column_stack((0.62 * body_mono, 0.62 * body_mono)),
-        "hemi_structure_shock": np.column_stack((shock_mono, 0.82 * shock_mono)),
-        "hemi_mechanical_torque_ripple": np.column_stack((0.88 * torque_mono, torque_mono)),
-    }
+    stems: dict[str, np.ndarray] = {}
+    kernel_diagnostics: dict[str, object] = {}
+    xpipe_cross_energy = 0.0
+    exhaust_names = frozenset(("hemi_exhaust_left", "hemi_exhaust_right"))
+    if requested & exhaust_names:
+        left_impulses = np.zeros(count, dtype=np.float64)
+        right_impulses = np.zeros(count, dtype=np.float64)
+        asymmetry = values["bank_amplitude_asymmetry"]
+        for ordinal, (index, label) in enumerate(
+            zip(event_indices, clock.bank_labels, strict=True)
+        ):
+            if label == "left":
+                left_impulses[index] = event_amplitudes[ordinal] * (1.0 + asymmetry)
+            else:
+                right_impulses[index] = event_amplitudes[ordinal] * (1.0 - asymmetry)
+        kernel, kernel_diagnostics = _blowdown_kernel(sample_rate_hz, values)
+        left_response = _delay(_finite_convolve(left_impulses, kernel), left_group_delay)
+        right_response = _delay(_finite_convolve(right_impulses, kernel), right_group_delay)
+        cross = values["xpipe_cross_coupling"]
+        left_cross = cross * _delay(right_response, delay_samples)
+        right_cross = cross * _delay(left_response, delay_samples)
+        xpipe_cross_energy = float(
+            np.sum(np.square(left_cross)) + np.sum(np.square(right_cross))
+        )
+        if "hemi_exhaust_left" in requested:
+            left_pressure = left_response + left_cross
+            stems["hemi_exhaust_left"] = np.column_stack(
+                (left_pressure, 0.34 * left_pressure)
+            )
+        if "hemi_exhaust_right" in requested:
+            right_pressure = right_response + right_cross
+            stems["hemi_exhaust_right"] = np.column_stack(
+                (0.34 * right_pressure, right_pressure)
+            )
+    if "hemi_blowdown_body" in requested:
+        body_mono = values["low_frequency_blowdown_gain"] * _finite_convolve(
+            all_impulses, _body_kernel(sample_rate_hz, values)
+        )
+        stems["hemi_blowdown_body"] = np.column_stack(
+            (0.62 * body_mono, 0.62 * body_mono)
+        )
+    if "hemi_structure_shock" in requested:
+        shock_mono = values["structure_shock_mix"] * _finite_convolve(
+            all_impulses, _structure_kernel(sample_rate_hz)
+        )
+        stems["hemi_structure_shock"] = np.column_stack(
+            (shock_mono, 0.82 * shock_mono)
+        )
+    if "hemi_mechanical_torque_ripple" in requested:
+        torque_mono = values["torque_ripple_modulation_depth"] * _finite_convolve(
+            all_impulses, _torque_kernel(sample_rate_hz)
+        )
+        stems["hemi_mechanical_torque_ripple"] = np.column_stack(
+            (0.88 * torque_mono, torque_mono)
+        )
     components: dict[str, object] = {
         "event_indices": event_indices,
         "cylinder_pattern": cylinder_pattern,
@@ -303,9 +329,7 @@ def _render_primitive_stems(
         "left_group_delay": left_group_delay,
         "right_group_delay": right_group_delay,
         "delay_samples": delay_samples,
-        "xpipe_cross_energy": float(
-            np.sum(np.square(left_cross)) + np.sum(np.square(right_cross))
-        ),
+        "xpipe_cross_energy": xpipe_cross_energy,
     }
     return stems, components
 

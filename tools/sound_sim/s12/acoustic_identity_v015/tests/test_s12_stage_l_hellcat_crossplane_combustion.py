@@ -238,6 +238,19 @@ def test_parameter_at_reference_is_inactive_even_when_its_stem_is_nonzero() -> N
     assert "bank_amplitude_asymmetry" not in usage["active"]
 
 
+def test_reference_probes_render_exactly_their_affected_primitive_stems() -> None:
+    rendered, _ = _render()
+    actual = rendered.diagnostics["parameter_reference_rendered_stems"]
+    affected = rendered.diagnostics["parameter_affected_stems"]
+    assert set(actual) == set(affected)
+    assert all(actual[name] == affected[name] for name in affected)
+    assert actual["structure_shock_mix"] == ["hemi_structure_shock"]
+    assert actual["torque_ripple_modulation_depth"] == [
+        "hemi_mechanical_torque_ripple"
+    ]
+    assert "hemi_blowdown_body" not in actual["xpipe_delay_ms"]
+
+
 def test_cylinder_strength_is_stable_across_python_hash_seeds() -> None:
     repo_root = Path(__file__).resolve().parents[5]
     script = """
