@@ -130,3 +130,31 @@ def test_final_pcm_probe_enforces_peak_clipping_and_loudness_delta() -> None:
     order = evidence["pipeline_order"]
     assert order.index("hellcat_shift_load_transient") < order.index("frozen_common_low_frequency_body")
     assert order.index("hellcat_named_peak_budget") < order.index("frozen_common_pre_ptr_equalization")
+
+
+def test_source_diagnostics_and_final_probe_share_one_pipeline_order() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l.render_candidate import (
+        _STAGE_L_PIPELINE_ORDER,
+        render_stage_l_candidate,
+        render_stage_l_l4_final_pcm_probe,
+    )
+
+    count = 16_001
+    time_s = np.arange(count, dtype=np.float64) / 8_000.0
+    trace = VehicleStateTrace(
+        time_s, np.linspace(1_500.0, 4_000.0, count), np.full(count, 0.82),
+        np.full(count, 0.88), np.ones(count),
+    ).validate()
+    source = render_stage_l_candidate(trace, _CANDIDATE)
+    probe = render_stage_l_l4_final_pcm_probe(trace, _CANDIDATE)
+    assert tuple(source.diagnostics["final_pipeline_order"]) == _STAGE_L_PIPELINE_ORDER
+    assert tuple(source.diagnostics["pipeline_order"]) == _STAGE_L_PIPELINE_ORDER
+    assert tuple(probe["pipeline_order"]) == _STAGE_L_PIPELINE_ORDER
+    prefix = tuple(source.diagnostics["executed_pipeline_prefix"])
+    assert prefix == _STAGE_L_PIPELINE_ORDER[:2]
+    order = _STAGE_L_PIPELINE_ORDER
+    assert order.index("hellcat_shift_load_transient") < order.index("hellcat_named_peak_budget")
+    assert order.index("hellcat_named_peak_budget") < order.index("frozen_common_low_frequency_body")
+    assert order.index("frozen_common_low_frequency_body") < order.index("frozen_exhaust_rumble")
+    assert order.index("frozen_exhaust_rumble") < order.index("frozen_common_pre_ptr_equalization")
+    assert order.index("frozen_common_pre_ptr_equalization") < order.index("frozen_ptr")

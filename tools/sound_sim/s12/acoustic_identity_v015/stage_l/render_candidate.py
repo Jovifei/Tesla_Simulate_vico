@@ -32,6 +32,13 @@ from .hellcat_transient_dynamics import apply_hellcat_transient_dynamics
 
 
 _SAMPLE_RATE_HZ = 48000
+_STAGE_L_PIPELINE_ORDER = (
+    "shared_hellcat_source", "state_spectral_targets_once", "source_operating_trim",
+    "idle_dynamics", "deterministic_afterfire", "hellcat_shift_load_transient",
+    "hellcat_named_peak_budget", "frozen_common_low_frequency_body",
+    "frozen_exhaust_rumble", "frozen_common_pre_ptr_equalization", "frozen_ptr",
+    "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+)
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _HEMI_CONTRIBUTORS = (
     "hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body",
@@ -262,15 +269,9 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
                 },
             },
             "stage_l_l2_event_consumption": "ACTIVE",
-            "pipeline_order": (
-                "shared_hellcat_crank_clock", "cross_plane_combustion_blowdown_source",
-                "twin_screw_intake_case_source", "state_spectral_targets_once",
-                "source_operating_trim", "idle_dynamics", "deterministic_afterfire",
-                "frozen_common_low_frequency_body", "frozen_exhaust_rumble",
-                "hellcat_shift_load_transient", "hellcat_named_peak_budget",
-                "frozen_common_pre_ptr_equalization", "frozen_ptr", "edge_fade",
-                "fixed_whole_cycle_gain", "pcm24",
-            ),
+            "pipeline_order": _STAGE_L_PIPELINE_ORDER,
+            "final_pipeline_order": _STAGE_L_PIPELINE_ORDER,
+            "executed_pipeline_prefix": _STAGE_L_PIPELINE_ORDER[:2],
             "implemented_pipeline_stop": "state_spectral_targets_once_after_l3_intake_and_casing",
             "post_frozen_ptr_added_energy": 0.0,
             "stage_l_scope": "C/synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
@@ -405,13 +406,7 @@ def render_stage_l_l4_final_pcm_probe(
     candidate_pcm = _pcm24_roundtrip(managed.segments["candidate"])
     parent_loudness = measure_loudness(parent_pcm, _SAMPLE_RATE_HZ)
     candidate_loudness = measure_loudness(candidate_pcm, _SAMPLE_RATE_HZ)
-    pipeline_order = (
-        "shared_hellcat_source", "source_operating_trim", "idle_dynamics",
-        "deterministic_afterfire", "hellcat_shift_load_transient",
-        "hellcat_named_peak_budget", "frozen_common_low_frequency_body",
-        "frozen_exhaust_rumble", "frozen_common_pre_ptr_equalization",
-        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
-    )
+    pipeline_order = _STAGE_L_PIPELINE_ORDER
     named_nonzero = [
         name for name in ("afterfire", "hellcat_shift_reengagement", "hellcat_sc_drive_transient", "hellcat_tip_in_blowdown")
         if np.any(rendered.stems[name])
