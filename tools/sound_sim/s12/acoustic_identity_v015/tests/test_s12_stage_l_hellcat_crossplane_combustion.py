@@ -516,6 +516,8 @@ def test_full_frozen_downstream_pcm_probe_improves_parent_low_and_mid_reference_
         "l4_transient_pending_pass_through", "frozen_common_pre_ptr_equalization",
         "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
     )
+    assert evidence["l3_intake_casing_status"] == "PENDING_PASS_THROUGH"
+    assert evidence["l2_low_frequency_gate"] == "PASS"
     assert evidence["l4_transient_status"] == "PENDING_PASS_THROUGH"
     assert evidence["candidate_pcm_sha256"] != evidence["parent_pcm_sha256"]
     assert evidence["candidate_80_250_rms"] > evidence["parent_80_250_rms"], evidence

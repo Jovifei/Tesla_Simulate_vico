@@ -101,8 +101,8 @@ def test_stage_l_shapes_only_pressure_contributors_once_and_rebuilds_aggregates(
     assert np.max(np.abs(rendered.pressure - total)) <= 1e-12
     assert np.max(np.abs(rendered.stems["exhaust"] - rendered.stems["hemi_exhaust_left"] - rendered.stems["hemi_exhaust_right"])) <= 1e-12
     assert np.max(np.abs(rendered.stems["hemi_exhaust"] - rendered.stems["exhaust"])) <= 1e-12
-    blower_names = tuple(name for name in contributors if name.startswith("blower_"))
-    assert np.max(np.abs(rendered.stems["blower"] - sum((rendered.stems[name] for name in blower_names), np.zeros_like(rendered.pressure)))) <= 1e-12
+    sc_names = tuple(name for name in contributors if name.startswith("sc_"))
+    assert np.max(np.abs(rendered.stems["supercharger_intake"] - sum((rendered.stems[name] for name in sc_names), np.zeros_like(rendered.pressure)))) <= 1e-12
 
 
 def test_stage_l_candidate_parameter_usage_is_measured_not_inferred_from_json_presence() -> None:
@@ -120,7 +120,10 @@ def test_stage_l_candidate_parameter_usage_is_measured_not_inferred_from_json_pr
     combustion = {name for name in requested if name.startswith("combustion_and_blowdown.")}
     assert combustion <= set(usage["active"])
     assert combustion.isdisjoint(usage["unused"])
-    assert any(name.startswith("supercharger_intake.") for name in usage["unused"])
+    supercharger = {name for name in requested if name.startswith("supercharger_intake.")}
+    assert supercharger <= set(usage["read"])
+    assert supercharger <= set(usage["active"]) | set(usage["inactive"])
+    assert supercharger.isdisjoint(usage["unused"])
     assert any(name.startswith("shift_and_load_transient.") for name in usage["unused"])
 
 
@@ -144,7 +147,7 @@ def test_stage_l_preserves_inactive_combustion_usage_from_the_source() -> None:
     assert active | inactive == read
     assert active.isdisjoint(inactive)
     assert unused == requested - read
-    assert any(item.startswith("supercharger_intake.") for item in unused)
+    assert not any(item.startswith("supercharger_intake.") for item in unused)
     assert any(item.startswith("shift_and_load_transient.") for item in unused)
     assert any(item.startswith("operating_level.") for item in unused)
     assert any(item.startswith("afterfire.") for item in unused)
@@ -200,13 +203,13 @@ def test_stage_l_does_not_accept_an_ambiguous_none_candidate() -> None:
         render_stage_l_candidate(_trace(), None)  # type: ignore[arg-type]
 
 
-def test_l2_combustion_and_v4_blower_adapters_receive_the_identical_clock_object(
+def test_l2_combustion_and_l3_supercharger_adapters_receive_the_identical_clock_object(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
 
     combustion_adapter = getattr(module, "render_crossplane_combustion_l2_with_clock", None)
-    blower_adapter = getattr(module, "render_stage_k_v4_blower_with_clock", None)
+    blower_adapter = getattr(module, "render_supercharger_intake_l3_with_clock", None)
     assert callable(combustion_adapter)
     assert callable(blower_adapter)
     observed: list[object] = []
@@ -215,18 +218,18 @@ def test_l2_combustion_and_v4_blower_adapters_receive_the_identical_clock_object
         observed.append(clock)
         return combustion_adapter(trace, clock, overrides, sample_rate_hz)
 
-    def observe_blower(trace, clock, sample_rate_hz=48000):
+    def observe_blower(trace, clock, overrides, sample_rate_hz=48000):
         observed.append(clock)
-        return blower_adapter(trace, clock, sample_rate_hz)
+        return blower_adapter(trace, clock, overrides, sample_rate_hz)
 
     monkeypatch.setattr(module, "render_crossplane_combustion_l2_with_clock", observe_combustion)
-    monkeypatch.setattr(module, "render_stage_k_v4_blower_with_clock", observe_blower)
+    monkeypatch.setattr(module, "render_supercharger_intake_l3_with_clock", observe_blower)
     rendered = module.render_stage_l_candidate(_trace(), load_stage_l_candidate(CANDIDATE_PATH))
     assert len(observed) == 2
     assert observed[0] is observed[1]
     evidence = rendered.diagnostics["shared_clock_consumers"]
     assert evidence["cross_plane_combustion_l2"]["clock_object_shared"] is True
-    assert evidence["stage_k_v4_blower"]["clock_object_shared"] is True
+    assert evidence["supercharger_intake_l3"]["clock_object_shared"] is True
     assert evidence["cross_plane_combustion_l2"]["internal_event_scheduling"] == "ACTIVE_L2_SHARED_CLOCK"
     assert evidence["cross_plane_combustion_l2"]["event_gates_consumed"] is True
     assert evidence["cross_plane_combustion_l2"]["event_sample_indices_consumed"] is True
