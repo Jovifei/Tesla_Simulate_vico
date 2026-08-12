@@ -124,6 +124,32 @@ def test_stage_l_candidate_parameter_usage_is_measured_not_inferred_from_json_pr
     assert any(name.startswith("shift_and_load_transient.") for name in usage["unused"])
 
 
+def test_stage_l_preserves_inactive_combustion_usage_from_the_source() -> None:
+    candidate = load_stage_l_candidate(CANDIDATE_PATH).with_parameter(
+        "combustion_and_blowdown", "bank_amplitude_asymmetry", 0.0
+    )
+    usage = render_stage_l_candidate(_trace(), candidate).diagnostics[
+        "candidate_parameter_usage"
+    ]
+    name = "combustion_and_blowdown.bank_amplitude_asymmetry"
+    requested = set(usage["requested"])
+    read = set(usage["read"])
+    active = set(usage["active"])
+    inactive = set(usage["inactive"])
+    unused = set(usage["unused"])
+    assert name in read
+    assert name in usage["configured"]
+    assert name in inactive
+    assert name not in active
+    assert active | inactive == read
+    assert active.isdisjoint(inactive)
+    assert unused == requested - read
+    assert any(item.startswith("supercharger_intake.") for item in unused)
+    assert any(item.startswith("shift_and_load_transient.") for item in unused)
+    assert any(item.startswith("operating_level.") for item in unused)
+    assert any(item.startswith("afterfire.") for item in unused)
+
+
 @pytest.mark.parametrize(
     "vehicle_id,candidate_name,expected_sha",
     [

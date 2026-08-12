@@ -141,6 +141,7 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
     combustion = render_crossplane_combustion_l2_with_clock(
         trace, clock, combustion_overrides, _SAMPLE_RATE_HZ,
     )
+    combustion_usage = combustion.diagnostics["candidate_parameter_usage"]
     blower = render_stage_k_v4_blower_with_clock(trace, clock, _SAMPLE_RATE_HZ)
     stems = {name: np.asarray(combustion.stems[name], dtype=np.float64) for name in _HEMI_CONTRIBUTORS}
     stems.update({name: np.asarray(blower.stems[name], dtype=np.float64) for name in _BLOWER_CONTRIBUTORS})
@@ -164,10 +165,13 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
         (shaped_stems[name] for name in _CONTRIBUTORS), np.zeros_like(shaped.pressure)
     )
     requested = sorted(candidate.requested_parameters())
-    combustion_parameters = sorted(
-        f"combustion_and_blowdown.{name}" for name in combustion_overrides
-    )
-    unused = sorted(set(requested) - set(combustion_parameters))
+    prefixed_usage = {
+        key: sorted(
+            f"combustion_and_blowdown.{name}" for name in combustion_usage[key]
+        )
+        for key in ("read", "configured", "active", "inactive")
+    }
+    unused = sorted(set(requested) - set(prefixed_usage["read"]))
     final_diagnostics = dict(shaped.diagnostics)
     final_diagnostics.update(
         {
@@ -177,9 +181,12 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
             "stage_l_parent_candidate_id": candidate.payload["parent_candidate_id"],
             "stage_l_phase": "L2_CROSSPLANE_COMBUSTION_BLOWDOWN",
             "candidate_parameter_usage": {
-                "requested": requested, "read": combustion_parameters,
-                "configured": combustion_parameters, "active": combustion_parameters,
-                "inactive": [], "unused": unused,
+                "requested": requested,
+                "read": prefixed_usage["read"],
+                "configured": prefixed_usage["configured"],
+                "active": prefixed_usage["active"],
+                "inactive": prefixed_usage["inactive"],
+                "unused": unused,
             },
             "crank_clock_firing_order": tuple(candidate.payload["crank_clock"]["firing_order"]),
             "crank_clock_event_count": len(clock.event_sample_indices),
