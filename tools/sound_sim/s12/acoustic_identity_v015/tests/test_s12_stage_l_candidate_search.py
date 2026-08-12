@@ -164,6 +164,16 @@ def _record(candidate_id: str, *, pass_all: bool, delta: float = 0.1) -> dict[st
         "full_render_residency_max": 1,
         "metrics": _perceptual(crest_db=9.0 if pass_all else 7.0),
         "reference_distance": _reference(pass_all=pass_all, candidate_id=candidate_id),
+        "formal_final_audio_provenance": {
+            "status": "AVAILABLE",
+            "producer_binding": {
+                "schema_version": "s12-stage-l-formal-final-audio-producer-binding-1",
+                "producer_artifact_sha256": _sha("producer"),
+                "candidate_profile_sha256": _sha("profile"),
+                "trace_sha256": _sha("trace"),
+                "final_wav_sha256": _sha("candidate"),
+            },
+        },
     }
 
 
@@ -257,6 +267,22 @@ def test_full_mix_crest_regression_is_partial_and_input_is_not_mutated() -> None
     assert evaluated["hard_gates"]["low_band_pulse_crest_improves_parent"] is False
     assert result["candidate_file_update_performed"] is False
     assert json.dumps(candidate, sort_keys=True) == before
+
+
+def test_missing_formal_final_audio_provenance_is_a_hard_gate() -> None:
+    candidate = _record("all-measured-gates-pass", pass_all=True)
+    candidate["formal_final_audio_provenance"] = {
+        "status": "NOT_AVAILABLE",
+        "reason": "no exact producer/profile/trace/final-WAV cross-binding",
+    }
+
+    result = qualify_stage_l_candidates(
+        [candidate], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
+    )
+
+    assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert result["selected_candidate_id"] is None
+    assert result["evaluated"][0]["hard_gates"]["formal_produced_final_audio"] is False
 
 
 def test_auxiliary_crest_roughness_and_reference_band_gates_are_hard() -> None:
@@ -435,9 +461,8 @@ def test_upper_band_increment_over_parent_is_a_hard_gate() -> None:
 
 
 def test_runner_measures_source_render_residency_instead_of_reporting_a_literal(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    del tmp_path
     live = 0
     observed_max = 0
 
@@ -457,8 +482,8 @@ def test_runner_measures_source_render_residency_instead_of_reporting_a_literal(
     residency = qualifier._RenderResidency()
     rendered = qualifier._render_pre_ptr(object(), object(), residency)
     assert isinstance(rendered, _Render)
-    assert residency.maximum == 1
-    assert observed_max > 1
+    assert observed_max == 2
+    assert residency.maximum == observed_max
 
 
 def test_real_stage_k_parent_and_stage_l_candidate_metrics_are_executable(
@@ -496,7 +521,7 @@ def test_real_stage_k_parent_and_stage_l_candidate_metrics_are_executable(
     assert candidate_metrics["source_domain"]["shaft_ratio_error"] >= 0.0
 
 
-def test_real_stage_l_pre_ptr_keeps_only_final_render_resident() -> None:
+def test_real_stage_l_pre_ptr_reports_raw_and_final_render_coexistence() -> None:
     package = Path(__file__).resolve().parents[1]
     trace = qualifier.build_drive_cycle_trace("hellcat", duration_s=1.0)
     profile = qualifier.load_stage_l_candidate(
@@ -507,7 +532,7 @@ def test_real_stage_l_pre_ptr_keeps_only_final_render_resident() -> None:
     rendered = qualifier._render_pre_ptr(trace, profile, residency)
 
     assert rendered.pressure.shape[0] == trace.time_s.shape[0]
-    assert residency.maximum == 1
+    assert residency.maximum == 2
 
 
 def test_actual_runner_renders_stage_k_and_stage_l_and_completes_partial(
@@ -540,9 +565,11 @@ def test_actual_runner_renders_stage_k_and_stage_l_and_completes_partial(
         manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
     )
 
-    assert result["full_render_residency_max"] == 1
+    assert result["full_render_residency_max"] > 1
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert result["selected_candidate_id"] is None
     assert result["formal_final_audio_provenance"]["status"] == "NOT_AVAILABLE"
+    assert result["evaluated"][0]["hard_gates"]["one_full_source_render_resident"] is False
     assert result["evaluated"][0]["hard_gates"]["non_hellcat_isolation"] is False
 
 
@@ -630,7 +657,6 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
         (lambda row: row["metrics"].update({"hard_gates": {name: True for name in REQUIRED_HARD_GATES}}), "exact keys"),
         (lambda row: row["reference_distance"]["protection_evidence"]["isolation"].update({"seven_non_hellcat_pcm_sha_unchanged": 1}), "exact keys"),
         (lambda row: row.update({"full_render_residency_max": True}), "integer"),
-        (lambda row: row.update({"full_render_residency_max": 2}), "one SourceRender"),
         (lambda row: row["reference_distance"].update({"mean_improvement_ratio": 0.99}), "reference summary"),
     ],
 )

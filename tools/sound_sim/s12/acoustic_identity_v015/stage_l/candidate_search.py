@@ -16,6 +16,8 @@ from typing import Any
 MAX_CANDIDATES = 64
 
 REQUIRED_HARD_GATES = (
+    "formal_produced_final_audio",
+    "one_full_source_render_resident",
     "exact_contract_and_reachability",
     "source_physics",
     "final_pcm_health",
@@ -36,7 +38,13 @@ REQUIRED_HARD_GATES = (
 
 _CANDIDATE_KEYS = {
     "candidate_id", "parameters", "probe_duration_s", "full_render_residency_max",
-    "metrics", "reference_distance",
+    "metrics", "reference_distance", "formal_final_audio_provenance",
+}
+_FORMAL_PROVENANCE_AVAILABLE_KEYS = {"status", "producer_binding"}
+_FORMAL_PROVENANCE_UNAVAILABLE_KEYS = {"status", "reason"}
+_PRODUCER_BINDING_KEYS = {
+    "schema_version", "producer_artifact_sha256", "candidate_profile_sha256",
+    "trace_sha256", "final_wav_sha256",
 }
 _METRIC_KEYS = {"schema_version", "domains", "source_domain", "pre_ptr", "final_pcm24"}
 _PARENT_METRIC_KEYS = {"schema_version", "domain", "final_pcm24"}
@@ -117,8 +125,8 @@ def qualify_stage_l_candidates(
         residency = candidate["full_render_residency_max"]
         if isinstance(residency, bool) or not isinstance(residency, int):
             raise ValueError("full_render_residency_max must be an exact integer")
-        if residency > 1 or residency < 0:
-            raise ValueError("one SourceRender resident at a time is required")
+        if residency < 0:
+            raise ValueError("full_render_residency_max must be nonnegative")
 
         metrics = _validate_metrics(candidate["metrics"], "metrics")
         requested = set(metrics["pre_ptr"]["candidate_parameter_usage"]["requested"])
@@ -131,7 +139,12 @@ def qualify_stage_l_candidates(
             raise ValueError("candidate metrics WAV hash does not match reference summary")
         if validated_parent["final_pcm24"]["wav_sha256"] != reference["hashes"]["stage_k_wav_sha256"]:
             raise ValueError("parent metrics WAV hash does not match reference summary")
+        formal_audio_available = _validate_formal_final_audio_provenance(
+            candidate["formal_final_audio_provenance"], reference,
+        )
         gates = _derive_gates(metrics, validated_parent, reference)
+        gates["formal_produced_final_audio"] = formal_audio_available
+        gates["one_full_source_render_resident"] = residency <= 1
         if set(gates) != set(REQUIRED_HARD_GATES) or any(type(value) is not bool for value in gates.values()):
             raise ValueError("derived hard gate set is incomplete")
         error_components = _vehicle_specific_error_components(metrics, validated_parent, reference)
@@ -219,6 +232,41 @@ def _validate_metrics(value: object, label: str) -> Mapping[str, object]:
     if not 0.0 < sum(shares) <= 1.000001:
         raise ValueError(f"{label}.final_pcm24.band_shares total must be within (0, 1]")
     return metrics
+
+
+def _validate_formal_final_audio_provenance(
+    value: object, reference: Mapping[str, object],
+) -> bool:
+    if not isinstance(value, Mapping):
+        raise ValueError("formal_final_audio_provenance must be a mapping")
+    if value.get("status") == "NOT_AVAILABLE":
+        unavailable = _exact_mapping(
+            value, _FORMAL_PROVENANCE_UNAVAILABLE_KEYS, "formal_final_audio_provenance",
+        )
+        if not isinstance(unavailable["reason"], str) or not unavailable["reason"]:
+            raise ValueError("formal_final_audio_provenance reason is invalid")
+        return False
+    available = _exact_mapping(
+        value, _FORMAL_PROVENANCE_AVAILABLE_KEYS, "formal_final_audio_provenance",
+    )
+    if available["status"] != "AVAILABLE":
+        raise ValueError("formal_final_audio_provenance status is invalid")
+    binding = _exact_mapping(
+        available["producer_binding"], _PRODUCER_BINDING_KEYS,
+        "formal_final_audio_provenance.producer_binding",
+    )
+    if binding["schema_version"] != "s12-stage-l-formal-final-audio-producer-binding-1":
+        raise ValueError("formal final audio producer binding schema_version mismatch")
+    producer_sha = _sha256(binding["producer_artifact_sha256"], "producer artifact SHA-256")
+    profile_sha = _sha256(binding["candidate_profile_sha256"], "producer profile SHA-256")
+    trace_sha = _sha256(binding["trace_sha256"], "producer trace SHA-256")
+    wav_sha = _sha256(binding["final_wav_sha256"], "producer final WAV SHA-256")
+    return bool(
+        producer_sha
+        and profile_sha == reference["hashes"]["candidate_profile_sha256"]
+        and trace_sha == reference["trace_binding"]["trace_sha256"]
+        and wav_sha == reference["hashes"]["stage_l_wav_sha256"]
+    )
 
 
 def _validate_parent_metrics(value: object) -> Mapping[str, object]:

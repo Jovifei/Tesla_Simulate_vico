@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import gc
 import hashlib
 import json
@@ -18,6 +19,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[5]))
 
 from tools.sound_sim.s12.acoustic_identity_v015.render_drive_cycle_v10 import build_drive_cycle_trace
+from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles import (
     StageLCandidateProfile,
     load_stage_l_candidate,
@@ -116,41 +118,49 @@ def run_stage_l_qualification_manifest(
     # metrics are measured from its real render, while its final-PCM health is
     # deliberately measured from the frozen Stage-K comparison WAV.
     residency = _RenderResidency()
-    parent_render = residency.observe(render_stage_k_candidate("hellcat", probe_trace, parent_profile))
-    parent_metrics = compute_stage_k_parent_metrics(
-        parent_render, probe_trace, stage_k_receipt["path"],
-    )
-    del parent_render
-    gc.collect()
-
-    records: list[dict[str, object]] = []
-    for candidate, (profile_receipt, wav_receipt) in zip(candidates, candidate_artifacts):
-        candidate_render = _render_pre_ptr(probe_trace, candidate, residency)
-        metrics = compute_stage_l_perceptual_metrics(
-            candidate_render, probe_trace, wav_receipt["path"],
+    with residency.track_source_render_construction():
+        parent_render = residency.observe(render_stage_k_candidate("hellcat", probe_trace, parent_profile))
+        parent_metrics = compute_stage_k_parent_metrics(
+            parent_render, probe_trace, stage_k_receipt["path"],
         )
-        del candidate_render
+        del parent_render
         gc.collect()
-        reference = compute_stage_l_reference_distance(
-            stage_k_receipt["path"], wav_receipt["path"], target_receipt["path"],
-            profile_path=profile_receipt["path"],
-            expected_stage_k_wav_sha256=stage_k_receipt["sha256"],
-            expected_stage_l_wav_sha256=wav_receipt["sha256"],
-            expected_target_sha256=target_receipt["sha256"],
-            expected_profile_sha256=profile_receipt["sha256"],
-            trace_version=trace["version"],
-            expected_trace_sha256=trace_sha,
-            trace_evidence_path=trace_receipt["path"],
-            expected_trace_evidence_sha256=trace_receipt["sha256"],
-        )
-        records.append({
-            "candidate_id": candidate.candidate_id,
-            "parameters": _flatten_parameters(candidate),
-            "probe_duration_s": duration,
-            "full_render_residency_max": residency.maximum,
-            "metrics": metrics,
-            "reference_distance": reference,
-        })
+
+        records: list[dict[str, object]] = []
+        for candidate, (profile_receipt, wav_receipt) in zip(candidates, candidate_artifacts):
+            candidate_render = _render_pre_ptr(probe_trace, candidate, residency)
+            metrics = compute_stage_l_perceptual_metrics(
+                candidate_render, probe_trace, wav_receipt["path"],
+            )
+            del candidate_render
+            gc.collect()
+            reference = compute_stage_l_reference_distance(
+                stage_k_receipt["path"], wav_receipt["path"], target_receipt["path"],
+                profile_path=profile_receipt["path"],
+                expected_stage_k_wav_sha256=stage_k_receipt["sha256"],
+                expected_stage_l_wav_sha256=wav_receipt["sha256"],
+                expected_target_sha256=target_receipt["sha256"],
+                expected_profile_sha256=profile_receipt["sha256"],
+                trace_version=trace["version"],
+                expected_trace_sha256=trace_sha,
+                trace_evidence_path=trace_receipt["path"],
+                expected_trace_evidence_sha256=trace_receipt["sha256"],
+            )
+            records.append({
+                "candidate_id": candidate.candidate_id,
+                "parameters": _flatten_parameters(candidate),
+                "probe_duration_s": duration,
+                "full_render_residency_max": residency.maximum,
+                "metrics": metrics,
+                "reference_distance": reference,
+                "formal_final_audio_provenance": {
+                    "status": "NOT_AVAILABLE",
+                    "reason": (
+                        "no existing repository producer artifact cross-binds these formal WAV bytes "
+                        "to the exact profile and trace; reopened PCM evidence is not producer proof"
+                    ),
+                },
+            })
 
     result = qualify_stage_l_candidates(
         records,
@@ -183,7 +193,7 @@ def run_stage_l_qualification_manifest(
 
 
 class _RenderResidency:
-    """Measure runner-visible live full renders by object lifetime."""
+    """Measure every live full SourceRender constructed during the runner."""
 
     def __init__(self) -> None:
         self._references: dict[int, weakref.ReferenceType[object]] = {}
@@ -200,19 +210,33 @@ class _RenderResidency:
             self._references[identity] = weakref.ref(render)
         live = sum(reference() is not None for reference in self._references.values())
         self.maximum = max(self.maximum, live)
-        if self.maximum > 1:
-            raise ValueError("more than one full SourceRender is resident")
         return render
+
+    @contextmanager
+    def track_source_render_construction(self):
+        original_init = SourceRender.__init__
+
+        def tracked_init(render: object, *args: object, **kwargs: object) -> None:
+            original_init(render, *args, **kwargs)
+            self.observe(render)
+
+        SourceRender.__init__ = tracked_init
+        try:
+            yield
+        finally:
+            SourceRender.__init__ = original_init
 
 
 def _render_pre_ptr(
     trace: object, profile: StageLCandidateProfile, residency: _RenderResidency,
 ) -> object:
     source = render_stage_l_candidate(trace, profile)
+    residency.observe(source)
     rendered = _apply_current_frozen_layers(source, trace, profile, include_l4=True)
+    residency.observe(rendered)
     del source
     gc.collect()
-    return residency.observe(rendered)
+    return rendered
 
 
 def _flatten_parameters(profile: object) -> dict[str, object]:
