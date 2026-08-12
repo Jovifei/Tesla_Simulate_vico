@@ -39,6 +39,8 @@ _CANDIDATE_KEYS = {
     "metrics", "reference_distance",
 }
 _METRIC_KEYS = {"schema_version", "domains", "source_domain", "pre_ptr", "final_pcm24"}
+_PARENT_METRIC_KEYS = {"schema_version", "domain", "final_pcm24"}
+_PARENT_DOMAIN = "reopened PCM24 values comparable across Stage-K and Stage-L"
 _DOMAIN_VALUES = {
     "source_domain": "actual SourceRender arrays and detected events",
     "pre_ptr": "actual named transient arrays before common Pre-PTR EQ",
@@ -64,6 +66,7 @@ _PCM_KEYS = {
     "wav_sha256", "sample_rate_hz", "channels", "pcm_bits", "finite",
     "final_pcm_lufs", "final_pcm_peak_dbfs", "clipping_count", "band_shares",
     "review_requested_gain_db", "review_actual_gain_db", "headroom_limited",
+    "low_band_pulse_crest_db", "roughness_20_300_hz",
 }
 _REFERENCE_KEYS = {
     "schema_version", "candidate_id", "domain", "bands_hz", "windows_s", "formula", "states",
@@ -80,8 +83,7 @@ _REFERENCE_GATES = {
 }
 _REFERENCE_HASHES = {
     "stage_k_wav_sha256", "stage_l_wav_sha256", "reference_target_sha256",
-    "candidate_profile_sha256", "trace_evidence_sha256", "identity_evidence_sha256",
-    "isolation_evidence_sha256", "track_p_evidence_sha256",
+    "candidate_profile_sha256", "trace_evidence_sha256",
 }
 def qualify_stage_l_candidates(
     candidates: Sequence[Mapping[str, object]], *, parent_parameters: Mapping[str, object],
@@ -90,7 +92,7 @@ def qualify_stage_l_candidates(
     """Select the best candidate whose complete measured gate set passes."""
     if not isinstance(parent_parameters, Mapping):
         raise TypeError("parent_parameters must be a mapping")
-    validated_parent = _validate_metrics(parent_metrics, "parent_metrics")
+    validated_parent = _validate_parent_metrics(parent_metrics)
     validated_parent_parameters = _validate_parameters(parent_parameters, "parent_parameters")
     if not candidates:
         raise ValueError("Stage-L search requires at least one candidate")
@@ -207,13 +209,46 @@ def _validate_metrics(value: object, label: str) -> Mapping[str, object]:
     for name in ("finite", "headroom_limited"):
         if type(pcm[name]) is not bool:
             raise ValueError(f"{label}.final_pcm24.{name} must be boolean")
-    for name in ("final_pcm_lufs", "final_pcm_peak_dbfs", "review_requested_gain_db", "review_actual_gain_db"):
+    for name in (
+        "final_pcm_lufs", "final_pcm_peak_dbfs", "review_requested_gain_db",
+        "review_actual_gain_db", "low_band_pulse_crest_db", "roughness_20_300_hz",
+    ):
         _finite_number(pcm[name], f"{label}.final_pcm24.{name}")
     _sha256(pcm["wav_sha256"], f"{label}.final_pcm24.wav_sha256")
     shares = _four_finite(pcm["band_shares"], f"{label}.final_pcm24.band_shares")
     if not 0.0 < sum(shares) <= 1.000001:
         raise ValueError(f"{label}.final_pcm24.band_shares total must be within (0, 1]")
     return metrics
+
+
+def _validate_parent_metrics(value: object) -> Mapping[str, object]:
+    metrics = _exact_mapping(value, _PARENT_METRIC_KEYS, "parent_metrics")
+    if metrics["schema_version"] != "s12-stage-k-parent-comparison-metrics-1":
+        raise ValueError("parent_metrics schema_version mismatch")
+    if metrics["domain"] != _PARENT_DOMAIN:
+        raise ValueError("parent_metrics domain mismatch")
+    _validate_pcm(metrics["final_pcm24"], "parent_metrics.final_pcm24")
+    return metrics
+
+
+def _validate_pcm(value: object, label: str) -> Mapping[str, object]:
+    pcm = _exact_mapping(value, _PCM_KEYS, label)
+    for name in ("sample_rate_hz", "channels", "pcm_bits", "clipping_count"):
+        if isinstance(pcm[name], bool) or not isinstance(pcm[name], int):
+            raise ValueError(f"{label}.{name} must be an integer")
+    for name in ("finite", "headroom_limited"):
+        if type(pcm[name]) is not bool:
+            raise ValueError(f"{label}.{name} must be boolean")
+    for name in (
+        "final_pcm_lufs", "final_pcm_peak_dbfs", "review_requested_gain_db",
+        "review_actual_gain_db", "low_band_pulse_crest_db", "roughness_20_300_hz",
+    ):
+        _finite_number(pcm[name], f"{label}.{name}")
+    _sha256(pcm["wav_sha256"], f"{label}.wav_sha256")
+    shares = _four_finite(pcm["band_shares"], f"{label}.band_shares")
+    if not 0.0 < sum(shares) <= 1.000001:
+        raise ValueError(f"{label}.band_shares total must be within (0, 1]")
+    return pcm
 
 
 def _validate_reference(value: object) -> Mapping[str, object]:
@@ -265,35 +300,26 @@ def _validate_reference(value: object) -> Mapping[str, object]:
         ref["protection_evidence"], {"identity", "isolation", "track_p"},
         "reference summary protection_evidence",
     )
-    identity = _exact_mapping(
-        protection["identity"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "stage_c_identity_regression_ratio"},
-        "reference summary identity evidence",
-    )
-    isolation = _exact_mapping(
-        protection["isolation"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "seven_non_hellcat_pcm_sha_unchanged"},
-        "reference summary isolation evidence",
-    )
-    track_p = _exact_mapping(
-        protection["track_p"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "passed", "total", "frozen_files", "frozen_symbols", "unchanged"},
-        "reference summary Track-P evidence",
-    )
-    if identity["schema_version"] != "s12-stage-l-produced-identity-evidence-1" or isolation["schema_version"] != "s12-stage-l-produced-isolation-evidence-1" or track_p["schema_version"] != "s12-stage-l-produced-track-p-evidence-1":
-        raise ValueError("reference summary protection evidence schema mismatch")
-    if identity["producer"] != "stage_c.identity_reference_distance" or isolation["producer"] != "stage_l.regression_isolation.reference_gate" or track_p["producer"] != "assert_track_p_unchanged.py":
-        raise ValueError("reference summary protection evidence producer mismatch")
+    evidence_keys = {
+        "schema_version", "status", "source_artifact", "source_artifact_sha256", "derivation",
+    }
+    identity = _exact_mapping(protection["identity"], evidence_keys, "reference summary identity evidence")
+    isolation = _exact_mapping(protection["isolation"], evidence_keys, "reference summary isolation evidence")
+    track_p = _exact_mapping(protection["track_p"], evidence_keys, "reference summary Track-P evidence")
     for label, row in (("identity", identity), ("isolation", isolation), ("Track-P", track_p)):
+        if row["schema_version"] != "s12-stage-l-repository-protection-evidence-1":
+            raise ValueError("reference summary protection evidence schema mismatch")
+        if row["status"] not in {"PASS", "FAIL", "NOT_AVAILABLE"}:
+            raise ValueError("reference summary protection evidence status is invalid")
         if not isinstance(row["source_artifact"], str) or not row["source_artifact"]:
             raise ValueError(f"reference summary {label} source artifact is invalid")
-        _sha256(row["source_artifact_sha256"], f"reference summary {label} source artifact SHA-256")
-    identity_regression = _finite_number(identity["stage_c_identity_regression_ratio"], "reference summary identity regression")
-    expected_identity_status = "PASS" if identity_regression <= 0.10 else "FAIL"
-    isolation_pass = isolation["seven_non_hellcat_pcm_sha_unchanged"] is True
-    track_p_pass = (
-        track_p["passed"] == 21 and track_p["total"] == 21 and track_p["frozen_files"] == 180
-        and track_p["frozen_symbols"] == 2 and track_p["unchanged"] is True
-    )
-    if identity["status"] != expected_identity_status or isolation["status"] != ("PASS" if isolation_pass else "FAIL") or track_p["status"] != ("PASS" if track_p_pass else "FAIL"):
-        raise ValueError("reference summary protection evidence status mismatch")
+        if row["source_artifact_sha256"] is not None:
+            _sha256(row["source_artifact_sha256"], f"reference summary {label} source artifact SHA-256")
+        if not isinstance(row["derivation"], str) or not row["derivation"]:
+            raise ValueError(f"reference summary {label} derivation is invalid")
+    identity_pass = identity["status"] == "PASS"
+    isolation_pass = isolation["status"] == "PASS"
+    track_p_pass = track_p["status"] == "PASS"
     upper_values = [float(states[name]["actual_stage_l"][3]) for name in states if states[name]["availability"] == "eligible"]
     expected_upper = max(upper_values) if upper_values else None
     reported_upper = ref["stage_l_max_eligible_4_12khz_share"]
@@ -305,7 +331,7 @@ def _validate_reference(value: object) -> Mapping[str, object]:
         "all_required_states_available": not missing,
         "mean_improvement_at_least_30_percent": actual_mean is not None and actual_mean >= 0.30,
         "no_state_worse_than_10_percent": bool(improvements) and all(value >= -0.10 for value in improvements),
-        "stage_c_identity_regression_at_most_10_percent": identity_regression <= 0.10,
+        "stage_c_identity_regression_at_most_10_percent": identity_pass,
         "stage_l_4_12khz_share_at_most_0_06": expected_upper is not None and expected_upper <= 0.06,
         "acceleration_20_250hz_absolute_error_non_expansion": False,
         "acceleration_250_1000hz_absolute_error_strict_shrink": False,
@@ -372,8 +398,8 @@ def _validate_reference_state(value: object, label: str) -> Mapping[str, object]
 
 def _derive_gates(metrics: Mapping[str, object], parent: Mapping[str, object], reference: Mapping[str, object]) -> dict[str, bool]:
     source = metrics["source_domain"]
-    parent_source = parent["source_domain"]
     pcm = metrics["final_pcm24"]
+    parent_pcm = parent["final_pcm24"]
     ref_gates = reference["gates"]
     source_physics = (
         float(source["shaft_ratio_error"]) <= 0.01
@@ -386,10 +412,10 @@ def _derive_gates(metrics: Mapping[str, object], parent: Mapping[str, object], r
         and pcm["finite"] is True and pcm["clipping_count"] == 0
         and float(pcm["final_pcm_peak_dbfs"]) <= -1.5
     )
-    crest_delta = float(source["low_band_pulse_crest_db"]) - float(parent_source["low_band_pulse_crest_db"])
-    parent_roughness = float(parent_source["roughness_20_300_hz"])
+    crest_delta = float(pcm["low_band_pulse_crest_db"]) - float(parent_pcm["low_band_pulse_crest_db"])
+    parent_roughness = float(parent_pcm["roughness_20_300_hz"])
     roughness_delta = (
-        (float(source["roughness_20_300_hz"]) - parent_roughness) / parent_roughness
+        (float(pcm["roughness_20_300_hz"]) - parent_roughness) / parent_roughness
         if parent_roughness > 0.0 else float("-inf")
     )
     return {
@@ -408,7 +434,7 @@ def _derive_gates(metrics: Mapping[str, object], parent: Mapping[str, object], r
         ),
         "non_hellcat_isolation": bool(ref_gates["seven_non_hellcat_isolation_pass"]),
         "track_p_guard": bool(ref_gates["track_p_guard_pass"]),
-        "low_band_pulse_crest_improves_parent": float(source["low_band_pulse_crest_db"]) > float(parent_source["low_band_pulse_crest_db"]),
+        "low_band_pulse_crest_improves_parent": float(pcm["low_band_pulse_crest_db"]) > float(parent_pcm["low_band_pulse_crest_db"]),
         "low_band_pulse_crest_auxiliary_1_to_3_db": 1.0 <= crest_delta <= 3.0,
         "roughness_auxiliary_10_to_35_percent": 0.10 <= roughness_delta <= 0.35,
         "acceleration_20_250hz_absolute_error_non_expansion": bool(
@@ -424,8 +450,8 @@ def _vehicle_specific_error_components(
     metrics: Mapping[str, object], parent: Mapping[str, object], reference: Mapping[str, object],
 ) -> dict[str, float]:
     source = metrics["source_domain"]
-    parent_source = parent["source_domain"]
     pcm = metrics["final_pcm24"]
+    parent_pcm = parent["final_pcm24"]
     distances = [
         float(row["stage_l_distance"])
         for row in reference["states"].values()
@@ -439,7 +465,7 @@ def _vehicle_specific_error_components(
         "shaft_ratio_error": abs(float(source["shaft_ratio_error"])),
         "whine_correlation_shortfall": max(0.0, 0.82 - float(source["intake_whine_load_correlation"])),
         "upper_share_excess": max(0.0, float(pcm["band_shares"][3]) - 0.06),
-        "crest_regression": max(0.0, float(parent_source["low_band_pulse_crest_db"]) - float(source["low_band_pulse_crest_db"])),
+        "crest_regression": max(0.0, float(parent_pcm["low_band_pulse_crest_db"]) - float(pcm["low_band_pulse_crest_db"])),
     }
 
 

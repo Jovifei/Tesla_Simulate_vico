@@ -10,6 +10,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender, V
 from tools.sound_sim.s12.acoustic_identity_v015.render_identity_v02 import _write_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.perceptual_metrics import (
     _bank_pattern_error,
+    compute_stage_k_parent_metrics,
     compute_stage_l_perceptual_metrics,
     evaluate_stage_l_metric_gates,
 )
@@ -101,6 +102,24 @@ def test_metrics_are_measured_in_explicit_source_pre_ptr_and_reopened_pcm_domain
     # The shared reference extractor uses full-spectrum normalization.  The
     # audited 20 Hz–12 kHz bands must not be renormalized to one here.
     assert 0.0 < sum(metrics["final_pcm24"]["band_shares"]) <= 1.0
+
+
+def test_stage_k_parent_adapter_uses_only_comparable_reopened_pcm(tmp_path: Path) -> None:
+    render, trace = _fixture()
+
+    class StageKLikeRender:
+        pressure = render.pressure
+        stems = {"legacy_stage_k_only": render.pressure}
+
+    wav = _write_pcm24_wav(tmp_path / "parent.wav", render.pressure * 0.25)
+    metrics = compute_stage_k_parent_metrics(
+        StageKLikeRender(), trace, wav, sample_rate_hz=8_000,
+    )
+
+    assert set(metrics) == {"schema_version", "domain", "final_pcm24"}
+    assert metrics["schema_version"] == "s12-stage-k-parent-comparison-metrics-1"
+    assert metrics["final_pcm24"]["low_band_pulse_crest_db"] > 0.0
+    assert metrics["final_pcm24"]["roughness_20_300_hz"] >= 0.0
 
 
 def test_pre_ptr_propagates_and_derives_actual_parameter_reachability(tmp_path: Path) -> None:
@@ -332,8 +351,10 @@ def test_reopened_pcm24_fails_closed_on_wrong_sample_rate(tmp_path: Path) -> Non
 
 def test_auxiliary_crest_and_roughness_gates_use_measured_parent_deltas() -> None:
     parent = {
-        "source_domain": {"low_band_pulse_crest_db": 6.0, "roughness_20_300_hz": 1.0},
-        "final_pcm24": {"band_shares": [0.3, 0.3, 0.2, 0.04]},
+        "final_pcm24": {
+            "band_shares": [0.3, 0.3, 0.2, 0.04],
+            "low_band_pulse_crest_db": 6.0, "roughness_20_300_hz": 1.0,
+        },
     }
     candidate = {
         "source_domain": {
@@ -352,6 +373,8 @@ def test_auxiliary_crest_and_roughness_gates_use_measured_parent_deltas() -> Non
             "pcm_bits": 24,
             "final_pcm_peak_dbfs": -2.0,
             "band_shares": [0.3, 0.3, 0.2, 0.05],
+            "low_band_pulse_crest_db": 7.5,
+            "roughness_20_300_hz": 1.20,
         },
         "reference_distance": {
             "mean_improvement_ratio": 0.30,
@@ -367,8 +390,8 @@ def test_auxiliary_crest_and_roughness_gates_use_measured_parent_deltas() -> Non
     assert gates["roughness_auxiliary_10_to_35_percent"] is True
     assert gates["reference_mean_improvement_at_least_30_percent"] is True
 
-    candidate["source_domain"] = dict(candidate["source_domain"], low_band_pulse_crest_db=9.1)
-    candidate["source_domain"]["roughness_20_300_hz"] = 1.36
+    candidate["final_pcm24"]["low_band_pulse_crest_db"] = 9.1
+    candidate["final_pcm24"]["roughness_20_300_hz"] = 1.36
     failed = evaluate_stage_l_metric_gates(candidate, parent)
     assert failed["low_band_pulse_crest_auxiliary_1_to_3_db"] is False
     assert failed["roughness_auxiliary_10_to_35_percent"] is False

@@ -35,57 +35,19 @@ def _json(path: Path, value: object) -> Path:
 
 def _evidence(
     tmp_path: Path,
-    *,
-    identity_ratio: float = 0.05,
-    isolation_pass: bool = True,
-    track_p_pass: bool = True,
+    **_ignored: object,
 ) -> dict[str, object]:
-    repository = PACKAGE_ROOT.parents[3]
-    identity_source = repository / "tasks/reports/runtime/s12-stage-c-integration-c1/stage_c_test_evidence.json"
-    isolation_source = repository / "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json"
-    track_p_source = isolation_source
     trace = _json(tmp_path / "trace_evidence.json", {
         "schema_version": "s12-stage-l-trace-evidence-1",
         "status": "PASS",
         "trace_version": TRACE_VERSION,
         "trace_sha256": TRACE_SHA256,
     })
-    identity = _json(tmp_path / "identity_evidence.json", {
-        "schema_version": "s12-stage-l-produced-identity-evidence-1",
-        "producer": "stage_c.identity_reference_distance",
-        "source_artifact": str(identity_source), "source_artifact_sha256": _sha(identity_source),
-        "status": "PASS" if identity_ratio <= 0.10 else "FAIL",
-        "stage_c_identity_regression_ratio": identity_ratio,
-    })
-    isolation = _json(tmp_path / "isolation_evidence.json", {
-        "schema_version": "s12-stage-l-produced-isolation-evidence-1",
-        "producer": "stage_l.regression_isolation.reference_gate",
-        "source_artifact": str(isolation_source), "source_artifact_sha256": _sha(isolation_source),
-        "status": "PASS" if isolation_pass else "FAIL",
-        "seven_non_hellcat_pcm_sha_unchanged": isolation_pass,
-    })
-    track_p = _json(tmp_path / "track_p_evidence.json", {
-        "schema_version": "s12-stage-l-produced-track-p-evidence-1",
-        "producer": "assert_track_p_unchanged.py",
-        "source_artifact": str(track_p_source), "source_artifact_sha256": _sha(track_p_source),
-        "status": "PASS" if track_p_pass else "FAIL",
-        "passed": 21 if track_p_pass else 20,
-        "total": 21,
-        "frozen_files": 180,
-        "frozen_symbols": 2,
-        "unchanged": track_p_pass,
-    })
     return {
         "trace_version": TRACE_VERSION,
         "expected_trace_sha256": TRACE_SHA256,
         "trace_evidence_path": trace,
         "expected_trace_evidence_sha256": _sha(trace),
-        "identity_evidence_path": identity,
-        "expected_identity_evidence_sha256": _sha(identity),
-        "isolation_evidence_path": isolation,
-        "expected_isolation_evidence_sha256": _sha(isolation),
-        "track_p_evidence_path": track_p,
-        "expected_track_p_evidence_sha256": _sha(track_p),
     }
 
 
@@ -145,8 +107,7 @@ def test_reference_distance_reopens_hash_bound_pcm24_and_uses_fixed_formula(
     }
     assert set(result["hashes"]) == {
         "stage_k_wav_sha256", "stage_l_wav_sha256", "reference_target_sha256",
-        "candidate_profile_sha256", "trace_evidence_sha256", "identity_evidence_sha256",
-        "isolation_evidence_sha256", "track_p_evidence_sha256",
+        "candidate_profile_sha256", "trace_evidence_sha256",
     }
     assert set(result) == {
         "schema_version", "candidate_id", "domain", "bands_hz", "windows_s", "formula", "trace_binding",
@@ -161,7 +122,10 @@ def test_reference_distance_reopens_hash_bound_pcm24_and_uses_fixed_formula(
     serialized = json.dumps(result).lower()
     assert "reference_lufs" not in serialized
     assert "reference_rms" not in serialized
-    assert result["protection_evidence"]["identity"]["status"] == "PASS"
+    assert result["protection_evidence"]["identity"]["status"] == "NOT_AVAILABLE"
+    assert result["protection_evidence"]["isolation"]["status"] == "NOT_AVAILABLE"
+    assert result["protection_evidence"]["track_p"]["status"] == "PASS"
+    assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
 
 
 def test_reference_distance_fails_closed_on_any_bound_hash_drift(tmp_path: Path) -> None:
@@ -211,28 +175,20 @@ def test_unavailable_pcm_state_window_is_na_but_eligible_mean_remains_independen
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
 
 
-@pytest.mark.parametrize(
-    ("evidence_overrides", "gate"),
-    (
-        ({"identity_ratio": 0.11}, "stage_c_identity_regression_at_most_10_percent"),
-        ({"isolation_pass": False}, "seven_non_hellcat_isolation_pass"),
-        ({"track_p_pass": False}, "track_p_guard_pass"),
-    ),
-)
-def test_formal_auxiliary_gates_are_derived_from_bound_evidence(
+def test_protection_gates_are_derived_only_from_existing_repository_artifacts(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    evidence_overrides: dict[str, object],
-    gate: str,
 ) -> None:
-    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path, **evidence_overrides)
+    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
     monkeypatch.setattr(
         "tools.sound_sim.s12.acoustic_identity_v015.stage_l.reference_distance.extract_reference_features",
         lambda path, *, segments: _features([0.4, 0.3, 0.2, 0.01]),
     )
     result = compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
-    assert result["gates"][gate] is False
+    assert result["gates"]["stage_c_identity_regression_at_most_10_percent"] is False
+    assert result["gates"]["seven_non_hellcat_isolation_pass"] is False
+    assert result["gates"]["track_p_guard_pass"] is True
 
 
 def test_final_pcm_upper_share_gate_uses_stage_l_eligible_state_features(
@@ -291,17 +247,10 @@ def test_protection_evidence_hash_drift_and_unknown_schema_are_rejected(
     tmp_path: Path, kind: str,
 ) -> None:
     stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
-    kwargs[f"expected_{kind}_evidence_sha256"] = "00" * 32
-    with pytest.raises(ValueError, match="SHA-256"):
-        compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
-
-    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path / "schema")
-    evidence_path = Path(kwargs[f"{kind}_evidence_path"])
-    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
-    payload["unexpected"] = True
-    _json(evidence_path, payload)
-    kwargs[f"expected_{kind}_evidence_sha256"] = _sha(evidence_path)
-    with pytest.raises(ValueError, match="exact schema"):
+    wrapper = _json(tmp_path / f"{kind}.json", {"status": "PASS"})
+    kwargs[f"{kind}_evidence_path"] = wrapper
+    kwargs[f"expected_{kind}_evidence_sha256"] = _sha(wrapper)
+    with pytest.raises(ValueError, match="caller-generated"):
         compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
 
 
@@ -311,6 +260,28 @@ def test_free_boolean_protection_claims_are_not_accepted(tmp_path: Path) -> None
         compute_stage_l_reference_distance(
             stage_k, stage_l, target, **kwargs, non_hellcat_isolation_pass=True,
         )
+
+
+def test_missing_identity_and_isolation_evidence_is_partial_not_fabricated(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
+    for name in (
+        "identity_evidence_path", "expected_identity_evidence_sha256",
+        "isolation_evidence_path", "expected_isolation_evidence_sha256",
+        "track_p_evidence_path", "expected_track_p_evidence_sha256",
+    ):
+        kwargs.pop(name, None)
+
+    monkeypatch.setattr(
+        "tools.sound_sim.s12.acoustic_identity_v015.stage_l.reference_distance.extract_reference_features",
+        lambda *_args, **_kwargs: _features([0.4, 0.4, 0.15, 0.05]),
+    )
+    result = compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
+
+    assert result["status"].startswith("PARTIAL")
+    assert result["protection_evidence"]["identity"]["status"] == "NOT_AVAILABLE"
+    assert result["protection_evidence"]["isolation"]["status"] == "NOT_AVAILABLE"
 
 
 def test_unrelated_profile_and_altered_target_are_rejected(tmp_path: Path) -> None:
@@ -341,7 +312,7 @@ def test_old_standalone_pass_protection_json_is_rejected(tmp_path: Path) -> None
     kwargs["identity_evidence_path"] = old
     kwargs["expected_identity_evidence_sha256"] = _sha(old)
 
-    with pytest.raises(ValueError, match="repository-produced|schema"):
+    with pytest.raises(ValueError, match="caller-generated"):
         compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
 
 
@@ -357,7 +328,7 @@ def test_protection_receipt_rejects_bound_repository_source_hash_drift(tmp_path:
     kwargs["isolation_evidence_path"] = receipt
     kwargs["expected_isolation_evidence_sha256"] = _sha(receipt)
 
-    with pytest.raises(ValueError, match="source artifact SHA-256 mismatch"):
+    with pytest.raises(ValueError, match="caller-generated"):
         compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
 
 @pytest.mark.parametrize(

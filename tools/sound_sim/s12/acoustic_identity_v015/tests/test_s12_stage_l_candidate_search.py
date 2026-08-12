@@ -75,10 +75,21 @@ def _perceptual(
             "final_pcm_peak_dbfs": -1.6,
             "clipping_count": 0,
             "band_shares": [0.40, 0.42, 0.13, upper_share],
+            "low_band_pulse_crest_db": crest_db,
+            "roughness_20_300_hz": source["roughness_20_300_hz"],
             "review_requested_gain_db": 0.0,
             "review_actual_gain_db": 0.0,
             "headroom_limited": False,
         },
+    }
+
+
+def _parent_metrics(*, crest_db: float = 8.0, upper_share: float = 0.05) -> dict[str, object]:
+    pcm = _perceptual(crest_db=crest_db, upper_share=upper_share)["final_pcm24"]
+    return {
+        "schema_version": "s12-stage-k-parent-comparison-metrics-1",
+        "domain": "reopened PCM24 values comparable across Stage-K and Stage-L",
+        "final_pcm24": pcm,
     }
 
 
@@ -115,9 +126,13 @@ def _reference(*, pass_all: bool = True, candidate_id: str = "candidate") -> dic
         "stage_l_max_eligible_4_12khz_share": stage_l[3],
         "trace_binding": {"trace_version": "canonical-v1", "trace_sha256": _sha("trace"), "trace_evidence_sha256": _sha("trace-evidence")},
         "protection_evidence": {
-            "identity": {"schema_version": "s12-stage-l-produced-identity-evidence-1", "producer": "stage_c.identity_reference_distance", "source_artifact": "repo/identity", "source_artifact_sha256": _sha("identity-source"), "status": "PASS", "stage_c_identity_regression_ratio": 0.05},
-            "isolation": {"schema_version": "s12-stage-l-produced-isolation-evidence-1", "producer": "stage_l.regression_isolation.reference_gate", "source_artifact": "repo/isolation", "source_artifact_sha256": _sha("isolation-source"), "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True},
-            "track_p": {"schema_version": "s12-stage-l-produced-track-p-evidence-1", "producer": "assert_track_p_unchanged.py", "source_artifact": "repo/track-p", "source_artifact_sha256": _sha("track-source"), "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True},
+            name: {
+                "schema_version": "s12-stage-l-repository-protection-evidence-1",
+                "status": "PASS", "source_artifact": f"repo/{name}",
+                "source_artifact_sha256": _sha(f"{name}-source"),
+                "derivation": "validated existing repository artifact",
+            }
+            for name in ("identity", "isolation", "track_p")
         },
         "gates": {
             **gates,
@@ -132,8 +147,7 @@ def _reference(*, pass_all: bool = True, candidate_id: str = "candidate") -> dic
         "hashes": {
             "stage_k_wav_sha256": _sha("parent"), "stage_l_wav_sha256": _sha("candidate"),
             "reference_target_sha256": _sha("target"), "candidate_profile_sha256": _sha("profile"),
-            "trace_evidence_sha256": _sha("trace-evidence"), "identity_evidence_sha256": _sha("identity-evidence"),
-            "isolation_evidence_sha256": _sha("isolation-evidence"), "track_p_evidence_sha256": _sha("track-p-evidence"),
+            "trace_evidence_sha256": _sha("trace-evidence"),
         },
         "reference_provenance": {
             "source": "B/R2 relative features", "boundary": "uncalibrated; not OEM reproduction",
@@ -157,7 +171,7 @@ def test_search_derives_exact_hard_gates_from_nested_evidence_and_is_determinist
     a = _record("a", pass_all=True, delta=0.2)
     b = _record("b", pass_all=True, delta=0.1)
     bad = _record("bad", pass_all=False, delta=0.0)
-    parent = _perceptual(crest_db=8.0)
+    parent = _parent_metrics()
     first = qualify_stage_l_candidates([a, bad, b], parent_parameters={"source.x": 0.0}, parent_metrics=parent)
     second = qualify_stage_l_candidates([b, bad, a], parent_parameters={"source.x": 0.0}, parent_metrics=parent)
     assert first == second
@@ -171,7 +185,7 @@ def test_search_accepts_real_extractor_band_shares_with_out_of_band_energy() -> 
     row = _record("real-band-domain", pass_all=True)
     row["metrics"]["final_pcm24"]["band_shares"] = [0.38, 0.34, 0.12, 0.05]
     result = qualify_stage_l_candidates(
-        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0),
+        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
     )
     assert result["selected_candidate_id"] == "real-band-domain"
 
@@ -185,7 +199,7 @@ def test_actual_reachability_false_is_partial_not_self_asserted_pass() -> None:
     usage["unused"] = ["source.x"]
     row["metrics"]["pre_ptr"]["all_requested_parameters_reachable"] = False
     result = qualify_stage_l_candidates(
-        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0),
+        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
     )
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
     assert result["evaluated"][0]["hard_gates"]["exact_contract_and_reachability"] is False
@@ -202,7 +216,7 @@ def test_missing_reference_actual_na_schema_is_accepted_as_partial() -> None:
     row["reference_distance"]["gates"]["all_required_states_available"] = False
     row["reference_distance"]["status"] = "PARTIAL / AUTOMATED_GATE_FAIL"
     result = qualify_stage_l_candidates(
-        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0),
+        [row], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
     )
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
 
@@ -213,7 +227,7 @@ def test_parameters_are_bound_exactly_to_actual_requested_usage(parameters: dict
     row["parameters"] = parameters
     with pytest.raises(ValueError, match="requested|parameter"):
         qualify_stage_l_candidates(
-            [row], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0),
+            [row], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
         )
 
 
@@ -222,7 +236,7 @@ def test_vehicle_specific_error_is_derived_from_actual_evidence_with_breakdown()
     worse = _record("worse", pass_all=True, delta=0.1)
     worse["metrics"]["source_domain"]["shaft_ratio_error"] = 0.009
     result = qualify_stage_l_candidates(
-        [worse, better], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0),
+        [worse, better], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics(),
     )
     assert result["selected_candidate_id"] == "better"
     records = {item["candidate_id"]: item for item in result["evaluated"]}
@@ -236,7 +250,7 @@ def test_vehicle_specific_error_is_derived_from_actual_evidence_with_breakdown()
 def test_full_mix_crest_regression_is_partial_and_input_is_not_mutated() -> None:
     candidate = _record("v8", pass_all=False)
     before = json.dumps(candidate, sort_keys=True)
-    result = qualify_stage_l_candidates([candidate], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0))
+    result = qualify_stage_l_candidates([candidate], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics())
     assert result["selected_candidate_id"] is None
     assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
     evaluated = result["evaluated"][0]
@@ -246,11 +260,11 @@ def test_full_mix_crest_regression_is_partial_and_input_is_not_mutated() -> None
 
 
 def test_auxiliary_crest_roughness_and_reference_band_gates_are_hard() -> None:
-    parent = _perceptual(crest_db=8.0)
+    parent = _parent_metrics()
     crest = _record("crest", pass_all=True)
-    crest["metrics"]["source_domain"]["low_band_pulse_crest_db"] = 11.5
+    crest["metrics"]["final_pcm24"]["low_band_pulse_crest_db"] = 11.5
     rough = _record("rough", pass_all=True)
-    rough["metrics"]["source_domain"]["roughness_20_300_hz"] = 1.40
+    rough["metrics"]["final_pcm24"]["roughness_20_300_hz"] = 1.40
     low = _record("low", pass_all=True)
     low["reference_distance"]["gates"]["acceleration_20_250hz_absolute_error_non_expansion"] = False
     mid = _record("mid", pass_all=True)
@@ -291,41 +305,13 @@ def _runner_manifest(tmp_path: Path) -> tuple[Path, dict[str, object]]:
         "schema_version": "s12-stage-l-trace-evidence-1", "status": "PASS",
         "trace_version": "stage_l_canonical_cycle_v1", "trace_sha256": _sha("reference-trace"),
     }), encoding="utf-8")
-    identity = tmp_path / "identity.json"
-    identity_source = repo_root / "tasks/reports/runtime/s12-stage-c-integration-c1/stage_c_test_evidence.json"
-    identity.write_text(json.dumps({"schema_version": "s12-stage-l-produced-identity-evidence-1", "producer": "stage_c.identity_reference_distance", "source_artifact": str(identity_source), "source_artifact_sha256": hashlib.sha256(identity_source.read_bytes()).hexdigest(), "status": "PASS", "stage_c_identity_regression_ratio": 0.05}), encoding="utf-8")
-    isolation = tmp_path / "isolation.json"
-    isolation_source = repo_root / "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json"
-    isolation.write_text(json.dumps({"schema_version": "s12-stage-l-produced-isolation-evidence-1", "producer": "stage_l.regression_isolation.reference_gate", "source_artifact": str(isolation_source), "source_artifact_sha256": hashlib.sha256(isolation_source.read_bytes()).hexdigest(), "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True}), encoding="utf-8")
-    track_p = tmp_path / "track_p.json"
-    track_source = isolation_source
-    track_p.write_text(json.dumps({"schema_version": "s12-stage-l-produced-track-p-evidence-1", "producer": "assert_track_p_unchanged.py", "source_artifact": str(track_source), "source_artifact_sha256": hashlib.sha256(track_source.read_bytes()).hexdigest(), "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True}), encoding="utf-8")
     trace_sha = _sha("reference-trace")
 
     def audio_entry(
         wav: Path, profile_path: Path, profile_id: str, artifact_kind: str,
     ) -> dict[str, object]:
-        receipt = tmp_path / f"{artifact_kind}.receipt.json"
-        _json_payload = {
-            "schema_version": "s12-stage-l-produced-audio-receipt-1",
-            "artifact_kind": artifact_kind,
-            "producer_api": (
-                "stage_k.named_review.render_stage_k_candidate_pcm24"
-                if artifact_kind.startswith("stage_k")
-                else "stage_l.named_review.render_stage_l_candidate_pcm24"
-            ),
-            "profile_kind": "stage_k_candidate" if artifact_kind.startswith("stage_k") else "stage_l_candidate",
-            "profile_id": profile_id,
-            "profile_sha256": hashlib.sha256(profile_path.read_bytes()).hexdigest(),
-            "trace_version": "stage_l_canonical_cycle_v1", "trace_sha256": trace_sha,
-            "wav_sha256": hashlib.sha256(wav.read_bytes()).hexdigest(),
-            "reopened_pcm24": {
-                "sample_rate_hz": 48_000, "channels": 2, "pcm_bits": 24,
-                "finite": True, "clipping_count": 0,
-            },
-        }
-        receipt.write_text(json.dumps(_json_payload), encoding="utf-8")
-        return {**_file_receipt(wav), "production_receipt": _file_receipt(receipt)}
+        del profile_path, profile_id, artifact_kind
+        return _file_receipt(wav)
 
     payload = {
         "schema_version": "s12-stage-l-qualification-manifest-1",
@@ -337,9 +323,6 @@ def _runner_manifest(tmp_path: Path) -> tuple[Path, dict[str, object]]:
             "version": "stage_l_canonical_cycle_v1", "trace_sha256": trace_sha,
             "evidence": _file_receipt(trace),
         },
-        "identity_evidence": _file_receipt(identity),
-        "isolation_evidence": _file_receipt(isolation),
-        "track_p_evidence": _file_receipt(track_p),
         "candidates": [{
             "candidate_profile": _file_receipt(profile),
             "stage_l_final_wav": audio_entry(stage_l, profile, "hellcat_stage_l_v8", "stage_l_final_pcm24"),
@@ -371,30 +354,30 @@ def test_runner_rejects_profile_hash_drift_before_render(tmp_path: Path, monkeyp
         qualifier.run_stage_l_qualification_manifest(manifest, hashlib.sha256(manifest.read_bytes()).hexdigest())
 
 
-def test_runner_rejects_plain_wav_hash_without_production_receipt(tmp_path: Path) -> None:
+def test_runner_rejects_nonexistent_producer_receipt_scheme(tmp_path: Path) -> None:
     manifest, payload = _runner_manifest(tmp_path)
-    payload["stage_k_final_wav"].pop("production_receipt")
+    payload["stage_k_final_wav"]["production_receipt"] = {
+        "path": "forged.json", "sha256": "0" * 64,
+    }
     manifest.write_text(json.dumps(payload), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="production_receipt|exact keys"):
+    with pytest.raises(ValueError, match="exact keys"):
         qualifier.run_stage_l_qualification_manifest(
             manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
         )
 
 
-def test_runner_rejects_cross_bound_audio_receipt_drift_before_render(
+def test_runner_rejects_fabricated_producer_api_before_render(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     manifest, payload = _runner_manifest(tmp_path)
-    receipt_path = Path(payload["candidates"][0]["stage_l_final_wav"]["production_receipt"]["path"])
-    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
-    receipt["trace_sha256"] = _sha("another-trace")
-    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
-    payload["candidates"][0]["stage_l_final_wav"]["production_receipt"] = _file_receipt(receipt_path)
+    payload["candidates"][0]["stage_l_final_wav"]["producer_api"] = (
+        "stage_l.named_review.render_stage_l_candidate_pcm24"
+    )
     manifest.write_text(json.dumps(payload), encoding="utf-8")
     monkeypatch.setattr(qualifier, "render_stage_k_candidate", lambda *_: pytest.fail("must fail before render"))
 
-    with pytest.raises(ValueError, match="trace.*mismatch"):
+    with pytest.raises(ValueError, match="exact keys"):
         qualifier.run_stage_l_qualification_manifest(
             manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
         )
@@ -433,40 +416,12 @@ def test_runner_uses_distinct_stage_k_parent_loader_and_renderer(
     assert calls[:2] == ["load-k:hellcat_candidate_v7.json", "load-l:hellcat_candidate_v8.json"]
 
 
-def test_production_audio_receipt_cross_binds_profile_trace_and_reopened_pcm(tmp_path: Path) -> None:
-    wav = tmp_path / "candidate.wav"
-    wav.write_bytes(b"pcm24-production-bytes")
-    receipt = tmp_path / "candidate.audio-receipt.json"
-    receipt.write_text(json.dumps({
-        "schema_version": "s12-stage-l-produced-audio-receipt-1",
-        "artifact_kind": "stage_l_final_pcm24",
-        "producer_api": "stage_l.render_candidate.render_stage_l_candidate",
-        "profile_kind": "stage_l_candidate",
-        "profile_id": "hellcat_stage_l_v8",
-        "profile_sha256": _sha("profile"),
-        "trace_version": "stage_l_canonical_cycle_v1",
-        "trace_sha256": _sha("wrong-trace"),
-        "wav_sha256": hashlib.sha256(wav.read_bytes()).hexdigest(),
-        "reopened_pcm24": {
-            "sample_rate_hz": 48_000, "channels": 2, "pcm_bits": 24,
-            "finite": True, "clipping_count": 0,
-        },
-    }), encoding="utf-8")
-
-    with pytest.raises(ValueError, match="trace.*mismatch"):
-        qualifier._bind_production_audio_receipt(
-            receipt, hashlib.sha256(receipt.read_bytes()).hexdigest(),
-            wav_path=wav,
-            expected_artifact_kind="stage_l_final_pcm24",
-            expected_profile_id="hellcat_stage_l_v8",
-            expected_profile_sha256=_sha("profile"),
-            expected_trace_version="stage_l_canonical_cycle_v1",
-            expected_trace_sha256=_sha("canonical-trace"),
-        )
+def test_nonexistent_producer_api_is_not_exposed() -> None:
+    assert not hasattr(qualifier, "_bind_production_audio_receipt")
 
 
 def test_upper_band_increment_over_parent_is_a_hard_gate() -> None:
-    parent = _perceptual(crest_db=8.0, upper_share=0.048)
+    parent = _parent_metrics(upper_share=0.048)
     row = _record("upper-increment", pass_all=True)
     row["metrics"]["final_pcm24"]["band_shares"][3] = 0.059
     row["metrics"]["final_pcm24"]["band_shares"][2] = 0.121
@@ -482,7 +437,7 @@ def test_upper_band_increment_over_parent_is_a_hard_gate() -> None:
 def test_runner_measures_source_render_residency_instead_of_reporting_a_literal(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    manifest, _ = _runner_manifest(tmp_path)
+    del tmp_path
     live = 0
     observed_max = 0
 
@@ -499,16 +454,96 @@ def test_runner_measures_source_render_residency_instead_of_reporting_a_literal(
 
     monkeypatch.setattr(qualifier, "render_stage_l_candidate", lambda *_: _Render())
     monkeypatch.setattr(qualifier, "_apply_current_frozen_layers", lambda *_args, **_kwargs: _Render())
-    monkeypatch.setattr(
-        qualifier, "compute_stage_l_perceptual_metrics",
-        lambda *_: _perceptual(crest_db=8.0, requested=[]),
+    residency = qualifier._RenderResidency()
+    rendered = qualifier._render_pre_ptr(object(), object(), residency)
+    assert isinstance(rendered, _Render)
+    assert residency.maximum == 1
+    assert observed_max > 1
+
+
+def test_real_stage_k_parent_and_stage_l_candidate_metrics_are_executable(
+    tmp_path: Path,
+) -> None:
+    """Exercise both production renderers; Stage-K must not enter the Stage-L stem validator."""
+    package = Path(__file__).resolve().parents[1]
+    trace = qualifier.build_drive_cycle_trace("hellcat", duration_s=1.0)
+    parent_profile = qualifier.load_stage_k_candidate(
+        package / "targets/stage_k_candidates/hellcat_candidate_v7.json"
+    )
+    candidate_profile = qualifier.load_stage_l_candidate(
+        package / "targets/stage_l_candidates/hellcat_candidate_v8.json"
+    )
+    parent_render = qualifier.render_stage_k_candidate("hellcat", trace, parent_profile)
+    candidate_render = qualifier._render_pre_ptr(
+        trace, candidate_profile, qualifier._RenderResidency()
     )
 
-    with pytest.raises(ValueError, match="SourceRender.*resident"):
-        qualifier.run_stage_l_qualification_manifest(
-            manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+    def write_reopened_pcm(path: Path, render: object) -> Path:
+        pressure = np.asarray(render.pressure, dtype=np.float64)
+        peak = max(float(np.max(np.abs(pressure))), 1.0e-12)
+        return _write_pcm24_wav(path, 0.25 * pressure / peak)
+
+    parent_metrics = qualifier.compute_stage_k_parent_metrics(
+        parent_render, trace, write_reopened_pcm(tmp_path / "stage_k.wav", parent_render)
+    )
+    candidate_metrics = qualifier.compute_stage_l_perceptual_metrics(
+        candidate_render, trace, write_reopened_pcm(tmp_path / "stage_l.wav", candidate_render)
+    )
+
+    assert parent_metrics["schema_version"] == "s12-stage-k-parent-comparison-metrics-1"
+    assert set(parent_metrics) == {"schema_version", "domain", "final_pcm24"}
+    assert candidate_metrics["schema_version"] == "s12-stage-l-perceptual-metrics-1"
+    assert candidate_metrics["source_domain"]["shaft_ratio_error"] >= 0.0
+
+
+def test_real_stage_l_pre_ptr_keeps_only_final_render_resident() -> None:
+    package = Path(__file__).resolve().parents[1]
+    trace = qualifier.build_drive_cycle_trace("hellcat", duration_s=1.0)
+    profile = qualifier.load_stage_l_candidate(
+        package / "targets/stage_l_candidates/hellcat_candidate_v8.json"
+    )
+    residency = qualifier._RenderResidency()
+
+    rendered = qualifier._render_pre_ptr(trace, profile, residency)
+
+    assert rendered.pressure.shape[0] == trace.time_s.shape[0]
+    assert residency.maximum == 1
+
+
+def test_actual_runner_renders_stage_k_and_stage_l_and_completes_partial(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manifest, payload = _runner_manifest(tmp_path)
+    samples = np.arange(48_000, dtype=np.float64) / 48_000.0
+    for key, frequency in (("stage_k_final_wav", 120.0), ("stage_l_final_wav", 180.0)):
+        wav_entry = (
+            payload["stage_k_final_wav"] if key == "stage_k_final_wav"
+            else payload["candidates"][0]["stage_l_final_wav"]
         )
-    assert observed_max > 1
+        wav = Path(wav_entry["path"])
+        mono = 0.05 * np.sin(2.0 * np.pi * frequency * samples)
+        _write_pcm24_wav(wav, np.column_stack((mono, mono)))
+        wav_entry["sha256"] = hashlib.sha256(wav.read_bytes()).hexdigest()
+    payload["probe_duration_s"] = 8.0
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(
+        "tools.sound_sim.s12.acoustic_identity_v015.stage_l.reference_distance.extract_reference_features",
+        lambda *_args, **_kwargs: {
+            "segments": {
+                state: {"band_shares": [0.40, 0.35, 0.20, 0.05]}
+                for state in ("idle", "acceleration", "afterfire")
+            }
+        },
+    )
+
+    result = qualifier.run_stage_l_qualification_manifest(
+        manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+    )
+
+    assert result["full_render_residency_max"] == 1
+    assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert result["formal_final_audio_provenance"]["status"] == "NOT_AVAILABLE"
+    assert result["evaluated"][0]["hard_gates"]["non_hellcat_isolation"] is False
 
 
 def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
@@ -531,18 +566,19 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
         events.append(f"layers:{profile.candidate_id}")
         return render
 
-    metric_calls = 0
-
     def fake_metrics(render, trace, wav_path):
-        nonlocal metric_calls
-        metric_calls += 1
         events.append(f"metrics:{Path(wav_path).name}")
-        is_parent = metric_calls == 1
-        receipt = payload["stage_k_final_wav"] if is_parent else payload["candidates"][0]["stage_l_final_wav"]
         return _perceptual(
-            crest_db=8.0 if is_parent else 9.0,
-            wav_sha256=receipt["sha256"], requested=requested,
+            crest_db=9.0,
+            wav_sha256=payload["candidates"][0]["stage_l_final_wav"]["sha256"],
+            requested=requested,
         )
+
+    def fake_parent_metrics(render, trace, wav_path):
+        events.append(f"metrics:{Path(wav_path).name}")
+        result = _parent_metrics()
+        result["final_pcm24"]["wav_sha256"] = payload["stage_k_final_wav"]["sha256"]
+        return result
 
     def fake_reference(*args, **kwargs):
         events.append("reference")
@@ -553,9 +589,6 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
             "reference_target_sha256": payload["reference_target"]["sha256"],
             "candidate_profile_sha256": payload["candidates"][0]["candidate_profile"]["sha256"],
             "trace_evidence_sha256": payload["reference_trace"]["evidence"]["sha256"],
-            "identity_evidence_sha256": payload["identity_evidence"]["sha256"],
-            "isolation_evidence_sha256": payload["isolation_evidence"]["sha256"],
-            "track_p_evidence_sha256": payload["track_p_evidence"]["sha256"],
         })
         result["trace_binding"] = {
             "trace_version": payload["reference_trace"]["version"],
@@ -570,6 +603,7 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
         lambda vehicle_id, trace, profile: events.append(f"render-k:{profile.candidate_id}") or _Render(),
     )
     monkeypatch.setattr(qualifier, "_apply_current_frozen_layers", fake_layers)
+    monkeypatch.setattr(qualifier, "compute_stage_k_parent_metrics", fake_parent_metrics)
     monkeypatch.setattr(qualifier, "compute_stage_l_perceptual_metrics", fake_metrics)
     monkeypatch.setattr(qualifier, "compute_stage_l_reference_distance", fake_reference)
     result = qualifier.run_stage_l_qualification_manifest(
@@ -583,9 +617,9 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
     ]
     assert set(result["artifact_receipts"]) == {
         "search_parent_profile", "stage_k_final_wav", "reference_target", "trace_evidence",
-        "identity_evidence", "isolation_evidence", "track_p_evidence", "candidate_profiles",
-        "stage_l_final_wavs", "stage_k_production_audio_receipt", "stage_l_production_audio_receipts",
+        "candidate_profiles", "stage_l_final_wavs",
     }
+    assert result["formal_final_audio_provenance"]["status"] == "NOT_AVAILABLE"
 
 
 @pytest.mark.parametrize(
@@ -594,7 +628,7 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
         (lambda row: row.update({"surprise": True}), "exact keys"),
         (lambda row: row.update({"vehicle_specific_error": 0.0}), "exact keys"),
         (lambda row: row["metrics"].update({"hard_gates": {name: True for name in REQUIRED_HARD_GATES}}), "exact keys"),
-        (lambda row: row["reference_distance"]["protection_evidence"]["isolation"].update({"seven_non_hellcat_pcm_sha_unchanged": 1}), "protection evidence status"),
+        (lambda row: row["reference_distance"]["protection_evidence"]["isolation"].update({"seven_non_hellcat_pcm_sha_unchanged": 1}), "exact keys"),
         (lambda row: row.update({"full_render_residency_max": True}), "integer"),
         (lambda row: row.update({"full_render_residency_max": 2}), "one SourceRender"),
         (lambda row: row["reference_distance"].update({"mean_improvement_ratio": 0.99}), "reference summary"),
@@ -604,16 +638,16 @@ def test_search_rejects_unknown_missing_non_boolean_or_self_asserted_evidence(mu
     row = _record("x", pass_all=True)
     mutator(row)
     with pytest.raises(ValueError, match=match):
-        qualify_stage_l_candidates([row], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0))
+        qualify_stage_l_candidates([row], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics())
 
 
 def test_search_rejects_unbounded_or_non_probe_inputs() -> None:
     with pytest.raises(ValueError, match=str(MAX_CANDIDATES)):
-        qualify_stage_l_candidates([_record(str(index), pass_all=True) for index in range(MAX_CANDIDATES + 1)], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0))
+        qualify_stage_l_candidates([_record(str(index), pass_all=True) for index in range(MAX_CANDIDATES + 1)], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics())
     bad = _record("long", pass_all=True)
     bad["probe_duration_s"] = 12.1
     with pytest.raises(ValueError, match="8.*12"):
-        qualify_stage_l_candidates([bad], parent_parameters={"source.x": 0.0}, parent_metrics=_perceptual(crest_db=8.0))
+        qualify_stage_l_candidates([bad], parent_parameters={"source.x": 0.0}, parent_metrics=_parent_metrics())
 
 
 @pytest.mark.parametrize("module_mode", (False, True))

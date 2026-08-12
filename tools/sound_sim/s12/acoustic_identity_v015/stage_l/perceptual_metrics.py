@@ -73,6 +73,34 @@ def compute_stage_l_perceptual_metrics(
     }
 
 
+def compute_stage_k_parent_metrics(
+    render: object,
+    trace: object,
+    final_pcm24_path: str | Path,
+    *,
+    sample_rate_hz: int = 48000,
+) -> dict[str, object]:
+    """Measure only semantics genuinely comparable with a Stage-L candidate.
+
+    Stage-K does not expose the Stage-L primitive stem contract.  Validate that
+    its real render matches the real trace, then derive every comparative value
+    from the independently reopened final PCM instead of inventing Stage-L
+    source stems or passing Stage-K through the Stage-L source validator.
+    """
+    if not isinstance(sample_rate_hz, int) or sample_rate_hz <= 0:
+        raise ValueError("sample_rate_hz must be a positive integer")
+    pressure = _stereo(getattr(render, "pressure", None), "render.pressure")
+    if not np.all(np.isfinite(pressure)):
+        raise ValueError("Stage-K SourceRender pressure must be finite")
+    _audio_trace(trace, pressure.shape[0], sample_rate_hz)
+    pcm = _reopen_pcm24(final_pcm24_path)
+    return {
+        "schema_version": "s12-stage-k-parent-comparison-metrics-1",
+        "domain": "reopened PCM24 values comparable across Stage-K and Stage-L",
+        "final_pcm24": _pcm_metrics(pcm, Path(final_pcm24_path), {}),
+    }
+
+
 def evaluate_stage_l_metric_gates(
     candidate: Mapping[str, object], parent: Mapping[str, object],
 ) -> dict[str, object]:
@@ -84,16 +112,16 @@ def evaluate_stage_l_metric_gates(
     """
 
     source = _mapping(candidate.get("source_domain"))
-    parent_source = _mapping(parent.get("source_domain"))
     pcm = _mapping(candidate.get("final_pcm24"))
+    parent_pcm = _mapping(parent.get("final_pcm24"))
     shares = pcm.get("band_shares")
     upper = _share_at(shares, 3)
-    parent_upper = _share_at(_mapping(parent.get("final_pcm24")).get("band_shares"), 3)
-    crest_candidate = _number(source.get("low_band_pulse_crest_db"), float("-inf"))
-    crest_parent = _number(parent_source.get("low_band_pulse_crest_db"), float("inf"))
+    parent_upper = _share_at(parent_pcm.get("band_shares"), 3)
+    crest_candidate = _number(pcm.get("low_band_pulse_crest_db"), float("-inf"))
+    crest_parent = _number(parent_pcm.get("low_band_pulse_crest_db"), float("inf"))
     crest_delta = crest_candidate - crest_parent
-    roughness_candidate = _number(source.get("roughness_20_300_hz"), float("nan"))
-    roughness_parent = _number(parent_source.get("roughness_20_300_hz"), float("nan"))
+    roughness_candidate = _number(pcm.get("roughness_20_300_hz"), float("nan"))
+    roughness_parent = _number(parent_pcm.get("roughness_20_300_hz"), float("nan"))
     anchor_shaft_rpm = _number(source.get("shaft_anchor_max_rpm", source.get("shaft_max_rpm")), float("inf"))
     gates: dict[str, bool] = {
         "shaft_ratio_error": _number(source.get("shaft_ratio_error"), float("inf")) <= 0.01,
@@ -264,6 +292,8 @@ def _pcm_metrics(pcm: np.ndarray, path: Path, diagnostics: Mapping[str, object])
         "final_pcm_peak_dbfs": float(loudness.peak_dbfs),
         "clipping_count": int(loudness.clipping_count),
         "band_shares": [_band_share(frequencies, power, low, high) for low, high in _BANDS],
+        "low_band_pulse_crest_db": _band_crest(mono, sample_rate_hz, 80.0, 250.0),
+        "roughness_20_300_hz": _roughness(mono, sample_rate_hz, 20.0, 300.0),
         "review_requested_gain_db": _number(diagnostics.get("review_requested_gain_db"), 0.0),
         "review_actual_gain_db": _number(diagnostics.get("review_actual_gain_db"), 0.0),
         "headroom_limited": bool(diagnostics.get("headroom_limited", False)),
@@ -629,4 +659,8 @@ def _number(value: object, default: float) -> float:
     return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(float(value)) else default
 
 
-__all__ = ("compute_stage_l_perceptual_metrics", "evaluate_stage_l_metric_gates")
+__all__ = (
+    "compute_stage_k_parent_metrics",
+    "compute_stage_l_perceptual_metrics",
+    "evaluate_stage_l_metric_gates",
+)
