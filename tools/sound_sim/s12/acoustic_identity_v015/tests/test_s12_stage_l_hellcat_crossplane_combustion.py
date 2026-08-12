@@ -198,6 +198,46 @@ def test_cylinder_strength_pattern_groups_strong_then_weak_events_with_unit_mean
     assert rendered.diagnostics["cylinder_strength_grouping"] == "four_strong_four_weak"
 
 
+def test_combustion_pressure_scale_is_named_c_level_source_structure_not_loudness_gain() -> None:
+    rendered, _ = _render()
+    evidence = rendered.diagnostics["combustion_pressure_structural_scale"]
+    assert evidence == {
+        "name": "combustion_pressure_structural_scale",
+        "value": 0.75,
+        "source_level": "C",
+        "source": "synthetic",
+        "verification_state": "fixed_source_structure",
+        "whole_cycle_gain": False,
+    }
+
+
+@pytest.mark.parametrize(
+    "parameter",
+    ("low_frequency_blowdown_gain", "blowdown_attack_ms", "xpipe_delay_ms"),
+)
+def test_parameter_effect_energy_equals_explicit_reference_output_delta(parameter: str) -> None:
+    baseline, _ = _render()
+    references = baseline.diagnostics["parameter_effect_reference_values"]
+    changed, _ = _render({parameter: references[parameter]})
+    affected = baseline.diagnostics["parameter_affected_stems"][parameter]
+    explicit_energy = sum(
+        float(np.sum(np.square(baseline.stems[name] - changed.stems[name])))
+        for name in affected
+    )
+    assert baseline.diagnostics["parameter_effect_energy"][parameter] == pytest.approx(
+        explicit_energy, rel=1.0e-10, abs=1.0e-20
+    )
+
+
+def test_parameter_at_reference_is_inactive_even_when_its_stem_is_nonzero() -> None:
+    rendered, _ = _render({"bank_amplitude_asymmetry": 0.0})
+    usage = rendered.diagnostics["candidate_parameter_usage"]
+    assert np.any(rendered.stems["hemi_exhaust_left"] != 0.0)
+    assert rendered.diagnostics["parameter_effect_energy"]["bank_amplitude_asymmetry"] == 0.0
+    assert "bank_amplitude_asymmetry" in usage["inactive"]
+    assert "bank_amplitude_asymmetry" not in usage["active"]
+
+
 def test_cylinder_strength_is_stable_across_python_hash_seeds() -> None:
     repo_root = Path(__file__).resolve().parents[5]
     script = """
