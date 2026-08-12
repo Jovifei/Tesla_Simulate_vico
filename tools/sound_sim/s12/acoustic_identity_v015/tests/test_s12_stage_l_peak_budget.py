@@ -60,6 +60,14 @@ def test_peak_budget_changes_only_four_named_stems_and_rewrites_exact_delta() ->
     assert result.diagnostics["peak_budget_named_stems"] == _NAMED
     assert result.diagnostics["whole_pressure_processed"] is False
     assert result.diagnostics["compressor_or_limiter_used"] is False
+    evidence = result.diagnostics["peak_budget_stem_evidence"]
+    assert set(evidence) == set(_NAMED)
+    for name in _NAMED:
+        assert evidence[name]["before_peak"] == np.max(np.abs(before.stems[name]))
+        assert evidence[name]["after_peak"] == np.max(np.abs(result.stems[name]))
+        assert evidence[name]["gain"] == result.diagnostics["peak_budget_stem_gains"][name]
+        assert evidence[name]["status"] in {"REDUCED_ISOLATED_PEAK", "HEADROOM_ALREADY_SATISFIED", "INACTIVE_ZERO"}
+    assert any(evidence[name]["gain"] < 1.0 for name in _NAMED)
 
 
 def test_comfort_copy_is_static_gain_with_peak_safe_headroom_cap() -> None:
@@ -112,3 +120,13 @@ def test_final_pcm_probe_enforces_peak_clipping_and_loudness_delta() -> None:
     assert evidence["candidate_lufs"] >= evidence["parent_lufs"] - 0.5
     assert evidence["formal_compressor_or_limiter_used"] is False
     assert evidence["l4_before_pre_ptr_equalization"] is True
+    assert evidence["l4_shift_event_count"] == 3
+    assert evidence["l4_tip_in_nonzero"] is True
+    assert evidence["l4_afterfire_event_count"] > 0
+    assert evidence["l4_named_nonzero_stems"] == list(_NAMED)
+    production_budget = evidence["l4_peak_budget_stem_evidence"]
+    assert set(production_budget) == set(_NAMED)
+    assert any(row["gain"] < 1.0 for row in production_budget.values())
+    order = evidence["pipeline_order"]
+    assert order.index("hellcat_shift_load_transient") < order.index("frozen_common_low_frequency_body")
+    assert order.index("hellcat_named_peak_budget") < order.index("frozen_common_pre_ptr_equalization")

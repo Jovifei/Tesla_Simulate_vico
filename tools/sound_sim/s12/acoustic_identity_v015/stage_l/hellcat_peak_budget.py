@@ -36,6 +36,7 @@ def apply_hellcat_named_peak_budget(
     stems = {name: np.asarray(stem, dtype=np.float64).copy() for name, stem in render.stems.items()}
     pressure = np.asarray(render.pressure, dtype=np.float64).copy()
     gains: dict[str, float] = {}
+    evidence: dict[str, dict[str, object]] = {}
     for name in NAMED_PEAK_STEMS:
         old = stems[name]
         peak = float(np.max(np.abs(old)))
@@ -46,11 +47,24 @@ def apply_hellcat_named_peak_budget(
         stems[name] = new
         pressure += new - old
         gains[name] = gain
+        evidence[name] = {
+            "before_peak": peak,
+            "after_peak": float(np.max(np.abs(new))),
+            "before_rms": rms,
+            "after_rms": float(np.sqrt(np.mean(np.square(new)))),
+            "gain": gain,
+            "status": (
+                "INACTIVE_ZERO" if peak <= 1.0e-30
+                else "REDUCED_ISOLATED_PEAK" if gain < 1.0
+                else "HEADROOM_ALREADY_SATISFIED"
+            ),
+        }
     diagnostics = dict(render.diagnostics)
     diagnostics.update({
         "peak_budget_model": "one_static_gain_per_named_transient_stem",
         "peak_budget_named_stems": NAMED_PEAK_STEMS,
         "peak_budget_stem_gains": gains,
+        "peak_budget_stem_evidence": evidence,
         "whole_pressure_processed": False,
         "compressor_or_limiter_used": False,
         "pre_ptr_named_peak_budget": True,

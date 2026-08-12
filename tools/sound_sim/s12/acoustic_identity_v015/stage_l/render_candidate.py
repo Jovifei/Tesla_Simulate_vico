@@ -388,9 +388,10 @@ def render_stage_l_l4_final_pcm_probe(
 ) -> dict[str, object]:
     """Measure the real L2+L3+L4 path through the frozen final-PCM chain."""
     trace.validate()
-    source = render_stage_l_candidate(trace, candidate)
-    rendered = _apply_current_frozen_layers(source, trace, candidate, include_l4=True)
-    parent = render_stage_l_parent(trace)
+    active_trace = _build_l4_active_probe_trace()
+    source = render_stage_l_candidate(active_trace, candidate)
+    rendered = _apply_current_frozen_layers(source, active_trace, candidate, include_l4=True)
+    parent = render_stage_l_parent(active_trace)
     pre_gain = {
         "parent": _edge_fade(_apply_frozen_ptr(parent.pressure)),
         "candidate": _edge_fade(_apply_frozen_ptr(rendered.pressure)),
@@ -404,6 +405,17 @@ def render_stage_l_l4_final_pcm_probe(
     candidate_pcm = _pcm24_roundtrip(managed.segments["candidate"])
     parent_loudness = measure_loudness(parent_pcm, _SAMPLE_RATE_HZ)
     candidate_loudness = measure_loudness(candidate_pcm, _SAMPLE_RATE_HZ)
+    pipeline_order = (
+        "shared_hellcat_source", "source_operating_trim", "idle_dynamics",
+        "deterministic_afterfire", "hellcat_shift_load_transient",
+        "hellcat_named_peak_budget", "frozen_common_low_frequency_body",
+        "frozen_exhaust_rumble", "frozen_common_pre_ptr_equalization",
+        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+    )
+    named_nonzero = [
+        name for name in ("afterfire", "hellcat_shift_reengagement", "hellcat_sc_drive_transient", "hellcat_tip_in_blowdown")
+        if np.any(rendered.stems[name])
+    ]
     return {
         "finite": bool(np.all(np.isfinite(candidate_pcm))),
         "candidate_peak_dbfs": float(candidate_loudness.peak_dbfs),
@@ -412,10 +424,34 @@ def render_stage_l_l4_final_pcm_probe(
         "parent_lufs": float(parent_loudness.integrated_lufs),
         "one_fixed_whole_cycle_gain_db": float(managed.gain_db),
         "formal_compressor_or_limiter_used": False,
-        "l4_before_pre_ptr_equalization": True,
+        "pipeline_order": pipeline_order,
+        "l4_before_pre_ptr_equalization": (
+            pipeline_order.index("hellcat_named_peak_budget")
+            < pipeline_order.index("frozen_common_pre_ptr_equalization")
+        ),
         "l4_shift_event_count": int(rendered.diagnostics["hellcat_shift_event_count"]),
+        "l4_tip_in_nonzero": bool(np.any(rendered.stems["hellcat_tip_in_blowdown"])),
+        "l4_afterfire_event_count": int(rendered.diagnostics["afterfire_event_count"]),
+        "l4_named_nonzero_stems": named_nonzero,
+        "l4_peak_budget_stem_evidence": rendered.diagnostics["peak_budget_stem_evidence"],
         "l3_full_mix_low_frequency_status": "DIAGNOSTIC_REGRESSION_PENDING_L5_PRESERVED",
     }
+
+
+def _build_l4_active_probe_trace() -> VehicleStateTrace:
+    """Short equivalent of the canonical pull: tip-in, three shifts, then hot lift."""
+    state_rate_hz = 1_000
+    duration_s = 4.0
+    time_s = np.arange(int(duration_s * state_rate_hz) + 1, dtype=np.float64) / state_rate_hz
+    rpm = np.interp(time_s, (0.0, 0.35, 3.05, 4.0), (1_500.0, 2_400.0, 6_000.0, 3_600.0))
+    load = np.where(time_s < 0.35, 0.15, np.where(time_s < 3.05, 0.94, 0.08))
+    throttle = np.where(time_s < 0.35, 0.10, np.where(time_s < 3.05, 0.96, 0.03))
+    for center in (0.85, 1.65, 2.45):
+        distance = np.abs(time_s - center)
+        rpm -= np.where(distance < 0.060, 700.0 * (1.0 - distance / 0.060), 0.0)
+    return VehicleStateTrace(
+        time_s, rpm, load, throttle, np.gradient(rpm / 60.0, time_s),
+    ).validate()
 
 
 def _apply_current_frozen_layers(

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import hashlib
 
 import numpy as np
 
@@ -118,6 +119,15 @@ def apply_hellcat_transient_dynamics(
         "hellcat_tip_in_blowdown": tip_in,
     })
     pressure += reengagement + sc_drive + tip_in
+    stems["exhaust"] = stems["hemi_exhaust_left"] + stems["hemi_exhaust_right"]
+    stems["hemi_exhaust"] = stems["exhaust"]
+    stems["hemi_combustion_and_blowdown"] = sum(
+        (stems[name] for name in _HEMI_STEMS), np.zeros_like(old_pressure)
+    )
+    stems["supercharger_intake"] = sum(
+        (stems[name] for name in (*_SC_STEMS, "sc_bypass_release")), np.zeros_like(old_pressure)
+    )
+    stems["blower"] = stems["supercharger_intake"].copy()
 
     diagnostics = dict(render.diagnostics)
     contract = dict(diagnostics.get("pressure_stem_contract", {}))
@@ -128,12 +138,19 @@ def apply_hellcat_transient_dynamics(
             contributors.append(name)
     if "hellcat_shift_torque_cut" not in aggregates:
         aggregates.append("hellcat_shift_torque_cut")
+    for name in ("exhaust", "hemi_exhaust", "hemi_combustion_and_blowdown", "supercharger_intake", "blower"):
+        if name not in aggregates:
+            aggregates.append(name)
     contract.update({"contributors": contributors, "diagnostic_aggregates": aggregates})
-    hemi_rms = float(np.sqrt(np.mean(np.square(hemi_source))))
-    sc_rms = float(np.sqrt(np.mean(np.square(sc_source))))
-    effective_floor = (
-        params["shift_min_exhaust_gain"] * hemi_rms + params["shift_min_sc_gain"] * sc_rms
-    ) / max(hemi_rms + sc_rms, 1.0e-30)
+    event_measurements = tuple(
+        _measure_shift_event(old_pressure, pressure, event.sample_index, sample_rate_hz, duration)
+        for event in events
+    )
+    measured_dips = tuple(row["dip_db"] for row in event_measurements)
+    measured_settling = tuple(row["settling_s"] for row in event_measurements)
+    measured_overshoot = tuple(row["overshoot_db"] for row in event_measurements)
+    bypass_before_sha = _sha256_array(np.asarray(render.stems["sc_bypass_release"]))
+    bypass_after_sha = _sha256_array(stems["sc_bypass_release"])
     diagnostics.update({
         "pressure_stem_contract": contract,
         "hellcat_shift_model": "separate_hemi_torque_cut_and_supercharger_inertia",
@@ -142,15 +159,17 @@ def apply_hellcat_transient_dynamics(
         "shift_min_exhaust_gain_measured": float(np.min(exhaust_gain)),
         "shift_min_sc_gain_measured": float(np.min(sc_gain)),
         "supercharger_inertia_retained": True,
-        "sustained_throttle_shift_bypass_triggered": False,
+        "sustained_throttle_shift_bypass_triggered": bypass_before_sha != bypass_after_sha,
+        "sustained_throttle_bypass_before_sha256": bypass_before_sha,
+        "sustained_throttle_bypass_after_sha256": bypass_after_sha,
         "generic_shift_dynamics_called": False,
         "fixed_70hz_recovery_used": False,
         "candidate_shift_parameters_read": tuple(sorted(params)),
-        "shift_dip_db_measured": float(-20.0 * np.log10(max(effective_floor, 1.0e-30))),
-        "shift_settling_s_measured": float(duration + params["reengagement_decay_s"]),
-        "shift_overshoot_db_measured": float(
-            20.0 * np.log10(1.0 + 0.25 * (1.0 - params["shift_min_exhaust_gain"]))
-        ),
+        "shift_event_measurement_domain": "pre_common_lf_rumble_eq_actual_pressure_waveform",
+        "shift_event_measurements": event_measurements,
+        "shift_dip_db_measured": float(max(measured_dips, default=0.0)),
+        "shift_settling_s_measured": float(max(measured_settling, default=0.0)),
+        "shift_overshoot_db_measured": float(max(measured_overshoot, default=0.0)),
     })
     requested = sorted(candidate.requested_parameters())
     shift_names = sorted(f"shift_and_load_transient.{name}" for name in params)
@@ -193,6 +212,63 @@ def _tip_in_blowdown(
         envelope = np.exp(-np.arange(stop - int(index), dtype=np.float64) / max(0.018 * sample_rate_hz, 1.0))
         result[int(index):stop] += gain * source[int(index):stop] * envelope[:, None]
     return result
+
+
+def _measure_shift_event(
+    before: np.ndarray, after: np.ndarray, event_sample: int, sample_rate_hz: int,
+    interruption_s: float,
+) -> dict[str, object]:
+    """Measure one real shift from fixed pre/dip/post waveform windows."""
+    count = before.shape[0]
+    pre_start = max(0, event_sample - int(round(0.090 * sample_rate_hz)))
+    pre_stop = max(pre_start + 1, event_sample - int(round(0.065 * sample_rate_hz)))
+    dip_start = max(0, event_sample - int(round(0.012 * sample_rate_hz)))
+    dip_stop = min(count, event_sample + int(round(0.013 * sample_rate_hz)))
+    after_start = min(count - 1, event_sample + int(round(0.070 * sample_rate_hz)))
+    after_stop = min(count, event_sample + int(round(0.300 * sample_rate_hz)))
+    pre_rms = _rms(before[pre_start:pre_stop])
+    dip_rms = _rms(after[dip_start:dip_stop])
+    dip_db = float(20.0 * np.log10(max(pre_rms, 1.0e-30) / max(dip_rms, 1.0e-30)))
+
+    block = max(1, int(round(0.020 * sample_rate_hz)))
+    hops = range(after_start, max(after_start + 1, after_stop - block + 1), block)
+    levels = tuple((_rms(after[start:min(count, start + block)]), start) for start in hops)
+    tolerance = 10.0 ** (0.50 / 20.0)
+    settled = after_stop
+    for position, (level, start) in enumerate(levels):
+        remaining = levels[position:]
+        if remaining and all(pre_rms / tolerance <= value <= pre_rms * tolerance for value, _ in remaining):
+            settled = start
+            break
+    interruption_start = event_sample - int(round(0.5 * interruption_s * sample_rate_hz))
+    settling_s = float((settled - interruption_start) / sample_rate_hz)
+    post_peak_rms = max((value for value, _ in levels), default=pre_rms)
+    overshoot_db = float(max(0.0, 20.0 * np.log10(max(post_peak_rms, 1.0e-30) / max(pre_rms, 1.0e-30))))
+    evidence = np.concatenate((
+        np.ascontiguousarray(before[pre_start:pre_stop]).ravel(),
+        np.ascontiguousarray(after[dip_start:dip_stop]).ravel(),
+        np.ascontiguousarray(after[after_start:after_stop]).ravel(),
+    ))
+    return {
+        "event_sample": int(event_sample),
+        "before_window": (int(pre_start), int(pre_stop)),
+        "dip_window": (int(dip_start), int(dip_stop)),
+        "after_window": (int(after_start), int(after_stop)),
+        "before_rms": pre_rms,
+        "dip_rms": dip_rms,
+        "dip_db": dip_db,
+        "settling_s": settling_s,
+        "overshoot_db": overshoot_db,
+        "measurement_sha256": _sha256_array(evidence),
+    }
+
+
+def _rms(value: np.ndarray) -> float:
+    return float(np.sqrt(np.mean(np.square(np.asarray(value, dtype=np.float64)))))
+
+
+def _sha256_array(value: np.ndarray) -> str:
+    return hashlib.sha256(np.ascontiguousarray(value, dtype="<f8").tobytes()).hexdigest()
 
 
 __all__ = ("apply_hellcat_transient_dynamics",)

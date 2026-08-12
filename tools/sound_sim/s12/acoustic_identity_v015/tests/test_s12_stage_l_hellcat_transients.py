@@ -121,6 +121,25 @@ def test_transient_pressure_delta_is_not_double_counted() -> None:
     assert "hellcat_shift_torque_cut" not in result.diagnostics["pressure_stem_contract"]["contributors"]
 
 
+def test_transient_rebuilds_all_diagnostic_aggregates_from_current_primitives() -> None:
+    trace = _trace()
+    before = _render(trace)
+    # Production aggregates intentionally contain stale pre-L4 values.
+    before.stems.update({
+        "exhaust": np.full_like(before.pressure, 99.0),
+        "hemi_exhaust": np.full_like(before.pressure, 99.0),
+        "hemi_combustion_and_blowdown": np.full_like(before.pressure, 99.0),
+        "supercharger_intake": np.full_like(before.pressure, 99.0),
+        "blower": np.full_like(before.pressure, 99.0),
+    })
+    result = apply_hellcat_transient_dynamics(before, trace, _CANDIDATE, _SR)
+    np.testing.assert_allclose(result.stems["exhaust"], result.stems["hemi_exhaust_left"] + result.stems["hemi_exhaust_right"], atol=0, rtol=0)
+    np.testing.assert_allclose(result.stems["hemi_exhaust"], result.stems["exhaust"], atol=0, rtol=0)
+    np.testing.assert_allclose(result.stems["hemi_combustion_and_blowdown"], sum((result.stems[n] for n in _HEMI), np.zeros_like(result.pressure)), atol=1e-12, rtol=0)
+    np.testing.assert_allclose(result.stems["supercharger_intake"], sum((result.stems[n] for n in _SC), np.zeros_like(result.pressure)), atol=1e-12, rtol=0)
+    np.testing.assert_allclose(result.stems["blower"], result.stems["supercharger_intake"], atol=0, rtol=0)
+
+
 def test_canonical_60_second_cycle_detects_exactly_three_shifts() -> None:
     trace = build_drive_cycle_trace("hellcat", duration_s=60.0)
     events = detect_shift_events(trace, 48_000)
@@ -134,6 +153,13 @@ def test_shift_envelopes_meet_dip_settling_and_overshoot_gates() -> None:
     assert 0.10 <= result.diagnostics["shift_settling_s_measured"] <= 0.30
     assert result.diagnostics["shift_overshoot_db_measured"] <= 1.5
     assert result.diagnostics["shift_min_sc_gain_measured"] > result.diagnostics["shift_min_exhaust_gain_measured"]
+    rows = result.diagnostics["shift_event_measurements"]
+    assert len(rows) == 3
+    assert all(2.0 <= row["dip_db"] <= 5.0 for row in rows)
+    assert all(0.10 <= row["settling_s"] <= 0.30 for row in rows)
+    assert all(row["overshoot_db"] <= 1.5 for row in rows)
+    assert all(row["before_window"][1] <= row["event_sample"] <= row["after_window"][0] for row in rows)
+    assert all(len(row["measurement_sha256"]) == 64 for row in rows)
 
 
 def test_no_fixed_70hz_recovery_component_is_synthesized() -> None:
@@ -161,3 +187,36 @@ def test_each_l4_parameter_is_read_and_has_measured_or_trace_conditional_activit
     assert full_name in usage["read"]
     assert full_name in usage["active"] or full_name in usage["inactive"]
     assert full_name not in usage["unused"]
+
+
+@pytest.mark.parametrize("parameter,target", (
+    ("shift_interruption_s", "hellcat_shift_torque_cut"),
+    ("shift_min_exhaust_gain", "hellcat_shift_torque_cut"),
+    ("shift_min_sc_gain", "sc_intake_radiated"),
+    ("reengagement_decay_s", "hellcat_shift_reengagement"),
+    ("sc_drive_modulation_depth", "hellcat_sc_drive_transient"),
+))
+def test_single_parameter_perturbation_changes_real_target(parameter: str, target: str) -> None:
+    trace = _trace()
+    baseline = apply_hellcat_transient_dynamics(_render(trace), trace, _CANDIDATE, _SR)
+    record = _CANDIDATE.payload["shift_and_load_transient"][parameter]
+    value = float(record["range"][1]) if float(record["value"]) != float(record["range"][1]) else float(record["range"][0])
+    perturbed = _CANDIDATE.with_parameter("shift_and_load_transient", parameter, value)
+    changed = apply_hellcat_transient_dynamics(_render(trace), trace, perturbed, _SR)
+    assert not np.array_equal(baseline.stems[target], changed.stems[target])
+
+
+def test_tip_in_parameter_is_active_only_on_a_real_tip_in_trace() -> None:
+    trace = _trace(shifts=False)
+    throttle = trace.throttle.copy()
+    throttle[: throttle.size // 3] = 0.10
+    throttle[throttle.size // 3 :] = 0.92
+    tip = VehicleStateTrace(trace.time_s, trace.rpm, trace.load, throttle, trace.acceleration_mps2).validate()
+    baseline = apply_hellcat_transient_dynamics(_render(tip), tip, _CANDIDATE, _SR)
+    changed = apply_hellcat_transient_dynamics(
+        _render(tip), tip, _CANDIDATE.with_parameter("shift_and_load_transient", "tip_in_blowdown_gain", 0.18), _SR,
+    )
+    assert np.any(baseline.stems["hellcat_tip_in_blowdown"])
+    assert not np.array_equal(baseline.stems["hellcat_tip_in_blowdown"], changed.stems["hellcat_tip_in_blowdown"])
+    assert "shift_and_load_transient.tip_in_blowdown_gain" in baseline.diagnostics["candidate_parameter_usage"]["active"]
+    np.testing.assert_array_equal(baseline.stems["sc_bypass_release"], _render(tip).stems["sc_bypass_release"])
