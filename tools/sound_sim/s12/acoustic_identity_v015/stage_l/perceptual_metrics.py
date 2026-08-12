@@ -219,7 +219,7 @@ def _pre_ptr_metrics(
         "shift_settling_s": shift["settling_s"],
         "shift_overshoot_db": shift["overshoot_db"],
         "named_transient_energy": _energy(named),
-        "named_transient_event_count": len(_event_indices(diagnostics, mono)),
+        "named_transient_event_count": _count_events(mono),
         "domain": "actual named transient arrays before common Pre-PTR EQ",
         "candidate_parameter_usage": usage,
         "all_requested_parameters_reachable": reachable,
@@ -497,6 +497,18 @@ def _bank_pattern_error(left: np.ndarray, right: np.ndarray, events: np.ndarray)
 
     expected = np.asarray([_LOCKED_HELLCAT_BANK_PATTERN[index % len(_LOCKED_HELLCAT_BANK_PATTERN)] for index in range(events.size)])
     errors: list[float] = []
+    gap = float(np.median(np.diff(events))) if events.size > 1 else 1.0
+    radius = max(1, min(int(gap / 4.0), 96))
+    left_mono = np.abs(np.mean(left, axis=1))
+    right_mono = np.abs(np.mean(right, axis=1))
+    crosstalk_penalty = 0.0
+    for event, label in zip(events, expected):
+        start = max(int(event) - radius, 0)
+        end = min(int(event) + radius + 1, left_mono.size)
+        expected_peak = float(np.max(left_mono[start:end] if label == "left" else right_mono[start:end]))
+        wrong_peak = float(np.max(right_mono[start:end] if label == "left" else left_mono[start:end]))
+        if expected_peak <= 1.0e-18 or wrong_peak >= 0.95 * expected_peak:
+            crosstalk_penalty = max(crosstalk_penalty, gap)
     for label, stem in (("left", left), ("right", right)):
         selected = events[expected == label]
         if selected.size < 2:
@@ -507,7 +519,7 @@ def _bank_pattern_error(left: np.ndarray, right: np.ndarray, events: np.ndarray)
         # The selected ordinal gaps are the concrete repeated 2/3/2/1
         # cross-plane interval pattern (the sorted multiset is 1-2-2-3).
         errors.append(float(np.mean(np.abs(actual_intervals - expected_intervals))))
-    return float(max(errors, default=float("inf")))
+    return float(max([crosstalk_penalty, *errors], default=float("inf")))
 
 
 def _bank_delay_seconds(left: np.ndarray, right: np.ndarray, events: np.ndarray, sample_rate_hz: int) -> float:

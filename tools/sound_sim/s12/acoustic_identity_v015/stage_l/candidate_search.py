@@ -19,10 +19,12 @@ REQUIRED_HARD_GATES = (
     "exact_contract_and_reachability",
     "source_physics",
     "final_pcm_health",
+    "all_required_states_available",
     "no_state_regression_over_10_percent",
     "reference_mean_improvement_at_least_30_percent",
     "stage_c_identity_regression_within_10_percent",
     "final_pcm_upper_share",
+    "final_pcm_upper_share_increment",
     "non_hellcat_isolation",
     "track_p_guard",
     "low_band_pulse_crest_improves_parent",
@@ -120,8 +122,6 @@ def qualify_stage_l_candidates(
         requested = set(metrics["pre_ptr"]["candidate_parameter_usage"]["requested"])
         if not requested or set(validated_parameters) != requested:
             raise ValueError("candidate parameter keys must exactly match actual requested usage")
-        if set(validated_parent_parameters) != requested:
-            raise ValueError("parent parameter keys must exactly match candidate requested usage")
         reference = _validate_reference(candidate["reference_distance"])
         if reference["candidate_id"] != candidate_id:
             raise ValueError("reference summary candidate_id mismatch")
@@ -266,19 +266,25 @@ def _validate_reference(value: object) -> Mapping[str, object]:
         "reference summary protection_evidence",
     )
     identity = _exact_mapping(
-        protection["identity"], {"schema_version", "status", "stage_c_identity_regression_ratio"},
+        protection["identity"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "stage_c_identity_regression_ratio"},
         "reference summary identity evidence",
     )
     isolation = _exact_mapping(
-        protection["isolation"], {"schema_version", "status", "seven_non_hellcat_pcm_sha_unchanged"},
+        protection["isolation"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "seven_non_hellcat_pcm_sha_unchanged"},
         "reference summary isolation evidence",
     )
     track_p = _exact_mapping(
-        protection["track_p"], {"schema_version", "status", "passed", "total", "frozen_files", "frozen_symbols", "unchanged"},
+        protection["track_p"], {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "passed", "total", "frozen_files", "frozen_symbols", "unchanged"},
         "reference summary Track-P evidence",
     )
-    if identity["schema_version"] != "s12-stage-l-identity-evidence-1" or isolation["schema_version"] != "s12-stage-l-isolation-evidence-1" or track_p["schema_version"] != "s12-stage-l-track-p-evidence-1":
+    if identity["schema_version"] != "s12-stage-l-produced-identity-evidence-1" or isolation["schema_version"] != "s12-stage-l-produced-isolation-evidence-1" or track_p["schema_version"] != "s12-stage-l-produced-track-p-evidence-1":
         raise ValueError("reference summary protection evidence schema mismatch")
+    if identity["producer"] != "stage_c.identity_reference_distance" or isolation["producer"] != "stage_l.regression_isolation.reference_gate" or track_p["producer"] != "assert_track_p_unchanged.py":
+        raise ValueError("reference summary protection evidence producer mismatch")
+    for label, row in (("identity", identity), ("isolation", isolation), ("Track-P", track_p)):
+        if not isinstance(row["source_artifact"], str) or not row["source_artifact"]:
+            raise ValueError(f"reference summary {label} source artifact is invalid")
+        _sha256(row["source_artifact_sha256"], f"reference summary {label} source artifact SHA-256")
     identity_regression = _finite_number(identity["stage_c_identity_regression_ratio"], "reference summary identity regression")
     expected_identity_status = "PASS" if identity_regression <= 0.10 else "FAIL"
     isolation_pass = isolation["seven_non_hellcat_pcm_sha_unchanged"] is True
@@ -390,12 +396,16 @@ def _derive_gates(metrics: Mapping[str, object], parent: Mapping[str, object], r
         "exact_contract_and_reachability": metrics["pre_ptr"]["all_requested_parameters_reachable"] is True,
         "source_physics": bool(source_physics),
         "final_pcm_health": bool(final_health),
+        "all_required_states_available": bool(ref_gates["all_required_states_available"]),
         "no_state_regression_over_10_percent": bool(ref_gates["no_state_worse_than_10_percent"]),
         "reference_mean_improvement_at_least_30_percent": bool(
-            ref_gates["all_required_states_available"] and ref_gates["mean_improvement_at_least_30_percent"]
+            ref_gates["mean_improvement_at_least_30_percent"]
         ),
         "stage_c_identity_regression_within_10_percent": bool(ref_gates["stage_c_identity_regression_at_most_10_percent"]),
         "final_pcm_upper_share": bool(float(pcm["band_shares"][3]) <= 0.06 and ref_gates["stage_l_4_12khz_share_at_most_0_06"]),
+        "final_pcm_upper_share_increment": bool(
+            float(pcm["band_shares"][3]) - float(parent["final_pcm24"]["band_shares"][3]) <= 0.01
+        ),
         "non_hellcat_isolation": bool(ref_gates["seven_non_hellcat_isolation_pass"]),
         "track_p_guard": bool(ref_gates["track_p_guard_pass"]),
         "low_band_pulse_crest_improves_parent": float(source["low_band_pulse_crest_db"]) > float(parent_source["low_band_pulse_crest_db"]),

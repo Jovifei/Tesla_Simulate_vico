@@ -10,6 +10,8 @@ from collections.abc import Mapping
 from pathlib import Path
 import sys
 from typing import Any
+import weakref
+import wave
 
 import numpy as np
 
@@ -18,7 +20,6 @@ if __package__ in (None, ""):
 
 from tools.sound_sim.s12.acoustic_identity_v015.render_drive_cycle_v10 import build_drive_cycle_trace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles import (
-    PARAMETER_SECTIONS,
     StageLCandidateProfile,
     load_stage_l_candidate,
 )
@@ -30,6 +31,12 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_l.perceptual_metrics impor
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.reference_distance import (
     compute_stage_l_reference_distance,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_profiles import (
+    load_stage_k_candidate,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_k.render_candidate import (
+    render_stage_k_candidate,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.render_candidate import (
     _apply_current_frozen_layers,
@@ -44,6 +51,7 @@ _MANIFEST_KEYS = {
     "track_p_evidence", "candidates",
 }
 _RECEIPT_KEYS = {"path", "sha256"}
+_AUDIO_ENTRY_KEYS = {"path", "sha256", "production_receipt"}
 _CANDIDATE_ENTRY_KEYS = {"candidate_profile", "stage_l_final_wav"}
 
 
@@ -68,7 +76,11 @@ def run_stage_l_qualification_manifest(
         raise ValueError("probe_duration_s must be within 8..12 seconds")
 
     parent_receipt = _bind_receipt(manifest["search_parent_profile"], "search parent profile")
-    stage_k_receipt = _bind_receipt(manifest["stage_k_final_wav"], "Stage-K final WAV")
+    stage_k_entry = _exact_mapping(manifest["stage_k_final_wav"], _AUDIO_ENTRY_KEYS, "Stage-K final WAV")
+    stage_k_receipt = _bind_receipt(
+        {"path": stage_k_entry["path"], "sha256": stage_k_entry["sha256"]}, "Stage-K final WAV",
+    )
+    stage_k_production = _bind_receipt(stage_k_entry["production_receipt"], "Stage-K production audio receipt")
     target_receipt = _bind_receipt(manifest["reference_target"], "reference target")
     identity_receipt = _bind_receipt(manifest["identity_evidence"], "identity evidence")
     isolation_receipt = _bind_receipt(manifest["isolation_evidence"], "isolation evidence")
@@ -84,29 +96,49 @@ def run_stage_l_qualification_manifest(
     if not isinstance(raw_candidates, list) or not raw_candidates:
         raise ValueError("qualification manifest candidates must be a non-empty array")
 
-    candidate_artifacts: list[tuple[dict[str, str], dict[str, str]]] = []
+    candidate_artifacts: list[tuple[dict[str, str], dict[str, str], dict[str, str]]] = []
     for index, raw_entry in enumerate(raw_candidates):
         entry = _exact_mapping(raw_entry, _CANDIDATE_ENTRY_KEYS, f"candidate entry {index}")
         profile_receipt = _bind_receipt(entry["candidate_profile"], f"candidate {index} profile")
-        wav_receipt = _bind_receipt(entry["stage_l_final_wav"], f"candidate {index} final WAV")
-        candidate_artifacts.append((profile_receipt, wav_receipt))
+        wav_entry = _exact_mapping(entry["stage_l_final_wav"], _AUDIO_ENTRY_KEYS, f"candidate {index} final WAV")
+        wav_receipt = _bind_receipt(
+            {"path": wav_entry["path"], "sha256": wav_entry["sha256"]}, f"candidate {index} final WAV",
+        )
+        production_receipt = _bind_receipt(
+            wav_entry["production_receipt"], f"candidate {index} production audio receipt",
+        )
+        candidate_artifacts.append((profile_receipt, wav_receipt, production_receipt))
 
     # Production loaders validate Stage-L lineage, parent/reference SHA and exact
     # parameter contracts.  This happens after every receipt is bound and before
     # any expensive render.
-    parent_profile = load_stage_l_candidate(parent_receipt["path"])
-    candidates = [load_stage_l_candidate(profile["path"]) for profile, _ in candidate_artifacts]
+    parent_profile = load_stage_k_candidate(parent_receipt["path"])
+    candidates = [load_stage_l_candidate(profile["path"]) for profile, _, _ in candidate_artifacts]
     if len({candidate.candidate_id for candidate in candidates}) != len(candidates):
         raise ValueError("qualification manifest contains duplicate candidate_id")
     if any(candidate.payload["reference_target"]["sha256"] != target_receipt["sha256"] for candidate in candidates):
         raise ValueError("candidate profile reference target does not match manifest")
+    _bind_production_audio_receipt(
+        stage_k_production["path"], stage_k_production["sha256"], wav_path=stage_k_receipt["path"],
+        expected_artifact_kind="stage_k_final_pcm24", expected_profile_id=parent_profile.candidate_id,
+        expected_profile_sha256=parent_receipt["sha256"], expected_trace_version=trace["version"],
+        expected_trace_sha256=trace_sha,
+    )
+    for candidate, (profile_receipt, wav_receipt, production_receipt) in zip(candidates, candidate_artifacts):
+        _bind_production_audio_receipt(
+            production_receipt["path"], production_receipt["sha256"], wav_path=wav_receipt["path"],
+            expected_artifact_kind="stage_l_final_pcm24", expected_profile_id=candidate.candidate_id,
+            expected_profile_sha256=profile_receipt["sha256"], expected_trace_version=trace["version"],
+            expected_trace_sha256=trace_sha,
+        )
 
     probe_trace = build_drive_cycle_trace("hellcat", duration_s=duration)
     probe_trace_sha = _trace_sha256(probe_trace)
     # Search parent is a Stage-L parameter anchor (normally v8).  Its source
     # metrics are measured from its real render, while its final-PCM health is
     # deliberately measured from the frozen Stage-K comparison WAV.
-    parent_render = _render_pre_ptr(probe_trace, parent_profile)
+    residency = _RenderResidency()
+    parent_render = residency.observe(render_stage_k_candidate("hellcat", probe_trace, parent_profile))
     parent_metrics = compute_stage_l_perceptual_metrics(
         parent_render, probe_trace, stage_k_receipt["path"],
     )
@@ -114,8 +146,8 @@ def run_stage_l_qualification_manifest(
     gc.collect()
 
     records: list[dict[str, object]] = []
-    for candidate, (profile_receipt, wav_receipt) in zip(candidates, candidate_artifacts):
-        candidate_render = _render_pre_ptr(probe_trace, candidate)
+    for candidate, (profile_receipt, wav_receipt, _) in zip(candidates, candidate_artifacts):
+        candidate_render = _render_pre_ptr(probe_trace, candidate, residency)
         metrics = compute_stage_l_perceptual_metrics(
             candidate_render, probe_trace, wav_receipt["path"],
         )
@@ -143,7 +175,7 @@ def run_stage_l_qualification_manifest(
             "candidate_id": candidate.candidate_id,
             "parameters": _flatten_parameters(candidate),
             "probe_duration_s": duration,
-            "full_render_residency_max": 1,
+            "full_render_residency_max": residency.maximum,
             "metrics": metrics,
             "reference_distance": reference,
         })
@@ -168,22 +200,134 @@ def run_stage_l_qualification_manifest(
         "identity_evidence": identity_receipt,
         "isolation_evidence": isolation_receipt,
         "track_p_evidence": track_p_receipt,
-        "candidate_profiles": [profile for profile, _ in candidate_artifacts],
-        "stage_l_final_wavs": [wav for _, wav in candidate_artifacts],
+        "stage_k_production_audio_receipt": stage_k_production,
+        "candidate_profiles": [profile for profile, _, _ in candidate_artifacts],
+        "stage_l_final_wavs": [wav for _, wav, _ in candidate_artifacts],
+        "stage_l_production_audio_receipts": [receipt for _, _, receipt in candidate_artifacts],
     }
     return result
 
 
-def _render_pre_ptr(trace: object, profile: StageLCandidateProfile) -> object:
-    source = render_stage_l_candidate(trace, profile)
-    return _apply_current_frozen_layers(source, trace, profile, include_l4=True)
+class _RenderResidency:
+    """Measure runner-visible live full renders by object lifetime."""
+
+    def __init__(self) -> None:
+        self._references: dict[int, weakref.ReferenceType[object]] = {}
+        self.maximum = 0
+
+    def observe(self, render: object) -> object:
+        self._references = {
+            identity: reference
+            for identity, reference in self._references.items()
+            if reference() is not None
+        }
+        identity = id(render)
+        if identity not in self._references:
+            self._references[identity] = weakref.ref(render)
+        live = sum(reference() is not None for reference in self._references.values())
+        self.maximum = max(self.maximum, live)
+        if self.maximum > 1:
+            raise ValueError("more than one full SourceRender is resident")
+        return render
 
 
-def _flatten_parameters(profile: StageLCandidateProfile) -> dict[str, object]:
+def _render_pre_ptr(
+    trace: object, profile: StageLCandidateProfile, residency: _RenderResidency,
+) -> object:
+    source = residency.observe(render_stage_l_candidate(trace, profile))
+    rendered = residency.observe(
+        _apply_current_frozen_layers(source, trace, profile, include_l4=True)
+    )
+    return rendered
+
+
+def _bind_production_audio_receipt(
+    receipt_path: str | Path, expected_receipt_sha256: str, *, wav_path: str | Path,
+    expected_artifact_kind: str, expected_profile_id: str,
+    expected_profile_sha256: str, expected_trace_version: str,
+    expected_trace_sha256: str,
+) -> Mapping[str, object]:
+    """Validate the exact production provenance binding for one final PCM WAV."""
+    receipt_file = Path(receipt_path).resolve()
+    receipt_sha = _sha_text(expected_receipt_sha256, "audio receipt SHA-256")
+    raw = receipt_file.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != receipt_sha:
+        raise ValueError("audio receipt SHA-256 mismatch")
+    try:
+        payload: Any = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("audio receipt is not UTF-8 JSON") from exc
+    receipt = _exact_mapping(payload, {
+        "schema_version", "artifact_kind", "producer_api", "profile_kind", "profile_id",
+        "profile_sha256", "trace_version", "trace_sha256", "wav_sha256", "reopened_pcm24",
+    }, "production audio receipt")
+    if receipt["schema_version"] != "s12-stage-l-produced-audio-receipt-1":
+        raise ValueError("production audio receipt schema mismatch")
+    expected = {
+        "artifact_kind": expected_artifact_kind,
+        "profile_id": expected_profile_id,
+        "profile_sha256": _sha_text(expected_profile_sha256, "profile SHA-256"),
+        "trace_version": expected_trace_version,
+        "trace_sha256": _sha_text(expected_trace_sha256, "trace SHA-256"),
+    }
+    for name, value in expected.items():
+        if receipt[name] != value:
+            raise ValueError(f"production audio receipt {name.replace('_', ' ')} mismatch")
+    if not isinstance(receipt["producer_api"], str) or not receipt["producer_api"]:
+        raise ValueError("production audio receipt producer API is invalid")
+    expected_producer = {
+        "stage_k_final_pcm24": "stage_k.named_review.render_stage_k_candidate_pcm24",
+        "stage_l_final_pcm24": "stage_l.named_review.render_stage_l_candidate_pcm24",
+    }[expected_artifact_kind]
+    if receipt["producer_api"] != expected_producer:
+        raise ValueError("production audio receipt producer API mismatch")
+    expected_profile_kind = "stage_k_candidate" if expected_artifact_kind.startswith("stage_k") else "stage_l_candidate"
+    if receipt["profile_kind"] != expected_profile_kind:
+        raise ValueError("production audio receipt profile kind is invalid")
+    wav_file = Path(wav_path).resolve()
+    actual_wav_sha = hashlib.sha256(wav_file.read_bytes()).hexdigest()
+    if receipt["wav_sha256"] != actual_wav_sha:
+        raise ValueError("production audio receipt WAV SHA-256 mismatch")
+    pcm = _exact_mapping(
+        receipt["reopened_pcm24"],
+        {"sample_rate_hz", "channels", "pcm_bits", "finite", "clipping_count"},
+        "production audio receipt reopened PCM24",
+    )
+    try:
+        with wave.open(str(wav_file), "rb") as stream:
+            reopened = {
+                "sample_rate_hz": stream.getframerate(), "channels": stream.getnchannels(),
+                "pcm_bits": 8 * stream.getsampwidth(), "finite": True,
+                "clipping_count": _pcm24_clipping_count(stream.readframes(stream.getnframes())),
+            }
+    except (OSError, wave.Error) as exc:
+        raise ValueError("production audio receipt WAV cannot be reopened") from exc
+    if pcm != reopened or reopened != {
+        "sample_rate_hz": 48000, "channels": 2, "pcm_bits": 24,
+        "finite": True, "clipping_count": 0,
+    }:
+        raise ValueError("production audio receipt reopened PCM24 contract mismatch")
+    return receipt
+
+
+def _pcm24_clipping_count(raw: bytes) -> int:
+    if len(raw) % 3:
+        raise ValueError("production PCM24 byte count is invalid")
+    triples = np.frombuffer(raw, dtype=np.uint8).reshape(-1, 3)
+    values = (
+        triples[:, 0].astype(np.int32)
+        | (triples[:, 1].astype(np.int32) << 8)
+        | (triples[:, 2].astype(np.int32) << 16)
+    )
+    values = np.where(values & 0x800000, values - 0x1000000, values)
+    return int(np.count_nonzero((values <= -0x800000) | (values >= 0x7FFFFF)))
+
+
+def _flatten_parameters(profile: object) -> dict[str, object]:
     return {
-        f"{section}.{name}": dict(record)
-        for section in PARAMETER_SECTIONS
-        for name, record in profile.payload[section].items()
+        name: dict(profile.payload[section][parameter])
+        for name in profile.requested_parameters()
+        for section, parameter in (name.split(".", 1),)
     }
 
 

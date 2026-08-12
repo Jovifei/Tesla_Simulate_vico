@@ -40,6 +40,10 @@ def _evidence(
     isolation_pass: bool = True,
     track_p_pass: bool = True,
 ) -> dict[str, object]:
+    repository = PACKAGE_ROOT.parents[3]
+    identity_source = repository / "tasks/reports/runtime/s12-stage-c-integration-c1/stage_c_test_evidence.json"
+    isolation_source = repository / "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json"
+    track_p_source = isolation_source
     trace = _json(tmp_path / "trace_evidence.json", {
         "schema_version": "s12-stage-l-trace-evidence-1",
         "status": "PASS",
@@ -47,17 +51,23 @@ def _evidence(
         "trace_sha256": TRACE_SHA256,
     })
     identity = _json(tmp_path / "identity_evidence.json", {
-        "schema_version": "s12-stage-l-identity-evidence-1",
+        "schema_version": "s12-stage-l-produced-identity-evidence-1",
+        "producer": "stage_c.identity_reference_distance",
+        "source_artifact": str(identity_source), "source_artifact_sha256": _sha(identity_source),
         "status": "PASS" if identity_ratio <= 0.10 else "FAIL",
         "stage_c_identity_regression_ratio": identity_ratio,
     })
     isolation = _json(tmp_path / "isolation_evidence.json", {
-        "schema_version": "s12-stage-l-isolation-evidence-1",
+        "schema_version": "s12-stage-l-produced-isolation-evidence-1",
+        "producer": "stage_l.regression_isolation.reference_gate",
+        "source_artifact": str(isolation_source), "source_artifact_sha256": _sha(isolation_source),
         "status": "PASS" if isolation_pass else "FAIL",
         "seven_non_hellcat_pcm_sha_unchanged": isolation_pass,
     })
     track_p = _json(tmp_path / "track_p_evidence.json", {
-        "schema_version": "s12-stage-l-track-p-evidence-1",
+        "schema_version": "s12-stage-l-produced-track-p-evidence-1",
+        "producer": "assert_track_p_unchanged.py",
+        "source_artifact": str(track_p_source), "source_artifact_sha256": _sha(track_p_source),
         "status": "PASS" if track_p_pass else "FAIL",
         "passed": 21 if track_p_pass else 20,
         "total": 21,
@@ -165,6 +175,40 @@ def test_missing_reference_is_na_and_never_zero_filled(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     assert _target_band_shares({"stock_median": {}}, "afterfire") is None
+
+
+def test_unavailable_pcm_state_window_is_na_but_eligible_mean_remains_independent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
+    stock = json.loads(target.read_text(encoding="utf-8"))["stock_median"]
+
+    def fake_extract(path: Path, *, segments):
+        rows: dict[str, object] = {}
+        for state in WINDOWS:
+            target_shares = stock[f"{state}_band_shares"]
+            baseline = [target_shares[0] + 0.1, target_shares[1] - 0.1, *target_shares[2:]]
+            candidate = [target_shares[0] + 0.05, target_shares[1] - 0.05, *target_shares[2:]]
+            if state == "afterfire":
+                continue
+            rows[state] = {"band_shares": baseline if path.name == "stage_k.wav" else candidate}
+        return {"segments": rows}
+
+    monkeypatch.setattr(
+        "tools.sound_sim.s12.acoustic_identity_v015.stage_l.reference_distance.extract_reference_features",
+        fake_extract,
+    )
+    result = compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
+
+    assert result["states"]["afterfire"] == {
+        "availability": "N/A", "target": None, "actual_stage_k": None,
+        "actual_stage_l": None, "signed_error": None, "absolute_error": None,
+        "stage_k_distance": None, "stage_l_distance": None, "improvement_ratio": None,
+    }
+    assert result["mean_improvement_ratio"] == pytest.approx(0.5)
+    assert result["gates"]["mean_improvement_at_least_30_percent"] is True
+    assert result["gates"]["all_required_states_available"] is False
+    assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
 
 
 @pytest.mark.parametrize(
@@ -287,6 +331,34 @@ def test_unrelated_profile_and_altered_target_are_rejected(tmp_path: Path) -> No
     with pytest.raises(ValueError, match="target"):
         compute_stage_l_reference_distance(stage_k, stage_l, altered, **kwargs)
 
+
+def test_old_standalone_pass_protection_json_is_rejected(tmp_path: Path) -> None:
+    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
+    old = _json(tmp_path / "standalone_identity.json", {
+        "schema_version": "s12-stage-l-identity-evidence-1",
+        "status": "PASS", "stage_c_identity_regression_ratio": 0.05,
+    })
+    kwargs["identity_evidence_path"] = old
+    kwargs["expected_identity_evidence_sha256"] = _sha(old)
+
+    with pytest.raises(ValueError, match="repository-produced|schema"):
+        compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
+
+
+def test_protection_receipt_rejects_bound_repository_source_hash_drift(tmp_path: Path) -> None:
+    stage_k, stage_l, target, profile, kwargs = _inputs(tmp_path)
+    source = PACKAGE_ROOT.parents[3] / "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json"
+    receipt = _json(tmp_path / "isolation_receipt.json", {
+        "schema_version": "s12-stage-l-produced-isolation-evidence-1",
+        "producer": "stage_l.regression_isolation.reference_gate",
+        "source_artifact": str(source), "source_artifact_sha256": "0" * 64,
+        "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True,
+    })
+    kwargs["isolation_evidence_path"] = receipt
+    kwargs["expected_isolation_evidence_sha256"] = _sha(receipt)
+
+    with pytest.raises(ValueError, match="source artifact SHA-256 mismatch"):
+        compute_stage_l_reference_distance(stage_k, stage_l, target, **kwargs)
 
 @pytest.mark.parametrize(
     ("candidate_low_delta", "candidate_mid_delta", "expected_low", "expected_mid"),

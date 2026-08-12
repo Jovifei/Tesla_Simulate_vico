@@ -9,6 +9,7 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender, VehicleStateTrace
 from tools.sound_sim.s12.acoustic_identity_v015.render_identity_v02 import _write_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.perceptual_metrics import (
+    _bank_pattern_error,
     compute_stage_l_perceptual_metrics,
     evaluate_stage_l_metric_gates,
 )
@@ -241,6 +242,30 @@ def test_source_metrics_require_clock_event_positions_for_array_alignment(tmp_pa
     missing_clock = SourceRender(render.pressure, render.stems, diagnostics).validate()
     with pytest.raises(ValueError, match="clock event_sample_indices"):
         compute_stage_l_perceptual_metrics(missing_clock, trace, wav, sample_rate_hz=8_000)
+
+
+def test_bank_pattern_rejects_identical_left_right_crosstalk_arrays() -> None:
+    events = np.arange(100, 900, 100, dtype=np.int64)
+    mono = np.zeros(1_000, dtype=np.float64)
+    mono[events] = 1.0
+    identical = np.column_stack((mono, mono))
+
+    assert _bank_pattern_error(identical, identical.copy(), events) > 1.0
+
+
+def test_named_transient_event_count_comes_from_named_arrays_not_clock_indices(tmp_path: Path) -> None:
+    render, trace = _fixture()
+    stems = dict(render.stems)
+    transient = np.zeros_like(render.pressure)
+    transient[2_000:2_020] = 0.5
+    transient[10_000:10_020] = -0.5
+    stems["hellcat_shift_reengagement"] = transient
+    changed = SourceRender(render.pressure + transient, stems, render.diagnostics).validate()
+    wav = _write_pcm24_wav(tmp_path / "candidate.wav", changed.pressure * 0.25)
+
+    metrics = compute_stage_l_perceptual_metrics(changed, trace, wav, sample_rate_hz=8_000)
+
+    assert metrics["pre_ptr"]["named_transient_event_count"] == 2
 
 
 def test_existing_full_mix_low_crest_regression_is_a_hard_gate_failure() -> None:

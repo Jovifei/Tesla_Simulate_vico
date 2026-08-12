@@ -96,18 +96,12 @@ def compute_stage_l_reference_distance(
     missing: list[str] = []
     for state in WINDOWS:
         target_shares = _target_band_shares(target, state)
-        if target_shares is None:
-            states[state] = {
-                "availability": "N/A",
-                "target": None,
-                "actual_stage_k": None,
-                "actual_stage_l": None,
-                "signed_error": None,
-                "absolute_error": None,
-                "stage_k_distance": None,
-                "stage_l_distance": None,
-                "improvement_ratio": None,
-            }
+        if (
+            target_shares is None
+            or not _state_feature_available(baseline, state)
+            or not _state_feature_available(candidate, state)
+        ):
+            states[state] = _na_state()
             missing.append(state)
             continue
         stage_k_shares = _feature_band_shares(baseline, state, "Stage-K")
@@ -274,11 +268,19 @@ def _trace_evidence(
 def _identity_evidence(path: Path) -> Mapping[str, object]:
     payload = _load_exact_json(
         path,
-        {"schema_version", "status", "stage_c_identity_regression_ratio"},
+        {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "stage_c_identity_regression_ratio"},
         "identity evidence",
     )
-    if payload["schema_version"] != "s12-stage-l-identity-evidence-1":
+    if payload["schema_version"] != "s12-stage-l-produced-identity-evidence-1":
         raise ValueError("identity evidence schema/status is invalid")
+    source = _validate_repository_source(
+        payload, path, "identity", "stage_c.identity_reference_distance",
+        "tasks/reports/runtime/s12-stage-c-integration-c1/stage_c_test_evidence.json",
+    )
+    source_payload = _load_json_mapping(source, "identity source artifact")
+    identity_tests = source_payload.get("tests", {}).get("engine_acoustic_identity_v015", {}) if isinstance(source_payload.get("tests"), Mapping) else {}
+    if identity_tests != {"passed": 58, "failed": 0, "subtests_passed": 78}:
+        raise ValueError("identity source artifact result mismatch")
     ratio = _finite_ratio(payload["stage_c_identity_regression_ratio"], "identity regression")
     expected_status = "PASS" if ratio <= 0.10 else "FAIL"
     if payload["status"] != expected_status:
@@ -289,11 +291,20 @@ def _identity_evidence(path: Path) -> Mapping[str, object]:
 def _isolation_evidence(path: Path) -> Mapping[str, object]:
     payload = _load_exact_json(
         path,
-        {"schema_version", "status", "seven_non_hellcat_pcm_sha_unchanged"},
+        {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "seven_non_hellcat_pcm_sha_unchanged"},
         "isolation evidence",
     )
-    if payload["schema_version"] != "s12-stage-l-isolation-evidence-1":
+    if payload["schema_version"] != "s12-stage-l-produced-isolation-evidence-1":
         raise ValueError("isolation evidence schema/status is invalid")
+    source = _validate_repository_source(
+        payload, path, "isolation", "stage_l.regression_isolation.reference_gate",
+        "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json",
+    )
+    source_payload = _load_json_mapping(source, "isolation source artifact")
+    runs = source_payload.get("fresh_runs")
+    isolation_run = next((row for row in runs if isinstance(row, Mapping) and "isolation" in str(row.get("command", ""))) , None) if isinstance(runs, list) else None
+    if not isinstance(isolation_run, Mapping) or isolation_run.get("result") != "84 passed":
+        raise ValueError("isolation source artifact result mismatch")
     unchanged = _strict_bool(
         payload["seven_non_hellcat_pcm_sha_unchanged"], "isolation evidence unchanged"
     )
@@ -306,11 +317,18 @@ def _isolation_evidence(path: Path) -> Mapping[str, object]:
 def _track_p_evidence(path: Path) -> Mapping[str, object]:
     payload = _load_exact_json(
         path,
-        {"schema_version", "status", "passed", "total", "frozen_files", "frozen_symbols", "unchanged"},
+        {"schema_version", "producer", "source_artifact", "source_artifact_sha256", "status", "passed", "total", "frozen_files", "frozen_symbols", "unchanged"},
         "Track-P evidence",
     )
-    if payload["schema_version"] != "s12-stage-l-track-p-evidence-1":
+    if payload["schema_version"] != "s12-stage-l-produced-track-p-evidence-1":
         raise ValueError("Track-P evidence schema/status is invalid")
+    source = _validate_repository_source(
+        payload, path, "Track-P", "assert_track_p_unchanged.py",
+        "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json",
+    )
+    source_payload = _load_json_mapping(source, "Track-P source artifact")
+    if source_payload.get("track_p_guard_script") != "PASS: 180 frozen files / 2 symbols unchanged; no rebaseline and no allowlist changes":
+        raise ValueError("Track-P source artifact result mismatch")
     counts = (payload["passed"], payload["total"], payload["frozen_files"], payload["frozen_symbols"])
     if any(type(value) is not int or value < 0 for value in counts):
         raise ValueError("Track-P evidence counts are invalid")
@@ -319,6 +337,36 @@ def _track_p_evidence(path: Path) -> Mapping[str, object]:
     expected_status = "PASS" if passed else "FAIL"
     if payload["status"] != expected_status:
         raise ValueError("Track-P evidence schema/status is invalid")
+    return payload
+
+
+def _validate_repository_source(
+    payload: Mapping[str, object], evidence_path: Path, label: str, expected_producer: str,
+    expected_relative_path: str,
+) -> Path:
+    if payload["producer"] != expected_producer:
+        raise ValueError(f"{label} evidence producer mismatch")
+    source_value = payload["source_artifact"]
+    if not isinstance(source_value, str) or not source_value:
+        raise ValueError(f"{label} evidence source artifact is invalid")
+    source = Path(source_value).resolve()
+    repository = Path(__file__).resolve().parents[5]
+    expected_source = (repository / expected_relative_path).resolve()
+    if source != expected_source or source == evidence_path.resolve() or not source.is_file():
+        raise ValueError(f"{label} evidence must bind a repository-produced source artifact")
+    expected_sha = _validated_sha_text(payload["source_artifact_sha256"], f"{label} source artifact SHA-256")
+    if _sha256(source) != expected_sha:
+        raise ValueError(f"{label} source artifact SHA-256 mismatch")
+    return source
+
+
+def _load_json_mapping(path: Path, label: str) -> Mapping[str, object]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{label} is not valid JSON") from exc
+    if not isinstance(payload, Mapping):
+        raise ValueError(f"{label} must be a mapping")
     return payload
 
 
@@ -360,6 +408,19 @@ def _feature_band_shares(segments: Mapping[str, object], state: str, label: str)
     if not isinstance(row, Mapping) or "band_shares" not in row:
         raise ValueError(f"{label} final PCM evidence is missing state {state}")
     return _four_finite_shares(row["band_shares"], f"{label} {state}")
+
+
+def _state_feature_available(segments: Mapping[str, object], state: str) -> bool:
+    row = segments.get(state)
+    return isinstance(row, Mapping) and "band_shares" in row
+
+
+def _na_state() -> dict[str, object]:
+    return {
+        "availability": "N/A", "target": None, "actual_stage_k": None,
+        "actual_stage_l": None, "signed_error": None, "absolute_error": None,
+        "stage_k_distance": None, "stage_l_distance": None, "improvement_ratio": None,
+    }
 
 
 def _four_finite_shares(value: object, label: str) -> tuple[float, ...]:

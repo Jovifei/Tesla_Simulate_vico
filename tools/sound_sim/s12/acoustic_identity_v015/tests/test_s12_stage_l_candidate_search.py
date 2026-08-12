@@ -5,9 +5,12 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import weakref
 
+import numpy as np
 import pytest
 
+from tools.sound_sim.s12.acoustic_identity_v015.render_identity_v02 import _write_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.scripts import qualify_stage_l_hellcat as qualifier
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_search import (
     MAX_CANDIDATES,
@@ -112,9 +115,9 @@ def _reference(*, pass_all: bool = True, candidate_id: str = "candidate") -> dic
         "stage_l_max_eligible_4_12khz_share": stage_l[3],
         "trace_binding": {"trace_version": "canonical-v1", "trace_sha256": _sha("trace"), "trace_evidence_sha256": _sha("trace-evidence")},
         "protection_evidence": {
-            "identity": {"schema_version": "s12-stage-l-identity-evidence-1", "status": "PASS", "stage_c_identity_regression_ratio": 0.05},
-            "isolation": {"schema_version": "s12-stage-l-isolation-evidence-1", "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True},
-            "track_p": {"schema_version": "s12-stage-l-track-p-evidence-1", "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True},
+            "identity": {"schema_version": "s12-stage-l-produced-identity-evidence-1", "producer": "stage_c.identity_reference_distance", "source_artifact": "repo/identity", "source_artifact_sha256": _sha("identity-source"), "status": "PASS", "stage_c_identity_regression_ratio": 0.05},
+            "isolation": {"schema_version": "s12-stage-l-produced-isolation-evidence-1", "producer": "stage_l.regression_isolation.reference_gate", "source_artifact": "repo/isolation", "source_artifact_sha256": _sha("isolation-source"), "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True},
+            "track_p": {"schema_version": "s12-stage-l-produced-track-p-evidence-1", "producer": "assert_track_p_unchanged.py", "source_artifact": "repo/track-p", "source_artifact_sha256": _sha("track-source"), "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True},
         },
         "gates": {
             **gates,
@@ -277,36 +280,70 @@ def _runner_manifest(tmp_path: Path) -> tuple[Path, dict[str, object]]:
     repo_root = Path(__file__).resolve().parents[5]
     package = repo_root / "tools/sound_sim/s12/acoustic_identity_v015"
     profile = package / "targets/stage_l_candidates/hellcat_candidate_v8.json"
+    parent_profile = package / "targets/stage_k_candidates/hellcat_candidate_v7.json"
     target = package / "reference_database/hellcat_reference_targets.json"
     stage_k = tmp_path / "stage_k.wav"
     stage_l = tmp_path / "stage_l.wav"
-    stage_k.write_bytes(b"stage-k-final-pcm24-fixture")
-    stage_l.write_bytes(b"stage-l-final-pcm24-fixture")
+    _write_pcm24_wav(stage_k, np.zeros((480, 2), dtype=np.float64))
+    _write_pcm24_wav(stage_l, np.zeros((480, 2), dtype=np.float64))
     trace = tmp_path / "trace.json"
     trace.write_text(json.dumps({
         "schema_version": "s12-stage-l-trace-evidence-1", "status": "PASS",
         "trace_version": "stage_l_canonical_cycle_v1", "trace_sha256": _sha("reference-trace"),
     }), encoding="utf-8")
     identity = tmp_path / "identity.json"
-    identity.write_text(json.dumps({"schema_version": "s12-stage-l-identity-evidence-1", "status": "PASS", "stage_c_identity_regression_ratio": 0.05}), encoding="utf-8")
+    identity_source = repo_root / "tasks/reports/runtime/s12-stage-c-integration-c1/stage_c_test_evidence.json"
+    identity.write_text(json.dumps({"schema_version": "s12-stage-l-produced-identity-evidence-1", "producer": "stage_c.identity_reference_distance", "source_artifact": str(identity_source), "source_artifact_sha256": hashlib.sha256(identity_source.read_bytes()).hexdigest(), "status": "PASS", "stage_c_identity_regression_ratio": 0.05}), encoding="utf-8")
     isolation = tmp_path / "isolation.json"
-    isolation.write_text(json.dumps({"schema_version": "s12-stage-l-isolation-evidence-1", "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True}), encoding="utf-8")
+    isolation_source = repo_root / "tasks/reports/runtime/s12-stage-k-four-vehicle-repair-v1/stage_k_test_evidence.json"
+    isolation.write_text(json.dumps({"schema_version": "s12-stage-l-produced-isolation-evidence-1", "producer": "stage_l.regression_isolation.reference_gate", "source_artifact": str(isolation_source), "source_artifact_sha256": hashlib.sha256(isolation_source.read_bytes()).hexdigest(), "status": "PASS", "seven_non_hellcat_pcm_sha_unchanged": True}), encoding="utf-8")
     track_p = tmp_path / "track_p.json"
-    track_p.write_text(json.dumps({"schema_version": "s12-stage-l-track-p-evidence-1", "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True}), encoding="utf-8")
+    track_source = isolation_source
+    track_p.write_text(json.dumps({"schema_version": "s12-stage-l-produced-track-p-evidence-1", "producer": "assert_track_p_unchanged.py", "source_artifact": str(track_source), "source_artifact_sha256": hashlib.sha256(track_source.read_bytes()).hexdigest(), "status": "PASS", "passed": 21, "total": 21, "frozen_files": 180, "frozen_symbols": 2, "unchanged": True}), encoding="utf-8")
+    trace_sha = _sha("reference-trace")
+
+    def audio_entry(
+        wav: Path, profile_path: Path, profile_id: str, artifact_kind: str,
+    ) -> dict[str, object]:
+        receipt = tmp_path / f"{artifact_kind}.receipt.json"
+        _json_payload = {
+            "schema_version": "s12-stage-l-produced-audio-receipt-1",
+            "artifact_kind": artifact_kind,
+            "producer_api": (
+                "stage_k.named_review.render_stage_k_candidate_pcm24"
+                if artifact_kind.startswith("stage_k")
+                else "stage_l.named_review.render_stage_l_candidate_pcm24"
+            ),
+            "profile_kind": "stage_k_candidate" if artifact_kind.startswith("stage_k") else "stage_l_candidate",
+            "profile_id": profile_id,
+            "profile_sha256": hashlib.sha256(profile_path.read_bytes()).hexdigest(),
+            "trace_version": "stage_l_canonical_cycle_v1", "trace_sha256": trace_sha,
+            "wav_sha256": hashlib.sha256(wav.read_bytes()).hexdigest(),
+            "reopened_pcm24": {
+                "sample_rate_hz": 48_000, "channels": 2, "pcm_bits": 24,
+                "finite": True, "clipping_count": 0,
+            },
+        }
+        receipt.write_text(json.dumps(_json_payload), encoding="utf-8")
+        return {**_file_receipt(wav), "production_receipt": _file_receipt(receipt)}
+
     payload = {
         "schema_version": "s12-stage-l-qualification-manifest-1",
         "probe_duration_s": 10.0,
-        "search_parent_profile": _file_receipt(profile),
-        "stage_k_final_wav": _file_receipt(stage_k),
+        "search_parent_profile": _file_receipt(parent_profile),
+        "stage_k_final_wav": audio_entry(stage_k, parent_profile, "hellcat_stage_k_v7", "stage_k_final_pcm24"),
         "reference_target": _file_receipt(target),
         "reference_trace": {
-            "version": "stage_l_canonical_cycle_v1", "trace_sha256": _sha("reference-trace"),
+            "version": "stage_l_canonical_cycle_v1", "trace_sha256": trace_sha,
             "evidence": _file_receipt(trace),
         },
         "identity_evidence": _file_receipt(identity),
         "isolation_evidence": _file_receipt(isolation),
         "track_p_evidence": _file_receipt(track_p),
-        "candidates": [{"candidate_profile": _file_receipt(profile), "stage_l_final_wav": _file_receipt(stage_l)}],
+        "candidates": [{
+            "candidate_profile": _file_receipt(profile),
+            "stage_l_final_wav": audio_entry(stage_l, profile, "hellcat_stage_l_v8", "stage_l_final_pcm24"),
+        }],
     }
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps(payload), encoding="utf-8")
@@ -332,6 +369,146 @@ def test_runner_rejects_profile_hash_drift_before_render(tmp_path: Path, monkeyp
     monkeypatch.setattr(qualifier, "render_stage_l_candidate", lambda *_: pytest.fail("must fail before render"))
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         qualifier.run_stage_l_qualification_manifest(manifest, hashlib.sha256(manifest.read_bytes()).hexdigest())
+
+
+def test_runner_rejects_plain_wav_hash_without_production_receipt(tmp_path: Path) -> None:
+    manifest, payload = _runner_manifest(tmp_path)
+    payload["stage_k_final_wav"].pop("production_receipt")
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="production_receipt|exact keys"):
+        qualifier.run_stage_l_qualification_manifest(
+            manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+        )
+
+
+def test_runner_rejects_cross_bound_audio_receipt_drift_before_render(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manifest, payload = _runner_manifest(tmp_path)
+    receipt_path = Path(payload["candidates"][0]["stage_l_final_wav"]["production_receipt"]["path"])
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["trace_sha256"] = _sha("another-trace")
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    payload["candidates"][0]["stage_l_final_wav"]["production_receipt"] = _file_receipt(receipt_path)
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(qualifier, "render_stage_k_candidate", lambda *_: pytest.fail("must fail before render"))
+
+    with pytest.raises(ValueError, match="trace.*mismatch"):
+        qualifier.run_stage_l_qualification_manifest(
+            manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+        )
+
+
+def test_runner_uses_distinct_stage_k_parent_loader_and_renderer(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manifest, payload = _runner_manifest(tmp_path)
+    repo_root = Path(__file__).resolve().parents[5]
+    stage_k_profile = (
+        repo_root / "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_k_candidates"
+        / "hellcat_candidate_v7.json"
+    )
+    payload["search_parent_profile"] = _file_receipt(stage_k_profile)
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+    calls: list[str] = []
+
+    monkeypatch.setattr(
+        qualifier, "load_stage_k_candidate",
+        lambda path: calls.append(f"load-k:{Path(path).name}") or object(),
+    )
+    monkeypatch.setattr(
+        qualifier, "render_stage_k_candidate",
+        lambda vehicle_id, trace, profile: calls.append(f"render-k:{vehicle_id}") or object(),
+    )
+    monkeypatch.setattr(
+        qualifier, "load_stage_l_candidate",
+        lambda path: calls.append(f"load-l:{Path(path).name}") or pytest.fail("stop after distinct loaders"),
+    )
+
+    with pytest.raises(pytest.fail.Exception, match="stop after distinct loaders"):
+        qualifier.run_stage_l_qualification_manifest(
+            manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+        )
+    assert calls[:2] == ["load-k:hellcat_candidate_v7.json", "load-l:hellcat_candidate_v8.json"]
+
+
+def test_production_audio_receipt_cross_binds_profile_trace_and_reopened_pcm(tmp_path: Path) -> None:
+    wav = tmp_path / "candidate.wav"
+    wav.write_bytes(b"pcm24-production-bytes")
+    receipt = tmp_path / "candidate.audio-receipt.json"
+    receipt.write_text(json.dumps({
+        "schema_version": "s12-stage-l-produced-audio-receipt-1",
+        "artifact_kind": "stage_l_final_pcm24",
+        "producer_api": "stage_l.render_candidate.render_stage_l_candidate",
+        "profile_kind": "stage_l_candidate",
+        "profile_id": "hellcat_stage_l_v8",
+        "profile_sha256": _sha("profile"),
+        "trace_version": "stage_l_canonical_cycle_v1",
+        "trace_sha256": _sha("wrong-trace"),
+        "wav_sha256": hashlib.sha256(wav.read_bytes()).hexdigest(),
+        "reopened_pcm24": {
+            "sample_rate_hz": 48_000, "channels": 2, "pcm_bits": 24,
+            "finite": True, "clipping_count": 0,
+        },
+    }), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="trace.*mismatch"):
+        qualifier._bind_production_audio_receipt(
+            receipt, hashlib.sha256(receipt.read_bytes()).hexdigest(),
+            wav_path=wav,
+            expected_artifact_kind="stage_l_final_pcm24",
+            expected_profile_id="hellcat_stage_l_v8",
+            expected_profile_sha256=_sha("profile"),
+            expected_trace_version="stage_l_canonical_cycle_v1",
+            expected_trace_sha256=_sha("canonical-trace"),
+        )
+
+
+def test_upper_band_increment_over_parent_is_a_hard_gate() -> None:
+    parent = _perceptual(crest_db=8.0, upper_share=0.048)
+    row = _record("upper-increment", pass_all=True)
+    row["metrics"]["final_pcm24"]["band_shares"][3] = 0.059
+    row["metrics"]["final_pcm24"]["band_shares"][2] = 0.121
+
+    result = qualify_stage_l_candidates(
+        [row], parent_parameters={"source.x": 0.0}, parent_metrics=parent,
+    )
+
+    assert result["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert result["evaluated"][0]["hard_gates"]["final_pcm_upper_share_increment"] is False
+
+
+def test_runner_measures_source_render_residency_instead_of_reporting_a_literal(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manifest, _ = _runner_manifest(tmp_path)
+    live = 0
+    observed_max = 0
+
+    class _Render:
+        def __init__(self) -> None:
+            nonlocal live, observed_max
+            live += 1
+            observed_max = max(observed_max, live)
+            weakref.finalize(self, _released)
+
+    def _released() -> None:
+        nonlocal live
+        live -= 1
+
+    monkeypatch.setattr(qualifier, "render_stage_l_candidate", lambda *_: _Render())
+    monkeypatch.setattr(qualifier, "_apply_current_frozen_layers", lambda *_args, **_kwargs: _Render())
+    monkeypatch.setattr(
+        qualifier, "compute_stage_l_perceptual_metrics",
+        lambda *_: _perceptual(crest_db=8.0, requested=[]),
+    )
+
+    with pytest.raises(ValueError, match="SourceRender.*resident"):
+        qualifier.run_stage_l_qualification_manifest(
+            manifest, hashlib.sha256(manifest.read_bytes()).hexdigest(),
+        )
+    assert observed_max > 1
 
 
 def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
@@ -388,6 +565,10 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
         return result
 
     monkeypatch.setattr(qualifier, "render_stage_l_candidate", fake_render)
+    monkeypatch.setattr(
+        qualifier, "render_stage_k_candidate",
+        lambda vehicle_id, trace, profile: events.append(f"render-k:{profile.candidate_id}") or _Render(),
+    )
     monkeypatch.setattr(qualifier, "_apply_current_frozen_layers", fake_layers)
     monkeypatch.setattr(qualifier, "compute_stage_l_perceptual_metrics", fake_metrics)
     monkeypatch.setattr(qualifier, "compute_stage_l_reference_distance", fake_reference)
@@ -397,13 +578,13 @@ def test_runner_builds_actual_evidence_instead_of_trusting_manifest(
     assert result["qualification_input_receipt"]["schema_version"] == "s12-stage-l-qualification-manifest-1"
     assert result["full_render_residency_max"] == 1
     assert events == [
-        "render:hellcat_stage_l_v8", "layers:hellcat_stage_l_v8", "metrics:stage_k.wav",
+        "render-k:hellcat_stage_k_v7", "metrics:stage_k.wav",
         "render:hellcat_stage_l_v8", "layers:hellcat_stage_l_v8", "metrics:stage_l.wav", "reference",
     ]
     assert set(result["artifact_receipts"]) == {
         "search_parent_profile", "stage_k_final_wav", "reference_target", "trace_evidence",
         "identity_evidence", "isolation_evidence", "track_p_evidence", "candidate_profiles",
-        "stage_l_final_wavs",
+        "stage_l_final_wavs", "stage_k_production_audio_receipt", "stage_l_production_audio_receipts",
     }
 
 
