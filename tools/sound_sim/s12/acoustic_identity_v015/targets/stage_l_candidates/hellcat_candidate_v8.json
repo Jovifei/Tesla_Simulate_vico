@@ -32,7 +32,7 @@
     "scope": "architecture_contract"
   },
   "combustion_and_blowdown": {
-    "cylinder_strength_variation": {"value": 0.12, "unit": "ratio", "range": [0.06, 0.20], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_cylinder_strength_pattern", "verification_state": "candidate_assumption"},
+    "cylinder_strength_variation": {"value": 0.16, "unit": "ratio", "range": [0.06, 0.20], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_cylinder_strength_pattern", "verification_state": "candidate_assumption"},
     "bank_amplitude_asymmetry": {"value": 0.05, "unit": "ratio", "range": [0.00, 0.12], "source_level": "C", "source": "synthetic", "source_scope": "bank_pressure_asymmetry", "verification_state": "candidate_assumption"},
     "blowdown_attack_ms": {"value": 0.45, "unit": "ms", "range": [0.20, 0.80], "source_level": "C", "source": "synthetic", "source_scope": "event_pressure_attack", "verification_state": "candidate_assumption"},
     "blowdown_fast_decay_ms": {"value": 2.0, "unit": "ms", "range": [1.2, 3.0], "source_level": "C", "source": "synthetic", "source_scope": "event_fast_decay", "verification_state": "candidate_assumption"},

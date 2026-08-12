@@ -37,7 +37,24 @@ _CONTRIBUTORS = (
     "hemi_mechanical_torque_ripple",
 )
 _AGGREGATES = ("hemi_exhaust", "hemi_combustion_and_blowdown")
-_CYLINDER_PATTERN = np.asarray((-1.0, -0.42, 0.68, 0.15, -0.75, 0.92, -0.16, 0.48))
+# A deterministic strong/weak grouping over the eight-event firing
+# cycle.  The zero mean keeps ``cylinder_strength_variation`` an energy-shape
+# control rather than a hidden gain, while the grouped pressure rises preserve
+# the audible cross-plane burst/pause cadence after the banks merge.
+_CYLINDER_PATTERN = np.asarray((1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0))
+_AFFECTED_STEMS = {
+    "cylinder_strength_variation": _CONTRIBUTORS,
+    "bank_amplitude_asymmetry": ("hemi_exhaust_left", "hemi_exhaust_right"),
+    "blowdown_attack_ms": ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"),
+    "blowdown_fast_decay_ms": ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"),
+    "blowdown_slow_decay_ms": ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"),
+    "blowdown_slow_weight": ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"),
+    "low_frequency_blowdown_gain": ("hemi_blowdown_body",),
+    "structure_shock_mix": ("hemi_structure_shock",),
+    "torque_ripple_modulation_depth": ("hemi_mechanical_torque_ripple",),
+    "xpipe_cross_coupling": ("hemi_exhaust_left", "hemi_exhaust_right"),
+    "xpipe_delay_ms": ("hemi_exhaust_left", "hemi_exhaust_right"),
+}
 
 
 def render_hellcat_crossplane_combustion_v2(
@@ -63,7 +80,7 @@ def render_hellcat_crossplane_combustion_v2(
         (0.28 + 0.72 * load[event_indices])
         * (0.25 + 0.75 * throttle[event_indices])
     )
-    event_amplitudes = 0.075 * pressure_rise * event_strengths
+    event_amplitudes = 0.75 * pressure_rise * event_strengths
 
     all_impulses = np.zeros(count, dtype=np.float64)
     all_impulses[event_indices] = event_amplitudes
@@ -79,10 +96,16 @@ def render_hellcat_crossplane_combustion_v2(
     kernel, kernel_diagnostics = _blowdown_kernel(sample_rate_hz, values)
     left_local = _finite_convolve(left_impulses, kernel)
     right_local = _finite_convolve(right_impulses, kernel)
+    left_group_delay = max(1, int(round(0.08e-3 * sample_rate_hz)))
+    right_group_delay = max(left_group_delay + 1, int(round(0.50e-3 * sample_rate_hz)))
+    left_response = _delay(left_local, left_group_delay)
+    right_response = _delay(right_local, right_group_delay)
     delay_samples = max(1, int(round(values["xpipe_delay_ms"] * sample_rate_hz / 1000.0)))
     cross = values["xpipe_cross_coupling"]
-    left_pressure = left_local + cross * _delay(right_local, delay_samples)
-    right_pressure = right_local + cross * _delay(left_local, delay_samples)
+    left_cross = cross * _delay(right_response, delay_samples)
+    right_cross = cross * _delay(left_response, delay_samples)
+    left_pressure = left_response + left_cross
+    right_pressure = right_response + right_cross
     exhaust_left = np.column_stack((left_pressure, 0.34 * left_pressure))
     exhaust_right = np.column_stack((0.34 * right_pressure, right_pressure))
 
@@ -110,6 +133,21 @@ def render_hellcat_crossplane_combustion_v2(
     stems["hemi_exhaust"] = exhaust_left + exhaust_right
     stems["hemi_combustion_and_blowdown"] = pressure.copy()
     requested = sorted(values)
+    effect_energy = {
+        "cylinder_strength_variation": float(np.sum(np.square(cylinder_variation * _CYLINDER_PATTERN[np.arange(event_count) % 8] * pressure_rise))),
+        "bank_amplitude_asymmetry": float(asymmetry * asymmetry * (np.sum(np.square(left_local)) + np.sum(np.square(right_local)))),
+        "blowdown_attack_ms": _kernel_delta_energy(kernel, _kernel_with(values, sample_rate_hz, "blowdown_attack_ms", 0.20)),
+        "blowdown_fast_decay_ms": _kernel_delta_energy(kernel, _kernel_with(values, sample_rate_hz, "blowdown_fast_decay_ms", 1.2)),
+        "blowdown_slow_decay_ms": _kernel_delta_energy(kernel, _kernel_with(values, sample_rate_hz, "blowdown_slow_decay_ms", 4.0)),
+        "blowdown_slow_weight": _kernel_delta_energy(kernel, _kernel_with(values, sample_rate_hz, "blowdown_slow_weight", 0.15)),
+        "low_frequency_blowdown_gain": float(np.sum(np.square(blowdown_body))),
+        "structure_shock_mix": float(np.sum(np.square(structure_shock))),
+        "torque_ripple_modulation_depth": float(np.sum(np.square(mechanical_torque))),
+        "xpipe_cross_coupling": float(np.sum(np.square(left_cross)) + np.sum(np.square(right_cross))),
+        "xpipe_delay_ms": float(np.sum(np.square(left_cross - cross * right_response)) + np.sum(np.square(right_cross - cross * left_response))),
+    }
+    active = sorted(name for name, energy in effect_energy.items() if energy > 1.0e-24)
+    inactive = sorted(set(requested) - set(active))
     diagnostics: dict[str, object] = {
         "vehicle_id": "hellcat",
         "scope": "C/synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
@@ -123,12 +161,22 @@ def render_hellcat_crossplane_combustion_v2(
         "firing_order": HELLCAT_FIRING_ORDER,
         "cylinder_sequence": tuple(HELLCAT_FIRING_ORDER[i % 8] for i in range(event_count)),
         "cylinder_strength_pattern": tuple(float(value) for value in cylinder_pattern),
+        "cylinder_strength_grouping": "four_strong_four_weak",
         "event_strengths": tuple(float(value) for value in event_strengths),
         "event_phase_max_error_samples": 0.0,
         "merged_firing_order": "uniform_4EO",
         "merged_firing_ridge_hz": float(np.mean(rpm) * 4.0 / 60.0),
         "bank_interval_ratio_multisets": _bank_interval_ratio_multisets(HELLCAT_BANK_PATTERN),
         "bank_response_model": "independent_bank_pulses_with_delayed_coherent_xpipe_crossfeed",
+        "bank_local_response": {
+            "topology": "bank_local_response_then_coherent_xpipe_mix",
+            "source_level": "C/synthetic",
+            "left_group_delay_samples": left_group_delay,
+            "right_group_delay_samples": right_group_delay,
+            "local_paths_distinct": left_group_delay != right_group_delay,
+            "xpipe_cross_energy": effect_energy["xpipe_cross_coupling"],
+            "xpipe_mix_coherent": True,
+        },
         "excitation_model": "event_driven_pressure_pulses",
         "static_low_shelf_used": False,
         "resonance_model": "broad_event_kernel_no_high_q_peak",
@@ -142,10 +190,12 @@ def render_hellcat_crossplane_combustion_v2(
             "requested": requested,
             "read": requested,
             "configured": requested,
-            "active": requested,
-            "inactive": [],
+            "active": active,
+            "inactive": inactive,
             "unused": [],
         },
+        "parameter_effect_energy": effect_energy,
+        "parameter_affected_stems": {name: list(stems) for name, stems in _AFFECTED_STEMS.items()},
         "xpipe_delay_samples": delay_samples,
         **kernel_diagnostics,
     }
@@ -211,14 +261,40 @@ def _blowdown_kernel(sample_rate_hz: int, values: Mapping[str, float]) -> tuple[
     kernel /= peak
     fast_energy = float(np.sum(np.square((1.0 - slow_weight) * fast)))
     slow_energy = float(np.sum(np.square(slow_weight * slow)))
+    measured_fast = _measured_decay_samples(fast)
+    measured_slow = _measured_decay_samples(slow)
     return kernel, {
         "measured_attack_samples": int(np.argmax(kernel)),
-        "measured_fast_decay_samples": float(fast_s * sample_rate_hz),
-        "measured_slow_decay_samples": float(slow_s * sample_rate_hz),
+        "requested_fast_decay_ms": float(values["blowdown_fast_decay_ms"]),
+        "requested_slow_decay_ms": float(values["blowdown_slow_decay_ms"]),
+        "measured_fast_decay_samples": measured_fast,
+        "measured_slow_decay_samples": measured_slow,
+        "measured_fast_decay_ms": 1000.0 * measured_fast / sample_rate_hz,
+        "measured_slow_decay_ms": 1000.0 * measured_slow / sample_rate_hz,
         "slow_tail_energy_ratio": slow_energy / max(fast_energy + slow_energy, 1.0e-30),
         "blowdown_kernel_peak": float(np.max(kernel)),
         "blowdown_kernel_area": float(np.sum(kernel)),
     }
+
+
+def _kernel_with(values: Mapping[str, float], sample_rate_hz: int, name: str, value: float) -> np.ndarray:
+    changed = dict(values)
+    changed[name] = value
+    return _blowdown_kernel(sample_rate_hz, changed)[0]
+
+
+def _kernel_delta_energy(first: np.ndarray, second: np.ndarray) -> float:
+    count = max(first.size, second.size)
+    left = np.pad(first, (0, count - first.size))
+    right = np.pad(second, (0, count - second.size))
+    return float(np.sum(np.square(left - right)))
+
+
+def _measured_decay_samples(envelope: np.ndarray) -> float:
+    peak_index = int(np.argmax(envelope))
+    peak = float(envelope[peak_index])
+    below = np.flatnonzero(envelope[peak_index:] <= peak / np.e)
+    return float(below[0]) if below.size else float(envelope.size - peak_index - 1)
 
 
 def _body_kernel(sample_rate_hz: int, values: Mapping[str, float]) -> np.ndarray:
@@ -231,7 +307,7 @@ def _body_kernel(sample_rate_hz: int, values: Mapping[str, float]) -> np.ndarray
     rise = 1.0 - np.exp(-time_s / max(attack_s, 1.0 / sample_rate_hz))
     kernel = rise * (
         0.35 * (1.0 - slow_weight) * np.exp(-time_s / max(2.2 * fast_s, 1.0 / sample_rate_hz))
-        + slow_weight * np.exp(-time_s / max(1.7 * slow_s, 1.0 / sample_rate_hz))
+        + slow_weight * np.exp(-time_s / max(1.10 * slow_s, 1.0 / sample_rate_hz))
     )
     return kernel / max(float(np.max(kernel)), 1.0e-30)
 

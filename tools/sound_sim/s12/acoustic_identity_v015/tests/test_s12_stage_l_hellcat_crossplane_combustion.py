@@ -184,6 +184,20 @@ def test_cylinder_strength_pattern_is_equal_at_zero_and_bounded_deterministic_wh
     assert _sha(first.pressure) == _sha(second.pressure)
 
 
+def test_cylinder_strength_pattern_groups_strong_then_weak_events_with_unit_mean() -> None:
+    rendered, _ = _render({"cylinder_strength_variation": 0.13})
+    pattern = np.asarray(rendered.diagnostics["cylinder_strength_pattern"], dtype=np.float64)
+    strengths = np.asarray(rendered.diagnostics["event_strengths"], dtype=np.float64)
+
+    assert pattern.shape == (8,)
+    assert np.mean(pattern) == pytest.approx(1.0, abs=1.0e-15)
+    assert np.all(pattern[:4] > 1.0)
+    assert np.all(pattern[4:] < 1.0)
+    np.testing.assert_array_equal(strengths[:8], pattern)
+    np.testing.assert_array_equal(strengths[8:16], pattern)
+    assert rendered.diagnostics["cylinder_strength_grouping"] == "four_strong_four_weak"
+
+
 def test_cylinder_strength_is_stable_across_python_hash_seeds() -> None:
     repo_root = Path(__file__).resolve().parents[5]
     script = """
@@ -372,3 +386,87 @@ def test_unknown_or_missing_override_is_rejected_instead_of_silently_unused() ->
         render_hellcat_crossplane_combustion_v2(
             trace.rpm, trace.load, trace.throttle, clock, _SR, missing
         )
+
+
+def test_bank_local_response_precedes_xpipe_and_has_bounded_distinct_group_delay() -> None:
+    rendered, _ = _render()
+    diagnostic = rendered.diagnostics["bank_local_response"]
+    assert diagnostic["topology"] == "bank_local_response_then_coherent_xpipe_mix"
+    assert diagnostic["source_level"] == "C/synthetic"
+    assert 0 <= diagnostic["left_group_delay_samples"] < diagnostic["right_group_delay_samples"] <= int(0.50e-3 * _SR)
+    assert diagnostic["local_paths_distinct"] is True
+    assert diagnostic["xpipe_cross_energy"] > 0.0
+    assert diagnostic["xpipe_mix_coherent"] is True
+
+
+def test_decay_diagnostics_separate_requested_settings_from_measured_envelopes() -> None:
+    rendered, _ = _render()
+    diagnostic = rendered.diagnostics
+    assert diagnostic["requested_fast_decay_ms"] == pytest.approx(_DEFAULTS["blowdown_fast_decay_ms"])
+    assert diagnostic["requested_slow_decay_ms"] == pytest.approx(_DEFAULTS["blowdown_slow_decay_ms"])
+    assert diagnostic["measured_fast_decay_ms"] > 0.0
+    assert diagnostic["measured_slow_decay_ms"] > diagnostic["measured_fast_decay_ms"]
+    assert diagnostic["measured_fast_decay_ms"] != diagnostic["requested_fast_decay_ms"]
+    assert diagnostic["measured_slow_decay_ms"] != diagnostic["requested_slow_decay_ms"]
+
+
+def test_usage_is_measured_and_zero_mix_is_inactive_not_declaratively_active() -> None:
+    rendered, _ = _render({"structure_shock_mix": 0.0})
+    usage = rendered.diagnostics["candidate_parameter_usage"]
+    assert "structure_shock_mix" in usage["read"]
+    assert "structure_shock_mix" in usage["configured"]
+    assert "structure_shock_mix" in usage["inactive"]
+    assert "structure_shock_mix" not in usage["active"]
+    assert rendered.diagnostics["parameter_effect_energy"]["structure_shock_mix"] == 0.0
+
+
+@pytest.mark.parametrize(
+    ("parameter", "value", "affected"),
+    (
+        ("blowdown_attack_ms", 0.75, {"hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"}),
+        ("blowdown_fast_decay_ms", 2.8, {"hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"}),
+        ("blowdown_slow_decay_ms", 9.5, {"hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"}),
+        ("blowdown_slow_weight", 0.44, {"hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"}),
+    ),
+)
+def test_blowdown_controls_publish_exact_affected_stems_and_preserve_unrelated_paths(
+    parameter: str, value: float, affected: set[str]
+) -> None:
+    baseline, _ = _render()
+    changed, _ = _render({parameter: value})
+    assert set(changed.diagnostics["parameter_affected_stems"][parameter]) == affected
+    for name in _CONTRIBUTORS:
+        if name in affected:
+            assert not np.array_equal(changed.stems[name], baseline.stems[name])
+        else:
+            np.testing.assert_array_equal(changed.stems[name], baseline.stems[name])
+
+
+def test_full_frozen_downstream_pcm_probe_improves_parent_low_and_mid_reference_errors() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as module
+
+    probe = getattr(module, "render_stage_l_final_pcm_probe", None)
+    assert callable(probe)
+    sample_rate_hz = 48_000
+    count = sample_rate_hz + 1
+    time_s = np.arange(count, dtype=np.float64) / sample_rate_hz
+    trace = VehicleStateTrace(
+        time_s, np.linspace(1_500.0, 3_300.0, count), np.full(count, 0.92),
+        np.full(count, 0.95), np.full(count, 2.0),
+    ).validate()
+    package_root = Path(__file__).resolve().parents[1]
+    candidate = load_stage_l_candidate(package_root / "targets/stage_l_candidates/hellcat_candidate_v8.json")
+    evidence = probe(trace, candidate)
+    assert evidence["pipeline_order"] == (
+        "source_operating_trim", "idle_dynamics", "deterministic_afterfire",
+        "frozen_common_low_frequency_body", "frozen_exhaust_rumble",
+        "l4_transient_pending_pass_through", "frozen_common_pre_ptr_equalization",
+        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+    )
+    assert evidence["l4_transient_status"] == "PENDING_PASS_THROUGH"
+    assert evidence["candidate_pcm_sha256"] != evidence["parent_pcm_sha256"]
+    assert evidence["candidate_80_250_rms"] > evidence["parent_80_250_rms"], evidence
+    assert evidence["candidate_80_250_crest"] > evidence["parent_80_250_crest"], evidence
+    assert evidence["candidate_band_abs_error"][0] <= evidence["parent_band_abs_error"][0], evidence
+    assert evidence["candidate_band_abs_error"][1] < evidence["parent_band_abs_error"][1], evidence
+    assert evidence["candidate_band_shares"][3] <= evidence["parent_band_shares"][3] + 0.005, evidence

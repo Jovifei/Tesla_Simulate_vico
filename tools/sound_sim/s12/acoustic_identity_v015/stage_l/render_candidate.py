@@ -8,12 +8,20 @@ from pathlib import Path
 
 import numpy as np
 
+from ..acoustic_layers import (
+    apply_afterfire, apply_exhaust_rumble, apply_idle_dynamics,
+    apply_low_frequency_body, apply_pre_ptr_equalization,
+)
 from ..contracts import SourceRender, VehicleStateTrace
+from ..loudness_manager import manage_bundle_loudness
+from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade, _pcm24_roundtrip
 from ..sources.hellcat_crossplane_combustion_v2 import render_hellcat_crossplane_combustion_v2
+from ..stage_f.reference_distance import final_pcm_band_shares
 from ..sources.supercharged_hemi_source import render_hellcat
 from ..sources.supercharger_whine_v4 import render_supercharger_whine_v4
 from ..stage_k.candidate_profiles import load_stage_k_candidate
 from ..stage_k.render_candidate import render_stage_k_candidate
+from ..stage_k.source_level import OperatingLevelTrim, apply_source_operating_trim
 from ..tuning.state_band_shaper import _inject_state_spectral_targets
 from .candidate_profiles import PARENT_CANDIDATE_PATH, StageLCandidateProfile
 from .crank_clock import HellcatCrankClock, build_hellcat_crank_clock
@@ -216,6 +224,120 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
     return SourceRender(shaped_pressure, shaped_stems, final_diagnostics).validate()
 
 
+def render_stage_l_final_pcm_probe(
+    trace: VehicleStateTrace, candidate: StageLCandidateProfile,
+) -> dict[str, object]:
+    """Measure L2 and its Stage-K parent through all currently available frozen layers."""
+    trace.validate()
+    source = render_stage_l_candidate(trace, candidate)
+    operating = candidate.payload["operating_level"]
+    trim = OperatingLevelTrim(
+        low_load_gain_db=float(operating["low_load_gain_db"]["value"]),
+        high_load_gain_db=float(operating["high_load_gain_db"]["value"]),
+        blend_load=(
+            float(operating["blend_load_low"]["value"]),
+            float(operating["blend_load_high"]["value"]),
+        ),
+        smoothing_s=float(operating["smoothing_s"]["value"]),
+    )
+    continuous = tuple(name for name in _CONTRIBUTORS if name != "blower_bypass_release")
+    render = apply_source_operating_trim(
+        source, trace, stem_names=continuous, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ,
+    )
+    stems = dict(render.stems)
+    stems["exhaust"] = stems["hemi_exhaust_left"] + stems["hemi_exhaust_right"]
+    stems["hemi_exhaust"] = stems["exhaust"]
+    stems["hemi_combustion_and_blowdown"] = sum(
+        (stems[name] for name in _HEMI_CONTRIBUTORS), np.zeros_like(render.pressure)
+    )
+    stems["blower"] = sum(
+        (stems[name] for name in _BLOWER_CONTRIBUTORS), np.zeros_like(render.pressure)
+    )
+    render = replace(render, stems=stems).validate()
+    render = apply_idle_dynamics(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = apply_afterfire(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = _scale_event_stem(
+        render, "afterfire", float(candidate.payload["afterfire"]["gain_scale"]["value"])
+    )
+    render = apply_low_frequency_body(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = apply_exhaust_rumble(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    render = apply_pre_ptr_equalization(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    parent = render_stage_l_parent(trace)
+    pre_gain = {
+        "parent": _edge_fade(_apply_frozen_ptr(parent.pressure)),
+        "candidate": _edge_fade(_apply_frozen_ptr(render.pressure)),
+    }
+    managed = manage_bundle_loudness(
+        pre_gain, _SAMPLE_RATE_HZ,
+        target_lufs=float(candidate.payload["loudness"]["target_lufs"]),
+        peak_limit_dbfs=float(candidate.payload["loudness"]["peak_limit_dbfs"]),
+    )
+    parent_pcm = _pcm24_roundtrip(managed.segments["parent"])
+    candidate_pcm = _pcm24_roundtrip(managed.segments["candidate"])
+    parent_shares = final_pcm_band_shares(parent_pcm, _SAMPLE_RATE_HZ)
+    candidate_shares = final_pcm_band_shares(candidate_pcm, _SAMPLE_RATE_HZ)
+    target = _load_acceleration_target()
+    return {
+        "pipeline_order": (
+            "source_operating_trim", "idle_dynamics", "deterministic_afterfire",
+            "frozen_common_low_frequency_body", "frozen_exhaust_rumble",
+            "l4_transient_pending_pass_through", "frozen_common_pre_ptr_equalization",
+            "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+        ),
+        "l4_transient_status": "PENDING_PASS_THROUGH",
+        "one_fixed_whole_cycle_gain_db": managed.gain_db,
+        "parent_pcm_sha256": _array_sha256(parent_pcm),
+        "candidate_pcm_sha256": _array_sha256(candidate_pcm),
+        "parent_80_250_rms": _band_rms(parent_pcm, 80.0, 250.0),
+        "candidate_80_250_rms": _band_rms(candidate_pcm, 80.0, 250.0),
+        "parent_80_250_crest": _band_crest(parent_pcm, 80.0, 250.0),
+        "candidate_80_250_crest": _band_crest(candidate_pcm, 80.0, 250.0),
+        "parent_band_shares": parent_shares,
+        "candidate_band_shares": candidate_shares,
+        "target_band_shares": target,
+        "parent_band_abs_error": tuple(abs(value - target[index]) for index, value in enumerate(parent_shares)),
+        "candidate_band_abs_error": tuple(abs(value - target[index]) for index, value in enumerate(candidate_shares)),
+    }
+
+
+def _scale_event_stem(render: SourceRender, name: str, scale: float) -> SourceRender:
+    if name not in render.stems or scale == 1.0:
+        return render
+    old = np.asarray(render.stems[name], dtype=np.float64)
+    new = scale * old
+    stems = dict(render.stems)
+    stems[name] = new
+    return replace(render, pressure=np.asarray(render.pressure) + new - old, stems=stems).validate()
+
+
+def _load_acceleration_target() -> tuple[float, float, float, float]:
+    import json
+
+    payload = json.loads((_PACKAGE_ROOT / "reference_database" / "hellcat_reference_targets.json").read_text(encoding="utf-8"))
+    return tuple(float(value) for value in payload["stock_median"]["acceleration_band_shares"])
+
+
+def _band_signal(value: np.ndarray, low_hz: float, high_hz: float) -> np.ndarray:
+    mono = np.mean(np.asarray(value, dtype=np.float64), axis=1)
+    spectrum = np.fft.rfft(mono)
+    frequencies = np.fft.rfftfreq(mono.size, 1.0 / _SAMPLE_RATE_HZ)
+    spectrum[(frequencies < low_hz) | (frequencies >= high_hz)] = 0.0
+    return np.fft.irfft(spectrum, n=mono.size)
+
+
+def _band_rms(value: np.ndarray, low_hz: float, high_hz: float) -> float:
+    signal = _band_signal(value, low_hz, high_hz)
+    return float(np.sqrt(np.mean(np.square(signal))))
+
+
+def _band_crest(value: np.ndarray, low_hz: float, high_hz: float) -> float:
+    signal = _band_signal(value, low_hz, high_hz)
+    trim = min(int(0.1 * _SAMPLE_RATE_HZ), max(0, signal.size // 4))
+    if trim:
+        signal = signal[trim:-trim]
+    return float(np.max(np.abs(signal)) / max(np.sqrt(np.mean(np.square(signal))), 1.0e-30))
+
+
 def _validate_shared_clock(
     trace: VehicleStateTrace, clock: HellcatCrankClock, sample_rate_hz: int,
 ) -> dict[str, object]:
@@ -244,5 +366,5 @@ def _array_sha256(value: np.ndarray) -> str:
 __all__ = (
     "render_crossplane_combustion_l2_with_clock", "render_legacy_hellcat_raw_with_clock",
     "render_stage_k_v4_blower_with_clock",
-    "render_stage_l_candidate", "render_stage_l_parent",
+    "render_stage_l_candidate", "render_stage_l_final_pcm_probe", "render_stage_l_parent",
 )
