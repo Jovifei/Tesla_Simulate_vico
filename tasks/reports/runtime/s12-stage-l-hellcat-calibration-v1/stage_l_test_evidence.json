@@ -104,11 +104,13 @@
     {
       "plan_command": 11,
       "name": "named_review",
-      "data_source": "Task10 fresh session controller",
-      "result": "12 passed",
+      "data_source": "post-eab38db frozen-final-PCM named-review JUnit",
+      "result": "20 passed",
       "exit_code": 0,
-      "pytest_duration_seconds": 13.81,
-      "command_duration_seconds": "NOT_CAPTURED"
+      "pytest_duration_seconds": 25.74,
+      "command_duration_seconds": "NOT_CAPTURED",
+      "junit_sha256": "5c97184257a8b47992447cd59136899eb67d3930563e668610c65d9ecb3ea554",
+      "csv_content_read": false
     },
     {
       "plan_command": 12,

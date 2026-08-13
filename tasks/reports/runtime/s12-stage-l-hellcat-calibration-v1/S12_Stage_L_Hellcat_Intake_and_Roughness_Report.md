@@ -53,3 +53,17 @@ These are the actual package values, retained for diagnostic reporting only; the
 ## Feedback boundary and next step
 
 Named feedback remains `NOT_PERFORMED / WAITING_FOR_JOVI`. No CSV content was read. A later Jovi-directed diagnostic-feedback step remains allowed, but it must not be represented as calibration, approval, or reference-distance qualification.
+
+## Task10 Obsidian handoff
+
+The planned external knowledge handoff was applied with per-page SHA-256 preconditions. Its local control receipt is `.superpowers/sdd/task10_obsidian_v5_receipt.json` (schema `s12-stage-l-task10-obsidian-handoff-v1`); it records `csv_content_read=false`, `feedback_values_read=false`, and the post-write UTF-8 read-only verification result (`7/7` SHA, `6/6` existing-page markers, `1/1` new-page YAML/internal link).
+
+| Page role | Before SHA-256 | After SHA-256 |
+| --- | --- | --- |
+| Tesla index | `0a3b234e05597f787695e50c2647bb1e67fdcb5941ed75db0b8bcd5c4235053b` | `621f6ee2bee778bede9f09cc07a8cf457b9a0acfea889ea91c1f2f1f38fa195d` |
+| S12 overall plan/current progress | `9f1d3830a50c09abb80b9ffa13f881170e513dc9507b39a79f6d2d852abd461e` | `8022071f60c186a9eb47af9a88a24df4e73903cbbec3776fecf0358cf7e06daf` |
+| Hellcat card | `63bb17df0ee97ded0df3fd6c072e295325b5b00a7ba71d0598f04ddc96b3eaa3` | `2b7e1b18902fa723b984220c6753e3b76ee61021dece7fca9a32bd3afa51e4ff` |
+| Workflow, reusable knowledge, and Stage K history | SHA-guarded | `0f8adf0e57f2b90063322aa7d20cfe7ac29c429a2a8c1f979fc40f9b3e1b0352`, `ef63abaf77073451ede66206ba731529b0cbdb8076e666c19f49d80c67b09fb9`, `fda7b3250895881da750d128377c1dda55629f7c8ed8f23ca6662dbc1b2836be` |
+| New Stage L page | absent | `3b225e6c83b0fa7f6be8733ad4e597bc443e4307ffed0e8964687f1cc1e88681` |
+
+The receiving page maps the Stage K continuity, intake/casing cat-call path, cross-plane combustion/blowdown/structure low-frequency path, frozen-final-PCM order, feedback boundary, and zero MATLAB/Simulink scope. The receipt's post-write verification records the 7/7 SHA and page-structure checks. The status remains `PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY`.

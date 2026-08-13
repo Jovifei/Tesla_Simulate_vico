@@ -31,6 +31,59 @@
     "formal_pcm_input_binding": "parent/candidate self-bind; comfort binds to candidate final PCM",
     "formal_metrics_layering": "pre-gain metrics are directly measured after Frozen PTR and Edge Fade; final metrics are measured from emitted PCM24"
   },
+  "obsidian_handoff": {
+    "schema": "s12-stage-l-task10-obsidian-handoff-v1",
+    "pages_updated": 6,
+    "pages_created": 1,
+    "sha256_recheck": "7_OF_7_PASS",
+    "marker_and_yaml_recheck": "PASS",
+    "receipt_post_write_verification": {
+      "sha256_recheck": "7_OF_7_PASS",
+      "existing_page_marker_recheck": "6_OF_6_PASS",
+      "new_page_yaml_and_internal_link_recheck": "1_OF_1_PASS"
+    },
+    "csv_content_read": false,
+    "feedback_values_read": false,
+    "new_stage_l_page_sha256": "3b225e6c83b0fa7f6be8733ad4e597bc443e4307ffed0e8964687f1cc1e88681",
+    "local_control_receipt": ".superpowers/sdd/task10_obsidian_v5_receipt.json",
+    "files": [
+      {
+        "role": "Tesla index",
+        "before_sha256": "0a3b234e05597f787695e50c2647bb1e67fdcb5941ed75db0b8bcd5c4235053b",
+        "after_sha256": "621f6ee2bee778bede9f09cc07a8cf457b9a0acfea889ea91c1f2f1f38fa195d"
+      },
+      {
+        "role": "S12 overall plan and current progress",
+        "before_sha256": "9f1d3830a50c09abb80b9ffa13f881170e513dc9507b39a79f6d2d852abd461e",
+        "after_sha256": "8022071f60c186a9eb47af9a88a24df4e73903cbbec3776fecf0358cf7e06daf"
+      },
+      {
+        "role": "Hellcat card",
+        "before_sha256": "63bb17df0ee97ded0df3fd6c072e295325b5b00a7ba71d0598f04ddc96b3eaa3",
+        "after_sha256": "2b7e1b18902fa723b984220c6753e3b76ee61021dece7fca9a32bd3afa51e4ff"
+      },
+      {
+        "role": "workflow manual",
+        "before_sha256": "a1a035d99e03e44c5c76dd1724c600a3184f015bb085970db5d18536f1b34e21",
+        "after_sha256": "0f8adf0e57f2b90063322aa7d20cfe7ac29c429a2a8c1f979fc40f9b3e1b0352"
+      },
+      {
+        "role": "reusable technical knowledge",
+        "before_sha256": "14e6f6502292e6c7a4cad2141d68dfe7aaeccad3098f41022e740fead7d10ef6",
+        "after_sha256": "ef63abaf77073451ede66206ba731529b0cbdb8076e666c19f49d80c67b09fb9"
+      },
+      {
+        "role": "Stage K historical page",
+        "before_sha256": "fa3094671684f0d4b454049d6b771328452da3e8eff90dca472d67913c36cab8",
+        "after_sha256": "fda7b3250895881da750d128377c1dda55629f7c8ed8f23ca6662dbc1b2836be"
+      },
+      {
+        "role": "new Stage L page",
+        "before_sha256": null,
+        "after_sha256": "3b225e6c83b0fa7f6be8733ad4e597bc443e4307ffed0e8964687f1cc1e88681"
+      }
+    ]
+  },
   "manifest_interpretation": {
     "package_identity_recorded": true,
     "qualification_established": false,

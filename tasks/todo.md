@@ -3633,11 +3633,11 @@ Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候�
 - [x] L6：仅在自动资格状态明确后生成具名 Hellcat 试听包和合法 1–5 反馈合同，并停止等待 Jovi。
 - [ ] L7：有效具名 Jovi 反馈尚未提供，未读取任何数值；收到后最多三轮窄范围迭代，每轮只修改一个明确失败的 source/transient family。
 - [ ] L8：DEFERRED；无 MATLAB/Simulink 改动。只有所有前置自动/人耳/ADR/equivalence 门禁满足后才另立产品化任务。
-- [ ] L9：仓库证据已审阅并更新到 v5 frozen-final-PCM 诊断包；外部 Obsidian 交接仍需要 sandbox escalation。本阶段只允许本地提交，不 push、merge、rebase 或改 main。
+- [x] L9：仓库证据已审阅并更新到 v5 frozen-final-PCM 诊断包；已完成 SHA-guarded 外部 Obsidian 交接（6 页更新、1 页新增、7/7 receipt 重核）。本阶段只保留本地提交，不 push、merge、rebase 或改 main。
 
 Review：最终事实：PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY；Task6 provenance 为 `NOT_AVAILABLE`；SourceRender residency gate 失败；未读取反馈。
 
-- [ ] Stage L Task10: external Obsidian authorization pending.
+- [x] Stage L Task10: external Obsidian handoff complete; the plan remains truthfully PARTIAL because L7 feedback and L8 deferred productization are still open.
 
 ## S12 Stage L final-review remediation (2026-08-13)
 
@@ -3645,4 +3645,4 @@ Review：最终事实：PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_O
 - [x] R2: RED→GREEN coverage locks the v5-only non-overwriting default package identity; Task10 evidence now distinguishes tracked-only empty from all-files non-empty status.
 - [x] R3: Production package builder now uses Frozen PTR → Edge Fade → one whole-cycle gain → PCM24 for formal A/B; candidate comfort starts from final candidate PCM; diagnostic qualification status is unchanged.
 - [x] R4: Generated and independently validated the absent v5 package; refreshed repository runtime evidence without reading feedback CSV content or untracked artifact contents.
-- [x] R5: Focused non-CSV regressions, compile/diff, v5 package checks, and final static review are complete. Task10 remains incomplete pending scoped Obsidian authorization; no status promotion is permitted.
+- [x] R5: Focused non-CSV regressions, compile/diff, v5 package checks, final static review, and the SHA-guarded Obsidian handoff are complete. No status promotion is permitted.
