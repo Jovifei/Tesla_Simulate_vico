@@ -9,6 +9,7 @@ import math
 from pathlib import Path
 import shutil
 import struct
+import threading
 from types import MappingProxyType
 from typing import Callable, Mapping
 import wave
@@ -79,6 +80,8 @@ class ProducedStageLArtifacts:
 _TRUSTED_PRODUCER_CAPABILITIES: weakref.WeakKeyDictionary[
     ProducedStageLArtifacts, tuple[Path, str]
 ] = weakref.WeakKeyDictionary()
+_CONSUMED_PRODUCER_CAPABILITIES: weakref.WeakSet[ProducedStageLArtifacts] = weakref.WeakSet()
+_PRODUCER_CAPABILITY_LOCK = threading.Lock()
 
 
 def _issue_produced_artifacts(metadata: Mapping[str, object]) -> ProducedStageLArtifacts:
@@ -90,13 +93,17 @@ def _issue_produced_artifacts(metadata: Mapping[str, object]) -> ProducedStageLA
     return handle
 
 
-def _trusted_producer_manifest(capability: object) -> tuple[Path, str]:
+def _consume_trusted_producer_manifest(capability: object) -> tuple[Path, str]:
     if not isinstance(capability, ProducedStageLArtifacts):
         raise ValueError("trusted in-process producer capability is required")
-    trusted = _TRUSTED_PRODUCER_CAPABILITIES.get(capability)
-    if trusted is None:
-        raise ValueError("trusted in-process producer capability is required")
-    return trusted
+    with _PRODUCER_CAPABILITY_LOCK:
+        trusted = _TRUSTED_PRODUCER_CAPABILITIES.pop(capability, None)
+        if trusted is not None:
+            _CONSUMED_PRODUCER_CAPABILITIES.add(capability)
+            return trusted
+        if capability in _CONSUMED_PRODUCER_CAPABILITIES:
+            raise ValueError("trusted capability already consumed")
+    raise ValueError("trusted in-process producer capability is required")
 
 
 def render_stage_l_named_artifacts(
@@ -507,9 +514,9 @@ def build_unqualified_diagnostic_package(
     status = _status(root)
     if not render:
         return status
+    source_manifest, expected_artifact_manifest_sha256 = _consume_trusted_producer_manifest(produced_artifacts)
     if root.exists():
         raise FileExistsError(f"output root already exists; refusing overwrite: {root}")
-    source_manifest, expected_artifact_manifest_sha256 = _trusted_producer_manifest(produced_artifacts)
     manifest_sha = _sha256(source_manifest)
     if manifest_sha != expected_artifact_manifest_sha256:
         raise ValueError("artifact input manifest SHA256 mismatch")

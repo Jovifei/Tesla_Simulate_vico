@@ -405,45 +405,63 @@ def test_artifact_producer_attenuates_hot_diagnostic_stems_to_pcm_health(tmp_pat
     assert item["final_peak_dbfs"] <= -1.5
 
 
-def test_builds_complete_content_addressed_unqualified_package_deterministically(tmp_path: Path, monkeypatch) -> None:
+def test_trusted_producer_capability_is_consumed_after_one_build(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
     produced = _artifact_input(tmp_path)
-    roots = [tmp_path / "review-a", tmp_path / "review-b"]
-    results = [
+    first_root = tmp_path / "review-first"
+    second_root = tmp_path / "review-second"
+
+    build_unqualified_diagnostic_package(
+        first_root,
+        produced_artifacts=produced,
+        task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+    )
+
+    with pytest.raises(ValueError, match="trusted capability already consumed"):
         build_unqualified_diagnostic_package(
-            root,
+            second_root,
             produced_artifacts=produced,
             task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
         )
-        for root in roots
-    ]
+
+    assert first_root.is_dir()
+    assert not second_root.exists()
+
+
+def test_builds_complete_content_addressed_unqualified_package(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
+    produced = _artifact_input(tmp_path)
+    root = tmp_path / "review"
+    result = build_unqualified_diagnostic_package(
+        root,
+        produced_artifacts=produced,
+        task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+    )
     required = {
         "00_OPEN_ME_FIRST.md", *WAV_DESTINATIONS, *NON_WAV_DESTINATIONS,
         "05_Feedback/Jovi_Stage_L_Hellcat_Feedback.csv", "artifact_manifest.json",
         "SHA256SUMS.txt", ZIP_NAME,
     }
-    for root, result in zip(roots, results):
-        actual = {path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()}
-        assert actual == required
-        assert result["package_status"] == PARTIAL
-        manifest = json.loads((root / "artifact_manifest.json").read_text(encoding="utf-8"))
-        assert manifest["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
-        assert manifest["qualification_status"] == UNQUALIFIED_DIAGNOSTIC_ONLY
-        assert manifest["feedback_status"] == DIAGNOSTIC_FEEDBACK_ALLOWED
-        assert manifest["artifact_input_sha256"] == produced["artifact_manifest_sha256"]
-        assert manifest["formal_final_provenance"] == "NOT_AVAILABLE"
-        assert manifest["full_pipeline_peak_residency"] == 5
-        assert all(item["pcm_health"]["frame_count"] > 0 for item in manifest["wav_artifacts"])
-        assert all(item["pcm_health"]["peak_dbfs"] <= -1.5 for item in manifest["wav_artifacts"])
-        assert all(item["pcm_health"]["clipping_count"] == 0 for item in manifest["wav_artifacts"])
-        readme = (root / "00_OPEN_ME_FIRST.md").read_text(encoding="utf-8")
-        assert "UNQUALIFIED_DIAGNOSTIC_ONLY" in readme
-        assert "Human PASS" not in readme and "Approved" not in readme
-        with (root / "05_Feedback/Jovi_Stage_L_Hellcat_Feedback.csv").open(encoding="utf-8", newline="") as stream:
-            rows = list(csv.DictReader(stream))
-        assert [row["file_id"] for row in rows] == list(WAV_DESTINATIONS)
-        assert all(row["listener_id"] == "" and row["keep_or_change"] == "" for row in rows)
-    assert _sha(roots[0] / ZIP_NAME) == _sha(roots[1] / ZIP_NAME)
+    actual = {path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()}
+    assert actual == required
+    assert result["package_status"] == PARTIAL
+    manifest = json.loads((root / "artifact_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
+    assert manifest["qualification_status"] == UNQUALIFIED_DIAGNOSTIC_ONLY
+    assert manifest["feedback_status"] == DIAGNOSTIC_FEEDBACK_ALLOWED
+    assert manifest["artifact_input_sha256"] == produced["artifact_manifest_sha256"]
+    assert manifest["formal_final_provenance"] == "NOT_AVAILABLE"
+    assert manifest["full_pipeline_peak_residency"] == 5
+    assert all(item["pcm_health"]["frame_count"] > 0 for item in manifest["wav_artifacts"])
+    assert all(item["pcm_health"]["peak_dbfs"] <= -1.5 for item in manifest["wav_artifacts"])
+    assert all(item["pcm_health"]["clipping_count"] == 0 for item in manifest["wav_artifacts"])
+    readme = (root / "00_OPEN_ME_FIRST.md").read_text(encoding="utf-8")
+    assert "UNQUALIFIED_DIAGNOSTIC_ONLY" in readme
+    assert "Human PASS" not in readme and "Approved" not in readme
+    with (root / "05_Feedback/Jovi_Stage_L_Hellcat_Feedback.csv").open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    assert [row["file_id"] for row in rows] == list(WAV_DESTINATIONS)
+    assert all(row["listener_id"] == "" and row["keep_or_change"] == "" for row in rows)
 
 
 def test_builder_cli_supports_direct_and_module_help() -> None:
