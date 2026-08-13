@@ -3625,14 +3625,16 @@ Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候�
 ## S12 Stage L Hellcat intake and cross-plane roughness calibration (2026-08-12)
 
 - [x] L0：从干净 Stage K tip 建立独立工作树，冻结 candidate/package/source/reference-distance SHA，记录 Jovi 文字方向与 CSV 冲突，并作出 Simulink 延后决定。
-- [ ] L1：定义 Stage L Hellcat-only candidate、共同曲轴时钟、反馈读取合同与其 parent/isolation 测试。
-- [ ] L2：实现并验证 cross-plane HEMI 的 combustion、bank blowdown、structure shock 与低频脉冲来源。
-- [ ] L3：实现并验证独立的 twin-screw intake/aero 与 gear/casing 声源，不以排气或全局高频增益替代。
-- [ ] L4：实现 Hellcat 专属 torque-cut、boost inertia 与 re-engagement 瞬态；保持公共混音和固定响度策略冻结。
-- [ ] L5：执行有界候选搜索、source/final-PCM 指标与固定 reference-distance 门禁，不降低 30% 门槛。
-- [ ] L6：仅在自动资格状态明确后生成具名 Hellcat 试听包和合法 1–5 反馈合同，并停止等待 Jovi。
-- [ ] L7：收到有效具名反馈后最多三轮窄范围迭代；每轮只修改一个明确失败的 source/transient family。
-- [ ] L8：保持 Simulink 延后，只有所有前置自动/人耳/ADR/equivalence 门禁满足后才另立产品化任务。
-- [ ] L9：完成 focused/full/Track-P 验证、证据报告与知识交接；本阶段只允许本地提交，不 push、merge、rebase 或改 main。
+- [x] L1：定义 Stage L Hellcat-only candidate、共同曲轴时钟、反馈读取合同与其 parent/isolation 测试。
+- [x] L2：实现并验证 cross-plane HEMI 的 combustion、bank blowdown、structure shock 与低频脉冲来源。
+- [x] L3：实现并验证独立的 twin-screw intake/aero 与 gear/casing 声源，不以排气或全局高频增益替代。
+- [x] L4：实现 Hellcat 专属 torque-cut、boost inertia 与 re-engagement 瞬态；保持公共混音和固定响度策略冻结。
+- [x] L5：执行有界候选搜索、source/final-PCM 指标与固定 reference-distance 门禁，不降低 30% 门槛。
+- [x] L6：仅在自动资格状态明确后生成具名 Hellcat 试听包和合法 1–5 反馈合同，并停止等待 Jovi。
+- [ ] L7：有效具名 Jovi 反馈尚未提供，未读取任何数值；收到后最多三轮窄范围迭代，每轮只修改一个明确失败的 source/transient family。
+- [ ] L8：DEFERRED；无 MATLAB/Simulink 改动。只有所有前置自动/人耳/ADR/equivalence 门禁满足后才另立产品化任务。
+- [ ] L9：仓库证据已审阅；外部 Obsidian 交接需要 sandbox escalation。本阶段只允许本地提交，不 push、merge、rebase 或改 main。
 
-Review：L0 只冻结 Stage K 输入和治理边界。当前不含任何声学实现、MATLAB/Simulink、Runtime、Android 或 ESP32 改动；`human_pass=false`，Stage K 顶层 CSV 仍为 `UNSUBMITTED_TEMPLATE`，嵌套副本为 `INVALID_UNBOUND_DIAGNOSTIC_COPY`。
+Review：最终事实：PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY；Task6 provenance 为 `NOT_AVAILABLE`；SourceRender residency gate 失败；未读取反馈。
+
+- [ ] Stage L Task10: external Obsidian authorization pending.

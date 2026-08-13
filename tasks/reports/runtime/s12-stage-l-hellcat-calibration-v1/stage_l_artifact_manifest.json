@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "current_review_package": {
+    "version": "v3",
+    "root": "E:/Tesla_speed/review_packages/s12-stage-l-hellcat-intake-roughness-v3",
+    "producer_sha256": "26a32dbd96d2a9f9c93ec0044a9edf011ffa924589a9988c64ed17555d8b74ca",
+    "manifest_sha256": "fbf43684e337ab6e65c0bbf50724f4094a124dc9d477a2cbf89273b6209c4e7f",
+    "zip_sha256": "16a9ee4fd02eb4d625170049889dedf2bb5bd0892219bd04760fbb2c160fd3f9"
+  },
+  "historical_packages": {
+    "v1": "RETAINED_HISTORICAL_INVALID",
+    "v2": "RETAINED_HISTORICAL_INVALID"
+  },
+  "manifest_interpretation": {
+    "package_identity_recorded": true,
+    "qualification_established": false,
+    "status": "AUTOMATED_GATE_FAIL",
+    "boundary": "包哈希只支持诊断性身份追溯；不支持 Human PASS、批准、校准、OEM 或 Simulink 集成声明。"
+  }
+}

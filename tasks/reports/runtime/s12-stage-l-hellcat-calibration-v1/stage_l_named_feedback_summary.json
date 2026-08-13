@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "named_feedback_summary": {
+    "status": "NOT_PERFORMED",
+    "decision_state": "WAITING_FOR_JOVI",
+    "feedback_values_read": false,
+    "csv_content_read": false,
+    "feedback_entries": [],
+    "reason": "本 Task10 范围内未读取命名反馈值或 CSV 内容；等待 Jovi 的明确后续指示。"
+  },
+  "allowed_next_action": "在 Jovi 明确授权后，仅将反馈作为诊断输入；不得据此宣称 Human PASS、批准或标定完成。"
+}

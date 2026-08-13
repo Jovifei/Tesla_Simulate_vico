@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "source_domain_metrics": {
+    "source_render_residency": {
+      "actual_maximum": 5,
+      "unit": "residency count",
+      "status": "PARTIAL",
+      "interpretation": "Task6 实测 SourceRender residency 最大值为 5；该值不构成正式标定或人工验收。"
+    },
+    "formal_final_audio_provenance": {
+      "status": "NOT_AVAILABLE",
+      "qualification_effect": "AUTOMATED_GATE_FAIL"
+    }
+  },
+  "claim_boundary": "仅限 UNQUALIFIED_DIAGNOSTIC_ONLY；不得宣称校准完成、Human PASS、OEM 认可或 Simulink 集成。"
+}

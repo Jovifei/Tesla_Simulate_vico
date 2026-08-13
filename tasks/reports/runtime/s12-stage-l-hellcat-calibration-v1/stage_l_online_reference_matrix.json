@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "scope": {
+    "online_reference_review_status": "NOT_PERFORMED",
+    "purpose": "诊断性参考矩阵占位记录",
+    "boundary": "本任务未执行在线参考检索、OEM 参考核验或人工批准流程。"
+  },
+  "references": [],
+  "matrix_summary": {
+    "candidate_reference_count": 0,
+    "verified_online_reference_count": 0,
+    "calibration_reference_available": false,
+    "conclusion": "没有可用于标定、批准或 OEM 声明的已核验在线参考。"
+  },
+  "claim_boundary": [
+    "Human PASS is not established.",
+    "No approved or calibrated result is established.",
+    "No OEM conclusion is established.",
+    "No Simulink integration conclusion is established."
+  ]
+}

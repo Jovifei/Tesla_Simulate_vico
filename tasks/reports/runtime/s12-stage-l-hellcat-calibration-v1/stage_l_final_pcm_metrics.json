@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "final_pcm_metrics": {
+    "diagnostic_transport_health": {
+      "status": "AVAILABLE / PASS_FOR_DIAGNOSTIC_TRANSPORT_ONLY",
+      "named_package": "s12-stage-l-hellcat-intake-roughness-v3",
+      "wav_file_count": 13,
+      "container": "WAV",
+      "encoding": "PCM24",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "all_samples_finite": true,
+      "clipping": 0,
+      "clipping_sample_count": 0,
+      "health_pass": true,
+      "scope": "Diagnostic transport health only; it is not formal qualification provenance."
+    },
+    "recorded_package_measurements": {
+      "scope": "Actual parent and candidate final WAV measurements retained for diagnostic reporting only.",
+      "parent_wav_final": {
+        "integrated_lufs": -21.034908867444564,
+        "peak_dbfs": -3.9567540362869122,
+        "sha256": "973f85e2d465642a631758f4b692ffa2b7812b3be081d0f44205375b26c4b548"
+      },
+      "candidate_wav_final": {
+        "integrated_lufs": -22.488648102210213,
+        "peak_dbfs": -1.5000012507616982,
+        "sha256": "7e3d17b0cb2d67ab5c6702bc01dce934fcc1701969efdc2c0e472434b3db3d2b"
+      },
+      "common_actual_gain_db": -20.739979471403824,
+      "requested_gain_db": 1.9382,
+      "requested_gain_display": "+1.9382 dB",
+      "headroom_limited": true
+    },
+    "formal_qualification_provenance": {
+      "status": "NOT_AVAILABLE / AUTOMATED_GATE_FAIL",
+      "available": false,
+      "reason": "Task6 did not establish formal qualification provenance."
+    }
+  },
+  "claim_boundary": [
+    "No calibration qualification follows from diagnostic transport health.",
+    "No approval qualification follows from diagnostic transport health.",
+    "No reference-distance qualification follows from diagnostic transport health.",
+    "This record is UNQUALIFIED_DIAGNOSTIC_ONLY."
+  ]
+}

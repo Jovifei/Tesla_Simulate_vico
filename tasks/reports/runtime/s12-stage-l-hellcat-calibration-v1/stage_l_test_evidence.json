@@ -1,0 +1,246 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "command_inventory": [
+    {
+      "plan_command": 1,
+      "name": "candidate_contract",
+      "data_source": "Task10 fresh session controller",
+      "result": "35 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 2,
+      "name": "crank_clock",
+      "data_source": "Task10 fresh session controller",
+      "result": "7 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 3,
+      "name": "feedback_intake",
+      "data_source": "Task10 fresh session controller",
+      "result": "13 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 4,
+      "name": "crossplane",
+      "data_source": "Task10 fresh session controller",
+      "result": "34 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 8.56,
+      "command_duration_seconds": 9.22
+    },
+    {
+      "plan_command": 5,
+      "name": "supercharger",
+      "data_source": "Task10 fresh session controller",
+      "result": "50 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 9.91,
+      "command_duration_seconds": 10.53
+    },
+    {
+      "plan_command": 6,
+      "name": "transients",
+      "data_source": "Task10 fresh session controller",
+      "result": "19 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 7,
+      "name": "peak_budget",
+      "data_source": "Task10 fresh session controller",
+      "result": "6 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 39.1,
+      "command_duration_seconds": 39.85
+    },
+    {
+      "plan_command": 8,
+      "name": "perceptual_metrics",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 9,
+      "name": "reference_distance",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 10,
+      "name": "candidate_search",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 11,
+      "name": "named_review",
+      "data_source": "Task10 fresh session controller",
+      "result": "12 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 13.81,
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 12,
+      "name": "feedback_contract",
+      "data_source": "Task10 fresh session controller",
+      "result": "1 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 0.86,
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 13,
+      "name": "regression_isolation",
+      "data_source": "Task10 fresh session controller",
+      "result": "18 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 38.32,
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 14,
+      "name": "stage_k_hellcat_whine_v4",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 15,
+      "name": "stage_k_protected_boundaries",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 16,
+      "name": "realism",
+      "data_source": "Task10 fresh session controller",
+      "result": "NOT_PROVEN",
+      "test_count": "NOT_CAPTURED",
+      "exit_code": "NOT_CAPTURED",
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 17,
+      "name": "identity",
+      "data_source": "Task10 fresh session controller",
+      "result": "58 passed plus 78 subtests",
+      "primary_test_count": 58,
+      "subtest_count": 78,
+      "exit_code": 0,
+      "pytest_duration_seconds": 83.83,
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 18,
+      "name": "full_combo",
+      "data_source": "JUnit",
+      "reported_tests": 1221,
+      "reported_failures": 0,
+      "reported_errors": 0,
+      "reported_skipped": 0,
+      "pytest_duration_seconds": 1190.061,
+      "junit_sha256": "f2966a4a710208ab97d67f94453753d645b77dd0d076fc8c7eeb8f300cba4e82",
+      "shell_exit": "NOT_CAPTURED",
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 19,
+      "name": "assert_track_p_unchanged",
+      "data_source": "Task10 fresh session controller",
+      "exit_code": 0,
+      "pytest_duration_seconds": "NOT_CAPTURED",
+      "command_duration_seconds": 0.46,
+      "guard": {
+        "files": 180,
+        "symbols": 2
+      }
+    },
+    {
+      "plan_command": 20,
+      "name": "git_diff_check",
+      "data_source": "Task10 fresh session controller",
+      "exit_code": 0,
+      "command_duration_seconds": "NOT_CAPTURED"
+    },
+    {
+      "plan_command": 21,
+      "name": "tracked_only_status",
+      "data_source": "Task10 fresh session controller",
+      "exit_code": 0,
+      "working_tree_status": "empty",
+      "command_duration_seconds": "NOT_CAPTURED"
+    }
+  ],
+  "full_junit_rerun": {
+    "data_source": "JUnit",
+    "path": "E:\\Tesla_speed\\_task10_l9_pytest_basetemp_20260813_1257\\18_full_rerun_results.xml",
+    "reported_tests": 1221,
+    "reported_failures": 0,
+    "reported_errors": 0,
+    "reported_skipped": 0,
+    "pytest_duration_seconds": 1190.061,
+    "sha256": "f2966a4a710208ab97d67f94453753d645b77dd0d076fc8c7eeb8f300cba4e82",
+    "shell_exit": "NOT_CAPTURED",
+    "command_duration_seconds": "NOT_CAPTURED"
+  },
+  "additional_automated_evidence": {
+    "track_p": {
+      "data_source": "Task10 fresh session controller",
+      "result": "21 passed",
+      "exit_code": 0,
+      "pytest_duration_seconds": 1.39,
+      "wall_duration_seconds": 2.08
+    },
+    "guard": {
+      "data_source": "Task10 fresh session controller",
+      "files": 180,
+      "symbols": 2
+    },
+    "loudness_sha256": "26feb740842a1e4db93e0a83fd7924c17c1ee5cfb8d1737a304af83e3e163fd3"
+  },
+  "evidence_interpretation": {
+    "status": "PARTIAL",
+    "independent_execution_proven": false,
+    "qualification_proven": false,
+    "reason": "The JUnit report records passing tests, but the full-combo shell exit is NOT_CAPTURED and Task6 keeps formal qualification at AUTOMATED_GATE_FAIL."
+  }
+}

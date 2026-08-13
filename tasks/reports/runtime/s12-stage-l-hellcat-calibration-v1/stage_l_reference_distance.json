@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "reference_distance": {
+    "status": "NOT_AVAILABLE",
+    "distance_value": null,
+    "unit": null,
+    "reference_pair_available": false,
+    "comparison_performed": false,
+    "reason": "没有已核验的参考对，也没有可资格化的正式最终 PCM 音频。"
+  },
+  "interpretation": {
+    "diagnostic_use_only": true,
+    "calibration_decision_supported": false,
+    "qualification_effect": "AUTOMATED_GATE_FAIL"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "task": "S12 Stage L Hellcat intake and roughness Task10",
+  "assessment": {
+    "overall_status": "PARTIAL",
+    "automated_gate_status": "AUTOMATED_GATE_FAIL",
+    "qualification_status": "UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
+  },
+  "parameter_reachability": {
+    "status": "PARTIAL",
+    "formal_parameter_set_available": false,
+    "calibration_parameter_values_applied": false,
+    "reason": "自动化门禁未通过，且正式最终音频 provenance 为 NOT_AVAILABLE。",
+    "allowed_use": "仅可作为后续经明确授权的诊断反馈输入。",
+    "disallowed_conclusions": [
+      "calibrated",
+      "approved",
+      "OEM validated",
+      "Simulink integrated"
+    ]
+  },
+  "data_access_boundary": {
+    "feedback_values_read": false,
+    "csv_content_read": false
+  }
+}

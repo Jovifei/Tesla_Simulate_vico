@@ -1277,3 +1277,5 @@ Rules:
 - Supercharger intake whine and exhaust low-frequency roar must be modeled and exported as separate stems; neither may be used as a proxy for the other.
 - “Louder” is not acoustic identity: a stem with higher LUFS can still fail to resemble the target vehicle, so gain cannot substitute for source, propagation, or transient evidence.
 - Same-name feedback copies must bind to the canonical manifest/SHA and pass the stated score-range validation; an illegal `0` cannot be interpreted as a real listening score.
+
+- Stage L Task10：最终音频 provenance 缺失或 shell exit 未捕获时，自动化证据不得升级为资格通过；反馈与 CSV 读取必须等待 Jovi 明确指示。
