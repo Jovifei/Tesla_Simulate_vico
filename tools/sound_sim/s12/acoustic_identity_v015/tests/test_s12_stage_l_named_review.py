@@ -17,6 +17,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_l.named_review import (
     AUTOMATED_GATE_FAIL,
     DIAGNOSTIC_FEEDBACK_ALLOWED,
     PARTIAL,
+    ProducedStageLArtifacts,
     UNQUALIFIED_DIAGNOSTIC_ONLY,
     build_unqualified_diagnostic_package,
     render_stage_l_named_artifacts,
@@ -166,13 +167,12 @@ def _arbitrary_artifact_input(tmp_path: Path) -> tuple[Path, str]:
     return manifest, _sha(manifest)
 
 
-def _artifact_input(tmp_path: Path) -> tuple[Path, str]:
+def _artifact_input(tmp_path: Path) -> ProducedStageLArtifacts:
     result, _ = _produced_input(tmp_path)
-    path = Path(result["artifact_manifest_path"])
-    return path, str(result["artifact_manifest_sha256"])
+    return result
 
 
-def _produced_input(tmp_path: Path) -> tuple[dict[str, object], dict[str, object]]:
+def _produced_input(tmp_path: Path) -> tuple[ProducedStageLArtifacts, dict[str, object]]:
     result = render_stage_l_named_artifacts(
         tmp_path / "produced",
         trace=_short_trace(),
@@ -187,6 +187,34 @@ def _produced_input(tmp_path: Path) -> tuple[dict[str, object], dict[str, object
     return result, json.loads(path.read_text(encoding="utf-8"))
 
 
+def _fully_forged_v3_artifact_input(tmp_path: Path) -> ProducedStageLArtifacts:
+    """Forge a self-consistent v3 JSON handoff around arbitrary healthy PCM."""
+    _, payload = _produced_input(tmp_path)
+    forged_root = tmp_path / "forged"
+    forged_root.mkdir()
+    for index, destination in enumerate(WAV_DESTINATIONS):
+        path = forged_root / f"arbitrary-{index:02d}.wav"
+        _write_pcm24(path, value=0.01 + index * 0.001)
+        pcm_sha = _sha(path)
+        record = payload["artifacts"][destination]
+        record["path"] = str(path)
+        record["sha256"] = pcm_sha
+        record["pcm_sha256"] = pcm_sha
+        receipt = record["producer_receipt"]
+        receipt["pcm_sha256"] = pcm_sha
+        receipt["frame_count"] = _wav_frames(path)
+        receipt["duration_s"] = _wav_duration(path)
+    manifest = tmp_path / "fully-forged-v3.json"
+    manifest.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    serialized_metadata = json.loads(json.dumps({
+        "artifact_manifest_path": str(manifest),
+        "artifact_manifest_sha256": _sha(manifest),
+    }))
+    forged = object.__new__(ProducedStageLArtifacts)
+    forged._metadata = serialized_metadata  # type: ignore[attr-defined]
+    return forged
+
+
 def _wav_duration(path: Path) -> float:
     with wave.open(str(path), "rb") as stream:
         return stream.getnframes() / stream.getframerate()
@@ -198,44 +226,54 @@ def _wav_frames(path: Path) -> int:
 
 
 def test_builder_rejects_caller_created_self_hash_fixture(tmp_path: Path) -> None:
-    manifest, manifest_sha = _arbitrary_artifact_input(tmp_path)
+    manifest, _manifest_sha = _arbitrary_artifact_input(tmp_path)
 
     with pytest.raises(ValueError, match="producer"):
         build_unqualified_diagnostic_package(
             tmp_path / "review",
-            artifact_manifest_path=manifest,
-            expected_artifact_manifest_sha256=manifest_sha,
+            produced_artifacts=manifest,
+            task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+        )
+
+
+def test_builder_rejects_fully_schema_valid_forged_v3_with_healthy_arbitrary_pcm(tmp_path: Path) -> None:
+    forged_capability = _fully_forged_v3_artifact_input(tmp_path)
+
+    with pytest.raises(ValueError, match="trusted in-process producer capability"):
+        build_unqualified_diagnostic_package(
+            tmp_path / "review",
+            produced_artifacts=forged_capability,
             task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
         )
 
 
 def test_builder_rejects_missing_per_file_producer_receipt(tmp_path: Path) -> None:
-    _, payload = _produced_input(tmp_path)
+    produced, payload = _produced_input(tmp_path)
     payload["artifacts"][WAV_DESTINATIONS[3]].pop("producer_receipt", None)
     manifest = tmp_path / "missing-receipt.json"
     manifest.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="producer receipt"):
+    Path(produced["artifact_manifest_path"]).write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="manifest SHA256 mismatch"):
         build_unqualified_diagnostic_package(
             tmp_path / "review",
-            artifact_manifest_path=manifest,
-            expected_artifact_manifest_sha256=_sha(manifest),
+            produced_artifacts=produced,
             task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
         )
 
 
 def test_builder_rejects_producer_receipt_frame_count_not_matching_pcm(tmp_path: Path) -> None:
-    _, payload = _produced_input(tmp_path)
+    produced, payload = _produced_input(tmp_path)
     receipt = payload["artifacts"][WAV_DESTINATIONS[3]]["producer_receipt"]
     receipt["frame_count"] += 1
     manifest = tmp_path / "wrong-frame-count.json"
     manifest.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="frame count or duration"):
+    Path(produced["artifact_manifest_path"]).write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="manifest SHA256 mismatch"):
         build_unqualified_diagnostic_package(
             tmp_path / "review",
-            artifact_manifest_path=manifest,
-            expected_artifact_manifest_sha256=_sha(manifest),
+            produced_artifacts=produced,
             task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
         )
 
@@ -280,6 +318,7 @@ def _fast_loudness(audio: np.ndarray, sample_rate_hz: int) -> SimpleNamespace:
 def test_initial_named_review_forces_task6_failure_to_diagnostic_status(tmp_path: Path) -> None:
     package = build_unqualified_diagnostic_package(
         output_root=tmp_path / "s12-stage-l-hellcat-intake-roughness-v1",
+        produced_artifacts=None,
         task6_gate_status={
             "residency_max": 5,
             "formal_final_provenance": "NOT_AVAILABLE",
@@ -368,13 +407,12 @@ def test_artifact_producer_attenuates_hot_diagnostic_stems_to_pcm_health(tmp_pat
 
 def test_builds_complete_content_addressed_unqualified_package_deterministically(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
-    source_manifest, source_sha = _artifact_input(tmp_path)
+    produced = _artifact_input(tmp_path)
     roots = [tmp_path / "review-a", tmp_path / "review-b"]
     results = [
         build_unqualified_diagnostic_package(
             root,
-            artifact_manifest_path=source_manifest,
-            expected_artifact_manifest_sha256=source_sha,
+            produced_artifacts=produced,
             task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
         )
         for root in roots
@@ -392,7 +430,7 @@ def test_builds_complete_content_addressed_unqualified_package_deterministically
         assert manifest["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
         assert manifest["qualification_status"] == UNQUALIFIED_DIAGNOSTIC_ONLY
         assert manifest["feedback_status"] == DIAGNOSTIC_FEEDBACK_ALLOWED
-        assert manifest["artifact_input_sha256"] == source_sha
+        assert manifest["artifact_input_sha256"] == produced["artifact_manifest_sha256"]
         assert manifest["formal_final_provenance"] == "NOT_AVAILABLE"
         assert manifest["full_pipeline_peak_residency"] == 5
         assert all(item["pcm_health"]["frame_count"] > 0 for item in manifest["wav_artifacts"])
@@ -418,4 +456,5 @@ def test_builder_cli_supports_direct_and_module_help() -> None:
     for command in commands:
         run = subprocess.run(command, cwd=repo_root, capture_output=True, text=True, check=False)
         assert run.returncode == 0, run.stderr
-        assert "artifact-manifest" in run.stdout
+        assert "artifact-manifest" not in run.stdout
+        assert "duration-s" in run.stdout

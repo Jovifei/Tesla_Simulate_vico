@@ -71,8 +71,7 @@ def build_production_stage_l_named_review(
     )
     return build_unqualified_diagnostic_package(
         root,
-        artifact_manifest_path=produced["artifact_manifest_path"],
-        expected_artifact_manifest_sha256=produced["artifact_manifest_sha256"],
+        produced_artifacts=produced,
         task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
     )
 
@@ -83,25 +82,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--candidate-profile", type=Path, default=DEFAULT_PROFILE)
     parser.add_argument("--duration-s", type=float, default=60.0)
     parser.add_argument("--review-gain-db", type=float, default=1.9382)
-    parser.add_argument("--artifact-manifest", type=Path)
-    parser.add_argument("--expected-artifact-manifest-sha256")
     args = parser.parse_args(argv)
-    if (args.artifact_manifest is None) != (args.expected_artifact_manifest_sha256 is None):
-        parser.error("--artifact-manifest and --expected-artifact-manifest-sha256 must be supplied together")
-    if args.artifact_manifest is not None:
-        result = build_unqualified_diagnostic_package(
-            args.output_root,
-            artifact_manifest_path=args.artifact_manifest,
-            expected_artifact_manifest_sha256=args.expected_artifact_manifest_sha256,
-            task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
-        )
-    else:
-        result = build_production_stage_l_named_review(
-            args.output_root,
-            candidate_profile_path=args.candidate_profile,
-            duration_s=args.duration_s,
-            requested_gain_db=args.review_gain_db,
-        )
+    result = build_production_stage_l_named_review(
+        args.output_root,
+        candidate_profile_path=args.candidate_profile,
+        duration_s=args.duration_s,
+        requested_gain_db=args.review_gain_db,
+    )
     print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
     return 0
 

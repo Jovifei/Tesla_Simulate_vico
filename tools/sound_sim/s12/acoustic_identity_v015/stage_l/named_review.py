@@ -9,8 +9,10 @@ import math
 from pathlib import Path
 import shutil
 import struct
+from types import MappingProxyType
 from typing import Callable, Mapping
 import wave
+import weakref
 import zipfile
 import zlib
 
@@ -27,7 +29,7 @@ DIAGNOSTIC_FEEDBACK_ALLOWED = "DIAGNOSTIC_FEEDBACK_ALLOWED"
 ZIP_NAME = "S12_Stage_L_Hellcat_UNQUALIFIED_DIAGNOSTIC_Review.zip"
 PACKAGE_SCOPE = "synthetic; uncalibrated; Hellcat-inspired; vehicle-inspired; not OEM reproduction"
 PRODUCER_SCHEMA = "s12-stage-l-named-artifact-producer-2"
-PACKAGE_ID = "s12-stage-l-hellcat-intake-roughness-v2"
+PACKAGE_ID = "s12-stage-l-hellcat-intake-roughness-v3"
 WAV_DESTINATIONS = (
     "01_Formal_Comparison/01_StageK_Parent_60s.wav",
     "01_Formal_Comparison/02_StageL_Candidate_60s.wav",
@@ -53,6 +55,50 @@ METRIC_DESTINATIONS = (
 )
 
 
+class ProducedStageLArtifacts:
+    """Opaque in-process capability issued only by the Stage-L producer."""
+
+    __slots__ = ("_metadata", "__weakref__")
+
+    def __new__(cls, *_args: object, **_kwargs: object) -> "ProducedStageLArtifacts":
+        raise TypeError("ProducedStageLArtifacts can only be issued by render_stage_l_named_artifacts")
+
+    def __getitem__(self, key: str) -> object:
+        return self._metadata[key]
+
+    def __iter__(self):
+        return iter(self._metadata)
+
+    def __len__(self) -> int:
+        return len(self._metadata)
+
+    def keys(self):
+        return self._metadata.keys()
+
+
+_TRUSTED_PRODUCER_CAPABILITIES: weakref.WeakKeyDictionary[
+    ProducedStageLArtifacts, tuple[Path, str]
+] = weakref.WeakKeyDictionary()
+
+
+def _issue_produced_artifacts(metadata: Mapping[str, object]) -> ProducedStageLArtifacts:
+    handle = object.__new__(ProducedStageLArtifacts)
+    handle._metadata = MappingProxyType(dict(metadata))
+    manifest_path = Path(str(handle["artifact_manifest_path"])).resolve()
+    manifest_sha = str(handle["artifact_manifest_sha256"]).lower()
+    _TRUSTED_PRODUCER_CAPABILITIES[handle] = (manifest_path, manifest_sha)
+    return handle
+
+
+def _trusted_producer_manifest(capability: object) -> tuple[Path, str]:
+    if not isinstance(capability, ProducedStageLArtifacts):
+        raise ValueError("trusted in-process producer capability is required")
+    trusted = _TRUSTED_PRODUCER_CAPABILITIES.get(capability)
+    if trusted is None:
+        raise ValueError("trusted in-process producer capability is required")
+    return trusted
+
+
 def render_stage_l_named_artifacts(
     output_root: str | Path,
     *,
@@ -65,7 +111,7 @@ def render_stage_l_named_artifacts(
     trace_version: str,
     candidate_id: str = "hellcat_candidate_v8",
     requested_gain_db: float = 1.9382,
-) -> dict[str, object]:
+) -> ProducedStageLArtifacts:
     """Produce the hash-bound audio/plot handoff consumed by the package builder.
 
     The renderers are injected so tests use a short trace while the production
@@ -209,13 +255,13 @@ def render_stage_l_named_artifacts(
         handoff_path.write_text(
             json.dumps(handoff, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n",
         )
-        return {
+        return _issue_produced_artifacts({
             "status": "PARTIAL / AUTOMATED_GATE_FAIL",
             "qualification_status": UNQUALIFIED_DIAGNOSTIC_ONLY,
             "artifact_manifest_path": str(handoff_path),
             "artifact_manifest_sha256": _sha256(handoff_path),
             "artifact_count": len(artifacts),
-        }
+        })
     except BaseException:
         shutil.rmtree(root, ignore_errors=True)
         raise
@@ -446,15 +492,14 @@ def _validate_sha_text(value: object, label: str) -> str:
 def build_unqualified_diagnostic_package(
     output_root: str | Path,
     *,
+    produced_artifacts: ProducedStageLArtifacts | None,
     task6_gate_status: Mapping[str, object],
-    artifact_manifest_path: str | Path | None = None,
-    expected_artifact_manifest_sha256: str | None = None,
     render: bool = True,
 ) -> dict[str, object]:
-    """Copy a hash-bound renderer handoff into a deterministic diagnostic package.
+    """Package a handoff authenticated by an in-process producer capability.
 
     This function never renders audio.  The producer must supply all WAVs and
-    plots through a SHA-bound artifact-input manifest.
+    plots through the opaque handle returned by ``render_stage_l_named_artifacts``.
     """
 
     _validate_task6_failure(task6_gate_status)
@@ -462,13 +507,11 @@ def build_unqualified_diagnostic_package(
     status = _status(root)
     if not render:
         return status
-    if artifact_manifest_path is None or expected_artifact_manifest_sha256 is None:
-        raise ValueError("artifact manifest path and expected SHA256 are required")
     if root.exists():
         raise FileExistsError(f"output root already exists; refusing overwrite: {root}")
-    source_manifest = Path(artifact_manifest_path).resolve()
+    source_manifest, expected_artifact_manifest_sha256 = _trusted_producer_manifest(produced_artifacts)
     manifest_sha = _sha256(source_manifest)
-    if manifest_sha != expected_artifact_manifest_sha256.lower():
+    if manifest_sha != expected_artifact_manifest_sha256:
         raise ValueError("artifact input manifest SHA256 mismatch")
     source = json.loads(source_manifest.read_text(encoding="utf-8"))
     if source.get("schema_version") != PRODUCER_SCHEMA:
@@ -782,6 +825,6 @@ def _write_deterministic_zip(root: Path, zip_path: Path) -> None:
 
 __all__ = (
     "AUTOMATED_GATE_FAIL", "DIAGNOSTIC_FEEDBACK_ALLOWED", "PARTIAL",
-    "UNQUALIFIED_DIAGNOSTIC_ONLY", "build_unqualified_diagnostic_package",
+    "ProducedStageLArtifacts", "UNQUALIFIED_DIAGNOSTIC_ONLY", "build_unqualified_diagnostic_package",
     "render_stage_l_named_artifacts",
 )
