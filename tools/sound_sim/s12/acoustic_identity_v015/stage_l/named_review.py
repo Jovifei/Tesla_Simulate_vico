@@ -26,6 +26,8 @@ UNQUALIFIED_DIAGNOSTIC_ONLY = "UNQUALIFIED_DIAGNOSTIC_ONLY"
 DIAGNOSTIC_FEEDBACK_ALLOWED = "DIAGNOSTIC_FEEDBACK_ALLOWED"
 ZIP_NAME = "S12_Stage_L_Hellcat_UNQUALIFIED_DIAGNOSTIC_Review.zip"
 PACKAGE_SCOPE = "synthetic; uncalibrated; Hellcat-inspired; vehicle-inspired; not OEM reproduction"
+PRODUCER_SCHEMA = "s12-stage-l-named-artifact-producer-2"
+PACKAGE_ID = "s12-stage-l-hellcat-intake-roughness-v2"
 WAV_DESTINATIONS = (
     "01_Formal_Comparison/01_StageK_Parent_60s.wav",
     "01_Formal_Comparison/02_StageL_Candidate_60s.wav",
@@ -61,6 +63,7 @@ def render_stage_l_named_artifacts(
     parent_profile_sha256: str,
     candidate_profile_sha256: str,
     trace_version: str,
+    candidate_id: str = "hellcat_candidate_v8",
     requested_gain_db: float = 1.9382,
 ) -> dict[str, object]:
     """Produce the hash-bound audio/plot handoff consumed by the package builder.
@@ -89,6 +92,7 @@ def render_stage_l_named_artifacts(
         "parent_profile_sha256": parent_profile_sha256.lower(),
         "trace_version": trace_version,
         "trace_sha256": trace_sha,
+        "candidate_id": candidate_id,
     }
     root.mkdir(parents=True)
     try:
@@ -111,60 +115,61 @@ def render_stage_l_named_artifacts(
             float(requested_gain_db),
             _headroom_gain_db(max(_peak(parent_pressure), _peak(candidate_pressure))),
         )
-        common_gain = 10.0 ** (common_gain_db / 20.0)
-        formal_parent = parent_pressure * common_gain
-        formal_candidate = candidate_pressure * common_gain
         comfort_gain_db = min(float(requested_gain_db), _headroom_gain_db(_peak(candidate_pressure)))
-        formal_comfort = candidate_pressure * (10.0 ** (comfort_gain_db / 20.0))
-
-        audio: dict[str, tuple[np.ndarray, str, float, float]] = {
-            WAV_DESTINATIONS[0]: (formal_parent, parent_path, common_gain_db, float(requested_gain_db)),
-            WAV_DESTINATIONS[1]: (formal_candidate, candidate_path, common_gain_db, float(requested_gain_db)),
-            WAV_DESTINATIONS[2]: (formal_comfort, candidate_path, comfort_gain_db, float(requested_gain_db)),
-            WAV_DESTINATIONS[3]: (_stem_sum(candidate_stems, ("sc_intake_radiated",)), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[4]: (_stem_sum(candidate_stems, ("sc_casing_radiated",)), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[5]: (_stem_sum(candidate_stems, (
-                "hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body",
-            )), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[6]: (_stem_sum(candidate_stems, (
-                "hemi_structure_shock", "hemi_mechanical_torque_ripple",
-            )), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[7]: (candidate_pressure, candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[8]: (_window(candidate_pressure, trace, 0.0, 8.0), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[9]: (_window(candidate_pressure, trace, 8.0, 20.0), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[10]: (_window(candidate_pressure, trace, 20.0, 32.0), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[11]: (_window(candidate_pressure, trace, 8.0, 20.0), candidate_path, 0.0, 0.0),
-            WAV_DESTINATIONS[12]: (_window(candidate_pressure, trace, 36.0, 48.0), candidate_path, 0.0, 0.0),
-        }
+        parent_final_peak_dbfs = _linear_db(_peak(parent_pressure) * (10.0 ** (common_gain_db / 20.0)))
         artifacts: dict[str, object] = {}
-        for relative in WAV_DESTINATIONS:
-            samples, render_path, gain_db, requested_db = audio[relative]
-            raw = np.asarray(samples, dtype=np.float64) / (10.0 ** (gain_db / 20.0)) if gain_db != 0.0 else np.asarray(samples, dtype=np.float64)
-            if relative not in WAV_DESTINATIONS[:3]:
-                gain_db = min(0.0, _headroom_gain_db(_peak(raw)))
-                samples = raw * (10.0 ** (gain_db / 20.0))
-            destination = root / relative.replace("/", "__")
-            _write_pcm24(destination, samples)
-            health = _pcm24_health(destination)
-            if not health["passes"]:
-                raise ValueError(f"produced WAV failed health gate: {relative}")
-            raw_loudness = measure_loudness(raw, 48_000)
-            final_loudness = measure_loudness(samples, 48_000)
-            artifacts[relative] = {
-                "kind": "pcm24_wav", "path": str(destination), "sha256": _sha256(destination),
-                "requested_gain_db": requested_db, "actual_gain_db": gain_db,
-                "headroom_limited": gain_db < requested_db - 1.0e-9,
-                "raw_lufs": float(raw_loudness.integrated_lufs),
-                "final_lufs": float(final_loudness.integrated_lufs),
-                "raw_peak_dbfs": float(raw_loudness.peak_dbfs),
-                "final_peak_dbfs": float(final_loudness.peak_dbfs),
-                "source_render_path": render_path,
-                "profile_binding": {
-                    "parent_profile_sha256": parent_profile_sha256.lower(),
-                    "candidate_profile_sha256": candidate_profile_sha256.lower(),
-                },
-                "trace_binding": {"trace_version": trace_version, "trace_sha256": trace_sha},
-            }
+        receipt_context = {
+            "source_commit": source_commit, "candidate_id": candidate_id,
+            "parent_profile_sha256": parent_profile_sha256.lower(),
+            "candidate_profile_sha256": candidate_profile_sha256.lower(),
+            "trace_version": trace_version, "trace_sha256": trace_sha,
+        }
+        formal_specs = (
+            (WAV_DESTINATIONS[0], parent_pressure, parent_path, common_gain_db),
+            (WAV_DESTINATIONS[1], candidate_pressure, candidate_path, common_gain_db),
+            (WAV_DESTINATIONS[2], candidate_pressure, candidate_path, comfort_gain_db),
+        )
+        for relative, raw, render_path, gain_db in formal_specs:
+            artifacts[relative] = _emit_wav_artifact(
+                root, relative, raw, render_path, float(requested_gain_db), gain_db,
+                {"state_kind": "formal"}, receipt_context,
+            )
+        del formal_specs
+        del parent_pressure
+
+        acceleration_specs = (
+            (WAV_DESTINATIONS[3], ("sc_intake_radiated",)),
+            (WAV_DESTINATIONS[4], ("sc_casing_radiated",)),
+            (WAV_DESTINATIONS[5], ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body")),
+            (WAV_DESTINATIONS[6], ("hemi_structure_shock", "hemi_mechanical_torque_ripple")),
+        )
+        acceleration_evidence = {"state_kind": "acceleration", "shift_count": 3, "bypass_event_count": 0}
+        for relative, stems in acceleration_specs:
+            raw = _window(_stem_sum(candidate_stems, stems), trace, 8.0, 26.0)
+            gain_db = min(0.0, _headroom_gain_db(_peak(raw)))
+            artifacts[relative] = _emit_wav_artifact(
+                root, relative, raw, candidate_path, 0.0, gain_db,
+                acceleration_evidence, receipt_context,
+            )
+            del raw
+        raw = _window(candidate_pressure, trace, 8.0, 26.0)
+        gain_db = min(0.0, _headroom_gain_db(_peak(raw)))
+        artifacts[WAV_DESTINATIONS[7]] = _emit_wav_artifact(
+            root, WAV_DESTINATIONS[7], raw, candidate_path, 0.0, gain_db,
+            acceleration_evidence, receipt_context,
+        )
+        del raw
+
+        for relative, state_kind in zip(WAV_DESTINATIONS[8:], ("idle", "low_load", "high_load", "shift", "lift_bypass")):
+            scenario_trace, evidence = _state_scenario_trace(trace, state_kind)
+            scenario = candidate_renderer(scenario_trace).validate()
+            scenario_path = str(scenario.diagnostics.get("render_path", "StageL_candidate"))
+            raw = _exact_duration(np.asarray(scenario.pressure, dtype=np.float64), 12.0)
+            gain_db = min(0.0, _headroom_gain_db(_peak(raw)))
+            artifacts[relative] = _emit_wav_artifact(
+                root, relative, raw, scenario_path, 0.0, gain_db, evidence, receipt_context,
+            )
+            del raw, scenario, scenario_trace
 
         plot_inputs = _plot_inputs(candidate_pressure, candidate_stems)
         for relative, image in zip(METRIC_DESTINATIONS[:5], plot_inputs):
@@ -179,8 +184,8 @@ def render_stage_l_named_artifacts(
             "source_paths": {"parent": parent_path, "candidate": candidate_path},
             "trace_binding": {"trace_version": trace_version, "trace_sha256": trace_sha},
             "formal_common_gain_db": common_gain_db,
-            "parent_peak_dbfs": _linear_db(_peak(formal_parent)),
-            "candidate_peak_dbfs": _linear_db(_peak(formal_candidate)),
+            "parent_peak_dbfs": parent_final_peak_dbfs,
+            "candidate_peak_dbfs": _linear_db(_peak(candidate_pressure) * (10.0 ** (common_gain_db / 20.0))),
             "scope": PACKAGE_SCOPE,
         }
         metrics_path.write_text(
@@ -188,8 +193,8 @@ def render_stage_l_named_artifacts(
         )
         artifacts[METRIC_DESTINATIONS[5]] = _plain_artifact(metrics_path, "json", bindings)
         handoff = {
-            "schema_version": "s12-stage-l-named-artifact-input-1",
-            "package_id": "s12-stage-l-hellcat-intake-roughness-v1",
+            "schema_version": PRODUCER_SCHEMA,
+            "package_id": PACKAGE_ID,
             "status": "PARTIAL / AUTOMATED_GATE_FAIL",
             "qualification_status": UNQUALIFIED_DIAGNOSTIC_ONLY,
             "bindings": bindings,
@@ -216,6 +221,66 @@ def render_stage_l_named_artifacts(
         raise
 
 
+def _emit_wav_artifact(
+    root: Path,
+    relative: str,
+    raw_audio: np.ndarray,
+    render_path: str,
+    requested_gain_db: float,
+    actual_gain_db: float,
+    event_evidence: Mapping[str, object],
+    receipt_context: Mapping[str, str],
+) -> dict[str, object]:
+    """Write and measure one WAV before the caller releases its render arrays."""
+    raw = np.asarray(raw_audio, dtype=np.float64)
+    final = raw * (10.0 ** (actual_gain_db / 20.0))
+    destination = root / relative.replace("/", "__")
+    _write_pcm24(destination, final)
+    health = _pcm24_health(destination)
+    if not health["passes"]:
+        raise ValueError(f"produced WAV failed health gate: {relative}")
+    raw_loudness = measure_loudness(raw, 48_000)
+    raw_lufs = float(raw_loudness.integrated_lufs)
+    raw_peak_dbfs = float(raw_loudness.peak_dbfs)
+    final_lufs = raw_lufs + actual_gain_db if math.isfinite(raw_lufs) else raw_lufs
+    final_peak_dbfs = raw_peak_dbfs + actual_gain_db if math.isfinite(raw_peak_dbfs) else raw_peak_dbfs
+    pcm_sha = _sha256(destination)
+    receipt = {
+        "schema_version": PRODUCER_SCHEMA,
+        "package_id": PACKAGE_ID,
+        "status": "PARTIAL / AUTOMATED_GATE_FAIL",
+        "file_id": relative,
+        "semantic_role": _semantic_role(relative),
+        "frame_count": health["frame_count"],
+        "duration_s": health["duration_s"],
+        "window": _semantic_window(relative),
+        "source_stems": list(_source_stems(relative)),
+        **receipt_context,
+        "source_render_path": render_path,
+        "pcm_sha256": pcm_sha,
+        "event_evidence": dict(event_evidence),
+    }
+    return {
+        "kind": "pcm24_wav", "path": str(destination), "sha256": pcm_sha,
+        "pcm_sha256": pcm_sha, "producer_receipt": receipt,
+        "requested_gain_db": requested_gain_db, "actual_gain_db": actual_gain_db,
+        "headroom_limited": actual_gain_db < requested_gain_db - 1.0e-9,
+        "raw_lufs": raw_lufs,
+        "final_lufs": final_lufs,
+        "raw_peak_dbfs": raw_peak_dbfs,
+        "final_peak_dbfs": final_peak_dbfs,
+        "source_render_path": render_path,
+        "profile_binding": {
+            "parent_profile_sha256": receipt_context["parent_profile_sha256"],
+            "candidate_profile_sha256": receipt_context["candidate_profile_sha256"],
+        },
+        "trace_binding": {
+            "trace_version": receipt_context["trace_version"],
+            "trace_sha256": receipt_context["trace_sha256"],
+        },
+    }
+
+
 def _validate_audio(value: np.ndarray, label: str) -> None:
     if value.ndim != 2 or value.shape[1] != 2 or not value.size or not np.all(np.isfinite(value)):
         raise ValueError(f"{label} must be finite non-empty stereo audio")
@@ -229,12 +294,62 @@ def _stem_sum(stems: Mapping[str, np.ndarray], names: tuple[str, ...]) -> np.nda
 
 
 def _window(audio: np.ndarray, trace: object, start_s: float, end_s: float) -> np.ndarray:
-    duration = float(np.asarray(trace.time_s)[-1])
-    if duration <= start_s:
-        return np.asarray(audio).copy()
+    target = int(round((end_s - start_s) * 48_000))
     start = int(round(start_s * 48_000))
-    end = min(audio.shape[0], int(round(end_s * 48_000)))
-    return np.asarray(audio[start:max(start + 1, end)]).copy()
+    end = start + target
+    values = np.asarray(audio)
+    if values.shape[0] >= end:
+        return values[start:end].copy()
+    if not values.shape[0]:
+        raise ValueError("cannot construct semantic window from empty audio")
+    repeats = int(math.ceil(target / values.shape[0]))
+    return np.tile(values, (repeats, 1))[:target].copy()
+
+
+def _exact_duration(audio: np.ndarray, duration_s: float) -> np.ndarray:
+    target = int(round(duration_s * 48_000))
+    values = np.asarray(audio)
+    if values.shape[0] >= target:
+        return values[:target].copy()
+    repeats = int(math.ceil(target / values.shape[0]))
+    return np.tile(values, (repeats, 1))[:target].copy()
+
+
+def _state_scenario_trace(template: object, state_kind: str) -> tuple[object, dict[str, object]]:
+    time_s = np.linspace(0.0, 12.0, 1201, dtype=np.float64)
+    if state_kind == "idle":
+        rpm = 760.0 + 18.0 * np.sin(2.0 * np.pi * time_s / 3.0)
+        load = np.full_like(time_s, 0.12); throttle = np.full_like(time_s, 0.08)
+        shifts, bypasses = 0, 0
+    elif state_kind == "low_load":
+        rpm = 1250.0 + 850.0 * time_s / 12.0
+        load = np.full_like(time_s, 0.32); throttle = np.full_like(time_s, 0.28)
+        shifts, bypasses = 0, 0
+    elif state_kind == "high_load":
+        rpm = 2400.0 + 3000.0 * time_s / 12.0
+        load = np.full_like(time_s, 0.90); throttle = np.full_like(time_s, 0.95)
+        shifts, bypasses = 0, 0
+    elif state_kind == "shift":
+        phase = np.mod(time_s, 3.0) / 3.0
+        rpm = 2600.0 + 2500.0 * phase
+        load = np.full_like(time_s, 0.88); throttle = np.full_like(time_s, 0.93)
+        for event_s in (3.0, 6.0, 9.0):
+            throttle[np.abs(time_s - event_s) <= 0.10] = 0.18
+        shifts, bypasses = 3, 0
+    elif state_kind == "lift_bypass":
+        rpm = np.where(time_s < 5.0, 4800.0 + 80.0 * time_s, 5200.0 - 260.0 * (time_s - 5.0))
+        load = np.where(time_s < 5.0, 0.92, 0.08)
+        throttle = np.where(time_s < 5.0, 0.96, 0.02)
+        shifts, bypasses = 0, 1
+    else:
+        raise ValueError(f"unknown state scenario: {state_kind}")
+    trace = template.__class__(time_s, rpm, load, throttle, np.gradient(rpm / 60.0, time_s)).validate()
+    evidence = {
+        "state_kind": state_kind, "shift_count": shifts, "bypass_event_count": bypasses,
+        "load_min": float(np.min(load)), "load_max": float(np.max(load)),
+        "throttle_min": float(np.min(throttle)), "throttle_max": float(np.max(throttle)),
+    }
+    return trace, evidence
 
 
 def _headroom_gain_db(peak: float) -> float:
@@ -356,8 +471,10 @@ def build_unqualified_diagnostic_package(
     if manifest_sha != expected_artifact_manifest_sha256.lower():
         raise ValueError("artifact input manifest SHA256 mismatch")
     source = json.loads(source_manifest.read_text(encoding="utf-8"))
-    if source.get("schema_version") != "s12-stage-l-named-artifact-input-1":
-        raise ValueError("unsupported artifact input schema")
+    if source.get("schema_version") != PRODUCER_SCHEMA:
+        raise ValueError("unsupported producer artifact input schema")
+    if source.get("package_id") != PACKAGE_ID or source.get("status") != "PARTIAL / AUTOMATED_GATE_FAIL":
+        raise ValueError("producer package identity or status is invalid")
     bindings = source.get("bindings")
     artifacts = source.get("artifacts")
     if not isinstance(bindings, dict) or not isinstance(artifacts, dict):
@@ -366,6 +483,7 @@ def build_unqualified_diagnostic_package(
     if set(artifacts) != required:
         raise ValueError("artifact input destinations do not match the required package tree")
     _validate_formal_gain(source.get("formal_common_gain"))
+    _validate_producer_handoff(source)
 
     root.mkdir(parents=True)
     copied: list[dict[str, object]] = []
@@ -401,6 +519,12 @@ def build_unqualified_diagnostic_package(
                 health = _pcm24_health(destination)
                 if not health["passes"]:
                     raise ValueError(f"PCM24 health gate failed: {relative}")
+                receipt = record["producer_receipt"]
+                if (
+                    receipt["frame_count"] != health["frame_count"]
+                    or abs(float(receipt["duration_s"]) - float(health["duration_s"])) > 1.0 / 48_000
+                ):
+                    raise ValueError(f"producer receipt frame count or duration mismatch: {relative}")
                 for field in (
                     "requested_gain_db", "actual_gain_db", "headroom_limited",
                     "raw_lufs", "final_lufs", "raw_peak_dbfs", "final_peak_dbfs",
@@ -492,7 +616,121 @@ def _pcm24_health(path: Path) -> dict[str, object]:
     peak_dbfs = float(20.0 * np.log10(max(peak, 1.0e-30)))
     clipping = int(np.count_nonzero(np.abs(values) >= 1.0))
     passes = bool(np.all(np.isfinite(values)) and peak_dbfs <= -1.5 + 1.0e-6 and clipping == 0)
-    return {"sample_rate_hz": rate, "channels": channels, "pcm_bits": 24, "finite": True, "peak_dbfs": peak_dbfs, "clipping_count": clipping, "passes": passes}
+    return {"sample_rate_hz": rate, "channels": channels, "pcm_bits": 24, "frame_count": frames, "duration_s": frames / rate, "finite": True, "peak_dbfs": peak_dbfs, "clipping_count": clipping, "passes": passes}
+
+
+def _semantic_role(relative: str) -> str:
+    roles = (
+        "formal_parent", "formal_candidate", "formal_candidate_comfort",
+        "source_sc_intake_aero", "source_sc_gear_casing", "source_hemi_exhaust_body",
+        "source_hemi_structure_shock", "source_full_mix", "state_idle", "state_low_load",
+        "state_high_load", "state_shift", "state_lift_bypass",
+    )
+    return roles[WAV_DESTINATIONS.index(relative)]
+
+
+def _semantic_window(relative: str) -> dict[str, float]:
+    if relative in WAV_DESTINATIONS[:3]:
+        return {"start_s": 0.0, "end_s": 60.0}
+    if relative in WAV_DESTINATIONS[3:8]:
+        return {"start_s": 8.0, "end_s": 26.0}
+    return {"start_s": 0.0, "end_s": 12.0}
+
+
+def _source_stems(relative: str) -> tuple[str, ...]:
+    mapping = {
+        WAV_DESTINATIONS[0]: ("stage_k_parent_pressure",),
+        WAV_DESTINATIONS[1]: ("stage_l_candidate_pressure",),
+        WAV_DESTINATIONS[2]: ("stage_l_candidate_pressure",),
+        WAV_DESTINATIONS[3]: ("sc_intake_radiated",),
+        WAV_DESTINATIONS[4]: ("sc_casing_radiated",),
+        WAV_DESTINATIONS[5]: ("hemi_exhaust_left", "hemi_exhaust_right", "hemi_blowdown_body"),
+        WAV_DESTINATIONS[6]: ("hemi_structure_shock", "hemi_mechanical_torque_ripple"),
+        WAV_DESTINATIONS[7]: ("stage_l_candidate_pressure",),
+    }
+    return mapping.get(relative, ("stage_l_semantic_scenario_pressure",))
+
+
+def _validate_producer_handoff(source: Mapping[str, object]) -> None:
+    bindings = source["bindings"]
+    required_bindings = {
+        "source_commit", "candidate_profile_sha256", "parent_profile_sha256",
+        "trace_version", "trace_sha256", "candidate_id",
+    }
+    if set(bindings) != required_bindings:
+        raise ValueError("producer bindings do not match the exact schema")
+    seen_pcm: dict[str, str] = {}
+    for relative in WAV_DESTINATIONS:
+        record = source["artifacts"][relative]
+        receipt = record.get("producer_receipt") if isinstance(record, dict) else None
+        if not isinstance(receipt, dict):
+            raise ValueError(f"producer receipt is required: {relative}")
+        expected = {
+            "schema_version": PRODUCER_SCHEMA,
+            "package_id": PACKAGE_ID,
+            "status": source["status"],
+            "file_id": relative,
+            "semantic_role": _semantic_role(relative),
+            "frame_count": receipt.get("frame_count"),
+            "duration_s": receipt.get("duration_s"),
+            "window": _semantic_window(relative),
+            "source_stems": list(_source_stems(relative)),
+            "source_commit": bindings["source_commit"],
+            "candidate_id": bindings["candidate_id"],
+            "parent_profile_sha256": bindings["parent_profile_sha256"],
+            "candidate_profile_sha256": bindings["candidate_profile_sha256"],
+            "trace_version": bindings["trace_version"],
+            "trace_sha256": bindings["trace_sha256"],
+            "source_render_path": record.get("source_render_path"),
+            "pcm_sha256": record.get("sha256"),
+            "event_evidence": receipt.get("event_evidence"),
+        }
+        if receipt != expected or record.get("pcm_sha256") != record.get("sha256"):
+            raise ValueError(f"producer receipt binding mismatch: {relative}")
+        if not isinstance(receipt["frame_count"], int) or receipt["frame_count"] <= 0:
+            raise ValueError(f"producer frame count is invalid: {relative}")
+        _validate_event_evidence(relative, receipt["event_evidence"])
+        pcm = str(record["sha256"])
+        previous = seen_pcm.get(pcm)
+        if previous is not None:
+            allowed = {previous, relative} == {WAV_DESTINATIONS[1], WAV_DESTINATIONS[2]}
+            if not allowed:
+                raise ValueError(f"producer semantic roles may not share identical PCM: {previous}, {relative}")
+            if source["artifacts"][previous]["actual_gain_db"] != record["actual_gain_db"]:
+                raise ValueError("candidate/comfort identical PCM requires identical actual gain")
+        seen_pcm[pcm] = relative
+
+
+def _validate_event_evidence(relative: str, value: object) -> None:
+    if not isinstance(value, dict):
+        raise ValueError(f"producer event evidence is required: {relative}")
+    role = _semantic_role(relative)
+    if role.startswith("formal_"):
+        if value.get("state_kind") != "formal":
+            raise ValueError(f"formal producer event evidence mismatch: {relative}")
+        return
+    if role.startswith("source_"):
+        if value.get("state_kind") != "acceleration" or value.get("shift_count") != 3:
+            raise ValueError(f"acceleration producer event evidence mismatch: {relative}")
+        return
+    expected_kind = role.removeprefix("state_")
+    if value.get("state_kind") != expected_kind:
+        raise ValueError(f"state producer event evidence mismatch: {relative}")
+    shifts = value.get("shift_count")
+    bypasses = value.get("bypass_event_count")
+    load_min, load_max = value.get("load_min"), value.get("load_max")
+    throttle_min, throttle_max = value.get("throttle_min"), value.get("throttle_max")
+    if not all(isinstance(item, (int, float)) for item in (load_min, load_max, throttle_min, throttle_max)):
+        raise ValueError(f"state load/throttle evidence is incomplete: {relative}")
+    valid = {
+        "idle": shifts == 0 and bypasses == 0 and load_max <= 0.20 and throttle_max <= 0.15,
+        "low_load": shifts == 0 and bypasses == 0 and 0.20 <= load_min <= load_max <= 0.50,
+        "high_load": shifts == 0 and bypasses == 0 and load_min >= 0.75 and throttle_min >= 0.75,
+        "shift": shifts == 3 and bypasses == 0 and throttle_min < 0.30 and throttle_max > 0.80,
+        "lift_bypass": shifts == 0 and bypasses >= 1 and load_min < 0.15 and load_max > 0.80 and throttle_min < 0.05,
+    }[expected_kind]
+    if not valid:
+        raise ValueError(f"state semantic conditions are not proven: {relative}")
 
 
 def _write_blank_feedback(path: Path, package_id: str) -> None:

@@ -6,9 +6,11 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 import wave
 
 import numpy as np
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender, VehicleStateTrace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.named_review import (
@@ -19,6 +21,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_l.named_review import (
     build_unqualified_diagnostic_package,
     render_stage_l_named_artifacts,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l import named_review as named_review_module
 
 
 ZIP_NAME = "S12_Stage_L_Hellcat_UNQUALIFIED_DIAGNOSTIC_Review.zip"
@@ -45,6 +48,12 @@ NON_WAV_DESTINATIONS = (
     "04_Metrics/shift_response.png",
     "04_Metrics/stage_l_hellcat_metrics.json",
 )
+
+
+@pytest.fixture(autouse=True)
+def _fast_named_review_loudness(monkeypatch) -> None:
+    """Named-review tests exercise binding/transport; loudness DSP is covered separately."""
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
 
 
 def _sha(path: Path) -> str:
@@ -75,7 +84,8 @@ def _short_trace() -> VehicleStateTrace:
 def _diagnostic_render(trace: VehicleStateTrace, *, candidate: bool) -> SourceRender:
     count = int(round(float(trace.time_s[-1]) * 48_000)) + 1
     time_s = np.arange(count, dtype=np.float64) / 48_000.0
-    scale = 1.15 if candidate else 1.0
+    operating_scale = 0.5 + float(np.mean(trace.load))
+    scale = (1.15 if candidate else 1.0) * operating_scale
     left = 0.025 * scale * np.sin(2.0 * np.pi * 90.0 * time_s)
     right = 0.024 * scale * np.sin(2.0 * np.pi * 92.0 * time_s)
     intake = 0.010 * scale * np.sin(2.0 * np.pi * (550.0 + 80.0 * time_s) * time_s)
@@ -111,7 +121,7 @@ def _hot_diagnostic_render(trace: VehicleStateTrace) -> SourceRender:
     return SourceRender(pressure, stems, render.diagnostics).validate()
 
 
-def _artifact_input(tmp_path: Path) -> tuple[Path, str]:
+def _arbitrary_artifact_input(tmp_path: Path) -> tuple[Path, str]:
     source = tmp_path / "source"
     source.mkdir()
     artifacts: dict[str, object] = {}
@@ -156,6 +166,117 @@ def _artifact_input(tmp_path: Path) -> tuple[Path, str]:
     return manifest, _sha(manifest)
 
 
+def _artifact_input(tmp_path: Path) -> tuple[Path, str]:
+    result, _ = _produced_input(tmp_path)
+    path = Path(result["artifact_manifest_path"])
+    return path, str(result["artifact_manifest_sha256"])
+
+
+def _produced_input(tmp_path: Path) -> tuple[dict[str, object], dict[str, object]]:
+    result = render_stage_l_named_artifacts(
+        tmp_path / "produced",
+        trace=_short_trace(),
+        parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+        candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+        source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+        parent_profile_sha256="2" * 64,
+        candidate_profile_sha256="1" * 64,
+        trace_version="stage-l-short-test-v1",
+    )
+    path = Path(result["artifact_manifest_path"])
+    return result, json.loads(path.read_text(encoding="utf-8"))
+
+
+def _wav_duration(path: Path) -> float:
+    with wave.open(str(path), "rb") as stream:
+        return stream.getnframes() / stream.getframerate()
+
+
+def _wav_frames(path: Path) -> int:
+    with wave.open(str(path), "rb") as stream:
+        return stream.getnframes()
+
+
+def test_builder_rejects_caller_created_self_hash_fixture(tmp_path: Path) -> None:
+    manifest, manifest_sha = _arbitrary_artifact_input(tmp_path)
+
+    with pytest.raises(ValueError, match="producer"):
+        build_unqualified_diagnostic_package(
+            tmp_path / "review",
+            artifact_manifest_path=manifest,
+            expected_artifact_manifest_sha256=manifest_sha,
+            task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+        )
+
+
+def test_builder_rejects_missing_per_file_producer_receipt(tmp_path: Path) -> None:
+    _, payload = _produced_input(tmp_path)
+    payload["artifacts"][WAV_DESTINATIONS[3]].pop("producer_receipt", None)
+    manifest = tmp_path / "missing-receipt.json"
+    manifest.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="producer receipt"):
+        build_unqualified_diagnostic_package(
+            tmp_path / "review",
+            artifact_manifest_path=manifest,
+            expected_artifact_manifest_sha256=_sha(manifest),
+            task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+        )
+
+
+def test_builder_rejects_producer_receipt_frame_count_not_matching_pcm(tmp_path: Path) -> None:
+    _, payload = _produced_input(tmp_path)
+    receipt = payload["artifacts"][WAV_DESTINATIONS[3]]["producer_receipt"]
+    receipt["frame_count"] += 1
+    manifest = tmp_path / "wrong-frame-count.json"
+    manifest.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="frame count or duration"):
+        build_unqualified_diagnostic_package(
+            tmp_path / "review",
+            artifact_manifest_path=manifest,
+            expected_artifact_manifest_sha256=_sha(manifest),
+            task6_gate_status={"residency_max": 5, "formal_final_provenance": "NOT_AVAILABLE"},
+        )
+
+
+def test_state_wavs_are_exactly_12_seconds_and_low_load_differs_from_shift(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
+    _, payload = _produced_input(tmp_path)
+    artifacts = payload["artifacts"]
+    for destination in WAV_DESTINATIONS[8:]:
+        item = artifacts[destination]
+        assert _wav_duration(Path(item["path"])) == pytest.approx(12.0, abs=1.0 / 48_000)
+        assert item["producer_receipt"]["frame_count"] == 12 * 48_000
+        assert item["producer_receipt"]["duration_s"] == 12.0
+        if np.isfinite(item["raw_lufs"]):
+            assert item["final_lufs"] == pytest.approx(item["raw_lufs"] + item["actual_gain_db"])
+        if np.isfinite(item["raw_peak_dbfs"]):
+            assert item["final_peak_dbfs"] == pytest.approx(item["raw_peak_dbfs"] + item["actual_gain_db"])
+    low = payload["artifacts"][WAV_DESTINATIONS[9]]
+    shift = payload["artifacts"][WAV_DESTINATIONS[11]]
+
+    assert low["pcm_sha256"] != shift["pcm_sha256"]
+
+
+def test_source_separation_wavs_are_exactly_18_seconds_and_full_mix_differs_from_formal(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
+    _, payload = _produced_input(tmp_path)
+    artifacts = payload["artifacts"]
+    formal_candidate_sha = artifacts[WAV_DESTINATIONS[1]]["pcm_sha256"]
+    for destination in WAV_DESTINATIONS[3:8]:
+        item = artifacts[destination]
+        assert _wav_duration(Path(item["path"])) == pytest.approx(18.0, abs=1.0 / 48_000)
+        assert item["producer_receipt"]["frame_count"] == 18 * 48_000
+    assert artifacts[WAV_DESTINATIONS[7]]["pcm_sha256"] != formal_candidate_sha
+
+
+def _fast_loudness(audio: np.ndarray, sample_rate_hz: int) -> SimpleNamespace:
+    del sample_rate_hz
+    peak = float(np.max(np.abs(audio)))
+    return SimpleNamespace(integrated_lufs=-20.0, peak_dbfs=20.0 * np.log10(max(peak, 1.0e-30)))
+
+
 def test_initial_named_review_forces_task6_failure_to_diagnostic_status(tmp_path: Path) -> None:
     package = build_unqualified_diagnostic_package(
         output_root=tmp_path / "s12-stage-l-hellcat-intake-roughness-v1",
@@ -175,8 +296,9 @@ def test_initial_named_review_forces_task6_failure_to_diagnostic_status(tmp_path
 
 
 def test_artifact_producer_uses_actual_parent_candidate_paths_and_emits_complete_health_bound_handoff(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch,
 ) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
     trace = _short_trace()
     calls: list[str] = []
 
@@ -186,8 +308,7 @@ def test_artifact_producer_uses_actual_parent_candidate_paths_and_emits_complete
         return _diagnostic_render(actual_trace, candidate=False)
 
     def candidate_renderer(actual_trace: VehicleStateTrace) -> SourceRender:
-        assert actual_trace is trace
-        calls.append("stage_l_candidate")
+        calls.append("stage_l_candidate_canonical" if actual_trace is trace else "stage_l_candidate_scenario")
         return _diagnostic_render(actual_trace, candidate=True)
 
     result = render_stage_l_named_artifacts(
@@ -201,7 +322,7 @@ def test_artifact_producer_uses_actual_parent_candidate_paths_and_emits_complete
         trace_version="stage-l-short-test-v1",
     )
 
-    assert calls == ["stage_k_parent", "stage_l_candidate"]
+    assert calls == ["stage_k_parent", "stage_l_candidate_canonical"] + ["stage_l_candidate_scenario"] * 5
     manifest_path = Path(result["artifact_manifest_path"])
     payload = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert payload["status"] == "PARTIAL / AUTOMATED_GATE_FAIL"
@@ -219,11 +340,13 @@ def test_artifact_producer_uses_actual_parent_candidate_paths_and_emits_complete
         path = Path(payload["artifacts"][destination]["path"])
         with wave.open(str(path), "rb") as stream:
             assert (stream.getframerate(), stream.getnchannels(), stream.getsampwidth()) == (48_000, 2, 3)
+            assert payload["artifacts"][destination]["producer_receipt"]["frame_count"] == stream.getnframes()
     for destination in NON_WAV_DESTINATIONS[:5]:
         assert Path(payload["artifacts"][destination]["path"]).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
 
-def test_artifact_producer_attenuates_hot_diagnostic_stems_to_pcm_health(tmp_path: Path) -> None:
+def test_artifact_producer_attenuates_hot_diagnostic_stems_to_pcm_health(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
     trace = _short_trace()
     result = render_stage_l_named_artifacts(
         tmp_path / "hot-produced",
@@ -243,7 +366,8 @@ def test_artifact_producer_attenuates_hot_diagnostic_stems_to_pcm_health(tmp_pat
     assert item["final_peak_dbfs"] <= -1.5
 
 
-def test_builds_complete_content_addressed_unqualified_package_deterministically(tmp_path: Path) -> None:
+def test_builds_complete_content_addressed_unqualified_package_deterministically(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(named_review_module, "measure_loudness", _fast_loudness)
     source_manifest, source_sha = _artifact_input(tmp_path)
     roots = [tmp_path / "review-a", tmp_path / "review-b"]
     results = [
@@ -271,6 +395,7 @@ def test_builds_complete_content_addressed_unqualified_package_deterministically
         assert manifest["artifact_input_sha256"] == source_sha
         assert manifest["formal_final_provenance"] == "NOT_AVAILABLE"
         assert manifest["full_pipeline_peak_residency"] == 5
+        assert all(item["pcm_health"]["frame_count"] > 0 for item in manifest["wav_artifacts"])
         assert all(item["pcm_health"]["peak_dbfs"] <= -1.5 for item in manifest["wav_artifacts"])
         assert all(item["pcm_health"]["clipping_count"] == 0 for item in manifest["wav_artifacts"])
         readme = (root / "00_OPEN_ME_FIRST.md").read_text(encoding="utf-8")
