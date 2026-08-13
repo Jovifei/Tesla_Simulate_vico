@@ -1279,3 +1279,8 @@ Rules:
 - Same-name feedback copies must bind to the canonical manifest/SHA and pass the stated score-range validation; an illegal `0` cannot be interpreted as a real listening score.
 
 - Stage L Task10：最终音频 provenance 缺失或 shell exit 未捕获时，自动化证据不得升级为资格通过；反馈与 CSV 读取必须等待 Jovi 明确指示。
+
+## Stage L feedback boundary applies to test fixtures too (2026-08-13)
+
+- Pattern: the named-review test suite contained a convenience assertion that parsed the generated blank feedback CSV. Even blank or fixture CSV rows cross the no-CSV-read boundary when the task forbids all feedback-content reads.
+- Rule: before running a listener-package suite under a no-CSV-read constraint, audit its selected tests for CSV readers. Validate a generated feedback template only by path/transport metadata unless Jovi explicitly authorizes CSV content access; never parse headers, rows, scores, or fixture values by default.

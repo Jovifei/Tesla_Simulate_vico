@@ -11,27 +11,29 @@
 
 This report indexes Task10 diagnostic evidence only. It is not a Human PASS, approval, calibration completion, OEM acknowledgement, or Simulink integration claim.
 
-## Named v3 package: diagnostic PCM transport health
+## Named v5 package: frozen-final-PCM diagnostic transport health
 
-- Named package: `E:/Tesla_speed/review_packages/s12-stage-l-hellcat-intake-roughness-v3`
-- producer SHA-256: `26a32dbd96d2a9f9c93ec0044a9edf011ffa924589a9988c64ed17555d8b74ca`
-- manifest SHA-256: `fbf43684e337ab6e65c0bbf50724f4094a124dc9d477a2cbf89273b6209c4e7f`
-- ZIP SHA-256: `16a9ee4fd02eb4d625170049889dedf2bb5bd0892219bd04760fbb2c160fd3f9`
+- Named package: `E:/Tesla_speed/review_packages/s12-stage-l-hellcat-intake-roughness-v5`
+- producer SHA-256: `73eba07f818b78680083e7f230aab8a222c2d9ecfbaf31e614fb8dbc6240af16`
+- manifest SHA-256: `9d2c93a0509b00e612d74dbc646541b74f165cdd286b3d07f46add625d8228c8`
+- ZIP central-directory member count: `23`; ZIP content hash was not recomputed to avoid reading feedback CSV content.
 - All 13 WAV files are PCM24, 48 kHz, stereo, finite, and have `clipping=0`.
 - Diagnostic transport health: `AVAILABLE / PASS_FOR_DIAGNOSTIC_TRANSPORT_ONLY`.
 
-The named v3 package health establishes only that its WAVs are usable diagnostic transport artifacts. It does not establish formal qualification provenance.
+The formal parent/candidate v5 WAVs use `Frozen PTR -> Edge Fade -> One Whole-Cycle Gain -> PCM24`; their receipts bind actual PCM payload hashes. Their pre-gain metrics are directly measured after Frozen PTR and Edge Fade, and final metrics are measured from emitted PCM24. Candidate comfort starts from that final candidate PCM and then applies only its separately recorded static gain. SHA256SUMS was recomputed for 21 non-CSV entries; the feedback CSV itself was not read or hashed. The v1, v2, pre-remediation v3, and pre-actual-metric-layer v4 packages remain retained historical artifacts and are not current evidence.
+
+The named v5 package health establishes only that its WAVs are usable diagnostic transport artifacts. It does not establish formal qualification provenance.
 
 ## Recorded WAV loudness and headroom measurements
 
 These are the actual package values, retained for diagnostic reporting only; they are not a qualification result.
 
-| Artifact | Final LUFS | Peak (dBFS) | SHA-256 |
-| --- | ---: | ---: | --- |
-| Parent WAV | -21.034908867444564 | -3.9567540362869122 | `973f85e2d465642a631758f4b692ffa2b7812b3be081d0f44205375b26c4b548` |
-| Candidate WAV | -22.488648102210213 | -1.5000012507616982 | `7e3d17b0cb2d67ab5c6702bc01dce934fcc1701969efdc2c0e472434b3db3d2b` |
+| Artifact | Pre-gain LUFS | Final LUFS | Final peak (dBFS) | SHA-256 |
+| --- | ---: | ---: | ---: | --- |
+| Parent WAV | -20.629257368470288 | -19.92069310438389 | -1.5000002153229033 | `239692db2d11ca0349998dce6a8515e810000be957dff990a66ce0b871e2c345` |
+| Candidate WAV | -22.28028138572734 | -21.571717122578164 | -6.486224000631787 | `419678e0ab20128ae2bd145bd1a129c61f41e6277ea1a212551f9dda0b4218b0` |
 
-- Common actual gain: `-20.739979471403824 dB`
+- Common actual gain: `+0.7085642670226164 dB`
 - Requested gain: `+1.9382 dB`
 - `headroom_limited=true`
 

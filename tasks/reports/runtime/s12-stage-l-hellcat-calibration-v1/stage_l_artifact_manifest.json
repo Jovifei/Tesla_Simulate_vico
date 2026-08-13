@@ -8,20 +8,33 @@
     "feedback_status": "DIAGNOSTIC_FEEDBACK_ALLOWED"
   },
   "current_review_package": {
-    "version": "v3",
-    "root": "E:/Tesla_speed/review_packages/s12-stage-l-hellcat-intake-roughness-v3",
-    "producer_sha256": "26a32dbd96d2a9f9c93ec0044a9edf011ffa924589a9988c64ed17555d8b74ca",
-    "manifest_sha256": "fbf43684e337ab6e65c0bbf50724f4094a124dc9d477a2cbf89273b6209c4e7f",
-    "zip_sha256": "16a9ee4fd02eb4d625170049889dedf2bb5bd0892219bd04760fbb2c160fd3f9"
+    "version": "v5",
+    "root": "E:/Tesla_speed/review_packages/s12-stage-l-hellcat-intake-roughness-v5",
+    "producer_sha256": "73eba07f818b78680083e7f230aab8a222c2d9ecfbaf31e614fb8dbc6240af16",
+    "manifest_sha256": "9d2c93a0509b00e612d74dbc646541b74f165cdd286b3d07f46add625d8228c8",
+    "zip_validation": "EXISTS_WITH_23_CENTRAL_DIRECTORY_MEMBERS; ZIP_CONTENT_HASH_NOT_RECOMPUTED_TO_AVOID_CSV_CONTENT_READ"
   },
   "historical_packages": {
     "v1": "RETAINED_HISTORICAL_INVALID",
-    "v2": "RETAINED_HISTORICAL_INVALID"
+    "v2": "RETAINED_HISTORICAL_INVALID",
+    "v3": "RETAINED_HISTORICAL_INVALID_PRE_FINAL_PCM_REMEDIATION",
+    "v4": "RETAINED_HISTORICAL_PRE_ACTUAL_METRIC_LAYER_REMEDIATION"
+  },
+  "v5_validation": {
+    "package_files": 24,
+    "producer_files": 20,
+    "wav_file_count": 13,
+    "wav_pcm24_health": "13_OF_13_PASS",
+    "non_csv_sha256sums_checked": "21_OF_22",
+    "csv_content_read": false,
+    "formal_pipeline": "Frozen PTR -> Edge Fade -> One Whole-Cycle Gain -> PCM24",
+    "formal_pcm_input_binding": "parent/candidate self-bind; comfort binds to candidate final PCM",
+    "formal_metrics_layering": "pre-gain metrics are directly measured after Frozen PTR and Edge Fade; final metrics are measured from emitted PCM24"
   },
   "manifest_interpretation": {
     "package_identity_recorded": true,
     "qualification_established": false,
     "status": "AUTOMATED_GATE_FAIL",
-    "boundary": "包哈希只支持诊断性身份追溯；不支持 Human PASS、批准、校准、OEM 或 Simulink 集成声明。"
+    "boundary": "Diagnostic artifact transport only; it does not establish Human PASS, approval, calibration, OEM reproduction, or Simulink integration."
   }
 }

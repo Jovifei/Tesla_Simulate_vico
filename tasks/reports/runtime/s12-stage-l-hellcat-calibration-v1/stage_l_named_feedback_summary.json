@@ -12,8 +12,10 @@
     "decision_state": "WAITING_FOR_JOVI",
     "feedback_values_read": false,
     "csv_content_read": false,
+    "published_template_package": "s12-stage-l-hellcat-intake-roughness-v5",
+    "published_template_content_inspected": false,
     "feedback_entries": [],
-    "reason": "本 Task10 范围内未读取命名反馈值或 CSV 内容；等待 Jovi 的明确后续指示。"
+    "reason": "No named feedback values or CSV content were read within Task10; wait for Jovi's explicit follow-up."
   },
-  "allowed_next_action": "在 Jovi 明确授权后，仅将反馈作为诊断输入；不得据此宣称 Human PASS、批准或标定完成。"
+  "allowed_next_action": "After explicit authorization from Jovi, use feedback only as diagnostic input; do not infer Human PASS, approval, or completion."
 }

@@ -29,7 +29,7 @@ else:
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = PACKAGE_ROOT / "targets/stage_l_candidates/hellcat_candidate_v8.json"
-DEFAULT_OUTPUT = Path(r"E:\Tesla_speed\review_packages\s12-stage-l-hellcat-intake-roughness-v1")
+DEFAULT_OUTPUT = Path(r"E:\Tesla_speed\review_packages\s12-stage-l-hellcat-intake-roughness-v5")
 
 
 def build_production_stage_l_named_review(

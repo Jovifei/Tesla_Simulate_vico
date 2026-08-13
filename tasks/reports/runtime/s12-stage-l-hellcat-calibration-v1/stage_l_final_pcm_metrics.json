@@ -10,7 +10,7 @@
   "final_pcm_metrics": {
     "diagnostic_transport_health": {
       "status": "AVAILABLE / PASS_FOR_DIAGNOSTIC_TRANSPORT_ONLY",
-      "named_package": "s12-stage-l-hellcat-intake-roughness-v3",
+      "named_package": "s12-stage-l-hellcat-intake-roughness-v5",
       "wav_file_count": 13,
       "container": "WAV",
       "encoding": "PCM24",
@@ -20,24 +20,37 @@
       "clipping": 0,
       "clipping_sample_count": 0,
       "health_pass": true,
-      "scope": "Diagnostic transport health only; it is not formal qualification provenance."
+      "scope": "Diagnostic transport health only; formal WAVs use Frozen PTR -> Edge Fade -> One Whole-Cycle Gain -> PCM24, but this is not formal qualification provenance."
     },
     "recorded_package_measurements": {
       "scope": "Actual parent and candidate final WAV measurements retained for diagnostic reporting only.",
       "parent_wav_final": {
-        "integrated_lufs": -21.034908867444564,
-        "peak_dbfs": -3.9567540362869122,
-        "sha256": "973f85e2d465642a631758f4b692ffa2b7812b3be081d0f44205375b26c4b548"
+        "pre_gain_integrated_lufs": -20.629257368470288,
+        "pre_gain_peak_dbfs": -2.208564267022616,
+        "integrated_lufs": -19.92069310438389,
+        "peak_dbfs": -1.5000002153229033,
+        "sha256": "239692db2d11ca0349998dce6a8515e810000be957dff990a66ce0b871e2c345",
+        "pcm_payload_sha256": "58f2d5d853fec5eaa928250afb079d8e3aed7566ff4925a7dcc64fc881e66720"
       },
       "candidate_wav_final": {
-        "integrated_lufs": -22.488648102210213,
-        "peak_dbfs": -1.5000012507616982,
-        "sha256": "7e3d17b0cb2d67ab5c6702bc01dce934fcc1701969efdc2c0e472434b3db3d2b"
+        "pre_gain_integrated_lufs": -22.28028138572734,
+        "pre_gain_peak_dbfs": -7.194788565728292,
+        "integrated_lufs": -21.571717122578164,
+        "peak_dbfs": -6.486224000631787,
+        "sha256": "419678e0ab20128ae2bd145bd1a129c61f41e6277ea1a212551f9dda0b4218b0",
+        "pcm_payload_sha256": "0d25e4c876f159674f4e7b69832c28dea0e17d31da0bed48ff429dd4dab1938e"
       },
-      "common_actual_gain_db": -20.739979471403824,
+      "common_actual_gain_db": 0.7085642670226164,
       "requested_gain_db": 1.9382,
       "requested_gain_display": "+1.9382 dB",
-      "headroom_limited": true
+      "headroom_limited": true,
+      "formal_frame_count": 2880001,
+      "formal_pipeline_order": [
+        "frozen_ptr",
+        "edge_fade",
+        "one_fixed_whole_cycle_gain",
+        "pcm24"
+      ]
     },
     "formal_qualification_provenance": {
       "status": "NOT_AVAILABLE / AUTOMATED_GATE_FAIL",

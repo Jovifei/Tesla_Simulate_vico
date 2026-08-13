@@ -1,6 +1,5 @@
 """Focused contract tests for the Stage L named diagnostic review package."""
 
-import csv
 import hashlib
 import json
 from pathlib import Path
@@ -23,6 +22,11 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_l.named_review import (
     render_stage_l_named_artifacts,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l import named_review as named_review_module
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l import render_candidate as render_candidate_module
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l.render_candidate import (
+    StageLFormalPcmBundle,
+    render_stage_l_formal_final_pcm_bundle,
+)
 
 
 ZIP_NAME = "S12_Stage_L_Hellcat_UNQUALIFIED_DIAGNOSTIC_Review.zip"
@@ -59,6 +63,12 @@ def _fast_named_review_loudness(monkeypatch) -> None:
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _pcm_payload_sha(audio: np.ndarray) -> str:
+    pcm = np.clip(np.rint(np.asarray(audio, dtype=np.float64) * 8388607.0), -8388608, 8388607).astype("<i4")
+    payload = pcm.reshape(-1).view(np.uint8).reshape(-1, 4)[:, :3].tobytes()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _write_pcm24(path: Path, value: float = 0.1) -> None:
@@ -185,6 +195,272 @@ def _produced_input(tmp_path: Path) -> tuple[ProducedStageLArtifacts, dict[str, 
     )
     path = Path(result["artifact_manifest_path"])
     return result, json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_formal_parent_candidate_wavs_use_exact_frozen_final_pcm_bundle_and_bind_pcm_payload_hashes(
+    tmp_path: Path,
+) -> None:
+    trace = _short_trace()
+    parent = _diagnostic_render(trace, candidate=False)
+    candidate = _diagnostic_render(trace, candidate=True)
+    expected = render_stage_l_formal_final_pcm_bundle(
+        parent.pressure,
+        candidate.pressure,
+        target_lufs=-16.0,
+        peak_limit_dbfs=-1.5,
+    )
+
+    produced = render_stage_l_named_artifacts(
+        tmp_path / "produced",
+        trace=trace,
+        parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+        candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+        source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+        parent_profile_sha256="2" * 64,
+        candidate_profile_sha256="1" * 64,
+        trace_version="stage-l-short-test-v1",
+    )
+    payload = json.loads(Path(produced["artifact_manifest_path"]).read_text(encoding="utf-8"))
+
+    assert expected.pipeline_order == (
+        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+    )
+    for relative, final_pcm in (
+        (WAV_DESTINATIONS[0], expected.parent_pcm),
+        (WAV_DESTINATIONS[1], expected.candidate_pcm),
+    ):
+        record = payload["artifacts"][relative]
+        receipt = record["producer_receipt"]
+        final_pcm_sha256 = _pcm_payload_sha(final_pcm)
+        assert record["pcm_sha256"] == final_pcm_sha256
+        assert record["final_pcm_sha256"] == final_pcm_sha256
+        assert receipt["final_pcm_sha256"] == final_pcm_sha256
+        assert receipt["final_pipeline"]["pipeline_order"] == list(expected.pipeline_order)
+    assert payload["artifacts"][WAV_DESTINATIONS[0]]["actual_gain_db"] == pytest.approx(expected.gain_db)
+    assert payload["artifacts"][WAV_DESTINATIONS[1]]["actual_gain_db"] == pytest.approx(expected.gain_db)
+
+
+def test_candidate_comfort_copy_starts_with_the_frozen_final_candidate_pcm(tmp_path: Path) -> None:
+    trace = _short_trace()
+    parent = _diagnostic_render(trace, candidate=False)
+    candidate = _diagnostic_render(trace, candidate=True)
+    expected = render_stage_l_formal_final_pcm_bundle(
+        parent.pressure,
+        candidate.pressure,
+        target_lufs=-16.0,
+        peak_limit_dbfs=-1.5,
+    )
+    produced = render_stage_l_named_artifacts(
+        tmp_path / "produced",
+        trace=trace,
+        parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+        candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+        source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+        parent_profile_sha256="2" * 64,
+        candidate_profile_sha256="1" * 64,
+        trace_version="stage-l-short-test-v1",
+    )
+    payload = json.loads(Path(produced["artifact_manifest_path"]).read_text(encoding="utf-8"))
+    record = payload["artifacts"][WAV_DESTINATIONS[2]]
+    additional_gain_db = record["comfort_additional_gain_db"]
+
+    assert record["final_pcm_input_sha256"] == _pcm_payload_sha(expected.candidate_pcm)
+    assert record["producer_receipt"]["final_pcm_input_sha256"] == _pcm_payload_sha(expected.candidate_pcm)
+    assert record["final_pipeline"]["pipeline_order"] == [
+        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+        "candidate_comfort_static_gain", "pcm24",
+    ]
+    expected_comfort = expected.candidate_pcm * 10.0 ** (additional_gain_db / 20.0)
+    assert record["pcm_sha256"] == _pcm_payload_sha(expected_comfort)
+
+
+def test_formal_final_pcm_bundle_uses_one_shared_frozen_final_gain(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    trace = _short_trace()
+    parent = _diagnostic_render(trace, candidate=False).pressure
+    candidate = _diagnostic_render(trace, candidate=True).pressure
+    original = render_candidate_module.manage_bundle_loudness
+    managed_calls = []
+
+    def capture_managed_bundle(segments, sample_rate_hz, *, target_lufs, peak_limit_dbfs):
+        managed = original(
+            segments, sample_rate_hz,
+            target_lufs=target_lufs,
+            peak_limit_dbfs=peak_limit_dbfs,
+        )
+        managed_calls.append(managed)
+        return managed
+
+    monkeypatch.setattr(render_candidate_module, "manage_bundle_loudness", capture_managed_bundle)
+    bundle = render_stage_l_formal_final_pcm_bundle(
+        parent, candidate, target_lufs=-16.0, peak_limit_dbfs=-1.5,
+    )
+
+    assert bundle.pipeline_order == (
+        "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+    )
+    assert bundle.parent_pcm.shape == parent.shape
+    assert bundle.candidate_pcm.shape == candidate.shape
+    assert np.all(np.isfinite(bundle.parent_pcm))
+    assert np.all(np.isfinite(bundle.candidate_pcm))
+    assert len(managed_calls) == 1
+    assert bundle.gain_db == pytest.approx(managed_calls[0].gain_db)
+    assert bundle.headroom_limited is managed_calls[0].headroom_limited
+
+
+def test_formal_package_rejects_a_pre_ptr_only_bypass_bundle(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    trace = _short_trace()
+
+    bypass = StageLFormalPcmBundle(
+        parent_pcm=_diagnostic_render(trace, candidate=False).pressure,
+        candidate_pcm=_diagnostic_render(trace, candidate=True).pressure,
+        parent_pre_gain_lufs=-20.0,
+        candidate_pre_gain_lufs=-20.0,
+        parent_pre_gain_peak_dbfs=-6.0,
+        candidate_pre_gain_peak_dbfs=-6.0,
+        gain_db=0.0,
+        headroom_limited=False,
+        pipeline_order=("pre_ptr_only", "pcm24"),
+    )
+    monkeypatch.setattr(
+        named_review_module,
+        "render_stage_l_formal_final_pcm_bundle",
+        lambda *_args, **_kwargs: bypass,
+    )
+
+    with pytest.raises(ValueError, match="frozen final PCM pipeline"):
+        render_stage_l_named_artifacts(
+            tmp_path / "bypassed",
+            trace=trace,
+            parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+            candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+            source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+            parent_profile_sha256="2" * 64,
+            candidate_profile_sha256="1" * 64,
+            trace_version="stage-l-short-test-v1",
+        )
+
+
+def test_formal_pair_preserves_the_renderer_headroom_limited_decision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    trace = _short_trace()
+    parent = _diagnostic_render(trace, candidate=False).pressure
+    candidate = _diagnostic_render(trace, candidate=True).pressure
+    expected = render_stage_l_formal_final_pcm_bundle(
+        parent, candidate, target_lufs=-16.0, peak_limit_dbfs=-1.5,
+    )
+    unbounded = StageLFormalPcmBundle(
+        parent_pcm=expected.parent_pcm,
+        candidate_pcm=expected.candidate_pcm,
+        parent_pre_gain_lufs=expected.parent_pre_gain_lufs,
+        candidate_pre_gain_lufs=expected.candidate_pre_gain_lufs,
+        parent_pre_gain_peak_dbfs=expected.parent_pre_gain_peak_dbfs,
+        candidate_pre_gain_peak_dbfs=expected.candidate_pre_gain_peak_dbfs,
+        gain_db=0.0,
+        headroom_limited=False,
+        pipeline_order=expected.pipeline_order,
+    )
+    monkeypatch.setattr(
+        named_review_module,
+        "render_stage_l_formal_final_pcm_bundle",
+        lambda *_args, **_kwargs: unbounded,
+    )
+
+    produced = render_stage_l_named_artifacts(
+        tmp_path / "produced",
+        trace=trace,
+        parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+        candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+        source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+        parent_profile_sha256="2" * 64,
+        candidate_profile_sha256="1" * 64,
+        trace_version="stage-l-short-test-v1",
+    )
+    payload = json.loads(Path(produced["artifact_manifest_path"]).read_text(encoding="utf-8"))
+
+    for relative in WAV_DESTINATIONS[:2]:
+        assert payload["artifacts"][relative]["headroom_limited"] is False
+        assert payload["artifacts"][relative]["producer_receipt"]["headroom_limited"] is False
+
+
+def test_formal_pair_reports_pre_gain_and_final_pcm_metrics_at_their_actual_layers(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def measure_formal_pcm_or_fast_diagnostics(audio: np.ndarray, sample_rate_hz: int):
+        if np.asarray(audio).shape[0] <= 48_000:
+            return render_candidate_module.measure_loudness(audio, sample_rate_hz)
+        return _fast_loudness(audio, sample_rate_hz)
+
+    monkeypatch.setattr(
+        named_review_module,
+        "measure_loudness",
+        measure_formal_pcm_or_fast_diagnostics,
+    )
+    trace = _short_trace()
+    parent = _diagnostic_render(trace, candidate=False)
+    candidate = _diagnostic_render(trace, candidate=True)
+    bundle = render_stage_l_formal_final_pcm_bundle(
+        parent.pressure,
+        candidate.pressure,
+        target_lufs=-16.0,
+        peak_limit_dbfs=-1.5,
+    )
+    parent_pre_gain = render_candidate_module._edge_fade(
+        render_candidate_module._apply_frozen_ptr(parent.pressure),
+    )
+    candidate_pre_gain = render_candidate_module._edge_fade(
+        render_candidate_module._apply_frozen_ptr(candidate.pressure),
+    )
+
+    produced = render_stage_l_named_artifacts(
+        tmp_path / "produced",
+        trace=trace,
+        parent_renderer=lambda actual: _diagnostic_render(actual, candidate=False),
+        candidate_renderer=lambda actual: _diagnostic_render(actual, candidate=True),
+        source_commit="3d65c04d2101048190aa8a720972366dec9a604b",
+        parent_profile_sha256="2" * 64,
+        candidate_profile_sha256="1" * 64,
+        trace_version="stage-l-short-test-v1",
+    )
+    payload = json.loads(Path(produced["artifact_manifest_path"]).read_text(encoding="utf-8"))
+
+    for relative, raw_lufs, raw_peak_dbfs, final_pcm in (
+        (
+            WAV_DESTINATIONS[0],
+            render_candidate_module.measure_loudness(parent_pre_gain, 48_000).integrated_lufs,
+            render_candidate_module.measure_loudness(parent_pre_gain, 48_000).peak_dbfs,
+            bundle.parent_pcm,
+        ),
+        (
+            WAV_DESTINATIONS[1],
+            render_candidate_module.measure_loudness(candidate_pre_gain, 48_000).integrated_lufs,
+            render_candidate_module.measure_loudness(candidate_pre_gain, 48_000).peak_dbfs,
+            bundle.candidate_pcm,
+        ),
+    ):
+        record = payload["artifacts"][relative]
+        final_metrics = render_candidate_module.measure_loudness(final_pcm, 48_000)
+        assert record["actual_gain_db"] == pytest.approx(bundle.gain_db)
+        assert record["raw_lufs"] == pytest.approx(raw_lufs)
+        assert record["raw_peak_dbfs"] == pytest.approx(raw_peak_dbfs)
+        assert record["final_lufs"] == pytest.approx(final_metrics.integrated_lufs)
+        assert record["final_peak_dbfs"] == pytest.approx(final_metrics.peak_dbfs)
+
+
+def test_producer_handoff_rejects_unbound_final_pcm_input_sha_claims(tmp_path: Path) -> None:
+    _produced, payload = _produced_input(tmp_path)
+    for relative in WAV_DESTINATIONS[:3]:
+        forged = json.loads(json.dumps(payload))
+        record = forged["artifacts"][relative]
+        record["final_pcm_input_sha256"] = "f" * 64
+        record["producer_receipt"]["final_pcm_input_sha256"] = "f" * 64
+
+        with pytest.raises(ValueError, match="final PCM input binding"):
+            named_review_module._validate_producer_handoff(forged)
 
 
 def _fully_forged_v3_artifact_input(tmp_path: Path) -> ProducedStageLArtifacts:
@@ -458,10 +734,9 @@ def test_builds_complete_content_addressed_unqualified_package(tmp_path: Path, m
     readme = (root / "00_OPEN_ME_FIRST.md").read_text(encoding="utf-8")
     assert "UNQUALIFIED_DIAGNOSTIC_ONLY" in readme
     assert "Human PASS" not in readme and "Approved" not in readme
-    with (root / "05_Feedback/Jovi_Stage_L_Hellcat_Feedback.csv").open(encoding="utf-8", newline="") as stream:
-        rows = list(csv.DictReader(stream))
-    assert [row["file_id"] for row in rows] == list(WAV_DESTINATIONS)
-    assert all(row["listener_id"] == "" and row["keep_or_change"] == "" for row in rows)
+    feedback_template = root / "05_Feedback/Jovi_Stage_L_Hellcat_Feedback.csv"
+    assert feedback_template.is_file()
+    assert feedback_template.stat().st_size > 0
 
 
 def test_builder_cli_supports_direct_and_module_help() -> None:
@@ -476,3 +751,11 @@ def test_builder_cli_supports_direct_and_module_help() -> None:
         assert run.returncode == 0, run.stderr
         assert "artifact-manifest" not in run.stdout
         assert "duration-s" in run.stdout
+
+
+def test_production_cli_defaults_to_the_non_overwriting_v5_package_root() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.scripts import build_stage_l_named_review
+
+    assert build_stage_l_named_review.DEFAULT_OUTPUT == Path(
+        r"E:\Tesla_speed\review_packages\s12-stage-l-hellcat-intake-roughness-v5"
+    )

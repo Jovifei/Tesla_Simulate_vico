@@ -20,6 +20,7 @@ import zlib
 import numpy as np
 
 from .feedback_contract import FEEDBACK_FIELDS
+from .render_candidate import render_stage_l_formal_final_pcm_bundle
 from ..loudness_manager import measure_loudness
 
 
@@ -30,7 +31,7 @@ DIAGNOSTIC_FEEDBACK_ALLOWED = "DIAGNOSTIC_FEEDBACK_ALLOWED"
 ZIP_NAME = "S12_Stage_L_Hellcat_UNQUALIFIED_DIAGNOSTIC_Review.zip"
 PACKAGE_SCOPE = "synthetic; uncalibrated; Hellcat-inspired; vehicle-inspired; not OEM reproduction"
 PRODUCER_SCHEMA = "s12-stage-l-named-artifact-producer-2"
-PACKAGE_ID = "s12-stage-l-hellcat-intake-roughness-v3"
+PACKAGE_ID = "s12-stage-l-hellcat-intake-roughness-v5"
 WAV_DESTINATIONS = (
     "01_Formal_Comparison/01_StageK_Parent_60s.wav",
     "01_Formal_Comparison/02_StageL_Candidate_60s.wav",
@@ -118,6 +119,8 @@ def render_stage_l_named_artifacts(
     trace_version: str,
     candidate_id: str = "hellcat_candidate_v8",
     requested_gain_db: float = 1.9382,
+    formal_target_lufs: float = -16.0,
+    formal_peak_limit_dbfs: float = -1.5,
 ) -> ProducedStageLArtifacts:
     """Produce the hash-bound audio/plot handoff consumed by the package builder.
 
@@ -164,12 +167,39 @@ def render_stage_l_named_artifacts(
         _validate_audio(parent_pressure, "parent pressure")
         _validate_audio(candidate_pressure, "candidate pressure")
 
-        common_gain_db = min(
-            float(requested_gain_db),
-            _headroom_gain_db(max(_peak(parent_pressure), _peak(candidate_pressure))),
+        formal_bundle = render_stage_l_formal_final_pcm_bundle(
+            parent_pressure,
+            candidate_pressure,
+            target_lufs=float(formal_target_lufs),
+            peak_limit_dbfs=float(formal_peak_limit_dbfs),
         )
-        comfort_gain_db = min(float(requested_gain_db), _headroom_gain_db(_peak(candidate_pressure)))
-        parent_final_peak_dbfs = _linear_db(_peak(parent_pressure) * (10.0 ** (common_gain_db / 20.0)))
+        if tuple(formal_bundle.pipeline_order) != (
+            "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+        ):
+            raise ValueError("formal bundle must use the frozen final PCM pipeline")
+        common_gain_db = float(formal_bundle.gain_db)
+        comfort_gain_db = max(
+            0.0,
+            min(float(requested_gain_db), _headroom_gain_db(_peak(formal_bundle.candidate_pcm))),
+        )
+        formal_pipeline = {
+            "pipeline_order": list(formal_bundle.pipeline_order),
+            "target_lufs": float(formal_target_lufs),
+            "peak_limit_dbfs": float(formal_peak_limit_dbfs),
+            "gain_db": common_gain_db,
+            "headroom_limited": bool(formal_bundle.headroom_limited),
+        }
+        comfort_pipeline = {
+            **formal_pipeline,
+            "pipeline_order": [
+                *formal_bundle.pipeline_order,
+                "candidate_comfort_static_gain",
+                "pcm24",
+            ],
+            "comfort_requested_gain_db": float(requested_gain_db),
+            "comfort_additional_gain_db": comfort_gain_db,
+        }
+        parent_final_peak_dbfs = _linear_db(_peak(formal_bundle.parent_pcm))
         artifacts: dict[str, object] = {}
         receipt_context = {
             "source_commit": source_commit, "candidate_id": candidate_id,
@@ -178,16 +208,38 @@ def render_stage_l_named_artifacts(
             "trace_version": trace_version, "trace_sha256": trace_sha,
         }
         formal_specs = (
-            (WAV_DESTINATIONS[0], parent_pressure, parent_path, common_gain_db),
-            (WAV_DESTINATIONS[1], candidate_pressure, candidate_path, common_gain_db),
-            (WAV_DESTINATIONS[2], candidate_pressure, candidate_path, comfort_gain_db),
+            (WAV_DESTINATIONS[0], formal_bundle.parent_pcm, parent_path),
+            (WAV_DESTINATIONS[1], formal_bundle.candidate_pcm, candidate_path),
         )
-        for relative, raw, render_path, gain_db in formal_specs:
+        for relative, final_pcm, render_path in formal_specs:
             artifacts[relative] = _emit_wav_artifact(
-                root, relative, raw, render_path, float(requested_gain_db), gain_db,
+                root, relative, final_pcm, render_path, float(requested_gain_db), 0.0,
                 {"state_kind": "formal"}, receipt_context,
+                reported_gain_db=common_gain_db,
+                reported_headroom_limited=bool(formal_bundle.headroom_limited),
+                final_pipeline=formal_pipeline,
+                final_pcm_input_sha256=_pcm24_array_payload_sha256(final_pcm),
+                reported_raw_lufs=(
+                    formal_bundle.parent_pre_gain_lufs
+                    if relative == WAV_DESTINATIONS[0]
+                    else formal_bundle.candidate_pre_gain_lufs
+                ),
+                reported_raw_peak_dbfs=(
+                    formal_bundle.parent_pre_gain_peak_dbfs
+                    if relative == WAV_DESTINATIONS[0]
+                    else formal_bundle.candidate_pre_gain_peak_dbfs
+                ),
             )
+        artifacts[WAV_DESTINATIONS[2]] = _emit_wav_artifact(
+            root, WAV_DESTINATIONS[2], formal_bundle.candidate_pcm, candidate_path,
+            float(requested_gain_db), comfort_gain_db,
+            {"state_kind": "formal"}, receipt_context,
+            final_pipeline=comfort_pipeline,
+            final_pcm_input_sha256=_pcm24_array_payload_sha256(formal_bundle.candidate_pcm),
+            comfort_additional_gain_db=comfort_gain_db,
+        )
         del formal_specs
+        del formal_bundle
         del parent_pressure
 
         acceleration_specs = (
@@ -238,7 +290,7 @@ def render_stage_l_named_artifacts(
             "trace_binding": {"trace_version": trace_version, "trace_sha256": trace_sha},
             "formal_common_gain_db": common_gain_db,
             "parent_peak_dbfs": parent_final_peak_dbfs,
-            "candidate_peak_dbfs": _linear_db(_peak(candidate_pressure) * (10.0 ** (common_gain_db / 20.0))),
+            "candidate_peak_dbfs": float(artifacts[WAV_DESTINATIONS[1]]["final_peak_dbfs"]),
             "scope": PACKAGE_SCOPE,
         }
         metrics_path.write_text(
@@ -253,10 +305,13 @@ def render_stage_l_named_artifacts(
             "bindings": bindings,
             "formal_common_gain": {
                 "requested_gain_db": float(requested_gain_db), "actual_gain_db": common_gain_db,
-                "headroom_limited": common_gain_db < float(requested_gain_db) - 1.0e-9,
+                "headroom_limited": bool(formal_pipeline["headroom_limited"]),
                 "compressor": False, "limiter": False, "eq": False, "per_section_agc": False,
             },
-            "artifacts": artifacts,
+            "artifacts": {
+                relative: {key: value for key, value in record.items() if key != "_final_pcm"}
+                for relative, record in artifacts.items()
+            },
         }
         handoff_path = root / "stage_l_named_artifacts.json"
         handoff_path.write_text(
@@ -283,6 +338,14 @@ def _emit_wav_artifact(
     actual_gain_db: float,
     event_evidence: Mapping[str, object],
     receipt_context: Mapping[str, str],
+    *,
+    reported_gain_db: float | None = None,
+    reported_headroom_limited: bool | None = None,
+    final_pipeline: Mapping[str, object] | None = None,
+    final_pcm_input_sha256: str | None = None,
+    comfort_additional_gain_db: float | None = None,
+    reported_raw_lufs: float | None = None,
+    reported_raw_peak_dbfs: float | None = None,
 ) -> dict[str, object]:
     """Write and measure one WAV before the caller releases its render arrays."""
     raw = np.asarray(raw_audio, dtype=np.float64)
@@ -292,12 +355,29 @@ def _emit_wav_artifact(
     health = _pcm24_health(destination)
     if not health["passes"]:
         raise ValueError(f"produced WAV failed health gate: {relative}")
-    raw_loudness = measure_loudness(raw, 48_000)
-    raw_lufs = float(raw_loudness.integrated_lufs)
-    raw_peak_dbfs = float(raw_loudness.peak_dbfs)
-    final_lufs = raw_lufs + actual_gain_db if math.isfinite(raw_lufs) else raw_lufs
-    final_peak_dbfs = raw_peak_dbfs + actual_gain_db if math.isfinite(raw_peak_dbfs) else raw_peak_dbfs
-    pcm_sha = _sha256(destination)
+    if (reported_raw_lufs is None) != (reported_raw_peak_dbfs is None):
+        raise ValueError("raw loudness and peak overrides must be supplied together")
+    if reported_raw_lufs is None:
+        raw_loudness = measure_loudness(raw, 48_000)
+        raw_lufs = float(raw_loudness.integrated_lufs)
+        raw_peak_dbfs = float(raw_loudness.peak_dbfs)
+        final_lufs = raw_lufs + actual_gain_db if math.isfinite(raw_lufs) else raw_lufs
+        final_peak_dbfs = raw_peak_dbfs + actual_gain_db if math.isfinite(raw_peak_dbfs) else raw_peak_dbfs
+    else:
+        raw_lufs = float(reported_raw_lufs)
+        raw_peak_dbfs = float(reported_raw_peak_dbfs)
+        final_loudness = measure_loudness(final, 48_000)
+        final_lufs = float(final_loudness.integrated_lufs)
+        final_peak_dbfs = float(final_loudness.peak_dbfs)
+    file_sha = _sha256(destination)
+    payload_sha = _pcm24_payload_sha256(destination)
+    record_pcm_sha = payload_sha if final_pipeline is not None else file_sha
+    effective_gain_db = actual_gain_db if reported_gain_db is None else float(reported_gain_db)
+    effective_headroom_limited = (
+        effective_gain_db < requested_gain_db - 1.0e-9
+        if reported_headroom_limited is None
+        else bool(reported_headroom_limited)
+    )
     receipt = {
         "schema_version": PRODUCER_SCHEMA,
         "package_id": PACKAGE_ID,
@@ -310,14 +390,23 @@ def _emit_wav_artifact(
         "source_stems": list(_source_stems(relative)),
         **receipt_context,
         "source_render_path": render_path,
-        "pcm_sha256": pcm_sha,
+        "pcm_sha256": record_pcm_sha,
+        "headroom_limited": effective_headroom_limited,
         "event_evidence": dict(event_evidence),
     }
-    return {
-        "kind": "pcm24_wav", "path": str(destination), "sha256": pcm_sha,
-        "pcm_sha256": pcm_sha, "producer_receipt": receipt,
-        "requested_gain_db": requested_gain_db, "actual_gain_db": actual_gain_db,
-        "headroom_limited": actual_gain_db < requested_gain_db - 1.0e-9,
+    if final_pipeline is not None:
+        if final_pcm_input_sha256 is None:
+            raise ValueError("final PCM artifacts require a PCM input hash")
+        receipt["final_pcm_sha256"] = payload_sha
+        receipt["final_pcm_input_sha256"] = final_pcm_input_sha256
+        receipt["final_pipeline"] = dict(final_pipeline)
+        if comfort_additional_gain_db is not None:
+            receipt["comfort_additional_gain_db"] = float(comfort_additional_gain_db)
+    record: dict[str, object] = {
+        "kind": "pcm24_wav", "path": str(destination), "sha256": file_sha,
+        "pcm_sha256": record_pcm_sha, "producer_receipt": receipt,
+        "requested_gain_db": requested_gain_db, "actual_gain_db": effective_gain_db,
+        "headroom_limited": effective_headroom_limited,
         "raw_lufs": raw_lufs,
         "final_lufs": final_lufs,
         "raw_peak_dbfs": raw_peak_dbfs,
@@ -332,6 +421,13 @@ def _emit_wav_artifact(
             "trace_sha256": receipt_context["trace_sha256"],
         },
     }
+    if final_pipeline is not None:
+        record["final_pcm_sha256"] = payload_sha
+        record["final_pcm_input_sha256"] = final_pcm_input_sha256
+        record["final_pipeline"] = dict(final_pipeline)
+        if comfort_additional_gain_db is not None:
+            record["comfort_additional_gain_db"] = float(comfort_additional_gain_db)
+    return record
 
 
 def _validate_audio(value: np.ndarray, label: str) -> None:
@@ -426,6 +522,19 @@ def _write_pcm24(path: Path, audio: np.ndarray) -> None:
         stream.setsampwidth(3)
         stream.setframerate(48_000)
         stream.writeframes(packed)
+
+
+def _pcm24_array_payload_sha256(audio: np.ndarray) -> str:
+    pcm = np.clip(np.rint(np.asarray(audio, dtype=np.float64) * 8388607.0), -8388608, 8388607).astype("<i4")
+    payload = pcm.reshape(-1).view(np.uint8).reshape(-1, 4)[:, :3].tobytes()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _pcm24_payload_sha256(path: Path) -> str:
+    """Hash PCM payload bytes, excluding the WAV container header."""
+    with wave.open(str(path), "rb") as stream:
+        payload = stream.readframes(stream.getnframes())
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _trace_sha256(trace: object) -> str:
@@ -582,7 +691,18 @@ def build_unqualified_diagnostic_package(
                     if field not in record:
                         raise ValueError(f"WAV artifact missing {field}: {relative}")
                     item[field] = record[field]
-                item["pcm_sha256"] = output_sha
+                if relative in WAV_DESTINATIONS[:3]:
+                    output_pcm_sha = _pcm24_payload_sha256(destination)
+                    if output_pcm_sha != record["pcm_sha256"]:
+                        raise ValueError(f"copied frozen-final PCM payload binding failed: {relative}")
+                    item["pcm_sha256"] = record["pcm_sha256"]
+                    item["final_pcm_sha256"] = record["final_pcm_sha256"]
+                    item["final_pcm_input_sha256"] = record["final_pcm_input_sha256"]
+                    item["final_pipeline"] = record["final_pipeline"]
+                    if "comfort_additional_gain_db" in record:
+                        item["comfort_additional_gain_db"] = record["comfort_additional_gain_db"]
+                else:
+                    item["pcm_sha256"] = output_sha
                 item["pcm_health"] = health
                 wav_evidence.append(item)
             elif relative.endswith(".png"):
@@ -715,6 +835,12 @@ def _validate_producer_handoff(source: Mapping[str, object]) -> None:
         receipt = record.get("producer_receipt") if isinstance(record, dict) else None
         if not isinstance(receipt, dict):
             raise ValueError(f"producer receipt is required: {relative}")
+        frozen_final = relative in WAV_DESTINATIONS[:3]
+        if frozen_final:
+            payload_sha = _pcm24_payload_sha256(Path(str(record.get("path", ""))))
+            final_pipeline = record.get("final_pipeline")
+            if not isinstance(final_pipeline, dict):
+                raise ValueError(f"formal final pipeline is required: {relative}")
         expected = {
             "schema_version": PRODUCER_SCHEMA,
             "package_id": PACKAGE_ID,
@@ -732,10 +858,46 @@ def _validate_producer_handoff(source: Mapping[str, object]) -> None:
             "trace_version": bindings["trace_version"],
             "trace_sha256": bindings["trace_sha256"],
             "source_render_path": record.get("source_render_path"),
-            "pcm_sha256": record.get("sha256"),
+            "pcm_sha256": payload_sha if frozen_final else record.get("sha256"),
+            "headroom_limited": record.get("headroom_limited"),
             "event_evidence": receipt.get("event_evidence"),
         }
-        if receipt != expected or record.get("pcm_sha256") != record.get("sha256"):
+        if frozen_final:
+            expected_order = (
+                ["frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24"]
+                if relative in WAV_DESTINATIONS[:2]
+                else [
+                    "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+                    "candidate_comfort_static_gain", "pcm24",
+                ]
+            )
+            if final_pipeline.get("pipeline_order") != expected_order:
+                raise ValueError(f"formal final pipeline order is invalid: {relative}")
+            input_sha = record.get("final_pcm_input_sha256")
+            if not isinstance(input_sha, str) or len(input_sha) != 64:
+                raise ValueError(f"final PCM input binding is missing: {relative}")
+            if relative in WAV_DESTINATIONS[:2] and input_sha != payload_sha:
+                raise ValueError(f"final PCM input binding mismatch: {relative}")
+            if relative == WAV_DESTINATIONS[2]:
+                candidate_record = source["artifacts"][WAV_DESTINATIONS[1]]
+                candidate_pcm_sha = _pcm24_payload_sha256(Path(str(candidate_record.get("path", ""))))
+                if input_sha != candidate_pcm_sha:
+                    raise ValueError(f"final PCM input binding mismatch: {relative}")
+            expected["final_pcm_sha256"] = payload_sha
+            expected["final_pcm_input_sha256"] = input_sha
+            expected["final_pipeline"] = final_pipeline
+            if relative == WAV_DESTINATIONS[2]:
+                expected["comfort_additional_gain_db"] = record.get("comfort_additional_gain_db")
+            valid_pcm_binding = (
+                record.get("pcm_sha256") == payload_sha
+                and record.get("final_pcm_sha256") == payload_sha
+                and receipt.get("final_pcm_sha256") == payload_sha
+                and receipt.get("final_pcm_input_sha256") == record.get("final_pcm_input_sha256")
+                and record.get("sha256") == _sha256(Path(str(record.get("path", ""))))
+            )
+        else:
+            valid_pcm_binding = record.get("pcm_sha256") == record.get("sha256")
+        if receipt != expected or not valid_pcm_binding:
             raise ValueError(f"producer receipt binding mismatch: {relative}")
         if not isinstance(receipt["frame_count"], int) or receipt["frame_count"] <= 0:
             raise ValueError(f"producer frame count is invalid: {relative}")
@@ -746,8 +908,9 @@ def _validate_producer_handoff(source: Mapping[str, object]) -> None:
             allowed = {previous, relative} == {WAV_DESTINATIONS[1], WAV_DESTINATIONS[2]}
             if not allowed:
                 raise ValueError(f"producer semantic roles may not share identical PCM: {previous}, {relative}")
-            if source["artifacts"][previous]["actual_gain_db"] != record["actual_gain_db"]:
-                raise ValueError("candidate/comfort identical PCM requires identical actual gain")
+            comfort = source["artifacts"][WAV_DESTINATIONS[2]]
+            if comfort.get("comfort_additional_gain_db") != 0.0:
+                raise ValueError("candidate/comfort identical PCM requires zero comfort gain")
         seen_pcm[pcm] = relative
 
 

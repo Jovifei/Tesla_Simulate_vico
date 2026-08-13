@@ -206,7 +206,15 @@
       "name": "tracked_only_status",
       "data_source": "Task10 fresh session controller",
       "exit_code": 0,
-      "working_tree_status": "empty",
+      "tracked_only_status": "empty",
+      "all_files_status": {
+        "state": "NOT_EMPTY",
+        "reported_entries": 70,
+        "reported_tracked_entries": 5,
+        "reported_untracked_entries": 65,
+        "untracked_content_inspected": false,
+        "limitation": "global git ignore permission warning and inaccessible historical temporary directories"
+      },
       "command_duration_seconds": "NOT_CAPTURED"
     }
   ],
@@ -236,6 +244,38 @@
       "symbols": 2
     },
     "loudness_sha256": "26feb740842a1e4db93e0a83fd7924c17c1ee5cfb8d1737a304af83e3e163fd3"
+  },
+  "final_review_remediation_evidence": {
+    "named_review_no_csv_content_read": {
+      "data_source": "JUnit",
+      "reported_tests": 20,
+      "reported_failures": 0,
+      "reported_errors": 0,
+      "junit_sha256": "a77c065fb092e2869d205986926f7f854138ef602aebac68bbb3cbaaa8ecdf1a",
+      "shell_exit": 0
+    },
+    "stage_l_non_csv_regression": {
+      "data_source": "JUnit",
+      "reported_tests": 200,
+      "reported_failures": 0,
+      "reported_errors": 0,
+      "reported_skipped": 0,
+      "pytest_duration_seconds": 115.985,
+      "junit_sha256": "f9cae0b593aab3df4239a3ee81acf1f34f7280f2f4ca7be422c996bd394a9f61",
+      "shell_exit": "NOT_CAPTURED_SESSION_CLOSED"
+    },
+    "package_validation": {
+      "package_id": "s12-stage-l-hellcat-intake-roughness-v5",
+      "producer_manifest_sha256": "73eba07f818b78680083e7f230aab8a222c2d9ecfbaf31e614fb8dbc6240af16",
+      "package_manifest_sha256": "9d2c93a0509b00e612d74dbc646541b74f165cdd286b3d07f46add625d8228c8",
+      "zip_sha256": "de543beb2d0facb5e02e72b9d4cb864e7f6f472ad236a2be004123bcb3883205",
+      "wav_pcm24_health": "13_OF_13_PASS",
+      "non_csv_sha256sums_checked": "21_OF_22",
+      "csv_content_read": false,
+      "zip_central_directory_members": 23,
+      "formal_pcm_pipeline": "Frozen PTR -> Edge Fade -> One Whole-Cycle Gain -> PCM24",
+      "formal_metric_layers": "pre-gain arrays measured after Frozen PTR and Edge Fade; final metrics measured from PCM24"
+    }
   },
   "evidence_interpretation": {
     "status": "PARTIAL",

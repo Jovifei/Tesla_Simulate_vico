@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import dataclass, replace
 import hashlib
 from pathlib import Path
 
@@ -54,6 +54,56 @@ _CONTRIBUTORS = _HEMI_CONTRIBUTORS + _SC_CONTRIBUTORS
 _AGGREGATES = (
     "exhaust", "hemi_exhaust", "hemi_combustion_and_blowdown", "supercharger_intake",
 )
+
+
+@dataclass(frozen=True)
+class StageLFormalPcmBundle:
+    """Exact frozen final-PCM result for the formal parent/candidate pair."""
+
+    parent_pcm: np.ndarray
+    candidate_pcm: np.ndarray
+    parent_pre_gain_lufs: float
+    candidate_pre_gain_lufs: float
+    parent_pre_gain_peak_dbfs: float
+    candidate_pre_gain_peak_dbfs: float
+    gain_db: float
+    headroom_limited: bool
+    pipeline_order: tuple[str, ...]
+
+
+def render_stage_l_formal_final_pcm_bundle(
+    parent_pressure: np.ndarray,
+    candidate_pressure: np.ndarray,
+    target_lufs: float,
+    peak_limit_dbfs: float,
+) -> StageLFormalPcmBundle:
+    """Apply the frozen PTR-to-PCM chain once across the formal comparison pair."""
+    parent_pre_gain = _edge_fade(_apply_frozen_ptr(parent_pressure))
+    candidate_pre_gain = _edge_fade(_apply_frozen_ptr(candidate_pressure))
+    parent_pre_gain_metrics = measure_loudness(parent_pre_gain, _SAMPLE_RATE_HZ)
+    candidate_pre_gain_metrics = measure_loudness(candidate_pre_gain, _SAMPLE_RATE_HZ)
+    managed = manage_bundle_loudness(
+        {
+            "parent": parent_pre_gain,
+            "candidate": candidate_pre_gain,
+        },
+        _SAMPLE_RATE_HZ,
+        target_lufs=float(target_lufs),
+        peak_limit_dbfs=float(peak_limit_dbfs),
+    )
+    return StageLFormalPcmBundle(
+        parent_pcm=_pcm24_roundtrip(managed.segments["parent"]),
+        candidate_pcm=_pcm24_roundtrip(managed.segments["candidate"]),
+        parent_pre_gain_lufs=float(parent_pre_gain_metrics.integrated_lufs),
+        candidate_pre_gain_lufs=float(candidate_pre_gain_metrics.integrated_lufs),
+        parent_pre_gain_peak_dbfs=float(parent_pre_gain_metrics.peak_dbfs),
+        candidate_pre_gain_peak_dbfs=float(candidate_pre_gain_metrics.peak_dbfs),
+        gain_db=float(managed.gain_db),
+        headroom_limited=bool(managed.headroom_limited),
+        pipeline_order=(
+            "frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24",
+        ),
+    )
 
 
 def render_stage_l_parent(trace: VehicleStateTrace) -> SourceRender:
