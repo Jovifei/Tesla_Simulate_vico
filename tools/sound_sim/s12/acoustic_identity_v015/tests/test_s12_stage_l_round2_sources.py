@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import VehicleStateTrace
+from tools.sound_sim.s12.acoustic_identity_v015.stage_l import candidate_profiles as candidate_profiles_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_l.candidate_profiles import (
     load_stage_l_candidate,
 )
@@ -72,6 +77,12 @@ HEMI_V8 = {
 }
 
 
+def _write_v9_payload(tmp_path: Path, payload: dict[str, object], name: str) -> Path:
+    path = tmp_path / f"{name}.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path
+
+
 def _trace(load: np.ndarray, throttle: np.ndarray, *, sample_rate_hz: int = 8_000) -> VehicleStateTrace:
     count = load.size
     time_s = np.arange(count, dtype=np.float64) / sample_rate_hz
@@ -97,6 +108,83 @@ def test_v9_schema_is_separate_and_exposes_exact_round2_public_parameters() -> N
     receipt = candidate.payload["round2_feedback_receipt"]
     assert receipt["human_pass"] is False
     assert receipt["csv_content_read"] is False
+
+
+def test_v9_loader_fails_closed_when_round2_contract_metadata_drifts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payload = json.loads(V9_PATH.read_text(encoding="utf-8"))
+    accepted: list[str] = []
+    parameter_mutations = {
+        "value": lambda record: record.__setitem__("value", record["range"][0]),
+        "range": lambda record: record.__setitem__(
+            "range", [record["range"][0] - 1.0, record["range"][1] + 1.0]
+        ),
+        "unit": lambda record: record.__setitem__("unit", "drifted_unit"),
+        "source_scope": lambda record: record.__setitem__("source_scope", "drifted_scope"),
+        "source_level": lambda record: record.__setitem__("source_level", "B"),
+        "source": lambda record: record.__setitem__("source", "measured"),
+        "verification_state": lambda record: record.__setitem__("verification_state", "verified"),
+    }
+    parameter_sections = {
+        "supercharger_intake": SC_V9_PARAMETERS,
+        "combustion_and_blowdown": HEMI_V9_PARAMETERS,
+        "afterfire": AFTERFIRE_V9_PARAMETERS,
+    }
+    for section, names in parameter_sections.items():
+        for name in names:
+            for field, mutate in parameter_mutations.items():
+                drifted = deepcopy(payload)
+                mutate(drifted[section][name])
+                path = _write_v9_payload(tmp_path, drifted, f"{section}-{name}-{field}")
+                try:
+                    load_stage_l_candidate(path)
+                except ValueError:
+                    continue
+                accepted.append(f"{section}.{name}.{field}")
+
+    for field in payload["round2_feedback_receipt"]:
+        drifted = deepcopy(payload)
+        value = drifted["round2_feedback_receipt"][field]
+        drifted["round2_feedback_receipt"][field] = not value if isinstance(value, bool) else "drifted"
+        path = _write_v9_payload(tmp_path, drifted, f"round2-binding-{field}")
+        try:
+            load_stage_l_candidate(path)
+        except ValueError:
+            continue
+        accepted.append(f"round2_feedback_receipt.{field}")
+
+    receipt_path = Path(candidate_profiles_module._ROUND2_FEEDBACK_RECEIPT_PATH)
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["claims"][0] = "Drifted Round-2 engineering claim."
+    drifted_receipt = tmp_path / "drifted-round2-feedback-receipt.json"
+    drifted_receipt.write_text(json.dumps(receipt), encoding="utf-8")
+    receipt_sha = hashlib.sha256(drifted_receipt.read_bytes()).hexdigest()
+    with monkeypatch.context() as receipt_patch:
+        receipt_patch.setattr(candidate_profiles_module, "_ROUND2_FEEDBACK_RECEIPT_PATH", drifted_receipt)
+        receipt_patch.setattr(candidate_profiles_module, "_ROUND2_FEEDBACK_RECEIPT_SHA256", receipt_sha)
+        receipt_patch.setattr(
+            candidate_profiles_module,
+            "_EXPECTED_ROUND2_FEEDBACK",
+            {**candidate_profiles_module._EXPECTED_ROUND2_FEEDBACK, "sha256": receipt_sha},
+        )
+        drifted = deepcopy(payload)
+        drifted["round2_feedback_receipt"]["sha256"] = receipt_sha
+        try:
+            load_stage_l_candidate(_write_v9_payload(tmp_path, drifted, "round2-receipt-claim"))
+        except ValueError:
+            pass
+        else:
+            accepted.append("round2_feedback_receipt.claims")
+
+    assert not accepted, f"v9 contract metadata drift loaded: {accepted}"
+
+    candidate = load_stage_l_candidate(V9_PATH)
+    for section, names in parameter_sections.items():
+        for name in names:
+            lower_bound = candidate.payload[section][name]["range"][0]
+            changed = candidate.with_parameter(section, name, lower_bound)
+            assert changed.parameter(section, name) == lower_bound
 
 
 def test_sc_v6_is_v5_below_knee_and_modulates_then_attenuates_whine_above_knee() -> None:

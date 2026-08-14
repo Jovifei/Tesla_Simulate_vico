@@ -80,6 +80,66 @@ PARAMETER_KEYS_V2 = {
         "body_mix", "bright_mix", "decay_90_10_s",
     },
 }
+_PARAMETER_METADATA_V2 = {
+    "combustion_and_blowdown": {
+        "acceleration_blowdown_body_gain": {
+            "default": 1.35, "range": [1.0, 1.6], "unit": "ratio",
+            "source_scope": "smooth_high_load_blowdown_body_delta",
+        },
+        "low_frequency_blowdown_gain": {
+            "default": 1.28, "range": [1.2, 1.35], "unit": "ratio",
+            "source_scope": "v8_baseline_high_load_body_delta",
+        },
+        "structure_shock_mix": {
+            "default": 0.13, "range": [0.1, 0.16], "unit": "ratio",
+            "source_scope": "v8_baseline_high_load_structure_delta",
+        },
+        "torque_ripple_modulation_depth": {
+            "default": 0.14, "range": [0.11, 0.17], "unit": "ratio",
+            "source_scope": "v8_baseline_high_load_torque_delta",
+        },
+    },
+    "supercharger_intake": {
+        "combustion_ripple_to_aero_depth": {
+            "default": 0.09, "range": [0.04, 0.16], "unit": "ratio",
+            "source_scope": "shared_clock_zero_mean_unit_rms_aero_envelope",
+        },
+        "high_load_whine_knee": {
+            "default": 0.30, "range": [0.20, 0.40], "unit": "load_throttle_ratio",
+            "source_scope": "high_load_whine_blend_knee",
+        },
+        "high_load_whine_post_knee_slope": {
+            "default": 0.65, "range": [0.45, 0.85], "unit": "ratio",
+            "source_scope": "monotonic_high_load_whine_attenuation",
+        },
+    },
+    "afterfire": {
+        "minimum_rpm": {
+            "default": 3300.0, "range": [2800.0, 4200.0], "unit": "rpm",
+            "source_scope": "afterfire_qualification_minimum_rpm",
+        },
+        "residual_energy_gain": {
+            "default": 0.85, "range": [0.55, 1.25], "unit": "ratio",
+            "source_scope": "afterfire_residual_exhaust_energy",
+        },
+        "event_energy_threshold": {
+            "default": 0.35, "range": [0.20, 0.50], "unit": "ratio",
+            "source_scope": "afterfire_event_qualification_threshold",
+        },
+        "body_mix": {
+            "default": 0.68, "range": [0.55, 0.80], "unit": "ratio",
+            "source_scope": "afterfire_body_template_mix",
+        },
+        "bright_mix": {
+            "default": 0.20, "range": [0.10, 0.30], "unit": "ratio",
+            "source_scope": "afterfire_bright_template_mix",
+        },
+        "decay_90_10_s": {
+            "default": 0.045, "range": [0.025, 0.070], "unit": "s",
+            "source_scope": "afterfire_decay_90_10",
+        },
+    },
+}
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _L0_RECEIPT_ROOT = _REPO_ROOT / "tasks" / "reports" / "runtime" / "s12-stage-l-hellcat-calibration-v1"
@@ -100,6 +160,26 @@ _EXPECTED_ROUND2_FEEDBACK = {
     "feedback_scope": "named_round2_engineering_direction",
     "human_pass": False,
     "csv_content_read": False,
+}
+_EXPECTED_ROUND2_RECEIPT = {
+    "schema_version": "s12-stage-l-hellcat-round2-feedback-receipt-1",
+    "receipt_status": "TEXT_ONLY_ENGINEERING_DIRECTION",
+    "feedback_scope": "named_round2_engineering_direction",
+    "windows_s": {
+        "v8_byte_freeze": [0.0, 8.0],
+        "third_shift_whine_balance": [24.0, 26.0],
+        "sustained_high_load": [26.0, 36.0],
+        "afterfire": [36.0, 46.0],
+    },
+    "claims": [
+        "Increase the synthetic 6.2 L HEMI V8 blowdown body during high-load acceleration.",
+        "Reduce high-load twin-screw whine while retaining moving orders and shared crank-clock coherence.",
+        "Qualify deterministic afterfire only from high-load hot history and throttle-close conditions.",
+    ],
+    "human_pass": False,
+    "csv_content_read": False,
+    "qualification_status": "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY",
+    "provenance": "C-level synthetic engineering direction; uncalibrated; Hellcat-inspired; not OEM reproduction",
 }
 _FEEDBACK_KEYS = {
     "stage_k_package_sha256", "formal_template_sha256", "formal_template_status",
@@ -180,7 +260,7 @@ class StageLCandidateProfile:
             raise ValueError(f"unknown Stage-L parameter: {section}.{name}")
         payload = deepcopy(self.payload)
         payload[section][name]["value"] = float(value)
-        _validate_payload(payload)
+        _validate_payload(payload, allow_v2_value_override=True)
         return StageLCandidateProfile(payload, self.path)
 
 
@@ -212,7 +292,7 @@ def load_stage_l_candidate(path: str | Path) -> StageLCandidateProfile:
     return StageLCandidateProfile(payload, candidate_path)
 
 
-def _validate_payload(payload: Any) -> None:
+def _validate_payload(payload: Any, *, allow_v2_value_override: bool = False) -> None:
     if not isinstance(payload, Mapping):
         raise ValueError("Stage-L candidate must be an object")
     schema_version = payload.get("schema_version")
@@ -277,7 +357,15 @@ def _validate_payload(payload: Any) -> None:
         if not isinstance(value, Mapping) or set(value) != parameter_keys[section]:
             raise ValueError(f"{section} public parameter keys mismatch")
         for name, record in value.items():
-            _validate_parameter(f"{section}.{name}", record)
+            expected_metadata = (
+                _PARAMETER_METADATA_V2[section][name]
+                if schema_version == SCHEMA_VERSION_V2
+                else None
+            )
+            _validate_parameter(
+                f"{section}.{name}", record, expected_metadata,
+                allow_value_override=allow_v2_value_override,
+            )
     _validate_loudness(payload.get("loudness"))
     _validate_locked_layers(payload.get("locked_layers"))
     _validate_provenance(payload.get("provenance"), schema_version)
@@ -301,25 +389,7 @@ def _validate_round2_feedback_binding(value: Mapping[str, Any]) -> None:
         _ROUND2_FEEDBACK_RECEIPT_SHA256,
         "Round-2 text feedback",
     )
-    expected_windows = {
-        "v8_byte_freeze": [0.0, 8.0],
-        "third_shift_whine_balance": [24.0, 26.0],
-        "sustained_high_load": [26.0, 36.0],
-        "afterfire": [36.0, 46.0],
-    }
-    claims = receipt.get("claims")
-    if (
-        receipt.get("schema_version") != "s12-stage-l-hellcat-round2-feedback-receipt-1"
-        or receipt.get("receipt_status") != "TEXT_ONLY_ENGINEERING_DIRECTION"
-        or receipt.get("feedback_scope") != "named_round2_engineering_direction"
-        or receipt.get("windows_s") != expected_windows
-        or not isinstance(claims, list)
-        or len(claims) != 3
-        or not all(isinstance(claim, str) and claim for claim in claims)
-        or receipt.get("human_pass") is not False
-        or receipt.get("csv_content_read") is not False
-        or receipt.get("qualification_status") != "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY"
-    ):
+    if dict(receipt) != _EXPECTED_ROUND2_RECEIPT:
         raise ValueError("Round-2 feedback receipt contract mismatch")
 
 
@@ -333,7 +403,13 @@ def _validate_crank_clock(value: Any) -> None:
         raise ValueError("crank_clock architecture contract is invalid")
 
 
-def _validate_parameter(name: str, value: Any) -> None:
+def _validate_parameter(
+    name: str,
+    value: Any,
+    expected_metadata: Mapping[str, Any] | None = None,
+    *,
+    allow_value_override: bool = False,
+) -> None:
     required = {"value", "unit", "range", "source_level", "source", "source_scope", "verification_state"}
     if not isinstance(value, Mapping) or set(value) != required:
         raise ValueError(f"{name} provenance record is incomplete")
@@ -345,6 +421,12 @@ def _validate_parameter(name: str, value: Any) -> None:
         raise ValueError(f"{name} provenance must remain C/synthetic/candidate_assumption")
     if not isinstance(value["unit"], str) or not isinstance(value["source_scope"], str) or not value["source_scope"]:
         raise ValueError(f"{name} unit/source_scope is invalid")
+    if expected_metadata is not None:
+        for field in ("range", "unit", "source_scope"):
+            if value[field] != expected_metadata[field]:
+                raise ValueError(f"{name} {field} does not match the frozen v9 contract")
+        if not allow_value_override and value["value"] != expected_metadata["default"]:
+            raise ValueError(f"{name} value does not match the frozen v9 default")
 
 
 def _validate_loudness(value: Any) -> None:
