@@ -1,0 +1,112 @@
+{
+  "schema_version": "s12-stage-k-three-vehicle-round2-seed-probe-1",
+  "trace": {
+    "duration_s": 30.0,
+    "source": "build_drive_cycle_trace(vehicle_id, duration_s=30.0)",
+    "pcm_package_built": false
+  },
+  "vehicles": {
+    "c63_w204": {
+      "seed_parameters": {
+        "bark_body_gain": 1.1,
+        "bark_upper_mix": 0.8,
+        "mechanical_high_load_gain": 0.98
+      },
+      "pressure_accounting": {
+        "baseline": true,
+        "seed": true
+      },
+      "post_shift_band_delta_db": {
+        "80_250_hz": 0.0,
+        "250_1000_hz": 0.0,
+        "1000_4000_hz": 0.0
+      },
+      "high_load_band_delta_db": {
+        "80_250_hz": 0.0001,
+        "250_1000_hz": 0.786,
+        "1000_4000_hz": -1.3392
+      },
+      "lift_band_delta_db": {
+        "80_250_hz": -0.0001,
+        "250_1000_hz": 0.6027,
+        "1000_4000_hz": -0.666
+      },
+      "induction_to_engine_ratio": {
+        "baseline": 0.007183,
+        "seed": 0.006493
+      },
+      "event_kind": "closed_throttle_bark",
+      "event_count": 10,
+      "afterfire_event_count": 0
+    },
+    "gtr_r35": {
+      "seed_parameters": {
+        "exhaust_high_load_gain": 1.08,
+        "turbo_high_load_mix": 0.82,
+        "bov_release_mix": 0.9
+      },
+      "pressure_accounting": {
+        "baseline": true,
+        "seed": true
+      },
+      "post_shift_band_delta_db": {
+        "80_250_hz": 0.0,
+        "250_1000_hz": 0.0,
+        "1000_4000_hz": 0.0
+      },
+      "high_load_band_delta_db": {
+        "80_250_hz": 0.0185,
+        "250_1000_hz": 0.3625,
+        "1000_4000_hz": -1.2625
+      },
+      "lift_band_delta_db": {
+        "80_250_hz": 0.0001,
+        "250_1000_hz": 0.04,
+        "1000_4000_hz": -0.514
+      },
+      "induction_to_engine_ratio": {
+        "baseline": 0.020528,
+        "seed": 0.014928
+      },
+      "event_kind": "boost_history_bov",
+      "event_count": 10,
+      "afterfire_event_count": 0
+    },
+    "lfa": {
+      "seed_parameters": {
+        "order_high_load_mix": 0.95,
+        "intake_high_load_mix": 0.9,
+        "metallic_event_mix": 0.88,
+        "reengagement_gain": 1.0
+      },
+      "pressure_accounting": {
+        "baseline": true,
+        "seed": true,
+        "note": "baseline is measured through the Round-2 reconciled pressure view; historical v2 LFA ASG pressure contains a pressure_pulse alias"
+      },
+      "post_shift_band_delta_db": {
+        "80_250_hz": -0.0,
+        "250_1000_hz": -0.0,
+        "1000_4000_hz": -0.0
+      },
+      "high_load_band_delta_db": {
+        "80_250_hz": -0.0157,
+        "250_1000_hz": -0.2211,
+        "1000_4000_hz": -0.6719
+      },
+      "lift_band_delta_db": {
+        "80_250_hz": -0.0001,
+        "250_1000_hz": -0.0074,
+        "1000_4000_hz": -0.1316
+      },
+      "induction_to_engine_ratio": {
+        "baseline": 0.096677,
+        "seed": 0.085125
+      },
+      "event_kind": "asg_metallic_event",
+      "event_count": 9,
+      "afterfire_event_count": 0
+    }
+  },
+  "status": "DIAGNOSTIC_ONLY; no full hard-gate qualification was attempted"
+}

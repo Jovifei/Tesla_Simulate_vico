@@ -1,0 +1,41 @@
+{
+  "schema_version": "s12-stage-k-three-vehicle-round2-feedback-1",
+  "vehicles": [
+    "c63_w204",
+    "gtr_r35",
+    "lfa"
+  ],
+  "direction_only": true,
+  "windows_s": {
+    "idle": [
+      0.0,
+      8.0
+    ],
+    "post_shift_balance": [
+      24.0,
+      26.0
+    ],
+    "sustained_load": [
+      26.0,
+      36.0
+    ],
+    "lift_and_transient": [
+      36.0,
+      46.0
+    ]
+  },
+  "requirements": [
+    "measure arrays and trace events rather than diagnostics claims",
+    "keep each vehicle source identity and do not share Hellcat-specific layers",
+    "rebuild aggregates after primitive changes and count pressure contributors once",
+    "use one common formal whole-cycle gain and derive Comfort from final Candidate PCM",
+    "bind profile, trace, PCM, frame, duration, SHA and ZIP receipts",
+    "keep status PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY"
+  ],
+  "human_pass": false,
+  "csv_content_read": false,
+  "human_feedback_content_read": false,
+  "sealed_key_read": false,
+  "source": "Jovi-approved Hellcat Round-2 engineering lessons propagated to the three Stage-K vehicles",
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY"
+}

@@ -1271,3 +1271,9 @@ Rules:
 - Source-domain metrics are not final-PCM gates. Reopen the rendered WAV and bind its PCM24/finite/peak/clipping evidence to the package; keep pre-PTR source metrics explicitly labelled as diagnostic.
 - Long 60-second PTR/native numerical renders need isolated workers and streaming release. Do not retain four full `SourceRender` objects or treat a native worker termination as a test failure/pass without recording the actual process result.
 - `read`/`configured` is not `active`: neutral parameters and untriggered event layers must be recorded inactive; active reachability requires a deterministic event and a nonzero before/after effect.
+
+# 2026-08-15 S12 Stage K Round-2 propagation lessons
+
+- Propagating a successful Hellcat measurement pattern to other vehicles still requires vehicle-specific event names and trace windows. A generic `afterfire` fallback can hide C63 bark, GT-R BOV, or LFA ASG semantics; receipts must preserve the named source event and measure the existing Stage-K afterfire separately.
+- Historical aggregate aliases can make a source render fail exact pressure accounting even when primitive stems are correct. Reconcile the Round-2 view explicitly, list excluded aliases, and keep the historical render/profile bytes untouched.
+- A completed formal package can remain diagnostic-only: independent PCM/SHA/ZIP integrity proves transport, not acoustic hard gates or human approval. Keep the package status fail-closed when any vehicle event-eligibility or reference gate is unmet.

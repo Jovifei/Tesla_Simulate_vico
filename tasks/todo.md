@@ -3621,3 +3621,23 @@ Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候�
 - Package：四车 60 s + 场景/诊断 WAV、ZIP SHA `d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef`；状态 `PARTIAL / AUTOMATED_GATE_FAIL` + `WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW`；sealed key 未读取。
 - Reference distance：Hellcat `4.2019%`、C63 `-209.1852%`、GT-R `-64.6546%`、LFA `18.5617%` 平均改善，均未达到 30%；不得进入 Profile Freeze。
 - Remaining：真实 Jovi 具名 CSV 反馈、最多三轮窄范围调音、匿名盲听和 Profile Freeze 均未开始；禁止 Human PASS、Approved、OEM reproduction、Simulink/Runtime/Android。
+
+# S12 Stage K 三车 Round‑2 经验迁移（2026-08-15）
+
+- [x] R2-K0：冻结 C63 W204、GT‑R R35、LFA 当前 candidate profile、Stage K v1 package 与 Track‑P 边界；保留所有既有未跟踪文件。
+- [x] R2-K0：创建 `tasks/plans/2026-08-15-s12-stage-k-three-vehicle-round2-propagation.md`，明确三车专属声源边界、事件窗口和最终 PCM 证据规则。
+- [x] R2-K1：先补 RED：真实数组/事件窗口、aggregate/pressure 单次会计、三车隔离、最终 PCM/Comfort 与 receipt/ZIP 来源绑定。
+- [x] R2-K2：最小 GREEN：只增加三车 Round‑2 证据/指标契约，不修改公共层、Hellcat v9 或 Track‑P。
+- [x] R2-K3：按车型顺序做 8–12 s bounded probe：C63 bark/body、GT‑R twin‑turbo/V6、LFA V10 ASG/lift；每车最多九个完整快照。
+- [x] R2-K4：只在 hard gates 与包完整性通过后生成不覆盖的 `s12-stage-k-three-vehicle-round2-v3`；自动门未全过，状态保持 `UNQUALIFIED_DIAGNOSTIC_ONLY`。
+- [x] R2-K5：执行三车 focused、Stage K/J、Track‑P、冻结 SHA 与 diff 验证并本地提交；不读取 CSV，不进入 Profile Freeze。
+
+Progress (2026-08-15): R2-K1 actual-array/event-window/pressure/vehicle-isolation tests are green; R2-K2 source metrics now include bands, clock coherence, spectral distance and array-derived event/afterfire CV/centroid/decay; R2-K3 vehicle-specific trace-gated seed overlays and bounded coordinate ranking are implemented. The 30 s real seed probe is recorded in `tasks/reports/runtime/s12-stage-k-three-vehicle-round2/stage_k_round2_seed_probe.json`. Final v3 package is published at `E:\Tesla_speed\review_packages\s12-stage-k-three-vehicle-round2-v3`; v1/v2 remain historical and were not overwritten. Fresh evidence: Round‑2 `19 passed / 1 deselected`, compatibility plus package `77 passed`, boundary suite `11 passed`, Track‑P `21 passed` and guard `180 files / 2 symbols`; independent v3 package validation reports zero errors. Status remains `PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY` pending Jovi audition; no CSV was read.
+
+### R2-K review (2026-08-15)
+
+- Scope: C63 W204, GT‑R R35, and LFA only. Hellcat/Stage L, public layers, Frozen PTR, loudness manager, MATLAB/Simulink, Android, and Track‑P remain untouched.
+- Actual evidence: event windows are trace-derived; source metrics declare `actual_arrays_and_trace` and `diagnostics_claims_used=false`; LFA's historical aggregate alias is reconciled in the Round‑2 view before pressure accounting.
+- Package: 3 vehicles × (parent/baseline/candidate/comfort + 4 source-domain diagnostics), 24 WAV, 28 SHA entries, 29 ZIP members; all PCM headers/frames/receipt hashes/Comfort input SHA/ZIP CRC independently match.
+- Semantic receipts: C63 `closed_throttle_bark`, GT‑R `boost_history_bov`, LFA `asg_metallic_event`; existing Stage‑K afterfire is separately labelled. LFA event eligibility still fails an automatic wrong-condition gate, so no candidate is qualified.
+- Human/qualification boundary: `human_pass=false`, `csv_content_read=false`, no OEM claim, no Profile Freeze or Approved status. Await Jovi's explicitly labelled audition feedback before another round.
