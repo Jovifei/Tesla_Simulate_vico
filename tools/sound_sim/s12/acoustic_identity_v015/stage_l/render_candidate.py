@@ -87,6 +87,7 @@ class StageLRound2FormalPcmBundle:
     headroom_limited: bool
     pipeline_order: tuple[str, ...]
     comfort_pipeline_order: tuple[str, ...]
+    comfort_final_pipeline_order: tuple[str, ...]
 
 
 def render_stage_l_round2_formal_final_pcm_bundle(
@@ -134,7 +135,11 @@ def render_stage_l_round2_formal_final_pcm_bundle(
         comfort_gain_db=float(comfort_gain_db),
         headroom_limited=bool(managed.headroom_limited),
         pipeline_order=order,
+        # Keep the historical semantic stages available to callers while also
+        # exposing the terminal PCM24 write that produces the actual comfort
+        # WAV.  The package receipt uses the latter.
         comfort_pipeline_order=(*order, "candidate_comfort_static_gain"),
+        comfort_final_pipeline_order=(*order, "candidate_comfort_static_gain", "pcm24"),
     )
 
 
@@ -748,6 +753,8 @@ def _apply_current_frozen_layers(
     *, include_l4: bool = False,
 ) -> SourceRender:
     """Apply current common pre-PTR layers without changing their implementations."""
+    source_round2 = bool(source.diagnostics.get("round2_renderer_dispatch"))
+    source_round2_usage = source.diagnostics.get("candidate_parameter_usage")
     operating = candidate.payload["operating_level"]
     trim = OperatingLevelTrim(
         low_load_gain_db=float(operating["low_load_gain_db"]["value"]),
@@ -759,7 +766,11 @@ def _apply_current_frozen_layers(
         smoothing_s=float(operating["smoothing_s"]["value"]),
     )
     contributors = tuple(source.diagnostics["pressure_stem_contract"]["contributors"])
-    continuous = tuple(name for name in contributors if not name.endswith("bypass_release"))
+    continuous = tuple(
+        name for name in contributors
+        if not name.endswith("bypass_release")
+        and not (source_round2 and name == "afterfire")
+    )
     render = apply_source_operating_trim(
         source, trace, stem_names=continuous, trim=trim, sample_rate_hz=_SAMPLE_RATE_HZ,
     )
@@ -799,23 +810,32 @@ def _apply_current_frozen_layers(
     render = _append_pressure_contributors(
         render, ("idle_combustion_variation", "idle_accessory", "idle_valvetrain", "idle_crank")
     )
-    render = apply_afterfire(render, "hellcat", trace, _SAMPLE_RATE_HZ)
-    render = _append_pressure_contributors(render, ("afterfire",))
-    afterfire_before = np.asarray(render.stems["afterfire"], dtype=np.float64).copy()
-    afterfire_scale = float(candidate.payload["afterfire"]["gain_scale"]["value"])
-    render = _scale_event_stem(
-        render, "afterfire", afterfire_scale
-    )
-    afterfire_active = (
-        bool(np.any(afterfire_before))
-        and bool(np.max(np.abs(np.asarray(render.stems["afterfire"]) - afterfire_before)) > 1.0e-15)
-    )
-    render = _merge_candidate_parameter_usage(
-        render,
-        candidate,
-        read={"afterfire.gain_scale"},
-        active={"afterfire.gain_scale"} if afterfire_active else set(),
-    )
+    round2 = source_round2 or candidate.payload["schema_version"] == "s12-stage-l-hellcat-candidate-profile-2"
+    if round2:
+        # v9 already contains the Hellcat-specific, shared-clock afterfire
+        # contributor.  The generic Stage-L afterfire path is intentionally
+        # bypassed so the event is counted exactly once and no v1
+        # ``gain_scale`` parameter is fabricated for the schema-v2 contract.
+        if "afterfire" not in render.stems:
+            raise ValueError("schema-v2 candidate must provide its afterfire contributor")
+    else:
+        render = apply_afterfire(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+        render = _append_pressure_contributors(render, ("afterfire",))
+        afterfire_before = np.asarray(render.stems["afterfire"], dtype=np.float64).copy()
+        afterfire_scale = float(candidate.payload["afterfire"]["gain_scale"]["value"])
+        render = _scale_event_stem(
+            render, "afterfire", afterfire_scale
+        )
+        afterfire_active = (
+            bool(np.any(afterfire_before))
+            and bool(np.max(np.abs(np.asarray(render.stems["afterfire"]) - afterfire_before)) > 1.0e-15)
+        )
+        render = _merge_candidate_parameter_usage(
+            render,
+            candidate,
+            read={"afterfire.gain_scale"},
+            active={"afterfire.gain_scale"} if afterfire_active else set(),
+        )
     if include_l4:
         render = apply_hellcat_transient_dynamics(render, trace, candidate, _SAMPLE_RATE_HZ)
         render = apply_hellcat_named_peak_budget(render, trace, candidate, _SAMPLE_RATE_HZ)
@@ -826,6 +846,10 @@ def _apply_current_frozen_layers(
     render = apply_exhaust_rumble(render, "hellcat", trace, _SAMPLE_RATE_HZ)
     render = _append_pressure_contributors(render, ("exhaust_rumble",))
     render = apply_pre_ptr_equalization(render, "hellcat", trace, _SAMPLE_RATE_HZ)
+    if source_round2 and isinstance(source_round2_usage, dict):
+        diagnostics = dict(render.diagnostics)
+        diagnostics["candidate_parameter_usage"] = source_round2_usage
+        render = replace(render, diagnostics=diagnostics).validate()
     return render
 
 
