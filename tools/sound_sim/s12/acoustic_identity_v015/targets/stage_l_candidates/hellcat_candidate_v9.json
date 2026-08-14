@@ -1,0 +1,192 @@
+{
+  "schema_version": "s12-stage-l-hellcat-candidate-profile-2",
+  "candidate_id": "hellcat_stage_l_v9",
+  "vehicle_id": "hellcat",
+  "base_commit": "bf653c6f7a3779314d9891aaa801b29a4874db40",
+  "parent_candidate_id": "hellcat_stage_l_v8",
+  "parent_candidate_path": "targets/stage_l_candidates/hellcat_candidate_v8.json",
+  "parent_candidate_sha256": "18903081a45d9263d65db86f8ce93557ea3ad69905d204c04a66205c0fdd046c",
+  "status": "Candidate",
+  "hypothesis": "At high load only, couple the moving supercharger aero family to shared-clock torque ripple while softening whine growth and increasing deterministic HEMI blowdown body; retain v8 bytes outside that blend.",
+  "reference_target": {
+    "path": "reference_database/hellcat_reference_targets.json",
+    "sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "feedback_receipt": {
+    "stage_k_package_sha256": "d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef",
+    "formal_template_sha256": "de55eb154e05530f2905aa0cfc5c247ee7d6f81158119cb2a8fe2535e60f374e",
+    "formal_template_status": "UNSUBMITTED_TEMPLATE",
+    "nested_copy_sha256": "88f9636511233c04014b848bdc4a9c2cb49b188d23f964bbf3c337c1783faf95",
+    "nested_copy_status": "INVALID_UNBOUND_DIAGNOSTIC_COPY",
+    "named_text_feedback_path": "tasks/reports/runtime/s12-stage-l-hellcat-calibration-v1/stage_l_jovi_feedback_intake.json",
+    "named_text_feedback_sha256": "0f8e55cd4020d43e23b773d3844057444fda8fab5efa4b0b779e892fc976ca70",
+    "feedback_scope": "named_engineering_direction",
+    "human_pass": false
+  },
+  "round2_feedback_receipt": {
+    "path": "tasks/reports/runtime/s12-stage-l-hellcat-round2/round2_feedback_receipt.json",
+    "sha256": "ec9a80980715744dd7ca6dff766314e821e6dd375747d002189c5a2c2fe337bc",
+    "feedback_scope": "named_round2_engineering_direction",
+    "human_pass": false,
+    "csv_content_read": false
+  },
+  "crank_clock": {
+    "firing_order": [1, 8, 4, 3, 6, 5, 7, 2],
+    "bank_pattern": ["left", "right", "left", "right", "right", "left", "right", "left"],
+    "events_per_revolution": 4.0,
+    "cycle_revolutions": 2.0,
+    "scope": "architecture_contract"
+  },
+  "combustion_and_blowdown": {
+    "acceleration_blowdown_body_gain": {
+      "value": 1.35,
+      "unit": "ratio",
+      "range": [1.0, 1.6],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "smooth_high_load_blowdown_body_delta",
+      "verification_state": "candidate_assumption"
+    },
+    "low_frequency_blowdown_gain": {
+      "value": 1.28,
+      "unit": "ratio",
+      "range": [1.2, 1.35],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "v8_baseline_high_load_body_delta",
+      "verification_state": "candidate_assumption"
+    },
+    "structure_shock_mix": {
+      "value": 0.13,
+      "unit": "ratio",
+      "range": [0.1, 0.16],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "v8_baseline_high_load_structure_delta",
+      "verification_state": "candidate_assumption"
+    },
+    "torque_ripple_modulation_depth": {
+      "value": 0.14,
+      "unit": "ratio",
+      "range": [0.11, 0.17],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "v8_baseline_high_load_torque_delta",
+      "verification_state": "candidate_assumption"
+    }
+  },
+  "supercharger_intake": {
+    "combustion_ripple_to_aero_depth": {
+      "value": 0.09,
+      "unit": "ratio",
+      "range": [0.04, 0.16],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "shared_clock_zero_mean_unit_rms_aero_envelope",
+      "verification_state": "candidate_assumption"
+    },
+    "high_load_whine_knee": {
+      "value": 0.3,
+      "unit": "load_throttle_ratio",
+      "range": [0.2, 0.4],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "high_load_whine_blend_knee",
+      "verification_state": "candidate_assumption"
+    },
+    "high_load_whine_post_knee_slope": {
+      "value": 0.65,
+      "unit": "ratio",
+      "range": [0.45, 0.85],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "monotonic_high_load_whine_attenuation",
+      "verification_state": "candidate_assumption"
+    }
+  },
+  "afterfire": {
+    "minimum_rpm": {
+      "value": 3300.0,
+      "unit": "rpm",
+      "range": [2800.0, 4200.0],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_qualification_minimum_rpm",
+      "verification_state": "candidate_assumption"
+    },
+    "residual_energy_gain": {
+      "value": 0.85,
+      "unit": "ratio",
+      "range": [0.55, 1.25],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_residual_exhaust_energy",
+      "verification_state": "candidate_assumption"
+    },
+    "event_energy_threshold": {
+      "value": 0.35,
+      "unit": "ratio",
+      "range": [0.2, 0.5],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_event_qualification_threshold",
+      "verification_state": "candidate_assumption"
+    },
+    "body_mix": {
+      "value": 0.68,
+      "unit": "ratio",
+      "range": [0.55, 0.8],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_body_template_mix",
+      "verification_state": "candidate_assumption"
+    },
+    "bright_mix": {
+      "value": 0.2,
+      "unit": "ratio",
+      "range": [0.1, 0.3],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_bright_template_mix",
+      "verification_state": "candidate_assumption"
+    },
+    "decay_90_10_s": {
+      "value": 0.045,
+      "unit": "s",
+      "range": [0.025, 0.07],
+      "source_level": "C",
+      "source": "synthetic",
+      "source_scope": "afterfire_decay_90_10",
+      "verification_state": "candidate_assumption"
+    }
+  },
+  "loudness": {
+    "target_lufs": -16.0,
+    "peak_limit_dbfs": -1.5,
+    "whole_cycle_gain_only": true
+  },
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage_c_low_frequency_body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage_c_exhaust_rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage_c_pre_equalization"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage_c_frozen_ptr"},
+    "formal_loudness_manager": {"unchanged": true, "fingerprint": "stage_c_formal_loudness_manager"},
+    "reference_target": {"unchanged": true, "fingerprint": "hellcat_reference_targets_84030e82"}
+  },
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "calibration": "uncalibrated",
+    "claim": "Hellcat-inspired; not OEM reproduction",
+    "parent_status": "STAGE_L_V8_BASELINE",
+    "official_facts": {
+      "engine_displacement_l": 6.2,
+      "engine_configuration": "HEMI V8",
+      "supercharger_type": "twin-screw",
+      "supercharger_drive_ratio": 2.36,
+      "published_max_supercharger_rpm": 14600,
+      "provenance_note": "Hardware context only; no rotor geometry, OEM SPL, or factory afterfire calibration is asserted."
+    }
+  }
+}

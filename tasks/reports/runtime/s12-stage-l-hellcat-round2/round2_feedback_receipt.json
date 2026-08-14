@@ -1,0 +1,20 @@
+{
+  "schema_version": "s12-stage-l-hellcat-round2-feedback-receipt-1",
+  "receipt_status": "TEXT_ONLY_ENGINEERING_DIRECTION",
+  "feedback_scope": "named_round2_engineering_direction",
+  "windows_s": {
+    "v8_byte_freeze": [0.0, 8.0],
+    "third_shift_whine_balance": [24.0, 26.0],
+    "sustained_high_load": [26.0, 36.0],
+    "afterfire": [36.0, 46.0]
+  },
+  "claims": [
+    "Increase the synthetic 6.2 L HEMI V8 blowdown body during high-load acceleration.",
+    "Reduce high-load twin-screw whine while retaining moving orders and shared crank-clock coherence.",
+    "Qualify deterministic afterfire only from high-load hot history and throttle-close conditions."
+  ],
+  "human_pass": false,
+  "csv_content_read": false,
+  "qualification_status": "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY",
+  "provenance": "C-level synthetic engineering direction; uncalibrated; Hellcat-inspired; not OEM reproduction"
+}
