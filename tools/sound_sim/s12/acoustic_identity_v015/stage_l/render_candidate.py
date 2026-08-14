@@ -17,7 +17,9 @@ from ..loudness_manager import manage_bundle_loudness
 from ..loudness_manager import measure_loudness
 from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade, _pcm24_roundtrip
 from ..sources.hellcat_crossplane_combustion_v2 import render_hellcat_crossplane_combustion_v2
+from ..sources.hellcat_crossplane_combustion_v3 import render_hellcat_crossplane_combustion_v3
 from ..sources.hellcat_supercharger_intake_v5 import render_hellcat_supercharger_intake_v5
+from ..sources.hellcat_supercharger_intake_v6 import render_hellcat_supercharger_intake_v6
 from ..stage_f.reference_distance import final_pcm_band_shares
 from ..sources.supercharged_hemi_source import render_hellcat
 from ..sources.supercharger_whine_v4 import render_supercharger_whine_v4
@@ -28,6 +30,7 @@ from ..tuning.state_band_shaper import _inject_state_spectral_targets
 from .candidate_profiles import PARENT_CANDIDATE_PATH, StageLCandidateProfile
 from .crank_clock import HellcatCrankClock, build_hellcat_crank_clock
 from .hellcat_peak_budget import apply_hellcat_named_peak_budget
+from .hellcat_afterfire_v1 import render_hellcat_afterfire_v1
 from .hellcat_transient_dynamics import apply_hellcat_transient_dynamics
 
 
@@ -69,6 +72,70 @@ class StageLFormalPcmBundle:
     gain_db: float
     headroom_limited: bool
     pipeline_order: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class StageLRound2FormalPcmBundle:
+    """Round-2 three-track PCM bundle with one shared whole-cycle gain."""
+
+    parent_pcm: np.ndarray
+    v8_pcm: np.ndarray
+    v9_pcm: np.ndarray
+    comfort_pcm: np.ndarray
+    gain_db: float
+    comfort_gain_db: float
+    headroom_limited: bool
+    pipeline_order: tuple[str, ...]
+    comfort_pipeline_order: tuple[str, ...]
+
+
+def render_stage_l_round2_formal_final_pcm_bundle(
+    parent_pressure: np.ndarray,
+    v8_pressure: np.ndarray,
+    v9_pressure: np.ndarray,
+    target_lufs: float,
+    peak_limit_dbfs: float,
+    comfort_requested_gain_db: float = 0.0,
+) -> StageLRound2FormalPcmBundle:
+    """Render parent/v8/v9 through one frozen final-PCM gain decision.
+
+    The three supplied pressure arrays are already source-domain outputs.  The
+    only downstream operations here are the frozen PTR, edge fade, one shared
+    loudness-manager gain, and PCM24 conversion.  Comfort is derived from the
+    final v9 PCM with one additional attenuation-safe static gain.
+    """
+    pre_gain = {
+        "stage_k_parent": _edge_fade(_apply_frozen_ptr(parent_pressure)),
+        "stage_l_v8": _edge_fade(_apply_frozen_ptr(v8_pressure)),
+        "stage_l_v9": _edge_fade(_apply_frozen_ptr(v9_pressure)),
+    }
+    managed = manage_bundle_loudness(
+        pre_gain,
+        _SAMPLE_RATE_HZ,
+        target_lufs=float(target_lufs),
+        peak_limit_dbfs=float(peak_limit_dbfs),
+    )
+    parent_pcm = _pcm24_roundtrip(managed.segments["stage_k_parent"])
+    v8_pcm = _pcm24_roundtrip(managed.segments["stage_l_v8"])
+    v9_pcm = _pcm24_roundtrip(managed.segments["stage_l_v9"])
+    requested = max(0.0, float(comfort_requested_gain_db))
+    v9_peak = float(np.max(np.abs(v9_pcm))) if v9_pcm.size else 0.0
+    v9_peak_dbfs = float(20.0 * np.log10(max(v9_peak, 1.0e-30)))
+    available = float(peak_limit_dbfs) - v9_peak_dbfs if v9_peak > 0.0 else requested
+    comfort_gain_db = max(0.0, min(requested, available))
+    comfort_pcm = v9_pcm * float(10.0 ** (comfort_gain_db / 20.0))
+    order = ("frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24")
+    return StageLRound2FormalPcmBundle(
+        parent_pcm=parent_pcm,
+        v8_pcm=v8_pcm,
+        v9_pcm=v9_pcm,
+        comfort_pcm=comfort_pcm,
+        gain_db=float(managed.gain_db),
+        comfort_gain_db=float(comfort_gain_db),
+        headroom_limited=bool(managed.headroom_limited),
+        pipeline_order=order,
+        comfort_pipeline_order=(*order, "candidate_comfort_static_gain"),
+    )
 
 
 def render_stage_l_formal_final_pcm_bundle(
@@ -219,6 +286,65 @@ def render_crossplane_combustion_l2_with_clock(
     return replace(rendered, diagnostics=diagnostics).validate()
 
 
+def render_crossplane_combustion_l2_v3_with_clock(
+    trace: VehicleStateTrace,
+    clock: HellcatCrankClock,
+    overrides: dict[str, float],
+    sample_rate_hz: int = _SAMPLE_RATE_HZ,
+) -> SourceRender:
+    """Render the Round-2 v3 cross-plane source from the shared clock."""
+    contract = _validate_shared_clock(trace, clock, sample_rate_hz)
+    count = clock.engine_phase_cycles.shape[0]
+    time_s = trace.time_s[0] + np.arange(count, dtype=np.float64) / sample_rate_hz
+    rendered = render_hellcat_crossplane_combustion_v3(
+        np.interp(time_s, trace.time_s, trace.rpm),
+        np.interp(time_s, trace.time_s, trace.load),
+        np.interp(time_s, trace.time_s, trace.throttle),
+        clock,
+        sample_rate_hz,
+        overrides,
+    )
+    diagnostics = dict(rendered.diagnostics)
+    diagnostics["shared_crank_clock_contract"] = {
+        **contract,
+        "consumer": "cross_plane_combustion_l2_round2_v3",
+        "clock_object_shared": True,
+        "event_gates_consumed": True,
+        "event_sample_indices_consumed": True,
+        "bank_labels_consumed": True,
+        "internal_event_scheduling": "ACTIVE_L2_SHARED_CLOCK",
+    }
+    return replace(rendered, diagnostics=diagnostics).validate()
+
+
+def render_supercharger_intake_l3_v6_with_clock(
+    trace: VehicleStateTrace,
+    clock: HellcatCrankClock,
+    overrides: dict[str, float],
+    sample_rate_hz: int = _SAMPLE_RATE_HZ,
+) -> SourceRender:
+    """Render the Round-2 v6 intake source from the exact shared clock."""
+    contract = _validate_shared_clock(trace, clock, sample_rate_hz)
+    count = clock.engine_phase_cycles.shape[0]
+    time_s = trace.time_s[0] + np.arange(count, dtype=np.float64) / sample_rate_hz
+    rendered = render_hellcat_supercharger_intake_v6(
+        np.interp(time_s, trace.time_s, trace.rpm),
+        np.interp(time_s, trace.time_s, trace.load),
+        np.interp(time_s, trace.time_s, trace.throttle),
+        clock,
+        sample_rate_hz,
+        overrides,
+    )
+    diagnostics = dict(rendered.diagnostics)
+    diagnostics["shared_crank_clock_contract"] = {
+        **contract,
+        "consumer": "supercharger_intake_l3_round2_v6",
+        "clock_object_shared": True,
+        "engine_phase_consumed_as_exact_2_36_shaft_phase": True,
+    }
+    return replace(rendered, diagnostics=diagnostics).validate()
+
+
 def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidateProfile) -> SourceRender:
     """Assemble the L1 source contract; L2-L4 controls remain explicit unused stubs."""
     trace.validate()
@@ -231,28 +357,130 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
         name: float(record["value"])
         for name, record in candidate.payload["combustion_and_blowdown"].items()
     }
-    combustion = render_crossplane_combustion_l2_with_clock(
-        trace, clock, combustion_overrides, _SAMPLE_RATE_HZ,
-    )
+    round2 = candidate.payload["schema_version"] == "s12-stage-l-hellcat-candidate-profile-2"
+    if round2:
+        combustion = render_crossplane_combustion_l2_v3_with_clock(
+            trace, clock, combustion_overrides, _SAMPLE_RATE_HZ,
+        )
+    else:
+        combustion = render_crossplane_combustion_l2_with_clock(
+            trace, clock, combustion_overrides, _SAMPLE_RATE_HZ,
+        )
     combustion_usage = combustion.diagnostics["candidate_parameter_usage"]
     supercharger_overrides = {
         name: float(record["value"])
         for name, record in candidate.payload["supercharger_intake"].items()
     }
-    supercharger = render_supercharger_intake_l3_with_clock(
-        trace, clock, supercharger_overrides, _SAMPLE_RATE_HZ,
-    )
+    if round2:
+        supercharger = render_supercharger_intake_l3_v6_with_clock(
+            trace, clock, supercharger_overrides, _SAMPLE_RATE_HZ,
+        )
+    else:
+        supercharger = render_supercharger_intake_l3_with_clock(
+            trace, clock, supercharger_overrides, _SAMPLE_RATE_HZ,
+        )
     supercharger_usage = supercharger.diagnostics["candidate_parameter_usage"]
     stems = {name: np.asarray(combustion.stems[name], dtype=np.float64) for name in _HEMI_CONTRIBUTORS}
     stems.update({name: np.asarray(supercharger.stems[name], dtype=np.float64) for name in _SC_CONTRIBUTORS})
-    contract = {"contributors": list(_CONTRIBUTORS), "diagnostic_aggregates": list(_AGGREGATES)}
+    contract = {
+        "contributors": list(_CONTRIBUTORS) + (["afterfire"] if round2 else []),
+        "diagnostic_aggregates": list(_AGGREGATES),
+    }
     diagnostics = dict(combustion.diagnostics)
     diagnostics.update(supercharger.diagnostics)
     diagnostics["pressure_stem_contract"] = contract
     pressure = sum((stems[name] for name in _CONTRIBUTORS), np.zeros_like(combustion.pressure))
     raw = SourceRender(pressure=pressure, stems=stems, diagnostics=diagnostics).validate()
-    shaped = _inject_state_spectral_targets(raw, "hellcat", trace, sample_rate_hz=_SAMPLE_RATE_HZ)
-    shaped_stems = {name: np.asarray(shaped.stems[name], dtype=np.float64) for name in _CONTRIBUTORS}
+    afterfire_usage: dict[str, list[str]] = {
+        "read": [], "configured": [], "active": [], "inactive": [],
+    }
+    if round2:
+        afterfire = render_hellcat_afterfire_v1(
+            raw,
+            trace,
+            clock,
+            {
+                name: float(record["value"])
+                for name, record in candidate.payload["afterfire"].items()
+            },
+            _SAMPLE_RATE_HZ,
+        )
+        afterfire_diagnostics = dict(afterfire.diagnostics)
+        afterfire_diagnostics["pressure_stem_contract"] = contract
+        raw = replace(afterfire, diagnostics=afterfire_diagnostics).validate()
+        afterfire_usage = {
+            key: list(raw.diagnostics.get("candidate_parameter_usage", {}).get(key, ()))
+            for key in ("read", "configured", "active", "inactive")
+        }
+    if round2:
+        # Shape the exact v8-equivalent baseline once, then add only the v9
+        # primitive deltas.  This prevents a changed intake control from
+        # rescaling HEMI/exhaust through the common spectral shaper and keeps
+        # the 0-8 s byte freeze independent of STFT frame bleed.
+        baseline_combustion = render_crossplane_combustion_l2_v3_with_clock(
+            trace,
+            clock,
+            {
+                "acceleration_blowdown_body_gain": 1.0,
+                "low_frequency_blowdown_gain": 1.12,
+                "structure_shock_mix": 0.10,
+                "torque_ripple_modulation_depth": 0.11,
+            },
+            _SAMPLE_RATE_HZ,
+        )
+        baseline_supercharger = render_supercharger_intake_l3_v6_with_clock(
+            trace,
+            clock,
+            {
+                "combustion_ripple_to_aero_depth": 0.0,
+                "high_load_whine_knee": 0.999999,
+                "high_load_whine_post_knee_slope": 0.0,
+            },
+            _SAMPLE_RATE_HZ,
+        )
+        baseline_stems = {
+            name: np.asarray(baseline_combustion.stems[name], dtype=np.float64)
+            for name in _HEMI_CONTRIBUTORS
+        }
+        baseline_stems.update(
+            {name: np.asarray(baseline_supercharger.stems[name], dtype=np.float64)
+             for name in _SC_CONTRIBUTORS}
+        )
+        baseline_pressure = sum(
+            (baseline_stems[name] for name in _CONTRIBUTORS),
+            np.zeros_like(baseline_combustion.pressure),
+        )
+        baseline_raw = SourceRender(
+            pressure=baseline_pressure,
+            stems=baseline_stems,
+            diagnostics={
+                "pressure_stem_contract": {
+                    "contributors": list(_CONTRIBUTORS),
+                    "diagnostic_aggregates": list(_AGGREGATES),
+                },
+            },
+        ).validate()
+        shaped = _inject_state_spectral_targets(
+            baseline_raw, "hellcat", trace, sample_rate_hz=_SAMPLE_RATE_HZ,
+        )
+        contributor_names = tuple(contract["contributors"])
+        shaped_stems = {
+            name: np.asarray(shaped.stems[name], dtype=np.float64).copy()
+            for name in _CONTRIBUTORS
+        }
+        for name in _CONTRIBUTORS:
+            shaped_stems[name] += (
+                np.asarray(raw.stems[name], dtype=np.float64)
+                - baseline_stems[name]
+            )
+        shaped_stems["afterfire"] = np.asarray(raw.stems["afterfire"], dtype=np.float64).copy()
+    else:
+        shaped = _inject_state_spectral_targets(raw, "hellcat", trace, sample_rate_hz=_SAMPLE_RATE_HZ)
+        contributor_names = tuple(contract["contributors"])
+        shaped_stems = {
+            name: np.asarray(shaped.stems[name], dtype=np.float64)
+            for name in contributor_names
+        }
     shaped_stems["exhaust"] = shaped_stems["hemi_exhaust_left"] + shaped_stems["hemi_exhaust_right"]
     shaped_stems["hemi_exhaust"] = shaped_stems["exhaust"]
     shaped_stems["hemi_combustion_and_blowdown"] = sum(
@@ -265,25 +493,28 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
         (shaped_stems[name] for name in _SC_CONTRIBUTORS), np.zeros_like(shaped.pressure)
     )
     shaped_pressure = sum(
-        (shaped_stems[name] for name in _CONTRIBUTORS), np.zeros_like(shaped.pressure)
+        (shaped_stems[name] for name in contributor_names), np.zeros_like(shaped.pressure)
     )
     requested = sorted(candidate.requested_parameters())
     prefixed_usage = {
         key: sorted([
             *(f"combustion_and_blowdown.{name}" for name in combustion_usage[key]),
             *(f"supercharger_intake.{name}" for name in supercharger_usage[key]),
+            *(name for name in afterfire_usage[key]),
         ])
         for key in ("read", "configured", "active", "inactive")
     }
     unused = sorted(set(requested) - set(prefixed_usage["read"]))
     final_diagnostics = dict(shaped.diagnostics)
+    if round2:
+        final_diagnostics.update(raw.diagnostics)
     final_diagnostics.update(
         {
             "pressure_stem_contract": contract,
             "stage_l_candidate_id": candidate.candidate_id,
             "stage_l_candidate_status": candidate.status,
             "stage_l_parent_candidate_id": candidate.payload["parent_candidate_id"],
-            "stage_l_phase": "L3_SUPERCHARGER_INTAKE_AND_CASING",
+            "stage_l_phase": "L3_SUPERCHARGER_INTAKE_AND_CASING_ROUND2" if round2 else "L3_SUPERCHARGER_INTAKE_AND_CASING",
             "candidate_parameter_usage": {
                 "requested": requested,
                 "read": prefixed_usage["read"],
@@ -327,6 +558,18 @@ def render_stage_l_candidate(trace: VehicleStateTrace, candidate: StageLCandidat
             "stage_l_scope": "C/synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
         }
     )
+    if round2:
+        final_diagnostics["round2_renderer_dispatch"] = {
+            "schema_version": "s12-stage-l-hellcat-candidate-profile-2",
+            "combustion": "hellcat_crossplane_combustion_v3",
+            "supercharger": "hellcat_supercharger_intake_v6",
+            "afterfire": "hellcat_afterfire_v1",
+        }
+        final_diagnostics["round2_afterfire_status"] = {
+            "event_count": int(raw.diagnostics.get("afterfire_event_count", 0)),
+            "contributor_count": int(raw.diagnostics.get("afterfire_contributor_count", 1)),
+            "fixed_tone_injection": bool(raw.diagnostics.get("fixed_tone_injection", False)),
+        }
     return SourceRender(shaped_pressure, shaped_stems, final_diagnostics).validate()
 
 
