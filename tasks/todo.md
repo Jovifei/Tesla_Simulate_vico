@@ -3639,5 +3639,14 @@ Progress (2026-08-15): R2-K1 actual-array/event-window/pressure/vehicle-isolatio
 - Scope: C63 W204, GT‑R R35, and LFA only. Hellcat/Stage L, public layers, Frozen PTR, loudness manager, MATLAB/Simulink, Android, and Track‑P remain untouched.
 - Actual evidence: event windows are trace-derived; source metrics declare `actual_arrays_and_trace` and `diagnostics_claims_used=false`; LFA's historical aggregate alias is reconciled in the Round‑2 view before pressure accounting.
 - Package: 3 vehicles × (parent/baseline/candidate/comfort + 4 source-domain diagnostics), 24 WAV, 28 SHA entries, 29 ZIP members; all PCM headers/frames/receipt hashes/Comfort input SHA/ZIP CRC independently match.
-- Semantic receipts: C63 `closed_throttle_bark`, GT‑R `boost_history_bov`, LFA `asg_metallic_event`; existing Stage‑K afterfire is separately labelled. LFA event eligibility still fails an automatic wrong-condition gate, so no candidate is qualified.
+- Historical v3 semantic receipts recorded LFA `asg_metallic_event` and therefore failed its wrong-condition gate. Current code fixes that defect by measuring `lfa_shift_exhaust_reengagement` against actual ASG shift alignment; v3 remains historical and is not silently rewritten. Existing Stage-K afterfire remains separately labelled and keeps its closed-throttle history rule.
 - Human/qualification boundary: `human_pass=false`, `csv_content_read=false`, no OEM claim, no Profile Freeze or Approved status. Await Jovi's explicitly labelled audition feedback before another round.
+
+# S12 八车型 Round-2 完成与项目落地（2026-08-15）
+
+- [x] R2-8-0：盘点八车型覆盖与 Obsidian 漂移，确认剩余 Ferrari 458、RX-7 FD、Supra JZA80、Aventador LP700 四车。
+- [x] R2-8-1：修复 LFA 将连续 metallic 误判为 ASG event 的资格根因，并冻结真实 shift-array 回归；12 s actual render 为 3 个 shift / 0 wrong-condition / eligible=true。
+- [ ] R2-8-2：补齐 Ferrari/RX-7 与 Supra/Aventador 独立 Round-2 source、trace window、event qualification 与 pressure accounting。
+- [ ] R2-8-3：建立八车统一 final-PCM/Comfort 与可信 manifest/SHA/ZIP 包，不覆盖历史包。
+- [ ] R2-8-4：运行跨阶段、八车冻结与 Track-P 验证，记录实际结果。
+- [ ] R2-8-5：同步 Obsidian 当前仓库 tip、包、测试、已完成项与未完成资格门。

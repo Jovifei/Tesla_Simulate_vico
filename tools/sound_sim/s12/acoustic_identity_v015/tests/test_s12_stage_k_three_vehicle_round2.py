@@ -186,6 +186,25 @@ def test_round2_candidate_wrapper_reconciles_actual_render(vehicle_id: str, cand
     assert metrics["pressure_accounting"]["passes"] is True
 
 
+def test_lfa_round2_event_uses_actual_asg_shift_reengagement_not_continuous_metallic() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.render_drive_cycle_v10 import build_drive_cycle_trace
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_k.candidate_profiles import load_stage_k_candidate
+
+    trace = build_drive_cycle_trace("lfa", duration_s=12.0)
+    candidate = load_stage_k_candidate(
+        "tools/sound_sim/s12/acoustic_identity_v015/targets/stage_k_candidates/lfa_candidate_v2.json"
+    )
+    rendered = render_round2_candidate("lfa", trace, candidate)
+    metrics = measure_round2_metrics("lfa", rendered, trace)
+
+    assert metrics["event_stem"] == "lfa_shift_exhaust_reengagement"
+    assert metrics["event_kind"] == "asg_shift_reengagement"
+    assert metrics["event_count"] == 3
+    assert metrics["event"]["qualification"]["wrong_condition_event_count"] == 0
+    assert metrics["event"]["qualification"]["eligible"] is True
+    assert metrics["event"]["qualification"]["source"] == "actual_event_array_and_trace_shift_alignment"
+
+
 @pytest.mark.parametrize("vehicle_id", ROUND2_VEHICLES)
 def test_round2_tuning_is_event_gated_and_changes_actual_arrays_after_idle(vehicle_id: str) -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_k.named_review import _build_operating_trace

@@ -16,6 +16,7 @@ from typing import Mapping
 
 import numpy as np
 
+from ..acoustic_layers.shift_dynamics import detect_shift_events
 from ..contracts import SourceRender, VehicleStateTrace
 
 
@@ -73,7 +74,14 @@ _REQUIRED_SOURCE_STEMS = {
         "wastegate",
         "mechanical",
     ),
-    "lfa": ("exhaust", "order_family", "intake", "mechanical", "metallic"),
+    "lfa": (
+        "exhaust",
+        "order_family",
+        "intake",
+        "mechanical",
+        "metallic",
+        "lfa_shift_exhaust_reengagement",
+    ),
 }
 
 # These are decompositions of another contributor, not additional pressure
@@ -231,12 +239,13 @@ def measure_round2_metrics(
         trace,
         sample_rate_hz,
         event_stem=event_stem,
+        qualification_mode="shift_alignment" if vehicle_id == "lfa" else "closed_throttle_history",
     )
     event_kind = {
         "afterfire": "afterfire",
         "closed_throttle_tail": "closed_throttle_bark",
         "wastegate": "boost_history_bov",
-        "metallic": "asg_metallic_event",
+        "lfa_shift_exhaust_reengagement": "asg_shift_reengagement",
     }.get(event_stem, event_stem)
     event_metrics["event_kind"] = event_kind
     if "afterfire" in render.stems:
@@ -378,6 +387,7 @@ def _measure_afterfire(
     sample_rate_hz: int,
     *,
     event_stem: str,
+    qualification_mode: str = "closed_throttle_history",
 ) -> dict[str, object]:
     mono = np.mean(np.asarray(audio, dtype=np.float64), axis=1)
     magnitude = np.abs(mono)
@@ -401,13 +411,38 @@ def _measure_afterfire(
     intervals = np.diff(onset_times)
     amplitude_cv = _coefficient_of_variation(amplitudes)
     interval_cv = _coefficient_of_variation(intervals.tolist())
-    wrong_condition = 0
-    for onset in onset_indices:
-        history_start = max(0, onset - max(1, int(round(3.0 * sample_rate_hz))))
-        history_load = trace.load[min(history_start, trace.load.size - 1): min(onset, trace.load.size)]
-        closed = trace.throttle[min(onset, trace.throttle.size - 1)] <= 0.25
-        if history_load.size == 0 or float(np.max(history_load)) < 0.60 or not closed:
-            wrong_condition += 1
+    if qualification_mode == "closed_throttle_history":
+        wrong_condition = 0
+        for onset in onset_indices:
+            history_start = max(0, onset - max(1, int(round(3.0 * sample_rate_hz))))
+            history_load = trace.load[min(history_start, trace.load.size - 1): min(onset, trace.load.size)]
+            closed = trace.throttle[min(onset, trace.throttle.size - 1)] <= 0.25
+            if history_load.size == 0 or float(np.max(history_load)) < 0.60 or not closed:
+                wrong_condition += 1
+        missing_expected = 0
+        qualification_source = "actual_event_array_and_trace_history"
+    elif qualification_mode == "shift_alignment":
+        shift_events = detect_shift_events(trace, sample_rate_hz)
+        expected_times = tuple(float(event.time_s) for event in shift_events)
+        tolerance_s = 0.05
+        wrong_condition = 0
+        matched_expected: set[int] = set()
+        for onset_time in onset_times:
+            if not expected_times:
+                wrong_condition += 1
+                continue
+            nearest = int(np.argmin(np.abs(np.asarray(expected_times) - onset_time)))
+            trace_index = int(np.argmin(np.abs(trace.time_s - onset_time)))
+            aligned = abs(expected_times[nearest] - onset_time) <= tolerance_s
+            throttle_open = float(trace.throttle[trace_index]) > 0.30
+            if aligned and throttle_open:
+                matched_expected.add(nearest)
+            else:
+                wrong_condition += 1
+        missing_expected = len(expected_times) - len(matched_expected)
+        qualification_source = "actual_event_array_and_trace_shift_alignment"
+    else:
+        raise ValueError(f"unsupported event qualification mode: {qualification_mode!r}")
     return {
         "event_stem": event_stem,
         "event_count": len(onset_indices),
@@ -419,8 +454,9 @@ def _measure_afterfire(
         "decay_90_10_s": float(np.mean(decay_values)) if decay_values else 0.0,
         "qualification": {
             "wrong_condition_event_count": wrong_condition,
-            "eligible": bool(onset_indices and wrong_condition == 0),
-            "source": "actual_event_array_and_trace_history",
+            "missing_expected_event_count": missing_expected,
+            "eligible": bool(onset_indices and wrong_condition == 0 and missing_expected == 0),
+            "source": qualification_source,
         },
     }
 
@@ -638,7 +674,7 @@ def _event_stem(vehicle_id: str, stems: Mapping[str, object]) -> str:
     preferred = {
         "c63_w204": "closed_throttle_tail",
         "gtr_r35": "wastegate",
-        "lfa": "metallic",
+        "lfa": "lfa_shift_exhaust_reengagement",
     }[vehicle_id]
     if preferred not in stems:
         raise ValueError(f"stem contract for {vehicle_id} is missing event stem {preferred!r}")
