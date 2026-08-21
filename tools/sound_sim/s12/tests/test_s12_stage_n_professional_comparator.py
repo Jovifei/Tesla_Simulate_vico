@@ -12,6 +12,13 @@ import pytest
 from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_export import export_webmushra_study
 from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_import import import_webmushra_results
 from tools.sound_sim.s12.acoustic_comparator.perceptual.visqol_adapter import validate_visqol_request
+from tools.sound_sim.s12.acoustic_identity_v015.stage_n.matlab_inputs import (
+    CandidateBinding,
+    _stage_k_trace_sha256,
+    _stage_l_trace_sha256,
+    _state_codes,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.render_drive_cycle_v10 import build_drive_cycle_trace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_n.toolchain import (
     TOOL_STATUSES,
     build_unified_results,
@@ -150,9 +157,34 @@ def test_matlab_adapters_name_real_functions_and_never_estimate_missing_rpm() ->
         assert function in order
     assert "REFERENCE_RPM_UNAVAILABLE" in order
     assert "ORDER_COMPARISON_NOT_QUALIFIED" in order
+    assert "EXECUTED_ON_PROJECT_DATA" in order
+    assert "signal_pcm24" in order
     assert "rpmtrack(" not in order
     for function in ("acousticLoudness", "acousticSharpness", "acousticRoughness", "acousticFluctuation", "acousticToneToNoiseRatio", "acousticProminenceRatio"):
         assert function in psycho
+
+
+def test_matlab_project_input_trace_hashes_and_manual_runner_contract() -> None:
+    trace = build_drive_cycle_trace("hellcat", 60.0)
+    assert _stage_k_trace_sha256(trace) != _stage_l_trace_sha256(trace)
+    states = _state_codes(trace.time_s)
+    assert states.dtype == np.uint8
+    assert set(np.unique(states)) == {0, 1, 2, 3, 4, 5}
+    binding = CandidateBinding(
+        vehicle_id="hellcat",
+        source_package="fixture",
+        candidate_path="candidate.wav",
+        candidate_sha256="a" * 64,
+        trace_sha256=_stage_l_trace_sha256(trace),
+        trace_hash_kind="stage_l_json_time_rpm_load_throttle",
+        frame_count=trace.time_s.size,
+        raw_pcm24=b"fixture",
+    )
+    assert binding.trace_sha256 == "7a1f057a191ed4dc85f5fcbc2750d3dc1a8662031ecc21388ea2aea2d9b92d9f"
+    runner = Path("tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_order_analysis.m").read_text(encoding="utf-8")
+    assert "s12_order_analysis(struct('mode', 'fixture')" in runner
+    assert "s12:StageN:OutputExists" in runner
+    assert "REFERENCE_RPM_UNAVAILABLE" in runner
 
 
 def test_mosqito_adapter_is_real_call_path_not_proxy() -> None:

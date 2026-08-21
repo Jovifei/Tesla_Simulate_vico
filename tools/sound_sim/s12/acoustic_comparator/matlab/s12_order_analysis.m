@@ -28,13 +28,29 @@ if isfield(inputSpec, 'mode') && strcmp(inputSpec.mode, 'fixture')
     result.reference_status = 'SYNTHETIC_FIXTURE_RPM_AVAILABLE';
     result.order_comparison_status = 'FIXTURE_ORDER_ANALYSIS';
 else
-    requiredFields = {'signal','sample_rate_hz','rpm','state_trace'};
+    requiredFields = {'sample_rate_hz','rpm','state_trace'};
     if ~all(isfield(inputSpec, requiredFields))
-        result.blocked_reason = 'Project candidate needs signal, sample_rate_hz, RPM, and state_trace.';
+        result.blocked_reason = 'Project candidate needs PCM signal or PCM24 samples, sample_rate_hz, RPM, and state_trace.';
         s12_export_matlab_comparator_result(result, outputDirectory, 'order_metrics');
         return
     end
-    signal = inputSpec.signal(:);
+    if isfield(inputSpec, 'signal_pcm24')
+        pcm24 = double(inputSpec.signal_pcm24);
+        if size(pcm24, 2) ~= 2
+            result.blocked_reason = 'signal_pcm24 must preserve the original stereo PCM24 channels.';
+            s12_export_matlab_comparator_result(result, outputDirectory, 'order_metrics');
+            return
+        end
+        signal = mean(pcm24, 2) ./ (2^23);
+        result.channel_policy = 'stereo_mean_to_mono_from_exact_pcm24';
+    elseif isfield(inputSpec, 'signal')
+        signal = inputSpec.signal(:);
+        result.channel_policy = 'provided_mono_signal';
+    else
+        result.blocked_reason = 'Project candidate needs signal_pcm24 or signal.';
+        s12_export_matlab_comparator_result(result, outputDirectory, 'order_metrics');
+        return
+    end
     sampleRateHz = inputSpec.sample_rate_hz;
     rpm = inputSpec.rpm(:);
     stateTrace = inputSpec.state_trace(:);
@@ -75,9 +91,13 @@ ridges = ridgeSummary(orderSpectrum, spectrumOrder, expectedOrders, expectedAmpl
 ridgePath = fullfile(outputDirectory, 'order_ridges.json');
 writeJson(ridgePath, ridges);
 fixtureValidation = validateFixture(ridges, trackedMagnitude, expectedOrders);
-result.status = 'EXECUTED_ON_FIXTURE';
-if ~isempty(expectedOrders) && fixtureValidation.passed
-    result.status = 'VALIDATED';
+if isempty(expectedOrders)
+    result.status = 'EXECUTED_ON_PROJECT_DATA';
+else
+    result.status = 'EXECUTED_ON_FIXTURE';
+    if fixtureValidation.passed
+        result.status = 'VALIDATED';
+    end
 end
 result.order_rpm_map = matPath;
 result.order_rpm_map_png = pngPath;
