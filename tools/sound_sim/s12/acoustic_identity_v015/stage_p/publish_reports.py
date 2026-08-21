@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 
@@ -12,6 +13,11 @@ def _sha(path: Path) -> str:
 
 def _read(root: Path, name: str) -> dict[str, object]:
     return json.loads((root / name).read_text(encoding="utf-8"))
+
+
+def _git(repo: Path, *args: str) -> str:
+    result = subprocess.run(["git", *args], cwd=repo, text=True, capture_output=True, check=False)
+    return result.stdout.strip() if result.returncode == 0 else ""
 
 
 def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path) -> dict[str, object]:
@@ -33,7 +39,7 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         "E_official_webmushra_browser_roundtrip": "PASS" if web.get("status") == "PASS" else "FAIL",
         "F_security_reproducibility_idempotence": "PASS" if security.get("status") == "PASS" and reproducibility.get("status") == "PASS" else "FAIL",
         "G_jovi_uat_package_and_fixture_stage_o_boundary": "PASS" if uat.get("status") == "READY_FOR_JOVI_UAT" and fixture.get("status") == "FIXTURE_ONLY_NOT_HUMAN_FEEDBACK_NOT_TUNING_AUTHORITY" else "FAIL",
-        "H_real_jovi_feedback": "HUMAN_FEEDBACK_PENDING",
+        "H_real_jovi_feedback": "PENDING",
     }
     all_ready = all(value == "PASS" for key, value in gates.items() if key != "H_real_jovi_feedback")
     overall = "SYSTEM_ACCEPTANCE_PASSED" if all_ready else "SYSTEM_ACCEPTANCE_FAILED"
@@ -42,12 +48,34 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         "overall_status": overall,
         "ready_for_jovi_uat": all_ready,
         "human_feedback_status": "HUMAN_FEEDBACK_PENDING",
+        "human_acoustic_qualification_status": "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
         "profile_freeze_ready": False,
+        "final_status": [
+            overall,
+            "READY_FOR_JOVI_UAT" if all_ready else "NOT_READY_FOR_JOVI_UAT",
+            "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
+            "NOT_PROFILE_FREEZE_READY",
+        ],
         "no_source_change": True,
         "gates": gates,
         "exact_head": baseline.get("exact_head"),
         "uat_manifest_sha256": _sha(uat_package / "manifest.json"),
         "review_package_manifest_sha256": _sha(review_package / "webmushra_package_manifest.json"),
+        "uat_handoff": {
+            "package": str(uat_package),
+            "manifest_sha256": _sha(uat_package / "manifest.json"),
+            "start_command": f'powershell -ExecutionPolicy Bypass -File "{uat_package / "START_REVIEW.ps1"}"',
+            "browser_url": "http://127.0.0.1:8000/?config=s12-stage-p-system-acceptance-v1.yaml",
+            "expected_result_paths": uat.get("expected_result_paths", {}),
+        },
+        "git_handoff": {
+            "branch": baseline.get("branch"),
+            "current_local_head_at_report": _git(repo, "rev-parse", "HEAD"),
+            "status_at_report": _git(repo, "status", "--short"),
+            "push": False,
+            "merge": False,
+            "pull_request": False,
+        },
     }
     (output / "stage_p_gate_matrix.json").write_text(json.dumps(matrix, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
 
@@ -85,6 +113,20 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         "Covered wrong package/file/candidate SHA, test ID, duplicate listener/trial, missing Likert, illegal/unknown identity, insufficient rows, blank score, fixture-as-Jovi, modified CSV, other package, MUSHRA/LSS mismatch, and path traversal/external reference. No case creates human approval or tuning authority.\n",
         encoding="utf-8", newline="\n",
     )
+    # Emit both the historical internal names and the names required by the
+    # Stage-P hand-off specification.  The JSON content remains identical so
+    # downstream consumers cannot accidentally observe two different results.
+    (output / "stage_p_tool_receipt_validation.json").write_text(
+        json.dumps(receipts, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
+    (output / "stage_p_feedback_security_tests.json").write_text(
+        json.dumps(security, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
+    uat_alias = dict(uat)
+    uat_alias["artifact_name"] = "stage_p_uat_manifest.json"
+    (output / "stage_p_uat_manifest.json").write_text(
+        json.dumps(uat_alias, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
     (output / "S12_Stage_P_Reproducibility.md").write_text(
         "# S12 Stage P Reproducibility and Idempotence\n\n"
         f"Status: `{reproducibility['status']}`. Two independent output directories were generated; `{reproducibility['audio_file_count']}` audio files had equal inventories and equal SHA values. Existing populated outputs are refused rather than overwritten.\n",
@@ -97,9 +139,9 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         "The derived confusion matrix and per-vehicle scores are explicitly fixture-only evidence. They cannot qualify Stage O, produce HUMAN_PASS, or authorize a sound-fix/profile-freeze branch.\n",
         encoding="utf-8", newline="\n",
     )
-    (output / "S12_Stage_P_Final_System_Acceptance.md").write_text(
+    final_report = (
         "# S12 Stage P Final System Acceptance\n\n"
-        f"Overall status: `{overall}` / `READY_FOR_JOVI_UAT` = `{all_ready}` / `HUMAN_FEEDBACK_PENDING` / `NOT_PROFILE_FREEZE_READY`.\n\n"
+        f"Overall status: `{overall}` / `READY_FOR_JOVI_UAT` = `{all_ready}` / `HUMAN_ACOUSTIC_QUALIFICATION_PENDING` / `NOT_PROFILE_FREEZE_READY`.\n\n"
         "## Gate matrix\n\n"
         "| Gate | Result |\n| --- | --- |\n"
         + "".join(f"| `{key}` | `{value}` |\n" for key, value in gates.items())
@@ -108,9 +150,15 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         "## Scope boundary\n\n"
         "No FVM/PTR/Radiation/Runtime/Android/MATLAB physics/vehicle source/profile/idle/afterfire/low-frequency/shift/sound candidate parameter was changed. No Stage-N receipt or Stage-O waiting receipt was promoted. Synthetic parents are not real vehicle recordings; digital-domain metrics are not absolute SPL or real-reference truth.\n\n"
         f"Exact baseline: `{baseline.get('exact_head')}`. Review package: `{review_package}`. Jovi UAT package: `{uat_package}`. UAT manifest SHA: `{_sha(uat_package / 'manifest.json')}`.\n\n"
-        "The independent branch is committed locally only. Push/merge/PR/profile freeze are outside this acceptance scope.\n",
-        encoding="utf-8", newline="\n",
+        "## Jovi UAT hand-off\n\n"
+        f"One-click start: `powershell -ExecutionPolicy Bypass -File \"{uat_package / 'START_REVIEW.ps1'}\"`.\n\n"
+        "Browser URL: `http://127.0.0.1:8000/?config=s12-stage-p-system-acceptance-v1.yaml`.\n\n"
+        f"Expected official result files: `results/s12-stage-p-system-acceptance-v1/mushra.csv`, `results/s12-stage-p-system-acceptance-v1/lss.csv`; package-local normalized receipt: `{review_package / 'results' / 'normalized_import_result.json'}`; UAT receipt: `{uat_package / 'uat_import_receipt.json'}`.\n\n"
+        f"Git branch: `{baseline.get('branch')}`; local HEAD at report generation: `{_git(repo, 'rev-parse', 'HEAD')}`; push: `False`; merge: `False`; PR: `False`.\n\n"
+        "The independent branch is committed locally only. Push/merge/PR/profile freeze are outside this acceptance scope.\n"
     )
+    for report_name in ("S12_Stage_P_Final_System_Acceptance.md", "S12_Stage_P_System_Acceptance_Report.md"):
+        (output / report_name).write_text(final_report, encoding="utf-8", newline="\n")
     files = []
     for path in sorted(output.iterdir()):
         if path.name == "stage_p_artifact_manifest.json" or not path.is_file():

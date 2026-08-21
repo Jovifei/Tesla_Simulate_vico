@@ -1,0 +1,83 @@
+{
+  "artifact_name": "stage_p_uat_manifest.json",
+  "expected_result_paths": {
+    "official_webmushra": [
+      "results/s12-stage-p-system-acceptance-v1/mushra.csv",
+      "results/s12-stage-p-system-acceptance-v1/lss.csv"
+    ],
+    "package_local": [
+      "s12-stage-p-system-acceptance-v1/results/mushra.csv",
+      "s12-stage-p-system-acceptance-v1/results/lss.csv",
+      "s12-stage-p-system-acceptance-v1/results/browser_import_receipt.json",
+      "s12-stage-p-system-acceptance-v1/results/normalized_import_result.json"
+    ],
+    "uat_receipt": "uat_import_receipt.json"
+  },
+  "hidden_reference_policy": "synthetic_parent_not_real_reference",
+  "human_acoustic_qualification_status": "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
+  "human_feedback_available": false,
+  "profile_freeze_ready": false,
+  "required_files": [
+    "START_REVIEW.ps1",
+    "STOP_REVIEW.ps1",
+    "OPEN_REVIEW.ps1",
+    "IMPORT_RESULTS.ps1",
+    "CHECK_STATUS.ps1",
+    "README_JOVI.md",
+    "study_manifest.json",
+    "SHA256SUMS"
+  ],
+  "review_package": "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1",
+  "review_package_manifest_sha256": "0930b1596e0d3d095c974bbe0f9a5fb2b140d4fb17777dedf184f3aaab175747",
+  "schema_version": "s12-stage-p-jovi-uat-manifest-1",
+  "scripts": [
+    {
+      "bytes": 1452,
+      "path": "CHECK_STATUS.ps1",
+      "sha256": "ab8bc2c903d9ccd23f961f57407248fd6c9ddd0b40b1ceb582b2bf853e3ac65f"
+    },
+    {
+      "bytes": 1706,
+      "path": "IMPORT_RESULTS.ps1",
+      "sha256": "89638ee91af301e2854b9f88422b32605d3ace876ecb342dd4e6e9b5097e7b4a"
+    },
+    {
+      "bytes": 141,
+      "path": "OPEN_REVIEW.ps1",
+      "sha256": "7e0aea375100f0771fd3dd59b9d599ff02e0d6a87b12d06cf32a5b95369a6a2a"
+    },
+    {
+      "bytes": 1991,
+      "path": "README.md",
+      "sha256": "9fdb70585206432201e86a433dd94331764f1f81faff8b2630ddb9282729bdde"
+    },
+    {
+      "bytes": 1991,
+      "path": "README_JOVI.md",
+      "sha256": "9fdb70585206432201e86a433dd94331764f1f81faff8b2630ddb9282729bdde"
+    },
+    {
+      "bytes": 1817,
+      "path": "START_REVIEW.ps1",
+      "sha256": "467635466fe35821a190973c2f7ff8edb883ea3026ffce6e97669f6a45251bf5"
+    },
+    {
+      "bytes": 295,
+      "path": "STOP_REVIEW.ps1",
+      "sha256": "94fa9684e7e4e80947688413c31f0d163302fc24ebd69e4bc4c8d0f9fd150726"
+    },
+    {
+      "bytes": 7968,
+      "path": "uat_browser_import_receipt.json",
+      "sha256": "81cd6b6f8dba413f4975a277dd913126de421492b14d1aa3ebe0d2edecd05f27"
+    },
+    {
+      "bytes": 7968,
+      "path": "uat_import_receipt.json",
+      "sha256": "81cd6b6f8dba413f4975a277dd913126de421492b14d1aa3ebe0d2edecd05f27"
+    }
+  ],
+  "status": "READY_FOR_JOVI_UAT",
+  "study_manifest_sha256": "355907adeb9931ce9b2c836d84989cb5e933275b61eb5344a29f0c7df751cd05",
+  "tuning_authority": false
+}

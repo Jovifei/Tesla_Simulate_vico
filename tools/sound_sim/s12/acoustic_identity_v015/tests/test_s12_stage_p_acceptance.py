@@ -47,3 +47,42 @@ def test_stage_p_fixture_consumption_is_not_human_feedback() -> None:
     assert result["accepted_rows"] == 8
     assert result["human_feedback_available"] is False
     assert result["tuning_authority"] is False
+
+
+def test_stage_p_spec_named_delivery_contract_is_present() -> None:
+    required_reports = {
+        "S12_Stage_P_System_Acceptance_Report.md",
+        "S12_Stage_P_Baseline_Audit.md",
+        "S12_Stage_P_Comparator_Replay.md",
+        "stage_p_exact_tip_test_evidence.json",
+        "stage_p_tool_receipt_validation.json",
+        "stage_p_comparator_replay.json",
+        "stage_p_webmushra_roundtrip.json",
+        "stage_p_feedback_security_tests.json",
+        "stage_p_reproducibility.json",
+        "stage_p_uat_manifest.json",
+        "stage_p_fixture_stage_o_receipt.json",
+        "stage_p_gate_matrix.json",
+        "stage_p_artifact_manifest.json",
+    }
+    assert required_reports.issubset({path.name for path in P_OUTPUT.iterdir()})
+    matrix = json.loads((P_OUTPUT / "stage_p_gate_matrix.json").read_text(encoding="utf-8"))
+    assert matrix["final_status"] == [
+        "SYSTEM_ACCEPTANCE_PASSED",
+        "READY_FOR_JOVI_UAT",
+        "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
+        "NOT_PROFILE_FREEZE_READY",
+    ]
+    assert matrix["gates"]["H_real_jovi_feedback"] == "PENDING"
+    assert (PACKAGE / "SHA256SUMS").is_file()
+    assert (PACKAGE / "results" / "mushra.csv").is_file()
+    assert (PACKAGE / "results" / "lss.csv").is_file()
+    assert (PACKAGE / "results" / "normalized_import_result.json").is_file()
+    uat = Path(r"E:\Tesla_speed\review_packages\s12-stage-p-jovi-uat-v1")
+    assert {"START_REVIEW.ps1", "STOP_REVIEW.ps1", "OPEN_REVIEW.ps1", "IMPORT_RESULTS.ps1", "CHECK_STATUS.ps1", "README_JOVI.md", "SHA256SUMS"}.issubset({path.name for path in uat.iterdir()})
+    manifest = json.loads((uat / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["human_acoustic_qualification_status"] == "HUMAN_ACOUSTIC_QUALIFICATION_PENDING"
+    assert manifest["expected_result_paths"]["official_webmushra"]
+    assert "Docker CLI not found" in (uat / "START_REVIEW.ps1").read_text(encoding="utf-8")
+    assert "manifest SHA" in (uat / "CHECK_STATUS.ps1").read_text(encoding="utf-8")
+    assert "package SHA binding" in (uat / "IMPORT_RESULTS.ps1").read_text(encoding="utf-8")

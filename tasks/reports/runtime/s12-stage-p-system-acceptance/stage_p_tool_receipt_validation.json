@@ -1,0 +1,67 @@
+{
+  "candidate_count": 8,
+  "candidate_ids": [
+    "V01",
+    "V02",
+    "V03",
+    "V04",
+    "V05",
+    "V06",
+    "V07",
+    "V08"
+  ],
+  "candidate_sha_format_valid": true,
+  "cross_tool_same_fixture": true,
+  "errors": [],
+  "matlab_constraint": {
+    "status": "PASS",
+    "vehicle_count": 8
+  },
+  "mosqito_constraint": {
+    "status": "PASS",
+    "status_value": "VALIDATED"
+  },
+  "package_manifest_sha256": "0930b1596e0d3d095c974bbe0f9a5fb2b140d4fb17777dedf184f3aaab175747",
+  "real_reference_or_absolute_spl_claim": false,
+  "receipt_count": 9,
+  "receipts": {
+    "cross_tool_validation.json": {
+      "schema_version": "s12-stage-n-cross-tool-validation-1",
+      "status": "VALIDATED"
+    },
+    "matlab_order_validation.json": {
+      "schema_version": "s12-stage-n-matlab-order-validation-1",
+      "status": "VALIDATED"
+    },
+    "matlab_psychoacoustic_validation.json": {
+      "schema_version": "s12-stage-n-matlab-psychoacoustic-validation-1",
+      "status": "VALIDATED"
+    },
+    "matlab_shared_psychoacoustic_validation.json": {
+      "schema_version": "s12-stage-n-matlab-shared-psychoacoustic-validation-1",
+      "status": "VALIDATED"
+    },
+    "mosqito_shared_fixture_validation-v2.json": {
+      "schema_version": "s12-stage-n-mosqito-shared-fixture-validation-1",
+      "status": "VALIDATED"
+    },
+    "mosqito_validation.json": {
+      "schema_version": "s12-stage-n-mosqito-validation-1",
+      "status": "VALIDATED"
+    },
+    "toolchain_capability_matrix.json": {
+      "schema_version": "s12-stage-n-toolchain-capability-matrix-1",
+      "status": null
+    },
+    "webmushra_import_validation.json": {
+      "schema_version": "s12-stage-n-webmushra-import-1",
+      "status": "FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK"
+    },
+    "webmushra_package_manifest.json": {
+      "schema_version": "s12-stage-n-webmushra-package-binding-1",
+      "status": null
+    }
+  },
+  "schema_version": "s12-stage-p-stage-n-receipt-validation-1",
+  "status": "PASS"
+}

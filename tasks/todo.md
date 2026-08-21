@@ -3742,3 +3742,11 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 - A–G gates PASS; H remains `HUMAN_FEEDBACK_PENDING`; no real Jovi content was read and no source/profile/tuning change was made.
 - Final evidence: `tasks/reports/runtime/s12-stage-p-system-acceptance/`; UAT package: `E:\Tesla_speed\review_packages\s12-stage-p-jovi-uat-v1`.
 - No push, merge, PR, or profile freeze was performed.
+
+### Stage P specification-alignment correction (2026-08-22)
+
+- [x] Re-audited the pasted Stage-P deliverable list against the current tree; added the exact report aliases `S12_Stage_P_System_Acceptance_Report.md`, `stage_p_tool_receipt_validation.json`, `stage_p_feedback_security_tests.json`, and `stage_p_uat_manifest.json`.
+- [x] Added recursive `SHA256SUMS`, package-local `normalized_import_result.json`, explicit `README_JOVI.md` listening/setup hand-off, expected result paths, Docker/port/config checks, complete-trial status, and importer SHA/accepted/rejected diagnostics.
+- [x] Re-ran Stage-P acceptance (`5 passed`), compileall, diff check, Track-P frozen guard, package/UAT checksum ledgers, and the official Docker/PHP UAT START/CHECK/IMPORT/STOP smoke (`32` MUSHRA rows, `80` LSS rows, fixture import `8 accepted / 24 rejected`, SHA binding PASS). Docker service was left stopped.
+
+Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT / HUMAN_ACOUSTIC_QUALIFICATION_PENDING / NOT_PROFILE_FREEZE_READY`; H remains `PENDING`, and no source/profile/tuning or GitHub push/merge/PR was performed.

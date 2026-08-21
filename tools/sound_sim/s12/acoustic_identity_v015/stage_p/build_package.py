@@ -2,11 +2,29 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
 from ..stage_n.run_stage_n import _study_trials
 from ...acoustic_comparator.listening.webmushra_export import export_webmushra_study
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_sha256sums(destination: Path) -> Path:
+    """Write a recursive, POSIX-relative checksum ledger without self-hashing."""
+    lines = []
+    for path in sorted(destination.rglob("*")):
+        if not path.is_file() or path.name == "SHA256SUMS":
+            continue
+        relative = path.relative_to(destination).as_posix()
+        lines.append(f"{_sha256(path)}  {relative}")
+    checksum_path = destination / "SHA256SUMS"
+    checksum_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return checksum_path
 
 
 def build(destination: Path, stage_m_package: Path, *, study_id: str) -> dict[str, object]:
@@ -35,6 +53,7 @@ def build(destination: Path, stage_m_package: Path, *, study_id: str) -> dict[st
         encoding="utf-8",
         newline="\n",
     )
+    write_sha256sums(destination)
     return manifest
 
 

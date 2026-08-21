@@ -18,6 +18,7 @@ from typing import Any, Mapping
 
 from ...acoustic_comparator.listening.webmushra_import import import_webmushra_results
 from ..stage_o.feedback_intake import validate_feedback_entry
+from .build_package import write_sha256sums
 
 EXPECTED_VEHICLE_IDS = {
     "aventador_lp700",
@@ -373,6 +374,26 @@ def fixture_stage_o_consumption(package: Path, output_dir: Path) -> dict[str, An
         (output_dir / name).write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     if stage_o_entry is not None:
         (output_dir / "stage_p_fixture_stage_o_entry_receipt.json").write_text(json.dumps(stage_o_entry, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    # Keep a package-local normalized-import receipt alongside the raw CSV pair.
+    # It is deliberately labelled fixture-only and never becomes a Stage-O
+    # human receipt.  Refresh the package checksum ledger after adding it.
+    official_receipt = package / "results" / "browser_import_receipt.json"
+    normalized_result = {
+        "schema_version": "s12-stage-p-normalized-import-result-1",
+        "status": imported.get("status"),
+        "source_format": imported.get("source_format"),
+        "accepted_rows": imported.get("accepted_rows", 0),
+        "rejected_rows": imported.get("rejected_rows", 0),
+        "source_receipt": str(official_receipt) if official_receipt.is_file() else None,
+        "source_receipt_sha256": sha256(official_receipt) if official_receipt.is_file() else None,
+        "human_feedback_available": False,
+        "tuning_authority": False,
+        "provenance": "Stage-P fixture/import evidence only; not Jovi human feedback",
+    }
+    (package / "results" / "normalized_import_result.json").write_text(
+        json.dumps(normalized_result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
+    write_sha256sums(package)
     return receipt
 
 
