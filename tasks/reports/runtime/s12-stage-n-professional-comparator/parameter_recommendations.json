@@ -4,7 +4,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -15,7 +15,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -26,7 +26,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -37,7 +37,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -48,7 +48,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -59,7 +59,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -70,7 +70,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,
@@ -81,7 +81,7 @@
     {
       "confidence": "NONE",
       "direction": null,
-      "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
       "metric_residual": null,
       "no_source_change": true,
       "parameter_group": null,

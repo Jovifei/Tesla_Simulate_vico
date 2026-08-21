@@ -16,6 +16,7 @@ def import_webmushra_results(result_csv: Path, binding: Mapping[str, object]) ->
     trials = binding.get("trials", {})
     if not isinstance(trials, Mapping) or not expected_manifest:
         raise ValueError("invalid webMUSHRA package binding")
+    vehicle_ids = {str(trial.get("vehicle_id")) for trial in trials.values() if isinstance(trial, Mapping)}
     errors: list[dict[str, object]] = []
     accepted: list[dict[str, str]] = []
     with result_csv.open(encoding="utf-8-sig", newline="") as handle:
@@ -35,6 +36,8 @@ def import_webmushra_results(result_csv: Path, binding: Mapping[str, object]) ->
                     errors.append({"line": number, "reason": "unknown_anonymous_id"})
                 elif candidate_sha != str(trials[anonymous_id].get("candidate_sha256", "")):
                     errors.append({"line": number, "reason": "candidate_sha256_mismatch"})
+                elif "identity_guess" in required and row.get("identity_guess", "") not in vehicle_ids:
+                    errors.append({"line": number, "reason": "identity_guess_not_in_study_vehicle_set"})
                 elif any(not row.get(column, "").strip() for column in required):
                     errors.append({"line": number, "reason": "required_rating_or_binding_field_empty"})
                 else:

@@ -24,28 +24,33 @@
   "limitation": "MATLAB Audio Toolbox and MoSQITo are not expected to be sample-for-sample identical; units and trend agreement are recorded explicitly.",
   "metric_differences": {
     "base.loudness_sone": {
-      "difference_matlab_minus_mosqito": 2.800127262001417,
-      "matlab": 6.090127262001417,
-      "mosqito": 3.29
+      "difference_matlab_minus_mosqito": 2.8041272620014186,
+      "matlab": 6.090127262001419,
+      "mosqito": 3.286
     },
     "base.roughness_asper": {
-      "difference_matlab_minus_mosqito": -0.0002819616246166391,
-      "matlab": 0.00029437073512812527,
-      "mosqito": 0.0005763323597447644
+      "difference_matlab_minus_mosqito": -0.00028196162460221647,
+      "matlab": 0.0002943707351281573,
+      "mosqito": 0.0005763323597303738
     },
     "base.sharpness_acum": {
-      "difference_matlab_minus_mosqito": -0.0051812801906221395,
-      "matlab": 1.0038518141376072,
-      "mosqito": 1.0090330943282293
+      "difference_matlab_minus_mosqito": -0.005830722805534538,
+      "matlab": 1.0038518141376074,
+      "mosqito": 1.009682536943142
     },
     "prominent_tone.tone_to_noise_ratio_db": {
-      "difference_matlab_minus_mosqito": 0.21311443555141807,
-      "matlab": 42.51712370191301,
-      "mosqito": 42.30400926636159
+      "difference_matlab_minus_mosqito": -0.49979490431801565,
+      "matlab": 42.150895185760035,
+      "mosqito": 42.65069009007805
     }
   },
   "passed": true,
-  "same_fixture_intent": "digital-domain direction fixtures; durations and implementation standards may differ",
+  "same_fixture_intent": "identical hash-bound MAT fixture payload processed by both implementations; metrics need not be sample-for-sample equal",
   "schema_version": "s12-stage-n-cross-tool-validation-1",
+  "shared_fixture_provenance": {
+    "fixture_id": "s12-stage-n-shared-psychoacoustic-fixture-v1",
+    "fixture_manifest_sha256": "2aef9843f4b37263f4bbffc6010fda291dec7b006918c54b957a50658d02f077",
+    "fixture_mat_sha256": "2a1b2d1ecf37f9b5ae03850f4898a894198b07e27dcf52fce10a3409446d04e0"
+  },
   "status": "VALIDATED"
 }

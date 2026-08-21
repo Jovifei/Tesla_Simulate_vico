@@ -20,8 +20,18 @@ if ~all(structfun(@logical, available))
     return
 end
 
-if isfield(inputSpec, 'mode') && strcmp(inputSpec.mode, 'fixture')
-    fixture = buildFixtures();
+if isfield(inputSpec, 'mode') && (strcmp(inputSpec.mode, 'fixture') || strcmp(inputSpec.mode, 'shared_fixture'))
+    if strcmp(inputSpec.mode, 'fixture')
+        fixture = buildFixtures();
+    elseif ~all(isfield(inputSpec, {'fixture_signals', 'sample_rate_hz', 'fixture_provenance'}))
+        result.blocked_reason = 'Shared fixture mode requires fixture signals, sample rate, and provenance.';
+        s12_export_matlab_comparator_result(result, outputDirectory, 'matlab_psychoacoustic_metrics');
+        return
+    else
+        fixture = inputSpec.fixture_signals;
+        fixture.sample_rate_hz = inputSpec.sample_rate_hz;
+        result.fixture_provenance = inputSpec.fixture_provenance;
+    end
     values = struct();
     fields = setdiff(fieldnames(fixture), {'sample_rate_hz'}, 'stable');
     for index = 1:numel(fields)
@@ -58,6 +68,9 @@ fixture.prominent_tone = 0.01 * randn(size(time)) + 0.15 * sin(2*pi*1000*time);
 end
 
 function metric = measure(signal, sampleRateHz)
+% scipy.io.savemat writes a one-dimensional NumPy signal as a MATLAB row.
+% Audio Toolbox accepts mono as an N-by-1 vector, so normalize all callers.
+signal = signal(:);
 [loudness, specificLoudness] = acousticLoudness(signal, sampleRateHz);
 metric = struct();
 metric.loudness_sone = scalarValue(loudness);

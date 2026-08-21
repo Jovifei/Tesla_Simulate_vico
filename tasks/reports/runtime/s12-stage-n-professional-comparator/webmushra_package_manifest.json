@@ -1,10 +1,11 @@
 {
-  "package_manifest_sha256": "323a084b4261db85e770532efd29cc3c0656d17e5850a62a89a863b2aa1a0654",
+  "package_manifest_sha256": "aa6721a47f864af6cf2fad32d964f22f000edb1ce9f869dd9203148df5957fd4",
   "required_result_columns": [
     "listener_id",
     "anonymous_id",
     "package_manifest_sha256",
     "candidate_sha256",
+    "identity_guess",
     "vehicle_identity",
     "realism",
     "low_frequency_weight",
@@ -17,7 +18,7 @@
   ],
   "result_policy": "fixture imports and raw external rows are not human feedback until explicitly submitted by Jovi",
   "schema_version": "s12-stage-n-webmushra-package-binding-1",
-  "test_id": "s12-stage-n-webmushra-v1",
+  "test_id": "s12-stage-n-webmushra-v3",
   "trials": {
     "V01": {
       "candidate_sha256": "03b05e2e09d7eda37998e6426957ff5ab3a8af03512277507a676d9c6b9a6234",

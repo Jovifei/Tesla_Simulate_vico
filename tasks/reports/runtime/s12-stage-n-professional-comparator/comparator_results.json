@@ -1,10 +1,52 @@
 {
   "comparison_kind": "internal_synthetic_parent_regression_only",
-  "human_feedback_import": null,
+  "human_feedback_import": {
+    "human_feedback_available": false,
+    "promotion_block": "listener provenance must be explicitly confirmed by Jovi; no source changes are authorized here",
+    "schema_version": "s12-stage-n-feedback-closure-1",
+    "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+  },
   "no_truth_percentage": true,
   "schema_version": "s12-stage-n-unified-comparator-1",
   "vehicles": {
     "aventador_lp700": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -79,9 +121,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "c63_w204": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -156,9 +346,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "ferrari_458": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -233,9 +571,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "gtr_r35": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -310,9 +796,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "hellcat": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -387,9 +1021,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "lfa": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -464,9 +1246,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "rx7_fd": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -541,9 +1471,157 @@
           "digital_domain_relative_only": true,
           "external_reference_missing": true
         }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
       }
     },
     "supra_jza80": {
+      "acceleration": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_rpm_load_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
       "full_cycle": {
         "human_score": null,
         "idle_residual": {
@@ -613,6 +1691,117 @@
         "spectral_residual": 0.0,
         "transient_residual": {
           "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "idle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_idle_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "lift_afterfire": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_lift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      },
+      "shift": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": null,
+        "stage_m_scenario_status": "not_evaluated_without_shift_window",
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"
         },
         "uncertainty": {
           "digital_domain_relative_only": true,

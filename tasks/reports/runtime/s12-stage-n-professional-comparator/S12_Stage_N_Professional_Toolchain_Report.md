@@ -15,7 +15,7 @@
 - MATLAB order receipt: `matlab_order_validation.json`; status `VALIDATED`; project data `True`.
 - MATLAB psychoacoustic receipt: `matlab_psychoacoustic_validation.json`; status `VALIDATED`; project data `True`.
 - Audio Test Bench: `AUDIO_TEST_BENCH_NOT_INTEGRATED`; no audioPlugin bridge exists.
-- webMUSHRA package: `E:\Tesla_speed\review_packages\s12-stage-n-webmushra-v1`; status `VALIDATED`. Its hidden reference is explicitly a synthetic parent, not a real vehicle reference.
+- webMUSHRA package: `E:\Tesla_speed\review_packages\s12-stage-n-webmushra-v3`; status `VALIDATED`. Its hidden reference is explicitly a synthetic parent, not a real vehicle reference.
 
 ## Unified boundary
 

@@ -77,6 +77,7 @@ def _low_quality_anchor(source: Path, destination: Path) -> dict[str, object]:
 
 
 def _yaml(trials: Mapping[str, Mapping[str, object]]) -> str:
+    vehicle_ids = sorted({str(record["vehicle_id"]) for record in trials.values()})
     lines = [
         "testname: S12 Stage N professional comparator",
         "testId: s12-stage-n-webmushra-v1",
@@ -128,6 +129,18 @@ def _yaml(trials: Mapping[str, Mapping[str, object]]) -> str:
                 "      - value: 100",
                 "        label: 100",
             ])
+        lines.extend([
+            "  - type: likert_single_stimulus",
+            f"    id: {anonymous_id}_identity_guess",
+            f"    name: {anonymous_id} identity guess",
+            "    content: Select the vehicle identity you believe this anonymous Stage-M candidate represents.",
+            "    mustRate: true",
+            "    stimuli:",
+            f"      stage_m_candidate: {trial['candidate_path']}",
+            "    response:",
+        ])
+        for vehicle_id in vehicle_ids:
+            lines.extend([f"      - value: {vehicle_id}", f"        label: {vehicle_id}"])
     lines.extend([
         "  - type: finish",
         "    name: Submit results",
@@ -144,7 +157,13 @@ def _yaml(trials: Mapping[str, Mapping[str, object]]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def export_webmushra_study(destination: Path, trials: Iterable[Mapping[str, object]], *, upstream_receipt: Mapping[str, object]) -> dict[str, object]:
+def export_webmushra_study(
+    destination: Path,
+    trials: Iterable[Mapping[str, object]],
+    *,
+    upstream_receipt: Mapping[str, object],
+    study_id: str = "s12-stage-n-webmushra-v1",
+) -> dict[str, object]:
     """Create a new study directory and never overwrite a populated one."""
 
     if destination.exists() and any(destination.iterdir()):
@@ -158,6 +177,7 @@ def export_webmushra_study(destination: Path, trials: Iterable[Mapping[str, obje
     audio_dir.mkdir()
     results_dir.joinpath(".gitkeep").write_text("webMUSHRA result export destination\n", encoding="utf-8", newline="\n")
     records: dict[str, dict[str, object]] = {}
+    config_stem = "s12-stage-n" if study_id == "s12-stage-n-webmushra-v1" else study_id
     for trial in trials:
         anonymous_id = str(trial["anonymous_id"])
         if anonymous_id in records:
@@ -181,18 +201,19 @@ def export_webmushra_study(destination: Path, trials: Iterable[Mapping[str, obje
             "scenario": str(trial["scenario"]),
             "reference_role": "synthetic_parent_not_real_reference",
             "future_candidate": {"status": "NOT_GENERATED", "reason": "no source change is authorized on comparator branch"},
-            "reference_path": f"configs/s12-stage-n/audio/{anonymous_id}/{reference.name}",
-            "parent_path": f"configs/s12-stage-n/audio/{anonymous_id}/{parent_copy.name}",
-            "candidate_path": f"configs/s12-stage-n/audio/{anonymous_id}/{candidate_copy.name}",
-            "anchor_path": f"configs/s12-stage-n/audio/{anonymous_id}/{anchor.name}",
-            "volume_path": f"configs/s12-stage-n/audio/{anonymous_id}/{reference.name}",
+            "reference_path": f"configs/{config_stem}/audio/{anonymous_id}/{reference.name}",
+            "parent_path": f"configs/{config_stem}/audio/{anonymous_id}/{parent_copy.name}",
+            "candidate_path": f"configs/{config_stem}/audio/{anonymous_id}/{candidate_copy.name}",
+            "anchor_path": f"configs/{config_stem}/audio/{anonymous_id}/{anchor.name}",
+            "volume_path": f"configs/{config_stem}/audio/{anonymous_id}/{reference.name}",
             "candidate_sha256": candidate_receipt["audition_sha256"],
             "audition_receipts": {"reference": reference_receipt, "parent": parent_receipt, "candidate": candidate_receipt, "anchor": anchor_receipt},
         }
     if not records:
         raise ValueError("at least one listening trial is required")
-    yaml_path = config_dir / "s12-stage-n.yaml"
-    yaml_path.write_text(_yaml(records), encoding="utf-8", newline="\n")
+    config_filename = f"{config_stem}.yaml"
+    yaml_path = config_dir / config_filename
+    yaml_path.write_text(_yaml(records).replace("testId: s12-stage-n-webmushra-v1", f"testId: {study_id}", 1), encoding="utf-8", newline="\n")
     study = {
         "schema_version": "s12-stage-n-webmushra-study-1",
         "tool": "webMUSHRA",
@@ -207,20 +228,20 @@ def export_webmushra_study(destination: Path, trials: Iterable[Mapping[str, obje
     study_path.write_text(json.dumps(study, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     binding = {
         "schema_version": "s12-stage-n-webmushra-package-binding-1",
-        "test_id": "s12-stage-n-webmushra-v1",
+        "test_id": study_id,
         "package_manifest_sha256": _sha256(study_path),
         "trials": {key: {"candidate_sha256": value["candidate_sha256"], "vehicle_id": value["vehicle_id"], "scenario": value["scenario"]} for key, value in records.items()},
-        "required_result_columns": ["listener_id", "anonymous_id", "package_manifest_sha256", "candidate_sha256", *RATING_DIMENSIONS],
+        "required_result_columns": ["listener_id", "anonymous_id", "package_manifest_sha256", "candidate_sha256", "identity_guess", *RATING_DIMENSIONS],
         "result_policy": "fixture imports and raw external rows are not human feedback until explicitly submitted by Jovi",
     }
     (destination / "webmushra_package_manifest.json").write_text(json.dumps(binding, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     (destination / "LOCAL_WEBMUSHRA_SETUP.md").write_text(
         "# Local Stage-N webMUSHRA setup\n\n"
         "This study uses the official external webMUSHRA checkout; its source is not copied into this repository. The hidden reference is a synthetic parent, not a real vehicle recording.\n\n"
-        "1. Copy `configs/s12-stage-n.yaml` to `<webMUSHRA>/configs/s12-stage-n.yaml`.\n"
-        "2. Copy this package's `audio/` directory to `<webMUSHRA>/configs/s12-stage-n/audio/`.\n"
+        f"1. Copy `configs/{config_filename}` to `<webMUSHRA>/configs/{config_filename}`.\n"
+        f"2. Copy this package's `audio/` directory to `<webMUSHRA>/configs/{config_stem}/audio/`.\n"
         "3. From the external checkout run `docker compose up --build`.\n"
-        "4. Open `http://127.0.0.1:8000/?config=s12-stage-n.yaml` in Chrome. Results appear under `<webMUSHRA>/results/s12-stage-n-webmushra-v1/mushra.csv`.\n"
+        f"4. Open `http://127.0.0.1:8000/?config={config_filename}` in Chrome. Results appear under `<webMUSHRA>/results/{study_id}/mushra.csv`.\n"
         "5. Normalize the exported result with the SHA/file-ID binding before calling `webmushra_import.py`. No fixture or browser result is human qualification until Jovi submits it.\n",
         encoding="utf-8", newline="\n",
     )

@@ -127,8 +127,7 @@ def build_unified_results(
             if isinstance(project_metrics, Mapping) or isinstance(matlab_psycho_metrics, Mapping)
             else {"status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"}
         )
-        vehicle_results[str(vehicle_id)] = {
-            "full_cycle": {
+        full_cycle = {
                 "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE" if external_missing else "EXTERNAL_REFERENCE_PRESENT",
                 "rpm_state_alignment": {"status": "REFERENCE_RPM_UNAVAILABLE" if external_missing else "NOT_REEVALUATED"},
                 "spectral_residual": prior.get("spectral", {}).get("log_distance") if isinstance(prior.get("spectral"), Mapping) else None,
@@ -150,7 +149,37 @@ def build_unified_results(
                     "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
                 },
             }
-        }
+        vehicle_scenarios: dict[str, dict[str, object]] = {"full_cycle": full_cycle}
+        scenario_metrics = prior.get("scenario_metrics", {})
+        if isinstance(scenario_metrics, Mapping):
+            for scenario_name, stage_m_status in sorted(scenario_metrics.items()):
+                scenario = str(scenario_name)
+                if scenario == "full_cycle":
+                    continue
+                vehicle_scenarios[scenario] = {
+                    "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE" if external_missing else "EXTERNAL_REFERENCE_PRESENT",
+                    "rpm_state_alignment": {"status": "REFERENCE_RPM_UNAVAILABLE" if external_missing else "NOT_REEVALUATED"},
+                    "spectral_residual": None,
+                    "order_identity": {"status": "ORDER_COMPARISON_NOT_QUALIFIED" if external_missing else "NOT_REEVALUATED", "residual": None},
+                    "idle_residual": {"status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"},
+                    "transient_residual": {"status": "NOT_QUALIFIED_NO_SCENARIO_PCM_OR_REFERENCE"},
+                    "psychoacoustic_residual": {"status": "BLOCKED_PENDING_SCENARIO_PROFESSIONAL_TOOL_RECEIPT"},
+                    "human_score": None,
+                    "uncertainty": {"digital_domain_relative_only": True, "external_reference_missing": external_missing},
+                    "reference_limitation": "Stage-M scenario status is preserved, but no separate scenario PCM/reference pair was supplied to Stage N.",
+                    "stage_m_scenario_status": stage_m_status,
+                    "radar_axes": {
+                        "order_identity": "NOT_QUALIFIED",
+                        "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+                        "low_frequency_body": "NOT_QUALIFIED",
+                        "high_order_character": "NOT_QUALIFIED",
+                        "idle_texture": "NOT_QUALIFIED",
+                        "transient_behavior": "NOT_QUALIFIED",
+                        "psychoacoustic_match": "BLOCKED",
+                        "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+                    },
+                }
+        vehicle_results[str(vehicle_id)] = vehicle_scenarios
     return {
         "schema_version": "s12-stage-n-unified-comparator-1",
         "comparison_kind": "internal_synthetic_parent_regression_only",
@@ -191,6 +220,18 @@ def build_cross_tool_validation(
             "reason": "validated MoSQITo fixture receipt is absent",
         }
     matlab_fixture = matlab_psychoacoustic.get("fixture", {})
+    matlab_provenance = matlab_fixture.get("provenance") if isinstance(matlab_fixture, Mapping) else None
+    mosqito_provenance = mosqito_fixture.get("shared_fixture_provenance")
+    provenance_fields = ("fixture_id", "fixture_manifest_sha256", "fixture_mat_sha256")
+    if (
+        not isinstance(matlab_provenance, Mapping)
+        or not isinstance(mosqito_provenance, Mapping)
+        or any(matlab_provenance.get(field) != mosqito_provenance.get(field) for field in provenance_fields)
+    ):
+        return {
+            "status": "CROSS_TOOL_COMPARISON_BLOCKED",
+            "reason": "MATLAB and MoSQITo receipts do not bind the same shared fixture manifest and MAT payload",
+        }
     matlab_validation = matlab_fixture.get("validation", {}) if isinstance(matlab_fixture, Mapping) else {}
     mosqito_validation = mosqito_fixture.get("validation", {})
     common_trends = {
@@ -237,7 +278,8 @@ def build_cross_tool_validation(
     return {
         "schema_version": "s12-stage-n-cross-tool-validation-1",
         "status": "VALIDATED" if passed else "EXECUTED_ON_FIXTURE",
-        "same_fixture_intent": "digital-domain direction fixtures; durations and implementation standards may differ",
+        "shared_fixture_provenance": dict(matlab_provenance),
+        "same_fixture_intent": "identical hash-bound MAT fixture payload processed by both implementations; metrics need not be sample-for-sample equal",
         "common_trends": common_trends,
         "metric_differences": metric_differences,
         "passed": passed,
@@ -439,26 +481,95 @@ def write_toolchain_matrix(output_root: Path, records: list[dict[str, object]]) 
     return payload
 
 
-def withheld_recommendations(unified: Mapping[str, object]) -> dict[str, object]:
+def recommend_parameter_adjustments(unified: Mapping[str, object]) -> dict[str, object]:
+    """Map confirmed human/objective evidence to branch-gated parameter guidance."""
+
     vehicles = unified.get("vehicles", {})
+    feedback = unified.get("human_feedback_import")
+    if not isinstance(vehicles, Mapping):
+        raise ValueError("unified comparator results must expose vehicles")
+    if not isinstance(feedback, Mapping) or feedback.get("status") != "CONFIRMED_JOVI_FEEDBACK_IMPORTED":
+        return {
+            "schema_version": "s12-stage-n-parameter-recommendations-1",
+            "no_source_change": True,
+            "recommendations": [
+                {
+                    "vehicle_id": vehicle_id,
+                    "state": "WITHHELD",
+                    "metric_residual": None,
+                    "parameter_group": None,
+                    "direction": None,
+                    "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+                    "confidence": "NONE",
+                    "side_effect_risk": "unknown without target",
+                    "no_source_change": True,
+                }
+                for vehicle_id in sorted(vehicles)
+            ],
+        }
+    scores_by_vehicle = feedback.get("human_scores_by_vehicle", {})
+    residuals_by_vehicle = feedback.get("objective_residual_bindings", {})
+    if not isinstance(scores_by_vehicle, Mapping) or not isinstance(residuals_by_vehicle, Mapping):
+        raise ValueError("confirmed feedback closure is missing score or objective bindings")
+    recommendations: list[dict[str, object]] = []
+    for vehicle_id in sorted(vehicles):
+        score_rows = scores_by_vehicle.get(vehicle_id)
+        scenario_bindings = residuals_by_vehicle.get(vehicle_id)
+        low_frequency = _mean_numeric(score_rows, "low_frequency_weight")
+        full_cycle = scenario_bindings.get("full_cycle") if isinstance(scenario_bindings, Mapping) else None
+        spectral_residual = full_cycle.get("spectral_residual") if isinstance(full_cycle, Mapping) else None
+        if low_frequency is not None and low_frequency <= 25.0 and isinstance(spectral_residual, (int, float)):
+            recommendations.append({
+                "vehicle_id": vehicle_id,
+                "state": "EVIDENCE_BOUND_RECOMMENDATION_FOR_SEPARATE_BRANCH",
+                "metric_residual": {"spectral_residual": spectral_residual, "low_frequency_weight": low_frequency},
+                "parameter_group": "pressure/body resonance (60-120 Hz local band)",
+                "direction": "increase local body-resonance support only; preserve 120-400 Hz and do not apply global low-frequency gain",
+                "evidence": "SHA/file-ID-bound Jovi low-frequency score joined to the retained Stage-N full-cycle spectral residual",
+                "confidence": "LOW_NO_EXTERNAL_REFERENCE",
+                "side_effect_risk": "may mask order detail or over-weight cabin/body energy if broadened beyond the local band",
+                "no_source_change": True,
+                "promotion_block": "create and review a separate sound-fix branch before any vehicle-source edit",
+            })
+            continue
+        recommendations.append({
+            "vehicle_id": vehicle_id,
+            "state": "WITHHELD",
+            "metric_residual": None,
+            "parameter_group": None,
+            "direction": None,
+            "evidence": "confirmed feedback did not contain a rule-supported residual/score combination",
+            "confidence": "NONE",
+            "side_effect_risk": "unknown without a qualified target",
+            "no_source_change": True,
+        })
     return {
         "schema_version": "s12-stage-n-parameter-recommendations-1",
         "no_source_change": True,
-        "recommendations": [
-            {
-                "vehicle_id": vehicle_id,
-                "state": "WITHHELD",
-                "metric_residual": None,
-                "parameter_group": None,
-                "direction": None,
-                "evidence": "no RPM/state-bound external reference and no imported Jovi feedback",
-                "confidence": "NONE",
-                "side_effect_risk": "unknown without target",
-                "no_source_change": True,
-            }
-            for vehicle_id in sorted(vehicles) if isinstance(vehicles, Mapping)
-        ],
+        "recommendations": recommendations,
     }
+
+
+def _mean_numeric(rows: object, key: str) -> float | None:
+    if not isinstance(rows, list):
+        return None
+    values: list[float] = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            continue
+        try:
+            value = float(row[key])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if 0.0 <= value <= 100.0:
+            values.append(value)
+    return sum(values) / len(values) if values else None
+
+
+def withheld_recommendations(unified: Mapping[str, object]) -> dict[str, object]:
+    """Backward-compatible entry point for the fail-closed recommendations report."""
+
+    return recommend_parameter_adjustments(unified)
 
 
 def write_artifact_manifest(output_root: Path) -> dict[str, object]:

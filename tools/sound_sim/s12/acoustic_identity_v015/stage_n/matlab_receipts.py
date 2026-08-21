@@ -209,3 +209,80 @@ def validate_psychoacoustic_session(receipt_path: Path, *, input_root: Path, out
         "input_calibration": fixture.get("calibration"),
         "limitation": "Digital-domain relative candidate metrics only; no full-scale-to-Pascal calibration, absolute SPL, or real-reference residual is claimed.",
     }
+
+
+def validate_shared_psychoacoustic_fixture(receipt_path: Path, *, fixture_root: Path, output_root: Path) -> dict[str, Any]:
+    """Validate a MATLAB fixture that consumed the exact cross-tool MAT payload."""
+
+    manifest_path = fixture_root / "fixture_manifest.json"
+    manifest = _read_json(manifest_path)
+    mat_path = fixture_root / str(manifest.get("fixture_mat", ""))
+    if manifest.get("fixture_id") != "s12-stage-n-shared-psychoacoustic-fixture-v1" or not mat_path.is_file() or _sha256(mat_path) != manifest.get("fixture_mat_sha256"):
+        raise ValueError("shared psychoacoustic fixture manifest/MAT binding is invalid")
+    receipt = _read_json(receipt_path)
+    if receipt.get("schema_version") != "s12-stage-n-matlab-shared-psychoacoustic-fixture-1" or receipt.get("status") != "VALIDATED":
+        raise ValueError("MATLAB shared psychoacoustic fixture was not validated")
+    fixture = receipt.get("fixture")
+    if not isinstance(fixture, Mapping) or fixture.get("status") != "VALIDATED":
+        raise ValueError("MATLAB shared psychoacoustic fixture result is invalid")
+    availability = fixture.get("function_availability")
+    validation = fixture.get("validation")
+    if not isinstance(availability, Mapping) or any(availability.get(function) is not True for function in PSYCHOACOUSTIC_FUNCTIONS):
+        raise ValueError("MATLAB shared fixture did not invoke every required Audio Toolbox function")
+    if not isinstance(validation, Mapping) or validation.get("passed") is not True:
+        raise ValueError("MATLAB shared psychoacoustic fixture direction validation failed")
+    output_artifact = _child(output_root, fixture.get("output_artifact"))
+    if not output_artifact.is_file():
+        raise ValueError("MATLAB shared psychoacoustic fixture output artifact is missing")
+    provenance = {
+        "fixture_id": manifest["fixture_id"],
+        "fixture_manifest_sha256": _sha256(manifest_path),
+        "fixture_mat_sha256": _sha256(mat_path),
+    }
+    raw_provenance = fixture.get("fixture_provenance")
+    if not isinstance(raw_provenance, Mapping) or raw_provenance.get("fixture_id") != provenance["fixture_id"] or raw_provenance.get("fixture_mat_sha256") != provenance["fixture_mat_sha256"]:
+        raise ValueError("MATLAB shared fixture receipt does not identify the declared MAT payload")
+    return {
+        "schema_version": "s12-stage-n-matlab-shared-psychoacoustic-validation-1",
+        "status": "VALIDATED",
+        "fixture": {
+            "provenance": provenance,
+            "validation": dict(validation),
+            "metrics": fixture.get("metrics"),
+            "metric_path": str(output_artifact),
+            "metric_sha256": _sha256(output_artifact),
+        },
+        "matlab_release": fixture.get("matlab_release"),
+        "fixture_validated": True,
+        "vehicle_data_executed": False,
+        "vehicle_count": 0,
+        "session_receipt_path": str(receipt_path),
+        "session_receipt_sha256": _sha256(receipt_path),
+        "limitation": "Shared fixture validates cross-tool trends only; it is digital-domain relative and is not an external-reference comparison.",
+    }
+
+
+def attach_shared_fixture_to_project_receipt(project_receipt: Mapping[str, Any], shared_fixture_receipt: Mapping[str, Any]) -> dict[str, Any]:
+    """Preserve eight-candidate execution while replacing the legacy fixture with the shared one."""
+
+    if not _project_receipt_valid(project_receipt) or shared_fixture_receipt.get("status") != "VALIDATED":
+        raise ValueError("cannot attach an unvalidated shared fixture to the MATLAB project receipt")
+    fixture = shared_fixture_receipt.get("fixture")
+    if not isinstance(fixture, Mapping):
+        raise ValueError("shared fixture payload is invalid")
+    merged = dict(project_receipt)
+    merged["fixture"] = dict(fixture)
+    merged["shared_fixture_receipt_path"] = shared_fixture_receipt.get("session_receipt_path")
+    merged["shared_fixture_receipt_sha256"] = shared_fixture_receipt.get("session_receipt_sha256")
+    return merged
+
+
+def _project_receipt_valid(receipt: Mapping[str, Any]) -> bool:
+    return bool(
+        receipt.get("status") == "VALIDATED"
+        and receipt.get("fixture_validated") is True
+        and receipt.get("vehicle_data_executed") is True
+        and receipt.get("vehicle_count") == 8
+        and isinstance(receipt.get("vehicles"), Mapping)
+        and len(receipt["vehicles"]) == 8
+    )

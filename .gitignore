@@ -116,3 +116,5 @@ artifacts/matlab/s12-stage-n-order-inputs-v1/
 # Runtime reports contain the receipt hashes and paths; large maps stay local.
 artifacts/matlab/s12-stage-n-order-execution-*/
 artifacts/matlab/s12-stage-n-psychoacoustic-execution-*/
+artifacts/matlab/s12-stage-n-shared-psychoacoustic-fixture-*/
+artifacts/matlab/s12-stage-n-shared-psychoacoustic-execution-*/

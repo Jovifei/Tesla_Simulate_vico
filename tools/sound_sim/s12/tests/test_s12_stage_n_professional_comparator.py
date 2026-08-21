@@ -22,8 +22,13 @@ from tools.sound_sim.s12.acoustic_identity_v015.render_drive_cycle_v10 import bu
 from tools.sound_sim.s12.acoustic_identity_v015.stage_n.toolchain import (
     TOOL_STATUSES,
     build_unified_results,
+    recommend_parameter_adjustments,
     tool_record,
     validate_tool_record,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_n.run_stage_n import (
+    _prepare_feedback_closure,
+    _validated_fixture_import_matches_binding,
 )
 
 
@@ -102,7 +107,20 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
     assert (package / "results" / ".gitkeep").is_file()
     with pytest.raises(FileExistsError):
         export_webmushra_study(package, [], upstream_receipt={})
+    versioned = tmp_path / "study-v2"
+    export_webmushra_study(
+        versioned,
+        [{"anonymous_id": "V01", "vehicle_id": "hellcat", "scenario": "acceleration", "parent": parent, "candidate": candidate}],
+        upstream_receipt={"tool": "webMUSHRA", "version": "fixture"},
+        study_id="s12-stage-n-webmushra-v2",
+    )
+    assert (versioned / "configs" / "s12-stage-n-webmushra-v2.yaml").is_file()
+    versioned_config = (versioned / "configs" / "s12-stage-n-webmushra-v2.yaml").read_text(encoding="utf-8")
+    assert "testId: s12-stage-n-webmushra-v2" in versioned_config
+    assert "configs/s12-stage-n-webmushra-v2/audio/V01/" in versioned_config
     binding = json.loads((package / "webmushra_package_manifest.json").read_text(encoding="utf-8"))
+    assert "identity_guess" in binding["required_result_columns"]
+    assert "identity_guess" in (package / "configs" / "s12-stage-n.yaml").read_text(encoding="utf-8")
     result = package / "results" / "fixture.csv"
     with result.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=binding["required_result_columns"])
@@ -112,6 +130,7 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
             "anonymous_id": "V01",
             "package_manifest_sha256": binding["package_manifest_sha256"],
             "candidate_sha256": binding["trials"]["V01"]["candidate_sha256"],
+            "identity_guess": "hellcat",
         }
         row.update({dimension: "50" for dimension in binding["required_result_columns"] if dimension not in row})
         writer.writerow(row)
@@ -119,6 +138,14 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
     assert receipt["status"] == "FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK"
     assert receipt["accepted_rows"] == 1
     assert receipt["human_feedback_available"] is False
+    row["identity_guess"] = "unknown_vehicle"
+    with result.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=binding["required_result_columns"])
+        writer.writeheader()
+        writer.writerow(row)
+    rejected_identity = import_webmushra_results(result, binding)
+    assert rejected_identity["accepted_rows"] == 0
+    assert rejected_identity["errors"] == [{"line": 2, "reason": "identity_guess_not_in_study_vehicle_set"}]
     raw = package / "results" / "mushra.csv"
     raw.write_text(
         "session_test_id,listener_id,session_uuid,trial_id,rating_stimulus,rating_score,rating_time,rating_comment\n"
@@ -129,6 +156,9 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
     assert raw_receipt["source_format"] == "webmushra_raw_mushra_csv"
     assert raw_receipt["accepted_rows"] == 1
     assert raw_receipt["human_feedback_available"] is False
+    assert _validated_fixture_import_matches_binding(raw_receipt, binding) is True
+    stale = {**raw_receipt, "rows": [{**raw_receipt["rows"][0], "package_manifest_sha256": "0" * 64}]}
+    assert _validated_fixture_import_matches_binding(stale, binding) is False
 
 
 def test_unified_result_keeps_missing_reference_order_not_qualified() -> None:
@@ -152,6 +182,91 @@ def test_unified_result_keeps_missing_reference_order_not_qualified() -> None:
     psycho = project_result["vehicles"]["hellcat"]["full_cycle"]["psychoacoustic_residual"]
     assert psycho["status"] == "CANDIDATE_METRICS_AVAILABLE_REFERENCE_COMPARISON_BLOCKED"
     assert psycho["residual"] is None
+    stage_m["vehicles"]["hellcat"]["scenario_metrics"] = {
+        "idle": "not_evaluated_without_idle_window",
+        "acceleration": "not_evaluated_without_rpm_load_window",
+        "lift_afterfire": "not_evaluated_without_lift_window",
+        "shift": "not_evaluated_without_shift_window",
+    }
+    scenario_result = build_unified_results(stage_m, human_feedback=None)
+    assert set(scenario_result["vehicles"]["hellcat"]) == {"full_cycle", "idle", "acceleration", "lift_afterfire", "shift"}
+    assert scenario_result["vehicles"]["hellcat"]["shift"]["order_identity"]["status"] == "ORDER_COMPARISON_NOT_QUALIFIED"
+
+
+def test_stage_n_feedback_closure_module_is_available() -> None:
+    import importlib.util
+
+    assert importlib.util.find_spec("tools.sound_sim.s12.acoustic_identity_v015.stage_n.feedback_closure") is not None
+
+
+def _stage_n_feedback_inputs() -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+    binding = {
+        "package_manifest_sha256": "m" * 64,
+        "trials": {
+            "V01": {"vehicle_id": "hellcat", "scenario": "full_cycle", "candidate_sha256": "a" * 64},
+            "V02": {"vehicle_id": "lfa", "scenario": "full_cycle", "candidate_sha256": "b" * 64},
+        },
+    }
+    receipt = {
+        "status": "IMPORTED_JOVI_FEEDBACK_PENDING_REVIEW",
+        "accepted_rows": 2,
+        "rejected_rows": 0,
+        "rows": [
+            {"listener_id": "Jovi", "anonymous_id": "V01", "package_manifest_sha256": "m" * 64, "candidate_sha256": "a" * 64, "identity_guess": "hellcat", "realism": "75"},
+            {"listener_id": "Jovi", "anonymous_id": "V02", "package_manifest_sha256": "m" * 64, "candidate_sha256": "b" * 64, "identity_guess": "hellcat", "realism": "50"},
+        ],
+    }
+    comparator = {"vehicles": {"hellcat": {"full_cycle": {"spectral_residual": 0.1}}, "lfa": {"full_cycle": {"spectral_residual": 0.2}}}}
+    return binding, receipt, comparator
+
+
+def test_feedback_closure_refuses_unconfirmed_listener_claim() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_n.feedback_closure import prepare_feedback_closure
+
+    binding, receipt, comparator = _stage_n_feedback_inputs()
+    closure = prepare_feedback_closure(receipt, binding, comparator, confirmed_by_jovi=False)
+    assert closure["status"] == "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+    assert closure["human_feedback_available"] is False
+
+
+def test_publisher_feedback_flow_requires_explicit_confirmation(tmp_path: Path) -> None:
+    binding, receipt, comparator = _stage_n_feedback_inputs()
+    waiting = _prepare_feedback_closure(None, binding, comparator, confirmed_by_jovi=False)
+    assert waiting["status"] == "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+    receipt_path = tmp_path / "jovi_import.json"
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    confirmed = _prepare_feedback_closure(receipt_path, binding, comparator, confirmed_by_jovi=True)
+    assert confirmed["status"] == "CONFIRMED_JOVI_FEEDBACK_IMPORTED"
+
+
+def test_feedback_closure_confirms_bound_rows_and_builds_identity_confusion_matrix() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_n.feedback_closure import prepare_feedback_closure
+
+    binding, receipt, comparator = _stage_n_feedback_inputs()
+    closure = prepare_feedback_closure(receipt, binding, comparator, confirmed_by_jovi=True)
+    assert closure["status"] == "CONFIRMED_JOVI_FEEDBACK_IMPORTED"
+    assert closure["human_feedback_available"] is True
+    assert closure["identity_confusion_matrix"]["hellcat"]["hellcat"] == 1
+    assert closure["identity_confusion_matrix"]["lfa"]["hellcat"] == 1
+    assert closure["objective_residual_bindings"]["lfa"]["full_cycle"]["spectral_residual"] == 0.2
+
+
+def test_parameter_recommendations_require_confirmed_feedback_and_preserve_source_boundary() -> None:
+    unified = {
+        "vehicles": {"hellcat": {"full_cycle": {"spectral_residual": 0.1}}},
+        "human_feedback_import": {
+            "status": "CONFIRMED_JOVI_FEEDBACK_IMPORTED",
+            "human_scores_by_vehicle": {"hellcat": [{"low_frequency_weight": "25", "realism": "50"}]},
+            "identity_confusion_matrix": {"hellcat": {"hellcat": 1}},
+            "objective_residual_bindings": {"hellcat": {"full_cycle": {"spectral_residual": 0.1}}},
+        },
+    }
+    recommendations = recommend_parameter_adjustments(unified)
+    recommendation = recommendations["recommendations"][0]
+    assert recommendation["metric_residual"] == {"spectral_residual": 0.1, "low_frequency_weight": 25.0}
+    assert recommendation["parameter_group"] == "pressure/body resonance (60-120 Hz local band)"
+    assert recommendation["direction"].startswith("increase local")
+    assert recommendation["no_source_change"] is True
 
 
 def test_matlab_adapters_name_real_functions_and_never_estimate_missing_rpm() -> None:
@@ -174,6 +289,7 @@ def test_matlab_adapters_name_real_functions_and_never_estimate_missing_rpm() ->
         assert function in psycho
     assert "acousticRoughness(signal, sampleRateHz)" in psycho
     assert "acousticFluctuation(signal, sampleRateHz)" in psycho
+    assert "signal = signal(:);" in psycho
     assert "setdiff(fieldnames(fixture), {'sample_rate_hz'}, 'stable')" in psycho
     assert "values.prominent_tone.prominence_ratio_db > values.base.prominence_ratio_db" in psycho
 
@@ -211,4 +327,17 @@ def test_mosqito_adapter_is_real_call_path_not_proxy() -> None:
         assert function in adapter
     assert "proxy_metrics" not in adapter
     assert "--project-input-root" in adapter
+    assert "--shared-fixture-root" in adapter
+    assert "shared_fixture_suite" in adapter
+    assert 'prominent["tone_to_noise_prominent"]' in adapter
     assert "MATLAB input SHA mismatch" in adapter
+
+
+def test_shared_fixture_matlab_runner_and_publisher_contract_exist() -> None:
+    matlab = Path("tools/sound_sim/s12/acoustic_comparator/matlab")
+    shared_runner = matlab / "s12_stage_n_run_shared_psychoacoustic_fixture.m"
+    assert shared_runner.is_file()
+    runner = Path("tools/sound_sim/s12/acoustic_identity_v015/stage_n/run_stage_n.py").read_text(encoding="utf-8")
+    assert "--shared-fixture-root" in runner
+    assert "--matlab-shared-psychoacoustic-receipt" in runner
+    assert "--mosqito-shared-fixture-receipt" in runner

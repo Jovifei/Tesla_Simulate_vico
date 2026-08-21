@@ -1,14 +1,19 @@
 {
   "artifacts": [
     {
-      "bytes": 27337,
+      "bytes": 75155,
       "path": "comparator_results.json",
-      "sha256": "f8fcf1dff4b6a20e07664acd54f76b4081bcdb75b820ba075ca98b9389e98edc"
+      "sha256": "8ea0bbcef63b5eb722d9a4f074145d40a025b93f76199cb0232bf4b2376cb935"
     },
     {
-      "bytes": 1579,
+      "bytes": 1912,
       "path": "cross_tool_validation.json",
-      "sha256": "b2bd3b81bb6e23c31c43e5abd7f957064d4eb0e2ee7ede296cc1f5e046aceceb"
+      "sha256": "ea922386674bf3512cee2b84511e658cc4ef2c92a0103c9fee86c333d8d31207"
+    },
+    {
+      "bytes": 261,
+      "path": "feedback_closure.json",
+      "sha256": "bbde58c7fbadce2ee35e5ae23b3add146b41db1c985ce02ac72d0651ddd7175f"
     },
     {
       "bytes": 8614,
@@ -16,9 +21,14 @@
       "sha256": "228b013a2e94764ff81057eb2d3323cb3989820c3302bab8d260c3e45894ca6a"
     },
     {
-      "bytes": 13613,
+      "bytes": 14229,
       "path": "matlab_psychoacoustic_validation.json",
-      "sha256": "769c25c39f4a435e1c95833c18232d787f2e33ce3a61b8c85219c21358b94ced"
+      "sha256": "d5e2269a001674373637add853bd70d157eef33f80e31c2884e80b5556e620c0"
+    },
+    {
+      "bytes": 4239,
+      "path": "matlab_shared_psychoacoustic_validation.json",
+      "sha256": "2769e98f35679e2c85c54236d4e8f3cfdce44cbf42833d8ce8459c54027872c7"
     },
     {
       "bytes": 16949,
@@ -26,19 +36,29 @@
       "sha256": "ebd2de62259c893ec9ae798a2f1d2a35e5be0a91740c76e70f29ad839fa1e3cc"
     },
     {
+      "bytes": 9842,
+      "path": "mosqito_shared_fixture_validation-v2.json",
+      "sha256": "88b1cc0e671f888a20d90f106a8985a995a056e57a4a6c5eaaea792a31c9acf2"
+    },
+    {
+      "bytes": 9842,
+      "path": "mosqito_shared_fixture_validation.json",
+      "sha256": "88b1cc0e671f888a20d90f106a8985a995a056e57a4a6c5eaaea792a31c9acf2"
+    },
+    {
       "bytes": 9231,
       "path": "mosqito_validation.json",
       "sha256": "d8671e321de5d655538046d2b23d4d8259120d556a4a79a764825b155b78dbd2"
     },
     {
-      "bytes": 2997,
+      "bytes": 3005,
       "path": "parameter_recommendations.json",
-      "sha256": "ad588ca35828dfbd960b5dace2de539242f048cdf4bc27e6458fd60f312fbebf"
+      "sha256": "3313b58ea9728b985b4f3477d79916e9b05f66d83c742ffeff79198eedaaf43e"
     },
     {
       "bytes": 348,
       "path": "publish_receipt.json",
-      "sha256": "b119316ae39146af32a4b3a876877013915d1c966c40a9cf269a4cec32b9e60a"
+      "sha256": "c890f5345ae8f0ba2b6f3dfcead47c5b4ab2d783f74310ca10cf6b4011e0dc04"
     },
     {
       "bytes": 3708,
@@ -48,22 +68,22 @@
     {
       "bytes": 2072,
       "path": "S12_Stage_N_Professional_Toolchain_Report.md",
-      "sha256": "793231db2e85cd5046160b968f2588b7c2227708093f67afd5480a76e4d27fec"
+      "sha256": "cc4641bc44faa8f62286dd21315334cb0c4c6347af0194bed31599f9fb781545"
     },
     {
       "bytes": 10411,
       "path": "toolchain_capability_matrix.json",
-      "sha256": "39ee96f9e15eb061b0a256023ca8db702716143c030919719ea39aff27b48030"
+      "sha256": "b77dc9f0b3d8bd182d91d0390599e264d05e9b47fcce1fd916e2c92d27fb9339"
     },
     {
       "bytes": 681,
       "path": "webmushra_import_validation.json",
-      "sha256": "76d0d8b6437488422ac5907970b0954891cb05eb6f891b3f46004a96a3bb91ff"
+      "sha256": "c01ed2a7510153033ca81e7b035ecdb3d739c2717088da811a2c7005adbcb389"
     },
     {
-      "bytes": 2116,
+      "bytes": 2138,
       "path": "webmushra_package_manifest.json",
-      "sha256": "a6f5fcfe1022aae947125a0ba2fec9bc16fcace953d50f14111f272ab00c3320"
+      "sha256": "c33392fc3eda3ad1de00650e9f6e529dc8a1b251960ba11b096a6002186d64a1"
     }
   ],
   "schema_version": "s12-stage-n-artifact-manifest-1"

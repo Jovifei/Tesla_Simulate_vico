@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
+
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_n.toolchain import (
     build_cross_tool_validation,
@@ -21,6 +24,11 @@ def _validated_matlab_receipt() -> dict[str, object]:
         "vehicle_count": 8,
         "vehicles": {f"v{index}": {} for index in range(8)},
         "fixture": {
+            "provenance": {
+                "fixture_id": "s12-shared-fixture-v1",
+                "fixture_manifest_sha256": "a" * 64,
+                "fixture_mat_sha256": "b" * 64,
+            },
             "validation": {
                 "gain_increases_loudness": True,
                 "high_frequency_increases_sharpness": True,
@@ -75,6 +83,11 @@ def test_real_matlab_receipts_require_fixture_and_project_execution_and_cross_to
             "fast_am_increases_roughness": True,
             "prominent_tone_reports_tonality": True,
         },
+        "shared_fixture_provenance": {
+            "fixture_id": "s12-shared-fixture-v1",
+            "fixture_manifest_sha256": "a" * 64,
+            "fixture_mat_sha256": "b" * 64,
+        },
     }
     cross = build_cross_tool_validation(matlab, mosqito)
     assert cross["status"] == "VALIDATED"
@@ -88,3 +101,54 @@ def test_real_matlab_receipts_require_fixture_and_project_execution_and_cross_to
     psycho = next(record for record in matrix if record["tool"] == "MATLAB Audio Toolbox: acousticLoudness")
     assert order["status"] == "VALIDATED" and order["vehicle_data_executed"] is True
     assert psycho["status"] == "VALIDATED" and psycho["fixture_validated"] is True
+
+
+def test_cross_tool_validation_rejects_nonidentical_shared_fixture_provenance() -> None:
+    matlab = _validated_matlab_receipt()
+    matlab["fixture"]["provenance"] = {
+        "fixture_id": "s12-shared-fixture-v1",
+        "fixture_manifest_sha256": "a" * 64,
+        "fixture_mat_sha256": "b" * 64,
+    }
+    mosqito = {
+        "status": "VALIDATED",
+        "fixtures": {
+            "base": {"mosqito_version": "1.2.1", "results": {}},
+            "prominent_tone": {"results": {}},
+        },
+        "validation": {
+            "gain_increases_loudness": True,
+            "high_frequency_increases_sharpness": True,
+            "fast_am_increases_roughness": True,
+            "prominent_tone_reports_tonality": True,
+        },
+        "shared_fixture_provenance": {
+            "fixture_id": "s12-shared-fixture-v1",
+            "fixture_manifest_sha256": "c" * 64,
+            "fixture_mat_sha256": "b" * 64,
+        },
+    }
+    result = build_cross_tool_validation(matlab, mosqito)
+    assert result["status"] == "CROSS_TOOL_COMPARISON_BLOCKED"
+    assert "shared fixture" in result["reason"]
+
+
+def test_shared_fixture_builder_module_is_available() -> None:
+    assert importlib.util.find_spec("tools.sound_sim.s12.acoustic_identity_v015.stage_n.shared_psychoacoustic_fixture") is not None
+
+
+def test_shared_fixture_builder_writes_hash_bound_non_overwriting_mat_payload(tmp_path: Path) -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_n import shared_psychoacoustic_fixture
+
+    builder = getattr(shared_psychoacoustic_fixture, "write_shared_fixture", None)
+    assert callable(builder)
+    receipt = builder(tmp_path / "shared")
+    fixture_root = tmp_path / "shared"
+    manifest = json.loads((fixture_root / "fixture_manifest.json").read_text(encoding="utf-8"))
+    assert receipt["fixture_id"] == manifest["fixture_id"]
+    assert manifest["sample_rate_hz"] == 48_000
+    assert set(manifest["signals"]) == {"base", "gain", "high_frequency_boost", "fast_am", "slow_am", "prominent_tone"}
+    assert (fixture_root / "shared_psychoacoustic_fixture.mat").is_file()
+    assert len(manifest["fixture_mat_sha256"]) == 64
+    with pytest.raises(FileExistsError):
+        builder(fixture_root)

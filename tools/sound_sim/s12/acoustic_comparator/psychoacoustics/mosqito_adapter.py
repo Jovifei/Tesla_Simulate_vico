@@ -114,6 +114,58 @@ def fixture_suite() -> dict[str, object]:
     }
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def shared_fixture_suite(fixture_root: Path) -> dict[str, object]:
+    """Run MoSQITo on the exact MAT fixture that MATLAB receives."""
+
+    try:
+        from scipy.io import loadmat
+    except ImportError as exc:  # pragma: no cover - exercised by isolated runtime
+        raise RuntimeError("SciPy is required to read the shared psychoacoustic MAT fixture") from exc
+    manifest_path = fixture_root / "fixture_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    mat_path = fixture_root / str(manifest.get("fixture_mat", ""))
+    if not mat_path.is_file() or _sha256(mat_path) != manifest.get("fixture_mat_sha256"):
+        raise ValueError("shared psychoacoustic fixture MAT SHA mismatch")
+    expected_signals = ("base", "gain", "high_frequency_boost", "fast_am", "slow_am", "prominent_tone")
+    if manifest.get("fixture_id") != "s12-stage-n-shared-psychoacoustic-fixture-v1" or set(manifest.get("signals", {})) != set(expected_signals):
+        raise ValueError("shared psychoacoustic fixture manifest is invalid")
+    values = loadmat(mat_path, variable_names=("sample_rate_hz", *expected_signals))
+    sample_rate_hz = int(np.asarray(values.get("sample_rate_hz"), dtype=np.float64).reshape(-1)[0])
+    if sample_rate_hz != int(manifest.get("sample_rate_hz", 0)):
+        raise ValueError("shared psychoacoustic fixture sample-rate mismatch")
+    signals = {name: np.asarray(values.get(name), dtype=np.float64).reshape(-1) for name in expected_signals}
+    for name, signal in signals.items():
+        expected = manifest["signals"][name]
+        if signal.size != expected.get("samples") or hashlib.sha256(signal.tobytes()).hexdigest() != expected.get("float64_sha256"):
+            raise ValueError(f"shared psychoacoustic fixture signal mismatch: {name}")
+    measured = {name: compute_mosqito_metrics(signal, sample_rate_hz) for name, signal in signals.items()}
+    base = measured["base"]["results"]
+    prominent = measured["prominent_tone"]["results"]
+    validation = {
+        "gain_increases_loudness": measured["gain"]["results"]["loudness_sone"] > base["loudness_sone"],
+        "high_frequency_increases_sharpness": measured["high_frequency_boost"]["results"]["sharpness_acum"] > base["sharpness_acum"],
+        "fast_am_increases_roughness": measured["fast_am"]["results"]["roughness_asper"] > base["roughness_asper"],
+        "prominent_tone_reports_tonality": bool(prominent["tone_to_noise_prominent"]) and bool(prominent["prominence_present"]),
+    }
+    validation["passed"] = all(validation.values())
+    return {
+        "schema_version": "s12-stage-n-mosqito-shared-fixture-validation-1",
+        "status": "VALIDATED" if validation["passed"] else "EXECUTED_ON_FIXTURE",
+        "shared_fixture_provenance": {
+            "fixture_id": manifest["fixture_id"],
+            "fixture_manifest_sha256": _sha256(manifest_path),
+            "fixture_mat_sha256": _sha256(mat_path),
+        },
+        "fixtures": measured,
+        "validation": validation,
+        "input_calibration": "digital-domain relative input; no full-scale-to-Pascal calibration or absolute SPL claim",
+    }
+
+
 def analyze_project_inputs(input_root: Path, *, progress: Any | None = None) -> dict[str, object]:
     """Run real MoSQITo functions on all hash-bound Stage-N project inputs.
 
@@ -192,12 +244,15 @@ def main(argv: list[str] | None = None) -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--fixture", action="store_true", help="run the fixed direction fixture suite")
     mode.add_argument("--project-input-root", type=Path, help="run all hash-bound current S12 candidate inputs")
+    mode.add_argument("--shared-fixture-root", type=Path, help="run the exact MAT fixture used by the MATLAB cross-validation call")
     parser.add_argument("--output", type=Path, required=True, help="JSON receipt path")
     arguments = parser.parse_args(argv)
     if arguments.output.exists():
         raise FileExistsError(f"refusing to overwrite MoSQITo receipt: {arguments.output}")
     if arguments.fixture:
         receipt = fixture_suite()
+    elif arguments.shared_fixture_root:
+        receipt = shared_fixture_suite(arguments.shared_fixture_root)
     else:
         receipt = analyze_project_inputs(
             arguments.project_input_root,
