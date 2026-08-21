@@ -84,6 +84,7 @@ def publish(repo: Path, output: Path, *, uat_package: Path, review_package: Path
         f"Status: `{baseline.get('status')}`. Exact Stage-O tip: `{baseline.get('exact_head')}`; parent `{baseline.get('parent')}`; branch `{baseline.get('branch')}`; `origin/main` `{baseline.get('origin_main')}`.\n\n"
         "P0 observed a clean worktree immediately after creating the independent Stage-P branch. The current worktree is intentionally dirty only with new Stage-P acceptance files/reports; no Stage-N/O or Track-P file was rewritten.\n\n"
         f"Stage-N webMUSHRA binding SHA: `{baseline['stage_n_package']['manifest_sha256']}`; study manifest SHA: `{baseline['stage_n_package']['study_manifest_sha256']}`; candidate IDs: `{', '.join(baseline['candidate_ids'])}`. Stage-O feedback schema SHA: `{baseline['stage_o']['feedback_schema_sha256']}`.\n\n"
+        "The required `git worktree list --porcelain` capture is stored in `stage_p_baseline_state.json` under `worktree_list_porcelain`; it includes the Stage-O exact-tip worktree and this independent Stage-P worktree.\n\n"
         f"Track-P protected manifest: `{baseline['protected_track_p']['frozen_manifest_count']}` files / SHA `{baseline['protected_track_p']['frozen_manifest_sha256']}`; frozen symbols SHA `{baseline['protected_track_p']['frozen_symbol_sha256']}`. Real feedback content read: `{baseline['real_feedback_read']}`.\n",
         encoding="utf-8", newline="\n",
     )

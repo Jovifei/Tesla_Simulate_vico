@@ -6,4 +6,6 @@ P0 observed a clean worktree immediately after creating the independent Stage-P 
 
 Stage-N webMUSHRA binding SHA: `8156f2edfb0afc3f3065f50a51279fccb77445f20ca43c8f8f81dde5ec71276b`; study manifest SHA: `357e47e56bafb31d618ced90d1422237984b4374f4045b2103cd8203a357a55c`; candidate IDs: `V01, V02, V03, V04, V05, V06, V07, V08`. Stage-O feedback schema SHA: `8d15ac36c40a4f18fb830a47ed2a95950b782f528e70dc684f2eb12df6df572f`.
 
+The required `git worktree list --porcelain` capture is stored in `stage_p_baseline_state.json` under `worktree_list_porcelain`; it includes the Stage-O exact-tip worktree and this independent Stage-P worktree.
+
 Track-P protected manifest: `180` files / SHA `94281467e14a66780232fb6ae04bd01917a58a3332721967a80c41f4d6217a8a`; frozen symbols SHA `e1fbda0a64d7232a8c17712a0c63d9ae3e0f95ae9bf9236c55d049b9b5bd9f7d`. Real feedback content read: `False`.

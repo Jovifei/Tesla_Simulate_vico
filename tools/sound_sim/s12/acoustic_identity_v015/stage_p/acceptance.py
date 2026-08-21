@@ -85,6 +85,7 @@ def baseline_audit(repo: Path, stage_n_package: Path, stage_o_output: Path, outp
     _, branch, _ = _git(repo, "branch", "--show-current")
     _, origin_main, origin_err = _git(repo, "rev-parse", "origin/main")
     _, status, _ = _git(repo, "status", "--porcelain")
+    _, worktree_list, _ = _git(repo, "worktree", "list", "--porcelain")
     _, remote, _ = _git(repo, "remote", "get-url", "origin")
     binding = _json(stage_n_package / "webmushra_package_manifest.json")
     stage_o_schema = repo / "tools/sound_sim/s12/acoustic_comparator/schemas/human_feedback.schema.json"
@@ -111,6 +112,7 @@ def baseline_audit(repo: Path, stage_n_package: Path, stage_o_output: Path, outp
         "origin_main_resolution_error": origin_err or None,
         "remote_origin": remote,
         "worktree_status_porcelain": status,
+        "worktree_list_porcelain": worktree_list,
         "clean": not bool(status),
         "protected_track_p": protected,
         "stage_n_package": {

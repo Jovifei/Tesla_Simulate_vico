@@ -74,6 +74,8 @@ def test_stage_p_spec_named_delivery_contract_is_present() -> None:
         "NOT_PROFILE_FREEZE_READY",
     ]
     assert matrix["gates"]["H_real_jovi_feedback"] == "PENDING"
+    baseline = json.loads((P_OUTPUT / "stage_p_baseline_state.json").read_text(encoding="utf-8"))
+    assert "worktree E:/Tesla_speed/worktrees/s12-stage-p-system-acceptance" in baseline["worktree_list_porcelain"]
     assert (PACKAGE / "SHA256SUMS").is_file()
     assert (PACKAGE / "results" / "mushra.csv").is_file()
     assert (PACKAGE / "results" / "lss.csv").is_file()
