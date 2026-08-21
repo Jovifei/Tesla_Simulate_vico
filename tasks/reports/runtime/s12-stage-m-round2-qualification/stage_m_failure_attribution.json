@@ -1,0 +1,320 @@
+{
+  "category_legend": {
+    "A": "formal PCM evidence",
+    "B": "adverse legacy/internal trend",
+    "C": "external provenance missing",
+    "D": "scenario/RPM binding missing",
+    "E": "hard-gate metric failure",
+    "F": "source/trace defect",
+    "G": "no real-reference score",
+    "H": "reachable tune plan",
+    "I": "LFA ASG verification",
+    "J": "independent Stage-L diagnostic",
+    "K": "automatic tune withheld"
+  },
+  "hellcat_scope": "Stage-L v9 diagnostic candidate; not relabelled as v6 and not qualified",
+  "lfa_event_verification": {
+    "eligible": true,
+    "event_count": 3,
+    "event_kind": "asg_shift_reengagement",
+    "event_stem": "lfa_shift_exhaust_reengagement",
+    "source": "actual_event_array_and_trace_shift_alignment",
+    "wrong_condition_event_count": 0
+  },
+  "records": [
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.0
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.0,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_remaining_sources.py Ferrari 458 source/trace"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.5099887087125348
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.5099887087125348,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "independent Stage-L Hellcat v9 diagnostic package"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K",
+        "J"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.0
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.0,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_remaining_sources.py RX-7 FD source/trace"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.0
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.0,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_remaining_sources.py Supra JZA80 source/trace"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "supra_jza80"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.0
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.0,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_remaining_sources.py Aventador LP700 source/trace"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "aventador_lp700"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.36072198346811
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.36072198346811,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_propagation.py C63 bark/body source/trace"
+      },
+      "failure_category": [
+        "B",
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.43370287008584346
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.43370287008584346,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_propagation.py GT-R twin-turbo/V6 source/trace"
+      },
+      "failure_category": [
+        "B",
+        "C",
+        "D",
+        "G",
+        "K"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "candidate_actual": {
+        "kind": "synthetic_candidate_internal_delta",
+        "value": 0.07804468311428873
+      },
+      "candidate_error": null,
+      "evidence": {
+        "comparison_kind": "synthetic_parent_to_candidate_internal_regression_only",
+        "external_reference_missing": true,
+        "internal_log_spectral_distance": 0.07804468311428873,
+        "not_a_real_reference_deterioration_claim": true,
+        "source": "round2_propagation.py LFA ASG/V10 source/trace"
+      },
+      "failure_category": [
+        "C",
+        "D",
+        "G",
+        "K",
+        "I"
+      ],
+      "hard_gate": false,
+      "improvement": null,
+      "parameter_reachability": {
+        "reachable": false,
+        "reason": "no legally usable, scenario/RPM-bound external target"
+      },
+      "parent_actual": {
+        "kind": "synthetic_parent_internal_baseline",
+        "value": 0.0
+      },
+      "parent_error": null,
+      "recommended_action": "do not auto-tune against R2; obtain legally usable, state/RPM-bound reference or Jovi named feedback",
+      "scenario": "full_cycle",
+      "target": null,
+      "uncertainty": "external_reference_unavailable; no target/error/improvement asserted",
+      "vehicle_id": "lfa"
+    }
+  ],
+  "schema_version": "s12-stage-m-failure-attribution-2",
+  "status": "DIAGNOSTIC_ONLY"
+}

@@ -48,8 +48,8 @@ def test_injected_afterfire_is_detected() -> None:
 
 def test_wrong_condition_event_is_rejected() -> None:
     x = _signal(); x[4_000:4_080] += 5
-    result = compare_signals(_signal(), x, _case(), eligible_event_mask=np.zeros(x.size, dtype=bool))
-    assert result["events"]["wrong_condition_event_count"] >= 1
+    with pytest.raises(ValueError, match="trace-authorized"):
+        compare_signals(_signal(), x, _case(), eligible_event_mask=np.zeros(x.size, dtype=bool))
 
 def test_scenario_mismatch_is_rejected() -> None:
     with pytest.raises(ValueError, match="scenario"):
@@ -63,3 +63,9 @@ def test_missing_reference_returns_uncertainty_not_score() -> None:
     result = compare_signals(None, _signal(), _case(reference_present=False))
     assert result["uncertainty"]["reference_missing"] is True
     assert result["spectral"]["log_distance"] is None
+
+def test_synthetic_parent_is_not_an_external_identity_reference() -> None:
+    case = ComparisonCase("c63_w204", "acceleration", "synthetic-parent", "candidate", SR, (3000.0, 3000.0), (3000.0, 3000.0), (0.2, 0.9), (0.2, 0.9), "unaltered_analysis_signal", "synthetic_parent")
+    result = compare_signals(_signal(), _signal(), case)
+    assert result["uncertainty"]["external_reference_missing"] is True
+    assert result["uncertainty"]["identity_score_available"] is False

@@ -1,12 +1,22 @@
-"""Dependency-light acoustic comparator core; optional adapters live outside this module."""
+"""Fail-closed, dependency-light acoustic comparison core.
+
+This module provides relative digital-domain evidence. It never converts a
+synthetic parent/candidate comparison into a real-recording identity result.
+"""
 from __future__ import annotations
+
 from dataclasses import dataclass
-import math
-from typing import Sequence
+from typing import Literal
+
 import numpy as np
 
-BANDS = ((20.,60.),(60.,120.),(120.,250.),(250.,400.),(400.,1000.),(1000.,4000.),(4000.,5500.),(5500.,12000.))
-BAND_NAMES = ("20_60","60_120","120_250","250_400","400_1000","1000_4000","4000_5500","5500_12000")
+from .alignment import bounded_cross_correlation
+from .order import order_metrics, rpm_compatible
+from .preprocessing import to_mono_dc_free
+from .psychoacoustics import proxy_metrics
+from .spectral import BANDS, BAND_NAMES, band_comparison, normalized_log_spectral_distance, spectrum_features
+from .transients import event_metrics, require_trace_gated_events
+
 
 @dataclass(frozen=True)
 class ComparisonCase:
@@ -15,45 +25,124 @@ class ComparisonCase:
     reference_id: str | None
     candidate_id: str
     sample_rate_hz: int
-    reference_rpm: tuple[float,float]
-    candidate_rpm: tuple[float,float]
-    reference_load: tuple[float,float]
-    candidate_load: tuple[float,float]
+    reference_rpm: tuple[float, float]
+    candidate_rpm: tuple[float, float]
+    reference_load: tuple[float, float]
+    candidate_load: tuple[float, float]
     analysis_domain: str
+    reference_kind: Literal["external_recording", "synthetic_parent"] = "external_recording"
 
-def _mono(x: np.ndarray) -> np.ndarray:
-    value=np.asarray(x,dtype=np.float64)
-    if value.ndim==2: value=value.mean(axis=1)
-    if value.ndim!=1 or value.size<8 or not np.isfinite(value).all(): raise ValueError("signal must be finite mono/stereo audio")
-    return value - value.mean()
 
-def _features(x: np.ndarray, sr: int) -> tuple[dict[str,float], np.ndarray, np.ndarray]:
-    n=x.size; spec=np.abs(np.fft.rfft(x))**2; freq=np.fft.rfftfreq(n,1/sr); total=max(float(spec.sum()),1e-18)
-    bands={name:float(spec[(freq>=lo)&(freq<hi)].sum()/total) for name,(lo,hi) in zip(BAND_NAMES,BANDS)}
-    centroid=float((freq*spec).sum()/total)
-    rolloff=float(freq[min(len(freq)-1,int(np.searchsorted(np.cumsum(spec),.85*total)))])
-    return {"rms_db":20*math.log10(max(float(np.sqrt(np.mean(x*x))),1e-12)),"centroid_hz":centroid,"rolloff_hz":rolloff,**bands},spec,freq
+def _base_result(case: ComparisonCase, candidate: np.ndarray, eligible_event_mask: np.ndarray | None) -> dict[str, object]:
+    candidate_features, _, _ = spectrum_features(candidate, case.sample_rate_hz)
+    events = event_metrics(candidate, eligible_event_mask)
+    return {
+        "case": case.__dict__,
+        "preprocessing": {
+            "analysis_signal": "unaltered_analysis_signal",
+            "operations": ["channel_fold_down", "dc_removal"],
+            "loudness_matched_audition_signal_used": False,
+        },
+        "order": {
+            "rpm_compatible": rpm_compatible(case.reference_rpm, case.candidate_rpm),
+            "candidate": order_metrics(candidate, case.sample_rate_hz, case.candidate_rpm),
+        },
+        "candidate_features": candidate_features,
+        "events": {
+            "candidate_event_count": events["event_count"],
+            "wrong_condition_event_count": events["wrong_condition_event_count"],
+        },
+    }
 
-def _events(x: np.ndarray, eligible: np.ndarray | None) -> dict[str,int]:
-    env=np.abs(x); threshold=max(float(np.quantile(env,.995)),float(env.mean()+4*env.std()))
-    starts=np.flatnonzero((env>=threshold)&np.r_[True,env[:-1]<threshold]); kept=[]; gap=max(1,x.size//100)
-    for i in starts:
-        if not kept or int(i)-kept[-1]>=gap: kept.append(int(i))
-    wrong=0 if eligible is None else sum(not bool(eligible[min(i,eligible.size-1)]) for i in kept)
-    return {"event_count":len(kept),"wrong_condition_event_count":int(wrong)}
 
-def compare_signals(reference: np.ndarray | None, candidate: np.ndarray, case: ComparisonCase, *, candidate_scenario: str | None=None, candidate_domain: str="unaltered_analysis_signal", eligible_event_mask: np.ndarray | None=None) -> dict[str,object]:
-    if case.analysis_domain!="unaltered_analysis_signal" or candidate_domain!="unaltered_analysis_signal": raise ValueError("review-gain copy is forbidden for raw analysis")
-    if candidate_scenario is not None and candidate_scenario!=case.scenario: raise ValueError("scenario mismatch")
-    c=_mono(candidate); rpm_ok=abs(case.reference_rpm[0]-case.candidate_rpm[0])<=max(100.,.1*case.reference_rpm[0]) and abs(case.reference_rpm[1]-case.candidate_rpm[1])<=max(100.,.1*case.reference_rpm[1])
-    cf,cs,fr=_features(c,case.sample_rate_hz)
+def compare_signals(
+    reference: np.ndarray | None,
+    candidate: np.ndarray,
+    case: ComparisonCase,
+    *,
+    candidate_scenario: str | None = None,
+    candidate_domain: str = "unaltered_analysis_signal",
+    eligible_event_mask: np.ndarray | None = None,
+) -> dict[str, object]:
+    """Compare a trace/scenario-bound pair, preserving reference uncertainty.
+
+    ``reference_kind='synthetic_parent'`` permits an internal regression delta
+    but explicitly marks real-recording identity evaluation unavailable.
+    """
+
+    if case.analysis_domain != "unaltered_analysis_signal" or candidate_domain != "unaltered_analysis_signal":
+        raise ValueError("review-gain copy is forbidden for raw analysis")
+    if candidate_scenario is not None and candidate_scenario != case.scenario:
+        raise ValueError("scenario mismatch")
+    candidate_mono = to_mono_dc_free(candidate)
+    if eligible_event_mask is not None:
+        require_trace_gated_events(candidate_mono, eligible_event_mask)
+    result = _base_result(case, candidate_mono, eligible_event_mask)
     if reference is None or case.reference_id is None:
-        return {"case":case.__dict__,"uncertainty":{"reference_missing":True,"digital_domain_relative_only":True},"spectral":{"log_distance":None},"bands":{},"order":{"rpm_compatible":rpm_ok},"events":{"candidate_event_count":_events(c,eligible_event_mask)["event_count"],"wrong_condition_event_count":_events(c,eligible_event_mask)["wrong_condition_event_count"]}}
-    r=_mono(reference); n=min(r.size,c.size); r,c=r[:n],c[:n]
-    shift=int(np.argmax(np.correlate(r[:min(n,8192)],c[:min(n,8192)],"full"))-(min(n,8192)-1)); c=np.roll(c,shift)
-    rf,rs,fr=_features(r,case.sample_rate_hz); cf,cs,fr=_features(c,case.sample_rate_hz)
-    norm=lambda z:z/max(float(np.linalg.norm(z)),1e-18)
-    distance=float(np.linalg.norm(norm(np.log1p(rs))-norm(np.log1p(cs))))
-    ev=_events(c,eligible_event_mask)
-    bands={name:{"reference_share":rf[name],"candidate_share":cf[name],"delta":cf[name]-rf[name],"warning":"upstream perceptual compensation; outside validated radiation band; not physical radiation validation" if name=="5500_12000" else None} for name in BAND_NAMES}
-    return {"case":case.__dict__,"uncertainty":{"reference_missing":False,"digital_domain_relative_only":True},"alignment":{"applied_shift_samples":shift},"spectral":{"log_distance":distance,"centroid_delta_hz":cf["centroid_hz"]-rf["centroid_hz"],"rolloff_delta_hz":cf["rolloff_hz"]-rf["rolloff_hz"]},"bands":bands,"loudness":{"delta_db":cf["rms_db"]-rf["rms_db"]},"order":{"rpm_compatible":rpm_ok},"psychoacoustics":{"sharpness_proxy_delta":cf["centroid_hz"]-rf["centroid_hz"]},"events":{"candidate_event_count":ev["event_count"],"wrong_condition_event_count":ev["wrong_condition_event_count"]}}
+        result.update(
+            {
+                "uncertainty": {
+                    "reference_missing": True,
+                    "external_reference_missing": True,
+                    "digital_domain_relative_only": True,
+                    "identity_score_available": False,
+                },
+                "spectral": {"log_distance": None},
+                "bands": {},
+            }
+        )
+        return result
+
+    reference_mono = to_mono_dc_free(reference)
+    candidate_aligned, shift = bounded_cross_correlation(reference_mono, candidate_mono)
+    reference_mono = reference_mono[: candidate_aligned.size]
+    reference_features, reference_spectrum, _ = spectrum_features(reference_mono, case.sample_rate_hz)
+    candidate_features, candidate_spectrum, _ = spectrum_features(candidate_aligned, case.sample_rate_hz)
+    reference_psycho = proxy_metrics(reference_mono, case.sample_rate_hz, reference_features["centroid_hz"])
+    candidate_psycho = proxy_metrics(candidate_aligned, case.sample_rate_hz, candidate_features["centroid_hz"])
+    external = case.reference_kind == "external_recording"
+    result.update(
+        {
+            "uncertainty": {
+                "reference_missing": False,
+                "external_reference_missing": not external,
+                "digital_domain_relative_only": not external,
+                "identity_score_available": external,
+                "reference_kind": case.reference_kind,
+            },
+            "alignment": {"method": "bounded_cross_correlation", "applied_shift_samples": shift, "max_shift_samples": 4096},
+            "spectral": {
+                "log_distance": normalized_log_spectral_distance(reference_spectrum, candidate_spectrum),
+                "centroid_delta_hz": candidate_features["centroid_hz"] - reference_features["centroid_hz"],
+                "rolloff_delta_hz": candidate_features["rolloff_hz"] - reference_features["rolloff_hz"],
+                "contrast_delta_db": candidate_features["spectral_contrast_db"] - reference_features["spectral_contrast_db"],
+                "tristimulus_delta": [
+                    candidate_features["tristimulus_low"] - reference_features["tristimulus_low"],
+                    candidate_features["tristimulus_mid"] - reference_features["tristimulus_mid"],
+                    candidate_features["tristimulus_high"] - reference_features["tristimulus_high"],
+                ],
+                "harmonic_percussive_proxy": {
+                    "reference_harmonic_share": order_metrics(reference_mono, case.sample_rate_hz, case.reference_rpm)["harmonic_energy_share"],
+                    "candidate_harmonic_share": order_metrics(candidate_aligned, case.sample_rate_hz, case.candidate_rpm)["harmonic_energy_share"],
+                    "percussive_proxy": candidate_psycho["crest_factor"] - reference_psycho["crest_factor"],
+                },
+            },
+            "bands": band_comparison(reference_features, candidate_features),
+            "loudness": {"delta_db": candidate_features["rms_db"] - reference_features["rms_db"]},
+            "psychoacoustics": {
+                "sharpness_proxy_delta": candidate_psycho["sharpness_proxy_hz"] - reference_psycho["sharpness_proxy_hz"],
+                "roughness_proxy_delta": candidate_psycho["roughness_proxy"] - reference_psycho["roughness_proxy"],
+                "fluctuation_proxy_delta": candidate_psycho["fluctuation_proxy"] - reference_psycho["fluctuation_proxy"],
+            },
+            "scenario_metrics": {
+                "idle": "not_evaluated_without_idle_window",
+                "acceleration": "not_evaluated_without_rpm_load_window",
+                "shift": "not_evaluated_without_shift_window",
+                "lift_afterfire": "not_evaluated_without_lift_window",
+            },
+        }
+    )
+    return result
+
+
+__all__ = ["BANDS", "BAND_NAMES", "ComparisonCase", "compare_signals"]

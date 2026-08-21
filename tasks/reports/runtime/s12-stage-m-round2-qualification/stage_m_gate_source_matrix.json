@@ -1,0 +1,81 @@
+{
+  "audited_source_files": [
+    "stage_k/candidate_search.py",
+    "scripts/qualify_stage_k_candidates.py",
+    "round2_propagation.py",
+    "round2_legacy_anchors.py",
+    "round2_remaining_sources.py",
+    "round2_package.py",
+    "round2_remaining_package.py"
+  ],
+  "gates": {
+    "clock_coherence": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "actual induction arrays and crank trace",
+      "trace_bound": true
+    },
+    "high_band": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "actual source arrays",
+      "trace_bound": true
+    },
+    "idle_bytes": {
+      "domain": "final_pcm",
+      "hard_gate": true,
+      "origin": "actual final-PCM bytes",
+      "trace_bound": true
+    },
+    "isolation": {
+      "domain": "final_pcm",
+      "hard_gate": true,
+      "origin": "non-target render/hash regression",
+      "trace_bound": false
+    },
+    "low_band": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "actual source arrays",
+      "trace_bound": true
+    },
+    "pcm_health": {
+      "domain": "final_pcm",
+      "hard_gate": true,
+      "origin": "final PCM array",
+      "trace_bound": false
+    },
+    "pressure_accounting": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "actual primitive stems",
+      "trace_bound": false
+    },
+    "reference_distance": {
+      "domain": "unbound",
+      "hard_gate": false,
+      "origin": "caller metric only",
+      "trace_bound": false
+    },
+    "ridge_continuity": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "probe metrics",
+      "trace_bound": true
+    },
+    "spectral_distance": {
+      "domain": "source",
+      "hard_gate": true,
+      "origin": "actual candidate/parent arrays",
+      "trace_bound": true
+    },
+    "state_availability": {
+      "domain": "trace",
+      "hard_gate": true,
+      "origin": "trace-derived windows",
+      "trace_bound": true
+    }
+  },
+  "qualification_defect": "reference_distance_is_not_a_required_round2_hard_gate",
+  "schema_version": "s12-stage-m-gate-source-matrix-2"
+}

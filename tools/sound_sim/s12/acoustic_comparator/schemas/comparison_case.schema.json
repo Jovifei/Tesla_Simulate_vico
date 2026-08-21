@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/comparison_case.schema.json",
+  "type": "object",
+  "required": ["vehicle_id", "scenario", "candidate_id", "sample_rate_hz", "analysis_domain"],
+  "properties": {
+    "vehicle_id": {"type": "string"}, "scenario": {"type": "string"}, "reference_id": {"type": ["string", "null"]},
+    "candidate_id": {"type": "string"}, "sample_rate_hz": {"type": "integer", "minimum": 1},
+    "analysis_domain": {"const": "unaltered_analysis_signal"}, "reference_kind": {"enum": ["external_recording", "synthetic_parent"]}
+  }, "additionalProperties": true
+}

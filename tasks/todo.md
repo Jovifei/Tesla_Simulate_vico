@@ -3669,8 +3669,9 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 
 - [x] M0 baseline audit against `5e316934...` and `origin/main c08eb4c...`.
 - [x] M1 fresh test/package/WAV/SHA/CRC replay: 45 focused, 131 Stage-K, 21 Track-P; 52 ZIP WAVs and both CRC/SHA receipts passed.
-- [ ] M2 qualification call graph and gate-source matrix.
-- [ ] M3 eight-vehicle automatic-gate attribution.
-- [ ] M4 unaltered-final-PCM comparator evidence.
-- [ ] M5/M7 named-feedback validator, receipt, and fail-closed gate matrix.
-- [ ] Review: full verification and local commits; absent feedback stops at `WAITING_FOR_JOVI_NAMED_REVIEW`.
+- [x] M2 qualification call graph, source-domain and gate-source matrices; confirmed reference distance is not a required Round-2 hard gate.
+- [x] M3 eight-vehicle automatic-gate attribution, including C63/GT-R internal negative-delta routing, LFA ASG 3/0 verification, named remaining-four sources, and independent Hellcat Stage-L v9 diagnostic scope.
+- [x] M4 unaltered-final-PCM comparator evidence: contracts, preprocessing, bounded alignment, spectral/order/psychoacoustic/transient metrics, explicit synthetic-parent uncertainty, seven schemas, and self-tests.
+- [x] M5/M7 named-feedback validator, empty receipt, parameter recommendations withheld by missing reference contract, fail-closed gate matrix, and local eight-vehicle A/B review package.
+- [x] M6/M8 automated closure: no calibration round is run without a lawful state/RPM-bound target; status is `AUTOMATED_CLOSURE_COMPLETE` / `WAITING_FOR_JOVI_NAMED_REVIEW` / `NOT_PROFILE_FREEZE_READY`.
+- [ ] Review: final focused verification, artifact hash audit, local commits; no feedback content read.

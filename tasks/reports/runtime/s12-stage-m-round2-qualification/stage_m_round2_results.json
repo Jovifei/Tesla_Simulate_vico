@@ -1,0 +1,8 @@
+{
+  "changed_files": [],
+  "non_target_hashes_changed": false,
+  "reason": "no legally usable, scenario/RPM-bound external target; no feedback content read",
+  "round": 2,
+  "schema_version": "s12-stage-m-auto-calibration-result-1",
+  "status": "NOT_RUN_REFERENCE_CONTRACT_UNAVAILABLE"
+}

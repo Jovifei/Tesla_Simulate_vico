@@ -1,0 +1,103 @@
+{
+  "empty_receipt": {
+    "accepted": false,
+    "content_read": false,
+    "human_pass": false,
+    "reason": "WAITING_FOR_JOVI_NAMED_REVIEW"
+  },
+  "schema": {
+    "$id": "s12/human_feedback.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "afterfire_score": {
+        "type": "number"
+      },
+      "artifact_score": {
+        "type": "number"
+      },
+      "baseline_file": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "candidate_file": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "candidate_sha256": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
+      },
+      "identity_score": {
+        "type": "number"
+      },
+      "listener_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "low_frequency_score": {
+        "type": "number"
+      },
+      "mechanical_score": {
+        "type": "number"
+      },
+      "notes": {
+        "type": "string"
+      },
+      "playback_device": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "playback_endpoint": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "preference": {
+        "type": [
+          "string",
+          "number"
+        ]
+      },
+      "realism_score": {
+        "type": "number"
+      },
+      "scenario": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "shift_score": {
+        "type": "number"
+      },
+      "vehicle_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "windows_volume": {
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "listener_id",
+      "playback_device",
+      "windows_volume",
+      "playback_endpoint",
+      "vehicle_id",
+      "scenario",
+      "baseline_file",
+      "candidate_file",
+      "candidate_sha256",
+      "identity_score",
+      "realism_score",
+      "low_frequency_score",
+      "mechanical_score",
+      "shift_score",
+      "afterfire_score",
+      "artifact_score",
+      "preference",
+      "notes"
+    ],
+    "type": "object"
+  },
+  "template_location": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1\\human_feedback_template.csv"
+}

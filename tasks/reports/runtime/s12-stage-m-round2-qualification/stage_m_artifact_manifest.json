@@ -1,0 +1,92 @@
+{
+  "artifacts": [
+    {
+      "bytes": 2446,
+      "path": "S12_Stage_M_Automated_Gate_Diagnosis.md",
+      "sha256": "3310d5738f4228256d0d2b7765b90f311b1d1ebffea1b826888b5ed19341f385"
+    },
+    {
+      "bytes": 879,
+      "path": "S12_Stage_M_Automatic_Calibration_Report.md",
+      "sha256": "9f31b6e034a2e05915fc32c17662923f7065b079daa7d0308ec2512a42e1ccba"
+    },
+    {
+      "bytes": 837,
+      "path": "S12_Stage_M_Baseline_Audit.md",
+      "sha256": "893dd8820e5c4c2201b33f0a231db7943ca3ef92dadc6ad448e87d30a6958233"
+    },
+    {
+      "bytes": 851,
+      "path": "S12_Stage_M_Comparator_Report.md",
+      "sha256": "186d22bcc653a7ff9906d8d7336649378a2072b013128f73aa93cb01ca6136d7"
+    },
+    {
+      "bytes": 1927,
+      "path": "S12_Stage_M_Qualification_Callgraph.md",
+      "sha256": "e3dbcc8a59281d722354fcc2e30991db1af0ba7df45d64ec9658d9ae660b9409"
+    },
+    {
+      "bytes": 225,
+      "path": "S12_Stage_M_Round2_Qualification_Report.md",
+      "sha256": "8d65b4c7d5a1a0c2b01936f961935ed8ba3d49c88ef5b3f354e0dc0f21454633"
+    },
+    {
+      "bytes": 44989,
+      "path": "stage_m_comparator_results.json",
+      "sha256": "8d79cf1f86db6b0c27c127551a2230011e0165b43855ba037cc8de67eff27ac8"
+    },
+    {
+      "bytes": 10873,
+      "path": "stage_m_failure_attribution.json",
+      "sha256": "a6ba94c586a82082b23eac9b64d19769f318d145cf7845d77e41944e77612218"
+    },
+    {
+      "bytes": 672,
+      "path": "stage_m_gate_matrix.json",
+      "sha256": "17bb5ef13f52f292c29d84aee8028fb25ed7b5f82ed3b0932f890dab35c3354e"
+    },
+    {
+      "bytes": 2097,
+      "path": "stage_m_gate_source_matrix.json",
+      "sha256": "811cadbc498b6d290c34a73845f83dcc0af8cf862679a2a7c204a6430922604b"
+    },
+    {
+      "bytes": 2263,
+      "path": "stage_m_human_feedback_schema.json",
+      "sha256": "d16097fe86422b30e18f96f4696a2ced4d7ea8342ce3c6ff2244cce64470986f"
+    },
+    {
+      "bytes": 1433,
+      "path": "stage_m_parameter_recommendations.json",
+      "sha256": "c92747a0ff2fb13d680a18b05636868e2bb0fa711c99eff15ccefbe7edf8ca96"
+    },
+    {
+      "bytes": 1184,
+      "path": "stage_m_replay_evidence.json",
+      "sha256": "c04192a5c97046a1955f5d9b79af3768ed3539bfedad7f8996c00ca503f4c270"
+    },
+    {
+      "bytes": 288,
+      "path": "stage_m_round1_results.json",
+      "sha256": "524a1604723fd2cb99249aa1f9caac6793c156edce49493b430ab0f30bfd8406"
+    },
+    {
+      "bytes": 288,
+      "path": "stage_m_round2_results.json",
+      "sha256": "b93fbe978ffc17122c6d0751e7eb7c75bbb103271f6f21ef6ea2d460ddf1405f"
+    },
+    {
+      "bytes": 815,
+      "path": "stage_m_signal_domain_matrix.json",
+      "sha256": "74809c5eeca00c529301da48bab2479c52eb6ed607c42c62ed8f0775e8c5a4b4"
+    }
+  ],
+  "closure_status": [
+    "AUTOMATED_CLOSURE_COMPLETE",
+    "WAITING_FOR_JOVI_NAMED_REVIEW",
+    "NOT_PROFILE_FREEZE_READY"
+  ],
+  "review_package_expected_manifest": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1\\artifact_manifest.json",
+  "review_package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1",
+  "schema_version": "s12-stage-m-automated-closure-1"
+}

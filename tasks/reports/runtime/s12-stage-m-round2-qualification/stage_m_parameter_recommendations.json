@@ -1,0 +1,53 @@
+{
+  "recommendations": [
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "supra_jza80"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "aventador_lp700"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "parameter_reachability": false,
+      "reason": "external reference target unavailable",
+      "state": "WITHHELD",
+      "vehicle_id": "lfa"
+    }
+  ],
+  "schema_version": "s12-stage-m-parameter-recommendations-1"
+}
