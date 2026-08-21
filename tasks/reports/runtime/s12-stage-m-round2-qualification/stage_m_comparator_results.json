@@ -1,0 +1,752 @@
+{
+  "analysis_domain": "unaltered_final_pcm",
+  "limitations": [
+    "no legally/provenance-bound external reference waveform supplied",
+    "full-cycle package comparison is not a scenario/RPM matched real-reference comparison"
+  ],
+  "schema_version": "s12-stage-m-comparator-results-1",
+  "vehicles": {
+    "aventador_lp700": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.0485962436421815,
+          "delta": 0.0,
+          "reference_share": 0.0485962436421815,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.16622313052415116,
+          "delta": 0.0,
+          "reference_share": 0.16622313052415116,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.00026653755721085646,
+          "delta": 0.0,
+          "reference_share": 0.00026653755721085646,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.14514945916069402,
+          "delta": 0.0,
+          "reference_share": 0.14514945916069402,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 3.940038135228839e-05,
+          "delta": 0.0,
+          "reference_share": 3.940038135228839e-05,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.635698573242565,
+          "delta": 0.0,
+          "reference_share": 0.635698573242565,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 8.731156238563843e-06,
+          "delta": 0.0,
+          "reference_share": 8.731156238563843e-06,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.004009250693659855,
+          "delta": 0.0,
+          "reference_share": 0.004009250693659855,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "d99fa32295f96cbbde74187a04492cfbe7aa16478baf1d4913a4d9ef0a4a3ca9",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:d99fa32295f96cbbde74187a04492cfbe7aa16478baf1d4913a4d9ef0a4a3ca9",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:d99fa32295f96cbbde74187a04492cfbe7aa16478baf1d4913a4d9ef0a4a3ca9",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "aventador_lp700"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 34,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": 0.0
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "baseline_fallback_parent_missing",
+      "parent_sha256": "d99fa32295f96cbbde74187a04492cfbe7aa16478baf1d4913a4d9ef0a4a3ca9",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": 0.0
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": 0.0,
+        "log_distance": 0.0,
+        "rolloff_delta_hz": 0.0
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "c63_w204": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.008707648141387862,
+          "delta": -0.15979125012048037,
+          "reference_share": 0.16849889826186823,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.01657799188665485,
+          "delta": -0.200800059653426,
+          "reference_share": 0.21737805154008086,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.00026026843796570555,
+          "delta": -0.0030281126592471776,
+          "reference_share": 0.003288381097212883,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.014560886381908144,
+          "delta": -0.14393958837467,
+          "reference_share": 0.15850047475657814,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 7.607839009801738e-05,
+          "delta": -0.0025191082201716946,
+          "reference_share": 0.002595186610269712,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.9570649330993907,
+          "delta": 0.5439766576806631,
+          "reference_share": 0.41308827541872767,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 4.1028141988633715e-05,
+          "delta": -0.0017247546977376628,
+          "reference_share": 0.0017657828397262966,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.0027065315976452344,
+          "delta": -0.03193280669619409,
+          "reference_share": 0.03463933829383933,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "7b9f5d97ee277adf671e3cc049dde5b4ed9e40d88a8b9f30622508f03acabbc5",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:7b9f5d97ee277adf671e3cc049dde5b4ed9e40d88a8b9f30622508f03acabbc5",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:cac94aecebc9547f2d561b287f1dd7405ac80709b343100248c608afccb19977",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "c63_w204"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 7,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": 10.982016576907391
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "parent",
+      "parent_sha256": "cac94aecebc9547f2d561b287f1dd7405ac80709b343100248c608afccb19977",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": 45.53676243022551
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": 45.53676243022551,
+        "log_distance": 0.36072198346811,
+        "rolloff_delta_hz": -342.1665478588375
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "ferrari_458": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.3869128007845419,
+          "delta": 0.0,
+          "reference_share": 0.3869128007845419,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.17130500016401431,
+          "delta": 0.0,
+          "reference_share": 0.17130500016401431,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.0005311295792293845,
+          "delta": 0.0,
+          "reference_share": 0.0005311295792293845,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.12866921920504942,
+          "delta": 0.0,
+          "reference_share": 0.12866921920504942,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 0.0008011383917043501,
+          "delta": 0.0,
+          "reference_share": 0.0008011383917043501,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.3010244654132376,
+          "delta": 0.0,
+          "reference_share": 0.3010244654132376,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 0.00505008319015608,
+          "delta": 0.0,
+          "reference_share": 0.00505008319015608,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.005697189148745696,
+          "delta": 0.0,
+          "reference_share": 0.005697189148745696,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "ac6299544179e232d200ab192f3397b69bf17a16a1cd738a93203eb81481364a",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:ac6299544179e232d200ab192f3397b69bf17a16a1cd738a93203eb81481364a",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:ac6299544179e232d200ab192f3397b69bf17a16a1cd738a93203eb81481364a",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "ferrari_458"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 6,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": 0.0
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "baseline_fallback_parent_missing",
+      "parent_sha256": "ac6299544179e232d200ab192f3397b69bf17a16a1cd738a93203eb81481364a",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": 0.0
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": 0.0,
+        "log_distance": 0.0,
+        "rolloff_delta_hz": 0.0
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "gtr_r35": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.08497700163479716,
+          "delta": -0.7900302042101223,
+          "reference_share": 0.8750072058449194,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.056004440973849615,
+          "delta": 0.05206868044784035,
+          "reference_share": 0.0039357605260092665,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.00024861656838201084,
+          "delta": 0.00023522102403261688,
+          "reference_share": 1.3395544349393955e-05,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.6751644932222067,
+          "delta": 0.6037494011146451,
+          "reference_share": 0.07141509210756163,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 0.0007969523503802704,
+          "delta": -0.025413169048754753,
+          "reference_share": 0.026210121399135023,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.1790021797658315,
+          "delta": 0.15583687093094897,
+          "reference_share": 0.02316530883488252,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 0.001183216042539512,
+          "delta": 0.0011475359541933752,
+          "reference_share": 3.5680088346136725e-05,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.002618160291812463,
+          "delta": 0.0024011655327806697,
+          "reference_share": 0.00021699475903179345,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "3dac0f74db4272ab7d661835f6bc72f87cf8a791ac7a030cd26f321cda34b246",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:3dac0f74db4272ab7d661835f6bc72f87cf8a791ac7a030cd26f321cda34b246",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:661ac44b6cb388fb0392126d3ea9b1622d3a6ca0a92f805804ba98e65a5b6be6",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "gtr_r35"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 11,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": -9.795001843320051
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "parent",
+      "parent_sha256": "661ac44b6cb388fb0392126d3ea9b1622d3a6ca0a92f805804ba98e65a5b6be6",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": -1594.742402720934
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": -1594.742402720934,
+        "log_distance": 0.43370287008584346,
+        "rolloff_delta_hz": -2404.33249849566
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "lfa": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.1062305788622893,
+          "delta": -0.02695975031508409,
+          "reference_share": 0.1331903291773734,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.002341463224673462,
+          "delta": 0.00032589798731948606,
+          "reference_share": 0.002015565237353976,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 6.927842506745858e-05,
+          "delta": -0.00030106591711189635,
+          "reference_share": 0.00037034434217935494,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.017529853051697488,
+          "delta": 0.001872775785411885,
+          "reference_share": 0.015657077266285603,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 0.0007174896763355088,
+          "delta": -0.00043761153546813063,
+          "reference_share": 0.0011551012118036395,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.8725371875092728,
+          "delta": 0.027798174172757095,
+          "reference_share": 0.8447390133365157,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 0.0002928734779924794,
+          "delta": -0.00018190969180726665,
+          "reference_share": 0.00047478316979974604,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.00027970437832127327,
+          "delta": -0.0021145919863579934,
+          "reference_share": 0.0023942963646792666,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "1553e761fa291ccda856fe2d39b33069d5e1491c2a9b2202771e574426ed49d1",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:1553e761fa291ccda856fe2d39b33069d5e1491c2a9b2202771e574426ed49d1",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:f738ce44d619d451969a56274c49a8818d32a4da42f655eedcf71bd7b527bbfd",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "lfa"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 22,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": -0.26946498689690657
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "parent",
+      "parent_sha256": "f738ce44d619d451969a56274c49a8818d32a4da42f655eedcf71bd7b527bbfd",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": -14.859325850389837
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": -14.859325850389837,
+        "log_distance": 0.07804468311428873,
+        "rolloff_delta_hz": -25.03332464120672
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "rx7_fd": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.18728459776202955,
+          "delta": 0.0,
+          "reference_share": 0.18728459776202955,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.36879189530079315,
+          "delta": 0.0,
+          "reference_share": 0.36879189530079315,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.0004779171018817289,
+          "delta": 0.0,
+          "reference_share": 0.0004779171018817289,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.0800053178888409,
+          "delta": 0.0,
+          "reference_share": 0.0800053178888409,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 0.043688067739181505,
+          "delta": 0.0,
+          "reference_share": 0.043688067739181505,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.28437296373955395,
+          "delta": 0.0,
+          "reference_share": 0.28437296373955395,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 4.413736357702358e-06,
+          "delta": 0.0,
+          "reference_share": 4.413736357702358e-06,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.035374718869539926,
+          "delta": 0.0,
+          "reference_share": 0.035374718869539926,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "4553757c2ca87d2f04b520a2d658300e3c5d8274c3e7d31c1d4bb20f05067b93",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:4553757c2ca87d2f04b520a2d658300e3c5d8274c3e7d31c1d4bb20f05067b93",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:4553757c2ca87d2f04b520a2d658300e3c5d8274c3e7d31c1d4bb20f05067b93",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "rx7_fd"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 20,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": 0.0
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "baseline_fallback_parent_missing",
+      "parent_sha256": "4553757c2ca87d2f04b520a2d658300e3c5d8274c3e7d31c1d4bb20f05067b93",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": 0.0
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": 0.0,
+        "log_distance": 0.0,
+        "rolloff_delta_hz": 0.0
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    },
+    "supra_jza80": {
+      "alignment": {
+        "applied_shift_samples": 0
+      },
+      "bands": {
+        "1000_4000": {
+          "candidate_share": 0.004360343503404991,
+          "delta": 0.0,
+          "reference_share": 0.004360343503404991,
+          "warning": null
+        },
+        "120_250": {
+          "candidate_share": 0.47478577773857955,
+          "delta": 0.0,
+          "reference_share": 0.47478577773857955,
+          "warning": null
+        },
+        "20_60": {
+          "candidate_share": 0.012648430482953015,
+          "delta": 0.0,
+          "reference_share": 0.012648430482953015,
+          "warning": null
+        },
+        "250_400": {
+          "candidate_share": 0.32844396372109147,
+          "delta": 0.0,
+          "reference_share": 0.32844396372109147,
+          "warning": null
+        },
+        "4000_5500": {
+          "candidate_share": 3.6397849941357072e-06,
+          "delta": 0.0,
+          "reference_share": 3.6397849941357072e-06,
+          "warning": null
+        },
+        "400_1000": {
+          "candidate_share": 0.013736116013032769,
+          "delta": 0.0,
+          "reference_share": 0.013736116013032769,
+          "warning": null
+        },
+        "5500_12000": {
+          "candidate_share": 1.3001580560269498e-06,
+          "delta": 0.0,
+          "reference_share": 1.3001580560269498e-06,
+          "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+        },
+        "60_120": {
+          "candidate_share": 0.1659899733803878,
+          "delta": 0.0,
+          "reference_share": 0.1659899733803878,
+          "warning": null
+        }
+      },
+      "candidate_sha256": "daf9876ba3fb6c6873e6225ec270636c48fe16a16fb51b1a9c4d85bc3b659436",
+      "case": {
+        "analysis_domain": "unaltered_analysis_signal",
+        "candidate_id": "stage_k_candidate:daf9876ba3fb6c6873e6225ec270636c48fe16a16fb51b1a9c4d85bc3b659436",
+        "candidate_load": [
+          0.0,
+          0.0
+        ],
+        "candidate_rpm": [
+          0.0,
+          0.0
+        ],
+        "reference_id": "stage_k_parent:daf9876ba3fb6c6873e6225ec270636c48fe16a16fb51b1a9c4d85bc3b659436",
+        "reference_load": [
+          0.0,
+          0.0
+        ],
+        "reference_rpm": [
+          0.0,
+          0.0
+        ],
+        "sample_rate_hz": 48000,
+        "scenario": "full_cycle",
+        "vehicle_id": "supra_jza80"
+      },
+      "comparison_kind": "synthetic_parent_to_candidate_not_real_reference",
+      "events": {
+        "candidate_event_count": 22,
+        "wrong_condition_event_count": 0
+      },
+      "loudness": {
+        "delta_db": 0.0
+      },
+      "order": {
+        "rpm_compatible": true
+      },
+      "parent_role": "baseline_fallback_parent_missing",
+      "parent_sha256": "daf9876ba3fb6c6873e6225ec270636c48fe16a16fb51b1a9c4d85bc3b659436",
+      "psychoacoustics": {
+        "sharpness_proxy_delta": 0.0
+      },
+      "reference_limited": true,
+      "spectral": {
+        "centroid_delta_hz": 0.0,
+        "log_distance": 0.0,
+        "rolloff_delta_hz": 0.0
+      },
+      "uncertainty": {
+        "digital_domain_relative_only": true,
+        "reference_missing": false
+      }
+    }
+  }
+}
