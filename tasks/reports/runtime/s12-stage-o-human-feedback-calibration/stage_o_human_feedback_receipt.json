@@ -1,0 +1,17 @@
+{
+  "binding_manifest_sha256": "357e47e56bafb31d618ced90d1422237984b4374f4045b2103cd8203a357a55c",
+  "content_read": false,
+  "human_feedback_available": false,
+  "human_pass": false,
+  "no_source_change": true,
+  "promotion_block": "real Jovi submission and separate sound-fix branch are required; automatic metrics cannot produce HUMAN_PASS",
+  "required_playback_metadata": [
+    "playback_device",
+    "windows_volume",
+    "playback_endpoint",
+    "listening_environment",
+    "system_eq_enhancement"
+  ],
+  "schema_version": "s12-stage-o-human-feedback-receipt-1",
+  "status": "WAITING_FOR_JOVI_FEEDBACK"
+}

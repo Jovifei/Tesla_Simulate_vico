@@ -3716,3 +3716,11 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 - [x] N6 contract: documented participant-settable full-clip loop range and upstream sample-accurate fade behavior. The future-candidate slot is explicitly `INACTIVE_NOT_GENERATED_NO_SOURCE_CHANGE_AUTHORIZED`; no placeholder audio or source mutation was substituted.
 - [x] N9 deliverable correction: emitted the spec-named `stage_n_parameter_recommendations.json` alongside the backward-compatible `parameter_recommendations.json`, with identical hash-bound content.
 - [x] Audit evidence: direct requirement script passed (`15` tool records, `8` vehicles, five scenarios), and `test_s12_acoustic_comparator_core.py` plus both Stage-N suites passed (`30 passed in 8.47s`). Artifact manifest verification is zero-error.
+
+## S12 Stage O human-feedback calibration (2026-08-21)
+
+- [x] O0: Created this worktree from exact Stage-N tip `e0cf90dc7d10f5bb36d8953ae93eb068ab4382c6`; the inherited Track-P false positive was repaired with a precise Track-S allowlist (`fef513e`) without changing the 180-file/2-symbol frozen content.
+- [x] O0 evidence: governance-repaired full S12 `827 passed / 232 subtests / 1710.50s`; final current tree including Stage-O entry tests `830 passed / 232 subtests / 1746.77s`; Stage-N focused `19 passed`; Track-P guard pytest `32 passed`; independent guard `180 files / 2 symbols`; Stage-N artifact manifest, WAV reopen/finite/clipping and SHA binding checks passed.
+- [x] O1 entry gate: added strict real-feedback intake for paired official `mushra.csv`/`lss.csv` or named CSV, requiring package/candidate/file/test/row/identity/listener binding plus playback device, Windows volume, endpoint, environment and system EQ metadata. Fixture/synthetic inputs are rejected and no input paths currently exist.
+- [x] Waiting-state artifacts: published `tasks/reports/runtime/s12-stage-o-human-feedback-calibration/` with exact-tip receipt, entry receipt, empty confusion/metric/parameter/round outputs, gate matrix and artifact manifest. Current state is `STAGE_N_ACCEPTED / WAITING_FOR_JOVI_FEEDBACK / NOT_PROFILE_FREEZE_READY`.
+- [x] Boundary review: no vehicle source/profile, idle/afterfire/shift/body parameter, Runtime, Android, MATLAB receipt, MoSQITo receipt, Stage-N comparator core or frozen Track-P content changed; no push, merge or PR was performed.
