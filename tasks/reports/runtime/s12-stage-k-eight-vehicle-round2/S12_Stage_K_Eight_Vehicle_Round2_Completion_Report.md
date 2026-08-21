@@ -56,7 +56,7 @@ the project does not auto-advance to another calibration stage.
 
 - Remote: `https://github.com/Jovifei/Tesla_Simulate_vico.git`
 - Branch: `agent/s12-stage-k-four-vehicle-perceptual-repair`
-- Published tip: `bdda9c6c53ea58b254c883fb006fec143b85ccf6`
+- Published tip: `159d883` (`docs(s12): add public round2 milestone report`)
 - Pull-request entry point: `https://github.com/Jovifei/Tesla_Simulate_vico/pull/new/agent/s12-stage-k-four-vehicle-perceptual-repair`
 
 The feature branch is published but not merged into `main`. This receipt only
