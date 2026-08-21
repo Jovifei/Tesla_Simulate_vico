@@ -1,0 +1,79 @@
+{
+  "acceptance_scope": "Stage-P acceptance/feedback/UAT evidence only; no vehicle or sound source changes authorized.",
+  "baseline_observation": {
+    "current_worktree_is_not_baseline_clean_because_stage_p_artifacts_are_uncommitted": true,
+    "exact_tip_was_a_clean_worktree_before_stage_p_changes": true,
+    "observation_note": "P0 git status --porcelain returned no lines immediately after creating the Stage-P branch at the exact Stage-O HEAD; Stage-P acceptance files/reports were then added."
+  },
+  "branch": "agent/s12-stage-p-system-acceptance",
+  "candidate_ids": [
+    "V01",
+    "V02",
+    "V03",
+    "V04",
+    "V05",
+    "V06",
+    "V07",
+    "V08"
+  ],
+  "candidate_sha_count": 8,
+  "clean": false,
+  "exact_head": "38d84f3540081636b7ea78636ba2479a0afe170e",
+  "origin_main": "c08eb4c0d557c32e0896bef9be4f4eddf5d296ea",
+  "origin_main_resolution_error": null,
+  "parent": "fef513e7817aa38349103027768e20f7f00d6415",
+  "protected_track_p": {
+    "frozen_manifest_count": 180,
+    "frozen_manifest_sha256": "94281467e14a66780232fb6ae04bd01917a58a3332721967a80c41f4d6217a8a",
+    "frozen_substrings": [
+      "acoustic_demo/",
+      "radiation",
+      "fvm",
+      "ptr",
+      "matlab",
+      "manage_bundle_loudness"
+    ],
+    "frozen_symbol_sha256": "e1fbda0a64d7232a8c17712a0c63d9ae3e0f95ae9bf9236c55d049b9b5bd9f7d",
+    "guard_script_sha256": "2c692efeacab24776fac067fde9b8f5a8626268548f9ce26586124bc52f98868",
+    "track_s_allowlist_sha256": "41d099716cbd7ba4b3cbacac8f50516a824b05e4b9828c3dce5f2603bc424815"
+  },
+  "real_feedback_read": false,
+  "remote_origin": "https://github.com/Jovifei/Tesla_Simulate_vico.git",
+  "schema_version": "s12-stage-p-baseline-audit-1",
+  "source_change_authorized": false,
+  "stage_n_package": {
+    "candidate_ids": [
+      "V01",
+      "V02",
+      "V03",
+      "V04",
+      "V05",
+      "V06",
+      "V07",
+      "V08"
+    ],
+    "candidate_shas": {
+      "V01": "03b05e2e09d7eda37998e6426957ff5ab3a8af03512277507a676d9c6b9a6234",
+      "V02": "c9406b59f21fbda68f8460ad5918e4f7c363f17b2b269d4a95cd08830ce6dd5a",
+      "V03": "3c3bd7f731ef036c23fcccf9363c087477269e26db92815ac19ea624027412aa",
+      "V04": "8a71c1f0a761cc5c163268a3827d9c88c4efb0fb2c7297f8498980dd3237077d",
+      "V05": "ce0bdea4efcb9e9d30d7c01915e575d658986118cc11303ff64dd9bc25e14317",
+      "V06": "be03b3835b51486c4fef7ac1006486113d7a48c32793fb9c8ee719c4d8824ece",
+      "V07": "7de5f55059e6bc40e0237df3cf2ef8919930aaf94c6ad3e6aebb45a4a9aec513",
+      "V08": "afab90ba0f0914b79a286e61a3689dfbef2d7ded30c5ddaaad669f8e810512fa"
+    },
+    "manifest_sha256": "8156f2edfb0afc3f3065f50a51279fccb77445f20ca43c8f8f81dde5ec71276b",
+    "root": "E:\\Tesla_speed\\review_packages\\s12-stage-n-webmushra-v5",
+    "study_manifest_sha256": "357e47e56bafb31d618ced90d1422237984b4374f4045b2103cd8203a357a55c",
+    "test_id": "s12-stage-n-webmushra-v5"
+  },
+  "stage_o": {
+    "feedback_receipt_sha256": "b5e5dca66fbc230d44ee998ae898c1c1fd938d8801ea51a9351078bbee7f472b",
+    "feedback_schema_sha256": "8d15ac36c40a4f18fb830a47ed2a95950b782f528e70dc684f2eb12df6df572f",
+    "human_feedback_available": false,
+    "output": "E:\\Tesla_speed\\worktrees\\s12-stage-p-system-acceptance\\tasks\\reports\\runtime\\s12-stage-o-human-feedback-calibration",
+    "status": "WAITING_FOR_JOVI_FEEDBACK"
+  },
+  "status": "PASS_EXACT_STAGE_O_BASELINE",
+  "worktree_status_porcelain": "?? tasks/reports/runtime/s12-stage-p-system-acceptance/\n?? tools/sound_sim/s12/acoustic_identity_v015/stage_p/"
+}

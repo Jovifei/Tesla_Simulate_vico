@@ -1,0 +1,55 @@
+{
+  "browser": {
+    "closed_after_run": true,
+    "completed_pages": 90,
+    "fixture_listener_id": "fixture-stage-p-browser-rerun",
+    "opened_config": "s12-stage-p-system-acceptance-v1.yaml",
+    "session": "s12-stage-p-uat-rerun"
+  },
+  "fixture_only": true,
+  "human_feedback_available": false,
+  "importer_binding": {
+    "accepted_rows": 8,
+    "human_feedback_available": false,
+    "rejected_rows": 24,
+    "rejection_note": "non-stage-M candidate stimuli in official MUSHRA rows are intentionally rejected; all 8 stage_m_candidate rows join with all 10 Likert dimensions",
+    "source_format": "webmushra_raw_mushra_and_lss_csv",
+    "status": "FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK"
+  },
+  "official_exports": {
+    "listener_ids": [
+      "fixture-stage-p-browser-rerun"
+    ],
+    "lss_data_rows": 80,
+    "lss_path": "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1\\results\\lss.csv",
+    "lss_sha256": "e9851fb922ca34c1118cf588c7369460bebe2069ff6e11d22155f03ecbf86e8a",
+    "mushra_data_rows": 32,
+    "mushra_path": "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1\\results\\mushra.csv",
+    "mushra_sha256": "2daa12552378412cafbcf1ed043b04c7ba5c3d794aac2e0e1d89c721f373ed9b"
+  },
+  "official_upstream": {
+    "checkout": "E:\\Claude_allow\\Download\\webMUSHRA-stage-n",
+    "commit": "8c353f738aa88fa9dee0dc1aa7d18d2a06441cb5",
+    "docker_image": "sha256:f131ce5ed9285070aff2112cbc8cde0597e81bedcad68e8ba9838d1959076994 webmushra-stage-n-webmushra@sha256:f131ce5ed9285070aff2112cbc8cde0597e81bedcad68e8ba9838d1959076994",
+    "docker_image_after_uat_script_rebuild": "sha256:5ed4cc16191c7ab63a355189d5583bae19d472a8c3ba9164c4a8c76546c0cf6f webmushra-stage-n-webmushra@sha256:5ed4cc16191c7ab63a355189d5583bae19d472a8c3ba9164c4a8c76546c0cf6f",
+    "service_url": "http://127.0.0.1:8000"
+  },
+  "package": {
+    "binding_declared_package_manifest_sha256": "355907adeb9931ce9b2c836d84989cb5e933275b61eb5344a29f0c7df751cd05",
+    "binding_file_sha256": "0930b1596e0d3d095c974bbe0f9a5fb2b140d4fb17777dedf184f3aaab175747",
+    "hidden_reference_policy": "synthetic_parent_not_real_reference",
+    "root": "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1",
+    "study_manifest_sha256": "355907adeb9931ce9b2c836d84989cb5e933275b61eb5344a29f0c7df751cd05",
+    "trial_count": 8
+  },
+  "schema_version": "s12-stage-p-webmushra-roundtrip-1",
+  "status": "PASS",
+  "tuning_authority": false,
+  "uat_scripts": {
+    "check_status": "PASS",
+    "import_results": "PASS",
+    "service_left_running": false,
+    "start_review": "PASS",
+    "stop_review": "PASS"
+  }
+}

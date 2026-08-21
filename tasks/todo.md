@@ -3724,3 +3724,21 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 - [x] O1 entry gate: added strict real-feedback intake for paired official `mushra.csv`/`lss.csv` or named CSV, requiring package/candidate/file/test/row/identity/listener binding plus playback device, Windows volume, endpoint, environment and system EQ metadata. Fixture/synthetic inputs are rejected and no input paths currently exist.
 - [x] Waiting-state artifacts: published `tasks/reports/runtime/s12-stage-o-human-feedback-calibration/` with exact-tip receipt, entry receipt, empty confusion/metric/parameter/round outputs, gate matrix and artifact manifest. Current state is `STAGE_N_ACCEPTED / WAITING_FOR_JOVI_FEEDBACK / NOT_PROFILE_FREEZE_READY`.
 - [x] Boundary review: no vehicle source/profile, idle/afterfire/shift/body parameter, Runtime, Android, MATLAB receipt, MoSQITo receipt, Stage-N comparator core or frozen Track-P content changed; no push, merge or PR was performed.
+
+## S12 Stage P independent system acceptance (2026-08-22)
+
+> Status: `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT / HUMAN_FEEDBACK_PENDING / NOT_PROFILE_FREEZE_READY`; local-only Stage-P branch.
+
+- [x] P0 exact Stage-O baseline audit: `38d84f3540081636b7ea78636ba2479a0afe170e`, parent/origin/main/branch/worktree and protected hashes recorded.
+- [x] P1 fresh full regression (`830 passed / 232 subtests`) plus Stage-N/O/comparator/Track-P/Stage-P focused tests, compileall, diff and artifact manifest.
+- [x] P2 Stage-N receipts, 8 candidates, SHA/schema/finite/tool enum, MATLAB/MoSQITo constraints and same-fixture cross-tool binding validated.
+- [x] P3 8-vehicle × 5-scenario comparator replay with no truth/absolute SPL/real-reference promotion.
+- [x] P4 official upstream webMUSHRA Docker/PHP and named browser full fixture run generated/imported `mushra.csv + lss.csv`; hidden reference is synthetic parent, not real recording.
+- [x] P5 15 negative security cases fail closed; P6 two persistent independent package rebuilds match audio inventory/SHA and refuse overwrite.
+- [x] P7 Jovi UAT START/OPEN/IMPORT/CHECK/STOP package; P8 fixture-only Stage-O receipt/confusion/metric outputs and explicit fixture rejection at Stage-O entry.
+
+### Review
+
+- A–G gates PASS; H remains `HUMAN_FEEDBACK_PENDING`; no real Jovi content was read and no source/profile/tuning change was made.
+- Final evidence: `tasks/reports/runtime/s12-stage-p-system-acceptance/`; UAT package: `E:\Tesla_speed\review_packages\s12-stage-p-jovi-uat-v1`.
+- No push, merge, PR, or profile freeze was performed.

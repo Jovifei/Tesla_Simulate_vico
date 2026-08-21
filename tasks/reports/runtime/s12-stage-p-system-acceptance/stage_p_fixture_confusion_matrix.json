@@ -1,0 +1,16 @@
+{
+  "human_feedback_available": false,
+  "human_pass": false,
+  "matrix": {
+    "aventador_lp700->aventador_lp700": 1,
+    "c63_w204->c63_w204": 1,
+    "ferrari_458->ferrari_458": 1,
+    "gtr_r35->gtr_r35": 1,
+    "hellcat->hellcat": 1,
+    "lfa->lfa": 1,
+    "rx7_fd->rx7_fd": 1,
+    "supra_jza80->supra_jza80": 1
+  },
+  "schema_version": "s12-stage-p-fixture-confusion-matrix-1",
+  "status": "FIXTURE_ONLY_NOT_HUMAN_FEEDBACK_NOT_TUNING_AUTHORITY"
+}

@@ -1,0 +1,21 @@
+{
+  "exact_head": "38d84f3540081636b7ea78636ba2479a0afe170e",
+  "gates": {
+    "A_exact_stage_o_baseline": "PASS",
+    "B_fresh_full_and_focused_regression": "PASS",
+    "C_stage_n_receipts_and_cross_tool_fixture": "PASS",
+    "D_eight_vehicle_comparator_replay": "PASS",
+    "E_official_webmushra_browser_roundtrip": "PASS",
+    "F_security_reproducibility_idempotence": "PASS",
+    "G_jovi_uat_package_and_fixture_stage_o_boundary": "PASS",
+    "H_real_jovi_feedback": "HUMAN_FEEDBACK_PENDING"
+  },
+  "human_feedback_status": "HUMAN_FEEDBACK_PENDING",
+  "no_source_change": true,
+  "overall_status": "SYSTEM_ACCEPTANCE_PASSED",
+  "profile_freeze_ready": false,
+  "ready_for_jovi_uat": true,
+  "review_package_manifest_sha256": "0930b1596e0d3d095c974bbe0f9a5fb2b140d4fb17777dedf184f3aaab175747",
+  "schema_version": "s12-stage-p-gate-matrix-1",
+  "uat_manifest_sha256": "307597b4b8698a5c07b7b0b219ab9192284dd53a0d1509ea532ee24ba4a9aed2"
+}

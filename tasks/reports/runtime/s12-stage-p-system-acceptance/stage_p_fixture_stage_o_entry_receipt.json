@@ -1,0 +1,25 @@
+{
+  "accepted_rows": 0,
+  "binding_manifest_sha256": "355907adeb9931ce9b2c836d84989cb5e933275b61eb5344a29f0c7df751cd05",
+  "content_read": true,
+  "human_feedback_available": false,
+  "human_pass": false,
+  "no_source_change": true,
+  "promotion_block": "real Jovi submission and separate sound-fix branch are required; automatic metrics cannot produce HUMAN_PASS",
+  "rejected_rows": 24,
+  "rejection_reason": "fixture or synthetic result cannot be promoted to Jovi human feedback",
+  "required_playback_metadata": [
+    "playback_device",
+    "windows_volume",
+    "playback_endpoint",
+    "listening_environment",
+    "system_eq_enhancement"
+  ],
+  "schema_version": "s12-stage-o-human-feedback-receipt-1",
+  "source_format": "webmushra_raw_mushra_and_lss_csv",
+  "source_sha256": {
+    "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1\\results\\lss.csv": "e9851fb922ca34c1118cf588c7369460bebe2069ff6e11d22155f03ecbf86e8a",
+    "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1\\results\\mushra.csv": "2daa12552378412cafbcf1ed043b04c7ba5c3d794aac2e0e1d89c721f373ed9b"
+  },
+  "status": "REJECTED_FIXTURE_OR_SYNTHETIC_INPUT"
+}

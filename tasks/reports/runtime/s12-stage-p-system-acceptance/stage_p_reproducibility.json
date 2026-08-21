@@ -1,0 +1,22 @@
+{
+  "audio_file_count": 32,
+  "audio_inventory_equal": true,
+  "audio_sha_equal": true,
+  "first_file_count": 38,
+  "human_feedback_available": false,
+  "idempotence_policy": "existing populated output is never overwritten",
+  "independent_output_count": 2,
+  "note": "Study IDs intentionally differ; identical audio payload inventory and SHA are the reproducibility invariant.",
+  "persistent_output_dirs": [
+    "E:\\Tesla_speed\\review_packages\\s12-stage-p-reproducibility-a-v1",
+    "E:\\Tesla_speed\\review_packages\\s12-stage-p-reproducibility-b-v1"
+  ],
+  "persistent_output_tree_sha256": {
+    "a": "a797669e3990ed6acee2f8f819bb85c4b87fe499a2392431ae197d76041af71b",
+    "b": "a2d462dcd22c206d2e0a1834436946c89e3cd00a8b7d8d8c624e1bbe536f14c8"
+  },
+  "schema_version": "s12-stage-p-reproducibility-1",
+  "second_file_count": 38,
+  "status": "PASS",
+  "tuning_authority": false
+}
