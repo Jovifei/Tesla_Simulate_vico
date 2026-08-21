@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -113,14 +114,95 @@ def fixture_suite() -> dict[str, object]:
     }
 
 
+def analyze_project_inputs(input_root: Path, *, progress: Any | None = None) -> dict[str, object]:
+    """Run real MoSQITo functions on all hash-bound Stage-N project inputs.
+
+    The input manifest is produced by the Stage-N MATLAB-input preparation
+    step. This function rechecks every MAT SHA before any measurement and
+    reports candidate metrics only: an external-reference residual remains
+    unavailable without a lawful reference waveform and RPM/state metadata.
+    """
+
+    try:
+        from scipy.io import loadmat
+    except ImportError as exc:  # pragma: no cover - exercised by isolated runtime
+        raise RuntimeError("SciPy is required to read Stage-N MATLAB project inputs.") from exc
+    manifest_path = input_root / "input_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    records = manifest.get("records")
+    if manifest.get("status") != "PREPARED_NOT_EXECUTED_IN_MATLAB" or not isinstance(records, list) or len(records) != 8:
+        raise ValueError("expected eight hash-bound Stage-N MATLAB project inputs")
+    vehicles: dict[str, object] = {}
+    for index, record in enumerate(sorted(records, key=lambda item: str(item["vehicle_id"])), start=1):
+        if not isinstance(record, dict):
+            raise ValueError("MATLAB input manifest record must be an object")
+        vehicle_id = str(record["vehicle_id"])
+        mat_path = input_root / str(record["mat_file"])
+        actual_sha = hashlib.sha256(mat_path.read_bytes()).hexdigest()
+        if actual_sha != record["mat_sha256"]:
+            raise ValueError(f"MATLAB input SHA mismatch: {vehicle_id}")
+        values = loadmat(mat_path, variable_names=("signal_pcm24", "sample_rate_hz", "rpm", "state_trace"))
+        pcm24 = np.asarray(values.get("signal_pcm24"))
+        rpm = np.asarray(values.get("rpm"), dtype=np.float64).reshape(-1)
+        state_trace = np.asarray(values.get("state_trace")).reshape(-1)
+        sample_rate_hz = int(np.asarray(values.get("sample_rate_hz"), dtype=np.float64).reshape(-1)[0])
+        if (
+            sample_rate_hz != 48_000
+            or pcm24.ndim != 2
+            or pcm24.shape[1] != 2
+            or pcm24.shape[0] != int(record["frame_count"])
+            or rpm.size != pcm24.shape[0]
+            or state_trace.size != pcm24.shape[0]
+            or not np.issubdtype(pcm24.dtype, np.integer)
+            or np.any(pcm24 < -(1 << 23))
+            or np.any(pcm24 > (1 << 23) - 1)
+            or not np.all(np.isfinite(rpm))
+            or np.any(rpm <= 0)
+        ):
+            raise ValueError(f"MATLAB input contract failed: {vehicle_id}")
+        signal = np.mean(pcm24.astype(np.float64), axis=1) / float(1 << 23)
+        del pcm24
+        if progress is not None:
+            progress(index, len(records), vehicle_id)
+        metrics = compute_mosqito_metrics(signal, sample_rate_hz)
+        del signal
+        vehicles[vehicle_id] = {
+            "scenario": str(record["scenario"]),
+            "candidate_sha256": str(record["candidate_sha256"]),
+            "trace_sha256": str(record["trace_sha256"]),
+            "mat_file": str(record["mat_file"]),
+            "mat_sha256": actual_sha,
+            "channel_policy": str(record["channel_policy"]),
+            "metrics": metrics,
+            "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+        }
+    return {
+        "schema_version": "s12-stage-n-mosqito-project-analysis-1",
+        "status": "EXECUTED_ON_PROJECT_DATA",
+        "source_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "input_calibration": "digital-domain relative; no full-scale-to-Pascal calibration or absolute SPL claim",
+        "vehicle_count": len(vehicles),
+        "vehicles": vehicles,
+        "limitation": "candidate metrics only; no lawful external reference waveform contains matching RPM/state metadata",
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run Stage-N MoSQITo fixture evidence in its isolated interpreter.")
-    parser.add_argument("--fixture", action="store_true", help="run the fixed direction fixture suite")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--fixture", action="store_true", help="run the fixed direction fixture suite")
+    mode.add_argument("--project-input-root", type=Path, help="run all hash-bound current S12 candidate inputs")
     parser.add_argument("--output", type=Path, required=True, help="JSON receipt path")
     arguments = parser.parse_args(argv)
-    if not arguments.fixture:
-        parser.error("only --fixture is supported by this standalone real-call runner")
-    receipt = fixture_suite()
+    if arguments.output.exists():
+        raise FileExistsError(f"refusing to overwrite MoSQITo receipt: {arguments.output}")
+    if arguments.fixture:
+        receipt = fixture_suite()
+    else:
+        receipt = analyze_project_inputs(
+            arguments.project_input_root,
+            progress=lambda index, total, vehicle: print(f"[{index}/{total}] MoSQITo {vehicle}", flush=True),
+        )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return 0

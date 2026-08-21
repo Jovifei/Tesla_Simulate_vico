@@ -147,6 +147,11 @@ def test_unified_result_keeps_missing_reference_order_not_qualified() -> None:
     assert hellcat["order_identity"]["status"] == "ORDER_COMPARISON_NOT_QUALIFIED"
     assert hellcat["human_score"] is None
     assert result["no_truth_percentage"] is True
+    project = {"status": "EXECUTED_ON_PROJECT_DATA", "vehicles": {"hellcat": {"metrics": {"results": {"loudness_sone": 1.0}}}}}
+    project_result = build_unified_results(stage_m, human_feedback=None, mosqito_project=project)
+    psycho = project_result["vehicles"]["hellcat"]["full_cycle"]["psychoacoustic_residual"]
+    assert psycho["status"] == "CANDIDATE_METRICS_AVAILABLE_REFERENCE_COMPARISON_BLOCKED"
+    assert psycho["residual"] is None
 
 
 def test_matlab_adapters_name_real_functions_and_never_estimate_missing_rpm() -> None:
@@ -159,9 +164,18 @@ def test_matlab_adapters_name_real_functions_and_never_estimate_missing_rpm() ->
     assert "ORDER_COMPARISON_NOT_QUALIFIED" in order
     assert "EXECUTED_ON_PROJECT_DATA" in order
     assert "signal_pcm24" in order
+    assert "if ~isfolder(outputDirectory)" in order
+    assert "measureOrderStability(orderMap, orderAxis, expectedOrders, 0.08)" in order
+    assert "tracked_amplitude_relative_variation_observation" in order
     assert "rpmtrack(" not in order
+    exporter = (matlab / "s12_export_matlab_comparator_result.m").read_text(encoding="utf-8")
+    assert exporter.index("movefile(temporaryPath, jsonPath, 'f');") < exporter.index("clear cleanup")
     for function in ("acousticLoudness", "acousticSharpness", "acousticRoughness", "acousticFluctuation", "acousticToneToNoiseRatio", "acousticProminenceRatio"):
         assert function in psycho
+    assert "acousticRoughness(signal, sampleRateHz)" in psycho
+    assert "acousticFluctuation(signal, sampleRateHz)" in psycho
+    assert "setdiff(fieldnames(fixture), {'sample_rate_hz'}, 'stable')" in psycho
+    assert "values.prominent_tone.prominence_ratio_db > values.base.prominence_ratio_db" in psycho
 
 
 def test_matlab_project_input_trace_hashes_and_manual_runner_contract() -> None:
@@ -185,6 +199,10 @@ def test_matlab_project_input_trace_hashes_and_manual_runner_contract() -> None:
     assert "s12_order_analysis(struct('mode', 'fixture')" in runner
     assert "s12:StageN:OutputExists" in runner
     assert "REFERENCE_RPM_UNAVAILABLE" in runner
+    psycho_runner = Path("tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_psychoacoustic_analysis.m").read_text(encoding="utf-8")
+    assert "s12_psychoacoustic_analysis(struct('mode', 'fixture')" in psycho_runner
+    assert "signal_pcm24" in psycho_runner
+    assert "matlab_psychoacoustic_session_receipt" in psycho_runner
 
 
 def test_mosqito_adapter_is_real_call_path_not_proxy() -> None:
@@ -192,3 +210,5 @@ def test_mosqito_adapter_is_real_call_path_not_proxy() -> None:
     for function in ("loudness_zwst", "sharpness_din_st", "roughness_dw", "tnr_ecma_st", "pr_ecma_st"):
         assert function in adapter
     assert "proxy_metrics" not in adapter
+    assert "--project-input-root" in adapter
+    assert "MATLAB input SHA mismatch" in adapter

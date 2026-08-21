@@ -20,9 +20,8 @@ end
 cleanup = onCleanup(@() closeOwned(fileId, temporaryPath));
 fprintf(fileId, '%s\n', jsonencode(result));
 fclose(fileId);
-fileId = -1;
-clear cleanup
 movefile(temporaryPath, jsonPath, 'f');
+clear cleanup
 artifacts = struct('json_path', jsonPath);
 end
 

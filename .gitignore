@@ -111,3 +111,8 @@ tools/sound_sim/s12/benchmark/out/
 # Stage-N MATLAB analysis inputs are regenerated from immutable, hash-bound
 # review packages and are intentionally not source-controlled.
 artifacts/matlab/s12-stage-n-order-inputs-v1/
+
+# Stage-N MATLAB Desktop execution roots are reproducible local evidence.
+# Runtime reports contain the receipt hashes and paths; large maps stay local.
+artifacts/matlab/s12-stage-n-order-execution-*/
+artifacts/matlab/s12-stage-n-psychoacoustic-execution-*/

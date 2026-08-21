@@ -23,7 +23,7 @@ end
 if isfield(inputSpec, 'mode') && strcmp(inputSpec.mode, 'fixture')
     fixture = buildFixtures();
     values = struct();
-    fields = fieldnames(fixture);
+    fields = setdiff(fieldnames(fixture), {'sample_rate_hz'}, 'stable');
     for index = 1:numel(fields)
         values.(fields{index}) = measure(fixture.(fields{index}), fixture.sample_rate_hz);
     end
@@ -62,9 +62,8 @@ function metric = measure(signal, sampleRateHz)
 metric = struct();
 metric.loudness_sone = scalarValue(loudness);
 metric.sharpness_acum = scalarValue(acousticSharpness(specificLoudness));
-[~, specificLoudnessTv] = acousticLoudness(signal, sampleRateHz, 'TimeVarying', true, 'TimeResolution', 'high');
-metric.roughness_asper = scalarValue(acousticRoughness(specificLoudnessTv));
-metric.fluctuation_vacil = scalarValue(acousticFluctuation(specificLoudnessTv));
+metric.roughness_asper = scalarValue(acousticRoughness(signal, sampleRateHz));
+metric.fluctuation_vacil = scalarValue(acousticFluctuation(signal, sampleRateHz));
 [tnr, tnrFrequency, prominent] = acousticToneToNoiseRatio(signal, sampleRateHz);
 [prominence, prominenceFrequency] = acousticProminenceRatio(signal, sampleRateHz);
 metric.tone_to_noise_ratio_db = scalarValue(tnr);
@@ -80,7 +79,8 @@ validation = struct( ...
     'high_frequency_increases_sharpness', values.high_frequency_boost.sharpness_acum > values.base.sharpness_acum, ...
     'fast_am_increases_roughness', values.fast_am.roughness_asper > values.base.roughness_asper, ...
     'slow_am_increases_fluctuation', values.slow_am.fluctuation_vacil > values.base.fluctuation_vacil, ...
-    'prominent_tone_increases_tonality', values.prominent_tone.tone_to_noise_ratio_db > values.base.tone_to_noise_ratio_db);
+    'prominent_tone_increases_tonality', values.prominent_tone.tone_prominent && ...
+        values.prominent_tone.prominence_ratio_db > values.base.prominence_ratio_db);
 validation.passed = all(structfun(@logical, validation));
 end
 

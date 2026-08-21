@@ -1,4 +1,51 @@
 {
-  "reason": "MATLAB fixture receipt is absent; numerical agreement is not inferred from source code",
-  "status": "CROSS_TOOL_COMPARISON_BLOCKED"
+  "common_trends": {
+    "fast_am_increases_roughness": {
+      "agreement": true,
+      "matlab": true,
+      "mosqito": true
+    },
+    "gain_increases_loudness": {
+      "agreement": true,
+      "matlab": true,
+      "mosqito": true
+    },
+    "high_frequency_increases_sharpness": {
+      "agreement": true,
+      "matlab": true,
+      "mosqito": true
+    },
+    "prominent_tone_reports_tonality": {
+      "agreement": true,
+      "matlab": true,
+      "mosqito": true
+    }
+  },
+  "limitation": "MATLAB Audio Toolbox and MoSQITo are not expected to be sample-for-sample identical; units and trend agreement are recorded explicitly.",
+  "metric_differences": {
+    "base.loudness_sone": {
+      "difference_matlab_minus_mosqito": 2.800127262001417,
+      "matlab": 6.090127262001417,
+      "mosqito": 3.29
+    },
+    "base.roughness_asper": {
+      "difference_matlab_minus_mosqito": -0.0002819616246166391,
+      "matlab": 0.00029437073512812527,
+      "mosqito": 0.0005763323597447644
+    },
+    "base.sharpness_acum": {
+      "difference_matlab_minus_mosqito": -0.0051812801906221395,
+      "matlab": 1.0038518141376072,
+      "mosqito": 1.0090330943282293
+    },
+    "prominent_tone.tone_to_noise_ratio_db": {
+      "difference_matlab_minus_mosqito": 0.21311443555141807,
+      "matlab": 42.51712370191301,
+      "mosqito": 42.30400926636159
+    }
+  },
+  "passed": true,
+  "same_fixture_intent": "digital-domain direction fixtures; durations and implementation standards may differ",
+  "schema_version": "s12-stage-n-cross-tool-validation-1",
+  "status": "VALIDATED"
 }

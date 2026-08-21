@@ -59,27 +59,83 @@ def validate_tool_record(record: Mapping[str, object]) -> None:
         raise ValueError("an invoked tool requires an output artifact")
 
 
-def build_unified_results(stage_m: Mapping[str, object], *, human_feedback: Mapping[str, object] | None) -> dict[str, object]:
+def build_unified_results(
+    stage_m: Mapping[str, object],
+    *,
+    human_feedback: Mapping[str, object] | None,
+    mosqito_project: Mapping[str, object] | None = None,
+    matlab_order: Mapping[str, object] | None = None,
+    matlab_psychoacoustic: Mapping[str, object] | None = None,
+) -> dict[str, object]:
     """Translate Stage-M internal regression evidence without upgrading it."""
 
     vehicle_results: dict[str, dict[str, dict[str, object]]] = {}
     vehicles = stage_m.get("vehicles", {})
     if not isinstance(vehicles, Mapping):
         raise ValueError("Stage-M comparator payload must expose vehicles")
+    project_vehicles = mosqito_project.get("vehicles", {}) if isinstance(mosqito_project, Mapping) else {}
+    if not isinstance(project_vehicles, Mapping):
+        project_vehicles = {}
+    matlab_order_vehicles = matlab_order.get("vehicles", {}) if isinstance(matlab_order, Mapping) else {}
+    if not isinstance(matlab_order_vehicles, Mapping):
+        matlab_order_vehicles = {}
+    matlab_psychoacoustic_vehicles = matlab_psychoacoustic.get("vehicles", {}) if isinstance(matlab_psychoacoustic, Mapping) else {}
+    if not isinstance(matlab_psychoacoustic_vehicles, Mapping):
+        matlab_psychoacoustic_vehicles = {}
     for vehicle_id, prior in sorted(vehicles.items()):
         if not isinstance(prior, Mapping):
             raise ValueError(f"invalid Stage-M record: {vehicle_id}")
         uncertainty = prior.get("uncertainty", {})
         external_missing = bool(uncertainty.get("external_reference_missing", True)) if isinstance(uncertainty, Mapping) else True
+        project_record = project_vehicles.get(str(vehicle_id))
+        project_metrics = project_record.get("metrics", {}).get("results") if isinstance(project_record, Mapping) and isinstance(project_record.get("metrics"), Mapping) else None
+        matlab_psycho_record = matlab_psychoacoustic_vehicles.get(str(vehicle_id))
+        matlab_psycho_metrics = matlab_psycho_record.get("metrics") if isinstance(matlab_psycho_record, Mapping) else None
+        matlab_order_record = matlab_order_vehicles.get(str(vehicle_id))
+        order_identity = {
+            "status": "ORDER_COMPARISON_NOT_QUALIFIED" if external_missing else "NOT_REEVALUATED",
+            "residual": None,
+        }
+        if isinstance(matlab_order_record, Mapping):
+            order_identity.update({
+                "candidate_order_analysis": "EXECUTED_ON_PROJECT_DATA",
+                "candidate_metric_path": matlab_order_record.get("metric_path"),
+                "limitation": "Candidate order map uses its hash-bound synthetic RPM/state trace; external reference RPM/state remains unavailable.",
+            })
+        psychoacoustic = (
+            {
+                "status": "CANDIDATE_METRICS_AVAILABLE_REFERENCE_COMPARISON_BLOCKED",
+                "tools": [
+                    name
+                    for name, metrics in (
+                        ("MoSQITo", project_metrics),
+                        ("MATLAB Audio Toolbox", matlab_psycho_metrics),
+                    )
+                    if isinstance(metrics, Mapping)
+                ],
+                "candidate_metrics": {
+                    name: metrics
+                    for name, metrics in (
+                        ("mosqito", project_metrics),
+                        ("matlab_audio_toolbox", matlab_psycho_metrics),
+                    )
+                    if isinstance(metrics, Mapping)
+                },
+                "residual": None,
+                "limitation": "no RPM/state-bound external reference is available",
+            }
+            if isinstance(project_metrics, Mapping) or isinstance(matlab_psycho_metrics, Mapping)
+            else {"status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"}
+        )
         vehicle_results[str(vehicle_id)] = {
             "full_cycle": {
                 "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE" if external_missing else "EXTERNAL_REFERENCE_PRESENT",
                 "rpm_state_alignment": {"status": "REFERENCE_RPM_UNAVAILABLE" if external_missing else "NOT_REEVALUATED"},
                 "spectral_residual": prior.get("spectral", {}).get("log_distance") if isinstance(prior.get("spectral"), Mapping) else None,
-                "order_identity": {"status": "ORDER_COMPARISON_NOT_QUALIFIED" if external_missing else "NOT_REEVALUATED", "residual": None},
+                "order_identity": order_identity,
                 "idle_residual": {"status": "NOT_QUALIFIED_NO_STATE_WINDOW"},
                 "transient_residual": {"status": "NOT_QUALIFIED_NO_STATE_WINDOW"},
-                "psychoacoustic_residual": {"status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"},
+                "psychoacoustic_residual": psychoacoustic,
                 "human_score": None,
                 "uncertainty": {"digital_domain_relative_only": True, "external_reference_missing": external_missing},
                 "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
@@ -90,7 +146,7 @@ def build_unified_results(stage_m: Mapping[str, object], *, human_feedback: Mapp
                     "high_order_character": "NOT_QUALIFIED",
                     "idle_texture": "NOT_QUALIFIED",
                     "transient_behavior": "NOT_QUALIFIED",
-                    "psychoacoustic_match": "BLOCKED",
+                    "psychoacoustic_match": "REFERENCE_COMPARISON_BLOCKED" if isinstance(project_metrics, Mapping) or isinstance(matlab_psycho_metrics, Mapping) else "BLOCKED",
                     "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
                 },
             }
@@ -104,9 +160,107 @@ def build_unified_results(stage_m: Mapping[str, object], *, human_feedback: Mapp
     }
 
 
+def _matlab_receipt_valid(receipt: Mapping[str, object] | None) -> bool:
+    """Only a validated fixture plus all eight project records unlocks MATLAB status."""
+
+    return bool(
+        isinstance(receipt, Mapping)
+        and receipt.get("status") == "VALIDATED"
+        and receipt.get("fixture_validated") is True
+        and receipt.get("vehicle_data_executed") is True
+        and receipt.get("vehicle_count") == 8
+        and isinstance(receipt.get("vehicles"), Mapping)
+        and len(receipt["vehicles"]) == 8
+    )
+
+
+def build_cross_tool_validation(
+    matlab_psychoacoustic: Mapping[str, object] | None,
+    mosqito_fixture: Mapping[str, object] | None,
+) -> dict[str, object]:
+    """Compare common fixture trends without claiming cross-standard equality."""
+
+    if not _matlab_receipt_valid(matlab_psychoacoustic):
+        return {
+            "status": "CROSS_TOOL_COMPARISON_BLOCKED",
+            "reason": "validated MATLAB psychoacoustic fixture receipt is absent",
+        }
+    if not isinstance(mosqito_fixture, Mapping) or mosqito_fixture.get("status") != "VALIDATED":
+        return {
+            "status": "CROSS_TOOL_COMPARISON_BLOCKED",
+            "reason": "validated MoSQITo fixture receipt is absent",
+        }
+    matlab_fixture = matlab_psychoacoustic.get("fixture", {})
+    matlab_validation = matlab_fixture.get("validation", {}) if isinstance(matlab_fixture, Mapping) else {}
+    mosqito_validation = mosqito_fixture.get("validation", {})
+    common_trends = {
+        "gain_increases_loudness": {
+            "matlab": matlab_validation.get("gain_increases_loudness"),
+            "mosqito": mosqito_validation.get("gain_increases_loudness"),
+        },
+        "high_frequency_increases_sharpness": {
+            "matlab": matlab_validation.get("high_frequency_increases_sharpness"),
+            "mosqito": mosqito_validation.get("high_frequency_increases_sharpness"),
+        },
+        "fast_am_increases_roughness": {
+            "matlab": matlab_validation.get("fast_am_increases_roughness"),
+            "mosqito": mosqito_validation.get("fast_am_increases_roughness"),
+        },
+        "prominent_tone_reports_tonality": {
+            "matlab": matlab_validation.get("prominent_tone_increases_tonality"),
+            "mosqito": mosqito_validation.get("prominent_tone_reports_tonality"),
+        },
+    }
+    for trend in common_trends.values():
+        trend["agreement"] = trend["matlab"] is True and trend["mosqito"] is True
+    matlab_metrics = matlab_fixture.get("metrics", {}) if isinstance(matlab_fixture, Mapping) else {}
+    mosqito_metrics = mosqito_fixture.get("fixtures", {})
+    metric_differences: dict[str, dict[str, object]] = {}
+    for fixture_name, metric_name in (
+        ("base", "loudness_sone"),
+        ("base", "sharpness_acum"),
+        ("base", "roughness_asper"),
+        ("prominent_tone", "tone_to_noise_ratio_db"),
+    ):
+        matlab_value = _nested_metric(matlab_metrics, fixture_name, metric_name)
+        mosqito_value = _nested_metric(mosqito_metrics, fixture_name, metric_name)
+        metric_differences[f"{fixture_name}.{metric_name}"] = {
+            "matlab": matlab_value,
+            "mosqito": mosqito_value,
+            "difference_matlab_minus_mosqito": (
+                matlab_value - mosqito_value
+                if isinstance(matlab_value, (int, float)) and isinstance(mosqito_value, (int, float))
+                else None
+            ),
+        }
+    passed = all(trend["agreement"] for trend in common_trends.values())
+    return {
+        "schema_version": "s12-stage-n-cross-tool-validation-1",
+        "status": "VALIDATED" if passed else "EXECUTED_ON_FIXTURE",
+        "same_fixture_intent": "digital-domain direction fixtures; durations and implementation standards may differ",
+        "common_trends": common_trends,
+        "metric_differences": metric_differences,
+        "passed": passed,
+        "limitation": "MATLAB Audio Toolbox and MoSQITo are not expected to be sample-for-sample identical; units and trend agreement are recorded explicitly.",
+    }
+
+
+def _nested_metric(container: object, fixture_name: str, metric_name: str) -> object:
+    if not isinstance(container, Mapping):
+        return None
+    fixture = container.get(fixture_name)
+    if not isinstance(fixture, Mapping):
+        return None
+    results = fixture.get("results") if isinstance(fixture.get("results"), Mapping) else fixture
+    return results.get(metric_name) if isinstance(results, Mapping) else None
+
+
 def default_capability_matrix(
     mosqito_receipt: Mapping[str, object] | None,
     *,
+    mosqito_project_receipt: Mapping[str, object] | None = None,
+    matlab_order_receipt: Mapping[str, object] | None = None,
+    matlab_psychoacoustic_receipt: Mapping[str, object] | None = None,
     webmushra_output: str | None = None,
     webmushra_fixture_validated: bool = False,
 ) -> list[dict[str, object]]:
@@ -117,28 +271,46 @@ def default_capability_matrix(
         "acousticLoudness", "acousticSharpness", "acousticRoughness", "acousticFluctuation",
         "acousticToneToNoiseRatio", "acousticProminenceRatio",
     )
+    order_validated = _matlab_receipt_valid(matlab_order_receipt)
+    psychoacoustic_validated = _matlab_receipt_valid(matlab_psychoacoustic_receipt)
     records = [
         *[
             tool_record(
                 f"MATLAB Signal Processing Toolbox: {function}",
-                version="R2026a executable detected; no safe user-started Desktop session",
+                version=str(matlab_order_receipt.get("matlab_release")) if order_validated else "R2026a executable detected; no execution receipt",
                 license="MathWorks commercial",
                 installation_mode="locally installed, existing-session-only policy",
                 adapter_path="tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
-                status="BLOCKED",
-                limitation="MATLAB.exe is absent while pre-existing MATLAB-MCP servers are active; Stage N did not start, stop, or reconnect MATLAB.",
+                actually_invoked=order_validated,
+                fixture_validated=order_validated,
+                vehicle_data_executed=order_validated,
+                output_artifact="matlab_order_validation.json" if order_validated else None,
+                status="VALIDATED" if order_validated else "BLOCKED",
+                limitation=(
+                    "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; no external reference RPM/state metadata is available."
+                    if order_validated
+                    else "No receipt from a user-opened MATLAB Desktop session was supplied; proxy order metrics are not substituted."
+                ),
             )
             for function in order_functions
         ],
         *[
             tool_record(
                 f"MATLAB Audio Toolbox: {function}",
-                version="R2026a executable detected; toolbox availability unqueried without safe Desktop session",
+                version=str(matlab_psychoacoustic_receipt.get("matlab_release")) if psychoacoustic_validated else "R2026a executable detected; no execution receipt",
                 license="MathWorks commercial",
                 installation_mode="locally installed, existing-session-only policy",
                 adapter_path="tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
-                status="BLOCKED",
-                limitation="No safe manually opened MATLAB Desktop session is available; proxy metrics are not substituted.",
+                actually_invoked=psychoacoustic_validated,
+                fixture_validated=psychoacoustic_validated,
+                vehicle_data_executed=psychoacoustic_validated,
+                output_artifact="matlab_psychoacoustic_validation.json" if psychoacoustic_validated else None,
+                status="VALIDATED" if psychoacoustic_validated else "BLOCKED",
+                limitation=(
+                    "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only."
+                    if psychoacoustic_validated
+                    else "No receipt from a user-opened MATLAB Desktop session was supplied; proxy psychoacoustic metrics are not substituted."
+                ),
             )
             for function in psychoacoustic_functions
         ],
@@ -186,6 +358,13 @@ def default_capability_matrix(
             ),
         ),
     ]
+    project_data_executed = bool(
+        isinstance(mosqito_project_receipt, Mapping)
+        and mosqito_project_receipt.get("status") == "EXECUTED_ON_PROJECT_DATA"
+        and mosqito_project_receipt.get("vehicle_count") == 8
+        and isinstance(mosqito_project_receipt.get("vehicles"), Mapping)
+        and len(mosqito_project_receipt["vehicles"]) == 8
+    )
     if mosqito_receipt and mosqito_receipt.get("status") == "VALIDATED":
         version = str(mosqito_receipt.get("fixtures", {}).get("base", {}).get("mosqito_version", "receipt version unavailable"))
         records.insert(3, tool_record(
@@ -196,9 +375,14 @@ def default_capability_matrix(
             adapter_path="tools/sound_sim/s12/acoustic_comparator/psychoacoustics/mosqito_adapter.py",
             actually_invoked=True,
             fixture_validated=True,
-            output_artifact="mosqito_validation.json",
+            vehicle_data_executed=project_data_executed,
+            output_artifact="mosqito_validation.json; mosqito_project_analysis.json" if project_data_executed else "mosqito_validation.json",
             status="VALIDATED",
-            limitation="Fixture input is digital-domain relative; it is not calibrated SPL or a real-reference comparison.",
+            limitation=(
+                "Fixture and eight hash-bound synthetic candidates were processed in the digital domain; no absolute SPL or real-reference residual is claimed."
+                if project_data_executed
+                else "Fixture input is digital-domain relative; it is not calibrated SPL or a real-reference comparison."
+            ),
         ))
     else:
         records.insert(3, tool_record(
@@ -312,19 +496,22 @@ def verify_artifact_manifest(output_root: Path) -> list[str]:
 def write_stage_n_report(output_root: Path, matrix: Mapping[str, object], unified: Mapping[str, object], *, webmushra_package: Path) -> None:
     mosqito = next((record for record in matrix["records"] if record["tool"] == "MoSQITo"), None)
     webmushra = next((record for record in matrix["records"] if record["tool"] == "webMUSHRA"), None)
+    matlab_order = next((record for record in matrix["records"] if record["tool"] == "MATLAB Signal Processing Toolbox: rpmordermap"), None)
+    matlab_psychoacoustic = next((record for record in matrix["records"] if record["tool"] == "MATLAB Audio Toolbox: acousticLoudness"), None)
     validated = [record["tool"] for record in matrix["records"] if record["status"] == "VALIDATED"]
     lines = [
         "# S12 Stage N Professional Toolchain Report", "",
         "## Status", "",
-        "- `PROFESSIONAL_COMPARATOR_TOOLCHAIN_PARTIAL`: MATLAB remains blocked and optional tools are not installed.",
+        "- `PROFESSIONAL_COMPARATOR_TOOLCHAIN_PARTIAL`: professional execution evidence exists only for the recorded tools; optional tools and real-reference calibration remain unavailable.",
         f"- `PROFESSIONAL_TOOLCHAIN_VALIDATED_ON_FIXTURES`: limited to `{', '.join(validated) or 'none'}`; it is not a claim that every professional tool is validated.",
         "- `PROJECT_CANDIDATES_ANALYZED`: eight Stage-M synthetic-parent candidate records were carried into the unified comparator without upgrading their evidence class.",
         "- `REAL_REFERENCE_ORDER_COMPARISON_BLOCKED`: no lawful external reference contains matching RPM/state metadata.",
         "- `WAITING_FOR_JOVI_HUMAN_FEEDBACK`: no human result content was imported.",
         "- `NOT_PROFILE_FREEZE_READY`.", "",
         "## Tool receipts", "",
-        f"- MoSQITo receipt: `{mosqito['output_artifact'] if mosqito else 'unavailable'}`; status `{mosqito['status'] if mosqito else 'BLOCKED'}`.",
-        "- MATLAB order and psychoacoustic source adapters are present but were not run because Stage N found no safe user-started Desktop session.",
+        f"- MoSQITo receipt: `{mosqito['output_artifact'] if mosqito else 'unavailable'}`; status `{mosqito['status'] if mosqito else 'BLOCKED'}`; project data `{mosqito['vehicle_data_executed'] if mosqito else False}`.",
+        f"- MATLAB order receipt: `{matlab_order['output_artifact'] if matlab_order else 'unavailable'}`; status `{matlab_order['status'] if matlab_order else 'BLOCKED'}`; project data `{matlab_order['vehicle_data_executed'] if matlab_order else False}`.",
+        f"- MATLAB psychoacoustic receipt: `{matlab_psychoacoustic['output_artifact'] if matlab_psychoacoustic else 'unavailable'}`; status `{matlab_psychoacoustic['status'] if matlab_psychoacoustic else 'BLOCKED'}`; project data `{matlab_psychoacoustic['vehicle_data_executed'] if matlab_psychoacoustic else False}`.",
         "- Audio Test Bench: `AUDIO_TEST_BENCH_NOT_INTEGRATED`; no audioPlugin bridge exists.",
         f"- webMUSHRA package: `{webmushra_package}`; status `{webmushra['status'] if webmushra else 'BLOCKED'}`. Its hidden reference is explicitly a synthetic parent, not a real vehicle reference.",
         "", "## Unified boundary", "",

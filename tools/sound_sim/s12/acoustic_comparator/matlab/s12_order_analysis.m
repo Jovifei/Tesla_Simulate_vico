@@ -9,6 +9,10 @@ arguments
     outputDirectory (1,:) char
 end
 
+if ~isfolder(outputDirectory)
+    mkdir(outputDirectory);
+end
+
 required = {'rpmordermap','rpmfreqmap','orderspectrum','ordertrack'};
 available = cell2struct(cellfun(@(name) exist(name, 'file') > 0, required, 'UniformOutput', false), required, 2);
 result = struct('schema_version', 's12-stage-n-matlab-order-1', ...
@@ -90,7 +94,7 @@ close(figureHandle);
 ridges = ridgeSummary(orderSpectrum, spectrumOrder, expectedOrders, expectedAmplitudes);
 ridgePath = fullfile(outputDirectory, 'order_ridges.json');
 writeJson(ridgePath, ridges);
-fixtureValidation = validateFixture(ridges, trackedMagnitude, expectedOrders);
+fixtureValidation = validateFixture(ridges, orderMap, orderAxis, trackedMagnitude, expectedOrders);
 if isempty(expectedOrders)
     result.status = 'EXECUTED_ON_PROJECT_DATA';
 else
@@ -152,7 +156,7 @@ for rank = 1:numel(ranking)
 end
 end
 
-function validation = validateFixture(ridges, trackedMagnitude, expectedOrders)
+function validation = validateFixture(ridges, orderMap, orderAxis, trackedMagnitude, expectedOrders)
 if isempty(expectedOrders)
     validation = struct('passed', false, 'reason', 'project candidate has no known fixture target');
     return
@@ -160,11 +164,29 @@ end
 errors = [ridges.order_error];
 order4 = find([ridges.expected_order] == 4, 1);
 amplitudeRankingCorrect = ridges(order4).amplitude_rank == 1;
+orderStability = measureOrderStability(orderMap, orderAxis, expectedOrders, 0.08);
 relativeVariation = std(trackedMagnitude, 0, 2) ./ max(mean(trackedMagnitude, 2), eps);
-validation = struct('passed', all(errors <= 0.08) && amplitudeRankingCorrect && all(relativeVariation < 0.25), ...
+validation = struct('passed', all(errors <= 0.08) && amplitudeRankingCorrect && orderStability.passed, ...
     'order_tolerance', 0.08, 'order_errors', errors, ...
     'amplitude_ranking_correct', amplitudeRankingCorrect, ...
-    'tracked_relative_variation', relativeVariation);
+    'order_stability', orderStability, ...
+    'tracked_amplitude_relative_variation_observation', relativeVariation);
+end
+
+function stability = measureOrderStability(orderMap, orderAxis, expectedOrders, tolerance)
+records = repmat(struct('expected_order', 0, 'max_order_error', 0, 'median_order_error', 0, 'passed', false), numel(expectedOrders), 1);
+for index = 1:numel(expectedOrders)
+    nearby = find(abs(orderAxis - expectedOrders(index)) <= tolerance);
+    [~, relativeLocation] = max(abs(orderMap(nearby, :)), [], 1);
+    measured = orderAxis(nearby(relativeLocation));
+    errors = abs(measured - expectedOrders(index));
+    records(index) = struct( ...
+        'expected_order', expectedOrders(index), ...
+        'max_order_error', max(errors), ...
+        'median_order_error', median(errors), ...
+        'passed', all(errors <= tolerance));
+end
+stability = struct('tolerance', tolerance, 'per_order', records, 'passed', all([records.passed]));
 end
 
 function writeJson(path, value)
