@@ -19,8 +19,8 @@ Profile, or productization claim is made.
 ## Code and packages
 
 - Worktree: `E:\Tesla_speed\worktrees\s12-stage-k-four-vehicle-perceptual-repair`
-- Current HEAD: `33c23ca19f771f3bd71360d3625906630bf2075a`
-- Implementation tip: `c6ce1cfbc33ba90cf7d7c22fcf86c070d1bb40e1`
+- Round-2 implementation tip: `c6ce1cfbc33ba90cf7d7c22fcf86c070d1bb40e1`.
+- Documentation receipts are committed after this implementation tip; use `git rev-parse HEAD` for the current documentation tip.
 - LFA fix commit: `e9aa9b6` (`fix(s12): qualify LFA round2 shift events`)
 - Remaining-four implementation: `c6ce1cf` (`feat(s12): extend round2 evidence to remaining vehicles`)
 - Three-car v4 package: `E:\Tesla_speed\review_packages\s12-stage-k-three-vehicle-round2-v4`
