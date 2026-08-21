@@ -3646,7 +3646,12 @@ Progress (2026-08-15): R2-K1 actual-array/event-window/pressure/vehicle-isolatio
 
 - [x] R2-8-0：盘点八车型覆盖与 Obsidian 漂移，确认剩余 Ferrari 458、RX-7 FD、Supra JZA80、Aventador LP700 四车。
 - [x] R2-8-1：修复 LFA 将连续 metallic 误判为 ASG event 的资格根因，并冻结真实 shift-array 回归；12 s actual render 为 3 个 shift / 0 wrong-condition / eligible=true。
-- [ ] R2-8-2：补齐 Ferrari/RX-7 与 Supra/Aventador 独立 Round-2 source、trace window、event qualification 与 pressure accounting。
-- [ ] R2-8-3：建立八车统一 final-PCM/Comfort 与可信 manifest/SHA/ZIP 包，不覆盖历史包。
-- [ ] R2-8-4：运行跨阶段、八车冻结与 Track-P 验证，记录实际结果。
-- [ ] R2-8-5：同步 Obsidian 当前仓库 tip、包、测试、已完成项与未完成资格门。
+- [x] R2-8-2：补齐 Ferrari/RX-7 与 Supra/Aventador 独立 Round‑2 source、trace window、event qualification 与 pressure accounting；四车 source/package 契约与回归已绿。
+- [x] R2-8-3：建立八车统一 final-PCM/Comfort 与可信 manifest/SHA/ZIP 包；三车 v4 与剩余四车 v1 均为新根，不覆盖历史包。
+- [x] R2-8-4：运行跨阶段、八车冻结与 Track-P 验证；22 项 Round‑2 回归、Track-P 21/21、180 文件/2 符号 guard 与双包独立验收均通过。
+- [x] R2-8-5：读取并同步 Obsidian 当前仓库 tip、包、测试、已完成项与未完成资格门；未读取 CSV，仍保留诊断-only 边界。
+
+Round‑2 completion evidence: `tasks/reports/runtime/s12-stage-k-eight-vehicle-round2/`.
+The LFA fix is `e9aa9b6`; the remaining-four implementation and package contract
+are in `c6ce1cf`. All packages remain `PARTIAL / AUTOMATED_GATE_FAIL /
+UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.

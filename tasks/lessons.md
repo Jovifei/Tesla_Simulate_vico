@@ -1278,3 +1278,16 @@ Rules:
 - Historical aggregate aliases can make a source render fail exact pressure accounting even when primitive stems are correct. Reconcile the Round-2 view explicitly, list excluded aliases, and keep the historical render/profile bytes untouched.
 - A completed formal package can remain diagnostic-only: independent PCM/SHA/ZIP integrity proves transport, not acoustic hard gates or human approval. Keep the package status fail-closed when any vehicle event-eligibility or reference gate is unmet.
 - A continuous identity carrier is not an event stem. LFA `metallic` produced threshold crossings every ~50 ms and became 151 false events when it was passed through an afterfire qualifier. Bind each metric to the physical event array: ASG re-engagement must align with trace-detected RPM-drop/recovery under open throttle, while afterfire alone uses hot-load history plus closed throttle.
+
+# 2026-08-21 S12 Stage K eight-vehicle completion lessons
+
+- A corrected eligibility rule must be proven again through the real 60-second
+  package path, not only a short fixture. The v4 LFA manifest now records the
+  named shift stem, three trace-aligned events, zero wrong-condition events,
+  and `eligible=true`; the package still remains diagnostic-only because other
+  qualification and human gates are independent.
+- Extending a source contract to the remaining vehicles is not a shared-source
+  shortcut: Ferrari/RX-7 legacy anchors and Supra/Aventador source bindings
+  need separate profiles, traces, stems, pressure accounting, and receipts.
+- Transport integrity (PCM24/SHA/ZIP) proves that the package can be heard and
+  audited; it never upgrades acoustic realism, OEM identity, or Profile Freeze.
