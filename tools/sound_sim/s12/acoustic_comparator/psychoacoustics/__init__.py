@@ -1,10 +1,16 @@
-"""Transparent proxy metrics; optional MoSQITo adapters may enrich these later."""
+"""Stage-M proxy metrics plus separate professional-tool adapters.
+
+The proxy function remains available for historical Stage-M internal regression.
+It is deliberately not re-exported by the professional adapter receipts.
+"""
 from __future__ import annotations
 
 import numpy as np
 
 
 def proxy_metrics(signal: np.ndarray, sample_rate_hz: int, centroid_hz: float) -> dict[str, float | str]:
+    """Return transparent digital-domain proxy metrics for legacy comparisons."""
+
     envelope = np.abs(signal)
     window = max(1, sample_rate_hz // 20)
     smoothed = np.convolve(envelope, np.ones(window) / window, mode="same")
@@ -20,3 +26,6 @@ def proxy_metrics(signal: np.ndarray, sample_rate_hz: int, centroid_hz: float) -
         "crest_factor": crest,
         "tonality_proxy": float(1.0 / max(roughness + fluctuation, 1e-12)),
     }
+
+
+__all__ = ("proxy_metrics",)
