@@ -1,0 +1,312 @@
+{
+  "comparison_kind": "internal_synthetic_parent_regression_only",
+  "human_feedback_import": null,
+  "no_truth_percentage": true,
+  "schema_version": "s12-stage-n-unified-comparator-1",
+  "vehicles": {
+    "aventador_lp700": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.0,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "c63_w204": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.36072198346811,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "ferrari_458": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.0,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "gtr_r35": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.43370287008584346,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "hellcat": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.5099887087125348,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "lfa": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.07804468311428873,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "rx7_fd": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.0,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    },
+    "supra_jza80": {
+      "full_cycle": {
+        "human_score": null,
+        "idle_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "order_identity": {
+          "residual": null,
+          "status": "ORDER_COMPARISON_NOT_QUALIFIED"
+        },
+        "psychoacoustic_residual": {
+          "status": "BLOCKED_PENDING_PROFESSIONAL_TOOL_RECEIPT"
+        },
+        "radar_axes": {
+          "high_order_character": "NOT_QUALIFIED",
+          "human_realism": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+          "idle_texture": "NOT_QUALIFIED",
+          "low_frequency_body": "NOT_QUALIFIED",
+          "order_identity": "NOT_QUALIFIED",
+          "psychoacoustic_match": "BLOCKED",
+          "spectral_envelope": "INTERNAL_REGRESSION_ONLY",
+          "transient_behavior": "NOT_QUALIFIED"
+        },
+        "reference_availability": "EXTERNAL_REFERENCE_UNAVAILABLE",
+        "reference_limitation": "Stage-M is synthetic-parent internal regression evidence; external RPM/state metadata is unavailable",
+        "rpm_state_alignment": {
+          "status": "REFERENCE_RPM_UNAVAILABLE"
+        },
+        "spectral_residual": 0.0,
+        "transient_residual": {
+          "status": "NOT_QUALIFIED_NO_STATE_WINDOW"
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true
+        }
+      }
+    }
+  }
+}

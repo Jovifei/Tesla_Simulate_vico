@@ -3675,3 +3675,22 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 - [x] M5/M7 named-feedback validator, empty receipt, parameter recommendations withheld by missing reference contract, fail-closed gate matrix, and local eight-vehicle A/B review package.
 - [x] M6/M8 automated closure: no calibration round is run without a lawful state/RPM-bound target; status is `AUTOMATED_CLOSURE_COMPLETE` / `WAITING_FOR_JOVI_NAMED_REVIEW` / `NOT_PROFILE_FREEZE_READY`.
 - [x] Review correction pass: M2 ten-answer evidence, M3 32 vehicle/scenario records and `stage_m_eight_vehicle_failure_attribution.json`, comparator runtime subdirectory, and manifest-SHA feedback binding are regenerated. Final evidence: Stage-M/comparator `31 passed`; Round-2 focused `42 passed / 599.40s`; Stage-K `131 passed / 826.22s`; full S12 `336 passed / 114 subtests / 142.35s`; Track-P `21 passed / 1.09s` plus 180 files/2 symbols guard; original ZIP CRC/SHA and 52 WAV reopen checks plus 24 Stage-M audition WAV/binding checks passed. No feedback content read, push, merge, or PR.
+
+## S12 Stage N Professional Acoustic Comparator (2026-08-21)
+
+> Status: `IN_PROGRESS`; worktree `E:\Tesla_speed\worktrees\s12-stage-n-professional-comparator`, branch `agent/s12-stage-n-professional-comparator`, baseline `ec10ea6`. No vehicle sound-source, Simulink, Runtime, Android, merge, push, or PR changes are authorized.
+
+- [x] N0: Established isolated worktree and current-state preflight. MATLAB Desktop is absent, while four pre-existing `matlab-mcp-server.exe` processes are active; do not stop/reconnect/start MATLAB. Current project Python has no MoSQITo, Essentia, MATLAB Engine, or librosa import.
+- [x] N0: Saved detailed implementation plan at `docs/superpowers/plans/2026-08-21-s12-stage-n-professional-comparator.md`.
+- [x] N1: Added a closed-status, per-function capability matrix and validation contract; only actual versioned fixture receipts can become `VALIDATED`.
+- [x] N2: Added MATLAB order/psychoacoustic source adapters and static fixture contracts. Runtime is truthfully `BLOCKED`: no `MATLAB.exe`/safe existing session was available, and the four pre-existing MCP processes were not touched.
+- [x] N3: Created `E:\AI_Tools\Other\S12StageN\mosqito-venv`, locked MoSQITo `1.2.1`, and ran its real fixture functions. Gain/loudness, high-frequency/sharpness, fast-AM/roughness, and protruding-tone/tonality directions passed. MATLAB cross-tool trend remains `CROSS_TOOL_COMPARISON_BLOCKED`.
+- [x] N4: Added Essentia optional subprocess detection and official-build-only ViSQOL scope validation. Essentia and ViSQOL remain `OPTIONAL_NOT_INSTALLED`; no source vendor or `pip install visqol` was used.
+- [x] N5: Cloned official webMUSHRA upstream only to `E:\Claude_allow\Download\webMUSHRA-stage-n` at `8c353f7...`; exported new v1 study package, served config/audio through a temporary Docker container at `127.0.0.1:18081`, exercised PHP fixture export, SHA/file-ID imported it as `FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK`, then removed the confirmed temporary container.
+- [x] N6: Published unified eight-vehicle results, withheld recommendations, required Stage-N reports, deterministic artifact manifest, and fresh verification evidence. No vehicle-source path changed and no human feedback was claimed.
+
+### Stage N review
+
+- Final status: `PROFESSIONAL_COMPARATOR_TOOLCHAIN_PARTIAL` / `PROFESSIONAL_TOOLCHAIN_VALIDATED_ON_FIXTURES` (MoSQITo and webMUSHRA only) / `PROJECT_CANDIDATES_ANALYZED` / `REAL_REFERENCE_ORDER_COMPARISON_BLOCKED` / `WAITING_FOR_JOVI_HUMAN_FEEDBACK` / `NOT_PROFILE_FREEZE_READY`.
+- Fresh evidence: Stage-N focused and comparator tests `20 passed`; Stage-M closure/recommendation compatibility `2 passed`; full `tools/sound_sim/s12/tests` `342 passed, 114 subtests` in `140.24s`; Stage-N publisher determinism and artifact-manifest verification passed.
+- Boundary: MATLAB adapter execution awaits exactly one manually opened safe Desktop with an existing-session control path. A real external reference must carry lawful raw waveform provenance plus matching RPM/state metadata. After a SHA/file-ID-bound Jovi CSV or webMUSHRA result, use a separate sound-fix branch; do not change vehicle sources here.

@@ -1,0 +1,4 @@
+{
+  "reason": "MATLAB fixture receipt is absent; numerical agreement is not inferred from source code",
+  "status": "CROSS_TOOL_COMPARISON_BLOCKED"
+}

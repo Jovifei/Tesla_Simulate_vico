@@ -1,0 +1,65 @@
+{
+  "artifacts": [
+    {
+      "bytes": 11441,
+      "path": "comparator_results.json",
+      "sha256": "05546c4f7465947d84c4e4a4fb61fa986a2ead72b41de528012f1863bb89f57f"
+    },
+    {
+      "bytes": 150,
+      "path": "cross_tool_validation.json",
+      "sha256": "68c697b556bd67202411ce309f929dfe50f2281be15f362683b744db09a02124"
+    },
+    {
+      "bytes": 119,
+      "path": "matlab_order_validation.json",
+      "sha256": "511e99eb1d5ae9b163df67a308e626197a3ed0266c404dc778627f5c1d061252"
+    },
+    {
+      "bytes": 116,
+      "path": "matlab_psychoacoustic_validation.json",
+      "sha256": "383103ed7ae965936a8aebd91bf0bbf7ce34aafa3d73db369ce16669d2a876a7"
+    },
+    {
+      "bytes": 9231,
+      "path": "mosqito_validation.json",
+      "sha256": "d8671e321de5d655538046d2b23d4d8259120d556a4a79a764825b155b78dbd2"
+    },
+    {
+      "bytes": 2997,
+      "path": "parameter_recommendations.json",
+      "sha256": "ad588ca35828dfbd960b5dace2de539242f048cdf4bc27e6458fd60f312fbebf"
+    },
+    {
+      "bytes": 348,
+      "path": "publish_receipt.json",
+      "sha256": "b119316ae39146af32a4b3a876877013915d1c966c40a9cf269a4cec32b9e60a"
+    },
+    {
+      "bytes": 4031,
+      "path": "S12_Professional_Acoustic_Toolchain_Matrix.md",
+      "sha256": "52f9ade946e91e3fbf713635980990ab00d2e296034dacece302012a2d2852d0"
+    },
+    {
+      "bytes": 1426,
+      "path": "S12_Stage_N_Professional_Toolchain_Report.md",
+      "sha256": "46f8e31a1b3f825b1f1452440fd995f4da0cf77aacefed377c16a6eed3889a44"
+    },
+    {
+      "bytes": 10389,
+      "path": "toolchain_capability_matrix.json",
+      "sha256": "e4d3e89dd2df49c5dc340d6ed6c59b95d04fc38623dc3e42656995f178e8c2e5"
+    },
+    {
+      "bytes": 681,
+      "path": "webmushra_import_validation.json",
+      "sha256": "76d0d8b6437488422ac5907970b0954891cb05eb6f891b3f46004a96a3bb91ff"
+    },
+    {
+      "bytes": 2116,
+      "path": "webmushra_package_manifest.json",
+      "sha256": "a6f5fcfe1022aae947125a0ba2fec9bc16fcace953d50f14111f272ab00c3320"
+    }
+  ],
+  "schema_version": "s12-stage-n-artifact-manifest-1"
+}
