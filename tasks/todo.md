@@ -3655,3 +3655,10 @@ Round‑2 completion evidence: `tasks/reports/runtime/s12-stage-k-eight-vehicle-
 The LFA fix is `e9aa9b6`; the remaining-four implementation and package contract
 are in `c6ce1cf`. All packages remain `PARTIAL / AUTOMATED_GATE_FAIL /
 UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
+
+## S12 Round-2 documentation and GitHub publication (2026-08-21)
+
+- [x] Add the public `docs/08-reports/01-s12-stage-k-eight-vehicle-round2.md` milestone entry and link it from `docs/README.md`.
+- [x] Append the GitHub branch and publication receipt to the runtime completion report.
+- [x] Push `agent/s12-stage-k-four-vehicle-perceptual-repair` to the project GitHub remote without merging into `main`.
+- [x] Update the five local Obsidian project/context pages with the same branch, package, status, and report links.

@@ -51,3 +51,14 @@ named human audition, reference approval, Profile Freeze, OEM reproduction,
 Simulink/Runtime/Android integration, and product release remain unfinished.
 The next authorized action is Jovi's explicitly identified listening feedback;
 the project does not auto-advance to another calibration stage.
+
+## GitHub publication receipt
+
+- Remote: `https://github.com/Jovifei/Tesla_Simulate_vico.git`
+- Branch: `agent/s12-stage-k-four-vehicle-perceptual-repair`
+- Published tip: `bdda9c6c53ea58b254c883fb006fec143b85ccf6`
+- Pull-request entry point: `https://github.com/Jovifei/Tesla_Simulate_vico/pull/new/agent/s12-stage-k-four-vehicle-perceptual-repair`
+
+The feature branch is published but not merged into `main`. This receipt only
+records transport to GitHub; it does not alter the diagnostic-only or
+human-feedback boundary.
