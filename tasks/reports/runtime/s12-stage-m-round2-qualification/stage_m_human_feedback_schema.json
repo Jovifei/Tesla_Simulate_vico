@@ -5,6 +5,7 @@
     "human_pass": false,
     "reason": "WAITING_FOR_JOVI_NAMED_REVIEW"
   },
+  "feedback_binding_location": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1\\feedback_binding.json",
   "schema": {
     "$id": "s12/human_feedback.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -42,6 +43,10 @@
         "type": "number"
       },
       "notes": {
+        "type": "string"
+      },
+      "package_manifest_sha256": {
+        "pattern": "^[a-f0-9]{64}$",
         "type": "string"
       },
       "playback_device": {
@@ -87,6 +92,7 @@
       "baseline_file",
       "candidate_file",
       "candidate_sha256",
+      "package_manifest_sha256",
       "identity_score",
       "realism_score",
       "low_frequency_score",
@@ -99,5 +105,5 @@
     ],
     "type": "object"
   },
-  "template_location": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1\\human_feedback_template.csv"
+  "template_location": "E:\\Tesla_speed\\review_packages\\s12-stage-m-comparator-and-calibration-v1\\Jovi_Stage_M_Named_Feedback.csv"
 }

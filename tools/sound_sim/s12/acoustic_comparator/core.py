@@ -11,11 +11,11 @@ from typing import Literal
 import numpy as np
 
 from .alignment import bounded_cross_correlation
-from .order import order_metrics, rpm_compatible
+from .order import compare_order_metrics, order_metrics, rpm_compatible
 from .preprocessing import to_mono_dc_free
 from .psychoacoustics import proxy_metrics
 from .spectral import BANDS, BAND_NAMES, band_comparison, normalized_log_spectral_distance, spectrum_features
-from .transients import event_metrics, require_trace_gated_events
+from .transients import event_metrics, require_trace_gated_events, transient_shape
 
 
 @dataclass(frozen=True)
@@ -31,6 +31,11 @@ class ComparisonCase:
     candidate_load: tuple[float, float]
     analysis_domain: str
     reference_kind: Literal["external_recording", "synthetic_parent"] = "external_recording"
+    reference_provenance: str = "unspecified"
+    candidate_source_commit: str = "unspecified"
+    channel_policy: str = "stereo_mean_to_mono"
+    microphone_setup_uncertainty: str = "unspecified"
+    loudness_match_policy: str = "analysis_unaltered_audition_separate"
 
 
 def _base_result(case: ComparisonCase, candidate: np.ndarray, eligible_event_mask: np.ndarray | None) -> dict[str, object]:
@@ -43,6 +48,13 @@ def _base_result(case: ComparisonCase, candidate: np.ndarray, eligible_event_mas
             "operations": ["channel_fold_down", "dc_removal"],
             "loudness_matched_audition_signal_used": False,
         },
+        "comparison_contract": {
+            "reference_provenance": case.reference_provenance,
+            "candidate_source_commit": case.candidate_source_commit,
+            "channel_policy": case.channel_policy,
+            "microphone_setup_uncertainty": case.microphone_setup_uncertainty,
+            "loudness_match_policy": case.loudness_match_policy,
+        },
         "order": {
             "rpm_compatible": rpm_compatible(case.reference_rpm, case.candidate_rpm),
             "candidate": order_metrics(candidate, case.sample_rate_hz, case.candidate_rpm),
@@ -52,6 +64,7 @@ def _base_result(case: ComparisonCase, candidate: np.ndarray, eligible_event_mas
             "candidate_event_count": events["event_count"],
             "wrong_condition_event_count": events["wrong_condition_event_count"],
         },
+        "transients": {"candidate": transient_shape(candidate, case.sample_rate_hz), "state_window_required_for_shift_or_afterfire": True},
     }
 
 
@@ -100,6 +113,8 @@ def compare_signals(
     candidate_features, candidate_spectrum, _ = spectrum_features(candidate_aligned, case.sample_rate_hz)
     reference_psycho = proxy_metrics(reference_mono, case.sample_rate_hz, reference_features["centroid_hz"])
     candidate_psycho = proxy_metrics(candidate_aligned, case.sample_rate_hz, candidate_features["centroid_hz"])
+    reference_order = order_metrics(reference_mono, case.sample_rate_hz, case.reference_rpm)
+    candidate_order = order_metrics(candidate_aligned, case.sample_rate_hz, case.candidate_rpm)
     external = case.reference_kind == "external_recording"
     result.update(
         {
@@ -129,10 +144,12 @@ def compare_signals(
             },
             "bands": band_comparison(reference_features, candidate_features),
             "loudness": {"delta_db": candidate_features["rms_db"] - reference_features["rms_db"]},
+            "order": {"rpm_compatible": rpm_compatible(case.reference_rpm, case.candidate_rpm), "reference": reference_order, "candidate": candidate_order, "comparison": compare_order_metrics(reference_order, candidate_order)},
             "psychoacoustics": {
                 "sharpness_proxy_delta": candidate_psycho["sharpness_proxy_hz"] - reference_psycho["sharpness_proxy_hz"],
                 "roughness_proxy_delta": candidate_psycho["roughness_proxy"] - reference_psycho["roughness_proxy"],
                 "fluctuation_proxy_delta": candidate_psycho["fluctuation_proxy"] - reference_psycho["fluctuation_proxy"],
+                "tonality_proxy_delta": candidate_psycho["tonality_proxy"] - reference_psycho["tonality_proxy"],
             },
             "scenario_metrics": {
                 "idle": "not_evaluated_without_idle_window",

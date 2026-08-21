@@ -2,80 +2,114 @@
   "audited_source_files": [
     "stage_k/candidate_search.py",
     "scripts/qualify_stage_k_candidates.py",
-    "round2_propagation.py",
-    "round2_legacy_anchors.py",
-    "round2_remaining_sources.py",
-    "round2_package.py",
-    "round2_remaining_package.py"
+    "stage_k/round2_propagation.py",
+    "stage_k/round2_legacy_anchors.py",
+    "stage_k/round2_remaining_sources.py",
+    "stage_k/round2_package.py",
+    "stage_k/round2_remaining_package.py"
   ],
   "gates": {
     "clock_coherence": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "actual induction arrays and crank trace",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "high_band": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "actual source arrays",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "idle_bytes": {
+      "actual_array": true,
       "domain": "final_pcm",
       "hard_gate": true,
       "origin": "actual final-PCM bytes",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "isolation": {
+      "actual_array": true,
       "domain": "final_pcm",
       "hard_gate": true,
       "origin": "non-target render/hash regression",
+      "review_copy_allowed": false,
       "trace_bound": false
     },
     "low_band": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "actual source arrays",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "pcm_health": {
+      "actual_array": true,
       "domain": "final_pcm",
       "hard_gate": true,
       "origin": "final PCM array",
+      "review_copy_allowed": false,
       "trace_bound": false
     },
     "pressure_accounting": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "actual primitive stems",
+      "review_copy_allowed": false,
       "trace_bound": false
     },
     "reference_distance": {
+      "actual_array": false,
       "domain": "unbound",
       "hard_gate": false,
       "origin": "caller metric only",
+      "review_copy_allowed": false,
       "trace_bound": false
     },
     "ridge_continuity": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "probe metrics",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "spectral_distance": {
+      "actual_array": true,
       "domain": "source",
       "hard_gate": true,
       "origin": "actual candidate/parent arrays",
+      "review_copy_allowed": false,
       "trace_bound": true
     },
     "state_availability": {
+      "actual_array": true,
       "domain": "trace",
       "hard_gate": true,
       "origin": "trace-derived windows",
+      "review_copy_allowed": false,
       "trace_bound": true
     }
   },
+  "m2_answers": {
+    "actual_arrays_and_trace": "Named event and band metrics originate in actual source arrays; event eligibility is bound to trace windows. pressure_accounting and PCM/isolation checks have their stated non-trace origins.",
+    "baseline_candidate_trace_window_rate_chain": "Package receipts bind each vehicle's formal parent/candidate to one canonical trace SHA and 48 kHz PCM chain; no raw external recording/window exists to prove an external-reference equivalence.",
+    "best_failing_candidate": "Yes for diagnostics only: run_round2_coordinate_search returns snapshots[-1] as BEST_DIAGNOSTIC_ONLY when no qualified snapshot exists. rank_round2_snapshots never calls it qualified.",
+    "diagnostic_package_on_failure": "Round-2 package builders intentionally serialize transport-valid diagnostic evidence when automatic gates fail, preserving investigation without declaring qualification.",
+    "domain_mixing": "Source, final-PCM and audition domains are separately labeled. Stage M rejects diagnostic/review/unbound sources as hard-gate evidence.",
+    "formal_vs_review_copy": "Formal PCM follows frozen_ptr -> edge_fade -> fixed whole-cycle gain -> PCM24. The 1.25x comfort/review copy is post-PCM audition-only.",
+    "hard_gate_data_source": "The ten REQUIRED_FULL_GATES are caller-supplied metrics: source-array, trace, final-PCM and isolation checks. reference_distance is not among them.",
+    "loudness_copy_raw_analysis": "No. loudness_matched_audition_signal is forbidden by the comparator and signal-domain matrix for raw band, loudness, and transient analysis.",
+    "named_events_actual_stems": "Yes. The R2 receipts cite actual named source arrays plus trace alignment; e.g. LFA lfa_shift_exhaust_reengagement, Ferrari shift_recovery_boom, RX-7 blow_off, Supra spool_release and Aventador V12 re-engagement.",
+    "reference_distance_hard_gate": "No. reference_distance is neither recomputed by candidate_search nor required by REQUIRED_FULL_GATES; it is a post-gate rank input."
+  },
   "qualification_defect": "reference_distance_is_not_a_required_round2_hard_gate",
-  "schema_version": "s12-stage-m-gate-source-matrix-2"
+  "schema_version": "s12-stage-m-gate-source-matrix-3"
 }

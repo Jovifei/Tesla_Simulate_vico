@@ -22,3 +22,20 @@ def require_trace_gated_events(signal: np.ndarray, eligible_event_mask: np.ndarr
     if metrics["wrong_condition_event_count"]:
         raise ValueError("event detected outside the trace-authorized state window")
     return metrics
+
+
+def transient_shape(signal: np.ndarray, sample_rate_hz: int) -> dict[str, float | None]:
+    """Provide transparent attack/impact/decay proxies for an authorized window."""
+
+    envelope = np.abs(signal)
+    peak_index = int(np.argmax(envelope))
+    peak = float(envelope[peak_index])
+    if peak <= 0.0:
+        return {"impact_peak": 0.0, "attack_s": None, "decay_to_10pct_s": None}
+    rise = np.flatnonzero(envelope[: peak_index + 1] >= 0.1 * peak)
+    decay = np.flatnonzero(envelope[peak_index:] <= 0.1 * peak)
+    return {
+        "impact_peak": peak,
+        "attack_s": float((peak_index - int(rise[0])) / sample_rate_hz) if rise.size else None,
+        "decay_to_10pct_s": float(decay[0] / sample_rate_hz) if decay.size else None,
+    }

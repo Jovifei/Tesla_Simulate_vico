@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "s12/human_feedback.schema.json",
   "type": "object",
-  "required": ["listener_id", "playback_device", "windows_volume", "playback_endpoint", "vehicle_id", "scenario", "baseline_file", "candidate_file", "candidate_sha256", "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes"],
+  "required": ["listener_id", "playback_device", "windows_volume", "playback_endpoint", "vehicle_id", "scenario", "baseline_file", "candidate_file", "candidate_sha256", "package_manifest_sha256", "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes"],
   "properties": {
     "listener_id": {"type": "string", "minLength": 1}, "playback_device": {"type": "string", "minLength": 1},
     "windows_volume": {"type": "string", "minLength": 1}, "playback_endpoint": {"type": "string", "minLength": 1},
     "vehicle_id": {"type": "string", "minLength": 1}, "scenario": {"type": "string", "minLength": 1},
-    "baseline_file": {"type": "string", "minLength": 1}, "candidate_file": {"type": "string", "minLength": 1}, "candidate_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "baseline_file": {"type": "string", "minLength": 1}, "candidate_file": {"type": "string", "minLength": 1}, "candidate_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "package_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "identity_score": {"type": "number"}, "realism_score": {"type": "number"}, "low_frequency_score": {"type": "number"}, "mechanical_score": {"type": "number"}, "shift_score": {"type": "number"}, "afterfire_score": {"type": "number"}, "artifact_score": {"type": "number"},
     "preference": {"type": ["string", "number"]}, "notes": {"type": "string"}
   }, "additionalProperties": false

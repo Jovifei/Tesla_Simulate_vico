@@ -52,6 +52,11 @@ def _internal_result(
         candidate_load=(0.0, 0.0),
         analysis_domain="unaltered_analysis_signal",
         reference_kind="synthetic_parent",
+        reference_provenance="synthetic parent package member; no external recording supplied",
+        candidate_source_commit="package receipt provenance retained outside generic comparator parser",
+        channel_policy="stereo_mean_to_mono",
+        microphone_setup_uncertainty="not applicable to synthetic PCM; external setup unavailable",
+        loudness_match_policy="analysis uses unaltered PCM; audition is a separate loudness-matched copy",
     )
     result = compare_signals(parent, candidate, case)
     result.update(

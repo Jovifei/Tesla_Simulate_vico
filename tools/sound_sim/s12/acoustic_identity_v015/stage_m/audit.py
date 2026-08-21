@@ -7,7 +7,7 @@ from .callgraph import audit_qualification_callgraph, gate_source_matrix, signal
 
 VEHICLES = ("ferrari_458", "hellcat", "rx7_fd", "supra_jza80", "aventador_lp700", "c63_w204", "gtr_r35", "lfa")
 QUALIFICATION_STATUSES = frozenset(("DIAGNOSTIC_ONLY", "AUTOMATED_PASS_HUMAN_PENDING", "HUMAN_FAIL_REPAIR_REQUIRED", "PROFILE_CANDIDATE", "PROFILE_FREEZE_READY"))
-REQUIRED_FEEDBACK_FIELDS = frozenset(("listener_id", "playback_device", "windows_volume", "playback_endpoint", "vehicle_id", "scenario", "baseline_file", "candidate_file", "candidate_sha256", "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes"))
+REQUIRED_FEEDBACK_FIELDS = frozenset(("listener_id", "playback_device", "windows_volume", "playback_endpoint", "vehicle_id", "scenario", "baseline_file", "candidate_file", "candidate_sha256", "package_manifest_sha256", "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes"))
 
 
 def build_gate_matrix(automatic: Mapping[str, bool], feedback: Mapping[str, object]) -> dict[str, str]:

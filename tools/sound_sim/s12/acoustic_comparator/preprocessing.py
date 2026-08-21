@@ -42,3 +42,29 @@ def trim_window(signal: np.ndarray, start_sample: int = 0, end_sample: int | Non
     if not (0 <= start_sample < stop <= value.size):
         raise ValueError("invalid analysis window")
     return value[start_sample:stop]
+
+
+def segment_state_window(
+    signal: np.ndarray,
+    state_trace: np.ndarray,
+    *,
+    expected_state: str,
+    state_labels: tuple[str, ...],
+    start_sample: int,
+    end_sample: int,
+) -> np.ndarray:
+    """Return an explicitly state-authorized scenario segment.
+
+    A scenario cannot be selected from a same-length but incompatible trace;
+    this blocks accidental comparison of, for example, lift and acceleration.
+    """
+
+    value = trim_window(signal, start_sample, end_sample)
+    states = np.asarray(state_trace)
+    if states.ndim != 1 or states.size < end_sample:
+        raise ValueError("state trace does not cover requested scenario window")
+    if expected_state not in state_labels:
+        raise ValueError("unknown expected state")
+    if not np.all(states[start_sample:end_sample] == expected_state):
+        raise ValueError("scenario window contains an incompatible state")
+    return value

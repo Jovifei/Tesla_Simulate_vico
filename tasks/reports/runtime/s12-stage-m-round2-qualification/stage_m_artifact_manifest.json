@@ -1,9 +1,19 @@
 {
   "artifacts": [
     {
-      "bytes": 2446,
+      "bytes": 225,
+      "path": "comparator/run_receipt.json",
+      "sha256": "8fe2d5ac5c7413849fdb880c5d649491cc344d430a6d60e61f9e11f2dcc4a843"
+    },
+    {
+      "bytes": 59578,
+      "path": "comparator/s12_acoustic_comparator_run.json",
+      "sha256": "dc8e2912fc1d50f033d402d76bc1739edb0a4c77312bba5e5558a0b69c3a9c05"
+    },
+    {
+      "bytes": 6848,
       "path": "S12_Stage_M_Automated_Gate_Diagnosis.md",
-      "sha256": "3310d5738f4228256d0d2b7765b90f311b1d1ebffea1b826888b5ed19341f385"
+      "sha256": "b38ca0332c1961348afa00939da0d2bf7ed1b8eefc3a78a0746d67cf52af582c"
     },
     {
       "bytes": 879,
@@ -21,24 +31,29 @@
       "sha256": "186d22bcc653a7ff9906d8d7336649378a2072b013128f73aa93cb01ca6136d7"
     },
     {
-      "bytes": 1927,
+      "bytes": 3027,
       "path": "S12_Stage_M_Qualification_Callgraph.md",
-      "sha256": "e3dbcc8a59281d722354fcc2e30991db1af0ba7df45d64ec9658d9ae660b9409"
+      "sha256": "4aaba630638bd8df93313958992366524d0a1aefd2ea3b2078436e8cf32228b1"
     },
     {
-      "bytes": 225,
+      "bytes": 763,
       "path": "S12_Stage_M_Round2_Qualification_Report.md",
-      "sha256": "8d65b4c7d5a1a0c2b01936f961935ed8ba3d49c88ef5b3f354e0dc0f21454633"
+      "sha256": "0078971753c2375e158bf646f24e795379f373eec6e4e256c2f3292892043ec5"
     },
     {
-      "bytes": 44989,
+      "bytes": 59578,
       "path": "stage_m_comparator_results.json",
-      "sha256": "8d79cf1f86db6b0c27c127551a2230011e0165b43855ba037cc8de67eff27ac8"
+      "sha256": "dc8e2912fc1d50f033d402d76bc1739edb0a4c77312bba5e5558a0b69c3a9c05"
     },
     {
-      "bytes": 10873,
+      "bytes": 379996,
+      "path": "stage_m_eight_vehicle_failure_attribution.json",
+      "sha256": "634f4e8c62a31e96ba272224c8b3d34cc2fd1f2509586bde00243a7cc6828240"
+    },
+    {
+      "bytes": 379996,
       "path": "stage_m_failure_attribution.json",
-      "sha256": "a6ba94c586a82082b23eac9b64d19769f318d145cf7845d77e41944e77612218"
+      "sha256": "634f4e8c62a31e96ba272224c8b3d34cc2fd1f2509586bde00243a7cc6828240"
     },
     {
       "bytes": 672,
@@ -46,14 +61,14 @@
       "sha256": "17bb5ef13f52f292c29d84aee8028fb25ed7b5f82ed3b0932f890dab35c3354e"
     },
     {
-      "bytes": 2097,
+      "bytes": 4869,
       "path": "stage_m_gate_source_matrix.json",
-      "sha256": "811cadbc498b6d290c34a73845f83dcc0af8cf862679a2a7c204a6430922604b"
+      "sha256": "d56d47416d093e400775df31b8b199e5e547687b4f463ff3ed96245ebe918b23"
     },
     {
-      "bytes": 2263,
+      "bytes": 2539,
       "path": "stage_m_human_feedback_schema.json",
-      "sha256": "d16097fe86422b30e18f96f4696a2ced4d7ea8342ce3c6ff2244cce64470986f"
+      "sha256": "7020f0c5e7fc860fd1bb9e08c4d0eea40231e34bbe1c38fe52d5a96a65126723"
     },
     {
       "bytes": 1433,

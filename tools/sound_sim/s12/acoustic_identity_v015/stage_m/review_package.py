@@ -16,8 +16,34 @@ from tools.sound_sim.s12.acoustic_comparator.listening import loudness_matched_a
 
 CSV_COLUMNS = [
     "listener_id", "playback_device", "windows_volume", "playback_endpoint", "vehicle_id", "scenario", "baseline_file", "candidate_file", "candidate_sha256",
-    "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes",
+    "package_manifest_sha256", "identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score", "preference", "notes",
 ]
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_feedback_binding(output: Path) -> dict[str, object]:
+    """Add a non-destructive, manifest-SHA-bound Jovi feedback template."""
+
+    manifest_path = output / "artifact_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_sha = _sha256(manifest_path)
+    known_candidates: dict[str, str] = {}
+    rows = [",".join(CSV_COLUMNS)]
+    for anonymous_id, record in sorted(manifest["vehicles"].items()):
+        candidate = f"vehicles/{anonymous_id}/audition/B_stage_m_r1_upstream_candidate_audition.wav"
+        candidate_sha = _sha256(output / candidate)
+        known_candidates[candidate] = candidate_sha
+        baseline = f"vehicles/{anonymous_id}/audition/A_stage_k_parent_audition.wav"
+        rows.append(",".join(["", "", "", "", record["vehicle_id"], "full_cycle", baseline, candidate, candidate_sha, manifest_sha, "", "", "", "", "", "", "", "", "", ""])
+        )
+    binding = {"schema_version": "s12-stage-m-feedback-binding-1", "package_manifest_sha256": manifest_sha, "known_candidate_files": known_candidates, "feedback_template": "Jovi_Stage_M_Named_Feedback.csv", "status": "WAITING_FOR_JOVI_NAMED_REVIEW"}
+    (output / "feedback_binding.json").write_text(json.dumps(binding, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (output / "Jovi_Stage_M_Named_Feedback.csv").write_text("\n".join(rows) + "\n", encoding="utf-8", newline="\n")
+    (output / "LOCAL_REVIEW_INSTRUCTIONS.md").write_text("# Local Stage-M review\n\n1. Serve this directory locally, for example `python -m http.server 8000`, then open `ab-review.html`.\n2. Use documented headphones/speakers and record device, Windows volume, and endpoint.\n3. Copy/fill `Jovi_Stage_M_Named_Feedback.csv`; retain the candidate and package-manifest SHA columns unchanged.\n4. This package has no external reference waveform and no Stage-M R2 waveform. Do not infer a human pass or a profile freeze from any audio here.\n", encoding="utf-8", newline="\n")
+    return binding
 
 
 def _write_pcm24(path: Path, signal: np.ndarray, sample_rate_hz: int) -> None:
@@ -125,4 +151,5 @@ def build_local_review_package(
     (output / "ab-review.html").write_text("<!doctype html><title>S12 Stage M A/B</title><h1>S12 Stage M local A/B review</h1><p>Use headphones or a documented endpoint. This is an internal synthetic comparison, not a real-reference identity test. Each trial has Parent, Stage-M R1 (an upstream candidate re-export), and a clearly artificial low-quality anchor. Stage-M R2 was not generated because no lawful state/RPM-bound reference target exists.</p><p>Record your named response in <code>human_feedback_template.csv</code>; do not alter the anonymous mapping.</p>\n", encoding="utf-8", newline="\n")
     (output / "README.md").write_text("# S12 Stage M local listening package\n\nNo copyrighted external reference audio is included. `raw_analysis_pointers.json` preserves unaltered full-PCM SHA/pointers; files under `audition/` are separately loudness-matched 12-second listening clips. Do not use audition copies for analysis. Follow `ab-review.html` or import `webmushra-config.yaml` into a local webMUSHRA setup. Stage-M R2 is intentionally absent; no placeholder may be treated as a calibration result.\n", encoding="utf-8", newline="\n")
     (output / "artifact_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    write_feedback_binding(output)
     return manifest

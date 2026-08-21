@@ -8,7 +8,7 @@ from pathlib import Path
 from .audit import REQUIRED_FEEDBACK_FIELDS, VEHICLES
 
 
-def validate_named_feedback(rows: Sequence[Mapping[str, object]], known_file_ids: Mapping[str, str] | set[str]) -> dict[str, object]:
+def validate_named_feedback(rows: Sequence[Mapping[str, object]], known_file_ids: Mapping[str, str] | set[str], *, package_manifest_sha256: str | None = None) -> dict[str, object]:
     if not rows:
         return {"accepted": False, "reason": "WAITING_FOR_JOVI_NAMED_REVIEW", "content_read": False, "human_pass": False}
     known = set(known_file_ids)
@@ -26,6 +26,8 @@ def validate_named_feedback(rows: Sequence[Mapping[str, object]], known_file_ids
             raise ValueError("unknown candidate file")
         if "candidate_sha256" in row and sha_by_file and row["candidate_sha256"] != sha_by_file[candidate]:
             raise ValueError("candidate SHA mismatch")
+        if package_manifest_sha256 is not None and row["package_manifest_sha256"] != package_manifest_sha256:
+            raise ValueError("package manifest SHA mismatch")
         key = (str(row["listener_id"]), candidate)
         if key in seen:
             raise ValueError("duplicate feedback response")
@@ -36,8 +38,21 @@ def validate_named_feedback(rows: Sequence[Mapping[str, object]], known_file_ids
     return {"accepted": True, "content_read": True, "human_pass": False, "reason": "VALID_NAMED_FEEDBACK_REQUIRES_REVIEW"}
 
 
-def validate_named_feedback_csv(path: Path | None, known_file_ids: Mapping[str, str]) -> dict[str, object]:
+def validate_named_feedback_csv(path: Path | None, known_file_ids: Mapping[str, str], *, package_manifest_sha256: str | None = None) -> dict[str, object]:
     if path is None or not path.exists():
-        return validate_named_feedback([], known_file_ids)
+        return validate_named_feedback([], known_file_ids, package_manifest_sha256=package_manifest_sha256)
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        return validate_named_feedback(list(csv.DictReader(handle)), known_file_ids)
+        return validate_named_feedback(list(csv.DictReader(handle)), known_file_ids, package_manifest_sha256=package_manifest_sha256)
+
+
+def summarize_named_feedback(rows: Sequence[Mapping[str, object]]) -> dict[str, object]:
+    """Summarize validated named responses without deciding a human pass."""
+
+    grouped: dict[tuple[str, str], list[Mapping[str, object]]] = {}
+    for row in rows:
+        grouped.setdefault((str(row["vehicle_id"]), str(row["scenario"])), []).append(row)
+    score_fields = ("identity_score", "realism_score", "low_frequency_score", "mechanical_score", "shift_score", "afterfire_score", "artifact_score")
+    by_case = {}
+    for key, values in grouped.items():
+        by_case[f"{key[0]}:{key[1]}"] = {field: sum(float(row[field]) for row in values) / len(values) for field in score_fields}
+    return {"human_pass": False, "confusion_matrix": {"vehicle_scenario_cases": by_case}, "response_count": len(rows)}

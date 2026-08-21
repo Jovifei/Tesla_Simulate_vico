@@ -1,36 +1,36 @@
 # S12 Stage M Qualification Call Graph
 
-## M2 answers
+## M2 machine-readable answers
 
-1. Candidate selection starts at `candidate_grid` and reaches `candidate_search` only through caller-supplied metric dictionaries.
-2. Source metrics are actual arrays with trace-window bindings where stated in `stage_m_gate_source_matrix.json`.
-3. Final PCM checks use the formal PCM path, not the comfort-review copy.
-4. `idle_bytes` and `pcm_health` are final-PCM evidence; low/high band and event evidence are source/trace evidence.
-5. Trace availability is an explicit hard gate, but not every metric is trace-bound.
-6. Review-gain audio is audition-only and is rejected as an analysis input.
-7. Round-2 package builders intentionally produce diagnostic packages when gates fail.
-8. `reference_distance` is only a supplied/ranking input; it is not in `REQUIRED_FULL_GATES` and is not recomputed by candidate search.
-9. Therefore the current selection path cannot prove a provenance/scenario/RPM-bound real-reference identity pass.
-10. Stage M does not alter thresholds or profiles; it records the defect and holds all vehicles diagnostic-only pending valid evidence.
+1. **hard_gate_data_source** — The ten REQUIRED_FULL_GATES are caller-supplied metrics: source-array, trace, final-PCM and isolation checks. reference_distance is not among them.
+2. **actual_arrays_and_trace** — Named event and band metrics originate in actual source arrays; event eligibility is bound to trace windows. pressure_accounting and PCM/isolation checks have their stated non-trace origins.
+3. **domain_mixing** — Source, final-PCM and audition domains are separately labeled. Stage M rejects diagnostic/review/unbound sources as hard-gate evidence.
+4. **formal_vs_review_copy** — Formal PCM follows frozen_ptr -> edge_fade -> fixed whole-cycle gain -> PCM24. The 1.25x comfort/review copy is post-PCM audition-only.
+5. **reference_distance_hard_gate** — No. reference_distance is neither recomputed by candidate_search nor required by REQUIRED_FULL_GATES; it is a post-gate rank input.
+6. **diagnostic_package_on_failure** — Round-2 package builders intentionally serialize transport-valid diagnostic evidence when automatic gates fail, preserving investigation without declaring qualification.
+7. **best_failing_candidate** — Yes for diagnostics only: run_round2_coordinate_search returns snapshots[-1] as BEST_DIAGNOSTIC_ONLY when no qualified snapshot exists. rank_round2_snapshots never calls it qualified.
+8. **baseline_candidate_trace_window_rate_chain** — Package receipts bind each vehicle's formal parent/candidate to one canonical trace SHA and 48 kHz PCM chain; no raw external recording/window exists to prove an external-reference equivalence.
+9. **loudness_copy_raw_analysis** — No. loudness_matched_audition_signal is forbidden by the comparator and signal-domain matrix for raw band, loudness, and transient analysis.
+10. **named_events_actual_stems** — Yes. The R2 receipts cite actual named source arrays plus trace alignment; e.g. LFA lfa_shift_exhaust_reengagement, Ferrari shift_recovery_boom, RX-7 blow_off, Supra spool_release and Aventador V12 re-engagement.
 
 ## Call graph
 
 ```text
-candidate_grid -> renderer_source_overlay -> source_metrics -> hard_gates -> candidate_search -> selected_candidate -> review_package -> status_manifest
-                                  |                 ^
-                                  -> final_pcm_metrics
-reference_distance ---------------------------------> candidate_search (rank input only; not a required hard gate)
-state_regression -----------------------------------> candidate_search
+parameter_grid -> renderer_source_overlay -> source_stems -> source_metrics
+                                   -> common_acoustic_layers -> frozen_ptr -> final_pcm -> analysis_copy
+                                                                                 -> review_gain_copy (audition only)
+source_metrics + final_pcm + state_regression -> hard_gates -> candidate_search -> selected_candidate -> review_package -> status_manifest
+reference_distance ---------------------------> candidate_search (rank input only; not a required hard gate)
 ```
 
 ## Source files audited
 
 - `stage_k/candidate_search.py`
 - `scripts/qualify_stage_k_candidates.py`
-- `round2_propagation.py`
-- `round2_legacy_anchors.py`
-- `round2_remaining_sources.py`
-- `round2_package.py`
-- `round2_remaining_package.py`
+- `stage_k/round2_propagation.py`
+- `stage_k/round2_legacy_anchors.py`
+- `stage_k/round2_remaining_sources.py`
+- `stage_k/round2_package.py`
+- `stage_k/round2_remaining_package.py`
 
 The machine-readable gate and signal-domain matrices are the controlling evidence.

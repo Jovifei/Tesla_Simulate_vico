@@ -6,9 +6,10 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_m.callgraph import audit_q
 def test_callgraph_names_all_required_round2_source_files() -> None:
     audit = audit_qualification_callgraph()
     assert set(audit["source_files"]) == {
-        "stage_k/candidate_search.py", "scripts/qualify_stage_k_candidates.py", "round2_propagation.py",
-        "round2_legacy_anchors.py", "round2_remaining_sources.py", "round2_package.py", "round2_remaining_package.py",
+        "stage_k/candidate_search.py", "scripts/qualify_stage_k_candidates.py", "stage_k/round2_propagation.py",
+        "stage_k/round2_legacy_anchors.py", "stage_k/round2_remaining_sources.py", "stage_k/round2_package.py", "stage_k/round2_remaining_package.py",
     }
+    assert len(audit["m2_answers"]) == 10
 
 
 @pytest.mark.parametrize("gate", [
