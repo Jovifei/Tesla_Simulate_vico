@@ -22,6 +22,34 @@ def audit_qualification_callgraph() -> dict[str, object]:
         "fail_closed": {"reference_distance_enters_hard_gate": False, "selection_without_supplied_gates": False},
     }
 
+
+def gate_source_matrix() -> dict[str, object]:
+    """Return the authoritative Stage-M audit of the Round-2 selection path."""
+
+    rows = {
+        "idle_bytes": {"origin": "actual final-PCM bytes", "trace_bound": True, "domain": "final_pcm", "hard_gate": True},
+        "low_band": {"origin": "actual source arrays", "trace_bound": True, "domain": "source", "hard_gate": True},
+        "high_band": {"origin": "actual source arrays", "trace_bound": True, "domain": "source", "hard_gate": True},
+        "spectral_distance": {"origin": "actual candidate/parent arrays", "trace_bound": True, "domain": "source", "hard_gate": True},
+        "clock_coherence": {"origin": "actual induction arrays and crank trace", "trace_bound": True, "domain": "source", "hard_gate": True},
+        "ridge_continuity": {"origin": "probe metrics", "trace_bound": True, "domain": "source", "hard_gate": True},
+        "state_availability": {"origin": "trace-derived windows", "trace_bound": True, "domain": "trace", "hard_gate": True},
+        "pressure_accounting": {"origin": "actual primitive stems", "trace_bound": False, "domain": "source", "hard_gate": True},
+        "pcm_health": {"origin": "final PCM array", "trace_bound": False, "domain": "final_pcm", "hard_gate": True},
+        "isolation": {"origin": "non-target render/hash regression", "trace_bound": False, "domain": "final_pcm", "hard_gate": True},
+        "reference_distance": {"origin": "caller metric only", "trace_bound": False, "domain": "unbound", "hard_gate": False},
+    }
+    return {"schema_version": "s12-stage-m-gate-source-matrix-1", "gates": rows, "qualification_defect": "reference_distance_is_not_a_required_round2_hard_gate"}
+
+
+def signal_domain_matrix() -> dict[str, object]:
+    return {
+        "formal_pcm": {"analysis_allowed": True, "audition_allowed": True, "pipeline": ["frozen_ptr", "edge_fade", "one_fixed_whole_cycle_gain", "pcm24"]},
+        "comfort_review_copy": {"analysis_allowed": False, "audition_allowed": True, "gain": "one static post-PCM 1.25x requested gain, headroom limited"},
+        "source_stems": {"analysis_allowed": True, "audition_allowed": False, "restriction": "must not be presented as final PCM reference distance"},
+        "reference_recording": {"analysis_allowed": "only when provenance, scenario, RPM and window contracts are bound", "audition_allowed": True},
+    }
+
 def validate_named_feedback(rows: Sequence[Mapping[str, object]], known_file_ids: set[str]) -> dict[str, object]:
     if not rows:
         return {"accepted": False, "reason": "WAITING_FOR_JOVI_NAMED_REVIEW", "content_read": False, "human_pass": False}
