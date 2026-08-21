@@ -254,7 +254,9 @@ def publish(
     )
     _write_json(output / "feedback_closure.json", feedback_closure)
     _write_json(output / "comparator_results.json", unified)
-    _write_json(output / "parameter_recommendations.json", withheld_recommendations(unified))
+    recommendations = withheld_recommendations(unified)
+    _write_json(output / "parameter_recommendations.json", recommendations)
+    _write_json(output / "stage_n_parameter_recommendations.json", recommendations)
     write_stage_n_report(output, matrix, unified, webmushra_package=review_package_root)
     _write_json(output / "publish_receipt.json", {
         "status": "PUBLISHED_WITH_LIMITATIONS",

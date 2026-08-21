@@ -58,7 +58,7 @@
     {
       "bytes": 348,
       "path": "publish_receipt.json",
-      "sha256": "c890f5345ae8f0ba2b6f3dfcead47c5b4ab2d783f74310ca10cf6b4011e0dc04"
+      "sha256": "b015f034aa699869452fee0a43bdbbb9a5e6a54dfb93ddedff34e0cd86b07b3e"
     },
     {
       "bytes": 3708,
@@ -68,22 +68,27 @@
     {
       "bytes": 2072,
       "path": "S12_Stage_N_Professional_Toolchain_Report.md",
-      "sha256": "cc4641bc44faa8f62286dd21315334cb0c4c6347af0194bed31599f9fb781545"
+      "sha256": "68b83d73f057bf1804827a166f00589753cf14d802af3b4ba52e594cc1730465"
+    },
+    {
+      "bytes": 3005,
+      "path": "stage_n_parameter_recommendations.json",
+      "sha256": "3313b58ea9728b985b4f3477d79916e9b05f66d83c742ffeff79198eedaaf43e"
     },
     {
       "bytes": 10411,
       "path": "toolchain_capability_matrix.json",
-      "sha256": "b77dc9f0b3d8bd182d91d0390599e264d05e9b47fcce1fd916e2c92d27fb9339"
+      "sha256": "865aba07335ba7022b8eb98509a8c364f966775b9d3f814ab832c0c8076eec6d"
     },
     {
-      "bytes": 681,
+      "bytes": 995,
       "path": "webmushra_import_validation.json",
-      "sha256": "c01ed2a7510153033ca81e7b035ecdb3d739c2717088da811a2c7005adbcb389"
+      "sha256": "63a5ad0242fb1c930fe4a5a8bfa90283e025626425fbd0ac8513aa559db02007"
     },
     {
       "bytes": 2138,
       "path": "webmushra_package_manifest.json",
-      "sha256": "c33392fc3eda3ad1de00650e9f6e529dc8a1b251960ba11b096a6002186d64a1"
+      "sha256": "8156f2edfb0afc3f3065f50a51279fccb77445f20ca43c8f8f81dde5ec71276b"
     }
   ],
   "schema_version": "s12-stage-n-artifact-manifest-1"

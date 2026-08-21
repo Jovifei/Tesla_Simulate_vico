@@ -1,0 +1,94 @@
+{
+  "no_source_change": true,
+  "recommendations": [
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "aventador_lp700"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "lfa"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "confidence": "NONE",
+      "direction": null,
+      "evidence": "no RPM/state-bound external reference and no confirmed Jovi feedback",
+      "metric_residual": null,
+      "no_source_change": true,
+      "parameter_group": null,
+      "side_effect_risk": "unknown without target",
+      "state": "WITHHELD",
+      "vehicle_id": "supra_jza80"
+    }
+  ],
+  "schema_version": "s12-stage-n-parameter-recommendations-1"
+}

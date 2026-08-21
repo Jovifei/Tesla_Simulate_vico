@@ -1,5 +1,5 @@
 {
-  "package_manifest_sha256": "aa6721a47f864af6cf2fad32d964f22f000edb1ce9f869dd9203148df5957fd4",
+  "package_manifest_sha256": "357e47e56bafb31d618ced90d1422237984b4374f4045b2103cd8203a357a55c",
   "required_result_columns": [
     "listener_id",
     "anonymous_id",
@@ -18,7 +18,7 @@
   ],
   "result_policy": "fixture imports and raw external rows are not human feedback until explicitly submitted by Jovi",
   "schema_version": "s12-stage-n-webmushra-package-binding-1",
-  "test_id": "s12-stage-n-webmushra-v3",
+  "test_id": "s12-stage-n-webmushra-v5",
   "trials": {
     "V01": {
       "candidate_sha256": "03b05e2e09d7eda37998e6426957ff5ab3a8af03512277507a676d9c6b9a6234",

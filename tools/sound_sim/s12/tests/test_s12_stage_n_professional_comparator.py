@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_export import export_webmushra_study
+from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_export import RATING_DIMENSIONS, export_webmushra_study
 from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_import import import_webmushra_results
 from tools.sound_sim.s12.acoustic_comparator.perceptual.visqol_adapter import validate_visqol_request
 from tools.sound_sim.s12.acoustic_identity_v015.stage_n.matlab_inputs import (
@@ -103,8 +103,11 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
         upstream_receipt={"tool": "webMUSHRA", "version": "fixture", "license": "external"},
     )
     assert manifest["hidden_reference_policy"] == "synthetic_parent_not_real_reference"
+    assert manifest["loop_range_policy"] == "participant_settable_full_clip_default"
+    assert manifest["future_candidate_policy"] == "INACTIVE_NOT_GENERATED_NO_SOURCE_CHANGE_AUTHORIZED"
     assert (package / "configs" / "s12-stage-n.yaml").is_file()
     assert (package / "results" / ".gitkeep").is_file()
+    assert "--lss-input" in (package / "LOCAL_WEBMUSHRA_SETUP.md").read_text(encoding="utf-8")
     with pytest.raises(FileExistsError):
         export_webmushra_study(package, [], upstream_receipt={})
     versioned = tmp_path / "study-v2"
@@ -159,6 +162,38 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
     assert _validated_fixture_import_matches_binding(raw_receipt, binding) is True
     stale = {**raw_receipt, "rows": [{**raw_receipt["rows"][0], "package_manifest_sha256": "0" * 64}]}
     assert _validated_fixture_import_matches_binding(stale, binding) is False
+    lss = package / "results" / "lss.csv"
+    with lss.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["session_test_id", "listener_id", "trial_id", "stimuli_rating", "stimuli", "rating_time"],
+        )
+        writer.writeheader()
+        for dimension in (*RATING_DIMENSIONS, "identity_guess"):
+            writer.writerow({
+                "session_test_id": binding["test_id"],
+                "listener_id": "fixture-webmushra",
+                "trial_id": f"V01_{dimension}",
+                "stimuli_rating": "hellcat" if dimension == "identity_guess" else "50",
+                "stimuli": "stage_m_candidate",
+                "rating_time": "1.0",
+            })
+    combined_receipt = import_webmushra_results(raw, binding, lss_csv=lss)
+    assert combined_receipt["source_format"] == "webmushra_raw_mushra_and_lss_csv"
+    assert combined_receipt["accepted_rows"] == 1
+    assert combined_receipt["rows"] == [{
+        "listener_id": "fixture-webmushra",
+        "anonymous_id": "V01",
+        "package_manifest_sha256": binding["package_manifest_sha256"],
+        "candidate_sha256": binding["trials"]["V01"]["candidate_sha256"],
+        "identity_guess": "hellcat",
+        **{dimension: "50" for dimension in RATING_DIMENSIONS},
+    }]
+    bad_lss = package / "results" / "bad_lss.csv"
+    bad_lss.write_text(lss.read_text(encoding="utf-8").replace(",hellcat,stage_m_candidate,", ",unknown_vehicle,stage_m_candidate,"), encoding="utf-8")
+    rejected_combined = import_webmushra_results(raw, binding, lss_csv=bad_lss)
+    assert rejected_combined["accepted_rows"] == 0
+    assert any(error["reason"] == "identity_guess_not_in_study_vehicle_set" for error in rejected_combined["errors"])
 
 
 def test_unified_result_keeps_missing_reference_order_not_qualified() -> None:
@@ -341,3 +376,4 @@ def test_shared_fixture_matlab_runner_and_publisher_contract_exist() -> None:
     assert "--shared-fixture-root" in runner
     assert "--matlab-shared-psychoacoustic-receipt" in runner
     assert "--mosqito-shared-fixture-receipt" in runner
+    assert "stage_n_parameter_recommendations.json" in runner

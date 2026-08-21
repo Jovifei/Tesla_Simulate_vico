@@ -221,7 +221,9 @@ def export_webmushra_study(
         "hidden_reference_policy": "synthetic_parent_not_real_reference",
         "rating_dimensions": list(RATING_DIMENSIONS),
         "looping": True,
+        "loop_range_policy": "participant_settable_full_clip_default",
         "fade_policy": "webMUSHRA sample-accurate switching; no analysis signal is used for audition",
+        "future_candidate_policy": "INACTIVE_NOT_GENERATED_NO_SOURCE_CHANGE_AUTHORIZED",
         "trials": records,
     }
     study_path = destination / "study_manifest.json"
@@ -241,8 +243,8 @@ def export_webmushra_study(
         f"1. Copy `configs/{config_filename}` to `<webMUSHRA>/configs/{config_filename}`.\n"
         f"2. Copy this package's `audio/` directory to `<webMUSHRA>/configs/{config_stem}/audio/`.\n"
         "3. From the external checkout run `docker compose up --build`.\n"
-        f"4. Open `http://127.0.0.1:8000/?config={config_filename}` in Chrome. Results appear under `<webMUSHRA>/results/{study_id}/mushra.csv`.\n"
-        "5. Normalize the exported result with the SHA/file-ID binding before calling `webmushra_import.py`. No fixture or browser result is human qualification until Jovi submits it.\n",
+        f"4. Open `http://127.0.0.1:8000/?config={config_filename}` in Chrome. Results appear under `<webMUSHRA>/results/{study_id}/mushra.csv` and `lss.csv`.\n"
+        "5. Import an official export with `python -m tools.sound_sim.s12.acoustic_comparator.listening.webmushra_import --input <webMUSHRA>/results/<test-id>/mushra.csv --lss-input <webMUSHRA>/results/<test-id>/lss.csv --binding webmushra_package_manifest.json --output <receipt.json>`. The importer joins the two files, binds package SHA/file ID, and rejects missing Likert dimensions. No fixture or browser result is human qualification until Jovi submits it.\n",
         encoding="utf-8", newline="\n",
     )
     return study
