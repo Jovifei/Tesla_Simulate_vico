@@ -123,6 +123,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 - 本轮 Stage S/R 聚焦测试：`16 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
+- 2026-08-23 公开同步数据检索已固化到 `public_synchronized_source_screening_20260823.json`：Lincoln MKS 数据集虽有 RPM/油门/挡位时间戳但不是目标车型；HL-CEAD 仅有名义 RPM 文件夹且仓库页未声明许可证；Dodge 页面只是同步记录功能说明。三者均未下载或升级为 R1。
 
 ## 必须补齐的输入
 

@@ -3970,3 +3970,4 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 修正 R1 资格门对采集链的过窄假设：麦位不再限定 `EXTERIOR_REAR`，AGC 不再限定 `DOCUMENTED_NO_AGC`；只要明确记录即可，UNKNOWN/空值仍拒绝。新增测试覆盖 `INTERIOR_CABIN_DASH`、`DOCUMENTED_AGC_ON_WITH_LEVEL_TRACE` 和未知值；R1 计数仍为 0。
 - [x] 当前 HEAD `10a78bc2` 最终回归：S12 核心 `394 passed, 114 subtests`（147.48s）+ Track-P pytest `32 passed`（1.21s），合计 `426 passed, 114 subtests`；独立冻结守卫 `180 files / 2 symbols PASS`，compileall、JSON 包校验和 `git diff --check` 通过。
 - [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。
+- [x] 公开同步数据候选复筛：Lincoln MKS、HL-CEAD 和 Dodge 同步记录功能均不满足三锚点 R1；记录在 `public_synchronized_source_screening_20260823.json`，未下载不合格或未授权原始媒体。

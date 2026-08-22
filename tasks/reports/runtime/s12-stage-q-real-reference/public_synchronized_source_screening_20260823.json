@@ -1,0 +1,68 @@
+{
+  "schema_version": "s12.stage_q.public_synchronized_source_screening.v1",
+  "checked_at": "2026-08-23",
+  "policy": {
+    "raw_audio_downloaded": false,
+    "raw_media_stored_outside_git": true,
+    "r1_promotion_without_exact_target_and_rights": false,
+    "automatic_tuning_eligible": false
+  },
+  "candidates": [
+    {
+      "reference_id": "vehical_visual_acoustic_lincoln_mks",
+      "source_url": "https://vehical.org/ITSDataset/",
+      "vehicle_claim": "Lincoln MKS",
+      "published_evidence": [
+        "timestamped audio and vehicle data",
+        "engine_rpm and throttle topics",
+        "gear topic",
+        "inside/outside microphone audio"
+      ],
+      "status": "NOT_TARGET_R1",
+      "r1_eligible": false,
+      "missing_for_target_r1": [
+        "Ferrari 458/Hellcat/RX-7 FD exact target vehicle",
+        "exact stock trim and exhaust evidence",
+        "explicit analysis/tuning license on landing page"
+      ],
+      "decision_zh": "只可作为同步数据集方法参考；不是三锚点车辆，未下载。"
+    },
+    {
+      "reference_id": "hl_cead_machine_biometrics",
+      "source_url": "https://github.com/MachineLearningVisionRG/machine_biometrics",
+      "vehicle_claim": "多品牌普通车辆发动机录音（仓库列出 1000/1500/2000 RPM 文件夹）",
+      "published_evidence": [
+        "15-second WAV recordings",
+        "nominal RPM-level folders",
+        "neutral gear and steady throttle description",
+        "microphone and 44.1 kHz capture description"
+      ],
+      "status": "NOT_TARGET_R1",
+      "r1_eligible": false,
+      "missing_for_target_r1": [
+        "Ferrari 458/Hellcat/RX-7 FD exact target vehicle",
+        "timestamped RPM/load/throttle/gear/shift traces",
+        "explicit repository license for raw audio and derived tuning use",
+        "verified stock exhaust state"
+      ],
+      "decision_zh": "RPM 文件夹不能替代同步状态 trace；仓库页面未声明许可证，未下载。"
+    },
+    {
+      "reference_id": "dodge_drive_experience_recorder_feature",
+      "source_url": "https://www.dodge.com/2024/charger/technology/feature-panel/feature-panel-7/modal.html",
+      "vehicle_claim": "Dodge Charger Track Package feature",
+      "published_evidence": [
+        "manufacturer claims synchronized audio/video/live vehicle data recording"
+      ],
+      "status": "PRODUCT_FEATURE_ONLY",
+      "r1_eligible": false,
+      "missing_for_target_r1": [
+        "public downloadable recording and telemetry package",
+        "Hellcat target trim and stock-state receipt",
+        "rights grant for local comparator and tuning"
+      ],
+      "decision_zh": "这是产品功能说明，不是可审计的实际录音包，未下载。"
+    }
+  ],
+  "conclusion_zh": "本次公开检索没有发现同时满足三锚点车型、原厂状态、合法原始音频和数值同步 RPM/load/throttle/gear/shift 的 R1 来源；继续保持 R1=0。"
+}
