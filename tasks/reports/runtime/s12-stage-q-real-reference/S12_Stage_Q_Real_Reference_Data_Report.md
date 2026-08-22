@@ -44,6 +44,15 @@
 - [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 把真实录音提取的结构用于程序化扩增；其公开说明明确是合成数据。即使通道嵌入 RPM/扭矩，也不能替代真实车辆原始录音。
 - [Sounds of Vehicle Internal Combustion Engines](https://zenodo.org/records/18777405) 以 CC BY 4.0 发布真实车辆声样本，但页面只描述怠速和部分负载/加速片段，没有与本项目锚点绑定的同步 RPM、挡位、麦克风和 AGC 合同；因此不升级为 R1。本轮已保留该线索，不下载 8.1 GB 非目标资料。
 
+## 本轮继续检索复核（2026-08-22）
+
+- [Dodge Challenger Hellcat 2015 音效目录](https://www.asoundeffect.com/wp-content/uploads/2020/02/Dodge_Challenger_Hellcat_2015.pdf) 列出了 96 kHz/24 bit、steady RPM、车载/车外多麦位等商业录音条目；它只是目录/采购线索，当前没有取得原始文件、授权收据或同步状态文件，因此保持 `PROCUREMENT_CANDIDATE_NOT_R1`，不下载预览、不进入比较。
+- [VS13 音视频车辆速度数据集](https://slobodan.ucg.ac.me/science/vs13/) 提供 13 种非本项目锚点车型的 400 段道路通过视频/音频，标注是恒定道路速度和通过时刻，不是 RPM、Load/Throttle 或 Gear/shift；不纳入八车型参考，只保留为方法学线索。
+- [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 虽然提供时间对齐的 RPM/扭矩通道，但官方说明明确为程序化合成音频，并包含虚构发动机/排气配置；它不能替代真实车辆原始录音，继续排除在 Stage Q R1/R2 之外。
+- [RX-7 免费音效页面](https://www.instantsoundfx.com/audio/mazda-rx-7-brap-brap-brap/) 声称可免费下载和免版税，但没有可核验的实车录音作者、车型配置、采集链或同步状态；最多只能作为 R3 定性线索，不下载、不升级为 RX-7 FD 实车证据。
+
+本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
+
 ## 可采购/授权的 R1 候选（尚未纳入）
 
 公开检索没有找到可直接下载、同时满足本项目 R1 合同的三锚点原始包。以下商业库是下一步最短路径，但当前没有购买或 Jovi 的使用授权，且网页营销描述仍需在取得文件后逐条验收，不能先标成 R1：
