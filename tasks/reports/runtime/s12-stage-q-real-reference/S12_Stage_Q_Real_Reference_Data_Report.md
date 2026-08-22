@@ -77,6 +77,11 @@
 - 最终严格收据：`strict_decode_manifest_v3.json`，SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`；恢复策略和旧失败物收据：`download_recovery_receipt_v2.json`，SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`。
 - `24/24` 只表示这些公开 YouTube 派生媒体在仓库外可完整解码；它们仍没有可审计授权、原厂状态或同步 RPM/Load/Throttle/Gear/shift，全部保持 `R3`，不得进入 R1/R2 阶次门或自动调参。
 
+### Node/EJS 当前环境对照探针（2026-08-22）
+
+- 为区分客户端挑战解析与媒体出口拒绝，在不读取账号 Cookie 的前提下，对 `cKx-cb0fzeo` 以 `yt-dlp 2026.06.30.234726 + Node.js EJS`、`bestaudio/best` 分别使用默认代理和 `--proxy ""` 重试；两次都在签名 `googlevideo` 数据请求阶段返回 `HTTP 403`，没有产生新的完整媒体文件。
+- 机器收据：`youtube_node_ejs_probe_20260822.json`；详细日志和元数据仍在外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_node_ejs_20260822`，不进入 Git。该对照结果不撤销上方已完成的 24/24 外部音频/视频收据，也不把任何截断物升级为可用录音。
+
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
 ### 新增 CC0 Ferrari 458 GT3 候选（2026-08-22）
