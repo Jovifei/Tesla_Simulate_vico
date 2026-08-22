@@ -88,6 +88,12 @@
 - 为区分客户端挑战解析与媒体出口拒绝，在不读取账号 Cookie 的前提下，对 `cKx-cb0fzeo` 以 `yt-dlp 2026.06.30.234726 + Node.js EJS`、`bestaudio/best` 分别使用默认代理和 `--proxy ""` 重试；两次都在签名 `googlevideo` 数据请求阶段返回 `HTTP 403`，没有产生新的完整媒体文件。
 - 机器收据：`youtube_node_ejs_probe_20260822.json`；详细日志和元数据仍在外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_node_ejs_20260822`，不进入 Git。该对照结果不撤销上方已完成的 24/24 外部音频/视频收据，也不把任何截断物升级为可用录音。
 
+### 当前批量独立重试（2026-08-23）
+
+- 在全新外部目录 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1` 从 24 条原始 URL 重新开始，默认 `yt-dlp`（关闭代理）有 `22/24 HTTP 403`，仅 2 条直接取得媒体；每条默认日志和失败物均保留。
+- 对失败项使用 `Node.js + EJS` 的 `android` client 回退，补齐 `22/22` 个媒体容器；再对最终 24 个候选逐条执行 `ffprobe`、`ffmpeg -xerror` 全流解码和无增益音频解码，结果为 `24/24 COMPLETE_MEDIA_AND_AUDIO`，并生成 `24/24` 外部 WAV。合并回执为 `youtube_retry_combined_receipt_20260823.json`（SHA-256 `0DAB94BFB99A4AEDC4855929A39EA211D958A4EAA6C3B9F3ADCE98F065363EEE`），严格解码回执为 `strict_decode_receipt_20260823.json`（SHA-256 `C120BFE16B0CEF5B80C68FC47E4FB2BB6198CE94BAE8EE1BF9243B04A965C782`）。
+- 这次解决的是下载/解码完整性，不是来源资格：24 条仍是 YouTube 视频派生、授权/原厂排气/麦位与 AGC/同步 RPM-Load-Throttle-Gear 缺失的 `R3`；原始媒体与派生 WAV 只在仓库外，禁止进入 R1/R2 阶次门、自动调参或人耳资格门。
+
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
 ### 公开同步数据复核（2026-08-22）
