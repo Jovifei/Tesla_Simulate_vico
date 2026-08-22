@@ -3822,4 +3822,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 入口默认 fail-closed：无许可为 R3；有许可但无同步状态最多 R2；视频压缩派生音频不会自动升级为 R1。
 - [x] 新增 `URL_INTAKE_GUIDE.md` 和 4 项 URL intake 回归测试；不修改 MATLAB、Runtime、Simulink、Android 或 Track-P。
 - [x] 新入口接入后完整 S12 Python 回归：`375 passed, 114 subtests passed in 198.23s`；`compileall` 与 `git diff --check` 通过。
+- [x] 用已核验 CC0 测功机网址完成一次真实端到端冒烟：`URL_INTAKE_COMPLETE`、1 条记录、网页视频→PCM WAV→中文 manifest/report；因 Opus 派生音频和缺少同步状态正确保持 `R2`。
 - [ ] 等待 Jovi 提供车辆网址；收到后逐条下载、抽音频、检查画面状态并绑定车辆/工况。
