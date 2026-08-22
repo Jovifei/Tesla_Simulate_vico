@@ -3958,3 +3958,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 模板明确原始 WAV/FLAC、RPM/Load/Throttle/Gear/shift 状态和授权文件只放仓库外；Git 只保存路径别名、SHA、来源和派生特征指针。
 - [x] 模板验证通过：`r1_intake_request=PASS bytes=2954`；当前仍无任何真实 R1 记录，不启动 MATLAB 阶次、Comparator 资格调参或 Profile Candidate。
 - [ ] 等待 Jovi/许可方提供三锚点合法原始音频与同步状态；填充模板后再运行 `raw_audio_intake`、MATLAB 阶次、Comparator 和中文人耳 A/B。
+
+## S12 YouTube 403 回退与导入探针去重审计（2026-08-23）
+
+- [x] 独立复测 `c63_03 / vIbiUABVZO4`：默认 `yt-dlp` 返回 `HTTP 403`，切换 `Node.js + EJS + android`、`format=best` 成功下载 10,340,349 字节 MP4；`ffprobe`、`ffmpeg -xerror` 全流解码和 21,422,158 字节 PCM WAV 再解码均通过。
+- [x] 固化外部回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v4_probe\probe_receipt_c63_03_v2.json`，SHA-256 `C1E39775BB97B2A833DA915B67F0481CA3702F85B6F476750CACF887EF748DE5`；原始媒体、WAV、日志和不完整探针结果均留在 `E:\Claude_allow\Download`，不进入 Git。
+- [x] 审计 `E:\Claude_allow\Download\s12-rx7sim-q-import-probe-20260823-v2`：无原始媒体；canonical manifest SHA 为 `D317D2E10193D12B6607B59A714ABF4A55DCEE78A94C30ED96070F6D2DBC3E46`，探针元数据/派生文件逐文件相同，23 条外部路径均为既有记录；不重复合并、不改变 `R1=0/R2=8/R3=15`。
+- [x] 复核中文 A/B 包 `s12-rx7sim-human-ab-zh-20260823-v3`：反馈模板仍为空，`feedback_binding.status=WAITING_FOR_JOVI_HUMAN_FEEDBACK`；不把模板当作人耳反馈，不启动 Stage S 调音。
+- [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。

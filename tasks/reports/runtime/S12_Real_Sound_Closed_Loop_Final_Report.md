@@ -16,6 +16,10 @@
 
 2026-08-23 403 重试补充：对 `ferrari_01 / pN3uGrx0sS4`，`web_safari + bestaudio` 仅返回图片格式，`android + bestaudio` 在 SABR 下无可用音频格式；改用 `android + best` 成功取得 12,177,206 字节 H.264/AAC、143.058 s 文件，`ffmpeg -xerror` 全流解码通过，媒体 SHA-256 为 `6576BFCEC095E4FD27DD437FA5D32D05319995599F6319A9695545AF62040B40`。外部收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2\download_retry_receipt_ferrari_01_v1.json`；这验证了可用回退工具链，但不改变 YouTube 派生 `R3` 资格。
 
+2026-08-23 独立单条复测补充：对 `c63_03 / vIbiUABVZO4`，默认 `yt-dlp` 客户端复现 `HTTP 403`；切换 `youtube:player_client=android`、`format=best` 后取得 10,340,349 字节 H.264/AAC MP4，`ffprobe`、`ffmpeg -xerror` 全流解码和无增益 PCM WAV（21,422,158 字节）再次完整通过。外部回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v4_probe\probe_receipt_c63_03_v2.json`，SHA-256 `C1E39775BB97B2A833DA915B67F0481CA3702F85B6F476750CACF887EF748DE5`；这只确认 Android 回退链路，仍为 YouTube 派生 `R3_DIAGNOSTIC_ONLY`，不进入 R1/R2。
+
+2026-08-23 导入探针去重审计：外部目录 `E:\Claude_allow\Download\s12-rx7sim-q-import-probe-20260823-v2` 不含原始音频；其 `reference_database_v2\reference_manifest.json` SHA-256 `D317D2E10193D12B6607B59A714ABF4A55DCEE78A94C30ED96070F6D2DBC3E46` 与 canonical 完全相同，探针内 50/50 个元数据/派生文件与 canonical 逐文件 SHA 相同，23 条外部路径均指向既有文件。没有新增 R1、同步状态或人耳反馈，因此未合并、未升级门禁。
+
 2026-08-23 合法 R2 参考复核：重新从 Wikimedia Commons 保存 Ferrari 458 Italia 与 Dodge Challenger SRT Hellcat 两条明确许可音频到 `E:\Claude_allow\Download\s12-commons-r2-audit-20260823`，原始 OGG 与无增益 PCM WAV 的 SHA、来源和许可已写入外部 `revalidation_manifest_20260823.json`（SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`）。现有 Stage R R2 Comparator 复跑成功：Ferrari 频谱对数残差 `0.574775`、响度差 `+2.7001 dB`；Hellcat `0.503287`、`+0.4530 dB`。两案阶次均为 `not_evaluated_without_rpm_trace`，人耳反馈为空，自动调参仍关闭；R1 仍为 `0`。
 
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
