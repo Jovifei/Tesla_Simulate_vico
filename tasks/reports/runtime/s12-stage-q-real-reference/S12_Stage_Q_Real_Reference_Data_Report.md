@@ -42,6 +42,18 @@
 - [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 把真实录音提取的结构用于程序化扩增；其公开说明明确是合成数据。即使通道嵌入 RPM/扭矩，也不能替代真实车辆原始录音。
 - [Sounds of Vehicle Internal Combustion Engines](https://zenodo.org/records/18777405) 以 CC BY 4.0 发布真实车辆声样本，但页面只描述怠速和部分负载/加速片段，没有与本项目锚点绑定的同步 RPM、挡位、麦克风和 AGC 合同；因此不升级为 R1。本轮已保留该线索，不下载 8.1 GB 非目标资料。
 
+## 可采购/授权的 R1 候选（尚未纳入）
+
+公开检索没有找到可直接下载、同时满足本项目 R1 合同的三锚点原始包。以下商业库是下一步最短路径，但当前没有购买或 Jovi 的使用授权，且网页营销描述仍需在取得文件后逐条验收，不能先标成 R1：
+
+| 候选 | 页面公开信息 | 取得后必须补验 | 当前结论 |
+| --- | --- | --- | --- |
+| [Ferrari 458 2013（Sonniss）](https://sonniss.com/sound-effects/ferrari-458-2013/) | 页面列出 197 个文件、96 kHz/24 bit、29 声道、10 个同步 take，并描述 steady RPM、ramp、gearshift、多机位和 BWAV/Soundminer 元数据 | 原始 WAV/BWAV、每段数值 RPM 或可复核的同步 trace、Load/Throttle、Gear/shift 时间点、麦位、AGC/后处理、授权条款 | `PROCUREMENT_CANDIDATE_NOT_R1` |
+| [Dodge Challenger Hellcat 2015（Sonniss）](https://sonniss.com/sound-effects/dodge-challenger-hellcat-2015/) | 页面列出 196 个文件、96 kHz/24 bit、12 个同步 take，并描述 onboard/exterior、steady RPM、ramp、gearshift 和 BWAV 元数据 | 同上；特别核验 6.2 HEMI 配置、录音是否含原始同步状态而非仅文件命名 | `PROCUREMENT_CANDIDATE_NOT_R1` |
+| [Mazda RX-7 1990（Sonniss）](https://sonniss.com/sound-effects/mazda-rx-7-1990/) | 页面列出 208 个文件、96 kHz/24 bit、12 个同步 take，并描述 13B twin-turbo、steady RPM、ramp、gearshift、麦位和元数据 | 核验是否确为目标 FD 配置或明确可接受的 1990 车型、双转子事件与同步 RPM/负载/挡位 trace | `PROCUREMENT_CANDIDATE_NOT_R1` |
+
+这三项页面显示的价格均为商业购买入口；本轮没有代 Jovi 下单，也没有把预览流保存为 R1。即使购买，仍必须先生成 `reference_id`、原始文件 SHA-256、时间轴/单位审计、采集合同和授权收据；验收不通过则降为 R2 或 R3。只有验收通过，才允许执行 MATLAB 阶次基线和自动调参。
+
 ## 记录审计
 
 | 记录 | 场景提示 | 格式 | 时长 | SHA-256 前 12 位 | 证据等级 | 可用于调音 |
