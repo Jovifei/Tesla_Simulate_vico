@@ -14,6 +14,8 @@ def render_waiting_final_report(
     branch: str,
     commit: str,
     working_tree_dirty: bool,
+    pushed: bool = False,
+    remote_sha: str | None = None,
 ) -> str:
     lines = [
         "# S12 真实声浪闭环总报告",
@@ -69,7 +71,8 @@ def render_waiting_final_report(
             f"- 分支：`{branch}`",
             f"- 报告绑定代码提交：`{commit}`",
             f"- working tree dirty：`{str(working_tree_dirty).lower()}`",
-            "- push：否",
+            f"- push：{'是' if pushed else '否'}",
+            *( [f"- 远端分支 SHA：`{remote_sha}`"] if remote_sha else [] ),
             "- merge：否",
             "- PR：否",
             "",
@@ -97,6 +100,8 @@ def write_waiting_final_report(
     branch: str,
     commit: str,
     working_tree_dirty: bool,
+    pushed: bool = False,
+    remote_sha: str | None = None,
 ) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -109,6 +114,8 @@ def write_waiting_final_report(
             branch=branch,
             commit=commit,
             working_tree_dirty=working_tree_dirty,
+            pushed=pushed,
+            remote_sha=remote_sha,
         ),
         encoding="utf-8",
         newline="\n",
