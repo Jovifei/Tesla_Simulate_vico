@@ -3760,8 +3760,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Q3/Q4: Added `tools/sound_sim/s12/real_reference/` fail-closed inventory tooling, Stage Q manifest schema, Chinese report generation, provenance/SHA pointers, scenario-window placeholders, and RPM/state binding placeholders.
 - [x] Q gate: Regenerated `tasks/reports/runtime/s12-stage-q-real-reference/` from the current worktree. All 15 present recordings remain R3/qualitative-only; R1=0, R2=0; no automatic tuning eligibility.
 - [x] R gate: Added R1 qualification checks and generated a fail-closed waiting result, withheld parameter recommendations, and Chinese difference-report template under `tasks/reports/runtime/s12-stage-r-real-sound-difference/`.
+- [x] R2 path: Added an authorised-R2 limited comparator adapter. It permits only spectrum/loudness/psychoacoustic/subjective-transient evidence and always disables order hard gates and automatic tuning authority.
 - [x] S gate: Added the Chinese listening-study contract and feedback gate under `tasks/reports/runtime/s12-stage-s-human-calibration/`; no placeholder audio or fixture feedback is materialized.
 - [x] T gate: Added the blocked Profile Candidate handoff under `tasks/reports/runtime/s12-stage-t-profile-candidate/`; no candidate files, Profile Freeze, or product handoff are generated.
+- [x] Final waiting audit: Generated `tasks/reports/runtime/S12_Real_Sound_Closed_Loop_Final_Report.md` with per-stage/per-vehicle status, metric limits, feedback/tuning counts, Track-P boundary, commits, and no-push state.
 - [ ] R/S/T execution: Do not run a qualified real-vs-synthetic baseline, ingest human feedback, or modify vehicle parameters until Jovi supplies legal permission plus synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt.
 
 ### Stage Q review
@@ -3769,4 +3771,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - `python -m pytest tools/sound_sim/s12/tests/test_s12_stage_q_real_reference.py -q`: `4 passed`.
 - `python -m tools.sound_sim.s12.real_reference.cli --media-root E:\\Claude_allow\\Download\\tesla-sound-research --out-dir tasks\\reports\\runtime\\s12-stage-q-real-reference`: `REAL_REFERENCE_DATASET_LIMITED`, `WAITING_FOR_REAL_REFERENCE_DATA`, 15 records, 0 R1.
 - Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
+- R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
 - Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
