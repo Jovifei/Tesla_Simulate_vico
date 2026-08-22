@@ -94,6 +94,7 @@
 - 对失败项使用 `Node.js + EJS` 的 `android` client 回退，补齐 `22/22` 个媒体容器；再对最终 24 个候选逐条执行 `ffprobe`、`ffmpeg -xerror` 全流解码和无增益音频解码，结果为 `24/24 COMPLETE_MEDIA_AND_AUDIO`，并生成 `24/24` 外部 WAV。合并回执为 `youtube_retry_combined_receipt_20260823.json`（SHA-256 `0DAB94BFB99A4AEDC4855929A39EA211D958A4EAA6C3B9F3ADCE98F065363EEE`），严格解码回执为 `strict_decode_receipt_20260823.json`（SHA-256 `C120BFE16B0CEF5B80C68FC47E4FB2BB6198CE94BAE8EE1BF9243B04A965C782`）。
 - 这次解决的是下载/解码完整性，不是来源资格：24 条仍是 YouTube 视频派生、授权/原厂排气/麦位与 AGC/同步 RPM-Load-Throttle-Gear 缺失的 `R3`；原始媒体与派生 WAV 只在仓库外，禁止进入 R1/R2 阶次门、自动调参或人耳资格门。
 - 最新 24 条 WAV 已重新绑定到独立 R3 分析清单并运行现有 `analyze_downloaded_sources.py`：`24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断均生成；分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。状态仍为 `COMPLETE_DIAGNOSTIC_ONLY_R3`、`R1=0/R2=0/R3=24`、`WAITING_FOR_JOVI_LISTENING`，不得把低置信特征或人耳空白反馈写成调参结论。
+- 为三锚点另行生成中文人耳 A/B 包：`E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\README_中文.md`，Ferrari 458/Hellcat/RX-7 FD 各 3 个试次、18 个 5 秒试听片段；manifest SHA-256 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`。包绑定 `test_id/file_id/reference SHA/candidate SHA`，反馈字段为空；它只支持 R3 定性试听，不是自动调参或资格门。
 
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
