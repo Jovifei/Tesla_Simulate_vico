@@ -10,6 +10,8 @@
 
 本轮针对用户反馈再次做了独立 `yt-dlp` 验证：默认 `android_vr` 对 `XWEjZHFQ5lc` 复现 `HTTP 403`；切到 `web_embedded + Node.js EJS` 后，渐进式 `format 18` 虽显示下载完成，但严格 `ffmpeg -xerror` 判定为 `partial file`，未被采纳。改用 `134 + 140-9/140-8` 分流后，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 均通过完整流解码。外部收据 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_yt_dlp_current_20260822\yt_dlp_node_web_embedded_retry_receipt_v2.json`，SHA-256 `52996AB90C3145B292E0E2964560B70A2A2F46443283C0C79ED90458A94E5BF8`。这只验证下载/解码回退，不提升 YouTube 素材的 R1/R2 资格。
 
+本轮随后用仓库 URL 入口本身复现同一故障：`XWEjZHFQ5lc` 第 1 次默认客户端为 403、第 2 次 Android 残片被严格解码门拒绝，第 3 次 `Node.js + web_embedded` 自动选中完整 MKV（344.441 s，SHA-256 `A2D0C7AB0A048A302E468B72668D0E492F606FB57F2257F62AA9FFBC92AFCD06`）；`GQ0972wohFs` 同样在第 3 次选中完整 WebM（336.321 s，SHA-256 `3475C4E7CB139E31D84F12C8C7A26329E0994299EC1A2821207E1406C4716C0A`）。外部复试收据 `E:\Claude_allow\Download\s12-url-intake-repro-20260822\url_intake_repro_receipt_v2.json`，SHA-256 `4F6CF1E7D81ECDB5CF47C9E363D40B6D0FF35D8ECC783AC93F00FF64C58E19B6`；原始媒体、残片和日志均留在仓库外。这证明入口能识别并拒绝“有时长但不完整”的短头部文件，但不改变 YouTube 派生 R3、未授权/未同步边界。
+
 最终视频绑定的 R3 重算也已完成：从上述 24 条最终视频重新抽取无增益 PCM WAV，并用 intake manifest SHA `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF` 绑定到分析收据 `final_video_analysis_receipt_v1.json`（SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`）。中文差异报告位于仓库外 `analysis_final_video_r3_v1/S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`，SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。该结果是 24/24、8 车各 3 条的最新 R3 数字域诊断，不是 R1/R2 资格，也没有启动 MATLAB 阶次、自动调参或 Profile Candidate。
 
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
@@ -68,7 +70,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 当前 HEAD：`ac161b21a7e55d7e9b0167b59fd61be418f15663`（`docs(s12): audit public synchronized reference candidates`）；父提交包含 YouTube 分流完整性复试 `f0ca32c`。本地 `HEAD` 与远端 `origin/agent/s12-stage-q-real-reference-calibration` 一致。
+- 提交前审计基线 HEAD：`6b79c5eb858d51332b4a779180d12a9895b7aa6d`（`docs(s12): refresh regression and handoff evidence`）；本轮补充提交后的最终 SHA 以 Git 与远端复核为准。
 - working tree：干净；本轮仅提交审计 JSON、中文报告和任务清单，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
