@@ -3753,7 +3753,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## S12 Stage Q–T real-reference closed loop (2026-08-22)
 
-> Status: `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`, based on Stage P `9fbbcb7d99f4d77a6c467595bf48f1b055502478`. No push, merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
+> Status: `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`, based on Stage P `9fbbcb7d99f4d77a6c467595bf48f1b055502478`. Branch push is authorized and verified; no merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
 
 - [x] Q0: Created the Stage Q worktree from the exact Stage P HEAD and recorded clean starting state.
 - [x] Q1/Q2: Audited the external `E:\Claude_allow\Download\tesla-sound-research` media root; cataloged 15 WAV pointers across all eight vehicles without copying raw audio into Git.
@@ -3761,9 +3761,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Q gate: Regenerated `tasks/reports/runtime/s12-stage-q-real-reference/` from the current worktree. All 15 present recordings remain R3/qualitative-only; R1=0, R2=0; no automatic tuning eligibility.
 - [x] R gate: Added R1 qualification checks and generated a fail-closed waiting result, withheld parameter recommendations, and Chinese difference-report template under `tasks/reports/runtime/s12-stage-r-real-sound-difference/`.
 - [x] R2 path: Added an authorised-R2 limited comparator adapter. It permits only spectrum/loudness/psychoacoustic/subjective-transient evidence and always disables order hard gates and automatic tuning authority.
+- [x] R execution entry: Added an unaltered PCM-WAV reader, fail-closed R2 limited comparison/report writer, and R1 MATLAB/Stage-N execution-plan builder. The R1 plan names the required MATLAB/Audio Toolbox functions and receipts but does not execute without qualified real inputs.
 - [x] S gate: Added the Chinese listening-study contract and feedback gate under `tasks/reports/runtime/s12-stage-s-human-calibration/`; no placeholder audio or fixture feedback is materialized.
 - [x] T gate: Added the blocked Profile Candidate handoff under `tasks/reports/runtime/s12-stage-t-profile-candidate/`; no candidate files, Profile Freeze, or product handoff are generated.
-- [x] Final waiting audit: Generated `tasks/reports/runtime/S12_Real_Sound_Closed_Loop_Final_Report.md` with per-stage/per-vehicle status, metric limits, feedback/tuning counts, Track-P boundary, commits, and no-push state.
+- [x] Final waiting audit: Generated `tasks/reports/runtime/S12_Real_Sound_Closed_Loop_Final_Report.md` with per-stage/per-vehicle status, metric limits, feedback/tuning counts, Track-P boundary, commits, and the verified branch-push state.
 - [ ] R/S/T execution: Do not run a qualified real-vs-synthetic baseline, ingest human feedback, or modify vehicle parameters until Jovi supplies legal permission plus synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt.
 
 ### Stage Q review
@@ -3772,6 +3773,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - `python -m tools.sound_sim.s12.real_reference.cli --media-root E:\\Claude_allow\\Download\\tesla-sound-research --out-dir tasks\\reports\\runtime\\s12-stage-q-real-reference`: `REAL_REFERENCE_DATASET_LIMITED`, `WAITING_FOR_REAL_REFERENCE_DATA`, 15 records, 0 R1.
 - Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
 - R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
+- R execution entry tests: `5 passed`; full S12 focused suite: `46 passed`; `compileall` and `git diff --check` pass.
 - Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
 
 ### Q additional external-root audit（2026-08-22）

@@ -9,6 +9,14 @@ from .inventory import (
 )
 from .qualification import ReferenceQualificationError, qualify_r1_reference, qualify_r2_reference, require_r1_reference
 from .limited import compare_r2_signals
+from .stage_r_execute import (
+    MATLAB_R1_FUNCTIONS,
+    StageRExecutionContractError,
+    build_r1_execution_plan,
+    read_unaltered_pcm_wav,
+    run_r2_limited_comparison,
+    write_r2_outputs,
+)
 from .closed_loop_report import render_waiting_final_report, write_waiting_final_report
 
 __all__ = [
@@ -22,6 +30,12 @@ __all__ = [
     "qualify_r2_reference",
     "require_r1_reference",
     "compare_r2_signals",
+    "MATLAB_R1_FUNCTIONS",
+    "StageRExecutionContractError",
+    "build_r1_execution_plan",
+    "read_unaltered_pcm_wav",
+    "run_r2_limited_comparison",
+    "write_r2_outputs",
     "render_waiting_final_report",
     "write_waiting_final_report",
 ]
