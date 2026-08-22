@@ -9,7 +9,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_export import RATING_DIMENSIONS, export_webmushra_study
+from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_export import (
+    RATING_DIMENSIONS,
+    apply_chinese_webmushra_patch,
+    export_webmushra_study,
+)
 from tools.sound_sim.s12.acoustic_comparator.listening.webmushra_import import import_webmushra_results
 from tools.sound_sim.s12.acoustic_comparator.perceptual.visqol_adapter import validate_visqol_request
 from tools.sound_sim.s12.acoustic_identity_v015.stage_n.matlab_inputs import (
@@ -194,6 +198,39 @@ def test_webmushra_export_is_non_destructive_and_import_binds_manifest_sha(tmp_p
     rejected_combined = import_webmushra_results(raw, binding, lss_csv=bad_lss)
     assert rejected_combined["accepted_rows"] == 0
     assert any(error["reason"] == "identity_guess_not_in_study_vehicle_set" for error in rejected_combined["errors"])
+
+
+def test_webmushra_export_is_chinese_and_patch_is_idempotent(tmp_path: Path) -> None:
+    parent = tmp_path / "parent.wav"
+    candidate = tmp_path / "candidate.wav"
+    _write_wav(parent, 220.0)
+    _write_wav(candidate, 440.0)
+    package = tmp_path / "study"
+    export_webmushra_study(
+        package,
+        [{"anonymous_id": "V01", "vehicle_id": "hellcat", "scenario": "full_cycle", "parent": parent, "candidate": candidate}],
+        upstream_receipt={"tool": "webMUSHRA", "version": "fixture"},
+    )
+    config = (package / "configs" / "s12-stage-n.yaml").read_text(encoding="utf-8")
+    assert "language: zh" in config
+    assert "真实声浪对比与调音听审" in config
+    assert "Playback level" not in config
+    assert "Rate the" not in config
+    assert "听者编号" in config
+    patch_file = package / "webmushra_zh_cn_nls.js"
+    assert "nls['zh']" in patch_file.read_text(encoding="utf-8")
+
+    checkout = tmp_path / "webmushra"
+    (checkout / "lib" / "webmushra" / "nls").mkdir(parents=True)
+    (checkout / "index.html").write_text(
+        '<script src="lib/webmushra/nls/nls.js"></script>\n', encoding="utf-8"
+    )
+    first = apply_chinese_webmushra_patch(checkout, patch_file)
+    second = apply_chinese_webmushra_patch(checkout, patch_file)
+    assert first["index_updated"] is True
+    assert second["index_updated"] is False
+    index = (checkout / "index.html").read_text(encoding="utf-8")
+    assert index.count("s12_stage_s_zh_cn.js") == 1
 
 
 def test_unified_result_keeps_missing_reference_order_not_qualified() -> None:

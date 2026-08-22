@@ -3773,3 +3773,9 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
 - R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
 - Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
+
+### 浏览器中文展示修正（2026-08-22）
+
+- [x] 将 webMUSHRA 研究包的可见标题、说明、评分维度和提交字段统一为中文；机器协议键保留英文以兼容官方导出格式。
+- [x] 提供可审计、可重复应用的上游固定按钮中文覆盖；未应用覆盖前不得声称浏览器界面已全中文。
+- [x] 运行导出包配置测试，确认中文配置不会改变真实参考、SHA/file-ID 绑定或反馈门禁。

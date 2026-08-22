@@ -57,7 +57,8 @@ def build_stage_s_chinese_contract(q_inventory: dict[str, Any], r_result: dict[s
             "analysis_signal": "unaltered_analysis_signal",
             "audition_signal": "loudness_matched_audition_signal_separate",
         },
-        "upstream_ui_note": "评分文本和研究包采用中文；webMUSHRA 上游固定按钮若未维护本地化前端，仍需单独覆盖。",
+        "upstream_ui_note": "研究包导出器会附带 webmushra_zh_cn_nls.js，并提供幂等脚本把它加载到官方 nls.js 之后；应用覆盖前，固定按钮仍不能声称为中文。",
+        "ui_localization_status": "PACKAGE_CONFIG_ZH_CN_AND_UPSTREAM_NLS_PATCH_AVAILABLE",
         "r_status": r_result.get("status"),
     }
 
@@ -90,7 +91,7 @@ def write_stage_s_waiting_outputs(q_inventory: dict[str, Any], r_result: dict[st
             "",
             "一次只允许修改一个车型、一个场景问题和一个参数组；自动指标改善且人耳不退步后，才能进入下一轮。所有调音都必须在独立 sound-fix 分支进行，当前分支不修改车型 source。",
             "",
-            "中文评分维度已写入 `stage_s_chinese_listening_contract.json`。上游 webMUSHRA 的固定按钮若要完全中文，还需要维护本地化前端覆盖；不能只翻译配置文本就声称全中文。",
+            "中文评分维度已写入 `stage_s_chinese_listening_contract.json`。正式研究包会附带 `webmushra_zh_cn_nls.js` 和幂等应用脚本；未应用该覆盖前，不能声称上游固定按钮已全中文。",
             "",
         ]),
         encoding="utf-8",

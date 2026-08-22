@@ -149,13 +149,14 @@
   "stage": "S",
   "status": "WAITING_FOR_REAL_REFERENCE_DATA",
   "study_type": "webMUSHRA_or_AB",
+  "ui_localization_status": "PACKAGE_CONFIG_ZH_CN_AND_UPSTREAM_NLS_PATCH_AVAILABLE",
   "ui_text": {
     "finish": "提交前请确认听者编号、播放设备、系统音量、输出端点和系统音效设置。",
     "instruction": "请在相同工况和循环区间内比较匿名声音。当前结果只有在真实参考、候选 SHA 和听审元数据绑定后才有效。",
     "playback_level": "请先设置舒适且不失真的播放音量。不要使用系统响度增强、均衡器或自动增益。",
     "test_name": "S12 真实声浪对比与调音听审"
   },
-  "upstream_ui_note": "评分文本和研究包采用中文；webMUSHRA 上游固定按钮若未维护本地化前端，仍需单独覆盖。",
+  "upstream_ui_note": "研究包导出器会附带 webmushra_zh_cn_nls.js，并提供幂等脚本把它加载到官方 nls.js 之后；应用覆盖前，固定按钮仍不能声称为中文。",
   "vehicle_scope": [
     "ferrari_458",
     "hellcat",
