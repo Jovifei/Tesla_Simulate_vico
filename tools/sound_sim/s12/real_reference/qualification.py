@@ -29,6 +29,20 @@ class ReferenceQualificationError(ValueError):
     """Raised when a reference is not allowed into a qualified comparison."""
 
 
+def _documented_capture_field(value: Any) -> bool:
+    """Accept an explicit capture description without prescribing its value.
+
+    S12 requires microphone placement and recorder/AGC handling to be
+    documented, but it does not require a particular microphone perspective or
+    that AGC be disabled.  Unknown/placeholder values remain fail-closed.
+    """
+
+    normalized = str(value or "").strip().upper()
+    if not normalized or normalized in {"N/A", "NA"}:
+        return False
+    return not any(marker in normalized for marker in ("UNKNOWN", "UNSPECIFIED", "MISSING"))
+
+
 def qualify_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
     """Return an auditable R1 gate result without changing the input record.
 
@@ -72,8 +86,8 @@ def qualify_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
         "synchronized_rpm_trace": contract.get("rpm_state_status") == "SYNCED",
         "load_throttle_trace": contract.get("load_throttle_status") == "SYNCED",
         "gear_shift_trace": contract.get("gear_shift_status") == "SYNCED",
-        "microphone_position": provenance.get("microphone_perspective") == "EXTERIOR_REAR",
-        "recording_device_agc_contract": provenance.get("recording_device_agc") == "DOCUMENTED_NO_AGC",
+        "microphone_position": _documented_capture_field(provenance.get("microphone_perspective")),
+        "recording_device_agc_contract": _documented_capture_field(provenance.get("recording_device_agc")),
     }
     missing = [name for name in R1_FIELDS if not checks[name]]
     return {

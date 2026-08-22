@@ -134,3 +134,24 @@ def test_raw_intake_accepts_complete_external_r1_without_copying_audio(tmp_path:
     assert state["rpm"][0] == pytest.approx(1_000.0)
     assert state["rpm"][-1] == pytest.approx(3_000.0)
     assert state_meta["resampling"] == "timestamp_interpolation_to_audio_sample_grid"
+
+
+def test_raw_intake_accepts_documented_non_rear_mic_and_agc_contract(tmp_path: Path) -> None:
+    spec = _complete_spec(tmp_path)
+    spec["microphone_position"] = "INTERIOR_CABIN_DASH"
+    spec["recording_device_agc"] = "DOCUMENTED_AGC_ON_WITH_LEVEL_TRACE"
+    manifest = _ingest([spec], output_root=tmp_path / "out", allowed_root=tmp_path)
+    record = manifest["records"][0]
+    assert record["evidence"]["level"] == "R1"
+    assert record["evidence"]["r1_eligible"] is True
+
+
+@pytest.mark.parametrize("field", ["microphone_position", "recording_device_agc"])
+def test_raw_intake_rejects_unknown_capture_contract(tmp_path: Path, field: str) -> None:
+    spec = _complete_spec(tmp_path)
+    spec[field] = "AGC_UNKNOWN" if field == "recording_device_agc" else "UNKNOWN"
+    manifest = _ingest([spec], output_root=tmp_path / "out", allowed_root=tmp_path)
+    record = manifest["records"][0]
+    assert record["evidence"]["r1_eligible"] is False
+    gate_field = "recording_device_agc_contract" if field == "recording_device_agc" else field
+    assert gate_field in record["evidence"]["r1_gate"]["missing"]

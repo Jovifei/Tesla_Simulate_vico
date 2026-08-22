@@ -22,6 +22,8 @@
 
 2026-08-23 采购候选复核：重新核对 Ferrari 458、Hellcat、RX-7 的商业录音库页面/曲目单。三者都声称有 steady-RPM、ramps、gearshift 或多麦位同步 take，但没有提供可验收的数值 RPM/Load/Throttle/Gear 文件；尚未购买或取得书面许可，因此仍是 `PROCUREMENT_CANDIDATE_NOT_R1`。机器可读清单为 `tasks/reports/runtime/s12-stage-q-real-reference/procurement_candidate_revalidation_20260823.json`；不下载版权原始音频，不改变 `R1=0`。
 
+2026-08-23 R1 合同修正：资格门此前把麦位硬编码为 `EXTERIOR_REAR`、把 AGC 硬编码为 `DOCUMENTED_NO_AGC`，与规范“已记录即可”的要求不一致。现改为接受任意明确可审计的麦位和 AGC/后处理说明，同时继续拒绝 `UNKNOWN`/空值；新增车内麦位、AGC 开启但有电平记录和未知值拒绝测试。该修正没有制造任何 R1 记录，当前仍为 `R1=0`。
+
 2026-08-23 合法 R2 参考复核：重新从 Wikimedia Commons 保存 Ferrari 458 Italia 与 Dodge Challenger SRT Hellcat 两条明确许可音频到 `E:\Claude_allow\Download\s12-commons-r2-audit-20260823`，原始 OGG 与无增益 PCM WAV 的 SHA、来源和许可已写入外部 `revalidation_manifest_20260823.json`（SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`）。现有 Stage R R2 Comparator 复跑成功：Ferrari 频谱对数残差 `0.574775`、响度差 `+2.7001 dB`；Hellcat `0.503287`、`+0.4530 dB`。两案阶次均为 `not_evaluated_without_rpm_trace`，人耳反馈为空，自动调参仍关闭；R1 仍为 `0`。
 
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
