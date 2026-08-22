@@ -98,7 +98,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 提交前审计基线 HEAD：`e357f8bc2244fbd993bcf4f6e613dd998d130ad6`；本轮新增提交 `da7024514fa9e72208325912cd988cf14339c8fe` 已推送到 `agent/s12-stage-q-real-reference-calibration`，远端 SHA 与本地一致。
+- 提交前审计基线 HEAD：`e357f8bc2244fbd993bcf4f6e613dd998d130ad6`；本轮新增提交 `da7024514fa9e72208325912cd988cf14339c8fe`，随后报告收据修订提交 `54c2bf1880f64440aee24f754c34c164dfdd7c71` 已推送到 `agent/s12-stage-q-real-reference-calibration`，远端 SHA 与本地一致。
 - working tree：提交后干净；本轮提交包含 R2 A/B SHA 大小写兼容、回归测试和中文交接收据，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
