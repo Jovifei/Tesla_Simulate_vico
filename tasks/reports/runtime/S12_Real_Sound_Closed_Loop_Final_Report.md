@@ -50,7 +50,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定提交：待本轮报告口径修正后更新；此前 R2 公开许可素材与差异报告提交为 `1a8dc38`。
+- 报告绑定提交：`770149c`（本轮修正三条 R2 口径、检索边界和任务接力记录）；此前 R2 公开许可素材与差异报告提交为 `1a8dc38`。
 - working tree dirty：`false`（本次绑定前的干净提交）
 - push：是
 - merge：否
