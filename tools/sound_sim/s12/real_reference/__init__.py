@@ -11,8 +11,10 @@ from .qualification import ReferenceQualificationError, qualify_r1_reference, qu
 from .limited import compare_r2_signals
 from .stage_r_execute import (
     MATLAB_R1_FUNCTIONS,
+    R1_INPUT_SCHEMA_VERSION,
     StageRExecutionContractError,
     build_r1_execution_plan,
+    prepare_r1_matlab_inputs,
     read_unaltered_pcm_wav,
     run_r2_limited_comparison,
     write_r2_outputs,
@@ -31,8 +33,10 @@ __all__ = [
     "require_r1_reference",
     "compare_r2_signals",
     "MATLAB_R1_FUNCTIONS",
+    "R1_INPUT_SCHEMA_VERSION",
     "StageRExecutionContractError",
     "build_r1_execution_plan",
+    "prepare_r1_matlab_inputs",
     "read_unaltered_pcm_wav",
     "run_r2_limited_comparison",
     "write_r2_outputs",

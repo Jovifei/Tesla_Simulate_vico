@@ -8,8 +8,10 @@ creates tuning recommendations or profile changes by itself.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
+import re
 import wave
 from pathlib import Path
 from typing import Any, Mapping
@@ -34,6 +36,7 @@ MATLAB_R1_FUNCTIONS = (
     "acousticToneToNoiseRatio",
     "acousticProminenceRatio",
 )
+R1_INPUT_SCHEMA_VERSION = "s12-stage-r1-matlab-inputs-v1"
 
 
 class StageRExecutionContractError(ValueError):
@@ -96,6 +99,369 @@ def _reference_path(record: Mapping[str, Any]) -> Path:
     if expected and _sha256(path) != expected:
         raise StageRExecutionContractError(f"reference SHA-256 mismatch: {path}")
     return path
+
+
+def _normalise_trace_key(value: object) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(value).strip().lower()).strip("_")
+
+
+def _resolve_trace_path(owner: Mapping[str, Any], key: str, *, fallback_root: Path | None = None) -> Path:
+    containers = [owner]
+    for container_name in ("state_bindings", "analysis_contract"):
+        container = owner.get(container_name)
+        if isinstance(container, Mapping):
+            containers.append(container)
+    raw: object | None = None
+    for container in containers:
+        if container.get(key):
+            raw = container[key]
+            break
+    if not raw:
+        raise StageRExecutionContractError(f"R1 state trace path missing: {key}")
+    path = Path(str(raw))
+    if not path.is_absolute():
+        root = owner.get("trace_root")
+        if not root:
+            for container in containers[1:]:
+                if container.get("trace_root"):
+                    root = container["trace_root"]
+                    break
+        if root:
+            path = Path(str(root)) / path
+        elif fallback_root is not None:
+            path = fallback_root / path
+        else:
+            raise StageRExecutionContractError(f"relative R1 trace path needs trace_root: {key}")
+    if not path.is_file():
+        raise StageRExecutionContractError(f"R1 state trace is not readable: {path}")
+    return path
+
+
+def _read_trace_table(path: Path) -> dict[str, np.ndarray]:
+    """Read a small numeric CSV/JSON state table without guessing units."""
+
+    path = Path(path)
+    if path.suffix.lower() == ".csv":
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            if not reader.fieldnames:
+                raise StageRExecutionContractError(f"R1 trace CSV has no header: {path}")
+            rows = list(reader)
+        if not rows:
+            raise StageRExecutionContractError(f"R1 trace CSV is empty: {path}")
+        names = {_normalise_trace_key(name): name for name in reader.fieldnames if name is not None}
+        table: dict[str, np.ndarray] = {}
+        for normalised, original in names.items():
+            values: list[float] = []
+            for row in rows:
+                raw = row.get(original, "")
+                if raw is None or str(raw).strip() == "":
+                    raise StageRExecutionContractError(f"R1 trace contains a blank value in {original}: {path}")
+                try:
+                    values.append(float(raw))
+                except ValueError as exc:
+                    raise StageRExecutionContractError(f"R1 trace value is not numeric in {original}: {path}") from exc
+            table[normalised] = np.asarray(values, dtype=np.float64)
+        return table
+    if path.suffix.lower() == ".json":
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(payload, Mapping):
+            table = {}
+            for key, values in payload.items():
+                if not isinstance(values, (list, tuple)):
+                    continue
+                try:
+                    table[_normalise_trace_key(key)] = np.asarray(values, dtype=np.float64)
+                except (TypeError, ValueError) as exc:
+                    raise StageRExecutionContractError(f"R1 JSON trace value is not numeric: {path}") from exc
+            if table:
+                return table
+        elif isinstance(payload, list):
+            try:
+                return {"value": np.asarray(payload, dtype=np.float64)}
+            except (TypeError, ValueError) as exc:
+                raise StageRExecutionContractError(f"R1 JSON trace value is not numeric: {path}") from exc
+        raise StageRExecutionContractError(f"R1 JSON trace must contain numeric arrays: {path}")
+    raise StageRExecutionContractError(f"R1 trace must be CSV or JSON: {path}")
+
+
+def _trace_column(table: Mapping[str, np.ndarray], aliases: tuple[str, ...], field: str, *, required: bool = True) -> np.ndarray | None:
+    for alias in aliases:
+        key = _normalise_trace_key(alias)
+        if key in table:
+            value = np.asarray(table[key], dtype=np.float64).reshape(-1)
+            if value.size == 0:
+                raise StageRExecutionContractError(f"R1 trace column is empty: {field}")
+            return value
+    if required:
+        raise StageRExecutionContractError(f"R1 trace column missing: {field}")
+    return None
+
+
+def _trace_sha256(bundle: Mapping[str, np.ndarray]) -> str:
+    digest = hashlib.sha256()
+    for name in ("time_s", "rpm", "load", "throttle", "gear", "shift_event"):
+        values = np.asarray(bundle[name], dtype="<f8")
+        digest.update(name.encode("ascii"))
+        digest.update(b"\0")
+        digest.update(values.tobytes())
+    return digest.hexdigest()
+
+
+def _trace_window(owner: Mapping[str, Any]) -> tuple[float, float]:
+    window = owner.get("time_window")
+    if not isinstance(window, Mapping):
+        raise StageRExecutionContractError("R1 time_window with start_s/end_s is required")
+    try:
+        start = float(window["start_s"])
+        end = float(window["end_s"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise StageRExecutionContractError("R1 time_window must contain numeric start_s/end_s") from exc
+    if not np.isfinite([start, end]).all() or end <= start:
+        raise StageRExecutionContractError("R1 time_window must be finite and end_s > start_s")
+    return start, end
+
+
+def _load_state_bundle(owner: Mapping[str, Any], *, frame_count: int, sample_rate_hz: int, fallback_root: Path | None) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
+    rpm_path = _resolve_trace_path(owner, "rpm_trace_path", fallback_root=fallback_root)
+    load_path = _resolve_trace_path(owner, "load_throttle_trace_path", fallback_root=fallback_root)
+    gear_path = _resolve_trace_path(owner, "gear_shift_trace_path", fallback_root=fallback_root)
+    rpm_table = _read_trace_table(rpm_path)
+    load_table = _read_trace_table(load_path)
+    gear_table = _read_trace_table(gear_path)
+    rpm = _trace_column(rpm_table, ("rpm", "engine_rpm"), "rpm")
+    load = _trace_column(load_table, ("load", "engine_load", "load_fraction"), "load")
+    throttle = _trace_column(load_table, ("throttle", "throttle_pct", "throttle_fraction"), "throttle")
+    gear = _trace_column(gear_table, ("gear", "gear_index", "gear_number"), "gear")
+    shift_event = _trace_column(gear_table, ("shift", "shift_event", "gear_shift"), "shift_event", required=False)
+    if shift_event is None:
+        shift_event = np.concatenate(([0.0], (np.diff(gear) != 0).astype(np.float64)))
+        shift_source = "derived_from_gear_transition"
+    else:
+        shift_source = "recorded_trace_column"
+    time_sources = [
+        _trace_column(rpm_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
+        _trace_column(load_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
+        _trace_column(gear_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
+    ]
+    provided_time = next((value for value in time_sources if value is not None), None)
+    if provided_time is None:
+        time_s = np.arange(frame_count, dtype=np.float64) / float(sample_rate_hz)
+        time_source = "sample_index_at_audio_sample_rate"
+    else:
+        time_s = np.asarray(provided_time, dtype=np.float64)
+        time_source = "recorded_trace_column"
+        for other in time_sources:
+            if other is not None and (other.size != time_s.size or not np.allclose(other, time_s, rtol=0.0, atol=1e-9)):
+                raise StageRExecutionContractError("R1 state trace time columns are not aligned")
+        if time_s.size > 1 and np.any(np.diff(time_s) <= 0):
+            raise StageRExecutionContractError("R1 state trace time must be strictly increasing")
+    bundle = {
+        "time_s": time_s,
+        "rpm": np.asarray(rpm, dtype=np.float64),
+        "load": np.asarray(load, dtype=np.float64),
+        "throttle": np.asarray(throttle, dtype=np.float64),
+        "gear": np.asarray(gear, dtype=np.float64),
+        "shift_event": np.asarray(shift_event, dtype=np.float64),
+    }
+    if any(value.size != frame_count for value in bundle.values()):
+        sizes = {name: int(value.size) for name, value in bundle.items()}
+        raise StageRExecutionContractError(f"R1 state/audio sample count mismatch: frames={frame_count}, traces={sizes}")
+    if not all(np.isfinite(value).all() for value in bundle.values()):
+        raise StageRExecutionContractError("R1 state traces contain non-finite values")
+    if np.any(bundle["rpm"] <= 0):
+        raise StageRExecutionContractError("R1 RPM trace must be positive; estimated or zero RPM is not qualified")
+    if np.any(bundle["load"] < 0) or np.any(bundle["load"] > 1) or np.any(bundle["throttle"] < 0) or np.any(bundle["throttle"] > 1):
+        raise StageRExecutionContractError("R1 load/throttle must be normalized fractions in [0, 1]")
+    if np.any(bundle["gear"] < 0):
+        raise StageRExecutionContractError("R1 gear trace must be non-negative")
+    expected_sha = owner.get("state_trace_sha256")
+    if not expected_sha and isinstance(owner.get("state_bindings"), Mapping):
+        expected_sha = owner["state_bindings"].get("trace_sha256")
+    actual_sha = _trace_sha256(bundle)
+    if expected_sha and str(expected_sha).lower() != actual_sha:
+        raise StageRExecutionContractError(f"R1 state trace SHA-256 mismatch: expected={expected_sha}, actual={actual_sha}")
+    return bundle, {
+        "rpm_trace_path": str(rpm_path),
+        "load_throttle_trace_path": str(load_path),
+        "gear_shift_trace_path": str(gear_path),
+        "trace_sha256": actual_sha,
+        "shift_source": shift_source,
+        "time_source": time_source,
+        "frame_count": frame_count,
+        "sample_rate_hz": sample_rate_hz,
+    }
+
+
+def _pcm24_stereo(signal: np.ndarray) -> tuple[np.ndarray, str]:
+    value = np.asarray(signal, dtype=np.float64)
+    if value.ndim != 2 or value.shape[1] not in {1, 2}:
+        raise StageRExecutionContractError("R1 MATLAB input supports only mono or stereo WAV")
+    if value.shape[1] == 1:
+        value = np.repeat(value, 2, axis=1)
+        policy = "mono_duplicated_for_stage_n_stereo_input"
+    else:
+        policy = "original_stereo_channels_preserved"
+    pcm24 = np.rint(np.clip(value, -1.0, 1.0) * ((1 << 23) - 1)).astype(np.int32)
+    return pcm24, policy
+
+
+def _write_r1_mat(path: Path, *, vehicle_id: str, scenario: str, source_sha256: str, pcm24: np.ndarray, sample_rate_hz: int, state: Mapping[str, np.ndarray], state_sha256: str, side: str) -> str:
+    try:
+        from scipy.io import savemat
+    except ImportError as exc:  # pragma: no cover - depends on environment
+        raise StageRExecutionContractError("SciPy is required to prepare MATLAB R1 inputs") from exc
+    savemat(
+        path,
+        {
+            "vehicle_id": vehicle_id,
+            "scenario": scenario,
+            "side": side,
+            "sample_rate_hz": np.asarray([[sample_rate_hz]], dtype=np.float64),
+            "signal_pcm24": pcm24,
+            "rpm": state["rpm"],
+            "state_trace": state["gear"],
+            "load": state["load"],
+            "throttle": state["throttle"],
+            "gear": state["gear"],
+            "shift_event": state["shift_event"],
+            "time_s": state["time_s"],
+            "source_wav_sha256": source_sha256,
+            "state_trace_sha256": state_sha256,
+        },
+        do_compression=True,
+        long_field_names=True,
+    )
+    return _sha256(path)
+
+
+def prepare_r1_matlab_inputs(
+    reference_record: Mapping[str, Any],
+    candidate_path: Path,
+    *,
+    candidate_meta: Mapping[str, Any],
+    output_root: Path,
+) -> dict[str, Any]:
+    """Prepare two SHA-bound MAT inputs for the existing MATLAB Stage-N runners.
+
+    This function only validates and packages inputs.  It never starts MATLAB,
+    estimates RPM, applies gain/EQ/AGC, or produces a tuning decision.  The
+    output root is an external/ignored working area because the MAT files
+    contain the unaltered analysis waveform.
+    """
+
+    plan = build_r1_execution_plan(reference_record, candidate_meta)
+    candidate_path = Path(candidate_path)
+    if not candidate_path.is_file():
+        raise StageRExecutionContractError(f"R1 candidate WAV is not readable: {candidate_path}")
+    output_root = Path(output_root)
+    if output_root.exists():
+        raise StageRExecutionContractError(f"refusing to overwrite R1 MATLAB input root: {output_root}")
+    reference_path = Path(str(plan["reference"]["external_path"]))
+    reference_signal, reference_rate, reference_header = read_unaltered_pcm_wav(reference_path)
+    candidate_signal, candidate_rate, candidate_header = read_unaltered_pcm_wav(candidate_path)
+    if reference_rate != candidate_rate:
+        raise StageRExecutionContractError(
+            f"R1 sample-rate mismatch: reference={reference_rate}, candidate={candidate_rate}; resampling is not implicit"
+        )
+    vehicle_id = str(reference_record.get("vehicle_id"))
+    scenario = str(reference_record.get("scenario") or reference_record.get("scenario_hint"))
+    reference_state, reference_state_meta = _load_state_bundle(
+        reference_record,
+        frame_count=int(reference_header["frames"]),
+        sample_rate_hz=reference_rate,
+        fallback_root=reference_path.parent,
+    )
+    candidate_state, candidate_state_meta = _load_state_bundle(
+        candidate_meta,
+        frame_count=int(candidate_header["frames"]),
+        sample_rate_hz=candidate_rate,
+        fallback_root=candidate_path.parent,
+    )
+    reference_window = _trace_window(reference_record)
+    candidate_window = _trace_window(candidate_meta)
+    if not np.isclose(reference_window[1] - reference_window[0], candidate_window[1] - candidate_window[0], rtol=0.0, atol=1.0 / reference_rate):
+        raise StageRExecutionContractError("R1 reference/candidate time-window durations are not aligned")
+    reference_pcm24, reference_channel_policy = _pcm24_stereo(reference_signal)
+    candidate_pcm24, candidate_channel_policy = _pcm24_stereo(candidate_signal)
+    output_root.mkdir(parents=True)
+    reference_mat = output_root / "reference.mat"
+    candidate_mat = output_root / "candidate.mat"
+    reference_mat_sha = _write_r1_mat(
+        reference_mat,
+        vehicle_id=vehicle_id,
+        scenario=scenario,
+        source_sha256=str(reference_header["sha256"]),
+        pcm24=reference_pcm24,
+        sample_rate_hz=reference_rate,
+        state=reference_state,
+        state_sha256=str(reference_state_meta["trace_sha256"]),
+        side="reference",
+    )
+    candidate_mat_sha = _write_r1_mat(
+        candidate_mat,
+        vehicle_id=vehicle_id,
+        scenario=scenario,
+        source_sha256=str(candidate_header["sha256"]),
+        pcm24=candidate_pcm24,
+        sample_rate_hz=candidate_rate,
+        state=candidate_state,
+        state_sha256=str(candidate_state_meta["trace_sha256"]),
+        side="candidate",
+    )
+    manifest = {
+        "schema_version": R1_INPUT_SCHEMA_VERSION,
+        "status": "READY_FOR_MANUAL_MATLAB_EXECUTION",
+        "source_policy": "external WAV is referenced by SHA; unaltered analysis waveform is packaged only in the external MAT working root",
+        "automatic_tuning_eligible": False,
+        "order_hard_gate": True,
+        "vehicle_id": vehicle_id,
+        "scenario": scenario,
+        "sample_rate_hz": reference_rate,
+        "state_units": {"time_s": "s", "rpm": "rpm", "load": "fraction_0_1", "throttle": "fraction_0_1", "gear": "integer_index", "shift_event": "0_or_1"},
+        "reference_window": {"start_s": reference_window[0], "end_s": reference_window[1]},
+        "candidate_window": {"start_s": candidate_window[0], "end_s": candidate_window[1]},
+        "inputs": {
+            "reference": {
+                "mat_file": reference_mat.name,
+                "mat_sha256": reference_mat_sha,
+                "source_wav": str(reference_path),
+                "source_wav_sha256": reference_header["sha256"],
+                "frames": reference_header["frames"],
+                "state": reference_state_meta,
+                "channel_policy": reference_channel_policy,
+            },
+            "candidate": {
+                "mat_file": candidate_mat.name,
+                "mat_sha256": candidate_mat_sha,
+                "source_wav": str(candidate_path),
+                "source_wav_sha256": candidate_header["sha256"],
+                "frames": candidate_header["frames"],
+                "state": candidate_state_meta,
+                "channel_policy": candidate_channel_policy,
+                "candidate_id": candidate_meta["candidate_id"],
+            },
+        },
+        "matlab_entrypoints": {
+            "script_root": "tools/sound_sim/s12/acoustic_comparator/matlab",
+            "order": "s12_stage_n_run_order_analysis(input_root, output_root)",
+            "psychoacoustics": "s12_stage_n_run_psychoacoustic_analysis(input_root, output_root)",
+            "manual_desktop_only": True,
+            "required_functions": list(MATLAB_R1_FUNCTIONS),
+        },
+        "mosqito_entrypoint": {
+            "module": "tools.sound_sim.s12.acoustic_comparator.psychoacoustics.mosqito_adapter",
+            "mode": "--project-input-root",
+            "manual_receipt_required": True,
+        },
+        "tuning_authority": plan["automatic_tuning_authority"],
+    }
+    (output_root / "input_manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    return manifest
 
 
 def _r2_case(record: Mapping[str, Any], candidate_meta: Mapping[str, Any], sample_rate_hz: int) -> ComparisonCase:
@@ -220,6 +586,21 @@ def build_r1_execution_plan(
             "estimated_rpm_allowed": False,
         },
         "matlab_required_functions": list(MATLAB_R1_FUNCTIONS),
+        "input_preparation": {
+            "schema_version": R1_INPUT_SCHEMA_VERSION,
+            "function": "prepare_r1_matlab_inputs",
+            "output_policy": "external_or_ignored_working_root; MAT contains unaltered analysis waveform",
+        },
+        "matlab_entrypoints": {
+            "order": "s12_stage_n_run_order_analysis(input_root, output_root)",
+            "psychoacoustics": "s12_stage_n_run_psychoacoustic_analysis(input_root, output_root)",
+            "manual_desktop_only": True,
+        },
+        "mosqito_entrypoint": {
+            "module": "tools.sound_sim.s12.acoustic_comparator.psychoacoustics.mosqito_adapter",
+            "mode": "--project-input-root",
+            "manual_receipt_required": True,
+        },
         "required_receipts": ["matlab_order_session_receipt", "matlab_psychoacoustic_session_receipt", "mosqito_project_receipt"],
         "order_hard_gate": True,
         "automatic_tuning_authority": "WITHHELD_UNTIL_STAGE_S_HUMAN_FEEDBACK_AND_HARD_GATES",
@@ -298,8 +679,10 @@ if __name__ == "__main__":  # pragma: no cover - exercised through CLI smoke tes
 
 __all__ = [
     "MATLAB_R1_FUNCTIONS",
+    "R1_INPUT_SCHEMA_VERSION",
     "StageRExecutionContractError",
     "build_r1_execution_plan",
+    "prepare_r1_matlab_inputs",
     "read_unaltered_pcm_wav",
     "run_r2_limited_comparison",
     "write_r2_outputs",
