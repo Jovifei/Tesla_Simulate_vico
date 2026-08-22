@@ -119,7 +119,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 - 最新完整 S12 Python 回归（当前 worktree）：`877 passed, 232 subtests passed in 1605.13s`；运行范围为 `tools/sound_sim/s12/tests` 与 `tools/sound_sim/s12/acoustic_identity_v015/tests`。
 - 本轮 Stage Q/R/S 聚焦测试：`31 passed`；MATLAB R2 收据边界校验通过；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 本轮采购候选/guard 修订后聚焦回归：S12 Q/R/S/URL + Track-P guard 共 `69 passed`；独立 Track-P guard 重新通过 `180 files / 2 symbols`。新增 R2 MATLAB 审计入口已作为分析证据路径加入 Track-S allowlist，未触及 Track-P 物理模型。
-- 当前 HEAD `f64b6f7` 的 S12 测试全集（`tools/sound_sim/s12/tests` + Track-P guard）重新执行：`426 passed, 114 subtests passed in 147.96s`。
+- 当前 HEAD `10a78bc2` 的 S12 测试全集（`tools/sound_sim/s12/tests`：`394 passed, 114 subtests`；Track-P pytest：`32 passed`）重新执行：合计 `426 passed, 114 subtests`；核心回归用时 `147.48s`，Track-P 用时 `1.21s`。
 - 本轮 Stage S/R 聚焦测试：`16 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
