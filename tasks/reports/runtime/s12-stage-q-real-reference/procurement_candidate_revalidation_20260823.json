@@ -1,0 +1,106 @@
+{
+  "schema_version": "s12.stage_q.procurement_candidate_revalidation.v1",
+  "generated_at": "2026-08-23",
+  "scope": [
+    "ferrari_458",
+    "hellcat",
+    "rx7_fd"
+  ],
+  "policy": {
+    "raw_audio_downloaded": false,
+    "purchase_performed": false,
+    "raw_media_in_git": false,
+    "r1_promotion_without_numeric_state": false,
+    "automatic_tuning_eligible": false
+  },
+  "candidates": [
+    {
+      "reference_id": "pole_ferrari_458_2013_revalidated",
+      "vehicle_id": "ferrari_458",
+      "vehicle_claim": "2013 Ferrari 458, F136 F 4.5 L V8, 7-speed dual-clutch",
+      "source_url": "https://pole.se/product/ferrari-458-2013-2/",
+      "license_url": "https://pole.se/faqs/",
+      "published_evidence": {
+        "files_claimed": 228,
+        "size_claimed": "20.8 GB",
+        "sample_rate_claimed": "96 kHz",
+        "bit_depth_claimed": "24 bit",
+        "synchronized_takes_claimed": 11,
+        "scenes_claimed": ["steady RPM", "ramps", "gearshifts", "idle", "revving", "startup", "shutdown"],
+        "capture_metadata_claimed": ["engine perspective", "exhaust perspective", "interior perspective", "Pro Tools/Reaper sessions", "embedded metadata"]
+      },
+      "status": "PROCUREMENT_CANDIDATE_NOT_R1",
+      "missing_for_r1": [
+        "purchase_or_written_permission_receipt",
+        "numeric_synchronized_rpm_trace",
+        "numeric_load_or_throttle_trace",
+        "numeric_gear_and_shift_event_trace",
+        "recording_device_and_agc_contract",
+        "stock_exhaust_confirmation_for_target_trim"
+      ],
+      "license_caveat": "The product/license scope must be checked for comparator and tuning use before acquisition; no audio was downloaded."
+    },
+    {
+      "reference_id": "sonniss_hellcat_2015_revalidated",
+      "vehicle_id": "hellcat",
+      "vehicle_claim": "2015 Dodge Challenger Hellcat, supercharged 6.2 L HEMI V8",
+      "source_url": "https://sonniss.com/sound-effects/dodge-challenger-hellcat-2015/",
+      "license_url": "https://sonniss.com/license/",
+      "published_evidence": {
+        "files_claimed": 196,
+        "size_claimed": "15.08 GB",
+        "sample_rate_claimed": "96 kHz",
+        "bit_depth_claimed": "24 bit",
+        "synchronized_takes_claimed": 12,
+        "scenes_claimed": ["steady RPM", "ramps", "gearshifts", "idle", "startup", "shutdown", "pass-by"],
+        "capture_metadata_claimed": ["engine perspective", "exhaust perspective", "interior perspective", "BWAV metadata", "Soundminer metadata"]
+      },
+      "status": "PROCUREMENT_CANDIDATE_NOT_R1",
+      "missing_for_r1": [
+        "purchase_or_written_permission_receipt",
+        "numeric_synchronized_rpm_trace",
+        "numeric_load_or_throttle_trace",
+        "numeric_gear_and_shift_event_trace",
+        "recording_device_and_agc_contract",
+        "stock_exhaust_confirmation_for_target_trim"
+      ],
+      "license_caveat": "The product/license scope must be checked for comparator and tuning use before acquisition; no audio was downloaded."
+    },
+    {
+      "reference_id": "asoundeffect_rx7_1990_revalidated",
+      "vehicle_id": "rx7_fd",
+      "vehicle_claim": "1990 Mazda RX-7, 2-rotor twin-turbo 13B Bridgeport Wankel",
+      "source_url": "https://www.asoundeffect.com/wp-content/uploads/2020/01/Mazda_RX7_1990.pdf",
+      "license_url": "https://www.asoundeffect.com/license-agreement/",
+      "published_evidence": {
+        "sample_rate_claimed": "96 kHz",
+        "bit_depth_claimed": "24 bit",
+        "scenes_claimed": ["steady RPM", "drive ramps", "idle", "blips", "gearshift-capable drive takes"],
+        "capture_metadata_claimed": ["Holophone", "Sound Devices 788T", "Zaxcom Fusion", "DPA/RE50/PCM-D100/PCM-M10 perspectives"]
+      },
+      "status": "PROCUREMENT_CANDIDATE_NOT_R1",
+      "configuration_caveat": "Bridgeport/twin-turbo configuration is not yet accepted as the target stock RX-7 FD trim.",
+      "missing_for_r1": [
+        "purchase_or_written_permission_receipt",
+        "numeric_synchronized_rpm_trace",
+        "numeric_load_or_throttle_trace",
+        "numeric_gear_and_shift_event_trace",
+        "recording_device_and_agc_contract",
+        "stock_trim_and_exhaust_confirmation"
+      ],
+      "license_caveat": "The license restricts unsynchronized redistribution and AI/ML use; obtain written scope confirmation before comparator or tuning use."
+    }
+  ],
+  "next_input_contract": {
+    "required_from_jovi_or_licensor": [
+      "permission_or_invoice/license identifier",
+      "external raw audio path alias",
+      "raw audio SHA-256",
+      "exact vehicle year/trim/exhaust state",
+      "scene and segment boundaries",
+      "timestamped RPM/load/throttle/gear/shift files",
+      "microphone position and recorder/AGC/post-processing contract"
+    ],
+    "after_receipt": "Run raw_audio_intake.py fail-closed; only then qualify R1 and run MATLAB order metrics."
+  }
+}

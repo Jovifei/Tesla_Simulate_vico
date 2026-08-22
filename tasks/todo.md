@@ -3965,4 +3965,6 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 固化外部回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v4_probe\probe_receipt_c63_03_v2.json`，SHA-256 `C1E39775BB97B2A833DA915B67F0481CA3702F85B6F476750CACF887EF748DE5`；原始媒体、WAV、日志和不完整探针结果均留在 `E:\Claude_allow\Download`，不进入 Git。
 - [x] 审计 `E:\Claude_allow\Download\s12-rx7sim-q-import-probe-20260823-v2`：无原始媒体；canonical manifest SHA 为 `D317D2E10193D12B6607B59A714ABF4A55DCEE78A94C30ED96070F6D2DBC3E46`，探针元数据/派生文件逐文件相同，23 条外部路径均为既有记录；不重复合并、不改变 `R1=0/R2=8/R3=15`。
 - [x] 复核中文 A/B 包 `s12-rx7sim-human-ab-zh-20260823-v3`：反馈模板仍为空，`feedback_binding.status=WAITING_FOR_JOVI_HUMAN_FEEDBACK`；不把模板当作人耳反馈，不启动 Stage S 调音。
+- [x] 2026-08-23 重新核对 Ferrari 458、Hellcat、RX-7 商业录音库的车型、同步 take、录音链和许可边界；写入 `tasks/reports/runtime/s12-stage-q-real-reference/procurement_candidate_revalidation_20260823.json`。三者均保持 `PROCUREMENT_CANDIDATE_NOT_R1`：未购买/未取得书面许可，且页面未提供数值同步 RPM/Load/Throttle/Gear 文件；未下载版权原始音频。
+- [x] 修复 Track-P guard 对 Stage-Q/R `run_r2_matlab_psychoacoustic_audit.m` 的保守 `matlab` 路径假阳性：按 Baseline v3 §3.3 仅加入精确 Track-S allowlist，不改变 180 个冻结文件或 2 个冻结符号；guard 与聚焦回归重新通过（`69 passed`）。
 - [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。

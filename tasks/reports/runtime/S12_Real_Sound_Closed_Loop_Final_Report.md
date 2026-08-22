@@ -20,6 +20,8 @@
 
 2026-08-23 导入探针去重审计：外部目录 `E:\Claude_allow\Download\s12-rx7sim-q-import-probe-20260823-v2` 不含原始音频；其 `reference_database_v2\reference_manifest.json` SHA-256 `D317D2E10193D12B6607B59A714ABF4A55DCEE78A94C30ED96070F6D2DBC3E46` 与 canonical 完全相同，探针内 50/50 个元数据/派生文件与 canonical 逐文件 SHA 相同，23 条外部路径均指向既有文件。没有新增 R1、同步状态或人耳反馈，因此未合并、未升级门禁。
 
+2026-08-23 采购候选复核：重新核对 Ferrari 458、Hellcat、RX-7 的商业录音库页面/曲目单。三者都声称有 steady-RPM、ramps、gearshift 或多麦位同步 take，但没有提供可验收的数值 RPM/Load/Throttle/Gear 文件；尚未购买或取得书面许可，因此仍是 `PROCUREMENT_CANDIDATE_NOT_R1`。机器可读清单为 `tasks/reports/runtime/s12-stage-q-real-reference/procurement_candidate_revalidation_20260823.json`；不下载版权原始音频，不改变 `R1=0`。
+
 2026-08-23 合法 R2 参考复核：重新从 Wikimedia Commons 保存 Ferrari 458 Italia 与 Dodge Challenger SRT Hellcat 两条明确许可音频到 `E:\Claude_allow\Download\s12-commons-r2-audit-20260823`，原始 OGG 与无增益 PCM WAV 的 SHA、来源和许可已写入外部 `revalidation_manifest_20260823.json`（SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`）。现有 Stage R R2 Comparator 复跑成功：Ferrari 频谱对数残差 `0.574775`、响度差 `+2.7001 dB`；Hellcat `0.503287`、`+0.4530 dB`。两案阶次均为 `not_evaluated_without_rpm_trace`，人耳反馈为空，自动调参仍关闭；R1 仍为 `0`。
 
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
@@ -114,6 +116,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 - 最新完整 S12 Python 回归（当前 worktree）：`877 passed, 232 subtests passed in 1605.13s`；运行范围为 `tools/sound_sim/s12/tests` 与 `tools/sound_sim/s12/acoustic_identity_v015/tests`。
 - 本轮 Stage Q/R/S 聚焦测试：`31 passed`；MATLAB R2 收据边界校验通过；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
+- 本轮采购候选/guard 修订后聚焦回归：S12 Q/R/S/URL + Track-P guard 共 `69 passed`；独立 Track-P guard 重新通过 `180 files / 2 symbols`。新增 R2 MATLAB 审计入口已作为分析证据路径加入 Track-S allowlist，未触及 Track-P 物理模型。
 - 本轮 Stage S/R 聚焦测试：`16 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。

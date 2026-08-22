@@ -78,6 +78,9 @@ TRACK_S_ALLOWLIST = frozenset({
     "tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_shared_psychoacoustic_fixture.m",
     "tools/sound_sim/s12/acoustic_identity_v015/stage_n/matlab_inputs.py",
     "tools/sound_sim/s12/acoustic_identity_v015/stage_n/matlab_receipts.py",
+    # Stage-Q/R MATLAB psychoacoustic audit is analysis/evidence only; it does
+    # not edit or execute the frozen Track-P physical model/toolchain.
+    "tools/sound_sim/s12/real_reference/run_r2_matlab_psychoacoustic_audit.m",
 })
 
 # 冻结文件清单摘要：sha256 over sorted "mode SP type SP blobsha TAB path" 行。
