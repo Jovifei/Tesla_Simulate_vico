@@ -50,7 +50,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定代码提交：`229b31b326fac5ab12013e4b6fccadc8f63176f5`
+- 报告绑定代码提交：`05c6d956f706e1db702591d71ccb82a043642bfd`
 - working tree dirty：`false`
 - push：否
 - merge：否
