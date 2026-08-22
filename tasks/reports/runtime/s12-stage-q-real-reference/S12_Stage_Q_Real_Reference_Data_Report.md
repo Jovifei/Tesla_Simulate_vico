@@ -77,6 +77,12 @@
 - 最终严格收据：`strict_decode_manifest_v3.json`，SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`；恢复策略和旧失败物收据：`download_recovery_receipt_v2.json`，SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`。
 - `24/24` 只表示这些公开 YouTube 派生媒体在仓库外可完整解码；它们仍没有可审计授权、原厂状态或同步 RPM/Load/Throttle/Gear/shift，全部保持 `R3`，不得进入 R1/R2 阶次门或自动调参。
 
+### 当前 yt-dlp 独立复试（2026-08-22）
+
+- 默认 `android_vr` 客户端对 `XWEjZHFQ5lc` 复现 `HTTP 403`；`web_embedded + Node.js EJS` 的渐进式 `format 18` 生成的短头部通过 `yt-dlp` 表面成功，但被 `ffmpeg -xerror` 判定为 `partial file`，未计入完整率。
+- 改用 `134 + 140-9`（XWE）和 `134 + 140-8`（GQ）分流后，两个视频均 `ffprobe=0` 且完整流 `ffmpeg -xerror=0`；残留 `.part`/短头部保留在外部目录，未覆盖旧证据。
+- 外部收据：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_yt_dlp_current_20260822\yt_dlp_node_web_embedded_retry_receipt_v2.json`，SHA-256 `52996AB90C3145B292E0E2964560B70A2A2F46443283C0C79ED90458A94E5BF8`。本次只是下载完整性回退验证；两条仍是 YouTube 派生 `R3`，不进入 R1/R2、阶次门或调参。
+
 ### Node/EJS 当前环境对照探针（2026-08-22）
 
 - 为区分客户端挑战解析与媒体出口拒绝，在不读取账号 Cookie 的前提下，对 `cKx-cb0fzeo` 以 `yt-dlp 2026.06.30.234726 + Node.js EJS`、`bestaudio/best` 分别使用默认代理和 `--proxy ""` 重试；两次都在签名 `googlevideo` 数据请求阶段返回 `HTTP 403`，没有产生新的完整媒体文件。

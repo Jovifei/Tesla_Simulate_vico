@@ -8,6 +8,8 @@
 
 当前环境对照探针：使用不读取账号 Cookie 的 Node.js EJS，对 `cKx-cb0fzeo` 分别走默认代理和 `--proxy ""` 的 `bestaudio/best` 请求，挑战解析成功但签名媒体请求两次均为 `HTTP 403`，没有生成新的完整媒体。探针收据已写入 Stage Q，旧的 24/24 外部解码收据保持不变。
 
+本轮针对用户反馈再次做了独立 `yt-dlp` 验证：默认 `android_vr` 对 `XWEjZHFQ5lc` 复现 `HTTP 403`；切到 `web_embedded + Node.js EJS` 后，渐进式 `format 18` 虽显示下载完成，但严格 `ffmpeg -xerror` 判定为 `partial file`，未被采纳。改用 `134 + 140-9/140-8` 分流后，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 均通过完整流解码。外部收据 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_yt_dlp_current_20260822\yt_dlp_node_web_embedded_retry_receipt_v2.json`，SHA-256 `52996AB90C3145B292E0E2964560B70A2A2F46443283C0C79ED90458A94E5BF8`。这只验证下载/解码回退，不提升 YouTube 素材的 R1/R2 资格。
+
 最终视频绑定的 R3 重算也已完成：从上述 24 条最终视频重新抽取无增益 PCM WAV，并用 intake manifest SHA `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF` 绑定到分析收据 `final_video_analysis_receipt_v1.json`（SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`）。中文差异报告位于仓库外 `analysis_final_video_r3_v1/S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`，SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。该结果是 24/24、8 车各 3 条的最新 R3 数字域诊断，不是 R1/R2 资格，也没有启动 MATLAB 阶次、自动调参或 Profile Candidate。
 
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
