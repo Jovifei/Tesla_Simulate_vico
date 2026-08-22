@@ -1,0 +1,52 @@
+{
+  "schema_version": "s12-stage-q-freesound-candidate-audit-v1",
+  "generated_at": "2026-08-22",
+  "reference_id": "freesound_moscow_raceway_ferrari_458_italia_gt3_556039",
+  "vehicle_id": "ferrari_458",
+  "vehicle_variant": "Ferrari 458 Italia GT3",
+  "scenario": "race_passby_mixed_recording",
+  "source_url": "https://freesound.org/people/Walking.With.Microphones/sounds/556039/",
+  "license": "CC0-1.0",
+  "license_evidence": "source_page.html declares Creative Commons 0 and links to http://creativecommons.org/publicdomain/zero/1.0/",
+  "external_root": "E:\\Claude_allow\\Download\\s12-freesound-authorized-20260822\\ferrari_458_gt3_cc0",
+  "raw_media_policy": "external_only_not_in_git",
+  "files": {
+    "source_page.html": {
+      "path": "E:\\Claude_allow\\Download\\s12-freesound-authorized-20260822\\ferrari_458_gt3_cc0\\source_page.html",
+      "sha256": "9c8b73d335dc23420484a65e054c9c94e454f28d5b17708de0a80539ce82f505",
+      "role": "license_and_provenance_snapshot"
+    },
+    "moscow_raceway_gt_race_sounds_hq_preview.mp3": {
+      "path": "E:\\Claude_allow\\Download\\s12-freesound-authorized-20260822\\ferrari_458_gt3_cc0\\moscow_raceway_gt_race_sounds_hq_preview.mp3",
+      "sha256": "48e347d37de126be15fefc188c2e62a281d186cafce6a15858abc3c1aa4fa49b",
+      "role": "licensed_preview_audio",
+      "codec": "mp3",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_s": 56.756687
+    },
+    "moscow_raceway_gt_race_sounds_hq_preview.wav": {
+      "path": "E:\\Claude_allow\\Download\\s12-freesound-authorized-20260822\\ferrari_458_gt3_cc0\\moscow_raceway_gt_race_sounds_hq_preview.wav",
+      "sha256": "b0cc9e3d7d7b315420242d71478eb83f08841d954cb4559495711bd73318ea79",
+      "role": "unaltered_decode_derivative_for_audit_only",
+      "codec": "pcm_s16le",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_s": 56.756687
+    }
+  },
+  "capture_metadata": {
+    "microphone": "unknown",
+    "recording_device": "Zoom H6",
+    "agc_or_post_processing": "unknown",
+    "source_page_vehicle_listing": "Track 3 is listed as FERRARI 458 ITALIA GT3; the same file lists 16 other race vehicles.",
+    "synchronized_rpm_state": "missing",
+    "segment_time_binding": "missing"
+  },
+  "classification": "R2_CANDIDATE_NOT_COMPARISON_READY",
+  "r1_eligible": false,
+  "r2_eligible": false,
+  "comparator_status": "NOT_RUN_NO_SINGLE_VEHICLE_SEGMENT",
+  "automatic_tuning_eligible": false,
+  "reason": "The license and model mention are auditable, but the downloaded item is a mixed race recording with no timestamp that isolates the Ferrari segment and no synchronized RPM/load/throttle/gear trace. It is retained as a lawful candidate only; it does not enter the current R2 metrics or any tuning loop."
+}

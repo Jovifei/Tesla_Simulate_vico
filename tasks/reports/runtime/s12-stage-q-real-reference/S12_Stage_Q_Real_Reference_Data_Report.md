@@ -79,6 +79,13 @@
 
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
+### 新增 CC0 Ferrari 458 GT3 候选（2026-08-22）
+
+公开检索补到一条 Freesound CC0 录音：[Moscow Raceway GT Race sounds](https://freesound.org/people/Walking.With.Microphones/sounds/556039/)。页面明确列出 `FERRARI 458 ITALIA GT3`，并注明 Zoom H6 录制；但同一文件还列出其他 16 辆 GT 赛车，没有分段时间绑定，也没有 RPM/Load/Throttle/Gear 状态。因此它只能登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，不进入当前 R2 指标、A/B 或调参。
+
+- 外部目录：`E:\Claude_allow\Download\s12-freesound-authorized-20260822\ferrari_458_gt3_cc0`；原始/派生媒体均未进入 Git。
+- 审计指针：[freesound_ferrari_458_gt3_cc0_audit_20260822.json](freesound_ferrari_458_gt3_cc0_audit_20260822.json)，其中绑定页面 SHA、MP3 SHA `48e347d37de126be15fefc188c2e62a281d186cafce6a15858abc3c1aa4fa49b` 和 PCM SHA `b0cc9e3d7d7b315420242d71478eb83f08841d954cb4559495711bd73318ea79`。
+
 ## 可采购/授权的 R1 候选（尚未纳入）
 
 公开检索没有找到可直接下载、同时满足本项目 R1 合同的三锚点原始包。以下商业库是下一步最短路径，但当前没有购买或 Jovi 的使用授权，且网页营销描述仍需在取得文件后逐条验收，不能先标成 R1：
