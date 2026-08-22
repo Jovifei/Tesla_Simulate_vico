@@ -4,7 +4,7 @@
 
 ## 结论先行
 
-本轮已经把压缩包中的八车型目录按“每车 3 条”落成 24 条外部来源，并完成了视频→无增益 PCM WAV→SHA-256→抽帧→派生特征→Comparator 诊断链。第一次批量下载受到 YouTube 403/SABR 影响，仅 1/24 条完整；修正为默认客户端失败后使用 Android 客户端回退，并对 3 个损坏容器更换来源后，最终 24/24 条均有可读取视频、WAV、视频 SHA 和 WAV SHA。
+本轮已经把压缩包中的八车型目录按“每车 3 条”落成 24 条外部来源，并完成了视频→无增益 PCM WAV→SHA-256→抽帧→派生特征→Comparator 诊断链。第一次批量下载受到 YouTube 403/SABR 影响，仅 1/24 条完整；Android 客户端回退得到 21 条可用记录，另外 3 条保留为不完整容器并用替代 URL 补齐组合库。针对原始 3 条又用 `yt-dlp + Node.js EJS + web_embedded` 重试：只有 `yXw_35i3RMM` 通过完整音频解码，`XWEjZHFQ5lc` 和 `GQ0972wohFs` 仍是“可探测头部、媒体体不完整”，因此没有被计为完整来源。最终 24/24 指的是含 3 条替代 URL 的组合库，不是原始 24 个 YouTube URL 全部恢复。
 
 这不等于“真实原厂声浪闭环完成”。严格门禁下 24 条全部是 `R3`：公开 YouTube 视频的授权收据、精确原厂排气确认、同步 RPM/负载/挡位、麦克风与 AGC 采集合同均未提供。Comparator 结果只能作为数字域相对诊断；阶次、身份分数、自动调参和 Profile 更新均明确关闭。
 
@@ -26,9 +26,9 @@
 - 输入压缩包 SHA-256：`139A7EC28DE65CF446096A230C6ACBE95D0BD9F902F00A913A57D993305CD375`（已匹配）。
 - 压缩包安全解压：3 个文档文件，无路径穿越；解压目录位于仓库外。
 - 最终来源数：`8 × 3 = 24`，每车型 3 条，URL 唯一。
-- 视频/WAV：`24/24` 可探测、可读取；WAV 为无增益 PCM 解码产物，未做 EQ/AGC/响度匹配。
+- 视频/WAV：组合库 `24/24` 可探测、可读取；原始 URL 重试中 `1/3` 通过完整音频解码，另 `2/3` 明确为 `INCOMPLETE_MEDIA_BODY`。WAV 为无增益 PCM 解码产物，未做 EQ/AGC/响度匹配。
 - 抽帧：每条最多 12 帧；当前环境没有 Tesseract，OCR 状态为 `NOT_AVAILABLE_TESSERACT_MISSING`，没有把仪表读数当作 RPM 证据。
-- 首轮失败物：`intake_20260822_v1` 保留 403/不完整下载日志；修正后的完整批次为 `intake_20260822_v2`，3 个损坏容器使用 `intake_replacements_20260822_v1` 替换。没有删除或覆盖首轮证据。
+- 首轮失败物：`intake_20260822_v1` 保留 403/不完整下载日志；`intake_20260822_v2` 保留 21 条可用记录和 3 个损坏容器，`intake_replacements_20260822_v1` 提供 3 条替代 URL。Node.js/Web 客户端重试证据在外部 `retry_js_20260822/youtube_retry_js_manifest_v1.json`，其中两条仍标为 `INCOMPLETE_MEDIA_BODY`；没有删除或覆盖首轮证据。
 
 ## 派生结果（全部在仓库外）
 
@@ -41,6 +41,7 @@
 - `comparator_diagnostics_v1.json`：24 条“真实公开视频派生音频 vs 本地 synthetic 候选”的相对差异。
 - `human_ab_package_v1.json`：中文 A/B 任务清单，状态 `WAITING_FOR_JOVI_LISTENING`。
 - `parameter_diagnostics_v1.json`：每车 3 条来源的带不确定性诊断方向，状态 `WITHHELD_NO_AUTO_TUNING`。
+- `retry_js_20260822/youtube_retry_js_manifest_v1.json`：Node.js/Web 客户端回退、文件 SHA、ffprobe/ffmpeg 完整性校验和 403/截断结论；原始媒体仍只在仓库外。
 
 Git 只保留本报告、入口代码和这些外部产物的路径/SHA/派生特征引用；没有复制任何原始视频或版权音频。
 

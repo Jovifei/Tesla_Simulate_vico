@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考；RX-7 仅新增 1 条 R3 旋转机械演示；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
 | R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成未增益分析信号的 R2 频谱/响度/心理声学相对比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
-| S 反馈调音 | `WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 中文听审合同和 SHA/file-ID 绑定合同 | 没有真实 Jovi 听审和调音轮次 |
+| S 反馈调音 | `R2_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文 R2 A/B 包，3 个案例绑定参考/候选 SHA；RX-7 FD 明确排除为 R3 | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
 ## 八车型与工况
@@ -35,7 +35,7 @@
 - 阶次 / Order-RPM：`NOT_QUALIFIED`，所有新增公开素材都没有同步 RPM。
 - 频谱、响度、心理声学：Ferrari 458、Hellcat、Supra 均只有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。
 - 瞬态：没有同步 Gear/shift/state；不进入自动门。
-- 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。
+- 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。R2 A/B 包路径为 `E:\Claude_allow\Download\s12-stage-s-human-ab-r2-20260822`，study manifest SHA 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。
 - 真实性百分比：禁止输出。
 
 ## 调音与交接
@@ -50,8 +50,8 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定提交：`cde123d`（记录非目标 CC0 测功机视频筛查及 R3 限制）；此前三锚点商业 R1 候选为 `ae95434`，三条 R2 口径修正为 `770149c`，R2 公开许可素材与差异报告提交为 `1a8dc38`。
-- working tree dirty：`false`（本次绑定前的干净提交）
+- 报告基线提交：`b915b99`（YouTube 403 回退、24 条外部 R3 诊断和中文报告）；本次 R2 A/B 包和 Stage S/T 状态修正由后续提交绑定，最终 SHA 以 `git rev-parse HEAD` 和远端核验为准。
+- working tree：提交前必须为干净；本报告不得把外部试听副本写入 Git。
 - push：是
 - merge：否
 - PR：否
@@ -62,6 +62,6 @@
 2. 精确车型/配置/原厂状态、场景、麦克风位置和 AGC/后处理合同；
 3. 真实 Jovi 中文听审结果及播放元数据；R2 结果不能替代 R1 或人耳反馈。
 
-本轮 R2 结果：`tasks/reports/runtime/s12-stage-r-real-sound-difference/web-authorized-20260822/`；原始媒体仅存于 `E:\Claude_allow\Download\s12-web-authorized-20260822`，Git 只保存许可、路径和 SHA-256。
+本轮 R2 结果：`tasks/reports/runtime/s12-stage-r-real-sound-difference/web-authorized-20260822/`；中文 A/B 包：`E:\Claude_allow\Download\s12-stage-s-human-ab-r2-20260822`；原始媒体和试听副本均存于仓库外，Git 只保存许可、路径、SHA-256 和派生合同。
 
 所有产物继续声明：`synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。

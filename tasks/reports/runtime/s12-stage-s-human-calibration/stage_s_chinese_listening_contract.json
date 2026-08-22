@@ -2,8 +2,10 @@
   "audio_materialization": {
     "analysis_signal": "unaltered_analysis_signal",
     "audition_signal": "loudness_matched_audition_signal_separate",
-    "reason": "Stage Q 没有 R1 真实参考；禁止生成占位音频或把 synthetic parent 当作真实参考。",
-    "status": "NOT_MATERIALIZED"
+    "package_manifest_sha256": "9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6",
+    "package_path_alias": "E:\\Claude_allow\\Download\\s12-stage-s-human-ab-r2-20260822",
+    "reason": "已为三条合法 R2 参考生成外部中文 A/B 试听副本；试听副本不进入分析指标，也不把 R2 升级为 R1。",
+    "status": "R2_AB_PACKAGE_EXTERNAL"
   },
   "dimensions": [
     {
@@ -144,10 +146,10 @@
     "synthetic_reference_is_real_reference": false
   },
   "locale": "zh-CN",
-  "r_status": "BLOCKED_REFERENCE_QUALIFICATION",
+  "r_status": "R2_LIMITED_COMPARISON_COMPLETE_R1_BLOCKED",
   "schema_version": "s12-stage-s-chinese-listening-contract-v1",
   "stage": "S",
-  "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
   "study_type": "webMUSHRA_or_AB",
   "ui_localization_status": "PACKAGE_CONFIG_ZH_CN_AND_UPSTREAM_NLS_PATCH_AVAILABLE",
   "ui_text": {
@@ -161,5 +163,15 @@
     "ferrari_458",
     "hellcat",
     "rx7_fd"
-  ]
+  ],
+  "r2_cases": [
+    "ferrari_458_goodwood_2010",
+    "hellcat_launching_sound_2019",
+    "supra_jza80_chassis_dyno_cc0_2019"
+  ],
+  "r2_missing_anchor": {
+    "vehicle_id": "rx7_fd",
+    "status": "R3_ONLY",
+    "reason": "Wankel 13B 机械演示不是 RX-7 FD 整车录音，不能进入正式 R2 A/B。"
+  }
 }

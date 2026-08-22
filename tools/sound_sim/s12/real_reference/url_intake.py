@@ -215,11 +215,42 @@ def _find_downloaded_video(output: str, stem: str, root: Path) -> Path:
     return candidates[-1]
 
 
+def _validate_downloaded_media(video_path: Path) -> None:
+    """Reject a container that only has a header or a truncated media body."""
+
+    probe = _probe(video_path)
+    _audio_stream(probe)
+    duration = float((probe.get("format") or {}).get("duration") or 0.0)
+    if duration <= 0:
+        raise UrlIntakeError(f"downloaded video has no positive duration: {video_path}")
+    command = [
+        _tool("ffmpeg"),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        str(video_path),
+        "-map",
+        "0:a:0",
+        "-f",
+        "null",
+        "-",
+    ]
+    result = subprocess.run(command, check=False, capture_output=True, text=True)
+    diagnostics = result.stderr or ""
+    if result.returncode != 0 or re.search(
+        r"partial file|invalid data|eof while reading|error while decoding",
+        diagnostics,
+        flags=re.IGNORECASE,
+    ):
+        detail = " ".join(diagnostics.split())[:500] or f"ffmpeg exit={result.returncode}"
+        raise UrlIntakeError(f"downloaded video is incomplete or undecodable: {detail}")
+
+
 def _download_video(url: str, root: Path, stem: str) -> tuple[Path, Path, str]:
     yt_dlp = _tool("yt-dlp")
-    template = root / f"{stem}.%(ext)s"
     log_path = root / f"{stem}.download.log"
-    command = [
+    base_command = [
         yt_dlp,
         "--no-playlist",
         "--no-part",
@@ -230,49 +261,64 @@ def _download_video(url: str, root: Path, stem: str) -> tuple[Path, Path, str]:
         "after_move:filepath",
         "-f",
         "bestvideo*+bestaudio/best",
-        "-o",
-        str(template),
         url,
     ]
-    commands = [command]
+    commands = [base_command]
     host = urlparse(url).netloc.lower().split(":", 1)[0]
     if host == "youtube.com" or host.endswith(".youtube.com") or host == "youtu.be":
         # YouTube may expose only SABR/image formats to the default client.
-        # Keep the default attempt first, then use a documented client fallback
+        # Keep the default attempt first, then use documented client fallbacks
         # without changing the source URL or relaxing the external-only policy.
-        fallback = list(command)
-        format_index = fallback.index("-f")
-        fallback[format_index:format_index] = ["--extractor-args", "youtube:player_client=android"]
-        commands.append(fallback)
+        for client in ("android", "web_embedded", "mweb"):
+            fallback = list(base_command)
+            format_index = fallback.index("-f")
+            fallback[format_index:format_index] = [
+                "--force-ipv4",
+                "--extractor-args",
+                f"youtube:player_client={client}",
+            ]
+            if client in {"web_embedded", "mweb"} and shutil.which("node"):
+                fallback[format_index:format_index] = ["--js-runtimes", "node"]
+            commands.append(fallback)
 
     attempts: list[str] = []
-    result = None
-    for attempt_index, attempt in enumerate(commands, start=1):
+    last_error: Exception | None = None
+    for attempt_index, command_spec in enumerate(commands, start=1):
+        attempt_stem = f"{stem}.attempt{attempt_index}"
+        attempt = list(command_spec)
+        # The URL is the final positional argument; insert the per-attempt
+        # template immediately before it so incomplete files remain auditable.
+        attempt[-1:-1] = ["-o", str(root / f"{attempt_stem}.%(ext)s")]
         try:
             result = subprocess.run(attempt, check=True, capture_output=True, text=True)
+            try:
+                video_path = _find_downloaded_video(result.stdout, attempt_stem, root)
+                _validate_downloaded_media(video_path)
+            except (OSError, UrlIntakeError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+                last_error = exc
+                attempts.append(
+                    f"ATTEMPT {attempt_index} INCOMPLETE\nCOMMAND: {json.dumps(attempt, ensure_ascii=False)}\n"
+                    f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}\nVALIDATION:\n{exc}"
+                )
+                if attempt_index == len(commands):
+                    break
+                continue
             attempts.append(
                 f"ATTEMPT {attempt_index} OK\nCOMMAND: {json.dumps(attempt, ensure_ascii=False)}\n"
                 f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
             )
-            break
+            log_path.write_text("\n\n".join(attempts), encoding="utf-8", newline="\n")
+            return video_path, log_path, result.stdout
         except subprocess.CalledProcessError as exc:
+            last_error = exc
             attempts.append(
                 f"ATTEMPT {attempt_index} FAILED exit={exc.returncode}\nCOMMAND: {json.dumps(attempt, ensure_ascii=False)}\n"
                 f"STDOUT:\n{exc.stdout or ''}\nSTDERR:\n{exc.stderr or ''}"
             )
-            if attempt_index == len(commands):
-                log_path.write_text("\n\n".join(attempts), encoding="utf-8", newline="\n")
-                raise
-
-    if result is None:  # pragma: no cover - defensive guard for future command changes
-        raise UrlIntakeError("yt-dlp did not produce a result")
-    log_path.write_text(
-        "\n\n".join(attempts),
-        encoding="utf-8",
-        newline="\n",
-    )
-    video_path = _find_downloaded_video(result.stdout, stem, root)
-    return video_path, log_path, result.stdout
+    log_path.write_text("\n\n".join(attempts), encoding="utf-8", newline="\n")
+    if last_error is not None:
+        raise last_error
+    raise UrlIntakeError("yt-dlp did not produce a validated result")
 
 
 def _default_state_contract() -> dict[str, Any]:

@@ -1312,3 +1312,9 @@ Rules:
   - 对 YouTube 下载先保留默认客户端；遇到失败时才使用 `youtube:player_client=android` 回退，并把两次命令、stdout、stderr 和最终视频路径写入外部下载日志。
   - intake 成功必须同时有可探测视频、抽取 WAV、视频 SHA、WAV SHA 和记录；目录里有 `.mp4/.webm` 不等于记录成功。
   - 首轮失败目录只作诊断证据，重试使用全新外部目录，禁止覆盖、拼接或把空文件冒充原始来源。
+
+# 2026-08-22 S12 Stage Q YouTube completeness correction
+
+- `yt-dlp` 返回 0 只能说明下载器完成了自己的请求；YouTube 可能仍返回带完整 MP4 头部、但媒体体被截断的文件。必须用 `ffmpeg` 实际解码音频，并把 `partial file` 等诊断视为失败。
+- 默认客户端→Android→Node.js `web_embedded`/`mweb` 的回退顺序应保留每次尝试的独立文件和日志；替代 URL 补齐的组合库不能描述为原始 URL 全部恢复。
+- 当前 3 条原始失败 URL 的复核结果是 1 条完整、2 条 `INCOMPLETE_MEDIA_BODY`；不完整媒体不得进入 WAV、Comparator、R2 或人耳 A/B 包。
