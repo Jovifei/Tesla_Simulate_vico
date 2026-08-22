@@ -8,7 +8,7 @@
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
 | --- | --- | --- | --- |
-| Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考；RX-7 仅新增 1 条 R3 旋转机械演示；另记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
+| Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考；RX-7 仅新增 1 条 R3 旋转机械演示；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
 | R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成未增益分析信号的 R2 频谱/响度/心理声学相对比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
 | S 反馈调音 | `WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 中文听审合同和 SHA/file-ID 绑定合同 | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
@@ -50,7 +50,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定提交：`ae95434`（记录三锚点商业 R1 候选及逐段验收条件）；此前三条 R2 口径修正为 `770149c`，R2 公开许可素材与差异报告提交为 `1a8dc38`。
+- 报告绑定提交：`cde123d`（记录非目标 CC0 测功机视频筛查及 R3 限制）；此前三锚点商业 R1 候选为 `ae95434`，三条 R2 口径修正为 `770149c`，R2 公开许可素材与差异报告提交为 `1a8dc38`。
 - working tree dirty：`false`（本次绑定前的干净提交）
 - push：是
 - merge：否
