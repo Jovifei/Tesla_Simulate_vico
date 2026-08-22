@@ -1,0 +1,240 @@
+{
+  "overall_r1_ready": false,
+  "qualification_rule": "只有合法授权、精确车辆/原厂证据、外部后置视角和同步 RPM/state 才能成为 R1。",
+  "schema_version": "s12-stage-q-reference-database-v2",
+  "stage": "Q",
+  "vehicles": [
+    {
+      "anchor_vehicle": true,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 1,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 1,
+      "scenario_hints": [
+        "acceleration"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "Ferrari 458"
+    },
+    {
+      "anchor_vehicle": true,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 4
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 4,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 4,
+      "scenario_hints": [
+        "acceleration",
+        "afterfire",
+        "full_pull",
+        "shift"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "Hellcat"
+    },
+    {
+      "anchor_vehicle": true,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 1,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 1,
+      "scenario_hints": [
+        "acceleration"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "RX-7 FD"
+    },
+    {
+      "anchor_vehicle": false,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 1,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 1,
+      "scenario_hints": [
+        "acceleration"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "aventador_lp700",
+      "vehicle_name_zh": "Aventador LP700"
+    },
+    {
+      "anchor_vehicle": false,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 3
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 3,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 3,
+      "scenario_hints": [
+        "acceleration",
+        "afterfire",
+        "shift"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "c63_w204",
+      "vehicle_name_zh": "C63 W204"
+    },
+    {
+      "anchor_vehicle": false,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 3
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 3,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 3,
+      "scenario_hints": [
+        "acceleration",
+        "afterfire"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "gtr_r35",
+      "vehicle_name_zh": "GT-R R35"
+    },
+    {
+      "anchor_vehicle": false,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 1,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 1,
+      "scenario_hints": [
+        "full_pull"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "lfa",
+      "vehicle_name_zh": "LFA"
+    },
+    {
+      "anchor_vehicle": false,
+      "evidence_levels": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1
+      },
+      "missing_requirements": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "present_count": 1,
+      "r1_eligible_count": 0,
+      "r2_eligible_count": 0,
+      "recording_count": 1,
+      "scenario_hints": [
+        "acceleration"
+      ],
+      "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+      "vehicle_id": "supra_jza80",
+      "vehicle_name_zh": "Supra JZA80"
+    }
+  ]
+}

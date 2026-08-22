@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-q-reference-database-v2",
+  "type": "object",
+  "required": ["schema_version", "stage", "status", "stop_state", "raw_media_root", "vehicles", "anchor_vehicles", "recordings", "unmapped_external_media", "blockers"],
+  "properties": {
+    "schema_version": {"const": "s12-stage-q-reference-database-v2"},
+    "stage": {"const": "Q"},
+    "status": {"enum": ["REAL_REFERENCE_DATASET_READY", "REAL_REFERENCE_DATASET_LIMITED"]},
+    "stop_state": {"enum": ["READY_FOR_STAGE_R", "WAITING_FOR_REAL_REFERENCE_DATA"]},
+    "raw_media_root": {"type": "string", "minLength": 1},
+    "vehicles": {"type": "array", "minItems": 8, "items": {"type": "string"}},
+    "anchor_vehicles": {"const": ["ferrari_458", "hellcat", "rx7_fd"]},
+    "recordings": {"type": "array", "items": {"$ref": "#/$defs/recording"}},
+    "unmapped_external_media": {"type": "array", "items": {"type": "object", "required": ["relative_path", "sha256", "status", "use_policy"]}},
+    "blockers": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  },
+  "$defs": {
+    "recording": {
+      "type": "object",
+      "required": ["recording_id", "vehicle_id", "file_present", "provenance", "evidence", "analysis_contract"],
+      "properties": {
+        "recording_id": {"type": "string"},
+        "vehicle_id": {"type": "string"},
+        "file_present": {"type": "boolean"},
+        "sha256": {"type": ["string", "null"]},
+        "provenance": {"type": "object"},
+        "evidence": {"type": "object"},
+        "analysis_contract": {"type": "object", "required": ["analysis_signal", "rpm_state_status"]}
+      }
+    }
+  }
+}

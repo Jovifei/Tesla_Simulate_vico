@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\ferrari_458_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "ferrari_458_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "公开加速候选；车型、原厂状态、视角与 RPM 未完成审计。",
+  "sha256": "22b0d0e1da61c8c31667633f58d412022f9563ea0538d1ce002891ffd3f78ddf",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\ferrari_458_accel.download.log",
+  "source_log_sha256": "13ee3b2676885e8a55aa2ef0973c99a1ae6bd5790760652ee0f9ea95b1ee99bd",
+  "source_url": "https://www.youtube.com/watch?v=X0yiRilcKME",
+  "source_url_sha256": "c41170785036ee12abb9fa025d84b6aaed8dcd45328a0eeb4db646b0117fb804",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "ferrari_458"
+}

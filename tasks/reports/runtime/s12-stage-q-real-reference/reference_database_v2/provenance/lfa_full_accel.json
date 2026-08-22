@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\lfa_full_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "lfa_full_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "LFA 加速候选；年份、原厂状态、视角与同步 RPM 未验证。",
+  "sha256": "ec75623d44c7bae13773e9a270b2df3fe1c3f10746a36373c816f9ad191a3e19",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\lfa_full_accel.download.log",
+  "source_log_sha256": "13868d1cba8a4c829ba8023bcf7891622a630372a4050cf9f75fdba658329d04",
+  "source_url": "https://www.youtube.com/watch?v=bpv7N8smafY",
+  "source_url_sha256": "6506a2e2319db5593b84e12c499b98c4fb11da76673470b6395d70ee641edea6",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "lfa"
+}

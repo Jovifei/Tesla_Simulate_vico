@@ -1,0 +1,152 @@
+[
+  {
+    "end_s": 177.365333,
+    "recording_id": "aventador_lp700_accel",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "aventador_lp700"
+  },
+  {
+    "end_s": 12.0135,
+    "recording_id": "c63_w204_close_downshift",
+    "scenario": "shift",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "c63_w204"
+  },
+  {
+    "end_s": 62.008896,
+    "recording_id": "c63_w204_headers_backfire",
+    "scenario": "afterfire",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "c63_w204"
+  },
+  {
+    "end_s": 143.786667,
+    "recording_id": "c63_w204_performance_accel",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "c63_w204"
+  },
+  {
+    "end_s": 212.16,
+    "recording_id": "ferrari_458_accel",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "ferrari_458"
+  },
+  {
+    "end_s": 119.9935,
+    "recording_id": "gtr_r35_nismo_accel",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "gtr_r35"
+  },
+  {
+    "end_s": 30.0135,
+    "recording_id": "gtr_r35_tomei_close",
+    "scenario": "afterfire",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "gtr_r35"
+  },
+  {
+    "end_s": 68.661417,
+    "recording_id": "gtr_r35_tuned_backfire",
+    "scenario": "afterfire",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "gtr_r35"
+  },
+  {
+    "end_s": 11.0135,
+    "recording_id": "hellcat_burble_tune",
+    "scenario": "afterfire",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "hellcat"
+  },
+  {
+    "end_s": 25.0135,
+    "recording_id": "hellcat_redeye_downshift",
+    "scenario": "shift",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "hellcat"
+  },
+  {
+    "end_s": 39.0135,
+    "recording_id": "hellcat_redeye_leave",
+    "scenario": "full_pull",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "hellcat"
+  },
+  {
+    "end_s": 142.802729,
+    "recording_id": "hellcat_stock_accel",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "hellcat"
+  },
+  {
+    "end_s": 90.430125,
+    "recording_id": "lfa_full_accel",
+    "scenario": "full_pull",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "lfa"
+  },
+  {
+    "end_s": 63.947755,
+    "recording_id": "rx7_fd_13brew",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
+    "end_s": 16.695167,
+    "recording_id": "supra_jza80_stock",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "supra_jza80"
+  }
+]

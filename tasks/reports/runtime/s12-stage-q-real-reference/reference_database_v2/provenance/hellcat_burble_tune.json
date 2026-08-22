@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_burble_tune.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "hellcat_burble_tune",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Burble tune 候选，明确不能作为原厂调音标定目标。",
+  "sha256": "c062f3b8fd31c32a1c970eff34b742a6e292e11c62aa754fc0cb1d0a854a946e",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_burble_tune.download.log",
+  "source_log_sha256": "38dad464887fe61cc625c6d6c82a84817e4aa4bbe0e7775f5069b5796a074026",
+  "source_url": "https://www.youtube.com/watch?v=qiopd-QP2PE",
+  "source_url_sha256": "b5c4ede664a9c694343901db0b653b60e12a0fbc813cba232e7e48ee8c5e8298",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "hellcat"
+}

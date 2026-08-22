@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tomei_close.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "gtr_r35_tomei_close",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Tomei 改装排气近场候选，不能替代原厂 R35 参考。",
+  "sha256": "4aeed8ff74b80e5649c3c4ac5515ae78fed251e07603f75d6b2f5e5910061444",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tomei_close.download.log",
+  "source_log_sha256": "6cdecc4581d972a4296f46ef74b63a0a47dc2c4652f71dfaee3a9bda583b28a8",
+  "source_url": "https://www.youtube.com/watch?v=uCnpzelFwjM",
+  "source_url_sha256": "30fa59119975069d86c61517628ca693d1552d9137014fa4e4bafee1a64f7264",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "gtr_r35"
+}

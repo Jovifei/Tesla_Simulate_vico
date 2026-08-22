@@ -3750,3 +3750,23 @@ UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
 - [x] Re-ran Stage-P acceptance (`5 passed`), compileall, diff check, Track-P frozen guard, package/UAT checksum ledgers, and the official Docker/PHP UAT START/CHECK/IMPORT/STOP smoke (`32` MUSHRA rows, `80` LSS rows, fixture import `8 accepted / 24 rejected`, SHA binding PASS). Docker service was left stopped.
 
 Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT / HUMAN_ACOUSTIC_QUALIFICATION_PENDING / NOT_PROFILE_FREEZE_READY`; H remains `PENDING`, and no source/profile/tuning or GitHub push/merge/PR was performed.
+
+## S12 Stage Q–T real-reference closed loop (2026-08-22)
+
+> Status: `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`, based on Stage P `9fbbcb7d99f4d77a6c467595bf48f1b055502478`. No push, merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
+
+- [x] Q0: Created the Stage Q worktree from the exact Stage P HEAD and recorded clean starting state.
+- [x] Q1/Q2: Audited the external `E:\Claude_allow\Download\tesla-sound-research` media root; cataloged 15 WAV pointers across all eight vehicles without copying raw audio into Git.
+- [x] Q3/Q4: Added `tools/sound_sim/s12/real_reference/` fail-closed inventory tooling, Stage Q manifest schema, Chinese report generation, provenance/SHA pointers, scenario-window placeholders, and RPM/state binding placeholders.
+- [x] Q gate: Regenerated `tasks/reports/runtime/s12-stage-q-real-reference/` from the current worktree. All 15 present recordings remain R3/qualitative-only; R1=0, R2=0; no automatic tuning eligibility.
+- [x] R gate: Added R1 qualification checks and generated a fail-closed waiting result, withheld parameter recommendations, and Chinese difference-report template under `tasks/reports/runtime/s12-stage-r-real-sound-difference/`.
+- [x] S gate: Added the Chinese listening-study contract and feedback gate under `tasks/reports/runtime/s12-stage-s-human-calibration/`; no placeholder audio or fixture feedback is materialized.
+- [x] T gate: Added the blocked Profile Candidate handoff under `tasks/reports/runtime/s12-stage-t-profile-candidate/`; no candidate files, Profile Freeze, or product handoff are generated.
+- [ ] R/S/T execution: Do not run a qualified real-vs-synthetic baseline, ingest human feedback, or modify vehicle parameters until Jovi supplies legal permission plus synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt.
+
+### Stage Q review
+
+- `python -m pytest tools/sound_sim/s12/tests/test_s12_stage_q_real_reference.py -q`: `4 passed`.
+- `python -m tools.sound_sim.s12.real_reference.cli --media-root E:\\Claude_allow\\Download\\tesla-sound-research --out-dir tasks\\reports\\runtime\\s12-stage-q-real-reference`: `REAL_REFERENCE_DATASET_LIMITED`, `WAITING_FOR_REAL_REFERENCE_DATA`, 15 records, 0 R1.
+- Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
+- Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.

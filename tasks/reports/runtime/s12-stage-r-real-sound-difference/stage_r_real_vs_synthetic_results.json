@@ -1,0 +1,443 @@
+{
+  "limitations": [
+    "没有 R1 参考，因此不输出阶次资格、自动调参目标或真实性百分比。",
+    "未校准 SPL 只能在 R1/R2 合同满足后做 digital-domain relative 指标。",
+    "试听响度匹配副本与原始分析信号必须分离；当前未生成试听副本。"
+  ],
+  "metric_groups": [
+    "order",
+    "spectrum",
+    "idle",
+    "transient",
+    "psychoacoustics",
+    "human_feedback"
+  ],
+  "qualified_cases": [],
+  "reference_database_status": "REAL_REFERENCE_DATASET_LIMITED",
+  "reference_gates": [
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "aventador_lp700_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "aventador_lp700"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "c63_w204_close_downshift",
+      "stage_r_eligible": false,
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "c63_w204_headers_backfire",
+      "stage_r_eligible": false,
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "c63_w204_performance_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "c63_w204"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "ferrari_458_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "gtr_r35_nismo_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "gtr_r35_tomei_close",
+      "stage_r_eligible": false,
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "gtr_r35_tuned_backfire",
+      "stage_r_eligible": false,
+      "vehicle_id": "gtr_r35"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "hellcat_burble_tune",
+      "stage_r_eligible": false,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "hellcat_redeye_downshift",
+      "stage_r_eligible": false,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "hellcat_redeye_leave",
+      "stage_r_eligible": false,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "hellcat_stock_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "lfa_full_accel",
+      "stage_r_eligible": false,
+      "vehicle_id": "lfa"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "rx7_fd_13brew",
+      "stage_r_eligible": false,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "automatic_tuning_eligible": false,
+      "checks": {
+        "exact_vehicle_trim": false,
+        "gear_shift_trace": false,
+        "legal_permission": false,
+        "load_throttle_trace": false,
+        "microphone_position": false,
+        "recording_device_agc_contract": false,
+        "stock_exhaust_confirmation": false,
+        "synchronized_rpm_trace": false
+      },
+      "eligible": false,
+      "missing": [
+        "legal_permission",
+        "exact_vehicle_trim",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace",
+        "load_throttle_trace",
+        "gear_shift_trace",
+        "microphone_position",
+        "recording_device_agc_contract"
+      ],
+      "qualification": "NOT_R1",
+      "recording_id": "supra_jza80_stock",
+      "stage_r_eligible": false,
+      "vehicle_id": "supra_jza80"
+    }
+  ],
+  "schema_version": "s12-stage-r-real-sound-difference-v1",
+  "stage": "R",
+  "status": "BLOCKED_REFERENCE_QUALIFICATION",
+  "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA"
+}

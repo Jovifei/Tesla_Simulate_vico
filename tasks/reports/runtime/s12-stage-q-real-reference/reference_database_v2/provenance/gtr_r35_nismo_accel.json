@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_nismo_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "gtr_r35_nismo_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Nismo 候选不是冻结的 2007 原厂基线，来源与权限未验证。",
+  "sha256": "dd3bd936f5d5a5b587d1d87f753e8ebb2f3841455c9a721954fc326223d7a2f8",
+  "source_kind": "local_unverified",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": null,
+  "source_url_sha256": null,
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "gtr_r35"
+}

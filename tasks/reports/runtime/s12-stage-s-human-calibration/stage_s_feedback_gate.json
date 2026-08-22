@@ -1,0 +1,10 @@
+{
+  "feedback_rows": 0,
+  "parameter_changes": 0,
+  "profile_candidate_ready": false,
+  "real_reference_status": "REAL_REFERENCE_DATASET_LIMITED",
+  "reason": "真实参考和真实 Jovi 听审均未到位；当前不读取、不生成、不提升任何反馈内容。",
+  "schema_version": "s12-stage-s-feedback-gate-v1",
+  "stage": "S",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+}

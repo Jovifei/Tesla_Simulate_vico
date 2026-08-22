@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tuned_backfire.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "gtr_r35_tuned_backfire",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "tuned backfire 候选，改装状态与来源不明。",
+  "sha256": "0058a67bda86b174079ea06eecabf404515127c799d9b7e6658feddb5fc9c462",
+  "source_kind": "local_unverified",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": null,
+  "source_url_sha256": null,
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "gtr_r35"
+}
