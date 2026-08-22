@@ -50,8 +50,8 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定代码提交：`9a35777997ccb164659891f95f998aba2097caab`（后续元数据提交将更新）
-- working tree dirty：`待本轮元数据提交后复核`
+- 报告绑定提交：`1a8dc38`（R2 公开许可素材与差异报告）
+- working tree dirty：`false`（本次绑定前的干净提交）
 - push：是
 - merge：否
 - PR：否
