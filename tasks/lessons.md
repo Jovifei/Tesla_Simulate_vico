@@ -1296,3 +1296,10 @@ Rules:
   need separate profiles, traces, stems, pressure accounting, and receipts.
 - Transport integrity (PCM24/SHA/ZIP) proves that the package can be heard and
   audited; it never upgrades acoustic realism, OEM identity, or Profile Freeze.
+
+# 2026-08-22 S12 Stage Q web-reference correction lessons
+
+- 浏览器听审页面只是反馈入口，不是“真实声浪 vs 本地声浪”比较器；对 Jovi 的可见文案必须用中文，并把真实参考、分析报告、试听包三者分开说明。
+- 公开视频不能默认视为可用素材。只有页面上有可审计的作者和明确许可（例如 Wikimedia Commons CC BY-SA）才可进入 R2；普通 YouTube/Douyin 只保留 R3 定性描述，不能下载后冒充 R1。
+- 公开许可音频即使车型和场景可辨，也通常没有同步 RPM/state。它可以支持频谱/响度/心理声学的相对差异报告，但必须关闭阶次硬门、自动调参和 OEM 绝对门限；RX-7 的旋转机械演示不能升级为 RX-7 FD 实车证据。
+- 下载原始媒体只能放在 `E:\Claude_allow\Download`，Git 只保存外部路径、原始/派生 SHA、许可、场景和限制；容器解码/采样率转换必须写明“无增益/EQ/AGC”，不能改写分析信号含义。

@@ -1,0 +1,14 @@
+{
+  "recording_id": "web_hellcat_launching_sound_2019",
+  "reference_id": "q:web:hellcat_launching_sound_2019",
+  "vehicle_id": "hellcat",
+  "scenario": "launch",
+  "evidence_level": "R2",
+  "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\hellcat_launching_challenger.wav",
+  "sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+  "license": "CC BY-SA 4.0",
+  "author": "Axepas12",
+  "raw_media_stored_outside_git": true,
+  "r1_status": "NOT_R1_MISSING_SYNCHRONIZED_RPM_STATE"
+}

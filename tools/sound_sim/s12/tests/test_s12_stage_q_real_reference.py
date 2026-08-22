@@ -11,6 +11,7 @@ from tools.sound_sim.s12.real_reference.inventory import (
     build_inventory,
     write_stage_q_outputs,
 )
+from tools.sound_sim.s12.real_reference.qualification import qualify_r2_reference
 
 
 def _write_wav(path: Path) -> None:
@@ -75,3 +76,27 @@ def test_manifest_schema_matches_stage_q_contract() -> None:
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     assert schema["$id"] == "s12-stage-q-reference-database-v2"
     assert schema["properties"]["status"]["enum"] == ["REAL_REFERENCE_DATASET_READY", "REAL_REFERENCE_DATASET_LIMITED"]
+
+
+def test_web_authorized_manifest_is_explicitly_r2_only() -> None:
+    manifest_path = (
+        Path(__file__).resolve().parents[4]
+        / "tasks"
+        / "reports"
+        / "runtime"
+        / "s12-stage-q-real-reference"
+        / "reference_database_v2"
+        / "web_authorized_manifest_20260822.json"
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["schema_version"] == "s12-stage-q-web-authorized-r2-v1"
+    assert len(manifest["recordings"]) == 3
+    for record in manifest["recordings"]:
+        gate = qualify_r2_reference(record)
+        assert gate["eligible"] is True
+        assert gate["qualification"] == "R2"
+        assert record["provenance"]["legal_permission"] == "CONFIRMED"
+        assert record["evidence"]["r1_eligible"] is False
+        assert record["evidence"]["automatic_tuning_eligible"] is False
+        assert record["analysis_contract"]["rpm_state_status"] == "MISSING_RPM_STATE"
+    assert manifest["qualitative_only"][0]["evidence_level"] == "R3"

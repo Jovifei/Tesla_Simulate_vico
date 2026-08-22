@@ -1,10 +1,10 @@
 # S12 Stage Q 真实参考数据报告
 
-状态：`REAL_REFERENCE_DATASET_LIMITED` / `WAITING_FOR_REAL_REFERENCE_DATA`
+状态：`REAL_REFERENCE_DATASET_LIMITED` / `R2_REFERENCES_AVAILABLE_R1_BLOCKED`
 
 ## 结论
 
-本轮只审计外部本地参考，不把公开或来源不完整的音频伪装成 R1 真实标定数据。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息和缺口。当前没有任何记录满足 R1，因此 Stage R 的真实阶次基线、自动参数建议和调音闭环不能启动。
+本轮审计外部本地参考，并在 Jovi 明确授权后新增了两个带可审计 Creative Commons 许可的公开声浪参考。它们只进入 R2 有限比较；不会被伪装成 R1，也不会触发阶次硬门或自动调参。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息、许可证据和缺口。当前仍没有任何记录满足 R1，因此真实阶次基线、自动参数建议和调音闭环不能启动。
 
 ## 车型覆盖
 
@@ -25,6 +25,16 @@
 - `E:\Claude_allow\Download\tesla-sound-research`
 - `E:\Claude_allow\Download\tesla-sound-research-v12`
 - `E:\Claude_allow\Download\s12-acoustic-realism-v10`
+
+## 新增公开许可参考（2026-08-22）
+
+| 记录 | 车型/场景 | 许可证据 | 解码文件 | 证据等级 | 可用范围 |
+| --- | --- | --- | --- | --- | --- |
+| `web_ferrari_458_goodwood_2010` | Ferrari 458 / 从起点驶出加速 | [Wikimedia Commons 页面](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg)，CC BY-SA 3.0，作者 Edvvc | 外部 WAV，44.1 kHz / 2 ch / 24 bit，11.638s，SHA-256 `44b236ac66d3` | `R2` | 频谱、响度、心理声学、主观瞬态 |
+| `web_hellcat_launching_sound_2019` | Dodge Challenger Hellcat / 启动或起步声 | [Wikimedia Commons 页面](https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg)，CC BY-SA 4.0，作者 Axepas12 | 外部 WAV，44.1 kHz / 1 ch / 24 bit，6.548s，SHA-256 `b5a23a855b80` | `R2` | 频谱、响度、心理声学、主观瞬态 |
+| `web_supra_jza80_chassis_dyno_cc0_2019` | Toyota Supra / 底盘测功机全油门拉升 | [Freesound 页面](https://freesound.org/people/editboy23/sounds/496171/)，CC0 1.0，作者 editboy23 | 外部 HQ MP3 预览解码 WAV，48 kHz / 2 ch / 24 bit，35.469s，SHA-256 `029c95505a09` | `R2` | 频谱、响度、心理声学、主观瞬态；有损预览，车型代际未核实 |
+
+三条 R2 记录都缺同步 RPM、Load/Throttle、Gear/shift、麦克风与 AGC 合同，故 `R1=0`、阶次硬门关闭、自动调参关闭。Supra 记录明确是测功机全油门，但页面未核实 JZA80 代际且下载的是公开 HQ MP3 有损预览。Wankel3.ogv（CC BY-SA 2.5）是 Mazda 13B 机械演示，不是 RX-7 FD 整车录音，已登记为 `R3 qualitative_only`，不进入 R2。
 
 ## 记录审计
 

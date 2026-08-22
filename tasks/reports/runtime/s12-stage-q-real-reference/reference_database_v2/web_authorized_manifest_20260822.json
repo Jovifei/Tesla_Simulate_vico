@@ -1,0 +1,184 @@
+{
+  "schema_version": "s12-stage-q-web-authorized-r2-v1",
+  "created_at": "2026-08-22",
+  "source_policy": "Only explicit public license evidence is admitted; raw media stays outside Git.",
+  "raw_media_root": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822",
+  "recordings": [
+    {
+      "reference_id": "q:web:ferrari_458_goodwood_2010",
+      "recording_id": "web_ferrari_458_goodwood_2010",
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "法拉利 458",
+      "scenario": "acceleration",
+      "scenario_identity": "pulling_away_from_start",
+      "scenario_confidence": "page_description_explicit",
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\ferrari_458_italia.wav",
+      "file_present": true,
+      "sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+      "audio": {
+        "container": "WAV",
+        "codec": "PCM",
+        "channels": 2,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24,
+        "frames": 513238,
+        "duration_s": 11.638049
+      },
+      "provenance": {
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Ferrari_458_Italia.ogg",
+        "source_media_sha256": "D98951CAAA3DE712E59B13D4D1EB0472795A3CBFBF9D990B28711CD8C93891DA",
+        "source_kind": "wikimedia_commons_cc",
+        "author": "Edvvc",
+        "license": "CC BY-SA 3.0",
+        "legal_permission": "CONFIRMED",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "stock_identity": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "recording_device_agc": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching."
+      },
+      "evidence": {
+        "level": "R2",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only",
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "automatic_tuning_eligible": false,
+        "reason": "Explicit CC license and vehicle/scene description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract."
+      },
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "rpm_state_status": "MISSING_RPM_STATE",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "load_throttle_status": "MISSING",
+        "gear_shift_status": "MISSING",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "loudness_matched_audition_signal": "NOT_CREATED"
+      }
+    },
+    {
+      "reference_id": "q:web:hellcat_launching_sound_2019",
+      "recording_id": "web_hellcat_launching_sound_2019",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat",
+      "scenario": "launch",
+      "scenario_identity": "startup_or_launch_sound",
+      "scenario_confidence": "page_title_and_description_explicit",
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\hellcat_launching_challenger.wav",
+      "file_present": true,
+      "sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+      "audio": {
+        "container": "WAV",
+        "codec": "PCM",
+        "channels": 1,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24,
+        "frames": 288768,
+        "duration_s": 6.548027
+      },
+      "provenance": {
+        "source_url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Launching_sound_Challenger.ogg",
+        "source_media_sha256": "762E3B294362E3D1E37BE0B737D6AD4518FD61A6BDBCE392BE1C850300D0676A",
+        "source_kind": "wikimedia_commons_cc",
+        "author": "Axepas12",
+        "license": "CC BY-SA 4.0",
+        "legal_permission": "CONFIRMED",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "stock_identity": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "recording_device_agc": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching."
+      },
+      "evidence": {
+        "level": "R2",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only",
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "automatic_tuning_eligible": false,
+        "reason": "Explicit CC license and Hellcat launch/startup description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract."
+      },
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "rpm_state_status": "MISSING_RPM_STATE",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "load_throttle_status": "MISSING",
+        "gear_shift_status": "MISSING",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "loudness_matched_audition_signal": "NOT_CREATED"
+      }
+    },
+    {
+      "reference_id": "q:web:supra_jza80_chassis_dyno_cc0_2019",
+      "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+      "vehicle_id": "supra_jza80",
+      "vehicle_name_zh": "丰田 Supra JZA80",
+      "scenario": "full_pull",
+      "scenario_identity": "chassis_dyno_full_throttle_rev_to_max",
+      "scenario_confidence": "page_description_explicit_vehicle_generation_unverified",
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\supra_jza80_chassis_dyno_cc0_hq.wav",
+      "file_present": true,
+      "sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+      "audio": {
+        "container": "WAV",
+        "codec": "PCM",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 24,
+        "frames": 1702500,
+        "duration_s": 35.46875
+      },
+      "provenance": {
+        "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+        "source_media_url": "https://cdn.freesound.org/previews/496/496171_1784475-hq.mp3",
+        "source_media_sha256": "911E96CEAAA27885A71AACDFD08846916E1CD49AAB005F4482071FCBD5D66844",
+        "source_kind": "freesound_cc0_preview",
+        "author": "editboy23",
+        "license": "CC0 1.0",
+        "legal_permission": "CONFIRMED",
+        "rights_evidence": "https://freesound.org/people/editboy23/sounds/496171/",
+        "stock_identity": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "recording_device_agc": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "decode_note": "Public HQ MP3 preview decoded to PCM24 WAV at 48 kHz with no gain, EQ, AGC, or loudness matching; this is a lossy preview derivative, not the login-gated original WAV."
+      },
+      "evidence": {
+        "level": "R2",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only",
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "automatic_tuning_eligible": false,
+        "reason": "CC0 license and explicit Toyota Supra chassis-dyno/full-rev description; exact JZA80 generation, synchronized RPM/state, mic, and AGC are not verified."
+      },
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "rpm_state_status": "MISSING_RPM_STATE",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "load_throttle_status": "MISSING",
+        "gear_shift_status": "MISSING",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "loudness_matched_audition_signal": "NOT_CREATED"
+      }
+    }
+  ],
+  "qualitative_only": [
+    {
+      "recording_id": "web_wankel3_mazda_13b_mechanical_demo",
+      "vehicle_id": "rx7_fd",
+      "scenario": "rotary_mechanical_demo",
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\wankel3_mazda_13b.wav",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Wankel3.ogv",
+      "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Wankel3.ogv",
+      "source_media_sha256": "220E9B66457AD715882815B374D22AA5B15491AAC7D2C37311EDCDC802340072",
+      "license": "CC BY-SA 2.5",
+      "author": "HDP",
+      "legal_permission": "CONFIRMED",
+      "evidence_level": "R3",
+      "use_policy": "qualitative_rotary_texture_only",
+      "reason": "Licensed Mazda 13B mechanical demonstration, not an RX-7 FD vehicle recording and not a dyno/full-throttle scenario; no R2 identity claim."
+    }
+  ]
+}

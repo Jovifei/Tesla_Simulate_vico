@@ -1,0 +1,12 @@
+{
+  "candidate_id": "synthetic_supra_jza80_ab_full_pull",
+  "vehicle_id": "supra_jza80",
+  "scenario": "full_pull",
+  "candidate_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+  "source_audio": "E:\\Tesla_speed\\worktrees\\s12-stage-q-real-reference-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\supra_jza80_ab.wav",
+  "source_audio_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+  "source_commit": "9a35777997ccb164659891f95f998aba2097caab",
+  "analysis_signal": "unaltered_analysis_signal",
+  "resample_contract": "none; candidate and decoded reference both 48000 Hz",
+  "scenario_limitation": "Reference is an exact Toyota Supra generation-unknown dyno description; local profile is labelled JZA80 and remains synthetic/un calibrated."
+}

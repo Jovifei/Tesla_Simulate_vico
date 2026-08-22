@@ -1,0 +1,12 @@
+{
+  "candidate_id": "synthetic_hellcat_ab_launch_proxy_resampled_44100",
+  "vehicle_id": "hellcat",
+  "scenario": "launch",
+  "candidate_sha256": "fd38f6531304a3a38de80c5d20d24be7960085acebf930b1cf7188758d0053d1",
+  "source_audio": "E:\\Tesla_speed\\worktrees\\s12-stage-q-real-reference-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\hellcat_ab.wav",
+  "source_audio_sha256": "1bb9027ffe864c5fcb8aec03c1f2f9d121cb6923ec3988eb00d656e045169061",
+  "source_commit": "9a35777997ccb164659891f95f998aba2097caab",
+  "analysis_signal": "unaltered_analysis_signal",
+  "resample_contract": "explicit 48000-to-44100 scipy.signal.resample_poly(147,160); no gain/EQ/AGC",
+  "scenario_limitation": "Local WAV is a synthetic launch proxy; it is not synchronized to the public reference's engine-state trace."
+}

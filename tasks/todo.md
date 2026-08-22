@@ -3753,7 +3753,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## S12 Stage Q–T real-reference closed loop (2026-08-22)
 
-> Status: `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`, based on Stage P `9fbbcb7d99f4d77a6c467595bf48f1b055502478`. Branch push is authorized and verified; no merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
+> Status: `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED / WAITING_FOR_JOVI_HUMAN_FEEDBACK`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`. Branch push is authorized and verified; no merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
 
 - [x] Q0: Created the Stage Q worktree from the exact Stage P HEAD and recorded clean starting state.
 - [x] Q1/Q2: Audited the external `E:\Claude_allow\Download\tesla-sound-research` media root; cataloged 15 WAV pointers across all eight vehicles without copying raw audio into Git.
@@ -3763,19 +3763,29 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] R2 path: Added an authorised-R2 limited comparator adapter. It permits only spectrum/loudness/psychoacoustic/subjective-transient evidence and always disables order hard gates and automatic tuning authority.
 - [x] R execution entry: Added an unaltered PCM-WAV reader, fail-closed R2 limited comparison/report writer, and R1 MATLAB/Stage-N execution-plan builder. The R1 plan names the required MATLAB/Audio Toolbox functions and receipts but does not execute without qualified real inputs.
 - [x] R1 input preparation: Added a fail-closed CSV/JSON state loader and SHA-bound external MAT input package for the existing MATLAB order/psychoacoustic runners plus the MoSQITo project-input entrypoint. It preserves unaltered analysis data, records channel/time/unit policy, and never starts MATLAB or grants tuning authority.
+- [x] Public-license intake: After Jovi explicitly authorized web search/download, downloaded two Wikimedia Commons CC references and one Freesound CC0 Supra chassis-dyno reference to `E:\Claude_allow\Download\s12-web-authorized-20260822`, plus one CC rotary mechanical demo (R3 qualitative only); raw media stayed outside Git and provenance/derived WAV SHA-256 entries were committed.
+- [x] R2 execution: Ran the existing fail-closed R2 comparator on Ferrari 458 acceleration, Hellcat launch proxy, and Supra full-pull dyno preview with explicit sample-rate/conversion metadata. All three cases are `R2_LIMITED_COMPARISON_COMPLETE`; order hard gate, automatic tuning, parameter recommendations, and human feedback remain withheld.
 - [x] S gate: Added the Chinese listening-study contract and feedback gate under `tasks/reports/runtime/s12-stage-s-human-calibration/`; no placeholder audio or fixture feedback is materialized.
 - [x] T gate: Added the blocked Profile Candidate handoff under `tasks/reports/runtime/s12-stage-t-profile-candidate/`; no candidate files, Profile Freeze, or product handoff are generated.
 - [x] Final waiting audit: Generated `tasks/reports/runtime/S12_Real_Sound_Closed_Loop_Final_Report.md` with per-stage/per-vehicle status, metric limits, feedback/tuning counts, Track-P boundary, commits, and the verified branch-push state.
-- [ ] R/S/T execution: Do not run a qualified real-vs-synthetic baseline, ingest human feedback, or modify vehicle parameters until Jovi supplies legal permission plus synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt.
+- [ ] R/S/T execution: R1 MATLAB/MoSQITo baseline, human feedback, and parameter modification still require synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt. R2 output is diagnostic-only and cannot close S/T.
 
 ### Stage Q review
 
-- `python -m pytest tools/sound_sim/s12/tests/test_s12_stage_q_real_reference.py -q`: `4 passed`.
+- `python -m pytest tools/sound_sim/s12/tests/test_s12_stage_q_real_reference.py -q`: `5 passed` (including the explicit web-authorized R2 manifest contract).
 - `python -m tools.sound_sim.s12.real_reference.cli --media-root E:\\Claude_allow\\Download\\tesla-sound-research --out-dir tasks\\reports\\runtime\\s12-stage-q-real-reference`: `REAL_REFERENCE_DATASET_LIMITED`, `WAITING_FOR_REAL_REFERENCE_DATA`, 15 records, 0 R1.
 - Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
 - R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
 - R execution/input tests: `7 passed`; full S12 focused suite: `48 passed`; `compileall` and `git diff --check` pass.
 - Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
+
+### Web-authorized R2 review（2026-08-22）
+
+- Ferrari 458 CC BY-SA 3.0 source: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.574775`, loudness residual `+2.7001 dB`; order `NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM`.
+- Hellcat CC BY-SA 4.0 source: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.503287`, loudness residual `+0.4530 dB`; local file is a synthetic launch proxy and order remains `NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM`.
+- Supra CC0 chassis-dyno preview: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.854657`, loudness residual `-6.4747 dB`; source page describes a full-throttle dyno run but exact JZA80 generation and synchronized RPM/state are not verified.
+- RX-7 FD: no legally usable full-throttle/dyno vehicle recording found in this search. `Wankel3.ogv` is CC BY-SA 2.5 Mazda 13B mechanical demonstration and is registered only as R3 qualitative rotary texture.
+- No overall similarity percentage, no automatic parameter recommendation, no source/profile edit, and no Jovi hearing result was produced.
 
 ### Q additional external-root audit（2026-08-22）
 

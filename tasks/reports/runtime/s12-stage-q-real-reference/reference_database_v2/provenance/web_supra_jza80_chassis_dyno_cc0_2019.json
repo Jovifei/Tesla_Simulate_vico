@@ -1,0 +1,17 @@
+{
+  "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+  "reference_id": "q:web:supra_jza80_chassis_dyno_cc0_2019",
+  "vehicle_id": "supra_jza80",
+  "scenario": "full_pull",
+  "evidence_level": "R2",
+  "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\supra_jza80_chassis_dyno_cc0_hq.wav",
+  "sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+  "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+  "source_media_url": "https://cdn.freesound.org/previews/496/496171_1784475-hq.mp3",
+  "source_media_sha256": "911E96CEAAA27885A71AACDFD08846916E1CD49AAB005F4482071FCBD5D66844",
+  "license": "CC0 1.0",
+  "author": "editboy23",
+  "raw_media_stored_outside_git": true,
+  "lossy_preview_derivative": true,
+  "r1_status": "NOT_R1_MISSING_SYNCHRONIZED_RPM_STATE_AND_EXACT_JZA80_TRIM"
+}

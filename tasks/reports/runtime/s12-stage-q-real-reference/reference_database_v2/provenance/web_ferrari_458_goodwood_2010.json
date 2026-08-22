@@ -1,0 +1,14 @@
+{
+  "recording_id": "web_ferrari_458_goodwood_2010",
+  "reference_id": "q:web:ferrari_458_goodwood_2010",
+  "vehicle_id": "ferrari_458",
+  "scenario": "acceleration",
+  "evidence_level": "R2",
+  "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\ferrari_458_italia.wav",
+  "sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+  "license": "CC BY-SA 3.0",
+  "author": "Edvvc",
+  "raw_media_stored_outside_git": true,
+  "r1_status": "NOT_R1_MISSING_SYNCHRONIZED_RPM_STATE"
+}
