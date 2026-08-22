@@ -3774,6 +3774,12 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
 - Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
 
+### Q additional external-root audit（2026-08-22）
+
+- [x] 将 `tesla-sound-research-v12` 与 `s12-acoustic-realism-v10` 纳入 Q 目录审计；新增 6 个外部 WAV 指针，只记录 `audit_root`、路径和 SHA-256。
+- [x] 额外目录媒体保持 `UNMAPPED_NOT_REGISTERED / DO_NOT_ANALYZE_OR_TUNE`，不把旧 manifest 的 R2/R3 标签提升为当前 R1/R2 资格。
+- [x] 更新 Stage Q schema、CLI、报告和 manifest；当前 15 条登记候选、18 条未登记外部媒体、R1=0、R2=0。
+
 ### 浏览器中文展示修正（2026-08-22）
 
 - [x] 将 webMUSHRA 研究包的可见标题、说明、评分维度和提交字段统一为中文；机器协议键保留英文以兼容官方导出格式。

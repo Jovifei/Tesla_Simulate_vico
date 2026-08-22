@@ -15,6 +15,10 @@ from typing import Any, Iterable
 
 
 SCHEMA_VERSION = "s12-stage-q-reference-database-v2"
+DEFAULT_ADDITIONAL_MEDIA_ROOTS = (
+    Path(r"E:\Claude_allow\Download\tesla-sound-research-v12"),
+    Path(r"E:\Claude_allow\Download\s12-acoustic-realism-v10"),
+)
 ANCHOR_VEHICLES = ("ferrari_458", "hellcat", "rx7_fd")
 ALL_VEHICLES = (
     "ferrari_458",
@@ -304,7 +308,12 @@ def _unique(items: Iterable[str]) -> list[str]:
     return sorted(set(items))
 
 
-def _unmapped_external_media(media_root: Path, catalog: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+def _unmapped_external_media(
+    media_root: Path,
+    catalog: Iterable[dict[str, Any]],
+    *,
+    audit_reason: str | None = None,
+) -> list[dict[str, Any]]:
     known = {str(item["relative_path"]).replace("\\", "/") for item in catalog}
     rows = []
     for path in sorted(media_root.rglob("*")) if media_root.is_dir() else []:
@@ -314,13 +323,14 @@ def _unmapped_external_media(media_root: Path, catalog: Iterable[dict[str, Any]]
         if relative in known:
             continue
         rows.append({
+            "audit_root": str(media_root),
             "relative_path": relative,
             "external_path": str(path),
             "sha256": _sha256(path),
             "media_kind": path.suffix.lower().lstrip("."),
             "status": "UNMAPPED_NOT_REGISTERED",
             "use_policy": "DO_NOT_ANALYZE_OR_TUNE",
-            "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+            "reason": audit_reason or "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
         })
     return rows
 
@@ -361,9 +371,14 @@ def build_evidence_matrix(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def build_inventory(media_root: Path, catalog: Iterable[dict[str, Any]] = CATALOG) -> dict[str, Any]:
+def build_inventory(
+    media_root: Path,
+    catalog: Iterable[dict[str, Any]] = CATALOG,
+    additional_media_roots: Iterable[Path] = DEFAULT_ADDITIONAL_MEDIA_ROOTS,
+) -> dict[str, Any]:
     media_root = Path(media_root)
     catalog = tuple(catalog)
+    additional_roots = tuple(Path(root) for root in additional_media_roots if Path(root) != media_root)
     records = [_recording_record(media_root, spec) for spec in catalog]
     records.sort(key=lambda item: item["recording_id"])
     matrix = build_evidence_matrix(records)
@@ -380,11 +395,23 @@ def build_inventory(media_root: Path, catalog: Iterable[dict[str, Any]] = CATALO
         "status": status,
         "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA" if status != "REAL_REFERENCE_DATASET_READY" else "READY_FOR_STAGE_R",
         "raw_media_root": str(media_root),
+        "audited_external_roots": [str(media_root), *(str(root) for root in additional_roots)],
         "raw_audio_policy": "external_only_not_in_git",
         "vehicles": list(ALL_VEHICLES),
         "anchor_vehicles": list(ANCHOR_VEHICLES),
         "recordings": records,
-        "unmapped_external_media": _unmapped_external_media(media_root, catalog),
+        "unmapped_external_media": [
+            *_unmapped_external_media(media_root, catalog),
+            *(
+                row
+                for root in additional_roots
+                for row in _unmapped_external_media(
+                    root,
+                    (),
+                    audit_reason="额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+                )
+            ),
+        ],
         "evidence_matrix": matrix,
         "blockers": blockers,
         "next_input_contract": {
@@ -453,6 +480,11 @@ def _render_report(inventory: dict[str, Any]) -> str:
         )
     lines.extend(
         [
+            "",
+            "## 外部目录审计",
+            "",
+            "本轮已审计以下外部媒体目录；未登记音频只保留路径和 SHA-256，不进入分析、听审包或调音：",
+            *[f"- `{root}`" for root in inventory.get("audited_external_roots", [])],
             "",
             "## 记录审计",
             "",
@@ -547,6 +579,7 @@ __all__ = [
     "ALL_VEHICLES",
     "ANCHOR_VEHICLES",
     "CATALOG",
+    "DEFAULT_ADDITIONAL_MEDIA_ROOTS",
     "SCHEMA_VERSION",
     "build_evidence_matrix",
     "build_inventory",

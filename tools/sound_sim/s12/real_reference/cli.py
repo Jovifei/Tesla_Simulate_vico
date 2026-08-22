@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .inventory import build_inventory, write_stage_q_outputs
+from .inventory import DEFAULT_ADDITIONAL_MEDIA_ROOTS, build_inventory, write_stage_q_outputs
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -21,8 +21,16 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("tasks/reports/runtime/s12-stage-q-real-reference"),
         help="Stage Q 报告输出目录",
     )
+    parser.add_argument(
+        "--additional-media-root",
+        type=Path,
+        action="append",
+        default=None,
+        help="额外审计目录；只记录外部音频指针，不复制或分析原始文件（可重复指定）",
+    )
     args = parser.parse_args(argv)
-    inventory = build_inventory(args.media_root)
+    additional_roots = DEFAULT_ADDITIONAL_MEDIA_ROOTS if args.additional_media_root is None else tuple(args.additional_media_root)
+    inventory = build_inventory(args.media_root, additional_media_roots=additional_roots)
     outputs = write_stage_q_outputs(inventory, args.out_dir)
     print(f"status={inventory['status']}")
     print(f"stop_state={inventory['stop_state']}")

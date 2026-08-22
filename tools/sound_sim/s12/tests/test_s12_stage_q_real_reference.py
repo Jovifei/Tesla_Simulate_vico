@@ -40,6 +40,21 @@ def test_unverified_reference_is_fail_closed(tmp_path: Path) -> None:
     assert inventory["stop_state"] == "WAITING_FOR_REAL_REFERENCE_DATA"
 
 
+def test_additional_external_roots_are_audited_but_not_mapped(tmp_path: Path) -> None:
+    primary = tmp_path / "primary"
+    extra = tmp_path / "extra"
+    primary.mkdir()
+    extra.mkdir()
+    _write_wav(primary / "ferrari_458_accel.wav")
+    _write_wav(extra / "old-public-candidate.wav")
+    inventory = build_inventory(primary, additional_media_roots=(extra,))
+    assert str(extra) in inventory["audited_external_roots"]
+    assert not any(row["external_path"].endswith("old-public-candidate.wav") for row in inventory["recordings"])
+    unmapped = next(row for row in inventory["unmapped_external_media"] if row["external_path"].endswith("old-public-candidate.wav"))
+    assert unmapped["audit_root"] == str(extra)
+    assert unmapped["use_policy"] == "DO_NOT_ANALYZE_OR_TUNE"
+
+
 def test_outputs_do_not_copy_raw_audio(tmp_path: Path) -> None:
     _write_wav(tmp_path / "ferrari_458_accel.wav")
     out_dir = tmp_path / "out"
