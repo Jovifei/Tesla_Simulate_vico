@@ -20,6 +20,8 @@
 - 最新中文差异报告：`E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\analysis_final_video_r3_v1\\S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`；SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。
 - 重算结果：`24/24` 特征、`24/24` Comparator、8 车各 3 条、72 个低置信场景候选窗口；全部保持 `R3_DIAGNOSTIC_ONLY`，`R1=0`、`R2=0`、`WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
 
+2026-08-23 独立单条复测补充：对 `hellcat_01 / cKx-cb0fzeo` 的默认 403 记录，使用 `yt-dlp + Node.js EJS + android` 重新下载得到 3,749,435 字节 MP4；`ffprobe` 与 `ffmpeg -xerror` 全流通过，并提取出 48 kHz 双声道 WAV，WAV 完整解码通过。外部收据 `E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v2_probe\\download_receipt_hellcat_01.json` SHA-256 `7BF6CC011DBDCE68FA26A8F68F2EF10B4513AC7535269FFA42ED9802603317DE`。该探针确认备用客户端有效，但公开视频仍缺授权和同步状态，资格继续为 `R3`。
+
 因此最新 R3 数字差异已绑定到最终完整视频，而不是首轮截断物；它只改善媒体完整性和可重复性，不提供同步 RPM/Load/Throttle/Gear、合法授权、原厂排气确认或人耳结果，不能进入 MATLAB 阶次、调参或 Profile 写回。
 
 ## 按用户指定顺序的执行核对

@@ -12,6 +12,8 @@
 
 2026-08-23 批量独立复试：在 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1` 中，默认客户端对 24 条原始 URL 有 `22/24 HTTP 403`；使用 `Node.js + EJS + android` 回退后，最终 `24/24` 媒体和音频均通过 `ffprobe`、`ffmpeg -xerror` 全流/音频解码，并生成 `24/24` 外部 WAV。合并回执 SHA-256 为 `0DAB94BFB99A4AEDC4855929A39EA211D958A4EAA6C3B9F3ADCE98F065363EEE`，严格解码回执 SHA-256 为 `C120BFE16B0CEF5B80C68FC47E4FB2BB6198CE94BAE8EE1BF9243B04A965C782`。这只说明下载工具链已能恢复完整可解码媒体；YouTube 派生音频仍保持 `R3`，不进入 R1/R2、MATLAB 阶次或自动调参。
 
+2026-08-23 独立单条复测：对原先默认链路 403 的 `hellcat_01 / cKx-cb0fzeo`，直接调用 `yt-dlp + Node.js EJS + android` 成功取得 3,749,435 字节 MP4；`ffprobe` 识别 H.264/AAC、105.813 s，`ffmpeg -xerror` 全流解码通过，并无增益提取 48 kHz 双声道 PCM WAV（20,316,238 字节），WAV 再次完整解码通过。外部探针收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2_probe\download_receipt_hellcat_01.json` SHA-256 `7BF6CC011DBDCE68FA26A8F68F2EF10B4513AC7535269FFA42ED9802603317DE`；该复测只证明 Android 客户端回退可用，仍是 YouTube 派生 `R3`，不提升为 R1/R2。
+
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
 
 为便于 Jovi 进行中文试听，另生成三锚点 A/B 外部包 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\README_中文.md`：Ferrari 458、Hellcat、RX-7 FD 各 3 个公开来源对本地 synthetic 候选的 5 秒片段，共 9 个试次/18 个文件。manifest SHA-256 为 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 为 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`；状态为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，反馈为空，不能推动 Stage S 调音。
