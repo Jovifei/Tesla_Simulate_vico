@@ -114,6 +114,92 @@ def _extract_wav(video_path: Path, wav_path: Path) -> None:
     subprocess.run(command, check=True, capture_output=True, text=True)
 
 
+def _rpm_tokens(text: str) -> list[int]:
+    """Return only plausible numeric OCR tokens; they remain estimates."""
+
+    values = []
+    for raw in re.findall(r"(?<!\d)(\d{3,5})(?!\d)", text):
+        value = int(raw)
+        if 300 <= value <= 12_000 and value not in values:
+            values.append(value)
+    return values[:32]
+
+
+def scan_video_frames(
+    video_path: Path,
+    frame_root: Path,
+    *,
+    interval_s: float = 2.0,
+    max_frames: int = 30,
+) -> dict[str, Any]:
+    """Sample frames and optionally OCR them without granting RPM qualification."""
+
+    if interval_s <= 0 or max_frames < 1:
+        raise UrlIntakeError("frame interval must be positive and max_frames must be >= 1")
+    frame_root.mkdir(parents=True, exist_ok=True)
+    pattern = frame_root / "frame-%04d.jpg"
+    command = [
+        _tool("ffmpeg"),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        str(video_path),
+        "-vf",
+        f"fps=1/{interval_s:g}",
+        "-frames:v",
+        str(max_frames),
+        "-q:v",
+        "3",
+        str(pattern),
+    ]
+    subprocess.run(command, check=True, capture_output=True, text=True)
+    frames = sorted(frame_root.glob("frame-*.jpg"))
+    if not frames:
+        return {
+            "status": "NO_FRAMES_EXTRACTED",
+            "interval_s": interval_s,
+            "frame_count": 0,
+            "frames": [],
+            "ocr_status": "NOT_ATTEMPTED",
+            "ocr_text": [],
+            "rpm_candidates": [],
+            "rpm_status": "MISSING_RPM_STATE",
+        }
+    tesseract = shutil.which("tesseract")
+    ocr_text: list[dict[str, Any]] = []
+    if tesseract:
+        for frame in frames:
+            try:
+                result = subprocess.run(
+                    [tesseract, str(frame), "stdout", "--psm", "11"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=15,
+                )
+                text = " ".join(result.stdout.split())[:500]
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                text = f"OCR_ERROR:{type(exc).__name__}"
+            ocr_text.append({"frame": str(frame), "text": text})
+        candidates = _rpm_tokens(" ".join(row["text"] for row in ocr_text))
+        ocr_status = "COMPLETED"
+    else:
+        candidates = []
+        ocr_status = "NOT_AVAILABLE_TESSERACT_MISSING"
+    return {
+        "status": "FRAMES_EXTRACTED",
+        "interval_s": interval_s,
+        "frame_count": len(frames),
+        "frames": [{"path": str(frame), "sha256": _sha256(frame)} for frame in frames],
+        "ocr_status": ocr_status,
+        "ocr_text": ocr_text,
+        "rpm_candidates": candidates,
+        "rpm_status": "ESTIMATED_FROM_VIDEO_NOT_QUALIFIED" if candidates else "MISSING_RPM_STATE",
+        "qualification": "NOT_R1",
+    }
+
+
 def _find_downloaded_video(output: str, stem: str, root: Path) -> Path:
     printed = [Path(line.strip()) for line in output.splitlines() if line.strip()]
     for candidate in reversed(printed):
@@ -184,6 +270,7 @@ def build_video_record(
     recording_device_agc: str = "UNKNOWN",
     state_contract: Mapping[str, Any] | None = None,
     raw_audio_confirmed: bool = False,
+    visual_scan: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build an auditable record without granting tuning authority."""
 
@@ -192,6 +279,9 @@ def build_video_record(
     wav_path = Path(wav_path)
     audio = _audio_stream(probe)
     state = _default_state_contract() | dict(state_contract or {})
+    visual = dict(visual_scan or {"status": "NOT_REQUESTED", "rpm_candidates": [], "rpm_status": "MISSING_RPM_STATE"})
+    if visual.get("rpm_candidates") and state.get("rpm_state_status") != "SYNCED":
+        state["estimated_rpm_status"] = "ESTIMATED_FROM_VIDEO_NOT_QUALIFIED"
     record = {
         "schema_version": SCHEMA_VERSION,
         "reference_id": "q:url:" + hashlib.sha256(source_url.encode("utf-8")).hexdigest()[:16],
@@ -206,6 +296,7 @@ def build_video_record(
         "download_log_path": str(download_log_path) if download_log_path else None,
         "video_probe": dict(probe),
         "audio_stream": audio,
+        "visual_state_scan": visual,
         "provenance": {
             "source_kind": "user_provided_url_video_extracted",
             "legal_permission": legal_permission,
@@ -291,6 +382,10 @@ def render_intake_report(manifest: Mapping[str, Any]) -> str:
                 reason=evidence.get("reason") or record.get("error") or "—",
             )
         )
+        visual = record.get("visual_state_scan", {})
+        lines.append(
+            f"  - 画面状态扫描：`{visual.get('status', 'NOT_REQUESTED')}`；OCR：`{visual.get('ocr_status', 'NOT_ATTEMPTED')}`；RPM 候选：`{visual.get('rpm_candidates', [])}`（仅估算，不具备 R1 资格）。"
+        )
     lines.extend(
         [
             "",
@@ -328,6 +423,9 @@ def intake_urls(
     recording_device_agc: str = "UNKNOWN",
     state_contract: Mapping[str, Any] | None = None,
     raw_audio_confirmed: bool = False,
+    scan_frames: bool = False,
+    frame_interval_s: float = 2.0,
+    max_frames: int = 30,
 ) -> dict[str, Any]:
     output_root = _inside(ALLOWED_DOWNLOAD_ROOT, Path(output_root))
     output_root.mkdir(parents=True, exist_ok=True)
@@ -340,6 +438,11 @@ def intake_urls(
             probe = _probe(video_path)
             wav_path = output_root / f"{stem}.analysis.wav"
             _extract_wav(video_path, wav_path)
+            visual_scan = (
+                scan_video_frames(video_path, output_root / f"{stem}.frames", interval_s=frame_interval_s, max_frames=max_frames)
+                if scan_frames
+                else {"status": "NOT_REQUESTED", "rpm_candidates": [], "rpm_status": "MISSING_RPM_STATE"}
+            )
             records.append(
                 build_video_record(
                     source_url=url,
@@ -356,6 +459,7 @@ def intake_urls(
                     recording_device_agc=recording_device_agc,
                     state_contract=state_contract,
                     raw_audio_confirmed=raw_audio_confirmed,
+                    visual_scan=visual_scan,
                 )
             )
         except (OSError, UrlIntakeError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
@@ -397,6 +501,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--microphone-perspective", choices=("UNKNOWN", "EXTERIOR_REAR"), default="UNKNOWN")
     parser.add_argument("--recording-device-agc", choices=("UNKNOWN", "DOCUMENTED_NO_AGC"), default="UNKNOWN")
     parser.add_argument("--state-contract-json", type=Path, default=None, help="可选状态合同 JSON；不会自动把估算 RPM 升级为同步 RPM")
+    parser.add_argument("--scan-frames", action="store_true", help="按固定间隔抽帧并尝试 OCR；OCR 结果只作为估算线索")
+    parser.add_argument("--frame-interval-s", type=float, default=2.0)
+    parser.add_argument("--max-frames", type=int, default=30)
     parser.add_argument("--raw-audio-confirmed", action="store_true", help="仅在有原始音频收据时使用；视频抽取音频默认不满足")
     args = parser.parse_args(argv)
     if args.license_status == "CONFIRMED" and not args.rights_evidence:
@@ -423,6 +530,9 @@ def main(argv: list[str] | None = None) -> int:
         recording_device_agc=args.recording_device_agc,
         state_contract=state_contract,
         raw_audio_confirmed=args.raw_audio_confirmed,
+        scan_frames=args.scan_frames,
+        frame_interval_s=args.frame_interval_s,
+        max_frames=args.max_frames,
     )
     print(f"status={manifest['status']}")
     print(f"records={len(manifest['records'])}")
@@ -441,6 +551,7 @@ __all__ = [
     "build_video_record",
     "intake_urls",
     "render_intake_report",
+    "scan_video_frames",
     "validate_source_url",
     "write_intake_outputs",
 ]

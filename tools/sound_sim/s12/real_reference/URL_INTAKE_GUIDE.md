@@ -8,7 +8,8 @@ Jovi 提供网址后，使用这个入口把视频下载到 `E:\Claude_allow\Dow
 python -m tools.sound_sim.s12.real_reference.url_intake `
   --url "https://example.com/video" `
   --vehicle-id ferrari_458 `
-  --scenario full_pull
+  --scenario full_pull `
+  --scan-frames
 ```
 
 可重复指定多个 `--url`。如果来源有明确许可，才填写：
@@ -46,5 +47,6 @@ python -m tools.sound_sim.s12.real_reference.url_intake `
 
 - 需要 `yt-dlp` 和 `ffmpeg/ffprobe` 在 PATH 中。
 - 抽取过程不做增益、EQ、AGC 或响度匹配；试听副本与分析信号分离。
+- `--scan-frames` 会按间隔抽取画面；若本机有 Tesseract 会尝试 OCR。OCR 数字只记录为 `ESTIMATED_FROM_VIDEO_NOT_QUALIFIED`，不能替代同步 CSV/MAT，也不能开启阶次硬门。
 - 输出目录默认类似 `E:\Claude_allow\Download\s12-url-intake-YYYYMMDD-HHMMSS`。
 - 结果报告为 `URL_Intake_Report.md`；任何 `R2` 结果仍不能启动阶次自动调参。

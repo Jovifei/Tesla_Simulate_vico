@@ -100,3 +100,26 @@ def test_complete_contract_can_reach_r1_gate_only_with_raw_audio_receipt(tmp_pat
     assert record["evidence"]["r1_eligible"] is True
     assert record["evidence"]["automatic_tuning_eligible"] is False
 
+
+def test_visual_rpm_candidate_is_explicitly_estimated_not_synced(tmp_path: Path) -> None:
+    video, wav = _files(tmp_path)
+    record = build_video_record(
+        source_url="https://example.com/video",
+        video_path=video,
+        wav_path=wav,
+        probe=_probe(),
+        vehicle_id="hellcat",
+        scenario="full_pull",
+        legal_permission="CONFIRMED",
+        rights_evidence="https://example.com/license",
+        visual_scan={
+            "status": "FRAMES_EXTRACTED",
+            "ocr_status": "COMPLETED",
+            "rpm_candidates": [3200],
+            "rpm_status": "ESTIMATED_FROM_VIDEO_NOT_QUALIFIED",
+        },
+    )
+    assert record["analysis_contract"]["rpm_state_status"] == "MISSING_RPM_STATE"
+    assert record["analysis_contract"]["estimated_rpm_status"] == "ESTIMATED_FROM_VIDEO_NOT_QUALIFIED"
+    assert record["evidence"]["level"] == "R2"
+    assert record["evidence"]["r1_eligible"] is False
