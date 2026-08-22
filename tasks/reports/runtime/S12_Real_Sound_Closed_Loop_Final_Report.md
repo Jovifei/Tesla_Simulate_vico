@@ -50,7 +50,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定提交：`1a8dc38`（R2 公开许可素材与差异报告）
+- 报告绑定提交：`bbaac7d`（R2 公开许可素材与差异报告提交为 `1a8dc38`）
 - working tree dirty：`false`（本次绑定前的干净提交）
 - push：是
 - merge：否
