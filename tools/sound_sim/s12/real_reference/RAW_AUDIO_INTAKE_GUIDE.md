@@ -55,6 +55,16 @@ python -m tools.sound_sim.s12.real_reference.raw_audio_intake `
 
 输出只有 `reference_manifest.json` 和中文 `R1_Reference_Intake_Report.md`。`R1_REFERENCE_PACKAGE_READY` 只表示入库合同通过；它不会启动 MATLAB、Comparator、人耳 A/B 或自动调参。后续仍须用 `prepare_r1_matlab_inputs` 生成外部临时 MAT，取得 MATLAB/MoSQITo/Stage-N 收据，再由 Jovi 完成人耳确认。
 
+要把入库记录并入规格要求的 Stage Q canonical database，可在不复制原始媒体的前提下运行：
+
+```powershell
+python -m tools.sound_sim.s12.real_reference.cli `
+  --media-root "E:\Claude_allow\Download\tesla-sound-research" `
+  --raw-reference-manifest "E:\Claude_allow\Download\r1\intake-audit\reference_manifest.json"
+```
+
+这会更新 `reference_database_v2/reference_manifest.json`、`reference_evidence_matrix.json`、`scenario_segments.json`、`rpm_state_bindings.json` 及 provenance/derived-features 指针；原始音频仍不会被复制。
+
 ## YouTube 403 的处理边界
 
 下载器可以在批准的外部目录中重试不同客户端或仅音频流，并记录失败/截断 SHA 与解码收据；这些文件仍是视频派生 R3。403 重试成功只说明媒体完整可解码，不能证明原厂状态、同步 RPM/负载/挡位或许可，也不能进入这个原始录音入口。

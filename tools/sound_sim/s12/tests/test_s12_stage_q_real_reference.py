@@ -4,6 +4,8 @@ import json
 import wave
 from pathlib import Path
 
+import jsonschema
+
 from tools.sound_sim.s12.real_reference.inventory import (
     ALL_VEHICLES,
     ANCHOR_VEHICLES,
@@ -107,3 +109,50 @@ def test_web_authorized_manifest_is_explicitly_r2_only() -> None:
     assert pontiac["analysis_observation"]["tachometer_or_numeric_rpm_visible"] is False
     assert pontiac["analysis_observation"]["rpm_status"] == "MISSING_RPM_STATE"
     assert pontiac["use_policy"] == "dyno_process_qualitative_only"
+
+
+def test_external_raw_r1_manifest_merges_into_stage_q_outputs(tmp_path: Path) -> None:
+    primary = tmp_path / "primary"
+    primary.mkdir()
+    _write_wav(primary / "ferrari_458_accel.wav")
+    raw_audio = tmp_path / "raw" / "ferrari_458_r1.wav"
+    raw_audio.parent.mkdir()
+    _write_wav(raw_audio)
+    raw_record = {
+        "recording_id": "ferrari_458_r1_external",
+        "reference_id": "r1:ferrari_458_r1_external",
+        "vehicle_id": "ferrari_458",
+        "scenario": "full_pull",
+        "scenario_hint": "full_pull",
+        "external_path": str(raw_audio),
+        "relative_path": raw_audio.name,
+        "sha256": "a" * 64,
+        "file_present": True,
+        "audio": {"container": "WAV", "codec": "PCM", "channels": 1, "sample_rate_hz": 48_000, "sample_width_bits": 16, "frames": 48_000, "duration_s": 1.0},
+        "provenance": {"source_url": "https://example.com/raw", "source_kind": "controlled_raw_audio", "legal_permission": "CONFIRMED", "rights_evidence": "receipt", "stock_identity": "VERIFIED_EXACT_TRIM", "stock_exhaust_confirmation": "CONFIRMED_STOCK", "microphone_perspective": "EXTERIOR_REAR", "recording_device_agc": "DOCUMENTED_NO_AGC", "raw_audio_confirmed": True, "raw_media_stored_outside_git": True},
+        "evidence": {"level": "R1", "r1_eligible": True, "r2_eligible": True, "automatic_tuning_eligible": False, "order_hard_gate": True, "reason": "R1 contract passed"},
+        "required_missing": [],
+        "analysis_contract": {"analysis_signal": "unaltered_analysis_signal", "rpm_state_status": "SYNCED", "load_throttle_status": "SYNCED", "gear_shift_status": "SYNCED"},
+        "state_bindings": {"time_window": {"start_s": 0.0, "end_s": 0.999}, "rpm_trace_path": str(tmp_path / "raw" / "rpm.csv"), "load_throttle_trace_path": str(tmp_path / "raw" / "load.csv"), "gear_shift_trace_path": str(tmp_path / "raw" / "gear.csv"), "raw_trace_sha256": {"rpm_trace_path": "b" * 64, "load_throttle_trace_path": "c" * 64, "gear_shift_trace_path": "d" * 64}, "synchronization": "timestamp_bound_state_traces"},
+    }
+    raw_manifest = tmp_path / "raw_manifest.json"
+    raw_manifest.write_text(json.dumps({"records": [raw_record], "allowed_download_root": str(tmp_path / "raw")}, ensure_ascii=False), encoding="utf-8")
+
+    inventory = build_inventory(primary, raw_reference_manifests=(raw_manifest,))
+    merged = next(row for row in inventory["recordings"] if row["recording_id"] == raw_record["recording_id"])
+    assert merged["evidence"]["r1_eligible"] is True
+    assert merged["vehicle_name_zh"] == "法拉利 458"
+    assert merged["scenario_hint"] == "full_pull"
+    out_dir = tmp_path / "out"
+    outputs = write_stage_q_outputs(inventory, out_dir)
+    canonical_manifest = json.loads(outputs["manifest"].read_text(encoding="utf-8"))
+    schema = json.loads((Path(__file__).resolve().parents[1] / "real_reference" / "schemas" / "stage_q_reference_manifest.schema.json").read_text(encoding="utf-8"))
+    jsonschema.Draft202012Validator(schema).validate(canonical_manifest)
+    bindings = json.loads(outputs["rpm_state_bindings"].read_text(encoding="utf-8"))
+    binding = next(row for row in bindings if row["recording_id"] == raw_record["recording_id"])
+    assert binding["status"] == "SYNCED"
+    segments = json.loads(outputs["scenario_segments"].read_text(encoding="utf-8"))
+    segment = next(row for row in segments if row["recording_id"] == raw_record["recording_id"])
+    assert segment["start_s"] == 0.0
+    assert segment["end_s"] == 0.999
+    assert not list(out_dir.rglob("*.wav"))

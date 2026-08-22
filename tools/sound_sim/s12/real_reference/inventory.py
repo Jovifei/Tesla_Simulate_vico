@@ -11,7 +11,7 @@ import hashlib
 import json
 import wave
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 
 SCHEMA_VERSION = "s12-stage-q-reference-database-v2"
@@ -371,31 +371,111 @@ def build_evidence_matrix(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _normalise_external_raw_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Adapt the raw-audio intake schema to the canonical Stage-Q record."""
+
+    recording_id = str(record.get("recording_id") or "").strip()
+    vehicle_id = str(record.get("vehicle_id") or "").strip()
+    if not recording_id or vehicle_id not in ALL_VEHICLES:
+        raise ValueError(f"raw reference record must name a supported vehicle: {recording_id or '<missing>'}/{vehicle_id or '<missing>'}")
+    row = dict(record)
+    scenario = str(record.get("scenario") or record.get("scenario_hint") or "unknown").strip()
+    row["scenario"] = scenario
+    row["scenario_hint"] = scenario
+    row.setdefault("reference_id", f"q:{recording_id}")
+    row.setdefault("vehicle_name_zh", VEHICLE_NAMES_ZH[vehicle_id])
+    row.setdefault("relative_path", Path(str(record.get("external_path") or recording_id)).name)
+    row.setdefault("external_path", "")
+    row.setdefault("file_present", False)
+    row.setdefault("sha256", None)
+    row.setdefault("audio", None)
+    provenance = record.get("provenance")
+    row["provenance"] = dict(provenance) if isinstance(provenance, Mapping) else {}
+    analysis_defaults = {
+        "analysis_signal": "unaltered_analysis_signal",
+        "rpm_state_status": "MISSING_RPM_STATE",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "load_throttle_status": "MISSING",
+        "gear_shift_status": "MISSING",
+    }
+    analysis_contract = record.get("analysis_contract")
+    merged_analysis = dict(analysis_defaults)
+    if isinstance(analysis_contract, Mapping):
+        merged_analysis.update(analysis_contract)
+    row["analysis_contract"] = merged_analysis
+    evidence_value = record.get("evidence")
+    evidence = dict(evidence_value) if isinstance(evidence_value, Mapping) else {}
+    evidence.setdefault("level", "R3")
+    evidence.setdefault("r1_eligible", False)
+    evidence.setdefault("r2_eligible", False)
+    evidence.setdefault("automatic_tuning_eligible", False)
+    evidence.setdefault("order_hard_gate", bool(evidence["r1_eligible"]))
+    evidence.setdefault("reason", "外部原始录音入库记录未通过完整 Stage Q 证据门。")
+    row["evidence"] = evidence
+    missing = record.get("required_missing")
+    if missing is None:
+        missing = (evidence.get("r1_gate") or {}).get("missing", [])
+    row["required_missing"] = sorted({str(item) for item in (missing or [])})
+    return row
+
+
+def _read_external_raw_manifests(raw_reference_manifests: Iterable[Path | Mapping[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
+    records: list[dict[str, Any]] = []
+    roots: list[str] = []
+    for source in raw_reference_manifests:
+        if isinstance(source, Mapping):
+            payload = source
+        else:
+            path = Path(source)
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, Mapping) or not isinstance(payload.get("records"), list):
+            raise ValueError("raw reference manifest must contain a records array")
+        for record in payload["records"]:
+            if not isinstance(record, Mapping):
+                raise ValueError("raw reference manifest records must be objects")
+            records.append(_normalise_external_raw_record(record))
+        for key in ("allowed_download_root", "raw_media_root"):
+            value = payload.get(key)
+            if value and str(value) not in roots:
+                roots.append(str(value))
+    return records, roots
+
+
 def build_inventory(
     media_root: Path,
     catalog: Iterable[dict[str, Any]] = CATALOG,
     additional_media_roots: Iterable[Path] = DEFAULT_ADDITIONAL_MEDIA_ROOTS,
+    raw_reference_manifests: Iterable[Path | Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     media_root = Path(media_root)
     catalog = tuple(catalog)
     additional_roots = tuple(Path(root) for root in additional_media_roots if Path(root) != media_root)
     records = [_recording_record(media_root, spec) for spec in catalog]
+    raw_records, raw_roots = _read_external_raw_manifests(raw_reference_manifests)
+    by_id = {record["recording_id"]: record for record in records}
+    by_id.update({record["recording_id"]: record for record in raw_records})
+    records = list(by_id.values())
     records.sort(key=lambda item: item["recording_id"])
     matrix = build_evidence_matrix(records)
     status = "REAL_REFERENCE_DATASET_READY" if matrix["overall_r1_ready"] else "REAL_REFERENCE_DATASET_LIMITED"
-    blockers = [
-        "缺少 Jovi 明确授权或可审计的合法来源记录。",
-        "没有任何记录绑定同步 RPM trace；不能执行 R1 阶次资格或自动调参。",
-        "没有可靠的 Load/Throttle、Gear/shift、麦克风位置和 AGC 记录。",
-        "公开/改装候选不能被当作原厂 OEM 参考。",
-    ]
+    blockers: list[str] = []
+    if not any(record["evidence"]["r1_eligible"] for record in records):
+        blockers.append("没有任何记录同时通过合法来源、精确车型和同步状态的 R1 资格；不能执行 R1 阶次资格或自动调参。")
+    if not all(item["r1_eligible_count"] > 0 for item in matrix["vehicles"]):
+        blockers.append("八车型尚未全部取得至少一条 R1 参考；Stage T 锚点和其余车辆交接不能启动。")
+    if not all(item["r1_eligible_count"] > 0 for item in matrix["vehicles"] if item["anchor_vehicle"]):
+        blockers.append("Ferrari 458、Hellcat、RX-7 FD 三个锚点尚未全部通过 R1。")
+    if any(record["evidence"]["level"] in {"R2", "R3"} for record in records):
+        blockers.append("公开/改装或缺状态候选仍只能作 R2/R3 参考，不能替代原厂 R1。")
+    if not blockers:
+        blockers.append("无 Stage Q 阻塞项；继续执行 Stage R。")
     return {
         "schema_version": SCHEMA_VERSION,
         "stage": "Q",
         "status": status,
         "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA" if status != "REAL_REFERENCE_DATASET_READY" else "READY_FOR_STAGE_R",
         "raw_media_root": str(media_root),
-        "audited_external_roots": [str(media_root), *(str(root) for root in additional_roots)],
+        "audited_external_roots": [str(media_root), *(str(root) for root in additional_roots), *raw_roots],
         "raw_audio_policy": "external_only_not_in_git",
         "vehicles": list(ALL_VEHICLES),
         "anchor_vehicles": list(ANCHOR_VEHICLES),
@@ -428,38 +508,63 @@ def _scenario_segments(inventory: dict[str, Any]) -> list[dict[str, Any]]:
     segments = []
     for record in inventory["recordings"]:
         duration = (record.get("audio") or {}).get("duration_s")
+        state = record.get("state_bindings") or {}
+        window = record.get("time_window") or state.get("time_window")
+        if isinstance(window, Mapping) and window.get("start_s") is not None and window.get("end_s") is not None:
+            start_s = float(window["start_s"])
+            end_s = float(window["end_s"])
+            status = "R1_TIMESTAMP_BOUND_WINDOW" if record["evidence"]["r1_eligible"] else "TIMESTAMP_BOUND_NOT_R1"
+            source = "external_state_time_window"
+            usable = bool(record["evidence"]["r1_eligible"])
+        else:
+            start_s = 0.0
+            end_s = duration
+            status = "UNQUALIFIED_COARSE_WINDOW"
+            source = "filename_or_prior_note_only"
+            usable = False
         segments.append(
             {
                 "recording_id": record["recording_id"],
                 "vehicle_id": record["vehicle_id"],
                 "scenario": record["scenario_hint"],
-                "start_s": 0.0,
-                "end_s": duration,
-                "status": "UNQUALIFIED_COARSE_WINDOW",
-                "source": "filename_or_prior_note_only",
-                "usable_for_order_or_tuning": False,
+                "start_s": start_s,
+                "end_s": end_s,
+                "status": status,
+                "source": source,
+                "usable_for_order_or_tuning": usable,
             }
         )
     return segments
 
 
 def _rpm_bindings(inventory: dict[str, Any]) -> list[dict[str, Any]]:
-    return [
-        {
-            "recording_id": record["recording_id"],
-            "vehicle_id": record["vehicle_id"],
-            "status": "MISSING_RPM_STATE",
-            "rpm_source": None,
-            "trace_sha256": None,
-            "load_throttle_source": None,
-            "gear_shift_source": None,
-            "qualification": "ESTIMATED_RPM_NOT_QUALIFIED",
-        }
-        for record in inventory["recordings"]
-    ]
+    bindings = []
+    for record in inventory["recordings"]:
+        state = record.get("state_bindings") or {}
+        synced = bool(record["evidence"]["r1_eligible"]) and record.get("analysis_contract", {}).get("rpm_state_status") == "SYNCED"
+        bindings.append(
+            {
+                "recording_id": record["recording_id"],
+                "vehicle_id": record["vehicle_id"],
+                "status": "SYNCED" if synced else "MISSING_RPM_STATE",
+                "rpm_source": state.get("rpm_trace_path") if synced else None,
+                "trace_sha256": state.get("trace_sha256") if synced else None,
+                "raw_trace_sha256": state.get("raw_trace_sha256") if synced else None,
+                "load_throttle_source": state.get("load_throttle_trace_path") if synced else None,
+                "gear_shift_source": state.get("gear_shift_trace_path") if synced else None,
+                "time_window": state.get("time_window") if synced else None,
+                "qualification": "R1_SYNCED_STATE" if synced else "ESTIMATED_RPM_NOT_QUALIFIED",
+            }
+        )
+    return bindings
 
 
 def _render_report(inventory: dict[str, Any]) -> str:
+    r1_count = sum(1 for record in inventory["recordings"] if record["evidence"]["r1_eligible"])
+    if r1_count:
+        conclusion = f"当前已有 `{r1_count}` 条 R1 记录进入 Stage Q；只有通过 Stage R MATLAB/MoSQITo 收据和 Jovi 人耳反馈后，才允许参数建议或调音。其余记录仍按 R2/R3 限制处理。"
+    else:
+        conclusion = "本轮只审计外部本地参考，不把公开或来源不完整的音频伪装成 R1 真实标定数据。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息和缺口。当前没有任何记录满足 R1，因此 Stage R 的真实阶次基线、自动参数建议和调音闭环不能启动。"
     lines = [
         "# S12 Stage Q 真实参考数据报告",
         "",
@@ -467,7 +572,7 @@ def _render_report(inventory: dict[str, Any]) -> str:
         "",
         "## 结论",
         "",
-        "本轮只审计外部本地参考，不把公开或来源不完整的音频伪装成 R1 真实标定数据。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息和缺口。当前没有任何记录满足 R1，因此 Stage R 的真实阶次基线、自动参数建议和调音闭环不能启动。",
+        conclusion,
         "",
         "## 车型覆盖",
         "",
@@ -478,6 +583,11 @@ def _render_report(inventory: dict[str, Any]) -> str:
         lines.append(
             f"| {vehicle['vehicle_name_zh']} | {vehicle['recording_count']} | {vehicle['present_count']} | {vehicle['r1_eligible_count']} | {vehicle['r2_eligible_count']} | `{vehicle['status']}` |"
         )
+    next_state = (
+        "全部八车型已经有 R1 记录，可进入 Stage R；仍需逐条取得 MATLAB/MoSQITo 收据和 Jovi 人耳反馈。"
+        if inventory["status"] == "REAL_REFERENCE_DATASET_READY"
+        else "在所有必需 R1 资料到位之前，Stage Q 保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`；不会把 R2/R3 结果升级为真实差异合格报告或修改车型参数。"
+    )
     lines.extend(
         [
             "",
@@ -497,8 +607,9 @@ def _render_report(inventory: dict[str, Any]) -> str:
         fmt = f"{audio.get('sample_rate_hz', '—')} Hz / {audio.get('channels', '—')} ch / {audio.get('sample_width_bits', '—')} bit" if audio else "不可读"
         duration = f"{audio.get('duration_s', 0):.3f}s" if audio.get("duration_s") is not None else "—"
         sha = record.get("sha256")
+        use_policy = "Stage R 待收据" if record["evidence"]["r1_eligible"] else "否"
         lines.append(
-            f"| `{record['recording_id']}` | {record['scenario_hint']} | {fmt} | {duration} | `{sha[:12] if sha else '—'}` | `{record['evidence']['level']}` | 否 |"
+            f"| `{record['recording_id']}` | {record['scenario_hint']} | {fmt} | {duration} | `{sha[:12] if sha else '—'}` | `{record['evidence']['level']}` | {use_policy} |"
         )
     lines.extend(
         [
@@ -525,7 +636,7 @@ def _render_report(inventory: dict[str, Any]) -> str:
             "4. 录音设备、采样率、通道及 AGC/后处理说明。",
             "5. Jovi 确认允许用于本地分析、派生特征和听审的授权记录。",
             "",
-            "在这些资料到位之前，Stage Q 只能保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`；不会生成真实差异合格报告，也不会修改车型参数。",
+            next_state,
             "",
             "边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。",
         ]

@@ -176,6 +176,8 @@
 
 Stage R 现在允许低于音频采样率的、带严格递增时间戳且覆盖窗口的状态遥测：RPM/负载/油门采用线性插值，挡位/换挡事件采用离散最近点映射到音频采样网格；没有时间戳的低速率状态、窗口外推或长度/单位不一致继续 fail-closed。FLAC 仅在外部临时 MATLAB 输入准备阶段无重采样解码，原始 FLAC SHA 保持绑定。
 
-本轮验证：原始入库/Stage R 重点测试 `11 passed`；完整 S12 `381 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
+raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`，同步生成 evidence matrix、带状态窗口的 `scenario_segments.json`、R1 `rpm_state_bindings.json`、provenance 和派生特征指针；合并过程不复制原始媒体，并通过 Stage Q JSON Schema。
+
+本轮验证：原始入库/Stage Q/R 重点测试 `27 passed`；完整 S12 `382 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
 
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。

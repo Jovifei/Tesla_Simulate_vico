@@ -1330,6 +1330,7 @@ Rules:
 - 原始 WAV/FLAC 的入库 manifest 可以进入仓库，但音频、视频、PCM 和状态原件必须留在 `E:\Claude_allow\Download` 等批准外部目录；入口必须同时记录原始音频 SHA、每个状态文件 SHA、来源/许可、精确车型/原厂排气、麦位和 AGC。
 - 低于音频采样率的状态遥测只有在每类信号都有严格递增时间戳、明确单位且完整覆盖工况窗口时才能插值到音频网格；连续量线性插值、挡位/换挡事件离散映射，禁止静默外推或仅凭行数补齐。
 - YouTube 下载恢复工具与原始录音 R1 入口必须分开：视频派生音频即使通过严格解码仍保持 R3，不能因下载成功而获得阶次门或调参权限。
+- Raw R1 manifest 不能停留在独立入口；必须提供到 Stage Q canonical `reference_database_v2` 的显式合并路径，并验证场景窗口、state binding、provenance 和 JSON Schema，同时不复制原始媒体。
 
 # 2026-08-22 S12 Stage R direct-audio analysis lessons
 
