@@ -15,11 +15,19 @@ from .stage_r_execute import (
     StageRExecutionContractError,
     build_r1_execution_plan,
     prepare_r1_matlab_inputs,
+    read_unaltered_pcm_audio,
     read_unaltered_pcm_wav,
     run_r2_limited_comparison,
     write_r2_outputs,
 )
 from .closed_loop_report import render_waiting_final_report, write_waiting_final_report
+from .raw_audio_intake import (
+    RawReferenceContractError,
+    RawReferenceIntakeError,
+    RawReferencePathError,
+    ingest_raw_reference_specs,
+    render_raw_intake_report,
+)
 
 __all__ = [
     "ANCHOR_VEHICLES",
@@ -37,9 +45,15 @@ __all__ = [
     "StageRExecutionContractError",
     "build_r1_execution_plan",
     "prepare_r1_matlab_inputs",
+    "read_unaltered_pcm_audio",
     "read_unaltered_pcm_wav",
     "run_r2_limited_comparison",
     "write_r2_outputs",
     "render_waiting_final_report",
     "write_waiting_final_report",
+    "RawReferenceContractError",
+    "RawReferenceIntakeError",
+    "RawReferencePathError",
+    "ingest_raw_reference_specs",
+    "render_raw_intake_report",
 ]

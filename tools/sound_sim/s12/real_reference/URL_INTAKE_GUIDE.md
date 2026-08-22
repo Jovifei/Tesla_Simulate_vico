@@ -2,6 +2,8 @@
 
 Jovi 提供网址后，使用这个入口把视频下载到 `E:\Claude_allow\Download`，并生成外部审计目录。原始视频、抽取 WAV、下载日志和 `intake_manifest.json` 不进入 Git。
 
+如果已经拿到合法原始 WAV/FLAC 和同步 CSV/JSON，请改用同目录的 [`RAW_AUDIO_INTAKE_GUIDE.md`](RAW_AUDIO_INTAKE_GUIDE.md)；视频下载结果永远不能凭网址直接进入 R1。
+
 ## 直接网址
 
 ```powershell

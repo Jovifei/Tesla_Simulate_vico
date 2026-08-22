@@ -12,6 +12,8 @@ import csv
 import hashlib
 import json
 import re
+import shutil
+import subprocess
 import wave
 from pathlib import Path
 from typing import Any, Mapping
@@ -89,6 +91,69 @@ def read_unaltered_pcm_wav(path: Path) -> tuple[np.ndarray, int, dict[str, Any]]
         "frames": int(frames),
         "sha256": _sha256(path),
     }
+
+
+def _read_unaltered_pcm_flac(path: Path) -> tuple[np.ndarray, int, dict[str, Any]]:
+    """Decode a lossless FLAC source for analysis without changing its rate."""
+
+    ffprobe = shutil.which("ffprobe")
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffprobe or not ffmpeg:
+        raise StageRExecutionContractError("ffmpeg and ffprobe are required for FLAC R1 input")
+    probe = subprocess.run(
+        [ffprobe, "-v", "error", "-show_streams", "-of", "json", str(path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if probe.returncode != 0:
+        raise StageRExecutionContractError(f"ffprobe cannot read FLAC source: {path}")
+    try:
+        streams = json.loads(probe.stdout).get("streams", [])
+        stream = next(row for row in streams if row.get("codec_type") == "audio")
+        codec = str(stream.get("codec_name") or "").lower()
+        sample_rate_hz = int(stream["sample_rate"])
+        channels = int(stream["channels"])
+    except (KeyError, TypeError, ValueError, StopIteration, json.JSONDecodeError) as exc:
+        raise StageRExecutionContractError(f"FLAC source has incomplete audio metadata: {path}") from exc
+    if codec != "flac" or sample_rate_hz <= 0 or channels <= 0:
+        raise StageRExecutionContractError(f"unsupported FLAC source metadata: {path}")
+    decoded = subprocess.run(
+        [ffmpeg, "-v", "error", "-i", str(path), "-map", "0:a:0", "-f", "f32le", "-acodec", "pcm_f32le", "pipe:1"],
+        check=False,
+        capture_output=True,
+    )
+    if decoded.returncode != 0:
+        detail = decoded.stderr.decode("utf-8", errors="replace").strip()[:300]
+        raise StageRExecutionContractError(f"ffmpeg cannot decode FLAC source: {path}: {detail}")
+    raw = decoded.stdout
+    if not raw or len(raw) % (4 * channels) != 0:
+        raise StageRExecutionContractError(f"decoded FLAC frame data is truncated: {path}")
+    signal = np.frombuffer(raw, dtype="<f4").astype(np.float64).reshape(-1, channels)
+    if signal.size == 0 or not np.isfinite(signal).all():
+        raise StageRExecutionContractError("decoded FLAC is empty or non-finite")
+    return signal, sample_rate_hz, {
+        "channels": channels,
+        "sample_width_bits": None,
+        "sample_rate_hz": sample_rate_hz,
+        "frames": int(signal.shape[0]),
+        "sha256": _sha256(path),
+        "container": "FLAC",
+        "decoded_format": "pcm_f32le_without_resampling",
+    }
+
+
+def read_unaltered_pcm_audio(path: Path) -> tuple[np.ndarray, int, dict[str, Any]]:
+    """Read a qualified lossless WAV/FLAC source without gain, EQ, or resampling."""
+
+    path = Path(path)
+    if path.suffix.lower() == ".wav":
+        return read_unaltered_pcm_wav(path)
+    if path.suffix.lower() == ".flac":
+        if not path.is_file():
+            raise FileNotFoundError(f"FLAC file not found: {path}")
+        return _read_unaltered_pcm_flac(path)
+    raise StageRExecutionContractError("R1 source must be an uncompressed PCM WAV or lossless FLAC")
 
 
 def _reference_path(record: Mapping[str, Any]) -> Path:
@@ -222,6 +287,55 @@ def _trace_window(owner: Mapping[str, Any]) -> tuple[float, float]:
     return start, end
 
 
+def _resample_linear(values: np.ndarray, source_time_s: np.ndarray, target_time_s: np.ndarray, *, field: str) -> np.ndarray:
+    """Interpolate a continuous state field onto the audio sample grid."""
+
+    if source_time_s.size != values.size:
+        raise StageRExecutionContractError(f"R1 state/audio sample count mismatch: {field} time/value lengths differ")
+    if source_time_s.size < 2:
+        raise StageRExecutionContractError(f"R1 state trace needs at least two timestamped samples: {field}")
+    if not np.isfinite(source_time_s).all() or not np.isfinite(values).all():
+        raise StageRExecutionContractError(f"R1 state traces contain non-finite values: {field}")
+    if np.any(np.diff(source_time_s) <= 0):
+        raise StageRExecutionContractError(f"R1 state trace time must be strictly increasing: {field}")
+    tolerance = max(1e-9, 1.0e-6 / max(1.0, float(source_time_s[-1] - source_time_s[0])))
+    if target_time_s[0] < source_time_s[0] - tolerance or target_time_s[-1] > source_time_s[-1] + tolerance:
+        raise StageRExecutionContractError(
+            f"R1 state/audio sample count mismatch: {field} trace time range "
+            f"[{source_time_s[0]:.9g}, {source_time_s[-1]:.9g}] does not cover "
+            f"audio window [{target_time_s[0]:.9g}, {target_time_s[-1]:.9g}]"
+        )
+    # np.interp clamps at the edges.  The explicit coverage check above makes
+    # that clamp an endpoint tolerance only, never an implicit extrapolation.
+    return np.interp(target_time_s, source_time_s, values).astype(np.float64, copy=False)
+
+
+def _resample_discrete(values: np.ndarray, source_time_s: np.ndarray, target_time_s: np.ndarray, *, field: str) -> np.ndarray:
+    """Nearest-neighbour resampling for gear and shift-event state."""
+
+    if source_time_s.size != values.size:
+        raise StageRExecutionContractError(f"R1 state/audio sample count mismatch: {field} time/value lengths differ")
+    if source_time_s.size < 2:
+        raise StageRExecutionContractError(f"R1 state trace needs at least two timestamped samples: {field}")
+    if not np.isfinite(source_time_s).all() or not np.isfinite(values).all():
+        raise StageRExecutionContractError(f"R1 state traces contain non-finite values: {field}")
+    if np.any(np.diff(source_time_s) <= 0):
+        raise StageRExecutionContractError(f"R1 state trace time must be strictly increasing: {field}")
+    tolerance = max(1e-9, 1.0e-6 / max(1.0, float(source_time_s[-1] - source_time_s[0])))
+    if target_time_s[0] < source_time_s[0] - tolerance or target_time_s[-1] > source_time_s[-1] + tolerance:
+        raise StageRExecutionContractError(
+            f"R1 state/audio sample count mismatch: {field} trace time range "
+            f"[{source_time_s[0]:.9g}, {source_time_s[-1]:.9g}] does not cover "
+            f"audio window [{target_time_s[0]:.9g}, {target_time_s[-1]:.9g}]"
+        )
+    right = np.searchsorted(source_time_s, target_time_s, side="left")
+    right = np.clip(right, 0, source_time_s.size - 1)
+    left = np.clip(right - 1, 0, source_time_s.size - 1)
+    choose_right = np.abs(source_time_s[right] - target_time_s) < np.abs(target_time_s - source_time_s[left])
+    indices = np.where(choose_right, right, left)
+    return values[indices].astype(np.float64, copy=False)
+
+
 def _load_state_bundle(owner: Mapping[str, Any], *, frame_count: int, sample_rate_hz: int, fallback_root: Path | None) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
     rpm_path = _resolve_trace_path(owner, "rpm_trace_path", fallback_root=fallback_root)
     load_path = _resolve_trace_path(owner, "load_throttle_trace_path", fallback_root=fallback_root)
@@ -239,34 +353,69 @@ def _load_state_bundle(owner: Mapping[str, Any], *, frame_count: int, sample_rat
         shift_source = "derived_from_gear_transition"
     else:
         shift_source = "recorded_trace_column"
-    time_sources = [
-        _trace_column(rpm_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
-        _trace_column(load_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
-        _trace_column(gear_table, ("time_s", "timestamp_s", "time"), "time_s", required=False),
-    ]
-    provided_time = next((value for value in time_sources if value is not None), None)
-    if provided_time is None:
-        time_s = np.arange(frame_count, dtype=np.float64) / float(sample_rate_hz)
-        time_source = "sample_index_at_audio_sample_rate"
-    else:
-        time_s = np.asarray(provided_time, dtype=np.float64)
-        time_source = "recorded_trace_column"
-        for other in time_sources:
-            if other is not None and (other.size != time_s.size or not np.allclose(other, time_s, rtol=0.0, atol=1e-9)):
-                raise StageRExecutionContractError("R1 state trace time columns are not aligned")
-        if time_s.size > 1 and np.any(np.diff(time_s) <= 0):
-            raise StageRExecutionContractError("R1 state trace time must be strictly increasing")
-    bundle = {
-        "time_s": time_s,
+    time_sources = {
+        "rpm": _trace_column(rpm_table, ("time_s", "timestamp_s", "time"), "rpm.time_s", required=False),
+        "load": _trace_column(load_table, ("time_s", "timestamp_s", "time"), "load.time_s", required=False),
+        "throttle": _trace_column(load_table, ("time_s", "timestamp_s", "time"), "throttle.time_s", required=False),
+        "gear": _trace_column(gear_table, ("time_s", "timestamp_s", "time"), "gear.time_s", required=False),
+        "shift_event": _trace_column(gear_table, ("time_s", "timestamp_s", "time"), "shift_event.time_s", required=False),
+    }
+    values = {
         "rpm": np.asarray(rpm, dtype=np.float64),
         "load": np.asarray(load, dtype=np.float64),
         "throttle": np.asarray(throttle, dtype=np.float64),
         "gear": np.asarray(gear, dtype=np.float64),
         "shift_event": np.asarray(shift_event, dtype=np.float64),
     }
-    if any(value.size != frame_count for value in bundle.values()):
-        sizes = {name: int(value.size) for name, value in bundle.items()}
-        raise StageRExecutionContractError(f"R1 state/audio sample count mismatch: frames={frame_count}, traces={sizes}")
+    source_sizes = {name: int(value.size) for name, value in values.items()}
+    has_time = [time_sources[name] is not None for name in values]
+    if any(has_time) and not all(has_time):
+        raise StageRExecutionContractError("R1 state trace time columns are not aligned")
+    if all(has_time):
+        source_times = {name: np.asarray(time_sources[name], dtype=np.float64) for name in values}
+        for name, source_time in source_times.items():
+            if source_time.size != values[name].size:
+                raise StageRExecutionContractError(f"R1 state/audio sample count mismatch: {name} time/value lengths differ")
+            if source_time.size < 2 or not np.isfinite(source_time).all() or np.any(np.diff(source_time) <= 0):
+                raise StageRExecutionContractError(f"R1 state trace time must be strictly increasing: {name}")
+        time_source = "recorded_trace_columns"
+    else:
+        source_times = {}
+        time_source = "sample_index_at_audio_sample_rate"
+    default_time_s = np.arange(frame_count, dtype=np.float64) / float(sample_rate_hz)
+    sample_aligned_time = bool(
+        all(has_time)
+        and all(source_times[name].size == frame_count for name in values)
+        and all(np.allclose(source_times[name], default_time_s, rtol=0.0, atol=1e-9) for name in values)
+    )
+    needs_window = any(size != frame_count for size in source_sizes.values()) or (all(has_time) and not sample_aligned_time)
+    if needs_window:
+        window = _trace_window(owner)
+        target_time_s = np.linspace(window[0], window[1], frame_count, dtype=np.float64)
+    else:
+        target_time_s = default_time_s
+    if source_times:
+        if sample_aligned_time:
+            bundle = {"time_s": target_time_s, **values}
+            resampling = "none_audio_sample_aligned"
+        else:
+            bundle = {
+                "time_s": target_time_s,
+                "rpm": _resample_linear(values["rpm"], source_times["rpm"], target_time_s, field="rpm"),
+                "load": _resample_linear(values["load"], source_times["load"], target_time_s, field="load"),
+                "throttle": _resample_linear(values["throttle"], source_times["throttle"], target_time_s, field="throttle"),
+                "gear": _resample_discrete(values["gear"], source_times["gear"], target_time_s, field="gear"),
+                "shift_event": _resample_discrete(values["shift_event"], source_times["shift_event"], target_time_s, field="shift_event"),
+            }
+            resampling = "timestamp_interpolation_to_audio_sample_grid"
+    else:
+        if len(set(source_sizes.values())) != 1 or any(value.size != frame_count for value in values.values()):
+            raise StageRExecutionContractError(
+                f"R1 state/audio sample count mismatch: frames={frame_count}, traces={source_sizes}; "
+                "lower-rate traces require timestamp columns"
+            )
+        bundle = {"time_s": target_time_s, **values}
+        resampling = "none_audio_sample_aligned"
     if not all(np.isfinite(value).all() for value in bundle.values()):
         raise StageRExecutionContractError("R1 state traces contain non-finite values")
     if np.any(bundle["rpm"] <= 0):
@@ -288,6 +437,8 @@ def _load_state_bundle(owner: Mapping[str, Any], *, frame_count: int, sample_rat
         "trace_sha256": actual_sha,
         "shift_source": shift_source,
         "time_source": time_source,
+        "resampling": resampling,
+        "source_trace_lengths": source_sizes,
         "frame_count": frame_count,
         "sample_rate_hz": sample_rate_hz,
     }
@@ -358,8 +509,8 @@ def prepare_r1_matlab_inputs(
     if output_root.exists():
         raise StageRExecutionContractError(f"refusing to overwrite R1 MATLAB input root: {output_root}")
     reference_path = Path(str(plan["reference"]["external_path"]))
-    reference_signal, reference_rate, reference_header = read_unaltered_pcm_wav(reference_path)
-    candidate_signal, candidate_rate, candidate_header = read_unaltered_pcm_wav(candidate_path)
+    reference_signal, reference_rate, reference_header = read_unaltered_pcm_audio(reference_path)
+    candidate_signal, candidate_rate, candidate_header = read_unaltered_pcm_audio(candidate_path)
     if reference_rate != candidate_rate:
         raise StageRExecutionContractError(
             f"R1 sample-rate mismatch: reference={reference_rate}, candidate={candidate_rate}; resampling is not implicit"

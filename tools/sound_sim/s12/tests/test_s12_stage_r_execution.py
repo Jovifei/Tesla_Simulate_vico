@@ -303,3 +303,41 @@ def test_r1_input_preparation_rejects_state_audio_frame_mismatch(tmp_path: Path)
             candidate_meta=candidate_meta,
             output_root=tmp_path / "r1-matlab-inputs-mismatch",
         )
+
+
+def test_r1_state_bundle_resamples_timestamped_lower_rate_telemetry(tmp_path: Path) -> None:
+    frame_count = 4_800
+    sample_rate_hz = 48_000
+    root = tmp_path / "low-rate-state"
+    root.mkdir()
+    (root / "rpm.csv").write_text(
+        "time_s,rpm\n0,1000\n0.05,2000\n0.099,3000\n",
+        encoding="utf-8",
+    )
+    (root / "load_throttle.csv").write_text(
+        "time_s,load,throttle\n0,0.2,0.3\n0.05,0.6,0.8\n0.099,0.9,1.0\n",
+        encoding="utf-8",
+    )
+    (root / "gear_shift.csv").write_text(
+        "time_s,gear,shift_event\n0,2,0\n0.05,2,0\n0.099,3,1\n",
+        encoding="utf-8",
+    )
+    bundle, meta = stage_r_execute._load_state_bundle(
+        {
+            "trace_root": str(root),
+            "rpm_trace_path": "rpm.csv",
+            "load_throttle_trace_path": "load_throttle.csv",
+            "gear_shift_trace_path": "gear_shift.csv",
+            "time_window": {"start_s": 0.0, "end_s": 0.099},
+        },
+        frame_count=frame_count,
+        sample_rate_hz=sample_rate_hz,
+        fallback_root=root,
+    )
+    assert bundle["rpm"].size == frame_count
+    assert bundle["load"].size == frame_count
+    assert bundle["gear"].size == frame_count
+    assert bundle["rpm"][0] == pytest.approx(1000.0)
+    assert bundle["rpm"][-1] == pytest.approx(3000.0)
+    assert set(np.unique(bundle["gear"])) <= {2.0, 3.0}
+    assert meta["resampling"] == "timestamp_interpolation_to_audio_sample_grid"

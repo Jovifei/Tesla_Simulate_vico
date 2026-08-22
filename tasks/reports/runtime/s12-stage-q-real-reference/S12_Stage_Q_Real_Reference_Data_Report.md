@@ -170,4 +170,12 @@
 
 资格函数现要求 `vehicle_and_scenario_identity`、`source_and_license`、`raw_audio_source`、`sample_rate` 和明确的 `stock_exhaust_confirmation`，并拒绝 `video_extracted`/YouTube 来源即使其容器声称 PCM 或手工附带 raw receipt。完整 S12 回归为 `377 passed, 114 subtests passed`；当前三锚点重新审计仍为 `R1=0`，没有启动 MATLAB 阶次或自动调参。
 
+## 原始录音 R1 入库与低速率状态绑定（2026-08-23）
+
+新增 `tools/sound_sim/s12/real_reference/raw_audio_intake.py` 和中文 `RAW_AUDIO_INTAKE_GUIDE.md`。入口只接受批准外部目录中的原始 PCM WAV/FLAC、来源/授权凭证、精确车型与原厂排气确认，以及带明确单位和时间窗口的 RPM、Load/Throttle、Gear/shift CSV/JSON；只把 manifest、外部路径、原始 SHA-256、状态文件 SHA-256 与 provenance 写入元数据，绝不复制原始版权音频到 Git。YouTube/视频抽音即使完整解码仍被 R1 门禁拒绝。
+
+Stage R 现在允许低于音频采样率的、带严格递增时间戳且覆盖窗口的状态遥测：RPM/负载/油门采用线性插值，挡位/换挡事件采用离散最近点映射到音频采样网格；没有时间戳的低速率状态、窗口外推或长度/单位不一致继续 fail-closed。FLAC 仅在外部临时 MATLAB 输入准备阶段无重采样解码，原始 FLAC SHA 保持绑定。
+
+本轮验证：原始入库/Stage R 重点测试 `11 passed`；完整 S12 `381 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
+
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。

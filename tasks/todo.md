@@ -3879,3 +3879,20 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 下载完整性补充：直接无代理路径恢复了原始 24 条 URL 的可解码音频，但仅证明媒体传输/解码完整；不能替代授权、原厂状态或同步 RPM/状态数据。
 - 当前 R3 补充基线：已使用原始 URL 重试结果重算现有 Comparator；逐车中位数和不确定性报告只作为听审排序，不输出真实性百分比。
 - Git 范围：仅入口代码、测试/计划修改和中文报告；`git ls-files '*.mp4' '*.webm' '*.wav'` 不新增本轮版权媒体，原始/派生下载物仍在外部目录。
+
+## S12 原始录音 R1 入库与低速率状态绑定（2026-08-23）
+
+### 执行计划
+
+- [x] 审计当前 Q/R 门禁和分支状态，保持 YouTube 派生音频为 R3，不将下载完整性改写成原厂 R1。
+- [x] 以 TDD 新增原始 WAV/FLAC + 同步 RPM/Load/Throttle/Gear/shift 的外部入库合同；输出仅为 manifest/report，不复制原始媒体。
+- [x] 实现批准目录、来源/授权、车型/原厂排气、单位、时间窗口、递增时间戳和原始 SHA-256 的 fail-closed 校验；不完整状态不得进入 R1 或自动调参。
+- [x] 实现 Stage R 对带时间戳低速率遥测的非外推网格绑定：连续量线性插值，挡位/换挡事件离散映射；增加无重采样 FLAC 外部临时输入支持。
+- [x] 更新中文入口指南、Q/闭环报告和本任务接力记录；明确当前真实资料仍为 `R1=0`。
+- [x] 验证完整 S12、Track-P、独立冻结守卫、compileall 和 diff 门禁；仅在验证通过后提交并推送本分支。
+
+### Review
+
+- 原始入库/Stage R 重点测试：`11 passed`；完整 S12：`381 passed, 114 subtests passed`；Track-P：`32 passed`。
+- 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
+- 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。

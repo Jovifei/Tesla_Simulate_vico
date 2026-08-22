@@ -16,6 +16,8 @@
 
 R1 门禁加固（2026-08-22）：资格函数现在额外要求非视频派生的原始 PCM/FLAC 收据、来源指针与授权证据、车型/工况、采样率和明确的原厂排气确认；即使视频容器声明 PCM 或手工传入 raw receipt，YouTube/视频抽取来源仍保持 R2/R3。针对性 URL/Stage-Q/Stage-R 测试覆盖该拒绝路径，当前真实资料重新审计仍为锚点 `R1=0`。
 
+原始录音入口补充（2026-08-23）：新增 `raw_audio_intake.py`，将合法原始 WAV/FLAC、外部路径别名、音频/状态 SHA-256、provenance、精确车型/原厂排气、麦位/AGC 和同步状态合同 fail-closed 登记；原始版权媒体仍只在 `E:\Claude_allow\Download` 等批准外部目录，manifest/report 才可进入仓库。Stage R 支持带时间戳的低速率 RPM/Load/Throttle/Gear/shift 遥测，在窗口覆盖后插值/离散映射到音频采样网格，拒绝无时间戳低速率数据和外推。该实现验证了 R1 输入准备路径，但没有制造真实 R1 记录：当前 `R1=0`、MATLAB/MoSQITo 收据 `0`、Jovi 人耳反馈 `0`、调音轮次 `0`。
+
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
 公开同步数据复核：F1Audio 有同步 RPM/挡位/油门但文件受限且车辆不是锚点；Visual-Acoustic 数据集有同步状态但车辆是 Lincoln MKS；HL-CEAD 有固定 RPM 录音但车型和负载/换挡证据不匹配。Ferrari 458、Hellcat、RX-7 的专业库仍需购买/书面许可与数值状态验收。筛选记录位于 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`；当前 `R1=0`，没有启动 MATLAB 阶次或自动调参。
