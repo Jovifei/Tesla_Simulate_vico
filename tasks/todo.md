@@ -3849,6 +3849,8 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 校验用户压缩包 SHA-256 `139A7EC28DE65CF446096A230C6ACBE95D0BD9F902F00A913A57D993305CD375`，安全解压 3 个文档并按每车 3 条选择 24 个来源。
 - [x] 为 YouTube 403/SABR 增加默认客户端→Android→Node.js `web_embedded`/`mweb` 客户端回退；首轮 1/24 的不完整目录和日志保留，组合库通过 3 条替代 URL 达到 24/24 可读视频/WAV/SHA。
 - [x] 对原始 3 条失败 URL 进行 Node.js/Web 重试并执行 `ffprobe` + `ffmpeg` 媒体体完整性校验：`yXw_35i3RMM` 完整，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 明确保持 `INCOMPLETE_MEDIA_BODY`；结果写入外部 `retry_js_20260822/youtube_retry_js_manifest_v1.json`，不进入比较或 A/B。
+- [x] 针对上述两条截断视频追加 `web_embedded` 仅音频格式回退：`XWEjZHFQ5lc`/`140-9` 与 `GQ0972wohFs`/`140-8` 均完整解码，转出外部 WAV 并写入 `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`；完整音频为 `3/3`，完整视频仍为 `1/3`，三条继续保持 `R3`、不进入 R2/调参。
+- [x] 筛选 Zenodo CC BY 4.0 发动机声数据集：Petrol ZIP 官方 MD5 与本地一致，137 个编号 WAV 无车型/同步元数据；记录外部 `s12-public-vehicle-engine-ccby4-20260822/screening_manifest.json`，结论 `NOT_TARGET_BINDABLE_NO_MODEL_OR_STATE`，不进入目标车型比较。
 - [x] 完成 8 张车型接触表人工视觉复核；车型身份仅标为 `VISUAL_IDENTITY_SUPPORT_ONLY`，原厂排气全部保持 `NOT_CONFIRMED`，变体/测功机/赛道风险逐条记录。
 - [x] 新增 `tools/sound_sim/s12/real_reference/analyze_downloaded_sources.py`：校验外部 WAV SHA、生成 72 个低置信工况候选窗口、派生频谱/响度/心理声学/瞬态特征，并对 8 个本地 synthetic 候选做 24 条 R3 Comparator 诊断。
 - [x] 生成外部 `analysis_20260822_v1` 的来源 manifest、派生特征、Comparator、中文 A/B 清单和带四分位数/范围的不确定性诊断建议；自动调参/Profile 更新保持禁止。

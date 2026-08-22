@@ -42,7 +42,13 @@
 
 - [F1Audio](https://zenodo.org/records/21186137) 页面声称提供约 300 小时的 F1 车载声学特征与同步 RPM、挡位、油门，但 Zenodo 文件受限访问，且车辆不是本项目八个锚点，因此不能作为本项目 R1 输入。
 - [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 把真实录音提取的结构用于程序化扩增；其公开说明明确是合成数据。即使通道嵌入 RPM/扭矩，也不能替代真实车辆原始录音。
-- [Sounds of Vehicle Internal Combustion Engines](https://zenodo.org/records/18777405) 以 CC BY 4.0 发布真实车辆声样本，但页面只描述怠速和部分负载/加速片段，没有与本项目锚点绑定的同步 RPM、挡位、麦克风和 AGC 合同；因此不升级为 R1。本轮已保留该线索，不下载 8.1 GB 非目标资料。
+- [Sounds of Vehicle Internal Combustion Engines](https://zenodo.org/records/18777405) 以 CC BY 4.0 发布真实车辆声样本，但页面只描述怠速和部分负载/加速片段，没有与本项目锚点绑定的同步 RPM、挡位、麦克风和 AGC 合同；因此不升级为 R1。本轮只下载并核验 51 MB 的 Petrol ZIP，未下载 Diesel ZIP。
+
+### 公开发动机声数据集筛选结果
+
+- 外部文件：`E:\Claude_allow\Download\s12-public-vehicle-engine-ccby4-20260822\Petrol Motor Sounds.zip`；官方 MD5 与本地实测均为 `896accd703c04b46af23485698ce6c45`，本地 SHA-256 为 `ee7faf50612dc7d5f001cd8b190eb3ea1d5846ae6ffc4adfe7b03a6b36f71a66`。
+- ZIP 内有 137 个 `PetrolClean/REC*.wav`、0 个 CSV/JSON/README/metadata 条目；未发现 Ferrari 458、Dodge Challenger Hellcat 或 Mazda RX-7 FD 的可绑定车型/Trim，也没有 RPM、Load/Throttle、Gear/shift、麦位或 AGC 字段。
+- 筛选清单：`E:\Claude_allow\Download\s12-public-vehicle-engine-ccby4-20260822\screening_manifest.json`，SHA-256 `a87f11b45b14cbd9ca4a48e6ea20c9ed1543570407bc45c606d58de314dba2cb`。结论为 `NOT_TARGET_BINDABLE_NO_MODEL_OR_STATE`，保留公开来源与校验记录，但不进入 R1/R2、Comparator 或调参。
 
 ## 本轮继续检索复核（2026-08-22）
 
@@ -50,6 +56,12 @@
 - [VS13 音视频车辆速度数据集](https://slobodan.ucg.ac.me/science/vs13/) 提供 13 种非本项目锚点车型的 400 段道路通过视频/音频，标注是恒定道路速度和通过时刻，不是 RPM、Load/Throttle 或 Gear/shift；不纳入八车型参考，只保留为方法学线索。
 - [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 虽然提供时间对齐的 RPM/扭矩通道，但官方说明明确为程序化合成音频，并包含虚构发动机/排气配置；它不能替代真实车辆原始录音，继续排除在 Stage Q R1/R2 之外。
 - [RX-7 免费音效页面](https://www.instantsoundfx.com/audio/mazda-rx-7-brap-brap-brap/) 声称可免费下载和免版税，但没有可核验的实车录音作者、车型配置、采集链或同步状态；最多只能作为 R3 定性线索，不下载、不升级为 RX-7 FD 实车证据。
+
+## YouTube 403 重试复核（2026-08-22）
+
+- 原始 3 条失败 URL 继续保留在外部 `retry_js_20260822`；`yXw_35i3RMM` 为完整可解码视频，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 的视频容器仍为 `INCOMPLETE_MEDIA_BODY`。
+- 对后两条新增 `web_embedded + Node.js EJS` 的仅音频格式回退：`XWEjZHFQ5lc` 的 `140-9` 与 `GQ0972wohFs` 的 `140-8` 均取得完整 44.1 kHz / 2 ch AAC，并通过 `ffprobe` + `ffmpeg` 解码；同时生成外部 PCM WAV。清单为 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\audio_format_retry_20260822\youtube_retry_audio_manifest_v2.json`，SHA-256 `09FEB0090619F55F281D540BA433059E131706079108C8C848619AFAB9E1F5B1`。
+- 这把“可用音频流”从 `1/3` 提升为 `3/3`，但没有把“原始视频完整率”改写为 `3/3`；三条仍是未核验 YouTube 授权、原厂状态与同步状态的 `R3`，不进入 R2 基线、阶次门、Comparator 资格或自动调参。
 
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
