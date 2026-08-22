@@ -32,6 +32,8 @@ R1 门禁加固（2026-08-22）：资格函数现在额外要求非视频派生�
 
 Stage Q 合并补充（2026-08-23）：`real_reference.cli --raw-reference-manifest` 可把外部入库记录接入 canonical `reference_database_v2`，生成 evidence matrix、场景窗口、RPM/state bindings、provenance 和派生特征指针，并执行 JSON Schema 校验；该合并只写元数据，不复制原始版权音频。
 
+Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrari 458、Hellcat、Supra 各一条已审计授权记录接入 canonical Q；入口重新核对外部文件 SHA-256，当前 canonical 为 18 条记录（R1=0、R2=3、R3=15）。R2 仍只允许频谱/响度/心理声学/瞬态主观相对比较，不开放阶次硬门或自动调参。
+
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
 公开同步数据复核：F1Audio 有同步 RPM/挡位/油门但文件受限且车辆不是锚点；Visual-Acoustic 数据集有同步状态但车辆是 Lincoln MKS；HL-CEAD 有固定 RPM 录音但车型和负载/换挡证据不匹配。Ferrari 458、Hellcat、RX-7 的专业库仍需购买/书面许可与数值状态验收。筛选记录位于 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`；当前 `R1=0`，没有启动 MATLAB 阶次或自动调参。

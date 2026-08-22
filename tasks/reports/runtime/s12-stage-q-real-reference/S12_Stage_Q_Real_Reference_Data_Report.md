@@ -104,7 +104,13 @@
 - [Visual-Acoustic Vehicle Dataset](https://vehical.org/ITSDataset/) 提供时间戳、发动机 RPM、油门、挡位和车内/车外麦克风，但车辆是 Lincoln MKS；只作为方法学参考，不进入锚点资格。
 - [HL-CEAD](https://github.com/MachineLearningVisionRG/machine_biometrics) 说明了 1000/1500/2000 RPM 的 WAV 录音、麦克风和录音设备，但车型不包含三个锚点，且只记录空挡稳态、没有数值负载/换挡轨迹；不进入 R1。
 - Ferrari 458、Hellcat、RX-7 的专业库仍需购买或书面许可；供应商页面的“同步 take/steady RPM/gearshift”不是数值状态文件，继续登记为 `PROCUREMENT_CANDIDATE_NOT_R1`。本次未下单、未下载版权原始音频。
-- 筛选收据：`public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`。该审计只保存 URL、字段证据和分类，不包含原始音频；当前锚点 `R1=0`、可用 R2=2、RX-7 FD 开放 R1 未找到。
+- 筛选收据：`public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`。该审计只保存 URL、字段证据和分类，不包含原始音频；当前锚点 `R1=0`、可用 R2=3（Ferrari/Hellcat/Supra），RX-7 FD 开放 R1 未找到。
+
+### 三锚点采购线索复核（2026-08-23）
+
+- [Pole Position Ferrari 458 2013](https://pole.se/product/ferrari-458-2013-2/) 页面显示商业库、straight-pipe 配置和 11 个同步 take；它仍缺本项目所需的已购买授权、原始交付文件、数值状态 trace 和原厂排气确认，保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
+- [Sonniss Dodge Challenger Hellcat 2015](https://sonniss.com/sound-effects/dodge-challenger-hellcat-2015/) 页面显示商业 96 kHz/24-bit 声音库和多机位录音，但当前没有购买收据、原始文件或同步 RPM/Load/Throttle/Gear 文件，保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
+- [Mazda RX-7 1990 sound file list](https://www.asoundeffect.com/wp-content/uploads/2020/01/Mazda_RX7_1990.pdf) 列出 13B twin-turbo、多麦位、gearshift/steady-RPM 条目，但它是商业曲目单且年份/代际不等同于冻结的 RX-7 FD；没有原始交付和数值状态 trace，保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
 
 ### 新增 CC0 Ferrari 458 GT3 候选（2026-08-22）
 
