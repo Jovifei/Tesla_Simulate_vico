@@ -6,6 +6,8 @@
 
 下载恢复补充：在仓库外独立目录 `retry_tools_20260822_v2` 关闭本机代理并启用 Node.js EJS 后，24 条最终视频均通过严格全流解码；两条短头部文件使用 `134 + 140-9/140-8` 分流回退。严格清单 SHA-256 为 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`，恢复收据 SHA-256 为 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`。这只把外部媒体完整性从初始 `1/24` 恢复为 `24/24 COMPLETE_DECODABLE`，不改变其 YouTube 派生、未授权/未同步的 `R3` 资格。
 
+最终视频绑定的 R3 重算也已完成：从上述 24 条最终视频重新抽取无增益 PCM WAV，并用 intake manifest SHA `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF` 绑定到分析收据 `final_video_analysis_receipt_v1.json`（SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`）。中文差异报告位于仓库外 `analysis_final_video_r3_v1/S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`，SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。该结果是 24/24、8 车各 3 条的最新 R3 数字域诊断，不是 R1/R2 资格，也没有启动 MATLAB 阶次、自动调参或 Profile Candidate。
+
 ## 阶段状态
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |

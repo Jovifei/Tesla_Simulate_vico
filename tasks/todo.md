@@ -3861,6 +3861,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 验证：URL intake、Comparator、Stage-Q 重点测试 `22 passed`；新分析脚本实际跑完 `24/24`；`py_compile` 和 `git diff --check` 通过。
 - [x] 解析三份商业候选曲目单 PDF 的状态字段并固化外部收据 `tracklist_state_screening_v1.json`（SHA-256 `eb185ddcfffe142c97988fe45a4524fecb26bf52a62c81c49a3a3b2d30dffb37`）：三项均无数值 RPM trace、Load/Throttle 字段或 state trace 文件，标签不能升级为 R1。
 - [x] 针对 YouTube 初始 `1/24` 与代理 403 新建外部 `retry_tools_20260822_v2`，启用直接网络、Node.js EJS、`web_embedded` 渐进式格式及两条 `134 + 140` 分流回退；24/24 最终媒体通过严格 ffmpeg 全流解码。`strict_decode_manifest_v3.json` SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`，`download_recovery_receipt_v2.json` SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`；旧截断物保留，全部原始媒体仍在 Git 外。
+- [x] 从上述 24 条最终完整视频重新抽取无增益 PCM WAV，并以 `intake_manifest_final_video_v1.json`（SHA-256 `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF`）绑定现有 Comparator；外部分析收据 `final_video_analysis_receipt_v1.json` SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`，中文差异报告 SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`，结果为 24/24、8 车各 3 条、R3 诊断，不进入 MATLAB/调参。
 - [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
 
 ### Review

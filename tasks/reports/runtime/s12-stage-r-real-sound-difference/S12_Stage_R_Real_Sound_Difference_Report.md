@@ -12,6 +12,31 @@
 - 机器收据：`direct_analysis_receipt_v1.json`，SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
 - 逐车输出：8 车各 3 条，`24/24` 特征与 `24/24` Comparator；`order.status=not_evaluated_without_rpm_trace`，`automatic_tuning_eligible=false`，人耳反馈仍为空。
 
+## 最终视频完整性恢复后的 R3 重算（2026-08-22）
+
+为避免把首轮 `1/24` 的截断物或仅音频回退物混入当前基线，本轮又使用严格全流解码通过的 24 条最终视频重新抽取无增益 PCM WAV，并重新运行现有 Comparator。该重算只更新 R3 诊断输入，不改变资格门。
+
+- 严格视频清单：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_tools_20260822_v2\strict_decode_manifest_v3.json`；SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`。
+- 最终视频 intake manifest：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_tools_20260822_v2\intake_manifest_final_video_v1.json`；SHA-256 `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF`。
+- 分析收据：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_tools_20260822_v2\final_video_analysis_receipt_v1.json`；SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`。
+- 中文差异报告：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_tools_20260822_v2\analysis_final_video_r3_v1\S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`；SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。
+- 结果：8 车各 3 条，`24/24` 特征、`24/24` Comparator 和 72 个低置信场景候选窗口；全部 `R3_DIAGNOSTIC_ONLY`，`order.status=not_evaluated_without_rpm_trace`，`automatic_tuning_eligible=false`，人耳反馈为 0。
+
+下表是最终视频绑定重算的逐车中位数，仅用于 Jovi 听审时的定位，不是真实性分数、OEM 门限或参数值：
+
+| 车型 | 频谱对数差 | 响度差（本地−参考） | 频谱重心差 Hz | 最大差频段 | 低置信听审方向 |
+| --- | ---: | ---: | ---: | --- | --- |
+| Aventador LP700 | 0.7224 | -8.114 dB | -153.3 | 250–400 Hz | 先听主体厚度 |
+| C63 W204 | 0.7872 | -0.419 dB | +121.5 | 400–1000 Hz | 先听机械主体 |
+| Ferrari 458 | 0.6578 | -6.999 dB | +317.1 | 1000–4000 Hz | 先听明亮/刺耳感 |
+| GT-R R35 | 0.7515 | +3.536 dB | -99.0 | 400–1000 Hz | 先听厚度与压迫感 |
+| Hellcat | 0.6734 | -3.840 dB | +89.4 | 120–250 Hz | 先听 V8 主体是否不足 |
+| LFA | 0.7093 | -5.254 dB | +859.6 | 250–400 Hz | 先听 V10 金属感 |
+| RX-7 FD | 0.8352 | +3.389 dB | -502.1 | 120–250 Hz | 先听转子主体/轰鸣 |
+| Supra JZA80 | 0.7688 | -3.097 dB | -200.3 | 60–120 Hz | 先听涡轮/低频轰鸣 |
+
+这些数值受公开视频编码、麦克风位置、车速/转速和启发式切片影响；没有同步 RPM/Load/Throttle/Gear、合法授权、原厂状态和 Jovi 听审，故 MATLAB 阶次、自动调参、参数写回和 Profile Candidate 均保持关闭。
+
 ## 本轮 R2 结果
 
 | 车型 | 参考/场景 | R2 结果 | 频谱残差 | 响度残差 | 阶次/自动调参 |

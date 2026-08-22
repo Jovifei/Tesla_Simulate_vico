@@ -10,6 +10,18 @@
 
 这不等于“真实原厂声浪闭环完成”。严格门禁下 24 条全部是 `R3`：公开 YouTube 视频的授权收据、精确原厂排气确认、同步 RPM/负载/挡位、麦克风与 AGC 采集合同均未提供。Comparator 结果只能作为数字域相对诊断；阶次、身份分数、自动调参和 Profile 更新均明确关闭。
 
+## 最终视频完整性恢复后的最新 R3 分析（2026-08-22）
+
+旧的 `retry_direct_20260822_v1/analysis_r3_direct_v1` 保留为直接音频重试基线；当前优先引用的是使用最终严格解码视频绑定的重算。该重算重新从每条最终视频抽取 44.1 kHz、双声道、16-bit PCM WAV，再以视频 SHA 和 WAV SHA 运行现有 `analyze_downloaded_sources.py`。
+
+- 严格视频清单：`E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\strict_decode_manifest_v3.json`；SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`。
+- 最终视频 intake manifest：`E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\intake_manifest_final_video_v1.json`；SHA-256 `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF`。
+- 分析收据：`E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\final_video_analysis_receipt_v1.json`；SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`。
+- 最新中文差异报告：`E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\analysis_final_video_r3_v1\\S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`；SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。
+- 重算结果：`24/24` 特征、`24/24` Comparator、8 车各 3 条、72 个低置信场景候选窗口；全部保持 `R3_DIAGNOSTIC_ONLY`，`R1=0`、`R2=0`、`WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
+
+因此最新 R3 数字差异已绑定到最终完整视频，而不是首轮截断物；它只改善媒体完整性和可重复性，不提供同步 RPM/Load/Throttle/Gear、合法授权、原厂排气确认或人耳结果，不能进入 MATLAB 阶次、调参或 Profile 写回。
+
 ## 按用户指定顺序的执行核对
 
 > 口径更新：上文 `1/24` 和 `1/3` 是首轮/Node.js 历史收据的失败率；后续 `retry_tools_20260822_v2` 已以独立路径完成 24/24 严格视频完整性验证，旧失败物仍保留用于审计。
@@ -51,6 +63,7 @@
 - `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json`：关闭系统代理后的原始 24 条 URL 音频重试清单，记录客户端、外部路径、容器、编码、时长、SHA-256 和 R3 门禁；`decode_validation_v1.json` 记录 24/24 的 `ffmpeg` 解码验证。
 - `retry_direct_20260822_v1/analysis_r3_direct_v1/`：基于上述原始 24 条 URL 的外部 WAV，重新运行现有 `analyze_downloaded_sources.py`，生成 24 条特征、24 条 Comparator、8 车参数诊断和中文 R3 差异报告；收据为 `direct_analysis_receipt_v1.json`，SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。这份结果是当前原始 URL 的 R3 补充基线，不替代三条有许可 R2 基线。
 - `retry_tools_20260822_v2/`：关闭代理后的最终视频恢复、分流格式回退、逐文件 SHA 和严格全流解码收据；其中两条旧短头部文件保留为失败证据，最终 24 条媒体均未进入 Git。
+- `retry_tools_20260822_v2/analysis_final_video_r3_v1/`：绑定最终 24 条视频及其新抽取 PCM WAV 的最新 R3 分析，包含来源 manifest、72 个切片候选、24 条 Comparator、8 车带不确定性诊断、中文 A/B 清单和最终中文差异报告；分析收据为 `final_video_analysis_receipt_v1.json`，SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`。
 
 Git 只保留本报告、入口代码和这些外部产物的路径/SHA/派生特征引用；没有复制任何原始视频或版权音频。
 
