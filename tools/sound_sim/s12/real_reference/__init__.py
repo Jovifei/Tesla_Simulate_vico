@@ -20,6 +20,16 @@ from .stage_r_execute import (
     write_r2_outputs,
 )
 from .closed_loop_report import render_waiting_final_report, write_waiting_final_report
+from .url_intake import (
+    ALLOWED_DOWNLOAD_ROOT,
+    SCHEMA_VERSION as URL_INTAKE_SCHEMA_VERSION,
+    UrlIntakeError,
+    build_video_record,
+    intake_urls,
+    render_intake_report,
+    validate_source_url,
+    write_intake_outputs,
+)
 
 __all__ = [
     "ANCHOR_VEHICLES",
@@ -42,4 +52,12 @@ __all__ = [
     "write_r2_outputs",
     "render_waiting_final_report",
     "write_waiting_final_report",
+    "ALLOWED_DOWNLOAD_ROOT",
+    "URL_INTAKE_SCHEMA_VERSION",
+    "UrlIntakeError",
+    "build_video_record",
+    "intake_urls",
+    "render_intake_report",
+    "validate_source_url",
+    "write_intake_outputs",
 ]

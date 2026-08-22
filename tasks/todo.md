@@ -3815,3 +3815,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 记录三条可采购的三锚点候选（Ferrari 458、Hellcat、RX-7 FD）及其公开页面声称的同步 take/steady RPM/gearshift 元数据；明确它们仍需购买/授权和数值状态验收，不能预先升级为 R1。
 - [x] 下载并审计一条 CC0 Pontiac G8 测功机视频：完成 WebM→PCM WAV 解码、SHA/采样信息和抽帧检查；登记为非目标 R3 流程样本，未进入八车型比较或调音。
 - [ ] 取得 Jovi 授权的商业原始包或等价自录包后，逐段验收 RPM/Load/Throttle/Gear/shift/麦位/AGC/授权，并重新生成 R1 manifest；未取得前不启动阶次自动调参。
+
+### Jovi 网址输入入口（2026-08-22）
+
+- [x] 新增 `tools/sound_sim/s12/real_reference/url_intake.py`：网址校验、外部目录下载、视频/音频 SHA-256、ffprobe 元数据、无增益 PCM 抽取和中文审计报告。
+- [x] 入口默认 fail-closed：无许可为 R3；有许可但无同步状态最多 R2；视频压缩派生音频不会自动升级为 R1。
+- [x] 新增 `URL_INTAKE_GUIDE.md` 和 4 项 URL intake 回归测试；不修改 MATLAB、Runtime、Simulink、Android 或 Track-P。
+- [x] 新入口接入后完整 S12 Python 回归：`375 passed, 114 subtests passed in 198.23s`；`compileall` 与 `git diff --check` 通过。
+- [ ] 等待 Jovi 提供车辆网址；收到后逐条下载、抽音频、检查画面状态并绑定车辆/工况。
