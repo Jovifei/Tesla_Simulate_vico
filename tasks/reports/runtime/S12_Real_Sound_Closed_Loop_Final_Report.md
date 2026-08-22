@@ -68,11 +68,18 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告基线提交：`b915b99`（历史 YouTube 403 回退与外部 R3 诊断）；直接无代理音频 R3 补充提交为 `87c7bc8`；本轮商业同步候选审计提交为 `b0fbf5b`，最终 SHA 以 `git rev-parse HEAD` 和远端核验为准。
-- working tree：提交前必须为干净；本报告不得把外部试听副本写入 Git。
+- 当前 HEAD：`ac161b21a7e55d7e9b0167b59fd61be418f15663`（`docs(s12): audit public synchronized reference candidates`）；父提交包含 YouTube 分流完整性复试 `f0ca32c`。本地 `HEAD` 与远端 `origin/agent/s12-stage-q-real-reference-calibration` 一致。
+- working tree：干净；本轮仅提交审计 JSON、中文报告和任务清单，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
 - PR：否
+
+## 本轮验证
+
+- 完整 S12 Python 回归：`376 passed, 114 subtests passed in 483.53s`。
+- Stage Q/R 重点测试：`13 passed`；Track-P guard pytest：`32 passed`。
+- 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
+- R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 
 ## 必须补齐的输入
 
