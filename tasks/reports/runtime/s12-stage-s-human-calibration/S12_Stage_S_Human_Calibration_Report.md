@@ -13,3 +13,5 @@ Jovi 需要按 README_中文.md 播放 A/B，并在 `feedback_template.csv` 中�
 一次只允许修改一个车型、一个场景问题和一个参数组；自动指标改善且人耳不退步后，才能进入下一轮。所有调音都必须在独立 sound-fix 分支进行，当前分支不修改车型 source。
 
 中文评分维度已写入 `stage_s_chinese_listening_contract.json`；本轮 A/B 包的可见文案为中文，不依赖英文浏览器页面。一次只允许修改一个车型、一个场景问题和一个参数组；自动指标改善且人耳不退步后，才能进入下一轮。所有调音都必须在独立 sound-fix 分支进行，当前分支不修改车型 source。
+
+中文页面实测（2026-08-22）：在仓库外官方 webMUSHRA checkout 应用 `webmushra_zh_cn_nls.js`（SHA-256 `7E3B64C48A971E436BD1561234F17B2445D942F37A731FDA6B30AF6C04102021`），并使用 `s12-zh-probe.yaml`（SHA-256 `1E69987E46095106602387813A03B9DFA5936E8D2364C0CBE5F3D4B53DFFF9B1`）启动本地静态页面。浏览器快照显示“播放音量校准、播放、暂停、下一页”等中文控件，音频页成功加载；截图在外部 `E:\Claude_allow\Download\s12-stage-n-zh-probe-confirmed-20260822.png`（SHA-256 `338443A7F683CD9809D313F95405C480D9AC646B540AC8D446C25B9E7E9DC75B`）。这只是 UI/音频加载验证，不是 Jovi 听审结果，`feedback_rows` 仍为 0。

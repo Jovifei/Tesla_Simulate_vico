@@ -12,6 +12,8 @@
 
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
+中文听审入口实测：官方 webMUSHRA 外部 checkout 已应用中文 NLS 覆盖，并以 `language: zh` 的最小配置通过本地浏览器快照验证中文按钮和音频加载；截图与补丁均留在 `E:\Claude_allow\Download`，不进入 Git。该验证不产生 Jovi 听审行，真实反馈仍为 0。
+
 ## 阶段状态
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
