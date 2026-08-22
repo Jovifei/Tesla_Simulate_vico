@@ -4,6 +4,11 @@
     "hellcat",
     "rx7_fd"
   ],
+  "audited_external_roots": [
+    "E:\\Claude_allow\\Download\\tesla-sound-research",
+    "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+    "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10"
+  ],
   "blockers": [
     "缺少 Jovi 明确授权或可审计的合法来源记录。",
     "没有任何记录绑定同步 RPM trace；不能执行 R1 阶次资格或自动调参。",
@@ -1231,6 +1236,7 @@
   "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA",
   "unmapped_external_media": [
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\m5junjbk2eY.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1240,6 +1246,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\MlQoLofl5qU.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1249,6 +1256,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\R-pcSGjv8wM.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1258,6 +1266,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\S4_ybvcunKU.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1267,6 +1276,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\sbLXOEcAYMI.wav",
       "media_kind": "wav",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1276,6 +1286,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\zR_c4wHPqQc.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1285,6 +1296,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\A_hjItNZUAI.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1294,6 +1306,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\cKx-cb0fzeo.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1303,6 +1316,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\eyzGRhXp0do.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1312,6 +1326,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\FvORN7EH2cc.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1321,6 +1336,7 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\nnEaamqsieM.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
@@ -1330,11 +1346,72 @@
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     },
     {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
       "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\qiopd-QP2PE.mp3",
       "media_kind": "mp3",
       "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
       "relative_path": "hellcat_v6/qiopd-QP2PE.mp3",
       "sha256": "de7cd0fa68592010ace19246c30735f66f83d53ad713ee3e880271525f67b992",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\eyzGRhXp0do.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "eyzGRhXp0do.wav",
+      "sha256": "ac43280a684a75184bb32c57a37a5ae077d37bae9cd6d0c69a9e293949615f9f",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\Thh69Wc5uco.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "Thh69Wc5uco.wav",
+      "sha256": "c3458bd392e8107e2405de0e3df15ccbd93529523423e7974300216e6e7229db",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\X0yiRilcKME.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "X0yiRilcKME.wav",
+      "sha256": "f677bf9e41b1360d8c232f1b226568c8150f47b97af0572672668ac139537dfd",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\4B3nGVJWmPg.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "4B3nGVJWmPg.wav",
+      "sha256": "56b98ead29c9f0575bcfbd89f09a120dde9666559f5eacf0e7cf4c2c3f1f887a",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\9eh-Nq6NRmk.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "9eh-Nq6NRmk.wav",
+      "sha256": "a737b618e58ff0d05eaea127c3d04abd1f6e6e8d748531775b7935f99d6988b6",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\WYCWfroymIE.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "WYCWfroymIE.wav",
+      "sha256": "8ab93fca8c23de0ff22acfac8f84024b086615ed308203e2fe202e27bceb55c7",
       "status": "UNMAPPED_NOT_REGISTERED",
       "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
     }

@@ -19,6 +19,13 @@
 | 雷克萨斯 LFA | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
 | 丰田 Supra JZA80 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
 
+## 外部目录审计
+
+本轮已审计以下外部媒体目录；未登记音频只保留路径和 SHA-256，不进入分析、听审包或调音：
+- `E:\Claude_allow\Download\tesla-sound-research`
+- `E:\Claude_allow\Download\tesla-sound-research-v12`
+- `E:\Claude_allow\Download\s12-acoustic-realism-v10`
+
 ## 记录审计
 
 | 记录 | 场景提示 | 格式 | 时长 | SHA-256 前 12 位 | 证据等级 | 可用于调音 |
@@ -46,7 +53,7 @@
 - 没有可靠的 Load/Throttle、Gear/shift、麦克风位置和 AGC 记录。
 - 公开/改装候选不能被当作原厂 OEM 参考。
 
-目录中另发现 `12` 个未登记音频文件；它们只记录在 manifest 的 `unmapped_external_media`，不进入分析或调音。
+目录中另发现 `18` 个未登记音频文件；它们只记录在 manifest 的 `unmapped_external_media`，不进入分析或调音。
 
 ## 后续必须补齐的输入
 
