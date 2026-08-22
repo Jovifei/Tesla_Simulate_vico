@@ -15,6 +15,8 @@
 
 补充证据：原始 24 条 YouTube URL 已重新完成直接无代理音频下载与现有 Comparator 的 R3 诊断（8 车各 3 条）。该补充不改变 R2/R1 门禁；机器收据位于外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\direct_analysis_receipt_v1.json`，SHA-256 为 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
 
+同步录音采购线索也已完成只读页面/曲目单核验：Ferrari 458、Hellcat、RX-7 1990 三项均为 `PROCUREMENT_CANDIDATE_NOT_R1`，没有购买、版权原始音频或数值 RPM/state 收据。外部候选审计 JSON 为 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json`，SHA-256 为 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`；许可页还要求购买后许可，并限制未同步素材复制和 AI 训练/开发，使用前需完成范围确认。
+
 ## 八车型与工况
 
 当前八车型全部没有 R1 资格；已有文件只能作为未授权/未对齐候选，不能进入自动调参。

@@ -3857,6 +3857,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 新增 `tools/sound_sim/s12/real_reference/analyze_downloaded_sources.py`：校验外部 WAV SHA、生成 72 个低置信工况候选窗口、派生频谱/响度/心理声学/瞬态特征，并对 8 个本地 synthetic 候选做 24 条 R3 Comparator 诊断。
 - [x] 生成外部 `analysis_20260822_v1` 的来源 manifest、派生特征、Comparator、中文 A/B 清单和带四分位数/范围的不确定性诊断建议；自动调参/Profile 更新保持禁止。
 - [x] 增加中文报告 `tasks/reports/runtime/s12-stage-q-real-reference/S12_Stage_Q_YouTube_Intake_Analysis_20260822.md`，明确区分已完成链路与授权/同步状态/人耳反馈阻塞。
+- [x] 复核三锚点商业同步录音候选的官方商品页、许可页和曲目单；只下载网页/PDF，不下载版权原始音频。外部候选审计 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json` SHA-256 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`；三项均保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
 - [x] 验证：URL intake、Comparator、Stage-Q 重点测试 `22 passed`；新分析脚本实际跑完 `24/24`；`py_compile` 和 `git diff --check` 通过。
 - [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
 

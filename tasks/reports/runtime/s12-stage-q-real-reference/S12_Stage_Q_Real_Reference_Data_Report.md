@@ -123,4 +123,14 @@
 
 在这些资料到位之前，Stage Q 只能保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`；不会生成真实差异合格报告，也不会修改车型参数。
 
+## 商业同步录音候选页面核验（2026-08-22）
+
+本轮只下载公开商品页、许可页和曲目单 PDF，没有代 Jovi 下单，也没有把版权原始音频或试听流保存到本地。三项候选均保持 `PROCUREMENT_CANDIDATE_NOT_R1`：供应商页面对“同步 take、steady RPM、ramp、gearshift”的描述不能替代数值 RPM、Load/Throttle、Gear/shift 时间轴、采集链和授权凭证。
+
+- Ferrari 458： [Pole Position Ferrari 458 2013](https://pole.se/product/ferrari-458-2013-2/) 声称 2013 F136 F 4.5 L V8、straight pipes、228 文件、11 个同步 take；外部候选审计 JSON 记录商品页快照 SHA `5f649fb8740d...78824a`、曲目单 SHA `565232a65620...dbda45`。
+- Dodge Hellcat： [Sonniss Hellcat 2015](https://sonniss.com/sound-effects/dodge-challenger-hellcat-2015/) 声称 6.2 L HEMI V8、196 文件、96 kHz/24 bit、12 个同步 take；商品页快照 SHA `82c292e954e4...367802`、曲目单 SHA `1d0c9444c255...e6f9d`。
+- RX-7： [Sonniss Mazda RX-7 1990](https://sonniss.com/sound-effects/mazda-rx-7-1990/) 声称 1990 13B Bridgeport twin-turbo、208 文件、96 kHz/24 bit、12 个同步 take；商品页快照 SHA `78b6108e5bbc...54634c`、曲目单 SHA `75e60b119cb1...524bad`。该配置与目标 RX-7 FD/原厂状态尚未确认等价。
+
+完整 URL、绝对路径、抓取方法、完整 SHA 和许可限制见外部收据 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json`（SHA-256 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`）。Pole Position 与 Sonniss 许可文字均要求购买后许可，并限制未同步素材复制；同时明确禁止 AI 训练/开发。若 Comparator→反馈系统被许可方认定为 AI 用途，使用前必须取得书面范围确认。当前 R1 仍为 0，阶次与自动调参继续关闭。
+
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。
