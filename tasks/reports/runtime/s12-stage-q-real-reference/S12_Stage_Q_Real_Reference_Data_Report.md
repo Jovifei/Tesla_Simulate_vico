@@ -177,6 +177,9 @@
 4. 录音设备、采样率、通道及 AGC/后处理说明。
 5. Jovi 确认允许用于本地分析、派生特征和听审的授权记录。
 
+为避免字段遗漏，三锚点（Ferrari 458、Hellcat、RX-7 FD）的唯一入库模板为
+`tasks/reports/runtime/s12-stage-q-real-reference/r1_intake_request_v1.json`。该文件只保存字段合同和空记录槽位；填写时音频、状态文件和授权材料仍须放在仓库外，并在进入 R1 前分别绑定 SHA-256。
+
 在这些资料到位之前，Stage Q 只能保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`；不会生成真实差异合格报告，也不会修改车型参数。
 
 ## 商业同步录音候选页面核验（2026-08-22）

@@ -3943,3 +3943,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 外部 v3 包：研究清单 SHA `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`，中文页面 SHA `65B43B200E4C4A2771CFF8E35A375A3DC62EFFC9B49029CA043F3A004D192A7D`，Node `--check` 通过，试听 WAV 可打开。
 - YouTube 单条复试：`ferrari_01` 最终媒体 SHA `6576BFCEC095E4FD27DD437FA5D32D05319995599F6319A9695545AF62040B40`，`143.058141 s`，H.264/AAC，全流解码通过；仍是 YouTube 派生 `R3_DIAGNOSTIC_ONLY`。
 - 真实闭环仍未完成：`R1=0`、反馈行数 `0`、调音轮次 `0`、Profile Candidate 未生成；下载完整性不等于授权、原厂状态或同步 RPM/state。
+
+## S12 三锚点 R1 入库模板（2026-08-23）
+
+- [x] 新增 `tasks/reports/runtime/s12-stage-q-real-reference/r1_intake_request_v1.json`，固定 Ferrari 458、Hellcat、RX-7 FD 的 R1 必填字段、状态单位、时间戳与 fail-closed 接受门。
+- [x] 模板明确原始 WAV/FLAC、RPM/Load/Throttle/Gear/shift 状态和授权文件只放仓库外；Git 只保存路径别名、SHA、来源和派生特征指针。
+- [x] 模板验证通过：`r1_intake_request=PASS bytes=2954`；当前仍无任何真实 R1 记录，不启动 MATLAB 阶次、Comparator 资格调参或 Profile Candidate。
+- [ ] 等待 Jovi/许可方提供三锚点合法原始音频与同步状态；填充模板后再运行 `raw_audio_intake`、MATLAB 阶次、Comparator 和中文人耳 A/B。

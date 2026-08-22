@@ -1,0 +1,76 @@
+{
+  "schema_version": "s12-stage-q-r1-intake-request-v1",
+  "status": "WAITING_FOR_JOVI_OR_LICENSOR_INPUT",
+  "purpose": "三锚点合法原始音频与同步状态入库请求；本文件只有元数据模板，不是 R1 资格收据。",
+  "raw_media_policy": "原始 WAV/FLAC、状态 CSV/JSON 和授权文件只放在 E:\\Claude_allow\\Download 或其他明确批准的外部目录；Git 只保存本模板、路径别名、SHA、来源和派生特征。",
+  "required_reference_class": "R1",
+  "required_fields": [
+    "recording_id",
+    "vehicle_id",
+    "scenario",
+    "audio_path",
+    "audio_sha256",
+    "source_url_or_controlled_alias",
+    "license_status",
+    "rights_evidence",
+    "exact_vehicle_trim",
+    "stock_exhaust_confirmation",
+    "microphone_position",
+    "recording_device_agc",
+    "sample_rate_hz",
+    "state.rpm_trace_path",
+    "state.load_throttle_trace_path",
+    "state.gear_shift_trace_path",
+    "state.time_window",
+    "state.units"
+  ],
+  "state_contract": {
+    "time_column": "time_s",
+    "time_rule": "每个状态文件时间戳严格递增，并完整覆盖 time_window；禁止外推。",
+    "units": {
+      "time_s": "s",
+      "rpm": "rpm",
+      "load": "fraction_0_1",
+      "throttle": "fraction_0_1",
+      "gear": "integer_index",
+      "shift_event": "0_or_1"
+    },
+    "continuous_state": ["rpm", "load", "throttle"],
+    "discrete_state": ["gear", "shift_event"]
+  },
+  "anchors": [
+    {
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "法拉利 458",
+      "required_scenarios": ["idle", "steady_low", "steady_mid", "steady_high", "acceleration", "shift", "full_pull", "lift", "afterfire", "idle_return"],
+      "records": []
+    },
+    {
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat",
+      "required_scenarios": ["idle", "steady_low", "steady_mid", "steady_high", "acceleration", "shift", "full_pull", "lift", "afterfire", "idle_return"],
+      "records": []
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD",
+      "required_scenarios": ["idle", "steady_low", "steady_mid", "steady_high", "acceleration", "shift", "full_pull", "lift", "afterfire", "idle_return"],
+      "records": []
+    }
+  ],
+  "acceptance_gates": {
+    "legal_original_audio": true,
+    "exact_vehicle_and_stock_state": true,
+    "synchronized_rpm_load_throttle_gear": true,
+    "microphone_and_agc_documented": true,
+    "audio_and_state_sha256_bound": true,
+    "estimated_rpm_is_not_qualified": true,
+    "video_derived_audio_is_not_r1": true,
+    "automatic_tuning_before_matlab_and_human_review": false,
+    "profile_freeze_requires_jovi": true
+  },
+  "next_command_after_filling": "python -m tools.sound_sim.s12.real_reference.raw_audio_intake --spec-json <external-spec.json> --output-root <external-intake-audit>",
+  "not_a_qualification_receipt": true,
+  "automatic_tuning_eligible": false,
+  "profile_candidate_ready": false
+}
