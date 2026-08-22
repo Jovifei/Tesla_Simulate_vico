@@ -1319,3 +1319,8 @@ Rules:
 - 默认客户端→Android→Node.js `web_embedded`/`mweb` 的回退顺序应保留每次尝试的独立文件和日志；替代 URL 补齐的组合库不能描述为原始 URL 全部恢复。
 - 当前 3 条原始失败 URL 的复核结果是 1 条完整、2 条 `INCOMPLETE_MEDIA_BODY`；不完整媒体不得进入 WAV、Comparator、R2 或人耳 A/B 包。
 - 视频体截断不等于音频流一定不可恢复：在保留失败视频证据的前提下，可独立尝试 `web_embedded` 的音频格式；必须把结果标为“完整音频/不完整视频”，分别保存压缩音频与解码 WAV 的 SHA，并继续执行授权、原厂状态和同步状态门禁。仅音频成功不能把 YouTube 来源从 R3 升级到 R2/R1，也不能进入自动调参。
+
+# 2026-08-22 S12 Stage Q direct-proxy retry correction
+
+- 系统代理 `127.0.0.1:7890` 可能让 `googlevideo` 直链返回 403；在保留首轮失败物和独立日志后，用 `yt-dlp --proxy ""`、Node.js EJS 和客户端回退可恢复原始 24 条 URL 的完整可解码音频。
+- 规则：`ffprobe` 通过仍不够，必须逐条用 `ffmpeg` 解码验证并记录音频 SHA；“24/24 音频完整”不能改写成“24/24 视频完整”，也不能改变 YouTube 未核验授权/原厂状态/同步 RPM 的 R3 门禁。

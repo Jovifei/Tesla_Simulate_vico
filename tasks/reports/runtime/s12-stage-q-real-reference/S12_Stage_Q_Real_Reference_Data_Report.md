@@ -63,6 +63,13 @@
 - 对后两条新增 `web_embedded + Node.js EJS` 的仅音频格式回退：`XWEjZHFQ5lc` 的 `140-9` 与 `GQ0972wohFs` 的 `140-8` 均取得完整 44.1 kHz / 2 ch AAC，并通过 `ffprobe` + `ffmpeg` 解码；同时生成外部 PCM WAV。清单为 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\audio_format_retry_20260822\youtube_retry_audio_manifest_v2.json`，SHA-256 `09FEB0090619F55F281D540BA433059E131706079108C8C848619AFAB9E1F5B1`。
 - 这把“可用音频流”从 `1/3` 提升为 `3/3`，但没有把“原始视频完整率”改写为 `3/3`；三条仍是未核验 YouTube 授权、原厂状态与同步状态的 `R3`，不进入 R2 基线、阶次门、Comparator 资格或自动调参。
 
+### 直接无代理音频重试（2026-08-22）
+
+- 复核发现系统代理 `127.0.0.1:7890` 会让 `googlevideo` 媒体直链返回 HTTP 403。保留所有首轮失败物后，在全新外部目录使用 `yt-dlp 2026.06.30.234726 + Node.js EJS`，关闭代理（`--proxy ""`），按 `web_embedded → android_vr → tv_embedded → mweb` 回退，仅请求音频格式。
+- 原始 24 条 URL 的音频流均取得完整可探测文件（`24/24`），外部清单为 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\youtube_retry_direct_audio_manifest_v1.json`，SHA-256 `45DDB25441D3F09A35D6875011A8CBF2726DD03D921069F013B1E94385F4FD3F`。
+- 对选定音频逐条运行 `ffmpeg -v error -map 0:a:0 -f null -`，解码验证 `24/24`；验证清单 `decode_validation_v1.json` SHA-256 `C881F8790B52426F5C9F6FF5CF8A57EF76670C5A651FCE32AAB0DEF3AECA7CE4`。
+- 这只证明“可下载、可解码的 YouTube 有损派生音频”完整，不证明原始视频 `24/24`、授权、原厂状态、麦克风/AGC 或同步 RPM/负载/挡位。24 条继续保持 `R3`，不得进入 R2、阶次门、Comparator 合格输入或自动调参；原始文件仍只在仓库外。
+
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
 ## 可采购/授权的 R1 候选（尚未纳入）
