@@ -3872,6 +3872,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 2026-08-23 独立复试 YouTube 24 条：默认 `yt-dlp --proxy ""` 路径为 `2/24` 完整、`22/24 HTTP 403`；`Node.js + EJS + android` 回退补齐后，`ffprobe` 与 `ffmpeg -xerror` 全流/音频严格解码为 `24/24 COMPLETE_MEDIA_AND_AUDIO`，生成 `24/24` 外部 WAV。合并回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\youtube_retry_combined_receipt_20260823.json` SHA-256 `0DAB94BFB99A4AEDC4855929A39EA211D958A4EAA6C3B9F3ADCE98F065363EEE`；严格回执 `strict_decode_receipt_20260823.json` SHA-256 `C120BFE16B0CEF5B80C68FC47E4FB2BB6198CE94BAE8EE1BF9243B04A965C782`。原始/派生媒体均未进入 Git，YouTube 资格仍为 R3。
 - [x] 2026-08-23 将上述最新 24 条 WAV 重新绑定并运行 R3 诊断链：`24` 条特征、`72` 个低置信切片、`24` 条 Comparator、`24` 条中文 A/B 试次和参数诊断均生成；外部收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。清单仍明确 `R1=0/R2=0/R3=24`、A/B 等待 Jovi，禁止阶次/自动调参，原始与派生媒体不入 Git。
 - [x] 2026-08-23 为三锚点生成中文 A/B 外部包：Ferrari 458、Hellcat、RX-7 FD 各 3 个试次，共 18 个 5 秒试听片段；manifest SHA-256 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`。`ffprobe`/SHA 校验通过，反馈字段为空，状态保持 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，不进入自动调参。
+- [x] 2026-08-23 补齐中文离线 A/B 页面：`E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\index.html` 可直接双击打开，固定绑定 9 个试次/18 个片段 SHA，支持中文评分、备注、进度和反馈 JSON 下载；页面 SHA-256 `5C495F4FA900F99A1B90C613E818C61249B58A2D239C60F1A2C09BFD956A869F`。Node 脚本语法、18 个片段 manifest/SHA 校验通过；页面不自动调参，状态仍为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
 - [x] 审计一条 Freesound CC0 Ferrari 458 Italia GT3 现场录音：页面、MP3 预览和 PCM 派生 WAV 的 SHA 已绑定到 `freesound_ferrari_458_gt3_cc0_audit_20260822.json`；因同一文件混合多辆赛车且无分段时间/RPM/state，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，未进入比较或调参。
 - [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
 
@@ -3882,6 +3883,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 下载完整性补充：直接无代理路径恢复了原始 24 条 URL 的可解码音频，但仅证明媒体传输/解码完整；不能替代授权、原厂状态或同步 RPM/状态数据。
 - 当前 R3 补充基线：已使用原始 URL 重试结果重算现有 Comparator；逐车中位数和不确定性报告只作为听审排序，不输出真实性百分比。
 - Git 范围：仅入口代码、测试/计划修改和中文报告；`git ls-files '*.mp4' '*.webm' '*.wav'` 不新增本轮版权媒体，原始/派生下载物仍在外部目录。
+- 中文听审交接：Jovi 可双击外部 `anchor_ab_zh_v1\index.html` 完成 9 个 R3 试次；反馈 JSON 回传后，先复核监听人编号、试次/片段 SHA 和完整性，再决定是否进入后续人工评审。页面反馈不能替代 R1 原始录音、同步状态或 MATLAB 阶次资格。
 
 ## S12 原始录音 R1 入库与低速率状态绑定（2026-08-23）
 

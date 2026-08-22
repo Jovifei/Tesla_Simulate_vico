@@ -189,3 +189,7 @@ raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest
 本轮验证：原始入库/Stage Q/R 重点测试 `27 passed`；完整 S12 `382 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
 
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。
+
+## 中文离线 A/B 试听页（2026-08-23）
+
+为三锚点 R3 诊断包生成 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\index.html`，可在 Windows 中直接双击打开，无需 Docker、网页服务器或英文界面。页面绑定 9 个试次/18 个 5 秒片段，导出 JSON 时携带包清单 SHA `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`、片段 SHA、监听人编号、评分和备注；页面 SHA-256 为 `5C495F4FA900F99A1B90C613E818C61249B58A2D239C60F1A2C09BFD956A869F`。页面仅服务 R3 人耳诊断，反馈为空前不得推动 Stage S 或自动调参。

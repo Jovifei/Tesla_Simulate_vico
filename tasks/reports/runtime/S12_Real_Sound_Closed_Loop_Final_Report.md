@@ -16,6 +16,8 @@
 
 为便于 Jovi 进行中文试听，另生成三锚点 A/B 外部包 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\README_中文.md`：Ferrari 458、Hellcat、RX-7 FD 各 3 个公开来源对本地 synthetic 候选的 5 秒片段，共 9 个试次/18 个文件。manifest SHA-256 为 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 为 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`；状态为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，反馈为空，不能推动 Stage S 调音。
 
+为避免再次出现英文或难以理解的试听界面，已在同一外部包增加可直接双击的中文离线页面 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\index.html`。页面固定绑定 9 个试次、18 个片段 SHA-256，提供中文评分、备注、进度、草稿/完整状态和 JSON 下载；页面 SHA-256 为 `5C495F4FA900F99A1B90C613E818C61249B58A2D239C60F1A2C09BFD956A869F`。页面仅导出反馈，不自动调参、不更新 Profile，仍保持 `R3` 诊断边界。
+
 本轮随后用仓库 URL 入口本身复现同一故障：`XWEjZHFQ5lc` 第 1 次默认客户端为 403、第 2 次 Android 残片被严格解码门拒绝，第 3 次 `Node.js + web_embedded` 自动选中完整 MKV（344.441 s，SHA-256 `A2D0C7AB0A048A302E468B72668D0E492F606FB57F2257F62AA9FFBC92AFCD06`）；`GQ0972wohFs` 同样在第 3 次选中完整 WebM（336.321 s，SHA-256 `3475C4E7CB139E31D84F12C8C7A26329E0994299EC1A2821207E1406C4716C0A`）。外部复试收据 `E:\Claude_allow\Download\s12-url-intake-repro-20260822\url_intake_repro_receipt_v2.json`，SHA-256 `4F6CF1E7D81ECDB5CF47C9E363D40B6D0FF35D8ECC783AC93F00FF64C58E19B6`；原始媒体、残片和日志均留在仓库外。这证明入口能识别并拒绝“有时长但不完整”的短头部文件，但不改变 YouTube 派生 R3、未授权/未同步边界。
 
 最终视频绑定的 R3 重算也已完成：从上述 24 条最终视频重新抽取无增益 PCM WAV，并用 intake manifest SHA `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF` 绑定到分析收据 `final_video_analysis_receipt_v1.json`（SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`）。中文差异报告位于仓库外 `analysis_final_video_r3_v1/S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`，SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。该结果是 24/24、8 车各 3 条的最新 R3 数字域诊断，不是 R1/R2 资格，也没有启动 MATLAB 阶次、自动调参或 Profile Candidate。
@@ -38,7 +40,7 @@ Stage Q 合并补充（2026-08-23）：`real_reference.cli --raw-reference-manif
 | --- | --- | --- | --- |
 | Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考；RX-7 仅新增 1 条 R3 旋转机械演示；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
 | R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成未增益分析信号的 R2 频谱/响度/心理声学相对比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
-| S 反馈调音 | `R2_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文 R2 A/B 包，3 个案例绑定参考/候选 SHA；RX-7 FD 明确排除为 R3 | 没有真实 Jovi 听审和调音轮次 |
+| S 反馈调音 | `R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，18 个片段绑定 SHA；RX-7 FD 明确保持 R3 | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
 补充证据：原始 24 条 YouTube URL 已重新完成直接无代理音频下载与现有 Comparator 的 R3 诊断（8 车各 3 条）。该补充不改变 R2/R1 门禁；机器收据位于外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\direct_analysis_receipt_v1.json`，SHA-256 为 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
