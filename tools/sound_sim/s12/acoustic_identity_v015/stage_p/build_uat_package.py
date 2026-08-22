@@ -111,6 +111,8 @@ def build(destination: Path, review_package: Path, repo: Path, *, webmushra_root
 $ErrorActionPreference = "Stop"
 $docker = Get-Command docker -ErrorAction SilentlyContinue
 if (!$docker) {{ throw "Docker CLI not found; install/start Docker Desktop before UAT." }}
+docker info 2>$null | Out-Null
+if ($LASTEXITCODE -ne 0) {{ throw "Docker Desktop daemon unavailable; start Docker Desktop and rerun START_REVIEW.ps1." }}
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $config = Join-Path $packageRoot "..\\{package_name}\\configs\\{package_name}.yaml"
 $audio = Join-Path $packageRoot "..\\{package_name}\\audio"

@@ -86,5 +86,6 @@ def test_stage_p_spec_named_delivery_contract_is_present() -> None:
     assert manifest["human_acoustic_qualification_status"] == "HUMAN_ACOUSTIC_QUALIFICATION_PENDING"
     assert manifest["expected_result_paths"]["official_webmushra"]
     assert "Docker CLI not found" in (uat / "START_REVIEW.ps1").read_text(encoding="utf-8")
+    assert "Docker Desktop daemon unavailable" in (uat / "START_REVIEW.ps1").read_text(encoding="utf-8")
     assert "manifest SHA" in (uat / "CHECK_STATUS.ps1").read_text(encoding="utf-8")
     assert "package SHA binding" in (uat / "IMPORT_RESULTS.ps1").read_text(encoding="utf-8")
