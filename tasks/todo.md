@@ -3878,6 +3878,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 审计一条 Freesound CC0 Ferrari 458 Italia GT3 现场录音：页面、MP3 预览和 PCM 派生 WAV 的 SHA 已绑定到 `freesound_ferrari_458_gt3_cc0_audit_20260822.json`；因同一文件混合多辆赛车且无分段时间/RPM/state，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，未进入比较或调参。
 - [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
 
+## S12 MATLAB R2 专业指标复核（2026-08-23）
+
+- [x] 核验现有 MATLAB R2026a Audio Toolbox：`rpmordermap`、`ordertrack`、`orderspectrum`、`rpmfreqmap` 及六个心理声学函数均可用。
+- [x] 新增 `tools/sound_sim/s12/real_reference/run_r2_matlab_psychoacoustic_audit.m`，复用仓库现有 `s12_psychoacoustic_analysis`，对 Ferrari 458、Hellcat、RX-7 FD 各一组 R2 参考/本地 synthetic 代理执行 5 秒共同窗口相对测量。
+- [x] MATLAB 运行收据：`E:\Claude_allow\Download\s12-r2-matlab-psychoacoustic-audit-20260823-v3\matlab_r2_psychoacoustic_audit.json`，SHA-256 `523C8264F6A83EE23640A166FDFA15E76771880EFBFE914A4FA79C161AABB70A`；3/3 案例成功，状态 `R2_LIMITED_COMPARISON_COMPLETE`。
+- [x] 复核边界：无同步 RPM/Load/Throttle/Gear/shift，因此没有运行 `rpmordermap`/阶次资格、自动调参、参数写回或 Profile Candidate；Jovi 人耳反馈仍为 0。
+- [x] 当前 worktree 全量回归：`877 passed, 232 subtests passed in 1605.13s`；Stage Q/R/S 聚焦 `31 passed`；Track-P pytest `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`git diff --check` 与 `compileall` 通过。
+
 ### Review
 
 - 成功证据：外部组合 intake `URL_INTAKE_COMPLETE`、24 条唯一 URL、24 个 WAV SHA、72 个切片记录、24 条 Comparator 记录、8 车诊断汇总。

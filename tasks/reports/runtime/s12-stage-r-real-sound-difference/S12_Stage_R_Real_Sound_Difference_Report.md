@@ -64,6 +64,18 @@ RX-7sim 的五条外部 WAV 已通过 Stage Q SHA 校验并进入 R2。由于本
 
 四条未比较记录为 `idle`、`steady_low`、`steady_mid` 和 `full_pull_interior`；原因是没有各自语义匹配的本地候选，且不能用 `full_pull` 外部/排气代理跨场景或跨麦位推断。它们仍可在 Jovi 提供匹配候选后重跑 R2，但目前没有差异数值。
 
+### MATLAB Audio Toolbox R2 专业指标复核（2026-08-23）
+
+使用仓库现有 `s12_psychoacoustic_analysis` 入口，在 MATLAB R2026a Audio Toolbox 中对三组已授权 R2 参考/本地 synthetic 代理重算前 5 秒共同窗口。保留未增益分析信号；仅为不同采样率在内存中重采样，不做 EQ、AGC 或响度匹配。以下残差均为“candidate − reference”，是数字域相对诊断，不是参数目标：
+
+| 案例 | 响度 Δ（sone） | 尖锐度 Δ（acum） | 粗糙度 Δ（asper） | 波动度 Δ（vacil） | 阶次/调参 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Ferrari 458 / acceleration | -7.2266 | -0.2905 | -0.0950 | -0.0145 | `NOT_EVALUATED` / withheld |
+| Hellcat / launch | -5.2791 | -0.0396 | +0.1648 | -0.0812 | `NOT_EVALUATED` / withheld |
+| RX-7 FD / full_pull | -35.9495 | -0.7251 | +0.0333 | -0.0487 | `NOT_EVALUATED` / withheld |
+
+外部 MATLAB 收据：`E:\Claude_allow\Download\s12-r2-matlab-psychoacoustic-audit-20260823-v3\matlab_r2_psychoacoustic_audit.json`，SHA-256 `523C8264F6A83EE23640A166FDFA15E76771880EFBFE914A4FA79C161AABB70A`；状态为 `R2_LIMITED_COMPARISON_COMPLETE`，3/3 案例均为 `R2_LIMITED_COMPARISON_ONLY`，同步 RPM/Load/Throttle/Gear/shift 仍缺失。该复核证明专业心理声学入口可对真实 R2 做相对测量，但不产生 R1 阶次图、自动参数建议、Jovi 反馈或 Profile Candidate。
+
 完整机器结果和中文单案报告位于：
 
 - `web-authorized-20260822/ferrari_458/`

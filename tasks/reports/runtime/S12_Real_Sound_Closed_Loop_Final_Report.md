@@ -36,6 +36,8 @@ Stage Q 合并补充（2026-08-23）：`real_reference.cli --raw-reference-manif
 
 Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrari 458、Hellcat、Supra 各一条，以及 RX-7sim 同一作者的五条已审计授权记录接入 canonical Q；入口重新核对外部文件 SHA-256，当前 canonical 为 23 条记录（R1=0、R2=8、R3=15）。R2 仍只允许频谱/响度/心理声学/瞬态主观相对比较，不开放阶次硬门或自动调参。
 
+2026-08-23 MATLAB R2 专业指标复核：用仓库现有 `s12_psychoacoustic_analysis` 和 MATLAB R2026a Audio Toolbox 对 Ferrari 458、Hellcat、RX-7 FD 各一组 R2 参考/本地 synthetic 代理完成 5 秒共同窗口的响度、尖锐度、粗糙度、波动度、音调/突出度相对测量。外部收据 `E:\Claude_allow\Download\s12-r2-matlab-psychoacoustic-audit-20260823-v3\matlab_r2_psychoacoustic_audit.json`，SHA-256 `523C8264F6A83EE23640A166FDFA15E76771880EFBFE914A4FA79C161AABB70A`；状态 `R2_LIMITED_COMPARISON_COMPLETE`。该证据仍明确 `R1=0`、阶次未评估、自动调参关闭、Jovi 反馈为 0。
+
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
 公开同步数据复核：F1Audio 有同步 RPM/挡位/油门但文件受限且车辆不是锚点；Visual-Acoustic 数据集有同步状态但车辆是 Lincoln MKS；HL-CEAD 有固定 RPM 录音但车型和负载/换挡证据不匹配。Ferrari 458、Hellcat、RX-7 的专业库仍需购买/书面许可与数值状态验收。筛选记录位于 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`；当前 `R1=0`，没有启动 MATLAB 阶次或自动调参。
@@ -98,7 +100,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 提交前审计基线 HEAD：`e357f8bc2244fbd993bcf4f6e613dd998d130ad6`；本轮新增提交 `da7024514fa9e72208325912cd988cf14339c8fe`，随后报告收据修订提交 `54c2bf1880f64440aee24f754c34c164dfdd7c71` 已推送到 `agent/s12-stage-q-real-reference-calibration`，远端 SHA 与本地一致。
+- 历史提交链已推送到 `agent/s12-stage-q-real-reference-calibration`；本次交接以 `git rev-parse HEAD` 与 `git ls-remote` 的最终复核值为准，远端 SHA 必须与本地一致。
 - working tree：提交后干净；本轮提交包含 R2 A/B SHA 大小写兼容、回归测试和中文交接收据，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
@@ -106,7 +108,8 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 ## 本轮验证
 
-- 最新完整 S12 Python 回归：`391 passed, 114 subtests passed in 148.81s`。
+- 最新完整 S12 Python 回归（当前 worktree）：`877 passed, 232 subtests passed in 1605.13s`；运行范围为 `tools/sound_sim/s12/tests` 与 `tools/sound_sim/s12/acoustic_identity_v015/tests`。
+- 本轮 Stage Q/R/S 聚焦测试：`31 passed`；MATLAB R2 收据边界校验通过；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 本轮 Stage S/R 聚焦测试：`16 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
