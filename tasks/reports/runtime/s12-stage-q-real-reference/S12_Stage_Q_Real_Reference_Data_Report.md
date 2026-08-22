@@ -4,20 +4,20 @@
 
 ## 结论
 
-本轮审计外部本地参考，并在 Jovi 明确授权后新增了两个带可审计 Creative Commons 许可的公开声浪参考。它们只进入 R2 有限比较；不会被伪装成 R1，也不会触发阶次硬门或自动调参。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息、许可证据和缺口。当前仍没有任何记录满足 R1，因此真实阶次基线、自动参数建议和调音闭环不能启动。
+本轮审计外部本地参考，并在 Jovi 明确授权后新增了三条带可审计 Creative Commons/CC0 许可的公开声浪参考。它们只进入 R2 有限比较；不会被伪装成 R1，也不会触发阶次硬门或自动调参。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息、许可证据和缺口。当前仍没有任何记录满足 R1，因此真实阶次基线、自动参数建议和调音闭环不能启动。
 
 ## 车型覆盖
 
-| 车型 | 记录数 | 可读取 | R1 | R2 | 当前状态 |
-| --- | ---: | ---: | ---: | ---: | --- |
-| 法拉利 458 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 道奇 Hellcat | 4 | 4 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 马自达 RX-7 FD | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 兰博基尼 Aventador LP700 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 奔驰 C63 W204 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 日产 GT-R R35 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 雷克萨斯 LFA | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| 丰田 Supra JZA80 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 车型 | 记录数 | 可读取 | R1 | R2 | R3 | 当前状态 |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| 法拉利 458 | 2 | 2 | 0 | 1 | 0 | `R2_AVAILABLE_R1_BLOCKED` |
+| 道奇 Hellcat | 5 | 5 | 0 | 1 | 0 | `R2_AVAILABLE_R1_BLOCKED` |
+| 马自达 RX-7 FD | 2 | 2 | 0 | 0 | 1 | `R3_ONLY_R1_BLOCKED` |
+| 兰博基尼 Aventador LP700 | 1 | 1 | 0 | 0 | 1 | `R3_ONLY_R1_BLOCKED` |
+| 奔驰 C63 W204 | 3 | 3 | 0 | 0 | 3 | `R3_ONLY_R1_BLOCKED` |
+| 日产 GT-R R35 | 3 | 3 | 0 | 0 | 3 | `R3_ONLY_R1_BLOCKED` |
+| 雷克萨斯 LFA | 1 | 1 | 0 | 0 | 1 | `R3_ONLY_R1_BLOCKED` |
+| 丰田 Supra JZA80 | 2 | 2 | 0 | 1 | 1 | `R2_AVAILABLE_R1_BLOCKED` |
 
 ## 外部目录审计
 
@@ -35,6 +35,12 @@
 | `web_supra_jza80_chassis_dyno_cc0_2019` | Toyota Supra / 底盘测功机全油门拉升 | [Freesound 页面](https://freesound.org/people/editboy23/sounds/496171/)，CC0 1.0，作者 editboy23 | 外部 HQ MP3 预览解码 WAV，48 kHz / 2 ch / 24 bit，35.469s，SHA-256 `029c95505a09` | `R2` | 频谱、响度、心理声学、主观瞬态；有损预览，车型代际未核实 |
 
 三条 R2 记录都缺同步 RPM、Load/Throttle、Gear/shift、麦克风与 AGC 合同，故 `R1=0`、阶次硬门关闭、自动调参关闭。Supra 记录明确是测功机全油门，但页面未核实 JZA80 代际且下载的是公开 HQ MP3 有损预览。Wankel3.ogv（CC BY-SA 2.5）是 Mazda 13B 机械演示，不是 RX-7 FD 整车录音，已登记为 `R3 qualitative_only`，不进入 R2。
+
+## 公开同步数据检索结论（未纳入）
+
+- [F1Audio](https://zenodo.org/records/21186137) 页面声称提供约 300 小时的 F1 车载声学特征与同步 RPM、挡位、油门，但 Zenodo 文件受限访问，且车辆不是本项目八个锚点，因此不能作为本项目 R1 输入。
+- [Procedural Engine Sounds Dataset](https://huggingface.co/datasets/rdoerfler/procedural-engine-sounds) 把真实录音提取的结构用于程序化扩增；其公开说明明确是合成数据。即使通道嵌入 RPM/扭矩，也不能替代真实车辆原始录音。
+- [Sounds of Vehicle Internal Combustion Engines](https://zenodo.org/records/18777405) 以 CC BY 4.0 发布真实车辆声样本，但页面只描述怠速和部分负载/加速片段，没有与本项目锚点绑定的同步 RPM、挡位、麦克风和 AGC 合同；因此不升级为 R1。本轮已保留该线索，不下载 8.1 GB 非目标资料。
 
 ## 记录审计
 

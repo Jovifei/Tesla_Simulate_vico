@@ -33,7 +33,7 @@
 ## 指标与人耳边界
 
 - 阶次 / Order-RPM：`NOT_QUALIFIED`，所有新增公开素材都没有同步 RPM。
-- 频谱、响度、心理声学：Ferrari 458 和 Hellcat 仅有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。
+- 频谱、响度、心理声学：Ferrari 458、Hellcat、Supra 均只有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。
 - 瞬态：没有同步 Gear/shift/state；不进入自动门。
 - 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。
 - 真实性百分比：禁止输出。
@@ -50,7 +50,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定提交：`bbaac7d`（R2 公开许可素材与差异报告提交为 `1a8dc38`）
+- 报告绑定提交：待本轮报告口径修正后更新；此前 R2 公开许可素材与差异报告提交为 `1a8dc38`。
 - working tree dirty：`false`（本次绑定前的干净提交）
 - push：是
 - merge：否

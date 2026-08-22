@@ -2,7 +2,7 @@
 
 状态：`R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED`
 
-当前仍没有 R1 资格参考，但 Jovi 已授权下载并审计两条明确 CC 许可的公开声浪，已完成 Ferrari 458 与 Hellcat 的 R2 有限比较。本文件不把 R2 结果升级为真实阶次资格，不输出单个真实性百分比，不把 synthetic parent 当作真实车辆，也不生成车型参数建议。
+当前仍没有 R1 资格参考，但 Jovi 已授权下载并审计三条明确 CC/CC0 许可的公开声浪，已完成 Ferrari 458、Hellcat 与 Supra 的 R2 有限比较。本文件不把 R2 结果升级为真实阶次资格，不输出单个真实性百分比，不把 synthetic parent 当作真实车辆，也不生成车型参数建议。
 
 ## 本轮 R2 结果
 

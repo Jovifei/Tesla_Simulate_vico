@@ -3791,10 +3791,24 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - [x] 将 `tesla-sound-research-v12` 与 `s12-acoustic-realism-v10` 纳入 Q 目录审计；新增 6 个外部 WAV 指针，只记录 `audit_root`、路径和 SHA-256。
 - [x] 额外目录媒体保持 `UNMAPPED_NOT_REGISTERED / DO_NOT_ANALYZE_OR_TUNE`，不把旧 manifest 的 R2/R3 标签提升为当前 R1/R2 资格。
-- [x] 更新 Stage Q schema、CLI、报告和 manifest；当前 15 条登记候选、18 条未登记外部媒体、R1=0、R2=0。
+- [x] 更新 Stage Q schema、CLI、报告和 manifest；原始本地基线为 15 条登记候选、18 条未登记外部媒体、R1=0/R2=0；后续 web-authorized overlay 另加 3 条 R2。
 
 ### 浏览器中文展示修正（2026-08-22）
 
 - [x] 将 webMUSHRA 研究包的可见标题、说明、评分维度和提交字段统一为中文；机器协议键保留英文以兼容官方导出格式。
 - [x] 提供可审计、可重复应用的上游固定按钮中文覆盖；未应用覆盖前不得声称浏览器界面已全中文。
 - [x] 运行导出包配置测试，确认中文配置不会改变真实参考、SHA/file-ID 绑定或反馈门禁。
+
+### 公开同步数据检索与报告修正（2026-08-22）
+
+- [x] 复核 F1Audio：页面声明同步 RPM/挡位/油门，但 Zenodo 文件受限访问且车辆不是八个锚点；不下载、不升级为 R1。
+- [x] 复核 Procedural Engine Sounds：RPM/扭矩通道属于程序化合成扩增，不是真实车辆原始录音；不升级为 R1。
+- [x] 复核 CC BY 4.0 的 Sounds of Vehicle Internal Combustion Engines：真实声样本可作一般 R2 线索，但页面未提供本项目锚点所需同步状态和采集合同，本轮不下载 8.1 GB 非目标资料。
+- [x] 将 Q/R/总报告的“两个公开参考”“仅 Ferrari/Hellcat”旧口径修正为三条 R2（Ferrari/Hellcat/Supra），并增加 R3/R2 计数与检索边界。
+- [x] 增加本轮报告复核后的 lessons；不把 R2 诊断、浏览器听审入口或合成数据称为已完成闭环。
+
+### 公开同步数据检索复核
+
+- 当前组合状态仍为 `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED / WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
+- 最新验证：完整 S12 测试 `371 passed, 114 subtests passed`；Q/R/S/T 重点测试 `21 passed`；`compileall` 和 `git diff --check` 通过。
+- R1/S/T 未完成的唯一真实缺口仍是：合法原始录音与同步 RPM、Load/Throttle、Gear/shift、麦克风/AGC 采集合同，以及 Jovi 的 SHA/file-ID 绑定听审反馈。
