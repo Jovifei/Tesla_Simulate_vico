@@ -14,6 +14,8 @@
 
 2026-08-23 独立单条复测：对原先默认链路 403 的 `hellcat_01 / cKx-cb0fzeo`，直接调用 `yt-dlp + Node.js EJS + android` 成功取得 3,749,435 字节 MP4；`ffprobe` 识别 H.264/AAC、105.813 s，`ffmpeg -xerror` 全流解码通过，并无增益提取 48 kHz 双声道 PCM WAV（20,316,238 字节），WAV 再次完整解码通过。外部探针收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2_probe\download_receipt_hellcat_01.json` SHA-256 `7BF6CC011DBDCE68FA26A8F68F2EF10B4513AC7535269FFA42ED9802603317DE`；该复测只证明 Android 客户端回退可用，仍是 YouTube 派生 `R3`，不提升为 R1/R2。
 
+2026-08-23 403 重试补充：对 `ferrari_01 / pN3uGrx0sS4`，`web_safari + bestaudio` 仅返回图片格式，`android + bestaudio` 在 SABR 下无可用音频格式；改用 `android + best` 成功取得 12,177,206 字节 H.264/AAC、143.058 s 文件，`ffmpeg -xerror` 全流解码通过，媒体 SHA-256 为 `6576BFCEC095E4FD27DD437FA5D32D05319995599F6319A9695545AF62040B40`。外部收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2\download_retry_receipt_ferrari_01_v1.json`；这验证了可用回退工具链，但不改变 YouTube 派生 `R3` 资格。
+
 2026-08-23 合法 R2 参考复核：重新从 Wikimedia Commons 保存 Ferrari 458 Italia 与 Dodge Challenger SRT Hellcat 两条明确许可音频到 `E:\Claude_allow\Download\s12-commons-r2-audit-20260823`，原始 OGG 与无增益 PCM WAV 的 SHA、来源和许可已写入外部 `revalidation_manifest_20260823.json`（SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`）。现有 Stage R R2 Comparator 复跑成功：Ferrari 频谱对数残差 `0.574775`、响度差 `+2.7001 dB`；Hellcat `0.503287`、`+0.4530 dB`。两案阶次均为 `not_evaluated_without_rpm_trace`，人耳反馈为空，自动调参仍关闭；R1 仍为 `0`。
 
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
@@ -42,13 +44,15 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 2026-08-23 中文 R2 A/B 交接补充：针对唯一有语义匹配本地候选的 RX-7sim `exhaust/revLong01` `full_pull`，新增仓库外中文离线页面 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823\package\index.html`。研究清单 SHA-256 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`，页面 SHA-256 为 `586322EE697AACDD0ED429A36DCB4531A1BDA01E4D9598C84A6AC590A25EF6BB`，中文说明 SHA-256 为 `AF2C91F1B3E5ED1B02A02F8FF9B44E8AB149C24C93ECB3178365E65B284C1EBA`；仅 1 个 R2 案例，绑定 `test_id`、参考/候选源与试听副本 SHA，状态仍为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`。其它 4 条 RX-7sim 录音因无语义匹配候选未进入 A/B；不自动调音、不升级 R1。
 
+2026-08-23 中文 R2 A/B 可重建包修订：修复页面脚本转义并以全新外部目录 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823-v3\package` 重建。研究清单 SHA-256 为 `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`，页面 SHA-256 为 `65B43B200E4C4A2771CFF8E35A375A3DC62EFFC9B49029CA043F3A004D192A7D`；页面通过 Node 语法检查，且新增播放设备、系统音量、输出端点、系统音效字段。仓库内收据见 `tasks/reports/runtime/s12-stage-s-human-calibration/rx7sim-20260823-v3/`，状态仍为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，反馈行数为 `0`。
+
 ## 阶段状态
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
 | --- | --- | --- | --- |
 | Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考，以及 RX-7sim 同一作者的 5 条 R2 资产；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
 | R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成 R2 相对比较；RX-7 FD 的 `full_pull` 也完成一条语义匹配的 R2 诊断比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
-| S 反馈调音 | `R2_R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，另有 RX-7sim R2 单案，全部片段绑定 SHA | 没有真实 Jovi 听审和调音轮次 |
+| S 反馈调音 | `R2_R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，另有 RX-7sim R2 单案；v3 页面绑定播放环境字段和全部片段 SHA | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
 补充证据：原始 24 条 YouTube URL 已重新完成直接无代理音频下载与现有 Comparator 的 R3 诊断（8 车各 3 条）。该补充不改变 R2/R1 门禁；机器收据位于外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\direct_analysis_receipt_v1.json`，SHA-256 为 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
@@ -79,6 +83,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 - 瞬态：没有同步 Gear/shift/state；不进入自动门。
 - 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。R2 A/B 包路径为 `E:\Claude_allow\Download\s12-stage-s-human-ab-r2-20260822`，study manifest SHA 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。
 - 追加 R2 A/B 包：RX-7sim `full_pull` 单案的中文包路径为 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823\package`，study manifest SHA 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`，反馈行数仍为 `0`。
+- 当前可重建中文包：RX-7sim `full_pull` 单案的中文包路径为 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823-v3\package`，study manifest SHA 为 `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`，反馈导入器会校验播放设备/音量/端点/系统音效与案例集合，反馈行数仍为 `0`。
 - 真实性百分比：禁止输出。
 
 ## 调音与交接
@@ -101,8 +106,8 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 ## 本轮验证
 
-- 完整 S12 Python 回归：`386 passed, 114 subtests passed in 146.91s`。
-- 本轮 Stage S/R 聚焦测试：`11 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
+- 最新完整 S12 Python 回归：`391 passed, 114 subtests passed in 148.81s`。
+- 本轮 Stage S/R 聚焦测试：`16 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 

@@ -3924,3 +3924,22 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - 页面只导出反馈，不自动调参；试听副本明确不用于 Comparator 指标。
 - R2 仍无同步 RPM/state，阶次为 `not_evaluated_without_rpm_trace`；R1 仍为 `0`。
+
+## S12 Stage S 反馈绑定修订与 YouTube 403 独立复试（2026-08-23）
+
+### 执行计划
+
+- [x] 先以 TDD 为页面与反馈导入合同写出失败测试，再实现中文页面和 fail-closed 校验。
+- [x] 页面补齐监听人、播放设备、系统音量、输出端点、系统音效、机器维度键、案例 SHA 和中文标签；导出不授予自动调音/Profile 权限。
+- [x] 新增 `feedback_import.py` 与 CLI：校验 study/binding/feedback SHA、test_id、案例集合、参考/候选 SHA、R2 状态和播放元数据；重复/缺失案例拒绝。
+- [x] 用全新外部目录 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823-v3\package` 可重建生成中文 A/B 包，原始和试听音频不进 Git。
+- [x] 对 Ferrari 458 的 YouTube 403 用 `web_safari`、`android+bestaudio`、`android+best` 做独立复试；最后一条通过严格 `ffmpeg -xerror`，写入外部回执。
+- [x] 完成全量 S12、Stage S/R 聚焦、Track-P pytest、冻结守卫、compileall、Node 页面脚本和外部 WAV/SHA 检查。
+- [ ] 等待 Jovi 返回完整真实听审 JSON；在 R1 同步录音和反馈到位前，不启动 MATLAB 阶次、自动调音或 Profile Candidate。
+
+### Review
+
+- 最新全量 S12：`391 passed, 114 subtests passed in 148.81s`；Stage S/R 聚焦：`16 passed`；Track-P：`32 passed`。
+- 外部 v3 包：研究清单 SHA `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`，中文页面 SHA `65B43B200E4C4A2771CFF8E35A375A3DC62EFFC9B49029CA043F3A004D192A7D`，Node `--check` 通过，试听 WAV 可打开。
+- YouTube 单条复试：`ferrari_01` 最终媒体 SHA `6576BFCEC095E4FD27DD437FA5D32D05319995599F6319A9695545AF62040B40`，`143.058141 s`，H.264/AAC，全流解码通过；仍是 YouTube 派生 `R3_DIAGNOSTIC_ONLY`。
+- 真实闭环仍未完成：`R1=0`、反馈行数 `0`、调音轮次 `0`、Profile Candidate 未生成；下载完整性不等于授权、原厂状态或同步 RPM/state。

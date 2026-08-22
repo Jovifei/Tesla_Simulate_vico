@@ -8,6 +8,8 @@ Stage Q 已有三条可审计 CC/CC0 R2 参考（Ferrari 458、Hellcat、Supra�
 
 其 `study_manifest.json` SHA-256 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。包内只有响度匹配试听副本；原始分析 WAV 仍由 Stage Q 外部路径和 SHA 绑定，试听副本不能用于指标计算。另有一个单案 RX-7sim R2 中文包：`E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823\\package`，`study_manifest.json` SHA-256 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`；仅 `exhaust/revLong01` `full_pull` 有语义匹配候选，其余四条不进入 A/B。
 
+修订后的可重建单案包位于 `E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823-v3\\package`，`study_manifest.json` SHA-256 为 `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`。中文页面已补齐播放设备、系统音量、输出端点和系统音效，并通过 Node 语法检查；仓库内收据和导入命令见同目录 `rx7sim-20260823-v3`。
+
 Jovi 需要按 README_中文.md 播放 A/B，并在 `feedback_template.csv` 中绑定听者、设备、系统音量、输出端点、系统音效、case ID、参考 SHA、候选 SHA 和全部中文评分维度。空模板不是反馈，任何 fixture 结果也不算真实听审。
 
 一次只允许修改一个车型、一个场景问题和一个参数组；自动指标改善且人耳不退步后，才能进入下一轮。所有调音都必须在独立 sound-fix 分支进行，当前分支不修改车型 source。

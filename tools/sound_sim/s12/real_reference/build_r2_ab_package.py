@@ -48,6 +48,88 @@ DIMENSION_LABELS_ZH = {
 }
 
 
+def write_chinese_ab_page(output_root: Path, study: Mapping[str, Any]) -> Path:
+    """Write a self-contained Chinese A/B page with complete Stage-S bindings.
+
+    The page materializes only relative audition paths.  It exports machine
+    dimension IDs (while displaying Chinese labels) plus the playback metadata
+    required by ``feedback_binding.json``.  It never exports tuning authority.
+    """
+
+    output_root = Path(output_root)
+    cases = list(study.get("cases", []))
+    dimensions = [
+        (str(item.get("id")), str(item.get("label_zh", DIMENSION_LABELS_ZH.get(str(item.get("id")), item.get("id", "")))))
+        for item in study.get("dimensions", [])
+        if isinstance(item, Mapping) and item.get("id")
+    ]
+    if not dimensions:
+        dimensions = [(key, DIMENSION_LABELS_ZH[key]) for key in DIMENSIONS]
+    page_data = {
+        "test_id": str(study.get("test_id", "")),
+        "package_manifest_sha256": str(study.get("package_manifest_sha256", "")),
+        "dimensions": dimensions,
+        "cases": [
+            {
+                "case_id": str(case["case_id"]),
+                "vehicle_id": str(case["vehicle_id"]),
+                "scenario": str(case["scenario"]),
+                "reference_sha256": str(case["reference"].get("source_sha256", "")),
+                "candidate_sha256": str(case["candidate"].get("source_sha256", case["candidate"].get("candidate_sha256", ""))),
+                "reference_audition_sha256": str(case["reference"].get("audition_sha256", "")),
+                "candidate_audition_sha256": str(case["candidate"].get("audition", {}).get("audition_sha256", "")),
+                "reference_audio": f"audio/{case['case_id']}/reference_audition.wav",
+                "candidate_audio": f"audio/{case['case_id']}/candidate_audition.wav",
+            }
+            for case in cases
+        ],
+    }
+    embedded = json.dumps(page_data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    page = output_root / "index.html"
+    page.write_text(
+        """<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S12 中文真实声浪 A/B 听审</title>
+<style>
+body{margin:0;background:#f4f7fb;color:#172033;font-family:"Microsoft YaHei",Arial,sans-serif;line-height:1.55}
+main{max-width:960px;margin:auto;padding:20px 14px 48px}.card{background:#fff;border:1px solid #d9e0ea;border-radius:12px;padding:18px;margin:12px 0;box-shadow:0 2px 9px #17203310}
+h1{font-size:25px;margin:0 0 8px}h2{font-size:19px;margin:0 0 10px}.notice{background:#fff1e8;border-left:5px solid #a44a00;padding:10px 12px;border-radius:7px}
+label{display:block;font-weight:700;margin:10px 0 4px}input,select,textarea{width:100%;box-sizing:border-box;border:1px solid #b9c4d4;border-radius:7px;padding:8px;font:inherit;background:#fff}
+.audio{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.audio div{border:1px solid #d9e0ea;border-radius:8px;padding:12px}.ref{border-top:4px solid #16794b}.cand{border-top:4px solid #175cd3}audio{width:100%;margin-top:8px}
+.scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}.score{background:#f8fafc;padding:8px;border:1px solid #d9e0ea;border-radius:7px}.score label{margin:0 0 4px;font-weight:600}
+button{border:0;border-radius:7px;padding:10px 14px;background:#175cd3;color:white;font:inherit;font-weight:700;cursor:pointer;margin:8px 8px 0 0}button.gray{background:#5f6b7a}pre{white-space:pre-wrap;word-break:break-word;background:#f8fafc;padding:10px;border-radius:7px}.muted{color:#5f6b7a;font-size:13px}
+</style></head><body><main>
+<section class="card"><h1>S12 中文真实声浪对比听审</h1>
+<p>请先听 A（有许可的真实录音参考），再听 B（本地合成候选），保持同一耳机、系统音量和播放端点。</p>
+<div class="notice"><strong>边界：</strong>这是第二级（R2）有限相对比较，不是第一级（R1）阶次资格，不会自动调参，也不会更新车型配置。试听副本只用于听审。</div>
+<p class="muted">测试编号：<code id="test-id"></code><br>研究清单 SHA-256：<code id="manifest-sha"></code></p>
+<label for="listener_id">监听人编号（必填）</label><input id="listener_id" placeholder="例如：Jovi-20260823-A">
+<label for="playback_device">播放设备（必填）</label><input id="playback_device" placeholder="例如：耳机型号或扬声器">
+<label for="windows_volume">系统音量（必填）</label><input id="windows_volume" placeholder="例如：Windows 40%">
+<label for="playback_endpoint">输出端点（必填）</label><input id="playback_endpoint" placeholder="例如：USB 耳机 / HDMI">
+<label for="system_audio_effects">系统音效（必填）</label><input id="system_audio_effects" placeholder="例如：关闭均衡器、响度增强和自动增益">
+<p id="progress" class="muted"></p></section>
+<div id="cases"></div>
+<section class="card"><button id="export">生成反馈 JSON</button><button id="copy" class="gray">复制 JSON</button><button id="clear" class="gray">清空</button><p id="status" class="muted">尚未导出。</p><pre id="preview"></pre></section>
+</main><script>
+(function(){"use strict";var STUDY=__STUDY__;var root=document.getElementById("cases");
+document.getElementById("test-id").textContent=STUDY.test_id;document.getElementById("manifest-sha").textContent=STUDY.package_manifest_sha256;
+function id(caseId,dim){return "score-"+caseId+"-"+dim}function esc(value){return String(value).replace(/[&<>"']/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c===String.fromCharCode(34)?'&quot;':'&#39;'})}
+function addSelect(parent,selectId){var s=document.createElement("select");s.id=selectId;s.innerHTML='<option value="">请选择</option><option value="1">1：明显不匹配</option><option value="2">2：偏差较大</option><option value="3">3：基本接近</option><option value="4">4：较接近</option><option value="5">5：高度匹配</option><option value="uncertain">不确定</option>';s.onchange=progress;parent.appendChild(s);}
+STUDY.cases.forEach(function(c){var card=document.createElement("section");card.className="card";card.innerHTML='<h2>案例：'+esc(c.vehicle_id)+' / '+esc(c.scenario)+'</h2><p class="muted">不要把该候选扩展到其他车型或工况。</p><div class="audio"><div class="ref"><strong>A：真实来源参考</strong><audio controls preload="metadata" src="'+esc(c.reference_audio)+'"></audio><p class="muted">原始 SHA：<code>'+esc(c.reference_sha256)+'</code><br>试听副本 SHA：<code>'+esc(c.reference_audition_sha256)+'</code></p></div><div class="cand"><strong>B：本地合成候选</strong><audio controls preload="metadata" src="'+esc(c.candidate_audio)+'"></audio><p class="muted">候选原始 SHA：<code>'+esc(c.candidate_sha256)+'</code><br>试听副本 SHA：<code>'+esc(c.candidate_audition_sha256)+'</code></p></div></div><div class="scores"></div><label>整体偏好</label><select class="preference"><option value="">请选择</option><option>参考声音更好</option><option>候选声音更好</option><option>两者接近</option><option>无法判断</option></select><label>备注：最明显的差异</label><textarea class="notes" rows="3" placeholder="例如：候选低频偏轻、转子事件感不足……"></textarea>';var scores=card.querySelector(".scores");STUDY.dimensions.forEach(function(d){var wrap=document.createElement("div");wrap.className="score";var label=document.createElement("label");label.textContent=d[1]+"匹配度";wrap.appendChild(label);addSelect(wrap,id(c.case_id,d[0]));scores.appendChild(wrap)});card.dataset.caseId=c.case_id;card.querySelector(".preference").onchange=progress;root.appendChild(card)});
+function completeCase(card){var ok=true;STUDY.dimensions.forEach(function(d){if(!document.getElementById(id(card.dataset.caseId,d[0])).value)ok=false});if(!card.querySelector(".preference").value)ok=false;return ok}
+function complete(){var fields=["listener_id","playback_device","windows_volume","playback_endpoint","system_audio_effects"];return fields.every(function(k){return document.getElementById(k).value.trim()})&&Array.prototype.every.call(root.children,completeCase)}
+function progress(){var done=0;Array.prototype.forEach.call(root.children,function(card){if(completeCase(card))done++});document.getElementById("progress").textContent="已完成 "+done+" / "+STUDY.cases.length+" 个案例；听审元数据需全部填写。"}
+function payload(){var cases=[];Array.prototype.forEach.call(root.children,function(card){var c=STUDY.cases.filter(function(x){return x.case_id===card.dataset.caseId})[0],scores={};STUDY.dimensions.forEach(function(d){scores[d[0]]=document.getElementById(id(c.case_id,d[0])).value||null});cases.push({case_id:c.case_id,vehicle_id:c.vehicle_id,scenario:c.scenario,reference_sha256:c.reference_sha256,candidate_sha256:c.candidate_sha256,scores:scores,preference:card.querySelector(".preference").value||null,notes_zh:card.querySelector(".notes").value.trim()||null})});return {schema_version:"s12-stage-s-human-feedback-zh.v1",test_id:STUDY.test_id,package_manifest_sha256:STUDY.package_manifest_sha256,exported_at_utc:new Date().toISOString(),listener_id:document.getElementById("listener_id").value.trim()||null,playback_device:document.getElementById("playback_device").value.trim()||null,windows_volume:document.getElementById("windows_volume").value.trim()||null,playback_endpoint:document.getElementById("playback_endpoint").value.trim()||null,system_audio_effects:document.getElementById("system_audio_effects").value.trim()||null,evidence_level:"R2",package_status:complete()?"READY_FOR_REVIEW":"DRAFT_INCOMPLETE",automatic_tuning_eligible:false,profile_update:"FORBIDDEN",cases:cases}}
+function show(){var t=JSON.stringify(payload(),null,2);document.getElementById("preview").textContent=t;return t}document.getElementById("export").onclick=function(){var p=payload();if(!complete()){alert("请先填写监听元数据并完成全部案例评分");return}var t=show(),u=URL.createObjectURL(new Blob([t],{type:"application/json;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="jovi_s12_r2_feedback_"+Date.now()+".json";a.click();URL.revokeObjectURL(u);document.getElementById("status").textContent="已导出完整反馈 JSON。"};document.getElementById("copy").onclick=function(){if(!complete()){alert("请先填写监听元数据并完成全部案例评分");return}var t=show();if(navigator.clipboard){navigator.clipboard.writeText(t);document.getElementById("status").textContent="已复制反馈 JSON。"}};document.getElementById("clear").onclick=function(){if(!confirm("确定清空所有填写内容吗？"))return;["listener_id","playback_device","windows_volume","playback_endpoint","system_audio_effects"].forEach(function(k){document.getElementById(k).value=""});root.querySelectorAll("select,textarea").forEach(function(x){x.value=""});document.getElementById("preview").textContent="";progress()};progress()})();
+</script></body></html>""".replace("__STUDY__", embedded),
+        encoding="utf-8",
+        newline="\n",
+    )
+    return page
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -214,6 +296,7 @@ def build_package(manifest_path: Path, candidate_spec_path: Path, output_root: P
     study_path = output_root / "study_manifest.json"
     study_path.write_text(json.dumps(study, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     study_sha = _sha256(study_path)
+    write_chinese_ab_page(output_root, {**study, "package_manifest_sha256": study_sha})
     binding = {
         "schema_version": SCHEMA_VERSION,
         "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
@@ -246,7 +329,7 @@ def build_package(manifest_path: Path, candidate_spec_path: Path, output_root: P
         "2. 固定播放设备、Windows 音量、输出端点和系统音效；不要使用增强、EQ 或自动增益。\n"
         "3. 把反馈写入 `feedback_template.csv`，每一行必须填 listener_id、设备、音量、端点、系统音效和全部中文维度。\n"
         "4. 反馈必须保留 `study_manifest_sha256`、案例 ID、参考 SHA 和候选 SHA；空白模板不是真人反馈。\n\n"
-        "Ferrari/Hellcat/Supra 是 R2 有限参考；RX-7 FD 当前未进入正式 A/B，因为现有 CC 音频不是整车 FD 录音。\n",
+        "本页面只包含已绑定案例；其他车型或工况不得复用候选。页面只导出反馈，不自动调参。\n",
         encoding="utf-8",
         newline="\n",
     )
@@ -257,6 +340,7 @@ def build_package(manifest_path: Path, candidate_spec_path: Path, output_root: P
         "study_manifest_sha256": study_sha,
         "feedback_binding": str(binding_path),
         "feedback_template": str(template_path),
+        "chinese_page": str(output_root / "index.html"),
         "case_count": len(cases),
         "cases": [case["case_id"] for case in cases],
     }
