@@ -252,6 +252,7 @@ def _recording_record(media_root: Path, spec: dict[str, Any]) -> dict[str, Any]:
         missing.append("raw_audio_file")
     missing = sorted(set(missing))
     return {
+        "reference_id": f"q:{spec['recording_id']}",
         "recording_id": spec["recording_id"],
         "vehicle_id": spec["vehicle_id"],
         "vehicle_name_zh": VEHICLE_NAMES_ZH[spec["vehicle_id"]],
@@ -261,6 +262,7 @@ def _recording_record(media_root: Path, spec: dict[str, Any]) -> dict[str, Any]:
         "sha256": sha256,
         "audio": audio,
         "read_error": error,
+        "scenario": spec["scenario_hint"],
         "scenario_hint": spec["scenario_hint"],
         "scenario_confidence": "filename_or_prior_note_only",
         "provenance": {

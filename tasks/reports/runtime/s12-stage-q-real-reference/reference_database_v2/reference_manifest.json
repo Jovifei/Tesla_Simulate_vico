@@ -305,6 +305,7 @@
       },
       "read_error": null,
       "recording_id": "aventador_lp700_accel",
+      "reference_id": "q:aventador_lp700_accel",
       "relative_path": "aventador_lp700_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -316,6 +317,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "7dccc0bd4a553c252f1b949024e9c484ed9bbce093f41ce1245f6f795da2b3ee",
@@ -367,6 +369,7 @@
       },
       "read_error": null,
       "recording_id": "c63_w204_close_downshift",
+      "reference_id": "q:c63_w204_close_downshift",
       "relative_path": "c63_w204_close_downshift.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -378,6 +381,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "shift",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "shift",
       "sha256": "4e7600abe78ddea0e3b51df2546fb21fe286528a48e08908da8fb760764083f1",
@@ -429,6 +433,7 @@
       },
       "read_error": null,
       "recording_id": "c63_w204_headers_backfire",
+      "reference_id": "q:c63_w204_headers_backfire",
       "relative_path": "c63_w204_headers_backfire.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -441,6 +446,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "afterfire",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "afterfire",
       "sha256": "3261aa79236ab992faf43a11ee6b459314514e9516fc97bcfa2e749e7d6b4186",
@@ -492,6 +498,7 @@
       },
       "read_error": null,
       "recording_id": "c63_w204_performance_accel",
+      "reference_id": "q:c63_w204_performance_accel",
       "relative_path": "c63_w204_performance_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -504,6 +511,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "534605237d621e25e9636a3fec937ee5384be6573b636e20008f3992cb2b4dda",
@@ -555,6 +563,7 @@
       },
       "read_error": null,
       "recording_id": "ferrari_458_accel",
+      "reference_id": "q:ferrari_458_accel",
       "relative_path": "ferrari_458_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -566,6 +575,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "22b0d0e1da61c8c31667633f58d412022f9563ea0538d1ce002891ffd3f78ddf",
@@ -617,6 +627,7 @@
       },
       "read_error": null,
       "recording_id": "gtr_r35_nismo_accel",
+      "reference_id": "q:gtr_r35_nismo_accel",
       "relative_path": "gtr_r35_nismo_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -629,6 +640,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "dd3bd936f5d5a5b587d1d87f753e8ebb2f3841455c9a721954fc326223d7a2f8",
@@ -680,6 +692,7 @@
       },
       "read_error": null,
       "recording_id": "gtr_r35_tomei_close",
+      "reference_id": "q:gtr_r35_tomei_close",
       "relative_path": "gtr_r35_tomei_close.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -691,6 +704,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "afterfire",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "afterfire",
       "sha256": "4aeed8ff74b80e5649c3c4ac5515ae78fed251e07603f75d6b2f5e5910061444",
@@ -742,6 +756,7 @@
       },
       "read_error": null,
       "recording_id": "gtr_r35_tuned_backfire",
+      "reference_id": "q:gtr_r35_tuned_backfire",
       "relative_path": "gtr_r35_tuned_backfire.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -754,6 +769,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "afterfire",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "afterfire",
       "sha256": "0058a67bda86b174079ea06eecabf404515127c799d9b7e6658feddb5fc9c462",
@@ -805,6 +821,7 @@
       },
       "read_error": null,
       "recording_id": "hellcat_burble_tune",
+      "reference_id": "q:hellcat_burble_tune",
       "relative_path": "hellcat_burble_tune.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -816,6 +833,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "afterfire",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "afterfire",
       "sha256": "c062f3b8fd31c32a1c970eff34b742a6e292e11c62aa754fc0cb1d0a854a946e",
@@ -867,6 +885,7 @@
       },
       "read_error": null,
       "recording_id": "hellcat_redeye_downshift",
+      "reference_id": "q:hellcat_redeye_downshift",
       "relative_path": "hellcat_redeye_downshift.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -878,6 +897,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "shift",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "shift",
       "sha256": "4090dd9fa0f70ca47be71ac2c402dd1f7a15e304e9acdf77eaef22ce83006f6e",
@@ -929,6 +949,7 @@
       },
       "read_error": null,
       "recording_id": "hellcat_redeye_leave",
+      "reference_id": "q:hellcat_redeye_leave",
       "relative_path": "hellcat_redeye_leave.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -940,6 +961,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "full_pull",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "full_pull",
       "sha256": "e5c29a92428b1eab9991aefc17afb607b644ff41c0fdc97ed9222e8f291c7946",
@@ -991,6 +1013,7 @@
       },
       "read_error": null,
       "recording_id": "hellcat_stock_accel",
+      "reference_id": "q:hellcat_stock_accel",
       "relative_path": "hellcat_stock_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -1002,6 +1025,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "cf2ecf83c8948cb7fc2501d9b21b4e92521fa4b01d674075c4bf232b856c9c92",
@@ -1053,6 +1077,7 @@
       },
       "read_error": null,
       "recording_id": "lfa_full_accel",
+      "reference_id": "q:lfa_full_accel",
       "relative_path": "lfa_full_accel.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -1064,6 +1089,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "full_pull",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "full_pull",
       "sha256": "ec75623d44c7bae13773e9a270b2df3fe1c3f10746a36373c816f9ad191a3e19",
@@ -1115,6 +1141,7 @@
       },
       "read_error": null,
       "recording_id": "rx7_fd_13brew",
+      "reference_id": "q:rx7_fd_13brew",
       "relative_path": "rx7_fd_13brew.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -1126,6 +1153,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "c3458bd392e8107e2405de0e3df15ccbd93529523423e7974300216e6e7229db",
@@ -1177,6 +1205,7 @@
       },
       "read_error": null,
       "recording_id": "supra_jza80_stock",
+      "reference_id": "q:supra_jza80_stock",
       "relative_path": "supra_jza80_stock.wav",
       "required_missing": [
         "exact_vehicle_trim",
@@ -1188,6 +1217,7 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
+      "scenario": "acceleration",
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",

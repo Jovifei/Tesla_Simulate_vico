@@ -7,7 +7,7 @@ import pytest
 
 from tools.sound_sim.s12.real_reference.baseline import write_stage_r_waiting_outputs
 from tools.sound_sim.s12.real_reference.inventory import build_inventory
-from tools.sound_sim.s12.real_reference.qualification import ReferenceQualificationError, require_r1_reference
+from tools.sound_sim.s12.real_reference.qualification import ReferenceQualificationError, qualify_r2_reference, require_r1_reference
 
 
 def test_unqualified_reference_cannot_enter_stage_r() -> None:
@@ -27,3 +27,21 @@ def test_stage_r_waiting_outputs_withhold_recommendations(tmp_path: Path) -> Non
     assert result["qualified_cases"] == []
     assert recommendations["status"] == "WITHHELD_MISSING_R1_REFERENCE"
     assert recommendations["recommendations"] == []
+
+
+def test_r2_gate_is_limited_and_never_tuning_authority() -> None:
+    record = {
+        "recording_id": "ferrari_r2",
+        "vehicle_id": "ferrari_458",
+        "scenario": "acceleration",
+        "file_present": True,
+        "sha256": "a" * 64,
+        "provenance": {"legal_permission": "CONFIRMED"},
+    }
+    gate = qualify_r2_reference(record)
+    assert gate["eligible"] is True
+    assert gate["qualification"] == "R2"
+    assert "spectrum" in gate["allowed_metric_groups"]
+    assert gate["order_hard_gate"] is False
+    assert gate["rpm_synchronised_automatic_tuning"] is False
+    assert gate["automatic_tuning_eligible"] is False

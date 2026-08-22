@@ -15,6 +15,11 @@ R1_FIELDS = (
     "recording_device_agc_contract",
 )
 
+R2_FIELDS = (
+    "legal_permission",
+    "vehicle_and_scenario_identity",
+)
+
 
 class ReferenceQualificationError(ValueError):
     """Raised when a reference is not allowed into a qualified comparison."""
@@ -48,6 +53,34 @@ def qualify_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def qualify_r2_reference(record: dict[str, Any]) -> dict[str, Any]:
+    """Gate an authorised, scenario-labelled reference for limited metrics.
+
+    R2 deliberately does not imply RPM/order qualification or tuning authority.
+    """
+
+    provenance = record.get("provenance", {})
+    scenario = record.get("scenario") or record.get("scenario_hint")
+    checks = {
+        "legal_permission": provenance.get("legal_permission") == "CONFIRMED",
+        "vehicle_and_scenario_identity": bool(record.get("vehicle_id")) and bool(scenario),
+        "readable_audio_and_sha256": bool(record.get("file_present")) and bool(record.get("sha256")),
+    }
+    missing = [name for name, passed in checks.items() if not passed]
+    return {
+        "recording_id": record.get("recording_id"),
+        "vehicle_id": record.get("vehicle_id"),
+        "eligible": not missing,
+        "checks": checks,
+        "missing": missing,
+        "qualification": "R2" if not missing else "NOT_R2",
+        "allowed_metric_groups": ["spectrum", "loudness", "psychoacoustics", "transient_subjective"],
+        "order_hard_gate": False,
+        "rpm_synchronised_automatic_tuning": False,
+        "automatic_tuning_eligible": False,
+    }
+
+
 def require_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
     gate = qualify_r1_reference(record)
     if not gate["eligible"]:
@@ -58,4 +91,4 @@ def require_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
     return gate
 
 
-__all__ = ["R1_FIELDS", "ReferenceQualificationError", "qualify_r1_reference", "require_r1_reference"]
+__all__ = ["R1_FIELDS", "R2_FIELDS", "ReferenceQualificationError", "qualify_r1_reference", "qualify_r2_reference", "require_r1_reference"]
