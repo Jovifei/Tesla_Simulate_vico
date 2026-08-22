@@ -3909,3 +3909,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
 - 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。
 - 本轮新增验证：Stage Q canonical 为 23 条记录，其中 8 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性、大小写兼容和错哈希拒绝路径均有回归覆盖。RX-7sim Stage R 单案结果保留 `R2_LIMITED_COMPARISON_COMPLETE`，不提升为 R1。
+
+## S12 Stage S RX-7sim 中文 R2 A/B 交接（2026-08-23）
+
+> 状态：`R2_LIMITED_COMPARISON_ONLY / WAITING_FOR_JOVI_HUMAN_FEEDBACK`；只写仓库内元数据和收据，原始/试听音频均在 `E:\\Claude_allow\\Download`。
+
+- [x] 修复中文 A/B 构建器对参考/候选 SHA 的大小写敏感问题，并新增回归测试；不会放宽 SHA、路径或音频完整性门禁。
+- [x] 为唯一语义匹配的 RX-7sim `exhaust/revLong01` `full_pull` 生成外部中文离线 A/B 页面：`E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823\\package\\index.html`。
+- [x] 固化 `test_id=s12-stage-s-r2-ab-20260822`、研究清单 SHA `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`、反馈绑定 SHA `4ABF650DFED136A327A8828F9B1710417A3051437F7F85435DFBF8CE5FA4BD26`、中文页面 SHA `586322EE697AACDD0ED429A36DCB4531A1BDA01E4D9598C84A6AC590A25EF6BB`、中文说明 SHA `AF2C91F1B3E5ED1B02A02F8FF9B44E8AB149C24C93ECB3178365E65B284C1EBA` 及参考/候选/试听副本 SHA。
+- [x] 写入 `tasks/reports/runtime/s12-stage-s-human-calibration/rx7sim-20260823/` 元数据收据和中文交接报告；4 条无语义匹配候选的 RX-7sim 录音不进入 A/B。
+- [ ] 等待 Jovi 返回带 `test_id`、研究清单 SHA、案例 ID、参考/候选 SHA、监听设备和中文评分的反馈 JSON；在此之前调音轮次为 `0`，不生成 Profile Candidate。
+
+### Review
+
+- 页面只导出反馈，不自动调参；试听副本明确不用于 Comparator 指标。
+- R2 仍无同步 RPM/state，阶次为 `not_evaluated_without_rpm_trace`；R1 仍为 `0`。

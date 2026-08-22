@@ -2,11 +2,11 @@
 
 状态：`R2_AB_PACKAGE_READY` / `WAITING_FOR_JOVI_HUMAN_FEEDBACK`
 
-Stage Q 已有三条可审计 CC/CC0 R2 参考（Ferrari 458、Hellcat、Supra），Stage R 已完成有限数字域比较。本轮已生成仓库外的中文 A/B 包：
+Stage Q 已有三条可审计 CC/CC0 R2 参考（Ferrari 458、Hellcat、Supra），并新增 RX-7sim 作者录音的五条 R2 指针；Stage R 已完成有限数字域比较。本轮已生成仓库外的中文 A/B 包：
 
 `E:\\Claude_allow\\Download\\s12-stage-s-human-ab-r2-20260822`
 
-其 `study_manifest.json` SHA-256 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。包内只有响度匹配试听副本；原始分析 WAV 仍由 Stage Q 外部路径和 SHA 绑定，试听副本不能用于指标计算。RX-7 FD 当前只有 R3 旋转机械演示，因此没有进入正式 R2 A/B。
+其 `study_manifest.json` SHA-256 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。包内只有响度匹配试听副本；原始分析 WAV 仍由 Stage Q 外部路径和 SHA 绑定，试听副本不能用于指标计算。另有一个单案 RX-7sim R2 中文包：`E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823\\package`，`study_manifest.json` SHA-256 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`；仅 `exhaust/revLong01` `full_pull` 有语义匹配候选，其余四条不进入 A/B。
 
 Jovi 需要按 README_中文.md 播放 A/B，并在 `feedback_template.csv` 中绑定听者、设备、系统音量、输出端点、系统音效、case ID、参考 SHA、候选 SHA 和全部中文评分维度。空模板不是反馈，任何 fixture 结果也不算真实听审。
 

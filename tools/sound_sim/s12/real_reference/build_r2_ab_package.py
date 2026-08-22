@@ -153,11 +153,11 @@ def build_package(manifest_path: Path, candidate_spec_path: Path, output_root: P
             raise FileNotFoundError(f"missing R2 A/B source for {recording_id}")
         expected_reference_sha = str(recording["sha256"])
         actual_reference_sha = _sha256(reference_path)
-        if actual_reference_sha != expected_reference_sha:
+        if actual_reference_sha.lower() != expected_reference_sha.lower():
             raise ValueError(f"reference SHA-256 mismatch for {recording_id}")
         expected_candidate_sha = str(candidate.get("candidate_sha256") or _sha256(candidate_path))
         actual_candidate_sha = _sha256(candidate_path)
-        if actual_candidate_sha != expected_candidate_sha:
+        if actual_candidate_sha.lower() != expected_candidate_sha.lower():
             raise ValueError(f"candidate SHA-256 mismatch for {recording_id}")
         case_id = recording_id.removeprefix("web_")
         ref_dest = output_root / "audio" / case_id / "reference_audition.wav"

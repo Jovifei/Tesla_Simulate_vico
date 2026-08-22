@@ -40,6 +40,8 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 中文听审入口实测：官方 webMUSHRA 外部 checkout 已应用中文 NLS 覆盖，并以 `language: zh` 的最小配置通过本地浏览器快照验证中文按钮和音频加载；截图与补丁均留在 `E:\Claude_allow\Download`，不进入 Git。该验证不产生 Jovi 听审行，真实反馈仍为 0。
 
+2026-08-23 中文 R2 A/B 交接补充：针对唯一有语义匹配本地候选的 RX-7sim `exhaust/revLong01` `full_pull`，新增仓库外中文离线页面 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823\package\index.html`。研究清单 SHA-256 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`，页面 SHA-256 为 `586322EE697AACDD0ED429A36DCB4531A1BDA01E4D9598C84A6AC590A25EF6BB`，中文说明 SHA-256 为 `AF2C91F1B3E5ED1B02A02F8FF9B44E8AB149C24C93ECB3178365E65B284C1EBA`；仅 1 个 R2 案例，绑定 `test_id`、参考/候选源与试听副本 SHA，状态仍为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`。其它 4 条 RX-7sim 录音因无语义匹配候选未进入 A/B；不自动调音、不升级 R1。
+
 ## 阶段状态
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
@@ -76,6 +78,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 - 频谱、响度、心理声学：Ferrari 458、Hellcat、Supra 和 RX-7 FD `full_pull` 均只有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。RX-7sim 其余 4 条没有语义匹配候选，未比较。
 - 瞬态：没有同步 Gear/shift/state；不进入自动门。
 - 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。R2 A/B 包路径为 `E:\Claude_allow\Download\s12-stage-s-human-ab-r2-20260822`，study manifest SHA 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。
+- 追加 R2 A/B 包：RX-7sim `full_pull` 单案的中文包路径为 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823\package`，study manifest SHA 为 `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`，反馈行数仍为 `0`。
 - 真实性百分比：禁止输出。
 
 ## 调音与交接
