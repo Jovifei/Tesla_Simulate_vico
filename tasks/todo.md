@@ -3821,6 +3821,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 新增 `tools/sound_sim/s12/real_reference/url_intake.py`：网址校验、外部目录下载、视频/音频 SHA-256、ffprobe 元数据、无增益 PCM 抽取和中文审计报告。
 - [x] 入口默认 fail-closed：无许可为 R3；有许可但无同步状态最多 R2；视频压缩派生音频不会自动升级为 R1。
 - [x] 增加可选抽帧/OCR 状态线索；没有 Tesseract 时仍保留帧 SHA，OCR 数字统一标记 `ESTIMATED_FROM_VIDEO_NOT_QUALIFIED`。
+- [x] 支持 JSON 批量网址规格：每个网址可单独绑定车型、工况、许可和状态合同，避免多车型批处理时共用错误元数据。
 - [x] 新增 `URL_INTAKE_GUIDE.md` 和 4 项 URL intake 回归测试；不修改 MATLAB、Runtime、Simulink、Android 或 Track-P。
 - [x] 新入口接入后完整 S12 Python 回归：`376 passed, 114 subtests passed in 239.72s`；`compileall` 与 `git diff --check` 通过。
 - [x] 用已核验 CC0 测功机网址完成一次真实端到端冒烟：`URL_INTAKE_COMPLETE`、1 条记录、网页视频→PCM WAV→中文 manifest/report；因 Opus 派生音频和缺少同步状态正确保持 `R2`。

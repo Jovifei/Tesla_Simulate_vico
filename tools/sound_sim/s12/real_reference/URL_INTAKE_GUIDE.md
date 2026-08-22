@@ -20,6 +20,23 @@ python -m tools.sound_sim.s12.real_reference.url_intake `
 
 没有许可证据时，入口保持 `R3`；有许可、车型和场景但没有同步状态时，最多为 `R2`。
 
+如果一批网址属于不同车型/工况，可使用 JSON 数组（每项至少有 `url`，其余字段可逐项覆盖）：
+
+```json
+[
+  {"url": "https://example.com/ferrari", "vehicle_id": "ferrari_458", "scenario": "full_pull", "license_status": "CONFIRMED", "rights_evidence": "授权页面或收据"},
+  {"url": "https://example.com/hellcat", "vehicle_id": "hellcat", "scenario": "shift"}
+]
+```
+
+`license_status` 也可写成内部字段 `legal_permission`；只有同时提供可审计许可证据时才会进入 R2，网址视频本身不会自动取得 R1 资格。
+
+```powershell
+python -m tools.sound_sim.s12.real_reference.url_intake `
+  --spec-json "E:\Claude_allow\Download\s12-url-spec.json" `
+  --scan-frames
+```
+
 ## 同步状态合同
 
 如果网址同时提供了合法的同步状态文件，可以通过 JSON 传入状态合同：

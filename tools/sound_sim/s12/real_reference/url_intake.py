@@ -410,64 +410,97 @@ def write_intake_outputs(manifest: Mapping[str, Any], output_root: Path) -> dict
     return {"manifest": manifest_path, "report": report_path}
 
 
-def intake_urls(
-    urls: Iterable[str],
+def _process_url_spec(
+    spec: Mapping[str, Any],
+    *,
+    index: int,
+    output_root: Path,
+    defaults: Mapping[str, Any],
+    scan_frames: bool,
+    frame_interval_s: float,
+    max_frames: int,
+) -> dict[str, Any]:
+    if not isinstance(spec, Mapping):
+        raise UrlIntakeError("each URL spec must be a JSON object")
+    merged = dict(defaults)
+    merged.update({key: value for key, value in spec.items() if value is not None})
+    # Keep the JSON spelling aligned with the CLI while accepting the
+    # internal record field used by the qualification gate.
+    if "license_status" in spec and "legal_permission" not in spec:
+        merged["legal_permission"] = spec["license_status"]
+    if not merged.get("url"):
+        raise UrlIntakeError("each URL spec must contain a non-empty url")
+    url = validate_source_url(str(merged["url"]))
+    stem = _safe_stem(index, url)
+    try:
+        video_path, log_path, _ = _download_video(url, output_root, stem)
+        probe = _probe(video_path)
+        wav_path = output_root / f"{stem}.analysis.wav"
+        _extract_wav(video_path, wav_path)
+        visual_scan = (
+            scan_video_frames(video_path, output_root / f"{stem}.frames", interval_s=frame_interval_s, max_frames=max_frames)
+            if scan_frames
+            else {"status": "NOT_REQUESTED", "rpm_candidates": [], "rpm_status": "MISSING_RPM_STATE"}
+        )
+        return build_video_record(
+            source_url=url,
+            video_path=video_path,
+            wav_path=wav_path,
+            probe=probe,
+            download_log_path=log_path,
+            vehicle_id=merged.get("vehicle_id"),
+            scenario=merged.get("scenario"),
+            legal_permission=str(merged.get("legal_permission") or "UNVERIFIED"),
+            rights_evidence=merged.get("rights_evidence"),
+            stock_identity=str(merged.get("stock_identity", "UNVERIFIED")),
+            microphone_perspective=str(merged.get("microphone_perspective", "UNKNOWN")),
+            recording_device_agc=str(merged.get("recording_device_agc", "UNKNOWN")),
+            state_contract=merged.get("state_contract"),
+            raw_audio_confirmed=bool(merged.get("raw_audio_confirmed", False)),
+            visual_scan=visual_scan,
+        )
+    except (OSError, UrlIntakeError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        return {
+            "recording_id": "url_" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:16],
+            "source_url": url,
+            "status": "DOWNLOAD_OR_PARSE_FAILED",
+            "error": str(exc),
+            "evidence": {"level": "R3", "r1_eligible": False, "r2_eligible": False, "automatic_tuning_eligible": False},
+        }
+
+
+def intake_url_specs(
+    specs: Iterable[Mapping[str, Any]],
     *,
     output_root: Path,
-    vehicle_id: str | None = None,
-    scenario: str | None = None,
-    legal_permission: str = "UNVERIFIED",
-    rights_evidence: str | None = None,
-    stock_identity: str = "UNVERIFIED",
-    microphone_perspective: str = "UNKNOWN",
-    recording_device_agc: str = "UNKNOWN",
-    state_contract: Mapping[str, Any] | None = None,
-    raw_audio_confirmed: bool = False,
+    defaults: Mapping[str, Any] | None = None,
     scan_frames: bool = False,
     frame_interval_s: float = 2.0,
     max_frames: int = 30,
 ) -> dict[str, Any]:
+    """Download a batch where each URL may override vehicle/scenario metadata."""
+
     output_root = _inside(ALLOWED_DOWNLOAD_ROOT, Path(output_root))
     output_root.mkdir(parents=True, exist_ok=True)
     records: list[dict[str, Any]] = []
-    for index, raw_url in enumerate(urls, start=1):
-        url = validate_source_url(raw_url)
-        stem = _safe_stem(index, url)
+    for index, spec in enumerate(specs, start=1):
         try:
-            video_path, log_path, _ = _download_video(url, output_root, stem)
-            probe = _probe(video_path)
-            wav_path = output_root / f"{stem}.analysis.wav"
-            _extract_wav(video_path, wav_path)
-            visual_scan = (
-                scan_video_frames(video_path, output_root / f"{stem}.frames", interval_s=frame_interval_s, max_frames=max_frames)
-                if scan_frames
-                else {"status": "NOT_REQUESTED", "rpm_candidates": [], "rpm_status": "MISSING_RPM_STATE"}
-            )
             records.append(
-                build_video_record(
-                    source_url=url,
-                    video_path=video_path,
-                    wav_path=wav_path,
-                    probe=probe,
-                    download_log_path=log_path,
-                    vehicle_id=vehicle_id,
-                    scenario=scenario,
-                    legal_permission=legal_permission,
-                    rights_evidence=rights_evidence,
-                    stock_identity=stock_identity,
-                    microphone_perspective=microphone_perspective,
-                    recording_device_agc=recording_device_agc,
-                    state_contract=state_contract,
-                    raw_audio_confirmed=raw_audio_confirmed,
-                    visual_scan=visual_scan,
+                _process_url_spec(
+                    spec,
+                    index=index,
+                    output_root=output_root,
+                    defaults=defaults or {},
+                    scan_frames=scan_frames,
+                    frame_interval_s=frame_interval_s,
+                    max_frames=max_frames,
                 )
             )
-        except (OSError, UrlIntakeError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        except (TypeError, UrlIntakeError) as exc:
             records.append(
                 {
-                    "recording_id": "url_" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:16],
-                    "source_url": url,
-                    "status": "DOWNLOAD_OR_PARSE_FAILED",
+                    "recording_id": f"url_spec_{index:02d}",
+                    "status": "URL_SPEC_INVALID",
                     "error": str(exc),
                     "evidence": {"level": "R3", "r1_eligible": False, "r2_eligible": False, "automatic_tuning_eligible": False},
                 }
@@ -485,13 +518,52 @@ def intake_urls(
     return manifest
 
 
+def intake_urls(
+    urls: Iterable[str],
+    *,
+    output_root: Path,
+    vehicle_id: str | None = None,
+    scenario: str | None = None,
+    legal_permission: str = "UNVERIFIED",
+    rights_evidence: str | None = None,
+    stock_identity: str = "UNVERIFIED",
+    microphone_perspective: str = "UNKNOWN",
+    recording_device_agc: str = "UNKNOWN",
+    state_contract: Mapping[str, Any] | None = None,
+    raw_audio_confirmed: bool = False,
+    scan_frames: bool = False,
+    frame_interval_s: float = 2.0,
+    max_frames: int = 30,
+) -> dict[str, Any]:
+    return intake_url_specs(
+        ({"url": url} for url in urls),
+        output_root=output_root,
+        defaults={
+            "vehicle_id": vehicle_id,
+            "scenario": scenario,
+            "legal_permission": legal_permission,
+            "rights_evidence": rights_evidence,
+            "stock_identity": stock_identity,
+            "microphone_perspective": microphone_perspective,
+            "recording_device_agc": recording_device_agc,
+            "state_contract": state_contract,
+            "raw_audio_confirmed": raw_audio_confirmed,
+        },
+        scan_frames=scan_frames,
+        frame_interval_s=frame_interval_s,
+        max_frames=max_frames,
+    )
+
+
 def _timestamped_output_root() -> Path:
     return ALLOWED_DOWNLOAD_ROOT / ("s12-url-intake-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="下载 Jovi 提供的视频网址并生成中文、fail-closed 的 S12 声浪输入审计")
-    parser.add_argument("--url", action="append", required=True, help="视频 URL；可重复指定")
+    source_group = parser.add_mutually_exclusive_group(required=True)
+    source_group.add_argument("--url", action="append", help="视频 URL；可重复指定")
+    source_group.add_argument("--spec-json", type=Path, help="JSON 数组；每项至少含 url，可覆盖车型/工况/许可字段")
     parser.add_argument("--output-root", type=Path, default=None, help="输出目录，必须位于 E:\\Claude_allow\\Download")
     parser.add_argument("--vehicle-id", default=None)
     parser.add_argument("--scenario", default=None)
@@ -518,22 +590,41 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--state-contract-json must contain a JSON object")
         state_contract = loaded
     output_root = args.output_root or _timestamped_output_root()
-    manifest = intake_urls(
-        args.url,
-        output_root=output_root,
-        vehicle_id=args.vehicle_id,
-        scenario=args.scenario,
-        legal_permission=args.license_status,
-        rights_evidence=args.rights_evidence,
-        stock_identity=args.stock_identity,
-        microphone_perspective=args.microphone_perspective,
-        recording_device_agc=args.recording_device_agc,
-        state_contract=state_contract,
-        raw_audio_confirmed=args.raw_audio_confirmed,
-        scan_frames=args.scan_frames,
-        frame_interval_s=args.frame_interval_s,
-        max_frames=args.max_frames,
-    )
+    defaults = {
+        "vehicle_id": args.vehicle_id,
+        "scenario": args.scenario,
+        "legal_permission": args.license_status,
+        "rights_evidence": args.rights_evidence,
+        "stock_identity": args.stock_identity,
+        "microphone_perspective": args.microphone_perspective,
+        "recording_device_agc": args.recording_device_agc,
+        "state_contract": state_contract,
+        "raw_audio_confirmed": args.raw_audio_confirmed,
+    }
+    if args.spec_json is not None:
+        try:
+            specs = json.loads(args.spec_json.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            parser.error(f"--spec-json cannot be read as JSON: {exc}")
+        if not isinstance(specs, list):
+            parser.error("--spec-json must contain a JSON array")
+        manifest = intake_url_specs(
+            specs,
+            output_root=output_root,
+            defaults=defaults,
+            scan_frames=args.scan_frames,
+            frame_interval_s=args.frame_interval_s,
+            max_frames=args.max_frames,
+        )
+    else:
+        manifest = intake_urls(
+            args.url or [],
+            output_root=output_root,
+            **defaults,
+            scan_frames=args.scan_frames,
+            frame_interval_s=args.frame_interval_s,
+            max_frames=args.max_frames,
+        )
     print(f"status={manifest['status']}")
     print(f"records={len(manifest['records'])}")
     print(f"output_root={manifest['download_root']}")
@@ -550,6 +641,7 @@ __all__ = [
     "UrlIntakeError",
     "build_video_record",
     "intake_urls",
+    "intake_url_specs",
     "render_intake_report",
     "scan_video_frames",
     "validate_source_url",
