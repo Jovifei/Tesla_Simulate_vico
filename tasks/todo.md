@@ -3905,7 +3905,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ### Review
 
-- 原始入库/Stage Q/R/S/T 重点测试：`26 passed`；完整 S12：`385 passed, 114 subtests passed`；Track-P 冻结守卫通过（180 个冻结文件、2 个冻结符号）。
+- 原始入库/Stage Q/R/S/T 历史重点测试：`26 passed`；本轮完整 S12：`386 passed, 114 subtests passed`；本轮 Stage S/R 聚焦：`11 passed`；Track-P pytest `32 passed`，冻结守卫仍为 180 个冻结文件、2 个冻结符号。
 - 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
 - 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。
 - 本轮新增验证：Stage Q canonical 为 23 条记录，其中 8 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性、大小写兼容和错哈希拒绝路径均有回归覆盖。RX-7sim Stage R 单案结果保留 `R2_LIMITED_COMPARISON_COMPLETE`，不提升为 R1。

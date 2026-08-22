@@ -48,7 +48,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 | --- | --- | --- | --- |
 | Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考，以及 RX-7sim 同一作者的 5 条 R2 资产；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
 | R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成 R2 相对比较；RX-7 FD 的 `full_pull` 也完成一条语义匹配的 R2 诊断比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
-| S 反馈调音 | `R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，18 个片段绑定 SHA；RX-7sim R2 结果仍需中文人耳复核 | 没有真实 Jovi 听审和调音轮次 |
+| S 反馈调音 | `R2_R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，另有 RX-7sim R2 单案，全部片段绑定 SHA | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
 补充证据：原始 24 条 YouTube URL 已重新完成直接无代理音频下载与现有 Comparator 的 R3 诊断（8 车各 3 条）。该补充不改变 R2/R1 门禁；机器收据位于外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\direct_analysis_receipt_v1.json`，SHA-256 为 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
@@ -93,16 +93,16 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 提交前审计基线 HEAD：`6b79c5eb858d51332b4a779180d12a9895b7aa6d`（`docs(s12): refresh regression and handoff evidence`）；本轮补充提交后的最终 SHA 以 Git 与远端复核为准。
-- working tree：提交后干净；本轮提交包含 R1 门禁、测试和中文说明，没有把外部试听/版权媒体写入 Git。
+- 提交前审计基线 HEAD：`92d26c55b73ac83fdb6f32d9c8e7fbb8207f324c`；本轮新增提交 `c919d9616149e90604d6496c15e47b6a67a5250d` 已推送到 `agent/s12-stage-q-real-reference-calibration`，远端 SHA 与本地一致。
+- working tree：提交后干净；本轮提交包含 R2 A/B SHA 大小写兼容、回归测试和中文交接收据，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
 - PR：否
 
 ## 本轮验证
 
-- 完整 S12 Python 回归：`385 passed, 114 subtests passed in 146.97s`。
-- Stage Q/R/S/T 重点测试：`26 passed`；Track-P 冻结守卫：`180 files / 2 symbols`。
+- 完整 S12 Python 回归：`386 passed, 114 subtests passed in 146.91s`。
+- 本轮 Stage S/R 聚焦测试：`11 passed`；Track-P pytest：`32 passed`；冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 
