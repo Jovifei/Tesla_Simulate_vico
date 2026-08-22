@@ -234,9 +234,40 @@ def _download_video(url: str, root: Path, stem: str) -> tuple[Path, Path, str]:
         str(template),
         url,
     ]
-    result = subprocess.run(command, check=True, capture_output=True, text=True)
+    commands = [command]
+    host = urlparse(url).netloc.lower().split(":", 1)[0]
+    if host == "youtube.com" or host.endswith(".youtube.com") or host == "youtu.be":
+        # YouTube may expose only SABR/image formats to the default client.
+        # Keep the default attempt first, then use a documented client fallback
+        # without changing the source URL or relaxing the external-only policy.
+        fallback = list(command)
+        format_index = fallback.index("-f")
+        fallback[format_index:format_index] = ["--extractor-args", "youtube:player_client=android"]
+        commands.append(fallback)
+
+    attempts: list[str] = []
+    result = None
+    for attempt_index, attempt in enumerate(commands, start=1):
+        try:
+            result = subprocess.run(attempt, check=True, capture_output=True, text=True)
+            attempts.append(
+                f"ATTEMPT {attempt_index} OK\nCOMMAND: {json.dumps(attempt, ensure_ascii=False)}\n"
+                f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+            )
+            break
+        except subprocess.CalledProcessError as exc:
+            attempts.append(
+                f"ATTEMPT {attempt_index} FAILED exit={exc.returncode}\nCOMMAND: {json.dumps(attempt, ensure_ascii=False)}\n"
+                f"STDOUT:\n{exc.stdout or ''}\nSTDERR:\n{exc.stderr or ''}"
+            )
+            if attempt_index == len(commands):
+                log_path.write_text("\n\n".join(attempts), encoding="utf-8", newline="\n")
+                raise
+
+    if result is None:  # pragma: no cover - defensive guard for future command changes
+        raise UrlIntakeError("yt-dlp did not produce a result")
     log_path.write_text(
-        "COMMAND: " + json.dumps(command, ensure_ascii=False) + "\n\nSTDOUT:\n" + result.stdout + "\nSTDERR:\n" + result.stderr,
+        "\n\n".join(attempts),
         encoding="utf-8",
         newline="\n",
     )

@@ -3827,3 +3827,36 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 用已核验 CC0 测功机网址完成一次真实端到端冒烟：`URL_INTAKE_COMPLETE`、1 条记录、网页视频→PCM WAV→中文 manifest/report；因 Opus 派生音频和缺少同步状态正确保持 `R2`。
 - [x] 追加抽帧冒烟：4 个 JPEG 帧、`OCR=NOT_AVAILABLE_TESSERACT_MISSING`、`RPM_STATUS=MISSING_RPM_STATE`；结果仍为 `R2`，未产生阶次资格。
 - [ ] 等待 Jovi 提供车辆网址；收到后逐条下载、抽音频、检查画面状态并绑定车辆/工况。
+
+## 项目本地瘦身（2026-08-22）
+
+- [ ] 盘点当前 worktree 的源码、报告、测试、音频/视频、缓存、构建物和历史方案文档，先形成删除候选清单。
+- [ ] 保留当前需求、有效报告、可重建工具、测试、审计 manifest、外部原始录音指针，以及其他 worktree；不删除 `E:\\Claude_allow\\Download` 下的原始媒体。
+- [ ] 只删除证据明确无用的项目内生成物/缓存，并记录每个删除路径与理由；不使用 `git clean`、`git reset` 或宽范围递归删除。
+- [ ] 清理后运行 `git diff --check`、关键测试和路径存在性检查，记录清理前后 Git 状态与可恢复边界。
+
+### 清理评审记录
+
+- 盘点范围：当前 `s12-stage-q-real-reference-calibration` worktree；其他 worktree、`E:\\Claude_allow\\Download` 原始媒体和 MATLAB/Simulink 资产未纳入删除。
+- 明确保留：当前 S12 Q/R/S/T 报告、计划、测试、manifest、8 个仍被 R2 元数据引用的 `*_ab.wav`、历史审计 ZIP 及其校验记录。
+- 删除候选：37 个被 `.gitignore` 排除的 `__pycache__`/`.pytest_cache` 目录，共 445 个文件、5,149,580 bytes；这些目录确认为可重建缓存。
+- 删除结果：安全策略拒绝了递归删除操作；未使用替代命令绕过，故本轮实际删除 `0` 个文件，候选仍保留待后续受控清理。
+
+## S12 Stage Q 真实车辆来源库下载与比较诊断（2026-08-22）
+
+> 状态：`COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / WAITING_FOR_JOVI_HUMAN_AB`；原始媒体仅在 `E:\\Claude_allow\\Download`，未进入 Git。
+
+- [x] 校验用户压缩包 SHA-256 `139A7EC28DE65CF446096A230C6ACBE95D0BD9F902F00A913A57D993305CD375`，安全解压 3 个文档并按每车 3 条选择 24 个来源。
+- [x] 为 YouTube 403/SABR 增加默认客户端→Android 客户端回退；首轮 1/24 的不完整目录和日志保留，最终通过 3 条替代 URL 达到 24/24 可读视频/WAV/SHA。
+- [x] 完成 8 张车型接触表人工视觉复核；车型身份仅标为 `VISUAL_IDENTITY_SUPPORT_ONLY`，原厂排气全部保持 `NOT_CONFIRMED`，变体/测功机/赛道风险逐条记录。
+- [x] 新增 `tools/sound_sim/s12/real_reference/analyze_downloaded_sources.py`：校验外部 WAV SHA、生成 72 个低置信工况候选窗口、派生频谱/响度/心理声学/瞬态特征，并对 8 个本地 synthetic 候选做 24 条 R3 Comparator 诊断。
+- [x] 生成外部 `analysis_20260822_v1` 的来源 manifest、派生特征、Comparator、中文 A/B 清单和带四分位数/范围的不确定性诊断建议；自动调参/Profile 更新保持禁止。
+- [x] 增加中文报告 `tasks/reports/runtime/s12-stage-q-real-reference/S12_Stage_Q_YouTube_Intake_Analysis_20260822.md`，明确区分已完成链路与授权/同步状态/人耳反馈阻塞。
+- [x] 验证：URL intake、Comparator、Stage-Q 重点测试 `22 passed`；新分析脚本实际跑完 `24/24`；`py_compile` 和 `git diff --check` 通过。
+- [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
+
+### Review
+
+- 成功证据：外部组合 intake `URL_INTAKE_COMPLETE`、24 条唯一 URL、24 个 WAV SHA、72 个切片记录、24 条 Comparator 记录、8 车诊断汇总。
+- 诚实边界：所有公开视频是有损派生音频；法律、原厂排气和同步状态未核验，所以没有真实身份分数、阶次图、自动调参或 Profile Candidate。
+- Git 范围：仅入口代码、测试/计划修改和中文报告；`git ls-files '*.mp4' '*.webm' '*.wav'` 不新增本轮版权媒体，原始/派生下载物仍在外部目录。
