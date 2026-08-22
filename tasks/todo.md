@@ -3851,6 +3851,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 对原始 3 条失败 URL 进行 Node.js/Web 重试并执行 `ffprobe` + `ffmpeg` 媒体体完整性校验：`yXw_35i3RMM` 完整，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 明确保持 `INCOMPLETE_MEDIA_BODY`；结果写入外部 `retry_js_20260822/youtube_retry_js_manifest_v1.json`，不进入比较或 A/B。
 - [x] 针对上述两条截断视频追加 `web_embedded` 仅音频格式回退：`XWEjZHFQ5lc`/`140-9` 与 `GQ0972wohFs`/`140-8` 均完整解码，转出外部 WAV 并写入 `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`；完整音频为 `3/3`，完整视频仍为 `1/3`，三条继续保持 `R3`、不进入 R2/调参。
 - [x] 复核系统代理导致的媒体直链 403，并在全新外部目录以 `--proxy ""`、Node.js EJS 和 `web_embedded → android_vr → tv_embedded → mweb` 回退重试原始 24 条 URL；完整可解码音频为 `24/24`。清单 `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json` SHA-256 `45DDB25441D3F09A35D6875011A8CBF2726DD03D921069F013B1E94385F4FD3F`，`decode_validation_v1.json` SHA-256 `C881F8790B52426F5C9F6FF5CF8A57EF76670C5A651FCE32AAB0DEF3AECA7CE4`；视频完整率不改写为 24/24，24 条继续保持 R3。
+- [x] 将原始 24 条 URL 音频无增益解码为外部 PCM WAV，并用现有 `analyze_downloaded_sources.py` 生成 `24/24` 特征、`24/24` Comparator、8 车参数诊断和中文 R3 差异报告；外部收据 `analysis_r3_direct_v1/direct_analysis_receipt_v1.json` SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`，不进入 R2/R1 或自动调参。
 - [x] 筛选 Zenodo CC BY 4.0 发动机声数据集：Petrol ZIP 官方 MD5 与本地一致，137 个编号 WAV 无车型/同步元数据；记录外部 `s12-public-vehicle-engine-ccby4-20260822/screening_manifest.json`，结论 `NOT_TARGET_BINDABLE_NO_MODEL_OR_STATE`，不进入目标车型比较。
 - [x] 完成 8 张车型接触表人工视觉复核；车型身份仅标为 `VISUAL_IDENTITY_SUPPORT_ONLY`，原厂排气全部保持 `NOT_CONFIRMED`，变体/测功机/赛道风险逐条记录。
 - [x] 新增 `tools/sound_sim/s12/real_reference/analyze_downloaded_sources.py`：校验外部 WAV SHA、生成 72 个低置信工况候选窗口、派生频谱/响度/心理声学/瞬态特征，并对 8 个本地 synthetic 候选做 24 条 R3 Comparator 诊断。
@@ -3864,4 +3865,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 成功证据：外部组合 intake `URL_INTAKE_COMPLETE`、24 条唯一 URL、24 个 WAV SHA、72 个切片记录、24 条 Comparator 记录、8 车诊断汇总。
 - 诚实边界：所有公开视频是有损派生音频；法律、原厂排气和同步状态未核验，所以没有真实身份分数、阶次图、自动调参或 Profile Candidate。
 - 下载完整性补充：直接无代理路径恢复了原始 24 条 URL 的可解码音频，但仅证明媒体传输/解码完整；不能替代授权、原厂状态或同步 RPM/状态数据。
+- 当前 R3 补充基线：已使用原始 URL 重试结果重算现有 Comparator；逐车中位数和不确定性报告只作为听审排序，不输出真实性百分比。
 - Git 范围：仅入口代码、测试/计划修改和中文报告；`git ls-files '*.mp4' '*.webm' '*.wav'` 不新增本轮版权媒体，原始/派生下载物仍在外部目录。

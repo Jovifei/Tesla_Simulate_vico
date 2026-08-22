@@ -4,6 +4,14 @@
 
 当前仍没有 R1 资格参考，但 Jovi 已授权下载并审计三条明确 CC/CC0 许可的公开声浪，已完成 Ferrari 458、Hellcat 与 Supra 的 R2 有限比较。本文件不把 R2 结果升级为真实阶次资格，不输出单个真实性百分比，不把 synthetic parent 当作真实车辆，也不生成车型参数建议。
 
+## 原始 24 条 YouTube URL 的 R3 补充基线
+
+随后对原始 24 条 URL 使用直接无代理音频重试，并将 24 条完整可解码音频重新接入现有 Comparator。该补充结果仍全部为 `R3_DIAGNOSTIC_ONLY`，仅用于相对频谱、响度、心理声学代理和瞬态听审排序；没有同步 RPM/Load/Throttle/Gear、合法授权或原厂排气证据，因此不改变本报告的 R1/R2 状态。
+
+- 中文差异报告：`E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\S12_Stage_R_Direct_YouTube_R3_Difference_Report_20260822.md`，SHA-256 `5428C2085A8BD0CA0AC60C6338CABDC8B6000CC6F6BF255B46503ACA33A98D93`。
+- 机器收据：`direct_analysis_receipt_v1.json`，SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
+- 逐车输出：8 车各 3 条，`24/24` 特征与 `24/24` Comparator；`order.status=not_evaluated_without_rpm_trace`，`automatic_tuning_eligible=false`，人耳反馈仍为空。
+
 ## 本轮 R2 结果
 
 | 车型 | 参考/场景 | R2 结果 | 频谱残差 | 响度残差 | 阶次/自动调参 |

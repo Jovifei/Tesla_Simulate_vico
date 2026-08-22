@@ -44,6 +44,7 @@
 - `retry_js_20260822/youtube_retry_js_manifest_v1.json`：Node.js/Web 客户端回退、文件 SHA、ffprobe/ffmpeg 完整性校验和 403/截断结论；原始媒体仍只在仓库外。
 - `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`：两条截断视频的 `web_embedded` 仅音频成功回退、压缩音频/WAV SHA、44.1 kHz/2 ch 解码校验；仍标为 R3，未进入 R2 或调参。
 - `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json`：关闭系统代理后的原始 24 条 URL 音频重试清单，记录客户端、外部路径、容器、编码、时长、SHA-256 和 R3 门禁；`decode_validation_v1.json` 记录 24/24 的 `ffmpeg` 解码验证。
+- `retry_direct_20260822_v1/analysis_r3_direct_v1/`：基于上述原始 24 条 URL 的外部 WAV，重新运行现有 `analyze_downloaded_sources.py`，生成 24 条特征、24 条 Comparator、8 车参数诊断和中文 R3 差异报告；收据为 `direct_analysis_receipt_v1.json`，SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。这份结果是当前原始 URL 的 R3 补充基线，不替代三条有许可 R2 基线。
 
 Git 只保留本报告、入口代码和这些外部产物的路径/SHA/派生特征引用；没有复制任何原始视频或版权音频。
 
