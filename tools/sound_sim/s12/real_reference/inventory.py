@@ -28,14 +28,14 @@ ALL_VEHICLES = (
 )
 
 VEHICLE_NAMES_ZH = {
-    "ferrari_458": "Ferrari 458",
-    "hellcat": "Hellcat",
-    "rx7_fd": "RX-7 FD",
-    "aventador_lp700": "Aventador LP700",
-    "c63_w204": "C63 W204",
-    "gtr_r35": "GT-R R35",
-    "lfa": "LFA",
-    "supra_jza80": "Supra JZA80",
+    "ferrari_458": "法拉利 458",
+    "hellcat": "道奇 Hellcat",
+    "rx7_fd": "马自达 RX-7 FD",
+    "aventador_lp700": "兰博基尼 Aventador LP700",
+    "c63_w204": "奔驰 C63 W204",
+    "gtr_r35": "日产 GT-R R35",
+    "lfa": "雷克萨斯 LFA",
+    "supra_jza80": "丰田 Supra JZA80",
 }
 
 # These are pointers only.  The raw files remain under the external download
