@@ -53,7 +53,6 @@
 - 报告绑定代码提交：`74951860bbed24e1ee028d5ee800f72cdbe2a64f`
 - working tree dirty：`false`
 - push：是
-- 远端分支 SHA：`74951860bbed24e1ee028d5ee800f72cdbe2a64f`
 - merge：否
 - PR：否
 
