@@ -10,14 +10,14 @@
 
 | 车型 | 记录数 | 可读取 | R1 | R2 | 当前状态 |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Ferrari 458 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| Hellcat | 4 | 4 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| RX-7 FD | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| Aventador LP700 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| C63 W204 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| GT-R R35 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| LFA | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
-| Supra JZA80 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 法拉利 458 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 道奇 Hellcat | 4 | 4 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 马自达 RX-7 FD | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 兰博基尼 Aventador LP700 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 奔驰 C63 W204 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 日产 GT-R R35 | 3 | 3 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 雷克萨斯 LFA | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
+| 丰田 Supra JZA80 | 1 | 1 | 0 | 0 | `WAITING_FOR_REAL_REFERENCE_DATA` |
 
 ## 记录审计
 

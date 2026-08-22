@@ -42,7 +42,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "ferrari_458",
-        "vehicle_name_zh": "Ferrari 458"
+        "vehicle_name_zh": "法拉利 458"
       },
       {
         "anchor_vehicle": true,
@@ -73,7 +73,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "hellcat",
-        "vehicle_name_zh": "Hellcat"
+        "vehicle_name_zh": "道奇 Hellcat"
       },
       {
         "anchor_vehicle": true,
@@ -101,7 +101,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "rx7_fd",
-        "vehicle_name_zh": "RX-7 FD"
+        "vehicle_name_zh": "马自达 RX-7 FD"
       },
       {
         "anchor_vehicle": false,
@@ -129,7 +129,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "aventador_lp700",
-        "vehicle_name_zh": "Aventador LP700"
+        "vehicle_name_zh": "兰博基尼 Aventador LP700"
       },
       {
         "anchor_vehicle": false,
@@ -160,7 +160,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "c63_w204",
-        "vehicle_name_zh": "C63 W204"
+        "vehicle_name_zh": "奔驰 C63 W204"
       },
       {
         "anchor_vehicle": false,
@@ -190,7 +190,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "gtr_r35",
-        "vehicle_name_zh": "GT-R R35"
+        "vehicle_name_zh": "日产 GT-R R35"
       },
       {
         "anchor_vehicle": false,
@@ -218,7 +218,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "lfa",
-        "vehicle_name_zh": "LFA"
+        "vehicle_name_zh": "雷克萨斯 LFA"
       },
       {
         "anchor_vehicle": false,
@@ -246,7 +246,7 @@
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "supra_jza80",
-        "vehicle_name_zh": "Supra JZA80"
+        "vehicle_name_zh": "丰田 Supra JZA80"
       }
     ]
   },
@@ -322,7 +322,7 @@
       "scenario_hint": "acceleration",
       "sha256": "7dccc0bd4a553c252f1b949024e9c484ed9bbce093f41ce1245f6f795da2b3ee",
       "vehicle_id": "aventador_lp700",
-      "vehicle_name_zh": "Aventador LP700"
+      "vehicle_name_zh": "兰博基尼 Aventador LP700"
     },
     {
       "analysis_contract": {
@@ -386,7 +386,7 @@
       "scenario_hint": "shift",
       "sha256": "4e7600abe78ddea0e3b51df2546fb21fe286528a48e08908da8fb760764083f1",
       "vehicle_id": "c63_w204",
-      "vehicle_name_zh": "C63 W204"
+      "vehicle_name_zh": "奔驰 C63 W204"
     },
     {
       "analysis_contract": {
@@ -451,7 +451,7 @@
       "scenario_hint": "afterfire",
       "sha256": "3261aa79236ab992faf43a11ee6b459314514e9516fc97bcfa2e749e7d6b4186",
       "vehicle_id": "c63_w204",
-      "vehicle_name_zh": "C63 W204"
+      "vehicle_name_zh": "奔驰 C63 W204"
     },
     {
       "analysis_contract": {
@@ -516,7 +516,7 @@
       "scenario_hint": "acceleration",
       "sha256": "534605237d621e25e9636a3fec937ee5384be6573b636e20008f3992cb2b4dda",
       "vehicle_id": "c63_w204",
-      "vehicle_name_zh": "C63 W204"
+      "vehicle_name_zh": "奔驰 C63 W204"
     },
     {
       "analysis_contract": {
@@ -580,7 +580,7 @@
       "scenario_hint": "acceleration",
       "sha256": "22b0d0e1da61c8c31667633f58d412022f9563ea0538d1ce002891ffd3f78ddf",
       "vehicle_id": "ferrari_458",
-      "vehicle_name_zh": "Ferrari 458"
+      "vehicle_name_zh": "法拉利 458"
     },
     {
       "analysis_contract": {
@@ -645,7 +645,7 @@
       "scenario_hint": "acceleration",
       "sha256": "dd3bd936f5d5a5b587d1d87f753e8ebb2f3841455c9a721954fc326223d7a2f8",
       "vehicle_id": "gtr_r35",
-      "vehicle_name_zh": "GT-R R35"
+      "vehicle_name_zh": "日产 GT-R R35"
     },
     {
       "analysis_contract": {
@@ -709,7 +709,7 @@
       "scenario_hint": "afterfire",
       "sha256": "4aeed8ff74b80e5649c3c4ac5515ae78fed251e07603f75d6b2f5e5910061444",
       "vehicle_id": "gtr_r35",
-      "vehicle_name_zh": "GT-R R35"
+      "vehicle_name_zh": "日产 GT-R R35"
     },
     {
       "analysis_contract": {
@@ -774,7 +774,7 @@
       "scenario_hint": "afterfire",
       "sha256": "0058a67bda86b174079ea06eecabf404515127c799d9b7e6658feddb5fc9c462",
       "vehicle_id": "gtr_r35",
-      "vehicle_name_zh": "GT-R R35"
+      "vehicle_name_zh": "日产 GT-R R35"
     },
     {
       "analysis_contract": {
@@ -838,7 +838,7 @@
       "scenario_hint": "afterfire",
       "sha256": "c062f3b8fd31c32a1c970eff34b742a6e292e11c62aa754fc0cb1d0a854a946e",
       "vehicle_id": "hellcat",
-      "vehicle_name_zh": "Hellcat"
+      "vehicle_name_zh": "道奇 Hellcat"
     },
     {
       "analysis_contract": {
@@ -902,7 +902,7 @@
       "scenario_hint": "shift",
       "sha256": "4090dd9fa0f70ca47be71ac2c402dd1f7a15e304e9acdf77eaef22ce83006f6e",
       "vehicle_id": "hellcat",
-      "vehicle_name_zh": "Hellcat"
+      "vehicle_name_zh": "道奇 Hellcat"
     },
     {
       "analysis_contract": {
@@ -966,7 +966,7 @@
       "scenario_hint": "full_pull",
       "sha256": "e5c29a92428b1eab9991aefc17afb607b644ff41c0fdc97ed9222e8f291c7946",
       "vehicle_id": "hellcat",
-      "vehicle_name_zh": "Hellcat"
+      "vehicle_name_zh": "道奇 Hellcat"
     },
     {
       "analysis_contract": {
@@ -1030,7 +1030,7 @@
       "scenario_hint": "acceleration",
       "sha256": "cf2ecf83c8948cb7fc2501d9b21b4e92521fa4b01d674075c4bf232b856c9c92",
       "vehicle_id": "hellcat",
-      "vehicle_name_zh": "Hellcat"
+      "vehicle_name_zh": "道奇 Hellcat"
     },
     {
       "analysis_contract": {
@@ -1094,7 +1094,7 @@
       "scenario_hint": "full_pull",
       "sha256": "ec75623d44c7bae13773e9a270b2df3fe1c3f10746a36373c816f9ad191a3e19",
       "vehicle_id": "lfa",
-      "vehicle_name_zh": "LFA"
+      "vehicle_name_zh": "雷克萨斯 LFA"
     },
     {
       "analysis_contract": {
@@ -1158,7 +1158,7 @@
       "scenario_hint": "acceleration",
       "sha256": "c3458bd392e8107e2405de0e3df15ccbd93529523423e7974300216e6e7229db",
       "vehicle_id": "rx7_fd",
-      "vehicle_name_zh": "RX-7 FD"
+      "vehicle_name_zh": "马自达 RX-7 FD"
     },
     {
       "analysis_contract": {
@@ -1222,7 +1222,7 @@
       "scenario_hint": "acceleration",
       "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",
       "vehicle_id": "supra_jza80",
-      "vehicle_name_zh": "Supra JZA80"
+      "vehicle_name_zh": "丰田 Supra JZA80"
     }
   ],
   "schema_version": "s12-stage-q-reference-database-v2",

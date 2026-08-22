@@ -30,7 +30,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "ferrari_458",
-      "vehicle_name_zh": "Ferrari 458"
+      "vehicle_name_zh": "法拉利 458"
     },
     {
       "anchor_vehicle": true,
@@ -61,7 +61,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "hellcat",
-      "vehicle_name_zh": "Hellcat"
+      "vehicle_name_zh": "道奇 Hellcat"
     },
     {
       "anchor_vehicle": true,
@@ -89,7 +89,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "rx7_fd",
-      "vehicle_name_zh": "RX-7 FD"
+      "vehicle_name_zh": "马自达 RX-7 FD"
     },
     {
       "anchor_vehicle": false,
@@ -117,7 +117,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "aventador_lp700",
-      "vehicle_name_zh": "Aventador LP700"
+      "vehicle_name_zh": "兰博基尼 Aventador LP700"
     },
     {
       "anchor_vehicle": false,
@@ -148,7 +148,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "c63_w204",
-      "vehicle_name_zh": "C63 W204"
+      "vehicle_name_zh": "奔驰 C63 W204"
     },
     {
       "anchor_vehicle": false,
@@ -178,7 +178,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "gtr_r35",
-      "vehicle_name_zh": "GT-R R35"
+      "vehicle_name_zh": "日产 GT-R R35"
     },
     {
       "anchor_vehicle": false,
@@ -206,7 +206,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "lfa",
-      "vehicle_name_zh": "LFA"
+      "vehicle_name_zh": "雷克萨斯 LFA"
     },
     {
       "anchor_vehicle": false,
@@ -234,7 +234,7 @@
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "supra_jza80",
-      "vehicle_name_zh": "Supra JZA80"
+      "vehicle_name_zh": "丰田 Supra JZA80"
     }
   ]
 }
