@@ -39,6 +39,8 @@
 
 ## 本轮 R2 结果
 
+2026-08-23 对两条合法 R2 参考进行了外部重下载和复跑，结果与既有 Stage R 基线一致。复核收据位于 `E:\\Claude_allow\\Download\\s12-commons-r2-audit-20260823\\r2_revalidation_receipt.json`，SHA-256 `1E470FD6AABB54A7ADAF629FCEDD140B9B15082DD3A77EC4AE594DF98A26C0C1`。这只是 R2 数字域一致性复核，不是 R1 阶次资格，也没有产生参数建议。
+
 | 车型 | 参考/场景 | R2 结果 | 频谱残差 | 响度残差 | 阶次/自动调参 |
 | --- | --- | --- | ---: | ---: | --- |
 | Ferrari 458 | [Goodwood 起步录音](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg) / acceleration | `R2_LIMITED_COMPARISON_COMPLETE` | `0.574775` | `+2.7001 dB` | `NOT_QUALIFIED` / withheld |

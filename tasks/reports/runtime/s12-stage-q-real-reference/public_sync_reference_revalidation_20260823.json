@@ -1,0 +1,41 @@
+{
+  "schema_version": "s12.stage_q.public_sync_reference_revalidation.v1",
+  "generated_at": "2026-08-23",
+  "scope": ["ferrari_458", "hellcat", "rx7_fd"],
+  "external_manifest": "E:\\Claude_allow\\Download\\s12-commons-r2-audit-20260823\\revalidation_manifest_20260823.json",
+  "external_manifest_sha256": "16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F",
+  "r2_receipt": "E:\\Claude_allow\\Download\\s12-commons-r2-audit-20260823\\r2_revalidation_receipt.json",
+  "r2_receipt_sha256": "1E470FD6AABB54A7ADAF629FCEDD140B9B15082DD3A77EC4AE594DF98A26C0C1",
+  "records": [
+    {
+      "reference_id": "q:web:commons_ferrari_458_goodwood_2010_revalidated",
+      "vehicle_id": "ferrari_458",
+      "scenario": "acceleration",
+      "license": "CC BY-SA 3.0",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+      "source_sha256": "D98951CAAA3DE712E59B13D4D1EB0472795A3CBFBF9D990B28711CD8C93891DA",
+      "derived_wav_sha256": "5324489372972FA2B9E5C34550929E1E30BC34335A3E13C21D13D0C13FBC77BF",
+      "qualification": "R2_LIMITED",
+      "r1_blockers": ["synchronized_rpm_missing", "load_throttle_missing", "gear_shift_missing", "mic_agc_contract_missing", "stock_trim_unverified"]
+    },
+    {
+      "reference_id": "q:web:commons_hellcat_launch_2019_revalidated",
+      "vehicle_id": "hellcat",
+      "scenario": "launch",
+      "license": "CC BY-SA 4.0",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+      "source_sha256": "762E3B294362E3D1E37BE0B737D6AD4518FD61A6BDBCE392BE1C850300D0676A",
+      "derived_wav_sha256": "9C5256B4602D6298E41480C3068433501CB9CAD730964096CD5E5E9DCC52F516",
+      "qualification": "R2_LIMITED",
+      "r1_blockers": ["synchronized_rpm_missing", "load_throttle_missing", "gear_shift_missing", "mic_agc_contract_missing", "stock_trim_unverified"]
+    },
+    {
+      "reference_id": "rx7_fd_open_r1_search_20260823",
+      "vehicle_id": "rx7_fd",
+      "qualification": "NO_R1_SOURCE_FOUND",
+      "r1_blockers": ["no_legal_exact_vehicle_recording_with_numeric_synchronized_state_located"]
+    }
+  ],
+  "automatic_tuning_eligible": false,
+  "status": "R2_REVALIDATED_R1_BLOCKED"
+}

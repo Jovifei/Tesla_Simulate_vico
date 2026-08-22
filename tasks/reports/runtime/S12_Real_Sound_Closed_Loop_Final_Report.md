@@ -14,6 +14,8 @@
 
 2026-08-23 独立单条复测：对原先默认链路 403 的 `hellcat_01 / cKx-cb0fzeo`，直接调用 `yt-dlp + Node.js EJS + android` 成功取得 3,749,435 字节 MP4；`ffprobe` 识别 H.264/AAC、105.813 s，`ffmpeg -xerror` 全流解码通过，并无增益提取 48 kHz 双声道 PCM WAV（20,316,238 字节），WAV 再次完整解码通过。外部探针收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2_probe\download_receipt_hellcat_01.json` SHA-256 `7BF6CC011DBDCE68FA26A8F68F2EF10B4513AC7535269FFA42ED9802603317DE`；该复测只证明 Android 客户端回退可用，仍是 YouTube 派生 `R3`，不提升为 R1/R2。
 
+2026-08-23 合法 R2 参考复核：重新从 Wikimedia Commons 保存 Ferrari 458 Italia 与 Dodge Challenger SRT Hellcat 两条明确许可音频到 `E:\Claude_allow\Download\s12-commons-r2-audit-20260823`，原始 OGG 与无增益 PCM WAV 的 SHA、来源和许可已写入外部 `revalidation_manifest_20260823.json`（SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`）。现有 Stage R R2 Comparator 复跑成功：Ferrari 频谱对数残差 `0.574775`、响度差 `+2.7001 dB`；Hellcat `0.503287`、`+0.4530 dB`。两案阶次均为 `not_evaluated_without_rpm_trace`，人耳反馈为空，自动调参仍关闭；R1 仍为 `0`。
+
 同一批最新 WAV 随后重新进入现有 R3 诊断链，生成 `24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断；外部分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 为 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。该包仍是 `COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / R3=24`，A/B 反馈为空，未启动 MATLAB 阶次、自动调参或 Profile Candidate。
 
 为便于 Jovi 进行中文试听，另生成三锚点 A/B 外部包 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\README_中文.md`：Ferrari 458、Hellcat、RX-7 FD 各 3 个公开来源对本地 synthetic 候选的 5 秒片段，共 9 个试次/18 个文件。manifest SHA-256 为 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 为 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`；状态为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，反馈为空，不能推动 Stage S 调音。
