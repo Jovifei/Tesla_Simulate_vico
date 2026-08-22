@@ -47,11 +47,17 @@ def _r2_record(path: Path, sha256: str, *, sample_rate_hz: int = 48_000) -> dict
 
 def _r1_record(path: Path, sha256: str) -> dict[str, object]:
     record = _r2_record(path, sha256)
+    record["audio"] = {"codec": "PCM", "sample_rate_hz": 48_000}
     record["recording_id"] = "ferrari_r1_authorised_fixture"
     record["reference_id"] = "q:ferrari_r1_authorised_fixture"
     record["provenance"] = {
         "legal_permission": "CONFIRMED",
+        "rights_evidence": "https://example.com/r1-license",
+        "source_url": "https://example.com/original-audio-receipt",
+        "source_kind": "controlled_raw_audio",
+        "raw_audio_confirmed": True,
         "stock_identity": "VERIFIED_EXACT_TRIM",
+        "stock_exhaust_confirmation": "CONFIRMED_STOCK",
         "microphone_perspective": "EXTERIOR_REAR",
         "recording_device_agc": "DOCUMENTED_NO_AGC",
     }

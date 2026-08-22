@@ -74,7 +74,7 @@ def test_confirmed_rights_vehicle_and_scenario_are_r2_only_without_state(tmp_pat
     assert record["analysis_contract"]["rpm_state_status"] == "MISSING_RPM_STATE"
 
 
-def test_complete_contract_can_reach_r1_gate_only_with_raw_audio_receipt(tmp_path: Path) -> None:
+def test_video_extracted_audio_stays_out_of_r1_even_with_manual_raw_receipt(tmp_path: Path) -> None:
     video, wav = _files(tmp_path)
     record = build_video_record(
         source_url="https://example.com/video",
@@ -96,8 +96,9 @@ def test_complete_contract_can_reach_r1_gate_only_with_raw_audio_receipt(tmp_pat
         },
         raw_audio_confirmed=True,
     )
-    assert record["evidence"]["level"] == "R1"
-    assert record["evidence"]["r1_eligible"] is True
+    assert record["evidence"]["level"] == "R2"
+    assert record["evidence"]["r1_eligible"] is False
+    assert "raw_audio_source" in record["evidence"]["r1_gate"]["missing"]
     assert record["evidence"]["automatic_tuning_eligible"] is False
 
 

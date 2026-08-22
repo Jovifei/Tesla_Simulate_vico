@@ -7,7 +7,7 @@ import pytest
 
 from tools.sound_sim.s12.real_reference.baseline import write_stage_r_waiting_outputs
 from tools.sound_sim.s12.real_reference.inventory import build_inventory
-from tools.sound_sim.s12.real_reference.qualification import ReferenceQualificationError, qualify_r2_reference, require_r1_reference
+from tools.sound_sim.s12.real_reference.qualification import ReferenceQualificationError, qualify_r1_reference, qualify_r2_reference, require_r1_reference
 
 
 def test_unqualified_reference_cannot_enter_stage_r() -> None:
@@ -45,3 +45,33 @@ def test_r2_gate_is_limited_and_never_tuning_authority() -> None:
     assert gate["order_hard_gate"] is False
     assert gate["rpm_synchronised_automatic_tuning"] is False
     assert gate["automatic_tuning_eligible"] is False
+
+
+def test_r1_gate_requires_auditable_raw_source_and_capture_contract() -> None:
+    gate = qualify_r1_reference(
+        {
+            "recording_id": "r1-incomplete-source-contract",
+            "vehicle_id": "ferrari_458",
+            "scenario": "full_pull",
+            "file_present": True,
+            "sha256": "a" * 64,
+            "audio": {"codec": "PCM", "sample_rate_hz": 48_000},
+            "provenance": {
+                "legal_permission": "CONFIRMED",
+                "stock_identity": "VERIFIED_EXACT_TRIM",
+                "microphone_perspective": "EXTERIOR_REAR",
+                "recording_device_agc": "DOCUMENTED_NO_AGC",
+                "source_kind": "user_provided_url_video_extracted",
+                "raw_audio_confirmed": True,
+            },
+            "analysis_contract": {
+                "rpm_state_status": "SYNCED",
+                "load_throttle_status": "SYNCED",
+                "gear_shift_status": "SYNCED",
+            },
+        }
+    )
+    assert gate["eligible"] is False
+    assert "source_and_license" in gate["missing"]
+    assert "raw_audio_source" in gate["missing"]
+    assert "stock_exhaust_confirmation" in gate["missing"]

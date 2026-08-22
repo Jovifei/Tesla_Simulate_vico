@@ -5,9 +5,13 @@ from typing import Any
 
 
 R1_FIELDS = (
+    "vehicle_and_scenario_identity",
     "legal_permission",
+    "source_and_license",
+    "raw_audio_source",
     "exact_vehicle_trim",
     "stock_exhaust_confirmation",
+    "sample_rate",
     "synchronized_rpm_trace",
     "load_throttle_trace",
     "gear_shift_trace",
@@ -26,14 +30,45 @@ class ReferenceQualificationError(ValueError):
 
 
 def qualify_r1_reference(record: dict[str, Any]) -> dict[str, Any]:
-    """Return an auditable R1 gate result without changing the input record."""
+    """Return an auditable R1 gate result without changing the input record.
 
-    provenance = record.get("provenance", {})
-    contract = record.get("analysis_contract", {})
+    A video URL, even when a downloader reports success or the extracted
+    stream is PCM, is not an original capture.  R1 therefore requires an
+    explicit raw-audio receipt and a non-video-derived source kind in addition
+    to the synchronized state and capture-contract fields.
+    """
+
+    provenance = record.get("provenance") or {}
+    contract = record.get("analysis_contract") or {}
+    audio = record.get("audio") or record.get("audio_stream") or {}
+    codec = str(audio.get("codec") or audio.get("codec_name") or "").strip().lower()
+    sample_rate = audio.get("sample_rate_hz") or audio.get("sample_rate")
+    try:
+        sample_rate_valid = float(sample_rate) > 0
+    except (TypeError, ValueError):
+        sample_rate_valid = False
+    source_kind = str(provenance.get("source_kind") or "").strip().lower()
+    video_derived = "video_extracted" in source_kind or source_kind in {
+        "youtube_extracted",
+        "video_extracted",
+        "user_provided_url_video",
+    }
+    source_pointer = (
+        provenance.get("source_url")
+        or provenance.get("source_alias")
+        or provenance.get("controlled_alias")
+        or record.get("source_url")
+        or record.get("source_alias")
+    )
+    raw_codec = codec.startswith("pcm") or codec in {"pcm", "flac"}
     checks = {
+        "vehicle_and_scenario_identity": bool(record.get("vehicle_id")) and bool(record.get("scenario") or record.get("scenario_hint")),
         "legal_permission": provenance.get("legal_permission") == "CONFIRMED",
+        "source_and_license": bool(source_pointer) and bool(provenance.get("rights_evidence")) and provenance.get("legal_permission") == "CONFIRMED",
+        "raw_audio_source": bool(provenance.get("raw_audio_confirmed")) and bool(source_kind) and not video_derived and raw_codec,
         "exact_vehicle_trim": provenance.get("stock_identity") == "VERIFIED_EXACT_TRIM",
-        "stock_exhaust_confirmation": provenance.get("stock_identity") == "VERIFIED_EXACT_TRIM",
+        "stock_exhaust_confirmation": provenance.get("stock_exhaust_confirmation") == "CONFIRMED_STOCK",
+        "sample_rate": sample_rate_valid,
         "synchronized_rpm_trace": contract.get("rpm_state_status") == "SYNCED",
         "load_throttle_trace": contract.get("load_throttle_status") == "SYNCED",
         "gear_shift_trace": contract.get("gear_shift_status") == "SYNCED",

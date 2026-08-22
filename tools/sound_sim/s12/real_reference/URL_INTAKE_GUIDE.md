@@ -18,7 +18,7 @@ python -m tools.sound_sim.s12.real_reference.url_intake `
 --license-status CONFIRMED --rights-evidence "https://来源页面或授权收据"
 ```
 
-没有许可证据时，入口保持 `R3`；有许可、车型和场景但没有同步状态时，最多为 `R2`。
+没有许可证据时，入口保持 `R3`；有许可、车型和场景但没有同步状态时，最多为 `R2`。即使手工传入 `--raw-audio-confirmed`，只要来源类型是视频抽取（包括 YouTube），仍不能成为 `R1`；`R1` 必须单独提供原始 PCM/FLAC 收据、来源指针、授权证据和原厂排气确认。
 
 如果一批网址属于不同车型/工况，可使用 JSON 数组（每项至少有 `url`，其余字段可逐项覆盖）：
 
@@ -58,7 +58,7 @@ python -m tools.sound_sim.s12.real_reference.url_intake `
 --state-contract-json "E:\Claude_allow\Download\某次录音\state-contract.json"
 ```
 
-这仍不会绕过 Stage Q/R1 验收；必须另外核对原始音频、精确车型/原厂状态、麦克风、设备/AGC、时间轴、单位和 SHA-256。视频压缩音频默认是派生信号，不能凭网址直接成为 R1。
+这仍不会绕过 Stage Q/R1 验收；必须另外核对原始音频、精确车型/原厂状态、麦克风、设备/AGC、时间轴、单位和 SHA-256。视频压缩音频默认是派生信号，不能凭网址直接成为 R1。入口还会拒绝“容器声称 PCM、但来源仍是 video_extracted”的手工升级，避免把视频中的无损封装或短头部残片当作原始录音。
 
 ## 运行前提和输出
 

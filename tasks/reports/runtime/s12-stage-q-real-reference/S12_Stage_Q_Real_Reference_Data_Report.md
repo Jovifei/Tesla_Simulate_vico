@@ -166,4 +166,8 @@
 
 完整 URL、绝对路径、抓取方法、完整 SHA 和许可限制见外部收据 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json`（SHA-256 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`）。Pole Position 与 Sonniss 许可文字均要求购买后许可，并限制未同步素材复制；同时明确禁止 AI 训练/开发。若 Comparator→反馈系统被许可方认定为 AI 用途，使用前必须取得书面范围确认。当前 R1 仍为 0，阶次与自动调参继续关闭。
 
+## R1 门禁加固（2026-08-22）
+
+资格函数现要求 `vehicle_and_scenario_identity`、`source_and_license`、`raw_audio_source`、`sample_rate` 和明确的 `stock_exhaust_confirmation`，并拒绝 `video_extracted`/YouTube 来源即使其容器声称 PCM 或手工附带 raw receipt。完整 S12 回归为 `377 passed, 114 subtests passed`；当前三锚点重新审计仍为 `R1=0`，没有启动 MATLAB 阶次或自动调参。
+
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。

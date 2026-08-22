@@ -14,6 +14,8 @@
 
 最终视频绑定的 R3 重算也已完成：从上述 24 条最终视频重新抽取无增益 PCM WAV，并用 intake manifest SHA `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF` 绑定到分析收据 `final_video_analysis_receipt_v1.json`（SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`）。中文差异报告位于仓库外 `analysis_final_video_r3_v1/S12_Stage_R_Final_Video_R3_Difference_Report_20260822.md`，SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`。该结果是 24/24、8 车各 3 条的最新 R3 数字域诊断，不是 R1/R2 资格，也没有启动 MATLAB 阶次、自动调参或 Profile Candidate。
 
+R1 门禁加固（2026-08-22）：资格函数现在额外要求非视频派生的原始 PCM/FLAC 收据、来源指针与授权证据、车型/工况、采样率和明确的原厂排气确认；即使视频容器声明 PCM 或手工传入 raw receipt，YouTube/视频抽取来源仍保持 R2/R3。针对性 URL/Stage-Q/Stage-R 测试覆盖该拒绝路径，当前真实资料重新审计仍为锚点 `R1=0`。
+
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
 公开同步数据复核：F1Audio 有同步 RPM/挡位/油门但文件受限且车辆不是锚点；Visual-Acoustic 数据集有同步状态但车辆是 Lincoln MKS；HL-CEAD 有固定 RPM 录音但车型和负载/换挡证据不匹配。Ferrari 458、Hellcat、RX-7 的专业库仍需购买/书面许可与数值状态验收。筛选记录位于 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`；当前 `R1=0`，没有启动 MATLAB 阶次或自动调参。
@@ -71,15 +73,15 @@
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
 - 提交前审计基线 HEAD：`6b79c5eb858d51332b4a779180d12a9895b7aa6d`（`docs(s12): refresh regression and handoff evidence`）；本轮补充提交后的最终 SHA 以 Git 与远端复核为准。
-- working tree：干净；本轮仅提交审计 JSON、中文报告和任务清单，没有把外部试听/版权媒体写入 Git。
+- working tree：提交后干净；本轮提交包含 R1 门禁、测试和中文说明，没有把外部试听/版权媒体写入 Git。
 - push：是
 - merge：否
 - PR：否
 
 ## 本轮验证
 
-- 完整 S12 Python 回归：`376 passed, 114 subtests passed in 483.53s`。
-- Stage Q/R 重点测试：`13 passed`；Track-P guard pytest：`32 passed`。
+- 完整 S12 Python 回归：`377 passed, 114 subtests passed in 283.38s`。
+- Stage Q/R/URL 重点测试：`16 passed`；Track-P guard pytest：`32 passed`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 
