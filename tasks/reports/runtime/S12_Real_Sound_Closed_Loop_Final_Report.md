@@ -32,7 +32,7 @@ R1 门禁加固（2026-08-22）：资格函数现在额外要求非视频派生�
 
 Stage Q 合并补充（2026-08-23）：`real_reference.cli --raw-reference-manifest` 可把外部入库记录接入 canonical `reference_database_v2`，生成 evidence matrix、场景窗口、RPM/state bindings、provenance 和派生特征指针，并执行 JSON Schema 校验；该合并只写元数据，不复制原始版权音频。
 
-Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrari 458、Hellcat、Supra 各一条已审计授权记录接入 canonical Q；入口重新核对外部文件 SHA-256，当前 canonical 为 18 条记录（R1=0、R2=3、R3=15）。R2 仍只允许频谱/响度/心理声学/瞬态主观相对比较，不开放阶次硬门或自动调参。
+Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrari 458、Hellcat、Supra 各一条，以及 RX-7sim 同一作者的五条已审计授权记录接入 canonical Q；入口重新核对外部文件 SHA-256，当前 canonical 为 23 条记录（R1=0、R2=8、R3=15）。R2 仍只允许频谱/响度/心理声学/瞬态主观相对比较，不开放阶次硬门或自动调参。
 
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
@@ -44,9 +44,9 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
 | --- | --- | --- | --- |
-| Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考；RX-7 仅新增 1 条 R3 旋转机械演示；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
-| R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成未增益分析信号的 R2 频谱/响度/心理声学相对比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
-| S 反馈调音 | `R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，18 个片段绑定 SHA；RX-7 FD 明确保持 R3 | 没有真实 Jovi 听审和调音轮次 |
+| Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 原有目录审计加 3 条明确 CC/CC0 许可的 R2 参考，以及 RX-7sim 同一作者的 5 条 R2 资产；另审计 1 条 CC0 非目标 Pontiac G8 测功机视频作为 R3 流程样本；记录 3 条商业 R1 采购候选 | R1 元数据和同步 RPM/state；商业候选尚未购买/授权和验收 |
+| R 差异基线 | `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED` | Ferrari 458、Hellcat、Supra 已完成 R2 相对比较；RX-7 FD 的 `full_pull` 也完成一条语义匹配的 R2 诊断比较；R1 SHA-bound MATLAB/MoSQITo 输入准备仍在 | R1 阶次资格、自动调参、真实人耳反馈 |
+| S 反馈调音 | `R3_AB_PACKAGE_READY / WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 已生成仓库外中文离线 A/B 包和双击页面，3 个锚点各 3 个试次，18 个片段绑定 SHA；RX-7sim R2 结果仍需中文人耳复核 | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
 补充证据：原始 24 条 YouTube URL 已重新完成直接无代理音频下载与现有 Comparator 的 R3 诊断（8 车各 3 条）。该补充不改变 R2/R1 门禁；机器收据位于外部 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_direct_20260822_v1\analysis_r3_direct_v1\direct_analysis_receipt_v1.json`，SHA-256 为 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。
@@ -61,7 +61,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 | --- | ---: | ---: | --- |
 | 法拉利 458 | 2 | 0 | R2 频谱/响度/心理声学；无阶次 |
 | 道奇 Hellcat | 5 | 0 | R2 频谱/响度/心理声学；无阶次 |
-| 马自达 RX-7 FD | 2 | 0 | R3 定性旋转纹理；无 R2/R1 |
+| 马自达 RX-7 FD | 6 | 0 | R2 频谱/响度/心理声学；仍无阶次/R1 |
 | 兰博基尼 Aventador LP700 | 1 | 0 | 无；待授权和状态绑定 |
 | 奔驰 C63 W204 | 3 | 0 | 无；待授权和状态绑定 |
 | 日产 GT-R R35 | 3 | 0 | 无；待授权和状态绑定 |
@@ -73,7 +73,7 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 ## 指标与人耳边界
 
 - 阶次 / Order-RPM：`NOT_QUALIFIED`，所有新增公开素材都没有同步 RPM。
-- 频谱、响度、心理声学：Ferrari 458、Hellcat、Supra 均只有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。
+- 频谱、响度、心理声学：Ferrari 458、Hellcat、Supra 和 RX-7 FD `full_pull` 均只有 R2 相对数字域结果；不输出真实性百分比，不复用旧报告数字。RX-7sim 其余 4 条没有语义匹配候选，未比较。
 - 瞬态：没有同步 Gear/shift/state；不进入自动门。
 - 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。R2 A/B 包路径为 `E:\Claude_allow\Download\s12-stage-s-human-ab-r2-20260822`，study manifest SHA 为 `9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6`。
 - 真实性百分比：禁止输出。
@@ -98,8 +98,8 @@ Stage Q 授权 R2 合并补充：`--authorized-reference-manifest` 已把 Ferrar
 
 ## 本轮验证
 
-- 完整 S12 Python 回归：`384 passed, 114 subtests passed in 207.10s`。
-- Stage Q/R/S/T 重点测试：`18 passed`；Track-P guard pytest：`32 passed`。
+- 完整 S12 Python 回归：`385 passed, 114 subtests passed in 146.97s`。
+- Stage Q/R/S/T 重点测试：`26 passed`；Track-P 冻结守卫：`180 files / 2 symbols`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 

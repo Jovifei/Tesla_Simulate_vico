@@ -4,7 +4,7 @@
 
 ## 结论
 
-本轮审计外部本地参考，并在 Jovi 明确授权后新增了三条带可审计 Creative Commons/CC0 许可的公开声浪参考。它们只进入 R2 有限比较；不会被伪装成 R1，也不会触发阶次硬门或自动调参。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息、许可证据和缺口。当前仍没有任何记录满足 R1，因此真实阶次基线、自动参数建议和调音闭环不能启动。
+本轮审计外部本地参考，并登记了八条带可审计许可的 R2 声浪参考：三条 Creative Commons/CC0 公开素材，以及同一位作者录制的五条 1993 Mazda RX-7 资产。它们只进入 R2 有限比较；不会被伪装成 R1，也不会触发阶次硬门或自动调参。原始音频没有复制进 Git；仓库只保存路径指针、SHA-256、音频容器信息、许可证据和缺口。当前仍没有任何记录满足 R1，因此真实阶次基线、自动参数建议和调音闭环不能启动。
 
 ## 车型覆盖
 
@@ -12,7 +12,7 @@
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | 法拉利 458 | 2 | 2 | 0 | 1 | 0 | `R2_AVAILABLE_R1_BLOCKED` |
 | 道奇 Hellcat | 5 | 5 | 0 | 1 | 0 | `R2_AVAILABLE_R1_BLOCKED` |
-| 马自达 RX-7 FD | 2 | 2 | 0 | 0 | 1 | `R3_ONLY_R1_BLOCKED` |
+| 马自达 RX-7 FD | 6 | 6 | 0 | 5 | 1 | `R2_AVAILABLE_R1_BLOCKED` |
 | 兰博基尼 Aventador LP700 | 1 | 1 | 0 | 0 | 1 | `R3_ONLY_R1_BLOCKED` |
 | 奔驰 C63 W204 | 3 | 3 | 0 | 0 | 3 | `R3_ONLY_R1_BLOCKED` |
 | 日产 GT-R R35 | 3 | 3 | 0 | 0 | 3 | `R3_ONLY_R1_BLOCKED` |
@@ -25,6 +25,7 @@
 - `E:\Claude_allow\Download\tesla-sound-research`
 - `E:\Claude_allow\Download\tesla-sound-research-v12`
 - `E:\Claude_allow\Download\s12-acoustic-realism-v10`
+- `E:\Claude_allow\Download\s12-rx7sim-source-audit-20260823`
 
 ## 新增公开许可参考（2026-08-22）
 
@@ -34,7 +35,15 @@
 | `web_hellcat_launching_sound_2019` | Dodge Challenger Hellcat / 启动或起步声 | [Wikimedia Commons 页面](https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg)，CC BY-SA 4.0，作者 Axepas12 | 外部 WAV，44.1 kHz / 1 ch / 24 bit，6.548s，SHA-256 `b5a23a855b80` | `R2` | 频谱、响度、心理声学、主观瞬态 |
 | `web_supra_jza80_chassis_dyno_cc0_2019` | Toyota Supra / 底盘测功机全油门拉升 | [Freesound 页面](https://freesound.org/people/editboy23/sounds/496171/)，CC0 1.0，作者 editboy23 | 外部 HQ MP3 预览解码 WAV，48 kHz / 2 ch / 24 bit，35.469s，SHA-256 `029c95505a09` | `R2` | 频谱、响度、心理声学、主观瞬态；有损预览，车型代际未核实 |
 
-三条 R2 记录都缺同步 RPM、Load/Throttle、Gear/shift、麦克风与 AGC 合同，故 `R1=0`、阶次硬门关闭、自动调参关闭。Supra 记录明确是测功机全油门，但页面未核实 JZA80 代际且下载的是公开 HQ MP3 有损预览。Wankel3.ogv（CC BY-SA 2.5）是 Mazda 13B 机械演示，不是 RX-7 FD 整车录音，已登记为 `R3 qualitative_only`，不进入 R2。
+八条 R2 记录都缺同步 RPM、Load/Throttle、Gear/shift、麦克风与 AGC 完整合同，故 `R1=0`、阶次硬门关闭、自动调参关闭。Supra 记录明确是测功机全油门，但页面未核实 JZA80 代际且下载的是公开 HQ MP3 有损预览。Wankel3.ogv（CC BY-SA 2.5）是 Mazda 13B 机械演示，不是 RX-7 FD 整车录音，仍登记为 `R3 qualitative_only`，不进入 R2。
+
+### RX-7sim 作者录音 R2 增量（2026-08-23）
+
+作者页面明确说明录音来自作者自己的 1993 Mazda RX-7，并记录了 intake、exhaust、interior、exterior 多组麦位；GitHub 仓库 README/LICENSE 本身标注 `CC BY-NC-SA 4.0`。本轮只选取五个外部 OGG 资产作为 RX-7 FD 的 R2 候选：exhaust idle、short/medium/long rev，以及 interior long rev。五条文件均通过 SHA-256 与 `ffprobe` 核验（48 kHz，单声道 exhaust / 双声道 interior），但仓库资产是编辑/编码后的 OGG，不是带状态文件的原始 WAV/FLAC；未提供 RPM、Load/Throttle、Gear/shift、精确 trim、原厂排气或 AGC 设置。
+
+- 作者录音页：[RX-7 Sim](https://www.aaroncendan.me/rx7sim)；来源仓库：[acendan/rx7sim](https://github.com/acendan/rx7sim)；许可：[README](https://raw.githubusercontent.com/acendan/rx7sim/main/README.md) / [LICENSE](https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md)。
+- 外部审计清单：`E:\Claude_allow\Download\s12-rx7sim-source-audit-20260823\rx7sim_source_audit_20260823.json`，SHA-256 `C4F14D033FEF6F552F9FB18DED5D88B14ACD9799E816009121F208EBE85A6244`。
+- R2 合并清单：`reference_database_v2/rx7sim_authorized_r2_manifest_20260823.json`，外部 manifest SHA-256 `2C92C48E58C371FC92613FD9A4E2747EA9C06866E2B9F7072B741851D26A58DF`。五条均登记 `R2`，只允许频谱、响度、心理声学和主观瞬态比较；不允许阶次、RPM 同步自动调参或 Profile Candidate。
 
 本轮另外下载并审计了 [Wikimedia Commons 的 Pontiac G8 测功机视频](https://commons.wikimedia.org/wiki/File:Metro_Cruise_2019_Dyno_test.webm)。该文件为 CC0、约 9 秒；抽取出的单声道 48 kHz WAV 峰值达到 `1.0`，抽帧未看到数值转速表或同步状态。它已登记为非目标车型 `R3` 测功机流程样本，只能验证“视频→音频→元数据审计”路径，不进入八车型 R2/R1、阶次比较、自动调参或 Profile Candidate。
 
@@ -96,7 +105,7 @@
 - 最新 24 条 WAV 已重新绑定到独立 R3 分析清单并运行现有 `analyze_downloaded_sources.py`：`24` 条特征、`72` 个低置信场景切片、`24` 条 Comparator 诊断、`24` 条中文 A/B 试次和参数诊断均生成；分析收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。状态仍为 `COMPLETE_DIAGNOSTIC_ONLY_R3`、`R1=0/R2=0/R3=24`、`WAITING_FOR_JOVI_LISTENING`，不得把低置信特征或人耳空白反馈写成调参结论。
 - 为三锚点另行生成中文人耳 A/B 包：`E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\README_中文.md`，Ferrari 458/Hellcat/RX-7 FD 各 3 个试次、18 个 5 秒试听片段；manifest SHA-256 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`。包绑定 `test_id/file_id/reference SHA/candidate SHA`，反馈字段为空；它只支持 R3 定性试听，不是自动调参或资格门。
 
-本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
+本轮没有新增合法、车型明确且可绑定同步状态的三锚点 R1 原始包；RX-7sim 只补充了五条合法 R2 资产，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
 ### 公开同步数据复核（2026-08-22）
 
@@ -104,7 +113,7 @@
 - [Visual-Acoustic Vehicle Dataset](https://vehical.org/ITSDataset/) 提供时间戳、发动机 RPM、油门、挡位和车内/车外麦克风，但车辆是 Lincoln MKS；只作为方法学参考，不进入锚点资格。
 - [HL-CEAD](https://github.com/MachineLearningVisionRG/machine_biometrics) 说明了 1000/1500/2000 RPM 的 WAV 录音、麦克风和录音设备，但车型不包含三个锚点，且只记录空挡稳态、没有数值负载/换挡轨迹；不进入 R1。
 - Ferrari 458、Hellcat、RX-7 的专业库仍需购买或书面许可；供应商页面的“同步 take/steady RPM/gearshift”不是数值状态文件，继续登记为 `PROCUREMENT_CANDIDATE_NOT_R1`。本次未下单、未下载版权原始音频。
-- 筛选收据：`public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`。该审计只保存 URL、字段证据和分类，不包含原始音频；当前锚点 `R1=0`、可用 R2=3（Ferrari/Hellcat/Supra），RX-7 FD 开放 R1 未找到。
+- 筛选收据：`public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`。该审计只保存 URL、字段证据和分类，不包含原始音频；加上 RX-7sim 后当前锚点 `R1=0`、可用 R2=8（Ferrari/Hellcat/RX-7/Supra），RX-7 FD 的 R1 仍未找到。
 
 ### 三锚点采购线索复核（2026-08-23）
 
@@ -182,9 +191,9 @@
 
 ## R1 门禁加固（2026-08-22）
 
-资格函数现要求 `vehicle_and_scenario_identity`、`source_and_license`、`raw_audio_source`、`sample_rate` 和明确的 `stock_exhaust_confirmation`，并拒绝 `video_extracted`/YouTube 来源即使其容器声称 PCM 或手工附带 raw receipt。完整 S12 回归为 `377 passed, 114 subtests passed`；当前三锚点重新审计仍为 `R1=0`，没有启动 MATLAB 阶次或自动调参。
+资格函数现要求 `vehicle_and_scenario_identity`、`source_and_license`、`raw_audio_source`、`sample_rate` 和明确的 `stock_exhaust_confirmation`，并拒绝 `video_extracted`/YouTube 来源即使其容器声称 PCM 或手工附带 raw receipt。完整 S12 回归为 `385 passed, 114 subtests passed`，Stage Q/R/S/T 定向回归为 `26 passed`；当前三锚点重新审计仍为 `R1=0`，没有启动 MATLAB 阶次或自动调参。
 
-raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`；已审计的授权 R2 清单也可通过 `--authorized-reference-manifest` 合并。两者都只写入外部路径、SHA、provenance、证据等级和派生指针，不复制原始媒体，并通过 Stage Q JSON Schema。当前 canonical Q 已登记 Ferrari/Hellcat/Supra 各一条 R2，三锚点和其余车辆仍没有 R1。
+raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`；已审计的授权 R2 清单也可通过 `--authorized-reference-manifest` 合并。两者都只写入外部路径、SHA、provenance、证据等级和派生指针，不复制原始媒体，并通过 Stage Q JSON Schema。当前 canonical Q 为 23 条记录（R1=0、R2=8、R3=15）；Ferrari/Hellcat/RX-7/Supra 有限 R2 已登记，三锚点和其余车辆仍没有 R1。
 
 ## 原始录音 R1 入库与低速率状态绑定（2026-08-23）
 
@@ -194,7 +203,7 @@ Stage R 现在允许低于音频采样率的、带严格递增时间戳且覆盖
 
 raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`，同步生成 evidence matrix、带状态窗口的 `scenario_segments.json`、R1 `rpm_state_bindings.json`、provenance 和派生特征指针；合并过程不复制原始媒体，并通过 Stage Q JSON Schema。
 
-本轮验证：Stage Q/R/S/T 定向测试 `18 passed`；完整 S12 `384 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
+本轮验证：Stage Q/R/S/T 定向测试 `26 passed`；完整 S12 `385 passed, 114 subtests passed`；Track-P 冻结守卫为 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
 
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。
 

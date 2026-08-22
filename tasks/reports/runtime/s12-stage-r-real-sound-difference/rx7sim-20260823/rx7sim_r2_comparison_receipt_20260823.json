@@ -1,0 +1,68 @@
+{
+  "schema_version": "s12-stage-r2-comparison-receipt-v1",
+  "status": "R2_LIMITED_COMPARISON_COMPLETE",
+  "vehicle_id": "rx7_fd",
+  "vehicle_name_zh": "马自达 RX-7 FD",
+  "reference_recording_id": "rx7sim_exhaust_revLong01",
+  "reference_scenario": "full_pull",
+  "reference_manifest": "tasks/reports/runtime/s12-stage-q-real-reference/reference_database_v2/reference_manifest.json",
+  "reference_audio_external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_exhaust_revLong01.wav",
+  "reference_audio_sha256": "8FB34A9F7A29106F84AA976FB98096898FC3BB3952EA95A865AD7314D85E1CCB",
+  "candidate_meta": "tasks/reports/runtime/s12-stage-r-real-sound-difference/rx7sim-20260823/rx7sim_exhaust_full_pull_candidate_meta.json",
+  "candidate_id": "synthetic_rx7_fd_ab_full_pull_proxy",
+  "candidate_audio": "tools/sound_sim/s12/acoustic_identity_v015/docs/rx7_fd_ab.wav",
+  "candidate_audio_sha256": "03FFFFC1F3937EEC52B0DC841E1B54C6C9F90EF4A0A3978E4C0DB99F80603FD8",
+  "candidate_source_commit": "74e735768d870182dd39a901262a40f247eb158c",
+  "analysis_signal": "unaltered_analysis_signal",
+  "comparison_scope": "relative_digital_domain_only",
+  "external_output_root": "E:\\Claude_allow\\Download\\s12-rx7sim-r2-comparison-20260823",
+  "external_result_sha256": "A4F5D440F1043ED839193C1BA9E7CC0E672F386D510B92C1A40D43214316F862",
+  "external_report_sha256": "73EDE97341B10068B03CA48FE2B8CA4D6E4B136CFBAF906640B9D1847CD40103",
+  "repo_result": "tasks/reports/runtime/s12-stage-r-real-sound-difference/rx7sim-20260823/stage_r_r2_limited_result.json",
+  "repo_report": "tasks/reports/runtime/s12-stage-r-real-sound-difference/rx7sim-20260823/S12_Stage_R_R2_Limited_Difference_Report.md",
+  "headline_metrics": {
+    "spectral_log_distance": 0.6624996445293366,
+    "spectral_centroid_delta_hz": -31.54220504203252,
+    "spectral_rolloff_delta_hz": -173.75884160772264,
+    "spectral_contrast_delta_db": 15.80909782031798,
+    "loudness_delta_db": -0.14037828700988975,
+    "low_band_60_120_delta": -0.3217166287633229,
+    "mid_band_120_250_delta": 0.5587988672797386,
+    "order_status": "not_evaluated_without_rpm_trace"
+  },
+  "qualification": {
+    "r1_eligible": false,
+    "automatic_tuning_eligible": false,
+    "identity_score_available": false,
+    "human_ab_required": true,
+    "state_contract": "MISSING_RPM_LOAD_THROTTLE_GEAR_SHIFT",
+    "parameter_recommendations": []
+  },
+  "not_compared_rx7sim_records": [
+    {
+      "recording_id": "rx7sim_exhaust_idle",
+      "scenario": "idle",
+      "reason": "没有语义匹配的本地 idle 候选；禁止复用 full_pull 代理"
+    },
+    {
+      "recording_id": "rx7sim_exhaust_revShort01",
+      "scenario": "steady_low",
+      "reason": "没有语义匹配的本地 steady_low 候选；禁止复用 full_pull 代理"
+    },
+    {
+      "recording_id": "rx7sim_exhaust_revMedium01",
+      "scenario": "steady_mid",
+      "reason": "没有语义匹配的本地 steady_mid 候选；禁止复用 full_pull 代理"
+    },
+    {
+      "recording_id": "rx7sim_interior_revLong01",
+      "scenario": "full_pull_interior",
+      "reason": "麦克风视角与工况标识不同；禁止复用 exterior/full_pull 代理"
+    }
+  ],
+  "notes": [
+    "结果不等同于真实度百分比，不输出绝对 OEM 门限。",
+    "R2 参考缺少同步 RPM/state，因此阶次比较未评估；不能进入 R1、Stage S 或 Stage T。",
+    "原始版权 OGG 与外部 WAV 仅保存在 E:\\Claude_allow\\Download；仓库只保存清单、哈希、来源、派生特征和差异结果。"
+  ]
+}

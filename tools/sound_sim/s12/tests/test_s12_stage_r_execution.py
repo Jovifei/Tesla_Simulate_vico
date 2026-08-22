@@ -150,6 +150,24 @@ def test_r2_runner_emits_relative_only_report_and_no_recommendations(tmp_path: P
     assert "没有同步 RPM/state" in report
 
 
+def test_r2_runner_accepts_case_insensitive_manifest_sha(tmp_path: Path) -> None:
+    t = np.arange(16_384) / 48_000.0
+    reference_path = tmp_path / "reference.wav"
+    candidate_path = tmp_path / "candidate.wav"
+    reference_sha = _write_pcm16(reference_path, 48_000, np.sin(2 * np.pi * 240 * t))
+    _write_pcm16(candidate_path, 48_000, np.sin(2 * np.pi * 240 * t))
+    result = run_r2_limited_comparison(
+        _r2_record(reference_path, reference_sha.upper()),
+        candidate_path,
+        candidate_meta={
+            "vehicle_id": "ferrari_458",
+            "scenario": "acceleration",
+            "candidate_id": "candidate:case-insensitive-sha",
+        },
+    )
+    assert result["status"] == "R2_LIMITED_COMPARISON_COMPLETE"
+
+
 def test_r2_runner_rejects_implicit_resampling(tmp_path: Path) -> None:
     t = np.arange(16_384) / 48_000.0
     reference_path = tmp_path / "reference.wav"

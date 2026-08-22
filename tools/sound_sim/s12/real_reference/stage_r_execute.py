@@ -161,7 +161,9 @@ def _reference_path(record: Mapping[str, Any]) -> Path:
     if not path.is_file():
         raise StageRExecutionContractError(f"reference external_path is not readable: {path}")
     expected = record.get("sha256")
-    if expected and _sha256(path) != expected:
+    # SHA-256 hex is case-insensitive; manifests may use the conventional
+    # upper-case presentation while hashlib returns lower-case hex.
+    if expected and _sha256(path).lower() != str(expected).lower():
         raise StageRExecutionContractError(f"reference SHA-256 mismatch: {path}")
     return path
 

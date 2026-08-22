@@ -3896,13 +3896,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 实现批准目录、来源/授权、车型/原厂排气、单位、时间窗口、递增时间戳和原始 SHA-256 的 fail-closed 校验；不完整状态不得进入 R1 或自动调参。
 - [x] 实现 Stage R 对带时间戳低速率遥测的非外推网格绑定：连续量线性插值，挡位/换挡事件离散映射；增加无重采样 FLAC 外部临时输入支持。
 - [x] 将 raw intake manifest 接入 Stage Q canonical `reference_database_v2` 合并入口，生成 evidence matrix、时间窗口切片、RPM/state bindings、provenance 和派生特征指针，并用 JSON Schema 验证。
-- [x] 将已审计授权 R2 manifest 接入同一 Stage Q canonical 合并入口；入口重新核验外部音频 SHA-256，只登记 Ferrari/Hellcat/Supra 各一条 R2 指针，不复制原始媒体。
+- [x] 将已审计授权 R2 manifest 接入同一 Stage Q canonical 合并入口；入口重新核验外部音频 SHA-256，登记 Ferrari/Hellcat/Supra 各一条及 RX-7sim 五条 R2 指针，不复制原始媒体。
+- [x] 2026-08-23 审计 RX-7sim 作者录音：确认 1993 Mazda RX-7 页面/仓库与 `CC BY-NC-SA 4.0`，外部 OGG/WAV SHA 与 `ffprobe` 元数据绑定；5 条进入 R2，R1 仍因缺同步 RPM/state、精确 trim、原厂排气和 AGC 合同而关闭。
+- [x] 2026-08-23 对 RX-7sim `exhaust/revLong01` 的 `full_pull` 运行 Stage R R2 Comparator；结果 `spectral_log_distance=0.662500`、`loudness_delta=-0.1404 dB`、`order=not_evaluated_without_rpm_trace`，无参数建议。其余 4 条因缺语义匹配候选未比较，禁止跨工况复用代理。
+- [x] 修复 Stage R 参考 SHA 校验的大小写兼容性，并新增回归测试；大写清单 SHA 与 `hashlib` 小写输出现在按十六进制等价比较。
 - [x] 更新中文入口指南、Q/闭环报告和本任务接力记录；明确当前真实资料仍为 `R1=0`。
 - [x] 验证完整 S12、Track-P、独立冻结守卫、compileall 和 diff 门禁；仅在验证通过后提交并推送本分支。
 
 ### Review
 
-- 原始入库/Stage Q/R/S/T 重点测试：`18 passed`；完整 S12：`384 passed, 114 subtests passed`；Track-P：`32 passed`。
+- 原始入库/Stage Q/R/S/T 重点测试：`26 passed`；完整 S12：`385 passed, 114 subtests passed`；Track-P 冻结守卫通过（180 个冻结文件、2 个冻结符号）。
 - 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
 - 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。
-- 本轮新增验证：Stage Q canonical 为 18 条记录，其中 3 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性和错哈希拒绝路径均有回归覆盖。
+- 本轮新增验证：Stage Q canonical 为 23 条记录，其中 8 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性、大小写兼容和错哈希拒绝路径均有回归覆盖。RX-7sim Stage R 单案结果保留 `R2_LIMITED_COMPARISON_COMPLETE`，不提升为 R1。

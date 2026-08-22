@@ -2,7 +2,7 @@
 
 状态：`R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED`
 
-当前仍没有 R1 资格参考，但 Jovi 已授权下载并审计三条明确 CC/CC0 许可的公开声浪，已完成 Ferrari 458、Hellcat 与 Supra 的 R2 有限比较。本文件不把 R2 结果升级为真实阶次资格，不输出单个真实性百分比，不把 synthetic parent 当作真实车辆，也不生成车型参数建议。
+当前仍没有 R1 资格参考，但 Jovi 已授权下载并审计三条明确 CC/CC0 许可的公开声浪，以及同一作者录制的五条 RX-7sim 资产；当前共有 8 条 R2 参考。Ferrari 458、Hellcat、Supra 已完成既有 R2 有限比较，RX-7 FD 另完成一条语义匹配的 `full_pull` 诊断比较。本文件不把 R2 结果升级为真实阶次资格，不输出单个真实性百分比，不把 synthetic proxy 当作真实车辆，也不生成车型参数建议。
 
 ## 原始 24 条 YouTube URL 的 R3 补充基线
 
@@ -46,6 +46,23 @@
 | Ferrari 458 | [Goodwood 起步录音](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg) / acceleration | `R2_LIMITED_COMPARISON_COMPLETE` | `0.574775` | `+2.7001 dB` | `NOT_QUALIFIED` / withheld |
 | Dodge Hellcat | [启动/起步录音](https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg) / launch | `R2_LIMITED_COMPARISON_COMPLETE` | `0.503287` | `+0.4530 dB` | `NOT_QUALIFIED` / withheld |
 | Toyota Supra | [CC0 底盘测功机全油门录音](https://freesound.org/people/editboy23/sounds/496171/) / full_pull | `R2_LIMITED_COMPARISON_COMPLETE` | `0.854657` | `-6.4747 dB` | `NOT_QUALIFIED` / withheld |
+
+### RX-7sim 作者录音的 R2 增量（2026-08-23）
+
+RX-7sim 的五条外部 WAV 已通过 Stage Q SHA 校验并进入 R2。由于本地只有一个标注为 `full_pull` 的 RX-7 FD synthetic A/B 代理，Comparator 只运行了同场景的 `rx7sim_exhaust_revLong01`；其余四条没有语义匹配的本地候选，明确保留为“未比较”，不复用代理跨工况冒充结果。
+
+| 参考/场景 | 候选 | R2 结果 | 频谱对数残差 | 响度差 | 阶次/调参 |
+| --- | --- | --- | ---: | ---: | --- |
+| RX-7 FD exhaust revLong / `full_pull` | `synthetic_rx7_fd_ab_full_pull_proxy` | `R2_LIMITED_COMPARISON_COMPLETE` | `0.662500` | `-0.1404 dB` | `NOT_QUALIFIED` / withheld |
+
+该案的频谱重心差为 `-31.54 Hz`、频谱滚降差为 `-173.76 Hz`、120–250 Hz 频带残差为 `+0.5588`、60–120 Hz 频带残差为 `-0.3217`；这些是未增益分析信号上的相对数字域指标，不是真实性百分比或参数目标。阶次状态为 `not_evaluated_without_rpm_trace`，`parameter_recommendations=[]`，人耳评分为空。
+
+- 中文单案报告：`rx7sim-20260823/S12_Stage_R_R2_Limited_Difference_Report.md`。
+- 机器结果：`rx7sim-20260823/stage_r_r2_limited_result.json`。
+- 外部结果 SHA-256：`A4F5D440F1043ED839193C1BA9E7CC0E672F386D510B92C1A40D43214316F862`；外部报告 SHA-256：`73EDE97341B10068B03CA48FE2B8CA4D6E4B136CFBAF906640B9D1847CD40103`。
+- 审计收据：`rx7sim-20260823/rx7sim_r2_comparison_receipt_20260823.json`；原始 OGG、派生 WAV 和试听媒体均留在 `E:\Claude_allow\Download\s12-rx7sim-source-audit-20260823`，不进入 Git。
+
+四条未比较记录为 `idle`、`steady_low`、`steady_mid` 和 `full_pull_interior`；原因是没有各自语义匹配的本地候选，且不能用 `full_pull` 外部/排气代理跨场景或跨麦位推断。它们仍可在 Jovi 提供匹配候选后重跑 R2，但目前没有差异数值。
 
 完整机器结果和中文单案报告位于：
 

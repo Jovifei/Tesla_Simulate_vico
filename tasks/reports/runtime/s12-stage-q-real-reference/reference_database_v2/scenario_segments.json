@@ -140,6 +140,56 @@
     "vehicle_id": "rx7_fd"
   },
   {
+    "end_s": 14.0,
+    "recording_id": "rx7sim_exhaust_idle",
+    "scenario": "idle",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
+    "end_s": 16.5,
+    "recording_id": "rx7sim_exhaust_revLong01",
+    "scenario": "full_pull",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
+    "end_s": 7.679917,
+    "recording_id": "rx7sim_exhaust_revMedium01",
+    "scenario": "steady_mid",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
+    "end_s": 7.658208,
+    "recording_id": "rx7sim_exhaust_revShort01",
+    "scenario": "steady_low",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
+    "end_s": 16.5,
+    "recording_id": "rx7sim_interior_revLong01",
+    "scenario": "full_pull_interior",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "rx7_fd"
+  },
+  {
     "end_s": 16.695167,
     "recording_id": "supra_jza80_stock",
     "scenario": "acceleration",
