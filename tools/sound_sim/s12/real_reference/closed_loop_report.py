@@ -17,6 +17,18 @@ def render_waiting_final_report(
     pushed: bool = False,
     remote_sha: str | None = None,
 ) -> str:
+    recordings = q_inventory.get("recordings", [])
+    r2_count = sum(1 for record in recordings if (record.get("evidence") or {}).get("r2_eligible"))
+    r3_count = sum(1 for record in recordings if (record.get("evidence") or {}).get("level") == "R3")
+    if r2_count:
+        q_summary = (
+            f"{len(recordings)} 条候选已登记（R2 {r2_count} 条、R3 {r3_count} 条），"
+            "保留外部路径/SHA/格式/缺口"
+        )
+        metric_summary = "R2 频谱/响度/心理声学；无同步 RPM 阶次"
+    else:
+        q_summary = f"{len(recordings)} 条候选和未登记媒体已登记，保留路径/SHA/格式/缺口"
+        metric_summary = "无；待授权和状态绑定"
     lines = [
         "# S12 真实声浪闭环总报告",
         "",
@@ -28,7 +40,7 @@ def render_waiting_final_report(
         "",
         "| 阶段 | 当前状态 | 已完成内容 | 未完成内容 |",
         "| --- | --- | --- | --- |",
-        f"| Q 真实参考 | `{q_inventory.get('status')}` | 15 条候选和未登记媒体已登记，保留路径/SHA/格式/缺口 | 合法授权、R1 元数据和同步 RPM/state |",
+        f"| Q 真实参考 | `{q_inventory.get('status')}` | {q_summary} | 合法授权、R1 元数据和同步 RPM/state |",
         f"| R 差异基线 | `{r_result.get('status')}` | R1/R2 资格门、报告模板和 withheld 推荐 | 未运行合格真实比较 |",
         f"| S 反馈调音 | `{s_gate.get('status')}` | 中文听审合同和 SHA/file-ID 绑定合同 | 没有真实 Jovi 听审和调音轮次 |",
         f"| T Profile Candidate | `{t_gate.get('status')}` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |",
@@ -41,8 +53,9 @@ def render_waiting_final_report(
         "| --- | ---: | ---: | --- |",
     ]
     for vehicle in q_inventory.get("evidence_matrix", {}).get("vehicles", []):
+        vehicle_metric = metric_summary if vehicle.get("r2_eligible_count", 0) else "无；待授权和状态绑定"
         lines.append(
-            f"| {vehicle['vehicle_name_zh']} | {vehicle['recording_count']} | {vehicle['r1_eligible_count']} | 无；待授权和状态绑定 |"
+            f"| {vehicle['vehicle_name_zh']} | {vehicle['recording_count']} | {vehicle['r1_eligible_count']} | {vehicle_metric} |"
         )
     lines.extend(
         [
@@ -52,7 +65,7 @@ def render_waiting_final_report(
             "## 指标与人耳边界",
             "",
             "- 阶次 / Order-RPM：`NOT_QUALIFIED`，没有同步 RPM。",
-            "- 频谱、响度、心理声学：当前没有授权 R2；不复用旧报告数字。",
+            f"- 频谱、响度、心理声学：授权 R2 记录 `{r2_count}` 条；仅作相对比较，不复用旧报告数字。" if r2_count else "- 频谱、响度、心理声学：当前没有授权 R2；不复用旧报告数字。",
             "- 瞬态：没有同步 Gear/shift/state；不进入自动门。",
             "- 人耳：真实 Jovi 反馈行数为 0；Stage P fixture 不算人耳反馈。",
             "- 真实性百分比：禁止输出。",

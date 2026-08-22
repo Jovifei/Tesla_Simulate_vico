@@ -1,19 +1,15 @@
 {
-  "recording_id": "web_ferrari_458_goodwood_2010",
-  "vehicle_id": "ferrari_458",
-  "scenario": "acceleration",
-  "evidence_level": "R2",
-  "reference_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
-  "candidate_sha256": "c94ba310a623dfe2c3f465c1b20d053b39c18722280b977d79210860447f3f78",
-  "spectral_log_distance": 0.574775011791069,
-  "spectral_centroid_delta_hz": -18.8534291085519,
-  "loudness_delta_db": 2.70010449976638,
-  "psychoacoustic_proxy_delta": {
-    "sharpness": -18.8534291085519,
-    "roughness": 0.00272601034847047,
-    "fluctuation": -0.00773951865439487,
-    "tonality": 1.258820656173988
+  "audio_header": {
+    "channels": 2,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 11.638049,
+    "frames": 513238,
+    "sample_rate_hz": 44100,
+    "sample_width_bits": 24
   },
-  "order_status": "NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM",
-  "automatic_tuning_eligible": false
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "web_ferrari_458_goodwood_2010",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "ferrari_458"
 }

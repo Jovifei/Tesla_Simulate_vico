@@ -1,19 +1,15 @@
 {
-  "recording_id": "web_hellcat_launching_sound_2019",
-  "vehicle_id": "hellcat",
-  "scenario": "launch",
-  "evidence_level": "R2",
-  "reference_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
-  "candidate_sha256": "fd38f6531304a3a38de80c5d20d24be7960085acebf930b1cf7188758d0053d1",
-  "spectral_log_distance": 0.503287490395887,
-  "spectral_centroid_delta_hz": 37.6043998205917,
-  "loudness_delta_db": 0.453028227277631,
-  "psychoacoustic_proxy_delta": {
-    "sharpness": 37.6043998205917,
-    "roughness": 0.004671629031462,
-    "fluctuation": -0.0032767880765221,
-    "tonality": -0.23080611459562306
+  "audio_header": {
+    "channels": 1,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 6.548027,
+    "frames": 288768,
+    "sample_rate_hz": 44100,
+    "sample_width_bits": 24
   },
-  "order_status": "NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM",
-  "automatic_tuning_eligible": false
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "web_hellcat_launching_sound_2019",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "hellcat"
 }

@@ -7,13 +7,14 @@
   "audited_external_roots": [
     "E:\\Claude_allow\\Download\\tesla-sound-research",
     "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
-    "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10"
+    "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+    "E:\\Claude_allow\\Download\\s12-web-authorized-20260822"
   ],
   "blockers": [
-    "缺少 Jovi 明确授权或可审计的合法来源记录。",
-    "没有任何记录绑定同步 RPM trace；不能执行 R1 阶次资格或自动调参。",
-    "没有可靠的 Load/Throttle、Gear/shift、麦克风位置和 AGC 记录。",
-    "公开/改装候选不能被当作原厂 OEM 参考。"
+    "没有任何记录同时通过合法来源、精确车型和同步状态的 R1 资格；不能执行 R1 阶次资格或自动调参。",
+    "八车型尚未全部取得至少一条 R1 参考；Stage T 锚点和其余车辆交接不能启动。",
+    "Ferrari 458、Hellcat、RX-7 FD 三个锚点尚未全部通过 R1。",
+    "公开/改装或缺状态候选仍只能作 R2/R3 参考，不能替代原厂 R1。"
   ],
   "evidence_matrix": {
     "overall_r1_ready": false,
@@ -25,7 +26,7 @@
         "anchor_vehicle": true,
         "evidence_levels": {
           "R1": 0,
-          "R2": 0,
+          "R2": 1,
           "R3": 1
         },
         "missing_requirements": [
@@ -38,10 +39,10 @@
           "stock_exhaust_confirmation",
           "synchronized_rpm_trace"
         ],
-        "present_count": 1,
+        "present_count": 2,
         "r1_eligible_count": 0,
-        "r2_eligible_count": 0,
-        "recording_count": 1,
+        "r2_eligible_count": 1,
+        "recording_count": 2,
         "scenario_hints": [
           "acceleration"
         ],
@@ -53,7 +54,7 @@
         "anchor_vehicle": true,
         "evidence_levels": {
           "R1": 0,
-          "R2": 0,
+          "R2": 1,
           "R3": 4
         },
         "missing_requirements": [
@@ -66,14 +67,15 @@
           "stock_exhaust_confirmation",
           "synchronized_rpm_trace"
         ],
-        "present_count": 4,
+        "present_count": 5,
         "r1_eligible_count": 0,
-        "r2_eligible_count": 0,
-        "recording_count": 4,
+        "r2_eligible_count": 1,
+        "recording_count": 5,
         "scenario_hints": [
           "acceleration",
           "afterfire",
           "full_pull",
+          "launch",
           "shift"
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
@@ -229,7 +231,7 @@
         "anchor_vehicle": false,
         "evidence_levels": {
           "R1": 0,
-          "R2": 0,
+          "R2": 1,
           "R3": 1
         },
         "missing_requirements": [
@@ -242,12 +244,13 @@
           "stock_exhaust_confirmation",
           "synchronized_rpm_trace"
         ],
-        "present_count": 1,
+        "present_count": 2,
         "r1_eligible_count": 0,
-        "r2_eligible_count": 0,
-        "recording_count": 1,
+        "r2_eligible_count": 1,
+        "recording_count": 2,
         "scenario_hints": [
-          "acceleration"
+          "acceleration",
+          "full_pull"
         ],
         "status": "WAITING_FOR_REAL_REFERENCE_DATA",
         "vehicle_id": "supra_jza80",
@@ -1226,6 +1229,192 @@
       "scenario_confidence": "filename_or_prior_note_only",
       "scenario_hint": "acceleration",
       "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",
+      "vehicle_id": "supra_jza80",
+      "vehicle_name_zh": "丰田 Supra JZA80"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 11.638049,
+        "frames": 513238,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "Explicit CC license and vehicle/scene description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\ferrari_458_italia.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+        "declared_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "Edvvc",
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-SA 3.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "source_kind": "wikimedia_commons_cc",
+        "source_media_sha256": "D98951CAAA3DE712E59B13D4D1EB0472795A3CBFBF9D990B28711CD8C93891DA",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Ferrari_458_Italia.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_ferrari_458_goodwood_2010",
+      "reference_id": "q:web:ferrari_458_goodwood_2010",
+      "relative_path": "ferrari_458_italia.wav",
+      "required_missing": [],
+      "scenario": "acceleration",
+      "scenario_confidence": "page_description_explicit",
+      "scenario_hint": "acceleration",
+      "scenario_identity": "pulling_away_from_start",
+      "sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "法拉利 458"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 6.548027,
+        "frames": 288768,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "Explicit CC license and Hellcat launch/startup description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\hellcat_launching_challenger.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+        "declared_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "Axepas12",
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-SA 4.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "source_kind": "wikimedia_commons_cc",
+        "source_media_sha256": "762E3B294362E3D1E37BE0B737D6AD4518FD61A6BDBCE392BE1C850300D0676A",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Launching_sound_Challenger.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_hellcat_launching_sound_2019",
+      "reference_id": "q:web:hellcat_launching_sound_2019",
+      "relative_path": "hellcat_launching_challenger.wav",
+      "required_missing": [],
+      "scenario": "launch",
+      "scenario_confidence": "page_title_and_description_explicit",
+      "scenario_hint": "launch",
+      "scenario_identity": "startup_or_launch_sound",
+      "sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 35.46875,
+        "frames": 1702500,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "CC0 license and explicit Toyota Supra chassis-dyno/full-rev description; exact JZA80 generation, synchronized RPM/state, mic, and AGC are not verified.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\supra_jza80_chassis_dyno_cc0_hq.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+        "declared_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "editboy23",
+        "decode_note": "Public HQ MP3 preview decoded to PCM24 WAV at 48 kHz with no gain, EQ, AGC, or loudness matching; this is a lossy preview derivative, not the login-gated original WAV.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC0 1.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://freesound.org/people/editboy23/sounds/496171/",
+        "source_kind": "freesound_cc0_preview",
+        "source_media_sha256": "911E96CEAAA27885A71AACDFD08846916E1CD49AAB005F4482071FCBD5D66844",
+        "source_media_url": "https://cdn.freesound.org/previews/496/496171_1784475-hq.mp3",
+        "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+      "reference_id": "q:web:supra_jza80_chassis_dyno_cc0_2019",
+      "relative_path": "supra_jza80_chassis_dyno_cc0_hq.wav",
+      "required_missing": [],
+      "scenario": "full_pull",
+      "scenario_confidence": "page_description_explicit_vehicle_generation_unverified",
+      "scenario_hint": "full_pull",
+      "scenario_identity": "chassis_dyno_full_throttle_rev_to_max",
+      "sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
       "vehicle_id": "supra_jza80",
       "vehicle_name_zh": "丰田 Supra JZA80"
     }

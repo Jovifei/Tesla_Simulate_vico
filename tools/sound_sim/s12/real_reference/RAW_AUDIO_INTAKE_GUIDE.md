@@ -65,6 +65,14 @@ python -m tools.sound_sim.s12.real_reference.cli `
 
 这会更新 `reference_database_v2/reference_manifest.json`、`reference_evidence_matrix.json`、`scenario_segments.json`、`rpm_state_bindings.json` 及 provenance/derived-features 指针；原始音频仍不会被复制。
 
+已经单独完成授权审计、但缺少同步 RPM/state 的来源，可使用 `--authorized-reference-manifest` 合并为 R2。入口会重新校验外部文件 SHA-256；只有 SHA 匹配且许可/车型/工况字段齐全的记录才进入 R2，仍不得进入阶次硬门或自动调参：
+
+```powershell
+python -m tools.sound_sim.s12.real_reference.cli `
+  --media-root "E:\Claude_allow\Download\tesla-sound-research" `
+  --authorized-reference-manifest "tasks\reports\runtime\s12-stage-q-real-reference\reference_database_v2\web_authorized_manifest_20260822.json"
+```
+
 ## YouTube 403 的处理边界
 
 下载器可以在批准的外部目录中重试不同客户端或仅音频流，并记录失败/截断 SHA 与解码收据；这些文件仍是视频派生 R3。403 重试成功只说明媒体完整可解码，不能证明原厂状态、同步 RPM/负载/挡位或许可，也不能进入这个原始录音入口。

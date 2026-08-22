@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import wave
 from pathlib import Path
@@ -109,6 +110,83 @@ def test_web_authorized_manifest_is_explicitly_r2_only() -> None:
     assert pontiac["analysis_observation"]["tachometer_or_numeric_rpm_visible"] is False
     assert pontiac["analysis_observation"]["rpm_status"] == "MISSING_RPM_STATE"
     assert pontiac["use_policy"] == "dyno_process_qualitative_only"
+
+
+def test_authorized_r2_manifest_merges_into_canonical_stage_q_without_copying_audio(tmp_path: Path) -> None:
+    primary = tmp_path / "primary"
+    primary.mkdir()
+    _write_wav(primary / "ferrari_458_accel.wav")
+    r2_audio = tmp_path / "r2" / "ferrari_458_goodwood.wav"
+    r2_audio.parent.mkdir()
+    _write_wav(r2_audio)
+    r2_record = {
+        "recording_id": "web_ferrari_458_goodwood_2010",
+        "reference_id": "q:web:ferrari_458_goodwood_2010",
+        "vehicle_id": "ferrari_458",
+        "scenario": "acceleration",
+        "external_path": str(r2_audio),
+        "file_present": True,
+        "sha256": hashlib.sha256(r2_audio.read_bytes()).hexdigest(),
+        "audio": {"container": "WAV", "codec": "PCM", "channels": 1, "sample_rate_hz": 48_000, "sample_width_bits": 16, "frames": 48_000, "duration_s": 1.0},
+        "provenance": {
+            "source_url": "https://commons.wikimedia.org/wiki/File:Example.ogg",
+            "source_kind": "wikimedia_commons_cc",
+            "legal_permission": "CONFIRMED",
+            "rights_evidence": "https://commons.wikimedia.org/wiki/File:Example.ogg",
+        },
+        "evidence": {"level": "R2", "r1_eligible": False, "r2_eligible": True, "automatic_tuning_eligible": False},
+        "analysis_contract": {
+            "analysis_signal": "unaltered_analysis_signal",
+            "rpm_state_status": "MISSING_RPM_STATE",
+            "load_throttle_status": "MISSING",
+            "gear_shift_status": "MISSING",
+        },
+    }
+    manifest = tmp_path / "authorized_r2.json"
+    manifest.write_text(json.dumps({"raw_media_root": str(r2_audio.parent), "recordings": [r2_record]}), encoding="utf-8")
+
+    inventory = build_inventory(primary, authorized_reference_manifests=(manifest,))
+    merged = next(row for row in inventory["recordings"] if row["recording_id"] == r2_record["recording_id"])
+    assert merged["evidence"]["level"] == "R2"
+    assert merged["evidence"]["r2_eligible"] is True
+    assert merged["evidence"]["r1_eligible"] is False
+    ferrari = next(row for row in inventory["evidence_matrix"]["vehicles"] if row["vehicle_id"] == "ferrari_458")
+    assert ferrari["r2_eligible_count"] == 1
+    assert str(r2_audio.parent) in inventory["audited_external_roots"]
+
+    outputs = write_stage_q_outputs(inventory, tmp_path / "out")
+    assert not list((tmp_path / "out").rglob("*.wav"))
+    canonical = json.loads(outputs["manifest"].read_text(encoding="utf-8"))
+    canonical_row = next(row for row in canonical["recordings"] if row["recording_id"] == r2_record["recording_id"])
+    assert canonical_row["evidence"]["level"] == "R2"
+    assert canonical_row["integrity_check"]["status"] == "MATCH"
+
+
+def test_authorized_r2_manifest_sha_mismatch_is_not_eligible(tmp_path: Path) -> None:
+    primary = tmp_path / "primary"
+    primary.mkdir()
+    r2_audio = tmp_path / "r2" / "ferrari_458_bad_hash.wav"
+    r2_audio.parent.mkdir()
+    _write_wav(r2_audio)
+    record = {
+        "recording_id": "web_ferrari_458_bad_hash",
+        "vehicle_id": "ferrari_458",
+        "scenario": "acceleration",
+        "external_path": str(r2_audio),
+        "file_present": True,
+        "sha256": "a" * 64,
+        "provenance": {
+            "legal_permission": "CONFIRMED",
+            "rights_evidence": "receipt",
+        },
+    }
+    manifest = tmp_path / "authorized_r2_bad_hash.json"
+    manifest.write_text(json.dumps({"recordings": [record]}), encoding="utf-8")
+    inventory = build_inventory(primary, authorized_reference_manifests=(manifest,))
+    merged = next(row for row in inventory["recordings"] if row["recording_id"] == record["recording_id"])
+    assert merged["integrity_check"]["status"] == "MISMATCH"
+    assert merged["file_present"] is False
+    assert merged["evidence"]["r2_eligible"] is False
 
 
 def test_external_raw_r1_manifest_merges_into_stage_q_outputs(tmp_path: Path) -> None:

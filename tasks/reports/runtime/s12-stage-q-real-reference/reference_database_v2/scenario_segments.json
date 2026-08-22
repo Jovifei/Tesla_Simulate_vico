@@ -148,5 +148,35 @@
     "status": "UNQUALIFIED_COARSE_WINDOW",
     "usable_for_order_or_tuning": false,
     "vehicle_id": "supra_jza80"
+  },
+  {
+    "end_s": 11.638049,
+    "recording_id": "web_ferrari_458_goodwood_2010",
+    "scenario": "acceleration",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "ferrari_458"
+  },
+  {
+    "end_s": 6.548027,
+    "recording_id": "web_hellcat_launching_sound_2019",
+    "scenario": "launch",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "hellcat"
+  },
+  {
+    "end_s": 35.46875,
+    "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+    "scenario": "full_pull",
+    "source": "filename_or_prior_note_only",
+    "start_s": 0.0,
+    "status": "UNQUALIFIED_COARSE_WINDOW",
+    "usable_for_order_or_tuning": false,
+    "vehicle_id": "supra_jza80"
   }
 ]

@@ -3896,11 +3896,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 实现批准目录、来源/授权、车型/原厂排气、单位、时间窗口、递增时间戳和原始 SHA-256 的 fail-closed 校验；不完整状态不得进入 R1 或自动调参。
 - [x] 实现 Stage R 对带时间戳低速率遥测的非外推网格绑定：连续量线性插值，挡位/换挡事件离散映射；增加无重采样 FLAC 外部临时输入支持。
 - [x] 将 raw intake manifest 接入 Stage Q canonical `reference_database_v2` 合并入口，生成 evidence matrix、时间窗口切片、RPM/state bindings、provenance 和派生特征指针，并用 JSON Schema 验证。
+- [x] 将已审计授权 R2 manifest 接入同一 Stage Q canonical 合并入口；入口重新核验外部音频 SHA-256，只登记 Ferrari/Hellcat/Supra 各一条 R2 指针，不复制原始媒体。
 - [x] 更新中文入口指南、Q/闭环报告和本任务接力记录；明确当前真实资料仍为 `R1=0`。
 - [x] 验证完整 S12、Track-P、独立冻结守卫、compileall 和 diff 门禁；仅在验证通过后提交并推送本分支。
 
 ### Review
 
-- 原始入库/Stage Q/R/URL 重点测试：`27 passed`；完整 S12：`382 passed, 114 subtests passed`；Track-P：`32 passed`。
+- 原始入库/Stage Q/R/S/T 重点测试：`18 passed`；完整 S12：`384 passed, 114 subtests passed`；Track-P：`32 passed`。
 - 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
 - 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。
+- 本轮新增验证：Stage Q canonical 为 18 条记录，其中 3 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性和错哈希拒绝路径均有回归覆盖。

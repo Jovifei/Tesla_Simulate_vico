@@ -8,7 +8,7 @@
       "anchor_vehicle": true,
       "evidence_levels": {
         "R1": 0,
-        "R2": 0,
+        "R2": 1,
         "R3": 1
       },
       "missing_requirements": [
@@ -21,10 +21,10 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
-      "present_count": 1,
+      "present_count": 2,
       "r1_eligible_count": 0,
-      "r2_eligible_count": 0,
-      "recording_count": 1,
+      "r2_eligible_count": 1,
+      "recording_count": 2,
       "scenario_hints": [
         "acceleration"
       ],
@@ -36,7 +36,7 @@
       "anchor_vehicle": true,
       "evidence_levels": {
         "R1": 0,
-        "R2": 0,
+        "R2": 1,
         "R3": 4
       },
       "missing_requirements": [
@@ -49,14 +49,15 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
-      "present_count": 4,
+      "present_count": 5,
       "r1_eligible_count": 0,
-      "r2_eligible_count": 0,
-      "recording_count": 4,
+      "r2_eligible_count": 1,
+      "recording_count": 5,
       "scenario_hints": [
         "acceleration",
         "afterfire",
         "full_pull",
+        "launch",
         "shift"
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
@@ -212,7 +213,7 @@
       "anchor_vehicle": false,
       "evidence_levels": {
         "R1": 0,
-        "R2": 0,
+        "R2": 1,
         "R3": 1
       },
       "missing_requirements": [
@@ -225,12 +226,13 @@
         "stock_exhaust_confirmation",
         "synchronized_rpm_trace"
       ],
-      "present_count": 1,
+      "present_count": 2,
       "r1_eligible_count": 0,
-      "r2_eligible_count": 0,
-      "recording_count": 1,
+      "r2_eligible_count": 1,
+      "recording_count": 2,
       "scenario_hints": [
-        "acceleration"
+        "acceleration",
+        "full_pull"
       ],
       "status": "WAITING_FOR_REAL_REFERENCE_DATA",
       "vehicle_id": "supra_jza80",

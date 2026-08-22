@@ -178,6 +178,8 @@
 
 资格函数现要求 `vehicle_and_scenario_identity`、`source_and_license`、`raw_audio_source`、`sample_rate` 和明确的 `stock_exhaust_confirmation`，并拒绝 `video_extracted`/YouTube 来源即使其容器声称 PCM 或手工附带 raw receipt。完整 S12 回归为 `377 passed, 114 subtests passed`；当前三锚点重新审计仍为 `R1=0`，没有启动 MATLAB 阶次或自动调参。
 
+raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`；已审计的授权 R2 清单也可通过 `--authorized-reference-manifest` 合并。两者都只写入外部路径、SHA、provenance、证据等级和派生指针，不复制原始媒体，并通过 Stage Q JSON Schema。当前 canonical Q 已登记 Ferrari/Hellcat/Supra 各一条 R2，三锚点和其余车辆仍没有 R1。
+
 ## 原始录音 R1 入库与低速率状态绑定（2026-08-23）
 
 新增 `tools/sound_sim/s12/real_reference/raw_audio_intake.py` 和中文 `RAW_AUDIO_INTAKE_GUIDE.md`。入口只接受批准外部目录中的原始 PCM WAV/FLAC、来源/授权凭证、精确车型与原厂排气确认，以及带明确单位和时间窗口的 RPM、Load/Throttle、Gear/shift CSV/JSON；只把 manifest、外部路径、原始 SHA-256、状态文件 SHA-256 与 provenance 写入元数据，绝不复制原始版权音频到 Git。YouTube/视频抽音即使完整解码仍被 R1 门禁拒绝。
@@ -186,7 +188,7 @@ Stage R 现在允许低于音频采样率的、带严格递增时间戳且覆盖
 
 raw intake manifest 现在可通过 `real_reference.cli --raw-reference-manifest` 合并到 canonical `reference_database_v2`，同步生成 evidence matrix、带状态窗口的 `scenario_segments.json`、R1 `rpm_state_bindings.json`、provenance 和派生特征指针；合并过程不复制原始媒体，并通过 Stage Q JSON Schema。
 
-本轮验证：原始入库/Stage Q/R 重点测试 `27 passed`；完整 S12 `382 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
+本轮验证：Stage Q/R/S/T 定向测试 `18 passed`；完整 S12 `384 passed, 114 subtests passed`；Track-P `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`compileall` 与 `git diff --check` 通过。验证的是入口和合同，不代表已有外部资料已经出现 R1；当前真实数据仍为 `R1=0`，MATLAB 阶次、真人 A/B 和调参继续关闭。
 
 边界：所有产物继续标记 `synthetic`、`uncalibrated`、`vehicle-inspired`、`not OEM reproduction`。
 

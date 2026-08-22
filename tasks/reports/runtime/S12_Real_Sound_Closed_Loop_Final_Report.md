@@ -96,8 +96,8 @@ Stage Q 合并补充（2026-08-23）：`real_reference.cli --raw-reference-manif
 
 ## 本轮验证
 
-- 完整 S12 Python 回归：`377 passed, 114 subtests passed in 283.38s`。
-- Stage Q/R/URL 重点测试：`16 passed`；Track-P guard pytest：`32 passed`。
+- 完整 S12 Python 回归：`384 passed, 114 subtests passed in 207.10s`。
+- Stage Q/R/S/T 重点测试：`18 passed`；Track-P guard pytest：`32 passed`。
 - 独立 Track-P 冻结守卫：`180` 个冻结文件、`2` 个冻结符号、工作树/索引均匹配；`git diff --check` 通过。
 - R1 筛选 JSON、外部 YouTube 收据和当前 Git 远端 SHA 均已重新核验；由于锚点 `R1=0`，MATLAB 阶次执行、自动调参和 Profile Candidate 仍未启动。
 

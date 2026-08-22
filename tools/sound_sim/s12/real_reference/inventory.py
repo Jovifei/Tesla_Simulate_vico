@@ -13,6 +13,8 @@ import wave
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
+from .qualification import qualify_r2_reference
+
 
 SCHEMA_VERSION = "s12-stage-q-reference-database-v2"
 DEFAULT_ADDITIONAL_MEDIA_ROOTS = (
@@ -419,6 +421,111 @@ def _normalise_external_raw_record(record: Mapping[str, Any]) -> dict[str, Any]:
     return row
 
 
+def _normalise_authorized_r2_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Adapt a separately audited, licensed R2 manifest record to Stage Q.
+
+    The authorized manifest is intentionally a metadata-only handoff.  The
+    external WAV/FLAC remains where it was delivered; this function only
+    normalizes the pointer and re-runs the local R2 gate before the record is
+    allowed into the canonical inventory.
+    """
+
+    row = dict(record)
+    recording_id = str(row.get("recording_id") or "").strip()
+    vehicle_id = str(row.get("vehicle_id") or "").strip()
+    if not recording_id or vehicle_id not in ALL_VEHICLES:
+        raise ValueError(
+            "authorized R2 record must name a supported vehicle: "
+            f"{recording_id or '<missing>'}/{vehicle_id or '<missing>'}"
+        )
+    row["recording_id"] = recording_id
+    row["vehicle_id"] = vehicle_id
+    row.setdefault("reference_id", f"q:{recording_id}")
+    row.setdefault("vehicle_name_zh", VEHICLE_NAMES_ZH[vehicle_id])
+    scenario = str(row.get("scenario") or row.get("scenario_hint") or "unknown").strip()
+    row["scenario"] = scenario
+    row["scenario_hint"] = scenario
+    external_path = str(row.get("external_path") or "").strip()
+    row["external_path"] = external_path
+    row.setdefault("relative_path", Path(external_path).name if external_path else recording_id)
+    row["file_present"] = bool(row.get("file_present")) and bool(external_path) and Path(external_path).is_file()
+    row.setdefault("sha256", None)
+    declared_sha = str(row.get("sha256") or "").strip().lower()
+    if row["file_present"] and declared_sha:
+        try:
+            actual_sha = _sha256(Path(external_path))
+        except OSError as exc:
+            actual_sha = None
+            row["read_error"] = f"authorized R2 SHA-256 read failed: {exc}"
+        row["integrity_check"] = {
+            "status": "MATCH" if actual_sha == declared_sha else "MISMATCH",
+            "declared_sha256": declared_sha,
+            "actual_sha256": actual_sha,
+        }
+        if actual_sha != declared_sha:
+            row["file_present"] = False
+            row.setdefault("read_error", "authorized R2 SHA-256 mismatch")
+    else:
+        row["integrity_check"] = {
+            "status": "NOT_CHECKED",
+            "declared_sha256": declared_sha or None,
+            "actual_sha256": None,
+        }
+    row.setdefault("audio", None)
+    provenance = row.get("provenance")
+    row["provenance"] = dict(provenance) if isinstance(provenance, Mapping) else {}
+    analysis_contract = row.get("analysis_contract")
+    row["analysis_contract"] = dict(analysis_contract) if isinstance(analysis_contract, Mapping) else {
+        "analysis_signal": "unaltered_analysis_signal",
+        "rpm_state_status": "MISSING_RPM_STATE",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "load_throttle_status": "MISSING",
+        "gear_shift_status": "MISSING",
+    }
+
+    gate = qualify_r2_reference(row)
+    evidence = dict(row.get("evidence") or {})
+    if gate["eligible"]:
+        evidence.update(
+            {
+                "level": "R2",
+                "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only",
+                "r1_eligible": False,
+                "r2_eligible": True,
+                "automatic_tuning_eligible": False,
+                "order_hard_gate": False,
+            }
+        )
+    else:
+        evidence.update(
+            {
+                "level": "R3",
+                "use_policy": "qualitative_only",
+                "r1_eligible": False,
+                "r2_eligible": False,
+                "automatic_tuning_eligible": False,
+                "order_hard_gate": False,
+            }
+        )
+    evidence.setdefault("reason", "授权 R2 清单记录；没有同步 RPM/state，因此仅限相对比较。")
+    row["evidence"] = evidence
+    existing_missing = set(str(item) for item in (row.get("required_missing") or []))
+    if not gate["eligible"]:
+        existing_missing.update(gate["missing"])
+    row["required_missing"] = sorted(existing_missing)
+    row.setdefault(
+        "analysis_contract",
+        {
+            "analysis_signal": "unaltered_analysis_signal",
+            "rpm_state_status": "MISSING_RPM_STATE",
+            "estimated_rpm_status": "NOT_ATTEMPTED",
+            "load_throttle_status": "MISSING",
+            "gear_shift_status": "MISSING",
+        },
+    )
+    return row
+
+
 def _read_external_raw_manifests(raw_reference_manifests: Iterable[Path | Mapping[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
     records: list[dict[str, Any]] = []
     roots: list[str] = []
@@ -441,18 +548,44 @@ def _read_external_raw_manifests(raw_reference_manifests: Iterable[Path | Mappin
     return records, roots
 
 
+def _read_authorized_r2_manifests(
+    authorized_reference_manifests: Iterable[Path | Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    records: list[dict[str, Any]] = []
+    roots: list[str] = []
+    for source in authorized_reference_manifests:
+        if isinstance(source, Mapping):
+            payload = source
+        else:
+            path = Path(source)
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        raw_records = payload.get("recordings") if isinstance(payload, Mapping) else None
+        if not isinstance(raw_records, list):
+            raise ValueError("authorized R2 manifest must contain a recordings array")
+        for record in raw_records:
+            if not isinstance(record, Mapping):
+                raise ValueError("authorized R2 manifest recordings must be objects")
+            records.append(_normalise_authorized_r2_record(record))
+        if isinstance(payload, Mapping) and payload.get("raw_media_root"):
+            roots.append(str(payload["raw_media_root"]))
+    return records, roots
+
+
 def build_inventory(
     media_root: Path,
     catalog: Iterable[dict[str, Any]] = CATALOG,
     additional_media_roots: Iterable[Path] = DEFAULT_ADDITIONAL_MEDIA_ROOTS,
     raw_reference_manifests: Iterable[Path | Mapping[str, Any]] = (),
+    authorized_reference_manifests: Iterable[Path | Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     media_root = Path(media_root)
     catalog = tuple(catalog)
     additional_roots = tuple(Path(root) for root in additional_media_roots if Path(root) != media_root)
     records = [_recording_record(media_root, spec) for spec in catalog]
     raw_records, raw_roots = _read_external_raw_manifests(raw_reference_manifests)
+    authorized_records, authorized_roots = _read_authorized_r2_manifests(authorized_reference_manifests)
     by_id = {record["recording_id"]: record for record in records}
+    by_id.update({record["recording_id"]: record for record in authorized_records})
     by_id.update({record["recording_id"]: record for record in raw_records})
     records = list(by_id.values())
     records.sort(key=lambda item: item["recording_id"])
@@ -475,7 +608,12 @@ def build_inventory(
         "status": status,
         "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA" if status != "REAL_REFERENCE_DATASET_READY" else "READY_FOR_STAGE_R",
         "raw_media_root": str(media_root),
-        "audited_external_roots": [str(media_root), *(str(root) for root in additional_roots), *raw_roots],
+        "audited_external_roots": [
+            str(media_root),
+            *(str(root) for root in additional_roots),
+            *authorized_roots,
+            *raw_roots,
+        ],
         "raw_audio_policy": "external_only_not_in_git",
         "vehicles": list(ALL_VEHICLES),
         "anchor_vehicles": list(ANCHOR_VEHICLES),
