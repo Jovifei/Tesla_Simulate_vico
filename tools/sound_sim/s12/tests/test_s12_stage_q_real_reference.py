@@ -100,3 +100,10 @@ def test_web_authorized_manifest_is_explicitly_r2_only() -> None:
         assert record["evidence"]["automatic_tuning_eligible"] is False
         assert record["analysis_contract"]["rpm_state_status"] == "MISSING_RPM_STATE"
     assert manifest["qualitative_only"][0]["evidence_level"] == "R3"
+    pontiac = next(row for row in manifest["qualitative_only"] if row["recording_id"] == "web_pontiac_g8_dyno_cc0_2019")
+    assert pontiac["vehicle_id"] == "pontiac_g8_non_target"
+    assert pontiac["license"] == "CC0 1.0"
+    assert pontiac["video_metadata"]["audio_sample_rate_hz"] == 48_000
+    assert pontiac["analysis_observation"]["tachometer_or_numeric_rpm_visible"] is False
+    assert pontiac["analysis_observation"]["rpm_status"] == "MISSING_RPM_STATE"
+    assert pontiac["use_policy"] == "dyno_process_qualitative_only"

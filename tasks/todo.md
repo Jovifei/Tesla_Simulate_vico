@@ -3813,4 +3813,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 最新验证：完整 S12 测试 `371 passed, 114 subtests passed`；Q/R/S/T 重点测试 `21 passed`；`compileall` 和 `git diff --check` 通过。
 - R1/S/T 未完成的唯一真实缺口仍是：合法原始录音与同步 RPM、Load/Throttle、Gear/shift、麦克风/AGC 采集合同，以及 Jovi 的 SHA/file-ID 绑定听审反馈。
 - [x] 记录三条可采购的三锚点候选（Ferrari 458、Hellcat、RX-7 FD）及其公开页面声称的同步 take/steady RPM/gearshift 元数据；明确它们仍需购买/授权和数值状态验收，不能预先升级为 R1。
+- [x] 下载并审计一条 CC0 Pontiac G8 测功机视频：完成 WebM→PCM WAV 解码、SHA/采样信息和抽帧检查；登记为非目标 R3 流程样本，未进入八车型比较或调音。
 - [ ] 取得 Jovi 授权的商业原始包或等价自录包后，逐段验收 RPM/Load/Throttle/Gear/shift/麦位/AGC/授权，并重新生成 R1 manifest；未取得前不启动阶次自动调参。

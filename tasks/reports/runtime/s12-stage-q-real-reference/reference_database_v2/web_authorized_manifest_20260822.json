@@ -179,6 +179,39 @@
       "evidence_level": "R3",
       "use_policy": "qualitative_rotary_texture_only",
       "reason": "Licensed Mazda 13B mechanical demonstration, not an RX-7 FD vehicle recording and not a dyno/full-throttle scenario; no R2 identity claim."
+    },
+    {
+      "recording_id": "web_pontiac_g8_dyno_cc0_2019",
+      "vehicle_id": "pontiac_g8_non_target",
+      "scenario": "chassis_dyno",
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\pontiac_g8_dyno_cc0.webm",
+      "extracted_audio_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\pontiac_g8_dyno_cc0.wav",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Metro_Cruise_2019_Dyno_test.webm",
+      "source_media_sha256": "C67AD755E0044365152358EB27209F3B4479BBBDBDC96E413C27A9683B9E3C9E",
+      "extracted_audio_sha256": "37378190896E03AD0563D46C6C39941F6552A156E83B0724E3CF68886720E701",
+      "license": "CC0 1.0",
+      "author": "WMrapids",
+      "legal_permission": "CONFIRMED",
+      "evidence_level": "R3",
+      "use_policy": "dyno_process_qualitative_only",
+      "video_metadata": {
+        "container": "WebM",
+        "video_codec": "VP9",
+        "audio_codec": "Opus",
+        "duration_s": 8.994,
+        "video_size": "1280x720",
+        "audio_sample_rate_hz": 48000,
+        "audio_channels": 1,
+        "capture_device": "iPhone 6s Plus"
+      },
+      "analysis_observation": {
+        "extracted_wav_duration_s": 8.986125,
+        "extracted_wav_peak": 1.0,
+        "dominant_frequency_hz": 1154.2238729151886,
+        "tachometer_or_numeric_rpm_visible": false,
+        "rpm_status": "MISSING_RPM_STATE"
+      },
+      "reason": "CC0 Pontiac G8 chassis-dyno video was downloaded and decoded for process validation; it is not one of the eight target vehicles, has no visible numeric RPM/state trace, and the decoded audio reaches full-scale peak. It must not enter R2/R1 comparison, automatic tuning, or profile approval."
     }
   ]
 }

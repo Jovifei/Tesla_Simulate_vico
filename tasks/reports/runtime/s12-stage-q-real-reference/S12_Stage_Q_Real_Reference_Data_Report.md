@@ -36,6 +36,8 @@
 
 三条 R2 记录都缺同步 RPM、Load/Throttle、Gear/shift、麦克风与 AGC 合同，故 `R1=0`、阶次硬门关闭、自动调参关闭。Supra 记录明确是测功机全油门，但页面未核实 JZA80 代际且下载的是公开 HQ MP3 有损预览。Wankel3.ogv（CC BY-SA 2.5）是 Mazda 13B 机械演示，不是 RX-7 FD 整车录音，已登记为 `R3 qualitative_only`，不进入 R2。
 
+本轮另外下载并审计了 [Wikimedia Commons 的 Pontiac G8 测功机视频](https://commons.wikimedia.org/wiki/File:Metro_Cruise_2019_Dyno_test.webm)。该文件为 CC0、约 9 秒；抽取出的单声道 48 kHz WAV 峰值达到 `1.0`，抽帧未看到数值转速表或同步状态。它已登记为非目标车型 `R3` 测功机流程样本，只能验证“视频→音频→元数据审计”路径，不进入八车型 R2/R1、阶次比较、自动调参或 Profile Candidate。
+
 ## 公开同步数据检索结论（未纳入）
 
 - [F1Audio](https://zenodo.org/records/21186137) 页面声称提供约 300 小时的 F1 车载声学特征与同步 RPM、挡位、油门，但 Zenodo 文件受限访问，且车辆不是本项目八个锚点，因此不能作为本项目 R1 输入。
