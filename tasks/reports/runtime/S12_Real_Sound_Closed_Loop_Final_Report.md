@@ -52,7 +52,7 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告基线提交：`b915b99`（YouTube 403 回退、24 条外部 R3 诊断和中文报告）；本次 R2 A/B 包和 Stage S/T 状态修正由后续提交绑定，最终 SHA 以 `git rev-parse HEAD` 和远端核验为准。
+- 报告基线提交：`b915b99`（历史 YouTube 403 回退与外部 R3 诊断）；本轮直接无代理音频 R3 补充提交为 `87c7bc8`，最终 SHA 以 `git rev-parse HEAD` 和远端核验为准。
 - working tree：提交前必须为干净；本报告不得把外部试听副本写入 Git。
 - push：是
 - merge：否
