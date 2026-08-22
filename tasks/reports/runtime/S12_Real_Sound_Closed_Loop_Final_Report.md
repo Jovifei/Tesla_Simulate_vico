@@ -9,7 +9,7 @@
 | 阶段 | 当前状态 | 已完成内容 | 未完成内容 |
 | --- | --- | --- | --- |
 | Q 真实参考 | `REAL_REFERENCE_DATASET_LIMITED` | 15 条候选和未登记媒体已登记，保留路径/SHA/格式/缺口 | 合法授权、R1 元数据和同步 RPM/state |
-| R 差异基线 | `BLOCKED_REFERENCE_QUALIFICATION` | R1/R2 资格门、报告模板和 withheld 推荐 | 未运行合格真实比较 |
+| R 差异基线 | `BLOCKED_REFERENCE_QUALIFICATION` | R1/R2 资格门、R2 有限比较入口、R1 MATLAB 执行计划、报告模板和 withheld 推荐 | 未运行合格真实比较 |
 | S 反馈调音 | `WAITING_FOR_JOVI_HUMAN_FEEDBACK` | 中文听审合同和 SHA/file-ID 绑定合同 | 没有真实 Jovi 听审和调音轮次 |
 | T Profile Candidate | `BLOCKED_PROFILE_CANDIDATE_NOT_READY` | Profile Candidate 阻断门和交接模板 | 没有候选参数包或产品交接 |
 
@@ -50,9 +50,10 @@
 ## 当前提交与 Git 状态
 
 - 分支：`agent/s12-stage-q-real-reference-calibration`
-- 报告绑定代码提交：`0bdafe649ddf703e80a4eb32e150187131c5539a`
+- 报告绑定代码提交：`74951860bbed24e1ee028d5ee800f72cdbe2a64f`
 - working tree dirty：`false`
 - push：是
+- 远端分支 SHA：`74951860bbed24e1ee028d5ee800f72cdbe2a64f`
 - merge：否
 - PR：否
 
