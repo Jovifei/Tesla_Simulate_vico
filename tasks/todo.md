@@ -3968,4 +3968,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 2026-08-23 重新核对 Ferrari 458、Hellcat、RX-7 商业录音库的车型、同步 take、录音链和许可边界；写入 `tasks/reports/runtime/s12-stage-q-real-reference/procurement_candidate_revalidation_20260823.json`。三者均保持 `PROCUREMENT_CANDIDATE_NOT_R1`：未购买/未取得书面许可，且页面未提供数值同步 RPM/Load/Throttle/Gear 文件；未下载版权原始音频。
 - [x] 修复 Track-P guard 对 Stage-Q/R `run_r2_matlab_psychoacoustic_audit.m` 的保守 `matlab` 路径假阳性：按 Baseline v3 §3.3 仅加入精确 Track-S allowlist，不改变 180 个冻结文件或 2 个冻结符号；guard 与聚焦回归重新通过（`69 passed`）。
 - [x] 修正 R1 资格门对采集链的过窄假设：麦位不再限定 `EXTERIOR_REAR`，AGC 不再限定 `DOCUMENTED_NO_AGC`；只要明确记录即可，UNKNOWN/空值仍拒绝。新增测试覆盖 `INTERIOR_CABIN_DASH`、`DOCUMENTED_AGC_ON_WITH_LEVEL_TRACE` 和未知值；R1 计数仍为 0。
+- [x] 当前 HEAD 最终回归：`426 passed, 114 subtests passed in 147.96s`；Track-P guard `180 files / 2 symbols PASS`，compileall、JSON 包校验和 `git diff --check` 通过。
 - [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。
