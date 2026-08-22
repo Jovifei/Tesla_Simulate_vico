@@ -70,6 +70,13 @@
 - 对选定音频逐条运行 `ffmpeg -v error -map 0:a:0 -f null -`，解码验证 `24/24`；验证清单 `decode_validation_v1.json` SHA-256 `C881F8790B52426F5C9F6FF5CF8A57EF76670C5A651FCE32AAB0DEF3AECA7CE4`。
 - 这只证明“可下载、可解码的 YouTube 有损派生音频”完整，不证明原始视频 `24/24`、授权、原厂状态、麦克风/AGC 或同步 RPM/负载/挡位。24 条继续保持 `R3`，不得进入 R2、阶次门、Comparator 合格输入或自动调参；原始文件仍只在仓库外。
 
+### 视频体恢复重试（2026-08-22，后续收据）
+
+- 在独立外部目录 `E:\Claude_allow\Download\s12-real-vehicle-source-library-v1-20260822\retry_tools_20260822_v2` 使用 `yt-dlp 2026.06.30.234726 + Node.js EJS`、`--proxy ""`、`web_embedded` 和渐进式 360p/≤480p 格式重试；首轮 403 产生的 `.part`/截断物全部保留。
+- 对 `XWEjZHFQ5lc`、`GQ0972wohFs` 仍返回短头部的两条，改用 `134` 视频 + 英文原声 `140-9`/`140-8` 分流合并；随后对 24 个最终候选执行 `ffprobe`、`ffmpeg -xerror -err_detect explode` 全流解码和 info.json 时长对照，结果为 `24/24 COMPLETE_DECODABLE`。
+- 最终严格收据：`strict_decode_manifest_v3.json`，SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`；恢复策略和旧失败物收据：`download_recovery_receipt_v2.json`，SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`。
+- `24/24` 只表示这些公开 YouTube 派生媒体在仓库外可完整解码；它们仍没有可审计授权、原厂状态或同步 RPM/Load/Throttle/Gear/shift，全部保持 `R3`，不得进入 R1/R2 阶次门或自动调参。
+
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
 ## 可采购/授权的 R1 候选（尚未纳入）

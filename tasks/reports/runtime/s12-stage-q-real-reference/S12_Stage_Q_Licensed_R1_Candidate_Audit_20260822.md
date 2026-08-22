@@ -8,6 +8,8 @@
 
 - 外部候选审计：`E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json`。
 - 候选审计 SHA-256：`082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`。
+- 曲目单状态字段筛选收据：`E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\tracklist_state_screening_v1.json`。
+- 曲目单筛选 SHA-256：`eb185ddcfffe142c97988fe45a4524fecb26bf52a62c81c49a3a3b2d30dffb37`；使用 `pypdf` 解析 Ferrari/Hellcat/RX-7 三份 PDF，均为 `numeric_rpm_trace_present=false`、`load_or_throttle_label_line_count=0`、`state_trace_file_present=false`，只有 `STEADY RPMS`/`RPM Ramps`/`GEARSHIFTS` 等标签，不能把标签当作数值同步状态。
 - 公开页面/曲目单快照目录：`E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\source_snapshots`。
 - 原始版权音频下载：`false`；购买行为：`false`。
 - Ferrari 商品页的站点直连返回 HTTP 403，使用只读网页快照读取并保留 `retrieval_url` 与 SHA；Hellcat/RX-7 商品页和 Sonniss 许可页通过带 User-Agent 的只读 HTML 请求成功。所有下载物均是网页或 PDF，不是音频。

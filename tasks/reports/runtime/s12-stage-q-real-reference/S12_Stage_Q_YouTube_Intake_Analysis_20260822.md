@@ -4,11 +4,15 @@
 
 ## 结论先行
 
+最新下载状态（后续恢复）：在独立外部目录关闭系统代理、启用 Node.js EJS 和 `web_embedded` 后，先用渐进式 360p/≤480p 下载；对两条短头部文件再用 `134` 视频 + `140-9`/`140-8` 英文原声分流合并。24 个最终视频均通过 `ffprobe` 与 `ffmpeg -xerror -err_detect explode` 全流校验，收据为 `retry_tools_20260822_v2/strict_decode_manifest_v3.json`（SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`），策略收据为 `download_recovery_receipt_v2.json`（SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`）。
+
 本轮已经把压缩包中的八车型目录按“每车 3 条”落成 24 条外部来源，并完成了视频→无增益 PCM WAV→SHA-256→抽帧→派生特征→Comparator 诊断链。第一次批量下载受到 YouTube 403/SABR 影响，仅 1/24 条视频完整；Android 客户端回退得到 21 条可用记录，另外 3 条保留为不完整容器并用替代 URL 补齐组合库。针对原始 3 条又用 `yt-dlp + Node.js EJS + web_embedded` 重试：`yXw_35i3RMM` 通过完整视频/音频解码；`XWEjZHFQ5lc` 和 `GQ0972wohFs` 的视频仍是“可探测头部、媒体体不完整”，但新增的 `web_embedded` 音频格式 `140-9`/`140-8` 已分别完整下载并通过解码校验。随后发现系统代理 `127.0.0.1:7890` 是批量媒体直链 403 的主要触发条件之一；在全新目录关闭代理并按客户端回退后，原始 24 条 URL 的音频流全部取得并通过解码验证（`24/24`）。这不等于原始视频 `24/24` 恢复，也不等于真实原厂声浪闭环完成。
 
 这不等于“真实原厂声浪闭环完成”。严格门禁下 24 条全部是 `R3`：公开 YouTube 视频的授权收据、精确原厂排气确认、同步 RPM/负载/挡位、麦克风与 AGC 采集合同均未提供。Comparator 结果只能作为数字域相对诊断；阶次、身份分数、自动调参和 Profile 更新均明确关闭。
 
 ## 按用户指定顺序的执行核对
+
+> 口径更新：上文 `1/24` 和 `1/3` 是首轮/Node.js 历史收据的失败率；后续 `retry_tools_20260822_v2` 已以独立路径完成 24/24 严格视频完整性验证，旧失败物仍保留用于审计。
 
 | 顺序 | 本轮结果 | 是否可进入调音 |
 | --- | --- | --- |
@@ -29,6 +33,7 @@
 - 视频/WAV：组合库 `24/24` 可探测、可读取；原始 3 条专门复核的完整视频仍为 `1/3`，但直接无代理音频重试已使原始 24 条 URL 的完整可解码音频达到 `24/24`。对应外部清单为 `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json`（SHA-256 `45DDB25441D3F09A35D6875011A8CBF2726DD03D921069F013B1E94385F4FD3F`），`decode_validation_v1.json`（SHA-256 `C881F8790B52426F5C9F6FF5CF8A57EF76670C5A651FCE32AAB0DEF3AECA7CE4`）。这只代表音频流完整，不把视频完整率改写为 `24/24`；WAV 为无增益 PCM 解码产物，未做 EQ/AGC/响度匹配。
 - 抽帧：每条最多 12 帧；当前环境没有 Tesseract，OCR 状态为 `NOT_AVAILABLE_TESSERACT_MISSING`，没有把仪表读数当作 RPM 证据。
 - 首轮失败物：`intake_20260822_v1` 保留 403/不完整下载日志；`intake_20260822_v2` 保留 21 条可用记录和 3 个损坏容器，`intake_replacements_20260822_v1` 提供 3 条替代 URL。Node.js/Web 客户端重试证据在外部 `retry_js_20260822/youtube_retry_js_manifest_v1.json`，其中两条视频仍标为 `INCOMPLETE_MEDIA_BODY`；仅音频成功回退及 WAV SHA 在 `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`。没有删除或覆盖首轮证据。
+- 后续恢复：`retry_tools_20260822_v2` 将系统代理 403 与渐进式短头部分别隔离，最终 `strict_decode_manifest_v3.json` 记录 24/24 `COMPLETE_DECODABLE`；`download_recovery_receipt_v2.json` 记录使用的 Node.js EJS、直接网络、分流格式和旧失败物路径。该结果仍是公开 YouTube 派生 `R3`，不改变授权、原厂状态或同步状态门禁。
 
 ## 派生结果（全部在仓库外）
 
@@ -45,6 +50,7 @@
 - `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`：两条截断视频的 `web_embedded` 仅音频成功回退、压缩音频/WAV SHA、44.1 kHz/2 ch 解码校验；仍标为 R3，未进入 R2 或调参。
 - `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json`：关闭系统代理后的原始 24 条 URL 音频重试清单，记录客户端、外部路径、容器、编码、时长、SHA-256 和 R3 门禁；`decode_validation_v1.json` 记录 24/24 的 `ffmpeg` 解码验证。
 - `retry_direct_20260822_v1/analysis_r3_direct_v1/`：基于上述原始 24 条 URL 的外部 WAV，重新运行现有 `analyze_downloaded_sources.py`，生成 24 条特征、24 条 Comparator、8 车参数诊断和中文 R3 差异报告；收据为 `direct_analysis_receipt_v1.json`，SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`。这份结果是当前原始 URL 的 R3 补充基线，不替代三条有许可 R2 基线。
+- `retry_tools_20260822_v2/`：关闭代理后的最终视频恢复、分流格式回退、逐文件 SHA 和严格全流解码收据；其中两条旧短头部文件保留为失败证据，最终 24 条媒体均未进入 Git。
 
 Git 只保留本报告、入口代码和这些外部产物的路径/SHA/派生特征引用；没有复制任何原始视频或版权音频。
 

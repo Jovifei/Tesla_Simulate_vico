@@ -3859,6 +3859,8 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 增加中文报告 `tasks/reports/runtime/s12-stage-q-real-reference/S12_Stage_Q_YouTube_Intake_Analysis_20260822.md`，明确区分已完成链路与授权/同步状态/人耳反馈阻塞。
 - [x] 复核三锚点商业同步录音候选的官方商品页、许可页和曲目单；只下载网页/PDF，不下载版权原始音频。外部候选审计 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json` SHA-256 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`；三项均保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
 - [x] 验证：URL intake、Comparator、Stage-Q 重点测试 `22 passed`；新分析脚本实际跑完 `24/24`；`py_compile` 和 `git diff --check` 通过。
+- [x] 解析三份商业候选曲目单 PDF 的状态字段并固化外部收据 `tracklist_state_screening_v1.json`（SHA-256 `eb185ddcfffe142c97988fe45a4524fecb26bf52a62c81c49a3a3b2d30dffb37`）：三项均无数值 RPM trace、Load/Throttle 字段或 state trace 文件，标签不能升级为 R1。
+- [x] 针对 YouTube 初始 `1/24` 与代理 403 新建外部 `retry_tools_20260822_v2`，启用直接网络、Node.js EJS、`web_embedded` 渐进式格式及两条 `134 + 140` 分流回退；24/24 最终媒体通过严格 ffmpeg 全流解码。`strict_decode_manifest_v3.json` SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`，`download_recovery_receipt_v2.json` SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`；旧截断物保留，全部原始媒体仍在 Git 外。
 - [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
 
 ### Review
