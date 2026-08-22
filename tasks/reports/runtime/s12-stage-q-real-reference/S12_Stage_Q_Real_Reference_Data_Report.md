@@ -90,6 +90,14 @@
 
 本轮没有新增合法、车型明确且可绑定同步状态的三锚点原始包，Stage Q 仍保持 `REAL_REFERENCE_DATASET_LIMITED / WAITING_FOR_REAL_REFERENCE_DATA`。
 
+### 公开同步数据复核（2026-08-22）
+
+- [F1Audio](https://zenodo.org/records/21186137) 明确包含同步 RPM、挡位和油门，但文件受限访问，且对象是 F1 赛车，不是 Ferrari 458、Hellcat 或 RX-7 FD；不下载、不升级为锚点 R1。
+- [Visual-Acoustic Vehicle Dataset](https://vehical.org/ITSDataset/) 提供时间戳、发动机 RPM、油门、挡位和车内/车外麦克风，但车辆是 Lincoln MKS；只作为方法学参考，不进入锚点资格。
+- [HL-CEAD](https://github.com/MachineLearningVisionRG/machine_biometrics) 说明了 1000/1500/2000 RPM 的 WAV 录音、麦克风和录音设备，但车型不包含三个锚点，且只记录空挡稳态、没有数值负载/换挡轨迹；不进入 R1。
+- Ferrari 458、Hellcat、RX-7 的专业库仍需购买或书面许可；供应商页面的“同步 take/steady RPM/gearshift”不是数值状态文件，继续登记为 `PROCUREMENT_CANDIDATE_NOT_R1`。本次未下单、未下载版权原始音频。
+- 筛选收据：`public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`。该审计只保存 URL、字段证据和分类，不包含原始音频；当前锚点 `R1=0`、可用 R2=2、RX-7 FD 开放 R1 未找到。
+
 ### 新增 CC0 Ferrari 458 GT3 候选（2026-08-22）
 
 公开检索补到一条 Freesound CC0 录音：[Moscow Raceway GT Race sounds](https://freesound.org/people/Walking.With.Microphones/sounds/556039/)。页面明确列出 `FERRARI 458 ITALIA GT3`，并注明 Zoom H6 录制；但同一文件还列出其他 16 辆 GT 赛车，没有分段时间绑定，也没有 RPM/Load/Throttle/Gear 状态。因此它只能登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，不进入当前 R2 指标、A/B 或调参。

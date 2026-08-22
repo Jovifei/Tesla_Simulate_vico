@@ -14,6 +14,8 @@
 
 公开来源补充审计：新增一条 Freesound CC0 Ferrari 458 Italia GT3 页面/预览并完成 SHA 与容器核验；由于文件混合 17 辆 GT 赛车且没有 Ferrari 段落时间绑定或同步状态，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，没有进入 R2 指标或调音，R1 仍为 0。
 
+公开同步数据复核：F1Audio 有同步 RPM/挡位/油门但文件受限且车辆不是锚点；Visual-Acoustic 数据集有同步状态但车辆是 Lincoln MKS；HL-CEAD 有固定 RPM 录音但车型和负载/换挡证据不匹配。Ferrari 458、Hellcat、RX-7 的专业库仍需购买/书面许可与数值状态验收。筛选记录位于 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`，SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`；当前 `R1=0`，没有启动 MATLAB 阶次或自动调参。
+
 中文听审入口实测：官方 webMUSHRA 外部 checkout 已应用中文 NLS 覆盖，并以 `language: zh` 的最小配置通过本地浏览器快照验证中文按钮和音频加载；截图与补丁均留在 `E:\Claude_allow\Download`，不进入 Git。该验证不产生 Jovi 听审行，真实反馈仍为 0。
 
 ## 阶段状态

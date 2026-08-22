@@ -1,0 +1,83 @@
+{
+  "schema_version": "s12.stage_q.public_sync_reference_search_audit.v1",
+  "generated_at": "2026-08-22",
+  "scope": ["ferrari_458", "hellcat", "rx7_fd"],
+  "policy": "target_exact_vehicle_and_legal_source_required_for_R1; no_raw_media_in_git",
+  "records": [
+    {
+      "reference_id": "f1audio_2026",
+      "url": "https://zenodo.org/records/21186137",
+      "evidence": ["audio_features", "synchronized_rpm", "gear", "throttle"],
+      "access": "RESTRICTED",
+      "vehicle_match": "F1_race_cars_not_target_anchors",
+      "classification": "NOT_TARGET_R1",
+      "action": "do_not_download"
+    },
+    {
+      "reference_id": "visual_acoustic_vehicle_dataset",
+      "url": "https://vehical.org/ITSDataset/",
+      "evidence": ["timestamps", "engine_rpm", "throttle", "gear", "inside_outside_microphones"],
+      "vehicle_match": "Lincoln_MKS_not_target_anchors",
+      "classification": "NOT_TARGET_R1",
+      "action": "pipeline_method_reference_only"
+    },
+    {
+      "reference_id": "hl_cead",
+      "url": "https://github.com/MachineLearningVisionRG/machine_biometrics",
+      "evidence": ["1000_1500_2000_rpm_levels", "44_1_khz_wav", "microphone_and_recorder_described"],
+      "vehicle_match": "sixteen_manufacturers_models_none_of_three_anchors",
+      "state_limits": ["neutral_gear", "no_numeric_load_trace", "no_shift_trace"],
+      "license_status": "UNVERIFIED",
+      "classification": "NOT_TARGET_R1",
+      "action": "do_not_use_for_anchor_calibration"
+    },
+    {
+      "reference_id": "sonniss_ferrari_458_2013",
+      "url": "https://sonniss.com/sound-effects/ferrari-458-2013/",
+      "evidence": ["target_vehicle", "96_khz_24_bit", "multiple_mic_positions", "steady_rpm_ramps_gearshifts_claimed"],
+      "legal_status": "paid_purchase_not_authorized",
+      "numeric_state_trace": false,
+      "classification": "PROCUREMENT_CANDIDATE_NOT_R1"
+    },
+    {
+      "reference_id": "sonniss_hellcat_2015",
+      "url": "https://sonniss.com/sound-effects/dodge-challenger-hellcat-2015/",
+      "evidence": ["target_vehicle", "96_khz_24_bit", "multiple_mic_positions", "steady_rpm_ramps_gearshifts_claimed"],
+      "legal_status": "paid_purchase_not_authorized",
+      "numeric_state_trace": false,
+      "classification": "PROCUREMENT_CANDIDATE_NOT_R1"
+    },
+    {
+      "reference_id": "sonniss_rx7_1990",
+      "url": "https://sonniss.com/sound-effects/mazda-rx-7-1990/",
+      "evidence": ["target_family_claim", "1990_bridgeport_13b_twin_turbo", "96_khz_24_bit", "synchronized_takes_claimed"],
+      "legal_status": "paid_purchase_not_authorized",
+      "numeric_state_trace": false,
+      "trim_match": "bridgeport_not_verified_stock_fd",
+      "classification": "PROCUREMENT_CANDIDATE_NOT_R1"
+    },
+    {
+      "reference_id": "wikimedia_ferrari_458",
+      "url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+      "license_status": "CC_BY_SA_3_0",
+      "vehicle_match": "Ferrari_458",
+      "state_limits": ["no_synchronized_rpm", "no_load_throttle_gear_trace", "unknown_capture_chain"],
+      "classification": "R2_LIMITED"
+    },
+    {
+      "reference_id": "wikimedia_hellcat",
+      "url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+      "license_status": "CC_BY_SA_4_0",
+      "vehicle_match": "Dodge_Challenger_SRT_Hellcat",
+      "state_limits": ["no_synchronized_rpm", "no_load_throttle_gear_trace", "unknown_capture_chain"],
+      "classification": "R2_LIMITED"
+    }
+  ],
+  "rx7_fd_open_r1_found": false,
+  "r1_target_count": 0,
+  "r2_target_count": 2,
+  "purchase_or_permission_performed": false,
+  "raw_media_downloaded": false,
+  "automatic_tuning_eligible": false,
+  "next_required_input": "lawful_original_audio_plus_numeric_synchronized_rpm_load_throttle_gear_shift_and_capture_metadata"
+}
