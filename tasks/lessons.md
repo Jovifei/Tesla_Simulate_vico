@@ -1203,6 +1203,11 @@ Rules:
 
 - Pattern: Hellcat 完整试听已测得 `-16 LUFS`、`-3.12 dBFS` peak、零削波，且低频轰鸣获得 Jovi 部分认可；但 Jovi 在实际播放时仍明确感到整体音量偏小。数字健康/响度指标没有覆盖 Windows 音量、声卡、耳机/扬声器低频滚降、环境和人耳感知。
 - Rule: 后续响度阶段必须把“数字 master 合格”和“设备/人耳合格”分开报告。先以单一全程固定 gain 的小幅 audition-master A/B（例如 Hellcat `-16` 与 `-14 LUFS`，并保持 peak/headroom）诊断播放级别；不得用 RPM 音量耦合、per-clip AGC、削波或盲目增加 50 Hz 低频替代设备与人耳审核。
+
+## 浏览器工具用途必须和真实闭环边界分开 (2026-08-22)
+
+- Pattern: S12 早期 webMUSHRA 浏览器包是英文界面的 fixture 听审入口，隐藏参考还是 synthetic parent；若没有先说明“它只收集听感反馈”，用户容易把浏览器误解成真实声浪差异报告或调音系统。
+- Rule: 每次浏览器交接必须显式标注用途为“匿名听审/反馈入口”，并单独报告真实参考、差异分析、调音和候选交接状态。研究包可见文本与上游固定按钮必须提供中文覆盖；真实参考缺失时固定显示 `WAITING_FOR_REAL_REFERENCE_DATA`，不得用 fixture 伪装完成闭环。
 # 2026-08-09 S12 Stage C integration lessons
 
 - The standalone 60-second prototype is a direction probe, not production evidence: its shift count was false, its 70 Hz boom used the wrong time base, its centroid claims were hard-coded, and it duplicated the formal afterfire layer.
