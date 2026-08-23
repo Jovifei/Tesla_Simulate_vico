@@ -139,7 +139,9 @@ def _audio_evidence(path_value: str, declared_sha: str, side: str) -> dict[str, 
 def validate_exact_clip_pair(pair: Mapping[str, Any]) -> dict[str, Any]:
     reference = _audio_evidence(str(pair["reference_path"]), str(pair["reference_sha256"]), "reference")
     candidate = _audio_evidence(str(pair["candidate_path"]), str(pair["candidate_sha256"]), "candidate")
-    expected_duration = float(pair.get("window", {}).get("duration_s", 5.0))
+    window = pair.get("window", {})
+    reference_window = window.get("reference", {}) if isinstance(window, Mapping) else {}
+    expected_duration = float(window.get("duration_s") or reference_window.get("duration_s") or 5.0)
     if reference["duration_s"] < expected_duration - 1e-6 or candidate["duration_s"] < expected_duration - 1e-6:
         raise ExactClipValidationError(f"exact clip is shorter than the requested window: {pair.get('pair_id')}")
     return {
@@ -151,7 +153,11 @@ def validate_exact_clip_pair(pair: Mapping[str, Any]) -> dict[str, Any]:
         "reference_class": pair["reference_class"],
         "reference": reference,
         "candidate": candidate,
-        "window": {"start_s": pair["window"]["start_s"], "duration_s": expected_duration},
+        "window": {
+            "start_s": float(window.get("start_s") or reference_window.get("start_s") or 0.0),
+            "duration_s": expected_duration,
+            "profile": window.get("profile") or f"{expected_duration:g}s",
+        },
         "microphone_uncertainty": pair["microphone_uncertainty"],
         "order": pair["order"],
         "required_files": True,
@@ -205,7 +211,8 @@ def analyze_proxy_pair(pair: Mapping[str, Any]) -> dict[str, Any]:
     reference, reference_fs, _, _ = _read_audio(Path(pair["reference_path"]))
     candidate, candidate_fs, _, _ = _read_audio(Path(pair["candidate_path"]))
     candidate = _resample(candidate, candidate_fs, reference_fs)
-    window_samples = min(int(round(5.0 * reference_fs)), reference.size, candidate.size)
+    analysis_duration_s = float(pair.get("window", {}).get("duration_s", 5.0))
+    window_samples = min(int(round(analysis_duration_s * reference_fs)), reference.size, candidate.size)
     reference = reference[:window_samples]
     candidate = candidate[:window_samples]
     reference_metrics, ref_freq, ref_time, ref_spectrogram = _legacy_metrics(reference, reference_fs)
@@ -238,6 +245,7 @@ def analyze_proxy_pair(pair: Mapping[str, Any]) -> dict[str, Any]:
         "file_id": pair["file_id"],
         "vehicle_id": pair["vehicle_id"],
         "scenario": pair["scenario"],
+        "window_profile": pair.get("window", {}).get("profile", f"{analysis_duration_s:g}s"),
         "reference_class": pair["reference_class"],
         "tool_domains": ["Legacy Proxy"],
         "integrity": integrity,

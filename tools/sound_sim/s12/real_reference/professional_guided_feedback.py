@@ -61,7 +61,7 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
     expected = {str(pair["pair_id"]): pair for pair in pairs}
     rows = feedback.get("rows")
     if not isinstance(rows, list) or len(rows) != len(expected):
-        raise GuidedFeedbackError("guided feedback must cover all 9 pairs")
+        raise GuidedFeedbackError(f"guided feedback must cover all {len(expected)} pairs")
     seen: set[str] = set()
     vehicle_summary: dict[str, dict[str, Any]] = defaultdict(lambda: {"rows": 0, "identity_sum": 0, "realism_sum": 0, "preferences": Counter(), "agreements": Counter()})
     problem_summary: Counter[str] = Counter()

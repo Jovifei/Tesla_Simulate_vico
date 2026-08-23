@@ -31,8 +31,9 @@ def _finite_or_none(value: object, label: str) -> float | None:
 
 
 def _validate_rows(receipt: Mapping[str, Any], pairs: Sequence[Mapping[str, Any]], tool_domain: str) -> dict[str, Any]:
-    if receipt.get("status") != "EXECUTED_ON_EXACT_CLIPS":
-        raise ProfessionalReceiptError(f"{tool_domain} receipt is not exact-clip executed")
+    receipt_status = receipt.get("status")
+    if receipt_status not in {"EXECUTED_ON_EXACT_CLIPS", "EXECUTED_ON_LONG_WINDOWS"}:
+        raise ProfessionalReceiptError(f"{tool_domain} receipt is not an executed exact/long-window receipt")
     rows = receipt.get("results")
     if not isinstance(rows, list):
         raise ProfessionalReceiptError(f"{tool_domain} receipt has no results")
@@ -69,7 +70,7 @@ def _validate_rows(receipt: Mapping[str, Any], pairs: Sequence[Mapping[str, Any]
     if seen != expected_keys:
         raise ProfessionalReceiptError(f"{tool_domain} receipt is missing reference and candidate results")
     return {
-        "status": "VALIDATED_EXACT_CLIPS",
+        "status": "VALIDATED_LONG_WINDOWS" if receipt_status == "EXECUTED_ON_LONG_WINDOWS" else "VALIDATED_EXACT_CLIPS",
         "tool_domain": tool_domain,
         "clip_count": len(rows),
         "pair_count": len(expected),

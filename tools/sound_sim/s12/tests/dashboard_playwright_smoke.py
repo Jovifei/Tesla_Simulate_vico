@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 from playwright.sync_api import sync_playwright
 
@@ -10,13 +11,15 @@ ROOT = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "
 
 
 def main() -> int:
-    url = (ROOT / "index.html").resolve().as_uri()
+    page_name = sys.argv[1] if len(sys.argv) > 1 else "index.html"
+    url = (ROOT / page_name).resolve().as_uri()
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, args=["--allow-file-access-from-files"])
         page = browser.new_page()
         page.goto(url, wait_until="networkidle")
         page.wait_for_selector("#trial-nav button")
-        assert page.locator("#trial-nav button").count() == 9
+        expected_trials = 18 if "long_window" in page_name else 9
+        assert page.locator("#trial-nav button").count() == expected_trials
         assert page.locator("text=Professional MATLAB").count() >= 1
         assert page.locator("text=Professional MoSQITo").count() >= 1
         assert page.locator("text=Legacy Proxy").count() >= 1

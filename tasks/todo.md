@@ -3991,3 +3991,12 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Phase 5：三锚点各一个参数组、每组 64 个有界规格；`r2_diagnostic_candidate_results.json` 明确 `SPECIFICATIONS_ONLY_NOT_RENDERED`，不修改 source、不运行 Order、不生成 Profile Freeze。
 - [x] Dashboard 静态合同、0-duration/SHA/file-ID 门、Playwright Chromium 音频加载 smoke、Node 语法、JSON 校验已通过。
 - [ ] 等待 Jovi 在 Dashboard 先阅读专业诊断后提交 `Jovi_Guided_Feedback.json`；收到后只按确认的问题组进行 R2 有界复核。
+
+## S12 Professional Long-Window Extension（2026-08-23）
+
+- [x] 发现旧页面候选 WAV 只有 6.25 秒；未循环拼接或静音补齐，保留 5 秒 exact 基线不变。
+- [x] 外部生成 60 秒本地完整循环（怠速→加速→全负荷→收油/减速→巡航→怠速），目录 `E:\Claude_allow\Download\s12-professional-long-window-candidate-v1`，不进入 Git。
+- [x] 从真实长 reference 和 60 秒本地循环生成 15/30 秒派生窗口：18 对（15 秒 9 对、30 秒 9 对），目录 `E:\Claude_allow\Download\s12-professional-long-window-v1`；只做时间切片，无增益/EQ/AGC/重采样。
+- [x] 长窗口 Legacy Proxy、MATLAB R2026a、MoSQITo 1.2.1 均已执行；长窗口 Order 仍为 `ORDER_COMPARISON_NOT_QUALIFIED`。
+- [x] 新增长窗口页面 `S12_Professional_Comparison_Dashboard_v1/long_window.html`，5 秒基线页面保留；长窗口 Guided Feedback 模板为 `Jovi_Guided_Feedback_Long_Window.json`。
+- [ ] 等待 Jovi 比较 15 秒与 30 秒的动态结构后提交长窗口反馈；反馈前不执行参数修改。
