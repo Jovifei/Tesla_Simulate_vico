@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import numpy as np
 from scipy.io import wavfile
@@ -60,6 +60,11 @@ def compare_triad(reference_path: Path, parent_path: Path, candidate_path: Path,
     """Compute raw Legacy triad metrics; professional receipts bind later using the same SHA."""
 
     reference, parent, candidate = (Path(value).resolve() for value in (reference_path, parent_path, candidate_path))
+    reference_sha = _sha256(reference)
+    parent_sha = _sha256(parent)
+    candidate_sha = _sha256(candidate)
+    if parent_sha == candidate_sha:
+        raise StageUComparatorError("Parent/Candidate SHA must differ before triad comparison")
     rp = _proxy_pair(reference, parent, "reference_parent", scenario, vehicle_id)
     rc = _proxy_pair(reference, candidate, "reference_candidate", scenario, vehicle_id)
     pc = _proxy_pair(parent, candidate, "parent_candidate", scenario, vehicle_id)
@@ -77,9 +82,9 @@ def compare_triad(reference_path: Path, parent_path: Path, candidate_path: Path,
         "reference_path": str(reference),
         "parent_path": str(parent),
         "candidate_path": str(candidate),
-        "reference_sha256": _sha256(reference),
-        "parent_sha256": _sha256(parent),
-        "candidate_sha256": _sha256(candidate),
+        "reference_sha256": reference_sha,
+        "parent_sha256": parent_sha,
+        "candidate_sha256": candidate_sha,
         "reference_parent": rp,
         "reference_candidate": rc,
         "parent_candidate": pc,
@@ -97,4 +102,24 @@ def compare_triad(reference_path: Path, parent_path: Path, candidate_path: Path,
     }
 
 
-__all__ = ["StageUComparatorError", "compare_triad"]
+def compare_reference_parent_candidate(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Compare one rendered grid record while preserving its selection identity."""
+
+    required = ("reference_id", "candidate_id", "vehicle_id", "scenario", "reference_path", "parent_path", "candidate_path")
+    missing = [name for name in required if not str(record.get(name) or "")]
+    if missing:
+        raise StageUComparatorError(f"triad record missing required fields: {', '.join(missing)}")
+    result = compare_triad(
+        Path(str(record["reference_path"])),
+        Path(str(record["parent_path"])),
+        Path(str(record["candidate_path"])),
+        str(record["scenario"]),
+        str(record["vehicle_id"]),
+    )
+    result["reference_id"] = str(record["reference_id"])
+    result["candidate_id"] = str(record["candidate_id"])
+    result["hard_gates_pass"] = bool(record.get("hard_gates_pass", True))
+    return result
+
+
+__all__ = ["StageUComparatorError", "compare_reference_parent_candidate", "compare_triad"]

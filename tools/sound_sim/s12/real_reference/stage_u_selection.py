@@ -1,16 +1,16 @@
 """Fail-closed Stage U candidate selection; never select merely the least bad candidate."""
 from __future__ import annotations
 
-import math
 from collections import defaultdict
 from statistics import median
 from typing import Any, Mapping, Sequence
 
 
-def _required_improvements(vehicle_id: str, reference_count: int) -> int:
-    if vehicle_id == "rx7_fd":
-        return max(3, math.ceil(reference_count * 3.0 / 5.0))
-    return max(1, math.ceil(reference_count * 2.0 / 3.0))
+_REFERENCE_REQUIREMENTS = {
+    "ferrari_458": (3, 2),
+    "hellcat": (3, 2),
+    "rx7_fd": (5, 3),
+}
 
 
 def select_candidates(results: Sequence[Mapping[str, Any]], *, severe_regression_fraction: float = 0.10) -> dict[str, Any]:
@@ -25,7 +25,10 @@ def select_candidates(results: Sequence[Mapping[str, Any]], *, severe_regression
     for (vehicle_id, candidate_id), rows in sorted(grouped.items()):
         improvements = [float(row["absolute_improvement"]) for row in rows]
         parent_distances = [max(float(row["parent_distance"]), 1e-12) for row in rows]
-        required = _required_improvements(vehicle_id, len(rows))
+        requirement = _REFERENCE_REQUIREMENTS.get(vehicle_id)
+        expected_reference_count, required = requirement if requirement is not None else (0, 0)
+        reference_ids = [str(row.get("reference_id") or "") for row in rows]
+        distinct_reference_count = len({reference_id for reference_id in reference_ids if reference_id})
         improved_count = sum(value > 0.0 for value in improvements)
         severe_regression = any(value < -severe_regression_fraction * parent for value, parent in zip(improvements, parent_distances))
         professional_bound = all(bool(row.get("professional_bound")) for row in rows)
@@ -34,6 +37,8 @@ def select_candidates(results: Sequence[Mapping[str, Any]], *, severe_regression
             "vehicle_id": vehicle_id,
             "candidate_id": candidate_id,
             "reference_count": len(rows),
+            "distinct_reference_count": distinct_reference_count,
+            "expected_reference_count": expected_reference_count,
             "required_improvement_count": required,
             "improved_reference_count": improved_count,
             "median_absolute_improvement": float(median(improvements)),
@@ -43,11 +48,26 @@ def select_candidates(results: Sequence[Mapping[str, Any]], *, severe_regression
             "hard_gates_pass": hard_gates,
             "per_reference": [dict(row) for row in rows],
         }
-        if professional_bound and hard_gates and improved_count >= required and result["median_absolute_improvement"] > 0.0 and not severe_regression:
+        duplicate_coverage = len(reference_ids) != distinct_reference_count
+        exact_coverage = requirement is not None and len(rows) == expected_reference_count and distinct_reference_count == expected_reference_count
+        if not exact_coverage:
+            result["status"] = "REFERENCE_COVERAGE_NOT_QUALIFIED"
+            if requirement is None:
+                result["selection_reason"] = f"unsupported vehicle reference requirement: {vehicle_id}"
+            elif duplicate_coverage:
+                result["selection_reason"] = f"duplicate reference_id coverage; expected {expected_reference_count} distinct clean references"
+            else:
+                result["selection_reason"] = f"expected {expected_reference_count} distinct clean references; received {distinct_reference_count}"
+            rejected.append(result)
+        elif professional_bound and hard_gates and improved_count >= required and result["median_absolute_improvement"] > 0.0 and not severe_regression:
             result["status"] = "QUALIFIED_FOR_SELECTION"
             qualified.append(result)
         else:
             result["status"] = "NO_MEASURABLE_IMPROVEMENT"
+            result["selection_reason"] = (
+                f"requires at least {required} numerically improved references with professional/hard gates, "
+                "positive median improvement, and no severe regression"
+            )
             rejected.append(result)
     qualified_by_vehicle: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in qualified:
@@ -61,13 +81,18 @@ def select_candidates(results: Sequence[Mapping[str, Any]], *, severe_regression
             alternate["status"] = "QUALIFIED_NOT_SELECTED"
             alternate["selection_reason"] = f"lower median/worst-case improvement than {winner['candidate_id']}"
             rejected.append(alternate)
+    failure_status = "NO_MEASURABLE_IMPROVEMENT"
+    if rejected and all(row["status"] == "REFERENCE_COVERAGE_NOT_QUALIFIED" for row in rejected):
+        failure_status = "REFERENCE_COVERAGE_NOT_QUALIFIED"
     return {
         "schema_version": "s12-stage-u-selection-v1",
-        "status": "R2_COMPARATOR_DRIVEN_CANDIDATE_READY" if selected else "NO_MEASURABLE_IMPROVEMENT",
+        "status": "R2_COMPARATOR_DRIVEN_CANDIDATE_READY" if selected else failure_status,
         "selected_candidates": selected,
         "rejected_candidates": rejected,
         "automatic_tuning_eligible": False,
         "profile_candidate_ready": False,
+        "abx_ready": False,
+        "abx_reason": "loudness-matched audition copies are not created by Stage U selection",
         "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
     }
 

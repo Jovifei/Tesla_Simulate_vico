@@ -49,7 +49,12 @@ def merge_professional_triad_results(
         reference_id, candidate_id = (str(legacy["reference_id"]), str(legacy["candidate_id"]))
         clip_ids = {"reference": f"reference::{reference_id}", "parent": f"parent::{reference_id}", "candidate": f"candidate::{reference_id}::{candidate_id}"}
         expected_sha_by_role = {role: expected.get(clip_id) for role, clip_id in clip_ids.items()}
-        sha_bound = all(
+        legacy_bound = all(
+            expected_sha_by_role[role]
+            and str(legacy.get(f"{role}_sha256") or "") == expected_sha_by_role[role]
+            for role in clip_ids
+        )
+        receipt_bound = all(
             clip_ids[role] in expected
             and clip_ids[role] in matlab
             and clip_ids[role] in mosqito
@@ -59,7 +64,15 @@ def merge_professional_triad_results(
         )
         audio = audio_features.get((reference_id, candidate_id))
         audio_bound = bool(audio and audio.get("professional_bound") and isinstance(audio.get("sha_binding"), Mapping) and all(str(audio["sha_binding"].get(role) or "") == expected_sha_by_role[role] for role in clip_ids))
-        sha_bound = sha_bound and audio_bound
+        sha_bound = legacy_bound and receipt_bound and audio_bound
+        if not legacy_bound:
+            binding_status = "LEGACY_SHA_NOT_BOUND"
+        elif not receipt_bound:
+            binding_status = "PROFESSIONAL_RECEIPT_SHA_NOT_BOUND"
+        elif not audio_bound:
+            binding_status = "AUDIO_FEATURE_SHA_NOT_BOUND"
+        else:
+            binding_status = "ALL_COMPONENT_SHA_BOUND"
         components = [1.0]
         professional = {}
         if sha_bound:
@@ -89,6 +102,7 @@ def merge_professional_triad_results(
         row = dict(legacy)
         row.update({
             "professional_bound": sha_bound,
+            "professional_binding_status": binding_status,
             "professional_components": professional,
             "parent_distance": 1.0,
             "candidate_distance": candidate_score,
@@ -106,6 +120,8 @@ def merge_professional_triad_results(
         "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
         "automatic_tuning_eligible": False,
         "profile_candidate_ready": False,
+        "abx_ready": False,
+        "abx_reason": "raw analysis clips are not loudness-matched audition copies",
     }
 
 

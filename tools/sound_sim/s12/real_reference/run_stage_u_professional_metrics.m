@@ -30,6 +30,10 @@ for index = 1:numel(clips)
     if ~isfile(inputPath)
         error('s12:StageU:ClipMissing', 'Stage U clip missing: %s', inputPath);
     end
+    actualSha256 = sha256File(inputPath);
+    if isfield(clip, 'sha256') && ~isempty(clip.sha256) && ~strcmpi(actualSha256, char(clip.sha256))
+        error('s12:StageU:ClipShaMismatch', 'Stage U clip SHA-256 mismatch: %s', char(clip.clip_id));
+    end
     [signal, sampleRateHz] = audioread(inputPath);
     signal = mean(double(signal), 2);
     safeClipId = regexprep(char(clip.clip_id), '[^A-Za-z0-9_-]', '_');
@@ -50,7 +54,7 @@ for index = 1:numel(clips)
     row.vehicle_id = char(clip.vehicle_id);
     row.scenario = char(clip.scenario);
     row.input_path = inputPath;
-    row.input_sha256 = char(clip.sha256);
+    row.input_sha256 = actualSha256;
     row.sample_rate_hz = sampleRateHz;
     row.metrics = result.metrics;
     row.units = struct('loudness_sone', 'sone', 'sharpness_acum', 'acum', 'roughness_asper', 'asper', 'fluctuation_vacil', 'vacil', 'tone_to_noise_ratio_db', 'dB', 'tone_to_noise_frequency_hz', 'Hz', 'prominence_ratio_db', 'dB', 'prominence_frequency_hz', 'Hz');

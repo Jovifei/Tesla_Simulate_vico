@@ -22,7 +22,7 @@ for index = 1:numel(clips)
     end
     safeClipId = regexprep(char(clip.clip_id), '[^A-Za-z0-9_-]', '_');
     featurePath = fullfile(outputRoot, [safeClipId '.json']);
-    run_stage_u_audio_features(char(clip.path), featurePath);
+    featureReceipt = run_stage_u_audio_features(char(clip.path), featurePath, char(clip.sha256));
     row = struct();
     row.clip_id = char(clip.clip_id);
     row.role = char(clip.role);
@@ -33,7 +33,7 @@ for index = 1:numel(clips)
     end
     row.vehicle_id = char(clip.vehicle_id);
     row.scenario = char(clip.scenario);
-    row.input_sha256 = char(clip.sha256);
+    row.input_sha256 = char(featureReceipt.input_sha256);
     row.feature_receipt_path = featurePath;
     rows{index} = row;
     fprintf('[%d/%d] audioFeatureExtractor %s\n', index, numel(clips), char(clip.clip_id));
