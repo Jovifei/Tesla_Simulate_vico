@@ -1,0 +1,56 @@
+{
+  "automatic_tuning_eligible": false,
+  "clip_count": 18,
+  "evidence_level": "R3",
+  "feedback_status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+  "manifest_path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\anchor_ab_zh_manifest.json",
+  "manifest_sha256": "dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052",
+  "package_root": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1",
+  "package_status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+  "page_checks": {
+    "required_tokens": [
+      "manifest_sha",
+      "feedback_schema",
+      "export_button"
+    ],
+    "sha256": "5c495f4fa900f99a1b90c613e818c61249b58a2d239c60f1a2c09bfd956a869f",
+    "status": "PASS",
+    "trial_ids_embedded": 9
+  },
+  "profile_update": "FORBIDDEN",
+  "readme_sha256": "8466ed5880c4b0cfe4a82880896ad2bedbd908c5e4c34c1311e750f960d85478",
+  "receipt_path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\anchor_ab_zh_receipt.json",
+  "receipt_sha256": "fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e",
+  "schema_version": "s12-stage-s-anchor-ab-validation.v1",
+  "sha_checks": {
+    "checked": 20,
+    "clips": {
+      "ferrari_01:candidate_audition_path": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "ferrari_01:reference_audition_path": "b8c63c5f5494fb9241c221bd2b657f73477ad91724de0b58c809d8afcb2f97a1",
+      "ferrari_02:candidate_audition_path": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "ferrari_02:reference_audition_path": "6796b8aa3c4180c050966126055d9d7975696e9821758be2368054cfb01b8065",
+      "ferrari_03:candidate_audition_path": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "ferrari_03:reference_audition_path": "4cd34d2133f7280389a90e0420575530e065e65ba0cca4bd2c84c12e56045385",
+      "hellcat_01:candidate_audition_path": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "hellcat_01:reference_audition_path": "89ed8170e24762f0fc36b0be434716228e10a5eb5e0fb979414ab6eb89e2e0ec",
+      "hellcat_02:candidate_audition_path": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "hellcat_02:reference_audition_path": "0e8f94a9812fd5a2e305cb31e3f2afe13538096155aa93ad5293b780c34bbfcb",
+      "hellcat_03:candidate_audition_path": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "hellcat_03:reference_audition_path": "88639a1fd419f9066f69b9ec45eac59eb07300968dad8dd4799dc3c80a618d7b",
+      "rx7_01:candidate_audition_path": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "rx7_01:reference_audition_path": "851ae8ffe0295864942cfa8111d48a4ce1ec5e010bba46a0801c5ee6381eba1e",
+      "rx7_02:candidate_audition_path": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "rx7_02:reference_audition_path": "f8b3ef807221a0761f1ec09eb44b940da55ee5741ac6ea5140fe0f4cc6beccd4",
+      "rx7_03:candidate_audition_path": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "rx7_03:reference_audition_path": "6413d2ef5379d224c7e2335a8debfbb34106932f13a64d99266b23e327a99cfe"
+    },
+    "failed": []
+  },
+  "status": "VALIDATION_PASS",
+  "trial_count": 9,
+  "vehicle_counts": {
+    "ferrari_458": 3,
+    "hellcat": 3,
+    "rx7_fd": 3
+  }
+}
