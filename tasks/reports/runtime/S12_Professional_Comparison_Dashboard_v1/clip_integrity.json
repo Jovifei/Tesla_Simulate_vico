@@ -1,0 +1,352 @@
+{
+  "schema_version": "s12-professional-exact-clip-integrity-v1",
+  "status": "PASS",
+  "manifest_path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\anchor_ab_zh_manifest.json",
+  "manifest_sha256": "dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052",
+  "pair_count": 9,
+  "clip_count": 18,
+  "pairs": [
+    {
+      "status": "PASS",
+      "pair_id": "ferrari_01",
+      "file_id": "ferrari_01-reference-vs-candidate",
+      "vehicle_id": "ferrari_458",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_01\\reference.wav",
+        "sha256": "b8c63c5f5494fb9241c221bd2b657f73477ad91724de0b58c809d8afcb2f97a1",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_01\\candidate.wav",
+        "sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 70.62498866213151,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "ferrari_02",
+      "file_id": "ferrari_02-reference-vs-candidate",
+      "vehicle_id": "ferrari_458",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_02\\reference.wav",
+        "sha256": "6796b8aa3c4180c050966126055d9d7975696e9821758be2368054cfb01b8065",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_02\\candidate.wav",
+        "sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 101.37501133786849,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "ferrari_03",
+      "file_id": "ferrari_03-reference-vs-candidate",
+      "vehicle_id": "ferrari_458",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_03\\reference.wav",
+        "sha256": "4cd34d2133f7280389a90e0420575530e065e65ba0cca4bd2c84c12e56045385",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\ferrari_458\\ferrari_03\\candidate.wav",
+        "sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 17.375,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "hellcat_01",
+      "file_id": "hellcat_01-reference-vs-candidate",
+      "vehicle_id": "hellcat",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_01\\reference.wav",
+        "sha256": "89ed8170e24762f0fc36b0be434716228e10a5eb5e0fb979414ab6eb89e2e0ec",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_01\\candidate.wav",
+        "sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 94.87501133786849,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "hellcat_02",
+      "file_id": "hellcat_02-reference-vs-candidate",
+      "vehicle_id": "hellcat",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_02\\reference.wav",
+        "sha256": "0e8f94a9812fd5a2e305cb31e3f2afe13538096155aa93ad5293b780c34bbfcb",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_02\\candidate.wav",
+        "sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 51.37501133786848,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "hellcat_03",
+      "file_id": "hellcat_03-reference-vs-candidate",
+      "vehicle_id": "hellcat",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_03\\reference.wav",
+        "sha256": "88639a1fd419f9066f69b9ec45eac59eb07300968dad8dd4799dc3c80a618d7b",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\hellcat\\hellcat_03\\candidate.wav",
+        "sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 27.375011337868482,
+        "duration_s": 4.9999999999999964
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "rx7_01",
+      "file_id": "rx7_01-reference-vs-candidate",
+      "vehicle_id": "rx7_fd",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_01\\reference.wav",
+        "sha256": "851ae8ffe0295864942cfa8111d48a4ce1ec5e010bba46a0801c5ee6381eba1e",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_01\\candidate.wav",
+        "sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 181.87501133786847,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "rx7_02",
+      "file_id": "rx7_02-reference-vs-candidate",
+      "vehicle_id": "rx7_fd",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_02\\reference.wav",
+        "sha256": "f8b3ef807221a0761f1ec09eb44b940da55ee5741ac6ea5140fe0f4cc6beccd4",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_02\\candidate.wav",
+        "sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 1632.6249886621315,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    },
+    {
+      "status": "PASS",
+      "pair_id": "rx7_03",
+      "file_id": "rx7_03-reference-vs-candidate",
+      "vehicle_id": "rx7_fd",
+      "scenario": "scenario_candidate_peak",
+      "reference_class": "R3",
+      "reference": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_03\\reference.wav",
+        "sha256": "6413d2ef5379d224c7e2335a8debfbb34106932f13a64d99266b23e327a99cfe",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "candidate": {
+        "path": "E:\\Claude_allow\\Download\\s12-ytdlp-retry-20260823-v1\\anchor_ab_zh_v1\\audio\\rx7_fd\\rx7_03\\candidate.wav",
+        "sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+        "sha_status": "MATCH",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_s": 5.0,
+        "finite_pcm": true,
+        "nonzero_duration": true
+      },
+      "window": {
+        "start_s": 469.8750113378685,
+        "duration_s": 5.0
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "order": {
+        "status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "reason": "reference and candidate have no synchronized RPM trace"
+      },
+      "required_files": true
+    }
+  ]
+}
