@@ -4032,3 +4032,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] MATLAB R2026a 已在打开会话中逐条执行 `10` 个信号；批处理一次性循环曾触发 `0xc0000005`，未采用崩溃收据；MoSQITo 1.2.1 隔离环境执行 `10` 个信号；MATLAB/MoSQITo/Proxy SHA 交叉校验通过。
 - [x] 生成独立中文页面 `rx7_topic_r2.html`、数据 `rx7_topic_r2_results.json` 和报告 `rx7_topic_r2_report.md`；旧 R3 Dashboard 不覆盖。
 - [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；统一证据矩阵测试通过；RX-7 页面 Playwright smoke PASS；全量 S12 `455 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。
+
+## S12 Stage U — True Comparator-Driven Acoustic Regression（2026-08-23）
+
+> 分支：`agent/s12-stage-u-true-comparator-calibration`；基线：`b1d500c7c37a71728020c39e6dc115a0cd6743d5`。
+
+- [x] 创建隔离工作树并核验 exact HEAD、分支和 Track-P 基线；初始完整 S12 回归 `455 passed, 114 subtests`。
+- [ ] U0/U1：输出基线审计、Silero VAD/人工污染标志、SHA/时长/场景/麦克风合同和 Reference→Trace 场景匹配矩阵。
+- [ ] U2：接入 MATLAB audioFeatureExtractor、AudioCommons timbral_models、可选 OpenL3 和有界 DTW；可选研究指标不进入硬门。
+- [ ] U3：对 Ferrari/Hellcat/RX-7 的实际 renderer 参数做单变量可达性探针；不可达即拒绝 U4 grid。
+- [ ] U4：以同一 synthetic trace 渲染 Reference/Parent/Candidate，最多 64 候选/车；绑定 WAV/PCM/trace/stem/usage/health SHA。
+- [ ] U5/U6：运行 Reference↔Parent、Reference↔Candidate、Parent↔Candidate 专业三方比较；基于中位改善/最坏回归选择或明确拒绝。
+- [ ] U7：构建三播放器 + B/C 随机 ABX 中文页面，所有专业结果和听审文件绑定相同 SHA。
+- [ ] U8：Stage U/Stage N/Q/R/S/full S12/Track-P/WAV-ZIP-SHA/diff 验证并推送。
