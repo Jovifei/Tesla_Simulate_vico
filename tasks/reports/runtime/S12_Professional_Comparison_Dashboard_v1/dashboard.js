@@ -7,6 +7,17 @@
   const results = DATA.results || {};
   const state = { selected: 0, feedback: {}, audioReady: {}, audioErrors: {} };
   const problemOptions = ["太闷", "太薄", "太刺", "机械感不足", "机械感过强", "低频无冲击", "固定电子哨声", "转速变化不自然", "换挡不自然", "回火不自然", "循环/合成器伪影", "当前片段不包含", "无法判断", "其它"];
+  const topicOptions = ["怠速", "加速", "减速/收油", "换挡", "回火/爆音", "转速变化", "音色/机械感"];
+  const sceneTopics = (scenario) => {
+    const label = String(scenario || "").toLowerCase(); const topics = [];
+    if (label.includes("idle") || label.includes("startup")) topics.push("怠速");
+    if (label.includes("acceleration") || label.includes("launch") || label.includes("full_load") || label.includes("full_pull") || label.includes("track")) topics.push("加速");
+    if (label.includes("lift") || label.includes("deceleration") || label.includes("coast") || label.includes("afterfire")) topics.push("减速/收油");
+    if (label.includes("shift") || label.includes("downshift")) topics.push("换挡");
+    if (label.includes("afterfire") || label.includes("backfire")) topics.push("回火/爆音");
+    if (label.includes("rpm") || label.includes("rev") || label.includes("acceleration")) topics.push("转速变化");
+    return topics.length ? topics : ["音色/机械感"];
+  };
   const esc = (value) => String(value == null ? "—" : value).replace(/[&<>\"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
   const fileUrl = (value) => { const p = String(value || "").replace(/\\/g, "/"); return p.match(/^file:/) ? p : "file:///" + p.replace(/^\/+/, ""); };
   const currentPair = () => (metrics.pairs || [])[state.selected];
@@ -55,21 +66,24 @@
   };
   const vehicleIds = () => Array.from(new Set((metrics.pairs || []).map((pair) => pair.vehicle_id)));
   const pairsForVehicle = (vehicleId) => (metrics.pairs || []).filter((pair) => pair.vehicle_id === vehicleId);
-  const feedbackFor = (vehicleId) => state.feedback[vehicleId] || { software_agreement: "", identity: "", realism: "", problems: [], preference: "", notes: "", review_ready: false };
+  const feedbackFor = (vehicleId) => state.feedback[vehicleId] || { software_agreement: "", identity: "", realism: "", problems: [], focus_topics: [], preference: "", notes: "", review_ready: false };
   const renderFeedback = (pair) => {
     const vehicleId = pair.vehicle_id; const f = feedbackFor(vehicleId);
     const problems = problemOptions.map((p) => `<button type="button" class="problem-chip ${f.problems.indexOf(p) >= 0 ? "selected" : ""}" data-problem="${esc(p)}">${esc(p)}</button>`).join("");
+    const topics = topicOptions.map((topic) => `<button type="button" class="topic-chip ${f.focus_topics.indexOf(topic) >= 0 ? "selected" : ""}" data-topic="${esc(topic)}">${esc(topic)}</button>`).join("");
+    const currentTopics = sceneTopics(pair.scenario).join(" / ");
     const completed = vehicleIds().filter((id) => feedbackComplete(id)).length;
-    return `<div class="card feedback" data-feedback-scope="vehicle"><h2>${esc(vehicleId)} · 车型汇总反馈</h2><p class="load-status">当前车型只提交一份评分；先听当前窗口，再确认本车型听审完成。</p><div class="feedback-grid"><label>软件诊断是否符合听感<select data-feedback="software_agreement"><option value="">请选择</option><option ${f.software_agreement === "符合" ? "selected" : ""}>符合</option><option ${f.software_agreement === "部分符合" ? "selected" : ""}>部分符合</option><option ${f.software_agreement === "不符合" ? "selected" : ""}>不符合</option><option ${f.software_agreement === "无法判断" ? "selected" : ""}>无法判断</option></select></label><label>整体车型身份（0–100）<input data-feedback="identity" type="number" min="0" max="100" step="1" value="${esc(f.identity)}"></label><label>整体真实感（0–100）<input data-feedback="realism" type="number" min="0" max="100" step="1" value="${esc(f.realism)}"></label><label>更偏好<select data-feedback="preference"><option value="">请选择</option><option ${f.preference === "参考" ? "selected" : ""}>参考</option><option ${f.preference === "候选" ? "selected" : ""}>候选</option><option ${f.preference === "无明显偏好" ? "selected" : ""}>无明显偏好</option></select></label></div><label class="problem-label">最明显问题（点击标签，可多选）<span class="problem-chips">${problems}</span></label><label>自由备注<textarea data-feedback="notes">${esc(f.notes)}</textarea></label><label class="review-check"><input data-feedback="review_ready" type="checkbox" ${f.review_ready ? "checked" : ""}> 我已听完本车型当前窗口对比，确认提交这份车型评分</label><div class="actions"><button class="primary" id="export-feedback" type="button">提交全部车型反馈</button><span id="submit-status" class="submit-status">已完成车型 ${completed}/${vehicleIds().length}；需要三辆车都确认后提交。</span></div></div>`;
+    return `<div class="card feedback" data-feedback-scope="vehicle"><h2>${esc(vehicleId)} · 车型汇总反馈</h2><p class="load-status">当前车型只提交一份评分；先听当前窗口，再确认本车型听审完成。</p><p class="theme-hint"><strong>当前窗口主题：</strong>${esc(currentTopics)} <span>（由场景标签提示，最终以你的主题选择为准）</span></p><div class="feedback-grid"><label>软件诊断是否符合听感<select data-feedback="software_agreement"><option value="">请选择</option><option ${f.software_agreement === "符合" ? "selected" : ""}>符合</option><option ${f.software_agreement === "部分符合" ? "selected" : ""}>部分符合</option><option ${f.software_agreement === "不符合" ? "selected" : ""}>不符合</option><option ${f.software_agreement === "无法判断" ? "selected" : ""}>无法判断</option></select></label><label>整体车型身份（0–100）<input data-feedback="identity" type="number" min="0" max="100" step="1" value="${esc(f.identity)}"></label><label>整体真实感（0–100）<input data-feedback="realism" type="number" min="0" max="100" step="1" value="${esc(f.realism)}"></label><label>更偏好<select data-feedback="preference"><option value="">请选择</option><option ${f.preference === "参考" ? "selected" : ""}>参考</option><option ${f.preference === "候选" ? "selected" : ""}>候选</option><option ${f.preference === "无明显偏好" ? "selected" : ""}>无明显偏好</option></select></label></div><label class="topic-label">本车型听审主题（至少选择一项）<span class="topic-chips">${topics}</span></label><label class="problem-label">最明显问题（点击标签，可多选）<span class="problem-chips">${problems}</span></label><label>自由备注<textarea data-feedback="notes">${esc(f.notes)}</textarea></label><label class="review-check"><input data-feedback="review_ready" type="checkbox" ${f.review_ready ? "checked" : ""}> 我已听完本车型当前窗口对比，确认提交这份车型评分</label><div class="actions"><button class="primary" id="export-feedback" type="button">提交全部车型反馈</button><span id="submit-status" class="submit-status">已完成车型 ${completed}/${vehicleIds().length}；需要三辆车都确认后提交。</span></div></div>`;
   };
   function collectCurrentFeedback(pair) {
     const root = document.querySelector(".feedback"); if (!root) return;
     const value = (key) => root.querySelector(`[data-feedback='${key}']`)?.value || "";
     const problems = Array.from(root.querySelectorAll(".problem-chip.selected")).map((button) => button.dataset.problem);
     const score = (key) => { const raw = value(key); return raw === "" ? "" : Number(raw); };
-    state.feedback[pair.vehicle_id] = { software_agreement: value("software_agreement"), identity: score("identity"), realism: score("realism"), problems, preference: value("preference"), notes: value("notes"), review_ready: Boolean(root.querySelector("[data-feedback='review_ready']")?.checked) };
+    const focus_topics = Array.from(root.querySelectorAll(".topic-chip.selected")).map((button) => button.dataset.topic);
+    state.feedback[pair.vehicle_id] = { software_agreement: value("software_agreement"), identity: score("identity"), realism: score("realism"), problems, focus_topics, preference: value("preference"), notes: value("notes"), review_ready: Boolean(root.querySelector("[data-feedback='review_ready']")?.checked) };
   }
-  function feedbackComplete(vehicleId) { const f = feedbackFor(vehicleId); return Boolean(f.review_ready) && [f.software_agreement, f.identity, f.realism, f.preference].every(Boolean) && Number.isInteger(f.identity) && Number.isInteger(f.realism) && f.identity >= 0 && f.identity <= 100 && f.realism >= 0 && f.realism <= 100; }
+  function feedbackComplete(vehicleId) { const f = feedbackFor(vehicleId); return Boolean(f.review_ready) && Array.isArray(f.focus_topics) && f.focus_topics.length > 0 && [f.software_agreement, f.identity, f.realism, f.preference].every(Boolean) && Number.isInteger(f.identity) && Number.isInteger(f.realism) && f.identity >= 0 && f.identity <= 100 && f.realism >= 0 && f.realism <= 100; }
   function vehicleAudioReady(vehicleId) { return pairsForVehicle(vehicleId).some((pair) => state.audioReady[`${pair.pair_id}:reference`] && state.audioReady[`${pair.pair_id}:candidate`]); }
   function allAudioReady() { return vehicleIds().every(vehicleAudioReady); }
   function allFeedbackComplete() { return vehicleIds().every(feedbackComplete); }
@@ -85,12 +99,13 @@
     const players = document.querySelector(".players"); players.append(makeAudio(pair, "reference", "参考播放器"), makeAudio(pair, "candidate", "候选播放器"));
     document.querySelectorAll("[data-feedback]").forEach((el) => el.addEventListener("input", () => { collectCurrentFeedback(pair); updateSubmit(); }));
     document.querySelectorAll(".problem-chip").forEach((chip) => chip.addEventListener("click", () => { chip.classList.toggle("selected"); collectCurrentFeedback(pair); updateSubmit(); }));
+    document.querySelectorAll(".topic-chip").forEach((chip) => chip.addEventListener("click", () => { chip.classList.toggle("selected"); collectCurrentFeedback(pair); updateSubmit(); }));
     document.getElementById("export-feedback").addEventListener("click", () => exportFeedback()); updateSubmit();
   }
   function exportFeedback() {
     const pair = currentPair(); collectCurrentFeedback(pair);
     if (!allAudioReady() || !allFeedbackComplete()) { updateSubmit(); return null; }
-    const payload = { schema_version: "s12-professional-jovi-guided-feedback-v2", feedback_scope: "vehicle", package_manifest_sha256: metrics.manifest_sha256 || null, window_profiles_s: metrics.window_profiles_s || [5], evidence_level: "R3", status: "READY_FOR_REVIEW", automatic_tuning_eligible: false, profile_update: "FORBIDDEN", exported_at_utc: new Date().toISOString(), audio_submit_gate: { status: "PASS", required: ["canplaythrough", "duration>0", "reference_sha_match", "candidate_sha_match", "required_files"] }, rows: vehicleIds().map((vehicleId) => ({ vehicle_id: vehicleId, pair_ids: pairsForVehicle(vehicleId).map((item) => item.pair_id), file_ids: pairsForVehicle(vehicleId).map((item) => item.file_id), reference_sha256s: pairsForVehicle(vehicleId).map((item) => item.reference_sha256), candidate_sha256s: pairsForVehicle(vehicleId).map((item) => item.candidate_sha256), ...feedbackFor(vehicleId) })) };
+    const payload = { schema_version: "s12-professional-jovi-guided-feedback-v3", feedback_scope: "vehicle", package_manifest_sha256: metrics.manifest_sha256 || null, window_profiles_s: metrics.window_profiles_s || [5], evidence_level: "R3", status: "READY_FOR_REVIEW", automatic_tuning_eligible: false, profile_update: "FORBIDDEN", exported_at_utc: new Date().toISOString(), audio_submit_gate: { status: "PASS", required: ["canplaythrough", "duration>0", "reference_sha_match", "candidate_sha_match", "required_files"] }, rows: vehicleIds().map((vehicleId) => ({ vehicle_id: vehicleId, pair_ids: pairsForVehicle(vehicleId).map((item) => item.pair_id), file_ids: pairsForVehicle(vehicleId).map((item) => item.file_id), reference_sha256s: pairsForVehicle(vehicleId).map((item) => item.reference_sha256), candidate_sha256s: pairsForVehicle(vehicleId).map((item) => item.candidate_sha256), ...feedbackFor(vehicleId) })) };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "Jovi_Guided_Feedback.json"; link.click(); URL.revokeObjectURL(link.href); return payload;
   }
   window.S12Dashboard = { exportFeedback };

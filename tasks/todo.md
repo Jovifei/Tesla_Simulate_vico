@@ -4021,3 +4021,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - Jovi 反馈输入 SHA-256：`acfbcbab2022612621aba2cec8a73a5dbc193e0a142f247989f81b00356b673d`；长窗口 manifest SHA 保持 `ecbe8dc92fa63ed00a76e1554a37a1ff452aaa6af0eff5b3bd3edbadcd64c2a1`。
 - 当前结果：`R2_DIAGNOSTIC_REVIEW_READY / NOT_R1_QUALIFIED`；`parameter_changes=0`、`automatic_tuning_eligible=false`、`profile_candidate_ready=false`。
+
+## S12 主题化听审与 RX-7 清洁参考 R2（2026-08-23）
+
+- [x] 设计并提交 `docs/superpowers/specs/2026-08-23-s12-rx7-topic-aware-r2-design.md` 与实施计划；保留历史 R3 页面和外部原始音频边界。
+- [x] Dashboard 两套页面新增中文 `focus_topics`：怠速、加速、减速/收油、换挡、回火/爆音、转速变化、音色/机械感；新导出为 v3，每车至少选一个主题；v1/v2 旧反馈仍可导入。
+- [x] 修复 MoSQITo 长窗口收据对非 15/30 秒 native 窗口的硬编码，改为从 manifest 推导窗口时长。
+- [x] 外部构建 `E:\Claude_allow\Download\s12-rx7-topic-r2-v4`：5 条作者 R2 参考、5 条有界 RX-7 候选，原生时长 `7.658208/7.679917/14/16.5 s`；参考为字节一致外部副本，未循环/补静音/处理参考。
+- [x] RX-7 候选只改 `rotary_housing_turbo_distribution` 一组参数，并以一次固定候选增益留出 `-1.5 dBFS` 余量；source/PTR/Radiation 未改，`parameter_changes=1` 仅表示候选版本已渲染。
+- [x] MATLAB R2026a 已在打开会话中逐条执行 `10` 个信号；批处理一次性循环曾触发 `0xc0000005`，未采用崩溃收据；MoSQITo 1.2.1 隔离环境执行 `10` 个信号；MATLAB/MoSQITo/Proxy SHA 交叉校验通过。
+- [x] 生成独立中文页面 `rx7_topic_r2.html`、数据 `rx7_topic_r2_results.json` 和报告 `rx7_topic_r2_report.md`；旧 R3 Dashboard 不覆盖。
+- [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；RX-7 页面 Playwright smoke PASS；全量 S12 `454 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。

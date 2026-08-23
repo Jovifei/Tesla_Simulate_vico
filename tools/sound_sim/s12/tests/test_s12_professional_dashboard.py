@@ -76,3 +76,24 @@ def test_dashboard_uses_clickable_problem_chips_and_one_vehicle_level_submit() -
     assert "feedback_scope" in js
     assert "vehicle_id" in js
     assert "select multiple" not in js
+
+
+def test_dashboard_exposes_chinese_focus_topics_and_scene_hint() -> None:
+    root = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "S12_Professional_Comparison_Dashboard_v1"
+    js = (root / "dashboard.js").read_text(encoding="utf-8")
+    for token in ("topic-chip", "focus_topics", "怠速", "减速/收油", "换挡", "回火/爆音", "转速变化", "当前窗口主题"):
+        assert token in js
+
+
+def test_rx7_topic_dashboard_is_separate_and_fail_closed() -> None:
+    root = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "S12_Professional_Comparison_Dashboard_v1"
+    html = (root / "rx7_topic_r2.html").read_text(encoding="utf-8")
+    js = (root / "rx7_topic_r2.js").read_text(encoding="utf-8")
+    results = json.loads((root / "rx7_topic_r2_results.json").read_text(encoding="utf-8"))
+    for token in ("RX-7 FD", "CC BY-NC-SA 4.0", "Professional MATLAB", "Professional MoSQITo", "ORDER_COMPARISON_NOT_QUALIFIED", "调整后候选"):
+        assert token in html + js
+    assert "audio" in html + js and "S12_RX7_TOPIC_R2_DATA" in js
+    assert results["status"] == "RX7_R2_PROFESSIONAL_COMPARISON_COMPLETE"
+    assert results["pair_count"] == 5 and results["clip_count"] == 10
+    assert results["order_status"] == "ORDER_COMPARISON_NOT_QUALIFIED"
+    assert results["candidate"]["source_modified"] is False

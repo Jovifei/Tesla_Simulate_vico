@@ -55,7 +55,7 @@ def run_long_mosqito(manifest_path: Path, output_path: Path) -> dict:
         "mosqito_version": "1.2.1",
         "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         "clip_count": len(rows),
-        "window_profiles_s": [15.0, 30.0],
+        "window_profiles_s": sorted({float(pair["window"]["duration_s"]) for pair in pairs}),
         "results": rows,
         "input_calibration": "digital-domain relative input; no full-scale-to-Pascal calibration or absolute SPL claim",
         "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",

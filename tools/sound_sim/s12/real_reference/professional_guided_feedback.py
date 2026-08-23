@@ -15,6 +15,7 @@ class GuidedFeedbackError(ValueError):
 _AGREEMENT = {"符合", "部分符合", "不符合", "无法判断"}
 _PREFERENCE = {"参考", "候选", "无明显偏好"}
 _PROBLEMS = {"太闷", "太薄", "太刺", "机械感不足", "机械感过强", "低频无冲击", "固定电子哨声", "转速变化不自然", "换挡不自然", "回火不自然", "循环/合成器伪影", "当前片段不包含", "无法判断", "其它"}
+_FOCUS_TOPICS = ("怠速", "加速", "减速/收油", "换挡", "回火/爆音", "转速变化", "音色/机械感")
 
 
 def _read(path: Path, label: str) -> dict[str, Any]:
@@ -53,11 +54,23 @@ def _score(value: object, label: str) -> int:
     return score
 
 
+def _focus_topics(value: object, label: str, *, required: bool) -> list[str] | None:
+    if value is None:
+        if required:
+            raise GuidedFeedbackError(f"{label} must contain at least one focus_topics value")
+        return None
+    if not isinstance(value, list) or not value or any(not isinstance(topic, str) or topic not in _FOCUS_TOPICS for topic in value):
+        raise GuidedFeedbackError(f"{label} contains an unknown or empty focus_topics list")
+    if len(set(value)) != len(value):
+        raise GuidedFeedbackError(f"{label} contains duplicate focus_topics")
+    return list(value)
+
+
 def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[str, Any]:
     feedback = _read(Path(feedback_path), "Jovi guided feedback")
     metrics = _read(Path(metrics_path), "professional pair metrics")
     schema_version = feedback.get("schema_version")
-    if schema_version not in {"s12-professional-jovi-guided-feedback-v1", "s12-professional-jovi-guided-feedback-v2"}:
+    if schema_version not in {"s12-professional-jovi-guided-feedback-v1", "s12-professional-jovi-guided-feedback-v2", "s12-professional-jovi-guided-feedback-v3"}:
         raise GuidedFeedbackError("unexpected guided feedback schema")
     if feedback.get("status") != "READY_FOR_REVIEW":
         raise GuidedFeedbackError("guided feedback must be READY_FOR_REVIEW")
@@ -71,7 +84,7 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
     if feedback.get("package_manifest_sha256") != metrics.get("manifest_sha256"):
         raise GuidedFeedbackError("package manifest SHA mismatch")
     if schema_version == "s12-professional-jovi-guided-feedback-v2" or feedback.get("feedback_scope") == "vehicle":
-        return _validate_vehicle_feedback(feedback, metrics)
+        return _validate_vehicle_feedback(feedback, metrics, schema_version == "s12-professional-jovi-guided-feedback-v3")
     pairs = metrics.get("pairs")
     if not isinstance(pairs, list) or len(pairs) != 9:
         raise GuidedFeedbackError("professional metrics must contain 9 pairs")
@@ -106,6 +119,7 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
         problems = row.get("problems")
         if not isinstance(problems, list) or any(problem not in _PROBLEMS for problem in problems):
             raise GuidedFeedbackError(f"invalid problem list: {pair_id}")
+        focus_topics = _focus_topics(row.get("focus_topics"), f"{pair_id}.focus_topics", required=False)
         identity = _score(row.get("identity"), f"{pair_id}.identity")
         realism = _score(row.get("realism"), f"{pair_id}.realism")
         notes = row.get("notes")
@@ -128,6 +142,7 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
             "identity": identity,
             "realism": realism,
             "problems": list(problems),
+            "focus_topics": focus_topics,
             "preference": preference,
             "notes": notes.strip() if isinstance(notes, str) and notes.strip() else None,
         })
@@ -156,10 +171,11 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
         "automatic_tuning_eligible": False,
         "profile_update": "FORBIDDEN",
         "profile_candidate_ready": False,
+        "legacy_feedback_without_topics": any(row["focus_topics"] is None for row in canonical),
     }
 
 
-def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str, Any]) -> dict[str, Any]:
+def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str, Any], require_focus_topics: bool = False) -> dict[str, Any]:
     pairs = metrics.get("pairs")
     if not isinstance(pairs, list) or not pairs:
         raise GuidedFeedbackError("professional pair metrics are empty")
@@ -198,6 +214,7 @@ def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str
         problems = row.get("problems")
         if not isinstance(problems, list) or any(problem not in _PROBLEMS for problem in problems):
             raise GuidedFeedbackError(f"invalid problem list: {vehicle_id}")
+        focus_topics = _focus_topics(row.get("focus_topics"), f"{vehicle_id}.focus_topics", required=require_focus_topics)
         identity = _score(row.get("identity"), f"{vehicle_id}.identity")
         realism = _score(row.get("realism"), f"{vehicle_id}.realism")
         notes = row.get("notes")
@@ -222,12 +239,13 @@ def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str
             "identity": identity,
             "realism": realism,
             "problems": list(problems),
+            "focus_topics": focus_topics,
             "preference": preference,
             "notes": notes.strip() if isinstance(notes, str) and notes.strip() else None,
             "review_ready": True,
         })
     return {
-        "schema_version": "s12-professional-jovi-guided-feedback-receipt-v2",
+        "schema_version": "s12-professional-jovi-guided-feedback-receipt-v3" if require_focus_topics else "s12-professional-jovi-guided-feedback-receipt-v2",
         "status": "VALIDATED_R2_R3_GUIDED_FEEDBACK",
         "feedback_scope": "vehicle",
         "evidence_level": feedback.get("evidence_level"),
@@ -241,6 +259,7 @@ def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str
         "automatic_tuning_eligible": False,
         "profile_update": "FORBIDDEN",
         "profile_candidate_ready": False,
+        "legacy_feedback_without_topics": not require_focus_topics and any(row["focus_topics"] is None for row in canonical),
     }
 
 
