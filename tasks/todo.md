@@ -4039,7 +4039,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - [x] 创建隔离工作树并核验 exact HEAD、分支和 Track-P 基线；初始完整 S12 回归 `455 passed, 114 subtests`。
 - [x] U0/U1：输出基线审计、Silero VAD/人工污染标志、SHA/时长/场景/麦克风合同和 Reference→Trace 场景匹配矩阵；11条目标参考中10条通过，`ferrari_03_15s` 因连续讲话 `3.1s` 标记 `REFERENCE_SPEECH_CONTAMINATED` 并排除。
-- [ ] U2：接入 MATLAB audioFeatureExtractor、AudioCommons timbral_models、可选 OpenL3 和有界 DTW；可选研究指标不进入硬门。
+- [x] U2：接入 MATLAB audioFeatureExtractor、AudioCommons timbral_models、可选 OpenL3 和有界 DTW；MATLAB 已对 RX-7 raw WAV 真实执行，timbral_models/OpenL3 因项目未维护的依赖问题明确标为 `PROJECT_UNMAINTAINED_NOT_AVAILABLE / NOT_HARD_GATE`。
 - [ ] U3：对 Ferrari/Hellcat/RX-7 的实际 renderer 参数做单变量可达性探针；不可达即拒绝 U4 grid。
 - [ ] U4：以同一 synthetic trace 渲染 Reference/Parent/Candidate，最多 64 候选/车；绑定 WAV/PCM/trace/stem/usage/health SHA。
 - [ ] U5/U6：运行 Reference↔Parent、Reference↔Candidate、Parent↔Candidate 专业三方比较；基于中位改善/最坏回归选择或明确拒绝。

@@ -1,0 +1,45 @@
+{
+  "schema_version": "s12-stage-u-feature-toolchain-capability-v1",
+  "status": "FEATURE_TOOLCHAIN_READY_WITH_OPTIONAL_UNAVAILABLE",
+  "raw_analysis_signal_policy": "unmodified digital-domain signal for loudness and professional metrics; loudness-matched copy is reserved for audition and timbre/embedding comparison",
+  "matlab_audio_feature_extractor": {
+    "status": "EXECUTED_ON_RAW_ANALYSIS_SIGNAL",
+    "matlab_release": "R2026a",
+    "receipt_path_alias": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\matlab_features_rx7_idle.json",
+    "receipt_sha256": "154A1D3148FF1CE0032F2125167166D8F128B4325A45ACD86D7FC2A42DA87337",
+    "features": [
+      "barkSpectrum",
+      "erbSpectrum",
+      "mfcc",
+      "gtcc",
+      "spectralFlux",
+      "spectralFlatness",
+      "spectralEntropy",
+      "pitch",
+      "harmonicRatio",
+      "shortTimeEnergy"
+    ]
+  },
+  "silero_vad": {
+    "status": "EXECUTED",
+    "version": "6.2.1",
+    "runner_path_alias": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe"
+  },
+  "audiocommons_timbral_models": {
+    "classification": "OPTIONAL_RESEARCH_METRIC",
+    "project_status": "PROJECT_UNMAINTAINED",
+    "hard_gate": false,
+    "attempted_version": "0.4.0",
+    "isolated_runner_path_alias": "E:\\AI_Tools\\Other\\S12StageU\\timbral-legacy-venv\\Scripts\\python.exe",
+    "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+    "reason": "timbral_models calls an obsolete librosa onset_detect positional API"
+  },
+  "openl3": {
+    "classification": "OPTIONAL_RESEARCH_METRIC",
+    "project_status": "PROJECT_UNMAINTAINED",
+    "hard_gate": false,
+    "attempted_version": "0.4.2",
+    "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+    "reason": "package build imports removed Python imp module"
+  }
+}
