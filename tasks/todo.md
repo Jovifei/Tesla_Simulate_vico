@@ -4031,4 +4031,4 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] RX-7 候选只改 `rotary_housing_turbo_distribution` 一组参数，并以一次固定候选增益留出 `-1.5 dBFS` 余量；source/PTR/Radiation 未改，`parameter_changes=1` 仅表示候选版本已渲染。
 - [x] MATLAB R2026a 已在打开会话中逐条执行 `10` 个信号；批处理一次性循环曾触发 `0xc0000005`，未采用崩溃收据；MoSQITo 1.2.1 隔离环境执行 `10` 个信号；MATLAB/MoSQITo/Proxy SHA 交叉校验通过。
 - [x] 生成独立中文页面 `rx7_topic_r2.html`、数据 `rx7_topic_r2_results.json` 和报告 `rx7_topic_r2_report.md`；旧 R3 Dashboard 不覆盖。
-- [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；RX-7 页面 Playwright smoke PASS；全量 S12 `454 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。
+- [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；统一证据矩阵测试通过；RX-7 页面 Playwright smoke PASS；全量 S12 `455 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。

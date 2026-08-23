@@ -97,3 +97,17 @@ def test_rx7_topic_dashboard_is_separate_and_fail_closed() -> None:
     assert results["pair_count"] == 5 and results["clip_count"] == 10
     assert results["order_status"] == "ORDER_COMPARISON_NOT_QUALIFIED"
     assert results["candidate"]["source_modified"] is False
+
+
+def test_unified_evidence_matrix_keeps_r3_proxy_separate_from_formal_tools() -> None:
+    root = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "S12_Professional_Comparison_Dashboard_v1"
+    matrix = json.loads((root / "professional_evidence_matrix.json").read_text(encoding="utf-8"))
+    assert matrix["status"] == "UNIFIED_PROFESSIONAL_EVIDENCE_MATRIX_READY"
+    assert matrix["record_count"] == 33
+    assert matrix["dashboard_exact_pair_count"] == 9
+    assert matrix["stage_r3_record_count"] == 24
+    assert set(matrix["tool_domains"]) == {"Professional MATLAB", "Professional MoSQITo", "Legacy Proxy", "Not Qualified"}
+    exact = [row for row in matrix["records"] if row["evidence_family"] == "dashboard_exact_ab"]
+    r3 = [row for row in matrix["records"] if row["evidence_family"] == "stage_r3_eight_vehicle_summary"]
+    assert all(row["matlab_psychoacoustic_residual"] is not None for row in exact)
+    assert all(row["matlab_psychoacoustic_residual"] is None and row["mosqito_psychoacoustic_residual"] is None for row in r3)

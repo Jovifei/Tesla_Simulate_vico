@@ -7,6 +7,8 @@
 页面 exact A/B：`9` 对、`18` 个片段；参考等级为 R3。manifest SHA：`dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`。
 MATLAB Audio Toolbox、MoSQITo 和 Legacy Proxy 分列；数字域结果不是绝对 SPL，不输出总相似度百分比。
 
+统一字段证据表：`professional_evidence_matrix.json`，共 `33` 条记录（Dashboard exact `9` 对 + Stage R3 八车 `24` 条）。每条记录绑定 reference/candidate ID、SHA、采样率/窗口、麦克风不确定性、频带/心理声学残差、瞬态域、Order 状态和人耳状态；R3 记录的 MATLAB/MoSQITo 列明确为 `null`，不把 Proxy 冒充正式工具。
+
 ## 专业工具收据
 
 - MATLAB R2026a Audio Toolbox：18 条 exact clip，reference/candidate 各 9 条；外部收据 `E:\Claude_allow\Download\s12-professional-comparison-dashboard-v1\tool_receipts\matlab_exact_clip_metrics_v3\matlab_exact_clip_metrics.json`，SHA-256 `ccf6f1ae3df590f78ac7345730f6fac5dd11750df62fd2c271e875297b0d3dac`。
