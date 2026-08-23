@@ -1,0 +1,8 @@
+{
+  "automatic_tuning_eligible": false,
+  "feedback_rows": 0,
+  "parameter_changes": 0,
+  "profile_candidate_ready": false,
+  "schema_version": "s12.stage_s.r1-pilot-feedback-gate.v1",
+  "status": "WAITING_FOR_R1_PILOT_DELIVERY"
+}

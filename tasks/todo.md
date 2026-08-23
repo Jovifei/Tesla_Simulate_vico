@@ -3971,3 +3971,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 当前 HEAD `10a78bc2` 最终回归：S12 核心 `394 passed, 114 subtests`（147.48s）+ Track-P pytest `32 passed`（1.21s），合计 `426 passed, 114 subtests`；独立冻结守卫 `180 files / 2 symbols PASS`，compileall、JSON 包校验和 `git diff --check` 通过。
 - [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。
 - [x] 公开同步数据候选复筛：Lincoln MKS、HL-CEAD 和 Dodge 同步记录功能均不满足三锚点 R1；记录在 `public_synchronized_source_screening_20260823.json`，未下载不合格或未授权原始媒体。
+
+## S12 Stage Q-R1 Pilot Acquisition and R2 Human Feedback Closure（2026-08-23）
+
+- [x] A 线校验 `anchor_ab_zh_v1`：manifest/receipt/page 通过，9 个试次、18 个试听片段 SHA 全部匹配；收据位于 `tasks/reports/runtime/s12-stage-s-human-calibration/anchor_ab_zh_v1/anchor_ab_validation.json`。
+- [x] A 线新增 anchor 导出 JSON 的 fail-closed 适配器：严格绑定 package SHA、试次/试听 SHA、评分、偏好、备注和问题分类；没有反馈时保持 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，有限建议为空且 `parameter_changes=0`。
+- [x] B 线新增 Hellcat 默认供应方/车主联系模板、OBD/CAN 与音频同步采集说明、spec/rights/三状态 CSV/SHA 空模板；模板树不含任何原始媒体。
+- [x] B 线新增 rights scope、逐文件 SHA、时间戳单调性/窗口覆盖和既有 raw_audio_intake 汇总预检；完整 fixture 可达 `R1_PILOT_READY`，但仍关闭自动调参和 Profile Candidate。
+- [x] 当前真实外部目录 `E:\Claude_allow\Download\s12-r1-pilot\hellcat_full_pull_01` 尚不存在；已生成等待态 `S12_R1_Pilot_Acquisition_Report.md`、`r1_pilot_preflight.json`、`rights_scope_validation.json`、`state_sync_validation.json`、`comparison_results.json`、`parameter_recommendations.json` 和 `feedback_gate.json`，状态 `WAITING_FOR_R1_PILOT_DELIVERY`。
+- [x] 当前 focused TDD：anchor/A 线 `8 passed`；模板 `4 passed`；R1 preflight `7 passed`；端到端等待态 `2 passed`。真实文件到位前不调用 MATLAB、不运行 Order hard gate、不修改声源。
+- [ ] 等待 Jovi 提供完整反馈 JSON 和 Hellcat（或指定车型）R1 试点目录；收到后按 `raw_audio_intake → Stage Q → MATLAB/MoSQITo → Comparator → 中文 A/B → 有界调音 → 回归` 顺序推进。
