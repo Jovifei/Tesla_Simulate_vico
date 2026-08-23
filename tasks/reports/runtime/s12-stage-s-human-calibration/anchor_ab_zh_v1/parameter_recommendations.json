@@ -1,0 +1,10 @@
+{
+  "automatic_tuning_eligible": false,
+  "evidence_level": "R2_R3_ONLY",
+  "parameter_changes": 0,
+  "profile_candidate_ready": false,
+  "profile_update": "FORBIDDEN",
+  "recommendations": [],
+  "schema_version": "s12-stage-s-r2-r3-limited-parameter-recommendations-v1",
+  "status": "WITHHELD_NO_JOVI_FEEDBACK"
+}

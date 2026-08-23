@@ -1,0 +1,9 @@
+{
+  "automatic_tuning_eligible": false,
+  "evidence_level": null,
+  "feedback_rows": 0,
+  "parameter_changes": 0,
+  "profile_update": "FORBIDDEN",
+  "schema_version": "s12-stage-s-r2-r3-feedback-gate-v1",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+}
