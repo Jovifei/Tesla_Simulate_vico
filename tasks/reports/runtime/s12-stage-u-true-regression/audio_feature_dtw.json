@@ -65,9 +65,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "b62dc6596cb4cf9b419e6a25ec6840e62219b07e187a48bb992ac8cdc3d8c704"
       },
       "reference_id": "stage_u:ferrari_01_15s:reference",
       "candidate_id": "ferrari_458_stage_u_01",
@@ -152,9 +152,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "a6b39140e4294751c7a07d81a91917d077452edfe4c4ceddcc3932a567073f66"
       },
       "reference_id": "stage_u:ferrari_01_15s:reference",
       "candidate_id": "ferrari_458_stage_u_02",
@@ -239,9 +239,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "09494738e8bd61d5b9351ce9781be6d86baaf735180a9b7d2af41e08d88c39bc"
       },
       "reference_id": "stage_u:ferrari_01_15s:reference",
       "candidate_id": "ferrari_458_stage_u_03",
@@ -326,9 +326,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "df4f1478e4f7815c34a77dd039dd22c322dc2dd80a8a236d41cd9d4a740d0a5f"
       },
       "reference_id": "stage_u:ferrari_01_15s:reference",
       "candidate_id": "ferrari_458_stage_u_04",
@@ -413,9 +413,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "bb1625738d4ed635ebbcb6758da0c1a1c7760c74459744be2a8da9356420fe7f"
       },
       "reference_id": "stage_u:ferrari_02_15s:reference",
       "candidate_id": "ferrari_458_stage_u_01",
@@ -500,9 +500,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "b4f97fd807dd992c7895bf13c8667cea3460ceba7d9e1f16ebb7e1433f6d42aa"
       },
       "reference_id": "stage_u:ferrari_02_15s:reference",
       "candidate_id": "ferrari_458_stage_u_02",
@@ -587,9 +587,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "84e7c0100a7cfd6ab0d76899d919216e169df304d845b5596d1670b064857d94"
       },
       "reference_id": "stage_u:ferrari_02_15s:reference",
       "candidate_id": "ferrari_458_stage_u_03",
@@ -674,9 +674,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "269427d6e8b3d98e38777e766b98acdd82484afc76d1d4e235c5c97e0c46e3b4"
       },
       "reference_id": "stage_u:ferrari_02_15s:reference",
       "candidate_id": "ferrari_458_stage_u_04",
@@ -761,9 +761,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
       },
       "reference_id": "stage_u:hellcat_01_15s:reference",
       "candidate_id": "hellcat_stage_u_01",
@@ -848,9 +848,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
       },
       "reference_id": "stage_u:hellcat_01_15s:reference",
       "candidate_id": "hellcat_stage_u_02",
@@ -935,9 +935,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
       },
       "reference_id": "stage_u:hellcat_01_15s:reference",
       "candidate_id": "hellcat_stage_u_03",
@@ -1022,9 +1022,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
       },
       "reference_id": "stage_u:hellcat_01_15s:reference",
       "candidate_id": "hellcat_stage_u_04",
@@ -1109,9 +1109,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "f538b8a91e3662c4e593ff806bdb7fd230d219c4a5765f48a0d5e60a3881d173"
       },
       "reference_id": "stage_u:hellcat_02_15s:reference",
       "candidate_id": "hellcat_stage_u_01",
@@ -1196,9 +1196,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "1b7ab0376aef4e03dcbfa6e1c9f2a0a8d1464a37591eea177f7638ce22f2def0"
       },
       "reference_id": "stage_u:hellcat_02_15s:reference",
       "candidate_id": "hellcat_stage_u_02",
@@ -1283,9 +1283,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "9cc6c76346d8cc1b9fce3c5565badbbcb1dd016c27f030f032cd7af2a791d893"
       },
       "reference_id": "stage_u:hellcat_02_15s:reference",
       "candidate_id": "hellcat_stage_u_03",
@@ -1370,9 +1370,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a"
       },
       "reference_id": "stage_u:hellcat_02_15s:reference",
       "candidate_id": "hellcat_stage_u_04",
@@ -1457,9 +1457,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
       },
       "reference_id": "stage_u:hellcat_03_15s:reference",
       "candidate_id": "hellcat_stage_u_01",
@@ -1544,9 +1544,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
       },
       "reference_id": "stage_u:hellcat_03_15s:reference",
       "candidate_id": "hellcat_stage_u_02",
@@ -1631,9 +1631,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
       },
       "reference_id": "stage_u:hellcat_03_15s:reference",
       "candidate_id": "hellcat_stage_u_03",
@@ -1718,9 +1718,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
       },
       "reference_id": "stage_u:hellcat_03_15s:reference",
       "candidate_id": "hellcat_stage_u_04",
@@ -1805,9 +1805,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "debb25fb82a7eef97ef97098716d6d5ce6ad2ba316008f4eb1ed24decad489c4"
       },
       "reference_id": "stage_u:rx7_topic_01_idle:reference",
       "candidate_id": "rx7_fd_stage_u_01",
@@ -1892,9 +1892,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "004e84273f7cb584656f5975e7174baba9a215f68733d4d5cc3965a8d4ea4d78"
       },
       "reference_id": "stage_u:rx7_topic_01_idle:reference",
       "candidate_id": "rx7_fd_stage_u_02",
@@ -1979,9 +1979,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "40c1a53850bb70978b4e0f5db4bcf0dad78b63ae40a1666dd8c06b635e6edacb"
       },
       "reference_id": "stage_u:rx7_topic_01_idle:reference",
       "candidate_id": "rx7_fd_stage_u_03",
@@ -2066,9 +2066,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "e32da97b77f96dd800dddb2dad21ffc632dcdc4f9cf26eb646f09f7451b1acf0"
       },
       "reference_id": "stage_u:rx7_topic_01_idle:reference",
       "candidate_id": "rx7_fd_stage_u_04",
@@ -2153,9 +2153,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "9393eb8c7a18b40c2c99e8585234e805a86af13b56c5529c110cd18cdddc39a3"
       },
       "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
       "candidate_id": "rx7_fd_stage_u_01",
@@ -2240,9 +2240,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "f09590b571b5d32f0e4578e650d8c3d5057efab5f1af74f104fc13a0e9252be2"
       },
       "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
       "candidate_id": "rx7_fd_stage_u_02",
@@ -2327,9 +2327,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "6de6b8fdad9f2f5bfe950808440632613e4f02c92e1ae462b2c8cae977da9083"
       },
       "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
       "candidate_id": "rx7_fd_stage_u_03",
@@ -2414,9 +2414,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "108599bd81b392e46101e06c619126f97a7f23149b404af443e08a829e9fd491"
       },
       "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
       "candidate_id": "rx7_fd_stage_u_04",
@@ -2501,9 +2501,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "c9421c5a7b5b21995d8796fd1cb785cd7251e464d4b00dafefd6d77f3c36eb09"
       },
       "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
       "candidate_id": "rx7_fd_stage_u_01",
@@ -2588,9 +2588,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "f0ee315706b7bf448251d9ab7b3e68e90b886c91fc1fecbc45614d3cb2844050"
       },
       "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
       "candidate_id": "rx7_fd_stage_u_02",
@@ -2675,9 +2675,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "87c34ce46c8fac8b4b2cd025c29515109f289c6d5273f5151a362f6708d321c4"
       },
       "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
       "candidate_id": "rx7_fd_stage_u_03",
@@ -2762,9 +2762,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "56d9a40b4c546afdf38e4229fb2c53606b0caca478524e4e440db1dcfff83e0c"
       },
       "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
       "candidate_id": "rx7_fd_stage_u_04",
@@ -2849,9 +2849,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
       },
       "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
       "candidate_id": "rx7_fd_stage_u_01",
@@ -2936,9 +2936,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
       },
       "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
       "candidate_id": "rx7_fd_stage_u_02",
@@ -3023,9 +3023,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
       },
       "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
       "candidate_id": "rx7_fd_stage_u_03",
@@ -3110,9 +3110,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
       },
       "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
       "candidate_id": "rx7_fd_stage_u_04",
@@ -3197,9 +3197,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
       },
       "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
       "candidate_id": "rx7_fd_stage_u_01",
@@ -3284,9 +3284,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
       },
       "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
       "candidate_id": "rx7_fd_stage_u_02",
@@ -3371,9 +3371,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
       },
       "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
       "candidate_id": "rx7_fd_stage_u_03",
@@ -3458,9 +3458,9 @@
         }
       },
       "input_sha256": {
-        "reference": "",
-        "parent": "",
-        "candidate": ""
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
       },
       "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
       "candidate_id": "rx7_fd_stage_u_04",

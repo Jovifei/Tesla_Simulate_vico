@@ -1,68 +1,9 @@
 {
-  "clip_count": 15,
+  "schema_version": "s12-stage-u-selected-clip-manifest-v2",
+  "status": "RAW_SELECTED_NOT_ABX_READY",
+  "clip_count": 9,
   "clips": [
     {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "reference::stage_u:ferrari_01_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_01\\ferrari_01_15s_reference.wav",
-      "reference_id": "stage_u:ferrari_01_15s:reference",
-      "role": "reference",
-      "scenario": "start_idle_rev_acceleration",
-      "sha256": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "parent::stage_u:ferrari_01_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_01_15s_reference\\parent.wav",
-      "reference_id": "stage_u:ferrari_01_15s:reference",
-      "role": "parent",
-      "scenario": "start_idle_rev_acceleration",
-      "sha256": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "candidate::stage_u:ferrari_01_15s:reference::ferrari_458_stage_u_04",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_01_15s_reference\\ferrari_458_stage_u_04.wav",
-      "reference_id": "stage_u:ferrari_01_15s:reference",
-      "role": "candidate",
-      "scenario": "start_idle_rev_acceleration",
-      "sha256": "df4f1478e4f7815c34a77dd039dd22c322dc2dd80a8a236d41cd9d4a740d0a5f",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "reference::stage_u:ferrari_02_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_02\\ferrari_02_15s_reference.wav",
-      "reference_id": "stage_u:ferrari_02_15s:reference",
-      "role": "reference",
-      "scenario": "onboard_full_load_shift",
-      "sha256": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "parent::stage_u:ferrari_02_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_02_15s_reference\\parent.wav",
-      "reference_id": "stage_u:ferrari_02_15s:reference",
-      "role": "parent",
-      "scenario": "onboard_full_load_shift",
-      "sha256": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "ferrari_458_stage_u_04",
-      "clip_id": "candidate::stage_u:ferrari_02_15s:reference::ferrari_458_stage_u_04",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_02_15s_reference\\ferrari_458_stage_u_04.wav",
-      "reference_id": "stage_u:ferrari_02_15s:reference",
-      "role": "candidate",
-      "scenario": "onboard_full_load_shift",
-      "sha256": "269427d6e8b3d98e38777e766b98acdd82484afc76d1d4e235c5c97e0c46e3b4",
-      "vehicle_id": "ferrari_458"
-    },
-    {
-      "candidate_id": "hellcat_stage_u_04",
       "clip_id": "reference::stage_u:hellcat_01_15s:reference",
       "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_01\\hellcat_01_15s_reference.wav",
       "reference_id": "stage_u:hellcat_01_15s:reference",
@@ -72,12 +13,47 @@
       "vehicle_id": "hellcat"
     },
     {
-      "candidate_id": "hellcat_stage_u_04",
       "clip_id": "parent::stage_u:hellcat_01_15s:reference",
       "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\parent.wav",
       "reference_id": "stage_u:hellcat_01_15s:reference",
       "role": "parent",
       "scenario": "idle_rev_acceleration",
+      "sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "clip_id": "reference::stage_u:hellcat_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "role": "reference",
+      "scenario": "onboard_acceleration_shift",
+      "sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "clip_id": "parent::stage_u:hellcat_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\parent.wav",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "role": "parent",
+      "scenario": "onboard_acceleration_shift",
+      "sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "clip_id": "reference::stage_u:hellcat_03_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "role": "reference",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "clip_id": "parent::stage_u:hellcat_03_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\parent.wav",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "role": "parent",
+      "scenario": "idle_rev_acceleration_stock_segment",
       "sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
       "vehicle_id": "hellcat"
     },
@@ -93,52 +69,12 @@
     },
     {
       "candidate_id": "hellcat_stage_u_04",
-      "clip_id": "reference::stage_u:hellcat_02_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
-      "reference_id": "stage_u:hellcat_02_15s:reference",
-      "role": "reference",
-      "scenario": "onboard_acceleration_shift",
-      "sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
-      "vehicle_id": "hellcat"
-    },
-    {
-      "candidate_id": "hellcat_stage_u_04",
-      "clip_id": "parent::stage_u:hellcat_02_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\parent.wav",
-      "reference_id": "stage_u:hellcat_02_15s:reference",
-      "role": "parent",
-      "scenario": "onboard_acceleration_shift",
-      "sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
-      "vehicle_id": "hellcat"
-    },
-    {
-      "candidate_id": "hellcat_stage_u_04",
       "clip_id": "candidate::stage_u:hellcat_02_15s:reference::hellcat_stage_u_04",
       "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\hellcat_stage_u_04.wav",
       "reference_id": "stage_u:hellcat_02_15s:reference",
       "role": "candidate",
       "scenario": "onboard_acceleration_shift",
       "sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
-      "vehicle_id": "hellcat"
-    },
-    {
-      "candidate_id": "hellcat_stage_u_04",
-      "clip_id": "reference::stage_u:hellcat_03_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
-      "reference_id": "stage_u:hellcat_03_15s:reference",
-      "role": "reference",
-      "scenario": "idle_rev_acceleration_stock_segment",
-      "sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
-      "vehicle_id": "hellcat"
-    },
-    {
-      "candidate_id": "hellcat_stage_u_04",
-      "clip_id": "parent::stage_u:hellcat_03_15s:reference",
-      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\parent.wav",
-      "reference_id": "stage_u:hellcat_03_15s:reference",
-      "role": "parent",
-      "scenario": "idle_rev_acceleration_stock_segment",
-      "sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
       "vehicle_id": "hellcat"
     },
     {
@@ -152,7 +88,376 @@
       "vehicle_id": "hellcat"
     }
   ],
-  "raw_analysis_signal": "same SHA-bound raw clip set as professional triad comparison",
-  "schema_version": "s12-stage-u-selected-clip-manifest-v1",
-  "status": "READY_FOR_AUDIO_FEATURE_AND_ABX"
+  "selected_candidates": [
+    {
+      "vehicle_id": "hellcat",
+      "candidate_id": "hellcat_stage_u_04",
+      "reference_count": 3,
+      "distinct_reference_count": 3,
+      "expected_reference_count": 3,
+      "required_improvement_count": 2,
+      "improved_reference_count": 3,
+      "median_absolute_improvement": 0.02795810096222695,
+      "worst_case_absolute_improvement": 0.0034343370189635625,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "schema_version": "s12-stage-u-triad-comparison-v1",
+          "status": "TRIAD_LEGACY_COMPARISON_COMPLETE",
+          "vehicle_id": "hellcat",
+          "scenario": "idle_rev_acceleration",
+          "reference_id": "stage_u:hellcat_01_15s:reference",
+          "candidate_id": "hellcat_stage_u_04",
+          "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_01\\hellcat_01_15s_reference.wav",
+          "parent_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\parent.wav",
+          "candidate_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\hellcat_stage_u_04.wav",
+          "reference_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "parent_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "candidate_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "parent_distance": 1.0,
+          "candidate_distance": 0.9692530173208884,
+          "absolute_improvement": 0.03074698267911158,
+          "relative_improvement": 0.03074698267911158,
+          "raw_features": {
+            "reference": {
+              "rms_dbfs": -11.136467209342882,
+              "spectral_centroid_hz": 140.64869969905112,
+              "brightness_proxy": 0.001798275342105885,
+              "spectral_entropy": 7.127008569579664,
+              "spectral_flatness": 2.215245657656821e-05,
+              "roughness_70hz_proxy": 0.03134869521679315
+            },
+            "parent": {
+              "rms_dbfs": -26.372718705699256,
+              "spectral_centroid_hz": 433.77941461242847,
+              "brightness_proxy": 0.07811370349636491,
+              "spectral_entropy": 8.880775867879043,
+              "spectral_flatness": 0.00012124309648074974,
+              "roughness_70hz_proxy": 0.05611150252367787
+            },
+            "candidate": {
+              "rms_dbfs": -25.983979427279216,
+              "spectral_centroid_hz": 430.5519340444273,
+              "brightness_proxy": 0.07413861532193464,
+              "spectral_entropy": 8.906292291695237,
+              "spectral_flatness": 0.00011923292188711798,
+              "roughness_70hz_proxy": 0.0541748604691349
+            }
+          },
+          "professional_bound": true,
+          "hard_gates_pass": true,
+          "requested_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "consumed_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+          "professional_binding_status": "ALL_COMPONENT_SHA_BOUND",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.9969265896752553,
+              "candidate_distance": 1.8264098730436724
+            },
+            "mosqito": {
+              "parent_distance": 2.100611412595111,
+              "candidate_distance": 2.0631763717407057
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 11.972783582909306,
+              "candidate_distance": 11.896370144900773,
+              "state_context": {
+                "scenario": "idle_rev_acceleration",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+          }
+        },
+        {
+          "schema_version": "s12-stage-u-triad-comparison-v1",
+          "status": "TRIAD_LEGACY_COMPARISON_COMPLETE",
+          "vehicle_id": "hellcat",
+          "scenario": "onboard_acceleration_shift",
+          "reference_id": "stage_u:hellcat_02_15s:reference",
+          "candidate_id": "hellcat_stage_u_04",
+          "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
+          "parent_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\parent.wav",
+          "candidate_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\hellcat_stage_u_04.wav",
+          "reference_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "parent_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "candidate_sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "parent_distance": 1.0,
+          "candidate_distance": 0.972041899037773,
+          "absolute_improvement": 0.02795810096222695,
+          "relative_improvement": 0.02795810096222695,
+          "raw_features": {
+            "reference": {
+              "rms_dbfs": -13.427650182010272,
+              "spectral_centroid_hz": 194.15068325121618,
+              "brightness_proxy": 0.00028687831395223396,
+              "spectral_entropy": 7.905732215235881,
+              "spectral_flatness": 6.103130061084386e-07,
+              "roughness_70hz_proxy": 0.032792801761288834
+            },
+            "parent": {
+              "rms_dbfs": -22.562483553543608,
+              "spectral_centroid_hz": 535.639370698573,
+              "brightness_proxy": 0.03971380644832488,
+              "spectral_entropy": 9.182362813068966,
+              "spectral_flatness": 3.681238699846456e-05,
+              "roughness_70hz_proxy": 0.006118185626287754
+            },
+            "candidate": {
+              "rms_dbfs": -22.237119867834096,
+              "spectral_centroid_hz": 549.8869256947605,
+              "brightness_proxy": 0.03382804145267392,
+              "spectral_entropy": 9.260775022411543,
+              "spectral_flatness": 3.6389995699404044e-05,
+              "roughness_70hz_proxy": 0.008424976144028108
+            }
+          },
+          "professional_bound": true,
+          "hard_gates_pass": true,
+          "requested_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "consumed_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+          "professional_binding_status": "ALL_COMPONENT_SHA_BOUND",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.041606128658,
+              "candidate_distance": 1.0094264024507449
+            },
+            "mosqito": {
+              "parent_distance": 2.073555899552563,
+              "candidate_distance": 1.8831085339191789
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.854478206312567,
+              "candidate_distance": 16.057473085408606,
+              "state_context": {
+                "scenario": "onboard_acceleration_shift",
+                "rpm_window": [
+                  2604.0,
+                  5332.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+            "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+            "candidate": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a"
+          }
+        },
+        {
+          "schema_version": "s12-stage-u-triad-comparison-v1",
+          "status": "TRIAD_LEGACY_COMPARISON_COMPLETE",
+          "vehicle_id": "hellcat",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "reference_id": "stage_u:hellcat_03_15s:reference",
+          "candidate_id": "hellcat_stage_u_04",
+          "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
+          "parent_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\parent.wav",
+          "candidate_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\hellcat_stage_u_04.wav",
+          "reference_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "parent_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "candidate_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "parent_distance": 1.0,
+          "candidate_distance": 0.9965656629810364,
+          "absolute_improvement": 0.0034343370189635625,
+          "relative_improvement": 0.0034343370189635625,
+          "raw_features": {
+            "reference": {
+              "rms_dbfs": -14.013540828265077,
+              "spectral_centroid_hz": 221.79784917975965,
+              "brightness_proxy": 0.0019563342696875554,
+              "spectral_entropy": 7.827355920300596,
+              "spectral_flatness": 1.9973322489398785e-05,
+              "roughness_70hz_proxy": 0.06114173804719116
+            },
+            "parent": {
+              "rms_dbfs": -26.372718705699256,
+              "spectral_centroid_hz": 433.77941461242847,
+              "brightness_proxy": 0.07811370349636491,
+              "spectral_entropy": 8.880775867879043,
+              "spectral_flatness": 0.00012124309648074974,
+              "roughness_70hz_proxy": 0.05611150252367787
+            },
+            "candidate": {
+              "rms_dbfs": -25.983979427279216,
+              "spectral_centroid_hz": 430.5519340444273,
+              "brightness_proxy": 0.07413861532193464,
+              "spectral_entropy": 8.906292291695237,
+              "spectral_flatness": 0.00011923292188711798,
+              "roughness_70hz_proxy": 0.0541748604691349
+            }
+          },
+          "professional_bound": true,
+          "hard_gates_pass": true,
+          "requested_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "consumed_parameters": [
+            "afterfire.gain_scale",
+            "loudness.transient_peak_shaper.attack_ms",
+            "loudness.transient_peak_shaper.max_reduction_db",
+            "loudness.transient_peak_shaper.release_ms",
+            "shift.impact_scale",
+            "shift.recovery_scale",
+            "source.blower_boost_mix",
+            "source.blower_gain_scale",
+            "source.blower_intake_balance",
+            "source.boost_attack_s",
+            "source.boost_release_s",
+            "source.intake_gain_scale",
+            "source.pressure_attack_gain_scale"
+          ],
+          "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+          "professional_binding_status": "ALL_COMPONENT_SHA_BOUND",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7793554602759004,
+              "candidate_distance": 0.8067693381508986
+            },
+            "mosqito": {
+              "parent_distance": 0.7983919714829023,
+              "candidate_distance": 0.7791417323858337
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 12.385536332358358,
+              "candidate_distance": 12.318938146635263,
+              "state_context": {
+                "scenario": "idle_rev_acceleration_stock_segment",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+          }
+        }
+      ],
+      "status": "R2_COMPARATOR_DRIVEN_CANDIDATE_READY"
+    }
+  ],
+  "raw_analysis_signal": "same SHA-bound raw clips as the professional triad comparison",
+  "loudness_matched_audition": "NOT_CREATED_PENDING_U7",
+  "abx_ready": false,
+  "automatic_tuning_eligible": false,
+  "order_status": "ORDER_COMPARISON_NOT_QUALIFIED"
 }
