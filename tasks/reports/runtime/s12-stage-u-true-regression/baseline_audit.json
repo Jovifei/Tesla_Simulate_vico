@@ -1,0 +1,31 @@
+{
+  "baseline_commit": "b1d500c7c37a71728020c39e6dc115a0cd6743d5",
+  "baseline_is_ancestor": true,
+  "branch": "agent/s12-stage-u-true-comparator-calibration",
+  "ferrari_458": {
+    "candidate_audio_rendered": false,
+    "candidate_execution": "SPECIFICATIONS_ONLY_NOT_RENDERED",
+    "evaluated_count": 0
+  },
+  "head_commit": "e746eed18f599a62164dbcdf149e4b0d6033635f",
+  "hellcat": {
+    "candidate_audio_rendered": false,
+    "candidate_execution": "SPECIFICATIONS_ONLY_NOT_RENDERED",
+    "evaluated_count": 0
+  },
+  "objective_before_after_claim": "NOT_CLAIMED",
+  "profile_freeze": "NOT_PROFILE_FREEZE_READY",
+  "r1_status": "NOT_R1_QUALIFIED",
+  "rx7_fd": {
+    "candidate_profile_sha256": "56c631ac3fc4cde747c3e6997ef46f17491a27e434080128d537659addb076ef",
+    "candidate_result_status": "RX7_R2_PROFESSIONAL_COMPARISON_COMPLETE",
+    "manual_candidate_present": true,
+    "source_modified": false
+  },
+  "schema_version": "s12-stage-u-baseline-audit-v1",
+  "status": "STAGE_U_BASELINE_AUDITED",
+  "track_p": {
+    "baseline": "S12 Track-P Baseline v3",
+    "mutation": "NOT_PERFORMED"
+  }
+}

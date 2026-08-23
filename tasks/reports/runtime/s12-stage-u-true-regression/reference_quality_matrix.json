@@ -1,0 +1,302 @@
+{
+  "eligible_count": 10,
+  "record_count": 11,
+  "records": [
+    {
+      "candidate_audio_id": "stage_u_parent:ferrari_458:ferrari_01_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "start_idle_rev_acceleration",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_01\\ferrari_01_15s_reference.wav",
+      "reference_sha256": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+      "sample_rate_hz": 44100,
+      "scenario": "start_idle_rev_acceleration",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:ferrari_458:ferrari_02_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "onboard_full_load_shift",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_02\\ferrari_02_15s_reference.wav",
+      "reference_sha256": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+      "sample_rate_hz": 44100,
+      "scenario": "onboard_full_load_shift",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:ferrari_458:ferrari_03_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": false,
+      "longest_continuous_speech_s": 3.1,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "launch_acceleration_shift",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:ferrari_03_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_03\\ferrari_03_15s_reference.wav",
+      "reference_sha256": "568cab3b1160e163551428bc5c0b5faa6f15bd9d9a003be34c685d34c2f74959",
+      "sample_rate_hz": 48000,
+      "scenario": "launch_acceleration_shift",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [
+        [
+          1.1,
+          4.2
+        ],
+        [
+          4.7,
+          7.0
+        ]
+      ],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_SPEECH_CONTAMINATED",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:hellcat:hellcat_01_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "idle_rev_acceleration",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_01\\hellcat_01_15s_reference.wav",
+      "reference_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+      "sample_rate_hz": 44100,
+      "scenario": "idle_rev_acceleration",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:hellcat:hellcat_02_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "onboard_acceleration_shift",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
+      "reference_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+      "sample_rate_hz": 44100,
+      "scenario": "onboard_acceleration_shift",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:hellcat:hellcat_03_15s",
+      "channels": 2,
+      "duration_s": 15.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "idle_rev_acceleration_stock_segment",
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
+      "reference_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+      "sample_rate_hz": 44100,
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:rx7_fd:rx7_topic_01_idle",
+      "channels": 1,
+      "duration_s": 14.0,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "idle",
+      "microphone_uncertainty": "exhaust; AGC=MIXPRE_NAMED_AGC_UNKNOWN",
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-rx7-topic-r2-v4\\audio\\rx7_topic_01_idle\\reference.wav",
+      "reference_sha256": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+      "sample_rate_hz": 48000,
+      "scenario": "idle",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:rx7_fd:rx7_topic_02_steady_low",
+      "channels": 1,
+      "duration_s": 7.6582083333333335,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "steady_low",
+      "microphone_uncertainty": "exhaust; AGC=MIXPRE_NAMED_AGC_UNKNOWN",
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-rx7-topic-r2-v4\\audio\\rx7_topic_02_steady_low\\reference.wav",
+      "reference_sha256": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+      "sample_rate_hz": 48000,
+      "scenario": "steady_low",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:rx7_fd:rx7_topic_03_steady_mid",
+      "channels": 1,
+      "duration_s": 7.679916666666666,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "steady_mid",
+      "microphone_uncertainty": "exhaust; AGC=MIXPRE_NAMED_AGC_UNKNOWN",
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-rx7-topic-r2-v4\\audio\\rx7_topic_03_steady_mid\\reference.wav",
+      "reference_sha256": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+      "sample_rate_hz": 48000,
+      "scenario": "steady_mid",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:rx7_fd:rx7_topic_04_full_pull",
+      "channels": 1,
+      "duration_s": 16.5,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "full_pull",
+      "microphone_uncertainty": "exhaust; AGC=MIXPRE_NAMED_AGC_UNKNOWN",
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-rx7-topic-r2-v4\\audio\\rx7_topic_04_full_pull\\reference.wav",
+      "reference_sha256": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+      "sample_rate_hz": 48000,
+      "scenario": "full_pull",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_audio_id": "stage_u_parent:rx7_fd:rx7_topic_05_full_pull_interior",
+      "channels": 2,
+      "duration_s": 16.5,
+      "grid_eligible": true,
+      "longest_continuous_speech_s": 0.0,
+      "manual_contamination_review": "NOT_REVIEWED",
+      "matching_trace_scenario": "full_pull_interior",
+      "microphone_uncertainty": "interior; AGC=MIXPRE_NAMED_AGC_UNKNOWN",
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "reference_path": "E:\\Claude_allow\\Download\\s12-rx7-topic-r2-v4\\audio\\rx7_topic_05_full_pull_interior\\reference.wav",
+      "reference_sha256": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+      "sample_rate_hz": 48000,
+      "scenario": "full_pull_interior",
+      "scenario_compatible": true,
+      "silero_vad": {
+        "model": "onnx=True",
+        "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+        "version": "6.2.1"
+      },
+      "speech_intervals_s": [],
+      "speech_threshold_s": 1.0,
+      "status": "REFERENCE_QUALITY_PASS",
+      "vehicle_id": "rx7_fd"
+    }
+  ],
+  "schema_version": "s12-stage-u-reference-quality-matrix-v1",
+  "status": "REFERENCE_QUALITY_MATRIX_READY",
+  "status_counts": {
+    "REFERENCE_QUALITY_PASS": 10,
+    "REFERENCE_SPEECH_CONTAMINATED": 1
+  },
+  "vad_tool": {
+    "continuous_speech_threshold_s": 1.0,
+    "name": "Silero VAD",
+    "runner_python": "E:\\AI_Tools\\Other\\S12StageU\\vad-venv\\Scripts\\python.exe",
+    "version": "6.2.1"
+  }
+}

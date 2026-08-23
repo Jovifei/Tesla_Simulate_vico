@@ -4038,7 +4038,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 > 分支：`agent/s12-stage-u-true-comparator-calibration`；基线：`b1d500c7c37a71728020c39e6dc115a0cd6743d5`。
 
 - [x] 创建隔离工作树并核验 exact HEAD、分支和 Track-P 基线；初始完整 S12 回归 `455 passed, 114 subtests`。
-- [ ] U0/U1：输出基线审计、Silero VAD/人工污染标志、SHA/时长/场景/麦克风合同和 Reference→Trace 场景匹配矩阵。
+- [x] U0/U1：输出基线审计、Silero VAD/人工污染标志、SHA/时长/场景/麦克风合同和 Reference→Trace 场景匹配矩阵；11条目标参考中10条通过，`ferrari_03_15s` 因连续讲话 `3.1s` 标记 `REFERENCE_SPEECH_CONTAMINATED` 并排除。
 - [ ] U2：接入 MATLAB audioFeatureExtractor、AudioCommons timbral_models、可选 OpenL3 和有界 DTW；可选研究指标不进入硬门。
 - [ ] U3：对 Ferrari/Hellcat/RX-7 的实际 renderer 参数做单变量可达性探针；不可达即拒绝 U4 grid。
 - [ ] U4：以同一 synthetic trace 渲染 Reference/Parent/Candidate，最多 64 候选/车；绑定 WAV/PCM/trace/stem/usage/health SHA。
