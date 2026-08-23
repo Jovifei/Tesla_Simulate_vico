@@ -198,8 +198,8 @@ def render_rx7_fd(
     w8 = 0.55 + 1.15 * idle_gate
     w10 = 0.35 + 1.35 * idle_gate
     w12 = 0.34 + 1.06 * idle_gate
-    rotary_pulse_width_scale = float(overrides.get("rotary_pulse_width_scale", 1.0))
-    rotary_mono = 0.24 * rotary_pulse_width_scale * envelope * (
+    rotary_amplitude_scale = float(overrides.get("rotary_amplitude_scale", overrides.get("rotary_pulse_width_scale", 1.0)))
+    rotary_mono = 0.24 * rotary_amplitude_scale * envelope * (
         w2 * np.sin(2.0 * np.pi * phase * 2.0)
         + w4 * np.sin(2.0 * np.pi * phase * 4.0)
         + w6 * np.sin(2.0 * np.pi * phase * 6.0)
@@ -213,19 +213,20 @@ def render_rx7_fd(
     # sit at 61-123 Hz (support the centroid without lifting it above band0);
     # at accel they sweep 220-1013 Hz (modest band1 character, no kHz blow-up).
     # This replaces the old, inversion-causing 72/96-order excitation. ---
-    housing_decay_s = 0.060
+    housing_decay_s = 0.060 * float(overrides.get("housing_decay_scale", 1.0))
     housing_pole = float(np.exp(-1.0 / (housing_decay_s * sample_rate_hz)))
     housing_envelope = np.zeros(count)
     for sample in range(1, count):
         housing_envelope[sample] = housing_pole * housing_envelope[sample - 1] + impulses[sample]
     # Quiet under load (accel must stay band0-dominant); a touch louder at
     # idle to support the ~156 Hz centroid via 4/6/8/10/rev (61-154 Hz) content.
-    housing_level = 0.015 + 0.06 * idle_gate
+    housing_level = float(overrides.get("housing_gain_scale", 1.0)) * (0.015 + 0.06 * idle_gate)
+    housing_order_weight_scale = float(overrides.get("housing_order_weight_scale", 1.0))
     housing_mono = housing_level * (rpm > 0.0) * housing_envelope * (
         np.sin(2.0 * np.pi * phase * 4.0)
-        + 0.55 * np.sin(2.0 * np.pi * phase * 6.0)
-        + 0.30 * np.sin(2.0 * np.pi * phase * 8.0)
-        + 0.18 * np.sin(2.0 * np.pi * phase * 10.0)
+        + housing_order_weight_scale * 0.55 * np.sin(2.0 * np.pi * phase * 6.0)
+        + housing_order_weight_scale * 0.30 * np.sin(2.0 * np.pi * phase * 8.0)
+        + housing_order_weight_scale * 0.18 * np.sin(2.0 * np.pi * phase * 10.0)
     )
     rotor_housing = np.column_stack((housing_mono, 0.70 * housing_mono))
 
@@ -288,9 +289,9 @@ def render_rx7_fd(
     turbo_phase = np.cumsum(turbo_order * rpm / 60.0) / sample_rate_hz
     combustion_pressure_ratio = _turbo_pressure_drive(combustion_drive, load)
     turbo_mono = 0.44 * flow_gate * combustion_pressure_ratio * (0.42 * primary_spool + 0.78 * boost_state) * np.sin(2.0 * np.pi * turbo_phase)
-    turbo = np.column_stack((0.62 * turbo_mono, turbo_mono))
+    turbo = np.column_stack((0.62 * turbo_mono, turbo_mono)) * float(overrides.get("turbo_gain_scale", 1.0))
     turbine_mono = 0.22 * flow_gate * combustion_pressure_ratio * (0.25 * primary_spool + 0.55 * boost_state + 0.65 * secondary_spool) * np.sin(2.0 * np.pi * turbo_phase * 2.0 + 0.25)
-    turbine = np.column_stack((turbine_mono, 0.58 * turbine_mono))
+    turbine = np.column_stack((turbine_mono, 0.58 * turbine_mono)) * float(overrides.get("turbine_gain_scale", 1.0))
     blow_off_phase = np.cumsum(650.0 + 1100.0 * boost_state + 900.0 * blow_off_state) / sample_rate_hz
     blow_off_mono = 0.075 * blow_off_state * (
         np.sin(2.0 * np.pi * blow_off_phase) + 0.24 * np.sin(2.0 * np.pi * blow_off_phase * 1.7)

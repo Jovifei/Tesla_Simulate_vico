@@ -157,21 +157,22 @@ def render_ferrari_458(
     # Low/mid combustion carrier, amplitude tapered by low_drive (strong at idle,
     # tapers toward redline) so total RMS stays flat while the high band grows.
     pulse_width_scale = float(overrides.get("pulse_width_scale", 1.0))
-    left_carrier = 0.13 * pulse_width_scale * low_drive * comb_idle_factor * left_envelope * carrier
-    right_carrier = 0.13 * pulse_width_scale * low_drive * comb_idle_factor * right_envelope * carrier
+    mid_carrier_gain_scale = float(overrides.get("mid_carrier_gain_scale", 1.0))
+    left_carrier = 0.13 * pulse_width_scale * mid_carrier_gain_scale * low_drive * comb_idle_factor * left_envelope * carrier
+    right_carrier = 0.13 * pulse_width_scale * mid_carrier_gain_scale * low_drive * comb_idle_factor * right_envelope * carrier
     # Idle tonal filler (survives the frozen low-cut PTR): ~1000 Hz (mid) + ~1450 Hz.
     # Engine-order-coupled (phase*N) so time-origin invariant and rpm-tracking,
     # gated OFF at rpm=0. Amplitude kept modest so the idle raw level stays inside
     # the ~1.5 dB rpm spread (it previously spiked idle ~+3 dB vs redline).
     idle_running = (rpm > 0.0)
-    idle_mid = 0.55 * idle_mask * idle_running * np.sin(2.0 * np.pi * phase * 54.5) * (0.4 + 0.6 * load) * low_drive
+    idle_mid = mid_carrier_gain_scale * 0.55 * idle_mask * idle_running * np.sin(2.0 * np.pi * phase * 54.5) * (0.4 + 0.6 * load) * low_drive
     idle_hi = 0.06 * idle_mask * idle_running * np.sin(2.0 * np.pi * phase * 79.0) * (0.4 + 0.6 * load) * low_drive
     # Part-load / cruise filler (mid band, survives the frozen low-cut PTR). A
     # gated mid engine note lifts the moderate-rpm cruise into the publication
     # range; gated OFF at idle and rolled off above ~5.2k rpm. Engine-order-coupled
     # (phase*N) so time-origin invariant. Upstream perceptual compensation.
     cruise_mask = np.clip((rpm - 1600.0) / 1400.0, 0.0, 1.0) * np.clip((5200.0 - rpm) / 1800.0, 0.0, 1.0)
-    cruise_mid = 0.40 * cruise_mask * (
+    cruise_mid = mid_carrier_gain_scale * 0.40 * cruise_mask * (
         0.55 * np.sin(2.0 * np.pi * phase * 12.67) + 0.40 * np.sin(2.0 * np.pi * phase * 18.0)
     ) * (0.4 + 0.6 * load) * low_drive
     left_mono = left_carrier + idle_mid + idle_hi + cruise_mid
@@ -217,7 +218,9 @@ def render_ferrari_458(
     # fraction keeps GROWING with rpm. Its level is deliberately small: it only
     # has to seed the 4-12 kHz band with real content so the per-state shaper
     # needs a few dB rather than ~18 dB there.
-    metallic_mono = metallic_gain * (metallic_resonance + _UPPER_METALLIC_MIX * upper_metallic)
+    metallic_gain_scale = float(overrides.get("metallic_gain_scale", 1.0))
+    metallic_texture_mix = float(overrides.get("metallic_texture_mix", 1.0))
+    metallic_mono = metallic_gain * metallic_gain_scale * (metallic_resonance + metallic_texture_mix * _UPPER_METALLIC_MIX * upper_metallic)
     metallic = np.column_stack((0.72 * metallic_mono, metallic_mono))
     render = SourceRender(
         pressure=left_bank + right_bank + metallic,

@@ -1,0 +1,290 @@
+{
+  "automatic_tuning_eligible": false,
+  "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+  "profile_candidate_ready": false,
+  "schema_version": "s12-stage-u-parameter-reachability-matrix-v1",
+  "status": "PARAMETER_REACHABILITY_MATRIX_READY",
+  "vehicles": [
+    {
+      "mapping": {
+        "candidate_id": "ferrari_stage_u_reachability",
+        "dashboard_values": {
+          "metallic_envelope_db": 0.0,
+          "mid_band_balance_db": 0.0,
+          "texture_mix": 0.5
+        },
+        "legacy_rotary_pulse_width_scale": "NOT_APPLICABLE",
+        "parameter_group": "metallic_high_order_envelope_mid_band",
+        "parent_candidate_id": "ferrari_458_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "metallic_gain_scale": 1.0,
+          "metallic_texture_mix": 0.5,
+          "mid_carrier_gain_scale": 1.0
+        },
+        "vehicle_id": "ferrari_458"
+      },
+      "reachability": {
+        "candidate_id": "ferrari_stage_u_reachability",
+        "non_target_limit": 0.75,
+        "parameters": [
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.19593259351221318,
+            "parameter_id": "source.metallic_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "metallic"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.4250628041462784,
+            "parameter_id": "source.mid_carrier_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "left_bank",
+              "right_bank"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.0020884245952267504,
+            "parameter_id": "source.metallic_texture_mix",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "metallic"
+            ],
+            "triplet": {
+              "baseline": 0.5,
+              "minus": 0.4,
+              "plus": 0.6
+            }
+          }
+        ],
+        "schema_version": "s12-stage-u-parameter-reachability-v1",
+        "status": "PARAMETER_REACHABILITY_PASS",
+        "unused": [],
+        "vehicle_id": "ferrari_458"
+      }
+    },
+    {
+      "mapping": {
+        "candidate_id": "hellcat_stage_u_reachability",
+        "dashboard_values": {
+          "blower_intake_balance": 0.0,
+          "mid_band_pressure_db": 0.0,
+          "pressure_attack_db": 0.0
+        },
+        "legacy_rotary_pulse_width_scale": "NOT_APPLICABLE",
+        "parameter_group": "pressure_attack_blower_intake_balance",
+        "parent_candidate_id": "hellcat_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "blower_intake_balance": 0.0,
+          "intake_gain_scale": 1.0,
+          "pressure_attack_gain_scale": 1.0
+        },
+        "vehicle_id": "hellcat"
+      },
+      "reachability": {
+        "candidate_id": "hellcat_stage_u_reachability",
+        "non_target_limit": 0.75,
+        "parameters": [
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.07794584578384388,
+            "parameter_id": "source.blower_intake_balance",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "blower",
+              "intake"
+            ],
+            "triplet": {
+              "baseline": 0.0,
+              "minus": -0.05,
+              "plus": 0.05
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.0015191482858833711,
+            "parameter_id": "source.intake_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "intake"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.007950587728870832,
+            "parameter_id": "source.pressure_attack_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "pressure_attack"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          }
+        ],
+        "schema_version": "s12-stage-u-parameter-reachability-v1",
+        "status": "PARAMETER_REACHABILITY_PASS",
+        "unused": [],
+        "vehicle_id": "hellcat"
+      }
+    },
+    {
+      "mapping": {
+        "candidate_id": "rx7_stage_u_reachability",
+        "dashboard_values": {
+          "broadband_mix": 0.5,
+          "housing_peak_db": 0.0,
+          "turbo_band_balance_db": 0.0
+        },
+        "legacy_rotary_pulse_width_scale": "REJECTED_FOR_STAGE_U_GRID",
+        "parameter_group": "rotary_housing_turbo_distribution",
+        "parent_candidate_id": "rx7_fd_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "housing_gain_scale": 1.0,
+          "housing_order_weight_scale": 1.0,
+          "rotary_amplitude_scale": 1.0,
+          "turbine_gain_scale": 1.0,
+          "turbo_gain_scale": 1.0
+        },
+        "vehicle_id": "rx7_fd"
+      },
+      "reachability": {
+        "candidate_id": "rx7_stage_u_reachability",
+        "non_target_limit": 0.75,
+        "parameters": [
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.022959635017943958,
+            "parameter_id": "source.housing_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "rotor_housing"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.005613328552585375,
+            "parameter_id": "source.turbo_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "turbo"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.37341867286035146,
+            "parameter_id": "source.turbine_gain_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "turbine"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.8505924918658393,
+              "plus": 1.1494075081341608
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.18200438387479034,
+            "parameter_id": "source.rotary_amplitude_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "rotary"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.96,
+              "plus": 1.04
+            }
+          },
+          {
+            "consumed": true,
+            "direction_ok": true,
+            "non_target_bounded": true,
+            "non_target_max_relative_change": 0.004178859024538876,
+            "parameter_id": "source.housing_order_weight_scale",
+            "requested": true,
+            "target_changed": true,
+            "target_stems": [
+              "rotor_housing"
+            ],
+            "triplet": {
+              "baseline": 1.0,
+              "minus": 0.94,
+              "plus": 1.06
+            }
+          }
+        ],
+        "schema_version": "s12-stage-u-parameter-reachability-v1",
+        "status": "PARAMETER_REACHABILITY_PASS",
+        "unused": [],
+        "vehicle_id": "rx7_fd"
+      }
+    }
+  ]
+}

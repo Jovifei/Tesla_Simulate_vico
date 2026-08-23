@@ -24,9 +24,12 @@ COMMON_KEYS = {
     "shift": {"impact_scale", "recovery_scale"},
 }
 SOURCE_KEYS = {
-    "ferrari_458": {"pulse_width_scale", "bank_phase_offset_deg", "metallic_decay_scale", "high_rpm_growth_scale"},
-    "hellcat": {"blower_gain_scale", "blower_boost_mix", "boost_attack_s", "boost_release_s"},
-    "rx7_fd": {"rotary_phase_offset_deg", "rotary_pulse_width_scale", "primary_spool_tau_s", "secondary_spool_tau_s", "boost_attack_s", "boost_release_s", "blow_off_gain_scale", "blow_off_release_s"},
+    "ferrari_458": {"pulse_width_scale", "bank_phase_offset_deg", "metallic_decay_scale", "high_rpm_growth_scale", "metallic_gain_scale", "mid_carrier_gain_scale", "metallic_texture_mix"},
+    "hellcat": {"blower_gain_scale", "blower_boost_mix", "boost_attack_s", "boost_release_s", "blower_intake_balance", "intake_gain_scale", "pressure_attack_gain_scale"},
+    # ``rotary_pulse_width_scale`` is retained only so historical Stage-G v4
+    # receipts can be reopened.  New Stage-U grids must use the semantic
+    # ``rotary_amplitude_scale`` and one or more housing controls instead.
+    "rx7_fd": {"rotary_phase_offset_deg", "rotary_pulse_width_scale", "rotary_amplitude_scale", "housing_gain_scale", "housing_decay_scale", "housing_order_weight_scale", "turbo_gain_scale", "turbine_gain_scale", "primary_spool_tau_s", "secondary_spool_tau_s", "boost_attack_s", "boost_release_s", "blow_off_gain_scale", "blow_off_release_s"},
 }
 ELIGIBLE_STATES = ("idle", "acceleration", "afterfire")
 

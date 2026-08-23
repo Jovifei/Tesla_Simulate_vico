@@ -128,7 +128,8 @@ def render_hellcat(
         + 0.05 * (0.075 / max(float(overrides.get("boost_attack_s", 0.075)), 1e-9) - 1.0)
         + 0.05 * (0.22 / max(float(overrides.get("boost_release_s", 0.22)), 1e-9) - 1.0)
     )
-    blower_gain = float(overrides.get("blower_gain_scale", 1.0)) * blower_baseline * (0.85 + 0.30 * load_boost_state) * boost_override_factor
+    blower_intake_balance = float(overrides.get("blower_intake_balance", 0.0))
+    blower_gain = float(overrides.get("blower_gain_scale", 1.0)) * (1.0 + blower_intake_balance) * blower_baseline * (0.85 + 0.30 * load_boost_state) * boost_override_factor
     # TVS blower whine: 5th rotor harmonic dominates the 250-1000 Hz mid band; the 10th
     # (order 23.6, 944-2440 Hz over the accel sweep) is the only source that tracks the
     # 1-4 kHz band across the whole rpm range, so it carries the band2 target the casing
@@ -177,8 +178,12 @@ def render_hellcat(
     mechanical = np.column_stack((mechanical_mono, 0.78 * mechanical_mono))
     # Intake roar: 5th-order tone sits in the 250-1000 Hz mid band (safe mid source, no
     # 1000-4000 Hz leak). Gain raised to lift accel_mid without inflating the high band.
-    intake_mono = 0.050 * pressure_compensation * (rpm > 0.0) * load * (0.4 + throttle) * np.sin(2.0 * np.pi * phase * 5.0 + 0.35)
+    intake_gain_scale = float(overrides.get("intake_gain_scale", 1.0))
+    intake_mono = (1.0 - blower_intake_balance) * intake_gain_scale * 0.050 * pressure_compensation * (rpm > 0.0) * load * (0.4 + throttle) * np.sin(2.0 * np.pi * phase * 5.0 + 0.35)
     intake = np.column_stack((0.52 * intake_mono, intake_mono))
+    pressure_attack_gain_scale = float(overrides.get("pressure_attack_gain_scale", 0.0))
+    pressure_attack_mono = pressure_attack_gain_scale * 0.050 * pressure_compensation * load * np.tanh(compressor_envelope) * np.sin(2.0 * np.pi * phase * 3.0)
+    pressure_attack = np.column_stack((0.70 * pressure_attack_mono, pressure_attack_mono))
     bank_intervals = []
     for impulses in (left_impulses, right_impulses):
         positions = np.flatnonzero(impulses)
@@ -222,7 +227,7 @@ def render_hellcat(
     mechanical = makeup * mechanical
     casing = makeup * casing
     intake = makeup * intake
-    pressure = exhaust + blower + mechanical + intake
+    pressure = exhaust + blower + mechanical + intake + pressure_attack
     render = SourceRender(
         pressure=pressure,
         stems={
@@ -233,6 +238,7 @@ def render_hellcat(
             "mechanical": mechanical,
             "casing": casing,
             "intake": intake,
+            **({"pressure_attack": pressure_attack} if "pressure_attack_gain_scale" in overrides else {}),
         },
         diagnostics={
             "vehicle_id": "hellcat",
