@@ -49,4 +49,3 @@ E:\Claude_allow\Download\s12-r1-pilot\<recording_id>\
 - 是否能提供 OBD/CAN 时间戳状态：
 - 是否能提供原厂状态证明：
 - 预计交付日期：
-

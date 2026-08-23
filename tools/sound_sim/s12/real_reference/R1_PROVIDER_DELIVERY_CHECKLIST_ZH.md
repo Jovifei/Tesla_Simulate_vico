@@ -110,4 +110,3 @@
 ```
 
 入库命令见同目录 `RAW_AUDIO_INTAKE_GUIDE.md`。任何一项不满足时，系统必须保留记录和缺口，但继续保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不生成 `APPROVED_PROFILE_CANDIDATE`。
-
