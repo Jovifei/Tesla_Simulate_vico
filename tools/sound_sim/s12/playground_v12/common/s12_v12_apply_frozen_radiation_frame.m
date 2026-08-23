@@ -10,7 +10,7 @@ arguments
     sampleRate (1, 1) double {mustBeFinite, mustBePositive} = 48000
 end
 
-expectedSha = "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f";
+expectedSha = "0ea36a3188869e503b48b7e0735bcf64d430abe4d2f6d28b49dcfe3c9cf70d4b";
 expectedCommit = "4afe65a67ed21822422f1eb6dbf43fdd627072d3";
 upstreamDelay = 8;
 downstreamDelay = 12;

@@ -30,6 +30,13 @@ switch identity.engine_type
         [banks, layers, context] = renderRx7( ...
             identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, ...
             acceleration, context, sampleRateHz);
+    case {"twin_turbo_v6", "twin_turbo_inline6"}
+        [banks, layers, context] = renderInlineTurbo( ...
+            identity, crankPhase, rpmRatio, load, throttle, loadGain, ...
+            bankSkew, context);
+    case "naturally_aspirated_v10"
+        [banks, layers, context] = renderV10( ...
+            identity, crankPhase, rpmRatio, loadGain, bankSkew, throttle, context);
     otherwise
         error("S12:EngineIdentity:Render", "Engine identity type is unsupported.");
 end
@@ -53,6 +60,7 @@ diagnostics = struct( ...
     "high_frequency_energy", energy(layers.high_frequency), ...
     "supercharger_whine_energy", energy(layers.supercharger_whine), ...
     "v8_exhaust_energy", energy(layers.v8_exhaust), ...
+    "piston_exhaust_energy", energy(layers.piston_exhaust), ...
     "rotary_event_count", layers.rotary_event_count, ...
     "rotary_gate_variance", layers.rotary_gate_variance, ...
     "turbo_spool", context.turbo_spool, ...
@@ -137,6 +145,78 @@ layers.rotary_event_count = sum(diff(rotaryGate > 0.35) > 0);
 layers.rotary_gate_variance = var(rotaryGate);
 end
 
+function [banks, layers, context] = renderInlineTurbo( ...
+        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, context)
+primary = identity.order_profile.primary_order;
+secondary = identity.order_profile.secondary_order;
+pulseExponent = 2 + 8 * (1 - identity.firing_character.pulse_width);
+eventPulse = max(0, sin(primary * phase)) .^ pulseExponent;
+exhaust = identity.acoustic_color_profile.low_band_gain * loadGain .* ...
+    (0.72 * eventPulse + 0.28 * sin(secondary * phase));
+if identity.engine_type == "twin_turbo_v6"
+    lowBody = 0.95 * identity.acoustic_color_profile.low_band_gain * loadGain .* ...
+        sin(0.75 * primary * phase + pi / 12);
+    edgeScale = 0.50;
+    racyScale = 0.80;
+else
+    lowBody = 12.0 * identity.acoustic_color_profile.low_band_gain * loadGain .* ...
+        sin(0.68 * primary * phase + pi / 14);
+    edgeScale = 0.03;
+    racyScale = 0.03;
+end
+midEdge = edgeScale * identity.acoustic_color_profile.mid_band_gain * loadGain .* ...
+    (0.55 * sin(primary * phase) + 0.30 * sin(secondary * phase + pi / 8));
+targetSpool = min(1, max(0, 0.08 + load .* throttle .* (0.25 + 0.75 * rpmRatio)));
+spool = linspace(context.turbo_spool, targetSpool(end), numel(phase)).';
+turboOrder = identity.turbo_or_supercharger_profile.drive_ratio * ...
+    identity.harmonic_profile.high_frequency_order;
+turboPhase = context.turbo_phase_rad + turboOrder * phase;
+whistle = identity.turbo_or_supercharger_profile.whine_gain * spool .* ...
+    (sin(turboPhase) + 0.28 * sin(2 * turboPhase + pi / 7));
+turbine = identity.turbo_or_supercharger_profile.turbine_gain * spool .* ...
+    (sin(0.65 * turboPhase + pi / 5) + 0.20 * sin(1.3 * turboPhase));
+mechanical = identity.mechanical_noise_profile.base_gain * (0.45 + 0.55 * rpmRatio) .* ...
+    (sin(identity.mechanical_noise_profile.mechanical_order * phase) + ...
+    identity.mechanical_noise_profile.roughness * sin(7 * phase + pi / 9));
+if identity.engine_type == "twin_turbo_v6"
+    racy = racyScale * 0.55 * sin(4 * phase + pi / 11);
+else
+    racy = racyScale * 0.28 * sin(5 * phase + pi / 13);
+end
+mono = lowBody + exhaust + midEdge + racy + whistle + turbine + mechanical;
+banks = toBanks(mono, bankSkew);
+context.turbo_spool = spool(end);
+context.turbo_phase_rad = mod(turboPhase(end), 2 * pi);
+layers = emptyLayers();
+layers.high_frequency = whistle + turbine;
+layers.turbine = turbine;
+layers.piston_exhaust = lowBody + exhaust + midEdge + racy;
+end
+
+function [banks, layers, context] = renderV10( ...
+        identity, phase, rpmRatio, loadGain, bankSkew, throttle, context)
+primary = identity.order_profile.primary_order;
+secondary = identity.order_profile.secondary_order;
+highOrder = identity.order_profile.high_order;
+body = identity.acoustic_color_profile.mid_band_gain * loadGain .* ...
+    (0.80 * sin(primary * phase) + 0.06 * sin(secondary * phase) + ...
+    0.01 * sin(highOrder * phase + pi / 10));
+scream = identity.acoustic_color_profile.high_band_gain * ...
+    (0.35 + 0.65 * rpmRatio) .* ...
+    (sin(identity.harmonic_profile.high_frequency_order * phase) + ...
+    0.30 * sin(0.5 * identity.harmonic_profile.high_frequency_order * phase + pi / 8));
+intake = 0.35 * identity.acoustic_color_profile.mid_band_gain * sqrt(max(throttle, 0)) .* ...
+    sin(3 * primary * phase + pi / 6);
+mechanical = identity.mechanical_noise_profile.base_gain * (0.40 + 0.60 * rpmRatio) .* ...
+    (sin(identity.mechanical_noise_profile.mechanical_order * phase) + ...
+    identity.mechanical_noise_profile.roughness * sin(17 * phase + pi / 5));
+mono = body + scream + intake + mechanical;
+banks = toBanks(mono, bankSkew);
+layers = emptyLayers();
+layers.high_frequency = scream;
+layers.piston_exhaust = body + intake;
+end
+
 function [frame, nextEnvelope] = onsetTransient(profile, phase, acceleration, previous, current)
 change = acceleration(end) - previous;
 attack = profile.attack_gain * min(1, max(0, change) / 5) * profile.load_coupling;
@@ -153,7 +233,8 @@ end
 function layers = emptyLayers()
 layers = struct( ...
     "high_frequency", 0, "supercharger_whine", 0, "v8_exhaust", 0, ...
-    "turbine", 0, "rotary_event_count", 0, "rotary_gate_variance", 0);
+    "piston_exhaust", 0, "turbine", 0, "rotary_event_count", 0, ...
+    "rotary_gate_variance", 0);
 end
 
 function [banks, layers] = normalizeIdentityLevel(banks, layers, load, throttle)
@@ -167,6 +248,7 @@ banks = scale * banks;
 layers.high_frequency = scale * layers.high_frequency;
 layers.supercharger_whine = scale * layers.supercharger_whine;
 layers.v8_exhaust = scale * layers.v8_exhaust;
+layers.piston_exhaust = scale * layers.piston_exhaust;
 layers.turbine = scale * layers.turbine;
 end
 

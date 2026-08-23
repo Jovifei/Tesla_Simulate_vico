@@ -3462,3 +3462,17 @@ until driver and performance gates pass.
 
 - Jovi feedback recorded: Hellcat low-frequency character is partially convincing, but the actual playback level is still too low. This is an audition calibration gap, not proof that the engine source or the current fixed digital master should be blindly amplified.
 - Next action awaits Jovi's review of the package and authorization for a narrowly bounded Hellcat fixed-master A/B or a source-level low-frequency articulation experiment.
+
+## 2026-08-24 S12 v1.2 GT-R / Supra / LFA continuation
+
+> 状态：`TECHNICAL_DELIVERY / SYNTHETIC_UNCALIBRATED`。当前分支先已推送远端，随后新增三车 v1.2 source/identity/scenario/profile 与 Simulink wrapper；未修改 FVM、HLLC、MUSCL、SSP-RK3、PTR core 或 Radiation package。
+
+- [x] 推送原 acoustic-realism 分支领先的 6 个已提交 commit 到 `origin/agent/s12-acoustic-realism-review-optimization`，远端 tip=`b96bb45`；未跟踪 scratch 文件未入库。
+- [x] 修复当前分支遗留的 4D-B package SHA 期望值：实际接受包 SHA=`0ea36a...70d4b`，source commit=`4afe65a...`; 未改 package 内容。
+- [x] 新增 `gtr_r35_2007_stock`、`supra_jza80_rz_stock`、`lexus_lfa_stock` 的 source profile、engine identity profile、scenario profile 和 v1.2 SLX。
+- [x] MATLAB source/profile regression：`12/12 PASS`；本轮修改的 7 个 MATLAB 文件 Code Analyzer=`0 issue`。
+- [x] 三车完成 cold reload、`model_check` healthy、Update Diagram、Active Compile；compiled cycle `[9,1]`、source `[960,1]`、radiation `[960]`、PCM `[960,2]`。
+- [x] 三车真实 90 秒 Simulink：各 4500 frame、`[4320000,2]`、finite、clipping=0；r4 peak：GT-R `0.07960`、Supra `0.03597`、LFA `0.04915`。
+- [x] r4 与 r4-repeat 完整 WAV SHA 一致：GT-R `cffeeb85...a75377`、Supra `9b0aca13...f113dc`、LFA `3a56da84...1dd45c`。
+- [x] 交付报告：`tools/sound_sim/s12/playground_v12/docs/S12_v12_GTR_Supra_LFA_Report.md`；Obsidian：`23-S12-v12-GT-R-Supra-LFA模型与音频交付.md`。
+- [ ] 真实 R1 stock/exterior-rear 参考、人工盲听、OEM calibration、完整 FVM/PTR 管网和实时/移动端仍未完成；r4 频带误差已如实写入报告，不宣称自动门禁全通过。

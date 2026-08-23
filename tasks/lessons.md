@@ -1189,6 +1189,16 @@ Rules:
 
 - Pattern: `model_edit` 在已加载的空模型中成功创建结构，但后续脚本执行 `close_system(model,0)`，把尚未写入磁盘的结构全部丢弃；同一会话内的 `model_read` 曾看到块，磁盘冷加载却为空，导致上层 Model Reference 解析为零端口。
 - Rule: 每次 `model_edit` 后必须依次执行结构 `model_read`、`model_check`、Update Diagram、`save_system`、关闭、冷加载 `model_read`。任何 Model Reference 建立前都必须以磁盘冷加载确认被引用模型的端口，不得把内存图当作已交付 SLX。
+
+## v1.2 分支上的冻结包摘要必须以当前接受包字节为准 (2026-08-24)
+
+- Pattern: v1.2 MATLAB adapter 仍固定旧分支 SHA `0f4b2c...`，但当前已接受 4D-B baseline 文件实际 SHA 为 `0ea36a...`；source commit 相同，导致真实 MATLAB regression 在进入新车型前全部停止。
+- Rule: 进入新模型前先对当前 worktree 的冻结 package 做 byte-level hash/readback；若源提交相同而包字节已被接受基线更新，只更新 Track-S adapter 的期望摘要和测试，不修改冻结 package，不用旧会话记忆代替现场 hash。
+
+## Simulink wrapper 的模型名、path 和保存状态必须独立门禁 (2026-08-24)
+
+- Pattern: 新车 wrapper 第一次建模时 shared model 不在 MATLAB path，Model Reference 端口解析失败；修正 path 后又因 `model_edit` 内存结构未显式保存而被 `close_system(...,0)` 丢弃；另一次 `SimulationInput(modelName)` 在模型未 open 且车辆目录未入 path 时报告 model 不存在。
+- Rule: 每车建模顺序固定为：`model_read` 空壳 → `model_edit` → `model_read`/`model_check` → `open_system(absolute SLX)` + shared-model `addpath` → Update → `save_system` → 关闭 → 冷加载 `model_read`/`model_check` → `SimulationInput(modelName)` 仿真。绝不关闭未保存模型，绝不依赖偶然 current path。
 # 声学身份分离不足以代表真实感 (2026-08-02)
 
 - Pattern: v0.15 已证明三套 source 在阶次和相关性指标上可分离，但试听仍约 30% 真实；确定性怠速、固定低频谐振、静态增压正弦和缺少 closed-throttle 瞬态会让独立拓扑听起来仍像程序模板。

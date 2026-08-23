@@ -11,6 +11,12 @@ switch string(profileId)
         stem = "ferrari";
     case "rx7_fd_1991_stock"
         stem = "rx7";
+    case "gtr_r35_2007_stock"
+        stem = "gtr_r35";
+    case "supra_jza80_rz_stock"
+        stem = "supra_jza80";
+    case "lexus_lfa_stock"
+        stem = "lfa";
     otherwise
         error("S12:EngineIdentity:Demo", "No v0.14 listening name is defined for this profile.");
 end

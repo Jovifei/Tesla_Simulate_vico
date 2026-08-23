@@ -14,10 +14,12 @@ else
 end
 
 identity = s12_v12_load_engine_identity_profile(profileId);
-if identity.profile_id == "rx7_fd_1991_stock"
-    matched = source.engine_kind == "rotary" && source.rotor_count == 2;
-else
-    matched = source.engine_kind == "piston" && source.cylinders == 8;
+switch identity.profile_id
+    case "rx7_fd_1991_stock"
+        matched = source.engine_kind == "rotary" && source.rotor_count == 2;
+    otherwise
+        matched = source.engine_kind == "piston" && ...
+            source.cylinders == identity.cylinder_count;
 end
 if ~matched
     error("S12:EngineIdentity:Route", ...
@@ -30,17 +32,22 @@ if source.engine_kind == "rotary" && source.rotor_count == 2
     profileId = "rx7_fd_1991_stock";
     return
 end
-if source.engine_kind ~= "piston" || source.cylinders ~= 8 || ...
-        isempty(source.order_surface)
+if source.engine_kind ~= "piston" || isempty(source.order_surface)
     error("S12:EngineIdentity:Route", ...
         "A v0.4 identity profile cannot be inferred from this source topology.");
 end
 
 primaryOrder = source.order_surface(1).order;
-if primaryOrder == 2
+if source.cylinders == 8 && primaryOrder == 2
     profileId = "hellcat_2022_stock";
-elseif primaryOrder == 4
+elseif source.cylinders == 8 && primaryOrder == 4
     profileId = "ferrari_458_stock";
+elseif source.cylinders == 6 && source.layout == "V"
+    profileId = "gtr_r35_2007_stock";
+elseif source.cylinders == 6 && source.layout == "inline"
+    profileId = "supra_jza80_rz_stock";
+elseif source.cylinders == 10
+    profileId = "lexus_lfa_stock";
 else
     error("S12:EngineIdentity:Route", ...
         "A v0.4 piston identity requires an explicit profileId for this order surface.");

@@ -12,7 +12,7 @@
   ],
   "properties": {
     "schema_version": {"const": "s12-engine-identity-profile-0.4"},
-    "profile_id": {"enum": ["hellcat_2022_stock", "ferrari_458_stock", "rx7_fd_1991_stock"]},
+    "profile_id": {"enum": ["hellcat_2022_stock", "ferrari_458_stock", "rx7_fd_1991_stock", "gtr_r35_2007_stock", "supra_jza80_rz_stock", "lexus_lfa_stock"]},
     "synthetic": {"const": true},
     "engine_type": {"$ref": "#/$defs/parameter"},
     "cylinder_count": {"$ref": "#/$defs/parameter"},

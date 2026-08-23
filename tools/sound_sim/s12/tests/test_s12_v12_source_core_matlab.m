@@ -134,7 +134,7 @@ verifyEqual(testCase, diagnostics.configuration, ...
     "frozen_4d_b_radiation_audio_adapter");
 verifyFalse(testCase, diagnostics.full_fvm_ptr_network);
 verifyEqual(testCase, diagnostics.radiation_package_sha256, ...
-    "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f");
+    "0ea36a3188869e503b48b7e0735bcf64d430abe4d2f6d28b49dcfe3c9cf70d4b");
 verifyEqual(testCase, diagnostics.radiation_source_commit, ...
     "4afe65a67ed21822422f1eb6dbf43fdd627072d3");
 end
@@ -223,6 +223,31 @@ for frameIndex = 1:4500
     verifyTrue(testCase, all(isfinite(frame), "all"));
 end
 verifyEqual(testCase, context.frame_index, 4500);
+end
+
+function testRemainingThreeProfilesHaveDistinctIdentityAndFinitePrePtrFrames(testCase)
+profileIds = ["gtr_r35_2007_stock", "supra_jza80_rz_stock", "lexus_lfa_stock"];
+state = struct( ...
+    "rpm", 4200, "load", 0.72, "throttle", 0.82, "acceleration", 2.5, ...
+    "shift_event", 0, "shift_progress", 0, ...
+    "afterfire_kind", "none", "afterfire_progress", 0);
+frames = cell(numel(profileIds), 1);
+for index = 1:numel(profileIds)
+    profile = loadProfile(testCase, profileIds(index));
+    normalized = s12_v12_validate_source_profile(profile);
+    identity = s12_v12_load_engine_identity_profile(profileIds(index));
+    [frames{index}, ~, diagnostics] = s12_v12_render_pre_ptr_frame( ...
+        state, profile, [], 48000, 960, profileIds(index));
+    verifySize(testCase, frames{index}, [960, 1]);
+    verifyTrue(testCase, all(isfinite(frames{index}), "all"));
+    verifyEqual(testCase, diagnostics.identity.profile_id, identity.profile_id);
+    verifyEqual(testCase, diagnostics.identity.profile_id, profileIds(index));
+    verifyGreaterThan(testCase, diagnostics.layer_energy.identity, 0);
+    verifyGreaterThan(testCase, normalized.cylinders, 0);
+end
+verifyNotEqual(testCase, frames{1}, frames{2});
+verifyNotEqual(testCase, frames{1}, frames{3});
+verifyNotEqual(testCase, frames{2}, frames{3});
 end
 
 function profile = loadProfile(testCase, profileId)

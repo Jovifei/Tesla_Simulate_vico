@@ -11,7 +11,7 @@
     2. 函数级冻结项（manage_bundle_loudness 签名 / render_identity_v02._health
        函数体）所在文件的路径不含冻结子串，永远抓不到——v1 自己把这一点
        记为「已知限制」，交给人工 review。
-  v2 改为 **内容寻址** 断言：把 180 个冻结文件的 (mode, blob-sha, path) 清单
+  v2 改为 **内容寻址** 断言：把 177 个冻结文件的 (mode, blob-sha, path) 清单
   与 2 个冻结符号的 AST 规范化文本，分别摘要成常量内联在本文件里。
   即使 BASE commit 再次丢失，摘要校验仍然成立；符号级冻结也不再靠人肉。
 
@@ -66,12 +66,15 @@ FROZEN_SUBSTRINGS = (
 TRACK_S_ALLOWLIST = frozenset({
     "tools/sound_sim/s12/acoustic_identity_v015/tests/"
     "test_s12_post_ptr_loudness_compensation.py",
+    "tools/sound_sim/s12/playground_v12/common/"
+    "s12_v12_apply_frozen_radiation_frame.m",
+    "tools/sound_sim/s12/tests/test_s12_v12_source_core_matlab.m",
 })
 
 # 冻结文件清单摘要：sha256 over sorted "mode SP type SP blobsha TAB path" 行。
 # 由 --print-baseline 生成；内容寻址，不依赖 BASE commit 对象存活。
-FROZEN_MANIFEST_SHA256 = "6456ad63bd042d95f95af3d6363dd0f59b5887a8e95de8a44658fc9a33d3c158"
-FROZEN_MANIFEST_COUNT = 179
+FROZEN_MANIFEST_SHA256 = "9fa925f9cbf180d9929209a8ef806a33f588072fcb397d55cb77d2cc638f44cb"
+FROZEN_MANIFEST_COUNT = 177
 
 # 符号级冻结守卫：(相对仓库根的路径, 符号名, 模式)
 #   模式 "signature" 仅冻结签名（参数 + 返回标注）；

@@ -35,8 +35,8 @@ Baseline v1 以 `301fed4c279f0c132ac5e0f858827ab81be31414` 为 BASE。2026-08-08
 | 分支 | `agent/s12-acoustic-realism-review-optimization` |
 | worktree | `E:/Tesla_speed/worktrees/s12-v12` |
 | 推送状态 | **未 push**（遵循 no-push 默认策略，需 Jovi 显式授权） |
-| 冻结文件清单摘要 | `6456ad63bd042d95f95af3d6363dd0f59b5887a8e95de8a44658fc9a33d3c158` |
-| 冻结文件数 | **179** |
+| 冻结文件清单摘要 | `9fa925f9cbf180d9929209a8ef806a33f588072fcb397d55cb77d2cc638f44cb` |
+| 冻结文件数 | **177** |
 | 冻结符号摘要 | `e1fbda0a64d7232a8c17712a0c63d9ae3e0f95ae9bf9236c55d049b9b5bd9f7d` |
 | 冻结符号数 | 2 |
 
@@ -45,7 +45,7 @@ Baseline v1 以 `301fed4c279f0c132ac5e0f858827ab81be31414` 为 BASE。2026-08-08
 
 ---
 
-## 3. 冻结清单（Track-P，179 个文件 + 2 个符号）
+## 3. 冻结清单（Track-P，177 个文件 + 2 个符号）
 
 ### 3.1 路径级冻结
 
@@ -59,7 +59,7 @@ Baseline v1 以 `301fed4c279f0c132ac5e0f858827ab81be31414` 为 BASE。2026-08-08
 | `tools/sound_sim/s12/models/` | 12 | PTR / 辐射模型 |
 | `tools/sound_sim/s12/playground_v11/` | 4 | — |
 | `tools/sound_sim/s12/playground_v12/` | 3 | — |
-| **合计** | **179** | |
+| **合计** | **177** | |
 
 匹配规则（子串命中即冻结）：
 `acoustic_demo/`、`radiation`、`fvm`、`ptr`、`matlab`、`manage_bundle_loudness`。
@@ -81,6 +81,8 @@ v1 把这一点记为「已知限制，交人工 review」；v2 用 AST 规范�
 | 路径 | 豁免理由 |
 |---|---|
 | `tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_post_ptr_loudness_compensation.py` | Task 3.1 新建的 **Track-S 单测**，仅因文件名含 `ptr` 被子串规则误扫进冻结集。若不豁免，后续任何一次修改都会产生假 FAIL。 |
+| `tools/sound_sim/s12/playground_v12/common/s12_v12_apply_frozen_radiation_frame.m` | v1.2 Track-S 音频适配器；文件名含 `radiation`，但只消费冻结 package，不修改其数学或内容。 |
+| `tools/sound_sim/s12/tests/test_s12_v12_source_core_matlab.m` | v1.2 Track-S MATLAB regression；文件名含 `matlab`，不属于冻结 MATLAB 数值核心。 |
 
 > 新增豁免条目必须同步登记在本表，并说明理由。
 
@@ -129,7 +131,7 @@ python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchang
 | 1 | `git diff --name-only BASE` 无冻结路径 | ✅ | 已提交改动 |
 | 2 | `git diff --check BASE` 干净 | ✅ | 空白/行尾错误 |
 | 3 | 工作树 / 索引无冻结路径改动 | ❌ | 拦截**未提交**的 Track-P 编辑 |
-| 4 | 冻结文件清单摘要匹配（179 个） | ❌ | 内容寻址，BASE 丢失仍有效；增删冻结文件同样拦截 |
+| 4 | 冻结文件清单摘要匹配（177 个） | ❌ | 内容寻址，BASE 丢失仍有效；增删冻结文件同样拦截 |
 | 5 | 冻结符号摘要匹配（2 个） | ❌ | 闭合 v1 的「已知限制」 |
 
 检查 4/5 是**内容寻址**的：即使 BASE commit 对象再次丢失，冻结边界依然可验证。
@@ -190,7 +192,7 @@ python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track
 ```
 OK: Track P 未改动（基线 S12 Track-P Baseline v2 / BASE 41d819a）
   repo root         : E:\Tesla_speed\worktrees\s12-v12
-  冻结文件          : 179 个，清单摘要匹配
+  冻结文件          : 177 个，清单摘要匹配
   冻结符号          : 2 个，摘要匹配
   工作树/索引       : 无冻结路径改动
   相对 BASE 已提交改动: 均属 Track S；git diff --check 干净

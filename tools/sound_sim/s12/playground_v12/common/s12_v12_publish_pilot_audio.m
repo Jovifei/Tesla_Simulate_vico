@@ -5,7 +5,8 @@ arguments
     profileId (1, 1) string
     outputDirectory (1, 1) string
 end
-allowed = ["hellcat_2022_stock", "ferrari_458_stock", "rx7_fd_1991_stock"];
+allowed = ["hellcat_2022_stock", "ferrari_458_stock", "rx7_fd_1991_stock", ...
+    "gtr_r35_2007_stock", "supra_jza80_rz_stock", "lexus_lfa_stock"];
 if ~ismember(profileId, allowed)
     error("S12:EngineSoundV12:Publish", "Only v1.2 pilot profiles are publishable.");
 end
