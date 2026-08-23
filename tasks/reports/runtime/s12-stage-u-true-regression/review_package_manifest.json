@@ -1,0 +1,845 @@
+{
+  "schema_version": "s12-stage-u-review-package-v1",
+  "status": "ABX_READY_FOR_HUMAN_REVIEW",
+  "candidate_count": 1,
+  "trial_count": 3,
+  "audio_policy": {
+    "raw_copy": "byte-identical external copy; never loudness matched",
+    "audition_copy": "separate 48 kHz loudness-managed copy",
+    "target_lufs": -18.0,
+    "peak_cap_dbfs": -1.5,
+    "raw_media_in_repository": false
+  },
+  "trials": [
+    {
+      "trial_id": "u7_01_stage_u_hellcat_01_15s_reference",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "randomized_mapping": {
+        "B": "parent",
+        "C": "candidate"
+      },
+      "media": {
+        "reference": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_01\\hellcat_01_15s_reference.wav",
+          "source_raw_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\raw\\reference.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/raw/reference.wav",
+          "raw_copy_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\audition\\reference_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/audition/reference_48k_loudness_matched.wav",
+          "audition_sha256": "fd3a9900dad27ece6eea3c680954af80d2f0e1608316cd0477b0a3d2b46fc5ce",
+          "source_sample_rate_hz": 44100,
+          "audition_sample_rate_hz": 48000,
+          "resampled": true,
+          "duration_s": 15.0,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": -8.461408095252231,
+          "gain_linear": 0.37751098654226084,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -9.538591904747769,
+            "rms_dbfs": -11.060821293806853,
+            "peak_dbfs": 0.02108629286539484,
+            "crest_factor_db": 11.081907586672248,
+            "clipping_count": 226
+          },
+          "audition_metrics": {
+            "integrated_lufs": -17.99999999559731,
+            "rms_dbfs": -19.522229385583223,
+            "peak_dbfs": -8.440324211015918,
+            "crest_factor_db": 11.081905174567305,
+            "clipping_count": 0
+          }
+        },
+        "parent": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\parent.wav",
+          "source_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\raw\\parent.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/raw/parent.wav",
+          "raw_copy_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\audition\\parent_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/audition/parent_48k_loudness_matched.wav",
+          "audition_sha256": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 5.902222310486469,
+          "gain_linear": 1.9729274508539774,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -23.90222231048647,
+            "rms_dbfs": -25.989088673522115,
+            "peak_dbfs": -10.888576231553058,
+            "crest_factor_db": 15.100512441969057,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -18.000000000536314,
+            "rms_dbfs": -20.08686636297159,
+            "peak_dbfs": -4.986355534398859,
+            "crest_factor_db": 15.100510828572732,
+            "clipping_count": 0
+          }
+        },
+        "candidate": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\hellcat_stage_u_04.wav",
+          "source_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\raw\\candidate.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/raw/candidate.wav",
+          "raw_copy_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_01_stage_u_hellcat_01_15s_reference\\audition\\candidate_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_01_stage_u_hellcat_01_15s_reference/audition/candidate_48k_loudness_matched.wav",
+          "audition_sha256": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 5.52586050169932,
+          "gain_linear": 1.8892656353846846,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -23.52586050169932,
+            "rms_dbfs": -25.61988985833925,
+            "peak_dbfs": -11.17404407334135,
+            "crest_factor_db": 14.4458457849979,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -17.99999999282204,
+            "rms_dbfs": -20.09402935065442,
+            "peak_dbfs": -5.648183662071772,
+            "crest_factor_db": 14.445845688582647,
+            "clipping_count": 0
+          }
+        }
+      },
+      "spectrogram_residuals": {
+        "before": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_role": "reference",
+          "comparison_role": "parent",
+          "reference_raw_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "comparison_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_01_stage_u_hellcat_01_15s_reference\\before.svg",
+          "svg_url": "/visuals/u7_01_stage_u_hellcat_01_15s_reference/before.svg",
+          "svg_sha256": "0a225be4d4d6857cc2ba61f0e89b89930392e17d7d519ba2908b0c6801c56e9c",
+          "summary": {
+            "signed_mean_db": -17.576465630848823,
+            "mean_absolute_db": 19.854707783666825,
+            "rms_db": 23.375254586767113,
+            "p95_absolute_db": 42.47881659298329,
+            "max_absolute_db": 95.5727646280775,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        },
+        "after": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_role": "reference",
+          "comparison_role": "candidate",
+          "reference_raw_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "comparison_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_01_stage_u_hellcat_01_15s_reference\\after.svg",
+          "svg_url": "/visuals/u7_01_stage_u_hellcat_01_15s_reference/after.svg",
+          "svg_sha256": "0ce372f7e4ad03b0fe5c22c27d1ea01d23fd06081a8445f717f6750bfb156e8a",
+          "summary": {
+            "signed_mean_db": -17.222641054309097,
+            "mean_absolute_db": 19.53883408898593,
+            "rms_db": 23.102623100106328,
+            "p95_absolute_db": 42.39630420000979,
+            "max_absolute_db": 92.37996452495562,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        }
+      },
+      "timbral_descriptors": {
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+        "hard_gate": false,
+        "gate_label": "非硬门禁",
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "descriptors": {
+          "hardness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "booming": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        }
+      },
+      "professional_binding": {
+        "status": "ALL_COMPONENT_SHA_BOUND",
+        "passes": true,
+        "sha_binding": {
+          "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+        }
+      },
+      "parent_candidate_distinct": true,
+      "professional_metrics": {
+        "matlab": {
+          "before": 1.9969265896752553,
+          "after": 1.8264098730436724
+        },
+        "mosqito": {
+          "before": 2.100611412595111,
+          "after": 2.0631763717407057
+        },
+        "audio_feature_extractor": {
+          "before": 11.972783582909306,
+          "after": 11.896370144900773
+        }
+      },
+      "legacy_metrics": {
+        "before": 1.0,
+        "after": 0.9692530173208884,
+        "absolute_improvement": 0.03074698267911158
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "source_mapping": {
+        "candidate_id": "hellcat_stage_u_04",
+        "dashboard_values": {
+          "blower_intake_balance": 0.25,
+          "mid_band_pressure_db": 3.0,
+          "pressure_attack_db": 3.0
+        },
+        "legacy_rotary_pulse_width_scale": "NOT_APPLICABLE",
+        "parameter_group": "pressure_attack_blower_intake_balance",
+        "parent_candidate_id": "hellcat_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "blower_intake_balance": 0.25,
+          "intake_gain_scale": 1.4125375446227544,
+          "pressure_attack_gain_scale": 1.4125375446227544
+        },
+        "vehicle_id": "hellcat"
+      },
+      "parameter_uncertainty": {
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE",
+        "reason": "finite grid candidate; no continuous confidence interval was produced"
+      }
+    },
+    {
+      "trial_id": "u7_02_stage_u_hellcat_02_15s_reference",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "randomized_mapping": {
+        "B": "candidate",
+        "C": "parent"
+      },
+      "media": {
+        "reference": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
+          "source_raw_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\raw\\reference.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/raw/reference.wav",
+          "raw_copy_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\audition\\reference_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/audition/reference_48k_loudness_matched.wav",
+          "audition_sha256": "f2644d9d6f0b23c85b395f4741b3234b57767047371934fd3a1b43bf1aa1f902",
+          "source_sample_rate_hz": 44100,
+          "audition_sample_rate_hz": 48000,
+          "resampled": true,
+          "duration_s": 15.0,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": -5.55744573965417,
+          "gain_linear": 0.5273849267544354,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -12.44255426034583,
+            "rms_dbfs": -13.34251490159419,
+            "peak_dbfs": -2.7627460147906264,
+            "crest_factor_db": 10.579768886803564,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -17.999999998335287,
+            "rms_dbfs": -18.899960664286418,
+            "peak_dbfs": -8.320190703786146,
+            "crest_factor_db": 10.579769960500272,
+            "clipping_count": 0
+          }
+        },
+        "parent": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\parent.wav",
+          "source_raw_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\raw\\parent.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/raw/parent.wav",
+          "raw_copy_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\audition\\parent_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/audition/parent_48k_loudness_matched.wav",
+          "audition_sha256": "94dee9c479b480f52e23486a31804872cf2a11162a6354587b369d112237a9df",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 1.488375367684661,
+          "gain_linear": 1.186912676919539,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -19.48837536768466,
+            "rms_dbfs": -22.163536120137458,
+            "peak_dbfs": -8.501963602754536,
+            "crest_factor_db": 13.661572517382922,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -18.000000001265683,
+            "rms_dbfs": -20.675160752377245,
+            "peak_dbfs": -7.013588778710419,
+            "crest_factor_db": 13.661571973666826,
+            "clipping_count": 0
+          }
+        },
+        "candidate": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\hellcat_stage_u_04.wav",
+          "source_raw_sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\raw\\candidate.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/raw/candidate.wav",
+          "raw_copy_sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_02_stage_u_hellcat_02_15s_reference\\audition\\candidate_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_02_stage_u_hellcat_02_15s_reference/audition/candidate_48k_loudness_matched.wav",
+          "audition_sha256": "96374c49edbb29072669c1a1f92f012e3a5cbe62c4b88c004e6cec0ab8b18742",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 1.2248205138174129,
+          "gain_linear": 1.1514392398923177,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -19.224820513817413,
+            "rms_dbfs": -21.8543189831338,
+            "peak_dbfs": -8.722464831670216,
+            "crest_factor_db": 13.131854151463585,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -18.00000000354853,
+            "rms_dbfs": -20.62949847203075,
+            "peak_dbfs": -7.497644749709095,
+            "crest_factor_db": 13.131853722321654,
+            "clipping_count": 0
+          }
+        }
+      },
+      "spectrogram_residuals": {
+        "before": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_role": "reference",
+          "comparison_role": "parent",
+          "reference_raw_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "comparison_raw_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_02_stage_u_hellcat_02_15s_reference\\before.svg",
+          "svg_url": "/visuals/u7_02_stage_u_hellcat_02_15s_reference/before.svg",
+          "svg_sha256": "88fe8eb368f6f08b395898ed02d3e4b5670ae8561631e132b428f06c50565978",
+          "summary": {
+            "signed_mean_db": -3.8816095315618364,
+            "mean_absolute_db": 14.065716266168911,
+            "rms_db": 17.444994014287698,
+            "p95_absolute_db": 32.28247322568184,
+            "max_absolute_db": 102.80718531327908,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        },
+        "after": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_role": "reference",
+          "comparison_role": "candidate",
+          "reference_raw_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "comparison_raw_sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_02_stage_u_hellcat_02_15s_reference\\after.svg",
+          "svg_url": "/visuals/u7_02_stage_u_hellcat_02_15s_reference/after.svg",
+          "svg_sha256": "3f7392f803fc62b1a787383a24913f03974f9f7a3aac5046f039a7a5de4fa307",
+          "summary": {
+            "signed_mean_db": -3.6064967119877642,
+            "mean_absolute_db": 14.017356508089582,
+            "rms_db": 17.362988646331896,
+            "p95_absolute_db": 32.195249650608204,
+            "max_absolute_db": 98.31026493642844,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        }
+      },
+      "timbral_descriptors": {
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+        "hard_gate": false,
+        "gate_label": "非硬门禁",
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "descriptors": {
+          "hardness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "booming": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        }
+      },
+      "professional_binding": {
+        "status": "ALL_COMPONENT_SHA_BOUND",
+        "passes": true,
+        "sha_binding": {
+          "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "candidate": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a"
+        }
+      },
+      "parent_candidate_distinct": true,
+      "professional_metrics": {
+        "matlab": {
+          "before": 1.041606128658,
+          "after": 1.0094264024507449
+        },
+        "mosqito": {
+          "before": 2.073555899552563,
+          "after": 1.8831085339191789
+        },
+        "audio_feature_extractor": {
+          "before": 15.854478206312567,
+          "after": 16.057473085408606
+        }
+      },
+      "legacy_metrics": {
+        "before": 1.0,
+        "after": 0.972041899037773,
+        "absolute_improvement": 0.02795810096222695
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "source_mapping": {
+        "candidate_id": "hellcat_stage_u_04",
+        "dashboard_values": {
+          "blower_intake_balance": 0.25,
+          "mid_band_pressure_db": 3.0,
+          "pressure_attack_db": 3.0
+        },
+        "legacy_rotary_pulse_width_scale": "NOT_APPLICABLE",
+        "parameter_group": "pressure_attack_blower_intake_balance",
+        "parent_candidate_id": "hellcat_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "blower_intake_balance": 0.25,
+          "intake_gain_scale": 1.4125375446227544,
+          "pressure_attack_gain_scale": 1.4125375446227544
+        },
+        "vehicle_id": "hellcat"
+      },
+      "parameter_uncertainty": {
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE",
+        "reason": "finite grid candidate; no continuous confidence interval was produced"
+      }
+    },
+    {
+      "trial_id": "u7_03_stage_u_hellcat_03_15s_reference",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "randomized_mapping": {
+        "B": "parent",
+        "C": "candidate"
+      },
+      "media": {
+        "reference": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
+          "source_raw_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\raw\\reference.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/raw/reference.wav",
+          "raw_copy_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\audition\\reference_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/audition/reference_48k_loudness_matched.wav",
+          "audition_sha256": "11481676dcf6e3e32227a21b827754333007aaf0c2cfd93b8758c4d2276adfa3",
+          "source_sample_rate_hz": 44100,
+          "audition_sample_rate_hz": 48000,
+          "resampled": true,
+          "duration_s": 15.0,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": -6.059682589066847,
+          "gain_linear": 0.4977552742590111,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -11.940317410933153,
+            "rms_dbfs": -14.012796597616063,
+            "peak_dbfs": -0.6500362151209172,
+            "crest_factor_db": 13.362760382495146,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -18.000000002339423,
+            "rms_dbfs": -20.07247918896951,
+            "peak_dbfs": -6.709717852134457,
+            "crest_factor_db": 13.362761336835053,
+            "clipping_count": 0
+          }
+        },
+        "parent": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\parent.wav",
+          "source_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\raw\\parent.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/raw/parent.wav",
+          "raw_copy_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\audition\\parent_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/audition/parent_48k_loudness_matched.wav",
+          "audition_sha256": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 5.902222310486469,
+          "gain_linear": 1.9729274508539774,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -23.90222231048647,
+            "rms_dbfs": -25.989088673522115,
+            "peak_dbfs": -10.888576231553058,
+            "crest_factor_db": 15.100512441969057,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -18.000000000536314,
+            "rms_dbfs": -20.08686636297159,
+            "peak_dbfs": -4.986355534398859,
+            "crest_factor_db": 15.100510828572732,
+            "clipping_count": 0
+          }
+        },
+        "candidate": {
+          "source_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\hellcat_stage_u_04.wav",
+          "source_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "raw_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\raw\\candidate.wav",
+          "raw_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/raw/candidate.wav",
+          "raw_copy_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "audition_copy_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\audio\\u7_03_stage_u_hellcat_03_15s_reference\\audition\\candidate_48k_loudness_matched.wav",
+          "audition_copy_uri": "file:///E:/Claude_allow/Download/s12-stage-u-v1/review_package_hellcat_v3/audio/u7_03_stage_u_hellcat_03_15s_reference/audition/candidate_48k_loudness_matched.wav",
+          "audition_sha256": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "source_sample_rate_hz": 48000,
+          "audition_sample_rate_hz": 48000,
+          "resampled": false,
+          "duration_s": 15.000020833333334,
+          "target_lufs": -18.0,
+          "peak_cap_dbfs": -1.5,
+          "gain_db": 5.52586050169932,
+          "gain_linear": 1.8892656353846846,
+          "headroom_limited": false,
+          "resampled_input_metrics": {
+            "integrated_lufs": -23.52586050169932,
+            "rms_dbfs": -25.61988985833925,
+            "peak_dbfs": -11.17404407334135,
+            "crest_factor_db": 14.4458457849979,
+            "clipping_count": 0
+          },
+          "audition_metrics": {
+            "integrated_lufs": -17.99999999282204,
+            "rms_dbfs": -20.09402935065442,
+            "peak_dbfs": -5.648183662071772,
+            "crest_factor_db": 14.445845688582647,
+            "clipping_count": 0
+          }
+        }
+      },
+      "spectrogram_residuals": {
+        "before": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_role": "reference",
+          "comparison_role": "parent",
+          "reference_raw_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "comparison_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_03_stage_u_hellcat_03_15s_reference\\before.svg",
+          "svg_url": "/visuals/u7_03_stage_u_hellcat_03_15s_reference/before.svg",
+          "svg_sha256": "fcf0a8f6e48ea287f586d9038c2bdf6f7ee28f44424116643c556f8469ee3ddd",
+          "summary": {
+            "signed_mean_db": -17.78525685865444,
+            "mean_absolute_db": 20.48170987301242,
+            "rms_db": 24.358092053608313,
+            "p95_absolute_db": 44.1654465133173,
+            "max_absolute_db": 91.19233614420862,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        },
+        "after": {
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_role": "reference",
+          "comparison_role": "candidate",
+          "reference_raw_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "comparison_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "svg_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\visuals\\u7_03_stage_u_hellcat_03_15s_reference\\after.svg",
+          "svg_url": "/visuals/u7_03_stage_u_hellcat_03_15s_reference/after.svg",
+          "svg_sha256": "4d5e677184204176a9763f43cae4cb1aea5180dde0d4b8057ea86c460c53f908",
+          "summary": {
+            "signed_mean_db": -17.431432282114713,
+            "mean_absolute_db": 20.178485775603132,
+            "rms_db": 24.1051511249566,
+            "p95_absolute_db": 44.10818449766075,
+            "max_absolute_db": 94.98374326114478,
+            "frequency_bin_count": 171,
+            "time_frame_count": 2809,
+            "duration_s": 15.0
+          },
+          "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": 48000,
+            "stft_window": "hann",
+            "stft_frame_size": 1024,
+            "stft_overlap": 768,
+            "frequency_max_hz": 8000.0
+          }
+        }
+      },
+      "timbral_descriptors": {
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+        "hard_gate": false,
+        "gate_label": "非硬门禁",
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "descriptors": {
+          "hardness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "booming": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "before": null,
+            "after": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        }
+      },
+      "professional_binding": {
+        "status": "ALL_COMPONENT_SHA_BOUND",
+        "passes": true,
+        "sha_binding": {
+          "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+        }
+      },
+      "parent_candidate_distinct": true,
+      "professional_metrics": {
+        "matlab": {
+          "before": 0.7793554602759004,
+          "after": 0.8067693381508986
+        },
+        "mosqito": {
+          "before": 0.7983919714829023,
+          "after": 0.7791417323858337
+        },
+        "audio_feature_extractor": {
+          "before": 12.385536332358358,
+          "after": 12.318938146635263
+        }
+      },
+      "legacy_metrics": {
+        "before": 1.0,
+        "after": 0.9965656629810364,
+        "absolute_improvement": 0.0034343370189635625
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "source_mapping": {
+        "candidate_id": "hellcat_stage_u_04",
+        "dashboard_values": {
+          "blower_intake_balance": 0.25,
+          "mid_band_pressure_db": 3.0,
+          "pressure_attack_db": 3.0
+        },
+        "legacy_rotary_pulse_width_scale": "NOT_APPLICABLE",
+        "parameter_group": "pressure_attack_blower_intake_balance",
+        "parent_candidate_id": "hellcat_stage_g_v4",
+        "schema_version": "s12-stage-u-source-mapping-v1",
+        "source_values": {
+          "blower_intake_balance": 0.25,
+          "intake_gain_scale": 1.4125375446227544,
+          "pressure_attack_gain_scale": 1.4125375446227544
+        },
+        "vehicle_id": "hellcat"
+      },
+      "parameter_uncertainty": {
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE",
+        "reason": "finite grid candidate; no continuous confidence interval was produced"
+      }
+    }
+  ],
+  "manifest_path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\review_package_hellcat_v3\\review_package_manifest.json",
+  "manifest_sha256": "5f9825282f391b85d9a71ab72a18656000b045345f639c193b93302a0c24af2b"
+}

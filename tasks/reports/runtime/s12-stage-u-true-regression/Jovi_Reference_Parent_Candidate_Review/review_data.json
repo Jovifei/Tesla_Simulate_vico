@@ -1,0 +1,519 @@
+{
+  "manifest_sha256": "5f9825282f391b85d9a71ab72a18656000b045345f639c193b93302a0c24af2b",
+  "peak_cap_dbfs": -1.5,
+  "schema_version": "s12-stage-u-review-page-data-v1",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "target_lufs": -18.0,
+  "trials": [
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "media": {
+        "candidate": {
+          "duration_s": 15.000020833333334,
+          "sha256": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "url": "/media/u7_01_stage_u_hellcat_01_15s_reference/candidate.wav"
+        },
+        "parent": {
+          "duration_s": 15.000020833333334,
+          "sha256": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "url": "/media/u7_01_stage_u_hellcat_01_15s_reference/parent.wav"
+        },
+        "reference": {
+          "duration_s": 15.0,
+          "sha256": "fd3a9900dad27ece6eea3c680954af80d2f0e1608316cd0477b0a3d2b46fc5ce",
+          "url": "/media/u7_01_stage_u_hellcat_01_15s_reference/reference.wav"
+        }
+      },
+      "parameter_uncertainty": {
+        "display": "未量化：当前值是有限网格候选点，仅由已绑定参考片段支持。",
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE"
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_candidate_distinct": true,
+      "professional_binding": {
+        "passes": true,
+        "sha_binding": {
+          "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d"
+        },
+        "status": "ALL_COMPONENT_SHA_BOUND"
+      },
+      "professional_metrics": {
+        "audio_feature_extractor": {
+          "after": 11.896370144900773,
+          "before": 11.972783582909306
+        },
+        "matlab": {
+          "after": 1.8264098730436724,
+          "before": 1.9969265896752553
+        },
+        "mosqito": {
+          "after": 2.0631763717407057,
+          "before": 2.100611412595111
+        }
+      },
+      "randomized_mapping": {
+        "B": "parent",
+        "C": "candidate"
+      },
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "scenario": "idle_rev_acceleration",
+      "sha_bindings": {
+        "candidate": {
+          "audition": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "raw": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+        },
+        "parent": {
+          "audition": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "raw": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91"
+        },
+        "reference": {
+          "audition": "fd3a9900dad27ece6eea3c680954af80d2f0e1608316cd0477b0a3d2b46fc5ce",
+          "raw": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d"
+        }
+      },
+      "spectrogram_residuals": {
+        "after": {
+          "comparison_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "comparison_role": "candidate",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_raw_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 92.37996452495562,
+            "mean_absolute_db": 19.53883408898593,
+            "p95_absolute_db": 42.39630420000979,
+            "rms_db": 23.102623100106328,
+            "signed_mean_db": -17.222641054309097,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "0ce372f7e4ad03b0fe5c22c27d1ea01d23fd06081a8445f717f6750bfb156e8a",
+          "url": "/visuals/u7_01_stage_u_hellcat_01_15s_reference/after.svg"
+        },
+        "before": {
+          "comparison_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "comparison_role": "parent",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_raw_sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 95.5727646280775,
+            "mean_absolute_db": 19.854707783666825,
+            "p95_absolute_db": 42.47881659298329,
+            "rms_db": 23.375254586767113,
+            "signed_mean_db": -17.576465630848823,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "0a225be4d4d6857cc2ba61f0e89b89930392e17d7d519ba2908b0c6801c56e9c",
+          "url": "/visuals/u7_01_stage_u_hellcat_01_15s_reference/before.svg"
+        }
+      },
+      "status_labels": {
+        "evidence": "专业指标已绑定",
+        "order": "阶次比较未获资格",
+        "review": "等待 Jovi 人工盲听"
+      },
+      "timbral_descriptors": {
+        "descriptors": {
+          "booming": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "hardness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        },
+        "gate_label": "非硬门禁",
+        "hard_gate": false,
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+      },
+      "trial_id": "u7_01_stage_u_hellcat_01_15s_reference",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "media": {
+        "candidate": {
+          "duration_s": 15.000020833333334,
+          "sha256": "96374c49edbb29072669c1a1f92f012e3a5cbe62c4b88c004e6cec0ab8b18742",
+          "url": "/media/u7_02_stage_u_hellcat_02_15s_reference/candidate.wav"
+        },
+        "parent": {
+          "duration_s": 15.000020833333334,
+          "sha256": "94dee9c479b480f52e23486a31804872cf2a11162a6354587b369d112237a9df",
+          "url": "/media/u7_02_stage_u_hellcat_02_15s_reference/parent.wav"
+        },
+        "reference": {
+          "duration_s": 15.0,
+          "sha256": "f2644d9d6f0b23c85b395f4741b3234b57767047371934fd3a1b43bf1aa1f902",
+          "url": "/media/u7_02_stage_u_hellcat_02_15s_reference/reference.wav"
+        }
+      },
+      "parameter_uncertainty": {
+        "display": "未量化：当前值是有限网格候选点，仅由已绑定参考片段支持。",
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE"
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_candidate_distinct": true,
+      "professional_binding": {
+        "passes": true,
+        "sha_binding": {
+          "candidate": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9"
+        },
+        "status": "ALL_COMPONENT_SHA_BOUND"
+      },
+      "professional_metrics": {
+        "audio_feature_extractor": {
+          "after": 16.057473085408606,
+          "before": 15.854478206312567
+        },
+        "matlab": {
+          "after": 1.0094264024507449,
+          "before": 1.041606128658
+        },
+        "mosqito": {
+          "after": 1.8831085339191789,
+          "before": 2.073555899552563
+        }
+      },
+      "randomized_mapping": {
+        "B": "candidate",
+        "C": "parent"
+      },
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "scenario": "onboard_acceleration_shift",
+      "sha_bindings": {
+        "candidate": {
+          "audition": "96374c49edbb29072669c1a1f92f012e3a5cbe62c4b88c004e6cec0ab8b18742",
+          "raw": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a"
+        },
+        "parent": {
+          "audition": "94dee9c479b480f52e23486a31804872cf2a11162a6354587b369d112237a9df",
+          "raw": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4"
+        },
+        "reference": {
+          "audition": "f2644d9d6f0b23c85b395f4741b3234b57767047371934fd3a1b43bf1aa1f902",
+          "raw": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9"
+        }
+      },
+      "spectrogram_residuals": {
+        "after": {
+          "comparison_raw_sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+          "comparison_role": "candidate",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_raw_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 98.31026493642844,
+            "mean_absolute_db": 14.017356508089582,
+            "p95_absolute_db": 32.195249650608204,
+            "rms_db": 17.362988646331896,
+            "signed_mean_db": -3.6064967119877642,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "3f7392f803fc62b1a787383a24913f03974f9f7a3aac5046f039a7a5de4fa307",
+          "url": "/visuals/u7_02_stage_u_hellcat_02_15s_reference/after.svg"
+        },
+        "before": {
+          "comparison_raw_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+          "comparison_role": "parent",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_raw_sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 102.80718531327908,
+            "mean_absolute_db": 14.065716266168911,
+            "p95_absolute_db": 32.28247322568184,
+            "rms_db": 17.444994014287698,
+            "signed_mean_db": -3.8816095315618364,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "88fe8eb368f6f08b395898ed02d3e4b5670ae8561631e132b428f06c50565978",
+          "url": "/visuals/u7_02_stage_u_hellcat_02_15s_reference/before.svg"
+        }
+      },
+      "status_labels": {
+        "evidence": "专业指标已绑定",
+        "order": "阶次比较未获资格",
+        "review": "等待 Jovi 人工盲听"
+      },
+      "timbral_descriptors": {
+        "descriptors": {
+          "booming": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "hardness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        },
+        "gate_label": "非硬门禁",
+        "hard_gate": false,
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+      },
+      "trial_id": "u7_02_stage_u_hellcat_02_15s_reference",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "media": {
+        "candidate": {
+          "duration_s": 15.000020833333334,
+          "sha256": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "url": "/media/u7_03_stage_u_hellcat_03_15s_reference/candidate.wav"
+        },
+        "parent": {
+          "duration_s": 15.000020833333334,
+          "sha256": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "url": "/media/u7_03_stage_u_hellcat_03_15s_reference/parent.wav"
+        },
+        "reference": {
+          "duration_s": 15.0,
+          "sha256": "11481676dcf6e3e32227a21b827754333007aaf0c2cfd93b8758c4d2276adfa3",
+          "url": "/media/u7_03_stage_u_hellcat_03_15s_reference/reference.wav"
+        }
+      },
+      "parameter_uncertainty": {
+        "display": "未量化：当前值是有限网格候选点，仅由已绑定参考片段支持。",
+        "status": "NOT_QUANTIFIED_GRID_CANDIDATE"
+      },
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_candidate_distinct": true,
+      "professional_binding": {
+        "passes": true,
+        "sha_binding": {
+          "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353"
+        },
+        "status": "ALL_COMPONENT_SHA_BOUND"
+      },
+      "professional_metrics": {
+        "audio_feature_extractor": {
+          "after": 12.318938146635263,
+          "before": 12.385536332358358
+        },
+        "matlab": {
+          "after": 0.8067693381508986,
+          "before": 0.7793554602759004
+        },
+        "mosqito": {
+          "after": 0.7791417323858337,
+          "before": 0.7983919714829023
+        }
+      },
+      "randomized_mapping": {
+        "B": "parent",
+        "C": "candidate"
+      },
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "sha_bindings": {
+        "candidate": {
+          "audition": "7a9c9a4ec825195c7cf1a2583469a9bcf70a8a868f38333d22d897f6342d913f",
+          "raw": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+        },
+        "parent": {
+          "audition": "e67c695025f7a721262b51a47f16aa36a168244bdd5903b15fac120bfb06b8b8",
+          "raw": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91"
+        },
+        "reference": {
+          "audition": "11481676dcf6e3e32227a21b827754333007aaf0c2cfd93b8758c4d2276adfa3",
+          "raw": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353"
+        }
+      },
+      "spectrogram_residuals": {
+        "after": {
+          "comparison_raw_sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+          "comparison_role": "candidate",
+          "label": "调整后频谱残差（参考对候选版本）",
+          "reference_raw_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 94.98374326114478,
+            "mean_absolute_db": 20.178485775603132,
+            "p95_absolute_db": 44.10818449766075,
+            "rms_db": 24.1051511249566,
+            "signed_mean_db": -17.431432282114713,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "4d5e677184204176a9763f43cae4cb1aea5180dde0d4b8057ea86c460c53f908",
+          "url": "/visuals/u7_03_stage_u_hellcat_03_15s_reference/after.svg"
+        },
+        "before": {
+          "comparison_raw_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+          "comparison_role": "parent",
+          "label": "调整前频谱残差（参考对父版本）",
+          "reference_raw_sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+          "reference_role": "reference",
+          "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+          "summary": {
+            "duration_s": 15.0,
+            "frequency_bin_count": 171,
+            "max_absolute_db": 91.19233614420862,
+            "mean_absolute_db": 20.48170987301242,
+            "p95_absolute_db": 44.1654465133173,
+            "rms_db": 24.358092053608313,
+            "signed_mean_db": -17.78525685865444,
+            "time_frame_count": 2809
+          },
+          "svg_sha256": "fcf0a8f6e48ea287f586d9038c2bdf6f7ee28f44424116643c556f8469ee3ddd",
+          "url": "/visuals/u7_03_stage_u_hellcat_03_15s_reference/before.svg"
+        }
+      },
+      "status_labels": {
+        "evidence": "专业指标已绑定",
+        "order": "阶次比较未获资格",
+        "review": "等待 Jovi 人工盲听"
+      },
+      "timbral_descriptors": {
+        "descriptors": {
+          "booming": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "brightness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "depth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "hardness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "reverb": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "roughness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "sharpness": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          },
+          "warmth": {
+            "after": null,
+            "before": null,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+          }
+        },
+        "gate_label": "非硬门禁",
+        "hard_gate": false,
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+      },
+      "trial_id": "u7_03_stage_u_hellcat_03_15s_reference",
+      "vehicle_id": "hellcat"
+    }
+  ]
+}

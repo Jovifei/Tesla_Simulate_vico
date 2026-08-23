@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stage U 工业声学对照台</title>
+  <style>
+    :root { --graphite:#111719; --panel:#192226; --panel-2:#202c30; --line:#365057; --cyan:#32d8cb; --amber:#ffb84d; --ink:#e9f2ef; --muted:#91a6a5; --danger:#ff7068; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 90% 0,#20363a 0,transparent 34%),repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px),var(--graphite); font-family:"Microsoft YaHei UI","Noto Sans CJK SC","PingFang SC",sans-serif; min-height:100vh; }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; background:linear-gradient(90deg,transparent 49.8%,rgba(50,216,203,.035) 50%,transparent 50.2%); }
+    .shell { width:min(1240px,calc(100% - 28px)); margin:0 auto; padding:28px 0 56px; }
+    header { display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end; padding:22px 24px; border:1px solid var(--line); border-top:4px solid var(--cyan); background:linear-gradient(135deg,rgba(32,44,48,.96),rgba(20,29,32,.96)); box-shadow:0 18px 60px rgba(0,0,0,.28); }
+    .eyebrow { color:var(--cyan); letter-spacing:.22em; font-size:.76rem; }
+    h1 { margin:.35rem 0 .25rem; font-family:"SimHei","Microsoft YaHei UI",sans-serif; font-size:clamp(1.8rem,4vw,3.2rem); letter-spacing:.04em; }
+    .lead,.muted { color:var(--muted); }
+    .lamp { display:flex; align-items:center; gap:10px; color:var(--amber); font-weight:700; }
+    .lamp::before { content:""; width:13px; height:13px; border-radius:50%; background:currentColor; box-shadow:0 0 18px currentColor; }
+    .toolbar,.panel { border:1px solid var(--line); background:rgba(25,34,38,.94); }
+    .toolbar { margin-top:14px; padding:14px 18px; display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; }
+    select,textarea,button { font:inherit; }
+    select,textarea { color:var(--ink); background:#0e1517; border:1px solid var(--line); padding:10px 12px; }
+    .players { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:14px; }
+    .player { position:relative; padding:18px; min-height:184px; overflow:hidden; }
+    .player::after { content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--cyan); transform:scaleX(var(--signal,.34)); transform-origin:left; }
+    .player:nth-child(n+2)::after { background:var(--amber); }
+    .channel { color:var(--muted); font-size:.72rem; letter-spacing:.18em; }
+    .player h2 { margin:.5rem 0 1.4rem; font-size:1.22rem; }
+    audio { width:100%; filter:sepia(.12) saturate(.8) hue-rotate(125deg); }
+    .sha { margin-top:14px; color:var(--muted); font-family:Consolas,monospace; font-size:.7rem; overflow-wrap:anywhere; }
+    .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px; }
+    .research-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px; }
+    .panel { padding:20px; }
+    h3 { margin:0 0 14px; color:var(--cyan); font-size:1rem; letter-spacing:.08em; }
+    table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+    th,td { text-align:left; padding:9px 8px; border-bottom:1px solid #2c3d42; }
+    th { color:var(--muted); font-size:.78rem; }
+    .answers { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .choice { border:1px solid var(--line); padding:14px; cursor:pointer; background:#11191c; }
+    .choice:has(input:checked) { border-color:var(--amber); box-shadow:inset 0 0 0 1px var(--amber); }
+    textarea { width:100%; min-height:104px; margin-top:12px; resize:vertical; }
+    .status { margin-top:14px; padding:13px 15px; border-left:4px solid var(--amber); background:#11191c; color:var(--amber); }
+    button { margin-top:12px; width:100%; border:0; padding:14px 18px; color:#08201f; background:var(--cyan); font-weight:900; letter-spacing:.05em; cursor:pointer; }
+    button:disabled { cursor:not-allowed; background:#3a494c; color:#839191; }
+    .tag { display:inline-block; margin:0 8px 8px 0; padding:5px 8px; border:1px solid var(--line); color:var(--muted); font-size:.75rem; }
+    .residual-card { margin:0; }
+    .residual-card img { display:block; width:100%; min-height:180px; border:1px solid var(--line); background:#111719; }
+    .trace { margin-top:10px; color:var(--muted); font-family:Consolas,monospace; font-size:.72rem; overflow-wrap:anywhere; }
+    @media (max-width:850px) { header,.grid,.research-grid { grid-template-columns:1fr; } .players { grid-template-columns:1fr; } .shell { width:min(100% - 18px,680px); } }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <div><div class="eyebrow">S12 / U7 / SHA-256</div><h1>工业声学对照台</h1><div class="lead">三路播放器：参考音轨、父版本与候选版本已随机映射到盲听通道 B/C。审听副本与原始副本分离。</div></div>
+    <div class="lamp">等待人工审听</div>
+  </header>
+  <section class="toolbar"><label for="trial-select">审听片段</label><select id="trial-select" data-testid="trial-select"></select><span id="trial-meta" class="muted"></span><span id="status-labels" data-testid="status-labels"></span></section>
+  <section class="players">
+    <article class="player panel"><div class="channel">通道 01</div><h2>参考音轨</h2><audio controls preload="metadata" data-role="reference" data-testid="reference-player"></audio><div class="sha" data-sha="reference"></div></article>
+    <article class="player panel" data-testid="parent-player"><div class="channel">通道 02</div><h2>盲听通道 B</h2><audio controls preload="metadata" data-slot="B" data-testid="blind-b-player"></audio><div class="sha" data-sha-slot="B"></div></article>
+    <article class="player panel" data-testid="candidate-player"><div class="channel">通道 03</div><h2>盲听通道 C</h2><audio controls preload="metadata" data-slot="C" data-testid="blind-c-player"></audio><div class="sha" data-sha-slot="C"></div></article>
+  </section>
+  <section class="grid">
+    <article class="panel"><h3>专业指标：调整前 / 调整后</h3><table><thead><tr><th>工具域</th><th>调整前距离</th><th>调整后距离</th></tr></thead><tbody id="metrics-body"></tbody></table><h3 style="margin-top:22px">参数值与不确定性</h3><div id="parameters"></div><p id="uncertainty" class="muted"></p></article>
+    <article class="panel"><h3>哪个更接近参考音轨</h3><div class="answers"><label class="choice"><input type="radio" name="answer" value="B" data-testid="answer-b"> 盲听通道 B</label><label class="choice"><input type="radio" name="answer" value="C" data-testid="answer-c"> 盲听通道 C</label></div><textarea id="notes" data-testid="listener-notes" placeholder="记录低频压力、增压器质感、换挡冲击或其他听感依据（可选）"></textarea><div class="status" data-testid="gate-status">正在校验媒体……</div><button id="export" data-testid="export-submission" disabled>导出人工提交文件</button></article>
+  </section>
+  <section class="panel" data-testid="timbral-descriptors" style="margin-top:14px"><h3>音色描述符（可选研究指标）</h3><div id="timbral-status" class="status">PROJECT_UNMAINTAINED_NOT_AVAILABLE · 非硬门禁</div><p class="muted">当前项目不可维护且工具不可用；调整前与调整后均显示不可用，不以代理值代替。</p><table><thead><tr><th>描述符</th><th>调整前</th><th>调整后</th><th>状态</th></tr></thead><tbody id="timbral-body"></tbody></table></section>
+  <section class="research-grid">
+    <figure class="panel residual-card" data-testid="spectrogram-before"><h3>调整前频谱残差（参考对父版本）</h3><img id="spectrogram-before-image" alt="调整前频谱残差（参考对父版本）"><figcaption id="spectrogram-before-caption" class="muted"></figcaption><div id="spectrogram-before-trace" class="trace"></div></figure>
+    <figure class="panel residual-card" data-testid="spectrogram-after"><h3>调整后频谱残差（参考对候选版本）</h3><img id="spectrogram-after-image" alt="调整后频谱残差（参考对候选版本）"><figcaption id="spectrogram-after-caption" class="muted"></figcaption><div id="spectrogram-after-trace" class="trace"></div></figure>
+  </section>
+</main>
+<script src="review_data.js"></script><script src="review.js"></script>
+</body>
+</html>
