@@ -204,4 +204,5 @@ Run Stage N focused, Stage Q/R/S focused, full `tools/sound_sim/s12/tests`, Trac
 - [x] MoSQITo 1.2.1 isolated run: 18 exact clips executed and validated; fluctuation unsupported is explicit null.
 - [x] Professional metrics/diagnosis/candidate plan: three domains separated; 64 specs per anchor; no source writes.
 - [x] Chinese Dashboard, simplified Jovi feedback template, static contract, Node syntax and Chromium audio smoke passed.
+- [x] Simplified `Jovi_Guided_Feedback.json` importer added with audio gate, SHA/file-ID, score-range and vehicle/problem summary validation; no automatic tuning authority.
 - [ ] Jovi guided review and any later manual R2 candidate render remain external next steps; R1/Order/Profile Freeze remain closed.

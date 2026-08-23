@@ -82,7 +82,7 @@
   function exportFeedback() {
     const pair = currentPair(); collectCurrentFeedback(pair);
     if (!allAudioReady() || !allFeedbackComplete()) { updateSubmit(); return null; }
-    const payload = { schema_version: "s12-professional-jovi-guided-feedback-v1", package_manifest_sha256: metrics.manifest_sha256 || null, evidence_level: "R3", status: "READY_FOR_REVIEW", automatic_tuning_eligible: false, profile_update: "FORBIDDEN", exported_at_utc: new Date().toISOString(), rows: (metrics.pairs || []).map((item) => ({ pair_id: item.pair_id, file_id: item.file_id, vehicle_id: item.vehicle_id, reference_sha256: item.reference_sha256, candidate_sha256: item.candidate_sha256, ...feedbackFor(item) })) };
+    const payload = { schema_version: "s12-professional-jovi-guided-feedback-v1", package_manifest_sha256: metrics.manifest_sha256 || null, evidence_level: "R3", status: "READY_FOR_REVIEW", automatic_tuning_eligible: false, profile_update: "FORBIDDEN", exported_at_utc: new Date().toISOString(), audio_submit_gate: { status: "PASS", required: ["canplaythrough", "duration>0", "reference_sha_match", "candidate_sha_match", "required_files"] }, rows: (metrics.pairs || []).map((item) => ({ pair_id: item.pair_id, file_id: item.file_id, vehicle_id: item.vehicle_id, reference_sha256: item.reference_sha256, candidate_sha256: item.candidate_sha256, ...feedbackFor(item) })) };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "Jovi_Guided_Feedback.json"; link.click(); URL.revokeObjectURL(link.href); return payload;
   }
   window.S12Dashboard = { exportFeedback };

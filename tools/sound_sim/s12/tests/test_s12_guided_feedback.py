@@ -1,0 +1,81 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from tools.sound_sim.s12.real_reference.professional_guided_feedback import (
+    GuidedFeedbackError,
+    validate_guided_feedback,
+)
+
+
+ROOT = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "S12_Professional_Comparison_Dashboard_v1"
+
+
+def _valid_feedback(tmp_path: Path) -> tuple[Path, Path]:
+    metrics_path = ROOT / "professional_pair_metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    rows = []
+    for pair in metrics["pairs"]:
+        rows.append({
+            "pair_id": pair["pair_id"],
+            "file_id": pair["file_id"],
+            "vehicle_id": pair["vehicle_id"],
+            "reference_sha256": pair["reference_sha256"],
+            "candidate_sha256": pair["candidate_sha256"],
+            "software_agreement": "部分符合",
+            "identity": 72,
+            "realism": 64,
+            "problems": ["太闷", "机械感不足"],
+            "preference": "候选",
+            "notes": "软件方向基本符合听感。",
+        })
+    feedback = {
+        "schema_version": "s12-professional-jovi-guided-feedback-v1",
+        "package_manifest_sha256": metrics["manifest_sha256"],
+        "evidence_level": "R3",
+        "status": "READY_FOR_REVIEW",
+        "automatic_tuning_eligible": False,
+        "profile_update": "FORBIDDEN",
+        "audio_submit_gate": {"status": "PASS"},
+        "rows": rows,
+    }
+    path = tmp_path / "Jovi_Guided_Feedback.json"
+    path.write_text(json.dumps(feedback, ensure_ascii=False), encoding="utf-8")
+    return path, metrics_path
+
+
+def test_guided_feedback_import_validates_all_rows_and_summarizes_problems(tmp_path: Path) -> None:
+    feedback, metrics = _valid_feedback(tmp_path)
+    receipt = validate_guided_feedback(feedback, metrics)
+    assert receipt["status"] == "VALIDATED_R2_R3_GUIDED_FEEDBACK"
+    assert receipt["feedback_rows"] == 9
+    assert receipt["vehicle_summary"]["hellcat"]["rows"] == 3
+    assert receipt["problem_summary"]["太闷"] == 9
+    assert receipt["parameter_changes"] == 0
+    assert receipt["automatic_tuning_eligible"] is False
+
+
+def test_guided_feedback_rejects_not_ready_audio_gate(tmp_path: Path) -> None:
+    feedback, metrics = _valid_feedback(tmp_path)
+    payload = json.loads(feedback.read_text(encoding="utf-8"))
+    payload["audio_submit_gate"]["status"] = "NOT_SUBMITTED"
+    feedback.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(GuidedFeedbackError, match="audio gate"):
+        validate_guided_feedback(feedback, metrics)
+
+
+def test_guided_feedback_rejects_out_of_range_identity_and_authority_escalation(tmp_path: Path) -> None:
+    feedback, metrics = _valid_feedback(tmp_path)
+    payload = json.loads(feedback.read_text(encoding="utf-8"))
+    payload["rows"][0]["identity"] = 101
+    feedback.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(GuidedFeedbackError, match="identity"):
+        validate_guided_feedback(feedback, metrics)
+    payload["rows"][0]["identity"] = 72
+    payload["automatic_tuning_eligible"] = True
+    feedback.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(GuidedFeedbackError, match="automatic tuning"):
+        validate_guided_feedback(feedback, metrics)
