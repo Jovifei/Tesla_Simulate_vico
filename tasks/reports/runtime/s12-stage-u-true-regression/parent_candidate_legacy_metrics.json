@@ -1,0 +1,651 @@
+{
+  "automatic_tuning_eligible": false,
+  "detailed_external_receipt_alias": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\triad_legacy_v1.json",
+  "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+  "profile_candidate_ready": false,
+  "record_count": 40,
+  "results": [
+    {
+      "absolute_improvement": 0.018341855780034,
+      "candidate_distance": 0.5009001652584211,
+      "candidate_id": "ferrari_458_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": -3.0,
+        "mid_band_balance_db": -3.0,
+        "texture_mix": 0.2
+      },
+      "parent_distance": 0.5192420210384551,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "relative_improvement": 0.03532429009376266,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": 0.04360959235909462,
+      "candidate_distance": 0.47563242867936045,
+      "candidate_id": "ferrari_458_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": -1.0,
+        "mid_band_balance_db": 1.0,
+        "texture_mix": 0.45
+      },
+      "parent_distance": 0.5192420210384551,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "relative_improvement": 0.08398702453217839,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": 0.013667133611489413,
+      "candidate_distance": 0.5055748874269657,
+      "candidate_id": "ferrari_458_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": 1.0,
+        "mid_band_balance_db": -1.0,
+        "texture_mix": 0.7
+      },
+      "parent_distance": 0.5192420210384551,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "relative_improvement": 0.026321316568631924,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": 0.03867343305998111,
+      "candidate_distance": 0.48056858797847396,
+      "candidate_id": "ferrari_458_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": 3.0,
+        "mid_band_balance_db": 3.0,
+        "texture_mix": 1.0
+      },
+      "parent_distance": 0.5192420210384551,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "relative_improvement": 0.07448055337015368,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": -0.0015479889007474767,
+      "candidate_distance": 0.5293919630690643,
+      "candidate_id": "ferrari_458_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": -3.0,
+        "mid_band_balance_db": -3.0,
+        "texture_mix": 0.2
+      },
+      "parent_distance": 0.5278439741683169,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "relative_improvement": -0.002932663772825149,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": -0.004245641093309271,
+      "candidate_distance": 0.5320896152616261,
+      "candidate_id": "ferrari_458_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": -1.0,
+        "mid_band_balance_db": 1.0,
+        "texture_mix": 0.45
+      },
+      "parent_distance": 0.5278439741683169,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "relative_improvement": -0.008043363761040943,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": -0.0053644497676874625,
+      "candidate_distance": 0.5332084239360043,
+      "candidate_id": "ferrari_458_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": 1.0,
+        "mid_band_balance_db": -1.0,
+        "texture_mix": 0.7
+      },
+      "parent_distance": 0.5278439741683169,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "relative_improvement": -0.010162945927610169,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": -0.010348863588765411,
+      "candidate_distance": 0.5381928377570823,
+      "candidate_id": "ferrari_458_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "metallic_envelope_db": 3.0,
+        "mid_band_balance_db": 3.0,
+        "texture_mix": 1.0
+      },
+      "parent_distance": 0.5278439741683169,
+      "professional_bound": false,
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "relative_improvement": -0.019605914048884083,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "absolute_improvement": -0.005533818765690701,
+      "candidate_distance": 0.5792676768170598,
+      "candidate_id": "hellcat_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.25,
+        "mid_band_pressure_db": -3.0,
+        "pressure_attack_db": -3.0
+      },
+      "parent_distance": 0.5737338580513691,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "relative_improvement": -0.009645271388524593,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.0017355869853060701,
+      "candidate_distance": 0.5754694450366752,
+      "candidate_id": "hellcat_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.08,
+        "mid_band_pressure_db": 1.0,
+        "pressure_attack_db": -1.0
+      },
+      "parent_distance": 0.5737338580513691,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "relative_improvement": -0.003025073317445168,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.002664261472656304,
+      "candidate_distance": 0.5710695965787128,
+      "candidate_id": "hellcat_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.08,
+        "mid_band_pressure_db": -1.0,
+        "pressure_attack_db": 1.0
+      },
+      "parent_distance": 0.5737338580513691,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "relative_improvement": 0.004643723627720364,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.0076852056169530725,
+      "candidate_distance": 0.566048652434416,
+      "candidate_id": "hellcat_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_distance": 0.5737338580513691,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "relative_improvement": 0.013395070744221233,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.003140257786141909,
+      "candidate_distance": 0.5718567771315833,
+      "candidate_id": "hellcat_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.25,
+        "mid_band_pressure_db": -3.0,
+        "pressure_attack_db": -3.0
+      },
+      "parent_distance": 0.5687165193454414,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "relative_improvement": -0.0055216574151145765,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.0008397282369436709,
+      "candidate_distance": 0.5695562475823851,
+      "candidate_id": "hellcat_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.08,
+        "mid_band_pressure_db": 1.0,
+        "pressure_attack_db": -1.0
+      },
+      "parent_distance": 0.5687165193454414,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "relative_improvement": -0.001476532170913811,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.0004925524481032006,
+      "candidate_distance": 0.5682239668973382,
+      "candidate_id": "hellcat_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.08,
+        "mid_band_pressure_db": -1.0,
+        "pressure_attack_db": 1.0
+      },
+      "parent_distance": 0.5687165193454414,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "relative_improvement": 0.0008660772658232241,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.0010782401149336263,
+      "candidate_distance": 0.5676382792305078,
+      "candidate_id": "hellcat_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_distance": 0.5687165193454414,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "relative_improvement": 0.0018959184026773408,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.006352951960976239,
+      "candidate_distance": 0.4787462063209569,
+      "candidate_id": "hellcat_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.25,
+        "mid_band_pressure_db": -3.0,
+        "pressure_attack_db": -3.0
+      },
+      "parent_distance": 0.47239325435998064,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "relative_improvement": -0.013448439202595093,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.0021411438855715725,
+      "candidate_distance": 0.4745343982455522,
+      "candidate_id": "hellcat_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": -0.08,
+        "mid_band_pressure_db": 1.0,
+        "pressure_attack_db": -1.0
+      },
+      "parent_distance": 0.47239325435998064,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "relative_improvement": -0.004532545428643958,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.0031919470491343915,
+      "candidate_distance": 0.46920130731084625,
+      "candidate_id": "hellcat_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.08,
+        "mid_band_pressure_db": -1.0,
+        "pressure_attack_db": 1.0
+      },
+      "parent_distance": 0.47239325435998064,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "relative_improvement": 0.006756970002586051,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": 0.009175792503287317,
+      "candidate_distance": 0.4632174618566933,
+      "candidate_id": "hellcat_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "blower_intake_balance": 0.25,
+        "mid_band_pressure_db": 3.0,
+        "pressure_attack_db": 3.0
+      },
+      "parent_distance": 0.47239325435998064,
+      "professional_bound": false,
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "relative_improvement": 0.01942405489197573,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "absolute_improvement": -0.02117817616687445,
+      "candidate_distance": 0.8920998272021602,
+      "candidate_id": "rx7_fd_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.0,
+        "housing_peak_db": -3.0,
+        "turbo_band_balance_db": -3.0
+      },
+      "parent_distance": 0.8709216510352857,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "relative_improvement": -0.024316970581336955,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.011364490297025687,
+      "candidate_distance": 0.8822861413323114,
+      "candidate_id": "rx7_fd_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.33,
+        "housing_peak_db": -1.0,
+        "turbo_band_balance_db": 1.0
+      },
+      "parent_distance": 0.8709216510352857,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "relative_improvement": -0.013048809021473333,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.0008312946009395583,
+      "candidate_distance": 0.8717529456362253,
+      "candidate_id": "rx7_fd_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.66,
+        "housing_peak_db": 1.0,
+        "turbo_band_balance_db": -1.0
+      },
+      "parent_distance": 0.8709216510352857,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "relative_improvement": -0.0009544998679862629,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.010643297446542355,
+      "candidate_distance": 0.8602783535887434,
+      "candidate_id": "rx7_fd_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 1.0,
+        "housing_peak_db": 3.0,
+        "turbo_band_balance_db": 3.0
+      },
+      "parent_distance": 0.8709216510352857,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "relative_improvement": 0.012220728964414201,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.16467631315764608,
+      "candidate_distance": 0.6598790871161726,
+      "candidate_id": "rx7_fd_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.0,
+        "housing_peak_db": -3.0,
+        "turbo_band_balance_db": -3.0
+      },
+      "parent_distance": 0.8245554002738187,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "relative_improvement": 0.19971528062633548,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.005036958276183778,
+      "candidate_distance": 0.8195184419976349,
+      "candidate_id": "rx7_fd_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.33,
+        "housing_peak_db": -1.0,
+        "turbo_band_balance_db": 1.0
+      },
+      "parent_distance": 0.8245554002738187,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "relative_improvement": 0.0061086960009128595,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.19588067831016198,
+      "candidate_distance": 0.6286747219636567,
+      "candidate_id": "rx7_fd_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.66,
+        "housing_peak_db": 1.0,
+        "turbo_band_balance_db": -1.0
+      },
+      "parent_distance": 0.8245554002738187,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "relative_improvement": 0.23755914793004065,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.014431995636180694,
+      "candidate_distance": 0.810123404637638,
+      "candidate_id": "rx7_fd_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 1.0,
+        "housing_peak_db": 3.0,
+        "turbo_band_balance_db": 3.0
+      },
+      "parent_distance": 0.8245554002738187,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "relative_improvement": 0.01750276043476049,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.022237293249059542,
+      "candidate_distance": 0.7771152268398409,
+      "candidate_id": "rx7_fd_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.0,
+        "housing_peak_db": -3.0,
+        "turbo_band_balance_db": -3.0
+      },
+      "parent_distance": 0.7548779335907814,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "relative_improvement": -0.029458131254786895,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.011317495205562134,
+      "candidate_distance": 0.7661954287963435,
+      "candidate_id": "rx7_fd_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.33,
+        "housing_peak_db": -1.0,
+        "turbo_band_balance_db": 1.0
+      },
+      "parent_distance": 0.7548779335907814,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "relative_improvement": -0.01499248382016865,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.004991670240421686,
+      "candidate_distance": 0.7498862633503597,
+      "candidate_id": "rx7_fd_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.66,
+        "housing_peak_db": 1.0,
+        "turbo_band_balance_db": -1.0
+      },
+      "parent_distance": 0.7548779335907814,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "relative_improvement": 0.0066125528622587425,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.009753809458248774,
+      "candidate_distance": 0.7451241241325326,
+      "candidate_id": "rx7_fd_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 1.0,
+        "housing_peak_db": 3.0,
+        "turbo_band_balance_db": 3.0
+      },
+      "parent_distance": 0.7548779335907814,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "relative_improvement": 0.012921041964827528,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.037966895740917495,
+      "candidate_distance": 0.6980148068229141,
+      "candidate_id": "rx7_fd_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.0,
+        "housing_peak_db": -3.0,
+        "turbo_band_balance_db": -3.0
+      },
+      "parent_distance": 0.7359817025638316,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "relative_improvement": 0.05158673864942265,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -4.5095814185658334e-05,
+      "candidate_distance": 0.7360267983780172,
+      "candidate_id": "rx7_fd_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.33,
+        "housing_peak_db": -1.0,
+        "turbo_band_balance_db": 1.0
+      },
+      "parent_distance": 0.7359817025638316,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "relative_improvement": -6.127300995196573e-05,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.0002640125604391752,
+      "candidate_distance": 0.7362457151242707,
+      "candidate_id": "rx7_fd_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.66,
+        "housing_peak_db": 1.0,
+        "turbo_band_balance_db": -1.0
+      },
+      "parent_distance": 0.7359817025638316,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "relative_improvement": -0.00035872163603996315,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.0024193964925742772,
+      "candidate_distance": 0.7335623060712573,
+      "candidate_id": "rx7_fd_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 1.0,
+        "housing_peak_db": 3.0,
+        "turbo_band_balance_db": 3.0
+      },
+      "parent_distance": 0.7359817025638316,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "relative_improvement": 0.003287305219880033,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.029668011317920184,
+      "candidate_distance": 0.5027516017683503,
+      "candidate_id": "rx7_fd_stage_u_01",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.0,
+        "housing_peak_db": -3.0,
+        "turbo_band_balance_db": -3.0
+      },
+      "parent_distance": 0.5324196130862705,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "relative_improvement": 0.05572298726176515,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 9.077602927809458e-05,
+      "candidate_distance": 0.5323288370569924,
+      "candidate_id": "rx7_fd_stage_u_02",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.33,
+        "housing_peak_db": -1.0,
+        "turbo_band_balance_db": 1.0
+      },
+      "parent_distance": 0.5324196130862705,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "relative_improvement": 0.00017049715496372165,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": -0.0006658858133058443,
+      "candidate_distance": 0.5330854988995763,
+      "candidate_id": "rx7_fd_stage_u_03",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 0.66,
+        "housing_peak_db": 1.0,
+        "turbo_band_balance_db": -1.0
+      },
+      "parent_distance": 0.5324196130862705,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "relative_improvement": -0.001250678594362653,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "absolute_improvement": 0.003026841037958916,
+      "candidate_distance": 0.5293927720483116,
+      "candidate_id": "rx7_fd_stage_u_04",
+      "hard_gates_pass": true,
+      "parameter_values": {
+        "broadband_mix": 1.0,
+        "housing_peak_db": 3.0,
+        "turbo_band_balance_db": 3.0
+      },
+      "parent_distance": 0.5324196130862705,
+      "professional_bound": false,
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "relative_improvement": 0.005685066747284651,
+      "vehicle_id": "rx7_fd"
+    }
+  ],
+  "schema_version": "s12-stage-u-triad-legacy-summary-v1",
+  "status": "TRIAD_LEGACY_COMPARISON_COMPLETE"
+}

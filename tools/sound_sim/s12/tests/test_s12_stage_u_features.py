@@ -8,6 +8,7 @@ from tools.sound_sim.s12.real_reference.stage_u_features import (
     bounded_dtw,
     extract_raw_feature_summary,
     openl3_capability,
+    select_common_audio_feature_columns,
 )
 from tools.sound_sim.s12.real_reference.stage_u_timbral_runner import run as run_timbral
 
@@ -72,3 +73,11 @@ def test_timbral_runner_reports_unmaintained_runtime_failure_as_optional(tmp_pat
     assert result["classification"] == "OPTIONAL_RESEARCH_METRIC"
     assert result["hard_gate"] is False
     assert result["status"] == "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+
+
+def test_common_audio_feature_columns_exclude_sample_rate_dependent_bark_erb_bins() -> None:
+    features = np.arange(24, dtype=float).reshape(3, 8)
+    info = {"barkSpectrum": [1, 2], "erbSpectrum": [3], "mfcc": [4, 5], "gtcc": [6], "spectralFlux": 7, "pitch": 8}
+    selected, columns = select_common_audio_feature_columns(features, info)
+    assert columns == [4, 5, 6, 7, 8]
+    assert np.array_equal(selected, features[:, [3, 4, 5, 6, 7]])

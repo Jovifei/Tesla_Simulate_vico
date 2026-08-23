@@ -1,0 +1,158 @@
+{
+  "clip_count": 15,
+  "clips": [
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "reference::stage_u:ferrari_01_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_01\\ferrari_01_15s_reference.wav",
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "role": "reference",
+      "scenario": "start_idle_rev_acceleration",
+      "sha256": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "parent::stage_u:ferrari_01_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_01_15s_reference\\parent.wav",
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "role": "parent",
+      "scenario": "start_idle_rev_acceleration",
+      "sha256": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "candidate::stage_u:ferrari_01_15s:reference::ferrari_458_stage_u_04",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_01_15s_reference\\ferrari_458_stage_u_04.wav",
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "role": "candidate",
+      "scenario": "start_idle_rev_acceleration",
+      "sha256": "df4f1478e4f7815c34a77dd039dd22c322dc2dd80a8a236d41cd9d4a740d0a5f",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "reference::stage_u:ferrari_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\ferrari_02\\ferrari_02_15s_reference.wav",
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "role": "reference",
+      "scenario": "onboard_full_load_shift",
+      "sha256": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "parent::stage_u:ferrari_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_02_15s_reference\\parent.wav",
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "role": "parent",
+      "scenario": "onboard_full_load_shift",
+      "sha256": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "ferrari_458_stage_u_04",
+      "clip_id": "candidate::stage_u:ferrari_02_15s:reference::ferrari_458_stage_u_04",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_ferrari_02_15s_reference\\ferrari_458_stage_u_04.wav",
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "role": "candidate",
+      "scenario": "onboard_full_load_shift",
+      "sha256": "269427d6e8b3d98e38777e766b98acdd82484afc76d1d4e235c5c97e0c46e3b4",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "reference::stage_u:hellcat_01_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_01\\hellcat_01_15s_reference.wav",
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "role": "reference",
+      "scenario": "idle_rev_acceleration",
+      "sha256": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "parent::stage_u:hellcat_01_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\parent.wav",
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "role": "parent",
+      "scenario": "idle_rev_acceleration",
+      "sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "candidate::stage_u:hellcat_01_15s:reference::hellcat_stage_u_04",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_01_15s_reference\\hellcat_stage_u_04.wav",
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "role": "candidate",
+      "scenario": "idle_rev_acceleration",
+      "sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "reference::stage_u:hellcat_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_02\\hellcat_02_15s_reference.wav",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "role": "reference",
+      "scenario": "onboard_acceleration_shift",
+      "sha256": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "parent::stage_u:hellcat_02_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\parent.wav",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "role": "parent",
+      "scenario": "onboard_acceleration_shift",
+      "sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "candidate::stage_u:hellcat_02_15s:reference::hellcat_stage_u_04",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_02_15s_reference\\hellcat_stage_u_04.wav",
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "role": "candidate",
+      "scenario": "onboard_acceleration_shift",
+      "sha256": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "reference::stage_u:hellcat_03_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-professional-long-window-v1\\audio\\hellcat_03\\hellcat_03_15s_reference.wav",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "role": "reference",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "sha256": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "parent::stage_u:hellcat_03_15s:reference",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\parent.wav",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "role": "parent",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_id": "hellcat_stage_u_04",
+      "clip_id": "candidate::stage_u:hellcat_03_15s:reference::hellcat_stage_u_04",
+      "path": "E:\\Claude_allow\\Download\\s12-stage-u-v1\\candidate_grid_v2\\audio\\stage_u_hellcat_03_15s_reference\\hellcat_stage_u_04.wav",
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "role": "candidate",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "sha256": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53",
+      "vehicle_id": "hellcat"
+    }
+  ],
+  "raw_analysis_signal": "same SHA-bound raw clip set as professional triad comparison",
+  "schema_version": "s12-stage-u-selected-clip-manifest-v1",
+  "status": "READY_FOR_AUDIO_FEATURE_AND_ABX"
+}

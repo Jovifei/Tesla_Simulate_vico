@@ -1,0 +1,3491 @@
+{
+  "schema_version": "s12-stage-u-audio-feature-dtw-v1",
+  "status": "AUDIO_FEATURE_BATCH_COMPLETE",
+  "record_count": 40,
+  "results": [
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 13.474244961706475,
+      "candidate_distance": 13.933090921321188,
+      "parent_candidate_distance": 3.485214683662092,
+      "absolute_improvement": -0.4588459596147132,
+      "relative_improvement": -0.03405355631567809,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.474244961706475
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.933090921321188
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 364,
+          "distance": 3.485214683662092
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_01",
+      "vehicle_id": "ferrari_458",
+      "scenario": "start_idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "start_idle_rev_acceleration",
+        "rpm_window": [
+          1100.0,
+          7298.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "b62dc6596cb4cf9b419e6a25ec6840e62219b07e187a48bb992ac8cdc3d8c704"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 13.474244961706475,
+      "candidate_distance": 13.675688265684748,
+      "parent_candidate_distance": 2.419272689977326,
+      "absolute_improvement": -0.20144330397827304,
+      "relative_improvement": -0.014950248013953341,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.474244961706475
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 13.675688265684748
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 2.419272689977326
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_02",
+      "vehicle_id": "ferrari_458",
+      "scenario": "start_idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "start_idle_rev_acceleration",
+        "rpm_window": [
+          1100.0,
+          7298.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "a6b39140e4294751c7a07d81a91917d077452edfe4c4ceddcc3932a567073f66"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 13.474244961706475,
+      "candidate_distance": 13.529452104508115,
+      "parent_candidate_distance": 1.6494936376935854,
+      "absolute_improvement": -0.055207142801640074,
+      "relative_improvement": -0.0040972346100681435,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.474244961706475
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.529452104508115
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 370,
+          "distance": 1.6494936376935854
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_03",
+      "vehicle_id": "ferrari_458",
+      "scenario": "start_idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "start_idle_rev_acceleration",
+        "rpm_window": [
+          1100.0,
+          7298.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "09494738e8bd61d5b9351ce9781be6d86baaf735180a9b7d2af41e08d88c39bc"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 13.474244961706475,
+      "candidate_distance": 13.389647531806919,
+      "parent_candidate_distance": 1.8230573295215384,
+      "absolute_improvement": 0.08459742989955643,
+      "relative_improvement": 0.0062784542020707336,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.474244961706475
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.389647531806919
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "start_idle_rev_acceleration",
+          "rpm_overlap": [
+            1100.0,
+            7298.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 1.8230573295215384
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_04",
+      "vehicle_id": "ferrari_458",
+      "scenario": "start_idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "start_idle_rev_acceleration",
+        "rpm_window": [
+          1100.0,
+          7298.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+        "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+        "candidate": "df4f1478e4f7815c34a77dd039dd22c322dc2dd80a8a236d41cd9d4a740d0a5f"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.346503527405549,
+      "candidate_distance": 15.985632145665651,
+      "parent_candidate_distance": 4.334572017849971,
+      "absolute_improvement": -0.6391286182601021,
+      "relative_improvement": -0.041646529916000485,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.346503527405549
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.985632145665651
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 4.334572017849971
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_01",
+      "vehicle_id": "ferrari_458",
+      "scenario": "onboard_full_load_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_full_load_shift",
+        "rpm_window": [
+          3738.0,
+          7654.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "bb1625738d4ed635ebbcb6758da0c1a1c7760c74459744be2a8da9356420fe7f"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.346503527405549,
+      "candidate_distance": 15.499877620366421,
+      "parent_candidate_distance": 2.639373048220993,
+      "absolute_improvement": -0.15337409296087223,
+      "relative_improvement": -0.009994074069509003,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.346503527405549
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.499877620366421
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 363,
+          "distance": 2.639373048220993
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_02",
+      "vehicle_id": "ferrari_458",
+      "scenario": "onboard_full_load_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_full_load_shift",
+        "rpm_window": [
+          3738.0,
+          7654.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "b4f97fd807dd992c7895bf13c8667cea3460ceba7d9e1f16ebb7e1433f6d42aa"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.346503527405549,
+      "candidate_distance": 15.375241292393007,
+      "parent_candidate_distance": 1.5672650580657328,
+      "absolute_improvement": -0.028737764987457837,
+      "relative_improvement": -0.0018725936455908918,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.346503527405549
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.375241292393007
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 363,
+          "distance": 1.5672650580657328
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_03",
+      "vehicle_id": "ferrari_458",
+      "scenario": "onboard_full_load_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_full_load_shift",
+        "rpm_window": [
+          3738.0,
+          7654.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "84e7c0100a7cfd6ab0d76899d919216e169df304d845b5596d1670b064857d94"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.346503527405549,
+      "candidate_distance": 15.064288295398,
+      "parent_candidate_distance": 2.114302307876534,
+      "absolute_improvement": 0.28221523200754817,
+      "relative_improvement": 0.018389545964236906,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.346503527405549
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.064288295398
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_full_load_shift",
+          "rpm_overlap": [
+            3738.0,
+            7654.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 2.114302307876534
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "candidate_id": "ferrari_458_stage_u_04",
+      "vehicle_id": "ferrari_458",
+      "scenario": "onboard_full_load_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_full_load_shift",
+        "rpm_window": [
+          3738.0,
+          7654.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+        "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+        "candidate": "269427d6e8b3d98e38777e766b98acdd82484afc76d1d4e235c5c97e0c46e3b4"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 11.972783582909306,
+      "candidate_distance": 11.989171559392604,
+      "parent_candidate_distance": 0.9341950025599917,
+      "absolute_improvement": -0.016387976483297706,
+      "relative_improvement": -0.0013687691228872556,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.972783582909306
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.989171559392604
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.9341950025599917
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "candidate_id": "hellcat_stage_u_01",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 11.972783582909306,
+      "candidate_distance": 11.963072434475588,
+      "parent_candidate_distance": 0.5985508229016164,
+      "absolute_improvement": 0.009711148433718009,
+      "relative_improvement": 0.000811101976952152,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.972783582909306
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.963072434475588
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.5985508229016164
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "candidate_id": "hellcat_stage_u_02",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 11.972783582909306,
+      "candidate_distance": 11.935824206474129,
+      "parent_candidate_distance": 0.6722805757356463,
+      "absolute_improvement": 0.03695937643517766,
+      "relative_improvement": 0.0030869493446733444,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.972783582909306
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.935824206474129
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.6722805757356463
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "candidate_id": "hellcat_stage_u_03",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 11.972783582909306,
+      "candidate_distance": 11.896370144900773,
+      "parent_candidate_distance": 1.0560929566348345,
+      "absolute_improvement": 0.07641343800853306,
+      "relative_improvement": 0.0063822616920605115,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.972783582909306
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 11.896370144900773
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 1.0560929566348345
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.854478206312567,
+      "candidate_distance": 15.578445085856472,
+      "parent_candidate_distance": 1.1530419334307744,
+      "absolute_improvement": 0.27603312045609485,
+      "relative_improvement": 0.017410419747916423,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.854478206312567
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.578445085856472
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 1.1530419334307744
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "candidate_id": "hellcat_stage_u_01",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_acceleration_shift",
+        "rpm_window": [
+          2604.0,
+          5332.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "f538b8a91e3662c4e593ff806bdb7fd230d219c4a5765f48a0d5e60a3881d173"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.854478206312567,
+      "candidate_distance": 15.766642878084069,
+      "parent_candidate_distance": 0.5800745395900149,
+      "absolute_improvement": 0.08783532822849871,
+      "relative_improvement": 0.005540095806718286,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.854478206312567
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.766642878084069
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.5800745395900149
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "candidate_id": "hellcat_stage_u_02",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_acceleration_shift",
+        "rpm_window": [
+          2604.0,
+          5332.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "1b7ab0376aef4e03dcbfa6e1c9f2a0a8d1464a37591eea177f7638ce22f2def0"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.854478206312567,
+      "candidate_distance": 15.920607281585902,
+      "parent_candidate_distance": 0.6412874476222961,
+      "absolute_improvement": -0.06612907527333434,
+      "relative_improvement": -0.0041710029439508516,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.854478206312567
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.920607281585902
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.6412874476222961
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "candidate_id": "hellcat_stage_u_03",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_acceleration_shift",
+        "rpm_window": [
+          2604.0,
+          5332.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "9cc6c76346d8cc1b9fce3c5565badbbcb1dd016c27f030f032cd7af2a791d893"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.854478206312567,
+      "candidate_distance": 16.057473085408606,
+      "parent_candidate_distance": 1.1308130380957842,
+      "absolute_improvement": -0.20299487909603897,
+      "relative_improvement": -0.012803630397323022,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.854478206312567
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.057473085408606
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "onboard_acceleration_shift",
+          "rpm_overlap": [
+            2604.0,
+            5332.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 1.1308130380957842
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "onboard_acceleration_shift",
+        "rpm_window": [
+          2604.0,
+          5332.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+        "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+        "candidate": "3a1e33efcbdc8539750701ae7b82c5177d045a1c4e1f44b05128c668c478f65a"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 12.385536332358358,
+      "candidate_distance": 12.414899360459712,
+      "parent_candidate_distance": 1.21162862299539,
+      "absolute_improvement": -0.02936302810135416,
+      "relative_improvement": -0.002370751440504077,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.385536332358358
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.414899360459712
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 1.21162862299539
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "candidate_id": "hellcat_stage_u_01",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration_stock_segment",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 12.385536332358358,
+      "candidate_distance": 12.384446634029064,
+      "parent_candidate_distance": 0.7646347341607215,
+      "absolute_improvement": 0.0010896983292933982,
+      "relative_improvement": 8.798152135297206e-05,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.385536332358358
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.384446634029064
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.7646347341607215
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "candidate_id": "hellcat_stage_u_02",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration_stock_segment",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 12.385536332358358,
+      "candidate_distance": 12.35350584324139,
+      "parent_candidate_distance": 0.8191348758937099,
+      "absolute_improvement": 0.03203048911696804,
+      "relative_improvement": 0.0025861204761303256,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.385536332358358
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.35350584324139
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 0.8191348758937099
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "candidate_id": "hellcat_stage_u_03",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration_stock_segment",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 12.385536332358358,
+      "candidate_distance": 12.318938146635263,
+      "parent_candidate_distance": 1.3015224569998713,
+      "absolute_improvement": 0.06659818572309462,
+      "relative_improvement": 0.00537709340443342,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.385536332358358
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 362,
+          "distance": 12.318938146635263
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle_rev_acceleration_stock_segment",
+          "rpm_overlap": [
+            850.0,
+            5084.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 1.3015224569998713
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "candidate_id": "hellcat_stage_u_04",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle_rev_acceleration_stock_segment",
+        "rpm_window": [
+          850.0,
+          5084.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+        "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+        "candidate": "3efada2c485c3f087e034c98457826623eb337085acb34cb222d9792501a6b53"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 22.076060706130054,
+      "candidate_distance": 22.16552234456682,
+      "parent_candidate_distance": 4.046428935354489,
+      "absolute_improvement": -0.08946163843676658,
+      "relative_improvement": -0.004052427633156715,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 22.076060706130054
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 22.16552234456682
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 4.046428935354489
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "idle",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle",
+        "rpm_window": [
+          895.0,
+          945.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "debb25fb82a7eef97ef97098716d6d5ce6ad2ba316008f4eb1ed24decad489c4"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 22.076060706130054,
+      "candidate_distance": 21.95777973495467,
+      "parent_candidate_distance": 3.6488171515215937,
+      "absolute_improvement": 0.11828097117538405,
+      "relative_improvement": 0.005357883942697255,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 22.076060706130054
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 21.95777973495467
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 3.6488171515215937
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "vehicle_id": "rx7_fd",
+      "scenario": "idle",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle",
+        "rpm_window": [
+          895.0,
+          945.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "004e84273f7cb584656f5975e7174baba9a215f68733d4d5cc3965a8d4ea4d78"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 22.076060706130054,
+      "candidate_distance": 21.804702447904873,
+      "parent_candidate_distance": 3.683734608480637,
+      "absolute_improvement": 0.271358258225181,
+      "relative_improvement": 0.012291969198555002,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 22.076060706130054
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 21.804702447904873
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 3.683734608480637
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "vehicle_id": "rx7_fd",
+      "scenario": "idle",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle",
+        "rpm_window": [
+          895.0,
+          945.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "40c1a53850bb70978b4e0f5db4bcf0dad78b63ae40a1666dd8c06b635e6edacb"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 22.076060706130054,
+      "candidate_distance": 21.726989302921996,
+      "parent_candidate_distance": 4.259463774229138,
+      "absolute_improvement": 0.3490714032080575,
+      "relative_improvement": 0.015812214319157393,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 22.076060706130054
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 21.726989302921996
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "idle",
+          "rpm_overlap": [
+            895.0,
+            945.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 4.259463774229138
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "vehicle_id": "rx7_fd",
+      "scenario": "idle",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "idle",
+        "rpm_window": [
+          895.0,
+          945.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+        "candidate": "e32da97b77f96dd800dddb2dad21ffc632dcdc4f9cf26eb646f09f7451b1acf0"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.02612361556839,
+      "candidate_distance": 17.065425796466634,
+      "parent_candidate_distance": 14.570475242866577,
+      "absolute_improvement": -2.039302180898245,
+      "relative_improvement": -0.1357171172733697,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.02612361556839
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 17.065425796466634
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.570475242866577
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_low",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_low",
+        "rpm_window": [
+          2779.92,
+          2836.08
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "9393eb8c7a18b40c2c99e8585234e805a86af13b56c5529c110cd18cdddc39a3"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.02612361556839,
+      "candidate_distance": 14.982422260057925,
+      "parent_candidate_distance": 0.7573554440748542,
+      "absolute_improvement": 0.04370135551046417,
+      "relative_improvement": 0.002908358577935943,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.02612361556839
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.982422260057925
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 370,
+          "distance": 0.7573554440748542
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_low",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_low",
+        "rpm_window": [
+          2779.92,
+          2836.08
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "f09590b571b5d32f0e4578e650d8c3d5057efab5f1af74f104fc13a0e9252be2"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.02612361556839,
+      "candidate_distance": 16.98378513963902,
+      "parent_candidate_distance": 15.35183847029718,
+      "absolute_improvement": -1.957661524070632,
+      "relative_improvement": -0.13028386922375124,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.02612361556839
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.98378513963902
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.35183847029718
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_low",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_low",
+        "rpm_window": [
+          2779.92,
+          2836.08
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "6de6b8fdad9f2f5bfe950808440632613e4f02c92e1ae462b2c8cae977da9083"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 15.02612361556839,
+      "candidate_distance": 14.63084191327211,
+      "parent_candidate_distance": 1.2463867107876385,
+      "absolute_improvement": 0.3952817022962787,
+      "relative_improvement": 0.026306299110086646,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.02612361556839
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.63084191327211
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_low",
+          "rpm_overlap": [
+            2779.92,
+            2836.08
+          ],
+          "max_warp_frames": 72,
+          "path_length": 367,
+          "distance": 1.2463867107876385
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_low",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_low",
+        "rpm_window": [
+          2779.92,
+          2836.08
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+        "candidate": "108599bd81b392e46101e06c619126f97a7f23149b404af443e08a829e9fd491"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.237193101037938,
+      "candidate_distance": 15.192552985718816,
+      "parent_candidate_distance": 2.965733998933222,
+      "absolute_improvement": -0.9553598846808775,
+      "relative_improvement": -0.06710310648320339,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.237193101037938
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.192552985718816
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 364,
+          "distance": 2.965733998933222
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_mid",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_mid",
+        "rpm_window": [
+          4324.32,
+          4411.68
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "c9421c5a7b5b21995d8796fd1cb785cd7251e464d4b00dafefd6d77f3c36eb09"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.237193101037938,
+      "candidate_distance": 14.111533423097907,
+      "parent_candidate_distance": 1.5322369992960676,
+      "absolute_improvement": 0.12565967794003186,
+      "relative_improvement": 0.00882615534173452,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.237193101037938
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.111533423097907
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 375,
+          "distance": 1.5322369992960676
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_mid",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_mid",
+        "rpm_window": [
+          4324.32,
+          4411.68
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "f0ee315706b7bf448251d9ab7b3e68e90b886c91fc1fecbc45614d3cb2844050"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.237193101037938,
+      "candidate_distance": 14.416016273024434,
+      "parent_candidate_distance": 1.4187479404703458,
+      "absolute_improvement": -0.17882317198649567,
+      "relative_improvement": -0.012560282825233218,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.237193101037938
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.416016273024434
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 380,
+          "distance": 1.4187479404703458
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_mid",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_mid",
+        "rpm_window": [
+          4324.32,
+          4411.68
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "87c34ce46c8fac8b4b2cd025c29515109f289c6d5273f5151a362f6708d321c4"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.237193101037938,
+      "candidate_distance": 13.650908749105408,
+      "parent_candidate_distance": 2.6650058670188654,
+      "absolute_improvement": 0.5862843519325303,
+      "relative_improvement": 0.041179771024513825,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.237193101037938
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.650908749105408
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "steady_mid",
+          "rpm_overlap": [
+            4324.32,
+            4411.68
+          ],
+          "max_warp_frames": 72,
+          "path_length": 364,
+          "distance": 2.6650058670188654
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_mid",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "steady_mid",
+        "rpm_window": [
+          4324.32,
+          4411.68
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+      },
+      "sha_binding": {
+        "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+        "candidate": "56d9a40b4c546afdf38e4229fb2c53606b0caca478524e4e440db1dcfff83e0c"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.53956547731836,
+      "candidate_distance": 16.208896987442788,
+      "parent_candidate_distance": 8.167117956733103,
+      "absolute_improvement": -1.6693315101244277,
+      "relative_improvement": -0.114813026065227,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.53956547731836
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.208896987442788
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 8.167117956733103
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.53956547731836,
+      "candidate_distance": 14.337083746798731,
+      "parent_candidate_distance": 1.6556466411538218,
+      "absolute_improvement": 0.20248173051962937,
+      "relative_improvement": 0.013926257344863554,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.53956547731836
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.337083746798731
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 369,
+          "distance": 1.6556466411538218
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.53956547731836,
+      "candidate_distance": 14.703640910282465,
+      "parent_candidate_distance": 1.506514743196934,
+      "absolute_improvement": -0.1640754329641041,
+      "relative_improvement": -0.011284754913760032,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.53956547731836
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.703640910282465
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 372,
+          "distance": 1.506514743196934
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 14.53956547731836,
+      "candidate_distance": 13.754480372900257,
+      "parent_candidate_distance": 2.8206946098504906,
+      "absolute_improvement": 0.7850851044181031,
+      "relative_improvement": 0.053996462662026,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 14.53956547731836
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 13.754480372900257
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 2.8206946098504906
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 16.060171070447023,
+      "candidate_distance": 17.091492242749897,
+      "parent_candidate_distance": 9.000352793210313,
+      "absolute_improvement": -1.0313211723028743,
+      "relative_improvement": -0.06421607639040973,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.060171070447023
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 17.091492242749897
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 9.000352793210313
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull_interior",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull_interior",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 16.060171070447023,
+      "candidate_distance": 15.861607712608368,
+      "parent_candidate_distance": 1.7912193178296674,
+      "absolute_improvement": 0.19856335783865475,
+      "relative_improvement": 0.012363713746738308,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.060171070447023
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.861607712608368
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 370,
+          "distance": 1.7912193178296674
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull_interior",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull_interior",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 16.060171070447023,
+      "candidate_distance": 16.231236073654927,
+      "parent_candidate_distance": 1.6409627359363281,
+      "absolute_improvement": -0.17106500320790374,
+      "relative_improvement": -0.01065150566936908,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.060171070447023
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.231236073654927
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 373,
+          "distance": 1.6409627359363281
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull_interior",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull_interior",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
+      }
+    },
+    {
+      "status": "AUDIO_FEATURE_TRIAD_COMPLETE",
+      "tool": "MATLAB audioFeatureExtractor",
+      "analysis_signal": "raw SHA-bound digital-domain clips; not loudness-matched audition copies",
+      "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+      "selected_feature_count": 32,
+      "selected_feature_families": [
+        "mfcc",
+        "gtcc",
+        "spectralEntropy",
+        "spectralFlatness",
+        "spectralFlux",
+        "pitch",
+        "harmonicRatio",
+        "shortTimeEnergy"
+      ],
+      "excluded_feature_families": [
+        "barkSpectrum",
+        "erbSpectrum"
+      ],
+      "frame_cap": 360,
+      "parent_distance": 16.060171070447023,
+      "candidate_distance": 15.343640292583821,
+      "parent_candidate_distance": 3.0209672089813946,
+      "absolute_improvement": 0.716530777863202,
+      "relative_improvement": 0.04461538888472487,
+      "dtw": {
+        "reference_parent": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 16.060171070447023
+        },
+        "reference_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 360,
+          "distance": 15.343640292583821
+        },
+        "parent_candidate": {
+          "status": "BOUNDED_DTW_PASS",
+          "scenario": "full_pull_interior",
+          "rpm_overlap": [
+            2340.0,
+            7020.0
+          ],
+          "max_warp_frames": 72,
+          "path_length": 361,
+          "distance": 3.0209672089813946
+        }
+      },
+      "input_sha256": {
+        "reference": "",
+        "parent": "",
+        "candidate": ""
+      },
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull_interior",
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "state_context": {
+        "scenario": "full_pull_interior",
+        "rpm_window": [
+          2340.0,
+          7020.0
+        ],
+        "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+        "rpm_window_policy": "MATCHING_TRACE_RANGE"
+      },
+      "sha_binding": {
+        "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+        "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
+      }
+    }
+  ],
+  "analysis_signal": "raw SHA-bound digital-domain clips; loudness-matched audition copies are separate",
+  "classification": "PROFESSIONAL_ANALYSIS_NOT_R1_ORDER_GATE",
+  "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+  "automatic_tuning_eligible": false
+}

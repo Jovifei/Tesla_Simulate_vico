@@ -1,0 +1,2049 @@
+{
+  "schema_version": "s12-stage-u-rejected-candidates-v1",
+  "status": "R2_COMPARATOR_DRIVEN_CANDIDATE_READY",
+  "rejected_candidates": [
+    {
+      "vehicle_id": "ferrari_458",
+      "candidate_id": "ferrari_458_stage_u_01",
+      "reference_count": 2,
+      "required_improvement_count": 2,
+      "improved_reference_count": 1,
+      "median_absolute_improvement": 0.02464344140640229,
+      "worst_case_absolute_improvement": -0.013144833826932434,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.06243171663973701,
+          "candidate_distance": 0.937568283360263,
+          "candidate_id": "ferrari_458_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.2
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_01_15s:reference",
+          "relative_improvement": 0.06243171663973701,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.490146665258777,
+              "candidate_distance": 1.554378636577679
+            },
+            "mosqito": {
+              "parent_distance": 1.5829470136363497,
+              "candidate_distance": 1.1214220397591026
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 13.474244961706475,
+              "candidate_distance": 13.933090921321188,
+              "state_context": {
+                "scenario": "start_idle_rev_acceleration",
+                "rpm_window": [
+                  1100.0,
+                  7298.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+            "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+            "candidate": "b62dc6596cb4cf9b419e6a25ec6840e62219b07e187a48bb992ac8cdc3d8c704"
+          }
+        },
+        {
+          "absolute_improvement": -0.013144833826932434,
+          "candidate_distance": 1.0131448338269324,
+          "candidate_id": "ferrari_458_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.2
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_02_15s:reference",
+          "relative_improvement": -0.013144833826932434,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.5513929683616816,
+              "candidate_distance": 0.5122607611447294
+            },
+            "mosqito": {
+              "parent_distance": 0.3466101585787974,
+              "candidate_distance": 0.3739819164984773
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.346503527405549,
+              "candidate_distance": 15.985632145665651,
+              "state_context": {
+                "scenario": "onboard_full_load_shift",
+                "rpm_window": [
+                  3738.0,
+                  7654.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+            "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+            "candidate": "bb1625738d4ed635ebbcb6758da0c1a1c7760c74459744be2a8da9356420fe7f"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "hellcat",
+      "candidate_id": "hellcat_stage_u_01",
+      "reference_count": 3,
+      "required_improvement_count": 2,
+      "improved_reference_count": 0,
+      "median_absolute_improvement": -0.02493251018779663,
+      "worst_case_absolute_improvement": -0.04158053965723374,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": -0.02493251018779663,
+          "candidate_distance": 1.0249325101877966,
+          "candidate_id": "hellcat_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_01_15s:reference",
+          "relative_improvement": -0.02493251018779663,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.9969265896752553,
+              "candidate_distance": 2.0670612414333847
+            },
+            "mosqito": {
+              "parent_distance": 2.100611412595111,
+              "candidate_distance": 2.213193057964698
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 11.972783582909306,
+              "candidate_distance": 11.989171559392604,
+              "state_context": {
+                "scenario": "idle_rev_acceleration",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
+          }
+        },
+        {
+          "absolute_improvement": -0.04158053965723374,
+          "candidate_distance": 1.0415805396572337,
+          "candidate_id": "hellcat_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_02_15s:reference",
+          "relative_improvement": -0.04158053965723374,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.041606128658,
+              "candidate_distance": 1.1048433067890484
+            },
+            "mosqito": {
+              "parent_distance": 2.073555899552563,
+              "candidate_distance": 2.3171980990694627
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.854478206312567,
+              "candidate_distance": 15.578445085856472,
+              "state_context": {
+                "scenario": "onboard_acceleration_shift",
+                "rpm_window": [
+                  2604.0,
+                  5332.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+            "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+            "candidate": "f538b8a91e3662c4e593ff806bdb7fd230d219c4a5765f48a0d5e60a3881d173"
+          }
+        },
+        {
+          "absolute_improvement": -0.02465515184480993,
+          "candidate_distance": 1.02465515184481,
+          "candidate_id": "hellcat_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_03_15s:reference",
+          "relative_improvement": -0.02465515184480993,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7793554602759004,
+              "candidate_distance": 0.7965981798441948
+            },
+            "mosqito": {
+              "parent_distance": 0.7983919714829023,
+              "candidate_distance": 0.846836068154964
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 12.385536332358358,
+              "candidate_distance": 12.414899360459712,
+              "state_context": {
+                "scenario": "idle_rev_acceleration_stock_segment",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "9405a73ef6c60cbd0cbedb0b1aafb0e3ae778bcd93c31d7cbb0a059afc4fc03a"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "hellcat",
+      "candidate_id": "hellcat_stage_u_02",
+      "reference_count": 3,
+      "required_improvement_count": 2,
+      "improved_reference_count": 0,
+      "median_absolute_improvement": -0.00957271702316742,
+      "worst_case_absolute_improvement": -0.012132409308088121,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": -0.00957271702316742,
+          "candidate_distance": 1.0095727170231674,
+          "candidate_id": "hellcat_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_01_15s:reference",
+          "relative_improvement": -0.00957271702316742,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.9969265896752553,
+              "candidate_distance": 2.0215423832351798
+            },
+            "mosqito": {
+              "parent_distance": 2.100611412595111,
+              "candidate_distance": 2.150501053913328
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 11.972783582909306,
+              "candidate_distance": 11.963072434475588,
+              "state_context": {
+                "scenario": "idle_rev_acceleration",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
+          }
+        },
+        {
+          "absolute_improvement": -0.012132409308088121,
+          "candidate_distance": 1.0121324093080881,
+          "candidate_id": "hellcat_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_02_15s:reference",
+          "relative_improvement": -0.012132409308088121,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.041606128658,
+              "candidate_distance": 1.0597659957895589
+            },
+            "mosqito": {
+              "parent_distance": 2.073555899552563,
+              "candidate_distance": 2.146459460857087
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.854478206312567,
+              "candidate_distance": 15.766642878084069,
+              "state_context": {
+                "scenario": "onboard_acceleration_shift",
+                "rpm_window": [
+                  2604.0,
+                  5332.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+            "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+            "candidate": "1b7ab0376aef4e03dcbfa6e1c9f2a0a8d1464a37591eea177f7638ce22f2def0"
+          }
+        },
+        {
+          "absolute_improvement": -0.009051097356725268,
+          "candidate_distance": 1.0090510973567253,
+          "candidate_id": "hellcat_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_03_15s:reference",
+          "relative_improvement": -0.009051097356725268,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7793554602759004,
+              "candidate_distance": 0.7837038396144137
+            },
+            "mosqito": {
+              "parent_distance": 0.7983919714829023,
+              "candidate_distance": 0.8192941684821897
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 12.385536332358358,
+              "candidate_distance": 12.384446634029064,
+              "state_context": {
+                "scenario": "idle_rev_acceleration_stock_segment",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "57d4debe4147053e4130022ddbeabe30131a7d1015b906dee9d2383f1026e2fe"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "candidate_id": "rx7_fd_stage_u_01",
+      "reference_count": 5,
+      "required_improvement_count": 3,
+      "improved_reference_count": 0,
+      "median_absolute_improvement": -0.13193872421696673,
+      "worst_case_absolute_improvement": -0.454063758464486,
+      "severe_regression": true,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": -0.031545014201493915,
+          "candidate_distance": 1.031545014201494,
+          "candidate_id": "rx7_fd_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_01_idle:reference",
+          "relative_improvement": -0.031545014201493915,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.076214722325699,
+              "candidate_distance": 2.396516951376978
+            },
+            "mosqito": {
+              "parent_distance": 0.3009073682264984,
+              "candidate_distance": 0.283917672052342
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 22.076060706130054,
+              "candidate_distance": 22.16552234456682,
+              "state_context": {
+                "scenario": "idle",
+                "rpm_window": [
+                  895.0,
+                  945.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+            "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+            "candidate": "debb25fb82a7eef97ef97098716d6d5ce6ad2ba316008f4eb1ed24decad489c4"
+          }
+        },
+        {
+          "absolute_improvement": -0.454063758464486,
+          "candidate_distance": 1.454063758464486,
+          "candidate_id": "rx7_fd_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+          "relative_improvement": -0.454063758464486,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7655684377621931,
+              "candidate_distance": 2.085478600582992
+            },
+            "mosqito": {
+              "parent_distance": 0.8807147168180941,
+              "candidate_distance": 1.0182484761058679
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.02612361556839,
+              "candidate_distance": 17.065425796466634,
+              "state_context": {
+                "scenario": "steady_low",
+                "rpm_window": [
+                  2779.92,
+                  2836.08
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+            "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+            "candidate": "9393eb8c7a18b40c2c99e8585234e805a86af13b56c5529c110cd18cdddc39a3"
+          }
+        },
+        {
+          "absolute_improvement": -0.05660045150342219,
+          "candidate_distance": 1.0566004515034222,
+          "candidate_id": "rx7_fd_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+          "relative_improvement": -0.05660045150342219,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.391143291673751,
+              "candidate_distance": 1.418214419752109
+            },
+            "mosqito": {
+              "parent_distance": 0.09079780715885341,
+              "candidate_distance": 0.10082015467549044
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.237193101037938,
+              "candidate_distance": 15.192552985718816,
+              "state_context": {
+                "scenario": "steady_mid",
+                "rpm_window": [
+                  4324.32,
+                  4411.68
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+            "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+            "candidate": "c9421c5a7b5b21995d8796fd1cb785cd7251e464d4b00dafefd6d77f3c36eb09"
+          }
+        },
+        {
+          "absolute_improvement": -0.2160042511863438,
+          "candidate_distance": 1.2160042511863438,
+          "candidate_id": "rx7_fd_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+          "relative_improvement": -0.2160042511863438,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 3.2238727030380256,
+              "candidate_distance": 3.296073494759876
+            },
+            "mosqito": {
+              "parent_distance": 0.09914301166381753,
+              "candidate_distance": 0.1763154408420789
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.53956547731836,
+              "candidate_distance": 16.208896987442788,
+              "state_context": {
+                "scenario": "full_pull",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
+          }
+        },
+        {
+          "absolute_improvement": -0.13193872421696673,
+          "candidate_distance": 1.1319387242169667,
+          "candidate_id": "rx7_fd_stage_u_01",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+          "relative_improvement": -0.13193872421696673,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.5935303355594352,
+              "candidate_distance": 3.359175845054857
+            },
+            "mosqito": {
+              "parent_distance": 4.793876038439292,
+              "candidate_distance": 5.867935220620104
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 16.060171070447023,
+              "candidate_distance": 17.091492242749897,
+              "state_context": {
+                "scenario": "full_pull_interior",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "d190b0b3055e1fab84cf07da824488e75c4ee7a95ee71abcdb59cca841f62936"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "candidate_id": "rx7_fd_stage_u_02",
+      "reference_count": 5,
+      "required_improvement_count": 3,
+      "improved_reference_count": 2,
+      "median_absolute_improvement": -0.01996252394471032,
+      "worst_case_absolute_improvement": -0.1037379287506408,
+      "severe_regression": true,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.016252110284437293,
+          "candidate_distance": 0.9837478897155627,
+          "candidate_id": "rx7_fd_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_01_idle:reference",
+          "relative_improvement": 0.016252110284437293,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.076214722325699,
+              "candidate_distance": 1.9916466836347992
+            },
+            "mosqito": {
+              "parent_distance": 0.3009073682264984,
+              "candidate_distance": 0.29128810300271496
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 22.076060706130054,
+              "candidate_distance": 21.95777973495467,
+              "state_context": {
+                "scenario": "idle",
+                "rpm_window": [
+                  895.0,
+                  945.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+            "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+            "candidate": "004e84273f7cb584656f5975e7174baba9a215f68733d4d5cc3965a8d4ea4d78"
+          }
+        },
+        {
+          "absolute_improvement": -0.06826698543558551,
+          "candidate_distance": 1.0682669854355855,
+          "candidate_id": "rx7_fd_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+          "relative_improvement": -0.06826698543558551,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7655684377621931,
+              "candidate_distance": 0.7899131643479386
+            },
+            "mosqito": {
+              "parent_distance": 0.8807147168180941,
+              "candidate_distance": 1.1011447988143657
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.02612361556839,
+              "candidate_distance": 14.982422260057925,
+              "state_context": {
+                "scenario": "steady_low",
+                "rpm_window": [
+                  2779.92,
+                  2836.08
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+            "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+            "candidate": "f09590b571b5d32f0e4578e650d8c3d5057efab5f1af74f104fc13a0e9252be2"
+          }
+        },
+        {
+          "absolute_improvement": -0.1037379287506408,
+          "candidate_distance": 1.1037379287506408,
+          "candidate_id": "rx7_fd_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+          "relative_improvement": -0.1037379287506408,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.391143291673751,
+              "candidate_distance": 1.3631230744785412
+            },
+            "mosqito": {
+              "parent_distance": 0.09079780715885341,
+              "candidate_distance": 0.12974346082027716
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.237193101037938,
+              "candidate_distance": 14.111533423097907,
+              "state_context": {
+                "scenario": "steady_mid",
+                "rpm_window": [
+                  4324.32,
+                  4411.68
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+            "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+            "candidate": "f0ee315706b7bf448251d9ab7b3e68e90b886c91fc1fecbc45614d3cb2844050"
+          }
+        },
+        {
+          "absolute_improvement": 0.035803082968621114,
+          "candidate_distance": 0.9641969170313789,
+          "candidate_id": "rx7_fd_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+          "relative_improvement": 0.035803082968621114,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 3.2238727030380256,
+              "candidate_distance": 3.2009256424479235
+            },
+            "mosqito": {
+              "parent_distance": 0.09914301166381753,
+              "candidate_distance": 0.08702481172546624
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.53956547731836,
+              "candidate_distance": 14.337083746798731,
+              "state_context": {
+                "scenario": "full_pull",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
+          }
+        },
+        {
+          "absolute_improvement": -0.01996252394471032,
+          "candidate_distance": 1.0199625239447103,
+          "candidate_id": "rx7_fd_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+          "relative_improvement": -0.01996252394471032,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.5935303355594352,
+              "candidate_distance": 2.5658987324610596
+            },
+            "mosqito": {
+              "parent_distance": 4.793876038439292,
+              "candidate_distance": 5.2878291498379415
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 16.060171070447023,
+              "candidate_distance": 15.861607712608368,
+              "state_context": {
+                "scenario": "full_pull_interior",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "7c174b9349d388332a384bbf31c3e6d5f23afcd3d22fb0fc9ac851ae49988690"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "candidate_id": "rx7_fd_stage_u_03",
+      "reference_count": 5,
+      "required_improvement_count": 3,
+      "improved_reference_count": 2,
+      "median_absolute_improvement": -0.043620703630853574,
+      "worst_case_absolute_improvement": -0.5946892875069691,
+      "severe_regression": true,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.021698435288146523,
+          "candidate_distance": 0.9783015647118535,
+          "candidate_id": "rx7_fd_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_01_idle:reference",
+          "relative_improvement": 0.021698435288146523,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.076214722325699,
+              "candidate_distance": 2.013103834915439
+            },
+            "mosqito": {
+              "parent_distance": 0.3009073682264984,
+              "candidate_distance": 0.28734872864716066
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 22.076060706130054,
+              "candidate_distance": 21.804702447904873,
+              "state_context": {
+                "scenario": "idle",
+                "rpm_window": [
+                  895.0,
+                  945.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+            "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+            "candidate": "40c1a53850bb70978b4e0f5db4bcf0dad78b63ae40a1666dd8c06b635e6edacb"
+          }
+        },
+        {
+          "absolute_improvement": -0.5946892875069691,
+          "candidate_distance": 1.5946892875069691,
+          "candidate_id": "rx7_fd_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+          "relative_improvement": -0.5946892875069691,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7655684377621931,
+              "candidate_distance": 2.3736512165869623
+            },
+            "mosqito": {
+              "parent_distance": 0.8807147168180941,
+              "candidate_distance": 1.2202515814644694
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.02612361556839,
+              "candidate_distance": 16.98378513963902,
+              "state_context": {
+                "scenario": "steady_low",
+                "rpm_window": [
+                  2779.92,
+                  2836.08
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+            "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+            "candidate": "6de6b8fdad9f2f5bfe950808440632613e4f02c92e1ae462b2c8cae977da9083"
+          }
+        },
+        {
+          "absolute_improvement": -0.0966191807066239,
+          "candidate_distance": 1.096619180706624,
+          "candidate_id": "rx7_fd_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+          "relative_improvement": -0.0966191807066239,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.391143291673751,
+              "candidate_distance": 1.3943104375188882
+            },
+            "mosqito": {
+              "parent_distance": 0.09079780715885341,
+              "candidate_distance": 0.12514229047814257
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.237193101037938,
+              "candidate_distance": 14.416016273024434,
+              "state_context": {
+                "scenario": "steady_mid",
+                "rpm_window": [
+                  4324.32,
+                  4411.68
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+            "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+            "candidate": "87c34ce46c8fac8b4b2cd025c29515109f289c6d5273f5151a362f6708d321c4"
+          }
+        },
+        {
+          "absolute_improvement": 0.11202814684520979,
+          "candidate_distance": 0.8879718531547902,
+          "candidate_id": "rx7_fd_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+          "relative_improvement": 0.11202814684520979,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 3.2238727030380256,
+              "candidate_distance": 3.2636144139429955
+            },
+            "mosqito": {
+              "parent_distance": 0.09914301166381753,
+              "candidate_distance": 0.0523392432104843
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.53956547731836,
+              "candidate_distance": 14.703640910282465,
+              "state_context": {
+                "scenario": "full_pull",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
+          }
+        },
+        {
+          "absolute_improvement": -0.043620703630853574,
+          "candidate_distance": 1.0436207036308536,
+          "candidate_id": "rx7_fd_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+          "relative_improvement": -0.043620703630853574,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.5935303355594352,
+              "candidate_distance": 2.6177999954101288
+            },
+            "mosqito": {
+              "parent_distance": 4.793876038439292,
+              "candidate_distance": 5.5284074377358525
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 16.060171070447023,
+              "candidate_distance": 16.231236073654927,
+              "state_context": {
+                "scenario": "full_pull_interior",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "b80c776687d0f41c62a9b1aaf0c9bc098e709f0bee1b2c84b9cb0801fdd8198a"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "candidate_id": "rx7_fd_stage_u_04",
+      "reference_count": 5,
+      "required_improvement_count": 3,
+      "improved_reference_count": 1,
+      "median_absolute_improvement": -0.019470997534257517,
+      "worst_case_absolute_improvement": -0.10542216177596275,
+      "severe_regression": true,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": -0.0024412137366833786,
+          "candidate_distance": 1.0024412137366834,
+          "candidate_id": "rx7_fd_stage_u_04",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_01_idle:reference",
+          "relative_improvement": -0.0024412137366833786,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.076214722325699,
+              "candidate_distance": 2.127072075568504
+            },
+            "mosqito": {
+              "parent_distance": 0.3009073682264984,
+              "candidate_distance": 0.30491020959000487
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 22.076060706130054,
+              "candidate_distance": 21.726989302921996,
+              "state_context": {
+                "scenario": "idle",
+                "rpm_window": [
+                  895.0,
+                  945.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+            "parent": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+            "candidate": "e32da97b77f96dd800dddb2dad21ffc632dcdc4f9cf26eb646f09f7451b1acf0"
+          }
+        },
+        {
+          "absolute_improvement": -0.10542216177596275,
+          "candidate_distance": 1.1054221617759628,
+          "candidate_id": "rx7_fd_stage_u_04",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+          "relative_improvement": -0.10542216177596275,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7655684377621931,
+              "candidate_distance": 0.8566403315381188
+            },
+            "mosqito": {
+              "parent_distance": 0.8807147168180941,
+              "candidate_distance": 1.1859157217651286
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.02612361556839,
+              "candidate_distance": 14.63084191327211,
+              "state_context": {
+                "scenario": "steady_low",
+                "rpm_window": [
+                  2779.92,
+                  2836.08
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+            "parent": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+            "candidate": "108599bd81b392e46101e06c619126f97a7f23149b404af443e08a829e9fd491"
+          }
+        },
+        {
+          "absolute_improvement": -0.06118096017366326,
+          "candidate_distance": 1.0611809601736633,
+          "candidate_id": "rx7_fd_stage_u_04",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+          "relative_improvement": -0.06118096017366326,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.391143291673751,
+              "candidate_distance": 1.3373501874184248
+            },
+            "mosqito": {
+              "parent_distance": 0.09079780715885341,
+              "candidate_distance": 0.12144142455082133
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.237193101037938,
+              "candidate_distance": 13.650908749105408,
+              "state_context": {
+                "scenario": "steady_mid",
+                "rpm_window": [
+                  4324.32,
+                  4411.68
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "CONSTANT_RPM_PLUS_MINUS_25_OR_ONE_PERCENT"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+            "parent": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+            "candidate": "56d9a40b4c546afdf38e4229fb2c53606b0caca478524e4e440db1dcfff83e0c"
+          }
+        },
+        {
+          "absolute_improvement": 0.028393545420648758,
+          "candidate_distance": 0.9716064545793512,
+          "candidate_id": "rx7_fd_stage_u_04",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+          "relative_improvement": 0.028393545420648758,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 3.2238727030380256,
+              "candidate_distance": 2.9359466100110647
+            },
+            "mosqito": {
+              "parent_distance": 0.09914301166381753,
+              "candidate_distance": 0.10241673506310642
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 14.53956547731836,
+              "candidate_distance": 13.754480372900257,
+              "state_context": {
+                "scenario": "full_pull",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
+          }
+        },
+        {
+          "absolute_improvement": -0.019470997534257517,
+          "candidate_distance": 1.0194709975342575,
+          "candidate_id": "rx7_fd_stage_u_04",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+          "relative_improvement": -0.019470997534257517,
+          "vehicle_id": "rx7_fd",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 2.5935303355594352,
+              "candidate_distance": 2.29467118307606
+            },
+            "mosqito": {
+              "parent_distance": 4.793876038439292,
+              "candidate_distance": 5.960787012810662
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 16.060171070447023,
+              "candidate_distance": 15.343640292583821,
+              "state_context": {
+                "scenario": "full_pull_interior",
+                "rpm_window": [
+                  2340.0,
+                  7020.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+            "parent": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+            "candidate": "719a7cea08dff7c4fc62d22c07be14b11405b2ec1653873462bdd7669c2563f3"
+          }
+        }
+      ],
+      "status": "NO_MEASURABLE_IMPROVEMENT"
+    },
+    {
+      "vehicle_id": "ferrari_458",
+      "candidate_id": "ferrari_458_stage_u_02",
+      "reference_count": 2,
+      "required_improvement_count": 2,
+      "improved_reference_count": 2,
+      "median_absolute_improvement": 0.03515641915262463,
+      "worst_case_absolute_improvement": 0.027596148681030774,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.042716689624218485,
+          "candidate_distance": 0.9572833103757815,
+          "candidate_id": "ferrari_458_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.45
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_01_15s:reference",
+          "relative_improvement": 0.042716689624218485,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.490146665258777,
+              "candidate_distance": 1.5406523609378113
+            },
+            "mosqito": {
+              "parent_distance": 1.5829470136363497,
+              "candidate_distance": 1.3681045602405872
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 13.474244961706475,
+              "candidate_distance": 13.675688265684748,
+              "state_context": {
+                "scenario": "start_idle_rev_acceleration",
+                "rpm_window": [
+                  1100.0,
+                  7298.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+            "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+            "candidate": "a6b39140e4294751c7a07d81a91917d077452edfe4c4ceddcc3932a567073f66"
+          }
+        },
+        {
+          "absolute_improvement": 0.027596148681030774,
+          "candidate_distance": 0.9724038513189692,
+          "candidate_id": "ferrari_458_stage_u_02",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.45
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_02_15s:reference",
+          "relative_improvement": 0.027596148681030774,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.5513929683616816,
+              "candidate_distance": 0.5146767239137022
+            },
+            "mosqito": {
+              "parent_distance": 0.3466101585787974,
+              "candidate_distance": 0.3251779109914815
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.346503527405549,
+              "candidate_distance": 15.499877620366421,
+              "state_context": {
+                "scenario": "onboard_full_load_shift",
+                "rpm_window": [
+                  3738.0,
+                  7654.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+            "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+            "candidate": "b4f97fd807dd992c7895bf13c8667cea3460ceba7d9e1f16ebb7e1433f6d42aa"
+          }
+        }
+      ],
+      "status": "QUALIFIED_NOT_SELECTED",
+      "selection_reason": "lower median/worst-case improvement than ferrari_458_stage_u_04"
+    },
+    {
+      "vehicle_id": "ferrari_458",
+      "candidate_id": "ferrari_458_stage_u_03",
+      "reference_count": 2,
+      "required_improvement_count": 2,
+      "improved_reference_count": 2,
+      "median_absolute_improvement": 0.011427010152125494,
+      "worst_case_absolute_improvement": 0.002309445219363937,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.02054457508488705,
+          "candidate_distance": 0.979455424915113,
+          "candidate_id": "ferrari_458_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.7
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_01_15s:reference",
+          "relative_improvement": 0.02054457508488705,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.490146665258777,
+              "candidate_distance": 1.5128013640972775
+            },
+            "mosqito": {
+              "parent_distance": 1.5829470136363497,
+              "candidate_distance": 1.4639771202172684
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 13.474244961706475,
+              "candidate_distance": 13.529452104508115,
+              "state_context": {
+                "scenario": "start_idle_rev_acceleration",
+                "rpm_window": [
+                  1100.0,
+                  7298.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "84c1e9ec452ace8a682ecd6a3f237e3186a3ce3743df7ad6620c84df117e1269",
+            "parent": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+            "candidate": "09494738e8bd61d5b9351ce9781be6d86baaf735180a9b7d2af41e08d88c39bc"
+          }
+        },
+        {
+          "absolute_improvement": 0.002309445219363937,
+          "candidate_distance": 0.9976905547806361,
+          "candidate_id": "ferrari_458_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.7
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:ferrari_02_15s:reference",
+          "relative_improvement": 0.002309445219363937,
+          "vehicle_id": "ferrari_458",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.5513929683616816,
+              "candidate_distance": 0.540087517352519
+            },
+            "mosqito": {
+              "parent_distance": 0.3466101585787974,
+              "candidate_distance": 0.3463433091665231
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.346503527405549,
+              "candidate_distance": 15.375241292393007,
+              "state_context": {
+                "scenario": "onboard_full_load_shift",
+                "rpm_window": [
+                  3738.0,
+                  7654.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "ffbde7cdc9ca4a14824656f224af6363f6ae376bb65c84890451c9b7eea15a5d",
+            "parent": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+            "candidate": "84e7c0100a7cfd6ab0d76899d919216e169df304d845b5596d1670b064857d94"
+          }
+        }
+      ],
+      "status": "QUALIFIED_NOT_SELECTED",
+      "selection_reason": "lower median/worst-case improvement than ferrari_458_stage_u_04"
+    },
+    {
+      "vehicle_id": "hellcat",
+      "candidate_id": "hellcat_stage_u_03",
+      "reference_count": 3,
+      "required_improvement_count": 2,
+      "improved_reference_count": 3,
+      "median_absolute_improvement": 0.005814319770447329,
+      "worst_case_absolute_improvement": 0.003227535791943348,
+      "severe_regression": false,
+      "professional_bound": true,
+      "hard_gates_pass": true,
+      "per_reference": [
+        {
+          "absolute_improvement": 0.003227535791943348,
+          "candidate_distance": 0.9967724642080567,
+          "candidate_id": "hellcat_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_01_15s:reference",
+          "relative_improvement": 0.003227535791943348,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.9969265896752553,
+              "candidate_distance": 1.9838809329025733
+            },
+            "mosqito": {
+              "parent_distance": 2.100611412595111,
+              "candidate_distance": 2.1034543743717484
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 11.972783582909306,
+              "candidate_distance": 11.935824206474129,
+              "state_context": {
+                "scenario": "idle_rev_acceleration",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "a049028ed9e933723c2322813ee2a1eca1e3094e3431ea6c350c79c27272ed0d",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
+          }
+        },
+        {
+          "absolute_improvement": 0.010219342317464686,
+          "candidate_distance": 0.9897806576825353,
+          "candidate_id": "hellcat_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_02_15s:reference",
+          "relative_improvement": 0.010219342317464686,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 1.041606128658,
+              "candidate_distance": 1.027609835838808
+            },
+            "mosqito": {
+              "parent_distance": 2.073555899552563,
+              "candidate_distance": 2.0098042722225045
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 15.854478206312567,
+              "candidate_distance": 15.920607281585902,
+              "state_context": {
+                "scenario": "onboard_acceleration_shift",
+                "rpm_window": [
+                  2604.0,
+                  5332.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "3bb2360c4e64bd12955d571d3fe31c49f262d2c00af8c17cd83be96e249a71b9",
+            "parent": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+            "candidate": "9cc6c76346d8cc1b9fce3c5565badbbcb1dd016c27f030f032cd7af2a791d893"
+          }
+        },
+        {
+          "absolute_improvement": 0.005814319770447329,
+          "candidate_distance": 0.9941856802295527,
+          "candidate_id": "hellcat_stage_u_03",
+          "hard_gates_pass": true,
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "parent_distance": 1.0,
+          "professional_bound": true,
+          "reference_id": "stage_u:hellcat_03_15s:reference",
+          "relative_improvement": 0.005814319770447329,
+          "vehicle_id": "hellcat",
+          "professional_components": {
+            "matlab": {
+              "parent_distance": 0.7793554602759004,
+              "candidate_distance": 0.7688054791844189
+            },
+            "mosqito": {
+              "parent_distance": 0.7983919714829023,
+              "candidate_distance": 0.7980906696001152
+            },
+            "audioFeatureExtractor": {
+              "parent_distance": 12.385536332358358,
+              "candidate_distance": 12.35350584324139,
+              "state_context": {
+                "scenario": "idle_rev_acceleration_stock_segment",
+                "rpm_window": [
+                  850.0,
+                  5084.0
+                ],
+                "source": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1",
+                "rpm_window_policy": "MATCHING_TRACE_RANGE"
+              },
+              "selected_feature_families": [
+                "mfcc",
+                "gtcc",
+                "spectralEntropy",
+                "spectralFlatness",
+                "spectralFlux",
+                "pitch",
+                "harmonicRatio",
+                "shortTimeEnergy"
+              ]
+            }
+          },
+          "sha_binding": {
+            "reference": "17aec113e63a2340c065a7f9e01e74a0170660534c604bcc3bd960d564f1e353",
+            "parent": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+            "candidate": "7b0e4ccee226b139959419fee49a462c7b7a0ce3b0a363c9ecb3c37149fa1240"
+          }
+        }
+      ],
+      "status": "QUALIFIED_NOT_SELECTED",
+      "selection_reason": "lower median/worst-case improvement than hellcat_stage_u_04"
+    }
+  ]
+}

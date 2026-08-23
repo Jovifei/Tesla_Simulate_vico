@@ -125,4 +125,27 @@ def openl3_capability(error: str | None = None) -> dict[str, Any]:
     }
 
 
-__all__ = ["FeatureContractError", "bounded_dtw", "extract_raw_feature_summary", "openl3_capability"]
+def select_common_audio_feature_columns(features: np.ndarray, feature_info: Mapping[str, Any]) -> tuple[np.ndarray, list[int]]:
+    """Keep only fixed-length MATLAB descriptors for cross-sample-rate DTW.
+
+    Bark/ERB spectrum bin counts legitimately vary with sample rate.  MFCC,
+    GTCC and the scalar descriptors have stable dimensions and are therefore
+    the only audioFeatureExtractor columns admitted to cross-rate DTW.
+    """
+
+    values = np.asarray(features, dtype=np.float64)
+    if values.ndim != 2 or not np.isfinite(values).all():
+        raise FeatureContractError("MATLAB feature matrix must be finite and two-dimensional")
+    columns: list[int] = []
+    for name in ("mfcc", "gtcc", "spectralFlux", "spectralFlatness", "spectralEntropy", "pitch", "harmonicRatio", "shortTimeEnergy"):
+        item = feature_info.get(name)
+        if isinstance(item, list):
+            columns.extend(int(index) for index in item)
+        elif isinstance(item, (int, float)) and not isinstance(item, bool):
+            columns.append(int(item))
+    if not columns or any(index < 1 or index > values.shape[1] for index in columns):
+        raise FeatureContractError("MATLAB feature_info does not expose fixed cross-rate columns")
+    return values[:, np.asarray(columns, dtype=int) - 1], columns
+
+
+__all__ = ["FeatureContractError", "bounded_dtw", "extract_raw_feature_summary", "openl3_capability", "select_common_audio_feature_columns"]
