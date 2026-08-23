@@ -1,5 +1,5 @@
 window.S12_STAGE_U_REVIEW_DATA = {
-  "manifest_sha256": "5f9825282f391b85d9a71ab72a18656000b045345f639c193b93302a0c24af2b",
+  "manifest_sha256": "2eae36f99a0dfe3984bc2693563882d249acf750d31f5418d8a0fd7ba41d5bac",
   "peak_cap_dbfs": -1.5,
   "schema_version": "s12-stage-u-review-page-data-v1",
   "status": "READY_FOR_HUMAN_REVIEW",

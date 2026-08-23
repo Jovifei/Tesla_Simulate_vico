@@ -4043,5 +4043,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] U3：对 Ferrari/Hellcat/RX-7 的实际 renderer 参数做单变量可达性探针；15个 Stage-U source 控制均 `PARAMETER_REACHABILITY_PASS`，没有 unused，目标 stem 变化和非目标泄漏阈值均通过；RX-7 新网格禁用旧 `rotary_pulse_width_scale`，改用 `rotary_amplitude_scale` 与 housing/turbo 控制。
 - [x] U4：以同一 synthetic trace 实际渲染10个合格 Reference 场景、10个 Parent 和40个 Candidate；所有 Candidate 均绑定 WAV/PCM/trace/stem/usage/health SHA，Parent/Candidate SHA不同、无 clipping、无 wrong-condition event；讲话污染的 Ferrari 场景未渲染。
 - [x] U5/U6：运行 Reference↔Parent、Reference↔Candidate、Parent↔Candidate 专业三方比较；60/60 MATLAB、60/60 MoSQITo、60/60 audioFeatureExtractor 与40条 legacy triad均绑定实际SHA。仅 Hellcat `stage_u_04` 以3/3改善入选；Ferrari因仅2条干净参考而 `REFERENCE_COVERAGE_NOT_QUALIFIED`，RX-7全部 `NO_MEASURABLE_IMPROVEMENT`。
-- [ ] U7：构建三播放器 + B/C 随机 ABX 中文页面，所有专业结果和听审文件绑定相同 SHA。
-- [ ] U8：Stage U/Stage N/Q/R/S/full S12/Track-P/WAV-ZIP-SHA/diff 验证并推送。
+- [x] U7：构建三播放器 + B/C 随机 ABX 中文页面，已仅为 Hellcat `stage_u_04` 的3个场景生成仓库外 V4 原始/响度匹配副本、残差 SVG 和同源 SHA 门禁；真实浏览器验证通过。自动化导出仅为测试件，当前状态仍为 `WAITING_FOR_JOVI_PARENT_CANDIDATE_REVIEW`。
+- [x] U8：Stage U 79通过，Stage N/Q/R/S 45通过，Track-P 32通过，完整 S12 534通过/114子测试通过；V4 WAV/SVG/ZIP SHA、`git diff --check` 均通过。等待最终提交并推送。

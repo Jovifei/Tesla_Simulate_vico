@@ -1,0 +1,145 @@
+{
+  "schema_version": "s12-stage-u-scenario-alignment-matrix-v1",
+  "status": "SCENARIO_ALIGNMENT_COMPLETE",
+  "record_count": 10,
+  "records": [
+    {
+      "reference_id": "stage_u:ferrari_01_15s:reference",
+      "vehicle_id": "ferrari_458",
+      "scenario": "start_idle_rev_acceleration",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "start_idle_rev_acceleration",
+      "trace_sha256": "e6d35002b71b41a23d946ee7ef57ac91e8379c5884e56c8dc3527892dc95c414",
+      "parent_sha256": "d33d1c4063f6ca7e546ceed3eac950fcaa779987ed5831a610ce38acafcae79e",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:ferrari_02_15s:reference",
+      "vehicle_id": "ferrari_458",
+      "scenario": "onboard_full_load_shift",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "onboard_full_load_shift",
+      "trace_sha256": "43320fbece6619e96bbd20b0aaece78e2e31038e09f28434c8432512281fff29",
+      "parent_sha256": "024238de05fabfd03917187d0255d921f382be5fdf9c3fb27c16a538fc63755d",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:hellcat_01_15s:reference",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "idle_rev_acceleration",
+      "trace_sha256": "7b6b51d05baace11e4744e9acbe2a93632cbacd9c6e412b4e123e5bdb60f04e0",
+      "parent_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:hellcat_02_15s:reference",
+      "vehicle_id": "hellcat",
+      "scenario": "onboard_acceleration_shift",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "onboard_acceleration_shift",
+      "trace_sha256": "83d9fdc6e5010e6efce7ebb4559a054e8bda8310d4a5d723804a049e06f2b7ba",
+      "parent_sha256": "ed97e3b84e75a636af44140d25fbe60b8b07b4192947fef8a1bf8218908a07e4",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:hellcat_03_15s:reference",
+      "vehicle_id": "hellcat",
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "idle_rev_acceleration_stock_segment",
+      "trace_sha256": "7b6b51d05baace11e4744e9acbe2a93632cbacd9c6e412b4e123e5bdb60f04e0",
+      "parent_sha256": "bb7e2c5220daf942349b8fa7349972b7aeef5c7bfbf79b0e1ca12a07a455bf91",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:rx7_topic_01_idle:reference",
+      "vehicle_id": "rx7_fd",
+      "scenario": "idle",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "idle",
+      "trace_sha256": "49ef055b05ef42f73efda9724070bfaf231a39cf34597646840a2e229d0cf4c0",
+      "parent_sha256": "8201718f021fcac123f2e487c39d09b965a73589e3a4e26c1fdc44737cb02f7a",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:rx7_topic_02_steady_low:reference",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_low",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "steady_low",
+      "trace_sha256": "0a37b992ff94a7cf2fa5696ff5a258ca4850b326253cfa16f7555fb84f591cd5",
+      "parent_sha256": "3107ea8cac1bf9cffc6495ff0f9fdd03407cc7665d4cc33b7f94fc870487210c",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:rx7_topic_03_steady_mid:reference",
+      "vehicle_id": "rx7_fd",
+      "scenario": "steady_mid",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "steady_mid",
+      "trace_sha256": "933664b0db80708ddb1257bc73edcf5006997308132dddcad3dec102ba45b4fa",
+      "parent_sha256": "8a18b1ad5fa1c1b0c820f58e58972d78e92c1d974c8ca0d912d134e1237440e7",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:rx7_topic_04_full_pull:reference",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "full_pull",
+      "trace_sha256": "2d0267da459b8dbd44b3e079e5f1a0d2f0a01561e4c23bd0486c6b8982b53ba2",
+      "parent_sha256": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    },
+    {
+      "reference_id": "stage_u:rx7_topic_05_full_pull_interior:reference",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull_interior",
+      "quality_status": "REFERENCE_QUALITY_PASS",
+      "scenario_compatible": true,
+      "matching_trace_scenario": "full_pull_interior",
+      "trace_sha256": "2d0267da459b8dbd44b3e079e5f1a0d2f0a01561e4c23bd0486c6b8982b53ba2",
+      "parent_sha256": "615dcd98ef599336344fd48a384c08cd9b711ee9f4fda02ea8af540c2f815356",
+      "candidate_wav_reuse_forbidden": true,
+      "candidate_wav_unique_per_scenario": true,
+      "state_binding": "INFERRED_MATCHING_RENDER_TRACE_NOT_R1"
+    }
+  ],
+  "rejected_references": [
+    {
+      "reference_id": "stage_u:ferrari_03_15s:reference",
+      "status": "REFERENCE_SPEECH_CONTAMINATED"
+    }
+  ],
+  "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+  "automatic_tuning_eligible": false
+}
