@@ -6,7 +6,7 @@
   const plan = DATA.plan || {};
   const results = DATA.results || {};
   const state = { selected: 0, feedback: {}, audioReady: {}, audioErrors: {} };
-  const problemOptions = ["太闷", "太薄", "太刺", "机械感不足", "机械感过强", "低频无冲击", "固定电子哨声", "转速变化不自然", "换挡不自然", "回火不自然", "循环/合成器伪影", "当前片段不包含", "无法判断", "其它"]; 
+  const problemOptions = ["太闷", "太薄", "太刺", "机械感不足", "机械感过强", "低频无冲击", "固定电子哨声", "转速变化不自然", "换挡不自然", "回火不自然", "循环/合成器伪影", "当前片段不包含", "无法判断", "其它"];
   const esc = (value) => String(value == null ? "—" : value).replace(/[&<>\"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
   const fileUrl = (value) => { const p = String(value || "").replace(/\\/g, "/"); return p.match(/^file:/) ? p : "file:///" + p.replace(/^\/+/, ""); };
   const currentPair = () => (metrics.pairs || [])[state.selected];
