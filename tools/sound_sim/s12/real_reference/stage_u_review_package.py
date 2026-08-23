@@ -20,10 +20,11 @@ import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+from xml.sax.saxutils import escape
 
 import numpy as np
 import soundfile as sf
-from scipy.signal import resample_poly
+from scipy.signal import resample_poly, stft
 
 from tools.sound_sim.s12.acoustic_identity_v015.loudness_manager import (
     LoudnessMetrics,
@@ -37,6 +38,16 @@ TARGET_LUFS = -18.0
 PEAK_CAP_DBFS = -1.5
 AUDITION_SAMPLE_RATE_HZ = 48_000
 _EXPECTED_SELECTION = ("hellcat", "hellcat_stage_u_04")
+_TIMBRAL_DESCRIPTORS = {
+    "hardness": "硬度",
+    "depth": "深度",
+    "brightness": "明亮度",
+    "roughness": "粗糙度",
+    "warmth": "温暖度",
+    "sharpness": "锐度",
+    "booming": "轰鸣感",
+    "reverb": "混响感",
+}
 
 
 class StageUReviewPackageError(ValueError):
@@ -455,6 +466,199 @@ def _build_media_receipt(
     }
 
 
+def _timbral_unavailable_receipt() -> dict[str, Any]:
+    unavailable = "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+    return {
+        "status": unavailable,
+        "hard_gate": False,
+        "gate_label": "非硬门禁",
+        "reason": "timbral_models 项目当前不可维护且本环境不可用；不生成或替代任何数值。",
+        "descriptors": {
+            descriptor_id: {
+                "before": None,
+                "after": None,
+                "status": unavailable,
+            }
+            for descriptor_id in _TIMBRAL_DESCRIPTORS
+        },
+    }
+
+
+def _residual_colour(value_db: float, limit_db: float = 24.0) -> str:
+    amount = min(1.0, abs(float(value_db)) / limit_db)
+    base = (25, 34, 38)
+    target = (50, 216, 203) if value_db >= 0.0 else (255, 184, 77)
+    rgb = tuple(
+        round(start + amount * (end - start)) for start, end in zip(base, target)
+    )
+    return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+
+
+def _write_residual_svg(
+    path: Path,
+    residual_db: np.ndarray,
+    frequencies_hz: np.ndarray,
+    times_s: np.ndarray,
+    *,
+    label: str,
+    reference_sha256: str,
+    comparison_role: str,
+    comparison_sha256: str,
+    summary: Mapping[str, float],
+) -> None:
+    row_indices = np.linspace(
+        0, residual_db.shape[0] - 1, min(48, residual_db.shape[0]), dtype=int
+    )
+    column_indices = np.linspace(
+        0, residual_db.shape[1] - 1, min(96, residual_db.shape[1]), dtype=int
+    )
+    display = residual_db[np.ix_(row_indices, column_indices)]
+    width, height = 960, 380
+    plot_x, plot_y, plot_width, plot_height = 72, 76, 840, 230
+    cell_width = plot_width / display.shape[1]
+    cell_height = plot_height / display.shape[0]
+    rectangles: list[str] = []
+    for row_index, row in enumerate(display):
+        y = plot_y + (display.shape[0] - row_index - 1) * cell_height
+        for column_index, value in enumerate(row):
+            x = plot_x + column_index * cell_width
+            rectangles.append(
+                f'<rect x="{x:.3f}" y="{y:.3f}" width="{cell_width + 0.05:.3f}" '
+                f'height="{cell_height + 0.05:.3f}" fill="{_residual_colour(float(value))}"/>'
+            )
+    max_frequency = float(frequencies_hz[row_indices[-1]])
+    max_time = float(times_s[column_indices[-1]]) if times_s.size else 0.0
+    role_label = "父版本" if comparison_role == "parent" else "候选版本"
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" role="img">',
+        f"<title>{escape(label)}</title>",
+        '<rect width="960" height="380" fill="#111719"/>',
+        f'<text x="36" y="35" fill="#e9f2ef" font-size="20" font-family="Microsoft YaHei UI, sans-serif">{escape(label)}</text>',
+        f'<text x="36" y="58" fill="#91a6a5" font-size="12" font-family="Consolas, monospace">参考音轨 {escape(reference_sha256[:16])}… / {escape(role_label)} {escape(comparison_sha256[:16])}…</text>',
+        *rectangles,
+        f'<rect x="{plot_x}" y="{plot_y}" width="{plot_width}" height="{plot_height}" fill="none" stroke="#365057"/>',
+        f'<text x="{plot_x}" y="330" fill="#91a6a5" font-size="12">0 秒</text>',
+        f'<text x="{plot_x + plot_width - 58}" y="330" fill="#91a6a5" font-size="12">{max_time:.2f} 秒</text>',
+        f'<text x="16" y="{plot_y + plot_height}" fill="#91a6a5" font-size="12">0</text>',
+        f'<text x="8" y="{plot_y + 10}" fill="#91a6a5" font-size="12">{max_frequency / 1000.0:.1f}kHz</text>',
+        f'<text x="72" y="360" fill="#32d8cb" font-size="13">平均绝对残差 {float(summary["mean_absolute_db"]):.3f} dB</text>',
+        f'<text x="360" y="360" fill="#ffb84d" font-size="13">95% 绝对残差 {float(summary["p95_absolute_db"]):.3f} dB</text>',
+        '<text x="690" y="360" fill="#91a6a5" font-size="12">青绿：高于参考 / 琥珀：低于参考</text>',
+        "</svg>",
+    ]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _build_spectrogram_residual(
+    *,
+    row: Mapping[str, Any],
+    comparison_role: str,
+    trial_id: str,
+    staging_root: Path,
+    final_root: Path,
+) -> dict[str, Any]:
+    if comparison_role not in {"parent", "candidate"}:
+        raise StageUReviewPackageError(
+            f"invalid spectrogram comparison role: {comparison_role}"
+        )
+    reference_audio, reference_rate = _read_audio(Path(str(row["reference_path"])))
+    comparison_audio, comparison_rate = _read_audio(
+        Path(str(row[f"{comparison_role}_path"]))
+    )
+    reference = np.mean(_resample_48k(reference_audio, reference_rate), axis=1)
+    comparison = np.mean(_resample_48k(comparison_audio, comparison_rate), axis=1)
+    sample_count = min(reference.size, comparison.size)
+    if sample_count < 128:
+        raise StageUReviewPackageError(
+            f"raw analysis clip is too short for spectrogram residual: {trial_id}"
+        )
+    reference = reference[:sample_count]
+    comparison = comparison[:sample_count]
+    nperseg = min(1024, sample_count)
+    noverlap = min(768, nperseg - 1)
+    frequencies, times, reference_stft = stft(
+        reference,
+        fs=AUDITION_SAMPLE_RATE_HZ,
+        window="hann",
+        nperseg=nperseg,
+        noverlap=noverlap,
+        boundary=None,
+        padded=False,
+    )
+    _, _, comparison_stft = stft(
+        comparison,
+        fs=AUDITION_SAMPLE_RATE_HZ,
+        window="hann",
+        nperseg=nperseg,
+        noverlap=noverlap,
+        boundary=None,
+        padded=False,
+    )
+    frequency_mask = frequencies <= 8_000.0
+    frequencies = frequencies[frequency_mask]
+    floor = 1.0e-8
+    reference_db = 20.0 * np.log10(
+        np.maximum(np.abs(reference_stft[frequency_mask]), floor)
+    )
+    comparison_db = 20.0 * np.log10(
+        np.maximum(np.abs(comparison_stft[frequency_mask]), floor)
+    )
+    residual_db = comparison_db - reference_db
+    absolute = np.abs(residual_db)
+    summary = {
+        "signed_mean_db": float(np.mean(residual_db)),
+        "mean_absolute_db": float(np.mean(absolute)),
+        "rms_db": float(np.sqrt(np.mean(np.square(residual_db)))),
+        "p95_absolute_db": float(np.percentile(absolute, 95.0)),
+        "max_absolute_db": float(np.max(absolute)),
+        "frequency_bin_count": int(residual_db.shape[0]),
+        "time_frame_count": int(residual_db.shape[1]),
+        "duration_s": float(sample_count / AUDITION_SAMPLE_RATE_HZ),
+    }
+    phase = "before" if comparison_role == "parent" else "after"
+    label = (
+        "调整前频谱残差（参考对父版本）"
+        if comparison_role == "parent"
+        else "调整后频谱残差（参考对候选版本）"
+    )
+    relative = Path("visuals") / trial_id / f"{phase}.svg"
+    staging_path = staging_root / relative
+    final_path = final_root / relative
+    _write_residual_svg(
+        staging_path,
+        residual_db,
+        frequencies,
+        times,
+        label=label,
+        reference_sha256=str(row["reference_sha256"]),
+        comparison_role=comparison_role,
+        comparison_sha256=str(row[f"{comparison_role}_sha256"]),
+        summary=summary,
+    )
+    return {
+        "status": "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS",
+        "label": label,
+        "reference_role": "reference",
+        "comparison_role": comparison_role,
+        "reference_raw_sha256": str(row["reference_sha256"]),
+        "comparison_raw_sha256": str(row[f"{comparison_role}_sha256"]),
+        "svg_path": str(final_path),
+        "svg_url": f"/visuals/{trial_id}/{phase}.svg",
+        "svg_sha256": _sha256(staging_path),
+        "summary": summary,
+        "analysis": {
+            "domain": "raw_sha_bound_analysis_clips",
+            "sample_rate_hz": AUDITION_SAMPLE_RATE_HZ,
+            "stft_window": "hann",
+            "stft_frame_size": nperseg,
+            "stft_overlap": noverlap,
+            "frequency_max_hz": 8_000.0,
+        },
+    }
+
+
 def _professional_metric_view(
     components: Mapping[str, Any],
 ) -> dict[str, dict[str, float]]:
@@ -504,6 +708,21 @@ def _page_data(manifest: Mapping[str, Any], manifest_sha: str) -> dict[str, Any]
                 "professional_binding": trial["professional_binding"],
                 "parent_candidate_distinct": trial["parent_candidate_distinct"],
                 "professional_metrics": trial["professional_metrics"],
+                "spectrogram_residuals": {
+                    phase: {
+                        "status": receipt["status"],
+                        "label": receipt["label"],
+                        "url": receipt["svg_url"],
+                        "svg_sha256": receipt["svg_sha256"],
+                        "reference_role": receipt["reference_role"],
+                        "comparison_role": receipt["comparison_role"],
+                        "reference_raw_sha256": receipt["reference_raw_sha256"],
+                        "comparison_raw_sha256": receipt["comparison_raw_sha256"],
+                        "summary": receipt["summary"],
+                    }
+                    for phase, receipt in trial["spectrogram_residuals"].items()
+                },
+                "timbral_descriptors": trial["timbral_descriptors"],
                 "parameter_values": trial["parameter_values"],
                 "parameter_uncertainty": {
                     "status": "NOT_QUANTIFIED_GRID_CANDIDATE",
@@ -592,6 +811,22 @@ def build_review_package(
                 )
                 for role in ("reference", "parent", "candidate")
             }
+            spectrogram_residuals = {
+                "before": _build_spectrogram_residual(
+                    row=row,
+                    comparison_role="parent",
+                    trial_id=trial_id,
+                    staging_root=staging,
+                    final_root=output,
+                ),
+                "after": _build_spectrogram_residual(
+                    row=row,
+                    comparison_role="candidate",
+                    trial_id=trial_id,
+                    staging_root=staging,
+                    final_root=output,
+                ),
+            }
             manifest_trials.append(
                 {
                     "trial_id": trial_id,
@@ -601,6 +836,8 @@ def build_review_package(
                     "candidate_id": row["candidate_id"],
                     "randomized_mapping": mapping,
                     "media": media,
+                    "spectrogram_residuals": spectrogram_residuals,
+                    "timbral_descriptors": _timbral_unavailable_receipt(),
                     "professional_binding": {
                         "status": "ALL_COMPONENT_SHA_BOUND",
                         "passes": True,
@@ -716,6 +953,93 @@ def validate_review_package(
             or set(mapping.values()) != {"parent", "candidate"}
         ):
             raise StageUReviewPackageError("B/C randomized mapping is invalid")
+        timbral = trial.get("timbral_descriptors")
+        if (
+            not isinstance(timbral, Mapping)
+            or timbral.get("status") != "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+            or timbral.get("hard_gate") is not False
+            or timbral.get("gate_label") != "非硬门禁"
+            or not isinstance(timbral.get("descriptors"), Mapping)
+            or set(timbral["descriptors"]) != set(_TIMBRAL_DESCRIPTORS)
+        ):
+            raise StageUReviewPackageError(
+                "timbral descriptors must remain unavailable and non-gating"
+            )
+        for descriptor in timbral["descriptors"].values():
+            if descriptor != {
+                "before": None,
+                "after": None,
+                "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+            }:
+                raise StageUReviewPackageError(
+                    "timbral descriptor values must not be fabricated"
+                )
+        residuals = trial.get("spectrogram_residuals")
+        if not isinstance(residuals, Mapping) or set(residuals) != {
+            "before",
+            "after",
+        }:
+            raise StageUReviewPackageError(
+                "before/after spectrogram residual receipts are required"
+            )
+        for phase, expected_role in (("before", "parent"), ("after", "candidate")):
+            residual = residuals[phase]
+            if (
+                not isinstance(residual, Mapping)
+                or residual.get("status") != "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS"
+                or residual.get("reference_role") != "reference"
+                or residual.get("comparison_role") != expected_role
+                or residual.get("reference_raw_sha256")
+                != media["reference"].get("source_raw_sha256")
+                or residual.get("comparison_raw_sha256")
+                != media[expected_role].get("source_raw_sha256")
+            ):
+                raise StageUReviewPackageError(
+                    f"spectrogram residual role/SHA binding failed: {phase}"
+                )
+            svg_path = _inside_allowed_external_root(
+                Path(str(residual.get("svg_path") or ""))
+            )
+            expected_svg_url = f"/visuals/{trial['trial_id']}/{phase}.svg"
+            if residual.get("svg_url") != expected_svg_url:
+                raise StageUReviewPackageError(
+                    f"spectrogram residual URL binding failed: {phase}"
+                )
+            svg_sha = str(residual.get("svg_sha256") or "").lower()
+            if not _valid_sha(svg_sha):
+                raise StageUReviewPackageError(
+                    f"spectrogram residual SHA receipt is invalid: {phase}"
+                )
+            if verify_manifest_file or svg_path.exists():
+                if not svg_path.is_file() or _sha256(svg_path) != svg_sha:
+                    raise StageUReviewPackageError(
+                        f"spectrogram residual SHA mismatch: {phase}"
+                    )
+            summary = residual.get("summary")
+            numeric_keys = {
+                "signed_mean_db",
+                "mean_absolute_db",
+                "rms_db",
+                "p95_absolute_db",
+                "max_absolute_db",
+                "frequency_bin_count",
+                "time_frame_count",
+                "duration_s",
+            }
+            if (
+                not isinstance(summary, Mapping)
+                or set(summary) != numeric_keys
+                or not all(
+                    isinstance(summary[key], (int, float))
+                    and np.isfinite(float(summary[key]))
+                    for key in numeric_keys
+                )
+                or float(summary["mean_absolute_db"]) < 0.0
+                or float(summary["p95_absolute_db"]) < 0.0
+            ):
+                raise StageUReviewPackageError(
+                    f"spectrogram residual numeric summary is invalid: {phase}"
+                )
         for role, receipt in media.items():
             if not isinstance(receipt, Mapping):
                 raise StageUReviewPackageError(f"media receipt is missing: {role}")
@@ -899,6 +1223,18 @@ def create_review_http_server(
                     "review media route escapes external package"
                 )
             routes[f"/media/{trial['trial_id']}/{role}.wav"] = media_path
+        for phase, receipt in trial["spectrogram_residuals"].items():
+            visual_path = Path(str(receipt["svg_path"])).resolve()
+            if not visual_path.is_relative_to(external_root):
+                raise StageUReviewPackageError(
+                    "review visual route escapes external package"
+                )
+            expected_url = f"/visuals/{trial['trial_id']}/{phase}.svg"
+            if receipt.get("svg_url") != expected_url:
+                raise StageUReviewPackageError(
+                    "review visual route does not match its receipt"
+                )
+            routes[expected_url] = visual_path
     if any(not path.is_file() for path in routes.values()):
         raise StageUReviewPackageError("review server route is missing a required file")
 
@@ -907,7 +1243,7 @@ def create_review_http_server(
             route = urllib.parse.urlsplit(self.path).path
             path = routes.get(route)
             if path is None:
-                self.send_error(404, "未找到审听资源")
+                self.send_error(404)
                 return
             payload = path.read_bytes()
             mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
@@ -939,7 +1275,7 @@ def create_review_http_server(
             self._send(False)
 
         def do_POST(self) -> None:  # noqa: N802
-            self.send_error(405, "仅导出本地人工提交文件")
+            self.send_error(405)
 
         def log_message(self, format: str, *args: Any) -> None:
             return
@@ -978,6 +1314,7 @@ _HTML = r"""<!doctype html>
     audio { width:100%; filter:sepia(.12) saturate(.8) hue-rotate(125deg); }
     .sha { margin-top:14px; color:var(--muted); font-family:Consolas,monospace; font-size:.7rem; overflow-wrap:anywhere; }
     .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px; }
+    .research-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px; }
     .panel { padding:20px; }
     h3 { margin:0 0 14px; color:var(--cyan); font-size:1rem; letter-spacing:.08em; }
     table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
@@ -991,7 +1328,10 @@ _HTML = r"""<!doctype html>
     button { margin-top:12px; width:100%; border:0; padding:14px 18px; color:#08201f; background:var(--cyan); font-weight:900; letter-spacing:.05em; cursor:pointer; }
     button:disabled { cursor:not-allowed; background:#3a494c; color:#839191; }
     .tag { display:inline-block; margin:0 8px 8px 0; padding:5px 8px; border:1px solid var(--line); color:var(--muted); font-size:.75rem; }
-    @media (max-width:850px) { header,.grid { grid-template-columns:1fr; } .players { grid-template-columns:1fr; } .shell { width:min(100% - 18px,680px); } }
+    .residual-card { margin:0; }
+    .residual-card img { display:block; width:100%; min-height:180px; border:1px solid var(--line); background:#111719; }
+    .trace { margin-top:10px; color:var(--muted); font-family:Consolas,monospace; font-size:.72rem; overflow-wrap:anywhere; }
+    @media (max-width:850px) { header,.grid,.research-grid { grid-template-columns:1fr; } .players { grid-template-columns:1fr; } .shell { width:min(100% - 18px,680px); } }
   </style>
 </head>
 <body>
@@ -1010,6 +1350,11 @@ _HTML = r"""<!doctype html>
     <article class="panel"><h3>专业指标：调整前 / 调整后</h3><table><thead><tr><th>工具域</th><th>调整前距离</th><th>调整后距离</th></tr></thead><tbody id="metrics-body"></tbody></table><h3 style="margin-top:22px">参数值与不确定性</h3><div id="parameters"></div><p id="uncertainty" class="muted"></p></article>
     <article class="panel"><h3>哪个更接近参考音轨</h3><div class="answers"><label class="choice"><input type="radio" name="answer" value="B" data-testid="answer-b"> 盲听通道 B</label><label class="choice"><input type="radio" name="answer" value="C" data-testid="answer-c"> 盲听通道 C</label></div><textarea id="notes" data-testid="listener-notes" placeholder="记录低频压力、增压器质感、换挡冲击或其他听感依据（可选）"></textarea><div class="status" data-testid="gate-status">正在校验媒体……</div><button id="export" data-testid="export-submission" disabled>导出人工提交文件</button></article>
   </section>
+  <section class="panel" data-testid="timbral-descriptors" style="margin-top:14px"><h3>音色描述符（可选研究指标）</h3><div id="timbral-status" class="status">PROJECT_UNMAINTAINED_NOT_AVAILABLE · 非硬门禁</div><p class="muted">当前项目不可维护且工具不可用；调整前与调整后均显示不可用，不以代理值代替。</p><table><thead><tr><th>描述符</th><th>调整前</th><th>调整后</th><th>状态</th></tr></thead><tbody id="timbral-body"></tbody></table></section>
+  <section class="research-grid">
+    <figure class="panel residual-card" data-testid="spectrogram-before"><h3>调整前频谱残差（参考对父版本）</h3><img id="spectrogram-before-image" alt="调整前频谱残差（参考对父版本）"><figcaption id="spectrogram-before-caption" class="muted"></figcaption><div id="spectrogram-before-trace" class="trace"></div></figure>
+    <figure class="panel residual-card" data-testid="spectrogram-after"><h3>调整后频谱残差（参考对候选版本）</h3><img id="spectrogram-after-image" alt="调整后频谱残差（参考对候选版本）"><figcaption id="spectrogram-after-caption" class="muted"></figcaption><div id="spectrogram-after-trace" class="trace"></div></figure>
+  </section>
 </main>
 <script src="review_data.js"></script><script src="review.js"></script>
 </body>
@@ -1022,6 +1367,7 @@ _JAVASCRIPT = r"""(() => {
   const data = window.S12_STAGE_U_REVIEW_DATA;
   const roles = ["reference", "parent", "candidate"];
   const metricNames = {matlab:"MATLAB", mosqito:"MoSQITo", audio_feature_extractor:"audioFeatureExtractor"};
+  const timbralNames = {hardness:"硬度", depth:"深度", brightness:"明亮度", roughness:"粗糙度", warmth:"温暖度", sharpness:"锐度", booming:"轰鸣感", reverb:"混响感"};
   const state = {current:0, answers:{}, notes:{}, media_validation:{}};
   const select = document.getElementById("trial-select");
   const exportButton = document.getElementById("export");
@@ -1059,6 +1405,24 @@ _JAVASCRIPT = r"""(() => {
     shaNode.textContent = `SHA-256 ${trial.media[role].sha256}`;
     verifySha(trial, role, trial.media[role].url);
   }
+  function renderTimbral(trial) {
+    const receipt = trial.timbral_descriptors;
+    document.getElementById("timbral-status").textContent = `${receipt.status} · ${receipt.gate_label}`;
+    const body = document.getElementById("timbral-body"); body.replaceChildren();
+    Object.entries(receipt.descriptors).forEach(([name,value]) => {
+      const row = document.createElement("tr");
+      [`${timbralNames[name]}（${name}）`, value.before ?? "不可用", value.after ?? "不可用", value.status].forEach(text => { const cell=document.createElement("td"); cell.textContent=String(text); row.appendChild(cell); });
+      body.appendChild(row);
+    });
+  }
+  function renderResidual(trial, phase) {
+    const receipt = trial.spectrogram_residuals[phase];
+    document.getElementById(`spectrogram-${phase}-image`).src = receipt.url;
+    const summary = receipt.summary;
+    const comparisonName = receipt.comparison_role === "parent" ? "父版本" : "候选版本";
+    document.getElementById(`spectrogram-${phase}-caption`).textContent = `平均绝对残差 ${summary.mean_absolute_db.toFixed(3)} dB · 均方根残差 ${summary.rms_db.toFixed(3)} dB · 95% 绝对残差 ${summary.p95_absolute_db.toFixed(3)} dB`;
+    document.getElementById(`spectrogram-${phase}-trace`).textContent = `参考音轨 SHA-256 ${receipt.reference_raw_sha256} · ${comparisonName} SHA-256 ${receipt.comparison_raw_sha256} · SVG SHA-256 ${receipt.svg_sha256}`;
+  }
   function renderTrial(index) {
     state.current = index;
     const trial = data.trials[index];
@@ -1085,6 +1449,9 @@ _JAVASCRIPT = r"""(() => {
     parameters.replaceChildren();
     Object.entries(trial.parameter_values).forEach(([name,value]) => { const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = `${name} = ${value}`; parameters.appendChild(tag); });
     document.getElementById("uncertainty").textContent = trial.parameter_uncertainty.display;
+    renderTimbral(trial);
+    renderResidual(trial, "before");
+    renderResidual(trial, "after");
     document.querySelectorAll('input[name="answer"]').forEach(input => { input.checked = state.answers[trial.trial_id] === input.value; });
     document.getElementById("notes").value = state.notes[trial.trial_id] || "";
     updateGate();

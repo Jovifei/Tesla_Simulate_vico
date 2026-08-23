@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import http.client
 import json
 import shutil
 import tempfile
@@ -13,6 +14,7 @@ import numpy as np
 import pytest
 import soundfile as sf
 
+from tools.sound_sim.s12.real_reference import stage_u_review_package as review_package
 from tools.sound_sim.s12.real_reference.stage_u_review_package import (
     ALLOWED_EXTERNAL_ROOT,
     StageUReviewPackageError,
@@ -205,24 +207,48 @@ def test_review_package_refuses_nonempty_page_root_before_external_writes(
     ) == "preserve"
 
 
-def test_review_package_rejects_raw_sha_mismatch_before_writing(
-    package_inputs: dict[str, object], external_fixture_root: Path, tmp_path: Path
+@pytest.mark.parametrize("role", ("reference", "candidate"))
+def test_review_package_rejects_raw_sha_mismatch_before_visualization(
+    package_inputs: dict[str, object],
+    external_fixture_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    role: str,
 ) -> None:
+    visualization_calls = 0
+
+    def forbidden_visualization(*args: object, **kwargs: object) -> None:
+        nonlocal visualization_calls
+        visualization_calls += 1
+
+    monkeypatch.setattr(
+        review_package,
+        "_build_spectrogram_residual",
+        forbidden_visualization,
+        raising=False,
+    )
     selection = copy.deepcopy(package_inputs["selection"])
-    selection["selected_candidates"][0]["per_reference"][0]["reference_sha256"] = (
+    selection["selected_candidates"][0]["per_reference"][0][f"{role}_sha256"] = "0" * 64
+    selection["selected_candidates"][0]["per_reference"][0]["sha_binding"][role] = (
         "0" * 64
     )
-    selection["selected_candidates"][0]["per_reference"][0]["sha_binding"][
-        "reference"
-    ] = "0" * 64
     professional = copy.deepcopy(package_inputs["professional"])
-    professional["results"][0]["reference_sha256"] = "0" * 64
-    professional["results"][0]["sha_binding"]["reference"] = "0" * 64
-    inputs = {**package_inputs, "selection": selection, "professional": professional}
+    professional["results"][0][f"{role}_sha256"] = "0" * 64
+    professional["results"][0]["sha_binding"][role] = "0" * 64
+    grid = copy.deepcopy(package_inputs["grid"])
+    if role == "candidate":
+        grid["candidates"][0]["candidate_sha256"] = "0" * 64
+    inputs = {
+        **package_inputs,
+        "selection": selection,
+        "professional": professional,
+        "grid": grid,
+    }
     output = external_fixture_root / "invalid-sha-package"
     with pytest.raises(StageUReviewPackageError, match="raw SHA-256 mismatch"):
         _build(inputs, output, tmp_path / "repo-page")
     assert not output.exists()
+    assert visualization_calls == 0
 
 
 def test_review_package_rejects_parent_candidate_equality(
@@ -337,6 +363,29 @@ def test_successful_package_keeps_raw_and_loudness_matched_copies_separate(
         assert isinstance(receipt["headroom_limited"], bool)
         assert receipt["duration_s"] > 0.0
 
+    residuals = trial["spectrogram_residuals"]
+    assert set(residuals) == {"before", "after"}
+    assert residuals["before"]["label"] == "调整前频谱残差（参考对父版本）"
+    assert residuals["before"]["comparison_role"] == "parent"
+    assert residuals["after"]["label"] == "调整后频谱残差（参考对候选版本）"
+    assert residuals["after"]["comparison_role"] == "candidate"
+    for residual in residuals.values():
+        svg_path = Path(residual["svg_path"])
+        assert svg_path.is_file() and svg_path.is_relative_to(external_output)
+        assert svg_path.suffix == ".svg"
+        assert _sha256(svg_path) == residual["svg_sha256"]
+        assert residual["status"] == "COMPUTED_FROM_SHA_BOUND_RAW_ANALYSIS"
+        assert (
+            residual["reference_raw_sha256"]
+            == trial["media"]["reference"]["source_raw_sha256"]
+        )
+        assert (
+            residual["comparison_raw_sha256"]
+            == trial["media"][residual["comparison_role"]]["source_raw_sha256"]
+        )
+        assert residual["summary"]["mean_absolute_db"] >= 0.0
+        assert residual["summary"]["p95_absolute_db"] >= 0.0
+
     assert (external_output / "review_package_manifest.json").is_file()
     assert {path.name for path in repository_output.iterdir()} == {
         "index.html",
@@ -345,6 +394,7 @@ def test_successful_package_keeps_raw_and_loudness_matched_copies_separate(
         "review_data.json",
     }
     assert not list(repository_output.rglob("*.wav"))
+    assert not list(repository_output.rglob("*.svg"))
     validate_review_package(manifest)
     persisted = json.loads(
         (external_output / "review_package_manifest.json").read_text(encoding="utf-8")
@@ -376,6 +426,11 @@ def test_repository_page_contract_is_chinese_sha_bound_and_playwright_addressabl
         "专业指标：调整前 / 调整后",
         "参数值与不确定性",
         "导出人工提交文件",
+        "音色描述符（可选研究指标）",
+        "调整前频谱残差（参考对父版本）",
+        "调整后频谱残差（参考对候选版本）",
+        "非硬门禁",
+        "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
     ):
         assert token in html + js
     for selector in (
@@ -389,6 +444,9 @@ def test_repository_page_contract_is_chinese_sha_bound_and_playwright_addressabl
         'data-testid="status-labels"',
         'data-testid="blind-b-player"',
         'data-testid="blind-c-player"',
+        'data-testid="timbral-descriptors"',
+        'data-testid="spectrogram-before"',
+        'data-testid="spectrogram-after"',
     ):
         assert selector in html + js
     for gate_token in (
@@ -401,6 +459,7 @@ def test_repository_page_contract_is_chinese_sha_bound_and_playwright_addressabl
         assert gate_token in js
     assert "trial.randomized_mapping[slot]" in js
     assert ".innerHTML" not in js
+    assert "Reference SHA-256" not in js
     assert "https://" not in html and "http://" not in html
     assert "ABX_READY" not in html
     assert data["schema_version"] == "s12-stage-u-review-page-data-v1"
@@ -412,6 +471,31 @@ def test_repository_page_contract_is_chinese_sha_bound_and_playwright_addressabl
         "before": 1.8,
         "after": 1.5,
     }
+    timbral = data["trials"][0]["timbral_descriptors"]
+    assert timbral["status"] == "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+    assert timbral["hard_gate"] is False
+    assert set(timbral["descriptors"]) == {
+        "hardness",
+        "depth",
+        "brightness",
+        "roughness",
+        "warmth",
+        "sharpness",
+        "booming",
+        "reverb",
+    }
+    assert all(
+        row
+        == {
+            "before": None,
+            "after": None,
+            "status": "PROJECT_UNMAINTAINED_NOT_AVAILABLE",
+        }
+        for row in timbral["descriptors"].values()
+    )
+    residuals = data["trials"][0]["spectrogram_residuals"]
+    assert residuals["before"]["url"].endswith("/before.svg")
+    assert residuals["after"]["url"].endswith("/after.svg")
     persisted = json.loads(
         (
             external_fixture_root / "page-contract" / "review_package_manifest.json"
@@ -438,6 +522,34 @@ def test_callable_validator_rejects_tampered_media_and_submission_requires_answe
     ).hexdigest()
     with pytest.raises(StageUReviewPackageError, match="audition SHA-256 mismatch"):
         validate_review_package(tampered)
+
+    tampered_visual = copy.deepcopy(manifest)
+    tampered_visual["trials"][0]["spectrogram_residuals"]["before"]["svg_sha256"] = (
+        "e" * 64
+    )
+    canonical = copy.deepcopy(tampered_visual)
+    canonical.pop("manifest_sha256")
+    tampered_visual["manifest_sha256"] = hashlib.sha256(
+        (
+            json.dumps(canonical, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+        ).encode("utf-8")
+    ).hexdigest()
+    with pytest.raises(StageUReviewPackageError, match="spectrogram residual SHA"):
+        validate_review_package(tampered_visual)
+
+    tampered_visual_url = copy.deepcopy(manifest)
+    tampered_visual_url["trials"][0]["spectrogram_residuals"]["after"]["svg_url"] = (
+        "/visuals/wrong.svg"
+    )
+    canonical = copy.deepcopy(tampered_visual_url)
+    canonical.pop("manifest_sha256")
+    tampered_visual_url["manifest_sha256"] = hashlib.sha256(
+        (
+            json.dumps(canonical, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+        ).encode("utf-8")
+    ).hexdigest()
+    with pytest.raises(StageUReviewPackageError, match="spectrogram residual URL"):
+        validate_review_package(tampered_visual_url)
 
     trial = manifest["trials"][0]
     media_validation = {
@@ -530,6 +642,32 @@ def test_playwright_sees_three_players_and_fail_closed_export_gate(
     thread.join(timeout=5)
 
 
+def test_review_server_returns_http_errors_for_post_and_unknown_routes(
+    package_inputs: dict[str, object], external_fixture_root: Path, tmp_path: Path
+) -> None:
+    repository_output = tmp_path / "Jovi_Reference_Parent_Candidate_Review"
+    external_output = external_fixture_root / "http-errors"
+    _build(package_inputs, external_output, repository_output)
+    server = create_review_http_server(repository_output, external_output)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+    try:
+        connection.request("POST", "/")
+        response = connection.getresponse()
+        assert response.status == 405
+        response.read()
+        connection.request("GET", "/not-a-review-route")
+        response = connection.getresponse()
+        assert response.status == 404
+        response.read()
+    finally:
+        connection.close()
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
 def test_playwright_positive_path_passes_sha_media_and_answer_gates(
     package_inputs: dict[str, object], external_fixture_root: Path, tmp_path: Path
 ) -> None:
@@ -561,6 +699,26 @@ def test_playwright_positive_path_passes_sha_media_and_answer_gates(
             ).get_attribute("src")
             assert (
                 "全部门禁" in page.locator('[data-testid="gate-status"]').inner_text()
+            )
+            page.locator('[data-testid="spectrogram-before"] img').wait_for(
+                state="visible"
+            )
+            page.locator('[data-testid="spectrogram-after"] img').wait_for(
+                state="visible"
+            )
+            assert page.locator('[data-testid="spectrogram-before"] img').evaluate(
+                "image => image.complete && image.naturalWidth > 0"
+            )
+            assert page.locator('[data-testid="spectrogram-after"] img').evaluate(
+                "image => image.complete && image.naturalWidth > 0"
+            )
+            assert (
+                "调整前频谱残差"
+                in page.locator('[data-testid="spectrogram-before"]').inner_text()
+            )
+            assert (
+                "PROJECT_UNMAINTAINED_NOT_AVAILABLE"
+                in page.locator('[data-testid="timbral-descriptors"]').inner_text()
             )
             browser.close()
     finally:
