@@ -103,8 +103,9 @@ def dashboard_values_to_source(vehicle_id: str, values: Mapping[str, float]) -> 
 
 def _source_entry(name: str, value: float) -> dict[str, Any]:
     low, high, unit, scope = _RANGES[name]
-    if not low <= value <= high:
+    if value < low - 1e-12 or value > high + 1e-12:
         raise StageUReachabilityError(f"mapped source parameter out of range: {name}={value}")
+    value = min(max(float(value), low), high)
     return {
         "value": float(value),
         "unit": unit,

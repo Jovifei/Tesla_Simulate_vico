@@ -46,6 +46,15 @@ def test_stage_u_rx7_candidate_replaces_legacy_pulse_name_with_reachable_control
     assert mapping["parameter_group"] == "rotary_housing_turbo_distribution"
 
 
+def test_stage_u_rx7_maximum_broadband_mix_stays_inside_closed_range() -> None:
+    candidate, _ = build_stage_u_candidate(
+        CANDIDATES / "RX7_candidate_v4.json",
+        "rx7_stage_u_max_mix",
+        {"housing_peak_db": 3.0, "turbo_band_balance_db": 3.0, "broadband_mix": 1.0},
+    )
+    assert candidate.parameter("source", "rotary_amplitude_scale") == 1.20
+
+
 def test_reachability_probe_requires_consumption_target_change_and_bounded_non_target() -> None:
     candidate, _ = build_stage_u_candidate(
         CANDIDATES / "Hellcat_candidate_v4.json",
