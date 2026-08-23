@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, TypedDict, cast
 
 import numpy as np
 from scipy.io import wavfile
@@ -14,6 +14,36 @@ from tools.sound_sim.s12.real_reference.stage_u_features import extract_raw_feat
 
 class StageUComparatorError(ValueError):
     """Raised when a three-way comparison cannot bind the same scenario."""
+
+
+class TriadComparisonRecord(TypedDict):
+    """Exact legacy triad record consumed by professional merge and selection."""
+
+    schema_version: str
+    status: str
+    vehicle_id: str
+    scenario: str
+    reference_id: str
+    candidate_id: str
+    reference_path: str
+    parent_path: str
+    candidate_path: str
+    reference_sha256: str
+    parent_sha256: str
+    candidate_sha256: str
+    reference_parent: dict[str, Any]
+    reference_candidate: dict[str, Any]
+    parent_candidate: dict[str, Any]
+    parent_distance: float
+    candidate_distance: float
+    absolute_improvement: float
+    relative_improvement: float
+    raw_features: dict[str, Any]
+    professional_bound: bool
+    hard_gates_pass: bool
+    requested_parameters: list[str]
+    consumed_parameters: list[str]
+    order_status: str
 
 
 def _sha256(path: Path) -> str:
@@ -102,7 +132,36 @@ def compare_triad(reference_path: Path, parent_path: Path, candidate_path: Path,
     }
 
 
-def compare_reference_parent_candidate(record: Mapping[str, Any]) -> dict[str, Any]:
+def _parameter_names(value: Any) -> list[str]:
+    if not isinstance(value, (list, tuple)):
+        return []
+    return [str(item) for item in value if str(item)]
+
+
+def _hard_gate_from_record(
+    record: Mapping[str, Any],
+    requested_parameters: list[str],
+    consumed_parameters: list[str],
+    parent_sha256: str,
+    candidate_sha256: str,
+) -> bool:
+    if "hard_gates_pass" in record:
+        return record.get("hard_gates_pass") is True and parent_sha256 != candidate_sha256
+    return bool(
+        record.get("finite_pcm") is True
+        and record.get("package_integrity") is True
+        and record.get("non_target_vehicle_sha_unchanged") is True
+        and type(record.get("clipping_count")) is int
+        and record.get("clipping_count") == 0
+        and type(record.get("wrong_condition_event_count")) is int
+        and record.get("wrong_condition_event_count") == 0
+        and requested_parameters
+        and set(requested_parameters).issubset(consumed_parameters)
+        and parent_sha256 != candidate_sha256
+    )
+
+
+def compare_reference_parent_candidate(record: Mapping[str, Any]) -> TriadComparisonRecord:
     """Compare one rendered grid record while preserving its selection identity."""
 
     required = ("reference_id", "candidate_id", "vehicle_id", "scenario", "reference_path", "parent_path", "candidate_path")
@@ -118,8 +177,18 @@ def compare_reference_parent_candidate(record: Mapping[str, Any]) -> dict[str, A
     )
     result["reference_id"] = str(record["reference_id"])
     result["candidate_id"] = str(record["candidate_id"])
-    result["hard_gates_pass"] = bool(record.get("hard_gates_pass", True))
-    return result
+    requested_parameters = _parameter_names(record.get("requested_parameters"))
+    consumed_parameters = _parameter_names(record.get("consumed_parameters"))
+    result["requested_parameters"] = requested_parameters
+    result["consumed_parameters"] = consumed_parameters
+    result["hard_gates_pass"] = _hard_gate_from_record(
+        record,
+        requested_parameters,
+        consumed_parameters,
+        result["parent_sha256"],
+        result["candidate_sha256"],
+    )
+    return cast(TriadComparisonRecord, result)
 
 
-__all__ = ["StageUComparatorError", "compare_reference_parent_candidate", "compare_triad"]
+__all__ = ["StageUComparatorError", "TriadComparisonRecord", "compare_reference_parent_candidate", "compare_triad"]
