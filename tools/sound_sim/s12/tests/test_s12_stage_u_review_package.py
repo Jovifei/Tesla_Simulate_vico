@@ -251,6 +251,89 @@ def test_review_package_rejects_raw_sha_mismatch_before_visualization(
     assert visualization_calls == 0
 
 
+def test_derivatives_use_copied_raw_snapshot_when_original_changes_after_copy(
+    package_inputs: dict[str, object],
+    external_fixture_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    baseline = _build(
+        package_inputs,
+        external_fixture_root / "snapshot-baseline",
+        tmp_path / "baseline-page",
+    )
+    reference_path = Path(
+        package_inputs["selection"]["selected_candidates"][0]["per_reference"][0][
+            "reference_path"
+        ]
+    )
+    declared_sha = _sha256(reference_path)
+    real_copyfile = review_package.shutil.copyfile
+    original_replaced = False
+
+    def copy_then_replace_original(source: object, destination: object) -> object:
+        nonlocal original_replaced
+        result = real_copyfile(source, destination)
+        if Path(source).resolve() == reference_path.resolve() and not original_replaced:
+            _write_tone(reference_path, 44_100, 880.0, 0.04)
+            original_replaced = True
+        return result
+
+    monkeypatch.setattr(review_package.shutil, "copyfile", copy_then_replace_original)
+    snapshot = _build(
+        package_inputs,
+        external_fixture_root / "snapshot-mutated-original",
+        tmp_path / "snapshot-page",
+    )
+    assert original_replaced is True
+    assert _sha256(reference_path) != declared_sha
+
+    baseline_trial = baseline["trials"][0]
+    snapshot_trial = snapshot["trials"][0]
+    for role in ("reference", "parent", "candidate"):
+        baseline_media = baseline_trial["media"][role]
+        snapshot_media = snapshot_trial["media"][role]
+        assert snapshot_media["raw_copy_sha256"] == baseline_media["raw_copy_sha256"]
+        assert snapshot_media["audition_sha256"] == baseline_media["audition_sha256"]
+        assert snapshot_media["gain_db"] == pytest.approx(baseline_media["gain_db"])
+        assert snapshot_media["audition_metrics"] == baseline_media["audition_metrics"]
+    for phase in ("before", "after"):
+        baseline_residual = baseline_trial["spectrogram_residuals"][phase]
+        snapshot_residual = snapshot_trial["spectrogram_residuals"][phase]
+        assert snapshot_residual["svg_sha256"] == baseline_residual["svg_sha256"]
+        assert snapshot_residual["summary"] == baseline_residual["summary"]
+
+
+def test_tampered_raw_staging_copy_fails_before_derivative_processing(
+    package_inputs: dict[str, object],
+    external_fixture_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_copyfile = review_package.shutil.copyfile
+    visualization_calls = 0
+
+    def copy_then_corrupt(source: object, destination: object) -> object:
+        result = real_copyfile(source, destination)
+        destination_path = Path(destination)
+        destination_path.write_bytes(destination_path.read_bytes() + b"tampered")
+        return result
+
+    def count_visualization(*args: object, **kwargs: object) -> None:
+        nonlocal visualization_calls
+        visualization_calls += 1
+
+    monkeypatch.setattr(review_package.shutil, "copyfile", copy_then_corrupt)
+    monkeypatch.setattr(
+        review_package, "_build_spectrogram_residual", count_visualization
+    )
+    output = external_fixture_root / "tampered-staging"
+    with pytest.raises(StageUReviewPackageError, match="raw staging SHA-256 mismatch"):
+        _build(package_inputs, output, tmp_path / "tampered-page")
+    assert visualization_calls == 0
+    assert not output.exists()
+
+
 def test_review_package_rejects_parent_candidate_equality(
     package_inputs: dict[str, object], external_fixture_root: Path, tmp_path: Path
 ) -> None:

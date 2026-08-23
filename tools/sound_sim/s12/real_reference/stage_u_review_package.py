@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import http.server
+import io
 import json
 import math
 import mimetypes
@@ -139,6 +140,35 @@ def _read_audio(path: Path) -> tuple[np.ndarray, int]:
         )
     if int(sample_rate_hz) <= 0:
         raise StageUReviewPackageError(f"audio sample rate is invalid: {path}")
+    return np.asarray(audio, dtype=np.float64), int(sample_rate_hz)
+
+
+def _read_verified_raw_copy(path: Path, expected_sha256: str) -> tuple[np.ndarray, int]:
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
+        raise StageUReviewPackageError(
+            f"raw staging copy cannot be read: {path}"
+        ) from exc
+    actual_sha256 = hashlib.sha256(payload).hexdigest()
+    if actual_sha256 != str(expected_sha256).lower():
+        raise StageUReviewPackageError(f"raw staging SHA-256 mismatch: {path}")
+    try:
+        audio, sample_rate_hz = sf.read(
+            io.BytesIO(payload), always_2d=True, dtype="float64"
+        )
+    except (OSError, RuntimeError) as exc:
+        raise StageUReviewPackageError(
+            f"raw staging copy cannot be decoded: {path}"
+        ) from exc
+    if audio.size == 0 or audio.shape[0] == 0 or not np.all(np.isfinite(audio)):
+        raise StageUReviewPackageError(
+            f"raw staging copy must contain finite nonzero-duration samples: {path}"
+        )
+    if int(sample_rate_hz) <= 0:
+        raise StageUReviewPackageError(
+            f"raw staging copy sample rate is invalid: {path}"
+        )
     return np.asarray(audio, dtype=np.float64), int(sample_rate_hz)
 
 
@@ -422,7 +452,7 @@ def _build_media_receipt(
     audition_staging.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, raw_staging)
 
-    audio, source_rate = _read_audio(source)
+    audio, source_rate = _read_verified_raw_copy(raw_staging, source_sha)
     resampled = _resample_48k(audio, source_rate)
     input_metrics = measure_loudness(resampled, AUDITION_SAMPLE_RATE_HZ)
     managed = manage_bundle_loudness(
@@ -448,7 +478,7 @@ def _build_media_receipt(
         "source_raw_sha256": source_sha,
         "raw_copy_path": str(raw_final),
         "raw_copy_uri": raw_final.as_uri(),
-        "raw_copy_sha256": _sha256(raw_staging),
+        "raw_copy_sha256": source_sha,
         "audition_copy_path": str(audition_final),
         "audition_copy_uri": audition_final.as_uri(),
         "audition_sha256": _sha256(audition_staging),
@@ -553,7 +583,8 @@ def _write_residual_svg(
 
 def _build_spectrogram_residual(
     *,
-    row: Mapping[str, Any],
+    media: Mapping[str, Mapping[str, Any]],
+    raw_staging_paths: Mapping[str, Path],
     comparison_role: str,
     trial_id: str,
     staging_root: Path,
@@ -563,9 +594,15 @@ def _build_spectrogram_residual(
         raise StageUReviewPackageError(
             f"invalid spectrogram comparison role: {comparison_role}"
         )
-    reference_audio, reference_rate = _read_audio(Path(str(row["reference_path"])))
-    comparison_audio, comparison_rate = _read_audio(
-        Path(str(row[f"{comparison_role}_path"]))
+    reference_receipt = media["reference"]
+    comparison_receipt = media[comparison_role]
+    reference_audio, reference_rate = _read_verified_raw_copy(
+        raw_staging_paths["reference"],
+        str(reference_receipt["source_raw_sha256"]),
+    )
+    comparison_audio, comparison_rate = _read_verified_raw_copy(
+        raw_staging_paths[comparison_role],
+        str(comparison_receipt["source_raw_sha256"]),
     )
     reference = np.mean(_resample_48k(reference_audio, reference_rate), axis=1)
     comparison = np.mean(_resample_48k(comparison_audio, comparison_rate), axis=1)
@@ -632,9 +669,9 @@ def _build_spectrogram_residual(
         frequencies,
         times,
         label=label,
-        reference_sha256=str(row["reference_sha256"]),
+        reference_sha256=str(reference_receipt["source_raw_sha256"]),
         comparison_role=comparison_role,
-        comparison_sha256=str(row[f"{comparison_role}_sha256"]),
+        comparison_sha256=str(comparison_receipt["source_raw_sha256"]),
         summary=summary,
     )
     return {
@@ -642,8 +679,8 @@ def _build_spectrogram_residual(
         "label": label,
         "reference_role": "reference",
         "comparison_role": comparison_role,
-        "reference_raw_sha256": str(row["reference_sha256"]),
-        "comparison_raw_sha256": str(row[f"{comparison_role}_sha256"]),
+        "reference_raw_sha256": str(reference_receipt["source_raw_sha256"]),
+        "comparison_raw_sha256": str(comparison_receipt["source_raw_sha256"]),
         "svg_path": str(final_path),
         "svg_url": f"/visuals/{trial_id}/{phase}.svg",
         "svg_sha256": _sha256(staging_path),
@@ -811,16 +848,22 @@ def build_review_package(
                 )
                 for role in ("reference", "parent", "candidate")
             }
+            raw_staging_paths = {
+                role: staging / Path(str(receipt["raw_copy_path"])).relative_to(output)
+                for role, receipt in media.items()
+            }
             spectrogram_residuals = {
                 "before": _build_spectrogram_residual(
-                    row=row,
+                    media=media,
+                    raw_staging_paths=raw_staging_paths,
                     comparison_role="parent",
                     trial_id=trial_id,
                     staging_root=staging,
                     final_root=output,
                 ),
                 "after": _build_spectrogram_residual(
-                    row=row,
+                    media=media,
+                    raw_staging_paths=raw_staging_paths,
                     comparison_role="candidate",
                     trial_id=trial_id,
                     staging_root=staging,
