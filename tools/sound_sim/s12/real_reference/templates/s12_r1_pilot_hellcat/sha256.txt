@@ -1,0 +1,7 @@
+# 收到真实文件后，用 SHA-256 对每个文件逐行填写：<64位小写SHA-256>  <相对路径>
+REPLACE_WITH_SHA256  raw/raw_audio.wav
+REPLACE_WITH_SHA256  rpm.csv
+REPLACE_WITH_SHA256  load_throttle.csv
+REPLACE_WITH_SHA256  gear_shift.csv
+REPLACE_WITH_SHA256  spec.json
+REPLACE_WITH_SHA256  rights.json
