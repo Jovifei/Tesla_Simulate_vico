@@ -25,3 +25,18 @@ def test_matlab_runners_hash_analyzed_audio_and_validate_manifest_sha() -> None:
     assert "featureReceipt = run_stage_u_audio_features(char(clip.path), featurePath, char(clip.sha256))" in batch
     assert "row.input_sha256 = char(featureReceipt.input_sha256)" in batch
     assert "row.input_sha256 = char(clip.sha256)" not in batch
+
+
+def test_matlab_sha_helpers_use_binary_uint8_file_reads() -> None:
+    source_root = Path(__file__).parents[1] / "real_reference"
+    runners = [
+        (source_root / "run_stage_u_professional_metrics.m").read_text(encoding="utf-8"),
+        (source_root / "run_stage_u_audio_features.m").read_text(encoding="utf-8"),
+    ]
+
+    for source in runners:
+        assert "fopen(pathValue, 'rb')" in source
+        assert "fread(fileId, Inf, '*uint8')" in source
+        assert "algorithm.update(typecast(bytes, 'int8'))" in source
+        assert "lower(reshape(dec2hex(hash, 2).', 1, []))" in source
+        assert "FileInputStream" not in source

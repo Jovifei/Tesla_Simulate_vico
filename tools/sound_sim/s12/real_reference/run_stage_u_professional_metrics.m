@@ -76,18 +76,14 @@ end
 
 function digest = sha256File(pathValue)
 import java.security.*
-import java.io.*
-stream = FileInputStream(pathValue);
-cleaner = onCleanup(@() stream.close()); %#ok<NASGU>
-algorithm = MessageDigest.getInstance('SHA-256');
-buffer = zeros(1, 1024 * 1024, 'int8');
-while true
-    count = stream.read(buffer, 0, numel(buffer));
-    if count < 0
-        break;
-    end
-    algorithm.update(buffer(1:count));
+[fileId, message] = fopen(pathValue, 'rb');
+if fileId < 0
+    error('s12:StageU:HashInputOpen', 'Cannot read file for SHA-256: %s (%s)', pathValue, message);
 end
+cleaner = onCleanup(@() fclose(fileId)); %#ok<NASGU>
+bytes = fread(fileId, Inf, '*uint8');
+algorithm = MessageDigest.getInstance('SHA-256');
+algorithm.update(typecast(bytes, 'int8'));
 hash = typecast(algorithm.digest(), 'uint8');
 digest = lower(reshape(dec2hex(hash, 2).', 1, []));
 end
