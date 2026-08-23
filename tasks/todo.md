@@ -4000,3 +4000,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 长窗口 Legacy Proxy、MATLAB R2026a、MoSQITo 1.2.1 均已执行；长窗口 Order 仍为 `ORDER_COMPARISON_NOT_QUALIFIED`。
 - [x] 新增长窗口页面 `S12_Professional_Comparison_Dashboard_v1/long_window.html`，5 秒基线页面保留；长窗口 Guided Feedback 模板为 `Jovi_Guided_Feedback_Long_Window.json`。
 - [ ] 等待 Jovi 比较 15 秒与 30 秒的动态结构后提交长窗口反馈；反馈前不执行参数修改。
+
+## Dashboard Feedback UX 修复（2026-08-23）
+
+- [x] 将原生 `select multiple` 改为可直接点击的 `.problem-chip` 标签，不再要求 Ctrl 多选。
+- [x] 将反馈粒度从 18 个试次改为每车型一行；三辆车各完成一次身份/真实感/问题/偏好/备注后，用一个“提交全部车型反馈”按钮导出。
+- [x] 增加“已听完本车型当前窗口”确认；浏览器验证了三车型填写后按钮从禁用变为可提交，空反馈仍 fail-closed。
+- [x] Guided Feedback v2 导入器支持车型聚合 rows，并继续校验 SHA/file-ID、音频门和自动调音/Profile 禁止。
+- [ ] 等待 Jovi 提交三车型的 Guided Feedback JSON；反馈前不修改声源。

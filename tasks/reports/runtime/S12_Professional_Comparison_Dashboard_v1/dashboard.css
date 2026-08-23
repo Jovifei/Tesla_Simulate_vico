@@ -73,6 +73,12 @@ label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
 input, select, textarea { color: var(--text); background: #0b171c; border: 1px solid var(--line); padding: 9px; font: inherit; }
 textarea { min-height: 82px; resize: vertical; }
 select[multiple] { min-height: 120px; }
+.problem-label { margin-top: 14px; }
+.problem-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 7px; }
+.problem-chip { color: var(--muted); background: #0b171c; border: 1px solid var(--line); padding: 8px 11px; cursor: pointer; font: inherit; font-size: 12px; }
+.problem-chip:hover, .problem-chip.selected { color: #061014; background: var(--amber); border-color: var(--amber); }
+.review-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); }
+.review-check input { width: 18px; height: 18px; accent-color: var(--cyan); }
 .actions { display: flex; gap: 10px; align-items: center; margin-top: 14px; }
 button.primary { background: var(--cyan); color: #061014; border: 0; padding: 12px 18px; font-weight: 700; cursor: pointer; }
 button.primary:disabled { background: #38545a; color: #8da3a6; cursor: not-allowed; }

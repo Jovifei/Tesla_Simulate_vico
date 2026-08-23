@@ -66,3 +66,13 @@ def test_dashboard_files_expose_chinese_professional_sections() -> None:
         assert token in js
     assert "相似度百分比" not in html + js
     assert "--amber" in css and "--cyan" in css
+
+
+def test_dashboard_uses_clickable_problem_chips_and_one_vehicle_level_submit() -> None:
+    root = Path(__file__).resolve().parents[4] / "tasks" / "reports" / "runtime" / "S12_Professional_Comparison_Dashboard_v1"
+    js = (root / "dashboard.js").read_text(encoding="utf-8")
+    assert "problem-chip" in js
+    assert "提交全部车型反馈" in js
+    assert "feedback_scope" in js
+    assert "vehicle_id" in js
+    assert "select multiple" not in js

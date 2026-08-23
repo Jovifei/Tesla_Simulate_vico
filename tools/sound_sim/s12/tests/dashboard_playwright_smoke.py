@@ -27,6 +27,22 @@ def main() -> int:
         page.wait_for_function("Array.from(document.querySelectorAll('audio')).every((audio) => audio.readyState >= 3 && audio.duration > 0)", timeout=15_000)
         assert page.locator("#export-feedback").is_disabled()
         assert "不能提交" in page.locator("#submit-status").inner_text()
+        assert page.locator(".problem-chip").count() >= 5
+        assert page.locator("select[multiple]").count() == 0
+        pair_count = page.locator("#trial-nav button").count()
+        vehicle_offsets = [0, 3, 6] if expected_trials == 9 else [0, 6, 12]
+        for offset in vehicle_offsets:
+            if offset:
+                page.locator("#trial-nav button").nth(offset).click()
+                page.wait_for_function("Array.from(document.querySelectorAll('audio')).every((audio) => audio.readyState >= 3 && audio.duration > 0)", timeout=15_000)
+            page.locator("[data-feedback='software_agreement']").select_option(label="符合")
+            page.locator("[data-feedback='identity']").fill("80")
+            page.locator("[data-feedback='realism']").fill("70")
+            page.locator("[data-feedback='preference']").select_option(label="候选")
+            page.locator(".problem-chip").first.click()
+            page.locator("[data-feedback='review_ready']").check()
+        assert page.locator("#export-feedback").is_enabled()
+        assert "三辆车硬门通过" in page.locator("#submit-status").inner_text()
         browser.close()
     print("dashboard_playwright_smoke=PASS")
     return 0

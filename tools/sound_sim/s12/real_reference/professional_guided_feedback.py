@@ -42,7 +42,8 @@ def _score(value: object, label: str) -> int:
 def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[str, Any]:
     feedback = _read(Path(feedback_path), "Jovi guided feedback")
     metrics = _read(Path(metrics_path), "professional pair metrics")
-    if feedback.get("schema_version") != "s12-professional-jovi-guided-feedback-v1":
+    schema_version = feedback.get("schema_version")
+    if schema_version not in {"s12-professional-jovi-guided-feedback-v1", "s12-professional-jovi-guided-feedback-v2"}:
         raise GuidedFeedbackError("unexpected guided feedback schema")
     if feedback.get("status") != "READY_FOR_REVIEW":
         raise GuidedFeedbackError("guided feedback must be READY_FOR_REVIEW")
@@ -55,6 +56,8 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
         raise GuidedFeedbackError("audio gate must be PASS before feedback import")
     if feedback.get("package_manifest_sha256") != metrics.get("manifest_sha256"):
         raise GuidedFeedbackError("package manifest SHA mismatch")
+    if schema_version == "s12-professional-jovi-guided-feedback-v2" or feedback.get("feedback_scope") == "vehicle":
+        return _validate_vehicle_feedback(feedback, metrics)
     pairs = metrics.get("pairs")
     if not isinstance(pairs, list) or len(pairs) != 9:
         raise GuidedFeedbackError("professional metrics must contain 9 pairs")
@@ -133,6 +136,91 @@ def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[st
         "feedback_rows": len(canonical),
         "rows": canonical,
         "vehicle_summary": normalized_summary,
+        "problem_summary": dict(problem_summary),
+        "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "parameter_changes": 0,
+        "automatic_tuning_eligible": False,
+        "profile_update": "FORBIDDEN",
+        "profile_candidate_ready": False,
+    }
+
+
+def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str, Any]) -> dict[str, Any]:
+    pairs = metrics.get("pairs")
+    if not isinstance(pairs, list) or not pairs:
+        raise GuidedFeedbackError("professional pair metrics are empty")
+    by_vehicle: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+    for pair in pairs:
+        by_vehicle[str(pair["vehicle_id"])].append(pair)
+    rows = feedback.get("rows")
+    if not isinstance(rows, list) or set(str(row.get("vehicle_id")) for row in rows if isinstance(row, Mapping)) != set(by_vehicle) or len(rows) != len(by_vehicle):
+        raise GuidedFeedbackError("vehicle feedback must contain exactly one row per vehicle")
+    vehicle_summary: dict[str, dict[str, Any]] = {}
+    problem_summary: Counter[str] = Counter()
+    canonical: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise GuidedFeedbackError("vehicle feedback row is malformed")
+        vehicle_id = _text(row.get("vehicle_id"), "vehicle_id")
+        expected = by_vehicle.get(vehicle_id)
+        if not expected:
+            raise GuidedFeedbackError(f"unknown vehicle: {vehicle_id}")
+        if row.get("review_ready") is not True:
+            raise GuidedFeedbackError(f"vehicle review_ready must be true: {vehicle_id}")
+        expected_pair_ids = [str(pair["pair_id"]) for pair in expected]
+        expected_file_ids = [str(pair["file_id"]) for pair in expected]
+        expected_ref = [str(pair["reference_sha256"]) for pair in expected]
+        expected_cand = [str(pair["candidate_sha256"]) for pair in expected]
+        for field, expected_values in (("pair_ids", expected_pair_ids), ("file_ids", expected_file_ids), ("reference_sha256s", expected_ref), ("candidate_sha256s", expected_cand)):
+            values = row.get(field)
+            if not isinstance(values, list) or [str(value) for value in values] != expected_values:
+                raise GuidedFeedbackError(f"{field} mismatch: {vehicle_id}")
+        agreement = _text(row.get("software_agreement"), f"{vehicle_id}.software_agreement")
+        preference = _text(row.get("preference"), f"{vehicle_id}.preference")
+        if agreement not in _AGREEMENT:
+            raise GuidedFeedbackError(f"invalid software agreement: {vehicle_id}")
+        if preference not in _PREFERENCE:
+            raise GuidedFeedbackError(f"invalid preference: {vehicle_id}")
+        problems = row.get("problems")
+        if not isinstance(problems, list) or any(problem not in _PROBLEMS for problem in problems):
+            raise GuidedFeedbackError(f"invalid problem list: {vehicle_id}")
+        identity = _score(row.get("identity"), f"{vehicle_id}.identity")
+        realism = _score(row.get("realism"), f"{vehicle_id}.realism")
+        notes = row.get("notes")
+        if notes is not None and not isinstance(notes, str):
+            raise GuidedFeedbackError(f"notes must be text or null: {vehicle_id}")
+        problem_summary.update(problems)
+        vehicle_summary[vehicle_id] = {
+            "rows": 1,
+            "pair_count": len(expected),
+            "identity_mean": identity,
+            "realism_mean": realism,
+            "preferences": {preference: 1},
+            "agreements": {agreement: 1},
+        }
+        canonical.append({
+            "vehicle_id": vehicle_id,
+            "pair_ids": expected_pair_ids,
+            "file_ids": expected_file_ids,
+            "reference_sha256s": expected_ref,
+            "candidate_sha256s": expected_cand,
+            "software_agreement": agreement,
+            "identity": identity,
+            "realism": realism,
+            "problems": list(problems),
+            "preference": preference,
+            "notes": notes.strip() if isinstance(notes, str) and notes.strip() else None,
+            "review_ready": True,
+        })
+    return {
+        "schema_version": "s12-professional-jovi-guided-feedback-receipt-v2",
+        "status": "VALIDATED_R2_R3_GUIDED_FEEDBACK",
+        "feedback_scope": "vehicle",
+        "evidence_level": feedback.get("evidence_level"),
+        "package_manifest_sha256": metrics["manifest_sha256"],
+        "feedback_rows": len(canonical),
+        "rows": canonical,
+        "vehicle_summary": vehicle_summary,
         "problem_summary": dict(problem_summary),
         "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
         "parameter_changes": 0,

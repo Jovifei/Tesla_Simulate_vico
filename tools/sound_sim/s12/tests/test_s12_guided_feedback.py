@@ -79,3 +79,42 @@ def test_guided_feedback_rejects_out_of_range_identity_and_authority_escalation(
     feedback.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     with pytest.raises(GuidedFeedbackError, match="automatic tuning"):
         validate_guided_feedback(feedback, metrics)
+
+
+def test_guided_feedback_accepts_one_aggregate_row_per_vehicle(tmp_path: Path) -> None:
+    metrics_path = ROOT / "professional_pair_metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    rows = []
+    for vehicle_id in ("ferrari_458", "hellcat", "rx7_fd"):
+        vehicle_pairs = [p for p in metrics["pairs"] if p["vehicle_id"] == vehicle_id]
+        rows.append({
+            "vehicle_id": vehicle_id,
+            "pair_ids": [p["pair_id"] for p in vehicle_pairs],
+            "file_ids": [p["file_id"] for p in vehicle_pairs],
+            "reference_sha256s": [p["reference_sha256"] for p in vehicle_pairs],
+            "candidate_sha256s": [p["candidate_sha256"] for p in vehicle_pairs],
+            "software_agreement": "符合",
+            "identity": 80,
+            "realism": 70,
+            "problems": ["太闷"],
+            "preference": "候选",
+            "notes": "按车型汇总。",
+            "review_ready": True,
+        })
+    payload = {
+        "schema_version": "s12-professional-jovi-guided-feedback-v2",
+        "feedback_scope": "vehicle",
+        "package_manifest_sha256": metrics["manifest_sha256"],
+        "evidence_level": "R3",
+        "status": "READY_FOR_REVIEW",
+        "automatic_tuning_eligible": False,
+        "profile_update": "FORBIDDEN",
+        "audio_submit_gate": {"status": "PASS"},
+        "rows": rows,
+    }
+    path = tmp_path / "vehicle_feedback.json"
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    receipt = validate_guided_feedback(path, metrics_path)
+    assert receipt["status"] == "VALIDATED_R2_R3_GUIDED_FEEDBACK"
+    assert receipt["feedback_scope"] == "vehicle"
+    assert receipt["feedback_rows"] == 3

@@ -213,3 +213,10 @@ Run Stage N focused, Stage Q/R/S focused, full `tools/sound_sim/s12/tests`, Trac
 - [x] External 60s synthetic complete-cycle candidate package built; 15/30s windows sliced from real long references and the complete cycle.
 - [x] 18 long pairs (9×15s + 9×30s) received Legacy Proxy, MATLAB and MoSQITo metrics; long Dashboard added without replacing 5s baseline.
 - [ ] Jovi long-window guided review remains pending.
+
+## Feedback UX repair receipt
+
+- [x] Replaced keyboard-dependent multi-select with clickable problem chips.
+- [x] Changed export contract to one aggregate row per vehicle and one final submit after three vehicles.
+- [x] Added v2 vehicle-scope importer and Chromium verification of the enabled submit state.
+- [ ] Jovi guided feedback remains the external next step.
