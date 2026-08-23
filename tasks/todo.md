@@ -3981,3 +3981,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 当前真实外部目录 `E:\Claude_allow\Download\s12-r1-pilot\hellcat_full_pull_01` 尚不存在；已生成等待态 `S12_R1_Pilot_Acquisition_Report.md`、`r1_pilot_preflight.json`、`rights_scope_validation.json`、`state_sync_validation.json`、`comparison_results.json`、`parameter_recommendations.json` 和 `feedback_gate.json`，状态 `WAITING_FOR_R1_PILOT_DELIVERY`。
 - [x] 当前 focused TDD：anchor/A 线 `8 passed`；模板 `4 passed`；R1 preflight `7 passed`；端到端等待态 `2 passed`。真实文件到位前不调用 MATLAB、不运行 Order hard gate、不修改声源。
 - [ ] 等待 Jovi 提供完整反馈 JSON 和 Hellcat（或指定车型）R1 试点目录；收到后按 `raw_audio_intake → Stage Q → MATLAB/MoSQITo → Comparator → 中文 A/B → 有界调音 → 回归` 顺序推进。
+
+## S12 Professional Comparison Dashboard v1 + R2 Diagnostic Tuning（2026-08-23）
+
+- [x] Phase 1：按 `anchor_ab_zh_v1` 实际 manifest 审计 9 对/18 个片段；reference/candidate 文件、时长、SHA、file-ID 和 Order 未资格边界已写入 `S12_Professional_Comparison_Dashboard_v1/clip_integrity.json`。
+- [x] Phase 2：MATLAB R2026a Audio Toolbox 对 18 条 exact clip 真实执行六项心理声学指标；隔离 MoSQITo 1.2.1 对同一 18 条执行；两者分别绑定 reference/candidate SHA，MoSQITo 不支持的 fluctuation 列明确为 null，不用 Proxy 冒充。
+- [x] Phase 3：生成 `professional_pair_metrics.json`、`professional_plain_language_diagnosis.json` 和中文 `S12_Professional_Comparison_Report.md`；三类域分列，没有总相似度百分比。
+- [x] Phase 4：生成中文 `S12_Professional_Comparison_Dashboard_v1/index.html`；显示播放器、canplaythrough/时长/SHA 门、R3/麦位不确定性、MATLAB/MoSQITo/Proxy、8 频带、频谱/残差、诊断和简化 Jovi 反馈导出。
+- [x] Phase 5：三锚点各一个参数组、每组 64 个有界规格；`r2_diagnostic_candidate_results.json` 明确 `SPECIFICATIONS_ONLY_NOT_RENDERED`，不修改 source、不运行 Order、不生成 Profile Freeze。
+- [x] Dashboard 静态合同、0-duration/SHA/file-ID 门、Playwright Chromium 音频加载 smoke、Node 语法、JSON 校验已通过。
+- [ ] 等待 Jovi 在 Dashboard 先阅读专业诊断后提交 `Jovi_Guided_Feedback.json`；收到后只按确认的问题组进行 R2 有界复核。

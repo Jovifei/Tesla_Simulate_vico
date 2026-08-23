@@ -256,6 +256,13 @@ def analyze_proxy_pair(pair: Mapping[str, Any]) -> dict[str, Any]:
             },
             "bands": bands,
             "transient": transient_delta,
+            "spectrum_overlay": {
+                "status": "COMPUTED_LEGACY_PROXY",
+                "unit": "relative_dB",
+                "frequencies_hz": np.linspace(0.0, reference_fs / 2.0, len(ref_mag)).tolist(),
+                "reference_db": ref_mag.tolist(),
+                "candidate_db": cand_mag.tolist(),
+            },
         },
         "spectrogram_residual": {
             "status": "COMPUTED_LEGACY_PROXY",

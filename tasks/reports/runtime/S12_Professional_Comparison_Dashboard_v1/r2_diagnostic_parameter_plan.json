@@ -1,0 +1,2387 @@
+{
+  "anchors": [
+    {
+      "candidate_spec_count": 64,
+      "candidate_specs": [
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_01",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_02",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_03",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_04",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_05",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_06",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_07",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_08",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_09",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_10",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_11",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_12",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_13",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_14",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_15",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_16",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_17",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_18",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_19",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_20",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_21",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_22",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_23",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_24",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_25",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_26",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_27",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_28",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_29",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_30",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_31",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_32",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": -1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_33",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_34",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_35",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_36",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_37",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_38",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_39",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_40",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_41",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_42",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_43",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_44",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_45",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_46",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_47",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_48",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 1.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_49",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_50",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_51",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_52",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_53",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_54",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_55",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_56",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": -1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_57",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_58",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_59",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_60",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 1.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_61",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_62",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.33
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_63",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 0.66
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "ferrari_458_r2_diag_64",
+          "parameter_group": "metallic_high_order_envelope_mid_band",
+          "parameter_values": {
+            "metallic_envelope_db": 3.0,
+            "mid_band_balance_db": 3.0,
+            "texture_mix": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        }
+      ],
+      "hard_gates_required": [
+        "Track-P unchanged",
+        "finite PCM",
+        "clipping=0",
+        "wrong-condition events=0",
+        "state regression",
+        "non-target SHA unchanged",
+        "package integrity"
+      ],
+      "order_timing_modification": "FORBIDDEN_WITHOUT_RPM_TRACE",
+      "parameter_group": "metallic_high_order_envelope_mid_band",
+      "soft_objective": [
+        "R2 frequency residual",
+        "MATLAB psychoacoustic residual",
+        "MoSQITo residual",
+        "parameter change penalty",
+        "artifact penalty"
+      ],
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_spec_count": 64,
+      "candidate_specs": [
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_01",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_02",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_03",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_04",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_05",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_06",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_07",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_08",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_09",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_10",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_11",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_12",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_13",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_14",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_15",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_16",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_17",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_18",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_19",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_20",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_21",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_22",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_23",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_24",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_25",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_26",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_27",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_28",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_29",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_30",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_31",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_32",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_33",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_34",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_35",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_36",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_37",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_38",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_39",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_40",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_41",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_42",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_43",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_44",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_45",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_46",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_47",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_48",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_49",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_50",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_51",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_52",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_53",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_54",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_55",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_56",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": -0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_57",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_58",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_59",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_60",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.08,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_61",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_62",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": -1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_63",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 1.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "hellcat_r2_diag_64",
+          "parameter_group": "pressure_attack_blower_intake_balance",
+          "parameter_values": {
+            "blower_intake_balance": 0.25,
+            "mid_band_pressure_db": 3.0,
+            "pressure_attack_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        }
+      ],
+      "hard_gates_required": [
+        "Track-P unchanged",
+        "finite PCM",
+        "clipping=0",
+        "wrong-condition events=0",
+        "state regression",
+        "non-target SHA unchanged",
+        "package integrity"
+      ],
+      "order_timing_modification": "FORBIDDEN_WITHOUT_RPM_TRACE",
+      "parameter_group": "pressure_attack_blower_intake_balance",
+      "soft_objective": [
+        "R2 frequency residual",
+        "MATLAB psychoacoustic residual",
+        "MoSQITo residual",
+        "parameter change penalty",
+        "artifact penalty"
+      ],
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_spec_count": 64,
+      "candidate_specs": [
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_01",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_02",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_03",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_04",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_05",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_06",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_07",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_08",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_09",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_10",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_11",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_12",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_13",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_14",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_15",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_16",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_17",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_18",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_19",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_20",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_21",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_22",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_23",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_24",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_25",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_26",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_27",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_28",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_29",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_30",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_31",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_32",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": -1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_33",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_34",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_35",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_36",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_37",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_38",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_39",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_40",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_41",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_42",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_43",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_44",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_45",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_46",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_47",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_48",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 1.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_49",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_50",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_51",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_52",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_53",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_54",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_55",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_56",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": -1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_57",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_58",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_59",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_60",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 1.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_61",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_62",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.33,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_63",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 0.66,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        },
+        {
+          "bounded": true,
+          "candidate_id": "rx7_fd_r2_diag_64",
+          "parameter_group": "rotary_housing_turbo_distribution",
+          "parameter_values": {
+            "broadband_mix": 1.0,
+            "housing_peak_db": 3.0,
+            "turbo_band_balance_db": 3.0
+          },
+          "rendered": false,
+          "source_modified": false
+        }
+      ],
+      "hard_gates_required": [
+        "Track-P unchanged",
+        "finite PCM",
+        "clipping=0",
+        "wrong-condition events=0",
+        "state regression",
+        "non-target SHA unchanged",
+        "package integrity"
+      ],
+      "order_timing_modification": "FORBIDDEN_WITHOUT_RPM_TRACE",
+      "parameter_group": "rotary_housing_turbo_distribution",
+      "soft_objective": [
+        "R2 frequency residual",
+        "MATLAB psychoacoustic residual",
+        "MoSQITo residual",
+        "parameter change penalty",
+        "artifact penalty"
+      ],
+      "vehicle_id": "rx7_fd"
+    }
+  ],
+  "automatic_tuning_eligible": false,
+  "profile_candidate_ready": false,
+  "profile_update": "FORBIDDEN",
+  "review_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+  "schema_version": "s12-r2-diagnostic-parameter-plan-v1",
+  "source_modification": "FORBIDDEN_UNTIL_JOVI_GUIDED_REVIEW",
+  "status": "R2_DIAGNOSTIC_CANDIDATE_READY"
+}

@@ -133,6 +133,11 @@ def merge_professional_receipts(
                 ("mosqito", mosqito_ref, mosqito_cand),
             )
         }
+        proxy_row = proxy_map.get(pair_id, {})
+        legacy_domain = proxy_row.get("legacy_proxy", proxy_row) if isinstance(proxy_row, Mapping) else {}
+        if isinstance(legacy_domain, Mapping):
+            legacy_domain = dict(legacy_domain)
+            legacy_domain.setdefault("tool_domain", "Legacy Proxy")
         merged.append({
             "pair_id": pair_id,
             "file_id": pair["file_id"],
@@ -146,9 +151,11 @@ def merge_professional_receipts(
             "window": pair["window"],
             "microphone_uncertainty": pair["microphone_uncertainty"],
             "order": pair["order"],
+            "integrity": proxy_row.get("integrity") if isinstance(proxy_row, Mapping) else None,
             "matlab": {"reference": matlab_ref, "candidate": matlab_cand, "delta": deltas["matlab"], "tool_domain": "Professional MATLAB"},
             "mosqito": {"reference": mosqito_ref, "candidate": mosqito_cand, "delta": deltas["mosqito"], "tool_domain": "Professional MoSQITo"},
-            "legacy_proxy": proxy_map.get(pair_id, {"tool_domain": "Legacy Proxy", "status": "MISSING"}),
+            "legacy_proxy": legacy_domain or {"tool_domain": "Legacy Proxy", "status": "MISSING"},
+            "spectrogram_residual": proxy_row.get("spectrogram_residual") if isinstance(proxy_row, Mapping) else None,
             "uncertainty": {
                 "digital_domain_only": True,
                 "absolute_spl": "NOT_AVAILABLE",
@@ -160,6 +167,7 @@ def merge_professional_receipts(
     return {
         "schema_version": "s12-professional-pair-metrics-v1",
         "status": "R2_PROFESSIONAL_COMPARISON_COMPLETE",
+        "manifest_sha256": pairs[0].get("manifest_sha256") if pairs else None,
         "pair_count": len(merged),
         "clip_count": len(merged) * 2,
         "tool_domains": ["Professional MATLAB", "Professional MoSQITo", "Legacy Proxy", "Not Qualified"],
