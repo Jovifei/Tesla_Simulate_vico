@@ -34,9 +34,23 @@ def _text(value: object, label: str) -> str:
 
 
 def _score(value: object, label: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or int(value) != value or not 0 <= int(value) <= 100:
+    if isinstance(value, str):
+        candidate = value.strip()
+        if not candidate or not candidate.isascii() or not all("0" <= char <= "9" for char in candidate):
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+        score = int(candidate)
+    elif isinstance(value, bool) or not isinstance(value, (int, float)):
         raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
-    return int(value)
+    else:
+        try:
+            score = int(value)
+        except (TypeError, ValueError, OverflowError):
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100") from None
+        if score != value:
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+    if not 0 <= score <= 100:
+        raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+    return score
 
 
 def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[str, Any]:

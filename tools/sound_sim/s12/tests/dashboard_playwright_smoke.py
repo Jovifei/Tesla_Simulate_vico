@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import sys
 
 from playwright.sync_api import sync_playwright
@@ -43,6 +44,12 @@ def main() -> int:
             page.locator("[data-feedback='review_ready']").check()
         assert page.locator("#export-feedback").is_enabled()
         assert "三辆车硬门通过" in page.locator("#submit-status").inner_text()
+        with page.expect_download() as download_info:
+            page.locator("#export-feedback").click()
+        payload = json.loads(Path(download_info.value.path()).read_text(encoding="utf-8"))
+        assert payload["schema_version"] == "s12-professional-jovi-guided-feedback-v2"
+        assert len(payload["rows"]) == 3
+        assert all(isinstance(row["identity"], int) and isinstance(row["realism"], int) for row in payload["rows"])
         browser.close()
     print("dashboard_playwright_smoke=PASS")
     return 0

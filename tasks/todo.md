@@ -3990,7 +3990,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Phase 4：生成中文 `S12_Professional_Comparison_Dashboard_v1/index.html`；显示播放器、canplaythrough/时长/SHA 门、R3/麦位不确定性、MATLAB/MoSQITo/Proxy、8 频带、频谱/残差、诊断和简化 Jovi 反馈导出。
 - [x] Phase 5：三锚点各一个参数组、每组 64 个有界规格；`r2_diagnostic_candidate_results.json` 明确 `SPECIFICATIONS_ONLY_NOT_RENDERED`，不修改 source、不运行 Order、不生成 Profile Freeze。
 - [x] Dashboard 静态合同、0-duration/SHA/file-ID 门、Playwright Chromium 音频加载 smoke、Node 语法、JSON 校验已通过。
-- [ ] 等待 Jovi 在 Dashboard 先阅读专业诊断后提交 `Jovi_Guided_Feedback.json`；收到后只按确认的问题组进行 R2 有界复核。
+- [x] Jovi 已提交长窗口 `Jovi_Guided_Feedback.json`；完成 SHA/file-ID/音频门校验并按确认的问题组生成 R2 有界复核收据。
 
 ## S12 Professional Long-Window Extension（2026-08-23）
 
@@ -3999,7 +3999,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 从真实长 reference 和 60 秒本地循环生成 15/30 秒派生窗口：18 对（15 秒 9 对、30 秒 9 对），目录 `E:\Claude_allow\Download\s12-professional-long-window-v1`；只做时间切片，无增益/EQ/AGC/重采样。
 - [x] 长窗口 Legacy Proxy、MATLAB R2026a、MoSQITo 1.2.1 均已执行；长窗口 Order 仍为 `ORDER_COMPARISON_NOT_QUALIFIED`。
 - [x] 新增长窗口页面 `S12_Professional_Comparison_Dashboard_v1/long_window.html`，5 秒基线页面保留；长窗口 Guided Feedback 模板为 `Jovi_Guided_Feedback_Long_Window.json`。
-- [ ] 等待 Jovi 比较 15 秒与 30 秒的动态结构后提交长窗口反馈；反馈前不执行参数修改。
+- [x] Jovi 已完成 15 秒/30 秒长窗口车型聚合反馈；反馈仍保持 R3 诊断边界，不执行自动参数修改。
 
 ## Dashboard Feedback UX 修复（2026-08-23）
 
@@ -4007,4 +4007,17 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 将反馈粒度从 18 个试次改为每车型一行；三辆车各完成一次身份/真实感/问题/偏好/备注后，用一个“提交全部车型反馈”按钮导出。
 - [x] 增加“已听完本车型当前窗口”确认；浏览器验证了三车型填写后按钮从禁用变为可提交，空反馈仍 fail-closed。
 - [x] Guided Feedback v2 导入器支持车型聚合 rows，并继续校验 SHA/file-ID、音频门和自动调音/Profile 禁止。
-- [ ] 等待 Jovi 提交三车型的 Guided Feedback JSON；反馈前不修改声源。
+- [x] 收到 `C:\Users\Admin\Downloads\Jovi_Guided_Feedback.json` 后完成 v2 导入；未修改声源。
+
+## S12 Dashboard 长窗口反馈导入与 R2 有界复核（2026-08-23）
+
+- [x] 复现并定位浏览器 number input 导出为字符串导致的导入失败；新增纯整数字符串规范化，仍拒绝小数、越界、空值和布尔值；Dashboard 导出改为整数并加 `step=1`。
+- [x] 实际反馈文件通过长窗口 metrics：3 个车型、18 对窗口、每车 6 个 pair/file/SHA、音频提交门 `PASS`；验证收据 `Jovi_Guided_Feedback_Long_Window_Validation.json`。
+- [x] 生成 `long_window_parameter_recommendations.json`：Ferrari 与 Hellcat 各保留一个 64 规格参数组；RX-7 因人声污染阻塞；回火/换挡/转速事件保持不调。
+- [x] 更新 `S12_Professional_Long_Window_Report.md`，记录评分、偏好、问题分类、备注摘要和 R1/R2/R3 边界。
+- [x] 聚焦反馈回归 `5 passed`；待执行长窗口 Dashboard smoke、JSON/Node/compileall、全量 S12 与 Track-P 冻结守卫后提交推送。
+
+### Review
+
+- Jovi 反馈输入 SHA-256：`acfbcbab2022612621aba2cec8a73a5dbc193e0a142f247989f81b00356b673d`；长窗口 manifest SHA 保持 `ecbe8dc92fa63ed00a76e1554a37a1ff452aaa6af0eff5b3bd3edbadcd64c2a1`。
+- 当前结果：`R2_DIAGNOSTIC_REVIEW_READY / NOT_R1_QUALIFIED`；`parameter_changes=0`、`automatic_tuning_eligible=false`、`profile_candidate_ready=false`。
