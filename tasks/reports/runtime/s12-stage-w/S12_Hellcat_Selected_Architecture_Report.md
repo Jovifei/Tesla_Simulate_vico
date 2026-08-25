@@ -21,6 +21,12 @@ improvement, no 20% target improvement, no non-target regression decision and
 no candidate selection can be claimed. P2H/P3 remain candidates, not selected
 architectures, and Profile Freeze stays closed.
 
+The current external intake audit is
+[`w10_reference_intake_audit.json`](w10_reference_intake_audit.json). It
+records the two local public-reference packages as R3/insufficient evidence and
+lists the exact original-audio, rights and synchronized telemetry delivery
+needed to reopen W10.
+
 Scope: synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
 `NOT_R1_QUALIFIED`, `NOT_PROFILE_FREEZE_READY`.
 

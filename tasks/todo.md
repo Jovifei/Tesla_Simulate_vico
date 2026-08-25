@@ -4104,6 +4104,9 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - P4/P5/P6 are explicit rejected/pending states; no “best failed candidate” was selected.
 - Bake-off status is `REFERENCE_TARGET_MISSING`; W10 selection remains pending a
   rights-bound synchronized Reference.
+- `w10_reference_intake_audit.json` freshly audits the available Stage-U/R3
+  external packages: neither has legal rights, raw capture receipt or synced
+  RPM/load/gear state. The exact R1 delivery fields are recorded fail-closed.
 - v3 smoke rerender now binds P1/P2/P2H/P3 to identical 20 ms block-aligned
   frame counts and emits phase/event/path/gain traces. Eligible afterfire is
   nonzero while the ineligible scenario is zero; the 1.0 s smoke duration is

@@ -8,6 +8,7 @@
     "ferrari_migration_v3": {"path": "migration_v3/ferrari_458/migration_manifest.json", "sha256": "d95971f408ac7c84bad7944f222b26ef389e2469e09d1e4f42ebddcd230e4ec5", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
+    "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
     "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "3b46fe3037df266dfc3b67bceb46d8b24b68a316ba235263ac91caa37411439b"},
     "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "a817e1bd4262a25d780fd44b624cfeba50aab42ea839c4ec8cfed4e72f18baeb"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
