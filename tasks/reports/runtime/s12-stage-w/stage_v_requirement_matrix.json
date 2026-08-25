@@ -1,0 +1,26 @@
+{
+  "schema_version": "s12.stage_w.stage_v_requirement_matrix.v1",
+  "exact_tip": "03f45432bd56f348d618ed69f25dfea86bc98a6f",
+  "status": "PARTIAL",
+  "requirements": [
+    {"id": "commit_scope", "status": "PASS", "evidence": "git show --stat exact tip"},
+    {"id": "source_model_feature_flag", "status": "PARTIAL", "evidence": "event_domain_v1 diagnostics label; no persistent selector"},
+    {"id": "legacy_regression", "status": "PASS", "evidence": "Stage-V regression tests at exact tip"},
+    {"id": "event_phase", "status": "PARTIAL", "evidence": "event_phase_deg consumed directly"},
+    {"id": "firing_order", "status": "FAIL", "evidence": "validated but not used to derive phase"},
+    {"id": "crank_state", "status": "PARTIAL", "evidence": "PLL state is invocation-local"},
+    {"id": "combustion_torque_feedback", "status": "FAIL", "evidence": "load proxy is not scheduled-event torque"},
+    {"id": "acceleration_consumption", "status": "FAIL", "evidence": "validation/interpolation only"},
+    {"id": "path_delay", "status": "PASS", "evidence": "fractional delay and temperature sound speed"},
+    {"id": "collector_topology", "status": "PARTIAL", "evidence": "bank assignment only"},
+    {"id": "afterfire", "status": "PARTIAL", "evidence": "eligibility exists; location/delay not propagated"},
+    {"id": "forced_induction", "status": "PARTIAL", "evidence": "fixed harmonic branch with state envelope"},
+    {"id": "raw_monitor", "status": "PASS", "evidence": "separate arrays and bounded monitor"},
+    {"id": "candidate_grid", "status": "PARTIAL", "evidence": "full-load-only grid"},
+    {"id": "comparator", "status": "PARTIAL", "evidence": "three pair records; reference pointer-only"},
+    {"id": "frozen_ptr_radiation", "status": "FAIL", "evidence": "Stage-V pipeline stops pre-PTR"},
+    {"id": "third_party_notice", "status": "PASS", "evidence": "committed notice and pinned study"},
+    {"id": "runtime_artifacts", "status": "NOT_VERIFIABLE_FROM_REMOTE", "evidence": "outputs intentionally untracked"},
+    {"id": "obsidian", "status": "FAIL", "evidence": "Stage-W notes/mirror absent"}
+  ]
+}

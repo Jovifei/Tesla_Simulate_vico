@@ -4058,3 +4058,22 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 三车型新鲜 runtime：`tasks/reports/runtime/s12-stage-v/three_vehicle_slices_v3/`；Hellcat/Ferrari/RX-7 三个 manifest 均 `errors=[]`。三车型 review package：`E:\Tesla_speed\review_packages\s12-stage-v-event-domain-v3\`，独立校验 `ERRORS=[]`，109 文件。
 - v1 旧输出因 afterfire 场景门失败保留作诊断证据；v2 是当前唯一新鲜交付证据。未复制 Engine-Sim 源码、`.mr`、IR、版权原始音频；未修改 FVM/PTR/Radiation/MATLAB/Simulink/Runtime/Android/ESP32/CAN。
 - 未完成项：合法同步 Reference；Jovi 中文盲听反馈；R1 qualification、OEM/校准和 Profile Freeze 均保持关闭。
+
+## 2026-08-25 S12 Stage W — Hardening / Ecosystem Bake-Off / Obsidian Closure
+
+> 状态：`W0_AUDIT_PARTIAL / W1_PENDING`; worktree `E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff`; base `03f45432bd56f348d618ed69f25dfea86bc98a6f`; 不修改 Stage V worktree、main，不自动 push/merge/PR。
+
+- [x] 确认远端 Stage-V exact tip 与 37 文件提交；Stage-V focused `31 passed`；Track-P `180 files / 2 symbols OK`。
+- [x] 完成 W0 独立验收与差距矩阵：`tasks/reports/runtime/s12-stage-w/`。
+- [ ] W1：Persistent 20 ms engine state、3000×20 ms / one-shot 60 s 等价、snapshot/restore。
+- [ ] W2：scheduled event torque → crank omega/phase、free dynamics 与 measured-RPM tracking。
+- [ ] W3：复用 frozen RuntimePtrAdapter，建立 pre-PTR → post-PTR raw PCM 链。
+- [ ] W4/W5/W6：waveguide/ENSIM4 teacher、位置化 afterfire、timbre-map forced induction。
+- [ ] W7/W8/W9/W10：外部生态/论文研究、Hellcat P1–P6 bake-off、专业 comparator 与候选门。
+- [ ] W11：将选择的架构迁移并验证 Ferrari 458 与 RX-7 FD。
+- [ ] Obsidian：沿用 `codex_memory/03-项目记忆/tesla-speed`，新增 Stage-W 研究、ADR、实验和 repo mirror；不改 `.obsidian` 配置、不复制版权媒体。
+
+### W0 Review
+
+- Stage V prototype remains `synthetic / uncalibrated / vehicle-inspired / not OEM reproduction / NOT_R1_QUALIFIED / NOT_PROFILE_FREEZE_READY`.
+- W0 critical gaps: no persistent cross-call state, no scheduled-event torque feedback, no firing-order-derived phase, no frozen PTR output in Stage-V pipeline, no stateful waveguide, no real reference scene binding.

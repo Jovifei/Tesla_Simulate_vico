@@ -1,0 +1,20 @@
+{
+  "schema_version": "s12.stage_w.stage_v_parameter_usage.v1",
+  "status": "PARTIAL",
+  "parameters": [
+    {"parameter": "event_phase_deg", "consumer": "event_scheduler.schedule_events", "usage": "runtime event placement", "status": "REACHABLE"},
+    {"parameter": "firing_order_evidence", "consumer": "config_schema.validate_config", "usage": "permutation validation only", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "crank_inertia", "consumer": "crank_phase_pll.CrankPhasePLL", "usage": "proxy omega acceleration", "status": "REACHABLE"},
+    {"parameter": "friction_model", "consumer": "crank_phase_pll.CrankPhasePLL", "usage": "friction proxy", "status": "REACHABLE"},
+    {"parameter": "acceleration_mps2", "consumer": "block_renderer._audio_trace", "usage": "interpolated/validated only", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "per_path_primary_length_m", "consumer": "collector_network.route_to_collectors", "usage": "fractional delay", "status": "REACHABLE"},
+    {"parameter": "per_path_attenuation", "consumer": "collector_network.route_to_collectors", "usage": "path amplitude", "status": "REACHABLE"},
+    {"parameter": "collector_assignment", "consumer": "none", "usage": "metadata only", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "transfer_ir", "consumer": "none", "usage": "provenance only", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "afterfire.ignition_delay", "consumer": "afterfire_state.schedule_afterfire", "usage": "stored event field; not timing", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "afterfire.event_location", "consumer": "block_renderer round-robin placement", "usage": "location recorded but ignored", "status": "PARTIAL"},
+    {"parameter": "afterfire.d_rpm", "consumer": "schedule_afterfire argument", "usage": "not referenced", "status": "NOT_REACHABLE_TO_AUDIO"},
+    {"parameter": "forced_induction.gain", "consumer": "forced_induction.render_forced_induction", "usage": "harmonic carrier", "status": "REACHABLE"},
+    {"parameter": "source_model", "consumer": "diagnostics/pipeline label", "usage": "no runtime selector", "status": "PARTIAL"}
+  ]
+}
