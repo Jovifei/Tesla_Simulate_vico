@@ -1,0 +1,9 @@
+{
+  "schema_version": "s12.stage_w.w5_afterfire_receipt.v1",
+  "status": "AFTERFIRE_LOCATIONIZED_PASS",
+  "tests": "3 passed",
+  "consumed_state": ["unburned_fuel_reservoir", "oxygen_proxy", "exhaust_temperature", "throttle_closure_age", "rpm", "d_rpm", "load_history", "ignition_delay", "event_location", "path_id", "collector_pressure", "cooldown"],
+  "wrong_condition_event_count": 0,
+  "ptr_status": "PENDING_W3_OUTPUT_COMPARATOR",
+  "scope": ["synthetic", "uncalibrated", "vehicle-inspired", "not OEM reproduction", "NOT_R1_QUALIFIED", "NOT_PROFILE_FREEZE_READY"]
+}

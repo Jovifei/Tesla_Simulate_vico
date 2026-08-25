@@ -1,0 +1,9 @@
+{
+  "schema_version": "s12.stage_w.w6_timbre_map_receipt.v1",
+  "status": "TIMBRE_MAP_V1_PASS",
+  "tests": "2 passed",
+  "baseline": "harmonic_v1",
+  "candidate": "timbre_map_v1",
+  "layers": ["harmonics", "sidebands", "broadband_noise_envelope", "casing_resonance", "intake_resonance", "boost_state", "bypass_state"],
+  "scope": ["synthetic", "uncalibrated", "vehicle-inspired", "not OEM reproduction", "NOT_R1_QUALIFIED", "NOT_PROFILE_FREEZE_READY"]
+}

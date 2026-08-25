@@ -20,6 +20,8 @@ from ..event_domain.event_scheduler import schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
 from .frozen_ptr import FrozenPtrStereo
+from .waveguide import WaveguideNetwork
+from .timbre_map import render_timbre_map
 
 
 @dataclass(frozen=True)
@@ -57,7 +59,7 @@ class _DelayLine:
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
-    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False) -> None:
+    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1") -> None:
         self.config = validate_config(config)
         self.sample_rate_hz = int(sample_rate_hz)
         self.block_size = int(block_size)
@@ -67,6 +69,12 @@ class PersistentEventDomainEngine:
             raise ValueError("mode must be measured_rpm or free_dynamics")
         self.mode = mode
         self.ptr_enabled = bool(ptr_enabled)
+        if path_model not in {"delay_lpf_v1", "waveguide_v1"}:
+            raise ValueError("path_model must be delay_lpf_v1 or waveguide_v1")
+        self.path_model = path_model
+        if forced_induction_model not in {"harmonic_v1", "timbre_map_v1"}:
+            raise ValueError("forced_induction_model must be harmonic_v1 or timbre_map_v1")
+        self.forced_induction_model = forced_induction_model
         self.entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         self.bank_count = int(unwrap(self.config, "bank_count"))
         self._reset_runtime()
@@ -84,6 +92,7 @@ class PersistentEventDomainEngine:
         self.afterfire_location_policy = "primary"
         self._event_count = 0
         self._afterfire_event_count = 0
+        self._afterfire_location_counts = {"primary": 0, "collector": 0}
         self._combustion_torque_event_count = 0
         self._omega_ripple_values: list[float] = []
         temperature = float(unwrap(self.config, "gas_temperature_model"))
@@ -94,6 +103,7 @@ class PersistentEventDomainEngine:
         collector_delay = round(float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz)
         collector_loss = float(unwrap(self.config, "collector_loss"))
         self._collector_lines = [_DelayLine(collector_delay, collector_loss) for _ in range(self.bank_count)]
+        self.waveguide_network = WaveguideNetwork(lengths, list(unwrap(self.config, "bank_assignment")), self.sample_rate_hz, temperature) if self.path_model == "waveguide_v1" else None
         self._event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.entity_count)]
         self._monitor_gain_db = 0.0
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
@@ -150,18 +160,30 @@ class PersistentEventDomainEngine:
         self._schedule_afterfire(state, phase_block.phase_rad, n)
         banks = np.zeros((self.bank_count, n), dtype=np.float64)
         bank_assignment = list(unwrap(self.config, "bank_assignment"))
+        entity_sources: list[np.ndarray] = []
         for entity, line in enumerate(self._path_lines):
             source = self._event_tails[entity][:n].copy()
             self._event_tails[entity][:-n] = self._event_tails[entity][n:]
             self._event_tails[entity][-n:] = 0.0
-            banks[int(bank_assignment[entity])] += line.process(source)
-        collector = np.zeros_like(banks)
-        for bank, line in enumerate(self._collector_lines):
-            collector[bank] = line.process(banks[bank])
-        combustion_left = collector[0]
-        combustion_right = collector[min(1, self.bank_count - 1)]
+            entity_sources.append(source)
+            if self.waveguide_network is None:
+                banks[int(bank_assignment[entity])] += line.process(source)
+        if self.waveguide_network is not None:
+            waveguide = self.waveguide_network.process(np.asarray(entity_sources, dtype=np.float64))
+            combustion_left, combustion_right = waveguide.left, waveguide.right
+        else:
+            collector = np.zeros_like(banks)
+            for bank, line in enumerate(self._collector_lines):
+                collector[bank] = line.process(banks[bank])
+            combustion_left = collector[0]
+            combustion_right = collector[min(1, self.bank_count - 1)]
         phase = phase_block.phase_rad
-        forced = render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz)
+        boost_target = np.clip(load * throttle * np.maximum(rpm - 900.0, 0.0) / 4800.0, 0.0, 1.0)
+        forced = render_timbre_map(phase, rpm, load, boost_target, throttle, self.config, self.sample_counter) if self.forced_induction_model == "timbre_map_v1" else render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz)
+        if self.forced_induction_model == "timbre_map_v1":
+            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
+            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
+            forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
         mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
         post_ptr = self.ptr.process(raw) if self.ptr is not None else None
@@ -196,17 +218,19 @@ class PersistentEventDomainEngine:
         eligible = (d_throttle < -0.8) and d_rpm < -10.0 and float(state["rpm"]) >= float(unwrap(self.config, "afterfire.minimum_rpm")) and float(state["load"]) >= 0.35 and float(state["throttle"]) <= 0.18 and self._afterfire_temperature >= float(unwrap(self.config, "afterfire.minimum_temperature_c")) and self._afterfire_fuel_reservoir >= 0.2 and oxygen >= 0.15 and self._afterfire_cooldown_remaining == 0
         if not eligible:
             return
-        delay_s = 0.004 + 0.000001 * float(state["rpm"])
+        delay_s = float(unwrap(self.config, "afterfire.ignition_delay_s")) + 0.000001 * float(state["rpm"])
         delay_samples = min(n - 1, max(0, int(round(delay_s * self.sample_rate_hz))))
         energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"])))
         packet = render_event_packet(self.sample_rate_hz, 0.05, 0.002, 0.018, energy, 0.25).pressure
         if self.afterfire_location_policy == "primary":
             self._place(self._event_tails[0], delay_samples, packet)
+            self._afterfire_location_counts["primary"] += 1
         else:
             bank = self._collector_lines[0]
             impulse = np.zeros(n, dtype=np.float64)
             self._place(impulse, delay_samples, packet)
             bank.history = bank.history + np.pad(impulse[: bank.history.size], (max(0, bank.history.size - impulse.size), 0))[: bank.history.size]
+            self._afterfire_location_counts["collector"] += 1
         self._afterfire_event_count += 1
         self._afterfire_cooldown_remaining = int(round(float(unwrap(self.config, "afterfire.cooldown_s")) * self.sample_rate_hz))
 
@@ -236,12 +260,14 @@ class PersistentEventDomainEngine:
             "afterfire_cooldown_remaining": self._afterfire_cooldown_remaining,
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,
+            "afterfire_location_counts": dict(self._afterfire_location_counts),
             "combustion_torque_event_count": self._combustion_torque_event_count,
             "event_tails": [tail.copy() for tail in self._event_tails],
             "path_lines": [line.snapshot() for line in self._path_lines],
             "collector_lines": [line.snapshot() for line in self._collector_lines],
             "monitor_gain_db": self._monitor_gain_db,
             "ptr": self.ptr.snapshot() if self.ptr is not None else None,
+            "waveguide": self.waveguide_network.snapshot() if self.waveguide_network is not None else None,
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -250,20 +276,25 @@ class PersistentEventDomainEngine:
         self.sample_counter = int(snapshot["sample_counter"])
         pll = snapshot["pll"]
         self.pll.phase_rad = float(pll["phase_rad"]); self.pll.omega_rad_s = float(pll["omega_rad_s"]); self.pll.initialized = bool(pll["initialized"]); self.pll.sample_count = int(pll["sample_count"])
-        self._pending_combustion_torque = float(snapshot["pending_combustion_torque"]); self._last_rpm = float(snapshot["last_rpm"]); self._last_throttle = float(snapshot["last_throttle"]); self._last_load = float(snapshot["last_load"]); self._afterfire_fuel_reservoir = float(snapshot["afterfire_fuel_reservoir"]); self._afterfire_temperature = float(snapshot["afterfire_temperature"]); self._afterfire_cooldown_remaining = int(snapshot["afterfire_cooldown_remaining"]); self._event_count = int(snapshot["event_count"]); self._afterfire_event_count = int(snapshot["afterfire_event_count"]); self._combustion_torque_event_count = int(snapshot["combustion_torque_event_count"]); self._monitor_gain_db = float(snapshot["monitor_gain_db"])
+        self._pending_combustion_torque = float(snapshot["pending_combustion_torque"]); self._last_rpm = float(snapshot["last_rpm"]); self._last_throttle = float(snapshot["last_throttle"]); self._last_load = float(snapshot["last_load"]); self._afterfire_fuel_reservoir = float(snapshot["afterfire_fuel_reservoir"]); self._afterfire_temperature = float(snapshot["afterfire_temperature"]); self._afterfire_cooldown_remaining = int(snapshot["afterfire_cooldown_remaining"]); self._event_count = int(snapshot["event_count"]); self._afterfire_event_count = int(snapshot["afterfire_event_count"]); self._afterfire_location_counts = dict(snapshot.get("afterfire_location_counts", {"primary": 0, "collector": 0})); self._combustion_torque_event_count = int(snapshot["combustion_torque_event_count"]); self._monitor_gain_db = float(snapshot["monitor_gain_db"])
         self._event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot["event_tails"]]
         for line, saved in zip(self._path_lines, snapshot["path_lines"]): line.restore(saved)
         for line, saved in zip(self._collector_lines, snapshot["collector_lines"]): line.restore(saved)
         if self.ptr is not None and snapshot.get("ptr") is not None:
             self.ptr.restore(snapshot["ptr"])
+        if self.waveguide_network is not None and snapshot.get("waveguide") is not None:
+            self.waveguide_network.restore(snapshot["waveguide"])
 
     def diagnostics(self) -> dict[str, Any]:
         return {
             "source_model": "event_domain_v1_hardened_persistent",
             "mode": self.mode,
+            "path_model": self.path_model,
+            "forced_induction_model": self.forced_induction_model,
             "sample_counter": self.sample_counter,
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,
+            "afterfire_location_counts": dict(self._afterfire_location_counts),
             "afterfire_cooldown_remaining": self._afterfire_cooldown_remaining,
             "combustion_torque_event_count": self._combustion_torque_event_count,
             "omega_ripple_rms": float(np.sqrt(np.mean(np.square(self._omega_ripple_values)))) if self._omega_ripple_values else 0.0,
