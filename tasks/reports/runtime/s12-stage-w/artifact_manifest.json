@@ -9,8 +9,8 @@
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
     "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
-    "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "705a6534e8d60299ea7574840a446e4ab12b5653217f0ef5d03cc6e6ff45d0e9"},
-    "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "638a2503371aea898079907daa53ce28422703b50da31d1e4fa15c70fdf81211"},
+    "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "6ec6f7e01bdf54d5eeade9f0cd5a851a41baeff7948dd48102eb3ac5e5f90c85"},
+    "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "e442cdc2751fc46ea86703cfb1bcf62035d9a8f6c0889a68f9091f87abc41ec6"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
     "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "37ab6e72808d213a46c15b2db2b967e0dbc3235d4d1a8db41c5871edcd395380"}
   },
