@@ -1,0 +1,21 @@
+{
+  "schema_version": "s12.stage_w.w1_receipt.v1",
+  "status": "STAGE_W_PERSISTENT_ENGINE_PASS",
+  "exact_base": "03f45432bd56f348d618ed69f25dfea86bc98a6f",
+  "fast_tests": "5 passed, 1 skipped",
+  "slow_test": {
+    "name": "test_3000_twenty_ms_calls_match_one_shot_sixty_seconds",
+    "status": "PASS",
+    "result": "1 passed, 5 deselected in 385.63s",
+    "calls": 3000,
+    "block_samples": 960,
+    "duration_s": 60.0,
+    "equivalence": "byte-identical SHA stream"
+  },
+  "snapshot_restore": "PASS",
+  "reset_policy": "hard_and_phase_only",
+  "torque_feedback": "scheduled chamber torque contributes to next omega update",
+  "firing_order_phase": "derived for piston configurations",
+  "ptr_status": "PENDING_W3",
+  "scope": ["synthetic", "uncalibrated", "vehicle-inspired", "not OEM reproduction", "NOT_R1_QUALIFIED", "NOT_PROFILE_FREEZE_READY"]
+}

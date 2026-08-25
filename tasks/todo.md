@@ -4065,8 +4065,8 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - [x] 确认远端 Stage-V exact tip 与 37 文件提交；Stage-V focused `31 passed`；Track-P `180 files / 2 symbols OK`。
 - [x] 完成 W0 独立验收与差距矩阵：`tasks/reports/runtime/s12-stage-w/`。
-- [ ] W1：Persistent 20 ms engine state、3000×20 ms / one-shot 60 s 等价、snapshot/restore。
-- [ ] W2：scheduled event torque → crank omega/phase、free dynamics 与 measured-RPM tracking。
+- [x] W1：Persistent 20 ms engine state、3000×20 ms / one-shot 60 s 等价、snapshot/restore。
+- [x] W2：scheduled event torque → crank omega/phase、free dynamics 与 measured-RPM tracking。
 - [ ] W3：复用 frozen RuntimePtrAdapter，建立 pre-PTR → post-PTR raw PCM 链。
 - [ ] W4/W5/W6：waveguide/ENSIM4 teacher、位置化 afterfire、timbre-map forced induction。
 - [ ] W7/W8/W9/W10：外部生态/论文研究、Hellcat P1–P6 bake-off、专业 comparator 与候选门。
@@ -4077,3 +4077,9 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - Stage V prototype remains `synthetic / uncalibrated / vehicle-inspired / not OEM reproduction / NOT_R1_QUALIFIED / NOT_PROFILE_FREEZE_READY`.
 - W0 critical gaps: no persistent cross-call state, no scheduled-event torque feedback, no firing-order-derived phase, no frozen PTR output in Stage-V pipeline, no stateful waveguide, no real reference scene binding.
+
+### W1/W2 Review（2026-08-25）
+
+- `PersistentEventDomainEngine` now persists PLL, event tails, path/collector histories, afterfire reservoir/cooldown, monitor gain and sample counter.
+- Slow acceptance passed: `3000 × 20 ms = 60 s` repeated calls matched one-shot output; receipt: `tasks/reports/runtime/s12-stage-w/w1_persistent_engine_receipt.json`.
+- W3 remains the next gate: post-PTR raw PCM must be produced through the existing frozen RuntimePtrAdapter.

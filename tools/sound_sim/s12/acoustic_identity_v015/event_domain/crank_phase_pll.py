@@ -16,26 +16,33 @@ class PhaseBlock:
     combustion_torque: np.ndarray
 
 class CrankPhasePLL:
-    def __init__(self, sample_rate_hz: int, config: dict):
+    def __init__(self, sample_rate_hz: int, config: dict, mode: str = "measured_rpm"):
         if sample_rate_hz <= 0:
             raise ValueError("sample_rate_hz must be positive")
         self.sample_rate_hz = int(sample_rate_hz)
         self.config = config
+        if mode not in {"measured_rpm", "free_dynamics"}:
+            raise ValueError("mode must be measured_rpm or free_dynamics")
+        self.mode = mode
         self.phase_rad = 0.0
         self.omega_rad_s = 0.0
         self.initialized = False
         self.sample_count = 0
 
-    def process_block(self, rpm: np.ndarray, load: np.ndarray, throttle: np.ndarray, acceleration: np.ndarray) -> PhaseBlock:
+    def process_block(self, rpm: np.ndarray, load: np.ndarray, throttle: np.ndarray, acceleration: np.ndarray, combustion_torque_input: np.ndarray | None = None) -> PhaseBlock:
         rpm = np.asarray(rpm, dtype=np.float64)
         load = np.asarray(load, dtype=np.float64)
         throttle = np.asarray(throttle, dtype=np.float64)
         acceleration = np.asarray(acceleration, dtype=np.float64)
-        if not (rpm.ndim == load.ndim == throttle.ndim == acceleration.ndim == 1):
+        if combustion_torque_input is None:
+            combustion_torque_input = np.zeros_like(rpm)
+        else:
+            combustion_torque_input = np.asarray(combustion_torque_input, dtype=np.float64)
+        if not (rpm.ndim == load.ndim == throttle.ndim == acceleration.ndim == combustion_torque_input.ndim == 1):
             raise ValueError("PLL inputs must be one-dimensional")
-        if len({rpm.size, load.size, throttle.size, acceleration.size}) != 1 or rpm.size == 0:
+        if len({rpm.size, load.size, throttle.size, acceleration.size, combustion_torque_input.size}) != 1 or rpm.size == 0:
             raise ValueError("PLL inputs must have equal nonzero length")
-        if not all(np.all(np.isfinite(x)) for x in (rpm, load, throttle, acceleration)):
+        if not all(np.all(np.isfinite(x)) for x in (rpm, load, throttle, acceleration, combustion_torque_input)):
             raise ValueError("PLL inputs must be finite")
         if np.any(rpm < 0.0):
             raise ValueError("rpm must be nonnegative")
@@ -63,7 +70,10 @@ class CrankPhasePLL:
             governor_torque = governor * 0.10 * max(target, 1.0)
             combustion_torque = 0.005 * (0.25 + np.clip(load[i], 0.0, 1.0)) * max(target, 1.0)
             ripple = 0.004 * max(target, 1.0) * np.sin(self.phase_rad * max(entity_count, 1) + (self.sample_count + i) * 0.017)
-            torque_accel = (96.0 * sync_error - friction_torque - load_torque + governor_torque + combustion_torque + ripple) / inertia
+            tracking_torque = 96.0 * sync_error if self.mode == "measured_rpm" else 0.0
+            acceleration_torque = 0.001 * float(acceleration[i]) * max(target, 1.0)
+            combustion_torque += float(combustion_torque_input[i])
+            torque_accel = (tracking_torque - friction_torque - load_torque + governor_torque + combustion_torque + acceleration_torque + ripple) / inertia
             self.omega_rad_s = max(0.0, self.omega_rad_s + torque_accel * dt)
             self.phase_rad += max(self.omega_rad_s, 1.0e-9) * dt
             phases[i] = self.phase_rad

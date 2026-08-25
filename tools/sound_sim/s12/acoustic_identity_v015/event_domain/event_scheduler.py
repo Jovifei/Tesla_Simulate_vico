@@ -12,12 +12,32 @@ class EventTrace:
     bank_index: np.ndarray
     count: int
 
+
+def derive_event_phase_deg(config: dict) -> list[float]:
+    """Derive entity phase from firing order and cycle slots.
+
+    Rotary configurations keep their explicit eccentric-shaft event phases;
+    piston configurations use the declared firing sequence as the phase
+    authority and retain the old phase list only as cycle-slot geometry.
+    """
+
+    slots = [float(value) for value in unwrap(config, "event_phase_deg")]
+    if config["architecture"] == "rotary_wankel":
+        return slots
+    order = [int(value) for value in unwrap(config, "firing_order_evidence")]
+    if len(order) != len(slots) or sorted(order) != list(range(1, len(order) + 1)):
+        raise ValueError("firing order must be a complete permutation before phase derivation")
+    derived = [0.0] * len(order)
+    for slot_index, entity_number in enumerate(order):
+        derived[entity_number - 1] = slots[slot_index]
+    return derived
+
 def schedule_events(phase_rad: np.ndarray, config: dict, sample_rate_hz: int) -> EventTrace:
     phase_rad = np.asarray(phase_rad, dtype=np.float64)
     if phase_rad.ndim != 1 or phase_rad.size == 0 or not np.all(np.isfinite(phase_rad)):
         raise ValueError("phase_rad must be a finite nonempty vector")
     cycle_deg = 720.0 if config["architecture"] == "piston" else 360.0
-    phases_deg = np.asarray(unwrap(config, "event_phase_deg"), dtype=np.float64)
+    phases_deg = np.asarray(derive_event_phase_deg(config), dtype=np.float64)
     banks = np.asarray(unwrap(config, "bank_assignment"), dtype=np.int64)
     crank_deg = phase_rad * 180.0 / np.pi
     sample_indices: list[int] = []
