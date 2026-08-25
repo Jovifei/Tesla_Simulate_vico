@@ -4067,7 +4067,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 完成 W0 独立验收与差距矩阵：`tasks/reports/runtime/s12-stage-w/`。
 - [x] W1：Persistent 20 ms engine state、3000×20 ms / one-shot 60 s 等价、snapshot/restore。
 - [x] W2：scheduled event torque → crank omega/phase、free dynamics 与 measured-RPM tracking。
-- [ ] W3：复用 frozen RuntimePtrAdapter，建立 pre-PTR → post-PTR raw PCM 链。
+- [x] W3：复用 frozen RuntimePtrAdapter，建立 pre-PTR → post-PTR raw PCM 链；适配器和 package SHA 绑定，默认 Stage-V path 不变。
 - [ ] W4/W5/W6：waveguide/ENSIM4 teacher、位置化 afterfire、timbre-map forced induction。
 - [ ] W7/W8/W9/W10：外部生态/论文研究、Hellcat P1–P6 bake-off、专业 comparator 与候选门。
 - [ ] W11：将选择的架构迁移并验证 Ferrari 458 与 RX-7 FD。
@@ -4082,4 +4082,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - `PersistentEventDomainEngine` now persists PLL, event tails, path/collector histories, afterfire reservoir/cooldown, monitor gain and sample counter.
 - Slow acceptance passed: `3000 × 20 ms = 60 s` repeated calls matched one-shot output; receipt: `tasks/reports/runtime/s12-stage-w/w1_persistent_engine_receipt.json`.
-- W3 remains the next gate: post-PTR raw PCM must be produced through the existing frozen RuntimePtrAdapter.
+- W4 remains the next gate: persistent waveguide/reduced-CFD teacher paths must be compared against `delay_lpf_v1` while keeping the frozen PTR boundary unchanged.
+
+### W3 Review
+
+- `FrozenPtrStereo` uses the existing immutable adapter per channel and preserves its state across blocks/snapshot restore.
+- W3 focused tests: `2 passed`; package source commit and SHA receipt are in `tasks/reports/runtime/s12-stage-w/w3_ptr_receipt.json`.
+- The adapter is not a full FVM/PTR network; real-time and device qualification remain outside this stage.

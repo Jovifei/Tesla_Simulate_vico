@@ -19,6 +19,7 @@ from ..event_domain.crank_phase_pll import CrankPhasePLL
 from ..event_domain.event_scheduler import schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
+from .frozen_ptr import FrozenPtrStereo
 
 
 @dataclass(frozen=True)
@@ -26,6 +27,7 @@ class EngineAudioBlock:
     raw_pcm: np.ndarray
     monitor_pcm: np.ndarray
     diagnostics: dict[str, Any]
+    post_ptr_raw: np.ndarray | None = None
 
 
 class _DelayLine:
@@ -55,7 +57,7 @@ class _DelayLine:
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
-    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm") -> None:
+    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False) -> None:
         self.config = validate_config(config)
         self.sample_rate_hz = int(sample_rate_hz)
         self.block_size = int(block_size)
@@ -64,6 +66,7 @@ class PersistentEventDomainEngine:
         if mode not in {"measured_rpm", "free_dynamics"}:
             raise ValueError("mode must be measured_rpm or free_dynamics")
         self.mode = mode
+        self.ptr_enabled = bool(ptr_enabled)
         self.entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         self.bank_count = int(unwrap(self.config, "bank_count"))
         self._reset_runtime()
@@ -93,6 +96,7 @@ class PersistentEventDomainEngine:
         self._collector_lines = [_DelayLine(collector_delay, collector_loss) for _ in range(self.bank_count)]
         self._event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.entity_count)]
         self._monitor_gain_db = 0.0
+        self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
 
     def _tail_length(self) -> int:
         maximum_delay = max((line.delay_samples for line in getattr(self, "_path_lines", [])), default=0)
@@ -121,7 +125,10 @@ class PersistentEventDomainEngine:
             outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}))
         raw = np.concatenate([item.raw_pcm for item in outputs], axis=0)
         monitor = np.concatenate([item.monitor_pcm for item in outputs], axis=0)
-        return EngineAudioBlock(raw, monitor, {"frames": len(outputs), "sample_count": int(raw.shape[0]), "state": self.diagnostics()})
+        post_ptr = np.concatenate([item.post_ptr_raw for item in outputs if item.post_ptr_raw is not None], axis=0) if self.ptr_enabled else None
+        diagnostics = self.diagnostics()
+        diagnostics.update({"frames": len(outputs), "sample_count": int(raw.shape[0])})
+        return EngineAudioBlock(raw, monitor, diagnostics, post_ptr)
 
     def _process_frame(self, state: Mapping[str, float]) -> EngineAudioBlock:
         n = self.block_size
@@ -157,12 +164,13 @@ class PersistentEventDomainEngine:
         forced = render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz)
         mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
-        monitor = self._monitor(raw)
+        post_ptr = self.ptr.process(raw) if self.ptr is not None else None
+        monitor = self._monitor(post_ptr if post_ptr is not None else raw)
         self.sample_counter += n
         self._last_rpm = float(state["rpm"])
         self._last_throttle = float(state["throttle"])
         self._last_load = float(state["load"])
-        return EngineAudioBlock(raw, monitor, self.diagnostics())
+        return EngineAudioBlock(raw, monitor, self.diagnostics(), post_ptr)
 
     def _event_energy(self, load: float, throttle: float, entity: int, event_number: int) -> float:
         base = float(unwrap(self.config, "combustion_event.event_energy"))
@@ -233,6 +241,7 @@ class PersistentEventDomainEngine:
             "path_lines": [line.snapshot() for line in self._path_lines],
             "collector_lines": [line.snapshot() for line in self._collector_lines],
             "monitor_gain_db": self._monitor_gain_db,
+            "ptr": self.ptr.snapshot() if self.ptr is not None else None,
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -245,6 +254,8 @@ class PersistentEventDomainEngine:
         self._event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot["event_tails"]]
         for line, saved in zip(self._path_lines, snapshot["path_lines"]): line.restore(saved)
         for line, saved in zip(self._collector_lines, snapshot["collector_lines"]): line.restore(saved)
+        if self.ptr is not None and snapshot.get("ptr") is not None:
+            self.ptr.restore(snapshot["ptr"])
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -257,7 +268,8 @@ class PersistentEventDomainEngine:
             "combustion_torque_event_count": self._combustion_torque_event_count,
             "omega_ripple_rms": float(np.sqrt(np.mean(np.square(self._omega_ripple_values)))) if self._omega_ripple_values else 0.0,
             "state_memory_bytes": int(sum(tail.nbytes for tail in self._event_tails) + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines)),
-            "ptr_status": "NOT_CONNECTED",
+            "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
+            "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
             "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
         }
 
