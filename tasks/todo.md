@@ -4074,6 +4074,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [ ] W11：将选择的架构迁移并验证 Ferrari 458 与 RX-7 FD。
 - [ ] Obsidian：沿用 `codex_memory/03-项目记忆/tesla-speed`，新增 Stage-W 研究、ADR、实验和 repo mirror；不改 `.obsidian` 配置、不复制版权媒体。
 
+### W11 execution plan
+
+- [ ] 先为 Ferrari 458 与 RX-7 FD 写入 P2H/P3 迁移 RED 测试：每个场景必须生成 source、post-PTR 与 monitor 三条 PCM，且同一输入具有可复现 SHA。
+- [ ] 仅复用 `PersistentEventDomainEngine`、`waveguide_v1`、`timbre_map_v1` 与冻结 PTR；不得修改 PTR/Radiation 或将未选的 P2H/P3 标成 Selected。
+- [ ] 生成并验证迁移 manifest、运行时指标和三车诊断报告；结果只能为 `UNSELECTED_CANDIDATE_MIGRATION`，直到 W10 获得合法且同步的 Reference。
+- [ ] 将证据同步到 Obsidian repo mirror，并在 focused/full Stage-W 回归、JSON/WAV/manifest、`git diff --check` 后提交和推送阶段分支。
+
 ### W0 Review
 
 - Stage V prototype remains `synthetic / uncalibrated / vehicle-inspired / not OEM reproduction / NOT_R1_QUALIFIED / NOT_PROFILE_FREEZE_READY`.
@@ -4097,11 +4104,32 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - P4/P5/P6 are explicit rejected/pending states; no “best failed candidate” was selected.
 - Bake-off status is `REFERENCE_TARGET_MISSING`; W10 selection remains pending a
   rights-bound synchronized Reference.
+- v3 smoke rerender now binds P1/P2/P2H/P3 to identical 20 ms block-aligned
+  frame counts and emits phase/event/path/gain traces. Eligible afterfire is
+  nonzero while the ineligible scenario is zero; the 1.0 s smoke duration is
+  recorded explicitly and is not presented as a 20 s/60 s long-window result.
+
+### W7/W8 Follow-up Review
+
+- Engine-Sim, DasEtwas, Granular, FiveM, ESP32 RC, VehicleNoiseSynthesizer and
+  PTR are now external exact checkouts with license SHA receipts. FiveM build
+  passed but its Apache LICENSE/README-MIT conflict keeps reuse closed; PTR
+  source parse passed but its weight archive is absent; CMake/Rust/Unity/
+  PlatformIO toolchains are absent and remain explicit build blockers.
+
+### W11 Preselection Review
+
+- Ferrari 458 and RX-7 FD each have P1/P2H/P3 eight-second, five-scene
+  preselection renders with identical Parent/Candidate lengths, zero clipping,
+  frozen PTR output and persistent phase/event/path/gain traces. Lift has one
+  eligible afterfire event in P2H/P3 for both cars.
+- This is `UNSELECTED_CANDIDATE_MIGRATION`, not W11 completion: W10 still has
+  no legal synchronized Reference and no architecture may be selected.
 
 ### W3 Review
 
 - `FrozenPtrStereo` uses the existing immutable adapter per channel and preserves its state across blocks/snapshot restore.
-- W3 focused tests: `2 passed`; package source commit and SHA receipt are in `tasks/reports/runtime/s12-stage-w/w3_ptr_receipt.json`.
+- W3 focused tests: `2 passed`; package source commit and SHA receipt are in `tasks/reports/runtime/s12-stage-w/w3_boundary_adapter_receipt.json`.
 - The adapter is not a full FVM/PTR network; real-time and device qualification remain outside this stage.
 
 ### W4 Review

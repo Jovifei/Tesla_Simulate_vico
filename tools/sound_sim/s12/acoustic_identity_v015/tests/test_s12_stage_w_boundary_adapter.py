@@ -5,9 +5,15 @@ from __future__ import annotations
 import numpy as np
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w.boundary_adapter import FrozenPtrStereo
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import (
     PersistentEventDomainEngine,
 )
+
+
+def test_boundary_adapter_preserves_the_frozen_runtime_contract() -> None:
+    adapter = FrozenPtrStereo(48000)
+    assert adapter.provenance()["adapter"] == "RuntimePtrAdapter"
 
 
 def test_persistent_engine_exposes_distinct_post_ptr_raw_and_provenance() -> None:

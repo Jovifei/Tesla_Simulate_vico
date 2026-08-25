@@ -19,7 +19,7 @@ from ..event_domain.crank_phase_pll import CrankPhasePLL
 from ..event_domain.event_scheduler import schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
-from .frozen_ptr import FrozenPtrStereo
+from .boundary_adapter import FrozenPtrStereo
 from .waveguide import WaveguideNetwork
 from .timbre_map import render_timbre_map
 
@@ -139,6 +139,39 @@ class PersistentEventDomainEngine:
         diagnostics = self.diagnostics()
         diagnostics.update({"frames": len(outputs), "sample_count": int(raw.shape[0])})
         return EngineAudioBlock(raw, monitor, diagnostics, post_ptr)
+
+    def process_with_trace(self, vehicle_state_block: Mapping[str, np.ndarray]) -> EngineAudioBlock:
+        """Process frames while retaining block-rate diagnostic evidence."""
+        arrays = {name: np.asarray(vehicle_state_block[name], dtype=np.float64) for name in ("rpm", "load", "throttle", "acceleration_mps2")}
+        if any(value.ndim != 1 for value in arrays.values()) or len({value.size for value in arrays.values()}) != 1 or arrays["rpm"].size == 0:
+            raise ValueError("vehicle state block must contain equal nonempty one-dimensional arrays")
+        if not all(np.all(np.isfinite(value)) for value in arrays.values()):
+            raise ValueError("vehicle state block must be finite")
+        outputs: list[EngineAudioBlock] = []
+        trace = {"phase_rad": [], "omega_rad_s": [], "event_count": [], "afterfire_event_count": [], "combustion_torque_event_count": [], "path_state_energy": [], "monitor_gain_db": [], "sample_counter": []}
+        for index in range(arrays["rpm"].size):
+            outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}))
+            trace["phase_rad"].append(float(self.pll.phase_rad))
+            trace["omega_rad_s"].append(float(self.pll.omega_rad_s))
+            trace["event_count"].append(int(self._event_count))
+            trace["afterfire_event_count"].append(int(self._afterfire_event_count))
+            trace["combustion_torque_event_count"].append(int(self._combustion_torque_event_count))
+            trace["path_state_energy"].append(self._path_state_energy())
+            trace["monitor_gain_db"].append(float(self._monitor_gain_db))
+            trace["sample_counter"].append(int(self.sample_counter))
+        raw = np.concatenate([item.raw_pcm for item in outputs], axis=0)
+        monitor = np.concatenate([item.monitor_pcm for item in outputs], axis=0)
+        post_ptr = np.concatenate([item.post_ptr_raw for item in outputs if item.post_ptr_raw is not None], axis=0) if self.ptr_enabled else None
+        diagnostics = self.diagnostics()
+        diagnostics.update({"frames": len(outputs), "sample_count": int(raw.shape[0]), "frame_trace": trace})
+        return EngineAudioBlock(raw, monitor, diagnostics, post_ptr)
+
+    def _path_state_energy(self) -> float:
+        values = [tail for tail in self._event_tails] + [line.history for line in self._path_lines] + [line.history for line in self._collector_lines]
+        if self.waveguide_network is not None:
+            for guide in self.waveguide_network.guides:
+                values.extend((guide._forward.history, guide._round_trip.history))
+        return float(sum(np.sum(np.square(value)) for value in values))
 
     def _process_frame(self, state: Mapping[str, float]) -> EngineAudioBlock:
         n = self.block_size

@@ -104,6 +104,18 @@ def test_afterfire_location_and_delay_change_path_output_and_sha() -> None:
     assert hashlib.sha256(a.tobytes()).hexdigest() != hashlib.sha256(b.tobytes()).hexdigest()
 
 
+def test_process_with_trace_records_phase_event_path_and_gain_per_frame() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, ptr_enabled=True, path_model="waveguide_v1")
+    result = engine.process_with_trace(_frames(6))
+    trace = result.diagnostics["frame_trace"]
+    assert result.post_ptr_raw is not None
+    assert set(trace) == {"phase_rad", "omega_rad_s", "event_count", "afterfire_event_count", "combustion_torque_event_count", "path_state_energy", "monitor_gain_db", "sample_counter"}
+    assert all(len(values) == 6 for values in trace.values())
+    assert trace["sample_counter"][-1] == 6 * 960
+    assert trace["event_count"] == sorted(trace["event_count"])
+    assert trace["combustion_torque_event_count"] == sorted(trace["combustion_torque_event_count"])
+
+
 @unittest.skipUnless(os.environ.get("S12_RUN_SLOW") == "1", "set S12_RUN_SLOW=1 for the 3000-block acceptance run")
 def test_3000_twenty_ms_calls_match_one_shot_sixty_seconds() -> None:
     config = load_config("hellcat_v1")

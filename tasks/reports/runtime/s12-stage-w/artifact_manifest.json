@@ -1,0 +1,20 @@
+{
+  "schema_version": "s12.stage_w.artifact_manifest.v1",
+  "status": "PARTIAL_REFERENCE_SELECTION_PENDING",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "raw_external_media_committed": false,
+  "artifacts": {
+    "hellcat_bakeoff_v3": {"path": "bakeoff_v3/bakeoff_manifest.json", "sha256": "1d6f0e0a9000bb26c5abd3528fb861f5e54377476f8f60b56188237c24bfde26", "status": "REFERENCE_TARGET_MISSING"},
+    "ferrari_migration_v3": {"path": "migration_v3/ferrari_458/migration_manifest.json", "sha256": "d95971f408ac7c84bad7944f222b26ef389e2469e09d1e4f42ebddcd230e4ec5", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
+    "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
+    "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "3b46fe3037df266dfc3b67bceb46d8b24b68a316ba235263ac91caa37411439b"},
+    "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "a817e1bd4262a25d780fd44b624cfeba50aab42ea839c4ec8cfed4e72f18baeb"},
+    "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
+    "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "37ab6e72808d213a46c15b2db2b967e0dbc3235d4d1a8db41c5871edcd395380"}
+  },
+  "selection_gate": {
+    "selected_architecture": null,
+    "reason": "No legal, rights-bound and RPM/state-synchronised Reference; R2/R3 remains diagnostic only.",
+    "next_required_evidence": "Reference/Parent/Candidate post-PTR comparison with multi-reference median, >=20% target improvement and <=10% non-target regression."
+  }
+}

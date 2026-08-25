@@ -1,13 +1,14 @@
 {
   "schema_version": "s12.stage_w.license_receipts.v1",
   "receipts": [
-    {"id":"engine-sim","license":"MIT","license_url":"https://raw.githubusercontent.com/ange-yaghi/engine-sim/85f7c3b959a908ed5232ede4f1a4ac7eafe6b630/LICENSE","treatment":"clean_room"},
+    {"id":"engine-sim","license":"MIT","license_url":"https://raw.githubusercontent.com/ange-yaghi/engine-sim/85f7c3b959a908ed5232ede4f1a4ac7eafe6b630/LICENSE","license_sha256":"857039F9282782E3E8D05932898933DC55E1B1C0C27026F3E096554E17801EF9","treatment":"clean_room"},
     {"id":"ensim4","license":"MIT","license_sha256":"CDFF1D6C75E2B3C954619FDAA0A9917FF0F37ABE754201576C59853059A0305A","treatment":"teacher_only"},
-    {"id":"dasetwas-enginesound","license":"MIT plus notices","treatment":"clean_room"},
+    {"id":"dasetwas-enginesound","license":"MIT plus notices","license_sha256":"6ACD48BF78FB35FE640C742D2521A12613E3549A90BDE8147B005457AB649529","treatment":"clean_room"},
     {"id":"granular-engine-audio","license":"NONE_FOUND","treatment":"no_code_no_assets"},
-    {"id":"fivem-enginesound","license":"Apache-2.0 file / README MIT conflict","treatment":"no_code_until_resolved"},
+    {"id":"fivem-enginesound","license":"Apache-2.0 file / README MIT conflict","license_sha256":"1EB85FC97224598DAD1852B5D6483BBCF0AA8608790DCC657A5A2A761AE9C8C6","treatment":"no_code_until_resolved"},
     {"id":"esp32-rc-engine-sound","license":"NONE_FOUND","treatment":"concept_only"},
-    {"id":"ptr-model","license":"CC BY-NC 4.0 code/data; CC BY-NC-SA 4.0 paper","treatment":"research_only"},
+    {"id":"ptr-model","license":"CC BY-NC 4.0","license_sha256":"D39EBDFC4BD06FB13ED9D669DC78444D1B425C3ADAE7BA4EA2C7110FFD16D745","treatment":"research_only"},
+    {"id":"vehicle-noise-synthesizer","license":"MIT","license_sha256":"C4A6DC9C675EFC5AB30AA265D162E1414EC66F6CABE91D7A8A589FF9E5505178","treatment":"clean_room"},
     {"id":"commercial_sources","license":"proprietary/commercial","treatment":"public_docs_only"},
     {"id":"papers","license":"publication-specific","treatment":"method_reading_only"}
   ]

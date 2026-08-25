@@ -16,11 +16,13 @@ from ..event_domain.config_schema import load_config
 from ..sources.supercharged_hemi_source import render_hellcat
 from ..stage_v.comparator import compare_three_way
 from ..stage_v.io import read_pcm24_wav, sha256_file, write_json, write_pcm24_wav
-from .frozen_ptr import FrozenPtrStereo
+from .boundary_adapter import FrozenPtrStereo
+from .migration import write_diagnostic_traces
 from .persistent_engine import PersistentEventDomainEngine
 
-STATE_RATE_HZ = 100
 SAMPLE_RATE_HZ = 48000
+BLOCK_SIZE = 960
+STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
 
@@ -30,13 +32,14 @@ def build_hellcat_bakeoff_trace(scene: str, duration_s: float = 8.0) -> VehicleS
         raise ValueError(f"unsupported bake-off scene: {scene}")
     if not np.isfinite(duration_s) or duration_s < 0.20:
         raise ValueError("duration_s must be finite and >= 0.20")
-    count = max(2, int(round(duration_s * STATE_RATE_HZ)) + 1)
-    time_s = np.linspace(0.0, duration_s, count, dtype=np.float64)
-    phase = time_s / duration_s
+    count = max(2, int(round(duration_s * STATE_RATE_HZ)))
+    time_s = np.linspace(0.0, count * BLOCK_SIZE / SAMPLE_RATE_HZ - 1.0 / SAMPLE_RATE_HZ, count, dtype=np.float64)
+    state_time_s = np.arange(count, dtype=np.float64) / STATE_RATE_HZ
+    phase = np.linspace(0.0, 1.0, count, dtype=np.float64)
     idle = 850.0
     redline = 6500.0
     if scene == "hot_idle_20s":
-        rpm = idle + 4.0 * np.sin(2.0 * np.pi * 2.7 * time_s); load = np.full(count, 0.18); throttle = np.full(count, 0.18)
+        rpm = idle + 4.0 * np.sin(2.0 * np.pi * 2.7 * state_time_s); load = np.full(count, 0.18); throttle = np.full(count, 0.18)
     elif scene.startswith("steady_"):
         target = float(scene.split("_")[1].replace("rpm", "")); rpm = np.full(count, target); load = np.full(count, 0.24 + target / 20000.0); throttle = load.copy()
     elif scene == "throttle_tip_in":
@@ -46,14 +49,14 @@ def build_hellcat_bakeoff_trace(scene: str, duration_s: float = 8.0) -> VehicleS
     elif scene == "gear_shift":
         rpm = np.linspace(2600.0, 5600.0, count); center = int(0.55 * count); width = max(1, int(0.02 * count)); rpm -= np.where(np.abs(np.arange(count) - center) < width, 1100.0, 0.0); load = np.full(count, 0.70); throttle = np.full(count, 0.75)
     elif scene in {"high_rpm_lift", "afterfire_eligible"}:
-        high = 0.90 * redline; close = phase >= 0.40; late = phase >= 0.64; rpm = np.where(close, np.linspace(high, idle, count), high); load = np.where(close, np.where(late, 0.12, 0.55), 0.86); throttle = np.where(close, 0.02, 0.92)
+        high = 0.90 * redline; close = phase >= 0.40; late = phase >= 0.64; decline = np.clip((phase - 0.40) / 0.60, 0.0, 1.0); rpm = high + (idle - high) * decline; load = np.where(close, np.where(late, 0.12, 0.55), 0.86); throttle = np.where(close, 0.02, 0.92)
     elif scene == "afterfire_ineligible":
         high = 0.65 * redline; close = phase >= 0.40; rpm = np.where(close, np.linspace(high, idle, count), high); load = np.where(close, 0.12, 0.25); throttle = np.where(close, 0.02, 0.30)
     elif scene == "idle_return":
         rpm = np.where(phase < 0.45, 0.78 * redline, np.linspace(0.78 * redline, idle, count)); load = np.where(phase < 0.45, 0.55, 0.12); throttle = np.where(phase < 0.45, 0.62, 0.14)
     else:
         anchors = np.array([idle, 2400.0, 6200.0, 5400.0, 2200.0, idle], dtype=np.float64); anchor_x = np.linspace(0.0, 1.0, anchors.size); rpm = np.interp(phase, anchor_x, anchors); load = np.interp(phase, anchor_x, [0.18, 0.45, 0.95, 0.25, 0.30, 0.16]); throttle = np.interp(phase, anchor_x, [0.18, 0.50, 0.98, 0.03, 0.35, 0.16])
-    return VehicleStateTrace(time_s, rpm, load, throttle, np.gradient(rpm / 60.0, time_s)).validate()
+    return VehicleStateTrace(time_s, rpm, load, throttle, np.gradient(rpm / 60.0, state_time_s)).validate()
 
 
 def _state_arrays(trace: VehicleStateTrace) -> dict[str, np.ndarray]:
@@ -66,15 +69,17 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         source = render_hellcat(trace).pressure * OUTPUT_SCALE
         post_ptr = FrozenPtrStereo(SAMPLE_RATE_HZ).process(source)
         monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
-        return source, post_ptr, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER"}
+        return source, post_ptr, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
     settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
     setting = settings[architecture]
-    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, 960, ptr_enabled=True, **setting)
-    result = engine.process(_state_arrays(trace))
+    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=True, **setting)
+    result = engine.process_with_trace(_state_arrays(trace))
     raw = result.raw_pcm * OUTPUT_SCALE
     post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
     monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
-    return raw, post_ptr, {"source_model": architecture, "ptr_status": result.diagnostics["ptr_status"], "engine_state": result.diagnostics}
+    diagnostics = dict(result.diagnostics)
+    diagnostics["architecture"] = architecture
+    return raw, post_ptr, diagnostics
 
 
 def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTrace, reference: np.ndarray | None = None) -> dict[str, Any]:
@@ -112,9 +117,11 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     post_receipt = write_pcm24_wav(case_root / "post_ptr_raw.wav", post_ptr, SAMPLE_RATE_HZ)
     monitor_receipt = write_pcm24_wav(case_root / "monitor.wav", monitor, SAMPLE_RATE_HZ)
     write_json(case_root / "state_trace.json", {"sample_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
-    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))))}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))))}, "comparison": comparison, "diagnostics": diagnostics})
+    write_diagnostic_traces(case_root, diagnostics)
+    diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
+    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))) )}, "comparison": comparison, "diagnostics": diagnostic_summary})
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
-    files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "metrics.json", "cpu_memory_latency.json")}
+    files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
     return {"raw_sha256": raw_receipt.sha256, "post_ptr_sha256": post_receipt.sha256, "monitor_sha256": monitor_receipt.sha256, "comparison": comparison, "render_seconds": elapsed}
 
@@ -134,12 +141,13 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
         for scene in SCENES:
             trace = build_hellcat_bakeoff_trace(scene, duration_s)
             architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
-    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY", "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER", "selected_architecture": None, "architectures": architectures}
+    block_aligned_duration_s = max(2, int(round(duration_s * STATE_RATE_HZ))) / STATE_RATE_HZ
+    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY", "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER", "requested_duration_s": float(duration_s), "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
     write_json(root / "bakeoff_results.json", result)
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
     write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P5", "P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
-    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "files": files})
+    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "requested_duration_s": result["requested_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
 
 
