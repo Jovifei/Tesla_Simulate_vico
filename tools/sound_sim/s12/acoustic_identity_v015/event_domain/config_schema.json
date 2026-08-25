@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12.event_domain_v1",
+  "type": "object",
+  "required": ["schema", "vehicle_id", "architecture", "cylinder_or_rotor_count", "bank_count", "event_phase_deg", "bank_assignment", "provenance", "asset_checksums"],
+  "properties": {
+    "schema": {"const": "s12.event_domain_v1"},
+    "vehicle_id": {"type": "string", "minLength": 1},
+    "architecture": {"enum": ["piston", "rotary_wankel"]},
+    "cylinder_or_rotor_count": {"$ref": "#/$defs/parameter"},
+    "bank_count": {"$ref": "#/$defs/parameter"},
+    "event_phase_deg": {"$ref": "#/$defs/parameter"},
+    "bank_assignment": {"$ref": "#/$defs/parameter"},
+    "firing_order_evidence": {"$ref": "#/$defs/parameter"},
+    "per_path_primary_length_m": {"$ref": "#/$defs/parameter"},
+    "per_path_attenuation": {"$ref": "#/$defs/parameter"},
+    "afterfire": {"type": "object"},
+    "forced_induction": {"type": "object"},
+    "provenance": {"$ref": "#/$defs/parameter"},
+    "asset_checksums": {"$ref": "#/$defs/parameter"}
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "required": ["value", "unit", "range", "source_level", "source", "verification_state"],
+      "properties": {
+        "source_level": {"enum": ["A", "B", "C"]},
+        "verification_state": {"enum": ["verified", "synthetic_assumption", "pending"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

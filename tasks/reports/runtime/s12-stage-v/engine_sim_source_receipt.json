@@ -1,0 +1,61 @@
+{
+  "stage": "S12 Stage V",
+  "engine_sim_source": {
+    "path": "E:/project/engine-sim",
+    "commit": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+    "license": "MIT",
+    "copied_code": false,
+    "copied_engine_scripts": false,
+    "copied_ir_or_audio": false
+  },
+  "s12_baseline": {
+    "worktree": "E:/Tesla_speed/worktrees/s12-stage-v-event-domain-engine-source",
+    "branch": "agent/s12-stage-v-event-domain-engine-source",
+    "head": "b1d500c7c37a71728020c39e6dc115a0cd6743d5",
+    "status_short": [],
+    "diff_check": "PASS",
+    "remote_stage_v_branch": null,
+    "track_p_guard": "PASS: S12 Track-P Baseline v3 / BASE ea586bc",
+    "untracked_files": []
+  },
+  "scope": [
+    "synthetic",
+    "uncalibrated",
+    "offline",
+    "not OEM reproduction",
+    "NOT_R1_QUALIFIED",
+    "NOT_PROFILE_FREEZE_READY"
+  ],
+  "implementation_policy": "clean-room architecture mapping; no Engine-Sim source or unknown-license asset copied"
+  ,"stage_v_implementation": {
+    "status": "EVENT_DOMAIN_HELLCAT_ACCEPTED / WAITING_FOR_JOVI_HELLCAT_REVIEW / REFERENCE_POINTER_ONLY / NOT_R1_QUALIFIED",
+    "source_model": "event_domain_v1",
+    "runtime_root": "E:/Tesla_speed/worktrees/s12-stage-v-event-domain-engine-source/tasks/reports/runtime/s12-stage-v/hellcat_vertical_slice_v2",
+    "runtime_manifest_sha256": "5AC9339344D4DF7E2931DE2F47703F49159BDBBC27FBE6AB4F0F8040AE51306A",
+    "review_package": "E:/Tesla_speed/review_packages/s12-stage-v-event-domain-v1",
+    "review_package_manifest_sha256": "563323888B486CBC979E8D5B7464D3A5E1FDD043072795A5D27813FA16BAF3A8",
+    "blind_manifest_sha256": "E36F3669A3F2893C0A22E80C057535115F235F05675414E17FA0D1CCC92BE284",
+    "test_evidence": {
+      "stage_v": "31 passed",
+      "acoustic_identity_v015": "517 passed, 118 subtests passed",
+      "stage_n_q_r_s_t": "46 passed",
+      "track_p": "180 frozen files / 2 frozen symbols OK",
+      "manifest_wav_json": "PASS",
+      "compileall": "PASS; 1 existing SyntaxWarning",
+      "one_shot_block": "5/5 equal",
+      "afterfire": "eligible=1, wrong_condition=0"
+    },
+    "reference_status": "REFERENCE_POINTER_ONLY",
+    "ferrari_rx7_status": "PUBLISHED; HUMAN_REVIEW_PENDING"
+    ,"three_vehicle_implementation": {
+      "status": "EVENT_DOMAIN_THREE_VEHICLE_CANDIDATES_READY / WAITING_FOR_JOVI_THREE_VEHICLE_REVIEW / REFERENCE_POINTER_ONLY / NOT_R1_QUALIFIED",
+      "runtime_root": "E:/Tesla_speed/worktrees/s12-stage-v-event-domain-engine-source/tasks/reports/runtime/s12-stage-v/three_vehicle_slices_v3",
+      "summary_sha256": "93F5C95FD25C73D6C31BE355F7A5D3FC97B9D26001BA51D9ADFE8BA64D1705D3",
+      "review_package": "E:/Tesla_speed/review_packages/s12-stage-v-event-domain-v3",
+      "review_package_manifest_sha256": "EAF55DF37E405B959F540B5A9E68BFFC92328DB1B8925E39308D86D18A49F608",
+      "blind_manifest_sha256": "743FD2D7522CE4A3946FDDF75FC66C49ACCAC338A5D31220226AFC998D81521D",
+      "vehicles": ["hellcat_v1", "ferrari_458_v1", "rx7_fd_v1"],
+      "scenario_count_per_vehicle": 5
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "rotary_event_width_scale": {"value": 1.0, "unit": "ratio", "range": [0.4, 2.5], "source_level": "C", "source": "synthetic rotary event width assumption", "verification_state": "synthetic_assumption"},
+  "rotary_event_gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.2, 2.0], "source_level": "C", "source": "synthetic rotary event gain assumption", "verification_state": "synthetic_assumption"},
+  "housing_gain_scale": {"value": 0.18, "unit": "normalized_gain", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic rotary housing response", "verification_state": "synthetic_assumption"},
+  "housing_decay_scale": {"value": 0.12, "unit": "seconds", "range": [0.01, 1.0], "source_level": "C", "source": "synthetic rotary housing decay", "verification_state": "synthetic_assumption"},
+  "housing_order_mix": {"value": 0.35, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic rotary housing order mix", "verification_state": "synthetic_assumption"},
+  "primary_spool_tau": {"value": 0.18, "unit": "seconds", "range": [0.01, 2.0], "source_level": "C", "source": "synthetic sequential turbo primary spool", "verification_state": "synthetic_assumption"},
+  "secondary_spool_tau": {"value": 0.35, "unit": "seconds", "range": [0.01, 2.0], "source_level": "C", "source": "synthetic sequential turbo secondary spool", "verification_state": "synthetic_assumption"},
+  "blow_off_gain": {"value": 0.08, "unit": "normalized_gain", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic turbo bypass response", "verification_state": "synthetic_assumption"},
+  "blow_off_decay": {"value": 0.16, "unit": "seconds", "range": [0.01, 2.0], "source_level": "C", "source": "synthetic turbo bypass decay", "verification_state": "synthetic_assumption"}
+}

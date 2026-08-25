@@ -4032,3 +4032,29 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] MATLAB R2026a 已在打开会话中逐条执行 `10` 个信号；批处理一次性循环曾触发 `0xc0000005`，未采用崩溃收据；MoSQITo 1.2.1 隔离环境执行 `10` 个信号；MATLAB/MoSQITo/Proxy SHA 交叉校验通过。
 - [x] 生成独立中文页面 `rx7_topic_r2.html`、数据 `rx7_topic_r2_results.json` 和报告 `rx7_topic_r2_report.md`；旧 R3 Dashboard 不覆盖。
 - [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；统一证据矩阵测试通过；RX-7 页面 Playwright smoke PASS；全量 S12 `455 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。
+# 2026-08-24 S12 Stage V — Engine-Sim-Inspired Event-Domain Engine Source
+
+> 状态：`EVENT_DOMAIN_THREE_VEHICLE_CANDIDATES_READY / WAITING_FOR_JOVI_THREE_VEHICLE_REVIEW / REFERENCE_POINTER_ONLY / NOT_R1_QUALIFIED`；隔离 worktree `E:\Tesla_speed\worktrees\s12-stage-v-event-domain-engine-source`，不 push、不 merge。
+
+- [x] 从 `b1d500c7c37a71728020c39e6dc115a0cd6743d5` 建立分支 `agent/s12-stage-v-event-domain-engine-source`。
+- [x] 记录初始 HEAD、clean status、diff-check、Track-P 守卫和 Engine-Sim commit `85f7c3b959a908ed5232ede4f1a4ac7eafe6b630`。
+- [x] 完成 Engine-Sim 源码研究报告、S12 traceability 和 source receipt。
+- [x] 先写 Stage V RED 测试并观察失败，再按 RED→GREEN 实现。
+- [x] 实现 `event_domain_v1`，保持 `legacy_v015` 默认源和 Track-P 冻结边界不变。
+- [x] 通过 Hellcat vertical slice：事件、连续曲轴/转矩、路径衰减/温度声速、回火、raw/monitor、PCM24 WAV 重开与三方 comparator。
+- [x] 审核后迁移 Ferrari 458 flat-plane 与 RX-7 rotary event-domain；RX-7 的事件宽度、housing、双 spool 和 blow-off 参数均可达。
+- [x] 生成 Hellcat 五场景及三车型五场景 runtime package、Hellcat candidate grid、最终报告、中文试听指南和隐藏 B/C review package；Reference 保留外部指针，不复制原始媒体。
+- [x] 运行 Stage V、Stage N/Q/R/S/T、Track-P、compileall、JSON/WAV/diff 门禁。
+- [ ] 等待合法且同步的 Reference 后，重新执行 Reference/Parent/Candidate 三方 R2/R1 比较；当前候选网格为 `REFERENCE_TARGET_MISSING`，未选择任何候选。
+
+## Review
+
+## Review（2026-08-25）
+
+- 当前代码测试：Stage V 新增 `31 passed`；完整 `acoustic_identity_v015/tests` 的最近基线为 `513 passed, 118 subtests passed`（旋转扩展后的最终回归待重跑），另有 1 条历史 `SyntaxWarning`；Stage N/Q/R/S/T 聚焦为 `46 passed`。
+- Track-P 独立守卫：`180 files / 2 symbols OK`；`git diff --check`、compileall、JSON finite 校验均通过。
+- 新鲜 runtime：`tasks/reports/runtime/s12-stage-v/hellcat_vertical_slice_v2/`；五场景 manifest/WAV 验证 `0 errors`，one-shot/block PCM 等价性 `5/5 true`，合法 afterfire 场景 `1` 个事件、稳态/错误条件 `0`。
+- 顶层 review package：`E:\Tesla_speed\review_packages\s12-stage-v-event-domain-v1\`；独立校验 `PACKAGE_ERRORS=0`，状态 `WAITING_FOR_JOVI_HELLCAT_REVIEW`，Reference 为 `REFERENCE_POINTER_ONLY`。
+- 三车型新鲜 runtime：`tasks/reports/runtime/s12-stage-v/three_vehicle_slices_v3/`；Hellcat/Ferrari/RX-7 三个 manifest 均 `errors=[]`。三车型 review package：`E:\Tesla_speed\review_packages\s12-stage-v-event-domain-v3\`，独立校验 `ERRORS=[]`，109 文件。
+- v1 旧输出因 afterfire 场景门失败保留作诊断证据；v2 是当前唯一新鲜交付证据。未复制 Engine-Sim 源码、`.mr`、IR、版权原始音频；未修改 FVM/PTR/Radiation/MATLAB/Simulink/Runtime/Android/ESP32/CAN。
+- 未完成项：合法同步 Reference；Jovi 中文盲听反馈；R1 qualification、OEM/校准和 Profile Freeze 均保持关闭。
