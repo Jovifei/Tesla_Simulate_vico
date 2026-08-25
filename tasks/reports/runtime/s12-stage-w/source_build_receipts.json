@@ -1,0 +1,12 @@
+{
+  "schema_version": "s12.stage_w.source_build_receipts.v1",
+  "receipts": [
+    {"id":"engine-sim","status":"STUDIED_EXISTING_STAGE_V_RECEIPT","commit":"85f7c3b959a908ed5232ede4f1a4ac7eafe6b630","build":"not rerun in W7; existing Stage-V clean-room study"},
+    {"id":"ensim4","status":"BLOCKED_TOOLCHAIN_NO_CLANG_MAKE","commit":"35b92a6aa5e038d18769d637dc9bedf0346939e1","build":"make ENGINE=ENGINE_3_CYL","run":"not run"},
+    {"id":"dasetwas-enginesound","status":"NOT_RUN_EXTERNAL_RESEARCH_ONLY","commit":"e5fcca587397c0c8ba9c9d24874b951fed74d260"},
+    {"id":"granular-engine-audio","status":"NOT_RUN_NO_LICENSE","commit":"d27967bea639feea1fb8429a7dbfb42cb9bd508f"},
+    {"id":"fivem-enginesound","status":"NOT_RUN_LICENSE_CONFLICT","commit":"f0c12aa5a09d56344f9d96ce989299e900d76b70"},
+    {"id":"esp32-rc-engine-sound","status":"NOT_RUN_NO_LICENSE","commit":"5520d721ef41b50f39dfe9a7081ac4620138702a"},
+    {"id":"commercial_and_papers","status":"PUBLIC_DOCS_ONLY","build":"NOT_APPLICABLE"}
+  ]
+}

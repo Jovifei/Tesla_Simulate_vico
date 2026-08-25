@@ -1,0 +1,14 @@
+{
+  "schema_version": "s12.stage_w.license_receipts.v1",
+  "receipts": [
+    {"id":"engine-sim","license":"MIT","license_url":"https://raw.githubusercontent.com/ange-yaghi/engine-sim/85f7c3b959a908ed5232ede4f1a4ac7eafe6b630/LICENSE","treatment":"clean_room"},
+    {"id":"ensim4","license":"MIT","license_sha256":"CDFF1D6C75E2B3C954619FDAA0A9917FF0F37ABE754201576C59853059A0305A","treatment":"teacher_only"},
+    {"id":"dasetwas-enginesound","license":"MIT plus notices","treatment":"clean_room"},
+    {"id":"granular-engine-audio","license":"NONE_FOUND","treatment":"no_code_no_assets"},
+    {"id":"fivem-enginesound","license":"Apache-2.0 file / README MIT conflict","treatment":"no_code_until_resolved"},
+    {"id":"esp32-rc-engine-sound","license":"NONE_FOUND","treatment":"concept_only"},
+    {"id":"ptr-model","license":"CC BY-NC 4.0 code/data; CC BY-NC-SA 4.0 paper","treatment":"research_only"},
+    {"id":"commercial_sources","license":"proprietary/commercial","treatment":"public_docs_only"},
+    {"id":"papers","license":"publication-specific","treatment":"method_reading_only"}
+  ]
+}

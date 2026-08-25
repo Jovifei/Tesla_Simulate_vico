@@ -1,0 +1,38 @@
+{
+  "architecture": "P1",
+  "comparison": {
+    "pairs": {
+      "parent_candidate": {
+        "difference_rms": 0.0
+      },
+      "reference_candidate": {
+        "uncertainty": {
+          "reference_missing": true
+        }
+      },
+      "reference_parent": {
+        "uncertainty": {
+          "reference_missing": true
+        }
+      }
+    },
+    "parent_candidate_difference_rms": 0.0,
+    "reference_available": false,
+    "schema": "s12.stage_w.baseline_comparison.v1",
+    "status": "BASELINE_ONLY"
+  },
+  "diagnostics": {
+    "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+    "source_model": "legacy_v015"
+  },
+  "post_ptr_metrics": {
+    "peak": 0.046395692516423614,
+    "rms": 0.0024540521701625078
+  },
+  "raw_metrics": {
+    "peak": 0.18293198879291772,
+    "rms": 0.050881358870366974
+  },
+  "scene": "hot_idle_20s",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+}

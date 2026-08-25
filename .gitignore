@@ -108,6 +108,9 @@ package-lock.json
 # S12 benchmark working output (accepted baselines are stored separately).
 tools/sound_sim/s12/benchmark/out/
 
+# Stage-W bake-off keeps reproducible JSON receipts in Git; rendered audio stays local.
+/tasks/reports/runtime/s12-stage-w/bakeoff_v1/**/*.wav
+
 # Stage-N MATLAB analysis inputs are regenerated from immutable, hash-bound
 # review packages and are intentionally not source-controlled.
 artifacts/matlab/s12-stage-n-order-inputs-v1/
