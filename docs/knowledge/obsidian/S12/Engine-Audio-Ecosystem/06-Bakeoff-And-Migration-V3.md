@@ -14,4 +14,6 @@ s12_git_commit: working_tree_pending_next_commit
 Hellcat bakeoff v3 keeps P1/P2/P2H/P3 frame-aligned and records persistent
 phase/event/path/gain traces. Ferrari 458 and RX-7 FD v3 are 8-second,
 five-scene P1/P2H/P3 preselection packages. No candidate is selected without
-a legal RPM/state-synchronised Reference.
+a legal RPM/state-synchronised Reference. The labelled review package is
+`E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v1` with ZIP
+SHA `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.

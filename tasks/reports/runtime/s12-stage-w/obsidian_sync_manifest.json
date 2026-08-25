@@ -23,7 +23,7 @@
     {"name":"03-License-Matrix.md","repo_sha256":"bfbe44ec10bf0b7c21e0d4799e6bd1e9b8c21c83c0893b07ed426f3451b7e608","vault_sha256":"c98a722420e39d73bd6c87d208baaabad23cd01157edc62b17cf8978405bd20b"},
     {"name":"04-Source-To-S12-Traceability.md","repo_sha256":"cb4e2e17dfd3d48c7fbdefc3557daa8e6895918ca56b655acd794ee0f22d7018","vault_sha256":"feec044c81b8c7e8a577d547be65375756930b6f74f9e250739305109d7f341d"},
     {"name":"05-Stage-W-Logs.md","repo_sha256":"025da476212b11eb91dc618689e1c958f9178d33ddc118da66157fb70f3a7975","vault_sha256":"55057c5724bad1f08bb6b1634e9604c20e4ad88fbb01be91f1dd372c7d5f9075"},
-    {"name":"06-Bakeoff-And-Migration-V3.md","repo_sha256":"9e761928e68be33c3e7583d0eba81bd1c2637f26fcf00893d8792a5cc57fb5c5","vault_sha256":"46680f0fcfe81b1fead3f23932c8be736117d802a239f0b26a4ab9d9dea92b7f"},
+    {"name":"06-Bakeoff-And-Migration-V3.md","repo_sha256":"75ba8df86c4160cf46e9cf2737f3dff7d2c42978a712f7b47d2f656400ea08b3","vault_sha256":"6a61df83c3c9c593e5ad87473da224c1de49f67365111428fecbbac7ad1cf065"},
     {"name":"Commercial-Public-Workflow-References.md","repo_sha256":"b6d8509714faa6f0a2006253ca46cc09e642b6a9368ce0d41c238221d7d94f00","vault_sha256":"343a89c9f416d89a8e461007b159257fb4e2ab0c3827adce9d0e9f68e596b553"},
     {"name":"Open-Source-DasEtwas-Enginesound.md","repo_sha256":"b0683f5815b4ea48561b19168436f1c4f3eb2685316143b60943386b495298a1","vault_sha256":"2fb00f3072c9aed0c2d7919d33881f3da21f444e11fc62ba9a99c1960165bf0c"},
     {"name":"Open-Source-Engine-Sim.md","repo_sha256":"789e292b225f0f77040109104c614afb936617fccd407821108135a5edf768d2","vault_sha256":"3442b2b44cd181306879b60c5ffd21960ae23d4f5b3767a120d861e037f52b56"},

@@ -23,3 +23,8 @@ architectures, and Profile Freeze stays closed.
 
 Scope: synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
 `NOT_R1_QUALIFIED`, `NOT_PROFILE_FREEZE_READY`.
+
+The local review package is
+`E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v1` with ZIP
+SHA-256 `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.
+It is a labelled engineering package, not a scoring result or a selection.

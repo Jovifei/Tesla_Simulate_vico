@@ -4108,6 +4108,9 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
   frame counts and emits phase/event/path/gain traces. Eligible afterfire is
   nonzero while the ineligible scenario is zero; the 1.0 s smoke duration is
   recorded explicitly and is not presented as a 20 s/60 s long-window result.
+- Local labelled engineering package: `E:\Tesla_speed\review_packages\s12-stage-w-engine-audio-bakeoff-v1`; ZIP SHA
+  `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.
+  It contains P1/P2/P2H/P3 Raw/Post-PTR/Monitor and fail-closed Reference/P4/P5/P6 records; it is not an architecture selection.
 
 ### W7/W8 Follow-up Review
 
