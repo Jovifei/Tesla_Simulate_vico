@@ -4122,6 +4122,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
   passed but its Apache LICENSE/README-MIT conflict keeps reuse closed; PTR
   source parse passed but its weight archive is absent; CMake/Rust/Unity/
   PlatformIO toolchains are absent and remain explicit build blockers.
+- ENSIM4 later built in a Docker Arch container (`ENGINE_3_CYL`) and survived a
+  5 s dummy-SDL probe. It remains teacher-only: no real audio device, CFD
+  ON/OFF run, CPU receipt or WAV is claimed. DasEtwas Cargo remains blocked by
+  crates.io TLS certificate validation; TLS verification was not bypassed.
 
 ### W11 Preselection Review
 

@@ -1,6 +1,6 @@
 # S12 Stage W Waveguide / ENSIM4 Teacher (W4)
 
-Status: `WAVEGUIDE_V1_PASS / ENSIM4_BUILD_BLOCKED_TOOLCHAIN`
+Status: `WAVEGUIDE_V1_PASS / ENSIM4_DOCKER_BUILD_PASS_DUMMY_RUN_ONLY`
 
 ## Waveguide v1
 
@@ -22,10 +22,13 @@ path-model selection.
 - LICENSE SHA-256: `CDFF1D6C75E2B3C954619FDAA0A9917FF0F37ABE754201576C59853059A0305A`
 - README/source claim: C23, one-dimensional isentropic exhaust CFD, SDL3, CFD
   on/off control.
-- Build attempt: `make ENGINE=ENGINE_3_CYL` / `make ENGINE=ENGINE_8_CYL`
-  could not start because this Windows host has no `clang`/`make`; WSL exposes
-  only `docker-desktop` and no usable Linux distribution. No build/run/audio
-  PASS is claimed.
+- Docker build: Arch Linux container installed clang/make/SDL3 and completed
+  `make ENGINE=ENGINE_3_CYL`; Linux binary SHA-256 is
+  `0e88fa95ce4ec752acae1c99dca659a56a0ad61edc12ff214977a2082ba413d4`.
+- Dummy run: `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy timeout 5s ./ensim4`
+  remained live until the controlled timeout. This proves the executable path,
+  not a listening result: no real playback device, CFD on/off interaction, CPU
+  capture or WAV was produced.
 
 ENSIM4 remains an offline teacher candidate only. Its C source and output are
 not copied into S12 and cannot replace the frozen S12 FVM/PTR/Radiation chain.
