@@ -4,14 +4,14 @@
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
   "raw_external_media_committed": false,
   "artifacts": {
-    "hellcat_bakeoff_v5": {"path": "bakeoff_v5/bakeoff_manifest.json", "sha256": "ed3e7ed5db5d6923691b2ce8139f949216107d7415882c15dbb4fefa3714b7ff", "status": "REFERENCE_TARGET_MISSING"},
+    "hellcat_bakeoff_v6": {"path": "bakeoff_v6/bakeoff_manifest.json", "sha256": "781571023002b7da2a4812142477d63d3760c2741956d34232f3ad3d35f3cee7", "status": "REFERENCE_TARGET_MISSING"},
     "ferrari_migration_v3": {"path": "migration_v3/ferrari_458/migration_manifest.json", "sha256": "d95971f408ac7c84bad7944f222b26ef389e2469e09d1e4f42ebddcd230e4ec5", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
-    "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "501bf6672b7fe624ca31f964e7643b394177f0cd7be22c0a87a1cfe2f48bf944", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
+    "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "3fff4d0e6bc4fdbe93e0d9257d34bba775e3f0e881d3b537033576ecbfe47ab8", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
     "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
     "r1_capture_package": {"path": "w10_r1_capture_package_receipt.json", "status": "WAITING_FOR_R1_PILOT_DELIVERY"},
-    "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "c5c20b1977162b8df2c7b375bc17d975d7b7dc2b3a92f246848653da48f5c965"},
-    "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "3dc856fa998f67f6a8febfb23cb28ecb371213af8ecf43d9f9db5a2152724087"},
+    "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "1d26de37d81de3ad80821f5ed0d9ec373db596ade7d646d11fde40a93568aebf"},
+    "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "850ed1b4d07039e7791207c8fd9ffb3f189f489a1a9c0f3c6c363321917d7d91"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
     "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "37ab6e72808d213a46c15b2db2b967e0dbc3235d4d1a8db41c5871edcd395380"}
   },

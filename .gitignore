@@ -114,6 +114,7 @@ tools/sound_sim/s12/benchmark/out/
 /tasks/reports/runtime/s12-stage-w/bakeoff_v3/**/*.wav
 /tasks/reports/runtime/s12-stage-w/bakeoff_v4/
 /tasks/reports/runtime/s12-stage-w/bakeoff_v5/**/*.wav
+/tasks/reports/runtime/s12-stage-w/bakeoff_v6/**/*.wav
 /tasks/reports/runtime/s12-stage-w/migration_v1/
 /tasks/reports/runtime/s12-stage-w/migration_v2/
 /tasks/reports/runtime/s12-stage-w/migration_v3/**/*.wav

@@ -1,0 +1,488 @@
+{
+  "architecture": "P2H",
+  "comparison": {
+    "analysis_signal": "unaltered_analysis_signal",
+    "pairs": {
+      "parent_candidate": {
+        "delta": {
+          "candidate_rms": 0.0006837328802351613,
+          "difference_rms": 0.0038685891519350465,
+          "parent_rms": 0.0039183252148458,
+          "sample_count": 48000.0
+        },
+        "difference_rms": 0.0038685891519350465,
+        "rich": {
+          "alignment": {
+            "applied_shift_samples": 1,
+            "max_shift_samples": 4096,
+            "method": "bounded_cross_correlation"
+          },
+          "bands": {
+            "1000_4000": {
+              "candidate_share": 0.2677826047818322,
+              "delta": -0.39753289134493125,
+              "reference_share": 0.6653154961267634,
+              "warning": null
+            },
+            "120_250": {
+              "candidate_share": 0.04687381146220378,
+              "delta": -0.032760076998431656,
+              "reference_share": 0.07963388846063543,
+              "warning": null
+            },
+            "20_60": {
+              "candidate_share": 0.0007556272996357031,
+              "delta": 0.0005989881166830994,
+              "reference_share": 0.0001566391829526037,
+              "warning": null
+            },
+            "250_400": {
+              "candidate_share": 0.17791821179907805,
+              "delta": -0.008299221560461756,
+              "reference_share": 0.1862174333595398,
+              "warning": null
+            },
+            "4000_5500": {
+              "candidate_share": 0.05969360041980164,
+              "delta": 0.058543991626698176,
+              "reference_share": 0.0011496087931034587,
+              "warning": null
+            },
+            "400_1000": {
+              "candidate_share": 0.15079204986646905,
+              "delta": 0.09452061493867714,
+              "reference_share": 0.056271434927791915,
+              "warning": null
+            },
+            "5500_12000": {
+              "candidate_share": 0.09939604913794695,
+              "delta": 0.09738519945220278,
+              "reference_share": 0.002010849685744162,
+              "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+            },
+            "60_120": {
+              "candidate_share": 0.13702721611289168,
+              "delta": 0.12897841096653423,
+              "reference_share": 0.00804880514635744,
+              "warning": null
+            }
+          },
+          "candidate_features": {
+            "1000_4000": 0.2677826047818322,
+            "120_250": 0.04687381146220378,
+            "20_60": 0.0007556272996357031,
+            "250_400": 0.17791821179907805,
+            "4000_5500": 0.05969360041980162,
+            "400_1000": 0.15079204986646905,
+            "5500_12000": 0.09939604913794696,
+            "60_120": 0.13702721611289168,
+            "centroid_hz": 2882.319239063689,
+            "rms_db": -64.53461743033594,
+            "rolloff_hz": 5765.0,
+            "spectral_contrast_db": 20.392663329518733,
+            "spectral_flatness": 0.04372290686631661,
+            "tristimulus_high": 0.03352496448044122,
+            "tristimulus_low": 0.89755807954327,
+            "tristimulus_mid": 0.06891695597628875
+          },
+          "case": {
+            "analysis_domain": "unaltered_analysis_signal",
+            "candidate_id": "event_candidate",
+            "candidate_load": [
+              0.33999999999999997,
+              0.33999999999999997
+            ],
+            "candidate_rpm": [
+              2000.0,
+              2000.0
+            ],
+            "candidate_source_commit": "stage_w_worktree",
+            "channel_policy": "stereo_mean_to_mono",
+            "loudness_match_policy": "analysis_unaltered_audition_separate",
+            "microphone_setup_uncertainty": "unspecified",
+            "reference_id": "legacy_parent",
+            "reference_kind": "synthetic_parent",
+            "reference_load": [
+              0.33999999999999997,
+              0.33999999999999997
+            ],
+            "reference_provenance": "legacy_parent_raw",
+            "reference_rpm": [
+              2000.0,
+              2000.0
+            ],
+            "sample_rate_hz": 48000,
+            "scenario": "steady_2000rpm",
+            "vehicle_id": "hellcat"
+          },
+          "comparison_contract": {
+            "candidate_source_commit": "stage_w_worktree",
+            "channel_policy": "stereo_mean_to_mono",
+            "loudness_match_policy": "analysis_unaltered_audition_separate",
+            "microphone_setup_uncertainty": "unspecified",
+            "reference_provenance": "legacy_parent_raw"
+          },
+          "events": {
+            "candidate_event_count": 67,
+            "wrong_condition_event_count": 0
+          },
+          "loudness": {
+            "delta_db": -16.252901746140623
+          },
+          "order": {
+            "candidate": {
+              "dominant_order": 3,
+              "fundamental_hz": 33.333333333333336,
+              "harmonic_energy_share": 0.2026944120645012,
+              "mean_rpm": 2000.0,
+              "order_band_energy": [
+                7.893919090603501e-05,
+                4.597064388840121e-05,
+                0.13554406396948743,
+                0.040959575605221725,
+                0.0001593858183038877,
+                0.003475301469801212,
+                0.0002242454439473786,
+                0.02220692992294513
+              ],
+              "rpm_present": true
+            },
+            "comparison": {
+              "order_continuity": "not_evaluated_without_time_varying_rpm_trace",
+              "ridge_amplitude_error": 0.15832869392878426,
+              "ridge_frequency_error_hz": 0.0,
+              "status": "constant_window_proxy_only"
+            },
+            "reference": {
+              "dominant_order": 7,
+              "fundamental_hz": 33.333333333333336,
+              "harmonic_energy_share": 0.04436571813571694,
+              "mean_rpm": 2000.0,
+              "order_band_energy": [
+                6.013450332739027e-06,
+                5.5815600728040845e-05,
+                2.6553851129951235e-05,
+                0.00014252511242583506,
+                0.0004998599331904965,
+                0.00012393621450932396,
+                0.04304250775008025,
+                0.0004685062233203075
+              ],
+              "rpm_present": true
+            },
+            "rpm_compatible": true
+          },
+          "preprocessing": {
+            "analysis_signal": "unaltered_analysis_signal",
+            "loudness_matched_audition_signal_used": false,
+            "operations": [
+              "channel_fold_down",
+              "dc_removal"
+            ]
+          },
+          "psychoacoustics": {
+            "fluctuation_proxy_delta": -0.00019153608002587036,
+            "roughness_proxy_delta": -0.000703882371473504,
+            "sharpness_proxy_delta": 1031.6313455966708,
+            "tonality_proxy_delta": 2071.5976376308818
+          },
+          "scenario_metrics": {
+            "acceleration": "not_evaluated_without_rpm_load_window",
+            "idle": "not_evaluated_without_idle_window",
+            "lift_afterfire": "not_evaluated_without_lift_window",
+            "shift": "not_evaluated_without_shift_window"
+          },
+          "spectral": {
+            "centroid_delta_hz": 1031.6313455966708,
+            "contrast_delta_db": -4.2655065764503135,
+            "harmonic_percussive_proxy": {
+              "candidate_harmonic_share": 0.2026944120645012,
+              "percussive_proxy": 6.820703651127957,
+              "reference_harmonic_share": 0.04436571813571694
+            },
+            "log_distance": 1.2092203680338234,
+            "rolloff_delta_hz": 3365.0,
+            "tristimulus_delta": [
+              -0.10037163302272711,
+              0.06752404172705716,
+              0.032847591295670026
+            ]
+          },
+          "transients": {
+            "candidate": {
+              "attack_s": 0.2491875,
+              "decay_to_10pct_s": 0.0004166666666666667,
+              "impact_peak": 0.006820796275504332
+            },
+            "state_window_required_for_shift_or_afterfire": true
+          },
+          "uncertainty": {
+            "digital_domain_relative_only": true,
+            "external_reference_missing": true,
+            "identity_score_available": false,
+            "reference_kind": "synthetic_parent",
+            "reference_missing": false
+          }
+        }
+      },
+      "reference_candidate": {
+        "bands": {},
+        "candidate_features": {
+          "1000_4000": 0.2677826047818322,
+          "120_250": 0.04687381146220378,
+          "20_60": 0.0007556272996357031,
+          "250_400": 0.17791821179907805,
+          "4000_5500": 0.05969360041980162,
+          "400_1000": 0.15079204986646905,
+          "5500_12000": 0.09939604913794696,
+          "60_120": 0.13702721611289168,
+          "centroid_hz": 2882.319239063689,
+          "rms_db": -64.53461743033594,
+          "rolloff_hz": 5765.0,
+          "spectral_contrast_db": 20.392663329518733,
+          "spectral_flatness": 0.04372290686631661,
+          "tristimulus_high": 0.03352496448044122,
+          "tristimulus_low": 0.89755807954327,
+          "tristimulus_mid": 0.06891695597628875
+        },
+        "case": {
+          "analysis_domain": "unaltered_analysis_signal",
+          "candidate_id": "event_candidate",
+          "candidate_load": [
+            0.33999999999999997,
+            0.33999999999999997
+          ],
+          "candidate_rpm": [
+            2000.0,
+            2000.0
+          ],
+          "candidate_source_commit": "stage_w_worktree",
+          "channel_policy": "stereo_mean_to_mono",
+          "loudness_match_policy": "analysis_unaltered_audition_separate",
+          "microphone_setup_uncertainty": "unspecified",
+          "reference_id": null,
+          "reference_kind": "synthetic_parent",
+          "reference_load": [
+            0.33999999999999997,
+            0.33999999999999997
+          ],
+          "reference_provenance": "REFERENCE_POINTER_ONLY",
+          "reference_rpm": [
+            2000.0,
+            2000.0
+          ],
+          "sample_rate_hz": 48000,
+          "scenario": "steady_2000rpm",
+          "vehicle_id": "hellcat"
+        },
+        "comparison_contract": {
+          "candidate_source_commit": "stage_w_worktree",
+          "channel_policy": "stereo_mean_to_mono",
+          "loudness_match_policy": "analysis_unaltered_audition_separate",
+          "microphone_setup_uncertainty": "unspecified",
+          "reference_provenance": "REFERENCE_POINTER_ONLY"
+        },
+        "events": {
+          "candidate_event_count": 67,
+          "wrong_condition_event_count": 0
+        },
+        "order": {
+          "candidate": {
+            "dominant_order": 3,
+            "fundamental_hz": 33.333333333333336,
+            "harmonic_energy_share": 0.2026944120645012,
+            "mean_rpm": 2000.0,
+            "order_band_energy": [
+              7.893919090603498e-05,
+              4.597064388840121e-05,
+              0.13554406396948743,
+              0.040959575605221725,
+              0.0001593858183038877,
+              0.003475301469801212,
+              0.00022424544394737846,
+              0.02220692992294514
+            ],
+            "rpm_present": true
+          },
+          "rpm_compatible": true
+        },
+        "preprocessing": {
+          "analysis_signal": "unaltered_analysis_signal",
+          "loudness_matched_audition_signal_used": false,
+          "operations": [
+            "channel_fold_down",
+            "dc_removal"
+          ]
+        },
+        "spectral": {
+          "log_distance": null
+        },
+        "transients": {
+          "candidate": {
+            "attack_s": 0.2491875,
+            "decay_to_10pct_s": 0.0004166666666666667,
+            "impact_peak": 0.006820796275504332
+          },
+          "state_window_required_for_shift_or_afterfire": true
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true,
+          "identity_score_available": false,
+          "reference_missing": true
+        }
+      },
+      "reference_parent": {
+        "bands": {},
+        "candidate_features": {
+          "1000_4000": 0.6653154961267634,
+          "120_250": 0.07963388846063543,
+          "20_60": 0.0001566391829526037,
+          "250_400": 0.1862174333595398,
+          "4000_5500": 0.0011496087931034587,
+          "400_1000": 0.056271434927791915,
+          "5500_12000": 0.002010849685744162,
+          "60_120": 0.00804880514635744,
+          "centroid_hz": 1850.6878934670183,
+          "rms_db": -48.28171568419532,
+          "rolloff_hz": 2400.0,
+          "spectral_contrast_db": 24.65816990596904,
+          "spectral_flatness": 0.001189717918116311,
+          "tristimulus_high": 0.0006773731847711935,
+          "tristimulus_low": 0.9979297125659972,
+          "tristimulus_mid": 0.0013929142492315697
+        },
+        "case": {
+          "analysis_domain": "unaltered_analysis_signal",
+          "candidate_id": "legacy_parent",
+          "candidate_load": [
+            0.33999999999999997,
+            0.33999999999999997
+          ],
+          "candidate_rpm": [
+            2000.0,
+            2000.0
+          ],
+          "candidate_source_commit": "stage_w_worktree",
+          "channel_policy": "stereo_mean_to_mono",
+          "loudness_match_policy": "analysis_unaltered_audition_separate",
+          "microphone_setup_uncertainty": "unspecified",
+          "reference_id": null,
+          "reference_kind": "synthetic_parent",
+          "reference_load": [
+            0.33999999999999997,
+            0.33999999999999997
+          ],
+          "reference_provenance": "REFERENCE_POINTER_ONLY",
+          "reference_rpm": [
+            2000.0,
+            2000.0
+          ],
+          "sample_rate_hz": 48000,
+          "scenario": "steady_2000rpm",
+          "vehicle_id": "hellcat"
+        },
+        "comparison_contract": {
+          "candidate_source_commit": "stage_w_worktree",
+          "channel_policy": "stereo_mean_to_mono",
+          "loudness_match_policy": "analysis_unaltered_audition_separate",
+          "microphone_setup_uncertainty": "unspecified",
+          "reference_provenance": "REFERENCE_POINTER_ONLY"
+        },
+        "events": {
+          "candidate_event_count": 15,
+          "wrong_condition_event_count": 0
+        },
+        "order": {
+          "candidate": {
+            "dominant_order": 7,
+            "fundamental_hz": 33.333333333333336,
+            "harmonic_energy_share": 0.04436571813571694,
+            "mean_rpm": 2000.0,
+            "order_band_energy": [
+              6.013450332739027e-06,
+              5.5815600728040845e-05,
+              2.6553851129951235e-05,
+              0.00014252511242583506,
+              0.0004998599331904965,
+              0.00012393621450932396,
+              0.04304250775008025,
+              0.0004685062233203075
+            ],
+            "rpm_present": true
+          },
+          "rpm_compatible": true
+        },
+        "preprocessing": {
+          "analysis_signal": "unaltered_analysis_signal",
+          "loudness_matched_audition_signal_used": false,
+          "operations": [
+            "channel_fold_down",
+            "dc_removal"
+          ]
+        },
+        "spectral": {
+          "log_distance": null
+        },
+        "transients": {
+          "candidate": {
+            "attack_s": 0.7349791666666666,
+            "decay_to_10pct_s": 0.00014583333333333335,
+            "impact_peak": 0.018020654311126014
+          },
+          "state_window_required_for_shift_or_afterfire": true
+        },
+        "uncertainty": {
+          "digital_domain_relative_only": true,
+          "external_reference_missing": true,
+          "identity_score_available": false,
+          "reference_missing": true
+        }
+      }
+    },
+    "parent_candidate_difference_rms": 0.0038685891519350465,
+    "reference_available": false,
+    "schema": "s12.stage_v.three_way_comparison.v1",
+    "scope": "synthetic; uncalibrated; not OEM reproduction"
+  },
+  "diagnostics": {
+    "afterfire_cooldown_remaining": 0,
+    "afterfire_event_count": 0,
+    "afterfire_location_counts": {
+      "collector": 0,
+      "primary": 0
+    },
+    "architecture": "P2H",
+    "combustion_torque_event_count": 132,
+    "event_count": 132,
+    "forced_induction_model": "harmonic_v1",
+    "frames": 50,
+    "mode": "measured_rpm",
+    "omega_ripple_rms": 0.05218478442278784,
+    "path_model": "waveguide_v1",
+    "ptr_provenance": {
+      "adapter": "RuntimePtrAdapter",
+      "adapter_path": "E:\\Tesla_speed\\worktrees\\s12-stage-w-ecosystem-bakeoff\\tools\\sound_sim\\s12\\acoustic_demo\\runtime_ptr_adapter.py",
+      "full_fvm_ptr_network": false,
+      "radiation_package_sha256": "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f",
+      "radiation_source_commit": "4afe65a67ed21822422f1eb6dbf43fdd627072d3",
+      "runtime_ptr_adapter_sha256": "2bdcd21182ea083d2079239179ec6ce749b9519c8ea40095d9f202fe86036cfa"
+    },
+    "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+    "sample_count": 48000,
+    "sample_counter": 48000,
+    "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+    "source_model": "event_domain_v1_hardened_persistent",
+    "state_memory_bytes": 317800
+  },
+  "post_ptr_metrics": {
+    "peak": 0.011056968472462937,
+    "rms": 0.0006837328802351613
+  },
+  "raw_metrics": {
+    "peak": 0.1085969094395659,
+    "rms": 0.07662455894063562
+  },
+  "scene": "steady_2000rpm",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+}

@@ -168,7 +168,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     root.mkdir(parents=True, exist_ok=True)
     architectures: dict[str, Any] = {
         "P4": {"status": "REFERENCE_RECORDING_RIGHTS_PENDING", "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording"},
-        "P6": {"status": "TEACHER_NOT_RUNTIME_CANDIDATE", "reason": "ENSIM4 Docker build verifies a teacher executable, but there is no CFD ON/OFF audio receipt and P6 is not a Runtime path"},
+        "P6": {"status": "TEACHER_NOT_RUNTIME_CANDIDATE", "reason": "ENSIM4 Docker CFD ON/OFF teacher audio is externally captured but is not a fitted S12 Runtime path"},
     }
     for architecture in ("P1", "P2", "P2H", "P3", "P5"):
         architectures[architecture] = {"status": "RENDERED", "scenes": {}}

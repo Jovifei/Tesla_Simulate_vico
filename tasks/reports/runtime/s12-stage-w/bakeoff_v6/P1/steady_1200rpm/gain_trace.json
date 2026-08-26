@@ -1,0 +1,4 @@
+{
+  "reason": "legacy renderer has no persistent event-domain state",
+  "status": "NOT_AVAILABLE_LEGACY"
+}

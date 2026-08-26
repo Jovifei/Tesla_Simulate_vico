@@ -14,7 +14,7 @@ Status: `BAKEOFF_RENDERED / REFERENCE_TARGET_MISSING / NO_ARCHITECTURE_SELECTED`
 | P5 | Hybrid P2H + clean-room synthetic one-shot residual | Rendered; no third-party transient source |
 | P6 | ENSIM4 CFD teacher | Built teacher executable; not a Runtime candidate |
 
-The refreshed v5 smoke bake-off rendered all five executable architectures
+The refreshed v6 smoke bake-off rendered all five executable architectures
 across the unified Hellcat scene set: idle, 1200/2000/3000 RPM, tip-in, full
 load, shift, high-RPM lift, eligible/ineligible afterfire, idle return and
 complete-cycle. It declares a 1.0 s block-aligned duration per scene; names
@@ -33,7 +33,7 @@ is intentionally null with status `REFERENCE_TARGET_MISSING`.
 
 ## Evidence
 
-- Current runtime root: `tasks/reports/runtime/s12-stage-w/bakeoff_v5/`
+- Current runtime root: `tasks/reports/runtime/s12-stage-w/bakeoff_v6/`
 - Manifest validation: `0 errors`
 - P1/P2/P2H/P3/P5 post-PTR outputs are present, SHA-bound and frame-aligned.
 - P2/P2H/P3/P5 record an event for `afterfire_eligible` and zero events for

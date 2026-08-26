@@ -8,6 +8,9 @@ Dummy SDL ran for five seconds until a controlled timeout, without a real audio
 device or captured CFD ON/OFF WAV. Its SDL disk probe produced a raw F32LE
 stream with every sample zero because no starter/ignition input reached the
 dummy session.
+An external `ENSIM4_PERF` harness then auto-enabled starter, ignition and full
+throttle and captured nonzero CFD ON/OFF PCM. It remains teacher-only because
+that engine excitation is not an impulse/frequency sweep for a numeric S12 fit.
 
 Use only as an offline 1D-CFD teacher. It cannot replace frozen S12
 FVM/HLLC/SSP-RK3/PTR/Radiation. It remains teacher-only.

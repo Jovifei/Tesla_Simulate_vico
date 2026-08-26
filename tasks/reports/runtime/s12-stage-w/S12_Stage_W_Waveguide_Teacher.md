@@ -34,6 +34,11 @@ path-model selection.
   during the same controlled run. Every sample was zero because no starter/
   ignition keyboard event reached the dummy session; this is runtime plumbing
   evidence only, not engine audio or a CFD ON/OFF comparison.
+- CFD ON/OFF teacher capture: the separate `ENSIM4_PERF` automatic starter/
+  ignition/full-throttle runs generated nonzero 48 kHz stereo PCM for both
+  modes. `ensim4_teacher_response_receipt.json` binds raw/WAV SHA, frames,
+  RMS, peak, centroid and difference RMS. The input is not a controlled
+  impulse/frequency sweep, so no numeric waveguide/FIR/IIR fit is claimed.
 
 ENSIM4 remains an offline teacher candidate only. Its C source and output are
 not copied into S12 and cannot replace the frozen S12 FVM/PTR/Radiation chain.

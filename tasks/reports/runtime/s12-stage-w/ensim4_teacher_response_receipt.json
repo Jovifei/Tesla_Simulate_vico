@@ -1,0 +1,34 @@
+{
+  "schema_version": "s12.stage_w.ensim4_teacher_response.v1",
+  "status": "CFD_ON_OFF_AUDIO_CAPTURED_TEACHER_ONLY",
+  "checkout_commit": "35b92a6aa5e038d18769d637dc9bedf0346939e1",
+  "engine": "ENGINE_3_CYL",
+  "execution": "Docker Arch clang C23 ENSIM4_PERF with automatic starter, ignition and full throttle; SDL disk audio",
+  "sample_rate_hz": 48000,
+  "channels": 2,
+  "frames": 29696,
+  "duration_s": 0.6186666666666667,
+  "cfd_on": {
+    "raw_path": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4/ensim4_perf_cfd_on.raw",
+    "raw_sha256": "159e3ba6501f46672274d91ead37bc72e42340f6e5bddf5ebe3103a30fa727f5",
+    "wav_path": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4/ensim4_perf_3cyl_pcm24.wav",
+    "wav_sha256": "ed82edc329634063050195fdb0b3100ada00412843af1217edb88081dca7ec2e",
+    "rms": 0.14841886404915552,
+    "peak": 0.6960033178329468,
+    "spectral_centroid_hz": 175.61687399694765
+  },
+  "cfd_off": {
+    "raw_path": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4/ensim4_perf_cfd_off.raw",
+    "raw_sha256": "8c24e187c237b020b7d3c0013212eed701f0906924a9e5bbc65ca273acd0177b",
+    "wav_path": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4/ensim4_perf_3cyl_cfd_off_pcm24.wav",
+    "wav_sha256": "42fc3c6bc6cb98c1f7b82c654f76888c12a8cc0cdf1ecbe623f3b4ae6b6cc4e5",
+    "rms": 0.07386597826868908,
+    "peak": 0.6960033178329468,
+    "spectral_centroid_hz": 317.3450346424205
+  },
+  "difference_rms": 0.11675486631146668,
+  "teacher_fit_status": "NOT_FITTED",
+  "teacher_fit_reason": "The automatic full-throttle engine excitation is not a controlled impulse/frequency sweep, so it cannot justify a numeric waveguide/FIR/IIR parameter fit.",
+  "runtime_boundary": "ENSIM4 source, binaries and audio remain external research artifacts; P6 is not an S12 Runtime candidate.",
+  "raw_media_git_policy": "EXTERNAL_ONLY"
+}
