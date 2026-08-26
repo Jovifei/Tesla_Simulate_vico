@@ -1,0 +1,24 @@
+{
+  "schema": "s12.stage_w.phase_receipt.v1",
+  "phase": "W9_FINAL_QUALIFICATION",
+  "status": "PASS",
+  "head": "b9a1111f87e8b2b5eac40ee7dde21602c5198271",
+  "checks": {
+    "full_s12_python": "1000 passed, 1 skipped, 232 subtests passed",
+    "stage_w_slow_3000_block_equivalence": "1 passed in 362.40s",
+    "stage_w_fast": "28 passed, 1 skipped",
+    "track_p": "180 frozen files and 2 frozen symbols unchanged; 32 guard tests passed",
+    "json_parse": "3435 files, 0 errors",
+    "bakeoff_v7_manifest_and_wav_reopen": "0 errors",
+    "compileall": "exit 0",
+    "git_diff_check": "exit 0"
+  },
+  "qualification_boundary": {
+    "reference_status": "REFERENCE_TARGET_MISSING",
+    "selected_architecture": null,
+    "r1_pilot": "not ready: rights.json is placeholder-only; sha256.txt and original WAV/FLAC are absent; state CSVs are templates",
+    "human_audition": "not performed",
+    "oem_or_profile_freeze": "not permitted"
+  },
+  "next_action": "When R1 file-set or hash changes, run the existing R1 pilot preflight before W10 comparison"
+}

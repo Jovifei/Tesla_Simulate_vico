@@ -4147,3 +4147,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - `waveguide_v1` focused tests: `4 passed`; Stage-V `delay_lpf_v1` remains selectable.
 - ENSIM4 exact checkout and LICENSE SHA are recorded; build/run is `BLOCKED_TOOLCHAIN_NO_CLANG_MAKE`, not a claimed PASS.
+
+## Stage W-C current execution checkpoint (2026-08-26)
+
+- [x] Recovered the existing Stage W worktree at `b9a1111f87e8b2b5eac40ee7dde21602c5198271` without reset or duplicate branches.
+- [x] Added `execution_state.json`, `EXECUTION_RESUME.md`, phase-receipt/log/checkpoint directories, and the W9 command receipts.
+- [x] Completed repository-side W0-W9 hardening, research, bake-off, preselection migration and final verification; full S12 is `1000 passed, 1 skipped, 232 subtests`.
+- [ ] W10 formal Reference/Parent/Candidate selection: remain fail-closed until R1 rights, original WAV/FLAC, SHA manifest and synchronized RPM/load/gear traces arrive.
+
+### Stage W-C review
+
+- The missing R1 package is a non-blocking external qualification gap under the Stage W-C contract; internal Parent/Candidate and R2/R3 diagnostics are complete.
+- No architecture is selected, no OEM reproduction is claimed, and Profile Freeze remains closed.
+- Resume from `tasks/reports/runtime/s12-stage-w/execution_state.json` and `EXECUTION_RESUME.md`; do not rerun the full regression unless source or test inputs change.
