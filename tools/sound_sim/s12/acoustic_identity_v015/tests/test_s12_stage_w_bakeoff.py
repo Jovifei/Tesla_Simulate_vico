@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 
+import numpy as np
+import pytest
+
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import read_pcm24_wav
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w import bakeoff as bakeoff_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
     run_hellcat_bakeoff,
     validate_bakeoff_manifest,
@@ -45,3 +50,43 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     assert validate_bakeoff_manifest(root) == []
     manifest = json.loads((root / "bakeoff_manifest.json").read_text(encoding="utf-8"))
     assert manifest["reference_status"] == "REFERENCE_POINTER_ONLY"
+    parent_candidate = json.loads((root / "parent_candidate_metrics.json").read_text(encoding="utf-8"))
+    assert parent_candidate["status"] == "REFERENCE_TARGET_MISSING"
+    assert parent_candidate["selection_eligible"] is False
+    assert parent_candidate["architectures"]["P2H"]["complete_cycle_60s"]["post_ptr_sha256"] != parent_candidate["parent"]["complete_cycle_60s"]["post_ptr_sha256"]
+    ablations = json.loads((root / "ablation_results.json").read_text(encoding="utf-8"))
+    assert ablations["status"] == "REFERENCE_TARGET_MISSING"
+    assert ablations["selection_eligible"] is False
+    assert set(ablations["ablations"]) == {"P2_to_P2H_waveguide", "P2H_to_P3_timbre_map", "P3_to_P5_transient"}
+    assert ablations["ablations"]["P2_to_P2H_waveguide"]["complete_cycle_60s"]["post_ptr_sha256_different"] is True
+    delivery = tmp_path / "delivery"
+    receipt = bakeoff_module.publish_bakeoff_summaries(root, delivery)
+    assert receipt["status"] == "REFERENCE_TARGET_MISSING"
+    assert receipt["selection_eligible"] is False
+    assert set(receipt["files"]) == {"bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json"}
+    for name, expected_hash in receipt["files"].items():
+        assert (delivery / name).is_file()
+        assert hashlib.sha256((delivery / name).read_bytes()).hexdigest() == expected_hash
+
+
+def test_publisher_rejects_summary_without_manifest_binding(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    run_hellcat_bakeoff(root, duration_s=0.25)
+    manifest_path = root / "bakeoff_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"].pop("parent_candidate_metrics.json")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    (root / "parent_candidate_metrics.json").write_text('{"tampered": true}', encoding="utf-8")
+    with pytest.raises(ValueError, match="invalid bake-off source"):
+        bakeoff_module.publish_bakeoff_summaries(root, tmp_path / "delivery")
+
+
+def test_r2_summaries_preserve_reference_status(tmp_path) -> None:
+    reference = np.zeros((11_520, 2), dtype=np.float64)
+    root = tmp_path / "bakeoff"
+    result = run_hellcat_bakeoff(root, duration_s=0.25, reference=reference)
+    summaries = json.loads((root / "parent_candidate_metrics.json").read_text(encoding="utf-8"))
+    ablations = json.loads((root / "ablation_results.json").read_text(encoding="utf-8"))
+    assert result["reference_status"] == "EXTERNAL_R2_POINTER"
+    assert summaries["reference_status"] == result["reference_status"]
+    assert ablations["reference_status"] == result["reference_status"]

@@ -33,7 +33,10 @@ is intentionally null with status `REFERENCE_TARGET_MISSING`.
 
 ## Evidence
 
-- Current runtime root: `tasks/reports/runtime/s12-stage-w/bakeoff_v6/`
+- Current Git-tracked evidence: the five JSON summaries in
+  `tasks/reports/runtime/s12-stage-w/`, bound by `artifact_manifest.json`.
+- The v7 WAV render root is a local, Git-ignored runtime artifact and is not
+  part of this repository delivery.
 - Manifest validation: `0 errors`
 - P1/P2/P2H/P3/P5 post-PTR outputs are present, SHA-bound and frame-aligned.
 - P2/P2H/P3/P5 record an event for `afterfire_eligible` and zero events for

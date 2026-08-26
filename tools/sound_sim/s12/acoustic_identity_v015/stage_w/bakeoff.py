@@ -26,6 +26,7 @@ BLOCK_SIZE = 960
 STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
+SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 
 
 def build_hellcat_bakeoff_trace(scene: str, duration_s: float = 8.0) -> VehicleStateTrace:
@@ -161,6 +162,36 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     return {"raw_sha256": raw_receipt.sha256, "post_ptr_sha256": post_receipt.sha256, "monitor_sha256": monitor_receipt.sha256, "comparison": comparison, "render_seconds": elapsed}
 
 
+def _parent_candidate_metrics(architectures: dict[str, Any], status: str, reference_status: str) -> dict[str, Any]:
+    parent = {scene: {key: architectures["P1"]["scenes"][scene][key] for key in ("raw_sha256", "post_ptr_sha256", "monitor_sha256")} for scene in SCENES}
+    candidates = {
+        architecture: {
+            scene: {
+                **{key: architectures[architecture]["scenes"][scene][key] for key in ("raw_sha256", "post_ptr_sha256", "monitor_sha256")},
+                "parent_candidate_difference_rms": architectures[architecture]["scenes"][scene]["comparison"].get("parent_candidate_difference_rms"),
+            }
+            for scene in SCENES
+        }
+        for architecture in ("P2", "P2H", "P3", "P5")
+    }
+    return {"schema_version": "s12.stage_w.parent_candidate_metrics.v1", "status": status, "reference_status": reference_status, "selection_eligible": False, "parent": parent, "architectures": candidates}
+
+
+def _ablation_results(architectures: dict[str, Any], status: str, reference_status: str) -> dict[str, Any]:
+    pairs = {"P2_to_P2H_waveguide": ("P2", "P2H"), "P2H_to_P3_timbre_map": ("P2H", "P3"), "P3_to_P5_transient": ("P3", "P5")}
+    ablations = {
+        name: {
+            scene: {
+                "post_ptr_sha256_different": architectures[left]["scenes"][scene]["post_ptr_sha256"] != architectures[right]["scenes"][scene]["post_ptr_sha256"],
+                "monitor_sha256_different": architectures[left]["scenes"][scene]["monitor_sha256"] != architectures[right]["scenes"][scene]["monitor_sha256"],
+            }
+            for scene in SCENES
+        }
+        for name, (left, right) in pairs.items()
+    }
+    return {"schema_version": "s12.stage_w.ablation_results.v1", "status": status, "reference_status": reference_status, "selection_eligible": False, "ablations": ablations}
+
+
 def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, reference: np.ndarray | None = None) -> dict[str, Any]:
     root = Path(output_root)
     if root.exists() and any(root.iterdir()):
@@ -176,8 +207,12 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
             trace = build_hellcat_bakeoff_trace(scene, duration_s)
             architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
     block_aligned_duration_s = max(2, int(round(duration_s * STATE_RATE_HZ))) / STATE_RATE_HZ
-    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY", "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER", "requested_duration_s": float(duration_s), "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
+    status = "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY"
+    reference_status = "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER"
+    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": status, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": reference_status, "requested_duration_s": float(duration_s), "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
     write_json(root / "bakeoff_results.json", result)
+    write_json(root / "parent_candidate_metrics.json", _parent_candidate_metrics(architectures, status, reference_status))
+    write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
     write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
@@ -213,4 +248,35 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     return errors
 
 
-__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "run_hellcat_bakeoff", "validate_bakeoff_manifest"]
+def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path) -> dict[str, Any]:
+    source = Path(source_root)
+    errors = validate_bakeoff_manifest(source)
+    manifest = json.loads((source / "bakeoff_manifest.json").read_text(encoding="utf-8")) if not errors else {}
+    for name in SUMMARY_FILES:
+        path = source / name
+        expected = manifest.get("files", {}).get(name)
+        if expected is None:
+            errors.append(f"summary_manifest:{name}")
+        elif not path.is_file():
+            errors.append(f"summary_missing:{name}")
+        elif sha256_file(path) != expected:
+            errors.append(f"summary_sha:{name}")
+        else:
+            try:
+                json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                errors.append(f"summary_json:{name}")
+    if errors:
+        raise ValueError(f"invalid bake-off source: {errors}")
+    output = Path(output_root)
+    targets = [output / name for name in SUMMARY_FILES]
+    if any(target.exists() for target in targets):
+        raise FileExistsError(f"refusing to overwrite bake-off summaries: {output}")
+    output.mkdir(parents=True, exist_ok=True)
+    for name, target in zip(SUMMARY_FILES, targets):
+        target.write_bytes((source / name).read_bytes())
+    result = json.loads((source / "bakeoff_results.json").read_text(encoding="utf-8"))
+    return {"schema_version": "s12.stage_w.bakeoff_summary_receipt.v1", "status": result["status"], "reference_status": result["reference_status"], "selection_eligible": result["selected_architecture"] is not None, "files": {name: sha256_file(output / name) for name in SUMMARY_FILES}}
+
+
+__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "run_hellcat_bakeoff", "validate_bakeoff_manifest"]

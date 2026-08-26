@@ -4,9 +4,10 @@ Status: `BAKEOFF_RENDERED / REFERENCE_TARGET_MISSING / NO_ARCHITECTURE_SELECTED`
 
 The current executable candidates are P1 Legacy, P2 persistent delay/LPF,
 P2H persistent waveguide, P3 P2H plus timbre map and P5 P3 plus a clean-room
-synthetic one-shot residual. The refreshed smoke evidence is
-[`bakeoff_v6`](bakeoff_v6/): all 12 scenario-shaped traces were rendered at a
-declared 1.0 s block-aligned duration. Every P1/P2/P2H/P3/P5 case
+synthetic one-shot residual. The current Git-tracked evidence is the five
+top-level JSON summaries bound by `artifact_manifest.json`; their local v7
+WAV source remains Git-ignored. All 12 scenario-shaped traces were rendered at
+a declared 1.0 s block-aligned duration. Every P1/P2/P2H/P3/P5 case
 has equal post-PTR frame counts, raw/post-PTR/monitor PCM, state/phase/event/
 path/gain traces, CPU receipt and SHA manifest.
 

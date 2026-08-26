@@ -5,6 +5,7 @@
   "raw_external_media_committed": false,
   "artifacts": {
     "hellcat_bakeoff_v6": {"path": "bakeoff_v6/bakeoff_manifest.json", "sha256": "781571023002b7da2a4812142477d63d3760c2741956d34232f3ad3d35f3cee7", "status": "REFERENCE_TARGET_MISSING"},
+    "hellcat_bakeoff_summaries": {"status": "REFERENCE_TARGET_MISSING", "files": {"bakeoff_results.json": "5cba823ad1857312a35422b1fa7798409684b32aa3f3ba18089d345058c8e69e", "parent_candidate_metrics.json": "8da1c6ba2ffef85c2f5a51a90e173b16efb44c6b8da8769191f2ea051c0bdb19", "ablation_results.json": "dc2028630b183deb5b696c783af72e22a5e2b1c2999fa3a8add8a4b41147c225", "selected_architecture.json": "5ba713d07bac439d578b7cbfb0fbb437c849bc8fb1b8665eb8764d1b4da1c263", "rejected_architectures.json": "eefc52571852ce8b7c0665cc181f6668a9740b6d5240fa39dac355a54d48f1f0"}},
     "ferrari_migration_v3": {"path": "migration_v3/ferrari_458/migration_manifest.json", "sha256": "d95971f408ac7c84bad7944f222b26ef389e2469e09d1e4f42ebddcd230e4ec5", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "3fff4d0e6bc4fdbe93e0d9257d34bba775e3f0e881d3b537033576ecbfe47ab8", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
