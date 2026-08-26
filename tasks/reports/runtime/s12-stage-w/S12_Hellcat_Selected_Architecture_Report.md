@@ -27,6 +27,11 @@ records the two local public-reference packages as R3/insufficient evidence and
 lists the exact original-audio, rights and synchronized telemetry delivery
 needed to reopen W10.
 
+The ready-to-fill acquisition package is at
+`E:/Claude_allow/Download/s12-stage-w-r1-capture-v1`. Its current failed
+preflight is intentional: no raw audio, confirmed rights, SHA manifest or
+state traces have been supplied yet.
+
 Scope: synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
 `NOT_R1_QUALIFIED`, `NOT_PROFILE_FREEZE_READY`.
 

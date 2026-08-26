@@ -1,0 +1,15 @@
+{
+  "schema_version": "s12.stage_w.r1_capture_package_receipt.v1",
+  "status": "WAITING_FOR_R1_PILOT_DELIVERY",
+  "capture_root": "E:/Claude_allow/Download/s12-stage-w-r1-capture-v1",
+  "recording_id": "hellcat_full_pull_01",
+  "file_count": 13,
+  "raw_audio_present": false,
+  "preflight_status": "R1_PILOT_PREFLIGHT_FAILED",
+  "preflight_sha256": "2f2f842f9804446f5a5dbda9635839ed2aad9ab56a9f7c46b7ae42b9dd673041",
+  "report_sha256": "e628ae3bd803e8887fc7b98803d8dfffe80fa67475dfff2f44da378980d93337",
+  "failed_gates": ["rights_scope", "sha256", "state_sync", "raw_audio_intake"],
+  "required_files": ["rights.json", "spec.json", "sha256.txt", "raw/raw_audio.wav or raw/raw_audio.flac", "state/rpm.csv", "state/load_throttle.csv", "state/gear_shift.csv"],
+  "raw_media_policy": "E:/Claude_allow/Download only; never Git",
+  "scope": "R1 intake template only; no reference, comparator, tuning or selection result"
+}

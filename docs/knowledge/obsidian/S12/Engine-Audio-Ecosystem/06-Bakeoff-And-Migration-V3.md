@@ -19,3 +19,6 @@ a legal RPM/state-synchronised Reference. The labelled review package is
 SHA `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.
 The local Stage-U/R3 packages remain non-R1 because rights, original capture
 and synchronized RPM/load/gear evidence are absent; they cannot reopen W10.
+The ready-to-fill Hellcat-first intake package is
+`E:/Claude_allow/Download/s12-stage-w-r1-capture-v1`; it contains templates
+only, never original media.

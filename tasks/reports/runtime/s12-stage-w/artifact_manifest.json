@@ -9,6 +9,7 @@
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
     "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
+    "r1_capture_package": {"path": "w10_r1_capture_package_receipt.json", "status": "WAITING_FOR_R1_PILOT_DELIVERY"},
     "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "c5c20b1977162b8df2c7b375bc17d975d7b7dc2b3a92f246848653da48f5c965"},
     "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "33749e58bc2ab638c71bb374bcf205e249c06c1300cd696698378588d3c33f64"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},

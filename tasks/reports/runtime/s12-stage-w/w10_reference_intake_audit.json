@@ -31,7 +31,7 @@
     "microphone_position",
     "recording_device_agc_contract"
   ],
-  "accepted_delivery": "Original WAV/FLAC plus rights receipt, spec.json and timestamped rpm.csv, load_throttle.csv, gear_shift.csv with window coverage and SHA binding.",
+  "accepted_delivery": "Use E:/Claude_allow/Download/s12-stage-w-r1-capture-v1: original WAV/FLAC plus rights receipt, spec.json and timestamped rpm.csv, load_throttle.csv, gear_shift.csv with window coverage and SHA binding.",
   "selection_gate": "No R1 input means no multi-reference median improvement, no 20 percent target gate, no non-target regression gate and no architecture selection.",
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
 }
