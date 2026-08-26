@@ -1,6 +1,6 @@
 # S12 Stage W Localized Afterfire (W5)
 
-Status: `AFTERFIRE_LOCATIONIZED_PASS / PTR_PENDING`
+Status: `AFTERFIRE_LOCATIONIZED_PASS / POST_PTR_RENDERED`
 
 Persistent W5 afterfire state now consumes RPM derivative, throttle closure,
 fuel reservoir, oxygen proxy, exhaust temperature, cooldown and a configurable
@@ -10,5 +10,6 @@ produce different arrival/SHA evidence under equal event energy.
 
 Focused tests: `3 passed`.
 
-The event is still synthetic and source-domain; final post-PTR event metrics and
-R1/reference qualification remain pending.
+The event remains synthetic and source-domain. The current bake-off emits
+post-PTR raw PCM and monitor outputs with the event traces; R1/reference
+qualification remains closed.

@@ -1,6 +1,6 @@
 # S12 Stage W Persistent Engine (W1/W2)
 
-Status: `STAGE_W_PERSISTENT_ENGINE_PASS / PTR_PENDING`
+Status: `STAGE_W_PERSISTENT_ENGINE_PASS / FROZEN_PTR_AVAILABLE`
 
 ## Implemented contract
 
@@ -31,8 +31,9 @@ afterfire state and monitor gain.
   `vehicle-inspired`, `not OEM reproduction`, `NOT_R1_QUALIFIED`,
   `NOT_PROFILE_FREEZE_READY`.
 
-## Remaining boundary
+## Current boundary
 
-The W1/W2 output is not yet passed through frozen PTR/Radiation. W3 must reuse
-the existing `RuntimePtrAdapter` and accepted radiation package without
-modifying their source or parameters.
+W3 has now reused the existing `RuntimePtrAdapter` and accepted radiation
+package without modifying their source or parameters. The frozen path remains
+an explicit post-PTR option; this document does not claim a full FVM/PTR
+network or real-time/device qualification.
