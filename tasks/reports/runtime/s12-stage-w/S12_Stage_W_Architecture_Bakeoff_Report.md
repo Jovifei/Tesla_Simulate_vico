@@ -47,3 +47,8 @@ is intentionally null with status `REFERENCE_TARGET_MISSING`.
 
 All output remains synthetic, uncalibrated, vehicle-inspired, not OEM
 reproduction, NOT_R1_QUALIFIED and NOT_PROFILE_FREEZE_READY.
+
+Formal qualification outcome: `NO_ARCHITECTURE_CANDIDATE_PASSED`. This records
+that no candidate can pass the declared Reference/Parent/Candidate gate while
+the legal synchronized R1 Reference is absent; it is not an acoustic rejection,
+OEM similarity result or evidence that model redesign has been diagnosed.

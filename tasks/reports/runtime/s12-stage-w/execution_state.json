@@ -18,6 +18,10 @@
     "W9_FINAL_QUALIFICATION"
   ],
   "current_phase": "W9_FINAL_QUALIFICATION",
+  "overall_status": "STAGE_W_CONTINUOUS_EXECUTION_COMPLETE",
+  "selection_outcome": "NO_ARCHITECTURE_CANDIDATE_PASSED",
+  "selection_outcome_reason": "The formal candidate gate cannot pass without a legal, RPM/load/gear-synchronised R1 Reference; this is a qualification closure, not an acoustic rejection or OEM redesign conclusion.",
+  "redesign_follow_up": "REQUIRES_MODEL_REDESIGN (conditional review only after a legal synchronized Reference; not diagnosed from the current evidence)",
   "phases": {
     "W0_RECOVERY_AUDIT": {"status": "PASS", "started_at": null, "completed_at": null, "commit": "c75cef4", "evidence": ["tasks/reports/runtime/s12-stage-w/S12_Stage_V_Independent_Acceptance.md", "tasks/reports/runtime/s12-stage-w/stage_v_requirement_matrix.json"], "failed_checks": [], "next_action": "none; retained as the Stage-V audit baseline"},
     "W1_PERSISTENT_STREAMING": {"status": "PASS", "started_at": null, "completed_at": null, "commit": "5b2c6cd", "evidence": ["tasks/reports/runtime/s12-stage-w/S12_Stage_W_Persistent_Engine.md", "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py"], "failed_checks": [], "next_action": "none; stateful 20 ms engine is available"},

@@ -20,5 +20,10 @@
     "human_audition": "not performed",
     "oem_or_profile_freeze": "not permitted"
   },
+  "selection_outcome": {
+    "status": "NO_ARCHITECTURE_CANDIDATE_PASSED",
+    "requires_model_redesign": "REQUIRES_MODEL_REDESIGN (conditional review only after a legal synchronized Reference)",
+    "interpretation": "formal qualification closure only; not an acoustic rejection or OEM similarity result"
+  },
   "next_action": "When R1 file-set or hash changes, run the existing R1 pilot preflight before W10 comparison"
 }

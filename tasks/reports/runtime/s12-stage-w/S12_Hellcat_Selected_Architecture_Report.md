@@ -42,3 +42,7 @@ The local review package is
 `E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v4` with ZIP
 SHA-256 `3fff4d0e6bc4fdbe93e0d9257d34bba775e3f0e881d3b537033576ecbfe47ab8`.
 It is a labelled engineering package, not a scoring result or a selection.
+
+The W9 closure status is `NO_ARCHITECTURE_CANDIDATE_PASSED` for the formal gate
+only. No candidate is selected, and the missing R1 Reference prevents an
+acoustic improvement or redesign conclusion.
