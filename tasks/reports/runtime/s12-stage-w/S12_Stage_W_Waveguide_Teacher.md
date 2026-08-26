@@ -29,6 +29,11 @@ path-model selection.
   remained live until the controlled timeout. This proves the executable path,
   not a listening result: no real playback device, CFD on/off interaction, CPU
   capture or WAV was produced.
+- Disk-audio probe: SDL wrote `sdlaudio.raw` (1,818,624 bytes, F32LE stereo
+  48 kHz, SHA `f6ab339213be739aae5925f18a38d13e870a859ca6f8715cb5566e4a9264a498`)
+  during the same controlled run. Every sample was zero because no starter/
+  ignition keyboard event reached the dummy session; this is runtime plumbing
+  evidence only, not engine audio or a CFD ON/OFF comparison.
 
 ENSIM4 remains an offline teacher candidate only. Its C source and output are
 not copied into S12 and cannot replace the frozen S12 FVM/PTR/Radiation chain.
