@@ -10,10 +10,11 @@
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "3fff4d0e6bc4fdbe93e0d9257d34bba775e3f0e881d3b537033576ecbfe47ab8", "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"},
     "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
     "r1_capture_package": {"path": "w10_r1_capture_package_receipt.json", "status": "WAITING_FOR_R1_PILOT_DELIVERY"},
+    "teacher_reduction": {"path": "teacher_reduction_v1/teacher_reduction_receipt.json", "sha256": "f7734828183ef15c8fe4b081a2f40a3809749c884f467ba0884c5237e58c4e10", "status": "TEACHER_RESPONSE_RUNTIME_EXPERIMENT"},
     "source_registry": {"path": "../../../../docs/research/engine-audio-ecosystem/source_registry.json", "sha256": "1d26de37d81de3ad80821f5ed0d9ec373db596ade7d646d11fde40a93568aebf"},
     "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "850ed1b4d07039e7791207c8fd9ffb3f189f489a1a9c0f3c6c363321917d7d91"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
-    "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "37ab6e72808d213a46c15b2db2b967e0dbc3235d4d1a8db41c5871edcd395380"}
+    "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "921719f98205850757f73c7445446434f8ba0da719807cc1afa26155198f555b"}
   },
   "selection_gate": {
     "selected_architecture": null,

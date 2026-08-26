@@ -20,6 +20,7 @@ from ..event_domain.event_scheduler import schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
 from .boundary_adapter import FrozenPtrStereo
+from .teacher_response import ReducedCfdTeacherResponse
 from .waveguide import WaveguideNetwork
 from .timbre_map import render_timbre_map
 
@@ -69,8 +70,8 @@ class PersistentEventDomainEngine:
             raise ValueError("mode must be measured_rpm or free_dynamics")
         self.mode = mode
         self.ptr_enabled = bool(ptr_enabled)
-        if path_model not in {"delay_lpf_v1", "waveguide_v1"}:
-            raise ValueError("path_model must be delay_lpf_v1 or waveguide_v1")
+        if path_model not in {"delay_lpf_v1", "waveguide_v1", "reduced_cfd_teacher_v1"}:
+            raise ValueError("path_model must be delay_lpf_v1, waveguide_v1 or reduced_cfd_teacher_v1")
         self.path_model = path_model
         if forced_induction_model not in {"harmonic_v1", "timbre_map_v1"}:
             raise ValueError("forced_induction_model must be harmonic_v1 or timbre_map_v1")
@@ -104,6 +105,7 @@ class PersistentEventDomainEngine:
         collector_loss = float(unwrap(self.config, "collector_loss"))
         self._collector_lines = [_DelayLine(collector_delay, collector_loss) for _ in range(self.bank_count)]
         self.waveguide_network = WaveguideNetwork(lengths, list(unwrap(self.config, "bank_assignment")), self.sample_rate_hz, temperature) if self.path_model == "waveguide_v1" else None
+        self.teacher_response = ReducedCfdTeacherResponse() if self.path_model == "reduced_cfd_teacher_v1" else None
         self._event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.entity_count)]
         self._monitor_gain_db = 0.0
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
@@ -171,6 +173,8 @@ class PersistentEventDomainEngine:
         if self.waveguide_network is not None:
             for guide in self.waveguide_network.guides:
                 values.extend((guide._forward.history, guide._round_trip.history))
+        if self.teacher_response is not None:
+            values.append(self.teacher_response._state)
         return float(sum(np.sum(np.square(value)) for value in values))
 
     def _process_frame(self, state: Mapping[str, float]) -> EngineAudioBlock:
@@ -210,6 +214,9 @@ class PersistentEventDomainEngine:
                 collector[bank] = line.process(banks[bank])
             combustion_left = collector[0]
             combustion_right = collector[min(1, self.bank_count - 1)]
+        if self.teacher_response is not None:
+            reduced = self.teacher_response.process(np.column_stack((combustion_left, combustion_right)))
+            combustion_left, combustion_right = reduced[:, 0], reduced[:, 1]
         phase = phase_block.phase_rad
         boost_target = np.clip(load * throttle * np.maximum(rpm - 900.0, 0.0) / 4800.0, 0.0, 1.0)
         forced = render_timbre_map(phase, rpm, load, boost_target, throttle, self.config, self.sample_counter) if self.forced_induction_model == "timbre_map_v1" else render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz)
@@ -301,6 +308,7 @@ class PersistentEventDomainEngine:
             "monitor_gain_db": self._monitor_gain_db,
             "ptr": self.ptr.snapshot() if self.ptr is not None else None,
             "waveguide": self.waveguide_network.snapshot() if self.waveguide_network is not None else None,
+            "teacher_response": self.teacher_response.snapshot() if self.teacher_response is not None else None,
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -317,6 +325,8 @@ class PersistentEventDomainEngine:
             self.ptr.restore(snapshot["ptr"])
         if self.waveguide_network is not None and snapshot.get("waveguide") is not None:
             self.waveguide_network.restore(snapshot["waveguide"])
+        if self.teacher_response is not None and snapshot.get("teacher_response") is not None:
+            self.teacher_response.restore(snapshot["teacher_response"])
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -334,6 +344,7 @@ class PersistentEventDomainEngine:
             "state_memory_bytes": int(sum(tail.nbytes for tail in self._event_tails) + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines)),
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
             "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
+            "teacher_response": self.teacher_response.diagnostics() if self.teacher_response is not None else None,
             "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
         }
 

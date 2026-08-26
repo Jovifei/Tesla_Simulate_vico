@@ -20,3 +20,7 @@ experiments, a clean-room one-shot residual and the frozen PTR adapter. No path
 is selected. P4/P6 remain blocked paths until comparable raw/post-PTR evidence
 exists.
 External references remain R2/R3 diagnostic pointers, not OEM truth.
+
+`reduced_cfd_teacher_v1` is a separate metric-derived teacher experiment. It
+uses the ENSIM CFD ON/OFF receipt without embedding teacher media and is not a
+candidate architecture or a numerical CFD parameter fit.

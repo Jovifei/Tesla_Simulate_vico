@@ -40,5 +40,17 @@ path-model selection.
   RMS, peak, centroid and difference RMS. The input is not a controlled
   impulse/frequency sweep, so no numeric waveguide/FIR/IIR fit is claimed.
 
+## Reduced teacher response experiment
+
+`PersistentEventDomainEngine(path_model="reduced_cfd_teacher_v1")` is a
+stateful, transparent reduction of the measured CFD-on/off RMS and centroid
+ratio. It contains no ENSIM4 source, binary or audio. Snapshot/restore and
+non-identity against `delay_lpf_v1` are covered by the focused waveguide test.
+
+`teacher_reduction_v1/` renders the same Hellcat full-load trace through the
+delay baseline and reduced teacher path, then frozen PTR. Both outputs are
+48,000 frames and zero-clipping; post-PTR PCM differs. This is a metric-derived
+teacher experiment, not a numerical CFD fit and not a Runtime candidate.
+
 ENSIM4 remains an offline teacher candidate only. Its C source and output are
 not copied into S12 and cannot replace the frozen S12 FVM/PTR/Radiation chain.

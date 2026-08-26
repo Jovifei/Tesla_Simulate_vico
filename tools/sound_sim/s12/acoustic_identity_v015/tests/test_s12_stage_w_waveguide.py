@@ -55,3 +55,21 @@ def test_persistent_engine_can_select_waveguide_v1_without_changing_delay_baseli
     b = waveguide.process(state).raw_pcm
     assert not np.array_equal(a, b)
     assert waveguide.diagnostics()["path_model"] == "waveguide_v1"
+
+
+def test_persistent_engine_reduced_cfd_teacher_is_stateful_and_snapshot_safe() -> None:
+    config = load_config("hellcat_v1")
+    frames = {"rpm": np.array([2400.0, 4200.0]), "load": np.array([0.5, 0.8]), "throttle": np.array([0.6, 0.9]), "acceleration_mps2": np.array([2.0, 3.0])}
+    delay = PersistentEventDomainEngine(config, 48000, 960, path_model="delay_lpf_v1")
+    teacher = PersistentEventDomainEngine(config, 48000, 960, path_model="reduced_cfd_teacher_v1")
+    teacher.process({key: value[:1] for key, value in frames.items()})
+    snapshot = teacher.snapshot_state()
+    expected = teacher.process({key: value[1:] for key, value in frames.items()}).raw_pcm
+    teacher.restore_state(snapshot)
+    replay = teacher.process({key: value[1:] for key, value in frames.items()}).raw_pcm
+    assert np.array_equal(expected, replay)
+    teacher_compare = PersistentEventDomainEngine(config, 48000, 960, path_model="reduced_cfd_teacher_v1")
+    assert not np.array_equal(delay.process(frames).raw_pcm, teacher_compare.process(frames).raw_pcm)
+    diagnostics = teacher.diagnostics()
+    assert diagnostics["path_model"] == "reduced_cfd_teacher_v1"
+    assert diagnostics["teacher_response"]["status"] == "TEACHER_METRIC_REDUCTION_ONLY"

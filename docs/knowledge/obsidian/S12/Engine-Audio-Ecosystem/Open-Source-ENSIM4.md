@@ -11,6 +11,8 @@ dummy session.
 An external `ENSIM4_PERF` harness then auto-enabled starter, ignition and full
 throttle and captured nonzero CFD ON/OFF PCM. It remains teacher-only because
 that engine excitation is not an impulse/frequency sweep for a numeric S12 fit.
+`reduced_cfd_teacher_v1` uses only its recorded RMS/centroid ratio as a
+persistent experiment; it embeds no teacher audio and is not a Runtime path.
 
 Use only as an offline 1D-CFD teacher. It cannot replace frozen S12
 FVM/HLLC/SSP-RK3/PTR/Radiation. It remains teacher-only.
