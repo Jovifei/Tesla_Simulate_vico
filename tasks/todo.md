@@ -4101,7 +4101,8 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - P1/P2/P2H/P3 rendered across the unified 12-scene Hellcat trace with raw,
   post-PTR raw, monitor, traces, metrics, CPU timing and SHA manifests.
-- P4/P5/P6 are explicit rejected/pending states; no “best failed candidate” was selected.
+- P4/P6 are explicit rejected/pending states; P5 is a rendered clean-room
+  synthetic one-shot branch. No “best failed candidate” was selected.
 - Bake-off status is `REFERENCE_TARGET_MISSING`; W10 selection remains pending a
   rights-bound synchronized Reference.
 - `w10_reference_intake_audit.json` freshly audits the available Stage-U/R3

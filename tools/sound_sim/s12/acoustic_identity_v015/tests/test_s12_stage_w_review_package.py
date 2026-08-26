@@ -25,10 +25,10 @@ def test_review_package_keeps_reference_and_unavailable_paths_fail_closed(tmp_pa
     assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "raw_source.wav").is_file()
     assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "post_ptr_raw.wav").is_file()
     assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "monitor.wav").is_file()
+    assert (package / "vehicles" / "hellcat" / "P5" / "complete_cycle_60s" / "post_ptr_raw.wav").is_file()
     reference = json.loads((package / "reference_pointer.json").read_text(encoding="utf-8"))
     assert reference["status"] == "REFERENCE_TARGET_MISSING"
     assert reference["selection_allowed"] is False
     unavailable = json.loads((package / "unavailable_paths.json").read_text(encoding="utf-8"))
     assert unavailable["P4"]["status"] == "REFERENCE_RECORDING_RIGHTS_PENDING"
-    assert unavailable["P5"]["status"] == "HYBRID_TRANSIENT_PENDING"
-    assert unavailable["P6"]["status"] == "BLOCKED_TOOLCHAIN_NO_CLANG_MAKE"
+    assert unavailable["P6"]["status"] == "TEACHER_NOT_RUNTIME_CANDIDATE"

@@ -12,6 +12,7 @@ import numpy as np
 
 from ..contracts import VehicleStateTrace
 from ..event_domain.audition_monitor import render_audition_monitor
+from ..event_domain.chamber_event import render_event_packet
 from ..event_domain.config_schema import load_config
 from ..sources.supercharged_hemi_source import render_hellcat
 from ..stage_v.comparator import compare_three_way
@@ -63,6 +64,29 @@ def _state_arrays(trace: VehicleStateTrace) -> dict[str, np.ndarray]:
     return {"rpm": trace.rpm, "load": trace.load, "throttle": trace.throttle, "acceleration_mps2": trace.acceleration_mps2}
 
 
+def _synthetic_transient_residual(trace: VehicleStateTrace, sample_count: int) -> tuple[np.ndarray, int]:
+    """Create clean-room one-shots only for a throttle lift or a gear RPM drop."""
+    residual = np.zeros((sample_count, 2), dtype=np.float64)
+    count = 0
+    for index in range(1, trace.rpm.size):
+        throttle_drop = trace.throttle[index] - trace.throttle[index - 1]
+        rpm_drop = trace.rpm[index] - trace.rpm[index - 1]
+        closure = throttle_drop < -0.45 and trace.rpm[index] > 2500.0
+        shift = rpm_drop < -500.0 and trace.throttle[index] > 0.40
+        if not (closure or shift):
+            continue
+        packet = render_event_packet(SAMPLE_RATE_HZ, 0.055, 0.0015, 0.018, 0.065 if closure else 0.045, 0.20).pressure
+        start = index * BLOCK_SIZE
+        end = min(sample_count, start + packet.size)
+        if end <= start:
+            continue
+        pan = 0.82 if count % 2 == 0 else 0.66
+        residual[start:end, 0] += packet[: end - start] * pan
+        residual[start:end, 1] += packet[: end - start] * (1.48 - pan)
+        count += 1
+    return residual, count
+
+
 def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
     config = load_config("hellcat_v1")
     if architecture == "P1":
@@ -70,15 +94,26 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         post_ptr = FrozenPtrStereo(SAMPLE_RATE_HZ).process(source)
         monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
         return source, post_ptr, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
-    settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
+    settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
     setting = settings[architecture]
-    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=True, **setting)
+    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=architecture != "P5", **setting)
     result = engine.process_with_trace(_state_arrays(trace))
-    raw = result.raw_pcm * OUTPUT_SCALE
-    post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
+    if architecture == "P5":
+        transient, transient_count = _synthetic_transient_residual(trace, result.raw_pcm.shape[0])
+        raw_unscaled = result.raw_pcm + transient
+        adapter = FrozenPtrStereo(SAMPLE_RATE_HZ)
+        post_unscaled = adapter.process(raw_unscaled)
+        raw = raw_unscaled * OUTPUT_SCALE
+        post_ptr = post_unscaled * OUTPUT_SCALE
+    else:
+        transient_count = 0
+        raw = result.raw_pcm * OUTPUT_SCALE
+        post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
     monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
     diagnostics = dict(result.diagnostics)
     diagnostics["architecture"] = architecture
+    if architecture == "P5":
+        diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "synthetic_one_shot_v1", "transient_residual_event_count": transient_count})
     return raw, post_ptr, diagnostics
 
 
@@ -133,10 +168,9 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     root.mkdir(parents=True, exist_ok=True)
     architectures: dict[str, Any] = {
         "P4": {"status": "REFERENCE_RECORDING_RIGHTS_PENDING", "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording"},
-        "P5": {"status": "HYBRID_TRANSIENT_PENDING", "reason": "requires separately qualified granular/one-shot source"},
-        "P6": {"status": "BLOCKED_TOOLCHAIN_NO_CLANG_MAKE", "reason": "ENSIM4 teacher checkout cannot build on current host"},
+        "P6": {"status": "TEACHER_NOT_RUNTIME_CANDIDATE", "reason": "ENSIM4 Docker build verifies a teacher executable, but there is no CFD ON/OFF audio receipt and P6 is not a Runtime path"},
     }
-    for architecture in ("P1", "P2", "P2H", "P3"):
+    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
         architectures[architecture] = {"status": "RENDERED", "scenes": {}}
         for scene in SCENES:
             trace = build_hellcat_bakeoff_trace(scene, duration_s)
@@ -145,7 +179,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY", "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER", "requested_duration_s": float(duration_s), "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
     write_json(root / "bakeoff_results.json", result)
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
-    write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P5", "P6"] if reference is None else []})
+    write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
     write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "requested_duration_s": result["requested_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
@@ -164,7 +198,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             errors.append(f"missing:{relative}")
         elif sha256_file(path) != expected:
             errors.append(f"sha:{relative}")
-    for architecture in ("P1", "P2", "P2H", "P3"):
+    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
         for scene in SCENES:
             case = root / architecture / scene
             for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "metrics.json", "sha256_manifest.json"):

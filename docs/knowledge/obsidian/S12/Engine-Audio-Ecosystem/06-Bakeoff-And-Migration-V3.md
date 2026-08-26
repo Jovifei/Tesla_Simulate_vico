@@ -17,6 +17,8 @@ five-scene P1/P2H/P3 preselection packages. No candidate is selected without
 a legal RPM/state-synchronised Reference. The labelled review package is
 `E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v1` with ZIP
 SHA `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.
+P5 is now executable as a clean-room `synthetic_one_shot_v1` state-triggered
+residual before frozen PTR; it is not a recorded asset and remains unselected.
 The local Stage-U/R3 packages remain non-R1 because rights, original capture
 and synchronized RPM/load/gear evidence are absent; they cannot reopen W10.
 The ready-to-fill Hellcat-first intake package is

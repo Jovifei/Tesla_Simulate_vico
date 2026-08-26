@@ -3,12 +3,12 @@
   "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW",
   "reference_status": "REFERENCE_POINTER_ONLY",
   "selected_architecture": null,
-  "package_path": "E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v1",
-  "zip_path": "E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v1.zip",
-  "zip_sha256": "7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62",
-  "file_count": 532,
-  "wav_count": 144,
-  "json_count": 387,
+  "package_path": "E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v3",
+  "zip_path": "E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v3.zip",
+  "zip_sha256": "501bf6672b7fe624ca31f964e7643b394177f0cd7be22c0a87a1cfe2f48bf944",
+  "file_count": 664,
+  "wav_count": 180,
+  "json_count": 483,
   "package_validation_errors": [],
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
 }

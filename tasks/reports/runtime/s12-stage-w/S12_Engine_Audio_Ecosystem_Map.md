@@ -14,8 +14,9 @@ Stage W separates ecosystem evidence into five architectural families:
 5. **Embedded fallback:** ESP32 RC and FiveM schema ideas inform bounded state
    machines only; their code/assets/licensing are not imported.
 
-The current Stage-W paths are `P2H candidate` and `P3 candidate`: persistent
-event source plus localized afterfire, waveguide/timbre-map experiments and
-the frozen PTR adapter. No path is selected. P4/P5/P6 remain bake-off
-candidates or blocked paths until comparable raw/post-PTR evidence exists.
+The current Stage-W paths are `P2H candidate`, `P3 candidate` and `P5
+candidate`: persistent event source plus localized afterfire, waveguide/timbre
+experiments, a clean-room one-shot residual and the frozen PTR adapter. No path
+is selected. P4/P6 remain blocked paths until comparable raw/post-PTR evidence
+exists.
 External references remain R2/R3 diagnostic pointers, not OEM truth.
