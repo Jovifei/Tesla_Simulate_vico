@@ -40,6 +40,8 @@
     "interpretation": "formal qualification closure only; not an acoustic rejection or OEM similarity result"
   },
   "next_action": "When R1 file-set or hash changes, run the existing R1 pilot preflight before W10 comparison",
+  "verification_window_end": "2026-08-27T01:09:05.4746724Z",
+  "verification_window_end_role": "source_backed_final_gate_end",
   "audit_provenance": {
     "repair_kind": "stage_w_c_closure_metadata_repair",
     "repair_base": "7d4e49b52b73696af703a1380d83663208c5a897",

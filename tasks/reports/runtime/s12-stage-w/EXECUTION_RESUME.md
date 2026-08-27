@@ -6,7 +6,7 @@
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-w-ecosystem-bakeoff`
 - Current phase: `W9_FINAL_QUALIFICATION` (`PASS`)
 - Overall status: `STAGE_W_CONTINUOUS_EXECUTION_COMPLETE / NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`
-- Completed phases: `W0` through `W9` repository-side hardening, research, preselection, and verification
+- Completed phases: W0-W6 PASS, W7 SKIPPED_NO_SELECTED_ARCHITECTURE, W8-W9 PASS (Ferrari/RX-7 output remains unselected preselection diagnostics)
 - Current failed gate: R1 pilot input is incomplete; this is a non-blocking external qualification gap, not a reason to redo local work
 - Last safe commit: `24f2c41bccfc26b13a821d959b2f4400d7eb264b` (`tested_code_evidence_head`)
 - Next command after an R1 file-set/hash change: `python -c "from pathlib import Path; from tools.sound_sim.s12.real_reference.r1_pilot import write_r1_pilot_outputs; write_r1_pilot_outputs(Path(r'E:\Claude_allow\Download\s12-stage-w-r1-capture-v1'), 'hellcat_full_pull_01', Path(r'E:\Claude_allow\Download\s12-stage-w-r1-capture-v1\preflight'))"`

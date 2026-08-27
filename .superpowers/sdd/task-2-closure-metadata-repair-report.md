@@ -37,3 +37,21 @@ Result: `6 failed` on starting HEAD `7d4e49b52b73696af703a1380d83663208c5a897`, 
 - No functional concerns identified. The final metadata-repair commit SHA must be resolved with `git rev-parse HEAD` after commit because a commit cannot embed its own SHA.
 
 Commit SHA: `HEAD` (resolve with `git rev-parse HEAD` after the local commit)
+
+## Review addendum RED
+
+Command:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py -q
+```
+
+Result: `2 failed, 6 passed`; the new failures caught the misleading W0-W9 completion wording and W9 completion time preceding the final evidence window.
+
+## Review addendum GREEN and verification
+
+- `python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py -q` -> `8 passed`.
+- JSON parse for `execution_state.json` and `phase_receipts/W9_FINAL_QUALIFICATION.json` -> both parsed successfully.
+- `git diff --check` -> exit `0`.
+
+Self-review: resume now states W0-W6 PASS, W7 SKIPPED_NO_SELECTED_ARCHITECTURE, W8-W9 PASS; W9 completion is bound to the source-backed final gate end `2026-08-27T01:09:05.4746724Z`.

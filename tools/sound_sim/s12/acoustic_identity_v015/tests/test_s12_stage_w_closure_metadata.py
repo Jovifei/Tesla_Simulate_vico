@@ -79,6 +79,24 @@ def test_resume_and_receipt_readme_state_long_task_and_receipt_scope() -> None:
     assert "execution_state.json" in receipts_readme
 
 
+def test_resume_terminal_phase_summary_does_not_claim_w7_migration_completed() -> None:
+    resume = (RUNTIME / "EXECUTION_RESUME.md").read_text(encoding="utf-8")
+
+    assert "Completed phases: W0-W6 PASS, W7 SKIPPED_NO_SELECTED_ARCHITECTURE, W8-W9 PASS" in resume
+    assert "Completed phases: `W0` through `W9`" not in resume
+
+
+def test_w9_completion_uses_final_evidence_window_end() -> None:
+    state = _json(RUNTIME / "execution_state.json")
+    receipt = _json(RUNTIME / "phase_receipts" / "W9_FINAL_QUALIFICATION.json")
+    completed_at = state["phases"]["W9_FINAL_QUALIFICATION"]["completed_at"]
+
+    assert completed_at == "2026-08-27T01:09:05.4746724Z"
+    assert receipt.get("verification_window_end") == completed_at
+    assert receipt.get("verification_window_end_role") == "source_backed_final_gate_end"
+    assert completed_at > "2026-08-27T01:08:20.0954604Z"
+
+
 def test_terminal_status_and_selection_boundary_are_preserved() -> None:
     state = _json(RUNTIME / "execution_state.json")
     receipt = _json(RUNTIME / "phase_receipts" / "W9_FINAL_QUALIFICATION.json")
