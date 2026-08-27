@@ -92,6 +92,17 @@ def test_geometry_and_firing_order_are_phase_authorities_for_piston() -> None:
     assert derive_event_phase_deg(base) != derive_event_phase_deg(altered_geometry)
 
 
+def test_rotary_uses_explicit_rotor_geometry_without_piston_firing_order() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
+    base = load_config("rx7_fd_v1")
+    altered = copy.deepcopy(base)
+    altered["rotor_geometry"]["value"][1] = 210.0
+    altered["firing_order_evidence"]["value"] = [2, 1]
+    assert derive_event_phase_deg(base) != derive_event_phase_deg(altered)
+
+
 def test_transfer_ir_and_collector_assignment_are_consumed() -> None:
     import copy
     import hashlib

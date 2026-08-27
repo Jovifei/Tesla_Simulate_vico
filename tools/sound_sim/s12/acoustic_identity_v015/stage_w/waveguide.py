@@ -121,7 +121,8 @@ class StatefulWaveguide:
     def restore(self, snapshot: Mapping[str, Any]) -> None:
         self._forward.restore(snapshot["forward"])
         self._round_trip.restore(snapshot["round_trip"])
-        self._frequency_loss.restore(snapshot["frequency_loss"])
+        if snapshot.get("frequency_loss") is not None:
+            self._frequency_loss.restore(snapshot["frequency_loss"])
         self.sample_counter = int(snapshot["sample_counter"])
 
 
