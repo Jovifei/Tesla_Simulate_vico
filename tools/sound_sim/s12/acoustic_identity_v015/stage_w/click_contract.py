@@ -23,7 +23,7 @@ def click_gate_contract(config: Mapping[str, Any] | None = None) -> dict[str, An
         if result[key] != DEFAULT_CLICK_GATE[key]:
             raise ValueError(f"click gate {key} does not match the versioned contract")
     result["threshold"] = float(result["threshold"])
-    if result["threshold"] <= 0.0:
+    if not np.isfinite(result["threshold"]) or result["threshold"] <= 0.0:
         raise ValueError("click gate threshold must be positive")
     return result
 
@@ -33,10 +33,10 @@ def block_boundary_click_metrics(audio: np.ndarray, block_size: int = 960, confi
     if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0 or block_size <= 0 or not np.all(np.isfinite(values)):
         raise ValueError("click metrics require finite nonempty stereo audio")
     starts = np.arange(0, values.shape[0], int(block_size), dtype=np.int64)
-    previous = np.vstack((np.zeros((1, 2)), values[np.maximum(starts[:-1] - 1, 0)]))
-    jumps = values[starts] - previous
+    boundary_starts = starts[1:]
+    jumps = values[boundary_starts] - values[boundary_starts - 1] if boundary_starts.size else np.zeros((0, 2), dtype=np.float64)
     contract = click_gate_contract(config)
-    maximum = float(np.max(np.abs(jumps)))
+    maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
     rms = float(np.sqrt(np.mean(np.square(jumps))))
     return {"max_boundary_jump": maximum, "normalized_rms_boundary": rms / max(float(np.sqrt(np.mean(np.square(values)))), 1.0e-12), **contract, "passed": maximum <= contract["threshold"]}
 

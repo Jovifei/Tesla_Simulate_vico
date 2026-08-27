@@ -6,6 +6,7 @@ import hashlib
 from pathlib import Path
 import subprocess
 import pytest
+import pytest
 
 ROOT = Path(__file__).resolve().parents[5]
 
@@ -270,6 +271,60 @@ def test_shared_click_helper_uses_only_block_boundary_indices() -> None:
     metrics = block_boundary_click_metrics(signal, 960)
     assert metrics["max_boundary_jump"] == 0.2
     assert metrics["definition"] == "block_boundary_only"
+
+
+def test_shared_click_helper_uses_nonzero_previous_block_end_sample() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import block_boundary_click_metrics
+    signal = np.zeros((1920, 2), dtype=np.float64)
+    signal[959] = [0.1, -0.1]
+    signal[960] = [0.4, -0.4]
+    assert block_boundary_click_metrics(signal, 960)["max_boundary_jump"] == pytest.approx(0.3)
+
+
+def test_click_contract_rejects_nan_threshold() -> None:
+    import math
+    import pytest
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    with pytest.raises(ValueError, match="threshold"):
+        click_gate_contract({"click_gate": {"threshold": math.nan}})
+
+
+def test_click_contract_rejects_positive_infinite_threshold() -> None:
+    import math
+    import pytest
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    with pytest.raises(ValueError, match="threshold"):
+        click_gate_contract({"click_gate": {"threshold": math.inf}})
+
+
+def test_click_contract_rejects_negative_infinite_threshold() -> None:
+    import math
+    import pytest
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    with pytest.raises(ValueError, match="threshold"):
+        click_gate_contract({"click_gate": {"threshold": -math.inf}})
+
+
+def test_click_contract_rejects_nonpositive_thresholds() -> None:
+    import pytest
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    for value in (0.0, -0.01):
+        with pytest.raises(ValueError, match="threshold"):
+            click_gate_contract({"click_gate": {"threshold": value}})
+
+
+def test_collector_assignment_alone_changes_path_readback_not_combustion_phase() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_path_schedule, derive_event_phase_deg
+    base = load_config("hellcat_v1")
+    changed = copy.deepcopy(base)
+    changed["collector_assignment"]["value"] = "central_first"
+    assert derive_event_phase_deg(base) == derive_event_phase_deg(changed)
+    base_paths = derive_event_path_schedule(base)
+    changed_paths = derive_event_path_schedule(changed)
+    assert [(item["collector_slot"], item["path_id"]) for item in base_paths] != [(item["collector_slot"], item["path_id"]) for item in changed_paths]
 
 
 def test_timbre_map_is_bounded_four_dimensional_and_order_synchronous() -> None:
