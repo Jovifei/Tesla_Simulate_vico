@@ -66,6 +66,50 @@ def test_afterfire_queue_preserves_delay_across_blocks_and_snapshot_restore() ->
     assert np.array_equal(expected, engine.process(high).raw_pcm)
 
 
+def _copy_bakeoff_for_validation(tmp_path):
+    import shutil
+    from pathlib import Path
+    source = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "bakeoff_final_remediation_v5"
+    destination = tmp_path / "bakeoff"
+    shutil.copytree(source, destination)
+    return destination
+
+
+def test_bakeoff_validator_rejects_non_null_selection(tmp_path) -> None:
+    import json
+    root = _copy_bakeoff_for_validation(tmp_path)
+    path = root / "bakeoff_results.json"
+    payload = json.loads(path.read_text(encoding="utf-8")); payload["selected_architecture"] = "P3"; path.write_text(json.dumps(payload), encoding="utf-8")
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest
+    assert "selection" in " ".join(validate_bakeoff_manifest(root))
+
+
+def test_bakeoff_validator_rejects_unexpected_status_or_reference(tmp_path) -> None:
+    import json
+    root = _copy_bakeoff_for_validation(tmp_path)
+    path = root / "bakeoff_manifest.json"
+    payload = json.loads(path.read_text(encoding="utf-8")); payload["status"] = "R2_DIAGNOSTIC_READY"; payload["reference_status"] = "EXTERNAL_R2_POINTER"; path.write_text(json.dumps(payload), encoding="utf-8")
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest
+    errors = " ".join(validate_bakeoff_manifest(root))
+    assert "status" in errors and "reference_status" in errors
+
+
+def test_bakeoff_validator_rejects_missing_state_file(tmp_path) -> None:
+    root = _copy_bakeoff_for_validation(tmp_path)
+    (root / "ablation_results.json").unlink()
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest
+    assert any("ablation_results" in item for item in validate_bakeoff_manifest(root))
+
+
+def test_bakeoff_validator_rejects_contradictory_summary_fields(tmp_path) -> None:
+    import json
+    root = _copy_bakeoff_for_validation(tmp_path)
+    path = root / "selected_architecture.json"
+    payload = json.loads(path.read_text(encoding="utf-8")); payload["status"] = "R2_DIAGNOSTIC_READY"; path.write_text(json.dumps(payload), encoding="utf-8")
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest
+    assert any("selected_architecture" in item or "status" in item for item in validate_bakeoff_manifest(root))
+
+
 def test_waveguide_has_frequency_dependent_loss() -> None:
     import numpy as np
     from tools.sound_sim.s12.acoustic_identity_v015.stage_w.waveguide import StatefulWaveguide, WaveguideConfig

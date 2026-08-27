@@ -249,6 +249,28 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     if not manifest_path.is_file():
         return ["bakeoff_manifest.json missing"]
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    required_state = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json")
+    states: dict[str, dict[str, Any]] = {}
+    for name in required_state:
+        path = root / name
+        if not path.is_file():
+            errors.append(f"missing_state:{name}")
+            continue
+        try:
+            states[name] = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            errors.append(f"invalid_state:{name}")
+    if manifest.get("status") != "REFERENCE_TARGET_MISSING":
+        errors.append("manifest_status")
+    if manifest.get("reference_status") != "REFERENCE_POINTER_ONLY":
+        errors.append("manifest_reference_status")
+    for name, state in states.items():
+        if state.get("status") != "REFERENCE_TARGET_MISSING":
+            errors.append(f"status:{name}")
+        if name != "selected_architecture.json" and state.get("reference_status") != "REFERENCE_POINTER_ONLY":
+            errors.append(f"reference_status:{name}")
+        if state.get("selected_architecture") is not None:
+            errors.append(f"selection:{name}")
     for relative, expected in manifest.get("files", {}).items():
         path = root / relative
         if not path.is_file():
