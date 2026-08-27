@@ -2,7 +2,7 @@
   "schema": "s12.stage_w.phase_receipt.v1",
   "phase": "W9_FINAL_QUALIFICATION",
   "status": "PASS",
-  "head": "3a62b5a83c7e21418f42541add7774aa4c0127a2",
+  "head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
   "checks": {
     "full_s12_python": "1015 passed, 1 skipped, 232 subtests passed in 1701.94s",
     "stage_w_slow_3000_block_equivalence": "1 passed in 77.09s",

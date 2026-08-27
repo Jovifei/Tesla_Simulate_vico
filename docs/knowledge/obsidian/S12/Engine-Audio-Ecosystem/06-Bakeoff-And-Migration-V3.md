@@ -9,7 +9,7 @@ source_url: https://github.com/Jovifei/Tesla_Simulate_vico
 source_commit: d5b4dd85fd0aa8db51a243e00d25cd7658f1908f
 license: project_internal_synthetic
 s12_git_branch: agent/s12-stage-w-ecosystem-bakeoff
-s12_git_commit: working_tree_pending_final_commit
+s12_git_commit: 24f2c41bccfc26b13a821d959b2f4400d7eb264b
 
 Hellcat bakeoff v3 keeps P1/P2/P2H/P3/P5 frame-aligned and records persistent
 phase/event/path/gain traces. The final long-window root `bakeoff_long_v3`
