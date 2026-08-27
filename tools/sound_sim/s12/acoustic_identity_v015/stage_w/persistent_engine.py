@@ -16,7 +16,7 @@ from ..contracts import SourceRender
 from ..event_domain.chamber_event import render_event_packet
 from ..event_domain.config_schema import unwrap, validate_config
 from ..event_domain.crank_phase_pll import CrankPhasePLL
-from ..event_domain.event_scheduler import derive_event_path_schedule, schedule_events
+from ..event_domain.event_scheduler import cycle_degrees, derive_event_path_schedule, derive_event_phase_deg, schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
 from .boundary_adapter import FrozenPtrStereo
@@ -90,7 +90,7 @@ class _TransferIrFilter:
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
-    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1") -> None:
+    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1", random_seed: int = 0, jitter_fraction: float = 0.0) -> None:
         self.config = validate_config(config)
         self._parameter_fallbacks: dict[str, dict[str, Any]] = {}
         for name, fallback in (("transfer_ir", "identity_default"), ("collector_assignment", "identity_default")):
@@ -111,12 +111,19 @@ class PersistentEventDomainEngine:
         if forced_induction_model not in {"harmonic_v1", "timbre_map_v1"}:
             raise ValueError("forced_induction_model must be harmonic_v1 or timbre_map_v1")
         self.forced_induction_model = forced_induction_model
+        if not isinstance(random_seed, int) or isinstance(random_seed, bool):
+            raise ValueError("random_seed must be a bounded integer")
+        if not np.isfinite(jitter_fraction) or not 0.0 <= float(jitter_fraction) <= 0.25:
+            raise ValueError("jitter_fraction must be finite and in [0, 0.25]")
+        self.random_seed = int(random_seed)
+        self.jitter_fraction = float(jitter_fraction)
         self.entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         self.bank_count = int(unwrap(self.config, "bank_count"))
         self._reset_runtime()
 
     def _reset_runtime(self) -> None:
         self.pll = CrankPhasePLL(self.sample_rate_hz, self.config, mode=self.mode)
+        self._rng = np.random.default_rng(self.random_seed)
         self.sample_counter = 0
         self._last_rpm = float(unwrap(self.config, "idle_target_rpm"))
         self._last_throttle = 0.18
@@ -457,6 +464,8 @@ class PersistentEventDomainEngine:
         if not eligible:
             return
         delay_s = float(unwrap(self.config, "afterfire.ignition_delay_s")) + 0.000001 * float(state["rpm"])
+        if self.jitter_fraction:
+            delay_s *= 1.0 + float(self._rng.uniform(-self.jitter_fraction, self.jitter_fraction))
         delay_samples = max(0, int(round(delay_s * self.sample_rate_hz)))
         energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"])))
         policy = self.afterfire_location_policy
@@ -467,9 +476,7 @@ class PersistentEventDomainEngine:
         if len(self._afterfire_pending_events) >= 64:
             self._afterfire_dropped_events += 1
             return
-        # The event scheduler's entity is not exposed by this block-level gate;
-        # use a deterministic primary path, while preserving the route itself.
-        source_entity = 0
+        source_entity = self._afterfire_entity(phase)
         self._afterfire_sequence += 1
         scheduled_sample = self.sample_counter + delay_samples
         path_delay = self.waveguide_network.guides[source_entity].delay_samples if self.waveguide_network is not None else self._path_lines[source_entity].delay_samples
@@ -478,9 +485,9 @@ class PersistentEventDomainEngine:
             bank_id = int(unwrap(self.config, "bank_assignment")[source_entity])
             arrival = scheduled_sample + path_delay + self._collector_lines[bank_id].delay_samples
         elif policy == "bank_collector":
-            path_id = "bank_collector_0"
-            bank_id = 0
-            arrival = scheduled_sample + self._collector_lines[0].delay_samples
+            bank_id = int(unwrap(self.config, "bank_assignment")[source_entity])
+            path_id = f"bank_collector_{bank_id}"
+            arrival = scheduled_sample + self._collector_lines[bank_id].delay_samples
         else:
             path_id = "central_collector"
             bank_id = None
@@ -497,6 +504,13 @@ class PersistentEventDomainEngine:
             path_delay = self.waveguide_network.guides[0].delay_samples if self.waveguide_network is not None else self._path_lines[0].delay_samples
         self._afterfire_event_count += 1
         self._afterfire_cooldown_remaining = int(round(float(unwrap(self.config, "afterfire.cooldown_s")) * self.sample_rate_hz))
+
+    def _afterfire_entity(self, phase: np.ndarray) -> int:
+        phases = np.asarray(derive_event_phase_deg(self.config), dtype=np.float64)
+        cycle = cycle_degrees(self.config)
+        current = float(phase[-1] * 180.0 / np.pi) % cycle
+        distance = np.abs((current - phases + 0.5 * cycle) % cycle - 0.5 * cycle)
+        return int(np.argmin(distance))
 
     def _emit_due_afterfires(self, frame_start: int, block_size: int) -> None:
         """Materialize queued afterfires at absolute sample positions."""
@@ -574,6 +588,9 @@ class PersistentEventDomainEngine:
             "parameter_fallbacks": copy.deepcopy(self._parameter_fallbacks),
             "timbre_inertia_state": self._timbre_inertia_state,
             "click_contract": dict(self._click_contract),
+            "random_seed": self.random_seed,
+            "jitter_fraction": self.jitter_fraction,
+            "rng_state": copy.deepcopy(self._rng.bit_generator.state),
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -609,6 +626,8 @@ class PersistentEventDomainEngine:
             self._transfer_ir.restore(snapshot["transfer_ir"])
         self._parameter_consumption = dict(snapshot.get("parameter_consumption", self._parameter_consumption))
         self._parameter_fallbacks = copy.deepcopy(snapshot.get("parameter_fallbacks", self._parameter_fallbacks)); self._timbre_inertia_state = float(snapshot.get("timbre_inertia_state", 0.0))
+        if snapshot.get("rng_state") is not None:
+            self._rng.bit_generator.state = copy.deepcopy(snapshot["rng_state"])
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -653,6 +672,7 @@ class PersistentEventDomainEngine:
             "parameter_fallbacks": copy.deepcopy(self._parameter_fallbacks),
             "timbre_inertia_state": self._timbre_inertia_state,
             "click_contract": dict(self._click_contract),
+            "random_state": {"seed": self.random_seed, "jitter_fraction": self.jitter_fraction, "provenance": "bounded_local_pcg64_only"},
             "path_schedule": derive_event_path_schedule(self.config),
             "monitor_source": "PersistentEventDomainEngine.monitor_pcm",
             "collector_assignment": str(unwrap(self.config, "collector_assignment")),

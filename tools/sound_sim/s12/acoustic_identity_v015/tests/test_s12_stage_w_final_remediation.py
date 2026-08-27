@@ -343,6 +343,46 @@ def test_collector_assignment_alone_changes_path_readback_not_combustion_phase()
     assert [(item["collector_slot"], item["path_id"]) for item in base_paths] != [(item["collector_slot"], item["path_id"]) for item in changed_paths]
 
 
+def test_afterfire_route_uses_scheduled_entity_bank_and_stereo_topology() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    seen = {}
+    for policy in ("primary", "bank_collector", "central_collector"):
+        engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+        engine.afterfire_location_policy = policy
+        engine.process(high)
+        outputs = [engine.process(lift).raw_pcm for _ in range(30)]
+        block = type("Block", (), {"diagnostics": engine.diagnostics()})()
+        route = block.diagnostics["afterfire_route"]
+        seen[policy] = np.concatenate(outputs, axis=0)
+        assert route["entity"] in range(engine.entity_count)
+        if policy != "central_collector":
+            assert route["bank_id"] == config["bank_assignment"]["value"][route["entity"]]
+            assert route["path_id"].endswith(str(route["bank_id"])) or policy == "primary"
+    assert not np.array_equal(seen["primary"], seen["bank_collector"])
+    assert not np.array_equal(seen["bank_collector"], seen["central_collector"])
+
+
+def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    state = {"rpm": np.array([6200.0]), "load": np.array([0.9]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    engine = PersistentEventDomainEngine(config, 48000, 960, random_seed=17, jitter_fraction=0.1)
+    engine.process(state); snapshot = engine.snapshot_state(); expected = engine.process(lift).raw_pcm
+    engine.restore_state(snapshot)
+    assert np.array_equal(expected, engine.process(lift).raw_pcm)
+    engine.reset("hard"); first = engine.process(state).raw_pcm
+    engine.reset("hard"); assert np.array_equal(first, engine.process(state).raw_pcm)
+    assert engine.diagnostics()["random_state"]["provenance"] == "bounded_local_pcg64_only"
+
+
 def test_timbre_map_is_bounded_four_dimensional_and_order_synchronous() -> None:
     import numpy as np
     from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import TimbreMap4D
