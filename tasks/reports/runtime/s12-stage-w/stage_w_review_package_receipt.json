@@ -1,8 +1,12 @@
 {
   "schema_version": "s12.stage_w.review_package_receipt.v1",
-  "status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW",
+  "status": "STALE_HISTORICAL_REVIEW_PACKAGE",
   "reference_status": "REFERENCE_POINTER_ONLY",
   "selected_architecture": null,
+  "current_audition_prohibited": true,
+  "stale_relative_to_source_head": "d33b3ecf3757ffa084aa43277892f012d48ecaa8",
+  "superseded_by_current_evidence": ["bakeoff_final_remediation_v17", "migration_final_remediation_rx7_v17", "migration_final_remediation_ferrari_v18"],
+  "new_package_prohibited_until": "candidate_selected_and_R1_gate_closed",
   "source_bakeoff_manifest_sha256": "cb6c3eeb58cffdce628adea6211bf0ce031d6e8962e3b72529447aee1b2ec288",
   "long_window": true,
   "scene_duration_s": {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0, "other_diagnostic_scenes": 1.0},

@@ -1,10 +1,13 @@
 {
-  "schema_version": "s12.stage_w.parameter_usage_matrix.v1",
+  "schema_version": "s12.stage_w.parameter_usage_matrix.v2",
   "status": "PARTIAL_REFERENCE_SELECTION_PENDING",
   "stage_v_audit": "stage_v_parameter_usage_matrix.json",
   "stage_w_consumed_paths": {
     "persistent_engine": ["rpm", "load", "throttle", "acceleration_mps2", "firing_order_evidence", "combustion_event", "afterfire", "per_path_primary_length_m", "collector_length_m"],
+    "geometry": {"piston.crankpin_geometry": true, "rotary.rotor_geometry": true, "cycle_definition": "validated firing geometry", "evidence": "persistent_engine diagnostics parameter_consumption and phase schedule"},
+    "bank_collector_assignment": {"consumed": true, "authority": "W2 derived phase bank-order rule", "evidence": "event_scheduler derive_event_phase_deg and path_schedule"},
     "waveguide": ["per_path_primary_length_m", "bank_assignment", "gas_temperature_model"],
+    "transfer_ir": {"consumed": true, "model": "synthetic_rotary_housing_rear_exhaust", "evidence": "PersistentEventDomainEngine diagnostics"},
     "reduced_cfd_teacher": ["ensim4 CFD-on/off RMS ratio", "ensim4 CFD-on/off centroid ratio", "persistent teacher state"],
     "timbre_map": ["forced_induction.type", "forced_induction.ratio", "forced_induction.gain", "intake_model"],
     "frozen_ptr": ["runtime_ptr_adapter.py", "radiation-boundary-package.json"]
@@ -13,7 +16,9 @@
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py",
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py",
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py",
-    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py"
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v17",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v18"
   ],
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
 }

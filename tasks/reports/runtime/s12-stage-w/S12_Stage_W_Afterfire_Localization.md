@@ -8,7 +8,7 @@ ignition delay. `primary` events enter an entity event tail before the normal
 path delay; `collector` events enter the collector state. The two policies
 produce different arrival/SHA evidence under equal event energy.
 
-Focused Stage-W tests: `91 passed, 1 skipped`; the three configured routes
+Focused Stage-W tests: `93 passed, 1 skipped`; the three configured routes
 (`primary`, `bank_collector`, `central_collector`) expose path id, bank,
 collector pressure and arrival-sample diagnostics and are snapshot-safe.
 

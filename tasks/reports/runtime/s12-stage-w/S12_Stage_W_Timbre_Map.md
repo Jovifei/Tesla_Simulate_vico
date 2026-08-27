@@ -10,4 +10,4 @@ aspirated configurations do not emit BOV output. The existing `harmonic_v1`
 fixed family remains the baseline. The branch is suitable for an offline
 bake-off; it is not an OEM blower/turbo calibration or embedded CPU proof.
 
-Focused Stage-W tests: `91 passed, 1 skipped`.
+Focused Stage-W tests: `93 passed, 1 skipped`.
