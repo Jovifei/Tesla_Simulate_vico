@@ -1,8 +1,8 @@
 {
   "schema_version": "s12.stage_w.final_remediation_evidence_receipt.v1",
   "status": "DONE_WITH_CONCERNS",
-  "tested_code_head": "ff2646f29b12b0e38735b250cc090a2a1af3f8d9",
-  "tested_code_head_role": "source_fix_parent_before_receipt_commit",
+  "tested_code_head": "182ded416fed06715359d9e918aa700cb85e6db4",
+  "tested_code_head_role": "all_source_fixes_parent_before_final_receipt_commit",
   "outputs_are_local_synthetic_only": true,
   "external_media_ingested": false,
   "selection": null,
@@ -42,15 +42,15 @@
   "guards": {
     "track_p": {
       "command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py",
-      "start": "2026-08-28T00:08:27.3623787+08:00",
-      "end": "2026-08-28T00:08:28.5221518+08:00",
-      "verified_code_head": "ff2646f29b12b0e38735b250cc090a2a1af3f8d9",
+      "start": "2026-08-28T00:13:53.2654533+08:00",
+      "end": "2026-08-28T00:13:54.0466030+08:00",
+      "verified_code_head": "182ded416fed06715359d9e918aa700cb85e6db4",
       "exit_code": 0,
       "frozen_files": 180,
       "frozen_symbols": 2,
-      "git_diff_check": {"exit_code": 0},
-      "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/track_p_guard_final_pass_v2.stdout.log",
-      "stdout_sha256": "aa1fb973990fd68b345db169b254a76c0f0a8fbc70dc285056f3e55bd261a6eb"
+    "git_diff_check": {"exit_code": 0},
+      "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/track_p_guard_final_pass_v3.stdout.log",
+      "stdout_sha256": "0bf17ddb206c114508305d13bf17f820830f707f3a65d9d74f5b997e40e0287b"
     },
     "raw_log_sha_preserved": true,
     "pre_fix_failure_log": "tasks/reports/runtime/s12-stage-w/logs/track_p_guard_pre_fix_failure.stdout.log"
