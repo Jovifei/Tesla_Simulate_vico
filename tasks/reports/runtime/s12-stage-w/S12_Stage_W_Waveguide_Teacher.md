@@ -6,12 +6,13 @@ Status: `WAVEGUIDE_V1_PASS / ENSIM4_DOCKER_BUILD_PASS_DUMMY_RUN_ONLY`
 
 `stage_w.waveguide` is a clean-room stateful path model. It keeps forward and
 round-trip delay histories, computes temperature-dependent arrival samples,
-applies an area-ratio reflection coefficient and frequency-independent loss,
+applies an area-ratio reflection coefficient and stateful frequency-dependent
+loss (temperature/path-length parameterized one-pole attenuation),
 and merges paths through a bank stereo collector. It is selectable on
 `PersistentEventDomainEngine(path_model="waveguide_v1")`; the Stage-V
 `delay_lpf_v1` baseline remains available and unchanged.
 
-Focused evidence is included in the final Stage-W run (`43 passed, 1 skipped`),
+Focused evidence is included in the final Stage-W run (`79 passed, 1 skipped`),
 including impulse state across block boundaries, one-shot/block equality,
 equal/unequal header arrival/SHA, three afterfire routes and persistent-engine
 path-model selection.

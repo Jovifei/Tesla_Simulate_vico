@@ -5,7 +5,9 @@ Decision: **no architecture is selected**.
 The executable candidates are P2H (persistent event engine, waveguide and
 frozen PTR) and P3 (P2H plus timbre map). Both are kept as reversible,
 synthetic Track-S candidates. P1 Legacy and P2 delay/LPF remain comparison
-baselines. P4/P5 require rights-bound source material; P6 is an offline ENSIM4
+baselines. P5 clean-room synthetic transients are allowed without rights-bound
+source material; P4 and any P5 external source material require rights-bound
+media. P6 is an offline ENSIM4
 teacher and is not a Runtime candidate.
 
 The current Hellcat bake-off proves rendering, equal frame alignment, frozen
