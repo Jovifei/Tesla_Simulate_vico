@@ -37,7 +37,7 @@ def block_boundary_click_metrics(audio: np.ndarray, block_size: int = 960, confi
     jumps = values[boundary_starts] - values[boundary_starts - 1] if boundary_starts.size else np.zeros((0, 2), dtype=np.float64)
     contract = click_gate_contract(config)
     maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
-    rms = float(np.sqrt(np.mean(np.square(jumps))))
+    rms = float(np.sqrt(np.mean(np.square(jumps)))) if jumps.size else 0.0
     return {"max_boundary_jump": maximum, "normalized_rms_boundary": rms / max(float(np.sqrt(np.mean(np.square(values)))), 1.0e-12), **contract, "passed": maximum <= contract["threshold"]}
 
 

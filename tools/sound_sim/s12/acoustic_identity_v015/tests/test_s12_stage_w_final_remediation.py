@@ -67,11 +67,32 @@ def test_afterfire_queue_preserves_delay_across_blocks_and_snapshot_restore() ->
 
 
 def _copy_bakeoff_for_validation(tmp_path):
-    import shutil
-    from pathlib import Path
-    source = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "bakeoff_final_remediation_v5"
     destination = tmp_path / "bakeoff"
-    shutil.copytree(source, destination)
+    import numpy as np
+    import json
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import sha256_file, write_json, write_pcm24_wav
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import block_boundary_click_metrics
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import SCENES
+    destination.mkdir()
+    state = {"status": "REFERENCE_TARGET_MISSING", "reference_status": "REFERENCE_POINTER_ONLY", "selected_architecture": None}
+    for name in ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json"):
+        write_json(destination / name, state)
+    files = {}
+    silence = np.zeros((960, 2), dtype=np.float64)
+    click = {"raw": block_boundary_click_metrics(silence), "post_ptr": block_boundary_click_metrics(silence), "monitor": block_boundary_click_metrics(silence)}
+    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+        for scene in SCENES:
+            case = destination / architecture / scene
+            case.mkdir(parents=True)
+            for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav"):
+                write_pcm24_wav(case / name, silence, 48000)
+            write_json(case / "metrics.json", {"click_metrics": click, "diagnostics": {"click_metrics": click["raw"]}})
+            write_json(case / "sha256_manifest.json", {})
+            for path in case.iterdir():
+                files[path.relative_to(destination).as_posix()] = sha256_file(path)
+    for name in ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json"):
+        files[name] = sha256_file(destination / name)
+    write_json(destination / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": "REFERENCE_TARGET_MISSING", "reference_status": "REFERENCE_POINTER_ONLY", "files": files})
     return destination
 
 
