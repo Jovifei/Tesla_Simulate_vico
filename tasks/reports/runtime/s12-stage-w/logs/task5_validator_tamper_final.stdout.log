@@ -1,0 +1,8 @@
+................                                                         [100%]
+16 passed in 890.09s (0:14:50)
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py -q
+START=2026-08-28T06:34:05.0674458+08:00
+PID=62360
+END=2026-08-28T06:48:56.0000000+08:00
+EXIT=0
+SOURCE_HEAD=5038194

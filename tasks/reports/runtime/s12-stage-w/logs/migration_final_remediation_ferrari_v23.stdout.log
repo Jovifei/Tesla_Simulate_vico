@@ -1,0 +1,6 @@
+COMMAND=python -c "from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import run_preselection_vehicle_migration; run_preselection_vehicle_migration(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v23','ferrari_458',duration_s=0.20)"
+START=2026-08-28T06:51:12.4338452+08:00
+PID=54888
+END=2026-08-28T06:51:36.0000000+08:00
+EXIT=0
+VALIDATOR=[]
