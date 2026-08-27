@@ -56,4 +56,12 @@
     "pre_fix_failure_log": "tasks/reports/runtime/s12-stage-w/logs/track_p_guard_pre_fix_failure.stdout.log"
   },
   "external_gates_unverified": ["full S12 regression", "legal synchronized R1 reference", "W10", "Profile Freeze", "OEM reproduction", "human PASS"]
+  ,"current_verification": {
+    "remediation_tests": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q", "exit_code": 0, "passed": 22, "duration_s": 5.26},
+    "stage_w_focused": {"command": "python -m pytest <10 explicit test_s12_stage_w_*.py paths> -q", "parent_pid": 49496, "python_pid": 17004, "start": "2026-08-28T00:36:57.5834369+08:00", "end": "2026-08-28T00:49:00.6404587+08:00", "exit_code": 0, "passed": 73, "skipped": 1, "stdout": "tasks/reports/runtime/s12-stage-w/logs/stage_w_focused_addendum2.stdout.log"},
+    "stage_v_focused": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_v -q --disable-warnings", "pid": 21268, "start": "2026-08-28T00:53:04.6610595+08:00", "end": "2026-08-28T00:53:37.6409815+08:00", "exit_code": 0, "passed": 31, "deselected": 560, "stdout_sha256": "EBFAED605E52A45813BB57CFF546006556A1B79D6A092EDA558D11BD374423FD"},
+    "compileall_exit_code": 0,
+    "json_finite_scan": {"files": 730, "nonfinite": 0},
+    "git_diff_check_exit_code": 0
+  }
 }
