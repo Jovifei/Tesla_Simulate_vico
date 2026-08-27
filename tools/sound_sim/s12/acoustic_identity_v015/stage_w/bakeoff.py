@@ -171,12 +171,15 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     raw_receipt = write_pcm24_wav(case_root / "raw_source.wav", raw, SAMPLE_RATE_HZ)
     post_receipt = write_pcm24_wav(case_root / "post_ptr_raw.wav", post_ptr, SAMPLE_RATE_HZ)
     monitor_receipt = write_pcm24_wav(case_root / "monitor.wav", monitor, SAMPLE_RATE_HZ)
+    raw_reopened, _ = read_pcm24_wav(case_root / "raw_source.wav")
+    post_reopened, _ = read_pcm24_wav(case_root / "post_ptr_raw.wav")
+    monitor_reopened, _ = read_pcm24_wav(case_root / "monitor.wav")
     write_json(case_root / "state_trace.json", {"sample_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
-    click_metrics = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post_ptr), "monitor": _block_click_metrics(monitor)}
+    click_metrics = {"raw": _block_click_metrics(raw_reopened), "post_ptr": _block_click_metrics(post_reopened), "monitor": _block_click_metrics(monitor_reopened)}
     diagnostic_summary["click_metrics"] = click_metrics["raw"]
-    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))) )}, "click_metrics": click_metrics, "comparison": comparison, "diagnostics": diagnostic_summary})
+    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "status": "REFERENCE_TARGET_MISSING", "reference_status": "REFERENCE_POINTER_ONLY", "selected_architecture": None, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw_reopened))), "rms": float(np.sqrt(np.mean(np.square(raw_reopened))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_reopened))), "rms": float(np.sqrt(np.mean(np.square(post_reopened))) )}, "monitor_metrics": {"peak": float(np.max(np.abs(monitor_reopened))), "rms": float(np.sqrt(np.mean(np.square(monitor_reopened))) )}, "click_metrics": click_metrics, "comparison": comparison, "diagnostics": diagnostic_summary})
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
@@ -244,59 +247,114 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
 
 def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     root = Path(root)
-    errors: list[str] = []
     manifest_path = root / "bakeoff_manifest.json"
     if not manifest_path.is_file():
         return ["bakeoff_manifest.json missing"]
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    required_state = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json")
+    errors: list[str] = []
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"bakeoff_manifest.json invalid:{exc}"]
+    required_state = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
+    case_files = ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json")
+    architectures = ("P1", "P2", "P2H", "P3", "P5")
+
+    def finite(value: Any) -> bool:
+        if isinstance(value, dict):
+            return all(finite(item) for item in value.values())
+        if isinstance(value, list):
+            return all(finite(item) for item in value)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return bool(np.isfinite(value))
+        return True
+
     states: dict[str, dict[str, Any]] = {}
     for name in required_state:
         path = root / name
         if not path.is_file():
-            errors.append(f"missing_state:{name}")
+            errors.append(f"missing_required:{name}")
             continue
         try:
             states[name] = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            errors.append(f"invalid_state:{name}")
-    if manifest.get("status") != "REFERENCE_TARGET_MISSING":
-        errors.append("manifest_status")
-    if manifest.get("reference_status") != "REFERENCE_POINTER_ONLY":
-        errors.append("manifest_reference_status")
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"invalid_state:{name}:{exc}")
+    if manifest.get("status") != "REFERENCE_TARGET_MISSING": errors.append("manifest_status")
+    if manifest.get("reference_status") != "REFERENCE_POINTER_ONLY": errors.append("manifest_reference_status")
+    if manifest.get("selected_architecture") is not None: errors.append("manifest_selection")
     for name, state in states.items():
-        if state.get("status") != "REFERENCE_TARGET_MISSING":
-            errors.append(f"status:{name}")
-        if name != "selected_architecture.json" and state.get("reference_status") != "REFERENCE_POINTER_ONLY":
-            errors.append(f"reference_status:{name}")
-        if state.get("selected_architecture") is not None:
-            errors.append(f"selection:{name}")
+        if state.get("status") != "REFERENCE_TARGET_MISSING": errors.append(f"status:{name}")
+        if state.get("reference_status") not in {None, "REFERENCE_POINTER_ONLY"}: errors.append(f"reference_status:{name}")
+        if state.get("selected_architecture") is not None: errors.append(f"selection:{name}")
+        if not finite(state): errors.append(f"nonfinite:{name}")
+
+    expected_files = {f"{architecture}/{scene}/{filename}" for architecture in architectures for scene in SCENES for filename in case_files} | set(required_state)
+    listed_files = set(manifest.get("files", {}))
+    for relative in sorted(expected_files - listed_files): errors.append(f"missing_required:{relative}")
     for relative, expected in manifest.get("files", {}).items():
-        path = root / relative
-        if not path.is_file():
-            errors.append(f"missing:{relative}")
-        elif sha256_file(path) != expected:
-            errors.append(f"sha:{relative}")
-    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+        relative_path = Path(relative)
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            errors.append(f"unsafe_path:{relative}")
+            continue
+        path = root / relative_path
+        if not path.is_file(): errors.append(f"missing:{relative}")
+        elif sha256_file(path) != expected: errors.append(f"sha:{relative}")
+
+    results = states.get("bakeoff_results.json", {})
+    result_architectures = results.get("architectures", {})
+    if set(result_architectures) != {"P1", "P2", "P2H", "P3", "P4", "P5", "P6"}:
+        errors.append("nested_architecture_inventory")
+    for architecture in architectures:
+        scene_records = result_architectures.get(architecture, {}).get("scenes", {})
+        if set(scene_records) != set(SCENES): errors.append(f"nested_scene_inventory:{architecture}")
+    parent_candidates = states.get("parent_candidate_metrics.json", {}).get("architectures", {})
+    if set(parent_candidates) != {"P2", "P2H", "P3", "P5"}: errors.append("nested_parent_candidate_inventory")
+    ablations = states.get("ablation_results.json", {}).get("ablations", {})
+    if set(ablations) != {"P2_to_P2H_waveguide", "P2H_to_P3_timbre_map", "P3_to_P5_transient"}: errors.append("nested_ablation_inventory")
+    matrix_path = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "parameter_usage_matrix.json"
+    try:
+        geometry_matrix = json.loads(matrix_path.read_text(encoding="utf-8")).get("stage_w_consumed_paths", {}).get("geometry", {})
+        expected_geometry = {"crankpin_geometry": bool(geometry_matrix["piston.crankpin_geometry"]), "rotor_geometry": bool(geometry_matrix.get("piston.rotor_geometry", False))}
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        expected_geometry = None
+        errors.append("geometry_matrix_missing")
+
+    for architecture in architectures:
         for scene in SCENES:
             case = root / architecture / scene
-            for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "metrics.json", "sha256_manifest.json"):
-                if not (case / name).is_file(): errors.append(f"missing:{architecture}/{scene}/{name}")
             try:
+                for name in case_files:
+                    if not (case / name).is_file(): errors.append(f"missing_required:{architecture}/{scene}/{name}")
                 raw, raw_meta = read_pcm24_wav(case / "raw_source.wav")
                 post, post_meta = read_pcm24_wav(case / "post_ptr_raw.wav")
                 monitor, monitor_meta = read_pcm24_wav(case / "monitor.wav")
                 if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0: errors.append(f"clipping:{architecture}/{scene}")
                 if raw_meta["frames"] != post_meta["frames"] or post_meta["frames"] != monitor_meta["frames"]: errors.append(f"frames:{architecture}/{scene}")
+                if np.array_equal(raw, monitor) or np.array_equal(raw, post) or np.array_equal(post, monitor): errors.append(f"separation:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
-                click = metrics.get("click_metrics", {})
-                if not click:
-                    # Historical local synthetic outputs predate the explicit
-                    # contract; validate their saved PCM at the same block
-                    # boundaries without rewriting their SHA-bound bytes.
-                    click = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post), "monitor": _block_click_metrics(monitor)}
-                if not click or any(not item.get("passed", False) for item in click.values()): errors.append(f"click_gate:{architecture}/{scene}")
-            except (OSError, ValueError) as exc: errors.append(f"wav:{architecture}/{scene}:{exc}")
+                if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY" or metrics.get("selected_architecture") is not None: errors.append(f"identity_gate:{architecture}/{scene}")
+                if not finite(metrics): errors.append(f"nonfinite:metrics:{architecture}/{scene}")
+                recomputed_click = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post), "monitor": _block_click_metrics(monitor)}
+                if metrics.get("click_metrics") != recomputed_click: errors.append(f"click_saved:{architecture}/{scene}")
+                if any(not item.get("passed", False) for item in recomputed_click.values()): errors.append(f"click_gate:{architecture}/{scene}")
+                diagnostics = metrics.get("diagnostics", {})
+                consumption = diagnostics.get("parameter_consumption", {})
+                expected = {"collector_assignment": True, "crankpin_geometry": architecture != "P1", "rotor_geometry": False, "transfer_ir": architecture != "P1"}
+                if expected_geometry is not None:
+                    expected["crankpin_geometry"] = expected_geometry["crankpin_geometry"]
+                    expected["rotor_geometry"] = expected_geometry["rotor_geometry"]
+                if architecture != "P1" and any(consumption.get(key) is not value for key, value in expected.items()): errors.append(f"parameter_consumption:{architecture}/{scene}")
+                event_trace = json.loads((case / "event_trace.json").read_text(encoding="utf-8"))
+                afterfire = event_trace.get("afterfire_event_count", [])
+                if scene == "afterfire_ineligible" and architecture != "P1" and afterfire and afterfire[-1] != 0: errors.append(f"afterfire_wrong_condition:{architecture}/{scene}")
+                inner = json.loads((case / "sha256_manifest.json").read_text(encoding="utf-8"))
+                if set(inner) != set(case_files[:-1]): errors.append(f"case_manifest_inventory:{architecture}/{scene}")
+                for name in case_files[:-1]:
+                    if not isinstance(inner.get(name), str) or sha256_file(case / name) != inner.get(name): errors.append(f"case_manifest_sha:{architecture}/{scene}/{name}")
+                record = scene_records.get(scene, {})
+                for key, filename in (("raw_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
+                    if record.get(key) != sha256_file(case / filename): errors.append(f"nested_hash:{architecture}/{scene}/{key}")
+            except (OSError, ValueError, json.JSONDecodeError, KeyError, TypeError) as exc:
+                errors.append(f"artifact:{architecture}/{scene}:{exc}")
     return errors
 
 

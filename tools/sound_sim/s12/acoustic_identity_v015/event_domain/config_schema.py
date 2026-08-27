@@ -16,7 +16,7 @@ _TOP_LEVEL_KEYS = {
     "cycle_variation", "per_path_primary_length_m", "per_path_attenuation", "collector_assignment",
     "collector_length_m", "collector_loss", "gas_temperature_model", "intake_model", "forced_induction",
     "afterfire", "transfer_ir", "runtime_limits", "provenance", "asset_checksums",
-    "crankpin_geometry", "rotor_geometry", "timbre_map",
+    "crankpin_geometry", "rotor_geometry", "timbre_map", "bank_phase_offsets_version", "bank_phase_offsets_deg",
     "click_gate",
     "rotary_event_width_scale", "rotary_event_gain_scale", "housing_gain_scale", "housing_decay_scale",
     "housing_order_mix", "primary_spool_tau", "secondary_spool_tau", "blow_off_gain", "blow_off_decay",
@@ -37,6 +37,9 @@ def load_config(vehicle_id: str) -> dict[str, Any]:
     afterfire.setdefault("ignition_delay_s", parameter(0.004, "s", [0.001, 0.25], source="synthetic afterfire delay", verification_state="synthetic_assumption"))
     afterfire.setdefault("event_location", parameter("primary", "label", "primary|bank_collector|central_collector", source="synthetic afterfire location", verification_state="synthetic_assumption"))
     count = int(config["cylinder_or_rotor_count"]["value"])
+    bank_count = int(config["bank_count"]["value"])
+    config.setdefault("bank_phase_offsets_version", "s12.stage_w.bank_phase_offsets.v1")
+    config.setdefault("bank_phase_offsets_deg", parameter([0.0] * bank_count, "deg", [-180.0, 180.0], source="synthetic declared bank phase geometry", verification_state="synthetic_assumption"))
     if config.get("architecture") == "piston":
         config.setdefault("crankpin_geometry", parameter([0.0] * count, "deg", [0, 720], source="synthetic crankpin geometry", verification_state="synthetic_assumption"))
     else:
@@ -79,6 +82,8 @@ def validate_config(config: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError("unsupported event-domain schema")
     if config["architecture"] not in {"piston", "rotary_wankel"}:
         raise ValueError("architecture must be piston or rotary_wankel")
+    if config.get("bank_phase_offsets_version") != "s12.stage_w.bank_phase_offsets.v1":
+        raise ValueError("unsupported bank phase offset schema")
     for path, node in flatten_parameters(config).items():
         if set(node) != _PARAMETER_KEYS:
             raise ValueError(f"parameter {path} has incomplete provenance or unknown fields")
@@ -106,6 +111,9 @@ def validate_config(config: Mapping[str, Any]) -> dict[str, Any]:
     assignment = list(unwrap(config, "bank_assignment"))
     if len(assignment) != count or any(int(x) < 0 or int(x) >= bank_count for x in assignment):
         raise ValueError("bank_assignment must cover each entity")
+    bank_offsets = list(unwrap(config, "bank_phase_offsets_deg"))
+    if len(bank_offsets) != bank_count or any(not isinstance(x, (int, float)) or isinstance(x, bool) or not __import__("math").isfinite(float(x)) or not -180.0 <= float(x) <= 180.0 for x in bank_offsets):
+        raise ValueError("bank_phase_offsets_deg must contain one finite bounded offset per bank")
     lengths = list(unwrap(config, "per_path_primary_length_m"))
     attenuations = list(unwrap(config, "per_path_attenuation"))
     if len(lengths) != count or len(attenuations) != count:

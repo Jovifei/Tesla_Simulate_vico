@@ -4161,3 +4161,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - No architecture is selected, no OEM reproduction is claimed, and Profile Freeze remains closed.
 - Resume from `tasks/reports/runtime/s12-stage-w/execution_state.json` and `EXECUTION_RESUME.md`; do not rerun the full regression unless source or test inputs change.
 - Final W6 evidence is `bakeoff_long_v3` with real 20 s/60 s windows and review package v5; W8 source evidence is joined for all 23 registry ids and canonical Obsidian repo/vault hashes are 16/16 matched.
+
+## Task 5 addendum rework plan (2026-08-28)
+
+- [ ] RED/GREEN: harden bakeoff/migration validators and self-contained tamper tests.
+- [ ] RED/GREEN: explicit bank phase offsets, engine-level pressure, geometry matrix, timing/restore coverage.
+- [ ] RED/GREEN: historical W9/slow gate, stale package consumer rejection, nested migration inventory, mirror pending-parent state.
+- [ ] Commit source/tests/docs, regenerate once, run slow/Stage-W/V/validators/JSON/compileall/Track-P/diff.
+- [ ] Update receipt/recovery/package metadata separately; rerun Stage-W after metadata; leave clean.

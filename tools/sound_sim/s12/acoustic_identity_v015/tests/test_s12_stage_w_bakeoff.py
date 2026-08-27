@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 
 import numpy as np
 import pytest
@@ -103,3 +104,27 @@ def test_long_window_duration_contract_uses_real_named_scene_lengths() -> None:
 def test_bakeoff_trace_uses_exact_state_rate_timestamps() -> None:
     trace = bakeoff_module.build_hellcat_bakeoff_trace("hot_idle_20s", 0.25)
     assert np.array_equal(trace.time_s, np.arange(trace.time_s.size, dtype=np.float64) / bakeoff_module.STATE_RATE_HZ)
+
+
+def test_bakeoff_validator_requires_case_files_and_nested_scene_inventory(tmp_path) -> None:
+    baseline = tmp_path / "baseline"
+    run_hellcat_bakeoff(baseline, duration_s=0.25)
+    missing = tmp_path / "missing"
+    shutil.copytree(baseline, missing)
+    relative = "P2H/afterfire_eligible/phase_trace.json"
+    (missing / relative).unlink()
+    manifest = json.loads((missing / "bakeoff_manifest.json").read_text(encoding="utf-8"))
+    manifest["files"].pop(relative)
+    (missing / "bakeoff_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    assert f"missing_required:{relative}" in validate_bakeoff_manifest(missing)
+
+    nested = tmp_path / "nested"
+    shutil.copytree(baseline, nested)
+    results_path = nested / "bakeoff_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P1"]["scenes"].pop("gear_shift")
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest = json.loads((nested / "bakeoff_manifest.json").read_text(encoding="utf-8"))
+    manifest["files"]["bakeoff_results.json"] = hashlib.sha256(results_path.read_bytes()).hexdigest()
+    (nested / "bakeoff_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    assert any("nested" in error for error in validate_bakeoff_manifest(nested))

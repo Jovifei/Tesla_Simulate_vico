@@ -38,6 +38,8 @@ def build_stage_w_review_package(source_root: str | Path, output_root: str | Pat
     bakeoff = json.loads((source / "bakeoff_results.json").read_text(encoding="utf-8"))
     if bakeoff.get("selected_architecture") is not None:
         raise ValueError("Stage-W package builder accepts only an unselected bake-off")
+    if bakeoff.get("status") == "REFERENCE_TARGET_MISSING" or bakeoff.get("reference_status") == "REFERENCE_POINTER_ONLY":
+        raise ValueError("review package prohibited until candidate selection and R1 qualification")
     root.mkdir(parents=True, exist_ok=True)
     package: dict[str, Any] = {
         "schema_version": "s12.stage_w.review_package.v1",
@@ -95,6 +97,8 @@ def validate_stage_w_review_package(root: str | Path) -> list[str]:
         return ["package_manifest.json missing"]
     package = json.loads(manifest_path.read_text(encoding="utf-8"))
     errors: list[str] = []
+    if package.get("status") == "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW" and package.get("selected_architecture") is None and package.get("reference_status") == "REFERENCE_POINTER_ONLY":
+        errors.append("stale_waiting_audition")
     if package.get("status") != "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW":
         errors.append("status")
     if package.get("reference_status") != "REFERENCE_POINTER_ONLY" or package.get("selected_architecture") is not None:

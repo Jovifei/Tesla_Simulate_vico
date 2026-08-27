@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import run_hellcat_bakeoff
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.review_package import (
@@ -16,21 +17,12 @@ def test_review_package_keeps_reference_and_unavailable_paths_fail_closed(tmp_pa
     package = tmp_path / "package"
     run_hellcat_bakeoff(bakeoff, duration_s=0.25)
 
-    result = build_stage_w_review_package(bakeoff, package)
+    with pytest.raises(ValueError, match="prohibited until candidate selection and R1 qualification"):
+        build_stage_w_review_package(bakeoff, package)
 
-    assert result["status"] == "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"
-    assert result["selected_architecture"] is None
-    assert result["reference_status"] == "REFERENCE_POINTER_ONLY"
-    assert result["long_window"] is False
-    assert result["scene_duration_s"]["complete_cycle_60s"] == 0.25
-    assert validate_stage_w_review_package(package) == []
-    assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "raw_source.wav").is_file()
-    assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "post_ptr_raw.wav").is_file()
-    assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "monitor.wav").is_file()
-    assert (package / "vehicles" / "hellcat" / "P5" / "complete_cycle_60s" / "post_ptr_raw.wav").is_file()
-    reference = json.loads((package / "reference_pointer.json").read_text(encoding="utf-8"))
-    assert reference["status"] == "REFERENCE_TARGET_MISSING"
-    assert reference["selection_allowed"] is False
-    unavailable = json.loads((package / "unavailable_paths.json").read_text(encoding="utf-8"))
-    assert unavailable["P4"]["status"] == "REFERENCE_RECORDING_RIGHTS_PENDING"
-    assert unavailable["P6"]["status"] == "TEACHER_NOT_RUNTIME_CANDIDATE"
+
+def test_review_package_validator_rejects_historical_waiting_audition(tmp_path) -> None:
+    package = tmp_path / "package"
+    package.mkdir()
+    (package / "package_manifest.json").write_text(json.dumps({"status": "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW", "selected_architecture": None, "reference_status": "REFERENCE_POINTER_ONLY"}), encoding="utf-8")
+    assert "stale_waiting_audition" in validate_stage_w_review_package(package)

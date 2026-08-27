@@ -55,15 +55,15 @@ def derive_event_phase_deg(config: dict) -> list[float]:
     if len(geometry) != count:
         raise ValueError("crankpin geometry must cover every entity")
     bank_assignment = [int(value) for value in unwrap(config, "bank_assignment")]
+    bank_offsets = [float(value) for value in unwrap(config, "bank_phase_offsets_deg")]
+    if len(bank_offsets) != int(unwrap(config, "bank_count")) or not np.all(np.isfinite(bank_offsets)):
+        raise ValueError("bank_phase_offsets_deg must be finite and cover every bank")
     cycle = cycle_degrees(config)
     derived = [0.0] * len(order)
     for slot_index, entity_number in enumerate(order):
         entity = entity_number - 1
         base = slot_index * cycle / count
-        # Bank-order phase is a declared topology rule tied to cycle geometry;
-        # the canonical alternating layout has zero correction for legacy parity.
-        bank_delta = bank_assignment[entity] - (entity % max(1, len(set(bank_assignment))))
-        derived[entity] = (base + geometry[entity] + 0.25 * bank_delta) % cycle
+        derived[entity] = (base + geometry[entity] + bank_offsets[bank_assignment[entity]]) % cycle
     return derived
 
 def schedule_events(phase_rad: np.ndarray, config: dict, sample_rate_hz: int) -> EventTrace:

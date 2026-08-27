@@ -157,6 +157,22 @@ def test_geometry_and_firing_order_are_phase_authorities_for_piston() -> None:
     assert derive_event_phase_deg(base) != derive_event_phase_deg(altered_geometry)
 
 
+def test_declared_bank_phase_offsets_are_versioned_and_predictable() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
+    base = load_config("hellcat_v1")
+    base["bank_phase_offsets_version"] = "s12.stage_w.bank_phase_offsets.v1"
+    base["bank_phase_offsets_deg"] = {"value": [0.0, 12.0], "unit": "deg", "range": [-180.0, 180.0], "source_level": "C", "source": "synthetic declared bank phase geometry", "verification_state": "synthetic_assumption"}
+    altered = copy.deepcopy(base)
+    assignment = list(altered["bank_assignment"]["value"])
+    assignment[0] = 1
+    altered["bank_assignment"]["value"] = assignment
+    base_phase = derive_event_phase_deg(base)
+    altered_phase = derive_event_phase_deg(altered)
+    assert altered_phase[0] == base_phase[0] + 12.0
+
+
 def test_rotary_uses_explicit_rotor_geometry_without_piston_firing_order() -> None:
     import copy
     from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
@@ -231,6 +247,7 @@ def test_cycle_definition_and_bank_assignment_drive_explicit_path_readback_not_f
     cycle["cycle_definition"]["value"] = "four_stroke_1080"
     banks = copy.deepcopy(base)
     banks["bank_assignment"]["value"] = [1, 0, 1, 0, 1, 0, 1, 0]
+    banks["bank_phase_offsets_deg"]["value"] = [0.0, 12.0]
     assert derive_event_phase_deg(base) != derive_event_phase_deg(cycle)
     assert derive_event_phase_deg(base) != derive_event_phase_deg(banks)
     assert derive_event_path_schedule(base) != derive_event_path_schedule(banks)
@@ -484,6 +501,59 @@ def test_pressure_consumed_afterfire_energy_changes_with_collector_pressure() ->
     assert PersistentEventDomainEngine._pressure_to_energy(0.0) < PersistentEventDomainEngine._pressure_to_energy(1.0)
 
 
+def test_engine_afterfire_queue_energy_tracks_controlled_collector_pressure() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    state = {"rpm": 5800.0, "load": 0.55, "throttle": 0.02}
+    energies = []
+    for pressure in (0.10, 1.20):
+        engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+        engine._collector_pressure = pressure
+        engine._last_rpm = 6200.0
+        engine._last_throttle = 0.95
+        engine._last_load = 0.90
+        engine._schedule_afterfire(state, np.array([0.0]), 960)
+        energies.append(engine.diagnostics()["afterfire_pending_events"][0]["energy"])
+    assert energies[1] > energies[0]
+    assert 0.0 < energies[0] < energies[1] < 0.06
+
+
+def test_runtime_geometry_flags_match_architecture_usage_matrix() -> None:
+    import json
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    matrix = json.loads((ROOT / "tasks/reports/runtime/s12-stage-w/parameter_usage_matrix.json").read_text(encoding="utf-8"))
+    geometry = matrix["stage_w_consumed_paths"]["geometry"]
+    flags = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960).diagnostics()["parameter_consumption"]
+    assert flags["crankpin_geometry"] is geometry["piston.crankpin_geometry"]
+    assert flags["rotor_geometry"] is geometry.get("piston.rotor_geometry", False)
+
+
+def test_restore_rejects_channel_and_queue_length_mismatches() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.boundary_adapter import FrozenPtrStereo
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.waveguide import WaveguideNetwork
+    ptr = FrozenPtrStereo(48000)
+    snapshot = ptr.snapshot()
+    snapshot["channels"].pop()
+    with pytest.raises(ValueError, match="channel topology"):
+        ptr.restore(snapshot)
+    network = WaveguideNetwork([0.4, 0.5], [0, 1])
+    network_snapshot = network.snapshot()
+    network_snapshot["guides"].pop()
+    with pytest.raises(ValueError, match="network topology"):
+        network.restore(network_snapshot)
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    engine_snapshot = copy.deepcopy(engine.snapshot_state())
+    engine_snapshot["path_lines"].pop()
+    with pytest.raises(ValueError, match="path line topology"):
+        engine.restore_state(engine_snapshot)
+
+
 def test_short_afterfire_delay_is_rendered_inside_current_block() -> None:
     import copy
     import numpy as np
@@ -499,6 +569,24 @@ def test_short_afterfire_delay_is_rendered_inside_current_block() -> None:
     assert block.diagnostics["afterfire_event_count"] > 0
     assert block.diagnostics["afterfire_route"]["scheduled_sample"] < engine.sample_counter
     assert block.diagnostics["afterfire_route"]["scheduled_sample"] >= engine.sample_counter - 960
+
+
+@pytest.mark.parametrize(("delay_s", "expected_block_offset"), ((0.001, 326), (0.025, 518), (0.12, 278)))
+def test_afterfire_timing_preserves_absolute_sub_block_and_path_arrival(delay_s: float, expected_block_offset: int) -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    config["afterfire"]["ignition_delay_s"]["value"] = delay_s
+    engine = PersistentEventDomainEngine(config, 48000, 960)
+    engine.sample_counter = 960
+    engine._last_rpm = 6200.0
+    engine._last_throttle = 0.95
+    engine._last_load = 0.90
+    engine._schedule_afterfire({"rpm": 5800.0, "load": 0.55, "throttle": 0.02}, np.array([0.0]), 960)
+    event = engine.diagnostics()["afterfire_pending_events"][0]
+    assert event["scheduled_sample"] % 960 == expected_block_offset
+    assert event["arrival_samples"] > event["scheduled_sample"]
 
 
 def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:
