@@ -1,0 +1,106 @@
+{
+  "architectures": {
+    "P1": {
+      "complete_cycle": {
+        "monitor_sha256": "f3db17cad6acec7b766d9c2b1f97a552f10c3d3df90b03d5f3e79a1b81915d21",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "8b918bdca2f799cc14c41cd3aebd50c20a48a1a74405c45b6d6b25f0d0677aab",
+        "raw_source_sha256": "07cecba6fc26c02e5e42365303dcd75ec393369ca7737ead283d0aec346c51de"
+      },
+      "full_pull": {
+        "monitor_sha256": "a4d4ef0165f80278ce8a732eace96ffe88c798b4ae024c765d00f75fe44a3573",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "9f082101664543e7c24a8dd7a7873c245d9759814a09741a45c73b96e256c240",
+        "raw_source_sha256": "006425d0f1669db508f79e13a015ff447aaee98a417081cc931f6e007ea2d147"
+      },
+      "hot_idle": {
+        "monitor_sha256": "efb185f2980a3d2f9542b0ad2d19d18ec8eca74edda2724be567b89be7add459",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "3719909cb1a8c96d33b9a5a0bb456769625e8bd24c4956115ce4b4ee1fb716a7",
+        "raw_source_sha256": "a43af5cb679aac29b91f0d1c55c9bdaad0d387db0da2603c7525c969dd906522"
+      },
+      "lift": {
+        "monitor_sha256": "1119fa8fa8c3103e90a32e8a6dc2587137957a45c12ce4aa7cb45836df13841e",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "3d1eb3c829640d48d14f17c280d1a25485ba4a47b4951ff63a9842bd8bc5a60c",
+        "raw_source_sha256": "ef66557365fe37bd8c93618eb65eda84401b9f341a2a6f76cb8eef8d57438fc2"
+      },
+      "steady_mid": {
+        "monitor_sha256": "a4dc0dab7c7c5e975fe41300b9879d41f014bef75c1abeb704c31d9e54292a2b",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "4559be919bdd896dcd822587f6f835e6935105fb39d4c55ce62733b4cac91d1c",
+        "raw_source_sha256": "cfceddb4f19c0f4e6e5099915dae7d613763b72d8d034817626b1c0ac293bc38"
+      }
+    },
+    "P2H": {
+      "complete_cycle": {
+        "monitor_sha256": "71eef30656b5071e0eafea8886a8533d5fd694305da08abcb49611155d462a07",
+        "parent_post_ptr_difference_rms": 0.0027429624271522153,
+        "post_ptr_sha256": "7c951dfc928e982ae87d94cb61350cdd95c3c225c5c3426536e0fb8b76d72025",
+        "raw_source_sha256": "2a90e48f4a0970c560c98a41c5350cb26571cd6ecae7de524327751ffd8f8973"
+      },
+      "full_pull": {
+        "monitor_sha256": "76c19644283d15642f8f2e25faed9cfe7f4f5bb8a2d487b86bd3e8f5b71cd122",
+        "parent_post_ptr_difference_rms": 0.004341189899674734,
+        "post_ptr_sha256": "73cfeb6b4c282913d7a4cbe532751926861fc8c80471e1716f86fa1d7463a8d5",
+        "raw_source_sha256": "cab08330a538462b7c11f2087870a014bad6da442a18c5703338e5c85fffa715"
+      },
+      "hot_idle": {
+        "monitor_sha256": "979191e12eabd27e9c82b3de46ddaab13e8f4396721395cf23a444a7e3f93eb5",
+        "parent_post_ptr_difference_rms": 0.0009465415124130888,
+        "post_ptr_sha256": "d9c5f10c4bde19dcbf273527c0cea38d2a846dcc6acc58f24a93cb1ac97843dc",
+        "raw_source_sha256": "406f60279df36de23049e7419039cc0874694a4d191377a14dcfc927af9602e6"
+      },
+      "lift": {
+        "monitor_sha256": "07ea19f4818dc15676d387bb004b1e37f601f1d70946e0f43dfd47e2bdd5ee3f",
+        "parent_post_ptr_difference_rms": 0.003971300742499706,
+        "post_ptr_sha256": "23b0678adc1f0908d02397801cb9f4d45bb183a877fda13805cdaec55cd4fcac",
+        "raw_source_sha256": "f1a2c621344aede52b6604c55b5905324c724ed51dfc5d6e454db4036b30254b"
+      },
+      "steady_mid": {
+        "monitor_sha256": "119411a329f886b7a87599a24949cdc943827630b81d5c64a71cccdcc636d903",
+        "parent_post_ptr_difference_rms": 0.0017637668308358773,
+        "post_ptr_sha256": "60568af6009050ecb83097a36e160f1c13c81e7f143e96bac84bb3b74c9aa5b8",
+        "raw_source_sha256": "66771830eb670ed93a18b341a9f969a7941c0ab71f333eaca17a04a8eb709550"
+      }
+    },
+    "P3": {
+      "complete_cycle": {
+        "monitor_sha256": "aadad0873d454e4b3426a5a72c929b49daec32a39ba9f7c9a512882f6cde03a3",
+        "parent_post_ptr_difference_rms": 0.002747270640118384,
+        "post_ptr_sha256": "b5a6b07e6b632b95cab67f1a32dab4ebca0f0b7b759e079c57caa7ded9ced2b2",
+        "raw_source_sha256": "5f85a89c222fa43b99ab4cdc178885ed4538a35d912f35e25d5f7a9554d125b0"
+      },
+      "full_pull": {
+        "monitor_sha256": "4434382960efeb452c901ea8d4eed8e76785942812790b96a94daa62704ea310",
+        "parent_post_ptr_difference_rms": 0.004354761457269094,
+        "post_ptr_sha256": "8ccb0075c2004776f5f662f727858a8d67fd026686371aaa43c6820a55db6793",
+        "raw_source_sha256": "c8637c5c5eda39aac1d55a4ea3f3846c5b6fbc373bd736b6e06e78a6f4a2e229"
+      },
+      "hot_idle": {
+        "monitor_sha256": "d6e07fa5509592d496aef20ea1a04cdd36e6e0db894586c6be9ea344c2ba78ad",
+        "parent_post_ptr_difference_rms": 0.0009466230934326347,
+        "post_ptr_sha256": "8e3b01f9ebc5931ddee2d88bfb5553d0a5616638a695466f15d93cb9958b7d0c",
+        "raw_source_sha256": "76ea6bfabac5017502155290bcaf84a0fbf97b3bb28780f99b201c682330bc8c"
+      },
+      "lift": {
+        "monitor_sha256": "0238a5bdd66303c9116eb7de9af70804593529bf0cb976745e77efd9efeed71c",
+        "parent_post_ptr_difference_rms": 0.003984859825637612,
+        "post_ptr_sha256": "28ee996720abba180772e382300432dd4769f061fcf9823b8b5a84d923c1a871",
+        "raw_source_sha256": "d5ebb674c61ae0b769cd8a61392251269f1f9870921440f654c7f0a3eab9fcee"
+      },
+      "steady_mid": {
+        "monitor_sha256": "61b893724b6f2f632a6702319ff3d3c3ad9a8bbf24fbcae857f8f8de0b37e24f",
+        "parent_post_ptr_difference_rms": 0.0017618761961938618,
+        "post_ptr_sha256": "33c8c278f59c97c3149d68082438f8936066908a53871955caf94170d2e5a9fb",
+        "raw_source_sha256": "8885c1c44f3e98bb982281ad55765f909d4c358bc902ed00338e3c642b56f621"
+      }
+    }
+  },
+  "reference_status": "REFERENCE_TARGET_MISSING",
+  "schema_version": "s12.stage_w.vehicle_migration.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "selected_architecture": null,
+  "status": "UNSELECTED_CANDIDATE_MIGRATION",
+  "vehicle_id": "ferrari_458"
+}

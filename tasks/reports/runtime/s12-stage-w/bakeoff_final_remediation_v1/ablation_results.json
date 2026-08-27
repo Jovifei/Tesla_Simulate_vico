@@ -1,0 +1,158 @@
+{
+  "ablations": {
+    "P2H_to_P3_timbre_map": {
+      "afterfire_eligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "afterfire_ineligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "complete_cycle_60s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "full_load_acceleration": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "gear_shift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "high_rpm_lift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "hot_idle_20s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "idle_return": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_1200rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_2000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_3000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "throttle_tip_in": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      }
+    },
+    "P2_to_P2H_waveguide": {
+      "afterfire_eligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "afterfire_ineligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "complete_cycle_60s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "full_load_acceleration": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "gear_shift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "high_rpm_lift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "hot_idle_20s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "idle_return": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_1200rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_2000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_3000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "throttle_tip_in": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      }
+    },
+    "P3_to_P5_transient": {
+      "afterfire_eligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "afterfire_ineligible": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "complete_cycle_60s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "full_load_acceleration": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "gear_shift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "high_rpm_lift": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "hot_idle_20s": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "idle_return": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": true
+      },
+      "steady_1200rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "steady_2000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "steady_3000rpm": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      },
+      "throttle_tip_in": {
+        "monitor_sha256_different": true,
+        "post_ptr_sha256_different": false
+      }
+    }
+  },
+  "reference_status": "REFERENCE_POINTER_ONLY",
+  "schema_version": "s12.stage_w.ablation_results.v1",
+  "selection_eligible": false,
+  "status": "REFERENCE_TARGET_MISSING"
+}

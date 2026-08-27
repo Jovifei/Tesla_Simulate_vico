@@ -1,0 +1,50 @@
+{
+  "architecture": "P1",
+  "engine_diagnostics": {
+    "click_metrics": {
+      "max_boundary_jump": 0.003415069196074938,
+      "normalized_rms_boundary": 0.003415069196074938,
+      "passed": true,
+      "threshold": 0.35
+    },
+    "forced_induction_model": "legacy",
+    "path_model": "legacy",
+    "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+    "source_model": "legacy_v015"
+  },
+  "forced_induction_model": "legacy",
+  "monitor_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.011437177658081055,
+    "rms": 0.002669866452494738,
+    "sample_rate_hz": 48000
+  },
+  "parent_post_ptr_difference_rms": null,
+  "path_model": "legacy",
+  "post_ptr_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.004058122634887695,
+    "rms": 0.0009473041119016472,
+    "sample_rate_hz": 48000
+  },
+  "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+  "publication_output_scale": 0.05,
+  "raw_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.01915144920349121,
+    "rms": 0.005560381798263005,
+    "sample_rate_hz": 48000
+  },
+  "reference_status": "REFERENCE_TARGET_MISSING",
+  "scene": "hot_idle",
+  "schema_version": "s12.stage_w.vehicle_migration_metrics.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "status": "UNSELECTED_CANDIDATE_MIGRATION",
+  "vehicle_id": "ferrari_458"
+}

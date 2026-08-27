@@ -1,0 +1,6 @@
+COMMAND=python -c run_preselection_vehicle_migration ferrari_458 final_remediation_v3 duration_s=0.20 via PowerShell job
+START=2026-08-27T23:37:56+08:00
+PID=32072
+END=2026-08-27T23:38:53.5894057+08:00
+EXIT_CODE=0
+VALIDATOR=validate_vehicle_migration_manifest errors=[]

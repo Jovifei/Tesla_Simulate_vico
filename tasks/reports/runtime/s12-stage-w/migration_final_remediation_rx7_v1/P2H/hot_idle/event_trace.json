@@ -1,0 +1,51 @@
+{
+  "afterfire_event_count": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "combustion_torque_event_count": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    3,
+    4,
+    4,
+    5,
+    6
+  ],
+  "event_count": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    3,
+    4,
+    4,
+    5,
+    6
+  ],
+  "sample_counter": [
+    960,
+    1920,
+    2880,
+    3840,
+    4800,
+    5760,
+    6720,
+    7680,
+    8640,
+    9600
+  ],
+  "status": "PERSISTENT_ENGINE_TRACE"
+}

@@ -1,0 +1,6 @@
+COMMAND=python -c run_preselection_vehicle_migration ferrari_458 final_remediation_v1 duration_s=0.20
+START=2026-08-27T23:32:51+08:00
+PID=51416
+END=2026-08-27T23:33:47.8307390+08:00
+EXIT_CODE=0
+VALIDATOR=validate_vehicle_migration_manifest errors=[]

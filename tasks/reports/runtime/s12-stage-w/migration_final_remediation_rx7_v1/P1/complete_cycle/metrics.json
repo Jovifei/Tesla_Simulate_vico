@@ -1,0 +1,50 @@
+{
+  "architecture": "P1",
+  "engine_diagnostics": {
+    "click_metrics": {
+      "max_boundary_jump": 0.018081768594791568,
+      "normalized_rms_boundary": 0.018081768594791568,
+      "passed": true,
+      "threshold": 0.35
+    },
+    "forced_induction_model": "legacy",
+    "path_model": "legacy",
+    "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+    "source_model": "legacy_v015"
+  },
+  "forced_induction_model": "legacy",
+  "monitor_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.11502158641815186,
+    "rms": 0.012552508844293325,
+    "sample_rate_hz": 48000
+  },
+  "parent_post_ptr_difference_rms": null,
+  "path_model": "legacy",
+  "post_ptr_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.04081118106842041,
+    "rms": 0.004453798285101016,
+    "sample_rate_hz": 48000
+  },
+  "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+  "publication_output_scale": 0.05,
+  "raw_metrics": {
+    "channels": 2,
+    "clipping": 0,
+    "frames": 9600,
+    "peak": 0.21234452724456787,
+    "rms": 0.0323306512091811,
+    "sample_rate_hz": 48000
+  },
+  "reference_status": "REFERENCE_TARGET_MISSING",
+  "scene": "complete_cycle",
+  "schema_version": "s12.stage_w.vehicle_migration_metrics.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "status": "UNSELECTED_CANDIDATE_MIGRATION",
+  "vehicle_id": "rx7_fd"
+}

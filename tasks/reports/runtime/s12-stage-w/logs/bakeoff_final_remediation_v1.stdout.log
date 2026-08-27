@@ -1,0 +1,6 @@
+COMMAND=python -c run_hellcat_bakeoff final_remediation_v1 duration_s=0.20
+START=2026-08-27T23:24:10.8503225+08:00
+PID=23116
+END=2026-08-27T23:29:44.0646271+08:00
+EXIT_CODE=0
+VALIDATOR=validate_bakeoff_manifest errors=[]
