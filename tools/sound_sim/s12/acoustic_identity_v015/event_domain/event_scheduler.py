@@ -4,6 +4,25 @@ from dataclasses import dataclass
 import numpy as np
 from .config_schema import unwrap
 
+
+def cycle_degrees(config: dict) -> float:
+    """Return the declared mechanical cycle length in crank/eccentric degrees."""
+    definition = str(unwrap(config, "cycle_definition"))
+    if definition.startswith("four_stroke_"):
+        return float(definition.rsplit("_", 1)[1])
+    if definition == "rotary_360":
+        return 360.0
+    if definition == "rotary_1080":
+        return 1080.0
+    raise ValueError(f"unsupported cycle_definition: {definition}")
+
+
+def derive_event_path_schedule(config: dict) -> list[dict[str, object]]:
+    """Derive routing slots from bank assignment and collector topology."""
+    banks = [int(value) for value in unwrap(config, "bank_assignment")]
+    topology = str(unwrap(config, "collector_assignment")) if "collector_assignment" in config else "identity_default"
+    return [{"entity": index, "bank_id": bank, "collector_slot": ("central" if topology == "central_first" else f"bank_{bank}"), "path_id": f"{topology}:entity_{index}"} for index, bank in enumerate(banks)]
+
 @dataclass(frozen=True)
 class EventTrace:
     sample_index: np.ndarray
@@ -23,7 +42,7 @@ def derive_event_phase_deg(config: dict) -> list[float]:
 
     if config["architecture"] == "rotary_wankel":
         geometry = [float(value) for value in unwrap(config, "rotor_geometry")]
-        cycle = 360.0 if unwrap(config, "cycle_definition") == "rotary_360" else 1080.0
+        cycle = cycle_degrees(config)
         return [value % cycle for value in geometry]
     order = [int(value) for value in unwrap(config, "firing_order_evidence")]
     count = len(order)
@@ -36,23 +55,20 @@ def derive_event_phase_deg(config: dict) -> list[float]:
     if len(geometry) != count:
         raise ValueError("crankpin geometry must cover every entity")
     bank_assignment = [int(value) for value in unwrap(config, "bank_assignment")]
-    bank_count = max(bank_assignment) + 1
+    cycle = cycle_degrees(config)
     derived = [0.0] * len(order)
     for slot_index, entity_number in enumerate(order):
         entity = entity_number - 1
-        base = slot_index * 720.0 / count
-        # Preserve legacy alternating-bank layouts exactly; noncanonical bank
-        # assignments receive an explicit small topology phase perturbation.
-        canonical_bank = entity % bank_count
-        bank_delta = bank_assignment[entity] - canonical_bank
-        derived[entity] = (base + geometry[entity] + 0.25 * bank_delta) % 720.0
+        base = slot_index * cycle / count
+        # Bank topology determines routing, not a fictitious combustion phase.
+        derived[entity] = (base + geometry[entity]) % cycle
     return derived
 
 def schedule_events(phase_rad: np.ndarray, config: dict, sample_rate_hz: int) -> EventTrace:
     phase_rad = np.asarray(phase_rad, dtype=np.float64)
     if phase_rad.ndim != 1 or phase_rad.size == 0 or not np.all(np.isfinite(phase_rad)):
         raise ValueError("phase_rad must be a finite nonempty vector")
-    cycle_deg = 720.0 if config["architecture"] == "piston" else 360.0
+    cycle_deg = cycle_degrees(config)
     phases_deg = np.asarray(derive_event_phase_deg(config), dtype=np.float64)
     banks = np.asarray(unwrap(config, "bank_assignment"), dtype=np.int64)
     crank_deg = phase_rad * 180.0 / np.pi

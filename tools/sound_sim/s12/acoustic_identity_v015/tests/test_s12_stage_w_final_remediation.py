@@ -121,6 +121,103 @@ def test_transfer_ir_and_collector_assignment_are_consumed() -> None:
     assert second.diagnostics()["parameter_consumption"]["transfer_ir"] is True
 
 
+def test_collector_assignment_and_transfer_ir_are_independent_consumption_controls() -> None:
+    import copy
+    import hashlib
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    state = {"rpm": np.array([2400.0]), "load": np.array([0.5]), "throttle": np.array([0.6]), "acceleration_mps2": np.array([2.0])}
+    base = load_config("hellcat_v1")
+    topology = copy.deepcopy(base)
+    ir = copy.deepcopy(base)
+    topology["collector_assignment"]["value"] = "central_first"
+    ir["transfer_ir"]["value"] = "synthetic_long_damped_transfer"
+    base_audio = PersistentEventDomainEngine(base, 48000, 960).process(state).raw_pcm
+    topology_engine = PersistentEventDomainEngine(topology, 48000, 960)
+    ir_engine = PersistentEventDomainEngine(ir, 48000, 960)
+    topology_audio = topology_engine.process(state).raw_pcm
+    ir_audio = ir_engine.process(state).raw_pcm
+    assert hashlib.sha256(base_audio.tobytes()).hexdigest() != hashlib.sha256(topology_audio.tobytes()).hexdigest()
+    assert hashlib.sha256(base_audio.tobytes()).hexdigest() != hashlib.sha256(ir_audio.tobytes()).hexdigest()
+    assert topology_engine.diagnostics()["parameter_consumption"]["collector_assignment"] is True
+    assert ir_engine.diagnostics()["parameter_consumption"]["transfer_ir"] is True
+
+
+def test_legacy_config_missing_path_parameters_uses_recorded_identity_fallbacks() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    config.pop("transfer_ir", None)
+    config.pop("collector_assignment", None)
+    engine = PersistentEventDomainEngine(config, 48000, 960)
+    engine.process({"rpm": np.array([2400.0]), "load": np.array([0.5]), "throttle": np.array([0.6]), "acceleration_mps2": np.array([2.0])})
+    assert set(engine.diagnostics()["parameter_fallbacks"]) == {"transfer_ir", "collector_assignment"}
+
+
+def test_cycle_definition_and_bank_assignment_drive_explicit_path_readback_not_false_phase() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg, derive_event_path_schedule
+    base = load_config("hellcat_v1")
+    cycle = copy.deepcopy(base)
+    cycle["cycle_definition"]["value"] = "four_stroke_1080"
+    banks = copy.deepcopy(base)
+    banks["bank_assignment"]["value"] = [1, 0, 1, 0, 1, 0, 1, 0]
+    assert derive_event_phase_deg(base) != derive_event_phase_deg(cycle)
+    assert derive_event_phase_deg(base) == derive_event_phase_deg(banks)
+    assert derive_event_path_schedule(base) != derive_event_path_schedule(banks)
+
+
+def test_timbre_bypass_and_crank_inertia_are_persistent_and_finite() -> None:
+    import copy
+    import hashlib
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    base = load_config("hellcat_v1")
+    heavy = copy.deepcopy(base)
+    heavy["crank_inertia"]["value"] = 1.8
+    heavy["forced_induction"]["gain"]["value"] = 0.20
+    high = {"rpm": np.array([5200.0]), "load": np.array([0.92]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([4.0])}
+    closure = {"rpm": np.array([4700.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    normal = PersistentEventDomainEngine(base, 48000, 960, forced_induction_model="timbre_map_v1")
+    altered = PersistentEventDomainEngine(heavy, 48000, 960, forced_induction_model="timbre_map_v1")
+    normal.process(high); altered.process(high)
+    normal_audio = normal.process(closure).raw_pcm
+    altered_audio = altered.process(closure).raw_pcm
+    assert hashlib.sha256(normal_audio.tobytes()).hexdigest() != hashlib.sha256(altered_audio.tobytes()).hexdigest()
+    assert np.all(np.isfinite(altered_audio))
+    assert altered.diagnostics()["timbre_inertia_state"] >= 0.0
+
+
+def test_click_metrics_use_block_boundaries_and_versioned_contract() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    block = engine.process({"rpm": np.array([2400.0, 2500.0]), "load": np.array([0.4, 0.5]), "throttle": np.array([0.5, 0.6]), "acceleration_mps2": np.array([1.0, 1.0])})
+    click = block.diagnostics["click_metrics"]
+    assert click["definition"] == "block_boundary_only"
+    assert click["contract_version"]
+    assert click["provenance"] == "bounded_synthetic_engineering_acceptance_threshold"
+
+
+def test_p5_transient_is_part_of_persistent_engine_monitor_result() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, ptr_enabled=True)
+    state = {"rpm": np.array([4200.0]), "load": np.array([0.7]), "throttle": np.array([0.8]), "acceleration_mps2": np.array([3.0])}
+    transient = np.zeros((960, 2), dtype=np.float64)
+    transient[10] = [0.1, 0.2]
+    block = engine.process(state, external_transient=transient)
+    assert block.diagnostics["monitor_source"] == "PersistentEventDomainEngine.monitor_pcm"
+    assert np.max(np.abs(block.monitor_pcm)) > 0.0
+
+
 def test_timbre_map_is_bounded_four_dimensional_and_order_synchronous() -> None:
     import numpy as np
     from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import TimbreMap4D

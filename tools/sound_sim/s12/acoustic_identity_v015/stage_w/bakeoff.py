@@ -20,6 +20,7 @@ from ..stage_v.io import read_pcm24_wav, sha256_file, write_json, write_pcm24_wa
 from .boundary_adapter import FrozenPtrStereo
 from .migration import write_diagnostic_traces
 from .persistent_engine import PersistentEventDomainEngine
+from .click_contract import click_gate_contract
 
 SAMPLE_RATE_HZ = 48000
 BLOCK_SIZE = 960
@@ -28,6 +29,17 @@ OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
+
+
+def _block_click_metrics(audio: np.ndarray) -> dict[str, Any]:
+    values = np.asarray(audio, dtype=np.float64)
+    indices = np.arange(0, values.shape[0], BLOCK_SIZE, dtype=np.int64)
+    previous = np.vstack((np.zeros((1, values.shape[1])), values[np.maximum(indices - 1, 0)]))[:-1]
+    jumps = values[indices] - previous
+    maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
+    rms = float(np.sqrt(np.mean(np.square(jumps)))) if jumps.size else 0.0
+    contract = click_gate_contract()
+    return {"max_boundary_jump": maximum, "normalized_rms_boundary": rms / max(float(np.sqrt(np.mean(np.square(values)))), 1.0e-12), **contract, "passed": maximum <= float(contract["threshold"]) }
 
 
 def scene_duration_s(scene: str, duration_s: float, *, long_window: bool = False) -> float:
@@ -111,16 +123,15 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         return source, post_ptr, monitor, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
     settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
     setting = settings[architecture]
-    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=architecture != "P5", **setting)
-    result = engine.process_with_trace(_state_arrays(trace))
+    transient = None
     if architecture == "P5":
-        transient, transient_count = _synthetic_transient_residual(trace, result.raw_pcm.shape[0])
-        raw_unscaled = result.raw_pcm + transient
-        adapter = FrozenPtrStereo(SAMPLE_RATE_HZ)
-        post_unscaled = adapter.process(raw_unscaled)
-        raw = raw_unscaled * OUTPUT_SCALE
-        post_ptr = post_unscaled * OUTPUT_SCALE
-        monitor = (result.monitor_pcm + 0.20 * transient) * OUTPUT_SCALE
+        transient, transient_count = _synthetic_transient_residual(trace, trace.rpm.size * BLOCK_SIZE)
+    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=True, **setting)
+    result = engine.process_with_trace(_state_arrays(trace), external_transient=transient)
+    if architecture == "P5":
+        raw = result.raw_pcm * OUTPUT_SCALE
+        post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
+        monitor = result.monitor_pcm * OUTPUT_SCALE
     else:
         transient_count = 0
         raw = result.raw_pcm * OUTPUT_SCALE
@@ -170,11 +181,9 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     write_json(case_root / "state_trace.json", {"sample_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
-    if "click_metrics" not in diagnostic_summary:
-        jumps = np.diff(np.vstack((np.zeros((1, 2)), raw)), axis=0)
-        maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
-        diagnostic_summary["click_metrics"] = {"max_boundary_jump": maximum, "normalized_rms_boundary": maximum, "threshold": 0.35, "passed": maximum <= 0.35}
-    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))) )}, "comparison": comparison, "diagnostics": diagnostic_summary})
+    click_metrics = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post_ptr), "monitor": _block_click_metrics(monitor)}
+    diagnostic_summary["click_metrics"] = click_metrics["raw"]
+    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))) )}, "click_metrics": click_metrics, "comparison": comparison, "diagnostics": diagnostic_summary})
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
@@ -265,8 +274,8 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                 if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0: errors.append(f"clipping:{architecture}/{scene}")
                 if raw_meta["frames"] != post_meta["frames"] or post_meta["frames"] != monitor_meta["frames"]: errors.append(f"frames:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
-                click = metrics.get("diagnostics", {}).get("click_metrics", {})
-                if not click.get("passed", False): errors.append(f"click_gate:{architecture}/{scene}")
+                click = metrics.get("click_metrics", {})
+                if not click or any(not item.get("passed", False) for item in click.values()): errors.append(f"click_gate:{architecture}/{scene}")
             except (OSError, ValueError) as exc: errors.append(f"wav:{architecture}/{scene}:{exc}")
     return errors
 

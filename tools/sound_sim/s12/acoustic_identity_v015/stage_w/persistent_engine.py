@@ -16,13 +16,14 @@ from ..contracts import SourceRender
 from ..event_domain.chamber_event import render_event_packet
 from ..event_domain.config_schema import unwrap, validate_config
 from ..event_domain.crank_phase_pll import CrankPhasePLL
-from ..event_domain.event_scheduler import schedule_events
+from ..event_domain.event_scheduler import derive_event_path_schedule, schedule_events
 from ..event_domain.exhaust_path import sound_speed_mps
 from ..event_domain.forced_induction import render_forced_induction
 from .boundary_adapter import FrozenPtrStereo
 from .teacher_response import ReducedCfdTeacherResponse
 from .waveguide import WaveguideNetwork
 from .timbre_map import render_timbre_map
+from .click_contract import click_gate_contract
 
 
 @dataclass(frozen=True)
@@ -91,6 +92,11 @@ class PersistentEventDomainEngine:
 
     def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1") -> None:
         self.config = validate_config(config)
+        self._parameter_fallbacks: dict[str, dict[str, Any]] = {}
+        for name, fallback in (("transfer_ir", "identity_default"), ("collector_assignment", "identity_default")):
+            if name not in self.config:
+                self.config[name] = {"value": fallback, "unit": "label", "range": "explicit_default", "source_level": "C", "source": "legacy config compatibility fallback", "verification_state": "synthetic_assumption"}
+                self._parameter_fallbacks[name] = {"value": fallback, "reason": "legacy config omitted accepted field", "provenance": "explicit_identity_default"}
         self.sample_rate_hz = int(sample_rate_hz)
         self.block_size = int(block_size)
         if self.sample_rate_hz <= 0 or self.block_size <= 0:
@@ -162,6 +168,9 @@ class PersistentEventDomainEngine:
         self._click_sum_sq = 0.0
         self._click_count = 0
         self._click_threshold = 0.35
+        self._click_contract = click_gate_contract(self.config)
+        self._click_threshold = float(self._click_contract["threshold"])
+        self._timbre_inertia_state = 0.0
         transfer_label = str(unwrap(self.config, "transfer_ir"))
         self._transfer_ir = _TransferIrFilter(transfer_label)
         self._parameter_consumption = {"collector_assignment": False, "transfer_ir": False, "crankpin_geometry": False, "rotor_geometry": False}
@@ -193,15 +202,17 @@ class PersistentEventDomainEngine:
         self.pll.initialized = False
         self._pending_combustion_torque.fill(0.0)
 
-    def process(self, vehicle_state_block: Mapping[str, np.ndarray]) -> EngineAudioBlock:
+    def process(self, vehicle_state_block: Mapping[str, np.ndarray], external_transient: np.ndarray | None = None) -> EngineAudioBlock:
         arrays = {name: np.asarray(vehicle_state_block[name], dtype=np.float64) for name in ("rpm", "load", "throttle", "acceleration_mps2")}
         if any(value.ndim != 1 for value in arrays.values()) or len({value.size for value in arrays.values()}) != 1 or arrays["rpm"].size == 0:
             raise ValueError("vehicle state block must contain equal nonempty one-dimensional arrays")
         if not all(np.all(np.isfinite(value)) for value in arrays.values()):
             raise ValueError("vehicle state block must be finite")
+        transient = self._validate_external_transient(external_transient, arrays["rpm"].size)
         outputs: list[EngineAudioBlock] = []
         for index in range(arrays["rpm"].size):
-            outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}))
+            segment = transient[index * self.block_size : (index + 1) * self.block_size] if transient is not None else None
+            outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}, segment))
         raw = np.concatenate([item.raw_pcm for item in outputs], axis=0)
         monitor = np.concatenate([item.monitor_pcm for item in outputs], axis=0)
         post_ptr = np.concatenate([item.post_ptr_raw for item in outputs if item.post_ptr_raw is not None], axis=0) if self.ptr_enabled else None
@@ -209,17 +220,19 @@ class PersistentEventDomainEngine:
         diagnostics.update({"frames": len(outputs), "sample_count": int(raw.shape[0])})
         return EngineAudioBlock(raw, monitor, diagnostics, post_ptr)
 
-    def process_with_trace(self, vehicle_state_block: Mapping[str, np.ndarray]) -> EngineAudioBlock:
+    def process_with_trace(self, vehicle_state_block: Mapping[str, np.ndarray], external_transient: np.ndarray | None = None) -> EngineAudioBlock:
         """Process frames while retaining block-rate diagnostic evidence."""
         arrays = {name: np.asarray(vehicle_state_block[name], dtype=np.float64) for name in ("rpm", "load", "throttle", "acceleration_mps2")}
         if any(value.ndim != 1 for value in arrays.values()) or len({value.size for value in arrays.values()}) != 1 or arrays["rpm"].size == 0:
             raise ValueError("vehicle state block must contain equal nonempty one-dimensional arrays")
         if not all(np.all(np.isfinite(value)) for value in arrays.values()):
             raise ValueError("vehicle state block must be finite")
+        transient = self._validate_external_transient(external_transient, arrays["rpm"].size)
         outputs: list[EngineAudioBlock] = []
         trace = {"phase_rad": [], "omega_rad_s": [], "event_count": [], "afterfire_event_count": [], "combustion_torque_event_count": [], "path_state_energy": [], "monitor_gain_db": [], "sample_counter": []}
         for index in range(arrays["rpm"].size):
-            outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}))
+            segment = transient[index * self.block_size : (index + 1) * self.block_size] if transient is not None else None
+            outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}, segment))
             trace["phase_rad"].append(float(self.pll.phase_rad))
             trace["omega_rad_s"].append(float(self.pll.omega_rad_s))
             trace["event_count"].append(int(self._event_count))
@@ -244,7 +257,15 @@ class PersistentEventDomainEngine:
             values.append(self.teacher_response._state)
         return float(sum(np.sum(np.square(value)) for value in values))
 
-    def _process_frame(self, state: Mapping[str, float]) -> EngineAudioBlock:
+    def _validate_external_transient(self, value: np.ndarray | None, frame_count: int) -> np.ndarray | None:
+        if value is None:
+            return None
+        array = np.asarray(value, dtype=np.float64)
+        if array.shape != (frame_count * self.block_size, 2) or not np.all(np.isfinite(array)):
+            raise ValueError("external transient must be finite stereo and frame aligned")
+        return array
+
+    def _process_frame(self, state: Mapping[str, float], external_transient: np.ndarray | None = None) -> EngineAudioBlock:
         n = self.block_size
         rpm = np.full(n, max(0.0, state["rpm"]), dtype=np.float64)
         load = np.full(n, np.clip(state["load"], 0.0, 1.0), dtype=np.float64)
@@ -323,7 +344,13 @@ class PersistentEventDomainEngine:
         boost_target = np.clip(load * throttle * np.maximum(rpm - 900.0, 0.0) / 4800.0, 0.0, 1.0) if forced_type in {"supercharger", "turbo"} else np.zeros_like(rpm)
         boost_start = self._boost_state
         boost_state = self._advance_boost(boost_target)
-        forced = render_timbre_map(phase, rpm, load, boost_state, throttle, self.config, self.sample_counter) if self.forced_induction_model == "timbre_map_v1" else render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz, boost_state=boost_state)
+        if self.forced_induction_model == "timbre_map_v1":
+            inertia = max(float(unwrap(self.config, "crank_inertia")), 0.01)
+            target_inertia = float(np.mean((load + boost_state) * 0.5))
+            self._timbre_inertia_state += (target_inertia - self._timbre_inertia_state) / (1.0 + 8.0 * inertia)
+            forced = render_timbre_map(phase, rpm, load, boost_state, throttle, self.config, self.sample_counter, inertia_state=self._timbre_inertia_state)
+        else:
+            forced = render_forced_induction(phase, rpm, load, throttle, self.config, self.sample_rate_hz, boost_state=boost_state)
         self._blower_phase = float(phase[-1])
         self._turbo_phase = float(phase[-1] * max(float(unwrap(self.config, "forced_induction.ratio")), 1.0))
         if forced_type == "supercharger":
@@ -336,6 +363,8 @@ class PersistentEventDomainEngine:
             forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
         mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
+        if external_transient is not None:
+            raw += external_transient
         self._parameter_consumption["transfer_ir"] = True
         raw = self._transfer_ir.process(raw)
         boundary_jump = float(np.max(np.abs(raw[0] - self._last_output_sample))) if raw.size else 0.0
@@ -542,6 +571,9 @@ class PersistentEventDomainEngine:
             "teacher_response": self.teacher_response.snapshot() if self.teacher_response is not None else None,
             "transfer_ir": self._transfer_ir.snapshot(),
             "parameter_consumption": dict(self._parameter_consumption),
+            "parameter_fallbacks": copy.deepcopy(self._parameter_fallbacks),
+            "timbre_inertia_state": self._timbre_inertia_state,
+            "click_contract": dict(self._click_contract),
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -576,6 +608,7 @@ class PersistentEventDomainEngine:
         if snapshot.get("transfer_ir") is not None:
             self._transfer_ir.restore(snapshot["transfer_ir"])
         self._parameter_consumption = dict(snapshot.get("parameter_consumption", self._parameter_consumption))
+        self._parameter_fallbacks = copy.deepcopy(snapshot.get("parameter_fallbacks", self._parameter_fallbacks)); self._timbre_inertia_state = float(snapshot.get("timbre_inertia_state", 0.0))
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -608,12 +641,20 @@ class PersistentEventDomainEngine:
                 "normalized_rms_boundary": float(np.sqrt(self._click_sum_sq / self._click_count)) if self._click_count else 0.0,
                 "threshold": self._click_threshold,
                 "passed": self._click_max_boundary_jump <= self._click_threshold,
+                "definition": self._click_contract["definition"],
+                "contract_version": self._click_contract["contract_version"],
+                "provenance": self._click_contract["provenance"],
             },
             "state_memory_bytes": int(self._pending_combustion_torque.nbytes + sum(tail.nbytes for tail in self._event_tails) + sum(tail.nbytes for tail in self._collector_event_tails) + self._central_collector_event_tail.nbytes + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines) + self._central_collector_line.history.nbytes),
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
             "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
             "teacher_response": self.teacher_response.diagnostics() if self.teacher_response is not None else None,
             "parameter_consumption": dict(self._parameter_consumption),
+            "parameter_fallbacks": copy.deepcopy(self._parameter_fallbacks),
+            "timbre_inertia_state": self._timbre_inertia_state,
+            "click_contract": dict(self._click_contract),
+            "path_schedule": derive_event_path_schedule(self.config),
+            "monitor_source": "PersistentEventDomainEngine.monitor_pcm",
             "collector_assignment": str(unwrap(self.config, "collector_assignment")),
             "transfer_ir": str(unwrap(self.config, "transfer_ir")),
             "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
