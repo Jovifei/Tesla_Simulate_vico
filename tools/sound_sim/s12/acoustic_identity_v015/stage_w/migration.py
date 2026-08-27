@@ -17,6 +17,7 @@ from ..sources.rotary_turbo_source import render_rx7_fd
 from ..stage_v.io import read_pcm24_wav, sha256_file, write_json, write_pcm24_wav
 from .boundary_adapter import FrozenPtrStereo
 from .persistent_engine import PersistentEventDomainEngine
+from .click_contract import block_boundary_click_metrics
 
 SAMPLE_RATE_HZ = 48000
 BLOCK_SIZE = 960
@@ -133,10 +134,8 @@ def _write_case(root: Path, vehicle_id: str, architecture: str, scene: str, trac
     write_json(case_root / "state_trace.json", {"state_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
-    if "click_metrics" not in diagnostic_summary:
-        jumps = np.diff(np.vstack((np.zeros((1, 2)), raw)), axis=0)
-        maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
-        diagnostic_summary["click_metrics"] = {"max_boundary_jump": maximum, "normalized_rms_boundary": maximum, "threshold": 0.35, "passed": maximum <= 0.35}
+    click_metrics = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post_ptr, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
+    diagnostic_summary["click_metrics"] = click_metrics["raw"]
     write_json(case_root / "metrics.json", {
         "schema_version": "s12.stage_w.vehicle_migration_metrics.v1",
         "vehicle_id": vehicle_id,
@@ -153,6 +152,7 @@ def _write_case(root: Path, vehicle_id: str, architecture: str, scene: str, trac
         "post_ptr_metrics": _audio_metrics(post_reopened, post_metadata),
         "monitor_metrics": _audio_metrics(monitor_reopened, monitor_metadata),
         "parent_post_ptr_difference_rms": parent_difference_rms,
+        "click_metrics": click_metrics,
         "engine_diagnostics": diagnostic_summary,
     })
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed_s, "state_rate_hz": STATE_RATE_HZ, "block_size": BLOCK_SIZE, "memory_bytes": diagnostics.get("state_memory_bytes"), "latency_contract": "offline persistent source render"})
@@ -216,7 +216,10 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                 if raw.shape[0] != post.shape[0] or post.shape[0] != monitor.shape[0]:
                     errors.append(f"frames:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
-                if not metrics.get("engine_diagnostics", {}).get("click_metrics", {}).get("passed", False):
+                click = metrics.get("click_metrics")
+                if not click:
+                    click = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
+                if any(not item.get("passed", False) for item in click.values()):
                     errors.append(f"click_gate:{architecture}/{scene}")
             except (OSError, ValueError) as exc:
                 errors.append(f"wav:{architecture}/{scene}:{exc}")

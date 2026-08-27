@@ -180,7 +180,6 @@ def test_timbre_bypass_and_crank_inertia_are_persistent_and_finite() -> None:
     base = load_config("hellcat_v1")
     heavy = copy.deepcopy(base)
     heavy["crank_inertia"]["value"] = 1.8
-    heavy["forced_induction"]["gain"]["value"] = 0.20
     high = {"rpm": np.array([5200.0]), "load": np.array([0.92]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([4.0])}
     closure = {"rpm": np.array([4700.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
     normal = PersistentEventDomainEngine(base, 48000, 960, forced_induction_model="timbre_map_v1")
@@ -191,6 +190,33 @@ def test_timbre_bypass_and_crank_inertia_are_persistent_and_finite() -> None:
     assert hashlib.sha256(normal_audio.tobytes()).hexdigest() != hashlib.sha256(altered_audio.tobytes()).hexdigest()
     assert np.all(np.isfinite(altered_audio))
     assert altered.diagnostics()["timbre_inertia_state"] >= 0.0
+
+
+def test_timbre_inertia_changes_all_layers_without_gain_confound() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import render_timbre_map
+    config = load_config("hellcat_v1")
+    phase = np.linspace(0.0, 10.0 * np.pi, 960)
+    inputs = (phase, np.full(960, 4200.0), np.full(960, 0.7), np.full(960, 0.6), np.full(960, 0.8))
+    low = render_timbre_map(*inputs, config, inertia_state=0.0)
+    high = render_timbre_map(*inputs, config, inertia_state=1.0)
+    for key in ("blower", "sidebands", "broadband", "casing", "intake"):
+        assert not np.array_equal(low[key], high[key])
+        assert np.all(np.isfinite(high[key]))
+
+
+def test_timbre_bypass_changes_all_forced_layers_without_inertia_confound() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import render_timbre_map
+    config = load_config("hellcat_v1")
+    phase = np.linspace(0.0, 10.0 * np.pi, 960)
+    common = (phase, np.full(960, 4200.0), np.full(960, 0.7), np.full(960, 0.6))
+    open_map = render_timbre_map(*common, np.full(960, 0.95), config, inertia_state=0.5)
+    closed_map = render_timbre_map(*common, np.full(960, 0.02), config, inertia_state=0.5)
+    for key in ("blower", "sidebands", "broadband", "casing", "intake"):
+        assert not np.array_equal(open_map[key], closed_map[key])
 
 
 def test_click_metrics_use_block_boundaries_and_versioned_contract() -> None:
@@ -213,9 +239,37 @@ def test_p5_transient_is_part_of_persistent_engine_monitor_result() -> None:
     state = {"rpm": np.array([4200.0]), "load": np.array([0.7]), "throttle": np.array([0.8]), "acceleration_mps2": np.array([3.0])}
     transient = np.zeros((960, 2), dtype=np.float64)
     transient[10] = [0.1, 0.2]
+    baseline = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, ptr_enabled=True).process(state)
     block = engine.process(state, external_transient=transient)
     assert block.diagnostics["monitor_source"] == "PersistentEventDomainEngine.monitor_pcm"
-    assert np.max(np.abs(block.monitor_pcm)) > 0.0
+    assert not np.array_equal(block.post_ptr_raw, baseline.post_ptr_raw)
+    assert not np.array_equal(block.monitor_pcm, baseline.monitor_pcm)
+
+
+def test_click_contract_rejects_metadata_drift_but_accepts_finite_threshold_override() -> None:
+    import copy
+    import pytest
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    base = click_gate_contract()
+    changed = copy.deepcopy(base)
+    changed["threshold"] = 0.20
+    assert click_gate_contract({"click_gate": changed})["threshold"] == 0.20
+    for key in ("contract_version", "definition", "scope", "provenance"):
+        bad = copy.deepcopy(base)
+        bad[key] = "drift"
+        with pytest.raises(ValueError, match="click gate"):
+            click_gate_contract({"click_gate": bad})
+
+
+def test_shared_click_helper_uses_only_block_boundary_indices() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import block_boundary_click_metrics
+    signal = np.zeros((1920, 2), dtype=np.float64)
+    signal[100] = 1.0
+    signal[960] = 0.2
+    metrics = block_boundary_click_metrics(signal, 960)
+    assert metrics["max_boundary_jump"] == 0.2
+    assert metrics["definition"] == "block_boundary_only"
 
 
 def test_timbre_map_is_bounded_four_dimensional_and_order_synchronous() -> None:

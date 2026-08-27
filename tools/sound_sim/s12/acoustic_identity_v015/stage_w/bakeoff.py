@@ -20,7 +20,7 @@ from ..stage_v.io import read_pcm24_wav, sha256_file, write_json, write_pcm24_wa
 from .boundary_adapter import FrozenPtrStereo
 from .migration import write_diagnostic_traces
 from .persistent_engine import PersistentEventDomainEngine
-from .click_contract import click_gate_contract
+from .click_contract import block_boundary_click_metrics
 
 SAMPLE_RATE_HZ = 48000
 BLOCK_SIZE = 960
@@ -32,14 +32,7 @@ LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
 
 
 def _block_click_metrics(audio: np.ndarray) -> dict[str, Any]:
-    values = np.asarray(audio, dtype=np.float64)
-    indices = np.arange(0, values.shape[0], BLOCK_SIZE, dtype=np.int64)
-    previous = np.vstack((np.zeros((1, values.shape[1])), values[np.maximum(indices - 1, 0)]))[:-1]
-    jumps = values[indices] - previous
-    maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
-    rms = float(np.sqrt(np.mean(np.square(jumps)))) if jumps.size else 0.0
-    contract = click_gate_contract()
-    return {"max_boundary_jump": maximum, "normalized_rms_boundary": rms / max(float(np.sqrt(np.mean(np.square(values)))), 1.0e-12), **contract, "passed": maximum <= float(contract["threshold"]) }
+    return block_boundary_click_metrics(audio, BLOCK_SIZE)
 
 
 def scene_duration_s(scene: str, duration_s: float, *, long_window: bool = False) -> float:
