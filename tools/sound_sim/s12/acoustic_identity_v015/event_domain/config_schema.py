@@ -72,6 +72,10 @@ def flatten_parameters(node: Mapping[str, Any], prefix: str = "") -> dict[str, M
 def validate_config(config: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(config, Mapping):
         raise ValueError("config must be an object")
+    config = copy.deepcopy(dict(config))
+    bank_count = int(config.get("bank_count", {}).get("value", 0)) if isinstance(config.get("bank_count"), Mapping) else 0
+    config.setdefault("bank_phase_offsets_version", "s12.stage_w.bank_phase_offsets.v1")
+    config.setdefault("bank_phase_offsets_deg", parameter([0.0] * bank_count, "deg", [-180.0, 180.0], source="synthetic declared bank phase geometry", verification_state="synthetic_assumption"))
     unknown = set(config) - _TOP_LEVEL_KEYS
     if unknown:
         raise ValueError(f"unknown config fields: {sorted(unknown)}")
