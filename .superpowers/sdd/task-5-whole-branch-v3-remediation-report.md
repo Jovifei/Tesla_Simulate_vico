@@ -59,3 +59,8 @@ All times are Asia/Shanghai local time and all exits are process exits.
 - Remaining external gates: legal synchronized R1 audio/traces and rights
   receipt, formal candidate selection/W10, Profile Freeze, OEM reproduction,
   human PASS, and controller-owned full S12 regression.
+
+## Receipt parse and final receipt-head guard
+
+- Receipt parse: `python -c "import json; from pathlib import Path; d=json.loads(Path(r'.superpowers/sdd/final_remediation_evidence_receipt.json').read_text(encoding='utf-8')); print({'schema':d['schema_version'],'source_head':d['tested_source_head'],'evidence':list(d['current_verification']['fresh_evidence']), 'selection':d['selection']})"`; `05:43:25.0944444`–`05:43:25.1497593`, exit `0`; result schema `s12.stage_w.final_remediation_evidence_receipt.v4`, source `d33b3ecf3757ffa084aa43277892f012d48ecaa8`, evidence keys `source_head/bakeoff_v17/rx7_v17/ferrari_v18`, selection `None`.
+- Final receipt-head guard: `python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py`; verified parent receipt head `0d1f1c4`, `05:43:15.4753333`–`05:43:16.1627327`, exit `0`, 180 frozen files/2 symbols, stdout log SHA `285afa179606524ebff71d18b69b3185c473f83fab9641b801c561325c6814b9`; `git diff --check` at the receipt head exit `0`. This guard log/report commit is intentionally not claimed as self-bound by the receipt.
