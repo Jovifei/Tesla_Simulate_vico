@@ -55,6 +55,35 @@ class _Delay:
         self.sample_counter = int(payload["sample_counter"])
 
 
+class _FrequencyLoss:
+    """Stable one-pole low-pass representing distributed viscothermal loss."""
+
+    def __init__(self, cutoff_hz: float, sample_rate_hz: int) -> None:
+        if not np.isfinite(cutoff_hz) or cutoff_hz <= 0.0 or sample_rate_hz <= 0:
+            raise ValueError("frequency-loss cutoff and sample rate must be positive")
+        self.cutoff_hz = float(cutoff_hz)
+        self.sample_rate_hz = int(sample_rate_hz)
+        self.alpha = float(1.0 - np.exp(-2.0 * np.pi * self.cutoff_hz / self.sample_rate_hz))
+        self.state = 0.0
+
+    def process(self, values: np.ndarray) -> np.ndarray:
+        output = np.empty_like(np.asarray(values, dtype=np.float64))
+        state = self.state
+        for index, value in enumerate(output):
+            state += self.alpha * (float(values[index]) - state)
+            output[index] = state
+        self.state = state
+        return output
+
+    def snapshot(self) -> dict[str, Any]:
+        return {"cutoff_hz": self.cutoff_hz, "sample_rate_hz": self.sample_rate_hz, "state": self.state}
+
+    def restore(self, payload: Mapping[str, Any]) -> None:
+        if float(payload["cutoff_hz"]) != self.cutoff_hz:
+            raise ValueError("waveguide frequency-loss topology differs from snapshot")
+        self.state = float(payload["state"])
+
+
 class StatefulWaveguide:
     def __init__(self, config: WaveguideConfig) -> None:
         if not np.isfinite(config.length_m) or config.length_m <= 0.0 or config.area_ratio <= 0.0 or config.sample_rate_hz <= 0:
@@ -69,24 +98,30 @@ class StatefulWaveguide:
         self._loss = float(np.exp(-config.loss_per_meter * config.length_m))
         impedance_reflection = (1.0 - config.area_ratio) / (1.0 + config.area_ratio)
         self._reflection = -abs(impedance_reflection) if config.reflection_mode == "open" else abs(impedance_reflection)
+        # Longer paths and cooler gas have lower acoustic cut-offs.  This is a
+        # bounded source-domain loss model; it does not alter the frozen PTR.
+        cutoff = 2600.0 * np.sqrt(max(config.temperature_c, 20.0) / 700.0) / (1.0 + 1.6 * config.length_m)
+        self._frequency_loss = _FrequencyLoss(cutoff, config.sample_rate_hz)
         self.sample_counter = 0
 
     def process(self, signal: np.ndarray) -> np.ndarray:
         values = np.asarray(signal, dtype=np.float64)
         if values.ndim != 1 or not np.all(np.isfinite(values)):
             raise ValueError("waveguide input must be finite mono")
-        forward = self._forward.process(values) * self._loss
-        reflected = self._round_trip.process(values * self._reflection) * self._loss
-        output = 0.20 * values + forward + reflected
+        filtered = self._frequency_loss.process(values)
+        forward = self._forward.process(filtered) * self._loss
+        reflected = self._round_trip.process(filtered * self._reflection) * self._loss
+        output = 0.20 * filtered + forward + reflected
         self.sample_counter += values.size
         return output
 
     def snapshot(self) -> dict[str, Any]:
-        return {"sample_counter": self.sample_counter, "forward": self._forward.snapshot(), "round_trip": self._round_trip.snapshot()}
+        return {"sample_counter": self.sample_counter, "forward": self._forward.snapshot(), "round_trip": self._round_trip.snapshot(), "frequency_loss": self._frequency_loss.snapshot()}
 
     def restore(self, snapshot: Mapping[str, Any]) -> None:
         self._forward.restore(snapshot["forward"])
         self._round_trip.restore(snapshot["round_trip"])
+        self._frequency_loss.restore(snapshot["frequency_loss"])
         self.sample_counter = int(snapshot["sample_counter"])
 
 

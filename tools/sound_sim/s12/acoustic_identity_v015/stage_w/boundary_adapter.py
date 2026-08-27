@@ -14,13 +14,24 @@ _DEMO_ROOT = Path(__file__).resolve().parents[2] / "acoustic_demo"
 if str(_DEMO_ROOT) not in sys.path:
     sys.path.insert(0, str(_DEMO_ROOT))
 from runtime_ptr_adapter import RuntimePtrAdapter  # noqa: E402
+from frozen_ptr_contract import (  # noqa: E402
+    EXPECTED_RADIATION_PACKAGE_SHA256,
+    verify_frozen_radiation_package,
+)
 
 
-class FrozenPtrStereo:
+class StageWBoundaryAdapter:
     """Apply one frozen adapter per channel while retaining adapter state."""
 
-    def __init__(self, sample_rate_hz: int = 48000) -> None:
+    EXPECTED_PACKAGE_SHA256 = EXPECTED_RADIATION_PACKAGE_SHA256
+
+    def __init__(self, sample_rate_hz: int = 48000, *, expected_package_sha256: str | None = None) -> None:
         self.sample_rate_hz = int(sample_rate_hz)
+        if expected_package_sha256 is not None and expected_package_sha256 != self.EXPECTED_PACKAGE_SHA256:
+            raise ValueError("radiation package SHA does not match the frozen Track-S contract")
+        receipt = verify_frozen_radiation_package()
+        if receipt["radiation_package_sha256"] != self.EXPECTED_PACKAGE_SHA256:
+            raise ValueError("radiation package SHA does not match the frozen Track-S contract")
         self.channels = [RuntimePtrAdapter(sample_rate_hz=self.sample_rate_hz) for _ in range(2)]
 
     def process(self, raw_pcm: np.ndarray) -> np.ndarray:
@@ -64,4 +75,8 @@ class FrozenPtrStereo:
             adapter._downstream = deque(float(value) for value in state["downstream"])
 
 
-__all__ = ["FrozenPtrStereo"]
+class FrozenPtrStereo(StageWBoundaryAdapter):
+    """Backward-compatible name for the hash-enforcing Stage-W adapter."""
+
+
+__all__ = ["FrozenPtrStereo", "StageWBoundaryAdapter"]

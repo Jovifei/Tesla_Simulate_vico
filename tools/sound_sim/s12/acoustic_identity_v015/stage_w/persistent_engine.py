@@ -94,6 +94,10 @@ class PersistentEventDomainEngine:
         self._afterfire_fuel_reservoir = 0.0
         self._afterfire_temperature = 120.0
         self._afterfire_cooldown_remaining = 0
+        self._afterfire_pending_events: list[dict[str, Any]] = []
+        self._afterfire_sequence = 0
+        self._afterfire_dropped_events = 0
+        self._collector_pressure = 0.0
         configured_policy = str(unwrap(self.config, "afterfire.event_location"))
         if configured_policy == "collector":
             configured_policy = "bank_collector"
@@ -124,6 +128,11 @@ class PersistentEventDomainEngine:
         self._collector_event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.bank_count)]
         self._central_collector_event_tail = np.zeros(self._tail_length(), dtype=np.float64)
         self._monitor_gain_db = 0.0
+        self._last_output_sample = np.zeros(2, dtype=np.float64)
+        self._click_max_boundary_jump = 0.0
+        self._click_sum_sq = 0.0
+        self._click_count = 0
+        self._click_threshold = 0.35
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
 
     def initialize(self) -> "PersistentEventDomainEngine":
@@ -230,7 +239,8 @@ class PersistentEventDomainEngine:
         omega_ripple = phase_block.omega_rad_s - rpm * 2.0 * np.pi / 60.0
         self._omega_ripple_sum_sq += float(np.sum(np.square(omega_ripple)))
         self._omega_ripple_sample_count += int(omega_ripple.size)
-        self._schedule_afterfire(state, phase_block.phase_rad, n)
+        frame_start = self.sample_counter
+        self._emit_due_afterfires(frame_start, n)
         banks = np.zeros((self.bank_count, n), dtype=np.float64)
         bank_assignment = list(unwrap(self.config, "bank_assignment"))
         entity_sources: list[np.ndarray] = []
@@ -250,6 +260,8 @@ class PersistentEventDomainEngine:
         for bank, line in enumerate(self._collector_lines):
             collector[bank] = line.process(collector_inputs[bank])
         central = self._central_collector_line.process(self._consume(self._central_collector_event_tail, n))
+        self._collector_pressure = float(np.max(np.abs(collector_inputs))) if collector_inputs.size else 0.0
+        self._schedule_afterfire(state, phase_block.phase_rad, n)
         combustion_left = np.zeros(n, dtype=np.float64)
         combustion_right = np.zeros(n, dtype=np.float64)
         for bank, signal in enumerate(collector):
@@ -280,6 +292,11 @@ class PersistentEventDomainEngine:
             forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
         mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
+        boundary_jump = float(np.max(np.abs(raw[0] - self._last_output_sample))) if raw.size else 0.0
+        self._click_max_boundary_jump = max(self._click_max_boundary_jump, boundary_jump)
+        self._click_sum_sq += boundary_jump * boundary_jump
+        self._click_count += 1
+        self._last_output_sample = raw[-1].copy()
         post_ptr = self.ptr.process(raw) if self.ptr is not None else None
         monitor = self._monitor(post_ptr if post_ptr is not None else raw)
         self.sample_counter += n
@@ -365,28 +382,62 @@ class PersistentEventDomainEngine:
         if not eligible:
             return
         delay_s = float(unwrap(self.config, "afterfire.ignition_delay_s")) + 0.000001 * float(state["rpm"])
-        delay_samples = min(n - 1, max(0, int(round(delay_s * self.sample_rate_hz))))
+        delay_samples = max(0, int(round(delay_s * self.sample_rate_hz)))
         energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"])))
-        packet = render_event_packet(self.sample_rate_hz, 0.05, 0.002, 0.018, energy, 0.25).pressure
-        if self.afterfire_location_policy == "primary":
-            self._place(self._event_tails[0], delay_samples, packet)
-            self._afterfire_location_counts["primary"] += 1
-        elif self.afterfire_location_policy in {"collector", "bank_collector"}:
-            self._place(self._collector_event_tails[0], delay_samples, packet)
-            self._afterfire_location_counts["collector"] += 1
-            self._afterfire_location_counts["bank_collector"] += 1
-            self._last_afterfire_route = {"route": "bank_collector", "path_id": "bank_collector_0", "bank_id": 0, "collector_pressure": float(np.max(np.abs(packet))), "arrival_samples": delay_samples + self._collector_lines[0].delay_samples}
-        elif self.afterfire_location_policy == "central_collector":
-            self._place(self._central_collector_event_tail, delay_samples, packet)
-            self._afterfire_location_counts["central_collector"] += 1
-            self._last_afterfire_route = {"route": "central_collector", "path_id": "central_collector", "bank_id": None, "collector_pressure": float(np.max(np.abs(packet))), "arrival_samples": delay_samples + self._central_collector_line.delay_samples}
-        else:
+        policy = self.afterfire_location_policy
+        if policy == "collector":
+            policy = "bank_collector"
+        if policy not in {"primary", "bank_collector", "central_collector"}:
             raise ValueError("afterfire_location_policy must be primary, bank_collector, central_collector or collector")
-        if self.afterfire_location_policy == "primary":
+        if len(self._afterfire_pending_events) >= 64:
+            self._afterfire_dropped_events += 1
+            return
+        # The event scheduler's entity is not exposed by this block-level gate;
+        # use a deterministic primary path, while preserving the route itself.
+        source_entity = 0
+        self._afterfire_sequence += 1
+        scheduled_sample = self.sample_counter + delay_samples
+        path_delay = self.waveguide_network.guides[source_entity].delay_samples if self.waveguide_network is not None else self._path_lines[source_entity].delay_samples
+        if policy == "primary":
+            path_id = f"primary_path_{source_entity}"
+            bank_id = int(unwrap(self.config, "bank_assignment")[source_entity])
+            arrival = scheduled_sample + path_delay + self._collector_lines[bank_id].delay_samples
+        elif policy == "bank_collector":
+            path_id = "bank_collector_0"
+            bank_id = 0
+            arrival = scheduled_sample + self._collector_lines[0].delay_samples
+        else:
+            path_id = "central_collector"
+            bank_id = None
+            arrival = scheduled_sample + self._central_collector_line.delay_samples
+        self._afterfire_pending_events.append({"scheduled_sample": int(scheduled_sample), "sequence": self._afterfire_sequence, "energy": energy, "route": policy, "entity": source_entity, "bank_id": bank_id, "path_id": path_id, "arrival_samples": int(arrival), "collector_pressure": float(self._collector_pressure)})
+        self._afterfire_pending_events.sort(key=lambda event: (event["scheduled_sample"], event["sequence"]))
+        self._afterfire_location_counts[policy] += 1
+        if policy == "bank_collector":
+            self._afterfire_location_counts["collector"] += 1
+        self._last_afterfire_route = dict(self._afterfire_pending_events[-1])
+        self._last_afterfire_route.pop("sequence", None)
+        self._last_afterfire_route["route"] = policy
+        if policy == "primary":
             path_delay = self.waveguide_network.guides[0].delay_samples if self.waveguide_network is not None else self._path_lines[0].delay_samples
-            self._last_afterfire_route = {"route": "primary", "path_id": "primary_path_0", "bank_id": 0, "collector_pressure": 0.0, "arrival_samples": delay_samples + path_delay + self._collector_lines[0].delay_samples}
         self._afterfire_event_count += 1
         self._afterfire_cooldown_remaining = int(round(float(unwrap(self.config, "afterfire.cooldown_s")) * self.sample_rate_hz))
+
+    def _emit_due_afterfires(self, frame_start: int, block_size: int) -> None:
+        """Materialize queued afterfires at absolute sample positions."""
+        frame_end = frame_start + block_size
+        due = [event for event in self._afterfire_pending_events if event["scheduled_sample"] < frame_end]
+        self._afterfire_pending_events = [event for event in self._afterfire_pending_events if event["scheduled_sample"] >= frame_end]
+        for event in due:
+            offset = max(0, int(event["scheduled_sample"]) - frame_start)
+            packet = render_event_packet(self.sample_rate_hz, 0.05, 0.002, 0.018, float(event["energy"]), 0.25).pressure
+            if event["route"] == "primary":
+                self._place(self._event_tails[int(event["entity"])], offset, packet)
+            elif event["route"] == "bank_collector":
+                self._place(self._collector_event_tails[int(event["bank_id"] or 0)], offset, packet)
+            else:
+                self._place(self._central_collector_event_tail, offset, packet)
+            self._last_afterfire_route = {key: value for key, value in event.items() if key != "sequence"}
 
     def _monitor(self, raw: np.ndarray) -> np.ndarray:
         rms = float(np.sqrt(np.mean(np.square(raw))))
@@ -412,6 +463,10 @@ class PersistentEventDomainEngine:
             "afterfire_fuel_reservoir": self._afterfire_fuel_reservoir,
             "afterfire_temperature": self._afterfire_temperature,
             "afterfire_cooldown_remaining": self._afterfire_cooldown_remaining,
+            "afterfire_pending_events": copy.deepcopy(self._afterfire_pending_events),
+            "afterfire_sequence": self._afterfire_sequence,
+            "afterfire_dropped_events": self._afterfire_dropped_events,
+            "collector_pressure": self._collector_pressure,
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,
             "afterfire_location_counts": dict(self._afterfire_location_counts),
@@ -432,6 +487,10 @@ class PersistentEventDomainEngine:
             "central_collector_line": self._central_collector_line.snapshot(),
             "afterfire_location_policy": self.afterfire_location_policy,
             "monitor_gain_db": self._monitor_gain_db,
+            "last_output_sample": self._last_output_sample.copy(),
+            "click_max_boundary_jump": self._click_max_boundary_jump,
+            "click_sum_sq": self._click_sum_sq,
+            "click_count": self._click_count,
             "ptr": self.ptr.snapshot() if self.ptr is not None else None,
             "waveguide": self.waveguide_network.snapshot() if self.waveguide_network is not None else None,
             "teacher_response": self.teacher_response.snapshot() if self.teacher_response is not None else None,
@@ -451,6 +510,7 @@ class PersistentEventDomainEngine:
         if pending.shape != self._pending_combustion_torque.shape:
             raise ValueError("pending combustion torque topology differs from snapshot")
         self._pending_combustion_torque = pending.copy(); self._last_rpm = float(snapshot["last_rpm"]); self._last_throttle = float(snapshot["last_throttle"]); self._last_load = float(snapshot["last_load"]); self._boost_state = float(snapshot.get("boost_state", 0.0)); self._bov_state = float(snapshot.get("bov_state", 0.0)); self._bov_event_count = int(snapshot.get("bov_event_count", 0)); self._blower_phase = float(snapshot.get("blower_phase", 0.0)); self._turbo_phase = float(snapshot.get("turbo_phase", 0.0)); self._afterfire_fuel_reservoir = float(snapshot["afterfire_fuel_reservoir"]); self._afterfire_temperature = float(snapshot["afterfire_temperature"]); self._afterfire_cooldown_remaining = int(snapshot["afterfire_cooldown_remaining"]); self._event_count = int(snapshot["event_count"]); self._afterfire_event_count = int(snapshot["afterfire_event_count"]); self._afterfire_location_counts = dict(snapshot.get("afterfire_location_counts", {"primary": 0, "collector": 0})); self._last_afterfire_route = dict(snapshot.get("afterfire_route", self._last_afterfire_route)); self._combustion_torque_event_count = int(snapshot["combustion_torque_event_count"]); self._omega_ripple_sum_sq = float(snapshot.get("omega_ripple_sum_sq", 0.0)); self._omega_ripple_sample_count = int(snapshot.get("omega_ripple_sample_count", 0)); self._monitor_gain_db = float(snapshot["monitor_gain_db"])
+        self._afterfire_pending_events = copy.deepcopy(snapshot.get("afterfire_pending_events", [])); self._afterfire_sequence = int(snapshot.get("afterfire_sequence", 0)); self._afterfire_dropped_events = int(snapshot.get("afterfire_dropped_events", 0)); self._collector_pressure = float(snapshot.get("collector_pressure", 0.0)); self._last_output_sample = np.asarray(snapshot.get("last_output_sample", np.zeros(2)), dtype=np.float64).copy(); self._click_max_boundary_jump = float(snapshot.get("click_max_boundary_jump", 0.0)); self._click_sum_sq = float(snapshot.get("click_sum_sq", 0.0)); self._click_count = int(snapshot.get("click_count", 0))
         self._event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot["event_tails"]]
         self._collector_event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot.get("collector_event_tails", self._collector_event_tails)]
         self._central_collector_event_tail = np.asarray(snapshot.get("central_collector_event_tail", self._central_collector_event_tail), dtype=np.float64).copy()
@@ -478,6 +538,12 @@ class PersistentEventDomainEngine:
             "afterfire_location_counts": dict(self._afterfire_location_counts),
             "afterfire_route": dict(self._last_afterfire_route),
             "afterfire_cooldown_remaining": self._afterfire_cooldown_remaining,
+            "afterfire_pending_events": [
+                {key: value for key, value in event.items() if key != "energy"}
+                | {"energy": float(event["energy"])} for event in self._afterfire_pending_events
+            ],
+            "afterfire_dropped_events": self._afterfire_dropped_events,
+            "collector_pressure": self._collector_pressure,
             "combustion_torque_event_count": self._combustion_torque_event_count,
             "boost_state": self._boost_state,
             "bov_state": self._bov_state,
@@ -486,6 +552,12 @@ class PersistentEventDomainEngine:
             "turbo_phase": self._turbo_phase,
             "omega_ripple_rms": float(np.sqrt(self._omega_ripple_sum_sq / self._omega_ripple_sample_count)) if self._omega_ripple_sample_count else 0.0,
             "omega_ripple_sample_count": self._omega_ripple_sample_count,
+            "click_metrics": {
+                "max_boundary_jump": self._click_max_boundary_jump,
+                "normalized_rms_boundary": float(np.sqrt(self._click_sum_sq / self._click_count)) if self._click_count else 0.0,
+                "threshold": self._click_threshold,
+                "passed": self._click_max_boundary_jump <= self._click_threshold,
+            },
             "state_memory_bytes": int(self._pending_combustion_torque.nbytes + sum(tail.nbytes for tail in self._event_tails) + sum(tail.nbytes for tail in self._collector_event_tails) + self._central_collector_event_tail.nbytes + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines) + self._central_collector_line.history.nbytes),
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
             "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
