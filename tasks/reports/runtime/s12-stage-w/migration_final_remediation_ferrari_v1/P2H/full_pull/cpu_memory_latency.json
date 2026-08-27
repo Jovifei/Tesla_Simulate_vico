@@ -1,7 +1,0 @@
-{
-  "block_size": 960,
-  "latency_contract": "offline persistent source render",
-  "memory_bytes": 470920,
-  "render_seconds": 0.41505919996416196,
-  "state_rate_hz": 50
-}

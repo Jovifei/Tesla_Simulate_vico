@@ -134,3 +134,12 @@ tasks/reports/runtime/s12-stage-w/bakeoff_v7/
 tasks/reports/runtime/s12-stage-w/bakeoff_long_v1/
 tasks/reports/runtime/s12-stage-w/bakeoff_long_v2/
 tasks/reports/runtime/s12-stage-w/bakeoff_long_v3/
+
+# Final Stage-W-C remediation outputs are local synthetic evidence; retain
+# manifests/audio in the worktree without letting post-PTR filenames cross
+# the Track-P frozen-path guard.
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v2/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v3/
