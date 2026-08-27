@@ -314,6 +314,8 @@ class PersistentEventDomainEngine:
         collector_inputs = banks
         if self.waveguide_network is not None:
             collector_inputs = self.waveguide_network.process(np.asarray(entity_sources, dtype=np.float64)).bank_audio.copy()
+            if collector_inputs.shape[0] < self.bank_count:
+                collector_inputs = np.pad(collector_inputs, ((0, self.bank_count - collector_inputs.shape[0]), (0, 0)))
         collector_topology = str(unwrap(self.config, "collector_assignment"))
         self._parameter_consumption["collector_assignment"] = True
         if collector_topology == "central_first":

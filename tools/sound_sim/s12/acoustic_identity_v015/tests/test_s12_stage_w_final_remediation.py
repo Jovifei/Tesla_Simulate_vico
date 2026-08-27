@@ -453,6 +453,32 @@ def test_afterfire_route_stereo_contributions_are_directly_topology_bound() -> N
     assert np.max(np.abs(deltas["bank_collector"][:, 0] - deltas["bank_collector"][:, 1])) > 1.0e-8
 
 
+def test_afterfire_only_bank0_is_left_heavy_and_bank1_is_right_heavy() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    base = load_config("hellcat_v1")
+    control_config = copy.deepcopy(base); control_config["afterfire"]["gain"]["value"] = 0.0
+    deltas = {}
+    for bank, assignment in ((0, [0] * 8), (1, [1] * 8)):
+        routed = copy.deepcopy(base); routed["bank_assignment"]["value"] = assignment
+        control = copy.deepcopy(control_config); control["bank_assignment"]["value"] = assignment
+        for policy in ("primary", "bank_collector", "central_collector"):
+            engine = PersistentEventDomainEngine(routed, 48000, 960, path_model="waveguide_v1"); engine.afterfire_location_policy = policy
+            reference = PersistentEventDomainEngine(control, 48000, 960, path_model="waveguide_v1"); reference.afterfire_location_policy = policy
+            engine.process(high); reference.process(high)
+            actual = np.concatenate([engine.process(lift).raw_pcm for _ in range(30)])
+            expected = np.concatenate([reference.process(lift).raw_pcm for _ in range(30)])
+            deltas[(bank, policy)] = actual - expected
+    for policy in ("primary", "bank_collector"):
+        assert np.mean(deltas[(0, policy)][:, 0]) > np.mean(deltas[(0, policy)][:, 1])
+        assert np.mean(deltas[(1, policy)][:, 1]) > np.mean(deltas[(1, policy)][:, 0])
+    assert np.max(np.abs(deltas[(0, "central_collector")][:, 0] - deltas[(0, "central_collector")][:, 1])) < 1.0e-12
+
+
 def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:
     import numpy as np
     from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
