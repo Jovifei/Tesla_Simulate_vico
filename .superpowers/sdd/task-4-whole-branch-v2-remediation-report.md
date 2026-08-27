@@ -30,6 +30,11 @@ Evidence was generated after source/docs head `5a6485cb1ebdd39ad99c3fac34127e64f
 - Track-P source-head guard on `5a6485c`: exit `0`, 180 frozen files/2 symbols, stdout SHA `e5720bca586519e36b2fa2cd1727a1552f0778ee578963590e4746e67e23f83c`; `git diff --check` exit `0`.
 - Compact receipt `final_remediation_evidence_receipt.json` was refreshed with fresh output paths/hashes, `selection=null`, local synthetic-only boundary, and prior metadata guard `e926e96`. Receipt commit is separate from source/docs commits. Final receipt-head guard is recorded after that commit.
 
+## Final receipt-head guard
+
+- Final metadata head after receipt and local-output ignore commit: `8ae069f5d1e0c4c6c04a848708beaad3a10ff3e1`. Guard command `python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py` ran `2026-08-28T02:24:28.2201119+08:00`–`2026-08-28T02:24:29.1908948+08:00`, exit `0`, 180 frozen files/2 frozen symbols, stdout SHA `afbb9b19a3a20467334bcb71ccda30f775fc2916043e30c091f71a4453992a5f`; `git diff --check` exit `0`.
+- Receipt commit: `574ffb333c2887ea979b2124df79ac285283251c`; source/docs commits: `bc93a65`, `5a6485c`; local evidence roots remain ignored/untracked by design and are hash-validated in the receipt.
+
 ## Minor documentation and boundary updates
 
 `S12_Stage_W_Waveguide_Teacher.md` now describes stateful frequency-dependent loss and current focused count; `S12_Stage_W_Selected_Architecture.md` permits clean-room synthetic P5 transient output without rights-bound source material while retaining rights requirements for external media; test duplicate `pytest` import removed. Historical timing values remain untouched.
