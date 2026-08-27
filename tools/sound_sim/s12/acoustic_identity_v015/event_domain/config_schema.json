@@ -11,6 +11,8 @@
     "bank_count": {"$ref": "#/$defs/parameter"},
     "event_phase_deg": {"$ref": "#/$defs/parameter"},
     "bank_assignment": {"$ref": "#/$defs/parameter"},
+    "bank_phase_offsets_version": {"const": "s12.stage_w.bank_phase_offsets.v1"},
+    "bank_phase_offsets_deg": {"$ref": "#/$defs/parameter"},
     "firing_order_evidence": {"$ref": "#/$defs/parameter"},
     "per_path_primary_length_m": {"$ref": "#/$defs/parameter"},
     "per_path_attenuation": {"$ref": "#/$defs/parameter"},

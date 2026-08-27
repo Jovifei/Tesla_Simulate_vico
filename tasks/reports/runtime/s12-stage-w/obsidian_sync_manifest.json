@@ -8,7 +8,7 @@
   "historical_full_s12_role": "historical_only_not_current_coverage",
   "current_stage_w_evidence": ["tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v23", "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v23", "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v23"],
   "current_selection": null,
-  "latest_validation_head": "4ef0a32",
+  "latest_validation_head": "a87002b",
   "current_audition_package_status": "STALE_HISTORICAL_REVIEW_PACKAGE; new package prohibited until candidate selected and R1 gate closes",
   "vault_project": "tesla-speed",
   "vault_custom_relative_root": "03-项目记忆/tesla-speed/09-S12-Engine-Audio-Ecosystem",

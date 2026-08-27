@@ -17,8 +17,9 @@
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py",
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py",
     "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py",
-    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v17",
-    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v18"
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v23",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v23",
+    "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v23"
   ],
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
 }

@@ -78,3 +78,21 @@ All times are Asia/Shanghai local time and all exits are process exits.
 
 - Receipt parse: `python -c "import json; from pathlib import Path; d=json.loads(Path(r'.superpowers/sdd/final_remediation_evidence_receipt.json').read_text(encoding='utf-8')); print({'schema':d['schema_version'],'tested_source_head':d['tested_source_head'],'latest_validation_head':d['latest_validation_head'],'current_metadata_head':d['current_metadata_head'],'evidence':list(d['current_verification']['fresh_evidence']),'selection':d['selection']})"`; `07:36:52.5227959`–`07:36:52.5779452`, exit `0`; schema v5, source/evidence `5038194`, validation `4ef0a32`, selection `None`.
 - Final receipt-head guard: `python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py`; verified receipt parent head `97bc767`, `07:36:43.0695979`–`07:36:43.7516069`, exit `0`, 180 frozen files/2 symbols, stdout SHA `f82118b5098fc1da16e929898c66ccc0af4be09a1af41ba1de33e02ab6c411ba`; `git diff --check` exit `0`. The guard log/report commit is separate and does not claim self-binding by the receipt.
+
+## Addendum-2 authoritative closure
+
+- Audio generation remains bound to `5038194` v23 roots. Current validation/test
+  head is `a87002b`; metadata parent is `f9fb2b2`; no v24 evidence is created.
+- Additional RED→GREEN coverage includes independent bank-offset delta,
+  engine-level pressure, actual PCM short/cross/long afterfire placement with
+  snapshot continuity, nested migration hash tamper, boundary queue lengths,
+  stale package consumer errors, and direct raw-config schema validation.
+- Addendum-2 remediation is `52 passed` at `07:47:31.8145218`–
+  `07:47:52.9567758`, PID `3744`, exit `0`; the prior `47 passed` count is
+  retained as historical pre-addendum baseline. The post-metadata Stage-W
+  closure remains `103 passed, 1 skipped`; Stage-V is `31 passed, 590
+  deselected`; slow 3000 gate is `1 passed in 92.50s`.
+- Current v23 validators remain independent and return `[]`; JSON finite is
+  `730 files/0 non-finite`; compileall and Track-P remain exit `0`. W9 stays
+  historical-only for `24f2c41`; repo mirror remains
+  `VAULT_SYNC_PENDING_PARENT_CODEX_MEMORY` and no Vault write occurred.
