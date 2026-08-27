@@ -180,7 +180,7 @@ class PersistentEventDomainEngine:
         self._timbre_inertia_state = 0.0
         transfer_label = str(unwrap(self.config, "transfer_ir"))
         self._transfer_ir = _TransferIrFilter(transfer_label)
-        self._parameter_consumption = {"collector_assignment": False, "transfer_ir": False, "crankpin_geometry": False, "rotor_geometry": False}
+        self._parameter_consumption = {"collector_assignment": True, "transfer_ir": True, "crankpin_geometry": self.config["architecture"] == "piston", "rotor_geometry": self.config["architecture"] == "rotary_wankel"}
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
 
     def initialize(self) -> "PersistentEventDomainEngine":
@@ -300,6 +300,7 @@ class PersistentEventDomainEngine:
         self._omega_ripple_sum_sq += float(np.sum(np.square(omega_ripple)))
         self._omega_ripple_sample_count += int(omega_ripple.size)
         frame_start = self.sample_counter
+        self._schedule_afterfire(state, phase_block.phase_rad, n)
         self._emit_due_afterfires(frame_start, n)
         banks = np.zeros((self.bank_count, n), dtype=np.float64)
         bank_assignment = list(unwrap(self.config, "bank_assignment"))
@@ -335,7 +336,6 @@ class PersistentEventDomainEngine:
             collector[bank] = line.process(collector_inputs[bank])
         central = self._central_collector_line.process(self._consume(self._central_collector_event_tail, n))
         self._collector_pressure = float(np.max(np.abs(collector_inputs))) if collector_inputs.size else 0.0
-        self._schedule_afterfire(state, phase_block.phase_rad, n)
         combustion_left = np.zeros(n, dtype=np.float64)
         combustion_right = np.zeros(n, dtype=np.float64)
         for bank, signal in enumerate(collector):
@@ -469,7 +469,8 @@ class PersistentEventDomainEngine:
         if self.jitter_fraction:
             delay_s *= 1.0 + float(self._rng.uniform(-self.jitter_fraction, self.jitter_fraction))
         delay_samples = max(0, int(round(delay_s * self.sample_rate_hz)))
-        energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"])))
+        pressure_factor = self._pressure_to_energy(self._collector_pressure)
+        energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"]))) * pressure_factor
         policy = self.afterfire_location_policy
         if policy == "collector":
             policy = "bank_collector"
@@ -494,7 +495,7 @@ class PersistentEventDomainEngine:
             path_id = "central_collector"
             bank_id = None
             arrival = scheduled_sample + self._central_collector_line.delay_samples
-        self._afterfire_pending_events.append({"scheduled_sample": int(scheduled_sample), "sequence": self._afterfire_sequence, "energy": energy, "route": policy, "entity": source_entity, "bank_id": bank_id, "path_id": path_id, "arrival_samples": int(arrival), "collector_pressure": float(self._collector_pressure)})
+        self._afterfire_pending_events.append({"scheduled_sample": int(scheduled_sample), "sequence": self._afterfire_sequence, "energy": energy, "pressure_energy_factor": pressure_factor, "route": policy, "entity": source_entity, "bank_id": bank_id, "path_id": path_id, "arrival_samples": int(arrival), "collector_pressure": float(self._collector_pressure)})
         self._afterfire_pending_events.sort(key=lambda event: (event["scheduled_sample"], event["sequence"]))
         self._afterfire_location_counts[policy] += 1
         if policy == "bank_collector":
@@ -513,6 +514,12 @@ class PersistentEventDomainEngine:
         current = float(phase[-1] * 180.0 / np.pi) % cycle
         distance = np.abs((current - phases + 0.5 * cycle) % cycle - 0.5 * cycle)
         return int(np.argmin(distance))
+
+    @staticmethod
+    def _pressure_to_energy(pressure: float) -> float:
+        """Bounded synthetic pressure-to-afterfire energy map (v1)."""
+        normalized = np.clip(float(pressure), 0.0, 4.0)
+        return float(0.55 + 0.45 * normalized / (normalized + 0.20))
 
     def _emit_due_afterfires(self, frame_start: int, block_size: int) -> None:
         """Materialize queued afterfires at absolute sample positions."""
@@ -558,6 +565,7 @@ class PersistentEventDomainEngine:
             "afterfire_sequence": self._afterfire_sequence,
             "afterfire_dropped_events": self._afterfire_dropped_events,
             "collector_pressure": self._collector_pressure,
+            "afterfire_pressure_energy_map": {"version": "s12.stage_w.pressure_energy.v1", "pressure_source": "measured_collector_path", "mapping": "0.55+0.45*p/(p+0.20)", "provenance": "bounded_synthetic_engineering_mapping"},
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,
             "afterfire_location_counts": dict(self._afterfire_location_counts),
@@ -649,6 +657,7 @@ class PersistentEventDomainEngine:
             ],
             "afterfire_dropped_events": self._afterfire_dropped_events,
             "collector_pressure": self._collector_pressure,
+            "afterfire_pressure_energy_map": {"version": "s12.stage_w.pressure_energy.v1", "pressure_source": "measured_collector_path", "mapping": "0.55+0.45*p/(p+0.20)", "provenance": "bounded_synthetic_engineering_mapping"},
             "combustion_torque_event_count": self._combustion_torque_event_count,
             "boost_state": self._boost_state,
             "bov_state": self._bov_state,

@@ -51,7 +51,10 @@ class _Delay:
     def restore(self, payload: Mapping[str, Any]) -> None:
         if int(payload["samples"]) != self.samples:
             raise ValueError("waveguide delay topology differs from snapshot")
-        self.history = np.asarray(payload["history"], dtype=np.float64).copy()
+        history = np.asarray(payload["history"], dtype=np.float64)
+        if history.shape != self.history.shape:
+            raise ValueError("waveguide delay history topology differs from snapshot")
+        self.history = history.copy()
         self.sample_counter = int(payload["sample_counter"])
 
 
@@ -86,7 +89,7 @@ class _FrequencyLoss:
 
 class StatefulWaveguide:
     def __init__(self, config: WaveguideConfig) -> None:
-        if not np.isfinite(config.length_m) or config.length_m <= 0.0 or config.area_ratio <= 0.0 or config.sample_rate_hz <= 0:
+        if not all(np.isfinite(float(value)) for value in (config.length_m, config.area_ratio, config.temperature_c, config.loss_per_meter)) or config.length_m <= 0.0 or config.area_ratio <= 0.0 or config.sample_rate_hz <= 0 or config.temperature_c <= 0.0 or config.loss_per_meter < 0.0:
             raise ValueError("invalid waveguide geometry or sample rate")
         if config.reflection_mode not in {"open", "closed"}:
             raise ValueError("reflection_mode must be open or closed")
@@ -155,6 +158,8 @@ class WaveguideNetwork:
         return {"guides": [guide.snapshot() for guide in self.guides]}
 
     def restore(self, snapshot: Mapping[str, Any]) -> None:
+        if len(snapshot.get("guides", [])) != len(self.guides):
+            raise ValueError("waveguide network topology differs from snapshot")
         for guide, state in zip(self.guides, snapshot["guides"]):
             guide.restore(state)
 

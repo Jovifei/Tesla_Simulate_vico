@@ -68,6 +68,8 @@ class StageWBoundaryAdapter:
     def restore(self, snapshot: Mapping[str, Any]) -> None:
         if snapshot.get("schema_version") != "s12.stage_w.frozen_ptr_state.v1":
             raise ValueError("unsupported frozen PTR snapshot")
+        if len(snapshot.get("channels", [])) != len(self.channels):
+            raise ValueError("frozen PTR snapshot channel topology differs")
         for adapter, state in zip(self.channels, snapshot["channels"]):
             adapter._x0 = float(state["x0"])
             adapter._x1 = float(state["x1"])

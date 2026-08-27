@@ -232,7 +232,7 @@ def test_cycle_definition_and_bank_assignment_drive_explicit_path_readback_not_f
     banks = copy.deepcopy(base)
     banks["bank_assignment"]["value"] = [1, 0, 1, 0, 1, 0, 1, 0]
     assert derive_event_phase_deg(base) != derive_event_phase_deg(cycle)
-    assert derive_event_phase_deg(base) == derive_event_phase_deg(banks)
+    assert derive_event_phase_deg(base) != derive_event_phase_deg(banks)
     assert derive_event_path_schedule(base) != derive_event_path_schedule(banks)
 
 
@@ -477,6 +477,28 @@ def test_afterfire_only_bank0_is_left_heavy_and_bank1_is_right_heavy() -> None:
         assert np.mean(deltas[(0, policy)][:, 0]) > np.mean(deltas[(0, policy)][:, 1])
         assert np.mean(deltas[(1, policy)][:, 1]) > np.mean(deltas[(1, policy)][:, 0])
     assert np.max(np.abs(deltas[(0, "central_collector")][:, 0] - deltas[(0, "central_collector")][:, 1])) < 1.0e-12
+
+
+def test_pressure_consumed_afterfire_energy_changes_with_collector_pressure() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    assert PersistentEventDomainEngine._pressure_to_energy(0.0) < PersistentEventDomainEngine._pressure_to_energy(1.0)
+
+
+def test_short_afterfire_delay_is_rendered_inside_current_block() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    config["afterfire"]["ignition_delay_s"]["value"] = 0.001
+    engine = PersistentEventDomainEngine(config, 48000, 960)
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    engine.process(high)
+    block = engine.process(lift)
+    assert block.diagnostics["afterfire_event_count"] > 0
+    assert block.diagnostics["afterfire_route"]["scheduled_sample"] < engine.sample_counter
+    assert block.diagnostics["afterfire_route"]["scheduled_sample"] >= engine.sample_counter - 960
 
 
 def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:

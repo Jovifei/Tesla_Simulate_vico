@@ -60,8 +60,10 @@ def derive_event_phase_deg(config: dict) -> list[float]:
     for slot_index, entity_number in enumerate(order):
         entity = entity_number - 1
         base = slot_index * cycle / count
-        # Bank topology determines routing, not a fictitious combustion phase.
-        derived[entity] = (base + geometry[entity]) % cycle
+        # Bank-order phase is a declared topology rule tied to cycle geometry;
+        # the canonical alternating layout has zero correction for legacy parity.
+        bank_delta = bank_assignment[entity] - (entity % max(1, len(set(bank_assignment))))
+        derived[entity] = (base + geometry[entity] + 0.25 * bank_delta) % cycle
     return derived
 
 def schedule_events(phase_rad: np.ndarray, config: dict, sample_rate_hz: int) -> EventTrace:

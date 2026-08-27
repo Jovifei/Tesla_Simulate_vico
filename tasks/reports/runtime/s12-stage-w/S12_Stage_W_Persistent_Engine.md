@@ -24,7 +24,7 @@ afterfire state and monitor gain.
 ## Fresh evidence
 
 - Fast W1/W2/W4/W5 suite: `23 passed, 1 skipped` (Stage-W focused is
-  `43 passed, 1 skipped`).
+  `91 passed, 1 skipped`).
 - Slow gate: `1 passed in 77.09s`; 3000 calls × 960 samples
   matched one-shot processing byte-for-byte and remained under the bounded
   state-memory assertion.
