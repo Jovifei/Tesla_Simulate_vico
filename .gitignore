@@ -159,3 +159,6 @@ tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v7/
 tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v7/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v7/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v8/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v8/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v8/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v9/
