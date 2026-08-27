@@ -179,3 +179,19 @@ tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v15/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v17/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v14/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v18/
+# Superseded Task 5 command logs retained locally but excluded from the final receipt.
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v12.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v13.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v15.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v12.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v13.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v15.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v14.*.log
+tasks/reports/runtime/s12-stage-w/logs/compileall_task5.log
+tasks/reports/runtime/s12-stage-w/logs/json_finite_scan_task5.log
+tasks/reports/runtime/s12-stage-w/logs/task5_focused_pytest.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_v.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_w.*.log
+tasks/reports/runtime/s12-stage-w/logs/validator_bakeoff_v13.log
+tasks/reports/runtime/s12-stage-w/logs/validator_migration_rx7_v13.log
+tasks/reports/runtime/s12-stage-w/logs/validator_migration_ferrari_v14.log
