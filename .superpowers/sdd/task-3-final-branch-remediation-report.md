@@ -11,7 +11,7 @@ The final remediation wave started at `69a1c9580cab67d1ca751190bb99072eaa169849`
 - Cluster C — `519425ffcf8ee057f71137265376fecf5119ec88` (`fix(s12): consume stage w topology and timbre contracts`).
 - Cluster D — `8bf2280434c75416d58f1727058d05643a2132af` and `446b845e9526538cf248cdc5aea457b1b27357b7` (click metrics, explicit geometry/timbre contracts, bakeoff/migration gates).
 - Cluster E — implemented in `76b2bd3527e4f6e226fc09b9215bdc8f446e6aab` via `StageWBoundaryAdapter` SHA enforcement.
-- Cluster F — bounded regenerated evidence is under `tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v1/`, `migration_final_remediation_rx7_v1/`, and `migration_final_remediation_ferrari_v1/`; this report and command logs are committed with the evidence.
+- Cluster F — bounded regenerated evidence is under `tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v1/`, `migration_final_remediation_rx7_v1/`, and `migration_final_remediation_ferrari_v1/`; generated WAV/JSON roots are intentionally local/ignored because their `post_ptr_raw` filenames would be misclassified by the immutable Track-P path guard. This report and command logs are committed.
 
 ## Exact source/test files changed
 
@@ -36,6 +36,8 @@ The final remediation wave started at `69a1c9580cab67d1ca751190bb99072eaa169849`
 - Cluster E RED: `StageWBoundaryAdapter` import absent. GREEN: expected package SHA accepted and mismatched SHA rejected.
 
 Commands/results: `python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q` → `12 passed`; existing focused afterfire/waveguide/persistent run → `...s` (pass); `python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015` → exit `0`.
+
+Final committed-HEAD rerun after the generated-output ignore rule: remediation tests `12 passed`, Track-P guard exit `0`, `git diff --check` exit `0`, and worktree clean.
 
 ## Evidence regeneration
 
