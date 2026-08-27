@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[5]
 RUNTIME = ROOT / "tasks" / "reports" / "runtime" / "s12-stage-w"
-TESTED_CODE_EVIDENCE_HEAD = "24f2c41bccfc26b13a821d959b2f4400d7eb264b"
+TESTED_CODE_EVIDENCE_HEAD = "5038194"
 METADATA_REPAIR_BASE = "7d4e49b52b73696af703a1380d83663208c5a897"
 
 
@@ -20,7 +20,7 @@ def test_live_head_resolution_and_commit_roles_are_explicit() -> None:
     state = _json(RUNTIME / "execution_state.json")
 
     assert state.get("current_head") == "HEAD"
-    assert state.get("current_head_role") == "live_worktree_head"
+    assert state.get("current_head_role") == "live_worktree_head_resolve_after_metadata_commit"
     assert state.get("current_head_resolution_command") == "git rev-parse HEAD"
     assert state.get("metadata_repair_base") == METADATA_REPAIR_BASE
     assert state.get("tested_code_evidence_head") == TESTED_CODE_EVIDENCE_HEAD
@@ -29,8 +29,9 @@ def test_live_head_resolution_and_commit_roles_are_explicit() -> None:
 def test_w9_receipt_is_bound_to_tested_code_evidence_head() -> None:
     receipt = _json(RUNTIME / "phase_receipts" / "W9_FINAL_QUALIFICATION.json")
 
-    assert receipt.get("head") == TESTED_CODE_EVIDENCE_HEAD
-    assert receipt.get("head_role") == "tested_code_evidence_head"
+    assert receipt.get("head") == "24f2c41bccfc26b13a821d959b2f4400d7eb264b"
+    assert receipt.get("head_role") == "historical_full_s12_source_head_not_current_task5_qualification"
+    assert receipt.get("current_task5_source_head") == TESTED_CODE_EVIDENCE_HEAD
 
 
 def test_w6_commit_is_source_backed_and_w7_is_terminal_skip() -> None:
@@ -38,8 +39,8 @@ def test_w6_commit_is_source_backed_and_w7_is_terminal_skip() -> None:
     phases = state["phases"]
     status_vocabulary = state.get("phase_status_vocabulary", [])
 
-    assert phases["W6_HELLCAT_BAKEOFF"].get("commit") == TESTED_CODE_EVIDENCE_HEAD
-    assert phases["W6_HELLCAT_BAKEOFF"].get("commit_role") == "tested_code_evidence_head"
+    assert phases["W6_HELLCAT_BAKEOFF"].get("commit") == "24f2c41bccfc26b13a821d959b2f4400d7eb264b"
+    assert phases["W6_HELLCAT_BAKEOFF"].get("commit_role") == "historical_full_s12_evidence_only_not_current_coverage"
     assert phases["W7_FERRARI_RX7_MIGRATION"].get("status") == "SKIPPED_NO_SELECTED_ARCHITECTURE"
     assert phases["W7_FERRARI_RX7_MIGRATION"].get("evidence_role") == "unselected_preselection_diagnostic_evidence"
     assert "SKIPPED_NO_SELECTED_ARCHITECTURE" in status_vocabulary
