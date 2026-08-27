@@ -2,6 +2,7 @@
   "schema": "s12-stage-w-obsidian-sync-v2",
   "repository_branch": "agent/s12-stage-w-ecosystem-bakeoff",
   "repository_head_at_capture": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
+  "repository_head_at_capture_role": "tested_code_evidence_head",
   "vault_project": "tesla-speed",
   "vault_custom_relative_root": "03-项目记忆/tesla-speed/09-S12-Engine-Audio-Ecosystem",
   "vault_mirror_relative_root": "03-项目记忆/tesla-speed/05-工程文档/docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem",
