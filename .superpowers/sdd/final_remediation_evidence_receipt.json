@@ -1,45 +1,46 @@
 {
   "schema_version": "s12.stage_w.final_remediation_evidence_receipt.v1",
   "status": "DONE_WITH_CONCERNS",
-  "tested_code_head": "60b5ce74496a1c8aa77fc8ae16d4543320da4295",
-  "tested_code_head_role": "third_review_source_fixes_parent_before_fresh_v3_evidence",
+  "tested_code_head": "0896f127cd32e5f5950ca03c26595a4533f35ca5",
+  "tested_code_head_role": "fourth_review_click_scope_source_head_before_fresh_v4_evidence",
+  "prior_verified_metadata_head": {"head": "e926e96", "role": "prior_verified_metadata_head", "guard_command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py", "guard_start": "2026-08-28T01:25:59.6176453+08:00", "guard_end": "2026-08-28T01:26:00.4151994+08:00", "guard_exit": 0, "guard_stdout_sha256": "8c865edd0f014434a0dba8f5ce28b59a1596d1e318bbd5aeaacf34b6dffc1165", "note": "Report-only descendant of receipt head 4d0113f; no frozen-path source change intervened."},
   "outputs_are_local_synthetic_only": true,
   "external_media_ingested": false,
   "selection": null,
   "qualification_status": "NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED",
   "evidence_generation": {
-    "source_head": "60b5ce74496a1c8aa77fc8ae16d4543320da4295",
+    "source_head": "0896f127cd32e5f5950ca03c26595a4533f35ca5",
     "generated_after_source_commit": true,
-    "bakeoff_end": "2026-08-28T01:04:12+08:00",
-    "rx7_end": "2026-08-28T01:05:14.6617182+08:00",
-    "ferrari_end": "2026-08-28T01:06:26.7330481+08:00"
+    "bakeoff_end": "2026-08-28T01:33:10.0907109+08:00",
+    "rx7_end": "2026-08-28T01:34:28.4459338+08:00",
+    "ferrari_end": "2026-08-28T01:35:20.8203950+08:00"
   },
   "outputs": {
-    "bakeoff_final_remediation_v3": {
-      "path": "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v3",
+    "bakeoff_final_remediation_v4": {
+      "path": "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v4",
       "file_count": 666,
       "wav_count": 180,
-      "manifest_sha256": "3bcfce5ba56d036b6688f8f1251e79eca4c489cd5157e5d62c8be21b05e79952",
+      "manifest_sha256": "be3bebfa0db74c5cc1b098ace4f748f2fc6205529fb3f9157d52d792752d99eb",
       "wav_name_sha256_list_sha256": "5652827d4ff7c42c1332236d82e8b2e1ec85487a8d7ad0b7f127a2e6e62d336f",
       "validator": "validate_bakeoff_manifest",
       "validator_errors": [],
       "click_gate": "validated at block boundaries; final P5 metrics present in fresh v3 output"
     },
-    "migration_final_remediation_rx7_v3": {
-      "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v3",
+    "migration_final_remediation_rx7_v4": {
+      "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v4",
       "file_count": 167,
       "wav_count": 45,
-      "manifest_sha256": "11a8e8b0dffb26566f0decf4e163815b9a0996a75a0cc5e0a7a6c7a8784eecef",
+      "manifest_sha256": "80ab59ca35b7ad684e1dee3f37769d37902ddb837223f9a9ce1fb3027e60e948",
       "wav_name_sha256_list_sha256": "3a1d9ebf3217d48d6715a5ff0742ea8661314aa7f37f694b8035ebb2c44b44a5",
       "validator": "validate_vehicle_migration_manifest",
       "validator_errors": [],
       "click_gate": "validated at block boundaries"
     },
-    "migration_final_remediation_ferrari_v4": {
-      "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v4",
+    "migration_final_remediation_ferrari_v5": {
+      "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v5",
       "file_count": 167,
       "wav_count": 45,
-      "manifest_sha256": "dc3a63cbd8492ec44ea14a88347025a21ee1515676551a93c1e509932f07ab0b",
+      "manifest_sha256": "27cf7ea64b02638db1c782b82d2b0e46eb5cd16b7eda9d5aaac61651a8b34b28",
       "wav_name_sha256_list_sha256": "2e01ec17ca4348dcb1e76de9b4c4eb47adb777455d4dcdf4ddba23e247e8388f",
       "validator": "validate_vehicle_migration_manifest",
       "validator_errors": [],
@@ -70,6 +71,12 @@
     "compileall_exit_code": 0,
     "json_finite_scan": {"files": 730, "nonfinite": 0},
     "git_diff_check_exit_code": 0,
-    "source_head_track_p": {"verified_code_head": "60b5ce74496a1c8aa77fc8ae16d4543320da4295", "start": "2026-08-28T01:23:38.3620662+08:00", "end": "2026-08-28T01:23:39.3396872+08:00", "exit_code": 0, "stdout_sha256": "93baf1de2214f0916feb0f44b938f50c8fc5b2f4fdff5e320c631909ca8dfd71"}
+    "source_head_track_p": {"verified_code_head": "60b5ce74496a1c8aa77fc8ae16d4543320da4295", "start": "2026-08-28T01:23:38.3620662+08:00", "end": "2026-08-28T01:23:39.3396872+08:00", "exit_code": 0, "stdout_sha256": "93baf1de2214f0916feb0f44b938f50c8fc5b2f4fdff5e320c631909ca8dfd71"},
+    "fourth_scope_source_head_track_p": {"command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py", "verified_code_head": "0896f127cd32e5f5950ca03c26595a4533f35ca5", "start": "2026-08-28T01:38:11.1761315+08:00", "end": "2026-08-28T01:38:11.9634073+08:00", "exit_code": 0, "frozen_files": 180, "frozen_symbols": 2, "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/track_p_guard_addendum4_source.stdout.log", "stdout_sha256": "77c3d1eebdfec68e80c98af1e5cd8716bddbed79422285e206ce755616ca97ac"},
+    "fresh_validator_runs": {
+      "bakeoff_v4": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest; print(validate_bakeoff_manifest(r'tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v4'))\"", "start": "2026-08-28T01:38:50.1654734+08:00", "end": "2026-08-28T01:38:52.5164654+08:00", "exit_code": 0, "result": [], "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v4.stdout.log"},
+      "rx7_v4": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; print(validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v4'))\"", "start": "2026-08-28T01:38:52.5224546+08:00", "end": "2026-08-28T01:38:53.9369366+08:00", "exit_code": 0, "result": [], "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v4.stdout.log"},
+      "ferrari_v5": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; print(validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v5'))\"", "start": "2026-08-28T01:38:53.9374046+08:00", "end": "2026-08-28T01:38:55.4272439+08:00", "exit_code": 0, "result": [], "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v5.stdout.log"}
+    }
   }
 }

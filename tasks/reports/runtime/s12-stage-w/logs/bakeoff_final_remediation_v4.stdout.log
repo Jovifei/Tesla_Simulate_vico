@@ -1,0 +1,6 @@
+COMMAND=python -c "from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import run_hellcat_bakeoff; run_hellcat_bakeoff(r'tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v4', duration_s=0.20)"
+START=2026-08-28T01:31:17.3854912+08:00
+PID=52976
+END=2026-08-28T01:33:10.0907109+08:00
+EXIT_CODE=0
+VALIDATOR=validate_bakeoff_manifest errors=[]
