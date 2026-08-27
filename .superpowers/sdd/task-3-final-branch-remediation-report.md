@@ -51,3 +51,18 @@ Final committed-HEAD rerun after the generated-output ignore rule: remediation t
 - Controller must run the single full S12 regression after review; it was intentionally not run here.
 - No legal synchronized R1 reference is present. Therefore selection remains `null`, `NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`; W7 remains skipped. W10, Profile Freeze, OEM reproduction, MATLAB/R1 comparison, and human PASS remain unverified and prohibited.
 - The existing long pytest process was not duplicated or interrupted; its prior result remains controller-owned evidence.
+
+## Task 3 review addendum rework (2026-08-28)
+
+- Critical receipt correction: the former `track_p_guard_final_remediation.stdout.log` was relabeled to `track_p_guard_pre_fix_failure.stdout.log` and is retained only as the pre-fix failure receipt. A new authoritative PASS receipt is generated after the source-fix commit and committed separately below.
+- Addendum source-fix commit: `0077b47fda0ebffd3e75d1580832693949d2e3a8` (`fix(s12): close stage w review addendum`). Boundary/click compatibility correction commit: `ff2646f29b12b0e38735b250cc090a2a1af3f8d9`.
+- RED command: `python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q` → 5 expected failures (missing legacy fallbacks, path schedule, inertia diagnostic, click contract fields, external transient API). GREEN after implementation → `18 passed in 3.64s`; Stage-W core focused run → `32 passed, 1 skipped in 21.16s`.
+- Event/path authority now uses declared cycle lengths (`four_stroke_720`, `four_stroke_1080`, `rotary_360`, `rotary_1080`), geometry and firing order for phase, and collector assignment only for derived path slots/readback. Missing `transfer_ir` and `collector_assignment` use explicit identity defaults recorded in `parameter_fallbacks`.
+- P5 transient is injected into `PersistentEventDomainEngine.process_with_trace(..., external_transient=...)` before PTR and persistent monitor generation. Bakeoff click metrics use only block-boundary indices for raw, post-PTR and monitor outputs and are stored in top-level `click_metrics`.
+- `click_contract.py` defines version `s12.stage_w.click_gate.v1`, threshold `0.35`, block-boundary scope, and provenance `bounded_synthetic_engineering_acceptance_threshold`; this is not an external psychoacoustic standard. Timbre layers apply bypass/load/boost and persistent crank-inertia smoothing.
+
+## Addendum final evidence receipt
+
+`final_remediation_evidence_receipt.json` is the compact tracked receipt for the ignored local synthetic output roots. It binds `tested_code_head=ff2646f29b12b0e38735b250cc090a2a1af3f8d9`, inventories bakeoff (666 files/180 WAVs) and RX-7/Ferrari migration roots (167 files/45 WAVs each), records manifest and sorted WAV-list hashes, validator errors `[]`, click-gate status, selection `null`, and `external_media_ingested=false`. No generated WAV or `post_ptr_raw` path is tracked because those names would violate the Track-P basename guard.
+
+Required focused verification after addendum fixes: `python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015` → exit `0`; bakeoff validator → `[]`; RX-7 and Ferrari migration validators → `[]`; remediation tests → `18 passed`; Track-P guard and `git diff --check` are rerun after the final receipt commit. Full S12 remains controller-owned and was not run.
