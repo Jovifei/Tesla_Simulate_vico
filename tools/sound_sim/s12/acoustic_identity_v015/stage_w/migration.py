@@ -267,6 +267,8 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                     errors.append(f"clipping:{architecture}/{scene}")
                 if raw.shape[0] != post.shape[0] or post.shape[0] != monitor.shape[0]:
                     errors.append(f"frames:{architecture}/{scene}")
+                if np.array_equal(raw, monitor):
+                    errors.append(f"raw_monitor_separation:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
                 if metrics.get("vehicle_id") != manifest.get("vehicle_id") or metrics.get("architecture") != architecture or metrics.get("scene") != scene:
                     errors.append(f"identity:{architecture}/{scene}")
@@ -274,10 +276,11 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                     errors.append(f"selection_gate:{architecture}/{scene}")
                 if not finite(metrics):
                     errors.append(f"nonfinite:metrics:{architecture}/{scene}")
+                recomputed_click = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
                 click = metrics.get("click_metrics")
-                if not click:
-                    click = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
-                if any(not item.get("passed", False) for item in click.values()):
+                if click != recomputed_click:
+                    errors.append(f"click_saved:{architecture}/{scene}")
+                if any(not item.get("passed", False) for item in recomputed_click.values()):
                     errors.append(f"click_gate:{architecture}/{scene}")
                 diagnostics = metrics.get("engine_diagnostics", {})
                 consumption = diagnostics.get("parameter_consumption", {})

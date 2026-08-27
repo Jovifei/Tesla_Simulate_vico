@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 
 import pytest
 
@@ -11,6 +12,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import (
     run_preselection_vehicle_migration,
     validate_vehicle_migration_manifest,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import sha256_file
 
 
 def test_migration_uses_the_required_five_vehicle_scenes() -> None:
@@ -74,6 +76,58 @@ def test_migration_validator_requires_complete_case_artifact_inventory(tmp_path)
 
     errors = validate_vehicle_migration_manifest(root)
     assert f"missing_required:{relative}" in errors
+
+
+def test_migration_validator_rejects_tampered_case_evidence_classes(tmp_path) -> None:
+    baseline = tmp_path / "baseline"
+    run_preselection_vehicle_migration(baseline, "rx7_fd", duration_s=0.25)
+
+    def resign(root, case_relative: str, changed_file: str | None = None) -> None:
+        case = root / case_relative
+        inner_path = case / "sha256_manifest.json"
+        inner = json.loads(inner_path.read_text(encoding="utf-8"))
+        if changed_file is not None:
+            inner[changed_file] = sha256_file(case / changed_file)
+        inner_path.write_text(json.dumps(inner), encoding="utf-8")
+        manifest_path = root / "migration_manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for path in root.rglob("*"):
+            if path.is_file() and path.name != "migration_manifest.json":
+                manifest["files"][path.relative_to(root).as_posix()] = sha256_file(path)
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    cases = {
+        "internal_sha": ("P2H/lift", None, "case_manifest_sha"),
+        "saved_click": ("P2H/lift", None, "click_saved"),
+        "wrong_afterfire": ("P2H/hot_idle", None, "afterfire_wrong_condition"),
+        "parameter_gate": ("P2H/lift", None, "parameter_consumption"),
+        "raw_monitor": ("P2H/lift", lambda case: shutil.copyfile(case / "raw_source.wav", case / "monitor.wav"), "raw_monitor_separation"),
+    }
+    for name, (case_relative, mutate, expected) in cases.items():
+        root = tmp_path / name
+        shutil.copytree(baseline, root)
+        case = root / case_relative
+        if name in {"saved_click", "wrong_afterfire", "parameter_gate"}:
+            metrics_path = case / "metrics.json"
+            metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+            if name == "saved_click":
+                metrics["click_metrics"]["raw"].update({"passed": True, "max_boundary_jump": 999.0})
+            elif name == "wrong_afterfire":
+                metrics["engine_diagnostics"].update({"afterfire_event_count": 1})
+            else:
+                metrics["engine_diagnostics"]["parameter_consumption"].update({"transfer_ir": "yes"})
+            metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+            resign(root, case_relative, "metrics.json")
+        elif name == "internal_sha":
+            inner_path = case / "sha256_manifest.json"
+            inner = json.loads(inner_path.read_text(encoding="utf-8"))
+            inner["metrics.json"] = "0"
+            inner_path.write_text(json.dumps(inner), encoding="utf-8")
+            resign(root, case_relative)
+        else:
+            mutate(case)
+            resign(root, case_relative, "monitor.wav")
+        assert any(expected in error for error in validate_vehicle_migration_manifest(root)), name
 
 
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
