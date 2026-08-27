@@ -168,3 +168,14 @@ tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v10/
 tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v10/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v10/
 tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v11/
+# Task 5 superseded local synthetic evidence roots (receipts bind only v17/v18).
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v12/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v13/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v15/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v17/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v12/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v13/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v15/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v17/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v14/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v18/

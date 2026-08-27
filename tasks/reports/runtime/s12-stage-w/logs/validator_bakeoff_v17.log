@@ -1,0 +1,5 @@
+[]
+COMMAND=python -c "from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest; print(validate_bakeoff_manifest(r'tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v17'))"
+START=2026-08-28T05:34:40.2009775+08:00
+END=2026-08-28T05:34:42.2637032+08:00
+EXIT=0

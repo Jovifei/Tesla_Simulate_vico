@@ -1,0 +1,7 @@
+........................................                                 [100%]
+40 passed in 17.40s
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings
+START=2026-08-28T05:36:32.8290885+08:00
+PID=52624
+END=2026-08-28T05:36:51.1484711+08:00
+EXIT=0
