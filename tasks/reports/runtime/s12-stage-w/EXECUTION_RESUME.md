@@ -1,7 +1,7 @@
 # Stage W-C Resume
 
 - Live HEAD: resolve with `git rev-parse HEAD` on `agent/s12-stage-w-ecosystem-bakeoff` (the metadata repair cannot self-bind its own commit SHA)
-- Tested code/evidence head: `d33b3ecf3757ffa084aa43277892f012d48ecaa8` (Task 5 final source/test head)
+- Tested code/evidence head: `5038194` (Task 5 v23 evidence source head); latest validation source head: `4ef0a32` (raw-config validation-only follow-up)
 - Current metadata head: resolve with `git rev-parse HEAD` after the receipt/report metadata commit; metadata cannot self-bind its own future SHA
 - Metadata repair base/parent: `7d4e49b52b73696af703a1380d83663208c5a897`
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-w-ecosystem-bakeoff`
@@ -9,7 +9,7 @@
 - Overall status: `STAGE_W_CONTINUOUS_EXECUTION_COMPLETE / NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`
 - Completed phases: W0-W6 PASS, W7 SKIPPED_NO_SELECTED_ARCHITECTURE, W8-W9 PASS (Ferrari/RX-7 output remains unselected preselection diagnostics)
 - Current failed gate: R1 pilot input is incomplete; this is a non-blocking external qualification gap, not a reason to redo local work
-- Last safe commit: `d33b3ecf3757ffa084aa43277892f012d48ecaa8` (`task5_final_source_test_head`); `24f2c41` full-S12 evidence is historical only and does not cover Task 5
+- Last safe commit: `4ef0a32` (`latest_validation_source_head`); v23 audio evidence was generated at `5038194`; `24f2c41` full-S12 evidence is historical only and does not cover Task 5
 - Next command after an R1 file-set/hash change: `python -c "from pathlib import Path; from tools.sound_sim.s12.real_reference.r1_pilot import write_r1_pilot_outputs; write_r1_pilot_outputs(Path(r'E:\Claude_allow\Download\s12-stage-w-r1-capture-v1'), 'hellcat_full_pull_01', Path(r'E:\Claude_allow\Download\s12-stage-w-r1-capture-v1\preflight'))"`
 - Final Task 5 local verification: remediation `40 passed`; Stage-W focused `93 passed, 1 skipped`; Stage-V focused `31 passed, 580 deselected`; JSON finite `730/0`; bakeoff/RX-7/Ferrari validators `[]`; compileall and Track-P guard exit `0`.
 - Current synthetic evidence roots: `bakeoff_final_remediation_v17`, `migration_final_remediation_rx7_v17`, `migration_final_remediation_ferrari_v18`.

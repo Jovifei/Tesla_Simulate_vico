@@ -1,9 +1,15 @@
 {
   "schema": "s12.stage_w.phase_receipt.v1",
   "phase": "W9_FINAL_QUALIFICATION",
-  "status": "PASS",
+  "status": "HISTORICAL_ONLY",
   "head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
-  "head_role": "tested_code_evidence_head",
+  "head_role": "historical_full_s12_source_head_not_current_task5_qualification",
+  "current_task5_status": "PASS_LOCAL_REPOSITORY_VERIFICATION_PENDING_CONTROLLER_FULL_S12",
+  "current_task5_source_head": "5038194",
+  "current_task5_latest_validation_head": "4ef0a32",
+  "current_task5_receipt": ".superpowers/sdd/final_remediation_evidence_receipt.json",
+  "current_task5_evidence": ["bakeoff_final_remediation_v17", "migration_final_remediation_rx7_v17", "migration_final_remediation_ferrari_v18"],
+  "full_s12_pending_controller_verification": true,
   "checks": {
     "full_s12_python": "1015 passed, 1 skipped, 232 subtests passed in 1701.94s",
     "stage_w_slow_3000_block_equivalence": "1 passed in 77.09s",
