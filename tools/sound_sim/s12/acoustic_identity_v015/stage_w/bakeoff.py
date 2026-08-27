@@ -183,7 +183,7 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
-    return {"raw_sha256": raw_receipt.sha256, "post_ptr_sha256": post_receipt.sha256, "monitor_sha256": monitor_receipt.sha256, "comparison": comparison, "render_seconds": elapsed}
+    return {"raw_sha256": sha256_file(case_root / "raw_source.wav"), "post_ptr_sha256": sha256_file(case_root / "post_ptr_raw.wav"), "monitor_sha256": sha256_file(case_root / "monitor.wav"), "comparison": comparison, "render_seconds": elapsed}
 
 
 def _parent_candidate_metrics(architectures: dict[str, Any], status: str, reference_status: str) -> dict[str, Any]:

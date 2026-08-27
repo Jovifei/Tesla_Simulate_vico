@@ -158,7 +158,7 @@ def _write_case(root: Path, vehicle_id: str, architecture: str, scene: str, trac
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed_s, "state_rate_hz": STATE_RATE_HZ, "block_size": BLOCK_SIZE, "memory_bytes": diagnostics.get("state_memory_bytes"), "latency_contract": "offline persistent source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
-    return {"raw_source_sha256": raw_receipt.sha256, "post_ptr_sha256": post_receipt.sha256, "monitor_sha256": monitor_receipt.sha256, "parent_post_ptr_difference_rms": parent_difference_rms}
+    return {"raw_source_sha256": sha256_file(case_root / "raw_source.wav"), "post_ptr_sha256": sha256_file(case_root / "post_ptr_raw.wav"), "monitor_sha256": sha256_file(case_root / "monitor.wav"), "parent_post_ptr_difference_rms": parent_difference_rms}
 
 
 def run_preselection_vehicle_migration(output_root: str | Path, vehicle_id: str, duration_s: float = 8.0) -> dict[str, Any]:
@@ -241,6 +241,20 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
         for key in ("status", "vehicle_id", "selected_architecture", "reference_status"):
             if results.get(key) != manifest.get(key):
                 errors.append(f"results_{key}")
+        result_architectures = results.get("architectures", {})
+        if set(result_architectures) != {"P1", "P2H", "P3"}:
+            errors.append("results_architecture_inventory")
+        for architecture in ("P1", "P2H", "P3"):
+            scene_records = result_architectures.get(architecture, {})
+            if set(scene_records) != set(MIGRATION_SCENES):
+                errors.append(f"results_scene_inventory:{architecture}")
+            for scene in MIGRATION_SCENES:
+                record = scene_records.get(scene, {})
+                case = root / architecture / scene
+                for key, filename in (("raw_source_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
+                    path = case / filename
+                    if path.is_file() and record.get(key) != sha256_file(path):
+                        errors.append(f"results_hash:{architecture}/{scene}/{key}")
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(f"migration_results.json invalid:{exc}")
 

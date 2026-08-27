@@ -130,6 +130,20 @@ def test_migration_validator_rejects_tampered_case_evidence_classes(tmp_path) ->
         assert any(expected in error for error in validate_vehicle_migration_manifest(root)), name
 
 
+def test_migration_validator_cross_checks_nested_results_inventory(tmp_path) -> None:
+    root = tmp_path / "nested"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"].pop("lift")
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert "results_scene_inventory:P2H" in validate_vehicle_migration_manifest(root)
+
+
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"
