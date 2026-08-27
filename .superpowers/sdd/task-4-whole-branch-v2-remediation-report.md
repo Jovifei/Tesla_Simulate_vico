@@ -35,6 +35,16 @@ Evidence was generated after source/docs head `5a6485cb1ebdd39ad99c3fac34127e64f
 - Final metadata head after receipt and local-output ignore commit: `8ae069f5d1e0c4c6c04a848708beaad3a10ff3e1`. Guard command `python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py` ran `2026-08-28T02:24:28.2201119+08:00`–`2026-08-28T02:24:29.1908948+08:00`, exit `0`, 180 frozen files/2 frozen symbols, stdout SHA `afbb9b19a3a20467334bcb71ccda30f775fc2916043e30c091f71a4453992a5f`; `git diff --check` exit `0`.
 - Receipt commit: `574ffb333c2887ea979b2124df79ac285283251c`; source/docs commits: `bc93a65`, `5a6485c`; local evidence roots remain ignored/untracked by design and are hash-validated in the receipt.
 
+## Task 4 review addendum rework
+
+- RED: `python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -k bakeoff_validator -q` initially showed two state-validation failures (non-null selection and unexpected manifest status/reference). GREEN after fail-closed cross-file validation: `4 passed, 32 deselected`.
+- Additional direct route/RNG coverage passed in the source/test commit `8d88208cd513170764d465af2a1cf1e41f2cf920`; central afterfire contribution is symmetric L/R, primary and bank-collector contributions are bank-dependent, and bounded PCG64 jitter snapshots/restores/resets deterministically.
+- Fresh evidence was regenerated after source head `8d88208cd513170764d465af2a1cf1e41f2cf920`: bakeoff v7 PID `36632`, `02:49:41.8342783–02:51:33.7132243`, exit `0`; RX-7 v7 PID `54564`, `02:52:27.0661464–02:52:57.1371439`, exit `0`; Ferrari v8 PID `6020`, `02:53:25.5696833–02:53:55.6680483`, exit `0`. Manifest validators each returned `[]`.
+- Fresh manifest SHA-256: bakeoff v7 `e74ee12ae86d1856da40e7d71aa96230f47c0ad09beaeebe522596beed4fc5b9`; RX-7 v7 `08381b3ee96e6ee9dc89ee6c2788247c7e8f719cbc982d3fca45a6ced21101fd`; Ferrari v8 `5a7a5eabff006710b83413d5884771ee7e7ec70231a19f1a7a7324dc8c2c5dc9`.
+- Current focused verification: remediation `32 passed` (`02:05:52.2555019–02:05:59.5772663`, exit `0`); Stage-W `83 passed, 1 skipped` (`02:08:31.9655683–02:20:13.1005540`, exit `0`); Stage-V `31 passed, 570 deselected` (`02:06:10.4781857–02:06:45.5834217`, exit `0`); compileall exit `0`; JSON scan `730 files, 0 non-finite`; `git diff --check` exit `0`.
+- Task 4 source-head Track-P: command `python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py`, head `8d88208cd513170764d465af2a1cf1e41f2cf920`, `02:56:11.3298634–02:56:12.1043945`, exit `0`, 180 frozen files/2 symbols, stdout SHA `74f8ac8aa1970e346f3e84d7c11487a0b85b15dd996c26509cac5892d6dba366`.
+- The compact tracked receipt was refreshed with prior `e926e96`, source head `8d88208`, fresh v7/v8 roots/hashes, explicit selection null, and local synthetic-only evidence. Receipt metadata is committed separately; final receipt-head Track-P/diff guard follows.
+
 ## Minor documentation and boundary updates
 
 `S12_Stage_W_Waveguide_Teacher.md` now describes stateful frequency-dependent loss and current focused count; `S12_Stage_W_Selected_Architecture.md` permits clean-room synthetic P5 transient output without rights-bound source material while retaining rights requirements for external media; test duplicate `pytest` import removed. Historical timing values remain untouched.
