@@ -96,11 +96,11 @@ def validate_config(config: Mapping[str, Any]) -> dict[str, Any]:
     if len(phases) != count:
         raise ValueError("event_phase_deg length must equal cylinder_or_rotor_count")
     if config["architecture"] == "piston":
-        geometry = list(unwrap(config, "crankpin_geometry"))
+        geometry = list(unwrap(config, "crankpin_geometry")) if "crankpin_geometry" in config else [0.0] * count
         if len(geometry) != count or not all(isinstance(value, (int, float)) and not isinstance(value, bool) and __import__("math").isfinite(float(value)) for value in geometry):
             raise ValueError("crankpin_geometry must contain one finite offset per cylinder")
     else:
-        geometry = list(unwrap(config, "rotor_geometry"))
+        geometry = list(unwrap(config, "rotor_geometry")) if "rotor_geometry" in config else phases
         if len(geometry) != count or not all(isinstance(value, (int, float)) and __import__("math").isfinite(float(value)) for value in geometry):
             raise ValueError("rotor_geometry must contain one finite offset per rotor")
     assignment = list(unwrap(config, "bank_assignment"))
