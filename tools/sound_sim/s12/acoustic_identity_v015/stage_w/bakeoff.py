@@ -350,7 +350,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                 if set(inner) != set(case_files[:-1]): errors.append(f"case_manifest_inventory:{architecture}/{scene}")
                 for name in case_files[:-1]:
                     if not isinstance(inner.get(name), str) or sha256_file(case / name) != inner.get(name): errors.append(f"case_manifest_sha:{architecture}/{scene}/{name}")
-                record = scene_records.get(scene, {})
+                record = result_architectures.get(architecture, {}).get("scenes", {}).get(scene, {})
                 for key, filename in (("raw_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
                     if record.get(key) != sha256_file(case / filename): errors.append(f"nested_hash:{architecture}/{scene}/{key}")
             except (OSError, ValueError, json.JSONDecodeError, KeyError, TypeError) as exc:
