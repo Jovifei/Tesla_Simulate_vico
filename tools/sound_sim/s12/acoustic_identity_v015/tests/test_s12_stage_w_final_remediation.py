@@ -173,6 +173,19 @@ def test_declared_bank_phase_offsets_are_versioned_and_predictable() -> None:
     assert altered_phase[0] == base_phase[0] + 12.0
 
 
+def test_bank_offset_change_alone_has_exact_phase_delta() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
+    base = load_config("hellcat_v1")
+    changed = copy.deepcopy(base)
+    base["bank_phase_offsets_deg"]["value"] = [0.0, 0.0]
+    changed["bank_phase_offsets_deg"]["value"] = [0.0, 7.5]
+    assert base["bank_assignment"]["value"] == changed["bank_assignment"]["value"]
+    assert base["firing_order_evidence"]["value"] == changed["firing_order_evidence"]["value"]
+    assert derive_event_phase_deg(changed)[1] == derive_event_phase_deg(base)[1] + 7.5
+
+
 def test_rotary_uses_explicit_rotor_geometry_without_piston_firing_order() -> None:
     import copy
     from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
@@ -587,6 +600,53 @@ def test_afterfire_timing_preserves_absolute_sub_block_and_path_arrival(delay_s:
     event = engine.diagnostics()["afterfire_pending_events"][0]
     assert event["scheduled_sample"] % 960 == expected_block_offset
     assert event["arrival_samples"] > event["scheduled_sample"]
+
+
+@pytest.mark.parametrize("delay_s", (0.001, 0.025, 0.12))
+def test_afterfire_pcm_emission_starts_at_reported_path_arrival(delay_s: float) -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    config = load_config("hellcat_v1")
+    config["afterfire"]["ignition_delay_s"]["value"] = delay_s
+    silent = copy.deepcopy(config)
+    silent["afterfire"]["gain"]["value"] = 0.0
+    engine = PersistentEventDomainEngine(config, 48000, 960)
+    control = PersistentEventDomainEngine(silent, 48000, 960)
+    engine.process(high); control.process(high)
+    outputs = [engine.process(lift).raw_pcm]
+    reference = [control.process(lift).raw_pcm]
+    for _ in range(14):
+        outputs.append(engine.process(lift).raw_pcm)
+        reference.append(control.process(lift).raw_pcm)
+    route = engine.diagnostics()["afterfire_route"]
+    delta = np.concatenate(outputs, axis=0) - np.concatenate(reference, axis=0)
+    nonzero = np.flatnonzero(np.max(np.abs(delta), axis=1) > 1.0e-10)
+    assert nonzero.size > 0
+    # Arrival is a zero-based delay count; the first nonzero PCM sample is the
+    # following absolute sample in the concatenated block stream.
+    assert nonzero[0] == route["arrival_samples"] - 959
+
+
+def test_afterfire_pcm_snapshot_restore_preserves_timing_continuity() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    config = load_config("hellcat_v1")
+    config["afterfire"]["ignition_delay_s"]["value"] = 0.025
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    engine = PersistentEventDomainEngine(config, 48000, 960)
+    engine.process(high); engine.process(lift)
+    snapshot = copy.deepcopy(engine.snapshot_state())
+    expected = np.concatenate([engine.process(lift).raw_pcm for _ in range(8)])
+    engine.restore_state(snapshot)
+    actual = np.concatenate([engine.process(lift).raw_pcm for _ in range(8)])
+    assert np.array_equal(expected, actual)
 
 
 def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:
