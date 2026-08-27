@@ -10,7 +10,7 @@ DEFAULT_CLICK_GATE: dict[str, Any] = {
     "contract_version": "s12.stage_w.click_gate.v1",
     "threshold": 0.35,
     "definition": "block_boundary_only",
-    "scope": "synthetic_stage_w_source_and_post_ptr_outputs",
+    "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
     "provenance": "bounded_synthetic_engineering_acceptance_threshold",
 }
 

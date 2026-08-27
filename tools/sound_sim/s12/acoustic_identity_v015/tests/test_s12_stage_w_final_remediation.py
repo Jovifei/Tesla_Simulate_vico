@@ -282,6 +282,22 @@ def test_shared_click_helper_uses_nonzero_previous_block_end_sample() -> None:
     assert block_boundary_click_metrics(signal, 960)["max_boundary_jump"] == pytest.approx(0.3)
 
 
+def test_click_helper_normalized_boundary_rms_is_numeric() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import block_boundary_click_metrics
+    signal = np.zeros((1920, 2), dtype=np.float64)
+    signal[959] = [0.1, 0.1]
+    signal[960] = [0.3, 0.3]
+    metrics = block_boundary_click_metrics(signal, 960)
+    assert metrics["normalized_rms_boundary"] == pytest.approx(np.sqrt(2.0 * 0.2**2) / np.sqrt(2.0 * (0.3**2 + 0.1**2) / 1920.0), rel=1e-12)
+
+
+def test_click_contract_scope_explicitly_covers_raw_post_ptr_and_monitor() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.click_contract import click_gate_contract
+    contract = click_gate_contract()
+    assert all(token in contract["scope"] for token in ("raw", "post_ptr", "monitor"))
+
+
 def test_click_contract_rejects_nan_threshold() -> None:
     import math
     import pytest
