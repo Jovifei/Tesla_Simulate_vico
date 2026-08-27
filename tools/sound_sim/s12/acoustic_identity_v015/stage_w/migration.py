@@ -185,13 +185,16 @@ def run_preselection_vehicle_migration(output_root: str | Path, vehicle_id: str,
 
 
 def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
-    """Validate PCM integrity and fail closed on an accidental architecture selection."""
+    """Validate the complete migration receipt and fail closed on tampering."""
     root = Path(root)
     manifest_path = root / "migration_manifest.json"
     if not manifest_path.is_file():
         return ["migration_manifest.json missing"]
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     errors: list[str] = []
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"migration_manifest.json invalid:{exc}"]
     if manifest.get("status") != "UNSELECTED_CANDIDATE_MIGRATION":
         errors.append("status")
     if manifest.get("selected_architecture") is not None:
@@ -199,15 +202,64 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
     if manifest.get("reference_status") != "REFERENCE_TARGET_MISSING":
         errors.append("reference_status")
     for relative, expected in manifest.get("files", {}).items():
-        path = root / relative
+        relative_path = Path(relative)
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            errors.append(f"unsafe_path:{relative}")
+            continue
+        path = root / relative_path
         if not path.is_file():
             errors.append(f"missing:{relative}")
         elif sha256_file(path) != expected:
             errors.append(f"sha:{relative}")
+
+    expected_case_files = (
+        "raw_source.wav",
+        "post_ptr_raw.wav",
+        "monitor.wav",
+        "state_trace.json",
+        "phase_trace.json",
+        "event_trace.json",
+        "path_trace.json",
+        "gain_trace.json",
+        "metrics.json",
+        "cpu_memory_latency.json",
+        "sha256_manifest.json",
+    )
+    expected_outer_files = {
+        f"{architecture}/{scene}/{filename}"
+        for architecture in ("P1", "P2H", "P3")
+        for scene in MIGRATION_SCENES
+        for filename in expected_case_files
+    } | {"migration_results.json"}
+    listed_files = set(manifest.get("files", {}))
+    for relative in sorted(expected_outer_files - listed_files):
+        errors.append(f"missing_required:{relative}")
+
+    results_path = root / "migration_results.json"
+    try:
+        results = json.loads(results_path.read_text(encoding="utf-8"))
+        for key in ("status", "vehicle_id", "selected_architecture", "reference_status"):
+            if results.get(key) != manifest.get(key):
+                errors.append(f"results_{key}")
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"migration_results.json invalid:{exc}")
+
+    def finite(value: Any) -> bool:
+        if isinstance(value, dict):
+            return all(finite(item) for item in value.values())
+        if isinstance(value, list):
+            return all(finite(item) for item in value)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return bool(np.isfinite(value))
+        return True
+
     for architecture in ("P1", "P2H", "P3"):
         for scene in MIGRATION_SCENES:
             case = root / architecture / scene
             try:
+                for filename in expected_case_files:
+                    if not (case / filename).is_file():
+                        errors.append(f"missing_required:{architecture}/{scene}/{filename}")
                 raw, raw_meta = read_pcm24_wav(case / "raw_source.wav")
                 post, post_meta = read_pcm24_wav(case / "post_ptr_raw.wav")
                 monitor, monitor_meta = read_pcm24_wav(case / "monitor.wav")
@@ -216,13 +268,46 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                 if raw.shape[0] != post.shape[0] or post.shape[0] != monitor.shape[0]:
                     errors.append(f"frames:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
+                if metrics.get("vehicle_id") != manifest.get("vehicle_id") or metrics.get("architecture") != architecture or metrics.get("scene") != scene:
+                    errors.append(f"identity:{architecture}/{scene}")
+                if metrics.get("status") != "UNSELECTED_CANDIDATE_MIGRATION" or metrics.get("reference_status") != "REFERENCE_TARGET_MISSING":
+                    errors.append(f"selection_gate:{architecture}/{scene}")
+                if not finite(metrics):
+                    errors.append(f"nonfinite:metrics:{architecture}/{scene}")
                 click = metrics.get("click_metrics")
                 if not click:
                     click = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
                 if any(not item.get("passed", False) for item in click.values()):
                     errors.append(f"click_gate:{architecture}/{scene}")
+                diagnostics = metrics.get("engine_diagnostics", {})
+                consumption = diagnostics.get("parameter_consumption", {})
+                if architecture in {"P2H", "P3"} and not all(isinstance(consumption.get(key), bool) for key in ("collector_assignment", "crankpin_geometry", "rotor_geometry", "transfer_ir")):
+                    errors.append(f"parameter_consumption:{architecture}/{scene}")
+                if scene == "lift" and architecture in {"P2H", "P3"} and diagnostics.get("afterfire_event_count", 0) <= 0:
+                    errors.append(f"afterfire_missing:{architecture}/{scene}")
+                if scene != "lift" and architecture in {"P2H", "P3"} and diagnostics.get("afterfire_event_count", 0) != 0:
+                    errors.append(f"afterfire_wrong_condition:{architecture}/{scene}")
+                latency = json.loads((case / "cpu_memory_latency.json").read_text(encoding="utf-8"))
+                if not finite(latency) or not isinstance(latency.get("render_seconds"), (int, float)) or latency["render_seconds"] < 0:
+                    errors.append(f"latency:{architecture}/{scene}")
+                for filename in expected_case_files[:-1]:
+                    payload = json.loads((case / filename).read_text(encoding="utf-8")) if filename.endswith(".json") else None
+                    if payload is not None and not finite(payload):
+                        errors.append(f"nonfinite:{filename}:{architecture}/{scene}")
+                inner = json.loads((case / "sha256_manifest.json").read_text(encoding="utf-8"))
+                inner_files = inner.get("files", inner)
+                expected_inner = set(expected_case_files[:-1])
+                if set(inner_files) != expected_inner:
+                    errors.append(f"case_manifest_inventory:{architecture}/{scene}")
+                for filename in sorted(expected_inner):
+                    expected_hash = inner_files.get(filename)
+                    actual_path = case / filename
+                    if not actual_path.is_file() or not isinstance(expected_hash, str) or sha256_file(actual_path) != expected_hash:
+                        errors.append(f"case_manifest_sha:{architecture}/{scene}/{filename}")
             except (OSError, ValueError) as exc:
                 errors.append(f"wav:{architecture}/{scene}:{exc}")
+            except (json.JSONDecodeError, TypeError, KeyError) as exc:
+                errors.append(f"artifact:{architecture}/{scene}:{exc}")
     return errors
 
 

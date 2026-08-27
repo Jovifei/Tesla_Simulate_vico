@@ -62,6 +62,20 @@ def test_migration_manifest_keeps_w10_selection_gate_closed(tmp_path) -> None:
     assert manifest["status"] == "UNSELECTED_CANDIDATE_MIGRATION"
 
 
+def test_migration_validator_requires_complete_case_artifact_inventory(tmp_path) -> None:
+    root = tmp_path / "incomplete"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+
+    relative = "P2H/lift/phase_trace.json"
+    (root / relative).unlink()
+    manifest = json.loads((root / "migration_manifest.json").read_text(encoding="utf-8"))
+    manifest["files"].pop(relative)
+    (root / "migration_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert f"missing_required:{relative}" in errors
+
+
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"
