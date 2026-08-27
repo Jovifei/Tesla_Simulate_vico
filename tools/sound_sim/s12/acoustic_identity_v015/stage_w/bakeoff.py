@@ -170,6 +170,10 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     write_json(case_root / "state_trace.json", {"sample_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
+    if "click_metrics" not in diagnostic_summary:
+        jumps = np.diff(np.vstack((np.zeros((1, 2)), raw)), axis=0)
+        maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
+        diagnostic_summary["click_metrics"] = {"max_boundary_jump": maximum, "normalized_rms_boundary": maximum, "threshold": 0.35, "passed": maximum <= 0.35}
     write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_ptr))), "rms": float(np.sqrt(np.mean(np.square(post_ptr))) )}, "comparison": comparison, "diagnostics": diagnostic_summary})
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
@@ -260,6 +264,9 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                 monitor, monitor_meta = read_pcm24_wav(case / "monitor.wav")
                 if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0: errors.append(f"clipping:{architecture}/{scene}")
                 if raw_meta["frames"] != post_meta["frames"] or post_meta["frames"] != monitor_meta["frames"]: errors.append(f"frames:{architecture}/{scene}")
+                metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
+                click = metrics.get("diagnostics", {}).get("click_metrics", {})
+                if not click.get("passed", False): errors.append(f"click_gate:{architecture}/{scene}")
             except (OSError, ValueError) as exc: errors.append(f"wav:{architecture}/{scene}:{exc}")
     return errors
 

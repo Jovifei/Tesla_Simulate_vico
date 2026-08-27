@@ -133,6 +133,10 @@ def _write_case(root: Path, vehicle_id: str, architecture: str, scene: str, trac
     write_json(case_root / "state_trace.json", {"state_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
+    if "click_metrics" not in diagnostic_summary:
+        jumps = np.diff(np.vstack((np.zeros((1, 2)), raw)), axis=0)
+        maximum = float(np.max(np.abs(jumps))) if jumps.size else 0.0
+        diagnostic_summary["click_metrics"] = {"max_boundary_jump": maximum, "normalized_rms_boundary": maximum, "threshold": 0.35, "passed": maximum <= 0.35}
     write_json(case_root / "metrics.json", {
         "schema_version": "s12.stage_w.vehicle_migration_metrics.v1",
         "vehicle_id": vehicle_id,
@@ -211,6 +215,9 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                     errors.append(f"clipping:{architecture}/{scene}")
                 if raw.shape[0] != post.shape[0] or post.shape[0] != monitor.shape[0]:
                     errors.append(f"frames:{architecture}/{scene}")
+                metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
+                if not metrics.get("engine_diagnostics", {}).get("click_metrics", {}).get("passed", False):
+                    errors.append(f"click_gate:{architecture}/{scene}")
             except (OSError, ValueError) as exc:
                 errors.append(f"wav:{architecture}/{scene}:{exc}")
     return errors
