@@ -275,6 +275,11 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                 if raw_meta["frames"] != post_meta["frames"] or post_meta["frames"] != monitor_meta["frames"]: errors.append(f"frames:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
                 click = metrics.get("click_metrics", {})
+                if not click:
+                    # Historical local synthetic outputs predate the explicit
+                    # contract; validate their saved PCM at the same block
+                    # boundaries without rewriting their SHA-bound bytes.
+                    click = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post), "monitor": _block_click_metrics(monitor)}
                 if not click or any(not item.get("passed", False) for item in click.values()): errors.append(f"click_gate:{architecture}/{scene}")
             except (OSError, ValueError) as exc: errors.append(f"wav:{architecture}/{scene}:{exc}")
     return errors
