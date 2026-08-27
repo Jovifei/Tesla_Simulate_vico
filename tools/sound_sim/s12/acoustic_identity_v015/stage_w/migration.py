@@ -134,7 +134,7 @@ def _write_case(root: Path, vehicle_id: str, architecture: str, scene: str, trac
     write_json(case_root / "state_trace.json", {"state_rate_hz": STATE_RATE_HZ, "time_s": trace.time_s.tolist(), "rpm": trace.rpm.tolist(), "load": trace.load.tolist(), "throttle": trace.throttle.tolist(), "acceleration_mps2": trace.acceleration_mps2.tolist()})
     write_diagnostic_traces(case_root, diagnostics)
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
-    click_metrics = {"raw": block_boundary_click_metrics(raw, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post_ptr, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor, BLOCK_SIZE)}
+    click_metrics = {"raw": block_boundary_click_metrics(raw_reopened, BLOCK_SIZE), "post_ptr": block_boundary_click_metrics(post_reopened, BLOCK_SIZE), "monitor": block_boundary_click_metrics(monitor_reopened, BLOCK_SIZE)}
     diagnostic_summary["click_metrics"] = click_metrics["raw"]
     write_json(case_root / "metrics.json", {
         "schema_version": "s12.stage_w.vehicle_migration_metrics.v1",
