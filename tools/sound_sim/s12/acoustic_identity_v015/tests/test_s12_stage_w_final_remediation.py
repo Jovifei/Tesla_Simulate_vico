@@ -77,3 +77,58 @@ def test_waveguide_has_frequency_dependent_loss() -> None:
     guide = StatefulWaveguide(WaveguideConfig(length_m=0.30, area_ratio=0.7, sample_rate_hz=48000))
     high_out = guide.process(high)
     assert np.std(high_out[1000:]) < np.std(low_out[1000:])
+
+
+def test_geometry_and_firing_order_are_phase_authorities_for_piston() -> None:
+    import copy
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
+    base = load_config("hellcat_v1")
+    altered_order = copy.deepcopy(base)
+    altered_order["firing_order_evidence"]["value"] = list(reversed(altered_order["firing_order_evidence"]["value"]))
+    altered_geometry = copy.deepcopy(base)
+    altered_geometry["crankpin_geometry"]["value"][0] += 13.0
+    assert derive_event_phase_deg(base) != derive_event_phase_deg(altered_order)
+    assert derive_event_phase_deg(base) != derive_event_phase_deg(altered_geometry)
+
+
+def test_transfer_ir_and_collector_assignment_are_consumed() -> None:
+    import copy
+    import hashlib
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    state = {"rpm": np.array([2400.0]), "load": np.array([0.5]), "throttle": np.array([0.6]), "acceleration_mps2": np.array([2.0])}
+    base = load_config("hellcat_v1")
+    changed = copy.deepcopy(base)
+    changed["collector_assignment"]["value"] = "central_first"
+    changed["transfer_ir"]["value"] = "synthetic_long_damped_transfer"
+    first = PersistentEventDomainEngine(base, 48000, 960)
+    second = PersistentEventDomainEngine(changed, 48000, 960)
+    assert hashlib.sha256(first.process(state).raw_pcm.tobytes()).hexdigest() != hashlib.sha256(second.process(state).raw_pcm.tobytes()).hexdigest()
+    assert second.diagnostics()["parameter_consumption"]["collector_assignment"] is True
+    assert second.diagnostics()["parameter_consumption"]["transfer_ir"] is True
+
+
+def test_timbre_map_is_bounded_four_dimensional_and_order_synchronous() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import TimbreMap4D
+    table = TimbreMap4D.default()
+    low = table.sample(1200.0, 0.2, 0.1, 2.0)
+    high = table.sample(6200.0, 0.8, 0.9, 4.0)
+    assert np.isfinite(low) and np.isfinite(high)
+    assert low != high
+    assert table.sample(3200.0, 0.5, 0.4, 2.0) != table.sample(3200.0, 0.5, 0.4, 4.0)
+
+
+def test_engine_records_block_boundary_click_metrics_and_monitor_state() -> None:
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    state = {"rpm": np.array([2400.0, 2500.0]), "load": np.array([0.4, 0.5]), "throttle": np.array([0.5, 0.6]), "acceleration_mps2": np.array([1.0, 1.0])}
+    block = engine.process(state)
+    metrics = block.diagnostics["click_metrics"]
+    assert {"max_boundary_jump", "normalized_rms_boundary", "threshold", "passed"} <= set(metrics)
+    assert np.isfinite(metrics["max_boundary_jump"])
+    assert block.monitor_pcm.shape == block.raw_pcm.shape

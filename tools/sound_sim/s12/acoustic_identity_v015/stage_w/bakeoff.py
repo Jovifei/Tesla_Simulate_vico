@@ -97,7 +97,7 @@ def _synthetic_transient_residual(trace: VehicleStateTrace, sample_count: int) -
     return residual, count
 
 
-def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
     config = load_config("hellcat_v1")
     if architecture == "P1":
         source = render_hellcat(trace).pressure * OUTPUT_SCALE
@@ -108,7 +108,7 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
             source = source[:target_samples]
         post_ptr = FrozenPtrStereo(SAMPLE_RATE_HZ).process(source)
         monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
-        return source, post_ptr, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
+        return source, post_ptr, monitor, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
     settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
     setting = settings[architecture]
     engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=architecture != "P5", **setting)
@@ -120,26 +120,27 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         post_unscaled = adapter.process(raw_unscaled)
         raw = raw_unscaled * OUTPUT_SCALE
         post_ptr = post_unscaled * OUTPUT_SCALE
+        monitor = (result.monitor_pcm + 0.20 * transient) * OUTPUT_SCALE
     else:
         transient_count = 0
         raw = result.raw_pcm * OUTPUT_SCALE
         post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
-    monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
+        monitor = result.monitor_pcm * OUTPUT_SCALE
     diagnostics = dict(result.diagnostics)
     diagnostics["architecture"] = architecture
     if architecture == "P5":
         diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "synthetic_one_shot_v1", "transient_residual_event_count": transient_count})
-    return raw, post_ptr, diagnostics
+    diagnostics["monitor_source"] = "PersistentEventDomainEngine.monitor_pcm"
+    return raw, post_ptr, monitor, diagnostics
 
 
 def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTrace, reference: np.ndarray | None = None) -> dict[str, Any]:
     case_root = root / architecture / scene
     case_root.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
-    raw, post_ptr, diagnostics = _render_architecture(architecture, trace)
-    monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
+    raw, post_ptr, monitor, diagnostics = _render_architecture(architecture, trace)
     elapsed = time.perf_counter() - start
-    parent_raw, parent_post, _ = _render_architecture("P1", trace)
+    parent_raw, parent_post, _, _ = _render_architecture("P1", trace)
     case = {
         "vehicle_id": "hellcat",
         "scenario": scene,

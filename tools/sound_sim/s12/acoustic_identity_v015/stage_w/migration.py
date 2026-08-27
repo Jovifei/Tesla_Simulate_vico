@@ -89,7 +89,8 @@ def _render_architecture(vehicle_id: str, architecture: str, trace: VehicleState
         raise RuntimeError("P2H/P3 migration requires frozen PTR output")
     raw = rendered.raw_pcm * OUTPUT_SCALE
     post_ptr = rendered.post_ptr_raw * OUTPUT_SCALE
-    monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
+    monitor = rendered.monitor_pcm * OUTPUT_SCALE
+    rendered.diagnostics["monitor_source"] = "PersistentEventDomainEngine.monitor_pcm"
     return raw, post_ptr, monitor, rendered.diagnostics
 
 

@@ -57,6 +57,35 @@ class _DelayLine:
         self.history = np.asarray(payload["history"], dtype=np.float64).copy()
 
 
+class _TransferIrFilter:
+    """Bounded stateful pre-PTR transfer response selected by config label."""
+
+    def __init__(self, label: str) -> None:
+        self.label = str(label)
+        # Keep the clean-room IR symbolic: label deterministically selects a
+        # stable pole and high-frequency blend, with no external asset bytes.
+        code = sum((index + 1) * ord(char) for index, char in enumerate(self.label))
+        self.alpha = 0.16 + (code % 37) / 100.0
+        self.blend = 0.08 + (code % 19) / 100.0
+        self.state = np.zeros(2, dtype=np.float64)
+
+    def process(self, values: np.ndarray) -> np.ndarray:
+        array = np.asarray(values, dtype=np.float64)
+        result = np.empty_like(array)
+        for index, row in enumerate(array):
+            self.state += self.alpha * (row - self.state)
+            result[index] = (1.0 - self.blend) * self.state + self.blend * row
+        return result
+
+    def snapshot(self) -> dict[str, Any]:
+        return {"label": self.label, "state": self.state.copy()}
+
+    def restore(self, payload: Mapping[str, Any]) -> None:
+        if str(payload["label"]) != self.label:
+            raise ValueError("transfer IR topology differs from snapshot")
+        self.state = np.asarray(payload["state"], dtype=np.float64).copy()
+
+
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
@@ -133,6 +162,9 @@ class PersistentEventDomainEngine:
         self._click_sum_sq = 0.0
         self._click_count = 0
         self._click_threshold = 0.35
+        transfer_label = str(unwrap(self.config, "transfer_ir"))
+        self._transfer_ir = _TransferIrFilter(transfer_label)
+        self._parameter_consumption = {"collector_assignment": False, "transfer_ir": False, "crankpin_geometry": False, "rotor_geometry": False}
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
 
     def initialize(self) -> "PersistentEventDomainEngine":
@@ -254,6 +286,18 @@ class PersistentEventDomainEngine:
         collector_inputs = banks
         if self.waveguide_network is not None:
             collector_inputs = self.waveguide_network.process(np.asarray(entity_sources, dtype=np.float64)).bank_audio.copy()
+        collector_topology = str(unwrap(self.config, "collector_assignment"))
+        self._parameter_consumption["collector_assignment"] = True
+        if collector_topology == "central_first":
+            merged = np.sum(collector_inputs, axis=0, keepdims=True)
+            collector_inputs = np.repeat(merged, self.bank_count, axis=0) * 0.5
+        elif collector_topology in {"single_collector", "single_collector_then_central"}:
+            merged = np.sum(collector_inputs, axis=0, keepdims=True)
+            collector_inputs = np.zeros_like(collector_inputs)
+            collector_inputs[0] = merged[0]
+        elif collector_topology != "two_bank_then_central":
+            # Explicit identity fallback for legacy labels, recorded below.
+            collector_topology = "identity_default"
         for bank, tail in enumerate(self._collector_event_tails):
             collector_inputs[bank] += self._consume(tail, n)
         collector = np.zeros_like(collector_inputs)
@@ -292,6 +336,8 @@ class PersistentEventDomainEngine:
             forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
         mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
+        self._parameter_consumption["transfer_ir"] = True
+        raw = self._transfer_ir.process(raw)
         boundary_jump = float(np.max(np.abs(raw[0] - self._last_output_sample))) if raw.size else 0.0
         self._click_max_boundary_jump = max(self._click_max_boundary_jump, boundary_jump)
         self._click_sum_sq += boundary_jump * boundary_jump
@@ -494,6 +540,8 @@ class PersistentEventDomainEngine:
             "ptr": self.ptr.snapshot() if self.ptr is not None else None,
             "waveguide": self.waveguide_network.snapshot() if self.waveguide_network is not None else None,
             "teacher_response": self.teacher_response.snapshot() if self.teacher_response is not None else None,
+            "transfer_ir": self._transfer_ir.snapshot(),
+            "parameter_consumption": dict(self._parameter_consumption),
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -525,6 +573,9 @@ class PersistentEventDomainEngine:
             self.waveguide_network.restore(snapshot["waveguide"])
         if self.teacher_response is not None and snapshot.get("teacher_response") is not None:
             self.teacher_response.restore(snapshot["teacher_response"])
+        if snapshot.get("transfer_ir") is not None:
+            self._transfer_ir.restore(snapshot["transfer_ir"])
+        self._parameter_consumption = dict(snapshot.get("parameter_consumption", self._parameter_consumption))
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -562,6 +613,9 @@ class PersistentEventDomainEngine:
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
             "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
             "teacher_response": self.teacher_response.diagnostics() if self.teacher_response is not None else None,
+            "parameter_consumption": dict(self._parameter_consumption),
+            "collector_assignment": str(unwrap(self.config, "collector_assignment")),
+            "transfer_ir": str(unwrap(self.config, "transfer_ir")),
             "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
         }
 

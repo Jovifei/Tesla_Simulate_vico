@@ -16,6 +16,7 @@ _TOP_LEVEL_KEYS = {
     "cycle_variation", "per_path_primary_length_m", "per_path_attenuation", "collector_assignment",
     "collector_length_m", "collector_loss", "gas_temperature_model", "intake_model", "forced_induction",
     "afterfire", "transfer_ir", "runtime_limits", "provenance", "asset_checksums",
+    "crankpin_geometry", "rotor_geometry", "timbre_map",
     "rotary_event_width_scale", "rotary_event_gain_scale", "housing_gain_scale", "housing_decay_scale",
     "housing_order_mix", "primary_spool_tau", "secondary_spool_tau", "blow_off_gain", "blow_off_decay",
 }
@@ -34,6 +35,11 @@ def load_config(vehicle_id: str) -> dict[str, Any]:
     afterfire = config.setdefault("afterfire", {})
     afterfire.setdefault("ignition_delay_s", parameter(0.004, "s", [0.001, 0.25], source="synthetic afterfire delay", verification_state="synthetic_assumption"))
     afterfire.setdefault("event_location", parameter("primary", "label", "primary|bank_collector|central_collector", source="synthetic afterfire location", verification_state="synthetic_assumption"))
+    count = int(config["cylinder_or_rotor_count"]["value"])
+    if config.get("architecture") == "piston":
+        config.setdefault("crankpin_geometry", parameter([0.0] * count, "deg", [0, 720], source="synthetic crankpin geometry", verification_state="synthetic_assumption"))
+    else:
+        config.setdefault("rotor_geometry", parameter(list(config["event_phase_deg"]["value"]), "eccentric_shaft_deg", [0, 1080], source="synthetic rotor geometry", verification_state="synthetic_assumption"))
     return validate_config(config)
 
 
@@ -88,6 +94,14 @@ def validate_config(config: Mapping[str, Any]) -> dict[str, Any]:
     phases = list(unwrap(config, "event_phase_deg"))
     if len(phases) != count:
         raise ValueError("event_phase_deg length must equal cylinder_or_rotor_count")
+    if config["architecture"] == "piston":
+        geometry = list(unwrap(config, "crankpin_geometry"))
+        if len(geometry) != count or not all(isinstance(value, (int, float)) and not isinstance(value, bool) and __import__("math").isfinite(float(value)) for value in geometry):
+            raise ValueError("crankpin_geometry must contain one finite offset per cylinder")
+    else:
+        geometry = list(unwrap(config, "rotor_geometry"))
+        if len(geometry) != count or not all(isinstance(value, (int, float)) and __import__("math").isfinite(float(value)) for value in geometry):
+            raise ValueError("rotor_geometry must contain one finite offset per rotor")
     assignment = list(unwrap(config, "bank_assignment"))
     if len(assignment) != count or any(int(x) < 0 or int(x) >= bank_count for x in assignment):
         raise ValueError("bank_assignment must cover each entity")

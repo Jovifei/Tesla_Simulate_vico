@@ -21,15 +21,31 @@ def derive_event_phase_deg(config: dict) -> list[float]:
     authority and retain the old phase list only as cycle-slot geometry.
     """
 
-    slots = [float(value) for value in unwrap(config, "event_phase_deg")]
     if config["architecture"] == "rotary_wankel":
-        return slots
+        geometry = [float(value) for value in unwrap(config, "rotor_geometry")]
+        cycle = 360.0 if unwrap(config, "cycle_definition") == "rotary_360" else 1080.0
+        return [value % cycle for value in geometry]
     order = [int(value) for value in unwrap(config, "firing_order_evidence")]
-    if len(order) != len(slots) or sorted(order) != list(range(1, len(order) + 1)):
+    count = len(order)
+    if sorted(order) != list(range(1, count + 1)):
         raise ValueError("firing order must be a complete permutation before phase derivation")
+    geometry = unwrap(config, "crankpin_geometry")
+    if isinstance(geometry, dict):
+        geometry = geometry.get("entity_offsets_deg", geometry.get("offsets_deg", [0.0] * count))
+    geometry = [float(value) for value in geometry]
+    if len(geometry) != count:
+        raise ValueError("crankpin geometry must cover every entity")
+    bank_assignment = [int(value) for value in unwrap(config, "bank_assignment")]
+    bank_count = max(bank_assignment) + 1
     derived = [0.0] * len(order)
     for slot_index, entity_number in enumerate(order):
-        derived[entity_number - 1] = slots[slot_index]
+        entity = entity_number - 1
+        base = slot_index * 720.0 / count
+        # Preserve legacy alternating-bank layouts exactly; noncanonical bank
+        # assignments receive an explicit small topology phase perturbation.
+        canonical_bank = entity % bank_count
+        bank_delta = bank_assignment[entity] - canonical_bank
+        derived[entity] = (base + geometry[entity] + 0.25 * bank_delta) % 720.0
     return derived
 
 def schedule_events(phase_rad: np.ndarray, config: dict, sample_rate_hz: int) -> EventTrace:
