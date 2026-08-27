@@ -410,6 +410,28 @@ def test_afterfire_route_uses_scheduled_entity_bank_and_stereo_topology() -> Non
     assert not np.array_equal(seen["bank_collector"], seen["central_collector"])
 
 
+def test_afterfire_route_stereo_contributions_are_directly_topology_bound() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    base = load_config("hellcat_v1")
+    silent = copy.deepcopy(base); silent["afterfire"]["gain"]["value"] = 0.0
+    deltas = {}
+    for policy in ("primary", "bank_collector", "central_collector"):
+        route = PersistentEventDomainEngine(base, 48000, 960, path_model="waveguide_v1"); route.afterfire_location_policy = policy
+        control = PersistentEventDomainEngine(silent, 48000, 960, path_model="waveguide_v1"); control.afterfire_location_policy = policy
+        route.process(high); control.process(high)
+        routed = [route.process(lift).raw_pcm for _ in range(30)]
+        baseline = [control.process(lift).raw_pcm for _ in range(30)]
+        deltas[policy] = np.concatenate(routed) - np.concatenate(baseline)
+    assert np.max(np.abs(deltas["central_collector"][:, 0] - deltas["central_collector"][:, 1])) < 1.0e-12
+    assert np.max(np.abs(deltas["primary"][:, 0] - deltas["primary"][:, 1])) > 1.0e-8
+    assert np.max(np.abs(deltas["bank_collector"][:, 0] - deltas["bank_collector"][:, 1])) > 1.0e-8
+
+
 def test_local_bounded_jitter_rng_snapshots_and_resets_deterministically() -> None:
     import numpy as np
     from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
