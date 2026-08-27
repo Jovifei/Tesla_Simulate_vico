@@ -2,16 +2,29 @@
   "schema": "s12.stage_w.phase_receipt.v1",
   "phase": "W9_FINAL_QUALIFICATION",
   "status": "PASS",
-  "head": "b9a1111f87e8b2b5eac40ee7dde21602c5198271",
+  "head": "3a62b5a83c7e21418f42541add7774aa4c0127a2",
   "checks": {
-    "full_s12_python": "1000 passed, 1 skipped, 232 subtests passed",
-    "stage_w_slow_3000_block_equivalence": "1 passed in 362.40s",
-    "stage_w_fast": "28 passed, 1 skipped",
-    "track_p": "180 frozen files and 2 frozen symbols unchanged; 32 guard tests passed",
-    "json_parse": "3435 files, 0 errors",
-    "bakeoff_v7_manifest_and_wav_reopen": "0 errors",
+    "full_s12_python": "1015 passed, 1 skipped, 232 subtests passed in 1701.94s",
+    "stage_w_slow_3000_block_equivalence": "1 passed in 77.09s",
+    "stage_w_focused": "43 passed, 1 skipped",
+    "stage_v_focused": "31 passed",
+    "track_p": "180 frozen files and 2 frozen symbols unchanged; exit 0",
+    "json_parse_finite": "4898 files, 0 non-finite values",
+    "bakeoff_long_v3_manifest_and_wav_reopen": "0 errors; hot_idle_20s=20.0 s/960000 frames; complete_cycle_60s=60.0 s/2880000 frames",
+    "review_package_v5": "0 validation errors; long_window=true",
+    "source_evidence_receipts": "23/23 registry ids joined",
+    "obsidian_sync": "16/16 canonical repo/vault SHA pairs match",
     "compileall": "exit 0",
-    "git_diff_check": "exit 0"
+    "git_diff_check": "exit 0",
+    "logs": {
+      "full_s12_regression_final.stdout.log": "f7dc4474fa5d1949710a39f4be134e709337113457e33f889afb1ab956f5361b",
+      "slow_3000_final.stdout.log": "1069615f0a0cda50f5a27cadeac7cc3a3ade346db4f0fd594d1ff500b4488693",
+      "stage_w_focused_final.stdout.log": "e36de7cac97d175925b08bea53370c6dbe5e26b974cac44f286929d330ccbf0a",
+      "stage_v_focused_final.stdout.log": "50890229b8bf0a093a7674b6953a81b1fd0a00f1287aa537cdb19bf5c0ba08ad",
+      "track_p_guard_final.stdout.log": "a3266254ab22c958122cc74d51a6f8f9f150c72912a9af9455d70f995465903c",
+      "compileall_final.stdout.log": "94e3cacd80e4e275e45e567a02d31477f3d8891691113a0445fa4d6f09552a76",
+      "final_gate_check.stdout.log": "566ac84b335093aca8883f75639dbd1ff44baf9b0f1f9ba4be878dc40400d58f"
+    }
   },
   "qualification_boundary": {
     "reference_status": "REFERENCE_TARGET_MISSING",

@@ -1,0 +1,1 @@
+{'status': 'REFERENCE_TARGET_MISSING', 'scene_duration_s': {'hot_idle_20s': 20.0, 'steady_1200rpm': 1.0, 'steady_2000rpm': 1.0, 'steady_3000rpm': 1.0, 'throttle_tip_in': 1.0, 'full_load_acceleration': 1.0, 'gear_shift': 1.0, 'high_rpm_lift': 1.0, 'afterfire_eligible': 1.0, 'afterfire_ineligible': 1.0, 'idle_return': 1.0, 'complete_cycle_60s': 60.0}}

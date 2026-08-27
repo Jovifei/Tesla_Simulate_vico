@@ -1,6 +1,7 @@
 {
   "schema_version": "s12.stage_w.source_registry.v1",
   "project_scope": "Tesla-Speed S12 Track-S research; synthetic, uncalibrated, vehicle-inspired",
+  "receipt_file": "source_evidence_receipts.json",
   "sources": [
     {"id":"engine-sim","kind":"open_source","url":"https://github.com/ange-yaghi/engine-sim","commit":"85f7c3b959a908ed5232ede4f1a4ac7eafe6b630","license":"MIT","status":"CHECKED_OUT_DOCKER_BUILD_BLOCKED_WINDOWS_ONLY","mapping":"event -> chamber pressure -> exhaust path -> synthesizer","forbidden":"C++/.mr/IR/audio/assets/OEM claims"},
     {"id":"ensim4","kind":"open_source_teacher","url":"https://github.com/glouw/ensim4","commit":"35b92a6aa5e038d18769d637dc9bedf0346939e1","license":"MIT","status":"DOCKER_BUILD_PASS_CFD_ON_OFF_AUDIO_CAPTURED_TEACHER_ONLY","mapping":"1D CFD teacher, pressure-pipe response, CPU experiment","forbidden":"direct Runtime replacement; unverified solver promotion"},

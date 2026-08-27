@@ -4152,7 +4152,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - [x] Recovered the existing Stage W worktree at `b9a1111f87e8b2b5eac40ee7dde21602c5198271` without reset or duplicate branches.
 - [x] Added `execution_state.json`, `EXECUTION_RESUME.md`, phase-receipt/log/checkpoint directories, and the W9 command receipts.
-- [x] Completed repository-side W0-W9 hardening, research, bake-off, preselection migration and final verification; full S12 is `1000 passed, 1 skipped, 232 subtests`.
+- [x] Completed repository-side W0-W9 hardening, research, bake-off, preselection migration and final verification; full S12 is `1015 passed, 1 skipped, 232 subtests`, Stage-W focused is `43 passed, 1 skipped`, Stage-V focused is `31 passed`, and the explicit 3000-block gate is `1 passed in 77.09s`.
 - [ ] W10 formal Reference/Parent/Candidate selection: remain fail-closed until R1 rights, original WAV/FLAC, SHA manifest and synchronized RPM/load/gear traces arrive.
 
 ### Stage W-C review
@@ -4160,3 +4160,4 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - The missing R1 package is a non-blocking external qualification gap under the Stage W-C contract; internal Parent/Candidate and R2/R3 diagnostics are complete.
 - No architecture is selected, no OEM reproduction is claimed, and Profile Freeze remains closed.
 - Resume from `tasks/reports/runtime/s12-stage-w/execution_state.json` and `EXECUTION_RESUME.md`; do not rerun the full regression unless source or test inputs change.
+- Final W6 evidence is `bakeoff_long_v3` with real 20 s/60 s windows and review package v5; W8 source evidence is joined for all 23 registry ids and canonical Obsidian repo/vault hashes are 16/16 matched.

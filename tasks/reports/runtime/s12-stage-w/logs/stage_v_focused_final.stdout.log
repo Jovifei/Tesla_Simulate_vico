@@ -1,0 +1,6 @@
+START_UTC=2026-08-27T01:01:39.2961184Z
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_v -q
+...............................                                          [100%]
+31 passed, 530 deselected in 32.04s
+END_UTC=2026-08-27T01:02:12.7537337Z
+EXIT_CODE=0

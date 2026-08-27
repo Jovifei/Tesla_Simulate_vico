@@ -9,6 +9,7 @@ import unittest
 import numpy as np
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+from tools.sound_sim.s12.acoustic_identity_v015.event_domain.crank_phase_pll import CrankPhasePLL
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import (
     PersistentEventDomainEngine,
@@ -60,6 +61,15 @@ def test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state() -> No
     engine.reset("hard")
     assert engine.sample_counter == 0
     assert engine.diagnostics()["afterfire_cooldown_remaining"] == 0
+
+
+def test_restore_legacy_scalar_torque_snapshot_is_limited_to_one_block() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    snapshot = engine.snapshot_state()
+    snapshot["pending_combustion_torque"] = 0.25
+    engine.restore_state(snapshot)
+    assert np.array_equal(engine._pending_combustion_torque[: engine.block_size], np.full(engine.block_size, 0.25))
+    assert np.array_equal(engine._pending_combustion_torque[engine.block_size :], np.zeros(engine._pending_combustion_torque.size - engine.block_size))
 
 
 def test_combustion_event_torque_and_acceleration_change_dynamics() -> None:
@@ -114,6 +124,59 @@ def test_process_with_trace_records_phase_event_path_and_gain_per_frame() -> Non
     assert trace["sample_counter"][-1] == 6 * 960
     assert trace["event_count"] == sorted(trace["event_count"])
     assert trace["combustion_torque_event_count"] == sorted(trace["combustion_torque_event_count"])
+
+
+def test_public_initialize_and_block_api_keep_ripple_diagnostics_bounded() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    pll_id = id(engine.pll)
+    path_id = id(engine._path_lines[0])
+    assert engine.initialize() is engine
+    assert id(engine.pll) == pll_id
+    assert id(engine._path_lines[0]) == path_id
+    blocks = _frames(100)
+    for index in range(100):
+        engine.process_block(_frame(blocks, index))
+    diagnostics = engine.diagnostics()
+    assert not hasattr(engine, "_omega_ripple_values")
+    assert diagnostics["omega_ripple_sample_count"] == 100 * 960
+    assert diagnostics["state_memory_bytes"] < 4_000_000
+    snapshot = engine.snapshot_state()
+    assert snapshot["omega_ripple_sample_count"] == 100 * 960
+    before = engine.diagnostics()
+    engine.process_block(_frame(blocks, 0))
+    engine.restore_state(snapshot)
+    assert engine.diagnostics()["omega_ripple_sample_count"] == before["omega_ripple_sample_count"]
+    assert engine.diagnostics()["omega_ripple_rms"] == before["omega_ripple_rms"]
+
+
+def test_pll_torque_ripple_is_event_derived_not_a_free_running_sine() -> None:
+    config = load_config("hellcat_v1")
+    count = 32
+    rpm = np.full(count, 850.0)
+    load = np.full(count, 0.18)
+    throttle = np.full(count, 0.18)
+    acceleration = np.zeros(count)
+    zero = CrankPhasePLL(48000, config).process_block(rpm, load, throttle, acceleration, np.zeros(count))
+    event_input = np.zeros(count)
+    event_input[8] = 0.4
+    event = CrankPhasePLL(48000, config).process_block(rpm, load, throttle, acceleration, event_input)
+    assert np.array_equal(zero.torque_ripple, np.zeros(count))
+    assert event.torque_ripple[8] == 0.4
+    assert not np.array_equal(zero.omega_rad_s, event.omega_rad_s)
+
+
+def test_scheduled_event_energy_changes_free_dynamics_after_feedback_block() -> None:
+    normal_config = load_config("hellcat_v1")
+    silent_config = load_config("hellcat_v1")
+    silent_config["combustion_event"]["event_energy"]["value"] = 0.0
+    frames = {"rpm": np.full(8, 4200.0), "load": np.full(8, 0.85), "throttle": np.full(8, 0.90), "acceleration_mps2": np.zeros(8)}
+    normal = PersistentEventDomainEngine(normal_config, 48000, 960, mode="free_dynamics")
+    silent = PersistentEventDomainEngine(silent_config, 48000, 960, mode="free_dynamics")
+    normal_result = normal.process(frames)
+    silent_result = silent.process(frames)
+    assert normal.diagnostics()["combustion_torque_event_count"] > 0
+    assert abs(normal.diagnostics()["omega_ripple_rms"] - silent.diagnostics()["omega_ripple_rms"]) > 1.0e-6
+    assert not np.array_equal(normal_result.raw_pcm, silent_result.raw_pcm)
 
 
 @unittest.skipUnless(os.environ.get("S12_RUN_SLOW") == "1", "set S12_RUN_SLOW=1 for the 3000-block acceptance run")

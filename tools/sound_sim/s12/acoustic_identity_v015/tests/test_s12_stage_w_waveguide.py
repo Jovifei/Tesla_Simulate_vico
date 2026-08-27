@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 
 import numpy as np
@@ -73,3 +74,55 @@ def test_persistent_engine_reduced_cfd_teacher_is_stateful_and_snapshot_safe() -
     diagnostics = teacher.diagnostics()
     assert diagnostics["path_model"] == "reduced_cfd_teacher_v1"
     assert diagnostics["teacher_response"]["status"] == "TEACHER_METRIC_REDUCTION_ONLY"
+
+
+def test_waveguide_consumes_collector_and_distinguishes_three_afterfire_locations() -> None:
+    config = load_config("hellcat_v1")
+    rpm = np.r_[np.full(10, 6200.0), np.linspace(5800.0, 1100.0, 20)]
+    load = np.r_[np.full(10, 0.90), np.full(20, 0.55)]
+    throttle = np.r_[np.full(10, 0.95), np.full(20, 0.02)]
+    frames = {"rpm": rpm, "load": load, "throttle": throttle, "acceleration_mps2": np.gradient(rpm, 0.02)}
+    outputs = {}
+    arrivals = {}
+    for policy in ("primary", "bank_collector", "central_collector"):
+        engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+        engine.afterfire_location_policy = policy
+        outputs[policy] = np.concatenate([engine.process({key: value[i:i + 1] for key, value in frames.items()}).raw_pcm for i in range(30)])
+        assert engine.diagnostics()["afterfire_event_count"] > 0
+        assert engine.diagnostics()["afterfire_route"]["route"] == policy
+        assert engine.diagnostics()["afterfire_route"]["path_id"]
+        arrivals[policy] = engine.diagnostics()["afterfire_route"]["arrival_samples"]
+    assert len({hashlib.sha256(value.tobytes()).hexdigest() for value in outputs.values()}) == 3
+    assert len(set(arrivals.values())) == 3
+
+    changed = copy.deepcopy(config)
+    changed["collector_length_m"]["value"] += 0.20
+    baseline = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+    altered = PersistentEventDomainEngine(changed, 48000, 960, path_model="waveguide_v1")
+    assert not np.array_equal(baseline.process(frames).raw_pcm, altered.process(frames).raw_pcm)
+
+
+def test_afterfire_route_does_not_rewrite_pre_event_combustion() -> None:
+    config = load_config("hellcat_v1")
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    outputs = []
+    for policy in ("primary", "bank_collector", "central_collector"):
+        engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+        engine.afterfire_location_policy = policy
+        outputs.append(engine.process(high).raw_pcm)
+    assert np.array_equal(outputs[0], outputs[1])
+    assert np.array_equal(outputs[1], outputs[2])
+
+
+def test_afterfire_route_snapshot_restores_queued_tail_exactly() -> None:
+    config = load_config("hellcat_v1")
+    engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+    engine.afterfire_location_policy = "central_collector"
+    engine.process({"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])})
+    engine.process({"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])})
+    snapshot = engine.snapshot_state()
+    next_state = {"rpm": np.array([5600.0]), "load": np.array([0.50]), "throttle": np.array([0.04]), "acceleration_mps2": np.array([-4.0])}
+    expected = engine.process(next_state).raw_pcm
+    engine.restore_state(snapshot)
+    replay = engine.process(next_state).raw_pcm
+    assert np.array_equal(expected, replay)

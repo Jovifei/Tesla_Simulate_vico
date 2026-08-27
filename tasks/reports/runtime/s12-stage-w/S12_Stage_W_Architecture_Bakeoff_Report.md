@@ -14,14 +14,16 @@ Status: `BAKEOFF_RENDERED / REFERENCE_TARGET_MISSING / NO_ARCHITECTURE_SELECTED`
 | P5 | Hybrid P2H + clean-room synthetic one-shot residual | Rendered; no third-party transient source |
 | P6 | ENSIM4 CFD teacher | Built teacher executable; not a Runtime candidate |
 
-The refreshed v6 smoke bake-off rendered all five executable architectures
+The refreshed `bakeoff_long_v3` rendered all five executable architectures
 across the unified Hellcat scene set: idle, 1200/2000/3000 RPM, tip-in, full
 load, shift, high-RPM lift, eligible/ineligible afterfire, idle return and
-complete-cycle. It declares a 1.0 s block-aligned duration per scene; names
-such as `hot_idle_20s` and `complete_cycle_60s` are scenario identities, not a
-claim that this smoke run is a long-window render. Each executable case has
+complete-cycle. It renders `hot_idle_20s` at 20.0 s / 960,000 audio frames and
+`complete_cycle_60s` at 60.0 s / 2,880,000 audio frames; the other ten scenes
+remain declared 1.0 s diagnostic windows. Each executable case has
 raw source, post-PTR raw PCM, monitor PCM, state/phase/event/path/gain traces,
 metrics, CPU wall time and SHA manifest.
+The state trace uses the exact 50 Hz timeline (`0.00` through `19.98`/`59.98` s)
+while the rendered audio spans the declared full 20/60 s windows.
 
 ## Selection boundary
 
@@ -35,7 +37,7 @@ is intentionally null with status `REFERENCE_TARGET_MISSING`.
 
 - Current Git-tracked evidence: the five JSON summaries in
   `tasks/reports/runtime/s12-stage-w/`, bound by `artifact_manifest.json`.
-- The v7 WAV render root is a local, Git-ignored runtime artifact and is not
+- The long-window WAV render root is a local, Git-ignored runtime artifact and is not
   part of this repository delivery.
 - Manifest validation: `0 errors`
 - P1/P2/P2H/P3/P5 post-PTR outputs are present, SHA-bound and frame-aligned.

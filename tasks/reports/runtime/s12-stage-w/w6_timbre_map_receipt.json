@@ -1,7 +1,7 @@
 {
   "schema_version": "s12.stage_w.w6_timbre_map_receipt.v1",
   "status": "TIMBRE_MAP_V1_PASS",
-  "tests": "2 passed",
+  "tests": "covered by final Stage-W focused: 43 passed, 1 skipped",
   "baseline": "harmonic_v1",
   "candidate": "timbre_map_v1",
   "layers": ["harmonics", "sidebands", "broadband_noise_envelope", "casing_resonance", "intake_resonance", "boost_state", "bypass_state"],

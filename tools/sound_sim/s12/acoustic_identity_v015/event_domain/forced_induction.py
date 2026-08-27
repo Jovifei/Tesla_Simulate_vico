@@ -14,18 +14,25 @@ def _optional(config: dict, path: str, default: float) -> float:
         return float(node["value"])
     return default
 
-def render_forced_induction(phase_rad: np.ndarray, rpm: np.ndarray, load: np.ndarray, throttle: np.ndarray, config: dict, sample_rate_hz: int) -> dict[str, np.ndarray]:
+def render_forced_induction(phase_rad: np.ndarray, rpm: np.ndarray, load: np.ndarray, throttle: np.ndarray, config: dict, sample_rate_hz: int, initial_boost_state: float = 0.0, boost_state: np.ndarray | None = None) -> dict[str, np.ndarray]:
     phase_rad, rpm, load, throttle = [np.asarray(x, dtype=np.float64) for x in (phase_rad, rpm, load, throttle)]
     kind = unwrap(config, "forced_induction.type")
     gain = float(unwrap(config, "forced_induction.gain"))
     ratio = float(unwrap(config, "forced_induction.ratio"))
     boost_target = np.clip(load * throttle * np.maximum(rpm - 900.0, 0.0) / 4800.0, 0.0, 1.0)
-    state = np.zeros_like(boost_target)
-    rise_tau = _optional(config, "primary_spool_tau", 0.08)
-    fall_tau = _optional(config, "secondary_spool_tau", 0.25)
-    for i in range(1, state.size):
-        tau = rise_tau if boost_target[i] >= state[i - 1] else fall_tau
-        state[i] = state[i - 1] + (boost_target[i] - state[i - 1]) / max(tau * sample_rate_hz, 1.0)
+    if boost_state is None:
+        state = np.empty_like(boost_target)
+        state[0] = np.clip(float(initial_boost_state), 0.0, 1.0)
+        rise_tau = _optional(config, "primary_spool_tau", 0.08)
+        fall_tau = _optional(config, "secondary_spool_tau", 0.25)
+        for i in range(1, state.size):
+            tau = rise_tau if boost_target[i] >= state[i - 1] else fall_tau
+            state[i] = state[i - 1] + (boost_target[i] - state[i - 1]) / max(tau * sample_rate_hz, 1.0)
+    else:
+        state = np.asarray(boost_state, dtype=np.float64)
+        if state.shape != boost_target.shape or not np.all(np.isfinite(state)):
+            raise ValueError("boost_state must match finite boost target")
+        state = np.clip(state, 0.0, 1.0)
     shaft_phase = phase_rad * max(ratio, 1.0)
     if kind == "supercharger":
         carrier = gain * (0.25 + state) * (0.32 * np.sin(shaft_phase) + 0.75 * np.sin(5.0 * shaft_phase) + 0.22 * np.sin(10.0 * shaft_phase))
@@ -51,4 +58,4 @@ def render_forced_induction(phase_rad: np.ndarray, rpm: np.ndarray, load: np.nda
     intake_gain = float(unwrap(config, "intake_model"))
     intake_carrier = intake_gain * np.sqrt(np.clip(load * (0.25 + throttle), 0.0, 1.5)) * np.sin(phase_rad * 3.0 + 0.35)
     intake = np.column_stack((0.52 * intake_carrier, intake_carrier))
-    return {"blower": blower, "turbo": turbo, "blowoff": blowoff, "intake": intake, "boost_state": state}
+    return {"blower": blower, "turbo": turbo, "blowoff": blowoff, "intake": intake, "boost_state": state, "boost_state_final": np.asarray(state[-1])}

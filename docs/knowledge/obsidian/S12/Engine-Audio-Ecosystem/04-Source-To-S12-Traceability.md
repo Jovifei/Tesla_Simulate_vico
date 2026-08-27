@@ -9,4 +9,6 @@ S12 FVM/HLLC/SSP-RK3/PTR/Radiation or proves OEM identity.
 W3 uses the accepted RuntimePtrAdapter and radiation package by exact SHA. W4
 waveguide_v1 is an original S12 implementation and remains selectable beside
 delay_lpf_v1. External source code, presets, recordings, weights and binaries
-are not copied into S12.
+are not copied into S12. Per-source URL/version, license, build/run, callgraph,
+reusable idea, forbidden reuse and unresolved questions are joined by id in
+`docs/research/engine-audio-ecosystem/source_evidence_receipts.json`.

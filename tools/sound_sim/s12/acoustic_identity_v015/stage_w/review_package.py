@@ -47,6 +47,8 @@ def build_stage_w_review_package(source_root: str | Path, output_root: str | Pat
         "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
         "source_bakeoff_manifest_sha256": sha256_file(source / "bakeoff_manifest.json"),
         "requested_duration_s": bakeoff["requested_duration_s"],
+        "long_window": bakeoff.get("long_window", False),
+        "scene_duration_s": bakeoff.get("scene_duration_s", {}),
         "block_aligned_duration_s": bakeoff["block_aligned_duration_s"],
         "vehicles": {"hellcat": {"architectures": {}}},
     }
@@ -73,8 +75,8 @@ def build_stage_w_review_package(source_root: str | Path, output_root: str | Pat
     (root / "README_ZH.md").write_text(
         "# S12 Stage W 架构试听包\n\n"
         "状态：`WAITING_FOR_JOVI_ARCHITECTURE_REVIEW`，未选择架构。\n\n"
-        "包内所有 WAV 为本地 synthetic 输出。每个场景有 P1、P2、P2H、P3 的 Raw、Post-PTR Raw 和 Monitor；"
-        "Raw 只用于分析，Monitor 只用于试听。Reference 仅是缺失指针，P4/P5/P6 在 `unavailable_paths.json` 中说明原因，"
+        "包内所有 WAV 为本地 synthetic 输出。每个场景有 P1、P2、P2H、P3、P5 的 Raw、Post-PTR Raw 和 Monitor；"
+        "Raw 只用于分析，Monitor 只用于试听。Reference 仅是缺失指针，P4/P6 在 `unavailable_paths.json` 中说明原因，"
         "不含第三方音频、模型或预设。\n",
         encoding="utf-8", newline="\n",
     )

@@ -1,16 +1,16 @@
 {
   "schema_version": "s12.stage_w.w4_waveguide_receipt.v1",
-  "status": "WAVEGUIDE_V1_PASS / ENSIM4_BUILD_BLOCKED_TOOLCHAIN",
+  "status": "WAVEGUIDE_V1_PASS / ENSIM4_DOCKER_BUILD_PASS_TEACHER_ONLY",
   "waveguide_model": "waveguide_v1",
-  "waveguide_tests": "4 passed",
+  "waveguide_tests": "covered by final Stage-W focused: 43 passed, 1 skipped",
   "ensim4": {
     "external_root": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4",
     "commit": "35b92a6aa5e038d18769d637dc9bedf0346939e1",
     "license_sha256": "CDFF1D6C75E2B3C954619FDAA0A9917FF0F37ABE754201576C59853059A0305A",
     "build_command": "make ENGINE=ENGINE_3_CYL",
-    "build_status": "BLOCKED_TOOLCHAIN_NO_CLANG_MAKE",
-    "run_status": "NOT_RUN",
-    "audio_status": "NOT_GENERATED"
+    "build_status": "DOCKER_BUILD_PASS",
+    "run_status": "TEACHER_ONLY_DUMMY_AND_PERF_EVIDENCE",
+    "audio_status": "TEACHER_RECEIPT_ONLY"
   },
   "scope": ["synthetic", "uncalibrated", "vehicle-inspired", "not OEM reproduction", "NOT_R1_QUALIFIED", "NOT_PROFILE_FREEZE_READY"]
 }

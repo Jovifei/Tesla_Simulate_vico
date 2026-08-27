@@ -27,6 +27,15 @@ STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
+LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
+
+
+def scene_duration_s(scene: str, duration_s: float, *, long_window: bool = False) -> float:
+    if scene not in SCENES:
+        raise ValueError(f"unsupported bake-off scene: {scene}")
+    if not np.isfinite(duration_s) or duration_s < 0.20:
+        raise ValueError("duration_s must be finite and >= 0.20")
+    return LONG_WINDOW_SCENE_DURATIONS.get(scene, float(duration_s)) if long_window else float(duration_s)
 
 
 def build_hellcat_bakeoff_trace(scene: str, duration_s: float = 8.0) -> VehicleStateTrace:
@@ -35,8 +44,8 @@ def build_hellcat_bakeoff_trace(scene: str, duration_s: float = 8.0) -> VehicleS
     if not np.isfinite(duration_s) or duration_s < 0.20:
         raise ValueError("duration_s must be finite and >= 0.20")
     count = max(2, int(round(duration_s * STATE_RATE_HZ)))
-    time_s = np.linspace(0.0, count * BLOCK_SIZE / SAMPLE_RATE_HZ - 1.0 / SAMPLE_RATE_HZ, count, dtype=np.float64)
     state_time_s = np.arange(count, dtype=np.float64) / STATE_RATE_HZ
+    time_s = state_time_s.copy()
     phase = np.linspace(0.0, 1.0, count, dtype=np.float64)
     idle = 850.0
     redline = 6500.0
@@ -92,6 +101,11 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
     config = load_config("hellcat_v1")
     if architecture == "P1":
         source = render_hellcat(trace).pressure * OUTPUT_SCALE
+        target_samples = trace.rpm.size * BLOCK_SIZE
+        if source.shape[0] < target_samples:
+            source = np.pad(source, ((0, target_samples - source.shape[0]), (0, 0)))
+        elif source.shape[0] > target_samples:
+            source = source[:target_samples]
         post_ptr = FrozenPtrStereo(SAMPLE_RATE_HZ).process(source)
         monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
         return source, post_ptr, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
@@ -192,7 +206,7 @@ def _ablation_results(architectures: dict[str, Any], status: str, reference_stat
     return {"schema_version": "s12.stage_w.ablation_results.v1", "status": status, "reference_status": reference_status, "selection_eligible": False, "ablations": ablations}
 
 
-def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, reference: np.ndarray | None = None) -> dict[str, Any]:
+def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, reference: np.ndarray | None = None, *, long_window: bool = False) -> dict[str, Any]:
     root = Path(output_root)
     if root.exists() and any(root.iterdir()):
         raise FileExistsError(f"refusing to overwrite bake-off output: {root}")
@@ -201,22 +215,23 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
         "P4": {"status": "REFERENCE_RECORDING_RIGHTS_PENDING", "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording"},
         "P6": {"status": "TEACHER_NOT_RUNTIME_CANDIDATE", "reason": "ENSIM4 Docker CFD ON/OFF teacher audio is externally captured but is not a fitted S12 Runtime path"},
     }
+    scene_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
     for architecture in ("P1", "P2", "P2H", "P3", "P5"):
         architectures[architecture] = {"status": "RENDERED", "scenes": {}}
         for scene in SCENES:
-            trace = build_hellcat_bakeoff_trace(scene, duration_s)
+            trace = build_hellcat_bakeoff_trace(scene, scene_durations[scene])
             architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
-    block_aligned_duration_s = max(2, int(round(duration_s * STATE_RATE_HZ))) / STATE_RATE_HZ
+    block_aligned_duration_s = max(2, int(round(max(scene_durations.values()) * STATE_RATE_HZ))) / STATE_RATE_HZ
     status = "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY"
     reference_status = "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER"
-    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": status, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": reference_status, "requested_duration_s": float(duration_s), "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
+    result = {"schema_version": "s12.stage_w.bakeoff.v1", "status": status, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "reference_status": reference_status, "requested_duration_s": float(duration_s), "long_window": bool(long_window), "scene_duration_s": scene_durations, "block_aligned_duration_s": block_aligned_duration_s, "selected_architecture": None, "architectures": architectures}
     write_json(root / "bakeoff_results.json", result)
     write_json(root / "parent_candidate_metrics.json", _parent_candidate_metrics(architectures, status, reference_status))
     write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
     write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
-    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "requested_duration_s": result["requested_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
+    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
 
 
@@ -248,7 +263,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     return errors
 
 
-def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path) -> dict[str, Any]:
+def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path, *, overwrite: bool = False) -> dict[str, Any]:
     source = Path(source_root)
     errors = validate_bakeoff_manifest(source)
     manifest = json.loads((source / "bakeoff_manifest.json").read_text(encoding="utf-8")) if not errors else {}
@@ -270,7 +285,7 @@ def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path) 
         raise ValueError(f"invalid bake-off source: {errors}")
     output = Path(output_root)
     targets = [output / name for name in SUMMARY_FILES]
-    if any(target.exists() for target in targets):
+    if any(target.exists() for target in targets) and not overwrite:
         raise FileExistsError(f"refusing to overwrite bake-off summaries: {output}")
     output.mkdir(parents=True, exist_ok=True)
     for name, target in zip(SUMMARY_FILES, targets):
@@ -279,4 +294,4 @@ def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path) 
     return {"schema_version": "s12.stage_w.bakeoff_summary_receipt.v1", "status": result["status"], "reference_status": result["reference_status"], "selection_eligible": result["selected_architecture"] is not None, "files": {name: sha256_file(output / name) for name in SUMMARY_FILES}}
 
 
-__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "run_hellcat_bakeoff", "validate_bakeoff_manifest"]
+__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "run_hellcat_bakeoff", "scene_duration_s", "validate_bakeoff_manifest"]

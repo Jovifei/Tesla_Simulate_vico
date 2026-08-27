@@ -131,3 +131,6 @@ artifacts/matlab/s12-stage-n-psychoacoustic-execution-*/
 artifacts/matlab/s12-stage-n-shared-psychoacoustic-fixture-*/
 artifacts/matlab/s12-stage-n-shared-psychoacoustic-execution-*/
 tasks/reports/runtime/s12-stage-w/bakeoff_v7/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v1/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v2/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v3/

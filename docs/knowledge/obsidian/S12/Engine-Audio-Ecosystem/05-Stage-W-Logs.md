@@ -6,8 +6,12 @@
 - W3: frozen PTR adapter and post-PTR raw split — `PASS`.
 - W4: waveguide_v1 — `PASS`; ENSIM4 checkout/build attempt — `BLOCKED_TOOLCHAIN`.
 - W5: dRPM/ignition-delay/location afterfire — `PASS`.
-- W6: harmonic_v1 versus timbre_map_v1 — `PASS`.
-- W9: P1/P2/P2H/P3 bake-off render — `PASS` as diagnostic; selection withheld.
+- W6: harmonic_v1 versus timbre_map_v1 and true `hot_idle_20s`/`complete_cycle_60s`
+  windows — `PASS`.
+- W9: P1/P2/P2H/P3/P5 bake-off render — `PASS` as diagnostic; selection withheld.
+
+Final local evidence is `bakeoff_long_v3` (20.0 s / 960,000 frames and 60.0 s /
+2,880,000 frames) and review package v5; no raw external media is committed.
 
 The next gate is a rights-bound synchronized Reference and then W10 multi-
 reference selection plus human review.

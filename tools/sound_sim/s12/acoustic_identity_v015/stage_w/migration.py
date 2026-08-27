@@ -109,7 +109,7 @@ def write_diagnostic_traces(case_root: Path, diagnostics: dict[str, Any]) -> Non
     base = {"status": "PERSISTENT_ENGINE_TRACE", "sample_counter": trace["sample_counter"]}
     write_json(case_root / "phase_trace.json", base | {"phase_rad": trace["phase_rad"], "omega_rad_s": trace["omega_rad_s"]})
     write_json(case_root / "event_trace.json", base | {"event_count": trace["event_count"], "afterfire_event_count": trace["afterfire_event_count"], "combustion_torque_event_count": trace["combustion_torque_event_count"]})
-    write_json(case_root / "path_trace.json", base | {"path_state_energy": trace["path_state_energy"]})
+    write_json(case_root / "path_trace.json", base | {"path_state_energy": trace["path_state_energy"], "afterfire_route": diagnostics.get("afterfire_route", {"route": "none"})})
     write_json(case_root / "gain_trace.json", base | {"monitor_gain_db": trace["monitor_gain_db"]})
 
 

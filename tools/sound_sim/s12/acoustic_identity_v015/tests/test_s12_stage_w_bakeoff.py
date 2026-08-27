@@ -67,6 +67,8 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     for name, expected_hash in receipt["files"].items():
         assert (delivery / name).is_file()
         assert hashlib.sha256((delivery / name).read_bytes()).hexdigest() == expected_hash
+    refreshed = bakeoff_module.publish_bakeoff_summaries(root, delivery, overwrite=True)
+    assert refreshed["files"] == receipt["files"]
 
 
 def test_publisher_rejects_summary_without_manifest_binding(tmp_path) -> None:
@@ -90,3 +92,14 @@ def test_r2_summaries_preserve_reference_status(tmp_path) -> None:
     assert result["reference_status"] == "EXTERNAL_R2_POINTER"
     assert summaries["reference_status"] == result["reference_status"]
     assert ablations["reference_status"] == result["reference_status"]
+
+
+def test_long_window_duration_contract_uses_real_named_scene_lengths() -> None:
+    assert bakeoff_module.scene_duration_s("hot_idle_20s", 1.0, long_window=True) == 20.0
+    assert bakeoff_module.scene_duration_s("complete_cycle_60s", 1.0, long_window=True) == 60.0
+    assert bakeoff_module.scene_duration_s("steady_1200rpm", 1.0, long_window=True) == 1.0
+
+
+def test_bakeoff_trace_uses_exact_state_rate_timestamps() -> None:
+    trace = bakeoff_module.build_hellcat_bakeoff_trace("hot_idle_20s", 0.25)
+    assert np.array_equal(trace.time_s, np.arange(trace.time_s.size, dtype=np.float64) / bakeoff_module.STATE_RATE_HZ)

@@ -20,8 +20,10 @@ Project: `[[../..]]` / Tesla-Speed S12 Stage W.
 - Repository research: `docs/research/engine-audio-ecosystem/README.md`
 
 Current state: W0 audit complete; W1/W2 persistent state and event torque,
-W3 frozen PTR bridge, W4 waveguide, W5 localized afterfire and W6 timbre map
-implemented. W9 bake-off and Ferrari/RX-7 migration are preselection evidence
-only because synchronized rights-bound Reference evidence is missing. Keep all outputs synthetic, uncalibrated,
-vehicle-inspired, not OEM reproduction, NOT_R1_QUALIFIED and
-NOT_PROFILE_FREEZE_READY.
+W3 frozen PTR bridge, W4 waveguide, W5 localized afterfire, W6 true 20 s/60 s
+bake-off and W9 diagnostic closure are implemented. W9 bake-off and
+Ferrari/RX-7 migration are preselection evidence only because synchronized
+rights-bound Reference evidence is missing. Per-source evidence is joined in
+`docs/research/engine-audio-ecosystem/source_evidence_receipts.json`. Keep all
+outputs synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
+NOT_R1_QUALIFIED and NOT_PROFILE_FREEZE_READY.

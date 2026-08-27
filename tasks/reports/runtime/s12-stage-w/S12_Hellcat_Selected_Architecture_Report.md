@@ -5,9 +5,10 @@ Status: `BAKEOFF_RENDERED / REFERENCE_TARGET_MISSING / NO_ARCHITECTURE_SELECTED`
 The current executable candidates are P1 Legacy, P2 persistent delay/LPF,
 P2H persistent waveguide, P3 P2H plus timbre map and P5 P3 plus a clean-room
 synthetic one-shot residual. The current Git-tracked evidence is the five
-top-level JSON summaries bound by `artifact_manifest.json`; their local v7
-WAV source remains Git-ignored. All 12 scenario-shaped traces were rendered at
-a declared 1.0 s block-aligned duration. Every P1/P2/P2H/P3/P5 case
+top-level JSON summaries bound by `artifact_manifest.json`; their local
+long-window WAV source remains Git-ignored. All 12 scenario-shaped traces were
+rendered, with `hot_idle_20s` at 20.0 s and `complete_cycle_60s` at 60.0 s;
+the remaining diagnostic windows are declared at 1.0 s. Every P1/P2/P2H/P3/P5 case
 has equal post-PTR frame counts, raw/post-PTR/monitor PCM, state/phase/event/
 path/gain traces, CPU receipt and SHA manifest.
 
@@ -39,8 +40,8 @@ Scope: synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
 `NOT_R1_QUALIFIED`, `NOT_PROFILE_FREEZE_READY`.
 
 The local review package is
-`E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v4` with ZIP
-SHA-256 `3fff4d0e6bc4fdbe93e0d9257d34bba775e3f0e881d3b537033576ecbfe47ab8`.
+`E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v5` with ZIP
+SHA-256 `965c0176e106e7bdc5a703d3475ee5e0eebdf560a13ed03ce422f65c893c45c3`.
 It is a labelled engineering package, not a scoring result or a selection.
 
 The W9 closure status is `NO_ARCHITECTURE_CANDIDATE_PASSED` for the formal gate

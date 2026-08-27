@@ -21,6 +21,8 @@ def test_review_package_keeps_reference_and_unavailable_paths_fail_closed(tmp_pa
     assert result["status"] == "WAITING_FOR_JOVI_ARCHITECTURE_REVIEW"
     assert result["selected_architecture"] is None
     assert result["reference_status"] == "REFERENCE_POINTER_ONLY"
+    assert result["long_window"] is False
+    assert result["scene_duration_s"]["complete_cycle_60s"] == 0.25
     assert validate_stage_w_review_package(package) == []
     assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "raw_source.wav").is_file()
     assert (package / "vehicles" / "hellcat" / "P3" / "complete_cycle_60s" / "post_ptr_raw.wav").is_file()

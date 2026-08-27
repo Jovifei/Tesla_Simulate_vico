@@ -67,3 +67,19 @@ def test_event_location_is_recorded_and_consumed_by_path() -> None:
     assert primary.diagnostics()["afterfire_location_counts"]["primary"] > 0
     assert collector.diagnostics()["afterfire_location_counts"]["collector"] > 0
     assert hashlib.sha256(a.tobytes()).hexdigest() != hashlib.sha256(b.tobytes()).hexdigest()
+
+
+def test_afterfire_location_contract_names_primary_bank_and_central_routes() -> None:
+    config = load_config("hellcat_v1")
+    assert config["afterfire"]["event_location"]["range"] == "primary|bank_collector|central_collector"
+
+
+def test_afterfire_event_location_config_selects_the_runtime_route() -> None:
+    base = load_config("hellcat_v1")
+    frames = _lift_frames()
+    for policy in ("primary", "bank_collector", "central_collector"):
+        config = copy.deepcopy(base)
+        config["afterfire"]["event_location"]["value"] = policy
+        engine = PersistentEventDomainEngine(config, 48000, 960)
+        _render(engine, frames)
+        assert engine.diagnostics()["afterfire_route"]["route"] == policy

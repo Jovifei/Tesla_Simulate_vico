@@ -33,7 +33,7 @@ def load_config(vehicle_id: str) -> dict[str, Any]:
             config.setdefault(key, value)
     afterfire = config.setdefault("afterfire", {})
     afterfire.setdefault("ignition_delay_s", parameter(0.004, "s", [0.001, 0.25], source="synthetic afterfire delay", verification_state="synthetic_assumption"))
-    afterfire.setdefault("event_location", parameter("primary", "label", "primary|collector", source="synthetic afterfire location", verification_state="synthetic_assumption"))
+    afterfire.setdefault("event_location", parameter("primary", "label", "primary|bank_collector|central_collector", source="synthetic afterfire location", verification_state="synthetic_assumption"))
     return validate_config(config)
 
 

@@ -49,7 +49,6 @@ class CrankPhasePLL:
         dt = 1.0 / self.sample_rate_hz
         inertia = max(float(unwrap(self.config, "crank_inertia")), 1.0e-4)
         friction = float(unwrap(self.config, "friction_model"))
-        entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         phases = np.empty(rpm.size, dtype=np.float64)
         omegas = np.empty_like(phases)
         errors = np.empty_like(phases)
@@ -69,17 +68,17 @@ class CrankPhasePLL:
             governor = float(unwrap(self.config, "idle_governor")) * (1.0 - throttle[i]) if target_rpm <= float(unwrap(self.config, "idle_target_rpm")) * 1.25 else 0.0
             governor_torque = governor * 0.10 * max(target, 1.0)
             combustion_torque = 0.005 * (0.25 + np.clip(load[i], 0.0, 1.0)) * max(target, 1.0)
-            ripple = 0.004 * max(target, 1.0) * np.sin(self.phase_rad * max(entity_count, 1) + (self.sample_count + i) * 0.017)
+            event_torque = float(combustion_torque_input[i])
             tracking_torque = 96.0 * sync_error if self.mode == "measured_rpm" else 0.0
             acceleration_torque = 0.001 * float(acceleration[i]) * max(target, 1.0)
-            combustion_torque += float(combustion_torque_input[i])
-            torque_accel = (tracking_torque - friction_torque - load_torque + governor_torque + combustion_torque + acceleration_torque + ripple) / inertia
+            combustion_torque += event_torque
+            torque_accel = (tracking_torque - friction_torque - load_torque + governor_torque + combustion_torque + acceleration_torque) / inertia
             self.omega_rad_s = max(0.0, self.omega_rad_s + torque_accel * dt)
             self.phase_rad += max(self.omega_rad_s, 1.0e-9) * dt
             phases[i] = self.phase_rad
             omegas[i] = self.omega_rad_s
             errors[i] = target - self.omega_rad_s
-            ripple_trace[i] = ripple
+            ripple_trace[i] = event_torque
             load_trace[i] = load_torque
             friction_trace[i] = friction_torque
             governor_trace[i] = governor_torque

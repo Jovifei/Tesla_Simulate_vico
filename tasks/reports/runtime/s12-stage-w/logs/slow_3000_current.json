@@ -1,0 +1,13 @@
+{
+  "schema": "s12.stage_w.command_receipt.v2",
+  "command": "S12_RUN_SLOW=1 python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_3000_twenty_ms_calls_match_one_shot_sixty_seconds -q",
+  "started_at": "2026-08-26T23:21:36Z",
+  "ended_at": "2026-08-26T23:22:19Z",
+  "pid": 8764,
+  "exit_code": 0,
+  "result": "1 passed in 42.26s; 3000 x 20 ms equals one 60 s block stream",
+  "stdout_log": "tasks/reports/runtime/s12-stage-w/logs/slow_3000_current.stdout.log",
+  "stdout_log_sha256": "3116b6dd4f9398f2376a8024bcbfe8757a22f2fd4a5a1e90dc4338422a0ec65a",
+  "stderr_log": "tasks/reports/runtime/s12-stage-w/logs/slow_3000_current.stderr.log",
+  "scope": "persistent engine state equivalence; no R1 or human qualification claim"
+}
