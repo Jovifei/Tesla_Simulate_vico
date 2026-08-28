@@ -90,5 +90,4 @@ route fields, invalid path/bank relationships, stale schedules, nonpositive
 or duplicate queue sequences, unsorted queues, invalid arrival ordering, and
 non-numeric fractional-delay histories without mutating live state.
 
-New correction commit SHA: recorded in the parent-agent handoff after the
-clean commit is created; no other project artifacts are in scope.
+New correction implementation commit SHA: `ead8553`.
