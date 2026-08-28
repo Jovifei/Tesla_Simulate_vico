@@ -12,6 +12,7 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import read_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w import bakeoff as bakeoff_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+    resume_hellcat_bakeoff,
     run_hellcat_bakeoff,
     validate_bakeoff_manifest,
 )
@@ -128,3 +129,66 @@ def test_bakeoff_validator_requires_case_files_and_nested_scene_inventory(tmp_pa
     manifest["files"]["bakeoff_results.json"] = hashlib.sha256(results_path.read_bytes()).hexdigest()
     (nested / "bakeoff_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     assert any("nested" in error for error in validate_bakeoff_manifest(nested))
+
+
+def test_resume_bakeoff_defers_manifest_and_preserves_verified_cases(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    first = resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    preserved = (root / "P1" / "hot_idle_20s" / "raw_source.wav").read_bytes()
+    shutil.rmtree(root / "P1" / "complete_cycle_60s")
+    (root / "P1" / "complete_cycle_60s").mkdir()
+    again = resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    assert first["status"] == again["status"] == "IN_PROGRESS"
+    assert (root / "P1" / "hot_idle_20s" / "raw_source.wav").read_bytes() == preserved
+    assert (root / "P1" / "complete_cycle_60s" / "sha256_manifest.json").is_file()
+    assert not (root / "bakeoff_manifest.json").exists()
+
+
+def test_resume_bakeoff_finalizes_only_after_all_architectures(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    for architecture in ("P1", "P2", "P2H", "P3"):
+        result = resume_hellcat_bakeoff(root, architecture, duration_s=0.20)
+        assert result["status"] == "IN_PROGRESS"
+        assert not (root / "bakeoff_manifest.json").exists()
+    final = resume_hellcat_bakeoff(root, "P5", duration_s=0.20)
+    assert final["status"] == "REFERENCE_TARGET_MISSING"
+    assert final["selected_architecture"] is None
+    assert validate_bakeoff_manifest(root) == []
+
+
+@pytest.mark.parametrize("mutator", ("incomplete_case", "duration", "long_window"))
+def test_resume_bakeoff_rejects_bad_state_without_overwrite(tmp_path, mutator) -> None:
+    root = tmp_path / "bakeoff"
+    if mutator == "incomplete_case":
+        case = root / "P1" / "hot_idle_20s"
+        case.mkdir(parents=True)
+        target = case / "raw_source.wav"
+        target.write_bytes(b"partial")
+        before = target.read_bytes()
+        with pytest.raises(ValueError, match="incomplete"):
+            resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+        assert target.read_bytes() == before
+        return
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20, long_window=False)
+    with pytest.raises(ValueError, match=mutator):
+        resume_hellcat_bakeoff(
+            root,
+            "P2",
+            duration_s=0.25 if mutator == "duration" else 0.20,
+            long_window=mutator == "long_window",
+        )
+
+
+def test_resume_candidate_uses_verified_p1_parent_without_rerender(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "bakeoff"
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    original = bakeoff_module._render_architecture
+
+    def no_parent_rerender(architecture, trace):
+        if architecture == "P1":
+            raise AssertionError("candidate resume must use verified P1 PCM")
+        return original(architecture, trace)
+
+    monkeypatch.setattr(bakeoff_module, "_render_architecture", no_parent_rerender)
+    result = resume_hellcat_bakeoff(root, "P2", duration_s=0.20)
+    assert result["status"] == "IN_PROGRESS"

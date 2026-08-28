@@ -5,7 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
+import shutil
+import tempfile
 import time
 from typing import Any
 import wave
@@ -170,13 +173,24 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
     return raw, post_ptr, monitor, diagnostics
 
 
-def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTrace, reference: np.ndarray | None = None) -> dict[str, Any]:
+def _write_case(
+    root: Path,
+    architecture: str,
+    scene: str,
+    trace: VehicleStateTrace,
+    reference: np.ndarray | None = None,
+    *,
+    parent_post_ptr: np.ndarray | None = None,
+) -> dict[str, Any]:
     case_root = root / architecture / scene
     case_root.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
     raw, post_ptr, monitor, diagnostics = _render_architecture(architecture, trace)
     elapsed = time.perf_counter() - start
-    parent_raw, parent_post, _, _ = _render_architecture("P1", trace)
+    if parent_post_ptr is not None:
+        parent_post = parent_post_ptr
+    else:
+        _, parent_post, _, _ = _render_architecture("P1", trace)
     case = {
         "vehicle_id": "hellcat",
         "scenario": scene,
@@ -274,6 +288,335 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path != root / "bakeoff_manifest.json"}
     write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
+
+
+_RESUME_ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P5")
+_RESUME_CASE_FILES = (
+    "raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json",
+    "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json",
+    "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json",
+)
+_RESUME_SCHEMA = "s12.stage_w.bakeoff_resume.v1"
+
+
+def _resume_root_id(root: Path) -> str:
+    return hashlib.sha256(str(root).encode("utf-8")).hexdigest()[:16]
+
+
+def _resume_checkpoint_path(root: Path) -> Path:
+    return root.parent / "checkpoints" / f"{root.name}-{_resume_root_id(root)}.resume.json"
+
+
+def _resume_finite(value: Any) -> bool:
+    if isinstance(value, dict):
+        return all(_resume_finite(item) for item in value.values())
+    if isinstance(value, list):
+        return all(_resume_finite(item) for item in value)
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return math.isfinite(float(value))
+    return True
+
+
+def _load_or_initialize_resume_checkpoint(root: Path, duration_s: float, long_window: bool) -> tuple[Path, dict[str, Any]]:
+    if not np.isfinite(duration_s) or duration_s < 0.20:
+        raise ValueError("duration_s must be finite and >= 0.20")
+    if type(long_window) is not bool:
+        raise ValueError("long_window must be a bool")
+    checkpoint_path = _resume_checkpoint_path(root)
+    root_id = _resume_root_id(root)
+    if checkpoint_path.is_file():
+        try:
+            checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"invalid resume checkpoint: {exc}") from exc
+        if not isinstance(checkpoint, dict) or not _resume_finite(checkpoint):
+            raise ValueError("invalid resume checkpoint")
+        if checkpoint.get("schema_version") != _RESUME_SCHEMA:
+            raise ValueError("invalid resume checkpoint schema")
+        stored_root = checkpoint.get("canonical_root", checkpoint.get("root"))
+        stored_root_id = checkpoint.get("canonical_root_id", checkpoint.get("root_id"))
+        if stored_root != str(root) or stored_root_id != root_id:
+            raise ValueError("resume checkpoint root mismatch")
+        stored_duration = checkpoint.get("requested_duration_s", checkpoint.get("duration_s"))
+        if stored_duration != float(duration_s):
+            raise ValueError("resume checkpoint duration mismatch")
+        stored_long_window = checkpoint.get("long_window")
+        if type(stored_long_window) is not bool or stored_long_window is not long_window:
+            raise ValueError("resume checkpoint long_window mismatch")
+        if checkpoint.get("reference_status") != "REFERENCE_POINTER_ONLY":
+            raise ValueError("resume checkpoint reference mismatch")
+        if checkpoint.get("selected_architecture") is not None:
+            raise ValueError("resume checkpoint selection mismatch")
+        completed = checkpoint.get("completed_architectures", [])
+        if not isinstance(completed, list) or any(item not in _RESUME_ARCHITECTURES for item in completed) or len(set(completed)) != len(completed):
+            raise ValueError("invalid resume checkpoint completed_architectures")
+        return checkpoint_path, checkpoint
+    return checkpoint_path, {
+        "schema_version": _RESUME_SCHEMA,
+        "canonical_root": str(root),
+        "canonical_root_id": root_id,
+        "root": str(root),
+        "root_id": root_id,
+        "requested_duration_s": float(duration_s),
+        "duration_s": float(duration_s),
+        "long_window": bool(long_window),
+        "reference_status": "REFERENCE_POINTER_ONLY",
+        "reference_id": None,
+        "selected_architecture": None,
+        "selection_eligible": False,
+        "status": "IN_PROGRESS",
+        "completed_architectures": [],
+    }
+
+
+def _write_resume_checkpoint_atomic(checkpoint_path: Path, checkpoint: dict[str, Any]) -> None:
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        handle, temporary_name = tempfile.mkstemp(
+            prefix=f".{checkpoint_path.name}.", suffix=".tmp", dir=checkpoint_path.parent
+        )
+        temporary_path = Path(temporary_name)
+        with os.fdopen(handle, "w", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(checkpoint, indent=2, ensure_ascii=False, sort_keys=True, allow_nan=False))
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary_path, checkpoint_path)
+        temporary_path = None
+    finally:
+        if temporary_path is not None:
+            try:
+                temporary_path.unlink()
+            except FileNotFoundError:
+                pass
+
+
+def _load_verified_case(case_root: Path, architecture: str, scene: str, expected_frame_count: int) -> dict[str, Any]:
+    try:
+        entries = {entry.name for entry in case_root.iterdir()}
+    except OSError as exc:
+        raise ValueError(f"incomplete case {architecture}/{scene}: {exc}") from exc
+    if entries != set(_RESUME_CASE_FILES):
+        raise ValueError(f"incomplete case {architecture}/{scene}: expected exact eleven-file inventory")
+
+    payloads: dict[str, Any] = {}
+    for filename in _RESUME_CASE_FILES[3:]:
+        path = case_root / filename
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"incomplete case {architecture}/{scene}: invalid {filename}") from exc
+        if not _resume_finite(payload):
+            raise ValueError(f"incomplete case {architecture}/{scene}: nonfinite {filename}")
+        payloads[filename] = payload
+
+    inner = payloads["sha256_manifest.json"]
+    if not isinstance(inner, dict) or set(inner) != set(_RESUME_CASE_FILES[:-1]):
+        raise ValueError(f"incomplete case {architecture}/{scene}: invalid inner SHA inventory")
+    for filename, expected_hash in inner.items():
+        try:
+            matches = isinstance(expected_hash, str) and sha256_file(case_root / filename) == expected_hash
+        except OSError:
+            matches = False
+        if not matches:
+            raise ValueError(f"incomplete case {architecture}/{scene}: SHA mismatch for {filename}")
+
+    try:
+        raw, raw_metadata = read_pcm24_wav(case_root / "raw_source.wav")
+        post_ptr, post_metadata = read_pcm24_wav(case_root / "post_ptr_raw.wav")
+        monitor, monitor_metadata = read_pcm24_wav(case_root / "monitor.wav")
+    except (OSError, ValueError, wave.Error, EOFError) as exc:
+        raise ValueError(f"incomplete case {architecture}/{scene}: invalid PCM artifact") from exc
+    metadata = (raw_metadata, post_metadata, monitor_metadata)
+    if any(item["sample_rate_hz"] != SAMPLE_RATE_HZ or item["channels"] != 2 or item["sample_width_bits"] != 24 for item in metadata):
+        raise ValueError(f"incomplete case {architecture}/{scene}: PCM format identity mismatch")
+    if any(item["clipping"] != 0 for item in metadata) or len({item["frames"] for item in metadata}) != 1:
+        raise ValueError(f"incomplete case {architecture}/{scene}: PCM frame identity mismatch")
+    if raw.shape[0] != expected_frame_count:
+        raise ValueError(f"incomplete case {architecture}/{scene}: duration/frame identity mismatch")
+
+    metrics = payloads["metrics.json"]
+    if not isinstance(metrics, dict) or metrics.get("architecture") != architecture or metrics.get("scene") != scene:
+        raise ValueError(f"incomplete case {architecture}/{scene}: architecture/scene identity mismatch")
+    if metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY":
+        raise ValueError(f"incomplete case {architecture}/{scene}: status/reference identity mismatch")
+    if metrics.get("selected_architecture") is not None:
+        raise ValueError(f"incomplete case {architecture}/{scene}: selection identity mismatch")
+    for key, audio in (("raw_metrics", raw), ("post_ptr_metrics", post_ptr), ("monitor_metrics", monitor)):
+        saved = metrics.get(key)
+        expected = {"peak": float(np.max(np.abs(audio))), "rms": float(np.sqrt(np.mean(np.square(audio))))}
+        if not isinstance(saved, dict) or set(saved) != set(expected):
+            raise ValueError(f"incomplete case {architecture}/{scene}: {key} identity mismatch")
+        try:
+            matches = all(math.isclose(float(saved[field]), expected[field], rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE) for field in expected)
+        except (TypeError, ValueError, OverflowError):
+            matches = False
+        if not matches:
+            raise ValueError(f"incomplete case {architecture}/{scene}: {key} identity mismatch")
+    if not isinstance(metrics.get("comparison"), dict):
+        raise ValueError(f"incomplete case {architecture}/{scene}: comparison identity mismatch")
+
+    state = payloads["state_trace.json"]
+    if not isinstance(state, dict) or state.get("sample_rate_hz") != STATE_RATE_HZ:
+        raise ValueError(f"incomplete case {architecture}/{scene}: state identity mismatch")
+    state_keys = ("time_s", "rpm", "load", "throttle", "acceleration_mps2")
+    if any(not isinstance(state.get(key), list) for key in state_keys):
+        raise ValueError(f"incomplete case {architecture}/{scene}: state/frame identity mismatch")
+    state_lengths = {len(state[key]) for key in state_keys}
+    if state_lengths != {expected_frame_count // BLOCK_SIZE}:
+        raise ValueError(f"incomplete case {architecture}/{scene}: state/frame identity mismatch")
+    latency = payloads["cpu_memory_latency.json"]
+    if not isinstance(latency, dict) or not isinstance(latency.get("render_seconds"), (int, float)) or isinstance(latency.get("render_seconds"), bool) or latency["render_seconds"] < 0.0:
+        raise ValueError(f"incomplete case {architecture}/{scene}: latency identity mismatch")
+
+    return {
+        "raw_sha256": sha256_file(case_root / "raw_source.wav"),
+        "post_ptr_sha256": sha256_file(case_root / "post_ptr_raw.wav"),
+        "monitor_sha256": sha256_file(case_root / "monitor.wav"),
+        "comparison": metrics["comparison"],
+        "render_seconds": float(latency["render_seconds"]),
+        "post_ptr_pcm": post_ptr,
+    }
+
+
+def _inspect_architecture(root: Path, architecture: str, duration_s: float, long_window: bool) -> dict[str, Any]:
+    architecture_root = root / architecture
+    if not architecture_root.exists():
+        return {"complete": False, "scenes": {}}
+    if not architecture_root.is_dir():
+        raise ValueError(f"incomplete architecture: {architecture}")
+    try:
+        children = list(architecture_root.iterdir())
+    except OSError as exc:
+        raise ValueError(f"incomplete architecture: {architecture}") from exc
+    if any(child.name not in SCENES for child in children):
+        raise ValueError(f"incomplete architecture: {architecture} has an unexpected scene")
+    scenes: dict[str, Any] = {}
+    for scene in SCENES:
+        case_root = architecture_root / scene
+        if not case_root.exists():
+            continue
+        if not case_root.is_dir():
+            raise ValueError(f"incomplete case {architecture}/{scene}: not a directory")
+        try:
+            if not any(case_root.iterdir()):
+                continue
+        except OSError as exc:
+            raise ValueError(f"incomplete case {architecture}/{scene}: {exc}") from exc
+        duration = scene_duration_s(scene, duration_s, long_window=long_window)
+        state_count = max(2, int(round(duration * STATE_RATE_HZ)))
+        scenes[scene] = _load_verified_case(case_root, architecture, scene, state_count * BLOCK_SIZE)
+    return {"complete": len(scenes) == len(SCENES), "scenes": scenes}
+
+
+def _write_case_atomic(
+    root: Path,
+    architecture: str,
+    scene: str,
+    trace: VehicleStateTrace,
+    expected_frame_count: int,
+    parent_post_ptr: np.ndarray | None,
+) -> dict[str, Any]:
+    checkpoint_dir = _resume_checkpoint_path(root).parent
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    staging_root = Path(tempfile.mkdtemp(prefix=f".{root.name}-{_resume_root_id(root)}-{architecture}-", dir=checkpoint_dir))
+    target = root / architecture / scene
+    try:
+        _write_case(staging_root, architecture, scene, trace, None, parent_post_ptr=parent_post_ptr)
+        staged_case = staging_root / architecture / scene
+        _load_verified_case(staged_case, architecture, scene, expected_frame_count)
+        if target.exists():
+            if not target.is_dir():
+                raise ValueError(f"incomplete case {architecture}/{scene}: target is not a directory")
+            try:
+                if any(target.iterdir()):
+                    raise ValueError(f"incomplete case {architecture}/{scene}: target became non-empty")
+                target.rmdir()
+            except OSError as exc:
+                raise ValueError(f"incomplete case {architecture}/{scene}: target cannot be replaced") from exc
+        target.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(staged_case, target)
+        return _load_verified_case(target, architecture, scene, expected_frame_count)
+    finally:
+        shutil.rmtree(staging_root, ignore_errors=True)
+
+
+def _finalize_bakeoff_from_verified_cases(root: Path, infos: dict[str, Any], duration_s: float, long_window: bool) -> dict[str, Any]:
+    if any(not infos[architecture]["complete"] for architecture in _RESUME_ARCHITECTURES):
+        raise ValueError("cannot finalize incomplete bake-off")
+    architectures: dict[str, Any] = {name: dict(record) for name, record in PLACEHOLDER_RECORDS.items()}
+    for architecture in _RESUME_ARCHITECTURES:
+        architectures[architecture] = {"status": "RENDERED", "scenes": {}}
+        for scene in SCENES:
+            record = infos[architecture]["scenes"][scene]
+            architectures[architecture]["scenes"][scene] = {
+                key: record[key] for key in ("raw_sha256", "post_ptr_sha256", "monitor_sha256", "comparison", "render_seconds")
+            }
+    scene_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
+    block_aligned_duration_s = max(2, int(round(max(scene_durations.values()) * STATE_RATE_HZ))) / STATE_RATE_HZ
+    status = "REFERENCE_TARGET_MISSING"
+    reference_status = "REFERENCE_POINTER_ONLY"
+    result = {
+        "schema_version": "s12.stage_w.bakeoff.v1", "status": status, "scope": PLACEHOLDER_SCOPE,
+        "reference_status": reference_status, "requested_duration_s": float(duration_s), "long_window": bool(long_window),
+        "scene_duration_s": scene_durations, "block_aligned_duration_s": block_aligned_duration_s,
+        "selected_architecture": None, "architectures": architectures,
+    }
+    write_json(root / "bakeoff_results.json", result)
+    write_json(root / "parent_candidate_metrics.json", _parent_candidate_metrics(architectures, status, reference_status))
+    write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
+    write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": status})
+    write_json(root / "rejected_architectures.json", {"status": status, "reference_status": reference_status, "selected_architecture": None, "rejected": ["P4", "P6"]})
+    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path != root / "bakeoff_manifest.json"}
+    write_json(root / "bakeoff_manifest.json", {
+        "schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": status, "reference_status": reference_status,
+        "selected_architecture": None, "requested_duration_s": float(duration_s), "long_window": bool(long_window),
+        "scene_duration_s": scene_durations, "block_aligned_duration_s": block_aligned_duration_s, "files": files,
+    })
+    errors = validate_bakeoff_manifest(root)
+    if errors:
+        raise ValueError(f"finalized bake-off failed validation: {errors}")
+    return result
+
+
+def resume_hellcat_bakeoff(output_root: str | Path, architecture: str, duration_s: float = 8.0, *, long_window: bool = False) -> dict[str, Any]:
+    """Recover one synthetic no-reference Hellcat architecture with an external checkpoint."""
+    if architecture not in _RESUME_ARCHITECTURES:
+        raise ValueError(f"unsupported resume architecture: {architecture}")
+    root = Path(output_root).resolve()
+    if root.exists() and not root.is_dir():
+        raise ValueError(f"bake-off root is not a directory: {root}")
+    root.mkdir(parents=True, exist_ok=True)
+    checkpoint_path, checkpoint = _load_or_initialize_resume_checkpoint(root, duration_s, long_window)
+    infos = {name: _inspect_architecture(root, name, duration_s, long_window) for name in _RESUME_ARCHITECTURES}
+    if architecture != "P1" and not infos["P1"]["complete"]:
+        raise ValueError("candidate resume requires fully verified P1")
+    parent_by_scene = {scene: record["post_ptr_pcm"] for scene, record in infos["P1"]["scenes"].items()}
+    for scene in SCENES:
+        if scene in infos[architecture]["scenes"]:
+            continue
+        duration = scene_duration_s(scene, duration_s, long_window=long_window)
+        state_count = max(2, int(round(duration * STATE_RATE_HZ)))
+        trace = build_hellcat_bakeoff_trace(scene, duration)
+        infos[architecture]["scenes"][scene] = _write_case_atomic(
+            root, architecture, scene, trace, state_count * BLOCK_SIZE,
+            parent_by_scene.get(scene) if architecture != "P1" else None,
+        )
+    infos = {name: _inspect_architecture(root, name, duration_s, long_window) for name in _RESUME_ARCHITECTURES}
+    completed = [name for name in _RESUME_ARCHITECTURES if infos[name]["complete"]]
+    checkpoint["completed_architectures"] = completed
+    checkpoint["status"] = "REFERENCE_TARGET_MISSING" if len(completed) == len(_RESUME_ARCHITECTURES) else "IN_PROGRESS"
+    _write_resume_checkpoint_atomic(checkpoint_path, checkpoint)
+    if len(completed) == len(_RESUME_ARCHITECTURES):
+        return _finalize_bakeoff_from_verified_cases(root, infos, duration_s, long_window)
+    if any((root / filename).exists() for filename in (*SUMMARY_FILES, "bakeoff_manifest.json")):
+        raise ValueError("partial bake-off summaries exist before all architectures are complete")
+    return {
+        "schema_version": _RESUME_SCHEMA, "status": "IN_PROGRESS", "scope": PLACEHOLDER_SCOPE,
+        "reference_status": "REFERENCE_POINTER_ONLY", "requested_duration_s": float(duration_s),
+        "long_window": bool(long_window), "selected_architecture": None, "completed_architectures": completed,
+    }
 
 
 def validate_bakeoff_manifest(root: str | Path) -> list[str]:
@@ -692,4 +1035,4 @@ def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path, 
     return {"schema_version": "s12.stage_w.bakeoff_summary_receipt.v1", "status": result["status"], "reference_status": result["reference_status"], "selection_eligible": result["selected_architecture"] is not None, "files": {name: sha256_file(output / name) for name in SUMMARY_FILES}}
 
 
-__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "run_hellcat_bakeoff", "scene_duration_s", "validate_bakeoff_manifest"]
+__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "resume_hellcat_bakeoff", "run_hellcat_bakeoff", "scene_duration_s", "validate_bakeoff_manifest"]
