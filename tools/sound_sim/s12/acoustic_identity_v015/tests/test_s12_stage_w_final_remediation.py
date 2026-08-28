@@ -687,3 +687,37 @@ def test_engine_records_block_boundary_click_metrics_and_monitor_state() -> None
     assert {"max_boundary_jump", "normalized_rms_boundary", "threshold", "passed"} <= set(metrics)
     assert np.isfinite(metrics["max_boundary_jump"])
     assert block.monitor_pcm.shape == block.raw_pcm.shape
+
+
+def test_afterfire_readback_reports_exact_and_emitted_arrival_without_early_pcm() -> None:
+    import copy
+    import numpy as np
+    from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+
+    config = load_config("hellcat_v1")
+    config["afterfire"]["ignition_delay_s"]["value"] = 0.025
+    silent = copy.deepcopy(config)
+    silent["afterfire"]["gain"]["value"] = 0.0
+    high = {"rpm": np.array([6200.0]), "load": np.array([0.90]), "throttle": np.array([0.95]), "acceleration_mps2": np.array([0.0])}
+    lift = {"rpm": np.array([5800.0]), "load": np.array([0.55]), "throttle": np.array([0.02]), "acceleration_mps2": np.array([-8.0])}
+    engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+    control = PersistentEventDomainEngine(silent, 48000, 960, path_model="waveguide_v1")
+    engine.process(high)
+    control.process(high)
+    output = [engine.process(lift).raw_pcm]
+    baseline = [control.process(lift).raw_pcm]
+    for _ in range(14):
+        output.append(engine.process(lift).raw_pcm)
+        baseline.append(control.process(lift).raw_pcm)
+
+    route = engine.diagnostics()["afterfire_route"]
+    delta = np.concatenate(output, axis=0) - np.concatenate(baseline, axis=0)
+    nonzero = np.flatnonzero(np.max(np.abs(delta), axis=1) > 1.0e-10)
+
+    assert route["arrival_samples_exact"] % 1.0 != 0.0
+    assert route["arrival_sample_index"] == int(np.ceil(route["arrival_samples_exact"]))
+    assert route["arrival_samples"] + 1 == route["arrival_sample_index"]
+    assert nonzero.size > 0
+    assert nonzero[0] + 960 >= route["arrival_sample_index"]
+    assert nonzero[0] + 960 >= route["arrival_samples_exact"]

@@ -14,6 +14,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_w.waveguide import (
     WaveguideNetwork,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+from tools.sound_sim.s12.acoustic_identity_v015.event_domain.exhaust_path import sound_speed_mps
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
 
 
@@ -23,7 +24,7 @@ def test_waveguide_reflection_is_stateful_across_block_boundaries() -> None:
     first[0] = 1.0
     output_a = guide.process(first)
     output_b = guide.process(np.zeros(16, dtype=np.float64))
-    assert np.max(np.abs(output_a)) > 0.0
+    assert np.max(np.abs(output_a)) == 0.0
     assert np.max(np.abs(output_b)) > 0.0
     assert guide.snapshot()["sample_counter"] == 32
 
@@ -35,7 +36,7 @@ def test_waveguide_one_shot_and_block_processing_match() -> None:
     expected = one.process(signal)
     many = StatefulWaveguide(WaveguideConfig(length_m=0.04, area_ratio=0.70, sample_rate_hz=48000))
     actual = np.concatenate([many.process(signal[index:index + 16]) for index in range(0, signal.size, 16)])
-    assert np.array_equal(expected, actual)
+    assert np.allclose(expected, actual, rtol=0.0, atol=1.0e-15)
 
 
 def test_waveguide_network_equal_and_unequal_headers_change_arrival_and_sha() -> None:
@@ -47,6 +48,54 @@ def test_waveguide_network_equal_and_unequal_headers_change_arrival_and_sha() ->
     assert hashlib.sha256(equal.left.tobytes()).hexdigest() != hashlib.sha256(unequal.left.tobytes()).hexdigest()
     assert equal.arrival_samples[0] == equal.arrival_samples[1]
     assert unequal.arrival_samples[0] != unequal.arrival_samples[1]
+
+
+def test_waveguide_half_sample_delay_reports_exact_arrival_without_zero_delay_leak() -> None:
+    sample_rate_hz = 48000
+    length_m = float(sound_speed_mps(700.0)) * 0.5 / sample_rate_hz
+    guide = StatefulWaveguide(WaveguideConfig(length_m=length_m, area_ratio=0.70, sample_rate_hz=sample_rate_hz))
+    signal = np.zeros(8, dtype=np.float64)
+    signal[0] = 1.0
+
+    output = guide.process(signal)
+
+    assert guide.delay_samples_exact == pytest.approx(0.5, abs=1.0e-12)
+    assert guide.delay_samples == 1
+    assert output[0] == 0.0
+    assert output[1] != 0.0
+
+
+def test_fractional_waveguide_block_split_matches_one_shot() -> None:
+    sample_rate_hz = 48000
+    length_m = float(sound_speed_mps(700.0)) * 3.5 / sample_rate_hz
+    signal = np.linspace(-1.0, 1.0, 137, dtype=np.float64)
+    one_shot = StatefulWaveguide(WaveguideConfig(length_m=length_m, sample_rate_hz=sample_rate_hz))
+    split = StatefulWaveguide(WaveguideConfig(length_m=length_m, sample_rate_hz=sample_rate_hz))
+
+    expected = one_shot.process(signal)
+    actual = np.concatenate([split.process(signal[index:index + 11]) for index in range(0, signal.size, 11)])
+
+    assert np.allclose(expected, actual, rtol=0.0, atol=1.0e-15)
+
+
+def test_fractional_waveguide_snapshot_and_reset_restore_stream_exactly() -> None:
+    sample_rate_hz = 48000
+    length_m = float(sound_speed_mps(700.0)) * 2.5 / sample_rate_hz
+    guide = StatefulWaveguide(WaveguideConfig(length_m=length_m, sample_rate_hz=sample_rate_hz))
+    first = np.linspace(0.0, 1.0, 23, dtype=np.float64)
+    second = np.linspace(-1.0, 0.0, 29, dtype=np.float64)
+
+    guide.process(first)
+    snapshot = copy.deepcopy(guide.snapshot())
+    expected = guide.process(second)
+    guide.restore(snapshot)
+    replay = guide.process(second)
+    guide.reset()
+    reset_output = guide.process(first)
+    fresh = StatefulWaveguide(WaveguideConfig(length_m=length_m, sample_rate_hz=sample_rate_hz)).process(first)
+
+    assert np.array_equal(expected, replay)
+    assert np.array_equal(reset_output, fresh)
 
 
 def test_persistent_engine_can_select_waveguide_v1_without_changing_delay_baseline() -> None:

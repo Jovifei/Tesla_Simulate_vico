@@ -35,27 +35,49 @@ class EngineAudioBlock:
 
 
 class _DelayLine:
-    def __init__(self, delay_samples: int, attenuation: float = 1.0) -> None:
-        self.delay_samples = max(0, int(delay_samples))
+    """Bounded persistent fractional delay used by non-waveguide paths."""
+
+    def __init__(self, delay_samples: float, attenuation: float = 1.0) -> None:
+        if not np.isfinite(delay_samples) or float(delay_samples) < 0.0:
+            raise ValueError("delay must be finite and non-negative")
+        self.delay_samples_exact = float(delay_samples)
+        self.delay_samples = int(np.ceil(self.delay_samples_exact))
         self.attenuation = float(attenuation)
-        self.history = np.zeros(self.delay_samples, dtype=np.float64)
+        self.history_length = max(1, self.delay_samples + 1)
+        self.history = np.zeros(self.history_length, dtype=np.float64)
+        self.sample_counter = 0
 
     def process(self, block: np.ndarray) -> np.ndarray:
         values = np.asarray(block, dtype=np.float64)
-        if self.delay_samples == 0:
-            return self.attenuation * values
         joined = np.concatenate((self.history, values))
-        output = joined[: values.size]
-        self.history = joined[-self.delay_samples :].copy()
+        positions = self.history_length + np.arange(values.size, dtype=np.float64) - self.delay_samples_exact
+        left = np.floor(positions).astype(np.int64)
+        fraction = positions - left
+        left_clipped = np.clip(left, 0, joined.size - 1)
+        right_clipped = np.clip(left + 1, 0, joined.size - 1)
+        output = joined[left_clipped] * (1.0 - fraction) + joined[right_clipped] * fraction
+        output[self.sample_counter + np.arange(values.size) < self.delay_samples] = 0.0
+        self.history = joined[-self.history_length :].copy()
+        self.sample_counter += values.size
         return self.attenuation * output
 
     def snapshot(self) -> dict[str, Any]:
-        return {"delay_samples": self.delay_samples, "attenuation": self.attenuation, "history": self.history.copy()}
+        return {"delay_samples": self.delay_samples, "delay_samples_exact": self.delay_samples_exact, "attenuation": self.attenuation, "history": self.history.copy(), "sample_counter": self.sample_counter}
 
     def restore(self, payload: Mapping[str, Any]) -> None:
-        if int(payload["delay_samples"]) != self.delay_samples:
+        if type(payload["delay_samples"]) is not int or payload["delay_samples"] != self.delay_samples:
             raise ValueError("delay-line topology differs from snapshot")
-        self.history = np.asarray(payload["history"], dtype=np.float64).copy()
+        if float(payload.get("delay_samples_exact", payload["delay_samples"])) != self.delay_samples_exact:
+            raise ValueError("delay-line topology differs from snapshot")
+        history = np.asarray(payload["history"], dtype=np.float64)
+        if history.shape != self.history.shape or not np.all(np.isfinite(history)):
+            raise ValueError("delay-line history topology differs from snapshot")
+        self.history = history.copy()
+        self.sample_counter = int(payload.get("sample_counter", 0))
+
+    def reset(self) -> None:
+        self.history.fill(0.0)
+        self.sample_counter = 0
 
 
 class _TransferIrFilter:
@@ -149,7 +171,7 @@ class PersistentEventDomainEngine:
         self._event_count = 0
         self._afterfire_event_count = 0
         self._afterfire_location_counts = {"primary": 0, "collector": 0, "bank_collector": 0, "central_collector": 0}
-        self._last_afterfire_route = {"route": "none", "path_id": None, "bank_id": None, "collector_pressure": 0.0, "arrival_samples": None}
+        self._last_afterfire_route = {"route": "none", "path_id": None, "bank_id": None, "collector_pressure": 0.0, "arrival_samples": None, "arrival_sample_index": None, "arrival_samples_exact": None}
         self._combustion_torque_event_count = 0
         self._omega_ripple_sum_sq = 0.0
         self._omega_ripple_sample_count = 0
@@ -157,11 +179,11 @@ class PersistentEventDomainEngine:
         speed = float(sound_speed_mps(temperature))
         lengths = list(unwrap(self.config, "per_path_primary_length_m"))
         attenuations = list(unwrap(self.config, "per_path_attenuation"))
-        self._path_lines = [_DelayLine(round(float(length) / speed * self.sample_rate_hz), float(attenuations[index])) for index, length in enumerate(lengths)]
-        collector_delay = round(float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz)
+        self._path_lines = [_DelayLine(float(length) / speed * self.sample_rate_hz, float(attenuations[index])) for index, length in enumerate(lengths)]
+        collector_delay = float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz
         collector_loss = float(unwrap(self.config, "collector_loss"))
         self._collector_lines = [_DelayLine(collector_delay, collector_loss) for _ in range(self.bank_count)]
-        central_delay = round(1.35 * float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz)
+        central_delay = 1.35 * float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz
         self._central_collector_line = _DelayLine(central_delay, min(1.0, collector_loss * 0.98))
         self._pending_combustion_torque = np.zeros(max(self.block_size * 2, int(round(0.10 * self.sample_rate_hz)) + 2), dtype=np.float64)
         self.waveguide_network = WaveguideNetwork(lengths, list(unwrap(self.config, "bank_assignment")), self.sample_rate_hz, temperature) if self.path_model == "waveguide_v1" else None
@@ -468,7 +490,8 @@ class PersistentEventDomainEngine:
         delay_s = float(unwrap(self.config, "afterfire.ignition_delay_s")) + 0.000001 * float(state["rpm"])
         if self.jitter_fraction:
             delay_s *= 1.0 + float(self._rng.uniform(-self.jitter_fraction, self.jitter_fraction))
-        delay_samples = max(0, int(round(delay_s * self.sample_rate_hz)))
+        delay_samples_exact = max(0.0, delay_s * self.sample_rate_hz)
+        delay_samples = int(round(delay_samples_exact))
         pressure_factor = self._pressure_to_energy(self._collector_pressure)
         energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"]))) * pressure_factor
         policy = self.afterfire_location_policy
@@ -481,21 +504,30 @@ class PersistentEventDomainEngine:
             return
         source_entity = self._afterfire_entity(phase)
         self._afterfire_sequence += 1
+        scheduled_sample_exact = self.sample_counter + delay_samples_exact
         scheduled_sample = self.sample_counter + delay_samples
-        path_delay = self.waveguide_network.guides[source_entity].delay_samples if self.waveguide_network is not None else self._path_lines[source_entity].delay_samples
+        path_line = self.waveguide_network.guides[source_entity] if self.waveguide_network is not None else self._path_lines[source_entity]
+        path_delay = path_line.delay_samples
+        path_delay_exact = path_line.delay_samples_exact
         if policy == "primary":
             path_id = f"primary_path_{source_entity}"
             bank_id = int(unwrap(self.config, "bank_assignment")[source_entity])
-            arrival = scheduled_sample + path_delay + self._collector_lines[bank_id].delay_samples
+            collector_delay = self._collector_lines[bank_id]
+            arrival_exact = scheduled_sample_exact + path_delay_exact + collector_delay.delay_samples_exact
+            arrival = scheduled_sample + path_delay + collector_delay.delay_samples
         elif policy == "bank_collector":
             bank_id = int(unwrap(self.config, "bank_assignment")[source_entity])
             path_id = f"bank_collector_{bank_id}"
-            arrival = scheduled_sample + self._collector_lines[bank_id].delay_samples
+            collector_delay = self._collector_lines[bank_id]
+            arrival_exact = scheduled_sample_exact + collector_delay.delay_samples_exact
+            arrival = scheduled_sample + collector_delay.delay_samples
         else:
             path_id = "central_collector"
             bank_id = None
+            arrival_exact = scheduled_sample_exact + self._central_collector_line.delay_samples_exact
             arrival = scheduled_sample + self._central_collector_line.delay_samples
-        self._afterfire_pending_events.append({"scheduled_sample": int(scheduled_sample), "sequence": self._afterfire_sequence, "energy": energy, "pressure_energy_factor": pressure_factor, "route": policy, "entity": source_entity, "bank_id": bank_id, "path_id": path_id, "arrival_samples": int(arrival), "collector_pressure": float(self._collector_pressure)})
+        arrival_sample_index = int(np.ceil(arrival_exact))
+        self._afterfire_pending_events.append({"scheduled_sample": int(scheduled_sample), "scheduled_sample_exact": float(scheduled_sample_exact), "sequence": self._afterfire_sequence, "energy": energy, "pressure_energy_factor": pressure_factor, "route": policy, "entity": source_entity, "bank_id": bank_id, "path_id": path_id, "arrival_samples": arrival_sample_index - 1, "arrival_sample_index": arrival_sample_index, "arrival_samples_exact": float(arrival_exact), "collector_pressure": float(self._collector_pressure)})
         self._afterfire_pending_events.sort(key=lambda event: (event["scheduled_sample"], event["sequence"]))
         self._afterfire_location_counts[policy] += 1
         if policy == "bank_collector":
