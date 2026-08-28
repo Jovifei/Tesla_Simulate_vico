@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from numbers import Real
 from typing import Any, Mapping
 
 import numpy as np
@@ -69,12 +70,16 @@ class _FractionalDelay:
     def _validate(self, payload: Mapping[str, Any]) -> tuple[np.ndarray, int]:
         if not isinstance(payload, Mapping):
             raise ValueError("waveguide delay topology differs from snapshot")
+        if set(payload) != {"samples", "delay_samples", "history", "sample_counter"}:
+            raise ValueError("waveguide delay fields differ from snapshot")
         try:
             samples = payload["samples"]
-            delay_samples = float(payload.get("delay_samples", samples))
+            if isinstance(payload["delay_samples"], (bool, np.bool_)) or not isinstance(payload["delay_samples"], Real):
+                raise ValueError
+            delay_samples = float(payload["delay_samples"])
             history = np.asarray(payload["history"], dtype=np.float64)
             sample_counter = payload["sample_counter"]
-        except (KeyError, TypeError, ValueError):
+        except (KeyError, TypeError, ValueError, OverflowError):
             raise ValueError("waveguide delay topology differs from snapshot") from None
         if type(samples) is not int or type(sample_counter) is not int:
             raise ValueError("waveguide delay topology differs from snapshot")
@@ -124,11 +129,17 @@ class _FrequencyLoss:
     def _validate(self, payload: Mapping[str, Any]) -> float:
         if not isinstance(payload, Mapping):
             raise ValueError("waveguide frequency-loss topology differs from snapshot")
+        if set(payload) != {"cutoff_hz", "sample_rate_hz", "state"}:
+            raise ValueError("waveguide frequency-loss fields differ from snapshot")
         try:
+            if isinstance(payload["cutoff_hz"], (bool, np.bool_)) or not isinstance(payload["cutoff_hz"], Real):
+                raise ValueError
             cutoff_hz = float(payload["cutoff_hz"])
             sample_rate_hz = payload["sample_rate_hz"]
+            if isinstance(payload["state"], (bool, np.bool_)) or not isinstance(payload["state"], Real):
+                raise ValueError
             state = float(payload["state"])
-        except (KeyError, TypeError, ValueError):
+        except (KeyError, TypeError, ValueError, OverflowError):
             raise ValueError("waveguide frequency-loss topology differs from snapshot") from None
         if type(sample_rate_hz) is not int:
             raise ValueError("waveguide frequency-loss topology differs from snapshot")
@@ -190,6 +201,8 @@ class StatefulWaveguide:
     def _validate_snapshot(self, snapshot: Mapping[str, Any]) -> dict[str, Any]:
         if not isinstance(snapshot, Mapping):
             raise ValueError("waveguide topology differs from snapshot")
+        if set(snapshot) != {"sample_counter", "forward", "round_trip", "frequency_loss"}:
+            raise ValueError("waveguide fields differ from topology")
         try:
             forward = self._forward._validate(snapshot["forward"])
             round_trip = self._round_trip._validate(snapshot["round_trip"])
@@ -235,8 +248,18 @@ class WaveguideNetwork:
         return {"bank_assignment": self.bank_assignment.tolist(), "bank_count": self.bank_count, "guides": [guide.snapshot() for guide in self.guides]}
 
     def restore(self, snapshot: Mapping[str, Any]) -> None:
+        validated = self._validate_snapshot(snapshot)
+        for guide, state in zip(self.guides, validated):
+            guide._forward.history, guide._forward.sample_counter = state["forward"]
+            guide._round_trip.history, guide._round_trip.sample_counter = state["round_trip"]
+            guide._frequency_loss.state = state["frequency_loss"]
+            guide.sample_counter = state["sample_counter"]
+
+    def _validate_snapshot(self, snapshot: Mapping[str, Any]) -> list[dict[str, Any]]:
         if not isinstance(snapshot, Mapping):
             raise ValueError("waveguide network topology differs from snapshot")
+        if set(snapshot) != {"bank_assignment", "bank_count", "guides"}:
+            raise ValueError("waveguide network fields differ from topology")
         bank_assignment = snapshot.get("bank_assignment")
         bank_count = snapshot.get("bank_count")
         if (
@@ -252,11 +275,7 @@ class WaveguideNetwork:
         if not isinstance(guide_states, list) or len(guide_states) != len(self.guides):
             raise ValueError("waveguide network topology differs from snapshot")
         validated = [guide._validate_snapshot(state) for guide, state in zip(self.guides, guide_states)]
-        for guide, state in zip(self.guides, validated):
-            guide._forward.history, guide._forward.sample_counter = state["forward"]
-            guide._round_trip.history, guide._round_trip.sample_counter = state["round_trip"]
-            guide._frequency_loss.state = state["frequency_loss"]
-            guide.sample_counter = state["sample_counter"]
+        return validated
 
     def reset(self) -> None:
         for guide in self.guides:

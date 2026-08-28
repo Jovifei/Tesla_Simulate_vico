@@ -31,9 +31,23 @@ class ReducedCfdTeacherResponse:
         return {"schema_version": "s12.stage_w.reduced_cfd_teacher_state.v1", "state": self._state.copy()}
 
     def restore(self, payload: Mapping[str, Any]) -> None:
-        if payload.get("schema_version") != "s12.stage_w.reduced_cfd_teacher_state.v1":
+        self._state = self._validate(payload)
+
+    def _validate(self, payload: Mapping[str, Any]) -> np.ndarray:
+        if not isinstance(payload, Mapping) or payload.get("schema_version") != "s12.stage_w.reduced_cfd_teacher_state.v1":
             raise ValueError("unsupported teacher response snapshot")
-        self._state = np.asarray(payload["state"], dtype=np.float64).copy()
+        if set(payload) != {"schema_version", "state"}:
+            raise ValueError("teacher response fields differ from topology")
+        try:
+            source = np.asarray(payload["state"])
+            if source.dtype.kind not in "fiu":
+                raise ValueError
+            state = np.asarray(source, dtype=np.float64)
+        except (KeyError, TypeError, ValueError):
+            raise ValueError("teacher response state differs from snapshot") from None
+        if state.shape != self._state.shape or not np.all(np.isfinite(state)):
+            raise ValueError("teacher response state differs from snapshot")
+        return state.copy()
 
     def diagnostics(self) -> dict[str, Any]:
         return {

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import deque
 import hashlib
+from numbers import Real
 from pathlib import Path
 import sys
 from typing import Any, Mapping
@@ -76,6 +77,8 @@ class StageWBoundaryAdapter:
     def _validate_snapshot(self, snapshot: Mapping[str, Any]) -> list[tuple[Any, dict[str, float], list[float], list[float]]]:
         if not isinstance(snapshot, Mapping):
             raise ValueError("frozen PTR snapshot topology differs")
+        if set(snapshot) != {"schema_version", "channels"}:
+            raise ValueError("frozen PTR snapshot fields differ")
         if snapshot.get("schema_version") != "s12.stage_w.frozen_ptr_state.v1":
             raise ValueError("unsupported frozen PTR snapshot")
         channels = snapshot.get("channels")
@@ -85,14 +88,26 @@ class StageWBoundaryAdapter:
         for adapter, state in zip(self.channels, channels):
             if not isinstance(state, Mapping):
                 raise ValueError("frozen PTR snapshot channel topology differs")
+            if set(state) != {"x0", "x1", "upstream", "downstream"}:
+                raise ValueError("frozen PTR snapshot channel fields differ")
             if not isinstance(state.get("upstream"), list) or not isinstance(state.get("downstream"), list):
                 raise ValueError("frozen PTR snapshot queue topology differs")
             try:
+                if isinstance(state["x0"], (bool, np.bool_)) or isinstance(state["x1"], (bool, np.bool_)) or not isinstance(state["x0"], Real) or not isinstance(state["x1"], Real):
+                    raise ValueError
                 x0 = float(state["x0"])
                 x1 = float(state["x1"])
-                upstream = [float(value) for value in state["upstream"]]
-                downstream = [float(value) for value in state["downstream"]]
-            except (KeyError, TypeError, ValueError):
+                upstream = []
+                for value in state["upstream"]:
+                    if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+                        raise ValueError
+                    upstream.append(float(value))
+                downstream = []
+                for value in state["downstream"]:
+                    if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+                        raise ValueError
+                    downstream.append(float(value))
+            except (KeyError, TypeError, ValueError, OverflowError):
                 raise ValueError("frozen PTR snapshot queue topology differs") from None
             if not np.isfinite([x0, x1, *upstream, *downstream]).all():
                 raise ValueError("frozen PTR snapshot queue topology differs")

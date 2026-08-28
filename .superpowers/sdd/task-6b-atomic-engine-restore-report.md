@@ -1,0 +1,67 @@
+# Task 6B: Atomic PersistentEventDomainEngine restore
+
+## Scope
+
+Only persistent engine/component restore validation and focused tests were
+changed. No metadata, evidence, receipts, Vault, Track-P, push, merge, PR, or
+full S12 artifacts were touched.
+
+## RED
+
+Command:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py -q --disable-warnings
+```
+
+Result: `6 failed, 13 passed, 1 skipped`.
+
+The failures reproduced partial mutation after late component corruption,
+accepted unexpected/missing active component state, and accepted bool,
+fractional, and negative delay-line sample counters.
+
+## GREEN
+
+Command:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py -q --disable-warnings
+```
+
+Result: `23 passed, 1 skipped`.
+
+Specified restore/component regression command:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings
+```
+
+Result: `116 passed, 1 skipped`.
+
+Compile check:
+
+```text
+python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_w
+```
+
+Result: pass.
+
+## Implemented guarantees
+
+- Complete top-level snapshot, scalar, array, mapping, counter, queue, and
+  topology validation runs before any live engine field is changed.
+- Active PTR, waveguide, and teacher component snapshots are required;
+  unexpected inactive component state is rejected.
+- Delay lines reject bool, fractional, negative, malformed, nonfinite, and
+  topology-mismatched counters/history without mutation.
+- Pending afterfire queues enforce event shape, finite values, capacity, and
+  sorted `(scheduled_sample, sequence)` order.
+- Valid snapshots preserve replay-equivalent state, including RNG and all
+  active component histories.
+
+## Review
+
+Commit: `fix(s12): make engine restore atomic`
+
+Status: ready for parent-agent review. No provider/device/release or formal
+qualification claim is made.

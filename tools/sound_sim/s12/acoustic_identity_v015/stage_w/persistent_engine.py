@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import copy
+from numbers import Integral, Real
 from typing import Any, Mapping
 
 import numpy as np
@@ -24,6 +25,43 @@ from .teacher_response import ReducedCfdTeacherResponse
 from .waveguide import WaveguideNetwork
 from .timbre_map import render_timbre_map
 from .click_contract import click_gate_contract
+
+
+def _finite_scalar(value: Any, label: str) -> float:
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+        raise ValueError(f"{label} must be a finite number")
+    try:
+        result = float(value)
+    except (TypeError, OverflowError):
+        raise ValueError(f"{label} must be a finite number") from None
+    if not np.isfinite(result):
+        raise ValueError(f"{label} must be a finite number")
+    return result
+
+
+def _counter(value: Any, label: str) -> int:
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, Integral) or int(value) < 0:
+        raise ValueError(f"{label} must be a non-negative integer")
+    return int(value)
+
+
+def _finite_array(value: Any, shape: tuple[int, ...], label: str) -> np.ndarray:
+    try:
+        source = np.asarray(value)
+        if source.dtype.kind not in "fiu":
+            raise ValueError
+        result = np.asarray(source, dtype=np.float64)
+    except (TypeError, ValueError):
+        raise ValueError(f"{label} must be a finite array") from None
+    if result.shape != shape or not np.all(np.isfinite(result)):
+        raise ValueError(f"{label} topology or values differ from snapshot")
+    return result.copy()
+
+
+def _mapping(value: Any, label: str) -> Mapping[str, Any]:
+    if not isinstance(value, Mapping):
+        raise ValueError(f"{label} must be a mapping")
+    return value
 
 
 @dataclass(frozen=True)
@@ -65,15 +103,25 @@ class _DelayLine:
         return {"delay_samples": self.delay_samples, "delay_samples_exact": self.delay_samples_exact, "attenuation": self.attenuation, "history": self.history.copy(), "sample_counter": self.sample_counter}
 
     def restore(self, payload: Mapping[str, Any]) -> None:
-        if type(payload["delay_samples"]) is not int or payload["delay_samples"] != self.delay_samples:
-            raise ValueError("delay-line topology differs from snapshot")
-        if float(payload.get("delay_samples_exact", payload["delay_samples"])) != self.delay_samples_exact:
-            raise ValueError("delay-line topology differs from snapshot")
-        history = np.asarray(payload["history"], dtype=np.float64)
-        if history.shape != self.history.shape or not np.all(np.isfinite(history)):
-            raise ValueError("delay-line history topology differs from snapshot")
+        history, sample_counter = self._validate(payload)
         self.history = history.copy()
-        self.sample_counter = int(payload.get("sample_counter", 0))
+        self.sample_counter = sample_counter
+
+    def _validate(self, payload: Mapping[str, Any]) -> tuple[np.ndarray, int]:
+        payload = _mapping(payload, "delay-line snapshot")
+        if set(payload) != {"delay_samples", "delay_samples_exact", "attenuation", "history", "sample_counter"}:
+            raise ValueError("delay-line snapshot fields differ from topology")
+        if type(payload.get("delay_samples")) is not int or payload["delay_samples"] != self.delay_samples:
+            raise ValueError("delay-line topology differs from snapshot")
+        exact = _finite_scalar(payload.get("delay_samples_exact"), "delay_samples_exact")
+        if exact != self.delay_samples_exact:
+            raise ValueError("delay-line topology differs from snapshot")
+        attenuation = _finite_scalar(payload.get("attenuation"), "attenuation")
+        if attenuation != self.attenuation:
+            raise ValueError("delay-line topology differs from snapshot")
+        history = _finite_array(payload.get("history"), self.history.shape, "delay-line history")
+        sample_counter = _counter(payload.get("sample_counter"), "delay-line sample_counter")
+        return history, sample_counter
 
     def reset(self) -> None:
         self.history.fill(0.0)
@@ -104,9 +152,18 @@ class _TransferIrFilter:
         return {"label": self.label, "state": self.state.copy()}
 
     def restore(self, payload: Mapping[str, Any]) -> None:
-        if str(payload["label"]) != self.label:
+        payload = _mapping(payload, "transfer IR snapshot")
+        if type(payload.get("label")) is not str or payload["label"] != self.label:
             raise ValueError("transfer IR topology differs from snapshot")
-        self.state = np.asarray(payload["state"], dtype=np.float64).copy()
+        self.state = self._validate_state(payload)
+
+    def _validate_state(self, payload: Mapping[str, Any]) -> np.ndarray:
+        payload = _mapping(payload, "transfer IR snapshot")
+        if set(payload) != {"label", "state"}:
+            raise ValueError("transfer IR snapshot fields differ from topology")
+        if type(payload.get("label")) is not str or payload["label"] != self.label:
+            raise ValueError("transfer IR topology differs from snapshot")
+        return _finite_array(payload.get("state"), self.state.shape, "transfer IR state")
 
 
 class PersistentEventDomainEngine:
@@ -636,46 +693,221 @@ class PersistentEventDomainEngine:
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
-        if snapshot.get("schema_version") != "s12.stage_w.persistent_engine_state.v1":
+        state = self._validate_restore_snapshot(snapshot)
+        self.sample_counter = state["sample_counter"]
+        self.pll.phase_rad, self.pll.omega_rad_s, self.pll.initialized, self.pll.sample_count = state["pll"]
+        self._pending_combustion_torque = state["pending_combustion_torque"]
+        for name in (
+            "last_rpm", "last_throttle", "last_load", "boost_state", "bov_state", "blower_phase", "turbo_phase",
+            "afterfire_fuel_reservoir", "afterfire_temperature", "collector_pressure", "monitor_gain_db",
+            "omega_ripple_sum_sq", "click_max_boundary_jump", "click_sum_sq", "timbre_inertia_state",
+        ):
+            setattr(self, f"_{name}", state[name])
+        for name in ("bov_event_count", "afterfire_cooldown_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
+            setattr(self, f"_{name}", state[name])
+        self._afterfire_location_counts = state["afterfire_location_counts"]
+        self._last_afterfire_route = state["afterfire_route"]
+        self._afterfire_pending_events = state["afterfire_pending_events"]
+        self._event_tails = state["event_tails"]
+        self._collector_event_tails = state["collector_event_tails"]
+        self._central_collector_event_tail = state["central_collector_event_tail"]
+        for line, (history, counter) in zip(self._path_lines, state["path_lines"]):
+            line.history, line.sample_counter = history, counter
+        for line, (history, counter) in zip(self._collector_lines, state["collector_lines"]):
+            line.history, line.sample_counter = history, counter
+        self._central_collector_line.history, self._central_collector_line.sample_counter = state["central_collector_line"]
+        self.afterfire_location_policy = state["afterfire_location_policy"]
+        self._last_output_sample = state["last_output_sample"]
+        self._parameter_consumption = state["parameter_consumption"]
+        self._parameter_fallbacks = state["parameter_fallbacks"]
+        self._click_contract = state["click_contract"]
+        self._click_threshold = float(self._click_contract["threshold"])
+        self._transfer_ir.state = state["transfer_ir"]
+        if self.ptr is not None:
+            for adapter, adapter_state, upstream, downstream in state["ptr"]:
+                adapter._x0, adapter._x1 = adapter_state["x0"], adapter_state["x1"]
+                adapter._upstream.clear(); adapter._upstream.extend(upstream)
+                adapter._downstream.clear(); adapter._downstream.extend(downstream)
+        if self.waveguide_network is not None:
+            for guide, guide_state in zip(self.waveguide_network.guides, state["waveguide"]):
+                guide._forward.history, guide._forward.sample_counter = guide_state["forward"]
+                guide._round_trip.history, guide._round_trip.sample_counter = guide_state["round_trip"]
+                guide._frequency_loss.state = guide_state["frequency_loss"]
+                guide.sample_counter = guide_state["sample_counter"]
+        if self.teacher_response is not None:
+            self.teacher_response._state = state["teacher_response"]
+        self._rng.bit_generator.state = state["rng_state"]
+
+    def _validate_restore_snapshot(self, snapshot: Mapping[str, Any]) -> dict[str, Any]:
+        required = {
+            "schema_version", "sample_counter", "pll", "pending_combustion_torque", "last_rpm", "last_throttle", "last_load",
+            "afterfire_fuel_reservoir", "afterfire_temperature", "afterfire_cooldown_remaining", "afterfire_pending_events",
+            "afterfire_sequence", "afterfire_dropped_events", "collector_pressure", "afterfire_pressure_energy_map", "event_count",
+            "afterfire_event_count", "afterfire_location_counts", "afterfire_route", "combustion_torque_event_count", "boost_state",
+            "bov_state", "bov_event_count", "blower_phase", "turbo_phase", "omega_ripple_sum_sq", "omega_ripple_sample_count",
+            "event_tails", "collector_event_tails", "central_collector_event_tail", "path_lines", "collector_lines", "central_collector_line",
+            "afterfire_location_policy", "monitor_gain_db", "last_output_sample", "click_max_boundary_jump", "click_sum_sq", "click_count",
+            "ptr", "waveguide", "teacher_response", "transfer_ir", "parameter_consumption", "parameter_fallbacks", "timbre_inertia_state",
+            "click_contract", "random_seed", "jitter_fraction", "rng_state",
+        }
+        snapshot = _mapping(snapshot, "persistent engine snapshot")
+        if set(snapshot) != required:
+            raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
+        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v1":
             raise ValueError("unsupported persistent engine snapshot")
-        self.sample_counter = int(snapshot["sample_counter"])
-        pll = snapshot["pll"]
-        self.pll.phase_rad = float(pll["phase_rad"]); self.pll.omega_rad_s = float(pll["omega_rad_s"]); self.pll.initialized = bool(pll["initialized"]); self.pll.sample_count = int(pll["sample_count"])
-        pending = np.asarray(snapshot["pending_combustion_torque"], dtype=np.float64)
-        if pending.ndim == 0:
-            migrated = np.zeros_like(self._pending_combustion_torque)
-            migrated[: self.block_size] = float(pending)
-            pending = migrated
-        if pending.shape != self._pending_combustion_torque.shape:
-            raise ValueError("pending combustion torque topology differs from snapshot")
-        self._pending_combustion_torque = pending.copy(); self._last_rpm = float(snapshot["last_rpm"]); self._last_throttle = float(snapshot["last_throttle"]); self._last_load = float(snapshot["last_load"]); self._boost_state = float(snapshot.get("boost_state", 0.0)); self._bov_state = float(snapshot.get("bov_state", 0.0)); self._bov_event_count = int(snapshot.get("bov_event_count", 0)); self._blower_phase = float(snapshot.get("blower_phase", 0.0)); self._turbo_phase = float(snapshot.get("turbo_phase", 0.0)); self._afterfire_fuel_reservoir = float(snapshot["afterfire_fuel_reservoir"]); self._afterfire_temperature = float(snapshot["afterfire_temperature"]); self._afterfire_cooldown_remaining = int(snapshot["afterfire_cooldown_remaining"]); self._event_count = int(snapshot["event_count"]); self._afterfire_event_count = int(snapshot["afterfire_event_count"]); self._afterfire_location_counts = dict(snapshot.get("afterfire_location_counts", {"primary": 0, "collector": 0})); self._last_afterfire_route = dict(snapshot.get("afterfire_route", self._last_afterfire_route)); self._combustion_torque_event_count = int(snapshot["combustion_torque_event_count"]); self._omega_ripple_sum_sq = float(snapshot.get("omega_ripple_sum_sq", 0.0)); self._omega_ripple_sample_count = int(snapshot.get("omega_ripple_sample_count", 0)); self._monitor_gain_db = float(snapshot["monitor_gain_db"])
-        self._afterfire_pending_events = copy.deepcopy(snapshot.get("afterfire_pending_events", [])); self._afterfire_sequence = int(snapshot.get("afterfire_sequence", 0)); self._afterfire_dropped_events = int(snapshot.get("afterfire_dropped_events", 0)); self._collector_pressure = float(snapshot.get("collector_pressure", 0.0)); self._last_output_sample = np.asarray(snapshot.get("last_output_sample", np.zeros(2)), dtype=np.float64).copy(); self._click_max_boundary_jump = float(snapshot.get("click_max_boundary_jump", 0.0)); self._click_sum_sq = float(snapshot.get("click_sum_sq", 0.0)); self._click_count = int(snapshot.get("click_count", 0))
-        if len(snapshot["path_lines"]) != len(self._path_lines):
-            raise ValueError("path line topology differs from snapshot")
-        if len(snapshot["collector_lines"]) != len(self._collector_lines):
-            raise ValueError("collector line topology differs from snapshot")
-        if len(snapshot["event_tails"]) != len(self._event_tails) or len(snapshot.get("collector_event_tails", self._collector_event_tails)) != len(self._collector_event_tails):
-            raise ValueError("event tail topology differs from snapshot")
-        self._event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot["event_tails"]]
-        self._collector_event_tails = [np.asarray(tail, dtype=np.float64).copy() for tail in snapshot.get("collector_event_tails", self._collector_event_tails)]
-        self._central_collector_event_tail = np.asarray(snapshot.get("central_collector_event_tail", self._central_collector_event_tail), dtype=np.float64).copy()
-        for line, saved in zip(self._path_lines, snapshot["path_lines"]): line.restore(saved)
-        for line, saved in zip(self._collector_lines, snapshot["collector_lines"]): line.restore(saved)
-        if snapshot.get("central_collector_line") is not None:
-            self._central_collector_line.restore(snapshot["central_collector_line"])
-        self.afterfire_location_policy = str(snapshot.get("afterfire_location_policy", self.afterfire_location_policy))
-        if self.ptr is not None and snapshot.get("ptr") is not None:
-            self.ptr.restore(snapshot["ptr"])
-        if self.waveguide_network is not None and snapshot.get("waveguide") is not None:
-            self.waveguide_network.restore(snapshot["waveguide"])
-        if self.teacher_response is not None and snapshot.get("teacher_response") is not None:
-            self.teacher_response.restore(snapshot["teacher_response"])
-        if snapshot.get("transfer_ir") is not None:
-            self._transfer_ir.restore(snapshot["transfer_ir"])
-        self._parameter_consumption = dict(snapshot.get("parameter_consumption", self._parameter_consumption))
-        self._parameter_fallbacks = copy.deepcopy(snapshot.get("parameter_fallbacks", self._parameter_fallbacks)); self._timbre_inertia_state = float(snapshot.get("timbre_inertia_state", 0.0))
-        if snapshot.get("rng_state") is not None:
-            self._rng.bit_generator.state = copy.deepcopy(snapshot["rng_state"])
+        sample_counter = _counter(snapshot["sample_counter"], "sample_counter")
+        pll = _mapping(snapshot["pll"], "PLL snapshot")
+        if set(pll) != {"phase_rad", "omega_rad_s", "initialized", "sample_count"}:
+            raise ValueError("PLL snapshot fields differ from topology")
+        phase = _finite_scalar(pll["phase_rad"], "PLL phase_rad")
+        omega = _finite_scalar(pll["omega_rad_s"], "PLL omega_rad_s")
+        if type(pll["initialized"]) is not bool:
+            raise ValueError("PLL initialized must be boolean")
+        pll_count = _counter(pll["sample_count"], "PLL sample_count")
+        if pll_count != sample_counter:
+            raise ValueError("PLL and engine sample counters differ")
+        pending_value = snapshot["pending_combustion_torque"]
+        try:
+            pending_array = np.asarray(pending_value)
+        except (TypeError, ValueError):
+            raise ValueError("pending combustion torque must be a finite array") from None
+        if pending_array.ndim == 0:
+            pending_scalar = _finite_scalar(pending_value, "pending combustion torque")
+            pending = np.zeros_like(self._pending_combustion_torque)
+            pending[: self.block_size] = pending_scalar
+        else:
+            pending = _finite_array(pending_value, self._pending_combustion_torque.shape, "pending combustion torque")
+        state: dict[str, Any] = {"sample_counter": sample_counter, "pll": (phase, omega, pll["initialized"], pll_count), "pending_combustion_torque": pending}
+        for name in ("last_rpm", "last_throttle", "last_load", "boost_state", "bov_state", "blower_phase", "turbo_phase", "afterfire_fuel_reservoir", "afterfire_temperature", "collector_pressure", "monitor_gain_db", "omega_ripple_sum_sq", "click_max_boundary_jump", "click_sum_sq", "timbre_inertia_state"):
+            state[name] = _finite_scalar(snapshot[name], name)
+        for name in ("bov_event_count", "afterfire_cooldown_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
+            state[name] = _counter(snapshot[name], name)
+        counts = _mapping(snapshot["afterfire_location_counts"], "afterfire location counts")
+        if set(counts) != {"primary", "collector", "bank_collector", "central_collector"}:
+            raise ValueError("afterfire location count topology differs")
+        state["afterfire_location_counts"] = {key: _counter(counts[key], f"afterfire location count {key}") for key in counts}
+        state["afterfire_route"] = self._validate_afterfire_route(snapshot["afterfire_route"])
+        pending_events = snapshot["afterfire_pending_events"]
+        if not isinstance(pending_events, list) or len(pending_events) > 64:
+            raise ValueError("afterfire queue capacity differs from topology")
+        state["afterfire_pending_events"] = [self._validate_afterfire_event(event) for event in pending_events]
+        if state["afterfire_pending_events"] != sorted(state["afterfire_pending_events"], key=lambda event: (event["scheduled_sample"], event["sequence"])):
+            raise ValueError("afterfire queue order differs from topology")
+        pressure_map = _mapping(snapshot["afterfire_pressure_energy_map"], "afterfire pressure map")
+        expected_map = {"version": "s12.stage_w.pressure_energy.v1", "pressure_source": "measured_collector_path", "mapping": "0.55+0.45*p/(p+0.20)", "provenance": "bounded_synthetic_engineering_mapping"}
+        if dict(pressure_map) != expected_map:
+            raise ValueError("afterfire pressure map differs from topology")
+        for name, expected_count in (("event_tails", len(self._event_tails)), ("collector_event_tails", len(self._collector_event_tails))):
+            tails = snapshot[name]
+            if not isinstance(tails, list) or len(tails) != expected_count:
+                raise ValueError(f"{name} topology differs from snapshot")
+            state[name] = [_finite_array(tail, self._event_tails[0].shape, name) for tail in tails]
+        state["central_collector_event_tail"] = _finite_array(snapshot["central_collector_event_tail"], self._central_collector_event_tail.shape, "central collector event tail")
+        for name, lines in (("path_lines", self._path_lines), ("collector_lines", self._collector_lines)):
+            saved = snapshot[name]
+            if not isinstance(saved, list) or len(saved) != len(lines):
+                label = "path line" if name == "path_lines" else "collector line"
+                raise ValueError(f"{label} topology differs from snapshot")
+            state[name] = [line._validate(item) for line, item in zip(lines, saved)]
+        state["central_collector_line"] = self._central_collector_line._validate(snapshot["central_collector_line"])
+        policy = snapshot["afterfire_location_policy"]
+        if policy not in {"primary", "collector", "bank_collector", "central_collector"}:
+            raise ValueError("afterfire location policy differs from topology")
+        state["afterfire_location_policy"] = policy
+        state["last_output_sample"] = _finite_array(snapshot["last_output_sample"], (2,), "last output sample")
+        state["ptr"] = self._validate_optional_component(snapshot["ptr"], self.ptr, "ptr")
+        state["waveguide"] = self._validate_optional_component(snapshot["waveguide"], self.waveguide_network, "waveguide")
+        state["teacher_response"] = self._validate_optional_component(snapshot["teacher_response"], self.teacher_response, "teacher response")
+        state["transfer_ir"] = self._transfer_ir._validate_state(snapshot["transfer_ir"])
+        consumption = _mapping(snapshot["parameter_consumption"], "parameter consumption")
+        if set(consumption) != {"collector_assignment", "transfer_ir", "crankpin_geometry", "rotor_geometry"} or any(type(value) is not bool for value in consumption.values()) or dict(consumption) != self._parameter_consumption:
+            raise ValueError("parameter consumption differs from topology")
+        state["parameter_consumption"] = dict(consumption)
+        fallbacks = _mapping(snapshot["parameter_fallbacks"], "parameter fallbacks")
+        if set(fallbacks) != set(self._parameter_fallbacks):
+            raise ValueError("parameter fallback topology differs")
+        for key, fallback in fallbacks.items():
+            fallback = _mapping(fallback, f"parameter fallback {key}")
+            if set(fallback) != {"value", "reason", "provenance"} or not isinstance(fallback["value"], str) or not isinstance(fallback["reason"], str) or not isinstance(fallback["provenance"], str):
+                raise ValueError("parameter fallback fields differ from topology")
+        if dict(fallbacks) != self._parameter_fallbacks:
+            raise ValueError("parameter fallback values differ from topology")
+        state["parameter_fallbacks"] = copy.deepcopy(dict(fallbacks))
+        contract = _mapping(snapshot["click_contract"], "click contract")
+        if set(contract) != set(self._click_contract) or any(contract[key] != self._click_contract[key] for key in contract if key != "threshold") or _finite_scalar(contract["threshold"], "click threshold") != self._click_threshold:
+            raise ValueError("click contract differs from topology")
+        state["click_contract"] = dict(contract)
+        if type(snapshot["random_seed"]) is not int or snapshot["random_seed"] != self.random_seed:
+            raise ValueError("random seed differs from topology")
+        jitter = _finite_scalar(snapshot["jitter_fraction"], "jitter_fraction")
+        if not 0.0 <= jitter <= 0.25 or jitter != self.jitter_fraction:
+            raise ValueError("jitter fraction differs from topology")
+        rng = np.random.default_rng(self.random_seed)
+        try:
+            rng.bit_generator.state = copy.deepcopy(snapshot["rng_state"])
+        except (TypeError, ValueError, KeyError, OverflowError):
+            raise ValueError("RNG state differs from topology") from None
+        state["rng_state"] = copy.deepcopy(rng.bit_generator.state)
+        return state
+
+    def _validate_optional_component(self, snapshot: Any, component: Any, name: str) -> Any:
+        if component is None:
+            if snapshot is not None:
+                raise ValueError(f"unexpected {name} component state")
+            return None
+        if snapshot is None:
+            raise ValueError(f"missing active {name} component state")
+        if name == "ptr":
+            return self.ptr._validate_snapshot(snapshot)
+        if name == "waveguide":
+            return self.waveguide_network._validate_snapshot(snapshot)
+        return self.teacher_response._validate(snapshot)
+
+    def _validate_afterfire_event(self, event: Any) -> dict[str, Any]:
+        event = _mapping(event, "afterfire event")
+        required = {"scheduled_sample", "scheduled_sample_exact", "sequence", "energy", "pressure_energy_factor", "route", "entity", "bank_id", "path_id", "arrival_samples", "arrival_sample_index", "arrival_samples_exact", "collector_pressure"}
+        if set(event) != required:
+            raise ValueError("afterfire event fields differ from topology")
+        result = dict(event)
+        for name in ("scheduled_sample", "sequence", "entity", "arrival_samples", "arrival_sample_index"):
+            result[name] = _counter(event[name], f"afterfire event {name}")
+        for name in ("scheduled_sample_exact", "energy", "pressure_energy_factor", "arrival_samples_exact", "collector_pressure"):
+            result[name] = _finite_scalar(event[name], f"afterfire event {name}")
+        if not isinstance(event["route"], str) or event["route"] not in {"primary", "collector", "bank_collector", "central_collector"}:
+            raise ValueError("afterfire event route differs from topology")
+        result["route"] = event["route"]
+        if result["entity"] >= self.entity_count:
+            raise ValueError("afterfire event entity differs from topology")
+        if event["bank_id"] is not None:
+            result["bank_id"] = _counter(event["bank_id"], "afterfire event bank_id")
+            if result["bank_id"] >= self.bank_count:
+                raise ValueError("afterfire event bank_id differs from topology")
+        if not isinstance(event["path_id"], str):
+            raise ValueError("afterfire event path_id differs from topology")
+        return result
+
+    def _validate_afterfire_route(self, route: Any) -> dict[str, Any]:
+        route = _mapping(route, "afterfire route")
+        allowed = {"route", "path_id", "bank_id", "collector_pressure", "arrival_samples", "arrival_sample_index", "arrival_samples_exact", "scheduled_sample", "scheduled_sample_exact", "sequence", "energy", "pressure_energy_factor", "entity"}
+        required = {"route", "path_id", "bank_id", "collector_pressure", "arrival_samples", "arrival_sample_index", "arrival_samples_exact"}
+        if not set(route) <= allowed or not required <= set(route):
+            raise ValueError("afterfire route fields differ from topology")
+        result = dict(route)
+        if not isinstance(route["route"], str) or route["route"] not in {"none", "primary", "collector", "bank_collector", "central_collector"}:
+            raise ValueError("afterfire route differs from topology")
+        for name in ("collector_pressure", "arrival_samples_exact"):
+            if name in route and route[name] is not None:
+                result[name] = _finite_scalar(route[name], f"afterfire route {name}")
+        for name in ("arrival_samples", "arrival_sample_index", "scheduled_sample", "sequence", "entity"):
+            if name in route and route[name] is not None:
+                result[name] = _counter(route[name], f"afterfire route {name}")
+        if route.get("path_id") is not None and not isinstance(route["path_id"], str):
+            raise ValueError("afterfire route path_id differs from topology")
+        if route.get("bank_id") is not None:
+            result["bank_id"] = _counter(route["bank_id"], "afterfire route bank_id")
+            if result["bank_id"] >= self.bank_count:
+                raise ValueError("afterfire route bank_id differs from topology")
+        return result
 
     def diagnostics(self) -> dict[str, Any]:
         return {

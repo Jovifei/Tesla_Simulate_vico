@@ -4,14 +4,17 @@ from __future__ import annotations
 
 import hashlib
 import os
+import copy
 import unittest
 
 import numpy as np
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.crank_phase_pll import CrankPhasePLL
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.event_scheduler import derive_event_phase_deg
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import (
+    _DelayLine,
     PersistentEventDomainEngine,
 )
 
@@ -61,6 +64,121 @@ def test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state() -> No
     engine.reset("hard")
     assert engine.sample_counter == 0
     assert engine.diagnostics()["afterfire_cooldown_remaining"] == 0
+
+
+def _assert_snapshot_equal(before: dict, after: dict) -> None:
+    assert before.keys() == after.keys()
+    for key in before:
+        left, right = before[key], after[key]
+        if isinstance(left, np.ndarray):
+            assert isinstance(right, np.ndarray)
+            assert np.array_equal(left, right)
+        elif isinstance(left, dict):
+            _assert_snapshot_equal(left, right)
+        elif isinstance(left, list):
+            assert len(left) == len(right)
+            for left_item, right_item in zip(left, right):
+                if isinstance(left_item, dict):
+                    _assert_snapshot_equal(left_item, right_item)
+                elif isinstance(left_item, np.ndarray):
+                    assert np.array_equal(left_item, right_item)
+                else:
+                    assert left_item == right_item
+        else:
+            assert left == right
+
+
+@pytest.mark.parametrize(
+    ("factory", "corrupt"),
+    (
+        (
+            lambda config: PersistentEventDomainEngine(config, 48000, 960),
+            lambda snapshot: snapshot["transfer_ir"]["state"].__setitem__(0, np.nan),
+        ),
+        (
+            lambda config: PersistentEventDomainEngine(config, 48000, 960, ptr_enabled=True),
+            lambda snapshot: snapshot["ptr"]["channels"][0]["upstream"].__setitem__(0, np.inf),
+        ),
+        (
+            lambda config: PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1"),
+            lambda snapshot: snapshot["waveguide"]["guides"][0]["forward"]["history"].__setitem__(0, np.nan),
+        ),
+        (
+            lambda config: PersistentEventDomainEngine(config, 48000, 960, path_model="reduced_cfd_teacher_v1"),
+            lambda snapshot: snapshot["teacher_response"]["state"].__setitem__(0, np.nan),
+        ),
+    ),
+)
+def test_restore_rejects_late_component_corruption_atomically(factory, corrupt) -> None:
+    engine = factory(load_config("hellcat_v1"))
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = copy.deepcopy(before)
+    corrupt(invalid)
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+@pytest.mark.parametrize(
+    "factory",
+    (
+        lambda config: PersistentEventDomainEngine(config, 48000, 960),
+        lambda config: PersistentEventDomainEngine(config, 48000, 960, ptr_enabled=True),
+        lambda config: PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1"),
+        lambda config: PersistentEventDomainEngine(config, 48000, 960, path_model="reduced_cfd_teacher_v1"),
+    ),
+)
+def test_restore_rejects_early_corruption_atomically_for_each_engine_topology(factory) -> None:
+    engine = factory(load_config("hellcat_v1"))
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = copy.deepcopy(before)
+    invalid["sample_counter"] = True
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+def test_restore_rejects_missing_or_unexpected_active_component_atomically() -> None:
+    config = load_config("hellcat_v1")
+    for engine, field, value in (
+        (PersistentEventDomainEngine(config, 48000, 960), "ptr", {"unexpected": True}),
+        (PersistentEventDomainEngine(config, 48000, 960, ptr_enabled=True), "ptr", None),
+        (PersistentEventDomainEngine(config, 48000, 960), "waveguide", {"unexpected": True}),
+        (PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1"), "waveguide", None),
+        (PersistentEventDomainEngine(config, 48000, 960), "teacher_response", {"unexpected": True}),
+        (PersistentEventDomainEngine(config, 48000, 960, path_model="reduced_cfd_teacher_v1"), "teacher_response", None),
+    ):
+        before = copy.deepcopy(engine.snapshot_state())
+        invalid = copy.deepcopy(before)
+        invalid[field] = value
+        with pytest.raises(ValueError):
+            engine.restore_state(invalid)
+        _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+@pytest.mark.parametrize("counter", (True, 1.5, -1))
+def test_delay_line_restore_rejects_invalid_sample_counter_without_mutating(counter) -> None:
+    line = _DelayLine(2.25)
+    line.process(np.arange(4, dtype=np.float64))
+    before = line.snapshot()
+    invalid = copy.deepcopy(before)
+    invalid["sample_counter"] = counter
+    with pytest.raises(ValueError):
+        line.restore(invalid)
+    assert np.array_equal(before["history"], line.history)
+    assert before["sample_counter"] == line.sample_counter
+
+
+def test_delay_line_restore_rejects_malformed_history_without_mutating() -> None:
+    line = _DelayLine(2.25)
+    line.process(np.arange(4, dtype=np.float64))
+    before = line.snapshot()
+    invalid = copy.deepcopy(before)
+    invalid["history"] = [0.0]
+    with pytest.raises(ValueError):
+        line.restore(invalid)
+    assert np.array_equal(before["history"], line.history)
+    assert before["sample_counter"] == line.sample_counter
 
 
 def test_restore_legacy_scalar_torque_snapshot_is_limited_to_one_block() -> None:
