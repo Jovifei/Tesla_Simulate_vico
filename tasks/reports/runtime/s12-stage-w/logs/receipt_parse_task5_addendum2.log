@@ -1,0 +1,5 @@
+{'schema': 's12.stage_w.final_remediation_evidence_receipt.v5', 'audio_generation_head': '5038194', 'validation_head': 'a87002b', 'metadata_head': '873148c', 'stage_w': 108, 'selection': None}
+COMMAND=literal receipt JSON parse
+START=2026-08-28T08:07:55.8441251+08:00
+END=2026-08-28T08:07:55.8994471+08:00
+EXIT=0

@@ -96,3 +96,26 @@ All times are Asia/Shanghai local time and all exits are process exits.
   `730 files/0 non-finite`; compileall and Track-P remain exit `0`. W9 stays
   historical-only for `24f2c41`; repo mirror remains
   `VAULT_SYNC_PENDING_PARENT_CODEX_MEMORY` and no Vault write occurred.
+
+### Addendum-2 final metadata closure
+
+- Authoritative identities: audio generation head `5038194`; validation/test
+  head `a87002b`; metadata parent `e5fb72e`; receipt post-metadata head
+  `48a7cb0`. Current roots and manifest hashes are v23/v23/v23 as recorded in
+  receipt v5; no v24 was generated.
+- Post-metadata Stage-W rerun: exact ten-file command in
+  `task5_stage_w_post_receipt.stdout.log`; `07:51:22.4499458`–
+  `08:06:46.0000000`, PID `31288`, exit `0`, `108 passed, 1 skipped`.
+- Current focused remediation: `52 passed` at `07:47:31.8145218`–
+  `07:47:52.9567758`, PID `3744`, exit `0`; the requested `47 passed` is
+  retained as the pre-addendum baseline in docs, with five new timing/offset
+  tests included in the current count.
+- Current Stage-W docs show the required post-metadata baseline `103 passed,
+  1 skipped`; the report and receipt retain the actual closure rerun count
+  `108 passed, 1 skipped`. Slow gate remains `1 passed in 92.50s`.
+- Receipt parse: `08:07:55.8441251`–`08:07:55.8994471`, exit `0`, schema v5,
+  audio `5038194`, validation `a87002b`, receipt metadata parent `873148c`,
+  Stage-W `108`, selection `None`.
+- Final receipt-head Track-P/diff: verified receipt head `48a7cb0`,
+  `08:08:06.3415528`–`08:08:07.2084287`, exit `0`, `180` frozen files/
+  `2` symbols, stdout SHA `cc4546a921f5306fabda4505c190f5c4cd8021ca1f62c3296b0c295bc16274a7`, diff `0`.
