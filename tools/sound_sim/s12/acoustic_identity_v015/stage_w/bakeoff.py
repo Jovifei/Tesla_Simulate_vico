@@ -203,7 +203,7 @@ def _parent_candidate_metrics(architectures: dict[str, Any], status: str, refere
         }
         for architecture in ("P2", "P2H", "P3", "P5")
     }
-    return {"schema_version": "s12.stage_w.parent_candidate_metrics.v1", "status": status, "reference_status": reference_status, "selection_eligible": False, "parent": parent, "architectures": candidates}
+    return {"schema_version": "s12.stage_w.parent_candidate_metrics.v1", "status": status, "reference_status": reference_status, "selected_architecture": None, "selection_eligible": False, "parent": parent, "architectures": candidates}
 
 
 def _ablation_results(architectures: dict[str, Any], status: str, reference_status: str) -> dict[str, Any]:
@@ -218,7 +218,7 @@ def _ablation_results(architectures: dict[str, Any], status: str, reference_stat
         }
         for name, (left, right) in pairs.items()
     }
-    return {"schema_version": "s12.stage_w.ablation_results.v1", "status": status, "reference_status": reference_status, "selection_eligible": False, "ablations": ablations}
+    return {"schema_version": "s12.stage_w.ablation_results.v1", "status": status, "reference_status": reference_status, "selected_architecture": None, "selection_eligible": False, "ablations": ablations}
 
 
 def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, reference: np.ndarray | None = None, *, long_window: bool = False) -> dict[str, Any]:
@@ -244,9 +244,9 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     write_json(root / "parent_candidate_metrics.json", _parent_candidate_metrics(architectures, status, reference_status))
     write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
-    write_json(root / "rejected_architectures.json", {"status": result["status"], "rejected": ["P4", "P6"] if reference is None else []})
+    write_json(root / "rejected_architectures.json", {"status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "rejected": ["P4", "P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
-    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
+    write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
 
 
@@ -279,6 +279,9 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             except (OverflowError, TypeError, ValueError):
                 return False
         return True
+
+    def finite_number(value: Any) -> bool:
+        return isinstance(value, (int, float)) and not isinstance(value, bool) and finite(value)
 
     def load_json(path: Path, label: str) -> Any:
         try:
@@ -349,7 +352,9 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
         ("R2_DIAGNOSTIC_READY", "EXTERNAL_R2_POINTER"),
     }:
         errors.append("manifest_status_reference")
-    if manifest.get("selected_architecture") is not None:
+    if "selected_architecture" not in manifest:
+        errors.append("selection_missing:manifest")
+    elif manifest["selected_architecture"] is not None:
         errors.append("manifest_selection")
 
     expected_files = {
@@ -399,7 +404,9 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             errors.append(f"status:{name}")
         if "reference_status" in state and state.get("reference_status") != manifest_reference:
             errors.append(f"reference_status:{name}")
-        if state.get("selected_architecture") is not None:
+        if "selected_architecture" not in state:
+            errors.append(f"selection_missing:{name}")
+        elif state["selected_architecture"] is not None:
             errors.append(f"selection:{name}")
         if name in {"parent_candidate_metrics.json", "ablation_results.json"} and state.get("selection_eligible") is not False:
             errors.append(f"selection_eligible:{name}")
@@ -501,8 +508,12 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                     value = latency.get(field)
                     if value is not None and (not isinstance(value, (int, float)) or isinstance(value, bool) or not finite(value) or value < 0.0):
                         errors.append(f"{latency_label}/{field}")
-            if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY" or metrics.get("selected_architecture") is not None:
+            if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != manifest_status or metrics.get("reference_status") != manifest_reference:
                 errors.append(f"identity_gate:{case_label}")
+            if "selected_architecture" not in metrics:
+                errors.append(f"selection_missing:{case_label}")
+            elif metrics["selected_architecture"] is not None:
+                errors.append(f"selection:{case_label}")
             expected_audio = {
                 "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))))},
                 "post_ptr_metrics": {"peak": float(np.max(np.abs(post))), "rms": float(np.sqrt(np.mean(np.square(post))))},
@@ -580,6 +591,8 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             expected_difference = mapping_at(result_record, "comparison").get("parent_candidate_difference_rms")
             if "parent_candidate_difference_rms" not in candidate:
                 errors.append(f"parent_candidate_difference_missing:{architecture}/{scene}")
+            elif not finite_number(expected_difference) or not finite_number(candidate["parent_candidate_difference_rms"]):
+                errors.append(f"parent_candidate_difference_invalid:{architecture}/{scene}")
             else:
                 compare_values(candidate["parent_candidate_difference_rms"], expected_difference, f"parent_candidate_difference:{architecture}/{scene}")
 

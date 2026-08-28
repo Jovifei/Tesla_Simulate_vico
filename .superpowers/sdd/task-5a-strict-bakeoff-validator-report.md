@@ -94,3 +94,65 @@ takeover, per the explicit finalization instruction.
 Status at finalization: source/test/report are ready for the requested local
 commit only; formal Stage-W qualification, architecture selection, R1, and
 full-S12 status remain unchanged and unclaimed.
+
+## Review addendum closure (2026-08-28)
+
+The follow-up review required exact R2 identity handling, explicit selection
+fields, finite parent-candidate differences, and one tamper test for every
+listed class. The root causes were confirmed before the production change:
+
+```text
+python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py
+......F.FFFF..FF........                                                 [100%]
+7 failed, 17 passed in 128.34s (0:02:08)
+process exit code: 1
+```
+
+The seven RED failures were the legal R2 pair acceptance, missing selection
+fields in manifest/summary/case metrics, non-null selection, and result-side
+missing/null parent-candidate differences. The three newly found behavior
+classes were therefore observed failing before the corresponding validator
+changes.
+
+After the minimal fixes and complete tamper expansion:
+
+```text
+python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py
+........................                                                 [100%]
+24 passed in 128.61s (0:02:08)
+process exit code: 0
+```
+
+The required affected bakeoff/migration/remediation files then ran together:
+
+```text
+python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py
+.....................................................       [100%]
+66 passed in 765.50s (0:12:45)
+process exit code: 0
+```
+
+The earlier optional-reference concern is closed: case identity now compares
+exactly against the manifest's permitted pair, including
+`R2_DIAGNOSTIC_READY`/`EXTERNAL_R2_POINTER`. The remaining concern is that the
+validator intentionally depends on the repository
+`parameter_usage_matrix.json`; a replacement matrix remains an external
+contract boundary and was not in this review's scope.
+
+The post-review source/test/report commit is intentionally local only. No
+metadata, evidence roots, Vault, push, merge, PR, or full S12 execution was
+performed.
+
+## Final pre-commit verification
+
+After the report/test cleanup, the current Task5A module was rerun:
+
+```text
+python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py
+.......................                                                 [100%]
+24 passed in 127.11s (0:02:07)
+process exit code: 0
+```
+
+The affected three-file run remains the exact `66 passed in 765.50s`
+verification recorded above; no production source changed after that run.

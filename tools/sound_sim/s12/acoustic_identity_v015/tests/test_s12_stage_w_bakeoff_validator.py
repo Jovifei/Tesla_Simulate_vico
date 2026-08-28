@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import shutil
+import wave
 from pathlib import Path
 
 import pytest
@@ -73,6 +73,48 @@ def _rebind_root_file(root: Path, relative: str) -> None:
     _write_json(manifest_path, manifest)
 
 
+def _set_identity_pair(root: Path, status: str, reference_status: str) -> None:
+    manifest_path = root / "bakeoff_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["status"] = status
+    manifest["reference_status"] = reference_status
+    manifest["selected_architecture"] = None
+    _write_json(manifest_path, manifest)
+    for name in ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "rejected_architectures.json"):
+        path = root / name
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["status"] = status
+        payload["reference_status"] = reference_status
+        payload["selected_architecture"] = None
+        _write_json(path, payload)
+        _rebind_root_file(root, name)
+    selected = root / "selected_architecture.json"
+    payload = json.loads(selected.read_text(encoding="utf-8"))
+    payload["status"] = status
+    payload["selected_architecture"] = None
+    _write_json(selected, payload)
+    _rebind_root_file(root, "selected_architecture.json")
+    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+        for scene in ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s"):
+            metrics_path = root / architecture / scene / "metrics.json"
+            metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+            metrics["status"] = status
+            metrics["reference_status"] = reference_status
+            metrics["selected_architecture"] = None
+            _write_json(metrics_path, metrics)
+            _rebind_case(root, architecture, scene)
+
+
+def _tamper_pcm24_first_sample(path: Path) -> None:
+    with wave.open(str(path), "rb") as stream:
+        params = stream.getparams()
+        frames = stream.readframes(stream.getnframes())
+    tampered = b"\x00\x00\x80" + frames[3:]
+    with wave.open(str(path), "wb") as stream:
+        stream.setparams(params)
+        stream.writeframes(tampered)
+
+
 def test_validator_rejects_extra_outer_manifest_entries(
     bakeoff_fixture: Path, tmp_path: Path
 ) -> None:
@@ -84,6 +126,182 @@ def test_validator_rejects_extra_outer_manifest_entries(
     _write_json(root / "bakeoff_manifest.json", manifest)
 
     assert any("outer_manifest_extra:unexpected.json" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_missing_required_case_file(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    (root / "P1" / "steady_1200rpm" / "phase_trace.json").unlink()
+
+    assert any("missing_required:P1/steady_1200rpm/phase_trace.json" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_outer_sha_tamper(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    manifest_path = root / "bakeoff_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["P1/steady_1200rpm/raw_source.wav"] = "0" * 64
+    _write_json(manifest_path, manifest)
+
+    assert any("sha:P1/steady_1200rpm/raw_source.wav" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_per_case_sha_tamper(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    case = root / "P2" / "steady_1200rpm"
+    inner_path = case / "sha256_manifest.json"
+    inner = json.loads(inner_path.read_text(encoding="utf-8"))
+    inner["monitor.wav"] = "0" * 64
+    _write_json(inner_path, inner)
+    _rebind_root_file(root, "P2/steady_1200rpm/sha256_manifest.json")
+
+    assert any("case_manifest_sha:P2/steady_1200rpm" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_wav_clipping(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    case = root / "P3" / "gear_shift"
+    _tamper_pcm24_first_sample(case / "raw_source.wav")
+    _rebind_case(root, "P3", "gear_shift")
+
+    assert any("clipping:P3/gear_shift" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_raw_monitor_separation_tamper(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    case = root / "P5" / "full_load_acceleration"
+    shutil.copyfile(case / "raw_source.wav", case / "monitor.wav")
+    _rebind_case(root, "P5", "full_load_acceleration")
+
+    assert any("separation:P5/full_load_acceleration" in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_accepts_exact_r2_identity_pair(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    _set_identity_pair(root, "R2_DIAGNOSTIC_READY", "EXTERNAL_R2_POINTER")
+
+    assert validate_bakeoff_manifest(root) == []
+
+
+def test_validator_rejects_case_status_reference_mismatch(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "P2" / "steady_1200rpm" / "metrics.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["status"] = "R2_DIAGNOSTIC_READY"
+    payload["reference_status"] = "EXTERNAL_R2_POINTER"
+    _write_json(path, payload)
+    _rebind_case(root, "P2", "steady_1200rpm")
+
+    assert any("identity_gate:P2/steady_1200rpm" in error for error in validate_bakeoff_manifest(root))
+
+
+@pytest.mark.parametrize(
+    ("relative", "expected"),
+    [
+        ("bakeoff_manifest.json", "selection_missing:manifest"),
+        ("parent_candidate_metrics.json", "selection_missing:parent_candidate_metrics.json"),
+        ("P2/steady_1200rpm/metrics.json", "selection_missing:P2/steady_1200rpm"),
+    ],
+)
+def test_validator_rejects_missing_selection_fields(
+    bakeoff_fixture: Path, tmp_path: Path, relative: str, expected: str
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / relative
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload.pop("selected_architecture", None)
+    _write_json(path, payload)
+    if "/" in relative:
+        architecture, scene, _ = relative.split("/")
+        _rebind_case(root, architecture, scene)
+    elif relative != "bakeoff_manifest.json":
+        _rebind_root_file(root, relative)
+
+    assert any(expected in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_nonnull_selection_field(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "P2" / "steady_1200rpm" / "metrics.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["selected_architecture"] = "P2"
+    _write_json(path, payload)
+    _rebind_case(root, "P2", "steady_1200rpm")
+
+    assert any("selection:P2/steady_1200rpm" in error for error in validate_bakeoff_manifest(root))
+
+
+@pytest.mark.parametrize(
+    ("field", "expected"),
+    [("architecture", "nested_architecture_inventory"), ("scene", "nested_scene_inventory:P2")],
+)
+def test_validator_rejects_nested_inventory_tamper(
+    bakeoff_fixture: Path, tmp_path: Path, field: str, expected: str
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "bakeoff_results.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if field == "architecture":
+        payload["architectures"].pop("P4")
+    else:
+        payload["architectures"]["P2"]["scenes"].pop("steady_1200rpm")
+    _write_json(path, payload)
+    _rebind_root_file(root, "bakeoff_results.json")
+
+    assert any(expected in error for error in validate_bakeoff_manifest(root))
+
+
+@pytest.mark.parametrize("mode", ["missing", "null", "different"])
+def test_validator_rejects_invalid_parent_candidate_difference(
+    bakeoff_fixture: Path, tmp_path: Path, mode: str
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    result_path = root / "bakeoff_results.json"
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    candidate_result = result["architectures"]["P2"]["scenes"]["steady_1200rpm"]["comparison"]
+    candidate_path = root / "parent_candidate_metrics.json"
+    candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+    candidate_record = candidate["architectures"]["P2"]["steady_1200rpm"]
+    if mode == "missing":
+        candidate_result.pop("parent_candidate_difference_rms")
+    elif mode == "null":
+        candidate_result["parent_candidate_difference_rms"] = None
+    else:
+        candidate_result["parent_candidate_difference_rms"] = float(candidate_record["parent_candidate_difference_rms"]) + 1.0
+    _write_json(result_path, result)
+    _rebind_root_file(root, "bakeoff_results.json")
+
+    expected = "parent_candidate_difference_invalid:P2/steady_1200rpm" if mode != "different" else "parent_candidate_difference:P2/steady_1200rpm"
+    assert any(expected in error for error in validate_bakeoff_manifest(root))
+
+
+def test_validator_rejects_missing_candidate_difference_summary(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "parent_candidate_metrics.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["architectures"]["P2"]["steady_1200rpm"].pop("parent_candidate_difference_rms")
+    _write_json(path, payload)
+    _rebind_root_file(root, "parent_candidate_metrics.json")
+
+    assert any("parent_candidate_difference_missing:P2/steady_1200rpm" in error for error in validate_bakeoff_manifest(root))
+
 
 
 def test_validator_rejects_nonfinite_values_in_any_required_trace(
