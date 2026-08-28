@@ -948,6 +948,8 @@ class PersistentEventDomainEngine:
                 raise ValueError("empty afterfire route is malformed")
         elif any(route[key] is None for key in ("path_id", "arrival_samples", "arrival_sample_index", "arrival_samples_exact")):
             raise ValueError("afterfire route requires arrival fields")
+        elif any(route.get(key) is None for key in ("scheduled_sample", "scheduled_sample_exact", "energy", "pressure_energy_factor")):
+            raise ValueError("afterfire route requires complete schedule and energy fields")
         result["collector_pressure"] = _finite_scalar(route["collector_pressure"], "afterfire route collector_pressure")
         for name in ("arrival_samples_exact", "scheduled_sample_exact", "energy", "pressure_energy_factor"):
             if name in route and route[name] is not None:

@@ -295,6 +295,21 @@ def test_fractional_delay_rejects_bool_or_string_history_without_mutating(bad_va
     _assert_snapshot_equal(before, guide.snapshot())
 
 
+@pytest.mark.parametrize("field", ("scheduled_sample_exact", "energy", "pressure_energy_factor"))
+@pytest.mark.parametrize("form", ("missing", "null"))
+def test_restore_rejects_missing_or_null_last_afterfire_scalar_atomically(field, form) -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = _queued_afterfire_snapshot(engine)
+    if form == "missing":
+        invalid["afterfire_route"].pop(field)
+    else:
+        invalid["afterfire_route"][field] = None
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
 def test_restore_legacy_scalar_torque_snapshot_is_limited_to_one_block() -> None:
     engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
     snapshot = engine.snapshot_state()
