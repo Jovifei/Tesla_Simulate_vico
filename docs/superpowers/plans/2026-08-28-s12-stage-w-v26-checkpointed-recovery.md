@@ -194,5 +194,5 @@ feat(s12): add checkpointed bakeoff recovery
 ## Plan Review
 
 - Spec coverage: all user-authorized resume safety boundaries, partial-root handling, parent PCM binding, external checkpoint, atomic publishing, v26 continuation and final governed checks are covered.
-- Placeholder scan: no TODO/TBD or unbounded recovery behavior remains.
+- Placeholder scan: no unresolved markers or unbounded recovery behavior remains.
 - Interface consistency: existing full API is unchanged; new API is explicitly single-architecture and only returns standard final summaries after strict validation can succeed.
