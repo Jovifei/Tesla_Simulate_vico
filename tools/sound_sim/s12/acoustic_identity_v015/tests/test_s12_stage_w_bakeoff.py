@@ -293,3 +293,87 @@ def test_resume_promotes_verified_external_staging_after_empty_target_gap(tmp_pa
     assert resumed["status"] == "IN_PROGRESS"
     assert (target / "sha256_manifest.json").is_file()
     monkeypatch.setattr(bakeoff_module, "_render_architecture", original_render)
+
+
+def test_resume_rejects_rehashed_candidate_comparison_tamper_without_overwrite(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    resume_hellcat_bakeoff(root, "P2", duration_s=0.20)
+    case = root / "P2" / "hot_idle_20s"
+    metrics_path = case / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    metrics["comparison"]["parent_candidate_difference_rms"] += 1.0
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    inner_path = case / "sha256_manifest.json"
+    inner = json.loads(inner_path.read_text(encoding="utf-8"))
+    inner["metrics.json"] = hashlib.sha256(metrics_path.read_bytes()).hexdigest()
+    inner_path.write_text(json.dumps(inner), encoding="utf-8")
+    before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    checkpoint_path = bakeoff_module._resume_checkpoint_path(root)
+    checkpoint_before = checkpoint_path.read_bytes()
+    with pytest.raises(ValueError, match="parent_candidate_difference"):
+        resume_hellcat_bakeoff(root, "P2", duration_s=0.20)
+    assert {path: path.read_bytes() for path in root.rglob("*") if path.is_file()} == before
+    assert checkpoint_path.read_bytes() == checkpoint_before
+
+
+def test_resume_recovers_interrupted_finalization_transaction(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "bakeoff"
+    for architecture in ("P1", "P2", "P2H", "P3"):
+        resume_hellcat_bakeoff(root, architecture, duration_s=0.20)
+    original_replace = bakeoff_module.os.replace
+    moved = False
+
+    def interrupt_after_one_summary(source, destination):
+        nonlocal moved
+        destination_path = Path(destination)
+        if destination_path.parent == root and destination_path.name in bakeoff_module.SUMMARY_FILES:
+            if moved:
+                raise RuntimeError("simulated finalization interruption")
+            moved = True
+        return original_replace(source, destination)
+
+    monkeypatch.setattr(bakeoff_module.os, "replace", interrupt_after_one_summary)
+    with pytest.raises(RuntimeError, match="finalization interruption"):
+        resume_hellcat_bakeoff(root, "P5", duration_s=0.20)
+    assert moved
+    assert any((root / name).is_file() for name in bakeoff_module.SUMMARY_FILES)
+    assert bakeoff_module._resume_finalization_receipt_path(root).is_file()
+    monkeypatch.setattr(bakeoff_module.os, "replace", original_replace)
+    recovered = resume_hellcat_bakeoff(root, "P5", duration_s=0.20)
+    assert recovered["status"] == "REFERENCE_TARGET_MISSING"
+    assert bakeoff_module.validate_bakeoff_manifest(root) == []
+
+
+def test_resume_reports_cleanup_failure_and_retries_stale_stage(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "bakeoff"
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    target = root / "P1" / "complete_cycle_60s"
+    shutil.rmtree(target)
+    target.mkdir()
+    original_rmtree = bakeoff_module.shutil.rmtree
+
+    def fail_stage_cleanup(path, *args, **kwargs):
+        if Path(path).name.endswith(".stage"):
+            raise OSError("simulated cleanup failure")
+        return original_rmtree(path, *args, **kwargs)
+
+    monkeypatch.setattr(bakeoff_module.shutil, "rmtree", fail_stage_cleanup)
+    with pytest.raises(RuntimeError, match="staging cleanup"):
+        resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    stage_dirs = [path for path in (root.parent / "checkpoints").glob(".bakeoff-*") if path.is_dir()]
+    assert stage_dirs
+    monkeypatch.setattr(bakeoff_module.shutil, "rmtree", original_rmtree)
+    retried = resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    assert retried["status"] == "IN_PROGRESS"
+    assert not [path for path in (root.parent / "checkpoints").glob(".bakeoff-*") if path.is_dir()]
+
+
+def test_resume_rejects_boolean_duration_without_root_mutation(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(bakeoff_module, "_render_architecture", lambda *_: (_ for _ in ()).throw(AssertionError("rendered invalid duration")))
+    for duration in (True, False):
+        root = tmp_path / f"bakeoff-{duration}"
+        with pytest.raises(ValueError, match="duration"):
+            resume_hellcat_bakeoff(root, "P1", duration_s=duration)
+        assert not root.exists()
+        assert not (tmp_path / "checkpoints").exists()

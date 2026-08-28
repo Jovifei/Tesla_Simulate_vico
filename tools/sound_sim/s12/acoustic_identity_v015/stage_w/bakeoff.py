@@ -319,6 +319,10 @@ def _resume_finalization_staging_path(root: Path) -> Path:
     return _resume_checkpoint_dir(root) / f".{root.name}-{_resume_root_id(root)}-finalize.stage"
 
 
+def _resume_finalization_receipt_path(root: Path) -> Path:
+    return _resume_finalization_staging_path(root) / "transaction.json"
+
+
 def _resume_root_is_external(root: Path) -> bool:
     checkpoint_dir = _resume_checkpoint_dir(root)
     return checkpoint_dir == root or root in checkpoint_dir.parents
@@ -331,9 +335,27 @@ def _resume_preflight_layout(root: Path) -> None:
     if not root.is_dir():
         raise ValueError(f"bake-off root is not a directory: {root}")
     allowed = set(_RESUME_ARCHITECTURES)
-    for child in root.iterdir():
-        if child.name in SUMMARY_FILES or child.name == "bakeoff_manifest.json":
+    root_files = {child.name for child in root.iterdir() if child.is_file()}
+    owned_summary_files = False
+    if "bakeoff_manifest.json" in root_files:
+        try:
+            receipt = _load_finalization_receipt(root)
+        except ValueError:
+            receipt = None
+        if receipt is None or receipt.get("status") == "COMPLETED":
             raise ValueError("root summary/manifest exists; refusing to resume")
+        owned_summary_files = True
+    if root_files.intersection(SUMMARY_FILES):
+        try:
+            receipt = _load_finalization_receipt(root)
+        except ValueError:
+            receipt = None
+        if receipt is None:
+            raise ValueError("root summary/manifest exists without a valid finalization transaction")
+        owned_summary_files = True
+    for child in root.iterdir():
+        if owned_summary_files and child.name in (*SUMMARY_FILES, "bakeoff_manifest.json"):
+            continue
         if child.name not in allowed or not child.is_dir():
             raise ValueError(f"unexpected root file/directory: {child.name}")
 
@@ -365,6 +387,8 @@ def _resume_finite(value: Any) -> bool:
 
 
 def _load_or_initialize_resume_checkpoint(root: Path, duration_s: float, long_window: bool) -> tuple[Path, dict[str, Any]]:
+    if isinstance(duration_s, bool):
+        raise ValueError("duration_s must be finite and >= 0.20")
     if not np.isfinite(duration_s) or duration_s < 0.20:
         raise ValueError("duration_s must be finite and >= 0.20")
     if type(long_window) is not bool:
@@ -439,12 +463,49 @@ def _write_resume_checkpoint_atomic(checkpoint_path: Path, checkpoint: dict[str,
                 pass
 
 
+_FINALIZATION_TRANSACTION_SCHEMA = "s12.stage_w.bakeoff_finalization_transaction.v1"
+
+
+def _load_finalization_receipt(root: Path) -> dict[str, Any] | None:
+    receipt_path = _resume_finalization_receipt_path(root)
+    if not receipt_path.is_file():
+        return None
+    try:
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid finalization transaction receipt: {exc}") from exc
+    if not isinstance(receipt, dict) or not _resume_finite(receipt):
+        raise ValueError("invalid finalization transaction receipt")
+    if receipt.get("schema_version") != _FINALIZATION_TRANSACTION_SCHEMA:
+        raise ValueError("invalid finalization transaction schema")
+    if receipt.get("canonical_root") != str(root) or receipt.get("canonical_root_id") != _resume_root_id(root):
+        raise ValueError("finalization transaction root mismatch")
+    if receipt.get("status") not in {"PREPARED", "PUBLISHING", "VALIDATION_FAILED", "COMPLETED"}:
+        raise ValueError("invalid finalization transaction status")
+    expected_names = set((*SUMMARY_FILES, "bakeoff_manifest.json"))
+    staged_files = receipt.get("staged_files")
+    if not isinstance(staged_files, dict) or set(staged_files) != expected_names:
+        raise ValueError("invalid finalization transaction staged inventory")
+    published = receipt.get("published_files", [])
+    if not isinstance(published, list) or any(name not in expected_names for name in published) or len(set(published)) != len(published):
+        raise ValueError("invalid finalization transaction published inventory")
+    final_stage = _resume_finalization_staging_path(root)
+    if not final_stage.is_dir():
+        raise ValueError("finalization transaction stage missing")
+    for name, expected_hash in staged_files.items():
+        source = final_stage / name
+        if not isinstance(expected_hash, str) or not source.is_file() or sha256_file(source) != expected_hash:
+            raise ValueError(f"finalization transaction stage SHA mismatch: {name}")
+    return receipt
+
+
 def _load_verified_case(
     case_root: Path,
     architecture: str,
     scene: str,
     expected_frame_count: int,
     expected_trace: VehicleStateTrace,
+    parent_post_ptr: np.ndarray | None = None,
 ) -> dict[str, Any]:
     try:
         entries = {entry.name for entry in case_root.iterdir()}
@@ -511,6 +572,20 @@ def _load_verified_case(
             raise ValueError(f"incomplete case {architecture}/{scene}: {key} identity mismatch")
     if not isinstance(metrics.get("comparison"), dict):
         raise ValueError(f"incomplete case {architecture}/{scene}: comparison identity mismatch")
+    comparison_difference = metrics["comparison"].get("parent_candidate_difference_rms")
+    if architecture == "P1":
+        if comparison_difference != 0.0:
+            raise ValueError(f"incomplete case {architecture}/{scene}: parent_candidate_difference identity mismatch")
+    else:
+        if parent_post_ptr is None or parent_post_ptr.shape != post_ptr.shape:
+            raise ValueError(f"incomplete case {architecture}/{scene}: parent PCM identity mismatch")
+        recomputed_difference = float(np.sqrt(np.mean(np.square(parent_post_ptr - post_ptr))))
+        try:
+            matches_difference = math.isclose(float(comparison_difference), recomputed_difference, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE)
+        except (TypeError, ValueError, OverflowError):
+            matches_difference = False
+        if not matches_difference:
+            raise ValueError(f"incomplete case {architecture}/{scene}: parent_candidate_difference identity mismatch")
 
     state = payloads["state_trace.json"]
     if not isinstance(state, dict) or state.get("sample_rate_hz") != STATE_RATE_HZ:
@@ -573,7 +648,13 @@ def _load_verified_case(
     }
 
 
-def _inspect_architecture(root: Path, architecture: str, duration_s: float, long_window: bool) -> dict[str, Any]:
+def _inspect_architecture(
+    root: Path,
+    architecture: str,
+    duration_s: float,
+    long_window: bool,
+    parent_by_scene: dict[str, np.ndarray] | None = None,
+) -> dict[str, Any]:
     architecture_root = root / architecture
     if not architecture_root.exists():
         return {"complete": False, "scenes": {}}
@@ -600,18 +681,67 @@ def _inspect_architecture(root: Path, architecture: str, duration_s: float, long
         duration = scene_duration_s(scene, duration_s, long_window=long_window)
         state_count = max(2, int(round(duration * STATE_RATE_HZ)))
         expected_trace = build_hellcat_bakeoff_trace(scene, duration)
-        scenes[scene] = _load_verified_case(case_root, architecture, scene, state_count * BLOCK_SIZE, expected_trace)
+        parent_post_ptr = parent_by_scene.get(scene) if parent_by_scene is not None else None
+        scenes[scene] = _load_verified_case(case_root, architecture, scene, state_count * BLOCK_SIZE, expected_trace, parent_post_ptr)
     return {"complete": len(scenes) == len(SCENES), "scenes": scenes}
 
 
 def _resume_preflight_cases(root: Path, duration_s: float, long_window: bool, checkpoint_path: Path) -> dict[str, Any]:
-    infos = {name: _inspect_architecture(root, name, duration_s, long_window) for name in _RESUME_ARCHITECTURES}
+    p1_info = _inspect_architecture(root, "P1", duration_s, long_window)
+    parent_by_scene = {scene: record["post_ptr_pcm"] for scene, record in p1_info["scenes"].items()}
+    infos = {"P1": p1_info}
+    infos.update({name: _inspect_architecture(root, name, duration_s, long_window, parent_by_scene) for name in _RESUME_ARCHITECTURES if name != "P1"})
     if root.exists() and all(infos[name]["complete"] for name in _RESUME_ARCHITECTURES):
         # A case-complete root without its final manifest is only resumable when
         # it is the documented recovery state left by failed finalization.
         if not (checkpoint_path.is_file() and _resume_finalization_staging_path(root).is_dir()):
             raise ValueError("complete bake-off root must not be resumed")
     return infos
+
+
+def _remove_scene_stage(stage_root: Path, architecture: str, scene: str) -> None:
+    try:
+        shutil.rmtree(stage_root)
+    except OSError as exc:
+        raise RuntimeError(f"staging cleanup failed for {architecture}/{scene}") from exc
+    if stage_root.exists():
+        raise RuntimeError(f"staging cleanup failed for {architecture}/{scene}")
+
+
+def _cleanup_published_scene_stages(root: Path, infos: dict[str, Any], duration_s: float, long_window: bool) -> None:
+    parent_by_scene = {scene: record["post_ptr_pcm"] for scene, record in infos["P1"]["scenes"].items()}
+    for architecture in _RESUME_ARCHITECTURES:
+        for scene in infos[architecture]["scenes"]:
+            stage_root = _resume_staging_path(root, architecture, scene)
+            if not stage_root.exists():
+                continue
+            try:
+                stage_children = list(stage_root.iterdir())
+                empty_published_stage = not stage_children or (
+                    {child.name for child in stage_children} == {architecture}
+                    and stage_children[0].is_dir()
+                    and not any(stage_children[0].iterdir())
+                )
+                if empty_published_stage:
+                    _remove_scene_stage(stage_root, architecture, scene)
+                    continue
+            except OSError as exc:
+                raise ValueError(f"incomplete staging case {architecture}/{scene}; preserving it for diagnosis") from exc
+            duration = scene_duration_s(scene, duration_s, long_window=long_window)
+            expected_trace = build_hellcat_bakeoff_trace(scene, duration)
+            expected_frame_count = max(2, int(round(duration * STATE_RATE_HZ))) * BLOCK_SIZE
+            try:
+                _load_verified_case(
+                    stage_root / architecture / scene,
+                    architecture,
+                    scene,
+                    expected_frame_count,
+                    expected_trace,
+                    parent_by_scene.get(scene) if architecture != "P1" else None,
+                )
+            except ValueError as exc:
+                raise ValueError(f"incomplete staging case {architecture}/{scene}; preserving it for diagnosis") from exc
+            _remove_scene_stage(stage_root, architecture, scene)
 
 
 def _write_case_atomic(
@@ -637,13 +767,13 @@ def _write_case_atomic(
         except OSError as exc:
             raise ValueError(f"incomplete staging case {architecture}/{scene}; preserving it for diagnosis") from exc
         try:
-            _load_verified_case(staged_case, architecture, scene, expected_frame_count, expected_trace)
+            _load_verified_case(staged_case, architecture, scene, expected_frame_count, expected_trace, parent_post_ptr)
         except ValueError as exc:
             raise ValueError(f"incomplete staging case {architecture}/{scene}; preserving it for diagnosis") from exc
     else:
         staging_root.mkdir(parents=True, exist_ok=True)
         _write_case(staging_root, architecture, scene, trace, None, parent_post_ptr=parent_post_ptr)
-        _load_verified_case(staged_case, architecture, scene, expected_frame_count, expected_trace)
+        _load_verified_case(staged_case, architecture, scene, expected_frame_count, expected_trace, parent_post_ptr)
     if target.exists():
         if not target.is_dir():
             raise ValueError(f"incomplete case {architecture}/{scene}: target is not a directory")
@@ -655,8 +785,8 @@ def _write_case_atomic(
             raise ValueError(f"incomplete case {architecture}/{scene}: target cannot be replaced") from exc
     target.parent.mkdir(parents=True, exist_ok=True)
     os.replace(staged_case, target)
-    shutil.rmtree(staging_root, ignore_errors=True)
-    return _load_verified_case(target, architecture, scene, expected_frame_count, expected_trace)
+    _remove_scene_stage(staging_root, architecture, scene)
+    return _load_verified_case(target, architecture, scene, expected_frame_count, expected_trace, parent_post_ptr)
 
 
 def _atomic_copy_external(source: Path, target: Path, temporary_dir: Path) -> None:
@@ -675,6 +805,51 @@ def _atomic_copy_external(source: Path, target: Path, temporary_dir: Path) -> No
                 temporary_path.unlink()
             except FileNotFoundError:
                 pass
+
+
+def _recover_finalization_transaction(root: Path) -> dict[str, Any] | None:
+    receipt = _load_finalization_receipt(root)
+    if receipt is None:
+        return None
+    final_stage = _resume_finalization_staging_path(root)
+    expected_files = receipt["staged_files"]
+    published = set(receipt["published_files"])
+    for name, expected_hash in expected_files.items():
+        source = final_stage / name
+        target = root / name
+        if target.is_file():
+            if sha256_file(target) != expected_hash:
+                raise ValueError(f"finalization transaction root SHA mismatch: {name}")
+            published.add(name)
+            continue
+        if target.exists():
+            raise ValueError(f"finalization transaction target is not a file: {name}")
+        _atomic_copy_external(source, target, final_stage.parent)
+        published.add(name)
+        receipt["status"] = "PUBLISHING"
+        receipt["published_files"] = sorted(published)
+        _write_resume_checkpoint_atomic(_resume_finalization_receipt_path(root), receipt)
+    receipt["published_files"] = sorted(published)
+    errors = validate_bakeoff_manifest(root)
+    if errors:
+        for name in sorted(published):
+            target = root / name
+            try:
+                if target.is_file() and sha256_file(target) == expected_files[name]:
+                    target.unlink()
+            except OSError:
+                pass
+        receipt["status"] = "VALIDATION_FAILED"
+        receipt["published_files"] = []
+        _write_resume_checkpoint_atomic(_resume_finalization_receipt_path(root), receipt)
+        raise ValueError(f"finalized bake-off failed validation: {errors}")
+    receipt["status"] = "COMPLETED"
+    receipt["published_files"] = sorted(published)
+    _write_resume_checkpoint_atomic(_resume_finalization_receipt_path(root), receipt)
+    try:
+        return json.loads((root / "bakeoff_results.json").read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"finalization transaction result missing: {exc}") from exc
 
 
 def _finalize_bakeoff_from_verified_cases(root: Path, infos: dict[str, Any], duration_s: float, long_window: bool) -> dict[str, Any]:
@@ -716,30 +891,27 @@ def _finalize_bakeoff_from_verified_cases(root: Path, infos: dict[str, Any], dur
         "selected_architecture": None, "requested_duration_s": float(duration_s), "long_window": bool(long_window),
         "scene_duration_s": scene_durations, "block_aligned_duration_s": block_aligned_duration_s, "files": files,
     })
-
-    published: list[Path] = []
-    try:
-        for name in (*SUMMARY_FILES, "bakeoff_manifest.json"):
-            target = root / name
-            _atomic_copy_external(final_stage / name, target, final_stage.parent)
-            published.append(target)
-        errors = validate_bakeoff_manifest(root)
-        if errors:
-            raise ValueError(f"finalized bake-off failed validation: {errors}")
-    except Exception:
-        for path in published:
-            try:
-                path.unlink()
-            except FileNotFoundError:
-                pass
-        raise
-    return result
+    receipt = {
+        "schema_version": _FINALIZATION_TRANSACTION_SCHEMA,
+        "canonical_root": str(root),
+        "canonical_root_id": _resume_root_id(root),
+        "status": "PREPARED",
+        "staged_files": {name: sha256_file(final_stage / name) for name in (*SUMMARY_FILES, "bakeoff_manifest.json")},
+        "published_files": [],
+    }
+    _write_resume_checkpoint_atomic(_resume_finalization_receipt_path(root), receipt)
+    recovered = _recover_finalization_transaction(root)
+    if recovered is None:
+        raise RuntimeError("finalization transaction disappeared")
+    return recovered
 
 
 def resume_hellcat_bakeoff(output_root: str | Path, architecture: str, duration_s: float = 8.0, *, long_window: bool = False) -> dict[str, Any]:
     """Recover one synthetic no-reference Hellcat architecture with an external checkpoint."""
     if architecture not in _RESUME_ARCHITECTURES:
         raise ValueError(f"unsupported resume architecture: {architecture}")
+    if isinstance(duration_s, bool):
+        raise ValueError("duration_s must be finite and >= 0.20")
     if type(long_window) is not bool:
         raise ValueError("long_window must be a bool")
     try:
@@ -754,6 +926,10 @@ def resume_hellcat_bakeoff(output_root: str | Path, architecture: str, duration_
     _resume_preflight_layout(root)
     checkpoint_path, checkpoint = _load_or_initialize_resume_checkpoint(root, duration_s, long_window)
     infos = _resume_preflight_cases(root, duration_s, long_window, checkpoint_path)
+    _cleanup_published_scene_stages(root, infos, duration_s, long_window)
+    recovered = _recover_finalization_transaction(root)
+    if recovered is not None:
+        return recovered
     root.mkdir(parents=True, exist_ok=True)
     if architecture != "P1" and not infos["P1"]["complete"]:
         raise ValueError("candidate resume requires fully verified P1")
@@ -768,7 +944,10 @@ def resume_hellcat_bakeoff(output_root: str | Path, architecture: str, duration_
             root, architecture, scene, trace, state_count * BLOCK_SIZE, trace,
             parent_by_scene.get(scene) if architecture != "P1" else None,
         )
-    infos = {name: _inspect_architecture(root, name, duration_s, long_window) for name in _RESUME_ARCHITECTURES}
+    p1_info = _inspect_architecture(root, "P1", duration_s, long_window)
+    parent_by_scene = {scene: record["post_ptr_pcm"] for scene, record in p1_info["scenes"].items()}
+    infos = {"P1": p1_info}
+    infos.update({name: _inspect_architecture(root, name, duration_s, long_window, parent_by_scene) for name in _RESUME_ARCHITECTURES if name != "P1"})
     completed = [name for name in _RESUME_ARCHITECTURES if infos[name]["complete"]]
     checkpoint["completed_architectures"] = completed
     checkpoint["status"] = "REFERENCE_TARGET_MISSING" if len(completed) == len(_RESUME_ARCHITECTURES) else "IN_PROGRESS"
