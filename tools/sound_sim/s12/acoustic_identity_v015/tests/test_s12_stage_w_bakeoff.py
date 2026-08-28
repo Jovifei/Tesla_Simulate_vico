@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -192,3 +193,103 @@ def test_resume_candidate_uses_verified_p1_parent_without_rerender(tmp_path, mon
     monkeypatch.setattr(bakeoff_module, "_render_architecture", no_parent_rerender)
     result = resume_hellcat_bakeoff(root, "P2", duration_s=0.20)
     assert result["status"] == "IN_PROGRESS"
+
+
+def test_resume_rejects_root_summary_before_any_case_or_checkpoint_write(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    root.mkdir()
+    summary = root / "bakeoff_results.json"
+    summary.write_bytes(b"owner summary\n")
+    before = {path.relative_to(root).as_posix(): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    checkpoint_dir = root.parent / "checkpoints"
+    with pytest.raises(ValueError, match="root summary"):
+        resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    after = {path.relative_to(root).as_posix(): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    assert after == before
+    assert not checkpoint_dir.exists()
+    assert not (root / "P1").exists()
+
+
+def test_resume_rejects_root_named_checkpoints_before_creating_it(tmp_path) -> None:
+    root = tmp_path / "checkpoints"
+    with pytest.raises(ValueError, match="root-external"):
+        resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    assert not root.exists()
+    assert not (tmp_path / "checkpoints").exists()
+
+
+def test_resume_rejects_rehashed_state_or_scope_tamper_without_overwrite(tmp_path) -> None:
+    root = tmp_path / "bakeoff"
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    case = root / "P1" / "hot_idle_20s"
+    checkpoint_path = bakeoff_module._resume_checkpoint_path(root)
+    clean_files = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    clean_checkpoint = checkpoint_path.read_bytes()
+    for tamper in ("state", "scope"):
+        for path, content in clean_files.items():
+            path.write_bytes(content)
+        if tamper == "state":
+            state_path = case / "state_trace.json"
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            state["rpm"][0] += 1.0
+            state_path.write_text(json.dumps(state), encoding="utf-8")
+            error_match = "state"
+            changed_path = state_path
+        else:
+            metrics_path = case / "metrics.json"
+            metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+            metrics["scope"] = "tampered"
+            metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+            error_match = "scope"
+            changed_path = metrics_path
+        inner_path = case / "sha256_manifest.json"
+        inner = json.loads(inner_path.read_text(encoding="utf-8"))
+        inner[changed_path.name] = hashlib.sha256(changed_path.read_bytes()).hexdigest()
+        inner_path.write_text(json.dumps(inner), encoding="utf-8")
+        before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+        with pytest.raises(ValueError, match=error_match):
+            resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+        after = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+        assert after == before
+        assert checkpoint_path.read_bytes() == clean_checkpoint
+
+
+def test_resume_finalization_rolls_back_invalid_root_summaries(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "bakeoff"
+    for architecture in ("P1", "P2", "P2H", "P3"):
+        resume_hellcat_bakeoff(root, architecture, duration_s=0.20)
+    checkpoint_path = bakeoff_module._resume_checkpoint_path(root)
+    monkeypatch.setattr(bakeoff_module, "validate_bakeoff_manifest", lambda _: ["forced finalization failure"])
+    with pytest.raises(ValueError, match="finalized bake-off"):
+        resume_hellcat_bakeoff(root, "P5", duration_s=0.20)
+    for filename in (*bakeoff_module.SUMMARY_FILES, "bakeoff_manifest.json"):
+        assert not (root / filename).exists()
+    assert checkpoint_path.is_file()
+    assert any(path.is_dir() for path in checkpoint_path.parent.glob(".bakeoff-*"))
+
+
+def test_resume_promotes_verified_external_staging_after_empty_target_gap(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "bakeoff"
+    resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    target = root / "P1" / "complete_cycle_60s"
+    shutil.rmtree(target)
+    target.mkdir()
+    original_replace = bakeoff_module.os.replace
+
+    def stop_before_publish(source, destination):
+        if Path(destination) == target:
+            raise RuntimeError("simulated process stop after target gap")
+        return original_replace(source, destination)
+
+    monkeypatch.setattr(bakeoff_module.os, "replace", stop_before_publish)
+    with pytest.raises(RuntimeError, match="process stop"):
+        resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    staging_dirs = [path for path in (root.parent / "checkpoints").glob(".bakeoff-*") if path.is_dir()]
+    assert staging_dirs
+    monkeypatch.setattr(bakeoff_module.os, "replace", original_replace)
+    original_render = bakeoff_module._render_architecture
+    monkeypatch.setattr(bakeoff_module, "_render_architecture", lambda *_: (_ for _ in ()).throw(AssertionError("rerendered persisted stage")))
+    resumed = resume_hellcat_bakeoff(root, "P1", duration_s=0.20)
+    assert resumed["status"] == "IN_PROGRESS"
+    assert (target / "sha256_manifest.json").is_file()
+    monkeypatch.setattr(bakeoff_module, "_render_architecture", original_render)
