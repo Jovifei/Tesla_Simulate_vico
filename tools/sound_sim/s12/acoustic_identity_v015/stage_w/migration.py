@@ -104,7 +104,10 @@ def write_diagnostic_traces(case_root: Path, diagnostics: dict[str, Any]) -> Non
     if trace is None:
         unavailable = {"status": "NOT_AVAILABLE_LEGACY", "reason": "legacy renderer has no persistent event-domain state"}
         write_json(case_root / "phase_trace.json", unavailable)
-        write_json(case_root / "event_trace.json", unavailable)
+        # Keep the event-count contract present even for the legacy parent.
+        # The parent cannot emit event-domain afterfire, so its count is an
+        # explicit zero rather than an unavailable field.
+        write_json(case_root / "event_trace.json", unavailable | {"afterfire_event_count": [0]})
         write_json(case_root / "path_trace.json", unavailable)
         write_json(case_root / "gain_trace.json", unavailable)
         return

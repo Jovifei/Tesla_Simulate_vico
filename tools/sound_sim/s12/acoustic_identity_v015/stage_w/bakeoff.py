@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from pathlib import Path
 import time
 from typing import Any
+import wave
 
 import numpy as np
 
@@ -29,6 +31,7 @@ OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
+PCM24_METRIC_TOLERANCE = 1.0 / (1 << 23)
 
 
 def _block_click_metrics(audio: np.ndarray) -> dict[str, Any]:
@@ -179,7 +182,9 @@ def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTr
     diagnostic_summary = {key: value for key, value in diagnostics.items() if key != "frame_trace"}
     click_metrics = {"raw": _block_click_metrics(raw_reopened), "post_ptr": _block_click_metrics(post_reopened), "monitor": _block_click_metrics(monitor_reopened)}
     diagnostic_summary["click_metrics"] = click_metrics["raw"]
-    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "status": "REFERENCE_TARGET_MISSING", "reference_status": "REFERENCE_POINTER_ONLY", "selected_architecture": None, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw_reopened))), "rms": float(np.sqrt(np.mean(np.square(raw_reopened))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_reopened))), "rms": float(np.sqrt(np.mean(np.square(post_reopened))) )}, "monitor_metrics": {"peak": float(np.max(np.abs(monitor_reopened))), "rms": float(np.sqrt(np.mean(np.square(monitor_reopened))) )}, "click_metrics": click_metrics, "comparison": comparison, "diagnostics": diagnostic_summary})
+    case_status = "REFERENCE_TARGET_MISSING" if reference is None else "R2_DIAGNOSTIC_READY"
+    case_reference_status = "REFERENCE_POINTER_ONLY" if reference is None else "EXTERNAL_R2_POINTER"
+    write_json(case_root / "metrics.json", {"architecture": architecture, "scene": scene, "status": case_status, "reference_status": case_reference_status, "selected_architecture": None, "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction", "raw_metrics": {"peak": float(np.max(np.abs(raw_reopened))), "rms": float(np.sqrt(np.mean(np.square(raw_reopened))) )}, "post_ptr_metrics": {"peak": float(np.max(np.abs(post_reopened))), "rms": float(np.sqrt(np.mean(np.square(post_reopened))) )}, "monitor_metrics": {"peak": float(np.max(np.abs(monitor_reopened))), "rms": float(np.sqrt(np.mean(np.square(monitor_reopened))) )}, "click_metrics": click_metrics, "comparison": comparison, "diagnostics": diagnostic_summary})
     write_json(case_root / "cpu_memory_latency.json", {"render_seconds": elapsed, "cpu_status": "measured_wall_clock", "memory_bytes": None, "latency_contract": "offline source render"})
     files = {name: sha256_file(case_root / name) for name in ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json")}
     write_json(case_root / "sha256_manifest.json", files)
@@ -246,18 +251,22 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
 
 
 def validate_bakeoff_manifest(root: str | Path) -> list[str]:
+    """Fail closed on missing, tampered, inconsistent, or non-finite bake-off artifacts."""
     root = Path(root)
     manifest_path = root / "bakeoff_manifest.json"
     if not manifest_path.is_file():
         return ["bakeoff_manifest.json missing"]
+
     errors: list[str] = []
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return [f"bakeoff_manifest.json invalid:{exc}"]
-    required_state = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
-    case_files = ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json")
+    required_state = SUMMARY_FILES
+    case_files = (
+        "raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json",
+        "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json",
+        "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json",
+    )
     architectures = ("P1", "P2", "P2H", "P3", "P5")
+    all_architectures = {"P1", "P2", "P2H", "P3", "P4", "P5", "P6"}
+    candidates = {"P2", "P2H", "P3", "P5"}
 
     def finite(value: Any) -> bool:
         if isinstance(value, dict):
@@ -265,96 +274,324 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
         if isinstance(value, list):
             return all(finite(item) for item in value)
         if isinstance(value, (int, float)) and not isinstance(value, bool):
-            return bool(np.isfinite(value))
+            try:
+                return math.isfinite(float(value))
+            except (OverflowError, TypeError, ValueError):
+                return False
         return True
 
-    states: dict[str, dict[str, Any]] = {}
+    def load_json(path: Path, label: str) -> Any:
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            errors.append(f"invalid_json:{label}:{exc}")
+            return None
+        if not finite(value):
+            errors.append(f"nonfinite:{label}")
+        return value
+
+    def safe_relative(value: Any) -> bool:
+        if not isinstance(value, str) or not value:
+            return False
+        path = Path(value)
+        return bool(path.parts) and not path.is_absolute() and ".." not in path.parts and ":" not in path.parts[0]
+
+    def mapping_at(value: Any, *keys: str) -> dict[str, Any]:
+        for key in keys:
+            if not isinstance(value, dict):
+                return {}
+            value = value.get(key)
+        return value if isinstance(value, dict) else {}
+
+    def hash_matches(path: Path, expected: Any) -> bool:
+        if not path.is_file() or not isinstance(expected, str):
+            return False
+        try:
+            return sha256_file(path) == expected
+        except OSError:
+            return False
+
+    def compare_values(saved: Any, expected: Any, label: str) -> None:
+        if isinstance(expected, dict):
+            if not isinstance(saved, dict):
+                errors.append(f"metric_shape:{label}")
+                return
+            if set(saved) != set(expected):
+                errors.append(f"metric_inventory:{label}")
+                return
+            for key in expected:
+                compare_values(saved[key], expected[key], f"{label}/{key}")
+            return
+        if isinstance(expected, list):
+            if not isinstance(saved, list) or len(saved) != len(expected):
+                errors.append(f"metric_shape:{label}")
+                return
+            for index, (saved_item, expected_item) in enumerate(zip(saved, expected)):
+                compare_values(saved_item, expected_item, f"{label}/{index}")
+            return
+        if isinstance(expected, bool) or isinstance(expected, str) or expected is None:
+            if saved != expected:
+                errors.append(f"metric_value:{label}")
+            return
+        if not isinstance(saved, (int, float)) or isinstance(saved, bool) or not finite(saved):
+            errors.append(f"metric_value:{label}")
+            return
+        if not math.isclose(float(saved), float(expected), rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+            errors.append(f"metric_value:{label}")
+
+    manifest = load_json(manifest_path, "bakeoff_manifest.json")
+    if not isinstance(manifest, dict):
+        return errors or ["bakeoff_manifest.json must be an object"]
+    manifest_status = manifest.get("status")
+    manifest_reference = manifest.get("reference_status")
+    if (manifest_status, manifest_reference) not in {
+        ("REFERENCE_TARGET_MISSING", "REFERENCE_POINTER_ONLY"),
+        ("R2_DIAGNOSTIC_READY", "EXTERNAL_R2_POINTER"),
+    }:
+        errors.append("manifest_status_reference")
+    if manifest.get("selected_architecture") is not None:
+        errors.append("manifest_selection")
+
+    expected_files = {
+        f"{architecture}/{scene}/{filename}"
+        for architecture in architectures for scene in SCENES for filename in case_files
+    } | set(required_state)
+    manifest_files = manifest.get("files")
+    if not isinstance(manifest_files, dict):
+        errors.append("manifest_files_invalid")
+        manifest_files = {}
+    listed_files = set(manifest_files)
+    for relative in sorted(expected_files - listed_files):
+        errors.append(f"missing_required:{relative}")
+    for relative in sorted(listed_files - expected_files):
+        errors.append(f"outer_manifest_extra:{relative}")
+    actual_files = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*") if path.is_file() and path.name != "bakeoff_manifest.json"
+    }
+    for relative in sorted(actual_files - listed_files):
+        errors.append(f"outer_unlisted:{relative}")
+    for relative, expected in manifest_files.items():
+        if not safe_relative(relative):
+            errors.append(f"unsafe_path:{relative}")
+            continue
+        path = root / Path(relative)
+        if not path.is_file():
+            errors.append(f"missing:{relative}")
+        elif not hash_matches(path, expected):
+            errors.append(f"sha:{relative}")
+
+    states: dict[str, Any] = {}
     for name in required_state:
         path = root / name
         if not path.is_file():
             errors.append(f"missing_required:{name}")
             continue
-        try:
-            states[name] = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            errors.append(f"invalid_state:{name}:{exc}")
-    if manifest.get("status") != "REFERENCE_TARGET_MISSING": errors.append("manifest_status")
-    if manifest.get("reference_status") != "REFERENCE_POINTER_ONLY": errors.append("manifest_reference_status")
-    if manifest.get("selected_architecture") is not None: errors.append("manifest_selection")
+        states[name] = load_json(path, name)
+
     for name, state in states.items():
-        if state.get("status") != "REFERENCE_TARGET_MISSING": errors.append(f"status:{name}")
-        if state.get("reference_status") not in {None, "REFERENCE_POINTER_ONLY"}: errors.append(f"reference_status:{name}")
-        if state.get("selected_architecture") is not None: errors.append(f"selection:{name}")
-        if not finite(state): errors.append(f"nonfinite:{name}")
-
-    expected_files = {f"{architecture}/{scene}/{filename}" for architecture in architectures for scene in SCENES for filename in case_files} | set(required_state)
-    listed_files = set(manifest.get("files", {}))
-    for relative in sorted(expected_files - listed_files): errors.append(f"missing_required:{relative}")
-    for relative, expected in manifest.get("files", {}).items():
-        relative_path = Path(relative)
-        if relative_path.is_absolute() or ".." in relative_path.parts:
-            errors.append(f"unsafe_path:{relative}")
+        if not isinstance(state, dict):
+            errors.append(f"state_shape:{name}")
             continue
-        path = root / relative_path
-        if not path.is_file(): errors.append(f"missing:{relative}")
-        elif sha256_file(path) != expected: errors.append(f"sha:{relative}")
+        if name != "rejected_architectures" and state.get("status") != manifest_status:
+            errors.append(f"status:{name}")
+        elif name == "rejected_architectures" and state.get("status") != manifest_status:
+            errors.append(f"status:{name}")
+        if "reference_status" in state and state.get("reference_status") != manifest_reference:
+            errors.append(f"reference_status:{name}")
+        if state.get("selected_architecture") is not None:
+            errors.append(f"selection:{name}")
+        if name in {"parent_candidate_metrics.json", "ablation_results.json"} and state.get("selection_eligible") is not False:
+            errors.append(f"selection_eligible:{name}")
 
-    results = states.get("bakeoff_results.json", {})
+    results = states.get("bakeoff_results.json")
+    if not isinstance(results, dict):
+        results = {}
     result_architectures = results.get("architectures", {})
-    if set(result_architectures) != {"P1", "P2", "P2H", "P3", "P4", "P5", "P6"}:
+    if not isinstance(result_architectures, dict) or set(result_architectures) != all_architectures:
         errors.append("nested_architecture_inventory")
+        result_architectures = result_architectures if isinstance(result_architectures, dict) else {}
     for architecture in architectures:
-        scene_records = result_architectures.get(architecture, {}).get("scenes", {})
-        if set(scene_records) != set(SCENES): errors.append(f"nested_scene_inventory:{architecture}")
-    parent_candidates = states.get("parent_candidate_metrics.json", {}).get("architectures", {})
-    if set(parent_candidates) != {"P2", "P2H", "P3", "P5"}: errors.append("nested_parent_candidate_inventory")
-    ablations = states.get("ablation_results.json", {}).get("ablations", {})
-    if set(ablations) != {"P2_to_P2H_waveguide", "P2H_to_P3_timbre_map", "P3_to_P5_transient"}: errors.append("nested_ablation_inventory")
+        record = result_architectures.get(architecture, {})
+        scenes = record.get("scenes", {}) if isinstance(record, dict) else {}
+        if not isinstance(scenes, dict) or set(scenes) != set(SCENES):
+            errors.append(f"nested_scene_inventory:{architecture}")
+    parent_metrics = states.get("parent_candidate_metrics.json")
+    parent_metrics = parent_metrics if isinstance(parent_metrics, dict) else {}
+    parent_records = parent_metrics.get("parent", {})
+    candidate_records = parent_metrics.get("architectures", {})
+    if not isinstance(parent_records, dict) or set(parent_records) != set(SCENES):
+        errors.append("nested_parent_scene_inventory")
+        parent_records = parent_records if isinstance(parent_records, dict) else {}
+    if not isinstance(candidate_records, dict) or set(candidate_records) != candidates:
+        errors.append("nested_parent_candidate_inventory")
+        candidate_records = candidate_records if isinstance(candidate_records, dict) else {}
+    for architecture in candidates:
+        if not isinstance(candidate_records.get(architecture), dict) or set(candidate_records[architecture]) != set(SCENES):
+            errors.append(f"nested_parent_candidate_scene_inventory:{architecture}")
+
+    ablation_state = states.get("ablation_results.json")
+    ablation_state = ablation_state if isinstance(ablation_state, dict) else {}
+    ablations = ablation_state.get("ablations", {})
+    ablation_pairs = {
+        "P2_to_P2H_waveguide": ("P2", "P2H"),
+        "P2H_to_P3_timbre_map": ("P2H", "P3"),
+        "P3_to_P5_transient": ("P3", "P5"),
+    }
+    if not isinstance(ablations, dict) or set(ablations) != set(ablation_pairs):
+        errors.append("nested_ablation_inventory")
+        ablations = ablations if isinstance(ablations, dict) else {}
+    for name in ablation_pairs:
+        if not isinstance(ablations.get(name), dict) or set(ablations[name]) != set(SCENES):
+            errors.append(f"nested_ablation_scene_inventory:{name}")
+
     matrix_path = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "parameter_usage_matrix.json"
     try:
-        geometry_matrix = json.loads(matrix_path.read_text(encoding="utf-8")).get("stage_w_consumed_paths", {}).get("geometry", {})
-        expected_geometry = {"crankpin_geometry": bool(geometry_matrix["piston.crankpin_geometry"]), "rotor_geometry": bool(geometry_matrix.get("piston.rotor_geometry", False))}
+        matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+        geometry = matrix["stage_w_consumed_paths"]["geometry"]
+        expected_geometry = {
+            "crankpin_geometry": bool(geometry["piston.crankpin_geometry"]),
+            "rotor_geometry": bool(geometry.get("piston.rotor_geometry", False)),
+        }
     except (OSError, json.JSONDecodeError, KeyError, TypeError):
         expected_geometry = None
         errors.append("geometry_matrix_missing")
 
     for architecture in architectures:
         for scene in SCENES:
+            case_label = f"{architecture}/{scene}"
             case = root / architecture / scene
+            for name in case_files:
+                if not (case / name).is_file():
+                    errors.append(f"missing_required:{case_label}/{name}")
+            case_json: dict[str, Any] = {}
+            for name in case_files[3:]:
+                path = case / name
+                if path.is_file():
+                    value = load_json(path, f"{name.removesuffix('.json')}:{case_label}")
+                    case_json[name] = value
             try:
-                for name in case_files:
-                    if not (case / name).is_file(): errors.append(f"missing_required:{architecture}/{scene}/{name}")
                 raw, raw_meta = read_pcm24_wav(case / "raw_source.wav")
                 post, post_meta = read_pcm24_wav(case / "post_ptr_raw.wav")
                 monitor, monitor_meta = read_pcm24_wav(case / "monitor.wav")
-                if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0: errors.append(f"clipping:{architecture}/{scene}")
-                if raw_meta["frames"] != post_meta["frames"] or post_meta["frames"] != monitor_meta["frames"]: errors.append(f"frames:{architecture}/{scene}")
-                if np.array_equal(raw, monitor) or np.array_equal(raw, post) or np.array_equal(post, monitor): errors.append(f"separation:{architecture}/{scene}")
-                metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
-                if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY" or metrics.get("selected_architecture") is not None: errors.append(f"identity_gate:{architecture}/{scene}")
-                if not finite(metrics): errors.append(f"nonfinite:metrics:{architecture}/{scene}")
-                recomputed_click = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post), "monitor": _block_click_metrics(monitor)}
-                if metrics.get("click_metrics") != recomputed_click: errors.append(f"click_saved:{architecture}/{scene}")
-                if any(not item.get("passed", False) for item in recomputed_click.values()): errors.append(f"click_gate:{architecture}/{scene}")
-                diagnostics = metrics.get("diagnostics", {})
-                consumption = diagnostics.get("parameter_consumption", {})
-                expected = {"collector_assignment": True, "crankpin_geometry": architecture != "P1", "rotor_geometry": False, "transfer_ir": architecture != "P1"}
+            except (OSError, ValueError, wave.Error, EOFError) as exc:
+                errors.append(f"artifact:{case_label}:{exc}")
+                continue
+            if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0:
+                errors.append(f"clipping:{case_label}")
+            if len({raw_meta["frames"], post_meta["frames"], monitor_meta["frames"]}) != 1:
+                errors.append(f"frames:{case_label}")
+            if any(metadata["sample_rate_hz"] != SAMPLE_RATE_HZ for metadata in (raw_meta, post_meta, monitor_meta)):
+                errors.append(f"sample_rate:{case_label}")
+            if np.array_equal(raw, post) or np.array_equal(raw, monitor) or np.array_equal(post, monitor):
+                errors.append(f"separation:{case_label}")
+
+            metrics = case_json.get("metrics.json")
+            if not isinstance(metrics, dict):
+                continue
+            latency = case_json.get("cpu_memory_latency.json")
+            latency_label = f"cpu_memory_latency:{case_label}"
+            if not isinstance(latency, dict):
+                errors.append(f"{latency_label}:shape")
+            else:
+                render_seconds = latency.get("render_seconds")
+                if not isinstance(render_seconds, (int, float)) or isinstance(render_seconds, bool) or not finite(render_seconds) or render_seconds < 0.0:
+                    errors.append(latency_label)
+                for field in ("memory_bytes", "state_rate_hz", "block_size", "latency_seconds", "cpu_seconds", "peak_memory_bytes"):
+                    value = latency.get(field)
+                    if value is not None and (not isinstance(value, (int, float)) or isinstance(value, bool) or not finite(value) or value < 0.0):
+                        errors.append(f"{latency_label}/{field}")
+            if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY" or metrics.get("selected_architecture") is not None:
+                errors.append(f"identity_gate:{case_label}")
+            expected_audio = {
+                "raw_metrics": {"peak": float(np.max(np.abs(raw))), "rms": float(np.sqrt(np.mean(np.square(raw))))},
+                "post_ptr_metrics": {"peak": float(np.max(np.abs(post))), "rms": float(np.sqrt(np.mean(np.square(post))))},
+                "monitor_metrics": {"peak": float(np.max(np.abs(monitor))), "rms": float(np.sqrt(np.mean(np.square(monitor))))},
+            }
+            for key, expected_audio_metrics in expected_audio.items():
+                saved = metrics.get(key)
+                if not isinstance(saved, dict) or not all(field in saved for field in expected_audio_metrics):
+                    errors.append(f"audio_metrics_missing:{case_label}/{key}")
+                else:
+                    compare_values(saved, expected_audio_metrics, f"audio_metrics:{case_label}/{key}")
+                    if "clipping" in saved and saved["clipping"] != 0:
+                        errors.append(f"clipping_saved:{case_label}/{key}")
+            recomputed_click = {"raw": _block_click_metrics(raw), "post_ptr": _block_click_metrics(post), "monitor": _block_click_metrics(monitor)}
+            saved_click = metrics.get("click_metrics")
+            if not isinstance(saved_click, dict):
+                errors.append(f"click_saved:{case_label}")
+            else:
+                compare_values(saved_click, recomputed_click, f"click_saved:{case_label}")
+            if any(not item["passed"] for item in recomputed_click.values()):
+                errors.append(f"click_gate:{case_label}")
+
+            event_trace = case_json.get("event_trace.json")
+            if not isinstance(event_trace, dict) or "afterfire_event_count" not in event_trace:
+                errors.append(f"afterfire_event_count_missing:{case_label}")
+            else:
+                afterfire = event_trace["afterfire_event_count"]
+                if not isinstance(afterfire, list) or not afterfire or not all(isinstance(item, (int, float)) and not isinstance(item, bool) and finite(item) and item >= 0 for item in afterfire):
+                    errors.append(f"afterfire_event_count_invalid:{case_label}")
+                elif scene == "afterfire_ineligible" and any(item != 0 for item in afterfire):
+                    errors.append(f"afterfire_wrong_condition:{case_label}")
+
+            diagnostics = metrics.get("diagnostics", {})
+            if architecture in candidates:
+                consumption = diagnostics.get("parameter_consumption") if isinstance(diagnostics, dict) else None
+                expected = {"collector_assignment": True, "transfer_ir": True}
                 if expected_geometry is not None:
-                    expected["crankpin_geometry"] = expected_geometry["crankpin_geometry"]
-                    expected["rotor_geometry"] = expected_geometry["rotor_geometry"]
-                if architecture != "P1" and any(consumption.get(key) is not value for key, value in expected.items()): errors.append(f"parameter_consumption:{architecture}/{scene}")
-                event_trace = json.loads((case / "event_trace.json").read_text(encoding="utf-8"))
-                afterfire = event_trace.get("afterfire_event_count", [])
-                if scene == "afterfire_ineligible" and architecture != "P1" and afterfire and afterfire[-1] != 0: errors.append(f"afterfire_wrong_condition:{architecture}/{scene}")
-                inner = json.loads((case / "sha256_manifest.json").read_text(encoding="utf-8"))
-                if set(inner) != set(case_files[:-1]): errors.append(f"case_manifest_inventory:{architecture}/{scene}")
-                for name in case_files[:-1]:
-                    if not isinstance(inner.get(name), str) or sha256_file(case / name) != inner.get(name): errors.append(f"case_manifest_sha:{architecture}/{scene}/{name}")
-                record = result_architectures.get(architecture, {}).get("scenes", {}).get(scene, {})
-                for key, filename in (("raw_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
-                    if record.get(key) != sha256_file(case / filename): errors.append(f"nested_hash:{architecture}/{scene}/{key}")
-            except (OSError, ValueError, json.JSONDecodeError, KeyError, TypeError) as exc:
-                errors.append(f"artifact:{architecture}/{scene}:{exc}")
+                    expected.update(expected_geometry)
+                if not isinstance(consumption, dict) or any(type(consumption.get(key)) is not bool or consumption.get(key) is not value for key, value in expected.items()):
+                    errors.append(f"parameter_consumption:{case_label}")
+
+            inner = case_json.get("sha256_manifest.json")
+            if not isinstance(inner, dict) or set(inner) != set(case_files[:-1]):
+                errors.append(f"case_manifest_inventory:{case_label}")
+            elif any(not hash_matches(case / name, inner.get(name)) for name in case_files[:-1]):
+                errors.append(f"case_manifest_sha:{case_label}")
+
+            record = mapping_at(result_architectures, architecture, "scenes", scene)
+            for key, filename in (("raw_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
+                actual_hash = sha256_file(case / filename)
+                if record.get(key) != actual_hash:
+                    errors.append(f"nested_hash:{case_label}/{key}")
+                if architecture == "P1":
+                    expected_parent = mapping_at(parent_records, scene).get(key)
+                    if expected_parent != actual_hash:
+                        errors.append(f"parent_candidate_hash:{case_label}/{key}")
+                else:
+                    expected_candidate = mapping_at(candidate_records, architecture, scene).get(key)
+                    if expected_candidate != actual_hash:
+                        errors.append(f"parent_candidate_hash:{case_label}/{key}")
+
+    for scene in SCENES:
+        result_parent = mapping_at(result_architectures, "P1", "scenes", scene)
+        parent = mapping_at(parent_records, scene)
+        for key in ("raw_sha256", "post_ptr_sha256", "monitor_sha256"):
+            if parent.get(key) != result_parent.get(key):
+                errors.append(f"parent_candidate_hash:P1/{scene}/{key}")
+    for architecture in candidates:
+        for scene in SCENES:
+            result_record = mapping_at(result_architectures, architecture, "scenes", scene)
+            candidate = mapping_at(candidate_records, architecture, scene)
+            for key in ("raw_sha256", "post_ptr_sha256", "monitor_sha256"):
+                if candidate.get(key) != result_record.get(key):
+                    errors.append(f"parent_candidate_hash:{architecture}/{scene}/{key}")
+            expected_difference = mapping_at(result_record, "comparison").get("parent_candidate_difference_rms")
+            if "parent_candidate_difference_rms" not in candidate:
+                errors.append(f"parent_candidate_difference_missing:{architecture}/{scene}")
+            else:
+                compare_values(candidate["parent_candidate_difference_rms"], expected_difference, f"parent_candidate_difference:{architecture}/{scene}")
+
+    for name, (left, right) in ablation_pairs.items():
+        for scene in SCENES:
+            left_record = mapping_at(result_architectures, left, "scenes", scene)
+            right_record = mapping_at(result_architectures, right, "scenes", scene)
+            saved = mapping_at(ablations, name, scene)
+            for field, key in (("post_ptr_sha256_different", "post_ptr_sha256"), ("monitor_sha256_different", "monitor_sha256")):
+                expected = left_record.get(key) != right_record.get(key)
+                if saved.get(field) is not expected:
+                    errors.append(f"ablation_truth:{name}/{scene}/{field}")
     return errors
 
 
