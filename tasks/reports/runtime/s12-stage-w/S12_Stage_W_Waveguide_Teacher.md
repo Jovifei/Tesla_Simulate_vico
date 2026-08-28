@@ -12,7 +12,7 @@ and merges paths through a bank stereo collector. It is selectable on
 `PersistentEventDomainEngine(path_model="waveguide_v1")`; the Stage-V
 `delay_lpf_v1` baseline remains available and unchanged.
 
-Focused evidence is included in the final Stage-W run (`103 passed, 1 skipped`),
+Focused evidence is included in the current Task5C Stage-W run (`141 passed, 1 skipped` on validation head `da541fd`),
 including impulse state across block boundaries, one-shot/block equality,
 equal/unequal header arrival/SHA, three afterfire routes and persistent-engine
 path-model selection.

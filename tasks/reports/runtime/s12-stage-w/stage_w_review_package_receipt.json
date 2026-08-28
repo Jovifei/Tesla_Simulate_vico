@@ -5,7 +5,7 @@
   "selected_architecture": null,
   "current_audition_prohibited": true,
   "stale_relative_to_source_head": "5038194",
-  "current_validation_head": "a87002b",
+  "current_validation_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
   "superseded_by_current_evidence": ["bakeoff_final_remediation_v23", "migration_final_remediation_rx7_v23", "migration_final_remediation_ferrari_v23"],
   "new_package_prohibited_until": "candidate_selected_and_R1_gate_closed",
   "source_bakeoff_manifest_sha256": "cb6c3eeb58cffdce628adea6211bf0ce031d6e8962e3b72529447aee1b2ec288",
@@ -17,6 +17,6 @@
   "file_count": 664,
   "wav_count": 180,
   "json_count": 483,
-  "package_validation_errors": ["stale_waiting_audition", "current_audition_prohibited", "selection_null_R1_closed"],
+  "package_validation_errors": ["stale_waiting_audition", "current_audition_prohibited", "selection_null_R1_closed", "bakeoff_v23_current_validator_errors:16"],
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
 }

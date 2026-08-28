@@ -48,6 +48,12 @@ evidence roots.
   reconfirmed below after takeover. The exact affected test file contains
   seven tamper tests.
 
+## Historical pre-addendum verification (not current)
+
+The earlier `7 passed` validator run and the optional-reference concern below
+are pre-addendum historical records. They do not describe the current v23
+validator result or current Task5C source/test head.
+
 ## Fresh verification evidence
 
 All commands ran in the worktree above on 2026-08-28 (Asia/Shanghai).
@@ -80,7 +86,7 @@ takeover, per the explicit finalization instruction.
 
 ## Concerns and status
 
-1. `run_hellcat_bakeoff(..., reference=<array>)` emits case-level
+1. Historical pre-addendum concern: `run_hellcat_bakeoff(..., reference=<array>)` emits case-level
    `R2_DIAGNOSTIC_READY` / `EXTERNAL_R2_POINTER`, while the validator's case
    identity gate currently requires `REFERENCE_TARGET_MISSING` /
    `REFERENCE_POINTER_ONLY`. This optional-reference path is not exercised by

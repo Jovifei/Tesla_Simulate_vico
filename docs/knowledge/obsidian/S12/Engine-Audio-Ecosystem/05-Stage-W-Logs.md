@@ -10,8 +10,11 @@
   windows — `PASS`.
 - W9: P1/P2/P2H/P3/P5 bake-off render — `PASS` as diagnostic; selection withheld.
 
-Final local evidence is `bakeoff_long_v3` (20.0 s / 960,000 frames and 60.0 s /
+Task5C current validation/source/test head is `da541fd`; v23 local evidence was
+generated at audio head `5038194` (20.0 s / 960,000 frames and 60.0 s /
 2,880,000 frames) and review package v5; no raw external media is committed.
+The current focused verification is `141 passed, 1 skipped`; the 3000-block
+gate is documented as `1 passed in 92.50s` (fresh measured run `92.24s`).
 
 The next gate is a rights-bound synchronized Reference and then W10 multi-
 reference selection plus human review.

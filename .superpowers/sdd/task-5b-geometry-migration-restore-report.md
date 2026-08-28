@@ -87,8 +87,9 @@ git diff --check
 exit code 0
 ```
 
-The complete affected total is `102 passed` across the four suites. No full
-Stage-W or full S12 suite was run.
+The complete affected total of `102 passed` across the four suites is a
+historical pre-addendum baseline. The current Task5C migration closure total
+is `104 passed` across the same four suites. No full S12 suite was run.
 
 ## Status and concerns
 

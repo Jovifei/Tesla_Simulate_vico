@@ -1,6 +1,9 @@
 {
   "schema_version": "s12.stage_w.parameter_usage_matrix.v2",
   "status": "PARTIAL_REFERENCE_SELECTION_PENDING",
+  "audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
+  "validation_source_test_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
+  "validation_source_test_head_role": "current strict bakeoff/migration/restore validators; audio DSP unchanged after 5038194",
   "stage_v_audit": "stage_v_parameter_usage_matrix.json",
   "stage_w_consumed_paths": {
     "persistent_engine": ["rpm", "load", "throttle", "acceleration_mps2", "firing_order_evidence", "combustion_event", "afterfire", "per_path_primary_length_m", "collector_length_m"],
