@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import subprocess
 import time
 from typing import Any
 import wave
@@ -29,7 +30,10 @@ BLOCK_SIZE = 960
 STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
+RENDERABLE_ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P5")
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
+STAGE_CASE_FILES = ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json")
+STAGE_MANIFEST_SCHEMA = "s12.stage_w.architecture_stage_manifest.v1"
 LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
 PCM24_METRIC_TOLERANCE = 1.0 / (1 << 23)
 PLACEHOLDER_SCOPE = "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
@@ -170,13 +174,24 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
     return raw, post_ptr, monitor, diagnostics
 
 
-def _write_case(root: Path, architecture: str, scene: str, trace: VehicleStateTrace, reference: np.ndarray | None = None) -> dict[str, Any]:
+def _write_case(
+    root: Path,
+    architecture: str,
+    scene: str,
+    trace: VehicleStateTrace,
+    reference: np.ndarray | None = None,
+    *,
+    parent_post_ptr: np.ndarray | None = None,
+) -> dict[str, Any]:
     case_root = root / architecture / scene
     case_root.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
     raw, post_ptr, monitor, diagnostics = _render_architecture(architecture, trace)
     elapsed = time.perf_counter() - start
-    parent_raw, parent_post, _, _ = _render_architecture("P1", trace)
+    if parent_post_ptr is None:
+        _, parent_post, _, _ = _render_architecture("P1", trace)
+    else:
+        parent_post = parent_post_ptr
     case = {
         "vehicle_id": "hellcat",
         "scenario": scene,
@@ -661,6 +676,381 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     return errors
 
 
+def _stage_canonical_path(root: Path) -> str:
+    return root.resolve().as_posix()
+
+
+def _stage_canonical_id(canonical_path: str) -> str:
+    return hashlib.sha256(canonical_path.encode("utf-8")).hexdigest()
+
+
+def _stage_source_head() -> str:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=Path(__file__).resolve().parents[5],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "stage_w_worktree"
+    head = result.stdout.strip()
+    return head if len(head) == 40 and all(character in "0123456789abcdef" for character in head.lower()) else "stage_w_worktree"
+
+
+def _stage_json_finite(value: Any) -> bool:
+    if isinstance(value, dict):
+        return all(isinstance(key, str) and _stage_json_finite(item) for key, item in value.items())
+    if isinstance(value, list):
+        return all(_stage_json_finite(item) for item in value)
+    if isinstance(value, float):
+        return math.isfinite(value)
+    return True
+
+
+def _stage_load_json(path: Path, label: str, errors: list[str]) -> Any:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid_json:{label}:{exc}")
+        return None
+    if not _stage_json_finite(value):
+        errors.append(f"nonfinite:{label}")
+    return value
+
+
+def _stage_expected_geometry() -> dict[str, bool] | None:
+    matrix_path = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "parameter_usage_matrix.json"
+    try:
+        matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+        geometry = matrix["stage_w_consumed_paths"]["geometry"]
+        return {
+            "crankpin_geometry": bool(geometry["piston.crankpin_geometry"]),
+            "rotor_geometry": bool(geometry.get("piston.rotor_geometry", False)),
+        }
+    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError):
+        return None
+
+
+def _stage_expected_case_files() -> set[str]:
+    return {f"{architecture}/{scene}/{filename}" for architecture in RENDERABLE_ARCHITECTURES for scene in SCENES for filename in STAGE_CASE_FILES}
+
+
+def validate_hellcat_architecture_stage(
+    stage_root: str | Path,
+    architecture: str,
+    duration_s: float,
+    *,
+    long_window: bool = False,
+) -> list[str]:
+    """Strictly validate one externally staged synthetic Hellcat architecture."""
+    root = Path(stage_root)
+    errors: list[str] = []
+    if architecture not in RENDERABLE_ARCHITECTURES:
+        errors.append(f"architecture:{architecture}")
+    if type(long_window) is not bool:
+        errors.append("long_window")
+    try:
+        expected_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
+    except (TypeError, ValueError):
+        expected_durations = {}
+        errors.append("duration_s")
+
+    manifest_path = root / "stage_manifest.json"
+    if not root.is_dir():
+        return errors + ["stage_root missing"]
+    if not manifest_path.is_file():
+        errors.append("stage_manifest.json missing")
+        return errors
+
+    manifest = _stage_load_json(manifest_path, "stage_manifest.json", errors)
+    if not isinstance(manifest, dict):
+        return errors or ["stage_manifest.json must be an object"]
+    canonical_path = _stage_canonical_path(root)
+    if manifest.get("schema_version") != STAGE_MANIFEST_SCHEMA:
+        errors.append("schema_version")
+    if manifest.get("canonical_stage_path") != canonical_path:
+        errors.append("canonical_stage_path")
+    if manifest.get("canonical_stage_id") != _stage_canonical_id(canonical_path):
+        errors.append("canonical_stage_id")
+    if manifest.get("architecture") != architecture:
+        errors.append("architecture_manifest")
+    if manifest.get("scenes") != list(SCENES):
+        errors.append("scene_inventory")
+    if manifest.get("status") != "STAGE_COMPLETE":
+        errors.append("status")
+    if manifest.get("reference_status") != "REFERENCE_POINTER_ONLY":
+        errors.append("reference_status")
+    if "selected_architecture" not in manifest:
+        errors.append("selection_missing")
+    elif manifest["selected_architecture"] is not None:
+        errors.append("selection")
+    requested_duration = manifest.get("requested_duration_s")
+    if not isinstance(requested_duration, (int, float)) or isinstance(requested_duration, bool) or not math.isfinite(float(requested_duration)) or not math.isclose(float(requested_duration), float(duration_s), rel_tol=0.0, abs_tol=0.0):
+        errors.append("requested_duration_s")
+    if manifest.get("long_window") is not long_window:
+        errors.append("long_window_manifest")
+    if manifest.get("scene_duration_s") != expected_durations:
+        errors.append("scene_duration_s")
+    if manifest.get("source_head") != _stage_source_head():
+        errors.append("source_head")
+
+    parent = manifest.get("parent_stage")
+    if architecture == "P1":
+        if parent is not None:
+            errors.append("parent_stage:P1")
+    elif not isinstance(parent, dict):
+        errors.append("parent_stage:missing")
+    else:
+        required_parent_keys = {"canonical_stage_path", "canonical_stage_id", "architecture", "status", "reference_status", "selected_architecture", "post_ptr_sha256"}
+        if set(parent) != required_parent_keys:
+            errors.append("parent_stage:inventory")
+        if parent.get("architecture") != "P1" or parent.get("status") != "STAGE_COMPLETE" or parent.get("reference_status") != "REFERENCE_POINTER_ONLY" or parent.get("selected_architecture") is not None:
+            errors.append("parent_stage:identity")
+        parent_path = parent.get("canonical_stage_path")
+        parent_id = parent.get("canonical_stage_id")
+        if not isinstance(parent_path, str) or not parent_path or not isinstance(parent_id, str) or parent_id != _stage_canonical_id(parent_path):
+            errors.append("parent_stage:canonical_identity")
+        post_hashes = parent.get("post_ptr_sha256")
+        if not isinstance(post_hashes, dict) or set(post_hashes) != set(SCENES) or any(not isinstance(value, str) or len(value) != 64 or any(character not in "0123456789abcdef" for character in value) for value in (post_hashes.values() if isinstance(post_hashes, dict) else ())):
+            errors.append("parent_stage:post_ptr_sha256")
+
+    expected_files = _stage_expected_case_files()
+    manifest_files = manifest.get("files")
+    if not isinstance(manifest_files, dict):
+        errors.append("files_inventory")
+        manifest_files = {}
+    elif set(manifest_files) != {relative for relative in expected_files if relative.startswith(f"{architecture}/")}:
+        errors.append("files_inventory")
+    actual_files = {path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()}
+    expected_actual = {"stage_manifest.json"} | {relative for relative in expected_files if relative.startswith(f"{architecture}/")}
+    actual_top_dirs = {path.name for path in root.iterdir() if path.is_dir()}
+    if actual_top_dirs != {architecture}:
+        errors.append("stage_directory_inventory")
+    architecture_root = root / architecture
+    actual_scene_dirs = {path.name for path in architecture_root.iterdir() if path.is_dir()} if architecture_root.is_dir() else set()
+    if actual_scene_dirs != set(SCENES):
+        errors.append("scene_directory_inventory")
+    for relative in sorted(actual_files - expected_actual):
+        errors.append(f"extra_file:{relative}")
+    for relative in sorted(expected_actual - actual_files):
+        errors.append(f"missing_file:{relative}")
+    for relative, expected_hash in manifest_files.items():
+        if not _is_safe_manifest_relative(relative):
+            errors.append(f"unsafe_path:{relative}")
+            continue
+        path = root / Path(relative)
+        if not path.is_file() or not isinstance(expected_hash, str) or len(expected_hash) != 64 or sha256_file(path) != expected_hash:
+            errors.append(f"sha:{relative}")
+
+    geometry = _stage_expected_geometry()
+    if geometry is None:
+        errors.append("geometry_matrix_missing")
+    expected_case_files_without_inner = STAGE_CASE_FILES[:-1]
+    for scene in SCENES:
+        case_label = f"{architecture}/{scene}"
+        case = root / architecture / scene
+        actual_case_files = {path.name for path in case.iterdir()} if case.is_dir() else set()
+        if actual_case_files != set(STAGE_CASE_FILES):
+            errors.append(f"case_inventory:{case_label}")
+        state = _stage_load_json(case / "state_trace.json", f"state_trace:{case_label}", errors) if (case / "state_trace.json").is_file() else None
+        trace_duration = expected_durations.get(scene)
+        expected_trace = None
+        if trace_duration is not None:
+            try:
+                expected_trace = build_hellcat_bakeoff_trace(scene, trace_duration)
+            except (TypeError, ValueError):
+                expected_trace = None
+        if not isinstance(state, dict) or expected_trace is None:
+            errors.append(f"state_trace:{case_label}")
+        else:
+            expected_state = {"sample_rate_hz": STATE_RATE_HZ, "time_s": expected_trace.time_s, "rpm": expected_trace.rpm, "load": expected_trace.load, "throttle": expected_trace.throttle, "acceleration_mps2": expected_trace.acceleration_mps2}
+            if set(state) != set(expected_state):
+                errors.append(f"state_trace_inventory:{case_label}")
+            for key, expected_values in expected_state.items():
+                saved = state.get(key)
+                if key == "sample_rate_hz":
+                    if saved != expected_values:
+                        errors.append(f"state_trace_value:{case_label}/{key}")
+                    continue
+                if not isinstance(saved, list) or any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) for value in saved):
+                    errors.append(f"state_trace_values:{case_label}/{key}")
+                    continue
+                actual = np.asarray(saved, dtype=np.float64)
+                if actual.shape != expected_values.shape or not np.array_equal(actual, expected_values):
+                    errors.append(f"state_trace_mismatch:{case_label}/{key}")
+
+        audio: dict[str, np.ndarray] = {}
+        metadata: dict[str, dict[str, Any]] = {}
+        for name, key in (("raw_source.wav", "raw"), ("post_ptr_raw.wav", "post_ptr"), ("monitor.wav", "monitor")):
+            path = case / name
+            try:
+                values, info = read_pcm24_wav(path)
+            except (OSError, ValueError, wave.Error, EOFError) as exc:
+                errors.append(f"artifact:{case_label}:{name}:{exc}")
+                continue
+            audio[key] = values
+            metadata[key] = info
+            if info.get("channels") != 2 or info.get("sample_width_bits") != 24 or info.get("sample_rate_hz") != SAMPLE_RATE_HZ or info.get("clipping") != 0:
+                errors.append(f"wav_format:{case_label}/{name}")
+        if len(metadata) == 3:
+            frame_counts = {info["frames"] for info in metadata.values()}
+            expected_frames = expected_trace.rpm.size * BLOCK_SIZE if expected_trace is not None else None
+            if len(frame_counts) != 1 or expected_frames not in frame_counts:
+                errors.append(f"frames:{case_label}")
+            if np.array_equal(audio["raw"], audio["post_ptr"]) or np.array_equal(audio["raw"], audio["monitor"]) or np.array_equal(audio["post_ptr"], audio["monitor"]):
+                errors.append(f"separation:{case_label}")
+
+        json_cases = {}
+        for filename in ("phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json"):
+            path = case / filename
+            if path.is_file():
+                json_cases[filename] = _stage_load_json(path, f"{filename}:{case_label}", errors)
+        metrics = json_cases.get("metrics.json")
+        if not isinstance(metrics, dict):
+            errors.append(f"metrics:{case_label}")
+        else:
+            if metrics.get("architecture") != architecture or metrics.get("scene") != scene or metrics.get("status") != "REFERENCE_TARGET_MISSING" or metrics.get("reference_status") != "REFERENCE_POINTER_ONLY":
+                errors.append(f"identity_gate:{case_label}")
+            if "selected_architecture" not in metrics:
+                errors.append(f"selection_missing:{case_label}")
+            elif metrics["selected_architecture"] is not None:
+                errors.append(f"selection:{case_label}")
+            if len(audio) == 3:
+                expected_metrics = {
+                    "raw_metrics": {"peak": float(np.max(np.abs(audio["raw"]))), "rms": float(np.sqrt(np.mean(np.square(audio["raw"]))))},
+                    "post_ptr_metrics": {"peak": float(np.max(np.abs(audio["post_ptr"]))), "rms": float(np.sqrt(np.mean(np.square(audio["post_ptr"]))))},
+                    "monitor_metrics": {"peak": float(np.max(np.abs(audio["monitor"]))), "rms": float(np.sqrt(np.mean(np.square(audio["monitor"]))))},
+                }
+                for key, expected in expected_metrics.items():
+                    saved = metrics.get(key)
+                    if not isinstance(saved, dict) or set(saved) != set(expected):
+                        errors.append(f"audio_metrics:{case_label}/{key}")
+                    else:
+                        for field, expected_value in expected.items():
+                            value = saved[field]
+                            if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) or not math.isclose(float(value), expected_value, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+                                errors.append(f"audio_metrics:{case_label}/{key}/{field}")
+                expected_click = {key: _block_click_metrics(value) for key, value in audio.items()}
+                if metrics.get("click_metrics") != expected_click:
+                    errors.append(f"click_metrics:{case_label}")
+            diagnostics = metrics.get("diagnostics")
+            if not isinstance(diagnostics, dict) or diagnostics.get("ptr_status") != "FROZEN_RUNTIME_PTR_ADAPTER" or (architecture != "P1" and not isinstance(diagnostics.get("monitor_source"), str)):
+                errors.append(f"diagnostics:{case_label}")
+            if architecture != "P1" and isinstance(diagnostics, dict):
+                expected_consumption = {"collector_assignment": True, "transfer_ir": True}
+                if geometry is not None:
+                    expected_consumption.update(geometry)
+                consumption = diagnostics.get("parameter_consumption")
+                if not isinstance(consumption, dict) or any(type(consumption.get(key)) is not bool or consumption.get(key) is not value for key, value in expected_consumption.items()):
+                    errors.append(f"parameter_consumption:{case_label}")
+            comparison = metrics.get("comparison")
+            if not isinstance(comparison, dict):
+                errors.append(f"comparison:{case_label}")
+            else:
+                difference = comparison.get("parent_candidate_difference_rms")
+                if not isinstance(difference, (int, float)) or isinstance(difference, bool) or not math.isfinite(float(difference)) or difference < 0.0:
+                    errors.append(f"comparison_difference:{case_label}")
+                elif architecture == "P1" and difference != 0.0:
+                    errors.append(f"comparison_difference:{case_label}")
+
+        latency = json_cases.get("cpu_memory_latency.json")
+        if not isinstance(latency, dict) or not isinstance(latency.get("render_seconds"), (int, float)) or isinstance(latency.get("render_seconds"), bool) or not math.isfinite(float(latency.get("render_seconds", float("nan")))) or latency.get("render_seconds", -1.0) < 0.0:
+            errors.append(f"cpu_memory_latency:{case_label}")
+        inner = json_cases.get("sha256_manifest.json")
+        if not isinstance(inner, dict) or set(inner) != set(expected_case_files_without_inner):
+            errors.append(f"case_manifest_inventory:{case_label}")
+        else:
+            for filename in expected_case_files_without_inner:
+                path = case / filename
+                expected_hash = inner.get(filename)
+                if not isinstance(expected_hash, str) or len(expected_hash) != 64 or not path.is_file() or sha256_file(path) != expected_hash:
+                    errors.append(f"case_manifest_sha:{case_label}/{filename}")
+        event_trace = json_cases.get("event_trace.json")
+        if not isinstance(event_trace, dict) or not isinstance(event_trace.get("afterfire_event_count"), list) or not event_trace["afterfire_event_count"] or any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) or value < 0.0 for value in (event_trace.get("afterfire_event_count") if isinstance(event_trace, dict) else [])):
+            errors.append(f"afterfire_event_count:{case_label}")
+        elif scene == "afterfire_ineligible" and any(value != 0 for value in event_trace["afterfire_event_count"]):
+            errors.append(f"afterfire_wrong_condition:{case_label}")
+
+    return errors
+
+
+def render_hellcat_architecture_stage(
+    stage_root: str | Path,
+    architecture: str,
+    duration_s: float = 8.0,
+    *,
+    long_window: bool = False,
+    parent_stage_root: str | Path | None = None,
+) -> dict[str, Any]:
+    """Render one complete architecture into a new external stage root."""
+    root = Path(stage_root)
+    if architecture not in RENDERABLE_ARCHITECTURES:
+        raise ValueError(f"unsupported stage architecture: {architecture}")
+    if type(long_window) is not bool:
+        raise ValueError("long_window must be a bool")
+    scene_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
+    if root.exists():
+        if not root.is_dir() or any(root.iterdir()):
+            raise FileExistsError(f"refusing to overwrite architecture stage: {root}")
+
+    parent_manifest = None
+    parent_post_ptr: dict[str, np.ndarray] = {}
+    if architecture != "P1":
+        if parent_stage_root is None:
+            raise ValueError("candidate architecture requires verified P1 stage")
+        parent_root = Path(parent_stage_root)
+        parent_errors = validate_hellcat_architecture_stage(parent_root, "P1", duration_s, long_window=long_window)
+        if parent_errors:
+            raise ValueError(f"parent stage is not a verified P1 stage: {parent_errors}")
+        parent_manifest = json.loads((parent_root / "stage_manifest.json").read_text(encoding="utf-8"))
+        for scene in SCENES:
+            parent_post_ptr[scene] = read_pcm24_wav(parent_root / "P1" / scene / "post_ptr_raw.wav")[0]
+
+    root.mkdir(parents=True, exist_ok=True)
+    scene_records: dict[str, Any] = {}
+    for scene in SCENES:
+        trace = build_hellcat_bakeoff_trace(scene, scene_durations[scene])
+        scene_records[scene] = _write_case(root, architecture, scene, trace, None, parent_post_ptr=parent_post_ptr.get(scene))
+
+    canonical_path = _stage_canonical_path(root)
+    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file()}
+    parent_record = None
+    if parent_manifest is not None:
+        parent_record = {
+            "canonical_stage_path": parent_manifest["canonical_stage_path"],
+            "canonical_stage_id": parent_manifest["canonical_stage_id"],
+            "architecture": "P1",
+            "status": "STAGE_COMPLETE",
+            "reference_status": "REFERENCE_POINTER_ONLY",
+            "selected_architecture": None,
+            "post_ptr_sha256": {scene: parent_manifest["files"][f"P1/{scene}/post_ptr_raw.wav"] for scene in SCENES},
+        }
+    manifest = {
+        "schema_version": STAGE_MANIFEST_SCHEMA,
+        "canonical_stage_path": canonical_path,
+        "canonical_stage_id": _stage_canonical_id(canonical_path),
+        "source_head": _stage_source_head(),
+        "architecture": architecture,
+        "scenes": list(SCENES),
+        "status": "STAGE_COMPLETE",
+        "reference_status": "REFERENCE_POINTER_ONLY",
+        "selected_architecture": None,
+        "requested_duration_s": float(duration_s),
+        "long_window": bool(long_window),
+        "scene_duration_s": scene_durations,
+        "parent_stage": parent_record,
+        "files": files,
+    }
+    write_json(root / "stage_manifest.json", manifest)
+    result = dict(manifest)
+    result["stage_manifest_path"] = str(root / "stage_manifest.json")
+    result["scenes"] = scene_records
+    return result
+
+
 def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path, *, overwrite: bool = False) -> dict[str, Any]:
     source = Path(source_root)
     errors = validate_bakeoff_manifest(source)
@@ -692,4 +1082,9 @@ def publish_bakeoff_summaries(source_root: str | Path, output_root: str | Path, 
     return {"schema_version": "s12.stage_w.bakeoff_summary_receipt.v1", "status": result["status"], "reference_status": result["reference_status"], "selection_eligible": result["selected_architecture"] is not None, "files": {name: sha256_file(output / name) for name in SUMMARY_FILES}}
 
 
-__all__ = ["SCENES", "build_hellcat_bakeoff_trace", "publish_bakeoff_summaries", "run_hellcat_bakeoff", "scene_duration_s", "validate_bakeoff_manifest"]
+__all__ = [
+    "SCENES", "STAGE_CASE_FILES", "build_hellcat_bakeoff_trace",
+    "publish_bakeoff_summaries", "render_hellcat_architecture_stage",
+    "run_hellcat_bakeoff", "scene_duration_s", "validate_bakeoff_manifest",
+    "validate_hellcat_architecture_stage",
+]

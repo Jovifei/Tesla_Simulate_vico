@@ -12,9 +12,95 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import read_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w import bakeoff as bakeoff_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+    render_hellcat_architecture_stage,
     run_hellcat_bakeoff,
+    validate_hellcat_architecture_stage,
     validate_bakeoff_manifest,
 )
+
+
+def test_architecture_stage_renders_all_scenes_and_validates(tmp_path) -> None:
+    stage_root = tmp_path / "p1-stage"
+
+    result = render_hellcat_architecture_stage(stage_root, "P1", duration_s=0.20)
+
+    assert result["status"] == "STAGE_COMPLETE"
+    assert result["reference_status"] == "REFERENCE_POINTER_ONLY"
+    assert result["selected_architecture"] is None
+    manifest = json.loads((stage_root / "stage_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["architecture"] == "P1"
+    assert manifest["status"] == "STAGE_COMPLETE"
+    assert manifest["reference_status"] == "REFERENCE_POINTER_ONLY"
+    assert manifest["selected_architecture"] is None
+    assert manifest["scene_duration_s"] == {scene: 0.20 for scene in bakeoff_module.SCENES}
+    assert set(manifest["files"]) == {
+        f"P1/{scene}/{filename}"
+        for scene in bakeoff_module.SCENES
+        for filename in bakeoff_module.STAGE_CASE_FILES
+    }
+    assert validate_hellcat_architecture_stage(stage_root, "P1", 0.20) == []
+
+
+def test_candidate_stage_requires_verified_p1_and_uses_parent_pcm(tmp_path, monkeypatch) -> None:
+    parent_root = tmp_path / "p1-stage"
+    candidate_root = tmp_path / "p2-stage"
+    render_hellcat_architecture_stage(parent_root, "P1", duration_s=0.20)
+
+    calls: list[str] = []
+    original = bakeoff_module._render_architecture
+
+    def spy(architecture, trace):
+        calls.append(architecture)
+        return original(architecture, trace)
+
+    monkeypatch.setattr(bakeoff_module, "_render_architecture", spy)
+    result = render_hellcat_architecture_stage(
+        candidate_root,
+        "P2",
+        duration_s=0.20,
+        parent_stage_root=parent_root,
+    )
+
+    assert result["status"] == "STAGE_COMPLETE"
+    assert "P1" not in calls
+    assert validate_hellcat_architecture_stage(candidate_root, "P2", 0.20) == []
+    metrics = json.loads((candidate_root / "P2" / "steady_1200rpm" / "metrics.json").read_text(encoding="utf-8"))
+    assert metrics["comparison"]["parent_candidate_difference_rms"] > 0.0
+
+    missing_parent_root = tmp_path / "missing-parent"
+    with pytest.raises(ValueError, match="verified P1"):
+        render_hellcat_architecture_stage(
+            missing_parent_root,
+            "P2",
+            duration_s=0.20,
+            parent_stage_root=tmp_path / "does-not-exist",
+        )
+    assert not missing_parent_root.exists()
+
+
+def test_stage_rejects_nonempty_or_tampered_root_without_mutation(tmp_path) -> None:
+    nonempty = tmp_path / "nonempty"
+    nonempty.mkdir()
+    sentinel = nonempty / "sentinel.txt"
+    sentinel.write_bytes(b"owner data")
+    before = {path.relative_to(nonempty).as_posix(): path.read_bytes() for path in nonempty.rglob("*") if path.is_file()}
+    with pytest.raises(FileExistsError):
+        render_hellcat_architecture_stage(nonempty, "P1", duration_s=0.20)
+    after = {path.relative_to(nonempty).as_posix(): path.read_bytes() for path in nonempty.rglob("*") if path.is_file()}
+    assert after == before
+
+    tampered = tmp_path / "tampered"
+    render_hellcat_architecture_stage(tampered, "P1", duration_s=0.20)
+    metrics_path = tampered / "P1" / "steady_1200rpm" / "metrics.json"
+    original_metrics = metrics_path.read_bytes()
+    metrics_path.write_text("{\"tampered\": true}\n", encoding="utf-8")
+    assert validate_hellcat_architecture_stage(tampered, "P1", 0.20)
+    tampered_before = {path.relative_to(tampered).as_posix(): path.read_bytes() for path in tampered.rglob("*") if path.is_file()}
+    with pytest.raises(FileExistsError):
+        render_hellcat_architecture_stage(tampered, "P1", duration_s=0.20)
+    tampered_after = {path.relative_to(tampered).as_posix(): path.read_bytes() for path in tampered.rglob("*") if path.is_file()}
+    assert tampered_after == tampered_before
+    assert metrics_path.read_bytes() != original_metrics
 
 
 def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -> None:
