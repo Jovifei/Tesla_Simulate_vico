@@ -1,0 +1,4 @@
+HEAD=beb71a54594c1c189be8aea34814c60e89430648
+COMMAND=git diff --check
+EXIT=0
+RESULT=clean

@@ -1,0 +1,3 @@
+RECEIPT_PARSE=PASS
+CURRENT_VERIFICATION_KEYS=click_gate,compileall,fresh_evidence,json_finite,metadata_head_stage_w,remediation,selection,slow_3000,source_track_p,stage_v,stage_w,tamper_and_package,task5a_validator,task5b_affected,task5d_probe,validators,validators_role
+V23_LOCATION=historical_verification.v23_interrupted_observation
