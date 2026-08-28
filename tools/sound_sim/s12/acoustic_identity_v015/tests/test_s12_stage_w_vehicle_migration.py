@@ -365,6 +365,47 @@ def test_migration_validator_rejects_duplicate_manifest_keys(tmp_path) -> None:
     assert any(error.startswith("migration_manifest.json invalid:") for error in errors)
 
 
+def test_migration_validator_rejects_unlisted_nested_same_name_manifest(tmp_path) -> None:
+    root = tmp_path / "nested_manifest"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    nested = root / "P1" / "hot_idle" / "migration_manifest.json"
+    nested.write_text("{}\n", encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert "outer_unlisted:P1/hot_idle/migration_manifest.json" in errors
+
+
+def test_migration_validator_rejects_all_cross_platform_unsafe_manifest_paths(tmp_path) -> None:
+    root = tmp_path / "cross_platform_unsafe"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    source = root / "migration_results.json"
+    unsafe_paths = (
+        "",
+        ".",
+        "P1/./hot_idle/raw_source.wav",
+        "P1//hot_idle/raw_source.wav",
+        "P1/hot_idle/",
+        "../escape.json",
+        "/escape",
+        "\\escape",
+        "C:/escape",
+        "C:\\escape",
+        "//server/share/escape",
+        "\\\\server\\share\\escape",
+    )
+    for relative in unsafe_paths:
+        manifest["files"][relative] = sha256_file(source)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    for relative in unsafe_paths:
+        assert f"unsafe_path:{relative}" in errors
+
+
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"

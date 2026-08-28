@@ -39,6 +39,25 @@ _RANGES = {
 }
 
 
+def _is_safe_manifest_relative(value: Any) -> bool:
+    """Accept only canonical, separator-stable relative manifest paths."""
+    if not isinstance(value, str) or not value or "\\" in value or value.startswith("/"):
+        return False
+    if len(value) > 1 and value[0].isalpha() and value[1] == ":":
+        return False
+    parts = value.split("/")
+    if any(not part or part in {".", ".."} for part in parts):
+        return False
+    return "/".join(parts) == value
+
+
+def _canonical_manifest_relative(value: Any) -> str | None:
+    if not isinstance(value, str):
+        return None
+    parts = [part for part in value.replace("\\", "/").split("/") if part not in {"", "."}]
+    return "/".join(parts)
+
+
 def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
@@ -197,7 +216,7 @@ def run_preselection_vehicle_migration(output_root: str | Path, vehicle_id: str,
             rendered[architecture][scene] = _write_case(root, vehicle_id, architecture, scene, trace, parent_post_ptr)
     result = {"schema_version": "s12.stage_w.vehicle_migration.v1", "status": "UNSELECTED_CANDIDATE_MIGRATION", "vehicle_id": vehicle_id, "selected_architecture": None, "reference_status": "REFERENCE_TARGET_MISSING", "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY", "architectures": rendered}
     write_json(root / "migration_results.json", result)
-    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "migration_manifest.json"}
+    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path != root / "migration_manifest.json"}
     write_json(root / "migration_manifest.json", {"schema_version": "s12.stage_w.vehicle_migration_manifest.v1", "status": result["status"], "vehicle_id": vehicle_id, "selected_architecture": None, "reference_status": result["reference_status"], "files": files})
     return result
 
@@ -261,18 +280,16 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
         manifest_files = {}
     normalized_inventory: dict[str, str] = {}
     for relative, expected in manifest_files.items():
+        canonical = _canonical_manifest_relative(relative)
+        if canonical is not None:
+            if canonical in normalized_inventory:
+                errors.append(f"duplicate_inventory:{canonical}")
+            else:
+                normalized_inventory[canonical] = relative
+        if not _is_safe_manifest_relative(relative):
+            errors.append(f"unsafe_path:{relative}")
+            continue
         relative_path = Path(relative)
-        if relative_path.is_absolute() or ".." in relative_path.parts:
-            errors.append(f"unsafe_path:{relative}")
-            continue
-        canonical = relative_path.as_posix()
-        if canonical in normalized_inventory:
-            errors.append(f"duplicate_inventory:{canonical}")
-        else:
-            normalized_inventory[canonical] = relative
-        if canonical != relative or "." in relative_path.parts or ":" in relative_path.parts[0]:
-            errors.append(f"unsafe_path:{relative}")
-            continue
         path = root / relative_path
         if not path.is_file():
             errors.append(f"missing:{relative}")
@@ -306,7 +323,7 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
     actual_files = {
         path.relative_to(root).as_posix()
         for path in root.rglob("*")
-        if path.is_file() and path.name != "migration_manifest.json"
+        if path.is_file() and path != manifest_path
     }
     for relative in sorted(actual_files - listed_files):
         errors.append(f"outer_unlisted:{relative}")

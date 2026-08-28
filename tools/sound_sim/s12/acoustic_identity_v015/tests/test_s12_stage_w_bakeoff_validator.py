@@ -487,3 +487,46 @@ def test_validator_requires_placeholder_selection_boundary(
     errors = validate_bakeoff_manifest(root)
 
     assert any("placeholder_selected_architecture:P4" in error for error in errors)
+
+
+def test_validator_rejects_unlisted_nested_same_name_manifest(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    nested = root / "P1" / "hot_idle_20s" / "bakeoff_manifest.json"
+    nested.write_text("{}\n", encoding="utf-8")
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert "outer_unlisted:P1/hot_idle_20s/bakeoff_manifest.json" in errors
+
+
+def test_validator_rejects_all_cross_platform_unsafe_manifest_paths(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    manifest_path = root / "bakeoff_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    source = root / "bakeoff_results.json"
+    unsafe_paths = (
+        "",
+        ".",
+        "P1/./hot_idle_20s/raw_source.wav",
+        "P1//hot_idle_20s/raw_source.wav",
+        "P1/hot_idle_20s/",
+        "../escape.json",
+        "/escape",
+        "\\escape",
+        "C:/escape",
+        "C:\\escape",
+        "//server/share/escape",
+        "\\\\server\\share\\escape",
+    )
+    for relative in unsafe_paths:
+        manifest["files"][relative] = sha256_file(source)
+    _write_json(manifest_path, manifest)
+
+    errors = validate_bakeoff_manifest(root)
+
+    for relative in unsafe_paths:
+        assert f"unsafe_path:{relative}" in errors

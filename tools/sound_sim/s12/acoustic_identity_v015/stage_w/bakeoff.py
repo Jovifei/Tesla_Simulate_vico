@@ -51,6 +51,18 @@ PLACEHOLDER_RECORDS = {
 }
 
 
+def _is_safe_manifest_relative(value: Any) -> bool:
+    """Accept only canonical, separator-stable relative manifest paths."""
+    if not isinstance(value, str) or not value or "\\" in value or value.startswith("/"):
+        return False
+    if len(value) > 1 and value[0].isalpha() and value[1] == ":":
+        return False
+    parts = value.split("/")
+    if any(not part or part in {".", ".."} for part in parts):
+        return False
+    return "/".join(parts) == value
+
+
 def _block_click_metrics(audio: np.ndarray) -> dict[str, Any]:
     return block_boundary_click_metrics(audio, BLOCK_SIZE)
 
@@ -259,7 +271,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
     write_json(root / "rejected_architectures.json", {"status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "rejected": ["P4", "P6"] if reference is None else []})
-    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path.name != "bakeoff_manifest.json"}
+    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path != root / "bakeoff_manifest.json"}
     write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result
 
@@ -308,10 +320,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
         return value
 
     def safe_relative(value: Any) -> bool:
-        if not isinstance(value, str) or not value:
-            return False
-        path = Path(value)
-        return bool(path.parts) and not path.is_absolute() and ".." not in path.parts and ":" not in path.parts[0]
+        return _is_safe_manifest_relative(value)
 
     def mapping_at(value: Any, *keys: str) -> dict[str, Any]:
         for key in keys:
@@ -386,7 +395,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
         errors.append(f"outer_manifest_extra:{relative}")
     actual_files = {
         path.relative_to(root).as_posix()
-        for path in root.rglob("*") if path.is_file() and path.name != "bakeoff_manifest.json"
+        for path in root.rglob("*") if path.is_file() and path != manifest_path
     }
     for relative in sorted(actual_files - listed_files):
         errors.append(f"outer_unlisted:{relative}")

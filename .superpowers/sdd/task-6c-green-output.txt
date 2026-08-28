@@ -5,3 +5,55 @@
 ........................................................................ [ 84%]
 .............                                                            [100%]
 85 passed in 1301.48s (0:21:41)
+
+--- REVIEW ADDENDUM FOCUSED GREEN: BAKEOFF ---
+..                                                                       [100%]
+2 passed, 32 deselected in 113.27s (0:01:53)
+
+--- REVIEW ADDENDUM FOCUSED GREEN: MIGRATION ---
+..                                                                       [100%]
+2 passed, 26 deselected in 55.11s
+
+--- REVIEW ADDENDUM FULL TASK5A VALIDATOR ---
+..................................                                       [100%]
+34 passed in 139.23s (0:02:19)
+
+--- REVIEW ADDENDUM FULL AFFECTED BAKEOFF MIGRATION ---
+...........................F......                                       [100%]
+================================== FAILURES ===================================
+____ test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths ____
+
+tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1164/test_migration_validator_rejec8')
+
+    def test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths(tmp_path) -> None:
+        root = tmp_path / "unsafe_inventory"
+        run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+        manifest_path = root / "migration_manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["files"]["../escape.json"] = "0" * 64
+        manifest["files"]["P1/hot_idle/./raw_source.wav"] = manifest["files"]["P1/hot_idle/raw_source.wav"]
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    
+        errors = validate_vehicle_migration_manifest(root)
+    
+        assert any(error.startswith("unsafe_path:../escape.json") for error in errors)
+>       assert any("duplicate_inventory:P1/hot_idle/raw_source.wav" in error for error in errors)
+E       assert False
+E        +  where False = any(<generator object test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths.<locals>.<genexpr> at 0x0000029039C03C60>)
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_vehicle_migration.py:320: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py::test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths
+1 failed, 33 passed in 1335.81s (0:22:15)
+
+--- REVIEW ADDENDUM REGRESSION: MIGRATION DUPLICATE + PATH FOCUSED ---
+...                                                                      [100%]
+3 passed, 25 deselected in 82.78s (0:01:22)
+
+--- REVIEW ADDENDUM FINAL TASK5A VALIDATOR ---
+..................................                                       [100%]
+34 passed in 137.58s (0:02:17)
+
+--- REVIEW ADDENDUM FINAL AFFECTED BAKEOFF MIGRATION ---
+..................................                                       [100%]
+34 passed in 1331.64s (0:22:11)
