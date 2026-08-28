@@ -94,3 +94,18 @@ The receipt, this report, and the finalization logs are the only intended
 changes. After their evidence commit, Track-P and `git diff --check` are rerun
 on that commit and a final guard record is appended with the honest parent-head
 semantics: the receipt cannot self-bind the SHA of its own future commit.
+
+## Final guard record
+
+The evidence commit is `f99fccbbbaca0114e667e1a8e8a8ebca2c520d40` with parent
+`beb71a54594c1c189be8aea34814c60e89430648`. On that exact evidence commit:
+
+- receipt parse and current/historical placement assertions passed;
+- Track-P passed with 180 frozen files and 2 frozen symbols unchanged;
+- `git diff --check` exited 0 and was clean.
+
+The final guard logs are `task5d_receipt_parse_final_guard.log`,
+`task5d_track_p_final_guard.log`, and `task5d_diff_check_final_guard.log`.
+The receipt intentionally keeps `current_metadata_head` as `HEAD` resolved by
+`git rev-parse HEAD`; its observed metadata parent is recorded separately as
+`beb71a5`, so no commit self-binding claim is made.

@@ -1,0 +1,6 @@
+HEAD=f99fccbbbaca0114e667e1a8e8a8ebca2c520d40
+COMMAND=git diff --check
+EXIT=0
+RESULT=clean
+PARENT_HEAD=beb71a54594c1c189be8aea34814c60e89430648
+NOTE=receipt/report commit is not self-bound; guard resolves actual HEAD

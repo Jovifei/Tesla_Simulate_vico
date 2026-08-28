@@ -1,0 +1,2 @@
+RECEIPT_PARSE_FINAL_GUARD=PASS
+RECEIPT_SELF_BINDING=not claimed; current_metadata_head resolves by git rev-parse HEAD
