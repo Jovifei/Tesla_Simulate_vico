@@ -721,6 +721,22 @@ def _stage_load_json(path: Path, label: str, errors: list[str]) -> Any:
     return value
 
 
+def _stage_number(value: Any, label: str, errors: list[str], *, minimum: float | None = None) -> float | None:
+    """Read a finite numeric value without allowing bool/overflow to escape."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        errors.append(label)
+        return None
+    try:
+        number = float(value)
+    except (OverflowError, TypeError, ValueError):
+        errors.append(label)
+        return None
+    if not math.isfinite(number) or (minimum is not None and number < minimum):
+        errors.append(label)
+        return None
+    return number
+
+
 def _stage_expected_geometry() -> dict[str, bool] | None:
     matrix_path = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "parameter_usage_matrix.json"
     try:
@@ -744,6 +760,7 @@ def validate_hellcat_architecture_stage(
     duration_s: float,
     *,
     long_window: bool = False,
+    parent_stage_root: str | Path | None = None,
 ) -> list[str]:
     """Strictly validate one externally staged synthetic Hellcat architecture."""
     root = Path(stage_root)
@@ -754,7 +771,7 @@ def validate_hellcat_architecture_stage(
         errors.append("long_window")
     try:
         expected_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         expected_durations = {}
         errors.append("duration_s")
 
@@ -787,8 +804,9 @@ def validate_hellcat_architecture_stage(
         errors.append("selection_missing")
     elif manifest["selected_architecture"] is not None:
         errors.append("selection")
-    requested_duration = manifest.get("requested_duration_s")
-    if not isinstance(requested_duration, (int, float)) or isinstance(requested_duration, bool) or not math.isfinite(float(requested_duration)) or not math.isclose(float(requested_duration), float(duration_s), rel_tol=0.0, abs_tol=0.0):
+    requested_duration = _stage_number(manifest.get("requested_duration_s"), "requested_duration_s", errors, minimum=0.20)
+    expected_duration = _stage_number(duration_s, "duration_s", errors, minimum=0.20)
+    if requested_duration is not None and expected_duration is not None and not math.isclose(requested_duration, expected_duration, rel_tol=0.0, abs_tol=0.0):
         errors.append("requested_duration_s")
     if manifest.get("long_window") is not long_window:
         errors.append("long_window_manifest")
@@ -798,6 +816,41 @@ def validate_hellcat_architecture_stage(
         errors.append("source_head")
 
     parent = manifest.get("parent_stage")
+    verified_parent_pcm: dict[str, np.ndarray] = {}
+    if architecture != "P1" and parent_stage_root is not None:
+        supplied_parent_root = Path(parent_stage_root)
+        if not supplied_parent_root.is_dir():
+            errors.append("parent_stage_root:missing")
+        else:
+            parent_errors = validate_hellcat_architecture_stage(
+                supplied_parent_root,
+                "P1",
+                duration_s,
+                long_window=long_window,
+            )
+            if parent_errors:
+                errors.extend(f"parent_stage:{error}" for error in parent_errors)
+            else:
+                try:
+                    actual_parent_record = {
+                        "canonical_stage_path": _stage_canonical_path(supplied_parent_root),
+                        "canonical_stage_id": _stage_canonical_id(_stage_canonical_path(supplied_parent_root)),
+                        "architecture": "P1",
+                        "status": "STAGE_COMPLETE",
+                        "reference_status": "REFERENCE_POINTER_ONLY",
+                        "selected_architecture": None,
+                        "post_ptr_sha256": {
+                            scene: sha256_file(supplied_parent_root / "P1" / scene / "post_ptr_raw.wav")
+                            for scene in SCENES
+                        },
+                    }
+                    if parent != actual_parent_record:
+                        errors.append("parent_stage:binding")
+                    for scene in SCENES:
+                        verified_parent_pcm[scene] = read_pcm24_wav(supplied_parent_root / "P1" / scene / "post_ptr_raw.wav")[0]
+                except (OSError, UnicodeError, json.JSONDecodeError, ValueError, wave.Error, EOFError) as exc:
+                    errors.append(f"parent_stage:read:{exc}")
+
     if architecture == "P1":
         if parent is not None:
             errors.append("parent_stage:P1")
@@ -849,6 +902,8 @@ def validate_hellcat_architecture_stage(
     if geometry is None:
         errors.append("geometry_matrix_missing")
     expected_case_files_without_inner = STAGE_CASE_FILES[:-1]
+    candidate_post_ptr: dict[str, np.ndarray] = {}
+    candidate_comparison: dict[str, float] = {}
     for scene in SCENES:
         case_label = f"{architecture}/{scene}"
         case = root / architecture / scene
@@ -875,10 +930,13 @@ def validate_hellcat_architecture_stage(
                     if saved != expected_values:
                         errors.append(f"state_trace_value:{case_label}/{key}")
                     continue
-                if not isinstance(saved, list) or any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) for value in saved):
+                if not isinstance(saved, list):
                     errors.append(f"state_trace_values:{case_label}/{key}")
                     continue
-                actual = np.asarray(saved, dtype=np.float64)
+                numeric_values = [_stage_number(value, f"state_trace_values:{case_label}/{key}", errors) for value in saved]
+                if any(value is None for value in numeric_values):
+                    continue
+                actual = np.asarray(numeric_values, dtype=np.float64)
                 if actual.shape != expected_values.shape or not np.array_equal(actual, expected_values):
                     errors.append(f"state_trace_mismatch:{case_label}/{key}")
 
@@ -902,6 +960,8 @@ def validate_hellcat_architecture_stage(
                 errors.append(f"frames:{case_label}")
             if np.array_equal(audio["raw"], audio["post_ptr"]) or np.array_equal(audio["raw"], audio["monitor"]) or np.array_equal(audio["post_ptr"], audio["monitor"]):
                 errors.append(f"separation:{case_label}")
+            if architecture != "P1":
+                candidate_post_ptr[scene] = audio["post_ptr"]
 
         json_cases = {}
         for filename in ("phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json"):
@@ -930,12 +990,20 @@ def validate_hellcat_architecture_stage(
                         errors.append(f"audio_metrics:{case_label}/{key}")
                     else:
                         for field, expected_value in expected.items():
-                            value = saved[field]
-                            if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) or not math.isclose(float(value), expected_value, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+                            value = _stage_number(saved[field], f"audio_metrics:{case_label}/{key}/{field}", errors)
+                            if value is None or not math.isclose(value, expected_value, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
                                 errors.append(f"audio_metrics:{case_label}/{key}/{field}")
                 expected_click = {key: _block_click_metrics(value) for key, value in audio.items()}
-                if metrics.get("click_metrics") != expected_click:
+                saved_click = metrics.get("click_metrics")
+                if not isinstance(saved_click, dict):
                     errors.append(f"click_metrics:{case_label}")
+                else:
+                    for output_name in expected_click:
+                        gate = saved_click.get(output_name)
+                        if not isinstance(gate, dict) or type(gate.get("passed")) is not bool or gate.get("passed") is not True:
+                            errors.append(f"click_gate:{case_label}/{output_name}")
+                    if saved_click != expected_click:
+                        errors.append(f"click_metrics:{case_label}")
             diagnostics = metrics.get("diagnostics")
             if not isinstance(diagnostics, dict) or diagnostics.get("ptr_status") != "FROZEN_RUNTIME_PTR_ADAPTER" or (architecture != "P1" and not isinstance(diagnostics.get("monitor_source"), str)):
                 errors.append(f"diagnostics:{case_label}")
@@ -950,14 +1018,18 @@ def validate_hellcat_architecture_stage(
             if not isinstance(comparison, dict):
                 errors.append(f"comparison:{case_label}")
             else:
-                difference = comparison.get("parent_candidate_difference_rms")
-                if not isinstance(difference, (int, float)) or isinstance(difference, bool) or not math.isfinite(float(difference)) or difference < 0.0:
+                difference = _stage_number(comparison.get("parent_candidate_difference_rms"), f"comparison_difference:{case_label}", errors, minimum=0.0)
+                if difference is None:
                     errors.append(f"comparison_difference:{case_label}")
-                elif architecture == "P1" and difference != 0.0:
-                    errors.append(f"comparison_difference:{case_label}")
+                else:
+                    candidate_comparison[scene] = difference
+                    if architecture == "P1" and difference != 0.0:
+                        errors.append(f"comparison_difference:{case_label}")
 
         latency = json_cases.get("cpu_memory_latency.json")
-        if not isinstance(latency, dict) or not isinstance(latency.get("render_seconds"), (int, float)) or isinstance(latency.get("render_seconds"), bool) or not math.isfinite(float(latency.get("render_seconds", float("nan")))) or latency.get("render_seconds", -1.0) < 0.0:
+        if not isinstance(latency, dict):
+            errors.append(f"cpu_memory_latency:{case_label}")
+        elif _stage_number(latency.get("render_seconds"), f"cpu_memory_latency:{case_label}", errors, minimum=0.0) is None:
             errors.append(f"cpu_memory_latency:{case_label}")
         inner = json_cases.get("sha256_manifest.json")
         if not isinstance(inner, dict) or set(inner) != set(expected_case_files_without_inner):
@@ -969,10 +1041,30 @@ def validate_hellcat_architecture_stage(
                 if not isinstance(expected_hash, str) or len(expected_hash) != 64 or not path.is_file() or sha256_file(path) != expected_hash:
                     errors.append(f"case_manifest_sha:{case_label}/{filename}")
         event_trace = json_cases.get("event_trace.json")
-        if not isinstance(event_trace, dict) or not isinstance(event_trace.get("afterfire_event_count"), list) or not event_trace["afterfire_event_count"] or any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) or value < 0.0 for value in (event_trace.get("afterfire_event_count") if isinstance(event_trace, dict) else [])):
+        afterfire_values = event_trace.get("afterfire_event_count") if isinstance(event_trace, dict) else None
+        if not isinstance(afterfire_values, list) or not afterfire_values:
             errors.append(f"afterfire_event_count:{case_label}")
-        elif scene == "afterfire_ineligible" and any(value != 0 for value in event_trace["afterfire_event_count"]):
-            errors.append(f"afterfire_wrong_condition:{case_label}")
+        else:
+            numeric_afterfire = [_stage_number(value, f"afterfire_event_count:{case_label}", errors, minimum=0.0) for value in afterfire_values]
+            if any(value is None for value in numeric_afterfire):
+                errors.append(f"afterfire_event_count:{case_label}")
+            elif scene == "afterfire_ineligible" and any(value != 0 for value in numeric_afterfire):
+                errors.append(f"afterfire_wrong_condition:{case_label}")
+
+    if architecture != "P1" and parent_stage_root is not None and verified_parent_pcm:
+        for scene in SCENES:
+            parent_values = verified_parent_pcm.get(scene)
+            candidate_values = candidate_post_ptr.get(scene)
+            saved_difference = candidate_comparison.get(scene)
+            if parent_values is None or candidate_values is None:
+                errors.append(f"parent_candidate_difference_pcm_missing:{architecture}/{scene}")
+                continue
+            if parent_values.shape != candidate_values.shape:
+                errors.append(f"parent_candidate_difference_pcm_frames:{architecture}/{scene}")
+                continue
+            recomputed_difference = float(np.sqrt(np.mean(np.square(parent_values - candidate_values))))
+            if saved_difference is None or not math.isclose(saved_difference, recomputed_difference, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+                errors.append(f"parent_candidate_difference_pcm:{architecture}/{scene}")
 
     return errors
 
@@ -1045,6 +1137,15 @@ def render_hellcat_architecture_stage(
         "files": files,
     }
     write_json(root / "stage_manifest.json", manifest)
+    validation_errors = validate_hellcat_architecture_stage(
+        root,
+        architecture,
+        duration_s,
+        long_window=long_window,
+        parent_stage_root=parent_stage_root if architecture != "P1" else None,
+    )
+    if validation_errors:
+        raise ValueError(f"rendered architecture stage failed validation: {validation_errors}")
     result = dict(manifest)
     result["stage_manifest_path"] = str(root / "stage_manifest.json")
     result["scenes"] = scene_records

@@ -103,6 +103,78 @@ def test_stage_rejects_nonempty_or_tampered_root_without_mutation(tmp_path) -> N
     assert metrics_path.read_bytes() != original_metrics
 
 
+def _rebind_stage_case_hashes(stage_root, architecture: str, scene: str) -> None:
+    case = stage_root / architecture / scene
+    inner_path = case / "sha256_manifest.json"
+    inner = json.loads(inner_path.read_text(encoding="utf-8"))
+    for filename in inner:
+        inner[filename] = hashlib.sha256((case / filename).read_bytes()).hexdigest()
+    inner_path.write_text(json.dumps(inner, sort_keys=True) + "\n", encoding="utf-8")
+    outer_path = stage_root / "stage_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    for filename in bakeoff_module.STAGE_CASE_FILES:
+        outer["files"][f"{architecture}/{scene}/{filename}"] = hashlib.sha256((case / filename).read_bytes()).hexdigest()
+    outer_path.write_text(json.dumps(outer, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def test_stage_rejects_click_gate_false_even_when_hashes_are_rebound(tmp_path) -> None:
+    stage_root = tmp_path / "p1-stage"
+    render_hellcat_architecture_stage(stage_root, "P1", duration_s=0.20)
+    metrics_path = stage_root / "P1" / "steady_1200rpm" / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    metrics["click_metrics"]["raw"]["passed"] = False
+    metrics_path.write_text(json.dumps(metrics, sort_keys=True) + "\n", encoding="utf-8")
+    _rebind_stage_case_hashes(stage_root, "P1", "steady_1200rpm")
+
+    errors = validate_hellcat_architecture_stage(stage_root, "P1", 0.20)
+
+    assert any("click" in error for error in errors)
+
+
+def test_stage_validator_rejects_deleted_or_tampered_parent_and_candidate_rms(tmp_path) -> None:
+    parent_root = tmp_path / "p1-stage"
+    candidate_root = tmp_path / "p2-stage"
+    render_hellcat_architecture_stage(parent_root, "P1", duration_s=0.20)
+    render_hellcat_architecture_stage(candidate_root, "P2", duration_s=0.20, parent_stage_root=parent_root)
+    assert validate_hellcat_architecture_stage(candidate_root, "P2", 0.20, parent_stage_root=parent_root) == []
+
+    deleted_parent = tmp_path / "deleted-parent"
+    import shutil as _shutil
+    _shutil.copytree(parent_root, deleted_parent)
+    _shutil.rmtree(deleted_parent)
+    assert validate_hellcat_architecture_stage(candidate_root, "P2", 0.20, parent_stage_root=deleted_parent)
+
+    tampered_parent = tmp_path / "tampered-parent"
+    _shutil.copytree(parent_root, tampered_parent)
+    parent_pcm = tampered_parent / "P1" / "steady_1200rpm" / "post_ptr_raw.wav"
+    payload = bytearray(parent_pcm.read_bytes())
+    payload[-1] ^= 1
+    parent_pcm.write_bytes(payload)
+    assert validate_hellcat_architecture_stage(candidate_root, "P2", 0.20, parent_stage_root=tampered_parent)
+
+    candidate_metrics = candidate_root / "P2" / "steady_1200rpm" / "metrics.json"
+    metrics = json.loads(candidate_metrics.read_text(encoding="utf-8"))
+    metrics["comparison"]["parent_candidate_difference_rms"] += 1.0
+    candidate_metrics.write_text(json.dumps(metrics, sort_keys=True) + "\n", encoding="utf-8")
+    _rebind_stage_case_hashes(candidate_root, "P2", "steady_1200rpm")
+    errors = validate_hellcat_architecture_stage(candidate_root, "P2", 0.20, parent_stage_root=parent_root)
+    assert any("parent_candidate_difference" in error for error in errors)
+
+
+def test_stage_validator_rejects_huge_numeric_values_without_throwing(tmp_path) -> None:
+    stage_root = tmp_path / "p1-stage"
+    render_hellcat_architecture_stage(stage_root, "P1", duration_s=0.20)
+    huge = 10**1000
+    manifest_path = stage_root / "stage_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["requested_duration_s"] = huge
+    manifest_path.write_text(json.dumps(manifest, sort_keys=True) + "\n", encoding="utf-8")
+
+    errors = validate_hellcat_architecture_stage(stage_root, "P1", 0.20)
+
+    assert errors
+
+
 def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -> None:
     result = run_hellcat_bakeoff(tmp_path / "bakeoff", duration_s=0.25)
     root = tmp_path / "bakeoff"
