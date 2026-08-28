@@ -59,7 +59,7 @@
     "OEM reproduction and Profile Freeze remain prohibited"
   ],
   "audit_provenance": {
-    "repair_kind": "stage_w_task5d_fresh_strict_evidence_metadata",
+    "repair_kind": "stage_w_c_closure_metadata_repair",
     "repair_base": "7d4e49b52b73696af703a1380d83663208c5a897",
     "tested_code_evidence_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
     "recorded_at": "2026-08-28T12:23:31.740776+08:00",
