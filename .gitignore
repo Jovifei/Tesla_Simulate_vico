@@ -217,6 +217,11 @@ tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v26/
 tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v26.*.log
 tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v26.*.log
 tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v26.*.log
+tasks/reports/runtime/s12-stage-w/v27_stages_*/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27/
+tasks/reports/runtime/s12-stage-w/logs/task6p_v27_p1.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_slow_3000.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_stage_v_source_final.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_stage_w_source_final.*.log
