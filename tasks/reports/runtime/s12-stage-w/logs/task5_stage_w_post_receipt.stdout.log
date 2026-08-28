@@ -1,0 +1,10 @@
+........................................................................ [ 66%]
+............s........................                                    [100%]
+108 passed, 1 skipped in 923.80s (0:15:23)
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py -q --disable-warnings
+START=2026-08-28T07:51:22.4499458+08:00
+PID=31288
+END=2026-08-28T08:06:46.0000000+08:00
+EXIT=0
+SOURCE_TEST_HEAD=a87002b
+METADATA_HEAD=873148c
