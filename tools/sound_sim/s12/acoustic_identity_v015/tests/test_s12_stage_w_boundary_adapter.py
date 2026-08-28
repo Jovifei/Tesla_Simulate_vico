@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import numpy as np
+import copy
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.boundary_adapter import FrozenPtrStereo
@@ -39,3 +41,52 @@ def test_frozen_ptr_state_is_preserved_across_blocks_and_snapshot_restore() -> N
     first.restore_state(snapshot)
     replay = first.process(state).post_ptr_raw
     assert np.array_equal(expected, replay)
+
+
+@pytest.mark.parametrize("queue_name", ("upstream", "downstream"))
+@pytest.mark.parametrize("delta", (-1, 1))
+def test_boundary_restore_rejects_queue_length_atomically(queue_name: str, delta: int) -> None:
+    adapter = FrozenPtrStereo(48000)
+    adapter.process(np.ones((4, 2), dtype=np.float64))
+    before = copy.deepcopy(adapter.snapshot())
+    invalid = copy.deepcopy(before)
+    queue = invalid["channels"][0][queue_name]
+    if delta < 0:
+        queue.pop()
+    else:
+        queue.append(0.0)
+    with pytest.raises(ValueError, match="queue topology"):
+        adapter.restore(invalid)
+    assert adapter.snapshot() == before
+
+
+def test_boundary_restore_preflights_all_channels_before_mutating() -> None:
+    adapter = FrozenPtrStereo(48000)
+    adapter.process(np.ones((4, 2), dtype=np.float64))
+    before = copy.deepcopy(adapter.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["channels"][0]["x0"] = 123.0
+    invalid["channels"][1]["downstream"].pop()
+    with pytest.raises(ValueError, match="queue topology"):
+        adapter.restore(invalid)
+    assert adapter.snapshot() == before
+
+
+def test_boundary_restore_rejects_non_mapping_snapshot_atomically() -> None:
+    adapter = FrozenPtrStereo(48000)
+    adapter.process(np.ones((4, 2), dtype=np.float64))
+    before = copy.deepcopy(adapter.snapshot())
+    with pytest.raises(ValueError, match="snapshot"):
+        adapter.restore([])
+    assert adapter.snapshot() == before
+
+
+def test_boundary_restore_rejects_non_list_queue_atomically() -> None:
+    adapter = FrozenPtrStereo(48000)
+    adapter.process(np.ones((4, 2), dtype=np.float64))
+    before = copy.deepcopy(adapter.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["channels"][0]["upstream"] = tuple(invalid["channels"][0]["upstream"])
+    with pytest.raises(ValueError, match="queue topology"):
+        adapter.restore(invalid)
+    assert adapter.snapshot() == before

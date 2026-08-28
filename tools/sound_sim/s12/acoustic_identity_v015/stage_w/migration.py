@@ -27,6 +27,11 @@ MIGRATION_SCENES = ("hot_idle", "steady_mid", "full_pull", "lift", "complete_cyc
 
 _CONFIGS = {"ferrari_458": "ferrari_458_v1", "rx7_fd": "rx7_fd_v1"}
 _LEGACY_RENDERERS = {"ferrari_458": render_ferrari_458, "rx7_fd": render_rx7_fd}
+PARAMETER_USAGE_MATRIX_PATH = Path(__file__).resolve().parents[5] / "tasks" / "reports" / "runtime" / "s12-stage-w" / "parameter_usage_matrix.json"
+_EXPECTED_GEOMETRY = {
+    "piston": {"crankpin_geometry": True, "rotor_geometry": False},
+    "rotary_wankel": {"crankpin_geometry": False, "rotor_geometry": True},
+}
 _RANGES = {
     "ferrari_458": {"hot_idle": (1050.0, 1050.0, 0.14, 0.14), "steady_mid": (3800.0, 3800.0, 0.38, 0.38), "full_pull": (3000.0, 8800.0, 0.42, 0.98), "lift": (7900.0, 5200.0, 0.90, 0.04), "complete_cycle": (1050.0, 1050.0, 0.14, 0.14)},
     "rx7_fd": {"hot_idle": (920.0, 920.0, 0.15, 0.15), "steady_mid": (3400.0, 3400.0, 0.38, 0.38), "full_pull": (2800.0, 7600.0, 0.42, 0.98), "lift": (6900.0, 4500.0, 0.90, 0.04), "complete_cycle": (920.0, 920.0, 0.15, 0.15)},
@@ -187,6 +192,32 @@ def run_preselection_vehicle_migration(output_root: str | Path, vehicle_id: str,
     return result
 
 
+def _load_geometry_contract() -> tuple[dict[str, dict[str, bool]] | None, str | None]:
+    """Load and authenticate the architecture geometry contract from the live matrix."""
+    try:
+        matrix = json.loads(PARAMETER_USAGE_MATRIX_PATH.read_text(encoding="utf-8"))
+        geometry = matrix["stage_w_consumed_paths"]["geometry"]
+        if not isinstance(geometry, dict):
+            return None, "geometry_matrix_invalid"
+        values = {
+            "piston": {
+                "crankpin_geometry": geometry["piston.crankpin_geometry"],
+                "rotor_geometry": geometry["piston.rotor_geometry"],
+            },
+            "rotary_wankel": {
+                "crankpin_geometry": geometry["rotary.crankpin_geometry"],
+                "rotor_geometry": geometry["rotary.rotor_geometry"],
+            },
+        }
+        if any(type(value) is not bool for contract in values.values() for value in contract.values()):
+            return None, "geometry_matrix_invalid"
+        if values != _EXPECTED_GEOMETRY:
+            return None, "geometry_matrix_mismatch"
+        return values, None
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        return None, "geometry_matrix_invalid"
+
+
 def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
     """Validate the complete migration receipt and fail closed on tampering."""
     root = Path(root)
@@ -204,6 +235,9 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
         errors.append("selected_architecture")
     if manifest.get("reference_status") != "REFERENCE_TARGET_MISSING":
         errors.append("reference_status")
+    geometry_contract, geometry_error = _load_geometry_contract()
+    if geometry_error is not None:
+        errors.append(geometry_error)
     for relative, expected in manifest.get("files", {}).items():
         relative_path = Path(relative)
         if relative_path.is_absolute() or ".." in relative_path.parts:
@@ -303,6 +337,11 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                 consumption = diagnostics.get("parameter_consumption", {})
                 if architecture in {"P2H", "P3"} and not all(isinstance(consumption.get(key), bool) for key in ("collector_assignment", "crankpin_geometry", "rotor_geometry", "transfer_ir")):
                     errors.append(f"parameter_consumption:{architecture}/{scene}")
+                if architecture in {"P2H", "P3"} and geometry_contract is not None:
+                    vehicle_architecture = "rotary_wankel" if manifest.get("vehicle_id") == "rx7_fd" else "piston" if manifest.get("vehicle_id") == "ferrari_458" else None
+                    expected = geometry_contract.get(vehicle_architecture) if vehicle_architecture is not None else None
+                    if expected is None or any(consumption.get(key) is not value for key, value in expected.items()):
+                        errors.append(f"geometry_consumption:{architecture}/{scene}")
                 if scene == "lift" and architecture in {"P2H", "P3"} and diagnostics.get("afterfire_event_count", 0) <= 0:
                     errors.append(f"afterfire_missing:{architecture}/{scene}")
                 if scene != "lift" and architecture in {"P2H", "P3"} and diagnostics.get("afterfire_event_count", 0) != 0:

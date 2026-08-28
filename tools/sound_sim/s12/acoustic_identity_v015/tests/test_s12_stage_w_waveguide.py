@@ -6,6 +6,7 @@ import copy
 import hashlib
 
 import numpy as np
+import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.waveguide import (
     WaveguideConfig,
@@ -126,3 +127,121 @@ def test_afterfire_route_snapshot_restores_queued_tail_exactly() -> None:
     engine.restore_state(snapshot)
     replay = engine.process(next_state).raw_pcm
     assert np.array_equal(expected, replay)
+
+
+@pytest.mark.parametrize("queue_name", ("forward", "round_trip"))
+@pytest.mark.parametrize("delta", (-1, 1))
+def test_waveguide_restore_rejects_delay_queue_length_atomically(queue_name: str, delta: int) -> None:
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    history = invalid[queue_name]["history"]
+    if delta < 0:
+        invalid[queue_name]["history"] = history[:-1]
+    else:
+        invalid[queue_name]["history"] = np.concatenate((history, np.zeros(1)))
+    with pytest.raises(ValueError, match="delay history topology"):
+        guide.restore(invalid)
+    after = guide.snapshot()
+    assert np.array_equal(after["forward"]["history"], before["forward"]["history"])
+    assert np.array_equal(after["round_trip"]["history"], before["round_trip"]["history"])
+    assert after["sample_counter"] == before["sample_counter"]
+
+
+def test_waveguide_restore_preflights_all_delay_queues_before_mutating() -> None:
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["forward"]["history"] = np.full_like(invalid["forward"]["history"], 7.0)
+    invalid["round_trip"]["history"] = invalid["round_trip"]["history"][:-1]
+    with pytest.raises(ValueError, match="delay history topology"):
+        guide.restore(invalid)
+    after = guide.snapshot()
+    assert np.array_equal(after["forward"]["history"], before["forward"]["history"])
+    assert np.array_equal(after["round_trip"]["history"], before["round_trip"]["history"])
+
+
+def test_waveguide_restore_rejects_non_integral_snapshot_fields_atomically() -> None:
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["forward"]["samples"] += 0.5
+    invalid["sample_counter"] += 0.5
+    with pytest.raises(ValueError, match="topology"):
+        guide.restore(invalid)
+    after = guide.snapshot()
+    assert np.array_equal(after["forward"]["history"], before["forward"]["history"])
+    assert after["sample_counter"] == before["sample_counter"]
+
+
+def test_waveguide_restore_rejects_non_mapping_frequency_loss_atomically() -> None:
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["frequency_loss"] = None
+    with pytest.raises(ValueError, match="topology"):
+        guide.restore(invalid)
+    after = guide.snapshot()
+    assert np.array_equal(after["forward"]["history"], before["forward"]["history"])
+    assert after["frequency_loss"]["state"] == before["frequency_loss"]["state"]
+
+
+def test_waveguide_restore_rejects_non_integral_frequency_loss_header_atomically() -> None:
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["frequency_loss"]["sample_rate_hz"] += 0.5
+    with pytest.raises(ValueError, match="topology"):
+        guide.restore(invalid)
+    after = guide.snapshot()
+    assert after["frequency_loss"]["sample_rate_hz"] == before["frequency_loss"]["sample_rate_hz"]
+
+
+@pytest.mark.parametrize("guide_index", (0, 1))
+@pytest.mark.parametrize("delta", (-1, 1))
+def test_waveguide_network_restore_rejects_any_guide_queue_length_atomically(guide_index: int, delta: int) -> None:
+    network = WaveguideNetwork([0.20, 0.24], [0, 1], 48000)
+    network.process(np.ones((2, 8), dtype=np.float64))
+    before = copy.deepcopy(network.snapshot())
+    invalid = copy.deepcopy(before)
+    history = invalid["guides"][guide_index]["forward"]["history"]
+    invalid["guides"][guide_index]["forward"]["history"] = history[:-1] if delta < 0 else np.concatenate((history, np.zeros(1)))
+    with pytest.raises(ValueError, match="delay history topology"):
+        network.restore(invalid)
+    after = network.snapshot()
+    for actual, expected in zip(after["guides"], before["guides"]):
+        assert np.array_equal(actual["forward"]["history"], expected["forward"]["history"])
+        assert np.array_equal(actual["round_trip"]["history"], expected["round_trip"]["history"])
+
+
+def test_waveguide_network_restore_preflights_all_guides_before_mutating() -> None:
+    network = WaveguideNetwork([0.20, 0.24], [0, 1], 48000)
+    network.process(np.ones((2, 8), dtype=np.float64))
+    before = copy.deepcopy(network.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["guides"][0]["forward"]["history"] = np.full_like(invalid["guides"][0]["forward"]["history"], 7.0)
+    invalid["guides"][1]["round_trip"]["history"] = invalid["guides"][1]["round_trip"]["history"][:-1]
+    with pytest.raises(ValueError, match="delay history topology"):
+        network.restore(invalid)
+    after = network.snapshot()
+    for actual, expected in zip(after["guides"], before["guides"]):
+        assert np.array_equal(actual["forward"]["history"], expected["forward"]["history"])
+        assert np.array_equal(actual["round_trip"]["history"], expected["round_trip"]["history"])
+
+
+def test_waveguide_network_restore_rejects_malformed_header_atomically() -> None:
+    network = WaveguideNetwork([0.20, 0.24], [0, 1], 48000)
+    network.process(np.ones((2, 8), dtype=np.float64))
+    before = copy.deepcopy(network.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["bank_count"] = None
+    with pytest.raises(ValueError, match="topology"):
+        network.restore(invalid)
+    after = network.snapshot()
+    assert after["bank_assignment"] == before["bank_assignment"]
+    assert after["bank_count"] == before["bank_count"]

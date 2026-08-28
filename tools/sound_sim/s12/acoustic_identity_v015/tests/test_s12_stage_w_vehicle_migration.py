@@ -12,6 +12,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import (
     run_preselection_vehicle_migration,
     validate_vehicle_migration_manifest,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w import migration as migration_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import sha256_file
 
 
@@ -142,6 +143,100 @@ def test_migration_validator_cross_checks_nested_results_inventory(tmp_path) -> 
     manifest["files"]["migration_results.json"] = sha256_file(results_path)
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     assert "results_scene_inventory:P2H" in validate_vehicle_migration_manifest(root)
+
+
+@pytest.mark.parametrize(
+    ("vehicle_id", "expected"),
+    (
+        ("rx7_fd", {"crankpin_geometry": False, "rotor_geometry": True}),
+        ("ferrari_458", {"crankpin_geometry": True, "rotor_geometry": False}),
+    ),
+)
+def test_migration_validator_enforces_architecture_geometry_consumption(tmp_path, vehicle_id, expected) -> None:
+    root = tmp_path / vehicle_id
+    run_preselection_vehicle_migration(root, vehicle_id, duration_s=0.25)
+    assert validate_vehicle_migration_manifest(root) == []
+
+    metrics_path = root / "P2H" / "hot_idle" / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    metrics["engine_diagnostics"]["parameter_consumption"].update(
+        {key: not value for key, value in expected.items()}
+    )
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    case_manifest_path = metrics_path.parent / "sha256_manifest.json"
+    case_manifest = json.loads(case_manifest_path.read_text(encoding="utf-8"))
+    case_manifest["metrics.json"] = sha256_file(metrics_path)
+    case_manifest_path.write_text(json.dumps(case_manifest), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["P2H/hot_idle/metrics.json"] = sha256_file(metrics_path)
+    outer["files"]["P2H/hot_idle/sha256_manifest.json"] = sha256_file(case_manifest_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("geometry_consumption:P2H/hot_idle" in error for error in validate_vehicle_migration_manifest(root))
+
+
+@pytest.mark.parametrize("matrix", (None, {}, {"stage_w_consumed_paths": {"geometry": {}}}))
+def test_migration_validator_fails_closed_for_missing_or_malformed_geometry_matrix(tmp_path, monkeypatch, matrix) -> None:
+    root = tmp_path / "matrix"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    matrix_path = tmp_path / "parameter_usage_matrix.json"
+    if matrix is not None:
+        matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+    monkeypatch.setattr(migration_module, "PARAMETER_USAGE_MATRIX_PATH", matrix_path)
+    errors = validate_vehicle_migration_manifest(root)
+    assert "geometry_matrix_invalid" in errors
+
+
+def test_migration_validator_fails_closed_for_mismatched_geometry_matrix(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "matrix_mismatch"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    matrix_path = tmp_path / "parameter_usage_matrix.json"
+    matrix_path.write_text(
+        json.dumps(
+            {
+                "stage_w_consumed_paths": {
+                    "geometry": {
+                        "piston.crankpin_geometry": False,
+                        "piston.rotor_geometry": True,
+                        "rotary.crankpin_geometry": False,
+                        "rotary.rotor_geometry": True,
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(migration_module, "PARAMETER_USAGE_MATRIX_PATH", matrix_path)
+    assert "geometry_matrix_mismatch" in validate_vehicle_migration_manifest(root)
+
+
+@pytest.mark.parametrize("hash_key", ("raw_source_sha256", "post_ptr_sha256", "monitor_sha256"))
+def test_migration_validator_rejects_rebound_nested_result_hash_tampering(tmp_path, hash_key) -> None:
+    root = tmp_path / hash_key
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"][hash_key] = "0" * 64
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["migration_results.json"] = sha256_file(results_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("results_hash:P2H/lift/" in error for error in validate_vehicle_migration_manifest(root))
+
+
+def test_migration_validator_rejects_rebound_nested_result_hash_inventory_tampering(tmp_path) -> None:
+    root = tmp_path / "nested_hash_inventory"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"].pop("monitor_sha256")
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["migration_results.json"] = sha256_file(results_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("results_hash:P2H/lift/monitor_sha256" in error for error in validate_vehicle_migration_manifest(root))
 
 
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:

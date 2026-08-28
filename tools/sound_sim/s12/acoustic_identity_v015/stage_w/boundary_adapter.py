@@ -66,15 +66,40 @@ class StageWBoundaryAdapter:
         }
 
     def restore(self, snapshot: Mapping[str, Any]) -> None:
+        states = self._validate_snapshot(snapshot)
+        for adapter, state, upstream, downstream in states:
+            adapter._x0 = state["x0"]
+            adapter._x1 = state["x1"]
+            adapter._upstream = deque(upstream)
+            adapter._downstream = deque(downstream)
+
+    def _validate_snapshot(self, snapshot: Mapping[str, Any]) -> list[tuple[Any, dict[str, float], list[float], list[float]]]:
+        if not isinstance(snapshot, Mapping):
+            raise ValueError("frozen PTR snapshot topology differs")
         if snapshot.get("schema_version") != "s12.stage_w.frozen_ptr_state.v1":
             raise ValueError("unsupported frozen PTR snapshot")
-        if len(snapshot.get("channels", [])) != len(self.channels):
+        channels = snapshot.get("channels")
+        if not isinstance(channels, list) or len(channels) != len(self.channels):
             raise ValueError("frozen PTR snapshot channel topology differs")
-        for adapter, state in zip(self.channels, snapshot["channels"]):
-            adapter._x0 = float(state["x0"])
-            adapter._x1 = float(state["x1"])
-            adapter._upstream = deque(float(value) for value in state["upstream"])
-            adapter._downstream = deque(float(value) for value in state["downstream"])
+        validated = []
+        for adapter, state in zip(self.channels, channels):
+            if not isinstance(state, Mapping):
+                raise ValueError("frozen PTR snapshot channel topology differs")
+            if not isinstance(state.get("upstream"), list) or not isinstance(state.get("downstream"), list):
+                raise ValueError("frozen PTR snapshot queue topology differs")
+            try:
+                x0 = float(state["x0"])
+                x1 = float(state["x1"])
+                upstream = [float(value) for value in state["upstream"]]
+                downstream = [float(value) for value in state["downstream"]]
+            except (KeyError, TypeError, ValueError):
+                raise ValueError("frozen PTR snapshot queue topology differs") from None
+            if not np.isfinite([x0, x1, *upstream, *downstream]).all():
+                raise ValueError("frozen PTR snapshot queue topology differs")
+            if len(upstream) != adapter.config.upstream_delay_frames or len(downstream) != adapter.config.downstream_delay_frames:
+                raise ValueError("frozen PTR snapshot queue topology differs")
+            validated.append((adapter, {"x0": x0, "x1": x1}, upstream, downstream))
+        return validated
 
 
 class FrozenPtrStereo(StageWBoundaryAdapter):
