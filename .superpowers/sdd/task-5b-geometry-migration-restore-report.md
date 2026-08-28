@@ -100,3 +100,40 @@ PTR/Track-P behavior, or change the separate R1/W10 selection gate.
 Remaining concern: the migration validator intentionally depends on the
 current repository `parameter_usage_matrix.json`; replacing or relocating that
 matrix remains an external contract change and was not attempted here.
+
+## Review addendum closure: malformed migration result nodes
+
+The P2 review identified that `migration_results.json` architecture and scene
+nodes were used with `.get()` without mapping checks. The defect was reproduced
+with outer-manifest SHA rebinding and failed as exceptions:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py -k "malformed_architecture or malformed_scene" -q
+2 failed, 18 deselected in 54.50s
+Failure: malformed architecture list and malformed scene null each raised
+AttributeError instead of returning validation errors.
+```
+
+The validator now guards the result root, architecture inventory, each
+architecture node, and each scene node as mappings. Malformed nodes are
+normalized to empty mappings only after recording descriptive errors, so all
+subsequent inventory/hash checks remain exception-free. The self-contained
+tamper tests rebind only `migration_manifest.json`'s nested-results SHA and
+assert an error-list return:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py -k "malformed_architecture or malformed_scene" -q
+2 passed, 18 deselected in 54.61s
+```
+
+The complete migration validator suite then passed on the corrected source:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py -q
+20 passed in 536.71s (0:08:56)
+```
+
+A transient first post-fix collection attempt exposed an indentation
+`SyntaxError`; the block was corrected before the focused GREEN run above.
+No metadata/evidence/Vault/Track-P/frozen PTR changes or full Stage-W/S12 run
+were performed.

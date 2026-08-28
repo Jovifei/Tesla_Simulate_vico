@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 import time
 from typing import Any
@@ -275,18 +276,30 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
     results_path = root / "migration_results.json"
     try:
         results = json.loads(results_path.read_text(encoding="utf-8"))
+        if not isinstance(results, Mapping):
+            errors.append("results_root")
+            results = {}
         for key in ("status", "vehicle_id", "selected_architecture", "reference_status"):
             if results.get(key) != manifest.get(key):
                 errors.append(f"results_{key}")
         result_architectures = results.get("architectures", {})
-        if set(result_architectures) != {"P1", "P2H", "P3"}:
+        if not isinstance(result_architectures, Mapping):
+            errors.append("results_architecture_inventory")
+            result_architectures = {}
+        elif set(result_architectures) != {"P1", "P2H", "P3"}:
             errors.append("results_architecture_inventory")
         for architecture in ("P1", "P2H", "P3"):
             scene_records = result_architectures.get(architecture, {})
-            if set(scene_records) != set(MIGRATION_SCENES):
+            if not isinstance(scene_records, Mapping):
+                errors.append(f"results_architecture_node:{architecture}")
+                scene_records = {}
+            elif set(scene_records) != set(MIGRATION_SCENES):
                 errors.append(f"results_scene_inventory:{architecture}")
             for scene in MIGRATION_SCENES:
                 record = scene_records.get(scene, {})
+                if not isinstance(record, Mapping):
+                    errors.append(f"results_scene_node:{architecture}/{scene}")
+                    record = {}
                 case = root / architecture / scene
                 for key, filename in (("raw_source_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
                     path = case / filename

@@ -239,6 +239,40 @@ def test_migration_validator_rejects_rebound_nested_result_hash_inventory_tamper
     assert any("results_hash:P2H/lift/monitor_sha256" in error for error in validate_vehicle_migration_manifest(root))
 
 
+def test_migration_validator_rejects_rebound_malformed_architecture_node(tmp_path) -> None:
+    root = tmp_path / "malformed_architecture"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"] = []
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert isinstance(errors, list)
+    assert "results_architecture_node:P2H" in errors
+
+
+def test_migration_validator_rejects_rebound_malformed_scene_node(tmp_path) -> None:
+    root = tmp_path / "malformed_scene"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"] = None
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert isinstance(errors, list)
+    assert "results_scene_node:P2H/lift" in errors
+
+
 def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"
