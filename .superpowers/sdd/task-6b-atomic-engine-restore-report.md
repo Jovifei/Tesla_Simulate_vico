@@ -65,3 +65,30 @@ Commit: `fix(s12): make engine restore atomic`
 
 Status: ready for parent-agent review. No provider/device/release or formal
 qualification claim is made.
+
+## Review addendum correction
+
+Prior implementation commit reviewed and rejected: `14170ac`.
+
+RED during correction: the affected restore suites exposed route-validation
+failures and then the focused malformed-payload tests exposed an incorrect
+test fixture that treated scheduled sample zero as invalid at engine counter
+zero. The fixture was corrected to use a schedule before the engine counter.
+
+GREEN after correction:
+
+```text
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py -q --disable-warnings
+38 passed, 1 skipped
+
+python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings
+135 passed, 1 skipped
+```
+
+The correction rejects noncanonical afterfire aliases, malformed or missing
+route fields, invalid path/bank relationships, stale schedules, nonpositive
+or duplicate queue sequences, unsorted queues, invalid arrival ordering, and
+non-numeric fractional-delay histories without mutating live state.
+
+New correction commit SHA: recorded in the parent-agent handoff after the
+clean commit is created; no other project artifacts are in scope.

@@ -77,10 +77,19 @@ class _FractionalDelay:
             if isinstance(payload["delay_samples"], (bool, np.bool_)) or not isinstance(payload["delay_samples"], Real):
                 raise ValueError
             delay_samples = float(payload["delay_samples"])
-            history = np.asarray(payload["history"], dtype=np.float64)
+            raw_history = payload["history"]
+            if not isinstance(raw_history, (list, np.ndarray)):
+                raise ValueError
+            history = np.asarray(raw_history)
+            if history.shape != self.history.shape:
+                raise ValueError
+            for value in history.flat:
+                if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+                    raise ValueError
+            history = np.asarray(history, dtype=np.float64)
             sample_counter = payload["sample_counter"]
         except (KeyError, TypeError, ValueError, OverflowError):
-            raise ValueError("waveguide delay topology differs from snapshot") from None
+            raise ValueError("waveguide delay history topology differs from snapshot") from None
         if type(samples) is not int or type(sample_counter) is not int:
             raise ValueError("waveguide delay topology differs from snapshot")
         if samples != self.samples or delay_samples != self.delay_samples_exact:

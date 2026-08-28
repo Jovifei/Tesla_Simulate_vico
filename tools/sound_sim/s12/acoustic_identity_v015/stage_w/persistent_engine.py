@@ -58,6 +58,24 @@ def _finite_array(value: Any, shape: tuple[int, ...], label: str) -> np.ndarray:
     return result.copy()
 
 
+def _strict_numeric_array(value: Any, shape: tuple[int, ...], label: str) -> np.ndarray:
+    if not isinstance(value, (list, np.ndarray)):
+        raise ValueError(f"{label} must be a numeric list or array")
+    try:
+        source = np.asarray(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{label} must be a numeric list or array") from None
+    if source.shape != shape:
+        raise ValueError(f"{label} topology differs from snapshot")
+    for item in source.flat:
+        if isinstance(item, (bool, np.bool_)) or not isinstance(item, Real):
+            raise ValueError(f"{label} contains a non-numeric value")
+    result = np.asarray(source, dtype=np.float64)
+    if not np.all(np.isfinite(result)):
+        raise ValueError(f"{label} must be finite")
+    return result.copy()
+
+
 def _mapping(value: Any, label: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise ValueError(f"{label} must be a mapping")
@@ -119,7 +137,7 @@ class _DelayLine:
         attenuation = _finite_scalar(payload.get("attenuation"), "attenuation")
         if attenuation != self.attenuation:
             raise ValueError("delay-line topology differs from snapshot")
-        history = _finite_array(payload.get("history"), self.history.shape, "delay-line history")
+        history = _strict_numeric_array(payload.get("history"), self.history.shape, "delay-line history")
         sample_counter = _counter(payload.get("sample_counter"), "delay-line sample_counter")
         return history, sample_counter
 
@@ -791,6 +809,20 @@ class PersistentEventDomainEngine:
         if not isinstance(pending_events, list) or len(pending_events) > 64:
             raise ValueError("afterfire queue capacity differs from topology")
         state["afterfire_pending_events"] = [self._validate_afterfire_event(event) for event in pending_events]
+        sequences = [event["sequence"] for event in state["afterfire_pending_events"]]
+        if any(sequence <= 0 for sequence in sequences) or len(sequences) != len(set(sequences)):
+            raise ValueError("afterfire event sequences must be unique positive integers")
+        if sequences and max(sequences) > state["afterfire_sequence"]:
+            raise ValueError("afterfire event sequence exceeds sequence counter")
+        for event in state["afterfire_pending_events"]:
+            if event["scheduled_sample"] < sample_counter:
+                raise ValueError("pending afterfire event is scheduled before engine counter")
+            if event["scheduled_sample_exact"] < sample_counter:
+                raise ValueError("pending afterfire exact schedule is before engine counter")
+            if event["arrival_samples_exact"] < event["scheduled_sample_exact"]:
+                raise ValueError("afterfire exact arrival precedes scheduled sample")
+            if event["arrival_sample_index"] < event["scheduled_sample"] or event["arrival_samples"] + 1 < event["scheduled_sample"]:
+                raise ValueError("afterfire arrival precedes scheduled sample")
         if state["afterfire_pending_events"] != sorted(state["afterfire_pending_events"], key=lambda event: (event["scheduled_sample"], event["sequence"])):
             raise ValueError("afterfire queue order differs from topology")
         pressure_map = _mapping(snapshot["afterfire_pressure_energy_map"], "afterfire pressure map")
@@ -811,7 +843,7 @@ class PersistentEventDomainEngine:
             state[name] = [line._validate(item) for line, item in zip(lines, saved)]
         state["central_collector_line"] = self._central_collector_line._validate(snapshot["central_collector_line"])
         policy = snapshot["afterfire_location_policy"]
-        if policy not in {"primary", "collector", "bank_collector", "central_collector"}:
+        if not isinstance(policy, str) or policy not in {"primary", "bank_collector", "central_collector"}:
             raise ValueError("afterfire location policy differs from topology")
         state["afterfire_location_policy"] = policy
         state["last_output_sample"] = _finite_array(snapshot["last_output_sample"], (2,), "last output sample")
@@ -873,15 +905,27 @@ class PersistentEventDomainEngine:
             result[name] = _counter(event[name], f"afterfire event {name}")
         for name in ("scheduled_sample_exact", "energy", "pressure_energy_factor", "arrival_samples_exact", "collector_pressure"):
             result[name] = _finite_scalar(event[name], f"afterfire event {name}")
-        if not isinstance(event["route"], str) or event["route"] not in {"primary", "collector", "bank_collector", "central_collector"}:
+        if not isinstance(event["route"], str) or event["route"] not in {"primary", "bank_collector", "central_collector"}:
             raise ValueError("afterfire event route differs from topology")
         result["route"] = event["route"]
         if result["entity"] >= self.entity_count:
             raise ValueError("afterfire event entity differs from topology")
+        assignment = list(unwrap(self.config, "bank_assignment"))
+        expected_bank = int(assignment[result["entity"]])
+        if event["route"] == "central_collector":
+            if event["bank_id"] is not None or event["path_id"] != "central_collector":
+                raise ValueError("central afterfire event topology differs")
+        elif event["route"] == "primary":
+            if event["bank_id"] is None or event["path_id"] != f"primary_path_{result['entity']}" :
+                raise ValueError("primary afterfire event topology differs")
+        elif event["bank_id"] is None or event["path_id"] != f"bank_collector_{event['bank_id']}" :
+            raise ValueError("bank afterfire event topology differs")
         if event["bank_id"] is not None:
             result["bank_id"] = _counter(event["bank_id"], "afterfire event bank_id")
             if result["bank_id"] >= self.bank_count:
                 raise ValueError("afterfire event bank_id differs from topology")
+            if result["bank_id"] != expected_bank:
+                raise ValueError("afterfire event bank assignment differs from topology")
         if not isinstance(event["path_id"], str):
             raise ValueError("afterfire event path_id differs from topology")
         return result
@@ -893,9 +937,19 @@ class PersistentEventDomainEngine:
         if not set(route) <= allowed or not required <= set(route):
             raise ValueError("afterfire route fields differ from topology")
         result = dict(route)
-        if not isinstance(route["route"], str) or route["route"] not in {"none", "primary", "collector", "bank_collector", "central_collector"}:
+        if not isinstance(route["route"], str) or route["route"] not in {"none", "primary", "bank_collector", "central_collector"}:
             raise ValueError("afterfire route differs from topology")
-        for name in ("collector_pressure", "arrival_samples_exact"):
+        base = {"route", "path_id", "bank_id", "collector_pressure", "arrival_samples", "arrival_sample_index", "arrival_samples_exact"}
+        event_fields = base | {"scheduled_sample", "scheduled_sample_exact", "sequence", "energy", "pressure_energy_factor", "entity"}
+        if set(route) != base and set(route) != event_fields - {"sequence"}:
+            raise ValueError("afterfire route fields differ from topology")
+        if route["route"] == "none":
+            if set(route) != base or any(route[key] is not None for key in ("path_id", "bank_id", "arrival_samples", "arrival_sample_index", "arrival_samples_exact")):
+                raise ValueError("empty afterfire route is malformed")
+        elif any(route[key] is None for key in ("path_id", "arrival_samples", "arrival_sample_index", "arrival_samples_exact")):
+            raise ValueError("afterfire route requires arrival fields")
+        result["collector_pressure"] = _finite_scalar(route["collector_pressure"], "afterfire route collector_pressure")
+        for name in ("arrival_samples_exact", "scheduled_sample_exact", "energy", "pressure_energy_factor"):
             if name in route and route[name] is not None:
                 result[name] = _finite_scalar(route[name], f"afterfire route {name}")
         for name in ("arrival_samples", "arrival_sample_index", "scheduled_sample", "sequence", "entity"):
@@ -907,6 +961,25 @@ class PersistentEventDomainEngine:
             result["bank_id"] = _counter(route["bank_id"], "afterfire route bank_id")
             if result["bank_id"] >= self.bank_count:
                 raise ValueError("afterfire route bank_id differs from topology")
+        if route["route"] != "none":
+            entity = route.get("entity")
+            if entity is None:
+                raise ValueError("afterfire route requires entity")
+            entity = _counter(entity, "afterfire route entity")
+            result["entity"] = entity
+            if entity >= self.entity_count:
+                raise ValueError("afterfire route entity differs from topology")
+            expected_bank = int(list(unwrap(self.config, "bank_assignment"))[entity])
+            if route["route"] == "central_collector":
+                if route["bank_id"] is not None or route["path_id"] != "central_collector":
+                    raise ValueError("central afterfire route topology differs")
+            elif route["bank_id"] != expected_bank:
+                raise ValueError("afterfire route bank assignment differs from topology")
+            expected_path = f"primary_path_{entity}" if route["route"] == "primary" else f"bank_collector_{route['bank_id']}"
+            if route["route"] != "central_collector" and route["path_id"] != expected_path:
+                raise ValueError("afterfire route path differs from topology")
+            if route["arrival_sample_index"] < route["scheduled_sample"] or route["arrival_samples"] + 1 < route["scheduled_sample"] or route["arrival_samples_exact"] < route["scheduled_sample_exact"]:
+                raise ValueError("afterfire route arrival precedes scheduled sample")
         return result
 
     def diagnostics(self) -> dict[str, Any]:

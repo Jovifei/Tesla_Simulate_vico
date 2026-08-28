@@ -181,6 +181,120 @@ def test_delay_line_restore_rejects_malformed_history_without_mutating() -> None
     assert before["sample_counter"] == line.sample_counter
 
 
+def _queued_afterfire_snapshot(engine: PersistentEventDomainEngine, route: str = "primary") -> dict:
+    snapshot = copy.deepcopy(engine.snapshot_state())
+    bank = int(engine.config["bank_assignment"]["value"][0])
+    event = {
+        "scheduled_sample": engine.sample_counter + 100,
+        "scheduled_sample_exact": engine.sample_counter + 100.25,
+        "sequence": 1,
+        "energy": 0.2,
+        "pressure_energy_factor": 0.8,
+        "route": route,
+        "entity": 0,
+        "bank_id": bank if route != "central_collector" else None,
+        "path_id": "primary_path_0" if route == "primary" else "bank_collector_0" if route == "bank_collector" else "central_collector",
+        "arrival_samples": engine.sample_counter + 10000,
+        "arrival_sample_index": engine.sample_counter + 10001,
+        "arrival_samples_exact": engine.sample_counter + 10000.25,
+        "collector_pressure": 0.1,
+    }
+    snapshot["afterfire_pending_events"] = [event]
+    snapshot["afterfire_sequence"] = 1
+    snapshot["afterfire_route"] = {key: value for key, value in event.items() if key != "sequence"}
+    return snapshot
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    (
+        lambda event: event.__setitem__("energy", True),
+        lambda event: event.__setitem__("scheduled_sample_exact", "100.25"),
+        lambda event: event.__setitem__("collector_pressure", np.nan),
+        lambda event: event.__setitem__("arrival_samples_exact", np.inf),
+        lambda event: event.__setitem__("sequence", 0),
+        lambda event: event.__setitem__("scheduled_sample", -1),
+    ),
+)
+def test_restore_rejects_malformed_pending_afterfire_event_atomically(mutate) -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = _queued_afterfire_snapshot(engine)
+    mutate(invalid["afterfire_pending_events"][0])
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+@pytest.mark.parametrize(
+    ("route", "mutate"),
+    (
+        ("collector", lambda event: None),
+        ("primary", lambda event: event.__setitem__("bank_id", 1)),
+        ("bank_collector", lambda event: event.__setitem__("path_id", "primary_path_0")),
+        ("central_collector", lambda event: event.__setitem__("bank_id", 0)),
+    ),
+)
+def test_restore_rejects_noncanonical_or_mismatched_afterfire_route_atomically(route, mutate) -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = _queued_afterfire_snapshot(engine, route)
+    mutate(invalid["afterfire_pending_events"][0])
+    invalid["afterfire_route"] = {key: value for key, value in invalid["afterfire_pending_events"][0].items() if key != "sequence"}
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+@pytest.mark.parametrize("route", ("primary", "bank_collector", "central_collector"))
+def test_restore_round_trip_preserves_canonical_afterfire_queue(route) -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    snapshot = _queued_afterfire_snapshot(engine, route)
+    engine.restore_state(snapshot)
+    restored = engine.snapshot_state()
+    _assert_snapshot_equal(snapshot, restored)
+
+
+@pytest.mark.parametrize("kind", ("order", "duplicate_sequence", "arrival_before_schedule", "missing_route_field"))
+def test_restore_rejects_afterfire_queue_invariants_atomically(kind) -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
+    before = copy.deepcopy(engine.snapshot_state())
+    invalid = _queued_afterfire_snapshot(engine)
+    if kind == "order":
+        second = copy.deepcopy(invalid["afterfire_pending_events"][0])
+        second["scheduled_sample"] += 100
+        second["scheduled_sample_exact"] += 100.0
+        second["sequence"] = 2
+        invalid["afterfire_pending_events"] = [second, invalid["afterfire_pending_events"][0]]
+    elif kind == "duplicate_sequence":
+        second = copy.deepcopy(invalid["afterfire_pending_events"][0])
+        second["scheduled_sample"] += 100
+        second["scheduled_sample_exact"] += 100.0
+        invalid["afterfire_pending_events"].append(second)
+        invalid["afterfire_sequence"] = 2
+    elif kind == "arrival_before_schedule":
+        invalid["afterfire_pending_events"][0]["arrival_sample_index"] = invalid["afterfire_pending_events"][0]["scheduled_sample"] - 1
+    else:
+        invalid["afterfire_route"].pop("path_id")
+    with pytest.raises(ValueError):
+        engine.restore_state(invalid)
+    _assert_snapshot_equal(before, engine.snapshot_state())
+
+
+@pytest.mark.parametrize("bad_value", (True, "0.0"))
+def test_fractional_delay_rejects_bool_or_string_history_without_mutating(bad_value) -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.waveguide import StatefulWaveguide, WaveguideConfig
+
+    guide = StatefulWaveguide(WaveguideConfig(length_m=0.20, sample_rate_hz=48000))
+    guide.process(np.ones(8, dtype=np.float64))
+    before = copy.deepcopy(guide.snapshot())
+    invalid = copy.deepcopy(before)
+    invalid["forward"]["history"] = [bad_value] * len(before["forward"]["history"])
+    with pytest.raises(ValueError):
+        guide.restore(invalid)
+    _assert_snapshot_equal(before, guide.snapshot())
+
+
 def test_restore_legacy_scalar_torque_snapshot_is_limited_to_one_block() -> None:
     engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960)
     snapshot = engine.snapshot_state()
