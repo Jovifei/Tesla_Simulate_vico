@@ -24,8 +24,8 @@ afterfire state and monitor gain.
 ## Fresh evidence
 
 - Fast W1/W2/W4/W5 suite: `23 passed, 1 skipped` (Stage-W focused is
-  `141 passed, 1 skipped` on current validation head `da541fd`).
-- Slow gate: `1 passed in 92.50s` documentation baseline (fresh Task5C run: `1 passed in 92.24s`); 3000 calls × 960 samples
+  `141 passed, 1 skipped` on current validation head `fcf74f3`).
+- Slow gate: `1 passed in 92.50s` documentation baseline (fresh Task5D run: `1 passed in 92.06s`); 3000 calls × 960 samples
   matched one-shot processing byte-for-byte and remained under the bounded
   state-memory assertion.
 - Scope remains source-domain only: `synthetic`, `uncalibrated`,

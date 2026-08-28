@@ -2,7 +2,7 @@
   "schema_version": "s12.stage_w.w4_waveguide_receipt.v1",
   "status": "WAVEGUIDE_V1_PASS / ENSIM4_DOCKER_BUILD_PASS_TEACHER_ONLY",
   "waveguide_model": "waveguide_v1",
-  "waveguide_tests": "covered by final Stage-W focused: 43 passed, 1 skipped",
+  "waveguide_tests": "covered by Task5D final Stage-W focused: 141 passed, 1 skipped",
   "ensim4": {
     "external_root": "E:/Tesla_speed/research/engine-audio-ecosystem/ensim4",
     "commit": "35b92a6aa5e038d18769d637dc9bedf0346939e1",

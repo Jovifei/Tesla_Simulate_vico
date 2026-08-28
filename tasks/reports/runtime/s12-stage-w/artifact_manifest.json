@@ -11,7 +11,7 @@
     "ferrari_migration_v3": {"path": "migration_v3/ferrari_458/migration_manifest.json", "sha256": "d95971f408ac7c84bad7944f222b26ef389e2469e09d1e4f42ebddcd230e4ec5", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "rx7_migration_v3": {"path": "migration_v3/rx7_fd/migration_manifest.json", "sha256": "00e75ae4589fe174335a50401bc925f73a3bffc03ac096640e427e21595f28f0", "status": "UNSELECTED_CANDIDATE_MIGRATION"},
     "review_package": {"path": "stage_w_review_package_receipt.json", "zip_sha256": "965c0176e106e7bdc5a703d3475ee5e0eebdf560a13ed03ce422f65c893c45c3", "source_bakeoff_manifest_sha256": "cb6c3eeb58cffdce628adea6211bf0ce031d6e8962e3b72529447aee1b2ec288", "status": "STALE_HISTORICAL_REVIEW_PACKAGE", "current_audition_prohibited": true, "new_package_prohibited_until": "candidate_selected_and_R1_gate_closed"},
-    "task5_current_receipt": {"path": "../../../../.superpowers/sdd/final_remediation_evidence_receipt.json", "status": "DONE_WITH_CONCERNS", "tested_source_head": "5038194", "latest_validation_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a", "latest_validation_head_role": "current_validation_source_test_head; audio generation unchanged after 5038194", "evidence": ["bakeoff_final_remediation_v23", "migration_final_remediation_rx7_v23", "migration_final_remediation_ferrari_v23"]},
+    "task5_current_receipt": {"path": "../../../../.superpowers/sdd/final_remediation_evidence_receipt.json", "status": "DONE_WITH_CONCERNS", "tested_source_head": "5038194", "latest_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "latest_validation_head_role": "Task5D current strict bakeoff/migration/restore and complete Stage-W/V verification head; audio generation unchanged after 5038194", "evidence": ["bakeoff_final_remediation_v24", "migration_final_remediation_rx7_v24", "migration_final_remediation_ferrari_v24"]},
     "reference_intake_audit": {"path": "w10_reference_intake_audit.json", "status": "BLOCKED_REFERENCE_QUALIFICATION"},
     "r1_capture_package": {"path": "w10_r1_capture_package_receipt.json", "status": "WAITING_FOR_R1_PILOT_DELIVERY"},
     "teacher_reduction": {"path": "teacher_reduction_v1/teacher_reduction_receipt.json", "sha256": "f7734828183ef15c8fe4b081a2f40a3809749c884f467ba0884c5237e58c4e10", "status": "TEACHER_RESPONSE_RUNTIME_EXPERIMENT"},
@@ -19,16 +19,16 @@
     "source_evidence_receipts": {"path": "../../../../docs/research/engine-audio-ecosystem/source_evidence_receipts.json", "sha256": "f0b203e56ad4e1268ab8ef5452ddcaf665fb7334781e4a052da7b20c34db66d6", "receipt_count": 23},
     "source_build_receipts": {"path": "source_build_receipts.json", "sha256": "850ed1b4d07039e7791207c8fd9ffb3f189f489a1a9c0f3c6c363321917d7d91"},
     "license_receipts": {"path": "license_receipts.json", "sha256": "b093e065bb008b088191dbce97234aa1312a713e8a7081f29083607254f1a586"},
-    "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "c7d95ade0a77d8e1eb54aa1d146e190e6ede6f98206a8ec7cb0f6100e66371d6"}
+    "parameter_usage_matrix": {"path": "parameter_usage_matrix.json", "sha256": "1709a08f1d90a684bb75a79c144b650b3a42e54e71d5a19595b12142fbee6d96"}
   },
   "current_task5_evidence": {
     "audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
-    "validation_source_test_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
-    "bakeoff_final_remediation_v23": {"manifest_sha256": "dc8170d0e8e5a00f429fe3fc151169ce0597c02548b0ae2c7ea2ed9b41ae05d4", "wav_count": 180},
-    "migration_final_remediation_rx7_v23": {"manifest_sha256": "906f2da73d1912c33c2b00d6018291a7533c1715321dd21bf1b6ec9fb8fcca39", "wav_count": 45},
-    "migration_final_remediation_ferrari_v23": {"manifest_sha256": "85de38f559991d58b160dee59b0549d4cab6c48718f10201f9c9711285eb6e73", "wav_count": 45},
+    "validation_source_test_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+    "bakeoff_final_remediation_v24": {"manifest_sha256": "e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0", "wav_count": 180},
+    "migration_final_remediation_rx7_v24": {"manifest_sha256": "86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582", "wav_count": 45},
+    "migration_final_remediation_ferrari_v24": {"manifest_sha256": "290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d", "wav_count": 45},
     "selection": null,
-    "validation_concerns": ["bakeoff_v23_current_validator_errors:16", "rx7_v23_validator_passed", "ferrari_v23_validator_passed"]
+    "validation_concerns": ["formal R1/W10/reference selection remains externally blocked; all v24 local validators returned []"]
   },
   "selection_gate": {
     "selected_architecture": null,

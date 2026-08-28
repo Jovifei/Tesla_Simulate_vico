@@ -4169,3 +4169,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [ ] RED/GREEN: historical W9/slow gate, stale package consumer rejection, nested migration inventory, mirror pending-parent state.
 - [ ] Commit source/tests/docs, regenerate once, run slow/Stage-W/V/validators/JSON/compileall/Track-P/diff.
 - [ ] Update receipt/recovery/package metadata separately; rerun Stage-W after metadata; leave clean.
+
+## Task 5D fresh strict evidence (2026-08-28)
+
+- [x] Probe current generator in unique system temp root; strict bakeoff validator returned `[]` with exit 0, so no generator/source repair was required.
+- [x] Generate exactly one new ignored synthetic evidence set: bakeoff v24 (180 WAV), RX-7 v24 (45 WAV), Ferrari v24 (45 WAV); preserve v23 and all earlier roots as history.
+- [x] Run independent v24 validators (`[]` for all three), JSON finite (`730/0`), WAV reopen/format (`270/270`), nested SHA (`900/900`), remediation (`52 passed`), Task5A (`24 passed`), Task5B affected (`104 passed`), slow (`1 passed in 92.06s`), Stage-W (`141 passed, 1 skipped`), Stage-V (`31 passed, 652 deselected`), compileall, Track-P and diff checks.
+- [x] Synchronize receipt, execution state, W9 current pointer, artifact/usage/package metadata, Obsidian repo mirror, Stage-W docs and resume to v24/current validation head; Vault remains `PENDING_PARENT_CODEX_MEMORY`.
+
+### Task 5D Review
+
+- Source/test head: `fcf74f3f31cb113027ac31475a6f8de65cc6efd9`; audio-generation head remains `5038194e473432f9dc66bc9a1834b375c37cdfe7` because no audio DSP source changed.
+- Current status: local synthetic evidence complete and fail-closed; selection remains null, formal R1/W10, OEM reproduction, human PASS, Profile Freeze and full S12 remain parent-owned/external gates.
+- v24 manifest SHA-256: bakeoff `e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0`, RX-7 `86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582`, Ferrari `290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d`.

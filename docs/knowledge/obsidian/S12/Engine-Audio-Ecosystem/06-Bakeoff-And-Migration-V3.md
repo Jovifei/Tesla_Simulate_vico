@@ -9,9 +9,9 @@ source_url: https://github.com/Jovifei/Tesla_Simulate_vico
 source_commit: d5b4dd85fd0aa8db51a243e00d25cd7658f1908f
 license: project_internal_synthetic
 s12_git_branch: agent/s12-stage-w-ecosystem-bakeoff
-s12_git_commit: da541fde65f8ae399d76ae301e0cc1c2ba5d899a
+s12_git_commit: fcf74f3f31cb113027ac31475a6f8de65cc6efd9
 
-Task 5 current local verification at source head `d33b3ec` keeps P1/P2/P2H/P3/P5 frame-aligned and records persistent
+Task 5D current local verification at validation/source-test head `fcf74f3` keeps P1/P2/P2H/P3/P5 frame-aligned and records persistent
 phase/event/path/gain traces. The final long-window root `bakeoff_long_v3`
 renders `hot_idle_20s` at 20.0 s / 960,000 audio frames and
 `complete_cycle_60s` at 60.0 s / 2,880,000 audio frames; the other scenes are
@@ -22,12 +22,11 @@ a legal RPM/state-synchronised Reference. The labelled review package is
 SHA `965c0176e106e7bdc5a703d3475ee5e0eebdf560a13ed03ce422f65c893c45c3`.
 P5 is executable as a clean-room `synthetic_one_shot_v1` state-triggered
 residual before frozen PTR; it is not a recorded asset and remains unselected.
-Current local evidence roots are `bakeoff_final_remediation_v23`,
-`migration_final_remediation_rx7_v23`, and
-`migration_final_remediation_ferrari_v23`, generated from audio head `5038194`
-and validated from source/test head `da541fd`; RX-7 and Ferrari validators
-return `[]`, while the current bakeoff validator returns 16 content errors
-and is retained as a concern. Selection remains null. The prior Stage-U/R3 packages remain non-R1 because rights, original capture
+Current local evidence roots are `bakeoff_final_remediation_v24`,
+`migration_final_remediation_rx7_v24`, and
+`migration_final_remediation_ferrari_v24`, generated from unchanged audio head `5038194`
+and validated from source/test head `fcf74f3`; all three validators
+return `[]`; JSON finite, WAV reopen/clipping/click/afterfire/parameter and nested SHA gates pass. Selection remains null. The prior Stage-U/R3 packages remain non-R1 because rights, original capture
 and synchronized RPM/load/gear evidence are absent; they cannot reopen W10.
 The ready-to-fill Hellcat-first intake package is
 `E:/Claude_allow/Download/s12-stage-w-r1-capture-v1`; it contains templates

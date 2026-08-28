@@ -6,22 +6,24 @@
   "head_role": "historical_full_s12_source_head_not_current_task5_qualification",
   "current_task5_status": "PASS_LOCAL_REPOSITORY_VERIFICATION_PENDING_CONTROLLER_FULL_S12",
   "current_task5_source_head": "5038194",
-  "current_task5_latest_validation_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
+  "current_task5_latest_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
   "current_task5_receipt": ".superpowers/sdd/final_remediation_evidence_receipt.json",
-  "current_task5_evidence": ["bakeoff_final_remediation_v23", "migration_final_remediation_rx7_v23", "migration_final_remediation_ferrari_v23"],
+  "current_task5_evidence": ["bakeoff_final_remediation_v24", "migration_final_remediation_rx7_v24", "migration_final_remediation_ferrari_v24"],
   "full_s12_pending_controller_verification": true,
   "checks": {
     "full_s12_python": "1015 passed, 1 skipped, 232 subtests passed in 1701.94s",
-    "stage_w_slow_3000_block_equivalence": "1 passed in 92.50s (current Task5C documentation baseline; fresh run 92.24s)",
-    "stage_w_focused": "141 passed, 1 skipped",
-    "stage_v_focused": "31 passed, 652 deselected",
+    "stage_w_slow_3000_block_equivalence": "1 passed in 92.50s (documentation baseline; fresh Task5D run 92.06s)",
+    "stage_w_focused": "141 passed, 1 skipped (Task5D fresh)",
+    "stage_v_focused": "31 passed, 652 deselected (Task5D fresh)",
     "track_p": "180 frozen files and 2 frozen symbols unchanged; exit 0",
-    "json_parse_finite": "4898 files, 0 non-finite values",
+    "json_parse_finite": "730 current v24 evidence JSON files, 0 non-finite values",
+    "v24_wav_reopen": "270 WAV files reopened; 48 kHz/24-bit/stereo; format/clipping gates passed",
+    "v24_sha256": "900/900 nested SHA entries matched",
     "bakeoff_long_v3_manifest_and_wav_reopen": "0 errors; hot_idle_20s=20.0 s/960000 frames; complete_cycle_60s=60.0 s/2880000 frames",
-    "review_package_v5": "0 validation errors; long_window=true",
+    "review_package_v5": "STALE_HISTORICAL_REVIEW_PACKAGE; current audition prohibited",
     "source_evidence_receipts": "23/23 registry ids joined",
     "obsidian_sync": "16/16 canonical repo/vault SHA pairs match",
-    "compileall": "exit 0",
+    "compileall": "exit 0 (Task5D fresh)",
     "git_diff_check": "exit 0",
     "logs": {
       "full_s12_regression_final.stdout.log": "f7dc4474fa5d1949710a39f4be134e709337113457e33f889afb1ab956f5361b",
@@ -55,5 +57,14 @@
     "recorded_at": "2026-08-28T03:40:04.0202119Z",
     "runtime_timing_claim": false,
     "note": "This recovery repair timestamp identifies metadata maintenance only; it is not the original W9 execution time."
+  },
+  "task5d_current_verification": {
+    "source_test_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+    "audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
+    "evidence_version": "v24",
+    "selection": null,
+    "external_media_ingested": false,
+    "recorded_at": "2026-08-28T12:23:31.740776+08:00",
+    "vault_status": "PENDING_PARENT_CODEX_MEMORY"
   }
 }
