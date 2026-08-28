@@ -30,6 +30,16 @@ def _path_exists(path: Path) -> bool:
     return os.path.lexists(os.fspath(path))
 
 
+def _is_equal_or_descendant(path: Path, root: Path) -> bool:
+    """Compare resolved paths without allowing string-prefix false positives."""
+    path_name = os.path.normcase(os.fspath(path))
+    root_name = os.path.normcase(os.fspath(root))
+    try:
+        return os.path.commonpath((path_name, root_name)) == root_name
+    except ValueError:
+        return False
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -155,6 +165,8 @@ def assemble_v27_bakeoff(
         raise ValueError("stage_roots must contain exactly one stage root for each P1/P2/P2H/P3/P5")
 
     normalized: dict[str, Path] = {}
+    resolved_final = final.resolve(strict=False)
+    resolved_stages: dict[str, Path] = {}
     seen: dict[str, str] = {}
     for architecture in RENDERABLE_ARCHITECTURES:
         try:
@@ -166,6 +178,11 @@ def assemble_v27_bakeoff(
             raise ValueError(f"duplicate stage root for {architecture} and {seen[identity]}")
         seen[identity] = architecture
         normalized[architecture] = root
+        resolved_stages[architecture] = root.resolve(strict=False)
+
+    for architecture in RENDERABLE_ARCHITECTURES:
+        if _is_equal_or_descendant(resolved_final, resolved_stages[architecture]):
+            raise ValueError(f"final root is inside or equal to stage root {architecture}: {final}")
 
     # Complete all trust checks before creating the external build root.
     manifests: dict[str, Mapping[str, Any]] = {}

@@ -102,3 +102,15 @@ def test_assemble_rechecks_candidate_parent_and_preserves_stage_roots(tmp_path: 
     with pytest.raises(ValueError, match="parent_stage|verified"):
         assemble_v27_bakeoff(tmp_path / "second-final", stages, duration_s=0.20)
     assert not (tmp_path / "second-final").exists()
+
+
+def test_assemble_rejects_final_root_inside_stage_root_without_mutation(tmp_path: Path) -> None:
+    stages = _render_stages(tmp_path / "stages")
+    before = {architecture: _tree_hashes(path) for architecture, path in stages.items()}
+    final_root = stages["P1"] / "nested-final"
+
+    with pytest.raises(ValueError, match="inside|contained|stage root"):
+        assemble_v27_bakeoff(final_root, stages, duration_s=0.20)
+
+    assert not final_root.exists()
+    assert {architecture: _tree_hashes(path) for architecture, path in stages.items()} == before
