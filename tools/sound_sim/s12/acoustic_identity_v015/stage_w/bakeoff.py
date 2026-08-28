@@ -32,6 +32,23 @@ SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", 
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
 PCM24_METRIC_TOLERANCE = 1.0 / (1 << 23)
+PLACEHOLDER_SCOPE = "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+PLACEHOLDER_RECORDS = {
+    "P4": {
+        "status": "REFERENCE_RECORDING_RIGHTS_PENDING",
+        "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording",
+        "scope": PLACEHOLDER_SCOPE,
+        "selected_architecture": None,
+        "selection_eligible": False,
+    },
+    "P6": {
+        "status": "TEACHER_NOT_RUNTIME_CANDIDATE",
+        "reason": "ENSIM4 Docker CFD ON/OFF teacher audio is externally captured but is not a fitted S12 Runtime path",
+        "scope": PLACEHOLDER_SCOPE,
+        "selected_architecture": None,
+        "selection_eligible": False,
+    },
+}
 
 
 def _block_click_metrics(audio: np.ndarray) -> dict[str, Any]:
@@ -226,10 +243,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     if root.exists() and any(root.iterdir()):
         raise FileExistsError(f"refusing to overwrite bake-off output: {root}")
     root.mkdir(parents=True, exist_ok=True)
-    architectures: dict[str, Any] = {
-        "P4": {"status": "REFERENCE_RECORDING_RIGHTS_PENDING", "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording"},
-        "P6": {"status": "TEACHER_NOT_RUNTIME_CANDIDATE", "reason": "ENSIM4 Docker CFD ON/OFF teacher audio is externally captured but is not a fitted S12 Runtime path"},
-    }
+    architectures: dict[str, Any] = {name: dict(record) for name, record in PLACEHOLDER_RECORDS.items()}
     scene_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
     for architecture in ("P1", "P2", "P2H", "P3", "P5"):
         architectures[architecture] = {"status": "RENDERED", "scenes": {}}
@@ -387,6 +401,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             errors.append(f"sha:{relative}")
 
     states: dict[str, Any] = {}
+    reopened_post_ptr: dict[tuple[str, str], np.ndarray] = {}
     for name in required_state:
         path = root / name
         if not path.is_file():
@@ -418,6 +433,16 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     if not isinstance(result_architectures, dict) or set(result_architectures) != all_architectures:
         errors.append("nested_architecture_inventory")
         result_architectures = result_architectures if isinstance(result_architectures, dict) else {}
+    for architecture, expected_placeholder in PLACEHOLDER_RECORDS.items():
+        placeholder = result_architectures.get(architecture)
+        if not isinstance(placeholder, dict):
+            errors.append(f"placeholder_shape:{architecture}")
+            continue
+        if set(placeholder) != set(expected_placeholder):
+            errors.append(f"placeholder_inventory:{architecture}")
+        for field, expected in expected_placeholder.items():
+            if placeholder.get(field) != expected:
+                errors.append(f"placeholder_{field}:{architecture}")
     for architecture in architectures:
         record = result_architectures.get(architecture, {})
         scenes = record.get("scenes", {}) if isinstance(record, dict) else {}
@@ -484,6 +509,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
             except (OSError, ValueError, wave.Error, EOFError) as exc:
                 errors.append(f"artifact:{case_label}:{exc}")
                 continue
+            reopened_post_ptr[(architecture, scene)] = post
             if max(raw_meta["clipping"], post_meta["clipping"], monitor_meta["clipping"]) != 0:
                 errors.append(f"clipping:{case_label}")
             if len({raw_meta["frames"], post_meta["frames"], monitor_meta["frames"]}) != 1:
@@ -563,7 +589,11 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
 
             record = mapping_at(result_architectures, architecture, "scenes", scene)
             for key, filename in (("raw_sha256", "raw_source.wav"), ("post_ptr_sha256", "post_ptr_raw.wav"), ("monitor_sha256", "monitor.wav")):
-                actual_hash = sha256_file(case / filename)
+                try:
+                    actual_hash = sha256_file(case / filename)
+                except OSError as exc:
+                    errors.append(f"hash:{case_label}/{filename}:{exc}")
+                    continue
                 if record.get(key) != actual_hash:
                     errors.append(f"nested_hash:{case_label}/{key}")
                 if architecture == "P1":
@@ -595,6 +625,20 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
                 errors.append(f"parent_candidate_difference_invalid:{architecture}/{scene}")
             else:
                 compare_values(candidate["parent_candidate_difference_rms"], expected_difference, f"parent_candidate_difference:{architecture}/{scene}")
+            parent_pcm = reopened_post_ptr.get(("P1", scene))
+            candidate_pcm = reopened_post_ptr.get((architecture, scene))
+            if parent_pcm is None or candidate_pcm is None:
+                errors.append(f"parent_candidate_difference_pcm_missing:{architecture}/{scene}")
+            elif parent_pcm.shape != candidate_pcm.shape:
+                errors.append(f"parent_candidate_difference_pcm_frames:{architecture}/{scene}")
+            else:
+                recomputed_difference = float(np.sqrt(np.mean(np.square(parent_pcm - candidate_pcm))))
+                result_difference = mapping_at(result_record, "comparison").get("parent_candidate_difference_rms")
+                if not finite_number(result_difference) or not math.isclose(result_difference, recomputed_difference, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+                    errors.append(f"parent_candidate_difference_pcm:{architecture}/{scene}")
+                summary_difference = candidate.get("parent_candidate_difference_rms")
+                if not finite_number(summary_difference) or not math.isclose(summary_difference, recomputed_difference, rel_tol=0.0, abs_tol=PCM24_METRIC_TOLERANCE):
+                    errors.append(f"parent_candidate_difference_pcm_summary:{architecture}/{scene}")
 
     for name, (left, right) in ablation_pairs.items():
         for scene in SCENES:

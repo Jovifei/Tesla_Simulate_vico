@@ -39,6 +39,15 @@ _RANGES = {
 }
 
 
+def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
 def build_vehicle_migration_trace(vehicle_id: str, scene: str, duration_s: float = 8.0) -> VehicleStateTrace:
     """Build a block-aligned, synthetic state trace for one migration scene."""
     if vehicle_id not in _CONFIGS:
@@ -227,9 +236,16 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
         return ["migration_manifest.json missing"]
     errors: list[str] = []
     try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest = json.loads(
+            manifest_path.read_text(encoding="utf-8"),
+            object_pairs_hook=_reject_duplicate_json_keys,
+        )
     except (OSError, json.JSONDecodeError) as exc:
         return [f"migration_manifest.json invalid:{exc}"]
+    except ValueError as exc:
+        return [f"migration_manifest.json invalid:{exc}"]
+    if not isinstance(manifest, Mapping):
+        return ["migration_manifest.json must be an object"]
     if manifest.get("status") != "UNSELECTED_CANDIDATE_MIGRATION":
         errors.append("status")
     if manifest.get("selected_architecture") is not None:
@@ -239,9 +255,22 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
     geometry_contract, geometry_error = _load_geometry_contract()
     if geometry_error is not None:
         errors.append(geometry_error)
-    for relative, expected in manifest.get("files", {}).items():
+    manifest_files = manifest.get("files")
+    if not isinstance(manifest_files, Mapping):
+        errors.append("manifest_files_invalid")
+        manifest_files = {}
+    normalized_inventory: dict[str, str] = {}
+    for relative, expected in manifest_files.items():
         relative_path = Path(relative)
         if relative_path.is_absolute() or ".." in relative_path.parts:
+            errors.append(f"unsafe_path:{relative}")
+            continue
+        canonical = relative_path.as_posix()
+        if canonical in normalized_inventory:
+            errors.append(f"duplicate_inventory:{canonical}")
+        else:
+            normalized_inventory[canonical] = relative
+        if canonical != relative or "." in relative_path.parts or ":" in relative_path.parts[0]:
             errors.append(f"unsafe_path:{relative}")
             continue
         path = root / relative_path
@@ -269,13 +298,25 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
         for scene in MIGRATION_SCENES
         for filename in expected_case_files
     } | {"migration_results.json"}
-    listed_files = set(manifest.get("files", {}))
+    listed_files = set(manifest_files)
     for relative in sorted(expected_outer_files - listed_files):
         errors.append(f"missing_required:{relative}")
+    for relative in sorted(listed_files - expected_outer_files):
+        errors.append(f"outer_manifest_extra:{relative}")
+    actual_files = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path.name != "migration_manifest.json"
+    }
+    for relative in sorted(actual_files - listed_files):
+        errors.append(f"outer_unlisted:{relative}")
 
     results_path = root / "migration_results.json"
     try:
-        results = json.loads(results_path.read_text(encoding="utf-8"))
+        results = json.loads(
+            results_path.read_text(encoding="utf-8"),
+            object_pairs_hook=_reject_duplicate_json_keys,
+        )
         if not isinstance(results, Mapping):
             errors.append("results_root")
             results = {}
@@ -305,7 +346,7 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                     path = case / filename
                     if path.is_file() and record.get(key) != sha256_file(path):
                         errors.append(f"results_hash:{architecture}/{scene}/{key}")
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
         errors.append(f"migration_results.json invalid:{exc}")
 
     def finite(value: Any) -> bool:
@@ -334,6 +375,9 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                 if np.array_equal(raw, monitor):
                     errors.append(f"raw_monitor_separation:{architecture}/{scene}")
                 metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
+                if not isinstance(metrics, Mapping):
+                    errors.append(f"artifact:{architecture}/{scene}:metrics_root")
+                    continue
                 if metrics.get("vehicle_id") != manifest.get("vehicle_id") or metrics.get("architecture") != architecture or metrics.get("scene") != scene:
                     errors.append(f"identity:{architecture}/{scene}")
                 if metrics.get("status") != "UNSELECTED_CANDIDATE_MIGRATION" or metrics.get("reference_status") != "REFERENCE_TARGET_MISSING":
@@ -360,6 +404,9 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                 if scene != "lift" and architecture in {"P2H", "P3"} and diagnostics.get("afterfire_event_count", 0) != 0:
                     errors.append(f"afterfire_wrong_condition:{architecture}/{scene}")
                 latency = json.loads((case / "cpu_memory_latency.json").read_text(encoding="utf-8"))
+                if not isinstance(latency, Mapping):
+                    errors.append(f"artifact:{architecture}/{scene}:latency_root")
+                    continue
                 if not finite(latency) or not isinstance(latency.get("render_seconds"), (int, float)) or latency["render_seconds"] < 0:
                     errors.append(f"latency:{architecture}/{scene}")
                 for filename in expected_case_files[:-1]:
@@ -367,7 +414,13 @@ def validate_vehicle_migration_manifest(root: str | Path) -> list[str]:
                     if payload is not None and not finite(payload):
                         errors.append(f"nonfinite:{filename}:{architecture}/{scene}")
                 inner = json.loads((case / "sha256_manifest.json").read_text(encoding="utf-8"))
+                if not isinstance(inner, Mapping):
+                    errors.append(f"artifact:{architecture}/{scene}:sha256_manifest_root")
+                    continue
                 inner_files = inner.get("files", inner)
+                if not isinstance(inner_files, Mapping):
+                    errors.append(f"artifact:{architecture}/{scene}:sha256_manifest_files")
+                    continue
                 expected_inner = set(expected_case_files[:-1])
                 if set(inner_files) != expected_inner:
                     errors.append(f"case_manifest_inventory:{architecture}/{scene}")

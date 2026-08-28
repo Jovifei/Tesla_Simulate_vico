@@ -392,3 +392,98 @@ def test_validator_cross_checks_summary_hashes_and_ablation_truth(
     _write_json(ablation_path, ablation)
     _rebind_root_file(root, "ablation_results.json")
     assert any("ablation_truth:P2_to_P2H_waveguide/steady_1200rpm/post_ptr_sha256_different" in error for error in validate_bakeoff_manifest(root))
+
+
+@pytest.mark.parametrize(
+    ("relative", "expected"),
+    [
+        ("P1/steady_1200rpm/raw_source.wav", "missing_required:P1/steady_1200rpm/raw_source.wav"),
+        ("P2/steady_1200rpm/metrics.json", "missing_required:P2/steady_1200rpm/metrics.json"),
+        ("P3/steady_1200rpm/sha256_manifest.json", "missing_required:P3/steady_1200rpm/sha256_manifest.json"),
+    ],
+)
+def test_validator_reports_missing_late_artifacts_without_raising(
+    bakeoff_fixture: Path, tmp_path: Path, relative: str, expected: str
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    (root / relative).unlink()
+    manifest_path = root / "bakeoff_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"].pop(relative, None)
+    _write_json(manifest_path, manifest)
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert isinstance(errors, list)
+    assert expected in errors
+
+
+def test_validator_recomputes_parent_candidate_difference_from_reopened_pcm(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    case = root / "P2" / "steady_1200rpm"
+    with wave.open(str(case / "post_ptr_raw.wav"), "rb") as stream:
+        params = stream.getparams()
+        frames = stream.readframes(stream.getnframes())
+    tampered = bytearray(frames)
+    tampered[40 * 6 : 40 * 6 + 6] = b"\x00\x00\x40\x00\x00\x40"
+    with wave.open(str(case / "post_ptr_raw.wav"), "wb") as stream:
+        stream.setparams(params)
+        stream.writeframes(bytes(tampered))
+    _rebind_case(root, "P2", "steady_1200rpm")
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert any("parent_candidate_difference_pcm:P2/steady_1200rpm" in error for error in errors)
+
+
+def test_validator_rejects_dual_rebound_parent_candidate_difference_tamper(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    result_path = root / "bakeoff_results.json"
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    result["architectures"]["P2"]["scenes"]["steady_1200rpm"]["comparison"]["parent_candidate_difference_rms"] = 9.0
+    _write_json(result_path, result)
+    _rebind_root_file(root, "bakeoff_results.json")
+    summary_path = root / "parent_candidate_metrics.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["architectures"]["P2"]["steady_1200rpm"]["parent_candidate_difference_rms"] = 9.0
+    _write_json(summary_path, summary)
+    _rebind_root_file(root, "parent_candidate_metrics.json")
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert any("parent_candidate_difference_pcm:P2/steady_1200rpm" in error for error in errors)
+
+
+@pytest.mark.parametrize("architecture", ["P4", "P6"])
+def test_validator_requires_exact_placeholder_records(
+    bakeoff_fixture: Path, tmp_path: Path, architecture: str
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "bakeoff_results.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["architectures"][architecture]["reason"] = "tampered"
+    _write_json(path, payload)
+    _rebind_root_file(root, "bakeoff_results.json")
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert any(f"placeholder_reason:{architecture}" in error for error in errors)
+
+
+def test_validator_requires_placeholder_selection_boundary(
+    bakeoff_fixture: Path, tmp_path: Path
+) -> None:
+    root = _copy_fixture(bakeoff_fixture, tmp_path)
+    path = root / "bakeoff_results.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["architectures"]["P4"]["selected_architecture"] = "P4"
+    _write_json(path, payload)
+    _rebind_root_file(root, "bakeoff_results.json")
+
+    errors = validate_bakeoff_manifest(root)
+
+    assert any("placeholder_selected_architecture:P4" in error for error in errors)
