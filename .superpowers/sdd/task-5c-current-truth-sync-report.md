@@ -68,3 +68,11 @@ test(s12): record current stage w metadata verification
 
 Full S12, formal R1/W10 selection, Profile Freeze, OEM reproduction, human PASS,
 Vault synchronization, and integration remain parent-owned.
+
+## Task5C disposition
+
+The metadata-parent Stage-W rerun started at `2026-08-28T11:48:17.4274435+08:00`
+was intentionally stopped by `/root` after the current `da541fd` bakeoff
+validator exposed 16 incompatible v23 errors. It is `INTERRUPTED_NOT_FINAL`
+with exit `1`; no result count is claimed. Fresh v23 evidence regeneration and
+the superseding metadata verification are parent-owned follow-up work.

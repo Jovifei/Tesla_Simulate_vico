@@ -27,6 +27,13 @@
     "source_track_p": {"command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py", "verified_head": "4ef0a32", "validation_test_head": "a87002b", "exit_code": 0, "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/track_p_task5_source_v23.log", "stdout_sha256": "5cc966668cf828c1d7015724293cd72f2f824a7e825fb9b9fc15ae017377093d", "frozen_files": 180, "frozen_symbols": 2},
     "click_gate": {"contract_version": "s12.stage_w.click_gate.v1", "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs", "threshold": 0.35, "definition": "block_boundary_only", "provenance": "bounded_synthetic_engineering_acceptance_threshold", "validator_pass": true},
     "selection": null,
+    "metadata_head_stage_w": {
+      "metadata_parent": "deb45fb",
+      "status": "INTERRUPTED_NOT_FINAL",
+      "started_at": "2026-08-28T11:48:17.4274435+08:00",
+      "exit_code": 1,
+      "result": "stopped by parent after current da541fd bakeoff validator exposed 16 incompatible v23 errors; no pass count claimed"
+    },
     "validators_role": "historical receipt entries retained for provenance; task5c_validator_observation is authoritative for current da541fd execution",
     "task5c_validator_observation": {
       "source_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
