@@ -91,3 +91,21 @@ or duplicate queue sequences, unsorted queues, invalid arrival ordering, and
 non-numeric fractional-delay histories without mutating live state.
 
 New correction implementation commit SHA: `ead8553`.
+
+## Review addendum 2 closure
+
+The required afterfire-route fields `scheduled_sample_exact`, `energy`, and
+`pressure_energy_factor` now reject missing and null values with controlled
+`ValueError` before comparisons or state application. Six atomic tests cover
+both forms for all three fields.
+
+Focused result: `48 passed, 1 skipped`.
+
+Affecting restore suites result: `141 passed, 1 skipped`.
+
+Full commit SHAs:
+
+- Prior Task6B implementation: `14170ac89153056f64bb4c48236e62eff2cc896b`
+- First review correction: `ead8553accddd82b499a85a7e24e9ade3ecd627e`
+- Report closure: `6bc1b1298ca38420ff632d161fdc51581acaf6a0`
+- Null-field source/test correction: `7ef04cabf1c20a05432fb3f03c4f1af31223c266`
