@@ -44,20 +44,28 @@ class TimbreMap4D:
         return float(np.asarray(result))
 
     def sample_many(self, rpm: np.ndarray, load: np.ndarray, boost: np.ndarray, order: float) -> np.ndarray:
-        """Vectorized multilinear sampling for N sample points, same math as sample().
+        """Vectorized multilinear sampling for N sample points, same math as sample()."""
+        from scipy.interpolate import RegularGridInterpolator
 
-        Per-sample scalar interpolation; for N<=960 (typical engine frame) this
-        runs in < 1ms thanks to numpy overhead amortisation over the 4-D table.
-        """
         rpm = np.asarray(rpm, dtype=np.float64).reshape(-1)
         load = np.asarray(load, dtype=np.float64).reshape(-1)
         boost = np.asarray(boost, dtype=np.float64).reshape(-1)
-        order_value = float(order)
-        n = rpm.size
-        out = np.empty(n, dtype=np.float64)
-        for i in range(n):
-            out[i] = self.sample(float(rpm[i]), float(load[i]), float(boost[i]), order_value)
-        return out
+        order_value = float(np.clip(order, self.order_axis[0], self.order_axis[-1]))
+        points = np.column_stack(
+            (
+                np.clip(rpm, self.rpm_axis[0], self.rpm_axis[-1]),
+                np.clip(load, self.load_axis[0], self.load_axis[-1]),
+                np.clip(boost, self.boost_axis[0], self.boost_axis[-1]),
+                np.full(rpm.size, order_value, dtype=np.float64),
+            )
+        )
+        interpolator = RegularGridInterpolator(
+            (self.rpm_axis, self.load_axis, self.boost_axis, self.order_axis),
+            self.values,
+            bounds_error=False,
+            fill_value=None,
+        )
+        return np.asarray(interpolator(points), dtype=np.float64)
 
 
 def render_timbre_map(phase: np.ndarray, rpm: np.ndarray, load: np.ndarray, boost: np.ndarray, throttle: np.ndarray, config: dict, sample_counter: int = 0, inertia_state: float = 0.0) -> dict[str, np.ndarray]:

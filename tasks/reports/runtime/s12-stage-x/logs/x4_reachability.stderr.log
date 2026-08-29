@@ -4,9 +4,16 @@ Traceback (most recent call last):
                      ~~~~^^
   File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\drivers\drive_x4_reachability.py", line 25, in main
     summary = run_parameter_reachability(OUTPUT_ROOT, traces, architecture="P2H")
-  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\search_parameters.py", line 199, in run_parameter_reachability
-    baseline_metrics = _pcm_metrics(baseline_pcm)
-  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\search_parameters.py", line 283, in _pcm_metrics
-    concat = np.concatenate([block.mean(axis=1) for block in blocks]) if blocks else np.zeros(1)
-                             ^^^^^^^^^^
-AttributeError: 'tuple' object has no attribute 'mean'
+  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\search_parameters.py", line 219, in run_parameter_reachability
+    item_baseline = _render_config_pcm(base_config, item.architecture, item_traces)
+  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\search_parameters.py", line 165, in _render_config_pcm
+    result = engine.process_with_trace({"rpm": trace.rpm, "load": trace.load, "throttle": trace.throttle, "acceleration_mps2": trace.acceleration_mps2})
+  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_w\persistent_engine.py", line 407, in process_with_trace
+    outputs.append(self._process_frame({name: float(value[index]) for name, value in arrays.items()}, segment))
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_w\persistent_engine.py", line 525, in _process_frame
+    forced = render_timbre_map(phase, rpm, load, boost_state, throttle, self.config, self.sample_counter, inertia_state=self._timbre_inertia_state)
+  File "E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_w\timbre_map.py", line 110, in render_timbre_map
+    order_gains = np.column_stack([table.sample_many(rpm, load, boost, order) for order in (1.0, 2.0, 3.0, 5.0)]) * (gain * np.asarray(order_weight_vector, dtype=np.float64).reshape(1, -1))
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ValueError: operands could not be broadcast together with shapes (4,12,960) (1,4) 

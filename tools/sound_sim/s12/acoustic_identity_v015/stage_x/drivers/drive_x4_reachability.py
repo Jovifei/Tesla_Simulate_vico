@@ -18,9 +18,11 @@ OUTPUT_ROOT = REPO_ROOT / "tasks" / "reports" / "runtime" / "s12-stage-x" / "x4_
 
 def main() -> int:
     started = time.perf_counter()
+    # Short probe traces keep reachability deterministic while bounding render cost.
+    probe_duration_s = 0.5
     traces = [
-        build_hellcat_bakeoff_trace("hot_idle_20s", 2.0),
-        build_hellcat_bakeoff_trace("full_load_acceleration", 2.0),
+        build_hellcat_bakeoff_trace("hot_idle_20s", probe_duration_s),
+        build_hellcat_bakeoff_trace("full_load_acceleration", probe_duration_s),
     ]
     summary = run_parameter_reachability(OUTPUT_ROOT, traces, architecture="P2H")
     
