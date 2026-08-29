@@ -1,0 +1,71 @@
+{
+  "schema": "s12.stage_x.baseline_receipt.v1",
+  "recorded_at": "2026-08-29T21:20:00+08:00",
+  "remote": {
+    "repository": "https://github.com/Jovifei/Tesla_Simulate_vico.git",
+    "branch": "agent/s12-stage-w-ecosystem-bakeoff",
+    "head": "7d4e49b52b73696af703a1380d83663208c5a897",
+    "tree": "377748f89c6302fbc09ae8e174e938c6131139be",
+    "head_source": "cached origin ref from last successful fetch; live fetch failed (github.com:443 unreachable) and is re-checked before final push",
+    "remotely_provable_regression": {"passed": 1015, "skipped": 1, "subtests": 232, "note": "contract-recorded; not reused as Stage X evidence"}
+  },
+  "local": {
+    "stage_w_branch": "agent/s12-stage-w-ecosystem-bakeoff",
+    "stage_w_head": "8637e62e0e76a13f7447e5b0adec443f38dd0c88",
+    "stage_w_tree": "0e30550cc3be6e3e5f0180977b6133d075b088a0",
+    "stage_x_branch": "agent/s12-stage-x-r2-engineering-selection",
+    "stage_x_base": "8637e62e0e76a13f7447e5b0adec443f38dd0c88",
+    "stage_x_worktree": "E:/Tesla_speed/worktrees/s12-stage-x-r2-engineering-selection",
+    "unpushed_commits": 116,
+    "unpushed_files_changed": 308,
+    "unpushed_insertions": 101335,
+    "ancestor_check": "origin/agent/s12-stage-w-ecosystem-bakeoff is ancestor of 8637e62",
+    "reconciliation_rule": "B_recovery_branch_integrated_into_stage_x"
+  },
+  "track_p": {
+    "baseline": "S12 Track-P Baseline v3",
+    "base_sha": "ea586bc",
+    "frozen_files": 180,
+    "frozen_symbols": 2,
+    "verified_at": "8637e62",
+    "assert_exit": 0
+  },
+  "w9_test_receipts_local": {
+    "task6ab_eight_gates": "green (Stage-W 235 passed/1 skipped; Stage-V 33 passed; slow 1 passed; v27 validators []; JSON/WAV scans clean)",
+    "full_s12_run2": "2 failed, 1205 passed, 1 skipped, 232 subtests in 3902.44s; failures were Track-P whitespace surface (EOF blank line in committed task-6aa report); fixed whitespace-only; failed tests rerun 2 passed",
+    "reuse_policy": "not reusable as Stage X evidence; Stage X runs its own full S12 once at its exact final HEAD"
+  },
+  "review_package": {
+    "path": "E:/Tesla_speed/review_packages/s12-stage-w-engine-audio-bakeoff-v5",
+    "zip_sha256": "965c0176e106e7bdc5a703d3475ee5e0eebdf560a13ed03ce422f65c893c45c3",
+    "status": "STALE_HISTORICAL_REVIEW_PACKAGE"
+  },
+  "stage_w_v27_evidence_roots": [
+    "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27"
+  ],
+  "inherited_selection_state": {
+    "selected_architecture": null,
+    "selection_outcome": "NO_ARCHITECTURE_CANDIDATE_PASSED",
+    "qualification": "NOT_R1_QUALIFIED"
+  },
+  "jovi_feedback_receipt": {
+    "status": "INVENTORIED_IN_X1",
+    "note": "Stage O intake + named feedback receipts located during X1 code recon; values quoted in stage_x engineering_preselection.human_feedback"
+  },
+  "external_references": {
+    "status": "INVENTORIED_IN_X2",
+    "note": "reference_database_v2 / R2/R3 canonical cases located during X2; evidence levels and rights receipts recorded there"
+  },
+  "r1_intake": {
+    "path": "E:/Claude_allow/Download/s12-stage-w-r1-capture-v1",
+    "status": "R1_PILOT_PREFLIGHT_FAILED",
+    "note": "template only; no original audio, sha256, or synchronized traces"
+  },
+  "hard_blockers": [],
+  "non_blocking_gaps": [
+    "github.com:443 unreachable at X0 time; fetch/push deferred and re-checked",
+    "remote Stage W remains at 7d4e49b until Stage X branch push is authorized by completion"
+  ]
+}
