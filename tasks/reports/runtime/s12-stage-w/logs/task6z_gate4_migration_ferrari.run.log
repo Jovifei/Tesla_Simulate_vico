@@ -1,0 +1,9 @@
+Launcher PID: 38604
+Command: python C:\Users\Admin\AppData\Local\Temp\task6z_gate4_migration_ferrari_validator.py
+Start UTC: 2026-08-29T04:55:09.5734419Z
+End UTC: 2026-08-29T04:55:10.7593717Z
+Exit code: 0
+Duration seconds: 1
+Stdout: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate4_migration_ferrari.stdout.log
+Stderr: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate4_migration_ferrari.stderr.log
+Exit UTC: 2026-08-29T04:55:10.7593717Z

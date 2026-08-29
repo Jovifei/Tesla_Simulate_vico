@@ -1,0 +1,8 @@
+Task 6Y v27 Ferrari migration runner
+Command: D:\Python\Python3.14\python.exe .superpowers\sdd\task6x_v27_migration_runner.py --root tasks\reports\runtime\s12-stage-w\migration_final_remediation_ferrari_v27 --vehicle ferrari_458
+PID: 73764
+UTC start: 2026-08-28T20:43:37.3121825Z
+UTC end: 2026-08-28T20:44:01.2663790Z
+Exit code: 0
+Stdout log: tasks/reports/runtime/s12-stage-w/logs/task6y_v27_ferrari.stdout.log
+Stderr log: tasks/reports/runtime/s12-stage-w/logs/task6y_v27_ferrari.stderr.log

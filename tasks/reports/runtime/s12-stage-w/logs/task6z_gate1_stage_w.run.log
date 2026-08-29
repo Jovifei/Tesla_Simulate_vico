@@ -1,0 +1,11 @@
+command=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_w -q --disable-warnings
+launcher_pid=78252
+worker_pid=39260
+start_utc=2026-08-28T21:00:26.0000000Z (Process.StartTime local 2026-08-29 05:00:26 +08:00; source PID 39260)
+end_utc=2026-08-28T21:36:04.6900000Z (pytest duration 2138.69s; stdout filesystem timestamp rounded to 2026-08-28T21:36:05Z)
+exit_code=1
+stdout=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate1_stage_w.stdout.log
+stderr=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate1_stage_w.stderr.log
+result=FAILED: 1 failed, 234 passed, 1 skipped, 517 deselected in 2138.69s (0:35:38)
+failure=test_final_track_p_guard_is_clean_after_committed_log_attributes
+process_note=The launcher and worker were observed as one process tree; no duplicate runner was started. End timestamp is reconstructed from pytest duration and process start because the supervising shell did not retain its post-WaitForExit writeback.

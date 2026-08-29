@@ -1,0 +1,8 @@
+command=C:\Users\Admin\AppData\Local\Microsoft\WindowsApps\python.exe -c "from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import render_hellcat_architecture_stage; render_hellcat_architecture_stage('tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p2', 'P2', duration_s=0.20, long_window=True, parent_stage_root='tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p1')"
+pid=pending
+start_utc=2026-08-28T18:10:18.3414186Z
+status=RUNNING
+pid=41344
+end_utc=2026-08-28T18:10:19.8520769Z
+exit_code=1
+status=BLOCKED

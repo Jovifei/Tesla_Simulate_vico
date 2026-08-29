@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\.superpowers\sdd\task6f_v26_runner.py", line 136, in main
+    generate()
+    ~~~~~~~~^^
+  File "E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\.superpowers\sdd\task6f_v26_runner.py", line 78, in generate
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+        run_hellcat_bakeoff,
+    )
+ModuleNotFoundError: No module named 'tools'

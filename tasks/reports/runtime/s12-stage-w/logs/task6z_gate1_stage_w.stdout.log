@@ -1,0 +1,124 @@
+......................................................................F. [ 30%]
+........................................................................ [ 61%]
+..........................s............................................. [ 91%]
+....................                                                     [100%]
+================================== FAILURES ===================================
+______ test_final_track_p_guard_is_clean_after_committed_log_attributes _______
+
+    def test_final_track_p_guard_is_clean_after_committed_log_attributes() -> None:
+        guard = ROOT / "tools" / "sound_sim" / "s12" / "acoustic_identity_v015" / "scripts" / "assert_track_p_unchanged.py"
+        result = subprocess.run(["python", str(guard)], cwd=ROOT, capture_output=True, text=True)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）
+E           * git diff --check 发现空白错误：
+E         .superpowers/sdd/task-6c-green-output.txt:1: trailing whitespace.
+E         +................................                                         [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:2: trailing whitespace.
+E         +32 passed in 135.95s (0:02:15)
+E         .superpowers/sdd/task-6c-green-output.txt:4: trailing whitespace.
+E         +--- AFFECTED BAKEOFF MIGRATION REMEDIATION ---
+E         .superpowers/sdd/task-6c-green-output.txt:5: trailing whitespace.
+E         +........................................................................ [ 84%]
+E         .superpowers/sdd/task-6c-green-output.txt:6: trailing whitespace.
+E         +.............                                                            [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:7: trailing whitespace.
+E         +85 passed in 1301.48s (0:21:41)
+E         .superpowers/sdd/task-6c-green-output.txt:9: trailing whitespace.
+E         +--- REVIEW ADDENDUM FOCUSED GREEN: BAKEOFF ---
+E         .superpowers/sdd/task-6c-green-output.txt:10: trailing whitespace.
+E         +..                                                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:11: trailing whitespace.
+E         +2 passed, 32 deselected in 113.27s (0:01:53)
+E         .superpowers/sdd/task-6c-green-output.txt:13: trailing whitespace.
+E         +--- REVIEW ADDENDUM FOCUSED GREEN: MIGRATION ---
+E         .superpowers/sdd/task-6c-green-output.txt:14: trailing whitespace.
+E         +..                                                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:15: trailing whitespace.
+E         +2 passed, 26 deselected in 55.11s
+E         .superpowers/sdd/task-6c-green-output.txt:17: trailing whitespace.
+E         +--- REVIEW ADDENDUM FULL TASK5A VALIDATOR ---
+E         .superpowers/sdd/task-6c-green-output.txt:18: trailing whitespace.
+E         +..................................                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:19: trailing whitespace.
+E         +34 passed in 139.23s (0:02:19)
+E         .superpowers/sdd/task-6c-green-output.txt:21: trailing whitespace.
+E         +--- REVIEW ADDENDUM FULL AFFECTED BAKEOFF MIGRATION ---
+E         .superpowers/sdd/task-6c-green-output.txt:22: trailing whitespace.
+E         +...........................F......                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:23: trailing whitespace.
+E         +================================== FAILURES ===================================
+E         .superpowers/sdd/task-6c-green-output.txt:24: trailing whitespace.
+E         +____ test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths ____
+E         .superpowers/sdd/task-6c-green-output.txt:25: trailing whitespace.
+E         +
+E         .superpowers/sdd/task-6c-green-output.txt:26: trailing whitespace.
+E         +tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1164/test_migration_validator_rejec8')
+E         .superpowers/sdd/task-6c-green-output.txt:27: trailing whitespace.
+E         +
+E         .superpowers/sdd/task-6c-green-output.txt:28: trailing whitespace.
+E         +    def test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths(tmp_path) -> None:
+E         .superpowers/sdd/task-6c-green-output.txt:29: trailing whitespace.
+E         +        root = tmp_path / "unsafe_inventory"
+E         .superpowers/sdd/task-6c-green-output.txt:30: trailing whitespace.
+E         +        run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+E         .superpowers/sdd/task-6c-green-output.txt:31: trailing whitespace.
+E         +        manifest_path = root / "migration_manifest.json"
+E         .superpowers/sdd/task-6c-green-output.txt:32: trailing whitespace.
+E         +        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+E         .superpowers/sdd/task-6c-green-output.txt:33: trailing whitespace.
+E         +        manifest["files"]["../escape.json"] = "0" * 64
+E         .superpowers/sdd/task-6c-green-output.txt:34: trailing whitespace.
+E         +        manifest["files"]["P1/hot_idle/./raw_source.wav"] = manifest["files"]["P1/hot_idle/raw_source.wav"]
+E         .superpowers/sdd/task-6c-green-output.txt:35: trailing whitespace.
+E         +        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+E         .superpowers/sdd/task-6c-green-output.txt:36: trailing whitespace.
+E         +    
+E         .superpowers/sdd/task-6c-green-output.txt:37: trailing whitespace.
+E         +        errors = validate_vehicle_migration_manifest(root)
+E         .superpowers/sdd/task-6c-green-output.txt:38: trailing whitespace.
+E         +    
+E         .superpowers/sdd/task-6c-green-output.txt:39: trailing whitespace.
+E         +        assert any(error.startswith("unsafe_path:../escape.json") for error in errors)
+E         .superpowers/sdd/task-6c-green-output.txt:40: trailing whitespace.
+E         +>       assert any("duplicate_inventory:P1/hot_idle/raw_source.wav" in error for error in errors)
+E         .superpowers/sdd/task-6c-green-output.txt:41: trailing whitespace.
+E         +E       assert False
+E         .superpowers/sdd/task-6c-green-output.txt:42: trailing whitespace.
+E         +E        +  where False = any(<generator object test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths.<locals>.<genexpr> at 0x0000029039C03C60>)
+E         .superpowers/sdd/task-6c-green-output.txt:43: trailing whitespace.
+E         +
+E         .superpowers/sdd/task-6c-green-output.txt:44: trailing whitespace.
+E         +tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_vehicle_migration.py:320: AssertionError
+E         .superpowers/sdd/task-6c-green-output.txt:45: trailing whitespace.
+E         +=========================== short test summary info ===========================
+E         .superpowers/sdd/task-6c-green-output.txt:46: trailing whitespace.
+E         +FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py::test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths
+E         .superpowers/sdd/task-6c-green-output.txt:47: trailing whitespace.
+E         +1 failed, 33 passed in 1335.81s (0:22:15)
+E         .superpowers/sdd/task-6c-green-output.txt:49: trailing whitespace.
+E         +--- REVIEW ADDENDUM REGRESSION: MIGRATION DUPLICATE + PATH FOCUSED ---
+E         .superpowers/sdd/task-6c-green-output.txt:50: trailing whitespace.
+E         +...                                                                      [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:51: trailing whitespace.
+E         +3 passed, 25 deselected in 82.78s (0:01:22)
+E         .superpowers/sdd/task-6c-green-output.txt:53: trailing whitespace.
+E         +--- REVIEW ADDENDUM FINAL TASK5A VALIDATOR ---
+E         .superpowers/sdd/task-6c-green-output.txt:54: trailing whitespace.
+E         +..................................                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:55: trailing whitespace.
+E         +34 passed in 137.58s (0:02:17)
+E         .superpowers/sdd/task-6c-green-output.txt:57: trailing whitespace.
+E         +--- REVIEW ADDENDUM FINAL AFFECTED BAKEOFF MIGRATION ---
+E         .superpowers/sdd/task-6c-green-output.txt:58: trailing whitespace.
+E         +..................................                                       [100%]
+E         .superpowers/sdd/task-6c-green-output.txt:59: trailing whitespace.
+E         +34 passed in 1331.64s (0:22:11)
+E         
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', 'E:\\Tesla_speed\\worktrees\\s12-stage-w-ecosystem-bakeoff\\tools\\sound_sim\\s12\\ac...\n.superpowers/sdd/task-6c-green-output.txt:59: trailing whitespace.\n+34 passed in 1331.64s (0:22:11)\n\n', stderr='').returncode
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_final_remediation.py:24: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes
+1 failed, 234 passed, 1 skipped, 517 deselected in 2138.69s (0:35:38)
