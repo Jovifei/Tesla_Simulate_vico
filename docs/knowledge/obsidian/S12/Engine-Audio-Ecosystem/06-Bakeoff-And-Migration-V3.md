@@ -33,3 +33,16 @@ The ready-to-fill Hellcat-first intake package is
 only, never original media. Vault synchronization is
 `VAULT_SYNC_PENDING_PARENT_CODEX_MEMORY`; this repository mirror update has
 not been written to the Obsidian Vault by this task.
+
+## V27 addendum (2026-08-29)
+
+The v3/v24 roots described above remain the Task5D-era byte record. The
+current authoritative synthetic evidence is the v27 external staged set:
+`bakeoff_final_remediation_v27`, `migration_final_remediation_rx7_v27`,
+`migration_final_remediation_ferrari_v27`, produced by the external stage
+renderer → strict verification → atomic final-root publication pipeline and
+validated by all eight Task 6Z gates rerun green (see
+`.superpowers/sdd/task-6ab-current-verification-rerun-report.md` and
+[[05-Stage-W-Logs]]). Selection remains `null`
+(`REFERENCE_TARGET_MISSING`); nothing here is a Human PASS, Approved Profile,
+OEM reproduction or productization claim.

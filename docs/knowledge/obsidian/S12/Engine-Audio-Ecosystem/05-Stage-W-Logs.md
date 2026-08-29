@@ -19,3 +19,28 @@ gate is documented as `1 passed in 92.50s` (fresh measured run `92.06s`).
 
 The next gate is a rights-bound synchronized Reference and then W10 multi-
 reference selection plus human review.
+
+## v27 external staging closure (2026-08-29)
+
+- The rejected in-place v26 resume path was removed; the v27 architecture
+  renders one external stage root per architecture (P1/P2/P2H/P3/P5),
+  verifies each, assembles an external build root and publishes exactly one
+  final root by atomic rename only on a clean strict validator.
+- Authoritative current roots: `bakeoff_final_remediation_v27`
+  (666 files), `migration_final_remediation_rx7_v27` (167 files) and
+  `migration_final_remediation_ferrari_v27` (167 files); manifest SHA-256
+  `465cf15f…`, `b57aceb3…`, `67dbf3ef…` respectively.
+- Task 6Z first run was blocked at Gate 1 only (historical Task6C output
+  whitespace tripped the Track-P guard); Task 6AA repaired it
+  configuration-only via `.gitattributes` (commit `803c31f`). Task 6AB reran
+  all eight gates green at source head `6ad9bca`: Stage-W focused
+  `235 passed, 1 skipped`; Stage-V focused `33 passed`; slow 3000×20 ms
+  `1 passed`; v27 validators `[]`; 730 JSON / 270 WAV scans clean; compileall,
+  Track-P guard and `git diff --check` exit 0.
+- Governed metadata (evidence receipt v7, `execution_state.json`,
+  `artifact_manifest.json`, `obsidian_sync_manifest.json`,
+  `EXECUTION_RESUME.md`) is bound to the v27 roots. Selection stays `null`;
+  status stays `NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`.
+- Next gate is unchanged: a rights-bound synchronized R1 Reference, then W10
+  multi-reference selection plus human review. No raw external media is
+  committed.

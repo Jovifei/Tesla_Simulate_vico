@@ -27,3 +27,12 @@ rights-bound Reference evidence is missing. Per-source evidence is joined in
 `docs/research/engine-audio-ecosystem/source_evidence_receipts.json`. Keep all
 outputs synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
 NOT_R1_QUALIFIED and NOT_PROFILE_FREEZE_READY.
+
+v27 closure (2026-08-29): the rejected in-place v26 resume path was replaced
+by the v27 external staged architecture (stage renderer → verification →
+atomic final-root publication). Authoritative synthetic evidence roots are
+`bakeoff_final_remediation_v27`, `migration_final_remediation_rx7_v27` and
+`migration_final_remediation_ferrari_v27`; all eight Task 6Z verification
+gates rerun green after the Task 6AA configuration-only Track-P whitespace
+repair. Selection remains `null` and the status remains
+`NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`.
