@@ -1,37 +1,37 @@
 {
  "schema": "s12.stage_x.obsidian_sync.v1",
  "branch": "agent/s12-stage-x-r2-engineering-selection",
- "head_at_capture": "47d137a7052106111065b8b0406c4533eb277cfc",
+ "head_at_capture": "92959f555ab96a42e73c83bbe696868c7b0fdfd2",
  "notes": [
   {
    "name": "07-Stage-X-Remote-Reconciliation.md",
-   "repo_mirror_sha256": "1b53dd3299c8578203eedf0cb321b5cdae48882bf637b34fe66f910f881fec9b",
-   "vault_custom_sha256": "1ef844fe7a082187513661e90ddd2f635d52f4aa54312c973f858a3fca88b0ef"
+   "repo_mirror_sha256": "876b081fbc56a3aa145a518d794041618f56652263d75a3acc42f407a2d3d6b0",
+   "vault_custom_sha256": "df3f1e923537961e8a691b638e44af6aab448be955f5a0b49f7cde08dfa5c61a"
   },
   {
    "name": "08-Engineering-Selection-Contract.md",
-   "repo_mirror_sha256": "aec53bbda6fb5189edfa0ee5f5c49d69f3309a86277671cd89fa8d9ff6aee2e0",
-   "vault_custom_sha256": "3751c3290918a37fc3a078165d1dcd6c484bb2debc6c3b2bbc5abfb1152071a9"
+   "repo_mirror_sha256": "68f36286303cd0f52106189776017ee3eed4ef16433f49e124db18073360b624",
+   "vault_custom_sha256": "f35679641890703da93b3aea74efd2c42a1f47f51a059a3f4f6ff99d350ace51"
   },
   {
    "name": "09-Hellcat-R2-Engineering-Selection.md",
-   "repo_mirror_sha256": "be0bd52adf1d838853bb8c8912464bb8094b3d1902e717bf140fb138fec29e30",
-   "vault_custom_sha256": "30a309f9595114fb18b6f7a8efba801c55d617ce10453d354d6d72068cac82b0"
+   "repo_mirror_sha256": "e57cf4d916171a082be537fc2f97e569cdbbcd4b330018f5b5784604f701c7e2",
+   "vault_custom_sha256": "ac7c84695512cbff9b0e08d43f650233b98ac87fe34e56e3151f0d88281ad408"
   },
   {
    "name": "10-Ferrari-RX7-Diagnostic-Migration.md",
-   "repo_mirror_sha256": "c16d9e8f9f200ea575634659c9e295831c33ac6750187dea702bd6ede4d7aa24",
-   "vault_custom_sha256": "e091fea0e6a91a91dad6edd72c38a2a4c3e381e7052fe40122eefa8f7f83a4cf"
+   "repo_mirror_sha256": "40052f58904b09cc58edb74590e3e8bbdce57ab624c16c20691a8e6a9b4f30c9",
+   "vault_custom_sha256": "deac7a63760f16dc4fe871c0479ff6226b52fec1570cbbc849b9094885b824d0"
   },
   {
    "name": "11-R1-Formal-Gate-Readiness.md",
-   "repo_mirror_sha256": "dad609ec920a8d283d7c22f28461a61856b550a63ebef0a901542a9c2dc1af46",
-   "vault_custom_sha256": "39a2ce1a94e053c1601a37a0d02f083c31dbf3b4cd65fb87516a5c006fa9fc43"
+   "repo_mirror_sha256": "a6cb67ebcbc9a17417d63c7c7dc5c8755c403218cbc06a4d1e16c7baec1ae025",
+   "vault_custom_sha256": "82d90d7a2d64c34a07ee34b720e51da2745846af85f5b73f28966272811eb22d"
   },
   {
    "name": "12-Stage-X-Final-Status.md",
-   "repo_mirror_sha256": "4ee4bab9a5e00ac77268743ec7a685918457407ab0e7cc2ad56ea6675ec233c8",
-   "vault_custom_sha256": "dda1b6a5c34fabb9fe931b4ec279aec9edb3755388ab12b95d6eb9736b18c06d"
+   "repo_mirror_sha256": "2e59a3a10eede9f589b04c284e4e1ad9df888ded096749fa0588540d05c4e42f",
+   "vault_custom_sha256": "60dea348dc40911130b692048df26d9c94f24ba1c07598bdab195611435a48af"
   }
  ],
  "vault_custom_status": {
@@ -45,5 +45,5 @@
  "mirror_status": "REPO_MIRROR_UPDATED",
  "vault_mirror_status": "VAULT_MIRROR_SYNCED",
  "managed_block": "S12-STAGE-X:AUTO",
- "wall_seconds": 0.0
+ "wall_seconds": 0.1
 }

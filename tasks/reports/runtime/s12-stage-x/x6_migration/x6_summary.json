@@ -137,7 +137,7 @@
     }
    },
    "best_architecture": "P2H",
-   "wall_seconds": 1474.5
+   "wall_seconds": 1489.6
   },
   "rx7_fd": {
    "valid_reference_count": 0,
@@ -155,10 +155,10 @@
     }
    },
    "best_architecture": "P2H",
-   "wall_seconds": 2769.8
+   "wall_seconds": 2789.3
   }
  },
  "searched_parameter_count": 11,
- "wall_seconds": 4245.2,
+ "wall_seconds": 4279.8,
  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; no formal migration or OEM likeness claim"
 }

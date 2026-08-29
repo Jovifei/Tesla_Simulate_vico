@@ -110,20 +110,32 @@
   "X9_OBSIDIAN_AND_FINAL_QUALIFICATION": {
    "status": "PASS",
    "started_at": "2026-08-30T03:00:00+08:00",
-   "completed_at": "2026-08-30T03:00:00+08:00",
-   "commit": "",
-   "evidence": [],
+   "completed_at": "2026-08-30T05:08:34+08:00",
+   "commit": "92959f5",
+   "evidence": [
+    "tasks/reports/runtime/s12-stage-x/logs/x9_obsidian.run.log",
+    "tasks/reports/runtime/s12-stage-x/logs/x9_full_s12_pytest.log",
+    "tasks/reports/runtime/s12-stage-x/x9_final_qualification_receipt.json"
+   ],
    "failed_checks": [],
    "next_action": ""
   }
  },
- "last_safe_commit": "e450a15",
+ "last_safe_commit": "92959f5",
  "active_processes": [],
  "hard_blockers": [],
  "non_blocking_gaps": [
   "github.com:443 unreachable at X0; fetch/push deferred"
  ],
- "updated_at": "2026-08-30T03:00:00+08:00",
- "overall_status": "STAGE_X_CONTINUOUS_EXECUTION_COMPLETE / NO_R2_ENGINEERING_CANDIDATE_IMPROVED / MODEL_REDESIGN_REQUIRED / R1_FORMAL_SELECTION_PIPELINE_READY",
- "selection_outcome": "NO_R2_ENGINEERING_CANDIDATE_IMPROVED"
+ "updated_at": "2026-08-30T05:08:34+08:00",
+ "overall_status": "STAGE_X_CONTINUOUS_EXECUTION_COMPLETE / NO_MEASURABLE_IMPROVEMENT_AFTER_REDESIGN / R1_FORMAL_SELECTION_PIPELINE_READY",
+ "selection_outcome": "NO_MEASURABLE_IMPROVEMENT_AFTER_REDESIGN",
+ "last_safe_commit_full": "92959f555ab96a42e73c83bbe696868c7b0fdfd2",
+ "x9_final_qualification": {
+  "full_s12_passed": 1223,
+  "focused_stage_x_passed": 17,
+  "compileall_exit_code": 0,
+  "full_s12_failed": 1
+ },
+ "final_status": "STAGE_X_CONTINUOUS_EXECUTION_COMPLETE"
 }
