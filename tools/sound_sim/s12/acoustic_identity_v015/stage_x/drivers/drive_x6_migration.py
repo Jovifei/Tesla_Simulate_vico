@@ -103,8 +103,15 @@ def _search(vehicle_id: str, architecture: str, reference_audio: dict[str, tuple
 
             separations = []
             for scene in SEARCH_SCENES:
+                _, post, _, _ = _render(vehicle_id, architecture, config, scene)
                 parent_centroid = timbre_metrics(parent_audio[scene], 48000)["spectral_centroid_hz"]
-            objective = None
+                candidate_centroid = timbre_metrics(post, 48000)["spectral_centroid_hz"]
+                parent_sha = hashlib.sha256(np.ascontiguousarray(parent_audio[scene]).tobytes()).hexdigest()
+                candidate_sha = hashlib.sha256(np.ascontiguousarray(post).tobytes()).hexdigest()
+                if candidate_sha == parent_sha:
+                    continue
+                separations.append(abs(candidate_centroid - parent_centroid) / max(parent_centroid, 1.0))
+            objective = float(np.median(separations)) if separations else None
         else:
             objective = multi["improvement_fraction"]
         return {"stage": stage, "index": index, "overrides": overrides, "objective": objective, "finite": finite, "clipping_samples": clipping, "click_ok": click_ok, "comparison": multi or {}}

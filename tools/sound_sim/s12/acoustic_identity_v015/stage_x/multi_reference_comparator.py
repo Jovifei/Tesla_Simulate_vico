@@ -38,6 +38,16 @@ SCENARIO_SCOPED = {
 }
 
 
+def _to_mono(audio: np.ndarray) -> np.ndarray:
+    """Collapse stereo/multi-channel PCM to mono for metric comparison."""
+    array = np.asarray(audio, dtype=np.float64)
+    if array.ndim == 1:
+        return array
+    if array.ndim == 2:
+        return np.mean(array, axis=1)
+    return array.reshape(array.shape[0], -1).mean(axis=1)
+
+
 def loudness_match_rms(signal: np.ndarray, target_rms: float) -> np.ndarray:
     """Equal-power RMS match to a target; deterministic, gain-only."""
     rms = float(np.sqrt(np.mean(np.square(signal)))) if signal.size else 0.0
@@ -65,6 +75,7 @@ def _spectra(audio: np.ndarray, sample_rate: int, frame: int = 4096, hop: int = 
 
 def raw_dynamic_metrics(audio: np.ndarray, sample_rate: int) -> dict[str, float]:
     """Level and impact metrics on the unaltered signal."""
+    audio = _to_mono(audio)
     rms = float(np.sqrt(np.mean(np.square(audio)))) if audio.size else 0.0
     peak = float(np.max(np.abs(audio))) if audio.size else 0.0
     frame = 2048
@@ -90,6 +101,7 @@ def raw_dynamic_metrics(audio: np.ndarray, sample_rate: int) -> dict[str, float]
 
 def timbre_metrics(audio: np.ndarray, sample_rate: int) -> dict[str, Any]:
     """Timbre metrics on the RMS-matched signal (match before calling)."""
+    audio = _to_mono(audio)
     spectra, freqs = _spectra(audio, sample_rate)
     mean_spectrum = np.mean(spectra, axis=0)
     fine_shares = _band_powers(mean_spectrum, freqs, FINE_BAND_EDGES_HZ)
@@ -134,6 +146,9 @@ def _relative_error(candidate: float, parent: float, reference: float) -> float:
 
 def compare_case(reference: np.ndarray, parent: np.ndarray, candidate: np.ndarray, sample_rate: int, *, candidate_id: str) -> dict[str, Any]:
     """Compare one scenario triple against one bound reference."""
+    reference = _to_mono(reference)
+    parent = _to_mono(parent)
+    candidate = _to_mono(candidate)
     ref_rms = float(np.sqrt(np.mean(np.square(reference)))) if reference.size else 0.0
     parent_matched = loudness_match_rms(parent, ref_rms)
     candidate_matched = loudness_match_rms(candidate, ref_rms)
