@@ -5,6 +5,6 @@
  "scenario_count": 10,
  "reference_bound_scenarios": 4,
  "validator_errors": [],
- "package_zip_sha256": "d9fc737675e812bb536e071cc9164c75a6939035a9d236ee5afe5b9e14f2811c",
- "wall_seconds": 145.2
+ "package_zip_sha256": "3fd47cd52cbc3647ffc52337ae309ead303c955554aa3dc8632516b2ab438257",
+ "wall_seconds": 145.0
 }
