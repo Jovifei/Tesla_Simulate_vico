@@ -173,6 +173,8 @@ def run_engineering_search(
     refine_count: int = 32,
     seed: int = 8675309,
     allowed_parameter_names: list[str] | None = None,
+    base_config: dict[str, Any] | None = None,
+    parameters_override: list[Any] | None = None,
 ) -> dict[str, Any]:
     """Two-stage bounded search for one architecture; every candidate rendered.
 
@@ -181,12 +183,15 @@ def run_engineering_search(
     """
     output_root.mkdir(parents=True, exist_ok=True)
     all_parameters = hellcat_search_parameters()
-    if allowed_parameter_names is None:
+    if parameters_override is not None:
+        parameters = list(parameters_override)
+    elif allowed_parameter_names is None:
         parameters = list(all_parameters)
     else:
         allowed = set(allowed_parameter_names)
         parameters = [item for item in all_parameters if item.name in allowed]
-    base_config = load_config("hellcat_v1")
+    if base_config is None:
+        base_config = load_config("hellcat_v1")
     parent_audio: dict[str, np.ndarray] = {}
     for scene, bound_scenario, duration_s in SEARCH_SCENES:
         _, post_ptr, _, _, _ = _render_pcm(load_config("hellcat_v1"), "P1", scene, duration_s)

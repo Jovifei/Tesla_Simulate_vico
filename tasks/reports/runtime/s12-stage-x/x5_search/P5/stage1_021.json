@@ -1,0 +1,22 @@
+{
+  "candidate_index": 21,
+  "click_ok": true,
+  "clipping_samples": 0,
+  "finite": true,
+  "objective": -0.20433243720676428,
+  "overrides": {
+    "attack_mix_120_400": -0.059815789014101034,
+    "collector_loss": 0.8916817729920149,
+    "combustion_decay_time": 0.03363266080617905,
+    "combustion_event_energy": 0.49497155271470544,
+    "combustion_rise_time": 0.003081581906974316,
+    "cycle_variation": 0.06825940581038595,
+    "intake_mix": 0.12825315814465282,
+    "primary_length_spread": 1.1979910964146256,
+    "timbre_map_order_weights": 1.2023680249229074,
+    "waveguide_loss": 0.10077333403751254,
+    "waveguide_reflection": 0.8992071561515331
+  },
+  "render_seconds": 8.245101900072768,
+  "stage": 1
+}
