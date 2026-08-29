@@ -1,5 +1,5 @@
 {
-  "schema_version": "s12.stage_w.final_remediation_evidence_receipt.v6",
+  "schema_version": "s12.stage_w.final_remediation_evidence_receipt.v7",
   "status": "DONE_WITH_CONCERNS",
   "tested_source_head": "5038194",
   "latest_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
@@ -15,12 +15,53 @@
   "outputs_are_local_synthetic_only": true,
   "external_media_ingested": false,
   "current_verification": {
-    "task5d_probe": {"command": "python -c \"import tempfile; from pathlib import Path; from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import run_hellcat_bakeoff, validate_bakeoff_manifest; root=Path(tempfile.mkdtemp(prefix='s12-stage-w-task5d-probe-')); run_hellcat_bakeoff(root, duration_s=0.20); errors=validate_bakeoff_manifest(root); print('PROBE_ROOT='+str(root)); print('VALIDATOR_ERRORS='+repr(errors)); raise SystemExit(0 if not errors else 2)\"", "exit_code": 0, "result": [], "probe_root": "C:/Users/Admin/AppData/Local/Temp/s12-stage-w-task5d-probe-9o3ot58s", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9"},
-    "remediation": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 52, "duration_s": 19.37},
-    "task5a_validator": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py -q --disable-warnings", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 24, "duration_s": 127.46},
-    "task5b_affected": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 104, "duration_s": 560.63},
-    "tamper_and_package": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py -q", "start": "2026-08-28T06:34:05.0674458+08:00", "end": "2026-08-28T06:48:56.0000000+08:00", "pid": 62360, "exit_code": 0, "passed": 16, "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/task5_validator_tamper_final.stdout.log", "stdout_sha256": "d0618868279ffb90638427bcebf5160aa077f937e8f0e2806b1b0ff8d7e50917"},
-    "stage_w": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py -q --disable-warnings", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 141, "skipped": 1, "duration_s": 1255.65, "time_capture_status": "duration_only_harness_capture"},
+    "task5d_probe": {
+      "command": "python -c \"import tempfile; from pathlib import Path; from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import run_hellcat_bakeoff, validate_bakeoff_manifest; root=Path(tempfile.mkdtemp(prefix='s12-stage-w-task5d-probe-')); run_hellcat_bakeoff(root, duration_s=0.20); errors=validate_bakeoff_manifest(root); print('PROBE_ROOT='+str(root)); print('VALIDATOR_ERRORS='+repr(errors)); raise SystemExit(0 if not errors else 2)\"",
+      "exit_code": 0,
+      "result": [],
+      "probe_root": "C:/Users/Admin/AppData/Local/Temp/s12-stage-w-task5d-probe-9o3ot58s",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9"
+    },
+    "remediation": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 52,
+      "duration_s": 19.37
+    },
+    "task5a_validator": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py -q --disable-warnings",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 24,
+      "duration_s": 127.46
+    },
+    "task5b_affected": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py -q --disable-warnings",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 104,
+      "duration_s": 560.63
+    },
+    "tamper_and_package": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py -q",
+      "start": "2026-08-28T06:34:05.0674458+08:00",
+      "end": "2026-08-28T06:48:56.0000000+08:00",
+      "pid": 62360,
+      "exit_code": 0,
+      "passed": 16,
+      "stdout_path": "tasks/reports/runtime/s12-stage-w/logs/task5_validator_tamper_final.stdout.log",
+      "stdout_sha256": "d0618868279ffb90638427bcebf5160aa077f937e8f0e2806b1b0ff8d7e50917"
+    },
+    "stage_w": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py -q --disable-warnings",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 141,
+      "skipped": 1,
+      "duration_s": 1255.65,
+      "time_capture_status": "duration_only_harness_capture"
+    },
     "metadata_head_stage_w": {
       "metadata_head": "beb71a54594c1c189be8aea34814c60e89430648",
       "metadata_head_role": "git_resolved_current_metadata_head",
@@ -40,14 +81,97 @@
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "result": "141 passed, 1 skipped in 1241.06s"
     },
-    "stage_v": {"command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_v -q --disable-warnings", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 31, "deselected": 652, "duration_s": 32.48, "time_capture_status": "duration_only_harness_capture"},
-    "slow_3000": {"command": "$env:S12_RUN_SLOW='1'; python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_3000_twenty_ms_calls_match_one_shot_sixty_seconds -q", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "passed": 1, "duration_s": 92.06, "documentation_baseline": "1 passed in 92.50s", "time_capture_status": "duration_only_harness_capture"},
-    "fresh_evidence": {"audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7", "evidence_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "bakeoff_v24": {"path": "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24", "manifest_sha256": "e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0", "wav_count": 180, "generated_end": "2026-08-28T12:22:30.161328+08:00"}, "rx7_v24": {"path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24", "manifest_sha256": "86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582", "wav_count": 45, "generated_end": "2026-08-28T12:23:01.204340+08:00"}, "ferrari_v24": {"path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24", "manifest_sha256": "290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d", "wav_count": 45, "generated_end": "2026-08-28T12:23:31.740776+08:00"}},
-    "validators": {"bakeoff_v24": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest; errors=validate_bakeoff_manifest(r'tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"", "exit_code": 0, "result": [], "stdout_capture": "harness output: []"}, "rx7_v24": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; errors=validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"", "exit_code": 0, "result": [], "stdout_capture": "harness output: []"}, "ferrari_v24": {"command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; errors=validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"", "exit_code": 0, "result": [], "stdout_capture": "harness output: []"}},
-    "json_finite": {"command": "python -c \"parse all JSON under bakeoff_final_remediation_v24, migration_final_remediation_rx7_v24 and migration_final_remediation_ferrari_v24 with reject-constant hook\"", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "files": 730, "nonfinite": 0, "stdout_capture": "harness output: 730 files, 0 non-finite"},
-    "compileall": {"command": "python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015", "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "stdout_capture": "harness output: no output"},
-    "source_track_p": {"command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py", "verified_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "validation_test_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "exit_code": 0, "stdout_capture": "harness output: 180 frozen files and 2 frozen symbols unchanged", "frozen_files": 180, "frozen_symbols": 2},
-    "click_gate": {"contract_version": "s12.stage_w.click_gate.v1", "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs", "threshold": 0.35, "definition": "block_boundary_only", "provenance": "bounded_synthetic_engineering_acceptance_threshold", "validator_pass": true},
+    "stage_v": {
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_v -q --disable-warnings",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 31,
+      "deselected": 652,
+      "duration_s": 32.48,
+      "time_capture_status": "duration_only_harness_capture"
+    },
+    "slow_3000": {
+      "command": "$env:S12_RUN_SLOW='1'; python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_3000_twenty_ms_calls_match_one_shot_sixty_seconds -q",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "passed": 1,
+      "duration_s": 92.06,
+      "documentation_baseline": "1 passed in 92.50s",
+      "time_capture_status": "duration_only_harness_capture"
+    },
+    "fresh_evidence": {
+      "audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
+      "evidence_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "bakeoff_v24": {
+        "path": "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24",
+        "manifest_sha256": "e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0",
+        "wav_count": 180,
+        "generated_end": "2026-08-28T12:22:30.161328+08:00"
+      },
+      "rx7_v24": {
+        "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24",
+        "manifest_sha256": "86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582",
+        "wav_count": 45,
+        "generated_end": "2026-08-28T12:23:01.204340+08:00"
+      },
+      "ferrari_v24": {
+        "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24",
+        "manifest_sha256": "290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d",
+        "wav_count": 45,
+        "generated_end": "2026-08-28T12:23:31.740776+08:00"
+      }
+    },
+    "validators": {
+      "bakeoff_v24": {
+        "command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import validate_bakeoff_manifest; errors=validate_bakeoff_manifest(r'tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"",
+        "exit_code": 0,
+        "result": [],
+        "stdout_capture": "harness output: []"
+      },
+      "rx7_v24": {
+        "command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; errors=validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"",
+        "exit_code": 0,
+        "result": [],
+        "stdout_capture": "harness output: []"
+      },
+      "ferrari_v24": {
+        "command": "python -c \"from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import validate_vehicle_migration_manifest; errors=validate_vehicle_migration_manifest(r'tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24'); print(errors); raise SystemExit(0 if not errors else 1)\"",
+        "exit_code": 0,
+        "result": [],
+        "stdout_capture": "harness output: []"
+      }
+    },
+    "json_finite": {
+      "command": "python -c \"parse all JSON under bakeoff_final_remediation_v24, migration_final_remediation_rx7_v24 and migration_final_remediation_ferrari_v24 with reject-constant hook\"",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "files": 730,
+      "nonfinite": 0,
+      "stdout_capture": "harness output: 730 files, 0 non-finite"
+    },
+    "compileall": {
+      "command": "python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015",
+      "source_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "stdout_capture": "harness output: no output"
+    },
+    "source_track_p": {
+      "command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py",
+      "verified_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "validation_test_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+      "exit_code": 0,
+      "stdout_capture": "harness output: 180 frozen files and 2 frozen symbols unchanged",
+      "frozen_files": 180,
+      "frozen_symbols": 2
+    },
+    "click_gate": {
+      "contract_version": "s12.stage_w.click_gate.v1",
+      "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+      "threshold": 0.35,
+      "definition": "block_boundary_only",
+      "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+      "validator_pass": true
+    },
     "selection": null,
     "validators_role": "v24 literal validators are authoritative current evidence; v23 observations are historical only"
   },
@@ -55,7 +179,13 @@
     "historical_full_s12_source_head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
     "historical_full_s12_role": "historical_only_not_current_coverage",
     "historical_slow_gate": "77.09s at prior source; superseded by current 92.50s gate",
-    "prior_task5_attempts": ["v17", "v18", "v19", "v21", "v23_pre_nested_fix"],
+    "prior_task5_attempts": [
+      "v17",
+      "v18",
+      "v19",
+      "v21",
+      "v23_pre_nested_fix"
+    ],
     "v23_interrupted_observation": {
       "source_head": "da541fde65f8ae399d76ae301e0cc1c2ba5d899a",
       "metadata_parent": "deb45fb",
@@ -67,14 +197,113 @@
         "exit_code": 0,
         "result_count": 16,
         "status": "VALIDATION_ERRORS_PRESENT",
-        "errors": ["selection_missing:manifest", "selection_missing:parent_candidate_metrics.json", "selection_missing:ablation_results.json", "selection_missing:rejected_architectures.json", "afterfire_event_count_missing:P1/* (16 cases)"]
+        "errors": [
+          "selection_missing:manifest",
+          "selection_missing:parent_candidate_metrics.json",
+          "selection_missing:ablation_results.json",
+          "selection_missing:rejected_architectures.json",
+          "afterfire_event_count_missing:P1/* (16 cases)"
+        ]
       },
-      "rx7_v23": {"exit_code": 0, "result": []},
-      "ferrari_v23": {"exit_code": 0, "result": []}
+      "rx7_v23": {
+        "exit_code": 0,
+        "result": []
+      },
+      "ferrari_v23": {
+        "exit_code": 0,
+        "result": []
+      }
     },
     "stale_human_package": true,
     "note": "No current human audition package is permitted while selection is null and R1 is closed."
   },
-  "review_package": {"status": "STALE_HISTORICAL_REVIEW_PACKAGE", "validation_errors": ["stale_waiting_audition", "current_audition_prohibited", "selection_null_R1_closed", "v24_local_evidence_is_not_a_human_review_package"], "current_source_head": "5038194", "current_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9", "current_evidence": ["bakeoff_final_remediation_v24", "migration_final_remediation_rx7_v24", "migration_final_remediation_ferrari_v24"]},
-  "external_gates_unverified": ["full S12 regression (controller-owned)", "legal synchronized R1 reference", "W10", "Profile Freeze", "OEM reproduction", "human PASS", "parent Vault sync"]
+  "review_package": {
+    "status": "STALE_HISTORICAL_REVIEW_PACKAGE",
+    "validation_errors": [
+      "stale_waiting_audition",
+      "current_audition_prohibited",
+      "selection_null_R1_closed",
+      "v24_local_evidence_is_not_a_human_review_package"
+    ],
+    "current_source_head": "5038194",
+    "current_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+    "current_evidence": [
+      "bakeoff_final_remediation_v24",
+      "migration_final_remediation_ferrari_v24",
+      "migration_final_remediation_rx7_v24",
+      "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27",
+      "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27",
+      "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27"
+    ]
+  },
+  "external_gates_unverified": [
+    "full S12 regression (controller-owned)",
+    "legal synchronized R1 reference",
+    "W10",
+    "Profile Freeze",
+    "OEM reproduction",
+    "human PASS",
+    "parent Vault sync"
+  ],
+  "v27_closure": {
+    "role": "authoritative current synthetic evidence after the rejected in-place v26 resume path was replaced by the v27 external staged architecture; v24 blocks remain the Task5D-era byte record",
+    "verification_report": ".superpowers/sdd/task-6ab-current-verification-rerun-report.md",
+    "source_head_at_verification_rerun": "6ad9bca517fca83a5d228a5b5e24cbc1ddf89f16",
+    "current_metadata_head_resolution": "git rev-parse HEAD after metadata commit; receipt cannot self-bind its future commit",
+    "captured_at": "2026-08-29T09:35:00+08:00",
+    "rerun_gates": {
+      "gate1_stage_w_focused": {
+        "result": "235 passed, 1 skipped, 517 deselected in 2127.22s",
+        "exit_code": 0
+      },
+      "gate2_stage_v_focused": {
+        "result": "33 passed, 720 deselected in 40.41s",
+        "exit_code": 0
+      },
+      "gate3_slow_3000x20ms": {
+        "result": "1 passed in 96.32s",
+        "exit_code": 0
+      },
+      "gate4_v27_validators": {
+        "result": "[] / [] / []",
+        "exit_code": 0
+      },
+      "gate5_json_wav_scan": {
+        "result": "730 json / 0 nonfinite; 270 wav / 0 bad / 0 clip",
+        "exit_code": 0
+      },
+      "gate6_compileall": {
+        "result": "no output",
+        "exit_code": 0
+      },
+      "gate7_track_p_guard": {
+        "result": "180 frozen files and 2 frozen symbols unchanged",
+        "exit_code": 0
+      },
+      "gate8_git_hygiene": {
+        "result": "diff --check clean",
+        "exit_code": 0
+      }
+    },
+    "fresh_evidence": {
+      "bakeoff_final_remediation_v27": {
+        "path": "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27",
+        "manifest_sha256": "465cf15ff43ac3b93265e041c63f172ac65e31b862ecbea9778a4a470717ae65",
+        "files": 666
+      },
+      "migration_final_remediation_rx7_v27": {
+        "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27",
+        "manifest_sha256": "b57aceb3357d9d7c0f18735ca7691cad1eea85f51f2457ba34f6a30fa75d07be",
+        "files": 167
+      },
+      "migration_final_remediation_ferrari_v27": {
+        "path": "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27",
+        "manifest_sha256": "67dbf3ef52375a64c352d9e09a7885f7ab6965a3a45494ab3ae607ee17715af8",
+        "files": 167
+      }
+    },
+    "validators_role": "v27 literal validators are authoritative current evidence; v23 observations are historical only",
+    "selection": null,
+    "qualification_status": "NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED"
+  }
 }

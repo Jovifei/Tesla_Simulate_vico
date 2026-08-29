@@ -6,7 +6,11 @@
   "current_metadata_head_resolution": "git rev-parse HEAD after metadata commit; this manifest cannot self-bind its future commit",
   "historical_full_s12_source_head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
   "historical_full_s12_role": "historical_only_not_current_coverage",
-  "current_stage_w_evidence": ["tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24", "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24", "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24"],
+  "current_stage_w_evidence": [
+    "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24",
+    "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24"
+  ],
   "current_selection": null,
   "latest_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
   "current_audition_package_status": "STALE_HISTORICAL_REVIEW_PACKAGE; new package prohibited until candidate selected and R1 gate closes",
@@ -26,21 +30,97 @@
   "vault_sync_pending_parent": true,
   "raw_media_committed": false,
   "notes": [
-    {"name":"00-MOC.md","repo_sha256":"b1f5d09de54d6dec8f5dbe24151a03d16d64826f4cc954e009d5d2de4fbf15dc","vault_sha256":"804bb77153f1b4b665c322ca5901b5b0f74c8f09aecfbf147b9bf44feff89375"},
-    {"name":"01-Stage-V-Independent-Audit.md","repo_sha256":"fd0a0478460ccaf621f57de2d987a955ba8a0fec70e5f1e98b247c2e9541dc5b","vault_sha256":"bf0cc3b3b38b6c42d088872833d02e0783e2982e0083389881bb38730838814e"},
-    {"name":"02-Architecture-Comparison.md","repo_sha256":"2ae82ef97fc9df2c1e24553089b4f8c8d0dc654232439a1347e95213bb7c6265","vault_sha256":"32e0270e8aaa88057bc18e665ad0b9bc9cd3ce074a225c53eb2181e931e0cf46"},
-    {"name":"03-License-Matrix.md","repo_sha256":"bfbe44ec10bf0b7c21e0d4799e6bd1e9b8c21c83c0893b07ed426f3451b7e608","vault_sha256":"c98a722420e39d73bd6c87d208baaabad23cd01157edc62b17cf8978405bd20b"},
-    {"name":"04-Source-To-S12-Traceability.md","repo_sha256":"fe60a712c6e913e4a838007ccb935e553489a7a4000d7f1a527a32fe6487b609","vault_sha256":"b34cf7ee3a98b6fb2900699505744d05e6a01059214ec0dd25d6536b0fa7ea2b"},
-    {"name":"05-Stage-W-Logs.md","repo_sha256":"c26f3c34431eded917d00df68eeed6529a0887f4999f4d9104b5c6e58ec8b9b5","vault_sha256":"6a33b0b1c5b17c2d6f767b5cc9e702adff668b8356f3b3c9c93a3641e49d7bb6"},
-    {"name":"06-Bakeoff-And-Migration-V3.md","repo_sha256":"43fcd34a2357fb6c0eda7057537ea24afef2ad547b73ffbc9fe4cfb95d45aab2","vault_sha256":"c83e1582c184bcd7c47105633d844c84650cab32209d2e4a3b58320328794b77"},
-    {"name":"Commercial-Public-Workflow-References.md","repo_sha256":"b6d8509714faa6f0a2006253ca46cc09e642b6a9368ce0d41c238221d7d94f00","vault_sha256":"343a89c9f416d89a8e461007b159257fb4e2ab0c3827adce9d0e9f68e596b553"},
-    {"name":"Open-Source-DasEtwas-Enginesound.md","repo_sha256":"fb928b90caaeed3b654352c7ac36e3d1228bc62fc6fe299a889555925d96a5ce","vault_sha256":"58069c9704cddfd0b7b36bea673cfb2fd2d2ed9d7602504307ac425d33d02c38"},
-    {"name":"Open-Source-Engine-Sim.md","repo_sha256":"8449930937d546c6c15548239cfbc4d4b9c45804a3b6e0012a8576a772be82b1","vault_sha256":"fbcbfc1afc588203e34e9e5c9d498f2ca8a10c279808dabe159f60291d0cd99c"},
-    {"name":"Open-Source-ENSIM4.md","repo_sha256":"99f8d08297c5e762b9857fa5bcdecad5e55e2027e90da99a498ffb47d2f74255","vault_sha256":"7fb498fea765845e3b4416b66356a66e6e28732b6b4830bdb30d30973bf6ff31"},
-    {"name":"Open-Source-FiveM-License-Boundary.md","repo_sha256":"1e63c82b1c395a2cdfa2950c71086c82d8673200db5311bb375929a8ce219fe7","vault_sha256":"70a9e8d29801b64e71b59854ff606781fa0532618172a640b1f1a3c48c189e60"},
-    {"name":"Open-Source-Granular-ESP32-Boundaries.md","repo_sha256":"719aa44b7879282f8e5eb48c2174bdc06b971250378e540a8e48cde9140c78ad","vault_sha256":"b2522431138fc5c42311219a059579518e25b33f9d69e811ce1933c47c968615"},
-    {"name":"Open-Source-PTR-Model.md","repo_sha256":"fb59f79634fb308c68ea5482beeb21da71d425c9f5bffb03789dda50189d1b9c","vault_sha256":"926d4dce62ece211d33c177817bc2049b72a85aae2b4ce382b4a1413a0555fee"},
-    {"name":"Open-Source-VehicleNoiseSynthesizer.md","repo_sha256":"f4dadc83307ffaed24738266310c34e7ee9e526d1d67cca4a25644c4c60202fb","vault_sha256":"9b5eb35ebf466ac2cb30a0d20515fcc2207a045eb7eb6b35a5a3558eff0c8025"},
-    {"name":"Papers-PTR-EONE-DDSP.md","repo_sha256":"aa6d1a5188ea2dbc35194c0ff62946c8932306038dcd790d1748db6b128fcca2","vault_sha256":"d2cb0c62a0441bf374799bd19afb8b944a8e262cc2f85880a44078626bbd860e"}
-  ]
+    {
+      "name": "00-MOC.md",
+      "repo_sha256": "b1f5d09de54d6dec8f5dbe24151a03d16d64826f4cc954e009d5d2de4fbf15dc",
+      "vault_sha256": "804bb77153f1b4b665c322ca5901b5b0f74c8f09aecfbf147b9bf44feff89375"
+    },
+    {
+      "name": "01-Stage-V-Independent-Audit.md",
+      "repo_sha256": "fd0a0478460ccaf621f57de2d987a955ba8a0fec70e5f1e98b247c2e9541dc5b",
+      "vault_sha256": "bf0cc3b3b38b6c42d088872833d02e0783e2982e0083389881bb38730838814e"
+    },
+    {
+      "name": "02-Architecture-Comparison.md",
+      "repo_sha256": "2ae82ef97fc9df2c1e24553089b4f8c8d0dc654232439a1347e95213bb7c6265",
+      "vault_sha256": "32e0270e8aaa88057bc18e665ad0b9bc9cd3ce074a225c53eb2181e931e0cf46"
+    },
+    {
+      "name": "03-License-Matrix.md",
+      "repo_sha256": "bfbe44ec10bf0b7c21e0d4799e6bd1e9b8c21c83c0893b07ed426f3451b7e608",
+      "vault_sha256": "c98a722420e39d73bd6c87d208baaabad23cd01157edc62b17cf8978405bd20b"
+    },
+    {
+      "name": "04-Source-To-S12-Traceability.md",
+      "repo_sha256": "fe60a712c6e913e4a838007ccb935e553489a7a4000d7f1a527a32fe6487b609",
+      "vault_sha256": "b34cf7ee3a98b6fb2900699505744d05e6a01059214ec0dd25d6536b0fa7ea2b"
+    },
+    {
+      "name": "05-Stage-W-Logs.md",
+      "repo_sha256": "c26f3c34431eded917d00df68eeed6529a0887f4999f4d9104b5c6e58ec8b9b5",
+      "vault_sha256": "6a33b0b1c5b17c2d6f767b5cc9e702adff668b8356f3b3c9c93a3641e49d7bb6"
+    },
+    {
+      "name": "06-Bakeoff-And-Migration-V3.md",
+      "repo_sha256": "43fcd34a2357fb6c0eda7057537ea24afef2ad547b73ffbc9fe4cfb95d45aab2",
+      "vault_sha256": "c83e1582c184bcd7c47105633d844c84650cab32209d2e4a3b58320328794b77"
+    },
+    {
+      "name": "Commercial-Public-Workflow-References.md",
+      "repo_sha256": "b6d8509714faa6f0a2006253ca46cc09e642b6a9368ce0d41c238221d7d94f00",
+      "vault_sha256": "343a89c9f416d89a8e461007b159257fb4e2ab0c3827adce9d0e9f68e596b553"
+    },
+    {
+      "name": "Open-Source-DasEtwas-Enginesound.md",
+      "repo_sha256": "fb928b90caaeed3b654352c7ac36e3d1228bc62fc6fe299a889555925d96a5ce",
+      "vault_sha256": "58069c9704cddfd0b7b36bea673cfb2fd2d2ed9d7602504307ac425d33d02c38"
+    },
+    {
+      "name": "Open-Source-Engine-Sim.md",
+      "repo_sha256": "8449930937d546c6c15548239cfbc4d4b9c45804a3b6e0012a8576a772be82b1",
+      "vault_sha256": "fbcbfc1afc588203e34e9e5c9d498f2ca8a10c279808dabe159f60291d0cd99c"
+    },
+    {
+      "name": "Open-Source-ENSIM4.md",
+      "repo_sha256": "99f8d08297c5e762b9857fa5bcdecad5e55e2027e90da99a498ffb47d2f74255",
+      "vault_sha256": "7fb498fea765845e3b4416b66356a66e6e28732b6b4830bdb30d30973bf6ff31"
+    },
+    {
+      "name": "Open-Source-FiveM-License-Boundary.md",
+      "repo_sha256": "1e63c82b1c395a2cdfa2950c71086c82d8673200db5311bb375929a8ce219fe7",
+      "vault_sha256": "70a9e8d29801b64e71b59854ff606781fa0532618172a640b1f1a3c48c189e60"
+    },
+    {
+      "name": "Open-Source-Granular-ESP32-Boundaries.md",
+      "repo_sha256": "719aa44b7879282f8e5eb48c2174bdc06b971250378e540a8e48cde9140c78ad",
+      "vault_sha256": "b2522431138fc5c42311219a059579518e25b33f9d69e811ce1933c47c968615"
+    },
+    {
+      "name": "Open-Source-PTR-Model.md",
+      "repo_sha256": "fb59f79634fb308c68ea5482beeb21da71d425c9f5bffb03789dda50189d1b9c",
+      "vault_sha256": "926d4dce62ece211d33c177817bc2049b72a85aae2b4ce382b4a1413a0555fee"
+    },
+    {
+      "name": "Open-Source-VehicleNoiseSynthesizer.md",
+      "repo_sha256": "f4dadc83307ffaed24738266310c34e7ee9e526d1d67cca4a25644c4c60202fb",
+      "vault_sha256": "9b5eb35ebf466ac2cb30a0d20515fcc2207a045eb7eb6b35a5a3558eff0c8025"
+    },
+    {
+      "name": "Papers-PTR-EONE-DDSP.md",
+      "repo_sha256": "aa6d1a5188ea2dbc35194c0ff62946c8932306038dcd790d1748db6b128fcca2",
+      "vault_sha256": "d2cb0c62a0441bf374799bd19afb8b944a8e262cc2f85880a44078626bbd860e"
+    }
+  ],
+  "v27_closure": {
+    "captured_at": "2026-08-29T09:35:00+08:00",
+    "source_head_at_verification_rerun": "6ad9bca517fca83a5d228a5b5e24cbc1ddf89f16",
+    "current_stage_w_evidence_v27": [
+      "tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27",
+      "tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27",
+      "tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27"
+    ],
+    "current_selection": null,
+    "current_audition_package_status": "STALE_HISTORICAL_REVIEW_PACKAGE; new package prohibited until candidate selected and R1 gate closes",
+    "verification_report": ".superpowers/sdd/task-6ab-current-verification-rerun-report.md"
+  }
 }
