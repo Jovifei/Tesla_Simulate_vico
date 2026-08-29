@@ -1,0 +1,755 @@
+{
+  "architecture": "P2H",
+  "metric_stem": "post_ptr",
+  "parameter_count": 27,
+  "reachable_count": 9,
+  "results": [
+    {
+      "baseline": 0.6,
+      "delta": 0.18,
+      "metric_movement": {
+        "band_120_400": 0.07321174707446476,
+        "centroid": 0.062491740241964716,
+        "crest": 0.026288020139182026,
+        "dynamic_range": 0.04172047900580353,
+        "flux": 0.09692530559599004,
+        "high_band_share": 0.3655414929132425,
+        "low_band_share": 0.048736369985877416,
+        "mid_band_share": 0.05386064269868315,
+        "roughness": 0.0,
+        "sharpness": 0.1633217486419955,
+        "tonality": 0.040370010304443676,
+        "transient_density": 0.06521739130434782
+      },
+      "note": "per-event pressure energy",
+      "parameter": "combustion_event_energy",
+      "reason": "target movement 0.0652",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "crest",
+        "transient_density",
+        "low_band_share"
+      ],
+      "unit": "normalized_pressure"
+    },
+    {
+      "baseline": 0.0035,
+      "delta": 0.0012,
+      "metric_movement": {
+        "band_120_400": 0.025276764101621156,
+        "centroid": 0.021026403009134654,
+        "crest": 0.008063022382460833,
+        "dynamic_range": 0.015699795798197656,
+        "flux": 0.03805204407503864,
+        "high_band_share": 0.034270271569967994,
+        "low_band_share": 0.10411875223768817,
+        "mid_band_share": 0.025397611807687424,
+        "roughness": 0.0,
+        "sharpness": 0.035100375974728266,
+        "tonality": 0.024034262469689316,
+        "transient_density": 0.015527950310559006
+      },
+      "note": "",
+      "parameter": "combustion_rise_time",
+      "reason": "target movement 0.0351",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "band_120_400",
+        "sharpness"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 0.03,
+      "delta": 0.008,
+      "metric_movement": {
+        "band_120_400": 0.0032071014176705257,
+        "centroid": 0.023145573404352388,
+        "crest": 0.006719845121518063,
+        "dynamic_range": 0.0019212658887052874,
+        "flux": 0.002434235132476538,
+        "high_band_share": 0.06779136050343244,
+        "low_band_share": 0.25353671472107964,
+        "mid_band_share": 0.010673713694344746,
+        "roughness": 0.0,
+        "sharpness": 0.05868849191024772,
+        "tonality": 0.16096220189951452,
+        "transient_density": 0.02251552795031056
+      },
+      "note": "",
+      "parameter": "combustion_decay_time",
+      "reason": "target movement 0.2535",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "low_band_share",
+        "dynamic_range"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 0.08,
+      "delta": 0.03,
+      "metric_movement": {
+        "band_120_400": 0.0012551018075224875,
+        "centroid": 0.0007925952910737204,
+        "crest": 0.0035783198337973185,
+        "dynamic_range": 0.0018485482749712385,
+        "flux": 0.023187903476757348,
+        "high_band_share": 0.0005099581169042437,
+        "low_band_share": 0.025284628244158936,
+        "mid_band_share": 0.00037131300365646094,
+        "roughness": 0.0,
+        "sharpness": 0.0013395188584204275,
+        "tonality": 0.004711854234891448,
+        "transient_density": 0.010869565217391304
+      },
+      "note": "",
+      "parameter": "cycle_variation",
+      "reason": "target movement 0.0232",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "roughness",
+        "flux"
+      ],
+      "unit": "normalized"
+    },
+    {
+      "baseline": 0.34,
+      "delta": 0.1,
+      "metric_movement": {
+        "band_120_400": 0.00880839882871645,
+        "centroid": 0.0005168649498449525,
+        "crest": 0.009269957208522401,
+        "dynamic_range": 0.000985633835773747,
+        "flux": 0.007388693041249562,
+        "high_band_share": 0.01555338835894894,
+        "low_band_share": 0.04960982531958447,
+        "mid_band_share": 0.004327586354317896,
+        "roughness": 0.0,
+        "sharpness": 0.007354056653448478,
+        "tonality": 0.024012075919362594,
+        "transient_density": 0.03183229813664596
+      },
+      "note": "",
+      "parameter": "crank_inertia",
+      "reason": "target metric movement 0.0074 <= tolerance 0.02",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "flux",
+        "dynamic_range"
+      ],
+      "unit": "kg_m2"
+    },
+    {
+      "baseline": 0.22,
+      "delta": 0.07,
+      "metric_movement": {
+        "band_120_400": 0.0004994235472766295,
+        "centroid": 0.00042308320387295984,
+        "crest": 2.8808552455726595e-06,
+        "dynamic_range": 0.0008389260181963793,
+        "flux": 0.01657187408567206,
+        "high_band_share": 0.00045002412778106756,
+        "low_band_share": 0.000586259374084449,
+        "mid_band_share": 0.00036096926120007887,
+        "roughness": 0.0,
+        "sharpness": 0.0006672558519957727,
+        "tonality": 0.008418145147686651,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "idle_governor",
+      "reason": "target metric movement 0.0166 <= tolerance 0.02",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "flux",
+        "dynamic_range"
+      ],
+      "unit": "normalized_torque"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.25,
+      "metric_movement": {
+        "band_120_400": 0.022388823648049918,
+        "centroid": 0.0048932718370807765,
+        "crest": 0.013052495841703038,
+        "dynamic_range": 0.00024888255537335643,
+        "flux": 0.015836595418951854,
+        "high_band_share": 0.012014522454889301,
+        "low_band_share": 0.023722807549549692,
+        "mid_band_share": 0.019048156726342837,
+        "roughness": 0.0,
+        "sharpness": 0.033682552790951455,
+        "tonality": 0.07020363942096357,
+        "transient_density": 0.030279503105590064
+      },
+      "note": "",
+      "parameter": "primary_length_spread",
+      "reason": "target movement 0.0224",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "band_120_400",
+        "roughness"
+      ],
+      "unit": "spread_scale"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.25,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "primary_attenuation_spread",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "mid_band_share",
+        "roughness"
+      ],
+      "unit": "spread_scale"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.25,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "minus_error": "reflection_mode must be open or closed",
+      "note": "open vs damped junction reflection",
+      "parameter": "waveguide_reflection",
+      "reason": "render failed or non-finite PCM",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "band_120_400",
+        "dynamic_range"
+      ],
+      "unit": "mode_scale"
+    },
+    {
+      "baseline": 0.08,
+      "delta": 0.03,
+      "metric_movement": {
+        "band_120_400": 0.006264580770440774,
+        "centroid": 0.005332439492011536,
+        "crest": 0.0020150352969484876,
+        "dynamic_range": 0.004008908437285497,
+        "flux": 0.00746515232565672,
+        "high_band_share": 0.034193630137656306,
+        "low_band_share": 0.005650414108615734,
+        "mid_band_share": 0.004395323365868049,
+        "roughness": 0.0,
+        "sharpness": 0.014511082014314948,
+        "tonality": 0.0030560871326915724,
+        "transient_density": 0.007763975155279503
+      },
+      "note": "",
+      "parameter": "waveguide_loss",
+      "reason": "target movement 0.0342",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "high_band_share",
+        "mid_band_share"
+      ],
+      "unit": "per_m"
+    },
+    {
+      "baseline": 0.92,
+      "delta": 0.06,
+      "metric_movement": {
+        "band_120_400": 0.014317128496794859,
+        "centroid": 0.01211931173946402,
+        "crest": 0.005344585282250497,
+        "dynamic_range": 0.008758320319518939,
+        "flux": 0.01614251839705504,
+        "high_band_share": 0.07603280839267355,
+        "low_band_share": 0.011789478374744781,
+        "mid_band_share": 0.010122082222163665,
+        "roughness": 0.0,
+        "sharpness": 0.03254782614901072,
+        "tonality": 0.006835198045652945,
+        "transient_density": 0.011645962732919254
+      },
+      "note": "",
+      "parameter": "collector_loss",
+      "reason": "target movement 0.0760",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "mid_band_share",
+        "high_band_share"
+      ],
+      "unit": "ratio"
+    },
+    {
+      "baseline": 0.0,
+      "delta": 0.2,
+      "metric_movement": {
+        "band_120_400": 0.1089688497045154,
+        "centroid": 0.07183273055669605,
+        "crest": 0.00833684758670254,
+        "dynamic_range": 0.01252632644394739,
+        "flux": 0.03868421603151187,
+        "high_band_share": 0.1424846793747511,
+        "low_band_share": 0.014744363305314392,
+        "mid_band_share": 0.08442351670292518,
+        "roughness": 0.0,
+        "sharpness": 0.1338545257412127,
+        "tonality": 0.020100433048178584,
+        "transient_density": 0.006211180124223602
+      },
+      "note": "",
+      "parameter": "attack_mix_120_400",
+      "reason": "target movement 0.1090",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "band_120_400"
+      ],
+      "unit": "gain"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.3,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "timbre_map_order_weights",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "sharpness",
+        "tonality"
+      ],
+      "unit": "vector_scale"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.3,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "blower_sideband_mix",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "tonality",
+        "sharpness"
+      ],
+      "unit": "gain"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.3,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "blower_broadband_mix",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "roughness",
+        "flux"
+      ],
+      "unit": "gain"
+    },
+    {
+      "baseline": 1.0,
+      "delta": 0.3,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "blower_casing_mix",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "tonality"
+      ],
+      "unit": "gain"
+    },
+    {
+      "baseline": 0.18,
+      "delta": 0.06,
+      "metric_movement": {
+        "band_120_400": 0.20222216342738486,
+        "centroid": 0.11682080029770273,
+        "crest": 0.017928428144846856,
+        "dynamic_range": 0.010368195610748624,
+        "flux": 0.028699532520194478,
+        "high_band_share": 0.1604482940002485,
+        "low_band_share": 0.14193248078955734,
+        "mid_band_share": 0.166631526246096,
+        "roughness": 0.0,
+        "sharpness": 0.16506820906989408,
+        "tonality": 0.0100602195142881,
+        "transient_density": 0.039596273291925464
+      },
+      "note": "",
+      "parameter": "intake_mix",
+      "reason": "target movement 0.1666",
+      "status": "PARAMETER_REACHABLE",
+      "target_metrics": [
+        "mid_band_share",
+        "flux"
+      ],
+      "unit": "normalized_gain"
+    },
+    {
+      "baseline": 0.0,
+      "delta": 0.08,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "boost_attack",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "flux",
+        "dynamic_range"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 0.0,
+      "delta": 0.2,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "boost_release",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "flux"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 0.2,
+      "delta": 0.08,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "bypass_threshold",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "tonality",
+        "sharpness"
+      ],
+      "unit": "throttle"
+    },
+    {
+      "baseline": 0.72,
+      "delta": 0.2,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "afterfire_reservoir_rate",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "transient_density"
+      ],
+      "unit": "normalized"
+    },
+    {
+      "baseline": 0.004,
+      "delta": 0.0015,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "afterfire_ignition_delay",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "transient_density"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 0.0,
+      "delta": 1.0,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "primary vs bank collector routing",
+      "parameter": "afterfire_location_mix",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "transient_density",
+        "crest"
+      ],
+      "unit": "mode"
+    },
+    {
+      "baseline": 0.06,
+      "delta": 0.02,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "afterfire_energy",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "transient_density",
+        "crest"
+      ],
+      "unit": "normalized_gain"
+    },
+    {
+      "baseline": 0.12,
+      "delta": 0.05,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "monitor_attack",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "dynamic_range"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 1.2,
+      "delta": 0.4,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "monitor_release",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "dynamic_range",
+        "crest"
+      ],
+      "unit": "s"
+    },
+    {
+      "baseline": 9.0,
+      "delta": 3.0,
+      "metric_movement": {
+        "band_120_400": 0.0,
+        "centroid": 0.0,
+        "crest": 0.0,
+        "dynamic_range": 0.0,
+        "flux": 0.0,
+        "high_band_share": 0.0,
+        "low_band_share": 0.0,
+        "mid_band_share": 0.0,
+        "roughness": 0.0,
+        "sharpness": 0.0,
+        "tonality": 0.0,
+        "transient_density": 0.0
+      },
+      "note": "",
+      "parameter": "monitor_max_makeup",
+      "reason": "rendered PCM identical to baseline",
+      "status": "PARAMETER_NOT_REACHABLE",
+      "target_metrics": [
+        "dynamic_range",
+        "crest"
+      ],
+      "unit": "dB"
+    }
+  ],
+  "schema": "s12.stage_x.parameter_reachability.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "unreachable": [
+    "crank_inertia",
+    "idle_governor",
+    "primary_attenuation_spread",
+    "waveguide_reflection",
+    "timbre_map_order_weights",
+    "blower_sideband_mix",
+    "blower_broadband_mix",
+    "blower_casing_mix",
+    "boost_attack",
+    "boost_release",
+    "bypass_threshold",
+    "afterfire_reservoir_rate",
+    "afterfire_ignition_delay",
+    "afterfire_location_mix",
+    "afterfire_energy",
+    "monitor_attack",
+    "monitor_release",
+    "monitor_max_makeup"
+  ]
+}

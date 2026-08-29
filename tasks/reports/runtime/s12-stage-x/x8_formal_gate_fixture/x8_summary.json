@@ -1,0 +1,14 @@
+{
+ "schema": "s12.stage_x.x8_summary.v1",
+ "all_checks_pass": true,
+ "formal_selection_status": "FORMAL_SELECTION_READY_NOT_RUN",
+ "selected_architecture": null,
+ "profile_candidate_opened": false,
+ "real_status": "FORMAL_R1_REFERENCE_MISSING",
+ "fixture_markers": [
+  "FIXTURE_ONLY",
+  "NOT_REAL_R1",
+  "NOT_TUNING_AUTHORITY"
+ ],
+ "wall_seconds": 0.01
+}

@@ -1,0 +1,4 @@
+command=python tools/sound_sim/s12/acoustic_identity_v015/stage_x/drivers/drive_x4_reachability.py
+start_utc=2026-08-29T14:02:12
+note=per-parameter targeted probe protocol
+exit=1

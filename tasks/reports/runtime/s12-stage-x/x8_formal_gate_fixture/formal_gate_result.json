@@ -1,0 +1,50 @@
+{
+ "schema": "s12.stage_x.formal_selection_result.v1",
+ "fixture_markers": [
+  "FIXTURE_ONLY",
+  "NOT_REAL_R1",
+  "NOT_TUNING_AUTHORITY"
+ ],
+ "checks": {
+  "multi_scenario_independent_reference": true,
+  "audio_sha_present": true,
+  "rights_receipt_cleared": true,
+  "synchronized_traces": true,
+  "time_coverage": true,
+  "microphone_agc_declared": true,
+  "scenario_binding_complete": true,
+  "order_input_exportable": true,
+  "multi_reference_median_computed": true,
+  "formal_improvement_threshold": true
+ },
+ "human_confirmation": false,
+ "all_checks_pass": true,
+ "candidate_objectives": {
+  "P2H": 0.18,
+  "P3": 0.42,
+  "P5": 0.27
+ },
+ "best_architecture_on_fixture": "P3",
+ "formal_selection_status": "FORMAL_SELECTION_READY_NOT_RUN",
+ "selected_architecture": null,
+ "profile_candidate_gate": {
+  "opened": false,
+  "reason": "fixture is NOT_REAL_R1 and human confirmation is absent; fail-closed"
+ },
+ "real_status": {
+  "schema": "s12.stage_x.formal_selection.v1",
+  "architecture": null,
+  "evidence_level": "R1_REQUIRED",
+  "status": "FORMAL_R1_REFERENCE_MISSING",
+  "required_inputs": [
+   "rights_status=CLEARED",
+   "synchronized_rpm_load_gear_trace",
+   "scenario_bound_reference_audio",
+   "microphone_and_agc_receipt",
+   "human_confirmation"
+  ],
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+ },
+ "note": "the real R1 import reuses this exact pipeline; only the data source changes",
+ "scope": "synthetic; uncalibrated; not OEM reproduction"
+}
