@@ -1,0 +1,164 @@
+{
+ "schema": "s12.stage_x.x6_migration_summary.v1",
+ "vehicles": {
+  "ferrari_458": {
+   "valid_reference_count": 3,
+   "reference_scenarios": [
+    "full_pull",
+    "shift",
+    "tip_in"
+   ],
+   "architectures": {
+    "P2H": {
+     "schema": "s12.stage_x.engineering_gate.v1",
+     "architecture": "P2H",
+     "hard_gates": {
+      "finite_pcm": true,
+      "clipping_zero": true,
+      "parent_sha_different": true,
+      "post_ptr_exists": true,
+      "block_no_click": true,
+      "wrong_condition_afterfire_zero": true,
+      "raw_monitor_separated": true,
+      "parameter_consumed": true,
+      "scenario_compatible": true,
+      "reference_not_speech_contaminated": true
+     },
+     "hard_gates_passed": true,
+     "soft_gates": {
+      "valid_reference_count_at_least_2": true,
+      "median_improvement_at_least_15pct": false,
+      "key_dimensions_not_regressed": false,
+      "no_clean_reference_severe_regression": false,
+      "tonality_penalty_reduced": true,
+      "monitor_idle_audible": false
+     },
+     "failed_soft_gates": [
+      "key_dimensions_not_regressed",
+      "median_improvement_at_least_15pct",
+      "monitor_idle_audible",
+      "no_clean_reference_severe_regression"
+     ],
+     "objective": -12.889901283081691,
+     "dimension_median_relative_error": {
+      "low_frequency_body": 1.0079906659596078,
+      "120_400_pressure_attack": 7.864357876461874,
+      "mid_band_congestion": 7.049096161648805,
+      "mechanical_texture": -0.33280745471995204,
+      "forced_induction_identity": -0.8386777188552983,
+      "idle_life": NaN,
+      "acceleration_continuity": 89.70900531585781,
+      "shift_transient": NaN,
+      "afterfire_naturalness": NaN,
+      "synthetic_artifact": -0.8386777188552983,
+      "dynamic_range": -0.5010768628440118,
+      "runtime_cost": NaN
+     },
+     "eligibility": {
+      "schema": "s12.stage_x.selection_eligibility.v1",
+      "selection_eligible": false,
+      "blocking_reasons": [
+       "MEDIAN_IMPROVEMENT_BELOW_15PCT"
+      ],
+      "inputs": {
+       "hard_gates_passed": true,
+       "valid_reference_count": 3,
+       "median_improvement_fraction": -12.889901283081691,
+       "reference_evidence_level": "R2_AUDIO_DIAGNOSTIC"
+      },
+      "scope": "engineering preselection only; formal R1 selection is a separate gate"
+     },
+     "status": "NO_R2_ENGINEERING_CANDIDATE_IMPROVED",
+     "scope": "engineering preselection only; synthetic; uncalibrated; not OEM reproduction",
+     "best_objective": -12.889901283081691
+    },
+    "P3": {
+     "schema": "s12.stage_x.engineering_gate.v1",
+     "architecture": "P3",
+     "hard_gates": {
+      "finite_pcm": true,
+      "clipping_zero": true,
+      "parent_sha_different": true,
+      "post_ptr_exists": true,
+      "block_no_click": true,
+      "wrong_condition_afterfire_zero": true,
+      "raw_monitor_separated": true,
+      "parameter_consumed": true,
+      "scenario_compatible": true,
+      "reference_not_speech_contaminated": true
+     },
+     "hard_gates_passed": true,
+     "soft_gates": {
+      "valid_reference_count_at_least_2": true,
+      "median_improvement_at_least_15pct": false,
+      "key_dimensions_not_regressed": false,
+      "no_clean_reference_severe_regression": false,
+      "tonality_penalty_reduced": true,
+      "monitor_idle_audible": false
+     },
+     "failed_soft_gates": [
+      "key_dimensions_not_regressed",
+      "median_improvement_at_least_15pct",
+      "monitor_idle_audible",
+      "no_clean_reference_severe_regression"
+     ],
+     "objective": -16.22163340776493,
+     "dimension_median_relative_error": {
+      "low_frequency_body": 0.30486066085937935,
+      "120_400_pressure_attack": 4.612858965476763,
+      "mid_band_congestion": 13.378717275287018,
+      "mechanical_texture": -0.3418442058130006,
+      "forced_induction_identity": -0.6666109363079731,
+      "idle_life": NaN,
+      "acceleration_continuity": 113.42919082797712,
+      "shift_transient": NaN,
+      "afterfire_naturalness": NaN,
+      "synthetic_artifact": -0.6666109363079731,
+      "dynamic_range": -0.27749438905190416,
+      "runtime_cost": NaN
+     },
+     "eligibility": {
+      "schema": "s12.stage_x.selection_eligibility.v1",
+      "selection_eligible": false,
+      "blocking_reasons": [
+       "MEDIAN_IMPROVEMENT_BELOW_15PCT"
+      ],
+      "inputs": {
+       "hard_gates_passed": true,
+       "valid_reference_count": 3,
+       "median_improvement_fraction": -16.22163340776493,
+       "reference_evidence_level": "R2_AUDIO_DIAGNOSTIC"
+      },
+      "scope": "engineering preselection only; formal R1 selection is a separate gate"
+     },
+     "status": "NO_R2_ENGINEERING_CANDIDATE_IMPROVED",
+     "scope": "engineering preselection only; synthetic; uncalibrated; not OEM reproduction",
+     "best_objective": -16.22163340776493
+    }
+   },
+   "best_architecture": "P2H",
+   "wall_seconds": 1474.5
+  },
+  "rx7_fd": {
+   "valid_reference_count": 0,
+   "reference_scenarios": [],
+   "architectures": {
+    "P2H": {
+     "status": "DIAGNOSTIC_ONLY_NO_REFERENCE",
+     "note": "all R2 references speech-contaminated; reference-supported preselection prohibited",
+     "best_objective": 0.7706086399704125
+    },
+    "P3": {
+     "status": "DIAGNOSTIC_ONLY_NO_REFERENCE",
+     "note": "all R2 references speech-contaminated; reference-supported preselection prohibited",
+     "best_objective": 0.6265195916290779
+    }
+   },
+   "best_architecture": "P2H",
+   "wall_seconds": 2769.8
+  }
+ },
+ "searched_parameter_count": 11,
+ "wall_seconds": 4245.2,
+ "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; no formal migration or OEM likeness claim"
+}

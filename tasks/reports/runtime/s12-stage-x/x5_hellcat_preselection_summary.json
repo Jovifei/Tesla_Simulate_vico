@@ -251,5 +251,166 @@
  ],
  "selected_engineering_architecture": null,
  "wall_seconds": 2482.9,
- "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+ "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+ "round2": {
+  "failure_analysis": {
+   "schema": "s12.stage_x.structural_redesign.v1",
+   "best_architecture": "P3",
+   "best_objective": -0.04238151764798337,
+   "best_overrides": {
+    "combustion_event_energy": 0.5401751198396086,
+    "combustion_rise_time": 0.0023136766612157226,
+    "combustion_decay_time": 0.02308835954144597,
+    "cycle_variation": 0.08939279183000326,
+    "primary_length_spread": 1.144066050555557,
+    "waveguide_reflection": 0.18060126323252917,
+    "waveguide_loss": 0.07182334145717323,
+    "collector_loss": 0.9190485055856408,
+    "attack_mix_120_400": 0.13636695809662341,
+    "timbre_map_order_weights": 0.8832516053318977,
+    "intake_mix": 0.22707277156971395
+   },
+   "failing_dimensions": {
+    "120_400_pressure_attack": 0.10019518945421127,
+    "mid_band_congestion": 0.36342874655023216,
+    "forced_induction_identity": 0.48269976970850315,
+    "synthetic_artifact": 0.48269976970850315
+   },
+   "key_failures": {
+    "120_400_pressure_attack": 0.10019518945421127,
+    "mid_band_congestion": 0.36342874655023216,
+    "synthetic_artifact": 0.48269976970850315
+   },
+   "redesign_required": true
+  },
+  "architecture": "P3",
+  "preselection_gate": {
+   "schema": "s12.stage_x.engineering_gate.v1",
+   "architecture": "P3",
+   "hard_gates": {
+    "finite_pcm": true,
+    "clipping_zero": true,
+    "parent_sha_different": true,
+    "post_ptr_exists": true,
+    "block_no_click": true,
+    "wrong_condition_afterfire_zero": true,
+    "raw_monitor_separated": true,
+    "parameter_consumed": true,
+    "scenario_compatible": true,
+    "reference_not_speech_contaminated": true
+   },
+   "hard_gates_passed": true,
+   "soft_gates": {
+    "valid_reference_count_at_least_2": true,
+    "median_improvement_at_least_15pct": false,
+    "key_dimensions_not_regressed": false,
+    "no_clean_reference_severe_regression": false,
+    "tonality_penalty_reduced": false,
+    "monitor_idle_audible": false
+   },
+   "failed_soft_gates": [
+    "key_dimensions_not_regressed",
+    "median_improvement_at_least_15pct",
+    "monitor_idle_audible",
+    "no_clean_reference_severe_regression",
+    "tonality_penalty_reduced"
+   ],
+   "objective": 0.03388497151585622,
+   "dimension_median_relative_error": {
+    "low_frequency_body": -0.2832666609113944,
+    "120_400_pressure_attack": 0.31651408727019215,
+    "mid_band_congestion": 0.12307320775094802,
+    "mechanical_texture": -0.1892486518898765,
+    "forced_induction_identity": 0.21241021071820967,
+    "idle_life": -0.3501403569317325,
+    "acceleration_continuity": NaN,
+    "shift_transient": NaN,
+    "afterfire_naturalness": NaN,
+    "synthetic_artifact": 0.21241021071820967,
+    "dynamic_range": -0.3128318188514058,
+    "runtime_cost": NaN
+   },
+   "eligibility": {
+    "schema": "s12.stage_x.selection_eligibility.v1",
+    "selection_eligible": false,
+    "blocking_reasons": [
+     "MEDIAN_IMPROVEMENT_BELOW_15PCT"
+    ],
+    "inputs": {
+     "hard_gates_passed": true,
+     "valid_reference_count": 4,
+     "median_improvement_fraction": 0.03388497151585622,
+     "reference_evidence_level": "R2_AUDIO_DIAGNOSTIC"
+    },
+    "scope": "engineering preselection only; formal R1 selection is a separate gate"
+   },
+   "status": "NO_R2_ENGINEERING_CANDIDATE_IMPROVED",
+   "scope": "engineering preselection only; synthetic; uncalibrated; not OEM reproduction",
+   "round": 2,
+   "structural_redesign": {
+    "schema": "s12.stage_x.structural_redesign.v1",
+    "best_architecture": "P3",
+    "best_objective": -0.04238151764798337,
+    "best_overrides": {
+     "combustion_event_energy": 0.5401751198396086,
+     "combustion_rise_time": 0.0023136766612157226,
+     "combustion_decay_time": 0.02308835954144597,
+     "cycle_variation": 0.08939279183000326,
+     "primary_length_spread": 1.144066050555557,
+     "waveguide_reflection": 0.18060126323252917,
+     "waveguide_loss": 0.07182334145717323,
+     "collector_loss": 0.9190485055856408,
+     "attack_mix_120_400": 0.13636695809662341,
+     "timbre_map_order_weights": 0.8832516053318977,
+     "intake_mix": 0.22707277156971395
+    },
+    "failing_dimensions": {
+     "120_400_pressure_attack": 0.10019518945421127,
+     "mid_band_congestion": 0.36342874655023216,
+     "forced_induction_identity": 0.48269976970850315,
+     "synthetic_artifact": 0.48269976970850315
+    },
+    "key_failures": {
+     "120_400_pressure_attack": 0.10019518945421127,
+     "mid_band_congestion": 0.36342874655023216,
+     "synthetic_artifact": 0.48269976970850315
+    },
+    "redesign_required": true
+   },
+   "best_overrides": {
+    "combustion_event_energy": 0.3875777430329472,
+    "combustion_rise_time": 0.0006096072536036373,
+    "combustion_decay_time": 0.017267760514467954,
+    "cycle_variation": 0.062499329897528516,
+    "crank_inertia": 0.45994379333220425,
+    "idle_governor": 0.3140112225217745,
+    "primary_length_spread": 1.2927319784415887,
+    "primary_attenuation_spread": 0.8421862282790243,
+    "waveguide_reflection": -0.4262424952350557,
+    "waveguide_loss": 0.09485639375541359,
+    "collector_loss": 0.8956638435824775,
+    "attack_mix_120_400": -0.1417886198256165,
+    "timbre_map_order_weights": 1.3283901805798524,
+    "blower_sideband_mix": 0.6427940379362553,
+    "blower_broadband_mix": 0.6196790746878832,
+    "blower_casing_mix": 0.7662591738440097,
+    "intake_mix": 0.2354625602060929,
+    "boost_attack": 0.013711386397480964,
+    "boost_release": 0.03778967088088393,
+    "bypass_threshold": 0.12004627155512572,
+    "afterfire_reservoir_rate": 0.7369681234657764,
+    "afterfire_ignition_delay": 0.0035990002856124193,
+    "afterfire_location_mix": 0.5651613812893629,
+    "afterfire_energy": 0.054660861771553756,
+    "monitor_attack": 0.13134114961139856,
+    "monitor_release": 1.5310407036542892,
+    "monitor_max_makeup": 8.612500218115747
+   },
+   "best_objective": 0.03388497151585622
+  },
+  "selected_engineering_architecture": null
+ },
+ "final_status": "NO_MEASURABLE_IMPROVEMENT_AFTER_REDESIGN",
+ "model_redesign_required": true,
+ "wall_seconds_round2": 450.0
 }

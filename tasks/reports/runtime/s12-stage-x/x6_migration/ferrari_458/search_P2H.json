@@ -1,0 +1,640 @@
+{
+ "schema": "s12.stage_x.migration_search.v1",
+ "vehicle_id": "ferrari_458",
+ "architecture": "P2H",
+ "candidate_count": 88,
+ "reference_supported": true,
+ "best_objective": -12.889901283081691,
+ "best_overrides": {
+  "combustion_event_energy": 0.7691039209328592,
+  "combustion_rise_time": 0.0027593492326885463,
+  "combustion_decay_time": 0.027230630154162643,
+  "cycle_variation": 0.07687125486973673,
+  "primary_length_spread": 1.137693635490723,
+  "waveguide_reflection": 1.442967247031629,
+  "waveguide_loss": 0.05526027788687498,
+  "collector_loss": 0.9532396442890168,
+  "attack_mix_120_400": 0.11548627642914654,
+  "timbre_map_order_weights": 0.9815493629407138,
+  "intake_mix": 0.12937606066837906
+ },
+ "records": [
+  {
+   "stage": 1,
+   "index": 0,
+   "objective": -19.879562985180602,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 1,
+   "objective": -16.61643957995479,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 2,
+   "objective": -20.9820599516708,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 3,
+   "objective": -13.287163780558881,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 4,
+   "objective": -15.929706843070894,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 5,
+   "objective": -21.676631548095937,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 6,
+   "objective": -17.78863932122816,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 7,
+   "objective": -21.397843628532858,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 8,
+   "objective": -17.326203719057652,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 9,
+   "objective": -20.884020595636034,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 10,
+   "objective": -16.191831070017926,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 11,
+   "objective": -18.323884352502763,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 12,
+   "objective": -26.752398481502304,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 13,
+   "objective": -16.49422703085108,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 14,
+   "objective": -19.940350792433506,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 15,
+   "objective": -15.764810107538107,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 16,
+   "objective": -21.762097434254038,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 17,
+   "objective": -16.86401053154906,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 18,
+   "objective": -18.18741960647208,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 19,
+   "objective": -14.128305781883295,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 20,
+   "objective": -16.468785858327756,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 21,
+   "objective": -24.80741905353567,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 22,
+   "objective": -15.822789570896168,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 23,
+   "objective": -21.41390340174245,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 24,
+   "objective": -16.519231303698785,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 25,
+   "objective": -19.222576846441324,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 26,
+   "objective": -15.794079410102045,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 27,
+   "objective": -23.305171489328952,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 28,
+   "objective": -21.66285443660607,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 29,
+   "objective": -15.953914800103677,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 30,
+   "objective": -20.96836629585351,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 31,
+   "objective": -18.196891620024044,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 32,
+   "objective": -15.49680866569002,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 33,
+   "objective": -17.79143972455909,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 34,
+   "objective": -17.307676722281663,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 35,
+   "objective": -24.163802727008253,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 36,
+   "objective": -22.301211497620383,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 37,
+   "objective": -16.310191900224048,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 38,
+   "objective": -23.78624235327228,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 39,
+   "objective": -16.625607129073902,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 40,
+   "objective": -22.45152802972715,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 41,
+   "objective": -16.365531145475103,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 42,
+   "objective": -19.507815610444606,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 43,
+   "objective": -16.22452473645153,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 44,
+   "objective": -19.215942450841116,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 45,
+   "objective": -20.552720731864817,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 46,
+   "objective": -15.564170837181937,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 47,
+   "objective": -20.707939176380396,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 48,
+   "objective": -15.173763562602652,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 49,
+   "objective": -21.03875111500774,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 50,
+   "objective": -16.184103519027516,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 51,
+   "objective": -22.190459846920863,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 52,
+   "objective": -22.659032583391152,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 53,
+   "objective": -18.18039210046559,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 54,
+   "objective": -19.978252967489748,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 55,
+   "objective": -15.801203138572749,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 56,
+   "objective": -18.251104106135358,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 57,
+   "objective": -15.881667009185204,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 58,
+   "objective": -21.590265597053953,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 59,
+   "objective": -16.698452550955228,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 60,
+   "objective": -14.463610098182697,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 61,
+   "objective": -19.318016728251784,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 62,
+   "objective": -16.159263804965747,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 63,
+   "objective": -26.84810788801444,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_0",
+   "objective": -16.916385714644463,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_1",
+   "objective": -14.672348710627302,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_2",
+   "objective": -17.80645093129081,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_3",
+   "objective": -13.226907403218013,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_4",
+   "objective": -13.4491653227265,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_5",
+   "objective": -13.016754340614018,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_6",
+   "objective": -12.89492256041806,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_7",
+   "objective": -20.043261053350417,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_8",
+   "objective": -13.899505036806707,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_9",
+   "objective": -19.442798612735487,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_10",
+   "objective": -13.90464593719581,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_11",
+   "objective": -12.889901283081691,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_0",
+   "objective": -13.94232737493298,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_1",
+   "objective": -14.537099151920913,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_2",
+   "objective": -14.396266828024306,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_3",
+   "objective": -17.108928881067442,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_4",
+   "objective": -15.4654439330744,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_5",
+   "objective": -13.822661904096496,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_6",
+   "objective": -15.031880970981007,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_7",
+   "objective": -14.632225978675564,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_8",
+   "objective": -15.392044084366852,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_9",
+   "objective": -14.787936836672586,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_10",
+   "objective": -14.479341819550172,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_11",
+   "objective": -15.112076415192632,
+   "finite": true,
+   "clipping_samples": 0
+  }
+ ],
+ "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; diagnostic migration only"
+}

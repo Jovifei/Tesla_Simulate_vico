@@ -1,9 +1,13 @@
-# Stage X Resume
+# Stage X Resume (final)
 
-- Branch: `agent/s12-stage-x-r2-engineering-selection` (base 8637e62); worktree `E:/Tesla_speed/worktrees/s12-stage-x-r2-engineering-selection`
-- Current phase: X4 (parameter reachability, targeted probe scan, PID 71708 since 22:04)
-- Completed: X0 (232b736), X1-X3 (b6be70b), X8 fixture (e450a15; all pipeline checks pass, fail-closed preserved)
-- Key facts: R2 audio for hellcat/ferrari/rx7 SHA-verified at E:/Claude_allow/Download/s12-acoustic-realism-v10; hellcat binds 4 scenarios (idle+steady×3, accel speech-rejected pending manual review), ferrari 3, rx7 0 (speech-confirmed rejected); Jovi feedback receipt at tasks/reports/runtime/S12_Professional_Comparison_Dashboard_v1/Jovi_Guided_Feedback_Long_Window_Validation.json (hellcat identity 60 / realism 50)
-- Next commands after X4: python tools/sound_sim/s12/acoustic_identity_v015/stage_x/drivers/drive_x5_hellcat_search.py (then x6, x7, x9)
-- Do not rerun: X4 scan while PID 71708 alive
-- Remote: github unreachable at X0; re-try fetch before final push; push target = this branch only (no force, no merge, no PR)
+- Branch: `agent/s12-stage-x-r2-engineering-selection`; HEAD `git rev-parse HEAD`
+- Worktree: `E:/Tesla_speed/worktrees/s12-stage-x-r2-engineering-selection`
+- Overall: `STAGE_W_CONTINUOUS_EXECUTION_COMPLETE / NO_R2_ENGINEERING_CANDIDATE_IMPROVED / MODEL_REDESIGN_REQUIRED / R1_FORMAL_SELECTION_PIPELINE_READY`
+- All phases X0–X9 complete (PASS)
+- X4: 11/27 parameters reachable (per-parameter targeted protocol)
+- X5: P2H objective=-0.131, P3 objective=-0.042, P5 objective=-0.042 — all below 15% gate → NO_R2_ENGINEERING_CANDIDATE_IMPROVED
+- X6: Ferrari refs=3 best=P2H; RX-7 refs=0 (speech-contaminated) best=P2H (diagnostic only)
+- X7: 10 scenarios, 4 reference-bound; review package at E:/Tesla_speed/review_packages/s12-stage-x-r2-engineering-selection-v1 (ZIP SHA verified)
+- X8: formal fixture pipeline ready; all_checks_pass=true; formal_selection=FORMAL_SELECTION_READY_NOT_RUN
+- X9: 6 Obsidian notes synced (repo mirror + personal vault managed blocks)
+- Next: full S12 regression once at final HEAD, then push branch

@@ -1,0 +1,640 @@
+{
+ "schema": "s12.stage_x.migration_search.v1",
+ "vehicle_id": "ferrari_458",
+ "architecture": "P3",
+ "candidate_count": 88,
+ "reference_supported": true,
+ "best_objective": -16.22163340776493,
+ "best_overrides": {
+  "combustion_event_energy": 0.6852437084745615,
+  "combustion_rise_time": 0.0020953490050509573,
+  "combustion_decay_time": 0.026279980043321848,
+  "cycle_variation": 0.07577505016885697,
+  "primary_length_spread": 1.1136423292802646,
+  "waveguide_reflection": 2.042483027279377,
+  "waveguide_loss": 0.06253775377757848,
+  "collector_loss": 0.9558151781465859,
+  "attack_mix_120_400": 0.23815806092694403,
+  "timbre_map_order_weights": 1.0725405790656806,
+  "intake_mix": 0.10099040825664997
+ },
+ "records": [
+  {
+   "stage": 1,
+   "index": 0,
+   "objective": -21.724615561644,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 1,
+   "objective": -18.37502461760897,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 2,
+   "objective": -22.00847875295862,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 3,
+   "objective": -16.355656849421575,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 4,
+   "objective": -18.372034989185238,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 5,
+   "objective": -23.340905278749112,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 6,
+   "objective": -19.9650854036235,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 7,
+   "objective": -22.656203963247354,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 8,
+   "objective": -20.049710588931895,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 9,
+   "objective": -22.062168923052308,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 10,
+   "objective": -18.14328174621733,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 11,
+   "objective": -20.63138221984225,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 12,
+   "objective": -26.632762864918302,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 13,
+   "objective": -18.34295883688166,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 14,
+   "objective": -21.495614534258685,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 15,
+   "objective": -18.29676367349634,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 16,
+   "objective": -23.310904452232503,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 17,
+   "objective": -19.076964983161744,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 18,
+   "objective": -20.363896160808437,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 19,
+   "objective": -17.117300583985326,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 20,
+   "objective": -19.092233345932428,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 21,
+   "objective": -25.1607349579848,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 22,
+   "objective": -18.171469318524206,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 23,
+   "objective": -22.857323833824573,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 24,
+   "objective": -18.65726974410733,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 25,
+   "objective": -21.253959375309456,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 26,
+   "objective": -18.081346716950165,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 27,
+   "objective": -24.270513222544427,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 28,
+   "objective": -23.10503253306604,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 29,
+   "objective": -18.170676779949936,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 30,
+   "objective": -22.37659717548126,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 31,
+   "objective": -20.49059719106726,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 32,
+   "objective": -17.771804323472594,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 33,
+   "objective": -19.398231993073697,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 34,
+   "objective": -19.373924262161623,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 35,
+   "objective": -24.642552634727394,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 36,
+   "objective": -23.75873208473771,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 37,
+   "objective": -18.50563525434971,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 38,
+   "objective": -24.55758921213655,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 39,
+   "objective": -18.912566971710582,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 40,
+   "objective": -23.40061224410274,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 41,
+   "objective": -18.47887429427942,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 42,
+   "objective": -21.342244850550976,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 43,
+   "objective": -17.752441827804127,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 44,
+   "objective": -20.97474484695246,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 45,
+   "objective": -22.214327940819352,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 46,
+   "objective": -18.11607809749057,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 47,
+   "objective": -22.601826524569102,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 48,
+   "objective": -17.52126839508337,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 49,
+   "objective": -22.111300199420786,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 50,
+   "objective": -18.072681291932327,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 51,
+   "objective": -23.79928273250227,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 52,
+   "objective": -23.918781643507497,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 53,
+   "objective": -20.643908833830345,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 54,
+   "objective": -21.106317311842623,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 55,
+   "objective": -18.36226273609144,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 56,
+   "objective": -20.49244342726346,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 57,
+   "objective": -18.080280609951018,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 58,
+   "objective": -22.881422794181642,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 59,
+   "objective": -19.421430106783195,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 60,
+   "objective": -17.268405265938142,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 61,
+   "objective": -21.23302489593279,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 62,
+   "objective": -18.117474922381625,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 1,
+   "index": 63,
+   "objective": -25.99781792625042,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_0",
+   "objective": -19.049421072802506,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_1",
+   "objective": -17.04268454987718,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_2",
+   "objective": -20.52415065397414,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_3",
+   "objective": -16.468162700460148,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_4",
+   "objective": -16.301963158962053,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_5",
+   "objective": -16.497837338080764,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_6",
+   "objective": -16.22163340776493,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_7",
+   "objective": -22.125094866255907,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_8",
+   "objective": -16.777375218218037,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_9",
+   "objective": -21.03110935148826,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_10",
+   "objective": -16.36648901777124,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r0_11",
+   "objective": -16.307015388933852,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_0",
+   "objective": -17.017200921915684,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_1",
+   "objective": -17.548383693653307,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_2",
+   "objective": -16.82171736804689,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_3",
+   "objective": -19.370939194283192,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_4",
+   "objective": -17.759909969136082,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_5",
+   "objective": -16.937260602103816,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_6",
+   "objective": -17.55326444635433,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_7",
+   "objective": -17.113697287051846,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_8",
+   "objective": -18.160275732068797,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_9",
+   "objective": -17.021989945281327,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_10",
+   "objective": -17.155167684092344,
+   "finite": true,
+   "clipping_samples": 0
+  },
+  {
+   "stage": 2,
+   "index": "r1_11",
+   "objective": -17.07745873356875,
+   "finite": true,
+   "clipping_samples": 0
+  }
+ ],
+ "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; diagnostic migration only"
+}
