@@ -205,7 +205,7 @@ class _Band120to400:
         hp_out = np.empty_like(raw)
         previous_in = self._hp_prev_in
         previous_out = self._hp_prev_out
-        for index in range(raw.size):
+        for index in range(raw.shape[0]):
             current = raw[index]
             previous_out = alpha_hp * (previous_out + current - previous_in)
             previous_in = current
@@ -219,7 +219,7 @@ class _Band120to400:
         lp_out = np.empty_like(hp_out)
         previous_in = self._lp_prev_in
         previous_out = self._lp_prev_out
-        for index in range(hp_out.size):
+        for index in range(hp_out.shape[0]):
             previous_out += alpha_lp * (hp_out[index] - previous_out)
             previous_in = hp_out[index]
             lp_out[index] = previous_out
