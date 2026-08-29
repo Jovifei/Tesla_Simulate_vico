@@ -36,3 +36,10 @@ atomic final-root publication). Authoritative synthetic evidence roots are
 gates rerun green after the Task 6AA configuration-only Track-P whitespace
 repair. Selection remains `null` and the status remains
 `NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`.
+
+- [[07-Stage-X-Remote-Reconciliation]]
+- [[08-Engineering-Selection-Contract]]
+- [[09-Hellcat-R2-Engineering-Selection]]
+- [[10-Ferrari-RX7-Diagnostic-Migration]]
+- [[11-R1-Formal-Gate-Readiness]]
+- [[12-Stage-X-Final-Status]]
