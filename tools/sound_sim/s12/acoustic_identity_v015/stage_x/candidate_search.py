@@ -65,7 +65,10 @@ def _render_pcm(config: dict[str, Any], architecture: str, scene: str, duration_
         def __exit__(self, *exc: Any) -> None:
             self._bakeoff.load_config = self._orig_load
 
-    with _ConfigPatcher(config):
+    if config is not None:
+        with _ConfigPatcher(config):
+            raw, post_ptr, monitor, diagnostics = _render_architecture(architecture, trace)
+    else:
         raw, post_ptr, monitor, diagnostics = _render_architecture(architecture, trace)
     elapsed = time.perf_counter() - start
     return raw, post_ptr, monitor, diagnostics, elapsed

@@ -28,7 +28,9 @@ def main() -> int:
         return 0
     analysis = analyze_failure_dimensions(round1)
     plan = build_round2_plan(round1)
-    (RUNTIME / "x5_round2" / "failure_analysis.json").write_text(json.dumps(analysis, indent=1, ensure_ascii=False), encoding="utf-8")
+    round2_root = RUNTIME / "x5_round2"
+    round2_root.mkdir(parents=True, exist_ok=True)
+    (round2_root / "failure_analysis.json").write_text(json.dumps(analysis, indent=1, ensure_ascii=False), encoding="utf-8")
     caseset = rc.build_reference_caseset("hellcat", MANIFEST, R2_AUDIO_DIR)
     reference_audio: dict[str, tuple] = {}
     for case in caseset["cases"]:

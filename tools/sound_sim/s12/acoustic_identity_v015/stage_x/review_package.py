@@ -89,10 +89,10 @@ def build_review_package(
                 stereo = stereo * (0.99 / peak)
             stems["reference"] = stereo
         for architecture, stem in (("P1", "legacy"), ("P2H", "p2h"), ("P3", "p3"), ("P5", "p5")):
-            _, post, _, _ = _render_candidate(None, architecture, bakeoff_scene, duration_s)
+            _, post, _, _, _ = _render_candidate(None, architecture, bakeoff_scene, duration_s)
             stems[stem] = post
         if presel_config is not None and best_architecture:
-            raw, post, monitor, _ = _render_candidate(presel_config, best_architecture, bakeoff_scene, duration_s)
+            raw, post, monitor, _, _ = _render_candidate(presel_config, best_architecture, bakeoff_scene, duration_s)
             stems["presel_raw"] = post
             stems["presel_monitor"] = monitor
         else:
