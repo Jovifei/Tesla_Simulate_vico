@@ -51,21 +51,47 @@ def render_timbre_map(phase: np.ndarray, rpm: np.ndarray, load: np.ndarray, boos
     kind = unwrap(config, "forced_induction.type")
     gain = float(unwrap(config, "forced_induction.gain"))
     ratio = float(unwrap(config, "forced_induction.ratio"))
+    mixes = config.get("timbre_mixes") or {}
+    def _mix(name: str, default: float) -> float:
+        node = mixes.get(name)
+        value = node["value"] if isinstance(node, dict) and "value" in node else node
+        return float(value) if value is not None else default
+    sideband_mix = _mix("sideband_mix", 1.0)
+    broadband_mix = _mix("broadband_mix", 1.0)
+    casing_mix = _mix("casing_mix", 1.0)
+    intake_mix_scale = _mix("intake_mix", 1.0)
+    bypass_threshold = _mix("bypass_threshold", 0.20)
+    order_weights = mixes.get("order_weights")
+    if isinstance(order_weights, dict) and "value" in order_weights:
+        order_weights = order_weights["value"]
+    order_weight_vector = np.ones(4, dtype=np.float64) if order_weights is None else np.clip(np.asarray(order_weights, dtype=np.float64), 0.0, 4.0)
+    boost_attack_s = _mix("boost_attack_s", 0.0)
+    boost_release_s = _mix("boost_release_s", 0.0)
     load = np.clip(load, 0.0, 1.0)
     boost = np.clip(boost, 0.0, 1.0)
     throttle = np.clip(throttle, 0.0, 1.0)
-    bypass_gain = np.clip(0.25 + 0.75 * throttle / 0.20, 0.25, 1.0) if kind in {"supercharger", "turbo"} else np.ones_like(throttle)
+    if (boost_attack_s > 0.0 or boost_release_s > 0.0) and boost.size:
+        smoothed = np.empty_like(boost)
+        state = float(boost[0])
+        sample_period = 1.0 / 48000.0
+        for index, target in enumerate(boost):
+            tau = boost_attack_s if target > state else boost_release_s
+            alpha = 1.0 - np.exp(-sample_period / tau) if tau > 0.0 else 1.0
+            state += alpha * (float(target) - state)
+            smoothed[index] = state
+        boost = np.clip(smoothed, 0.0, 1.0)
+    bypass_gain = np.clip(0.25 + 0.75 * throttle / max(bypass_threshold, 1e-6), 0.25, 1.0) if kind in {"supercharger", "turbo"} else np.ones_like(throttle)
     inertia_gain = 0.70 + 0.30 * float(np.clip(inertia_state, 0.0, 1.0))
     shaft = phase * max(ratio, 1.0)
     table = TimbreMap4D.from_config(config.get("timbre_map"))
     rpm_factor = np.clip(rpm / 5200.0, 0.2, 1.6)
-    order_gains = np.column_stack([np.array([table.sample(r, l, b, order) for r, l, b in zip(rpm, load, boost)]) for order in (1.0, 2.0, 3.0, 5.0)]) * gain
+    order_gains = np.column_stack([np.array([table.sample(r, l, b, order) for r, l, b in zip(rpm, load, boost)]) for order in (1.0, 2.0, 3.0, 5.0)]) * gain * order_weight_vector
     harmonic = inertia_gain * bypass_gain * (order_gains[:, 0] * np.sin(shaft) + order_gains[:, 1] * np.sin(2.0 * shaft) + order_gains[:, 2] * np.sin(3.0 * shaft) + order_gains[:, 3] * np.sin(5.0 * shaft))
     sideband = inertia_gain * bypass_gain * (0.16 + 0.24 * throttle) * order_gains[:, 1] * (np.sin(shaft * (1.0 + 0.015 * rpm_factor) + 0.13 * np.sin(phase * 0.5)) + 0.5 * np.sin(shaft * (1.0 - 0.015 * rpm_factor)))
     index = np.arange(phase.size, dtype=np.float64) + float(sample_counter)
     broadband = inertia_gain * bypass_gain[:, None] * order_gains[:, 2, None] * (0.55 * np.sin(index[:, None] * 0.017 + phase[:, None] * 0.31) + 0.35 * np.sin(index[:, None] * 0.041 + phase[:, None] * 0.73) + 0.10 * np.sin(index[:, None] * 0.097))
     casing = inertia_gain * bypass_gain[:, None] * order_gains[:, 0, None] * (0.18 + 0.20 * load)[:, None] * (np.sin(phase[:, None] * 4.7 + 0.4) + 0.35 * np.sin(phase[:, None] * 9.3))
-    intake_gain = float(unwrap(config, "intake_model"))
+    intake_gain = float(unwrap(config, "intake_model")) * intake_mix_scale
     intake = inertia_gain * bypass_gain * intake_gain * np.sqrt(np.clip(load * (0.25 + throttle), 0.0, 1.5)) * rpm_factor * (0.7 * np.sin(phase * 3.0 + 0.35) + 0.3 * np.sin(phase * 7.0))
     if kind == "supercharger":
         blower = np.column_stack((0.58 * harmonic, harmonic))
@@ -79,9 +105,9 @@ def render_timbre_map(phase: np.ndarray, rpm: np.ndarray, load: np.ndarray, boos
     return {
         "blower": blower,
         "turbo": turbo,
-        "sidebands": np.column_stack((0.55 * sideband, sideband)),
-        "broadband": np.column_stack((0.70 * broadband, broadband)),
-        "casing": np.column_stack((0.72 * casing, casing)),
+        "sidebands": sideband_mix * np.column_stack((0.55 * sideband, sideband)),
+        "broadband": broadband_mix * np.column_stack((0.70 * broadband, broadband)),
+        "casing": casing_mix * np.column_stack((0.72 * casing, casing)),
         "intake": np.column_stack((0.52 * intake, intake)),
         "boost_state": boost.copy(),
         "blowoff": np.zeros((phase.size, 2), dtype=np.float64),

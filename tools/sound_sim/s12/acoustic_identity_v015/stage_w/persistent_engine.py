@@ -184,6 +184,49 @@ class _TransferIrFilter:
         return _finite_array(payload.get("state"), self.state.shape, "transfer IR state")
 
 
+class _Band120to400:
+    """Stateful bounded 120-400 Hz emphasis (one high-pass + one low-pass)."""
+
+    def __init__(self, sample_rate_hz: int) -> None:
+        self.sample_rate_hz = int(sample_rate_hz)
+        self._hp_prev_in: np.ndarray | None = None
+        self._hp_prev_out: np.ndarray | None = None
+        self._lp_prev_in: np.ndarray | None = None
+        self._lp_prev_out: np.ndarray | None = None
+
+    def process(self, raw: np.ndarray) -> np.ndarray:
+        raw = np.asarray(raw, dtype=np.float64)
+        dt = 1.0 / self.sample_rate_hz
+        rc_hp = 1.0 / (2.0 * np.pi * 120.0)
+        alpha_hp = rc_hp / (rc_hp + dt)
+        if self._hp_prev_in is None:
+            self._hp_prev_in = raw[0].copy() if raw.size else np.zeros(2)
+            self._hp_prev_out = np.zeros(2)
+        hp_out = np.empty_like(raw)
+        previous_in = self._hp_prev_in
+        previous_out = self._hp_prev_out
+        for index in range(raw.size):
+            current = raw[index]
+            previous_out = alpha_hp * (previous_out + current - previous_in)
+            previous_in = current
+            hp_out[index] = previous_out
+        self._hp_prev_in, self._hp_prev_out = previous_in.copy(), previous_out.copy()
+        rc_lp = 1.0 / (2.0 * np.pi * 400.0)
+        alpha_lp = dt / (rc_lp + dt)
+        if self._lp_prev_in is None:
+            self._lp_prev_in = hp_out[0].copy() if hp_out.size else np.zeros(2)
+            self._lp_prev_out = np.zeros(2)
+        lp_out = np.empty_like(hp_out)
+        previous_in = self._lp_prev_in
+        previous_out = self._lp_prev_out
+        for index in range(hp_out.size):
+            previous_out += alpha_lp * (hp_out[index] - previous_out)
+            previous_in = hp_out[index]
+            lp_out[index] = previous_out
+        self._lp_prev_in, self._lp_prev_out = previous_in.copy(), previous_out.copy()
+        return lp_out
+
+
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
@@ -261,12 +304,37 @@ class PersistentEventDomainEngine:
         central_delay = 1.35 * float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz
         self._central_collector_line = _DelayLine(central_delay, min(1.0, collector_loss * 0.98))
         self._pending_combustion_torque = np.zeros(max(self.block_size * 2, int(round(0.10 * self.sample_rate_hz)) + 2), dtype=np.float64)
-        self.waveguide_network = WaveguideNetwork(lengths, list(unwrap(self.config, "bank_assignment")), self.sample_rate_hz, temperature) if self.path_model == "waveguide_v1" else None
+        waveguide_node = self.config.get("exhaust_waveguide") or {}
+        def _waveguide_value(name: str, default: float) -> float:
+            node = waveguide_node.get(name)
+            value = node["value"] if isinstance(node, dict) and "value" in node else node
+            return float(value) if value is not None else float(default)
+        reflection_node = waveguide_node.get("reflection_mode")
+        reflection_value = reflection_node.get("value", "open") if isinstance(reflection_node, dict) else (reflection_node or "open")
+        self.waveguide_network = WaveguideNetwork(lengths, list(unwrap(self.config, "bank_assignment")), self.sample_rate_hz, temperature, loss_per_meter=_waveguide_value("loss_per_meter", 0.08), reflection_mode=str(reflection_value)) if self.path_model == "waveguide_v1" else None
         self.teacher_response = ReducedCfdTeacherResponse() if self.path_model == "reduced_cfd_teacher_v1" else None
         self._event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.entity_count)]
         self._collector_event_tails = [np.zeros(self._tail_length(), dtype=np.float64) for _ in range(self.bank_count)]
         self._central_collector_event_tail = np.zeros(self._tail_length(), dtype=np.float64)
         self._monitor_gain_db = 0.0
+        monitor_policy = self.config.get("monitor_policy") or {}
+        def _monitor_value(name: str, default: float) -> float:
+            node = monitor_policy.get(name)
+            value = node["value"] if isinstance(node, dict) and "value" in node else node
+            return float(value) if value is not None else float(default)
+        self._monitor_target_rms = _monitor_value("target_rms", 0.08)
+        self._monitor_attack_s = _monitor_value("attack_s", 0.12)
+        self._monitor_release_s = _monitor_value("release_s", 1.20)
+        self._monitor_max_makeup_db = _monitor_value("max_makeup_db", 9.0)
+        self._monitor_max_attenuation_db = _monitor_value("max_attenuation_db", -12.0)
+        attack_node = self.config.get("attack_shaping") or {}
+        attack_mix_node = attack_node.get("band_120_400_mix")
+        attack_mix_value = attack_mix_node.get("value", 0.0) if isinstance(attack_mix_node, dict) else (attack_mix_node if attack_mix_node is not None else 0.0)
+        self._attack_mix = float(np.clip(attack_mix_value, 0.0, 2.0))
+        if self._attack_mix > 0.0:
+            self._attack_band_state = _Band120to400(self.sample_rate_hz)
+        else:
+            self._attack_band_state = None
         self._last_output_sample = np.zeros(2, dtype=np.float64)
         self._click_max_boundary_jump = 0.0
         self._click_sum_sq = 0.0
@@ -471,6 +539,8 @@ class PersistentEventDomainEngine:
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
         if external_transient is not None:
             raw += external_transient
+        if self._attack_mix > 0.0:
+            raw = raw + self._attack_mix * self._attack_band_state.process(raw)
         self._parameter_consumption["transfer_ir"] = True
         raw = self._transfer_ir.process(raw)
         boundary_jump = float(np.max(np.abs(raw[0] - self._last_output_sample))) if raw.size else 0.0
@@ -555,7 +625,9 @@ class PersistentEventDomainEngine:
         dt = n / self.sample_rate_hz
         d_rpm = (float(state["rpm"]) - self._last_rpm) / max(dt, 1.0 / self.sample_rate_hz)
         d_throttle = (float(state["throttle"]) - self._last_throttle) / max(dt, 1.0 / self.sample_rate_hz)
-        self._afterfire_fuel_reservoir = max(0.0, 0.995 * self._afterfire_fuel_reservoir + 0.72 * float(state["load"]))
+        reservoir_node = self.config.get("afterfire", {}).get("fuel_reservoir_rate") if isinstance(self.config.get("afterfire"), Mapping) else None
+        reservoir_rate = reservoir_node.get("value", 0.72) if isinstance(reservoir_node, Mapping) else 0.72
+        self._afterfire_fuel_reservoir = max(0.0, 0.995 * self._afterfire_fuel_reservoir + float(reservoir_rate) * float(state["load"]))
         self._afterfire_temperature = 120.0 + 780.0 * np.clip(float(state["rpm"]) / 6500.0, 0.0, 1.0) * (0.55 + 0.45 * float(state["load"]))
         self._afterfire_cooldown_remaining = max(0, self._afterfire_cooldown_remaining - n)
         oxygen = np.clip(0.82 - 0.48 * float(state["load"]) + 0.15 * (1.0 - float(state["throttle"])), 0.0, 1.0)
@@ -646,8 +718,9 @@ class PersistentEventDomainEngine:
 
     def _monitor(self, raw: np.ndarray) -> np.ndarray:
         rms = float(np.sqrt(np.mean(np.square(raw))))
-        desired = float(np.clip(20.0 * np.log10(0.08 / max(rms, 1.0e-9)), -12.0, 9.0))
-        alpha = 1.0 - np.exp(-self.block_size / (0.12 * self.sample_rate_hz if desired > self._monitor_gain_db else 1.20 * self.sample_rate_hz))
+        desired = float(np.clip(20.0 * np.log10(self._monitor_target_rms / max(rms, 1.0e-9)), self._monitor_max_attenuation_db, self._monitor_max_makeup_db))
+        time_constant = self._monitor_attack_s if desired > self._monitor_gain_db else self._monitor_release_s
+        alpha = 1.0 - np.exp(-self.block_size / (time_constant * self.sample_rate_hz)) if time_constant > 0.0 else 1.0
         self._monitor_gain_db += alpha * (desired - self._monitor_gain_db)
         monitor = raw * 10.0 ** (self._monitor_gain_db / 20.0)
         peak = float(np.max(np.abs(monitor))) if monitor.size else 0.0

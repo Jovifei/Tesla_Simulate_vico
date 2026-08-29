@@ -227,11 +227,13 @@ class StatefulWaveguide:
 
 
 class WaveguideNetwork:
-    def __init__(self, primary_lengths_m: list[float], bank_assignment: list[int], sample_rate_hz: int = 48000, temperature_c: float = 700.0) -> None:
+    def __init__(self, primary_lengths_m: list[float], bank_assignment: list[int], sample_rate_hz: int = 48000, temperature_c: float = 700.0, *, loss_per_meter: float = 0.08, reflection_mode: str = "open") -> None:
         if len(primary_lengths_m) != len(bank_assignment) or not primary_lengths_m:
             raise ValueError("waveguide path and bank arrays must have equal nonzero length")
+        if not np.isfinite(loss_per_meter) or loss_per_meter < 0.0:
+            raise ValueError("waveguide loss_per_meter must be finite and non-negative")
         self.bank_assignment = np.asarray(bank_assignment, dtype=np.int64)
-        self.guides = [StatefulWaveguide(WaveguideConfig(float(length), sample_rate_hz=sample_rate_hz, temperature_c=temperature_c)) for length in primary_lengths_m]
+        self.guides = [StatefulWaveguide(WaveguideConfig(float(length), sample_rate_hz=sample_rate_hz, temperature_c=temperature_c, loss_per_meter=float(loss_per_meter), reflection_mode=str(reflection_mode))) for length in primary_lengths_m]
         self.bank_count = int(np.max(self.bank_assignment)) + 1
 
     def process(self, paths: np.ndarray) -> WaveguideResult:

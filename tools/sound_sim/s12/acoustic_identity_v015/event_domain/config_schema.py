@@ -20,6 +20,7 @@ _TOP_LEVEL_KEYS = {
     "click_gate",
     "rotary_event_width_scale", "rotary_event_gain_scale", "housing_gain_scale", "housing_decay_scale",
     "housing_order_mix", "primary_spool_tau", "secondary_spool_tau", "blow_off_gain", "blow_off_decay",
+    "timbre_mixes", "exhaust_waveguide", "monitor_policy", "attack_shaping",
 }
 
 
