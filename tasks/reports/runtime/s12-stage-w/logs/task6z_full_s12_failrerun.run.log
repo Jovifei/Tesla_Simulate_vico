@@ -1,0 +1,5 @@
+command=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree -q --disable-warnings
+start_utc=2026-08-29T12:20:53.609200Z
+note=post-fix rerun of the only 2 failures from task6z_final_full_s12_run2 (1205 passed / 2 failed / 1 skipped / 232 subtests)
+exit_code=0
+end_utc=2026-08-29T12:20:56.525476Z

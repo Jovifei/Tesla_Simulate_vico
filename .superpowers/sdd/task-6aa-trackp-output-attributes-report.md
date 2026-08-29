@@ -68,4 +68,3 @@ Message: `chore(s12): mark historical pytest output opaque`
 ```text
 M       .gitattributes
 ```
-

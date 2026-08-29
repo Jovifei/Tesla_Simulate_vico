@@ -25,3 +25,11 @@
 - Task 6AB rerun of all eight Task 6Z gates is green at source head `6ad9bca`: Gate 1 Stage-W focused `235 passed, 1 skipped`; Gate 2 Stage-V focused `33 passed`; Gate 3 slow 3000×20 ms `1 passed`; Gate 4 v27 bake-off/RX-7/Ferrari validators `[]`; Gate 5 JSON/WAV scan `730 json / 0 nonfinite, 270 wav / 0 bad / 0 clip`; Gate 6 compileall exit 0; Gate 7 Track-P guard exit 0; Gate 8 `git diff --check` clean. Evidence: `.superpowers/sdd/task-6ab-current-verification-rerun-report.md`.
 - Governed metadata is bound to the v27 roots and this head; selection remains `null`; qualification remains `NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`; R1/W10/Profile Freeze/Vault gates stay fail-closed.
 - Next command after an R1 file-set/hash change: unchanged (R1 pilot preflight above). Full S12 final qualification run for this round is recorded under `tasks/reports/runtime/s12-stage-w/logs/` when complete.
+
+## Final closure (2026-08-29)
+
+- Parent-owned full S12 run2: `2 failed, 1205 passed, 1 skipped, 232 subtests passed in 3902.44s` (`task6z_final_full_s12_run2.*.log`).
+- Both failures were the Track-P guard whitespace surface: committed `task-6aa-trackp-output-attributes-report.md` had an EOF blank line; fixed whitespace-only, guard exit 0, failed tests rerun `2 passed` (`task6z_full_s12_failrerun.*.log`).
+- Independent closure review of `2af0873..97a435c` + Vault writes: `VERDICT: PASS` (5 P3 notes, none blocking).
+- Vault sync applied: mirror root byte-synced (4 files), custom root managed blocks extended with v27 closure (3 files), `02-当前进度.md` live block replaced; `obsidian_sync_manifest.json` statuses flipped to applied.
+- Authoritative report: `.superpowers/sdd/task-6z-final-qualification-report.md`. Selection stays `null`; status stays `NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`; R1/W10/Profile Freeze/push remain fail-closed.

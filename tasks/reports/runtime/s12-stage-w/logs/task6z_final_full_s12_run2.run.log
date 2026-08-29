@@ -1,0 +1,5 @@
+command=python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q --disable-warnings
+start_utc=2026-08-29T11:09:19.791898Z
+note=run2 after killed first run (1F at 88%, no summary)
+exit_code=1
+end_utc=2026-08-29T12:14:23.368913Z

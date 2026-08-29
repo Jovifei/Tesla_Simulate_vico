@@ -1,0 +1,2 @@
+command=python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q --disable-warnings
+start_utc=2026-08-29T10:21:55.490401Z
