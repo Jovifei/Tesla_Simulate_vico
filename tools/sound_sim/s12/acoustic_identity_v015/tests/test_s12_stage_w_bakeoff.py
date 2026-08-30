@@ -200,11 +200,11 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     assert eligible["afterfire_event_count"][-1] > 0
     assert ineligible["afterfire_event_count"][-1] == 0
     p5_metrics = json.loads((root / "P5" / "gear_shift" / "metrics.json").read_text(encoding="utf-8"))
-    assert p5_metrics["diagnostics"]["transient_residual_source"] == "synthetic_one_shot_v1"
+    assert p5_metrics["diagnostics"]["transient_residual_source"] == "state_v1"
     assert p5_metrics["diagnostics"]["transient_residual_event_count"] > 0
     assert not (root / "P5" / "gear_shift" / "post_ptr_raw.wav").read_bytes() == (root / "P3" / "gear_shift" / "post_ptr_raw.wav").read_bytes()
     assert result["architectures"]["P5"]["status"] == "RENDERED"
-    assert result["architectures"]["P4"]["status"] == "REFERENCE_RECORDING_RIGHTS_PENDING"
+    assert result["architectures"]["P4"]["status"] == "RENDERED"
     assert result["architectures"]["P6"]["status"] == "TEACHER_NOT_RUNTIME_CANDIDATE"
     assert validate_bakeoff_manifest(root) == []
     manifest = json.loads((root / "bakeoff_manifest.json").read_text(encoding="utf-8"))

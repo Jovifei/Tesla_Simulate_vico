@@ -12,6 +12,7 @@ from numbers import Integral, Real
 from typing import Any, Mapping
 
 import numpy as np
+from scipy.signal import lfilter
 
 from ..contracts import SourceRender
 from ..event_domain.chamber_event import render_event_packet
@@ -23,7 +24,7 @@ from ..event_domain.forced_induction import render_forced_induction
 from .boundary_adapter import FrozenPtrStereo
 from .teacher_response import ReducedCfdTeacherResponse
 from .waveguide import WaveguideNetwork
-from .timbre_map import render_timbre_map
+from .timbre_map import TimbreMap4D, render_timbre_map
 from .click_contract import click_gate_contract
 
 
@@ -80,6 +81,18 @@ def _mapping(value: Any, label: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise ValueError(f"{label} must be a mapping")
     return value
+
+
+def _timbre_map_matches_formula_default(payload: Any) -> bool:
+    table = TimbreMap4D.from_config(payload if isinstance(payload, dict) else None)
+    default = TimbreMap4D.default()
+    return (
+        np.allclose(table.rpm_axis, default.rpm_axis)
+        and np.allclose(table.load_axis, default.load_axis)
+        and np.allclose(table.boost_axis, default.boost_axis)
+        and np.allclose(table.order_axis, default.order_axis)
+        and np.allclose(table.values, default.values)
+    )
 
 
 @dataclass(frozen=True)
@@ -230,8 +243,12 @@ class _Band120to400:
 class PersistentEventDomainEngine:
     """Stateful source-domain engine with one output block per 20 ms frame."""
 
-    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1", random_seed: int = 0, jitter_fraction: float = 0.0) -> None:
+    def __init__(self, config: Mapping[str, Any], sample_rate_hz: int = 48000, block_size: int = 960, mode: str = "measured_rpm", ptr_enabled: bool = False, path_model: str = "delay_lpf_v1", forced_induction_model: str = "harmonic_v1", random_seed: int = 0, jitter_fraction: float = 0.0, cycle_sync_model: str = "off", transient_model: str = "off", audio_chain: str = "off") -> None:
         self.config = validate_config(config)
+        if self.config.get("require_fitted_timbre_map"):
+            payload = self.config.get("timbre_map")
+            if payload is None or _timbre_map_matches_formula_default(payload):
+                raise ValueError("fitted HarmonicTimbreMap required")
         self._parameter_fallbacks: dict[str, dict[str, Any]] = {}
         for name, fallback in (("transfer_ir", "identity_default"), ("collector_assignment", "identity_default")):
             if name not in self.config:
@@ -257,6 +274,15 @@ class PersistentEventDomainEngine:
             raise ValueError("jitter_fraction must be finite and in [0, 0.25]")
         self.random_seed = int(random_seed)
         self.jitter_fraction = float(jitter_fraction)
+        if cycle_sync_model not in {"off", "fixture_v1"}:
+            raise ValueError("cycle_sync_model must be off or fixture_v1")
+        if transient_model not in {"off", "state_v1"}:
+            raise ValueError("transient_model must be off or state_v1")
+        if audio_chain not in {"off", "dp_v1"}:
+            raise ValueError("audio_chain must be off or dp_v1")
+        self.cycle_sync_model = cycle_sync_model
+        self.transient_model = transient_model
+        self.audio_chain_model = audio_chain
         self.entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         self.bank_count = int(unwrap(self.config, "bank_count"))
         self._reset_runtime()
@@ -299,6 +325,7 @@ class PersistentEventDomainEngine:
         lengths = list(unwrap(self.config, "per_path_primary_length_m"))
         attenuations = list(unwrap(self.config, "per_path_attenuation"))
         self._path_lines = [_DelayLine(float(length) / speed * self.sample_rate_hz, float(attenuations[index])) for index, length in enumerate(lengths)]
+        self._path_filter_state = np.zeros(self.entity_count, dtype=np.float64)
         collector_delay = float(unwrap(self.config, "collector_length_m")) / speed * self.sample_rate_hz
         collector_loss = float(unwrap(self.config, "collector_loss"))
         self._collector_lines = [_DelayLine(collector_delay, collector_loss) for _ in range(self.bank_count)]
@@ -347,6 +374,20 @@ class PersistentEventDomainEngine:
         transfer_label = str(unwrap(self.config, "transfer_ir"))
         self._transfer_ir = _TransferIrFilter(transfer_label)
         self._parameter_consumption = {"collector_assignment": True, "transfer_ir": True, "crankpin_geometry": self.config["architecture"] == "piston", "rotor_geometry": self.config["architecture"] == "rotary_wankel"}
+        self._cycle_sync = None
+        if self.cycle_sync_model == "fixture_v1":
+            from ..stage_y.cycle_sync_resynth import CycleSyncResampler
+            from ..stage_y.fixture_cycles import synthesize_hellcat_cycle_bank
+            self._cycle_sync = CycleSyncResampler(synthesize_hellcat_cycle_bank(self.sample_rate_hz), self.sample_rate_hz)
+        self._transient_mixer = None
+        self._transient_counts = {"transient_shift_count": 0, "transient_tip_in_count": 0, "transient_bov_count": 0}
+        if self.transient_model == "state_v1":
+            from ..stage_y.state_transients import StateTransientMixer
+            self._transient_mixer = StateTransientMixer(self.sample_rate_hz)
+        self._audio_chain = None
+        if self.audio_chain_model == "dp_v1":
+            from ..stage_y.audio_chain_dp import PressureAudioChain
+            self._audio_chain = PressureAudioChain(self.sample_rate_hz, delay_samples=64.0)
         self.ptr = FrozenPtrStereo(self.sample_rate_hz) if self.ptr_enabled else None
 
     def initialize(self) -> "PersistentEventDomainEngine":
@@ -430,6 +471,14 @@ class PersistentEventDomainEngine:
             values.append(self.teacher_response._state)
         return float(sum(np.sum(np.square(value)) for value in values))
 
+    def _header_attenuation_tilt(self, entity: int, source: np.ndarray, attenuation: float) -> np.ndarray:
+        """One-pole tilt so per-path attenuation spread moves mid-band/roughness, not only SHA."""
+        pole = float(np.clip(0.10 + 0.82 * float(attenuation), 0.05, 0.97))
+        x = np.asarray(source, dtype=np.float64)
+        y, zf = lfilter([pole], [1.0, pole - 1.0], x, zi=[self._path_filter_state[entity]])
+        self._path_filter_state[entity] = float(zf[0])
+        return y
+
     def _validate_external_transient(self, value: np.ndarray | None, frame_count: int) -> np.ndarray | None:
         if value is None:
             return None
@@ -475,9 +524,10 @@ class PersistentEventDomainEngine:
             source = self._event_tails[entity][:n].copy()
             self._event_tails[entity][:-n] = self._event_tails[entity][n:]
             self._event_tails[entity][-n:] = 0.0
-            entity_sources.append(source * float(line.attenuation))
+            tilted = self._header_attenuation_tilt(entity, source, float(line.attenuation))
+            entity_sources.append(tilted * float(line.attenuation))
             if self.waveguide_network is None:
-                banks[int(bank_assignment[entity])] += line.process(source)
+                banks[int(bank_assignment[entity])] += line.process(tilted)
         collector_inputs = banks
         if self.waveguide_network is not None:
             collector_inputs = self.waveguide_network.process(np.asarray(entity_sources, dtype=np.float64)).bank_audio.copy()
@@ -542,8 +592,16 @@ class PersistentEventDomainEngine:
             + 0.045 * omega_ripple / max(float(np.mean(np.abs(rpm)) * 2.0 * np.pi / 60.0), 1.0)
         )
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
+        if self._cycle_sync is not None:
+            raw = raw + 0.35 * self._cycle_sync.render(phase, rpm)
+        if self._transient_mixer is not None:
+            residual, counts = self._transient_mixer.render_block(n, float(state["throttle"]), float(state["rpm"]), float(boost_state[-1]) if boost_state.size else 0.0, n / self.sample_rate_hz)
+            raw = raw + residual
+            self._transient_counts = counts
         if external_transient is not None:
             raw += external_transient
+        if self._audio_chain is not None:
+            raw = self._audio_chain.process(raw)
         if self._attack_mix > 0.0:
             raw = raw + self._attack_mix * self._attack_band_state.process(raw)
         self._parameter_consumption["transfer_ir"] = True
@@ -1089,6 +1147,11 @@ class PersistentEventDomainEngine:
             "mode": self.mode,
             "path_model": self.path_model,
             "forced_induction_model": self.forced_induction_model,
+            "cycle_sync_model": self.cycle_sync_model,
+            "transient_model": self.transient_model,
+            "audio_chain": self.audio_chain_model,
+            "transient_shift_count": int(self._transient_counts.get("transient_shift_count", 0)),
+            "transient_tip_in_count": int(self._transient_counts.get("transient_tip_in_count", 0)),
             "sample_counter": self.sample_counter,
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import copy
+import shutil
+from pathlib import Path
 
 import numpy as np
 
@@ -99,3 +101,27 @@ def test_monitor_max_makeup_changes_monitor_sha() -> None:
     a = _render(low, "P2H", "hot_idle_20s", 2.0)
     b = _render(high, "P2H", "hot_idle_20s", 2.0)
     assert _sha(a.monitor_pcm) != _sha(b.monitor_pcm)
+
+
+def test_y1_named_parameters_are_reachable(tmp_path) -> None:
+    required = {
+        "crank_inertia", "idle_governor", "primary_attenuation_spread",
+        "blower_sideband_mix", "blower_broadband_mix", "blower_casing_mix",
+        "boost_attack", "boost_release", "bypass_threshold",
+        "afterfire_reservoir_rate", "afterfire_ignition_delay", "afterfire_location_mix",
+        "afterfire_energy", "monitor_attack", "monitor_release", "monitor_max_makeup",
+    }
+    summary = run_parameter_reachability(tmp_path, traces=[], architecture="P2H")
+    by_name = {row["parameter"]: row for row in summary["results"]}
+    deferred = []
+    for name in required:
+        row = by_name[name]
+        if row["status"] != PARAMETER_REACHABLE:
+            if name in {"blower_sideband_mix", "blower_broadband_mix", "blower_casing_mix", "boost_attack", "boost_release", "bypass_threshold"} and row.get("probe_architecture") == "P3":
+                deferred.append(name)
+            else:
+                raise AssertionError(f"{name} not reachable: {row['reason']}")
+    assert deferred == [] or all(by_name[name]["status"] == PARAMETER_REACHABLE for name in deferred)
+    ledger = Path("tasks/reports/runtime/s12-stage-y/y1_reachability")
+    ledger.mkdir(parents=True, exist_ok=True)
+    shutil.copy(tmp_path / "parameter_reachability.json", ledger / "parameter_reachability.json")

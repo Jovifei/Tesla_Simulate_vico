@@ -72,13 +72,13 @@ def build_stage_w_review_package(source_root: str | Path, output_root: str | Pat
         "reason": "No legal, rights-bound and RPM/state-synchronised Reference is available.",
         "scope": package["scope"],
     })
-    unavailable = {name: bakeoff["architectures"][name] for name in ("P4", "P6")}
+    unavailable = {name: bakeoff["architectures"][name] for name in ("P6",)}
     write_json(root / "unavailable_paths.json", unavailable)
     (root / "README_ZH.md").write_text(
         "# S12 Stage W 架构试听包\n\n"
         "状态：`WAITING_FOR_JOVI_ARCHITECTURE_REVIEW`，未选择架构。\n\n"
-        "包内所有 WAV 为本地 synthetic 输出。每个场景有 P1、P2、P2H、P3、P5 的 Raw、Post-PTR Raw 和 Monitor；"
-        "Raw 只用于分析，Monitor 只用于试听。Reference 仅是缺失指针，P4/P6 在 `unavailable_paths.json` 中说明原因，"
+        "包内所有 WAV 为本地 synthetic 输出。每个场景有 P1、P2、P2H、P3、P4、P5 的 Raw、Post-PTR Raw 和 Monitor；"
+        "Raw 只用于分析，Monitor 只用于试听。Reference 仅是缺失指针，P6 在 `unavailable_paths.json` 中说明原因，"
         "不含第三方音频、模型或预设。\n",
         encoding="utf-8", newline="\n",
     )
@@ -115,7 +115,7 @@ def validate_stage_w_review_package(root: str | Path) -> list[str]:
         errors.append("unavailable_paths")
     else:
         unavailable = json.loads(unavailable_path.read_text(encoding="utf-8"))
-        required = {"P4": "REFERENCE_RECORDING_RIGHTS_PENDING", "P6": "TEACHER_NOT_RUNTIME_CANDIDATE"}
+        required = {"P6": "TEACHER_NOT_RUNTIME_CANDIDATE"}
         for architecture, status in required.items():
             if unavailable.get(architecture, {}).get("status") != status:
                 errors.append(f"unavailable:{architecture}")

@@ -458,7 +458,7 @@ def test_validator_rejects_dual_rebound_parent_candidate_difference_tamper(
     assert any("parent_candidate_difference_pcm:P2/steady_1200rpm" in error for error in errors)
 
 
-@pytest.mark.parametrize("architecture", ["P4", "P6"])
+@pytest.mark.parametrize("architecture", ["P6"])
 def test_validator_requires_exact_placeholder_records(
     bakeoff_fixture: Path, tmp_path: Path, architecture: str
 ) -> None:
@@ -480,13 +480,13 @@ def test_validator_requires_placeholder_selection_boundary(
     root = _copy_fixture(bakeoff_fixture, tmp_path)
     path = root / "bakeoff_results.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
-    payload["architectures"]["P4"]["selected_architecture"] = "P4"
+    payload["architectures"]["P6"]["selected_architecture"] = "P6"
     _write_json(path, payload)
     _rebind_root_file(root, "bakeoff_results.json")
 
     errors = validate_bakeoff_manifest(root)
 
-    assert any("placeholder_selected_architecture:P4" in error for error in errors)
+    assert any("placeholder_selected_architecture:P6" in error for error in errors)
 
 
 def test_validator_rejects_unlisted_nested_same_name_manifest(

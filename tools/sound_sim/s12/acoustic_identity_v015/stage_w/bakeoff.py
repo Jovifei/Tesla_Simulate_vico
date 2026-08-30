@@ -30,7 +30,7 @@ BLOCK_SIZE = 960
 STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
-RENDERABLE_ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P5")
+RENDERABLE_ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P4", "P5")
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 STAGE_CASE_FILES = ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json")
 STAGE_MANIFEST_SCHEMA = "s12.stage_w.architecture_stage_manifest.v1"
@@ -38,13 +38,6 @@ LONG_WINDOW_SCENE_DURATIONS = {"hot_idle_20s": 20.0, "complete_cycle_60s": 60.0}
 PCM24_METRIC_TOLERANCE = 1.0 / (1 << 23)
 PLACEHOLDER_SCOPE = "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
 PLACEHOLDER_RECORDS = {
-    "P4": {
-        "status": "REFERENCE_RECORDING_RIGHTS_PENDING",
-        "reason": "cycle-synchronous recorded resynthesis requires rights-bound recording",
-        "scope": PLACEHOLDER_SCOPE,
-        "selected_architecture": None,
-        "selection_eligible": False,
-    },
     "P6": {
         "status": "TEACHER_NOT_RUNTIME_CANDIDATE",
         "reason": "ENSIM4 Docker CFD ON/OFF teacher audio is externally captured but is not a fitted S12 Runtime path",
@@ -150,26 +143,17 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         post_ptr = FrozenPtrStereo(SAMPLE_RATE_HZ).process(source)
         monitor = render_audition_monitor(post_ptr, SAMPLE_RATE_HZ).audio
         return source, post_ptr, monitor, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
-    settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}
+    settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P4": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "cycle_sync_model": "fixture_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "transient_model": "state_v1"}, "P3DP": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "audio_chain": "dp_v1"}}
     setting = settings[architecture]
-    transient = None
-    if architecture == "P5":
-        transient, transient_count = _synthetic_transient_residual(trace, trace.rpm.size * BLOCK_SIZE)
     engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=True, **setting)
-    result = engine.process_with_trace(_state_arrays(trace), external_transient=transient)
-    if architecture == "P5":
-        raw = result.raw_pcm * OUTPUT_SCALE
-        post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
-        monitor = result.monitor_pcm * OUTPUT_SCALE
-    else:
-        transient_count = 0
-        raw = result.raw_pcm * OUTPUT_SCALE
-        post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
-        monitor = result.monitor_pcm * OUTPUT_SCALE
+    result = engine.process_with_trace(_state_arrays(trace))
+    raw = result.raw_pcm * OUTPUT_SCALE
+    post_ptr = result.post_ptr_raw * OUTPUT_SCALE if result.post_ptr_raw is not None else FrozenPtrStereo(SAMPLE_RATE_HZ).process(raw)
+    monitor = result.monitor_pcm * OUTPUT_SCALE
     diagnostics = dict(result.diagnostics)
     diagnostics["architecture"] = architecture
     if architecture == "P5":
-        diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "synthetic_one_shot_v1", "transient_residual_event_count": transient_count})
+        diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "state_v1", "transient_residual_event_count": int(diagnostics.get("transient_shift_count", 0) + diagnostics.get("transient_tip_in_count", 0))})
     diagnostics["monitor_source"] = "PersistentEventDomainEngine.monitor_pcm"
     return raw, post_ptr, monitor, diagnostics
 
@@ -285,7 +269,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     write_json(root / "parent_candidate_metrics.json", _parent_candidate_metrics(architectures, status, reference_status))
     write_json(root / "ablation_results.json", _ablation_results(architectures, status, reference_status))
     write_json(root / "selected_architecture.json", {"selected_architecture": None, "status": result["status"]})
-    write_json(root / "rejected_architectures.json", {"status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "rejected": ["P4", "P6"] if reference is None else []})
+    write_json(root / "rejected_architectures.json", {"status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "rejected": ["P6"] if reference is None else []})
     files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file() and path != root / "bakeoff_manifest.json"}
     write_json(root / "bakeoff_manifest.json", {"schema_version": "s12.stage_w.bakeoff_manifest.v1", "status": result["status"], "reference_status": result["reference_status"], "selected_architecture": None, "requested_duration_s": result["requested_duration_s"], "long_window": result["long_window"], "scene_duration_s": result["scene_duration_s"], "block_aligned_duration_s": result["block_aligned_duration_s"], "files": files})
     return result

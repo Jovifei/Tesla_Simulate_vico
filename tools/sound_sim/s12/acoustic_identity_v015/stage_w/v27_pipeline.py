@@ -139,7 +139,7 @@ def _reconstruct_summaries(
             "status": status,
             "reference_status": reference_status,
             "selected_architecture": None,
-            "rejected": ["P4", "P6"],
+            "rejected": ["P6"],
         },
     }
     for name in SUMMARY_FILES:

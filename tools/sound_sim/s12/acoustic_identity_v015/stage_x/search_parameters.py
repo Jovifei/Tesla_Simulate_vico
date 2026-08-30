@@ -54,7 +54,7 @@ def _scale_spread(config: dict[str, Any], key: str, spread: float) -> None:
     mean = float(np.mean(values))
     if np.allclose(values, mean):
         pattern = np.array([1.0 if index % 2 == 0 else -1.0 for index in range(values.size)], dtype=np.float64)
-        values = mean * (1.0 + 0.08 * pattern)
+        values = mean * (1.0 + 0.22 * pattern)
     _set_parameter(config, key, list(mean + (values - mean) * spread))
 
 
@@ -108,7 +108,7 @@ def hellcat_search_parameters() -> list[SearchParameter]:
         SearchParameter("idle_governor", 0.22, 0.07, lambda c, v: _set_parameter(c, "idle_governor", v), ("flux", "dynamic_range"), (), unit="normalized_torque", scenes=(("hot_idle_20s", 2.0), ("throttle_tip_in", 2.0))),
 
         SearchParameter("primary_length_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_primary_length_m", v), ("band_120_400", "roughness"), (), unit="spread_scale"),
-        SearchParameter("primary_attenuation_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("mid_band_share", "roughness"), (), unit="spread_scale"),
+        SearchParameter("primary_attenuation_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("mid_band_share", "roughness"), (), unit="spread_scale", scenes=(("full_load_acceleration", 2.0),)),
         SearchParameter("waveguide_reflection", 1.0, 1.0, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"reflection_mode": _fixed("open" if v < 1.0 else "closed", "label", "stage x search reflection mode")}), ("band_120_400", "dynamic_range"), (), unit="mode_scale", note="open vs closed junction reflection", architecture="P2H", scenes=(("full_load_acceleration", 2.0), ("gear_shift", 1.5))),
         SearchParameter("waveguide_loss", 0.08, 0.03, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"loss_per_meter": _fixed(v, "ratio", "stage x search waveguide loss")}), ("high_band_share", "mid_band_share"), (), unit="per_m"),
         SearchParameter("collector_loss", 0.92, 0.06, lambda c, v: _set_parameter(c, "collector_loss", v), ("mid_band_share", "high_band_share"), (), unit="ratio"),
@@ -136,11 +136,11 @@ def hellcat_search_parameters() -> list[SearchParameter]:
 
         SearchParameter("afterfire_energy", 0.06, 0.02, lambda c, v: _set_parameter(c, "afterfire.gain", v), ("transient_density", "crest"), (), unit="normalized_gain", architecture="P3", scenes=(("high_rpm_lift", 2.5), ("afterfire_eligible", 2.5))),
 
-        SearchParameter("monitor_attack", 0.12, 0.05, lambda c, v: c.setdefault("monitor_policy", {}).update({"attack_s": _fixed(v, "s", "stage x monitor attack")}), ("dynamic_range",), (), unit="s", stem="monitor"),
+        SearchParameter("monitor_attack", 0.12, 0.05, lambda c, v: c.setdefault("monitor_policy", {}).update({"attack_s": _fixed(v, "s", "stage x monitor attack")}), ("dynamic_range",), (), unit="s", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
 
-        SearchParameter("monitor_release", 1.20, 0.40, lambda c, v: c.setdefault("monitor_policy", {}).update({"release_s": _fixed(v, "s", "stage x monitor release")}), ("dynamic_range", "crest"), (), unit="s", stem="monitor"),
+        SearchParameter("monitor_release", 1.20, 0.40, lambda c, v: c.setdefault("monitor_policy", {}).update({"release_s": _fixed(v, "s", "stage x monitor release")}), ("dynamic_range", "crest"), (), unit="s", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
 
-        SearchParameter("monitor_max_makeup", 9.0, 3.0, lambda c, v: c.setdefault("monitor_policy", {}).update({"max_makeup_db": _fixed(v, "dB", "stage x monitor makeup")}), ("dynamic_range", "crest"), ("low_band_share",), unit="dB", stem="monitor"),
+        SearchParameter("monitor_max_makeup", 9.0, 3.0, lambda c, v: c.setdefault("monitor_policy", {}).update({"max_makeup_db": _fixed(v, "dB", "stage x monitor makeup")}), ("dynamic_range", "crest"), ("low_band_share",), unit="dB", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
 
     ]
 
@@ -198,9 +198,6 @@ def run_parameter_reachability(
         index = {"raw": 0, "post_ptr": 1, "monitor": 2}[stem]
         return [block[index] for block in blocks]
 
-    baseline_pcm = _stem_blocks(_render_config_pcm(base_config, architecture, traces), "post_ptr")
-    baseline_metrics = _pcm_metrics(baseline_pcm)
-    baseline_bytes = b"".join(pcm.tobytes() for pcm in baseline_pcm)
     results = []
     from ..stage_w.bakeoff import build_hellcat_bakeoff_trace as build_scene_trace
     for item in parameters:
