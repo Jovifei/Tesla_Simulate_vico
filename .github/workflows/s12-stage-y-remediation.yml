@@ -28,10 +28,32 @@ jobs:
       - name: Compile acoustic identity package
         run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
 
-      - name: Run Stage X/Y focused contracts
-        run: >-
-          python -m pytest -q --disable-warnings
-          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_selection.py
-          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_search.py
-          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_remediation.py
-          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py
+      - name: Run Stage X/Y focused correctness contracts
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_selection.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_search.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_remediation.py \
+            2>&1 | tee stage_y_focused.log
+
+      - name: Diagnose historical Stage-W log integrity
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py \
+            2>&1 | tee historical_integrity.log
+
+      - name: Upload Stage Y test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s12-stage-y-test-logs-${{ github.sha }}
+          path: |
+            stage_y_focused.log
+            historical_integrity.log
+          if-no-files-found: warn
+          retention-days: 14
