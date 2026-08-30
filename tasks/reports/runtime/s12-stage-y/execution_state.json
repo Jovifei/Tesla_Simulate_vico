@@ -4,9 +4,9 @@
   "current_branch": "agent/s12-stage-y-source-layers-and-reachability",
   "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-source-layers",
   "phase_order": ["Y0_SETUP", "Y1_REACHABILITY", "Y2_HARMONIC_MAP", "Y3_CYCLE_SYNC_P4", "Y4_TRANSIENTS", "Y5_DP_CHAIN", "Y6_AUDITION"],
-  "current_phase": "Y3_CYCLE_SYNC_P4",
-  "tested_evidence_head": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
-  "runtime_resolved_live_head_at_probe": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+  "current_phase": "Y4_TRANSIENTS",
+  "tested_evidence_head": "bae8e7b768c5e6621678b87ec0535cea47b42d05",
+  "runtime_resolved_live_head_at_probe": "bae8e7b768c5e6621678b87ec0535cea47b42d05",
   "phases": {
     "Y0_SETUP": {"status": "PASS", "setup_commit": "9dffb65dc885e4b272f0286a6dc1350b83f66a4d", "provenance": "Stage-Y execution ledger initialized from base Stage-X HEAD 3d433e30f2c0238d65baed321aa70355a626ceb6."},
     "Y1_REACHABILITY": {
@@ -38,15 +38,15 @@
       "log_sha256": {"combined": "5348A3616F547BEA40648A873F36DE83CDF7014E75418F22D37E88987A430A0C"}
     },
     "Y3_CYCLE_SYNC_P4": {
-      "status": "FAIL_REPAIRING",
-      "source_head": "49ef180f4cb2c351d0583bd0459144781a4da54f",
-      "worktree_diff_sha256": "e7570d4becf2827cd252291bf78b74e3eae0aed9",
-      "receipt_path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_cycle_sync_p4_receipt.json",
-      "failure_run_id": "y3-stage-w-bakeoff",
-      "failure": "SUPERSEDED_PRE_NORMALIZATION_EVIDENCE: P3/P4/P5 timbre-map bakeoff raw PCM exceeded PCM24 bounds before the separately authorized Y2 Fourier-coefficient normalization; P3 peak=1.989831651 before P4 was staged. The original clipping receipt is retained unchanged.",
-      "next_action": "Resume the separately scoped Y3 validation from FAIL_REPAIRING against the normalized Y2 map; do not promote Y3 from this checkpoint."
+      "status": "PASS",
+      "evidence_head": "bae8e7b768c5e6621678b87ec0535cea47b42d05",
+      "receipt_path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_normalized_revalidation_receipt.json",
+      "run_id": "y3-normalized-focused-20260830T214700+0800",
+      "result": "66 passed in 287.05s",
+      "superseded_receipt": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_cycle_sync_p4_receipt.json",
+      "superseded_reason": "Pre-normalization PCM24 clipping was repaired by the separately authorized Y2 Fourier-coefficient normalization; Y3 performed no map or OUTPUT_SCALE modification."
     },
-    "Y4_TRANSIENTS": {"status": "NOT_STARTED"},
+    "Y4_TRANSIENTS": {"status": "IN_PROGRESS"},
     "Y5_DP_CHAIN": {"status": "NOT_STARTED"},
     "Y6_AUDITION": {"status": "NOT_STARTED"}
   },

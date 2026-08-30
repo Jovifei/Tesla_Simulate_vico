@@ -1,0 +1,47 @@
+{
+  "schema": "s12.stage_y.y3_normalized_revalidation_receipt.v1",
+  "phase": "Y3_CYCLE_SYNC_P4",
+  "status": "PASS",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "source_head": "bae8e7b768c5e6621678b87ec0535cea47b42d05",
+  "normalized_map": {
+    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+    "sha256": "5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC",
+    "normalization_commit": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+    "output_scale_changed_by_y3": false,
+    "map_changed_by_y3": false
+  },
+  "superseded_evidence": {
+    "receipt": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_cycle_sync_p4_receipt.json",
+    "run_id": "y3-stage-w-bakeoff",
+    "reason": "The recorded P3/P4/P5 PCM24 clipping preceded the separately authorized Y2 map normalization and was revalidated against the normalized committed map."
+  },
+  "verification": {
+    "run_id": "y3-normalized-focused-20260830T214700+0800",
+    "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_v27_pipeline.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q",
+    "started_at_utc": "2026-08-30T12:01:36.1127024Z",
+    "ended_at_utc": "2026-08-30T12:06:23.8922772Z",
+    "exit_code": 0,
+    "result": "66 passed in 287.05s",
+    "logs": {
+      "stdout": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-normalized-focused-20260830T214700+0800.stdout.log",
+      "stderr": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-normalized-focused-20260830T214700+0800.stderr.log"
+    },
+    "log_sha256": {
+      "stdout": "AA4E9B17E16CFD9C903ADEAE5436507384CDA11A7A9F2BBFD95411D76121CC65",
+      "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  },
+  "post_run_checks": {
+    "compileall_exit_code": 0,
+    "git_diff_check_exit_code": 0,
+    "json_receipt_validation": "passed",
+    "preserved_out_of_scope": [
+      "Y4 equal-power crossfade",
+      "Y5 dP chain",
+      "persistent-engine snapshot replay",
+      "fitted-map source",
+      "OUTPUT_SCALE"
+    ]
+  }
+}
