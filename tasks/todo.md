@@ -4188,7 +4188,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 > 状态：接管执行中；保留 `f989a8b` 后全部未提交 WIP，不 reset/clean/stash，不 push/merge/PR。
 
 - [x] Y1：16/16 参数达到既有 0.02 可达性门，pytest 不写仓库。
-- [ ] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
+- [x] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
 - [ ] Y3：按 720°/4π 接入 P4，并统一 bakeoff/validator/review inventory。
 - [ ] Y4/Y5：闭合状态瞬态和分块等价 DC/dP/warmup 链。
 - [ ] Y6：生成累计分层试听包并完成 WAV/SHA/边界校验。
@@ -4197,4 +4197,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 ### Review
 
 - Y1 canonical probe：16/16 bilateral PASS；evidence HEAD `e0436dc`，metadata commit `7f5f2e9`；独立收据/hash/state 复审 PASS。
+- Y2 committed fitted map：source head `2dd4ad6`，postfix evidence `9 passed`，receipt/state/hash 复审 PASS。
 - Y4/Y5 前必须修复 takeover WIP 中既有的 snapshot/raw replay 缺口；不得把该缺口带入最终资格。
