@@ -256,8 +256,14 @@ class PersistentEventDomainEngine:
         self.config = validate_config(config)
         if self.config.get("require_fitted_timbre_map"):
             payload = self.config.get("timbre_map")
-            if payload is None or _timbre_map_matches_formula_default(payload):
+            fitted_metadata = self.config.get("fitted_timbre_map")
+            if payload is None or fitted_metadata is None or _timbre_map_matches_formula_default(payload):
                 raise ValueError("fitted HarmonicTimbreMap required")
+            from ..stage_y.harmonic_map_fit import validate_fitted_timbre_map
+            fitted_table = validate_fitted_timbre_map(fitted_metadata)
+            candidate_table = TimbreMap4D.from_config(payload if isinstance(payload, dict) else None)
+            if not (np.array_equal(candidate_table.rpm_axis, fitted_table.rpm_axis) and np.array_equal(candidate_table.load_axis, fitted_table.load_axis) and np.array_equal(candidate_table.boost_axis, fitted_table.boost_axis) and np.array_equal(candidate_table.order_axis, fitted_table.order_axis) and np.array_equal(candidate_table.values, fitted_table.values)):
+                raise ValueError("fitted HarmonicTimbreMap payload differs from metadata")
         self._parameter_fallbacks: dict[str, dict[str, Any]] = {}
         for name, fallback in (("transfer_ir", "identity_default"), ("collector_assignment", "identity_default")):
             if name not in self.config:

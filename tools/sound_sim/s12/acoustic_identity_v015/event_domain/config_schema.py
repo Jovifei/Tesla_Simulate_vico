@@ -22,6 +22,7 @@ _TOP_LEVEL_KEYS = {
     "housing_order_mix", "primary_spool_tau", "secondary_spool_tau", "blow_off_gain", "blow_off_decay",
     "timbre_mixes", "exhaust_waveguide", "monitor_policy", "attack_shaping",
     "require_fitted_timbre_map",
+    "fitted_timbre_map",
 }
 
 

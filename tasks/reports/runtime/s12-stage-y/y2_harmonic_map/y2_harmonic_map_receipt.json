@@ -1,0 +1,49 @@
+{
+  "schema": "s12.stage_y.y2_harmonic_map_receipt.v1",
+  "status": "PASS",
+  "phase": "Y2_HARMONIC_MAP",
+  "scope": "synthetic fixture only; uncalibrated; not tuning authority; not OEM reproduction",
+  "source_head_at_map_build": "2601ef7d04a6ffe50a9302580f62fcdab54ffd85",
+  "map": {
+    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+    "file_sha256": "BA2687E0028F1588D0EFDC09156D096AE099524536B429B56302C8E32D00B491",
+    "schema": "s12.stage_y.harmonic_timbre_map.v1",
+    "fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
+    "boundary": {
+      "fixture_scope": "FIXTURE_ONLY",
+      "tuning_authority": "NOT_TUNING_AUTHORITY",
+      "oem_status": "NOT_OEM"
+    },
+    "external_media_ingested": false,
+    "embedded_pcm": false
+  },
+  "verification": {
+    "focused_pytest": {
+      "command": "D:\\Python\\Python3.14\\python.exe -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_tip_in_and_shift_stems_change_sha tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py::test_dp_chain_ablation_changes_sha tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py -k not forced_induction_boost_and_bov_state_persist_across_blocks tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q",
+      "started_at_utc": "2026-08-30T10:59:02.0947605Z",
+      "ended_at_utc": "2026-08-30T10:59:26.8303616Z",
+      "exit_code": 0,
+      "result": "16 passed, 1 deselected in 24.08s",
+      "stdout_log": "tasks/reports/runtime/s12-stage-y/logs/y2-focused-green-20260830T191300+0800.stdout.log",
+      "stdout_log_sha256": "B12372B072816048BFBA4AD2504C0B25907BE9501D5811A3A5880041FCFEB153"
+    },
+    "compileall": {
+      "command": "D:\\Python\\Python3.14\\python.exe -m compileall -q Stage-Y and touched Y2 modules",
+      "started_at_utc": "2026-08-30T10:55:04.0309235Z",
+      "ended_at_utc": "2026-08-30T10:55:04.1459007Z",
+      "exit_code": 0
+    },
+    "map_json_finite_nonnegative": {
+      "command": "JSON finite/nonnegative validation",
+      "started_at_utc": "2026-08-30T10:55:04.0405290Z",
+      "ended_at_utc": "2026-08-30T10:55:04.1050481Z",
+      "exit_code": 0
+    },
+    "git_diff_check": {"command": "git diff --check", "exit_code": 0}
+  },
+  "deferred_out_of_scope_failures": [
+    "Y4 equal-power crossfade test failure",
+    "Y5 PressureAudioChain stream-vs-oneshot exactness failure",
+    "Persistent engine snapshot/replay exactness failure"
+  ]
+}

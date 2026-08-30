@@ -145,6 +145,17 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         return source, post_ptr, monitor, {"source_model": "legacy_v015", "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "frame_trace": None}
     settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P4": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "cycle_sync_model": "fixture_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "transient_model": "state_v1"}, "P3DP": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1", "audio_chain": "dp_v1"}}
     setting = settings[architecture]
+    fitted_map = None
+    if setting["forced_induction_model"] == "timbre_map_v1":
+        from ..stage_y.harmonic_map_fit import load_committed_fixture_timbre_map
+        fitted_map, fitted_table = load_committed_fixture_timbre_map()
+        config["timbre_map"] = {
+            "rpm_axis": fitted_table.rpm_axis.tolist(), "load_axis": fitted_table.load_axis.tolist(),
+            "boost_axis": fitted_table.boost_axis.tolist(), "order_axis": fitted_table.order_axis.tolist(),
+            "values": fitted_table.values.tolist(),
+        }
+        config["fitted_timbre_map"] = fitted_map
+        config["require_fitted_timbre_map"] = True
     engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=True, **setting)
     result = engine.process_with_trace(_state_arrays(trace))
     raw = result.raw_pcm * OUTPUT_SCALE
@@ -152,6 +163,9 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
     monitor = result.monitor_pcm * OUTPUT_SCALE
     diagnostics = dict(result.diagnostics)
     diagnostics["architecture"] = architecture
+    if fitted_map is not None:
+        diagnostics["fitted_timbre_map_schema"] = fitted_map["schema"]
+        diagnostics["fitted_timbre_map_fixture_sha256"] = fitted_map["fixture_sha256"]
     if architecture == "P5":
         diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "state_v1", "transient_residual_event_count": int(diagnostics.get("transient_shift_count", 0) + diagnostics.get("transient_tip_in_count", 0))})
     diagnostics["monitor_source"] = "PersistentEventDomainEngine.monitor_pcm"
