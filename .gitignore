@@ -93,6 +93,10 @@ docs/07-debugging/*
 !docs/08-reports/
 docs/08-reports/*
 !docs/08-reports/00-guide.md
+!docs/08-reports/01-s12-stage-k-eight-vehicle-round2.md
+!docs/08-reports/02-s12-workspace-cleanup-20260830.md
+!docs/knowledge/
+!docs/knowledge/**
 !docs/09-backlog/
 docs/09-backlog/*
 !docs/09-backlog/00-guide.md
@@ -231,3 +235,16 @@ tasks/reports/runtime/s12-stage-w/logs/task6p_v27_p1.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_slow_3000.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_stage_v_source_final.*.log
 tasks/reports/runtime/s12-stage-w/logs/task5_stage_w_source_final.*.log
+
+# Workspace-local pytest / EDA / audit sandboxes (never commit)
+_stage_l_*/
+_r2_*/
+_task10_*/
+_lfa_*/
+_pytest_tmp/
+worktrees/**/.pytest_*/
+worktrees/**/.task*/
+worktrees/**/_agent_tmp/
+outputs/
+audit_packages/
+audit-worktrees/

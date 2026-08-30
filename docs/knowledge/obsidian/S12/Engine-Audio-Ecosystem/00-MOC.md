@@ -43,3 +43,4 @@ repair. Selection remains `null` and the status remains
 - [[10-Ferrari-RX7-Diagnostic-Migration]]
 - [[11-R1-Formal-Gate-Readiness]]
 - [[12-Stage-X-Final-Status]]
+- [[13-Workspace-Cleanup-20260830]]
