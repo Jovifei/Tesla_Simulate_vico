@@ -1,0 +1,178 @@
+{
+  "completed_at_utc": "2026-08-30T07:40:55.835101+00:00",
+  "focused": {
+    "errors": 0,
+    "failed_cases": [],
+    "failures": 0,
+    "present": true,
+    "skipped": 1,
+    "tests": 38
+  },
+  "full_s12": {
+    "errors": 0,
+    "failed_cases": [
+      "tools.sound_sim.s12.tests.test_s12_engine_sound_v11_research_static.S12EngineSoundV11ResearchStaticTests::test_obsidian_research_docs_disclose_pending_measurement_state",
+      "tools.sound_sim.s12.tests.test_s12_rx7_topic_r2::test_rx7_source_manifest_has_five_audited_native_recordings",
+      "tools.sound_sim.s12.tests.test_s12_rx7_topic_r2::test_rx7_builder_rejects_non_empty_output",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_stage_p_acceptance::test_stage_p_receipt_validation_is_closed",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_stage_p_acceptance::test_stage_p_security_matrix_is_fail_closed",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_stage_p_acceptance::test_stage_p_fixture_consumption_is_not_human_feedback",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_stage_p_acceptance::test_stage_p_spec_named_delivery_contract_is_present",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_stage_w_final_remediation::test_final_track_p_guard_is_clean_after_committed_log_attributes",
+      "tools.sound_sim.s12.acoustic_identity_v015.tests.test_s12_track_p_guard::test_guard_reports_pass_on_clean_tree"
+    ],
+    "failures": 9,
+    "present": true,
+    "skipped": 2,
+    "tests": 1478
+  },
+  "logs": {
+    "compile": {
+      "present": true,
+      "sha256": "9b7cc33baba2821925c651ba65709e1ca6b229a049ef77ccfacf17a5e2e29323",
+      "tail": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_k_gtr_parallel_turbo_v3.py:167: SyntaxWarning: invalid escape sequence '\\['",
+        "  with pytest.raises(ValueError, match=\"turbo_whistle_mix must be in \\[0, 1\\]\"):"
+      ]
+    },
+    "focused": {
+      "present": true,
+      "sha256": "2b6b172331acd34a3cc9b175692fbc95e7ca7b4c8b6a294400b9aa5052b5eda9",
+      "tail": [
+        "......s...............................                                   [100%]",
+        "37 passed, 1 skipped in 1.64s"
+      ]
+    },
+    "full": {
+      "present": true,
+      "sha256": "dc667513930c158e385082d510ecbab648df80f297164ed71440ec7e3f6a2aef",
+      "tail": [
+        "+Branch: `agent/s12-stage-y-closed-loop-remediation`  ",
+        "docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:5: trailing whitespace.",
+        "+Base: `f1714b969ecd033e991e04cfc59df06a05e3685a`  ",
+        "docs/08-reports/04-s12-stage-y-hybrid-calibration-tooling.md:3: trailing whitespace.",
+        "+Date: 2026-08-30  ",
+        "tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md:14: trailing whitespace.",
+        "+- Next: push `agent/s12-stage-x-r2-engineering-selection` when GitHub reachable",
+        "",
+        "=========================== short test summary info ============================",
+        "FAILED tools/sound_sim/s12/tests/test_s12_engine_sound_v11_research_static.py::S12EngineSoundV11ResearchStaticTests::test_obsidian_research_docs_disclose_pending_measurement_state - FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\AI_Tools\\\\Obsidian\\\\data\\\\notes-personal\\\\tesla\\\\S12-Engine-Sound-v11'",
+        "FAILED tools/sound_sim/s12/tests/test_s12_rx7_topic_r2.py::test_rx7_source_manifest_has_five_audited_native_recordings - tools.sound_sim.s12.real_reference.rx7_topic_r2.Rx7TopicR2Error: source_root is outside allowed root: /home/runner/work/Tesla_Simulate_vico/Tesla_Simulate_vico/E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823",
+        "FAILED tools/sound_sim/s12/tests/test_s12_rx7_topic_r2.py::test_rx7_builder_rejects_non_empty_output - AssertionError: Regex pattern did not match.",
+        "  Expected regex: 'non-empty'",
+        "  Actual message: 'output_root is outside allowed root: /home/runner/work/Tesla_Simulate_vico/Tesla_Simulate_vico/E:\\\\Claude_allow\\\\Download\\\\s12-rx7-topic-r2-test-nonempty'",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_p_acceptance.py::test_stage_p_receipt_validation_is_closed - FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Tesla_speed\\\\review_packages\\\\s12-stage-m-comparator-and-calibration-v1\\\\artifact_manifest.json'",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_p_acceptance.py::test_stage_p_security_matrix_is_fail_closed - FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Tesla_speed\\\\review_packages\\\\s12-stage-p-system-acceptance-v1/webmushra_package_manifest.json'",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_p_acceptance.py::test_stage_p_fixture_consumption_is_not_human_feedback - FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Tesla_speed\\\\review_packages\\\\s12-stage-p-system-acceptance-v1/webmushra_package_manifest.json'",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_p_acceptance.py::test_stage_p_spec_named_delivery_contract_is_present - AssertionError: assert False",
+        " +  where False = is_file()",
+        " +    where is_file = (PosixPath('E:\\\\Tesla_speed\\\\review_packages\\\\s12-stage-p-system-acceptance-v1') / 'SHA256SUMS').is_file",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes - AssertionError: FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）",
+        "    * git diff --check 发现空白错误：",
+        "  docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:3: trailing whitespace.",
+        "  +Date: 2026-08-30  ",
+        "  docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:4: trailing whitespace.",
+        "  +Branch: `agent/s12-stage-y-closed-loop-remediation`  ",
+        "  docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:5: trailing whitespace.",
+        "  +Base: `f1714b969ecd033e991e04cfc59df06a05e3685a`  ",
+        "  docs/08-reports/04-s12-stage-y-hybrid-calibration-tooling.md:3: trailing whitespace.",
+        "  +Date: 2026-08-30  ",
+        "  tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md:14: trailing whitespace.",
+        "  +- Next: push `agent/s12-stage-x-r2-engineering-selection` when GitHub reachable",
+        "  ",
+        "  ",
+        "assert 1 == 0",
+        " +  where 1 = CompletedProcess(args=['python', '/home/runner/work/Tesla_Simulate_vico/Tesla_Simulate_vico/tools/sound_sim/s12/acoust...trailing whitespace.\\n+- Next: push `agent/s12-stage-x-r2-engineering-selection` when GitHub reachable\\n\\n', stderr='').returncode",
+        "FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree - assert 1 == 0",
+        " +  where 1 = <function main at 0x7fe52c2ef920>()",
+        " +    where <function main at 0x7fe52c2ef920> = guard.main",
+        "9 failed, 1235 passed, 2 skipped, 1 warning, 232 subtests passed in 3150.20s (0:52:30)"
+      ]
+    },
+    "history": {
+      "present": true,
+      "sha256": "cd94f76a0b3f99b15aeeab56ea1cf862e80e6eda6bea5e5d7a99a5e68655d4f1",
+      "tail": [
+        "{",
+        "  \"apply\": true,",
+        "  \"changed\": [],",
+        "  \"historical_head\": \"24f2c41bccfc26b13a821d959b2f4400d7eb264b\",",
+        "  \"passed\": true,",
+        "  \"policy\": \"receipt and hashes are immutable; only the receipt-bound Git blob is authoritative\",",
+        "  \"receipt\": \"tasks/reports/runtime/s12-stage-w/phase_receipts/W9_FINAL_QUALIFICATION.json\",",
+        "  \"results\": {",
+        "    \"compileall_final.stdout.log\": {",
+        "      \"sha256\": \"94e3cacd80e4e275e45e567a02d31477f3d8891691113a0445fa4d6f09552a76\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"final_gate_check.stdout.log\": {",
+        "      \"sha256\": \"566ac84b335093aca8883f75639dbd1ff44baf9b0f1f9ba4be878dc40400d58f\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"full_s12_regression_final.stdout.log\": {",
+        "      \"sha256\": \"f7dc4474fa5d1949710a39f4be134e709337113457e33f889afb1ab956f5361b\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"slow_3000_final.stdout.log\": {",
+        "      \"sha256\": \"1069615f0a0cda50f5a27cadeac7cc3a3ade346db4f0fd594d1ff500b4488693\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"stage_v_focused_final.stdout.log\": {",
+        "      \"sha256\": \"50890229b8bf0a093a7674b6953a81b1fd0a00f1287aa537cdb19bf5c0ba08ad\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"stage_w_focused_final.stdout.log\": {",
+        "      \"sha256\": \"e36de7cac97d175925b08bea53370c6dbe5e26b974cac44f286929d330ccbf0a\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    },",
+        "    \"track_p_guard_final.stdout.log\": {",
+        "      \"sha256\": \"a3266254ab22c958122cc74d51a6f8f9f150c72912a9af9455d70f995465903c\",",
+        "      \"status\": \"ALREADY_MATCHED\"",
+        "    }",
+        "  },",
+        "  \"schema\": \"s12.stage_y.historical_log_byte_restore.v2\",",
+        "  \"unresolved\": {}",
+        "}"
+      ]
+    },
+    "track_p": {
+      "present": true,
+      "sha256": "004584e2cfed3558b603152dfe34dc44d03ee2e0e7ca82971d6ff135a2e1b03d",
+      "tail": [
+        "FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）",
+        "  * git diff --check 发现空白错误：",
+        "docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:3: trailing whitespace.",
+        "+Date: 2026-08-30  ",
+        "docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:4: trailing whitespace.",
+        "+Branch: `agent/s12-stage-y-closed-loop-remediation`  ",
+        "docs/08-reports/03-s12-stage-y-closed-loop-remediation.md:5: trailing whitespace.",
+        "+Base: `f1714b969ecd033e991e04cfc59df06a05e3685a`  ",
+        "docs/08-reports/04-s12-stage-y-hybrid-calibration-tooling.md:3: trailing whitespace.",
+        "+Date: 2026-08-30  ",
+        "tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md:14: trailing whitespace.",
+        "+- Next: push `agent/s12-stage-x-r2-engineering-selection` when GitHub reachable",
+        ""
+      ]
+    }
+  },
+  "outcomes": {
+    "compileall": "success",
+    "dependencies": "success",
+    "focused_tests": "success",
+    "full_s12_tests": "failure",
+    "historical_log_integrity": "success",
+    "track_p": "failure"
+  },
+  "qualification_boundary": {
+    "human_audition": "PENDING",
+    "oem_match_claim": false,
+    "profile_freeze": false,
+    "real_derived_vehicle_assets": "NOT_GENERATED",
+    "real_r1_reference": "MISSING"
+  },
+  "schema": "s12.stage_y.ci_acceptance.v3",
+  "scope": "software feedback-loop validation; synthetic; uncalibrated; not OEM reproduction",
+  "status": "FAIL",
+  "tested_head": "e468c7fa7ca35b105a835bde1d493ef26f3162ae",
+  "workflow_run_id": 33297727089
+}
