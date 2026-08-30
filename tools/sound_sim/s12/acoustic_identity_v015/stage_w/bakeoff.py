@@ -31,6 +31,13 @@ STATE_RATE_HZ = SAMPLE_RATE_HZ // BLOCK_SIZE
 OUTPUT_SCALE = 0.25
 SCENES = ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s")
 RENDERABLE_ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P4", "P5")
+CANDIDATE_ARCHITECTURES = tuple(name for name in RENDERABLE_ARCHITECTURES if name != "P1")
+ABLATION_PAIRS = {
+    "P2_to_P2H_waveguide": ("P2", "P2H"),
+    "P2H_to_P3_timbre_map": ("P2H", "P3"),
+    "P3_to_P4_cycle_sync": ("P3", "P4"),
+    "P4_to_P5_transient": ("P4", "P5"),
+}
 SUMMARY_FILES = ("bakeoff_results.json", "parent_candidate_metrics.json", "ablation_results.json", "selected_architecture.json", "rejected_architectures.json")
 STAGE_CASE_FILES = ("raw_source.wav", "post_ptr_raw.wav", "monitor.wav", "state_trace.json", "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json", "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json")
 STAGE_MANIFEST_SCHEMA = "s12.stage_w.architecture_stage_manifest.v1"
@@ -243,13 +250,12 @@ def _parent_candidate_metrics(architectures: dict[str, Any], status: str, refere
             }
             for scene in SCENES
         }
-        for architecture in ("P2", "P2H", "P3", "P5")
+        for architecture in CANDIDATE_ARCHITECTURES
     }
     return {"schema_version": "s12.stage_w.parent_candidate_metrics.v1", "status": status, "reference_status": reference_status, "selected_architecture": None, "selection_eligible": False, "parent": parent, "architectures": candidates}
 
 
 def _ablation_results(architectures: dict[str, Any], status: str, reference_status: str) -> dict[str, Any]:
-    pairs = {"P2_to_P2H_waveguide": ("P2", "P2H"), "P2H_to_P3_timbre_map": ("P2H", "P3"), "P3_to_P5_transient": ("P3", "P5")}
     ablations = {
         name: {
             scene: {
@@ -258,7 +264,7 @@ def _ablation_results(architectures: dict[str, Any], status: str, reference_stat
             }
             for scene in SCENES
         }
-        for name, (left, right) in pairs.items()
+        for name, (left, right) in ABLATION_PAIRS.items()
     }
     return {"schema_version": "s12.stage_w.ablation_results.v1", "status": status, "reference_status": reference_status, "selected_architecture": None, "selection_eligible": False, "ablations": ablations}
 
@@ -270,7 +276,7 @@ def run_hellcat_bakeoff(output_root: str | Path, duration_s: float = 8.0, refere
     root.mkdir(parents=True, exist_ok=True)
     architectures: dict[str, Any] = {name: dict(record) for name, record in PLACEHOLDER_RECORDS.items()}
     scene_durations = {scene: scene_duration_s(scene, duration_s, long_window=long_window) for scene in SCENES}
-    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+    for architecture in RENDERABLE_ARCHITECTURES:
         architectures[architecture] = {"status": "RENDERED", "scenes": {}}
         for scene in SCENES:
             trace = build_hellcat_bakeoff_trace(scene, scene_durations[scene])
@@ -303,9 +309,9 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
         "phase_trace.json", "event_trace.json", "path_trace.json", "gain_trace.json",
         "metrics.json", "cpu_memory_latency.json", "sha256_manifest.json",
     )
-    architectures = ("P1", "P2", "P2H", "P3", "P5")
-    all_architectures = {"P1", "P2", "P2H", "P3", "P4", "P5", "P6"}
-    candidates = {"P2", "P2H", "P3", "P5"}
+    architectures = RENDERABLE_ARCHITECTURES
+    all_architectures = set(RENDERABLE_ARCHITECTURES) | set(PLACEHOLDER_RECORDS)
+    candidates = set(CANDIDATE_ARCHITECTURES)
 
     def finite(value: Any) -> bool:
         if isinstance(value, dict):
@@ -487,11 +493,7 @@ def validate_bakeoff_manifest(root: str | Path) -> list[str]:
     ablation_state = states.get("ablation_results.json")
     ablation_state = ablation_state if isinstance(ablation_state, dict) else {}
     ablations = ablation_state.get("ablations", {})
-    ablation_pairs = {
-        "P2_to_P2H_waveguide": ("P2", "P2H"),
-        "P2H_to_P3_timbre_map": ("P2H", "P3"),
-        "P3_to_P5_transient": ("P3", "P5"),
-    }
+    ablation_pairs = ABLATION_PAIRS
     if not isinstance(ablations, dict) or set(ablations) != set(ablation_pairs):
         errors.append("nested_ablation_inventory")
         ablations = ablations if isinstance(ablations, dict) else {}

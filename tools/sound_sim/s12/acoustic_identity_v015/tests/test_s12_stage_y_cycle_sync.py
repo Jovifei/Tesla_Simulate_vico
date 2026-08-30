@@ -27,8 +27,22 @@ def test_cycle_sync_shares_phase_and_has_no_block_click() -> None:
     assert hashlib.sha256(resampler2.render(phase, rpm).tobytes()).hexdigest() == hashlib.sha256(audio.tobytes()).hexdigest()
 
 
+def test_cycle_sync_uses_full_four_stroke_720_degree_fixture_cycle() -> None:
+    """A 360-degree crank turn must not reset a non-symmetric fixture cycle."""
+    bank = synthesize_hellcat_cycle_bank(sample_rate_hz=48000)
+    resampler = CycleSyncResampler(bank, sample_rate_hz=48000)
+    phase = np.array([0.0, 2.0 * np.pi, 4.0 * np.pi])
+    rpm = np.full(phase.size, 2000.0)
+
+    audio = resampler.render(phase, rpm)
+
+    assert not np.array_equal(audio[0], audio[1])
+    np.testing.assert_array_equal(audio[0], audio[2])
+
+
 def test_p4_bakeoff_render_differs_from_p2h() -> None:
     trace = build_hellcat_bakeoff_trace("steady_2000rpm", 1.5)
-    p2h_raw, p2h_post, _p2h_mon, _p2h_diag = _render_architecture("P2H", trace)
+    _p2h_raw, p2h_post, _p2h_mon, _p2h_diag = _render_architecture("P2H", trace)
     p4_raw, p4_post, _p4_mon, _p4_diag = _render_architecture("P4", trace)
+    assert np.max(np.abs(p4_raw)) < 1.0
     assert hashlib.sha256(p4_post.tobytes()).hexdigest() != hashlib.sha256(p2h_post.tobytes()).hexdigest()

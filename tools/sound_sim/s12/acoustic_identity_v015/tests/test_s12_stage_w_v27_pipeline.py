@@ -9,13 +9,14 @@ from pathlib import Path
 import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+    RENDERABLE_ARCHITECTURES,
     render_hellcat_architecture_stage,
     validate_bakeoff_manifest,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.v27_pipeline import assemble_v27_bakeoff
 
 
-ARCHITECTURES = ("P1", "P2", "P2H", "P3", "P5")
+ARCHITECTURES = RENDERABLE_ARCHITECTURES
 
 
 def _render_stages(root: Path) -> dict[str, Path]:

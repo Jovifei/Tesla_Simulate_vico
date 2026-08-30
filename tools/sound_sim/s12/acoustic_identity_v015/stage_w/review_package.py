@@ -10,9 +10,7 @@ from typing import Any
 import numpy as np
 
 from ..stage_v.io import read_pcm24_wav, sha256_file, write_json
-from .bakeoff import SCENES
-
-_EXECUTABLE = ("P1", "P2", "P2H", "P3", "P5")
+from .bakeoff import RENDERABLE_ARCHITECTURES, SCENES
 _CASE_FILES = (
     "raw_source.wav", "post_ptr_raw.wav", "monitor.wav",
     "state_trace.json", "phase_trace.json", "event_trace.json",
@@ -54,7 +52,7 @@ def build_stage_w_review_package(source_root: str | Path, output_root: str | Pat
         "block_aligned_duration_s": bakeoff["block_aligned_duration_s"],
         "vehicles": {"hellcat": {"architectures": {}}},
     }
-    for architecture in _EXECUTABLE:
+    for architecture in RENDERABLE_ARCHITECTURES:
         records: dict[str, Any] = {}
         for scene in SCENES:
             source_case = source / architecture / scene
@@ -119,7 +117,7 @@ def validate_stage_w_review_package(root: str | Path) -> list[str]:
         for architecture, status in required.items():
             if unavailable.get(architecture, {}).get("status") != status:
                 errors.append(f"unavailable:{architecture}")
-    for architecture in _EXECUTABLE:
+    for architecture in RENDERABLE_ARCHITECTURES:
         for scene in SCENES:
             record = package.get("vehicles", {}).get("hellcat", {}).get("architectures", {}).get(architecture, {}).get(scene)
             if not record:

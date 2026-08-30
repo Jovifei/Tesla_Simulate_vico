@@ -9,7 +9,6 @@ class CycleSyncResampler:
         self.sample_rate_hz = int(sample_rate_hz)
         self.rpms = np.array(sorted(bank["cycles"].keys()), dtype=np.float64)
         self.cycles = [np.asarray(bank["cycles"][float(rpm)], dtype=np.float64) for rpm in self.rpms]
-        self.phase_index = 0.0
 
     def render(self, phase: np.ndarray, rpm: np.ndarray) -> np.ndarray:
         phase = np.asarray(phase, dtype=np.float64)
@@ -35,7 +34,10 @@ class CycleSyncResampler:
 
     def _sample(self, cycle: np.ndarray, phase_rad: np.ndarray) -> np.ndarray:
         n = cycle.shape[0]
-        position = (np.asarray(phase_rad, dtype=np.float64) / (2.0 * np.pi)) * n
+        # The fixture spans one four-stroke engine cycle: 720 crank degrees.
+        # `phase_rad` comes directly from the production PLL's absolute crank
+        # clock, so 2π addresses its second revolution rather than a reset.
+        position = (np.asarray(phase_rad, dtype=np.float64) / (4.0 * np.pi)) * n
         wrapped = np.mod(position, n)
         left = np.floor(wrapped).astype(np.int64) % n
         right = (left + 1) % n

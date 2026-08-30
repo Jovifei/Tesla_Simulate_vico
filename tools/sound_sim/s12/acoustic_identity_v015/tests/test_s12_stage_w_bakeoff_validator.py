@@ -11,6 +11,7 @@ import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import sha256_file
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+    RENDERABLE_ARCHITECTURES,
     run_hellcat_bakeoff,
     validate_bakeoff_manifest,
 )
@@ -94,7 +95,7 @@ def _set_identity_pair(root: Path, status: str, reference_status: str) -> None:
     payload["selected_architecture"] = None
     _write_json(selected, payload)
     _rebind_root_file(root, "selected_architecture.json")
-    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+    for architecture in RENDERABLE_ARCHITECTURES:
         for scene in ("hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm", "throttle_tip_in", "full_load_acceleration", "gear_shift", "high_rpm_lift", "afterfire_eligible", "afterfire_ineligible", "idle_return", "complete_cycle_60s"):
             metrics_path = root / architecture / scene / "metrics.json"
             metrics = json.loads(metrics_path.read_text(encoding="utf-8"))

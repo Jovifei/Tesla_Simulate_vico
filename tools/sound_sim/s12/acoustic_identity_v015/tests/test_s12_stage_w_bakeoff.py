@@ -183,7 +183,7 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     assert result["requested_duration_s"] == 0.25
     assert result["block_aligned_duration_s"] == 0.24
     assert set(result["architectures"]) >= {"P1", "P2", "P2H", "P3", "P4", "P5", "P6"}
-    for architecture in ("P1", "P2", "P2H", "P3", "P5"):
+    for architecture in bakeoff_module.RENDERABLE_ARCHITECTURES:
         assert (root / architecture / "complete_cycle_60s" / "raw_source.wav").is_file()
         assert (root / architecture / "complete_cycle_60s" / "metrics.json").is_file()
         assert (root / architecture / "complete_cycle_60s" / "phase_trace.json").is_file()
@@ -193,7 +193,7 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     phase_trace = json.loads((root / "P2H" / "complete_cycle_60s" / "phase_trace.json").read_text(encoding="utf-8"))
     assert phase_trace["status"] == "PERSISTENT_ENGINE_TRACE"
     for scene in ("hot_idle_20s", "full_load_acceleration", "complete_cycle_60s"):
-        frames = [read_pcm24_wav(root / architecture / scene / "post_ptr_raw.wav")[1]["frames"] for architecture in ("P1", "P2", "P2H", "P3", "P5")]
+        frames = [read_pcm24_wav(root / architecture / scene / "post_ptr_raw.wav")[1]["frames"] for architecture in bakeoff_module.RENDERABLE_ARCHITECTURES]
         assert len(set(frames)) == 1
     eligible = json.loads((root / "P2H" / "afterfire_eligible" / "event_trace.json").read_text(encoding="utf-8"))
     ineligible = json.loads((root / "P2H" / "afterfire_ineligible" / "event_trace.json").read_text(encoding="utf-8"))
@@ -216,7 +216,7 @@ def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -
     ablations = json.loads((root / "ablation_results.json").read_text(encoding="utf-8"))
     assert ablations["status"] == "REFERENCE_TARGET_MISSING"
     assert ablations["selection_eligible"] is False
-    assert set(ablations["ablations"]) == {"P2_to_P2H_waveguide", "P2H_to_P3_timbre_map", "P3_to_P5_transient"}
+    assert set(ablations["ablations"]) == set(bakeoff_module.ABLATION_PAIRS)
     assert ablations["ablations"]["P2_to_P2H_waveguide"]["complete_cycle_60s"]["post_ptr_sha256_different"] is True
     delivery = tmp_path / "delivery"
     receipt = bakeoff_module.publish_bakeoff_summaries(root, delivery)

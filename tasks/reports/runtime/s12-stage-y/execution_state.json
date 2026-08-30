@@ -37,7 +37,15 @@
       "log_paths": {"stdout": "tasks/reports/runtime/s12-stage-y/logs/y2-postfix-9-20260830T112038431Z.stdout.log", "stderr": "tasks/reports/runtime/s12-stage-y/logs/y2-postfix-9-20260830T112038431Z.stderr.log"},
       "log_sha256": {"stdout": "5B081BA812077D6BAEFD0E273493D822EEF95E4C03EBE72AC9288A990E42A4ED", "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"}
     },
-    "Y3_CYCLE_SYNC_P4": {"status": "IN_PROGRESS"},
+    "Y3_CYCLE_SYNC_P4": {
+      "status": "FAIL_REPAIRING",
+      "source_head": "49ef180f4cb2c351d0583bd0459144781a4da54f",
+      "worktree_diff_sha256": "e7570d4becf2827cd252291bf78b74e3eae0aed9",
+      "receipt_path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_cycle_sync_p4_receipt.json",
+      "failure_run_id": "y3-stage-w-bakeoff",
+      "failure": "P3/P4/P5 timbre-map bakeoff raw PCM exceeds PCM24 bounds; P3 peak=1.989831651 before P4 is staged. No scaling or fitted-map change was authorized.",
+      "next_action": "Start a separately authorized amplitude-policy repair; do not promote Y3 from this checkpoint."
+    },
     "Y4_TRANSIENTS": {"status": "NOT_STARTED"},
     "Y5_DP_CHAIN": {"status": "NOT_STARTED"},
     "Y6_AUDITION": {"status": "NOT_STARTED"}

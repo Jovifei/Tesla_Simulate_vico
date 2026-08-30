@@ -162,7 +162,10 @@ def assemble_v27_bakeoff(
         raise TypeError("stage_roots must be a mapping")
     expected = set(RENDERABLE_ARCHITECTURES)
     if set(stage_roots) != expected:
-        raise ValueError("stage_roots must contain exactly one stage root for each P1/P2/P2H/P3/P5")
+        raise ValueError(
+            "stage_roots must contain exactly one stage root for each "
+            + "/".join(RENDERABLE_ARCHITECTURES)
+        )
 
     normalized: dict[str, Path] = {}
     resolved_final = final.resolve(strict=False)

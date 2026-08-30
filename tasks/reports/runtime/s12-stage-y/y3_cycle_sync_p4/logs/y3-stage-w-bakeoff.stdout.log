@@ -1,0 +1,170 @@
+......FFF..F                                                             [100%]
+================================== FAILURES ===================================
+______ test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths _______
+
+tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1634/test_bakeoff_renders_executabl0')
+
+    def test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths(tmp_path) -> None:
+>       result = run_hellcat_bakeoff(tmp_path / "bakeoff", duration_s=0.25)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_bakeoff.py:179: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:283: in run_hellcat_bakeoff
+    architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:223: in _write_case
+    raw_receipt = write_pcm24_wav(case_root / "raw_source.wav", raw, SAMPLE_RATE_HZ)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:86: in write_pcm24_wav
+    values = _validate_audio(audio)
+             ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+audio = array([[0.01332158, 0.0197887 ],
+       [0.02491224, 0.03772214],
+       [0.03725872, 0.05702283],
+       ...,
+       [0.52317574, 0.86701182],
+       [0.52772552, 0.87507671],
+       [0.53242359, 0.88333544]], shape=(11520, 2))
+
+    def _validate_audio(audio: np.ndarray) -> np.ndarray:
+        values = np.asarray(audio, dtype=np.float64)
+        if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0:
+            raise ValueError("Stage-V WAV audio must be nonempty stereo")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("Stage-V WAV audio must be finite")
+        if np.any(np.abs(values) >= 1.0):
+>           raise ValueError("Stage-V WAV audio would clip")
+E           ValueError: Stage-V WAV audio would clip
+
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:30: ValueError
+___________ test_publisher_rejects_summary_without_manifest_binding ___________
+
+tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1634/test_publisher_rejects_summary0')
+
+    def test_publisher_rejects_summary_without_manifest_binding(tmp_path) -> None:
+        root = tmp_path / "bakeoff"
+>       run_hellcat_bakeoff(root, duration_s=0.25)
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_bakeoff.py:235: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:283: in run_hellcat_bakeoff
+    architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:223: in _write_case
+    raw_receipt = write_pcm24_wav(case_root / "raw_source.wav", raw, SAMPLE_RATE_HZ)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:86: in write_pcm24_wav
+    values = _validate_audio(audio)
+             ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+audio = array([[0.01332158, 0.0197887 ],
+       [0.02491224, 0.03772214],
+       [0.03725872, 0.05702283],
+       ...,
+       [0.52317574, 0.86701182],
+       [0.52772552, 0.87507671],
+       [0.53242359, 0.88333544]], shape=(11520, 2))
+
+    def _validate_audio(audio: np.ndarray) -> np.ndarray:
+        values = np.asarray(audio, dtype=np.float64)
+        if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0:
+            raise ValueError("Stage-V WAV audio must be nonempty stereo")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("Stage-V WAV audio must be finite")
+        if np.any(np.abs(values) >= 1.0):
+>           raise ValueError("Stage-V WAV audio would clip")
+E           ValueError: Stage-V WAV audio would clip
+
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:30: ValueError
+_________________ test_r2_summaries_preserve_reference_status _________________
+
+tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1634/test_r2_summaries_preserve_ref0')
+
+    def test_r2_summaries_preserve_reference_status(tmp_path) -> None:
+        reference = np.zeros((11_520, 2), dtype=np.float64)
+        root = tmp_path / "bakeoff"
+>       result = run_hellcat_bakeoff(root, duration_s=0.25, reference=reference)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_bakeoff.py:248: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:283: in run_hellcat_bakeoff
+    architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:223: in _write_case
+    raw_receipt = write_pcm24_wav(case_root / "raw_source.wav", raw, SAMPLE_RATE_HZ)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:86: in write_pcm24_wav
+    values = _validate_audio(audio)
+             ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+audio = array([[0.01332158, 0.0197887 ],
+       [0.02491224, 0.03772214],
+       [0.03725872, 0.05702283],
+       ...,
+       [0.52317574, 0.86701182],
+       [0.52772552, 0.87507671],
+       [0.53242359, 0.88333544]], shape=(11520, 2))
+
+    def _validate_audio(audio: np.ndarray) -> np.ndarray:
+        values = np.asarray(audio, dtype=np.float64)
+        if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0:
+            raise ValueError("Stage-V WAV audio must be nonempty stereo")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("Stage-V WAV audio must be finite")
+        if np.any(np.abs(values) >= 1.0):
+>           raise ValueError("Stage-V WAV audio would clip")
+E           ValueError: Stage-V WAV audio would clip
+
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:30: ValueError
+____ test_bakeoff_validator_requires_case_files_and_nested_scene_inventory ____
+
+tmp_path = WindowsPath('C:/Users/Admin/AppData/Local/Temp/pytest-of-Jovi/pytest-1634/test_bakeoff_validator_require0')
+
+    def test_bakeoff_validator_requires_case_files_and_nested_scene_inventory(tmp_path) -> None:
+        baseline = tmp_path / "baseline"
+>       run_hellcat_bakeoff(baseline, duration_s=0.25)
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_bakeoff.py:269: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:283: in run_hellcat_bakeoff
+    architectures[architecture]["scenes"][scene] = _write_case(root, architecture, scene, trace, reference)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_w\bakeoff.py:223: in _write_case
+    raw_receipt = write_pcm24_wav(case_root / "raw_source.wav", raw, SAMPLE_RATE_HZ)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:86: in write_pcm24_wav
+    values = _validate_audio(audio)
+             ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+audio = array([[0.01332158, 0.0197887 ],
+       [0.02491224, 0.03772214],
+       [0.03725872, 0.05702283],
+       ...,
+       [0.52317574, 0.86701182],
+       [0.52772552, 0.87507671],
+       [0.53242359, 0.88333544]], shape=(11520, 2))
+
+    def _validate_audio(audio: np.ndarray) -> np.ndarray:
+        values = np.asarray(audio, dtype=np.float64)
+        if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0:
+            raise ValueError("Stage-V WAV audio must be nonempty stereo")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("Stage-V WAV audio must be finite")
+        if np.any(np.abs(values) >= 1.0):
+>           raise ValueError("Stage-V WAV audio would clip")
+E           ValueError: Stage-V WAV audio would clip
+
+tools\sound_sim\s12\acoustic_identity_v015\stage_v\io.py:30: ValueError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py::test_bakeoff_renders_executable_p5_and_rejects_unavailable_paths
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py::test_publisher_rejects_summary_without_manifest_binding
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py::test_r2_summaries_preserve_reference_status
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py::test_bakeoff_validator_requires_case_files_and_nested_scene_inventory
+4 failed, 8 passed in 103.06s (0:01:43)
