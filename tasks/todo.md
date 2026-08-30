@@ -4182,3 +4182,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Source/test head: `fcf74f3f31cb113027ac31475a6f8de65cc6efd9`; audio-generation head remains `5038194e473432f9dc66bc9a1834b375c37cdfe7` because no audio DSP source changed.
 - Current status: local synthetic evidence complete and fail-closed; selection remains null, formal R1/W10, OEM reproduction, human PASS, Profile Freeze and full S12 remain parent-owned/external gates.
 - v24 manifest SHA-256: bakeoff `e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0`, RX-7 `86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582`, Ferrari `290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d`.
+
+## 2026-08-30 S12 Stage Y source layers recovery
+
+> 状态：接管执行中；保留 `f989a8b` 后全部未提交 WIP，不 reset/clean/stash，不 push/merge/PR。
+
+- [ ] Y1：16/16 参数达到既有 0.02 可达性门，pytest 不写仓库。
+- [ ] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
+- [ ] Y3：按 720°/4π 接入 P4，并统一 bakeoff/validator/review inventory。
+- [ ] Y4/Y5：闭合状态瞬态和分块等价 DC/dP/warmup 链。
+- [ ] Y6：生成累计分层试听包并完成 WAV/SHA/边界校验。
+- [ ] 同步 Stage Y 状态、Obsidian/registry，并在最终 HEAD 完成一次完整 S12 资格。
+
+### Review
+
+- 待阶段实现、独立审查和最终验证后填写；历史测试计数不得复用为本轮证据。
