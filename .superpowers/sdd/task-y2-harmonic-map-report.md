@@ -18,3 +18,10 @@ The committed map was generated from source HEAD `2601ef7d04a6ffe50a9302580f62fc
 Focused verification completed at `2026-08-30T10:59:26.8303616Z`: `16 passed, 1 deselected in 24.08s`. It includes Y2 map tests, Y3 cycle-sync, executable Y4/Y5 stem checks, relevant Stage-W timbre behavior (excluding the pre-existing replay failure), and the Y1 parent golden. `compileall`, finite/nonnegative JSON validation, and `git diff --check` also passed.
 
 The receipt is `tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_map_receipt.json`. The next phase is Y3; no Y3-Y6 production module was edited.
+
+## Y2 review-fix addendum (2026-08-30)
+
+- Replaced `stage_y.package._fitted_config()`'s dynamic fixture fitting with `load_committed_fixture_timbre_map()`. The runtime interpolation payload now derives from the validated committed table, and the complete committed metadata is assigned to `fitted_timbre_map` before `require_fitted_timbre_map=True` is set.
+- Added explicit fail-closed tests for a nonexistent map path and syntactically invalid JSON. Existing wrong-schema, fixture-SHA, and nonfinite-value checks remain in place.
+- TDD evidence: before the production edit, the three new focused cases produced `1 failed, 2 passed`; the expected failure was `KeyError: 'fitted_timbre_map'` in the package configuration contract. After the edit, those cases passed `3 passed`.
+- Focused verification: `test_s12_stage_y_harmonic_map.py` passed `8 passed in 4.94s`; `test_y1_default_p3_render_matches_fixed_pre_task_parent_golden` passed `1 passed in 2.96s`; the existing Stage-Y package render smoke completed with no failure output. No Y6 test or production module was changed, and no Y6 failure was observed.

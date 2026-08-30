@@ -8,6 +8,7 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y.fixture_cycles import synthesize_hellcat_cycle_bank
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y import harmonic_map_fit
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import fit_harmonic_map, MAP_SCHEMA
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y.package import _fitted_config
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import _render_architecture, build_hellcat_bakeoff_trace
@@ -43,6 +44,40 @@ def test_committed_fixture_map_loader_is_deterministic_and_fail_closed(tmp_path)
         path.write_text(json.dumps(corrupt), encoding="utf-8")
         with pytest.raises(ValueError):
             load(path)
+
+
+def test_committed_fixture_map_loader_rejects_missing_path(tmp_path) -> None:
+    missing_path = tmp_path / "missing_fixture_timbre_map.json"
+
+    with pytest.raises(ValueError, match="unable to load fitted HarmonicTimbreMap"):
+        harmonic_map_fit.load_committed_fixture_timbre_map(missing_path)
+
+
+def test_committed_fixture_map_loader_rejects_invalid_json(tmp_path) -> None:
+    invalid_json_path = tmp_path / "invalid_fixture_timbre_map.json"
+    invalid_json_path.write_text("{not valid json", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="unable to load fitted HarmonicTimbreMap"):
+        harmonic_map_fit.load_committed_fixture_timbre_map(invalid_json_path)
+
+
+def test_package_fitted_config_uses_committed_map_metadata() -> None:
+    config = _fitted_config()
+    payload, table = harmonic_map_fit.load_committed_fixture_timbre_map()
+
+    assert config["fitted_timbre_map"] == payload
+    assert config["timbre_map"] == {
+        "rpm_axis": table.rpm_axis.tolist(),
+        "load_axis": table.load_axis.tolist(),
+        "boost_axis": table.boost_axis.tolist(),
+        "order_axis": table.order_axis.tolist(),
+        "values": table.values.tolist(),
+    }
+    assert config["require_fitted_timbre_map"] is True
+    PersistentEventDomainEngine(
+        config, 48000, 960, ptr_enabled=True,
+        path_model="waveguide_v1", forced_induction_model="timbre_map_v1",
+    )
 
 
 def test_fixture_bank_is_deterministic_and_not_pcm_in_map(tmp_path) -> None:

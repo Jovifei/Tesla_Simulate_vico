@@ -12,8 +12,7 @@ from ..event_domain.config_schema import load_config
 from ..stage_v.io import write_json, write_pcm24_wav
 from ..stage_w.bakeoff import OUTPUT_SCALE, SAMPLE_RATE_HZ, BLOCK_SIZE, _render_architecture, build_hellcat_bakeoff_trace
 from ..stage_w.persistent_engine import PersistentEventDomainEngine
-from .fixture_cycles import synthesize_hellcat_cycle_bank
-from .harmonic_map_fit import fit_harmonic_map
+from .harmonic_map_fit import load_committed_fixture_timbre_map
 
 SCENES = (
     "hot_idle_20s", "steady_1200rpm", "steady_2000rpm", "steady_3000rpm",
@@ -34,14 +33,15 @@ def _safe_pcm(audio: np.ndarray) -> np.ndarray:
 
 def _fitted_config() -> dict[str, Any]:
     config = load_config("hellcat_v1")
-    mapped = fit_harmonic_map(synthesize_hellcat_cycle_bank(SAMPLE_RATE_HZ), vehicle_id="hellcat")
+    fitted_map, fitted_table = load_committed_fixture_timbre_map()
     config["timbre_map"] = {
-        "rpm_axis": mapped["rpm_axis"],
-        "load_axis": mapped["load_axis"],
-        "boost_axis": mapped["boost_axis"],
-        "order_axis": mapped["order_axis"],
-        "values": mapped["amplitude"],
+        "rpm_axis": fitted_table.rpm_axis.tolist(),
+        "load_axis": fitted_table.load_axis.tolist(),
+        "boost_axis": fitted_table.boost_axis.tolist(),
+        "order_axis": fitted_table.order_axis.tolist(),
+        "values": fitted_table.values.tolist(),
     }
+    config["fitted_timbre_map"] = fitted_map
     config["require_fitted_timbre_map"] = True
     return config
 
