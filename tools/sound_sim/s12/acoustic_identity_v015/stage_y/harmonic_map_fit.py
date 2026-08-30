@@ -82,7 +82,9 @@ def fit_harmonic_map(bank: dict, vehicle_id: str = "hellcat") -> dict:
         for order_index, order in enumerate(order_axis):
             target = firing_hz * float(order)
             bin_index = int(np.argmin(np.abs(freqs - target)))
-            base = float(spectrum[bin_index])
+            is_dc_or_nyquist = bin_index == 0 or (mono.size % 2 == 0 and bin_index == mono.size // 2)
+            one_sided_scale = (1.0 if is_dc_or_nyquist else 2.0) / mono.size
+            base = float(spectrum[bin_index]) * one_sided_scale
             for load_index, load in enumerate(load_axis):
                 for boost_index, boost in enumerate(boost_axis):
                     amplitude[rpm_index, load_index, boost_index, order_index] = base * (0.4 + 0.6 * load) * (0.5 + 0.5 * boost)

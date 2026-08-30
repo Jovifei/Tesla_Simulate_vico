@@ -13,6 +13,48 @@ from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema impor
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import _render_architecture, build_hellcat_bakeoff_trace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.timbre_map import TimbreMap4D
+from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import write_pcm24_wav
+
+
+def test_fit_harmonic_map_recovers_sample_count_invariant_sinusoid_amplitude() -> None:
+    sample_rate_hz = 48_000
+    rpm = 1_500.0
+    order = 2.0
+    input_amplitude = 0.25
+    target_hz = rpm / 60.0 * 4.0 * order
+
+    recovered = []
+    for sample_count in (4_800, 9_600):
+        sample_index = np.arange(sample_count, dtype=np.float64)
+        mono = input_amplitude * np.sin(2.0 * np.pi * target_hz * sample_index / sample_rate_hz)
+        bank = {
+            "sample_rate_hz": sample_rate_hz,
+            "cycles": {rpm: np.column_stack((mono, mono))},
+        }
+        mapped = fit_harmonic_map(bank, vehicle_id="hellcat")
+        recovered.append(mapped["amplitude"][0][2][2][1])
+
+    assert recovered == pytest.approx([input_amplitude, input_amplitude], abs=1e-12)
+
+
+def test_normalized_fitted_map_is_bounded_and_p3_p4_p5_raw_pcm24_safe(tmp_path, monkeypatch) -> None:
+    map_path = tmp_path / "normalized_fixture_timbre_map.json"
+    payload = harmonic_map_fit.build_committed_fixture_timbre_map(map_path, created_from_commit="a" * 40)
+    _loaded_payload, table = harmonic_map_fit.load_committed_fixture_timbre_map(map_path)
+
+    assert np.all(np.isfinite(table.values))
+    assert np.all(table.values >= 0.0)
+    assert float(np.max(table.values)) < 1.0
+    monkeypatch.setattr(harmonic_map_fit, "load_committed_fixture_timbre_map", lambda: (payload, table))
+
+    trace = build_hellcat_bakeoff_trace("full_load_acceleration", 0.2)
+    for architecture in ("P3", "P4", "P5"):
+        raw, _post_ptr, _monitor, _diagnostics = _render_architecture(architecture, trace)
+        assert np.all(np.isfinite(raw))
+        assert float(np.max(np.abs(raw))) < 1.0
+        receipt = write_pcm24_wav(tmp_path / f"{architecture}.wav", raw, 48_000)
+        assert receipt.metadata["sample_width_bits"] == 24
+        assert receipt.metadata["clipping"] == 0
 
 
 def test_committed_fixture_map_loader_is_deterministic_and_fail_closed(tmp_path) -> None:
