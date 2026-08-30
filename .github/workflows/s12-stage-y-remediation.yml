@@ -35,3 +35,4 @@ jobs:
           tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_selection.py
           tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_search.py
           tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_remediation.py
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py
