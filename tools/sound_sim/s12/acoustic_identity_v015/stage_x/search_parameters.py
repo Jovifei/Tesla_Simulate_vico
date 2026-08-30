@@ -154,12 +154,13 @@ METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "afterfire_timing": _afterfire_timing,
     "early_path_balance": _early_path_balance,
     "high_slew_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.30, 0.40),
-    "idle_recovery_window_rms": lambda audio, sr: _window_rms(audio, 0.35, 0.65),
+    "idle_recovery_window_rms": lambda audio, sr: _window_rms(audio, 0.775, 0.80),
     "path_window_rms": lambda audio, sr: _window_rms(audio, 0.15, 0.45),
     "blower_window_rms": lambda audio, sr: _window_rms(audio, 0.35, 0.70),
-    "boost_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.3625, 0.3750),
-    "boost_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.3925, 0.4050),
-    "bypass_sweep_window_rms": lambda audio, sr: _window_rms(audio, 0.20, 0.80),
+    "boost_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.40, 0.425),
+    "boost_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.5875, 0.6125),
+    "bypass_sweep_window_rms": lambda audio, sr: _window_rms(audio, 0.2625, 0.2875),
+    "blower_component_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.30, 0.40),
     "monitor_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.05, 0.30),
     "monitor_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.65, 0.95),
     "monitor_makeup_envelope_rms": lambda audio, sr: _window_rms(audio, 0.45, 0.55),
@@ -182,7 +183,7 @@ def hellcat_search_parameters() -> list[SearchParameter]:
         SearchParameter("idle_governor", 0.22, 0.07, lambda c, v: _set_parameter(c, "idle_governor", v), ("idle_recovery_window_rms",), (), unit="normalized_torque", scenes=(("y1_idle_dip_recovery", 1.6),)),
 
         SearchParameter("primary_length_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_primary_length_m", v), ("band_120_400", "roughness"), (), unit="spread_scale"),
-        SearchParameter("primary_attenuation_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("early_path_balance",), (), unit="spread_scale", scenes=(("full_load_acceleration", 1.6),)),
+        SearchParameter("primary_attenuation_spread", 1.0, 0.28, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("early_path_balance",), (), unit="spread_scale", scenes=(("full_load_acceleration", 1.6),)),
         SearchParameter("waveguide_reflection", 1.0, 1.0, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"reflection_mode": _fixed("open" if v < 1.0 else "closed", "label", "stage x search reflection mode")}), ("band_120_400", "dynamic_range"), (), unit="mode_scale", note="open vs closed junction reflection", architecture="P2H", scenes=(("full_load_acceleration", 2.0), ("gear_shift", 1.5))),
         SearchParameter("waveguide_loss", 0.08, 0.03, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"loss_per_meter": _fixed(v, "ratio", "stage x search waveguide loss")}), ("high_band_share", "mid_band_share"), (), unit="per_m"),
         SearchParameter("collector_loss", 0.92, 0.06, lambda c, v: _set_parameter(c, "collector_loss", v), ("mid_band_share", "high_band_share"), (), unit="ratio"),
@@ -191,9 +192,9 @@ def hellcat_search_parameters() -> list[SearchParameter]:
 
         SearchParameter("blower_sideband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"sideband_mix": _fixed(v, "gain", "stage x sideband mix")}), ("tonality", "sharpness"), ("low_band_share",), unit="gain", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
 
-        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("blower_window_rms",), ("tonality",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
+        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("blower_component_high_band_share",), ("tonality",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
-        SearchParameter("blower_casing_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_window_rms",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
+        SearchParameter("blower_casing_mix", 1.0, 0.40, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_component_high_band_share",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
         SearchParameter("intake_mix", 0.18, 0.06, lambda c, v: _set_parameter(c, "intake_model", v), ("mid_band_share", "flux"), (), unit="normalized_gain"),
         SearchParameter("boost_attack", 0.08, 0.07, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("boost_attack_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
@@ -274,34 +275,19 @@ def _render_monitor_step_pcm(config: dict[str, Any], architecture: str) -> tuple
         return np.column_stack((mono, mono))
 
     raw_blocks: list[np.ndarray] = []
-    monitor_blocks: list[np.ndarray] = []
-    attack_gain_start_db = float(engine._monitor_gain_db)
     for index in range(60):
-        raw = tone_block(0.02, index)
-        raw_blocks.append(raw)
-        monitor_blocks.append(engine._monitor(raw))
-    attack_gain_end_db = float(engine._monitor_gain_db)
-    release_desired_gain_db = float(
-        np.clip(
-            20.0 * np.log10(engine._monitor_target_rms / 0.15),
-            engine._monitor_max_attenuation_db,
-            engine._monitor_max_makeup_db,
-        )
-    )
+        raw_blocks.append(tone_block(0.02, index))
     for index in range(60, 100):
-        raw = tone_block(0.15, index)
-        raw_blocks.append(raw)
-        monitor_blocks.append(engine._monitor(raw))
-    release_gain_end_db = float(engine._monitor_gain_db)
+        raw_blocks.append(tone_block(0.15, index))
+    diagnostic = engine.monitor_diagnostic_trace(raw_blocks)
     raw_pcm = np.concatenate(raw_blocks, axis=0)
-    monitor_pcm = np.concatenate(monitor_blocks, axis=0)
     evidence = {
-        "attack_gain_start_db": attack_gain_start_db,
-        "attack_gain_end_db": attack_gain_end_db,
-        "release_desired_gain_db": release_desired_gain_db,
-        "release_gain_end_db": release_gain_end_db,
+        "attack_gain_start_db": float(diagnostic.gain_trace_db[0]),
+        "attack_gain_end_db": float(diagnostic.gain_trace_db[59]),
+        "release_desired_gain_db": float(diagnostic.desired_gain_trace_db[60]),
+        "release_gain_end_db": float(diagnostic.gain_trace_db[-1]),
     }
-    return [(raw_pcm, raw_pcm, monitor_pcm)], evidence
+    return [(raw_pcm, raw_pcm, diagnostic.monitor_pcm)], evidence
 
 
 def _render_parameter_probe(
@@ -337,9 +323,9 @@ def _build_parameter_probe_trace(scene: str, duration_s: float) -> Any:
         load = np.where(phase < 0.35, 0.15, 0.95)
         throttle = np.where(phase < 0.35, 0.12, 0.98)
     elif scene == "y1_precharged_boost_release":
-        rpm = np.where(phase < 0.38, 4800.0, 2200.0)
-        load = np.where(phase < 0.38, 0.95, 0.14)
-        throttle = np.where(phase < 0.38, 0.98, 0.10)
+        rpm = np.where(phase < 0.38, 4800.0, 4400.0)
+        load = np.where(phase < 0.38, 0.95, 0.35)
+        throttle = np.where(phase < 0.38, 0.98, 0.35)
     elif scene == "y1_bypass_threshold_sweep":
         rpm = np.full(count, 3200.0)
         throttle = np.interp(phase, (0.0, 0.24, 0.50, 0.76, 1.0), (0.08, 0.16, 0.24, 0.32, 0.18))
@@ -407,8 +393,7 @@ def run_parameter_reachability(
             "probe_mode": item.probe_mode,
         }
         movement: dict[str, float] = {}
-        sha_changed = False
-        finite_ok = True
+        direction_evidence: dict[str, dict[str, Any]] = {}
         item_traces = [_build_parameter_probe_trace(scene, duration) for scene, duration in item.scenes]
         item_baseline, probe_evidence = _render_parameter_probe(item, base_config, item_traces)
         item_baseline = _stem_blocks(item_baseline, item.stem)
@@ -424,40 +409,64 @@ def run_parameter_reachability(
                 pcm_blocks, _ = _render_parameter_probe(item, config, item_traces)
                 pcm_blocks = _stem_blocks(pcm_blocks, item.stem)
             except Exception as error:  # noqa: BLE001 - reachability must classify, not crash
-                record[f"{direction}_error"] = str(error)
-                finite_ok = False
+                direction_evidence[direction] = {
+                    "value": float(value),
+                    "finite": False,
+                    "sha_changed": False,
+                    "target_movement": 0.0,
+                    "error": str(error),
+                }
                 continue
             if not all(np.all(np.isfinite(block)) for block in pcm_blocks):
-                finite_ok = False
+                direction_evidence[direction] = {
+                    "value": float(value),
+                    "finite": False,
+                    "sha_changed": False,
+                    "target_movement": 0.0,
+                    "error": "non-finite selected-stem PCM",
+                }
                 continue
             variant_bytes = b"".join(block.tobytes() for block in pcm_blocks)
-            if hashlib.sha256(variant_bytes).hexdigest() != hashlib.sha256(baseline_bytes).hexdigest():
-                sha_changed = True
+            sha_changed = hashlib.sha256(variant_bytes).hexdigest() != hashlib.sha256(baseline_bytes).hexdigest()
             variant_metrics = _pcm_metrics(pcm_blocks)
+            direction_movement: dict[str, float] = {}
             for metric, value_pair in variant_metrics.items():
                 base_value = item_baseline_metrics[metric]
                 change = abs(value_pair - base_value) / max(abs(base_value), 1e-9)
+                direction_movement[metric] = float(change)
                 movement[metric] = max(movement.get(metric, 0.0), change)
+            direction_evidence[direction] = {
+                "value": float(value),
+                "finite": True,
+                "sha_changed": sha_changed,
+                "target_movement": float(max((direction_movement.get(name, 0.0) for name in item.target_metrics), default=0.0)),
+                "metric_movement": {name: float(metric_value) for name, metric_value in sorted(direction_movement.items())},
+            }
         target_movement = max((movement.get(name, 0.0) for name in item.target_metrics), default=0.0)
+        directional_ok = all(
+            direction_evidence.get(direction, {}).get("finite")
+            and direction_evidence[direction]["sha_changed"]
+            and direction_evidence[direction]["target_movement"] > tolerance
+            for direction in ("minus", "plus")
+        )
         guard_violation = any(
             movement.get(name, 0.0) > max(5.0 * target_movement, 0.5) for name in item.guard_metrics
         )
-        if not finite_ok:
+        if not directional_ok:
             status = PARAMETER_NOT_REACHABLE
-            reason = "render failed or non-finite PCM"
-        elif not sha_changed:
-            status = PARAMETER_NOT_REACHABLE
-            reason = "rendered PCM identical to baseline"
-        elif target_movement <= tolerance:
-            status = PARAMETER_NOT_REACHABLE
-            reason = f"target metric movement {target_movement:.4f} <= tolerance {tolerance}"
+            reason = "both perturbation directions must be finite, change selected-stem PCM, and exceed tolerance"
         elif guard_violation:
             status = PARAMETER_NOT_REACHABLE
             reason = "guard metric moved out of bounds"
         else:
             status = PARAMETER_REACHABLE
             reason = f"target movement {target_movement:.4f}"
-        record.update({"status": status, "reason": reason, "metric_movement": {name: float(value) for name, value in sorted(movement.items())}})
+        record.update({
+            "status": status,
+            "reason": reason,
+            "metric_movement": {name: float(value) for name, value in sorted(movement.items())},
+            "directions": direction_evidence,
+        })
         results.append(record)
     summary = {
         "schema": REACHABILITY_SCHEMA,
@@ -503,12 +512,13 @@ def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
         "afterfire_path_balance": _afterfire_path_balance(stereo, sample_rate),
         "early_path_balance": _early_path_balance(stereo, sample_rate),
         "high_slew_high_band_share": _window_high_band_share(concat, sample_rate, 0.30, 0.40),
-        "idle_recovery_window_rms": _window_rms(concat, 0.35, 0.65),
+        "idle_recovery_window_rms": _window_rms(concat, 0.775, 0.80),
         "path_window_rms": _window_rms(concat, 0.15, 0.45),
         "blower_window_rms": _window_rms(concat, 0.35, 0.70),
-        "boost_attack_envelope_rms": _window_rms(concat, 0.3625, 0.3750),
-        "boost_release_envelope_rms": _window_rms(concat, 0.3925, 0.4050),
-        "bypass_sweep_window_rms": _window_rms(concat, 0.20, 0.80),
+        "boost_attack_envelope_rms": _window_rms(concat, 0.40, 0.425),
+        "boost_release_envelope_rms": _window_rms(concat, 0.5875, 0.6125),
+        "bypass_sweep_window_rms": _window_rms(concat, 0.2625, 0.2875),
+        "blower_component_high_band_share": _window_high_band_share(concat, sample_rate, 0.30, 0.40),
         "monitor_attack_envelope_rms": _window_rms(concat, 0.05, 0.30),
         "monitor_release_envelope_rms": _window_rms(concat, 0.65, 0.95),
         "monitor_makeup_envelope_rms": _window_rms(concat, 0.45, 0.55),

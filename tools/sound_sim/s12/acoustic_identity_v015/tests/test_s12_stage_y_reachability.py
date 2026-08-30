@@ -9,8 +9,12 @@ from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema impor
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import unwrap
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import build_hellcat_bakeoff_trace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+from tools.sound_sim.s12.acoustic_identity_v015.stage_x import search_parameters as search_parameter_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_x.search_parameters import (
+    METRIC_FUNCS,
+    PARAMETER_NOT_REACHABLE,
     PARAMETER_REACHABLE,
+    SearchParameter,
     _build_parameter_probe_trace,
     _render_config_pcm,
     apply_parameters,
@@ -59,8 +63,8 @@ def test_idle_governor_changes_post_ptr_sha_on_idle() -> None:
 def test_primary_attenuation_spread_changes_post_ptr_sha() -> None:
     parameters = hellcat_search_parameters()
     base = load_config("hellcat_v1")
-    low = apply_parameters(base, {"primary_attenuation_spread": 0.75}, parameters)
-    high = apply_parameters(base, {"primary_attenuation_spread": 1.25}, parameters)
+    low = apply_parameters(base, {"primary_attenuation_spread": 0.72}, parameters)
+    high = apply_parameters(base, {"primary_attenuation_spread": 1.28}, parameters)
     a = _render(low, "P2H", "full_load_acceleration", 2.0)
     b = _render(high, "P2H", "full_load_acceleration", 2.0)
     assert _sha(a.post_ptr_raw) != _sha(b.post_ptr_raw)
@@ -84,13 +88,8 @@ def test_primary_attenuation_spread_reaches_early_post_ptr_path_balance(tmp_path
     assert len(unwrap(low, "per_path_attenuation")) == len(unwrap(high, "per_path_attenuation"))
     assert _sha(default_pcm) == _sha(unoverridden_pcm)
 
-    def early_path_balance(pcm: np.ndarray) -> float:
-        early = pcm[: int(round(0.20 * pcm.shape[0]))]
-        energy = np.mean(np.square(early), axis=0)
-        return float((energy[0] - energy[1]) / max(float(np.sum(energy)), 1.0e-12))
-
-    low_balance = early_path_balance(low_pcm)
-    high_balance = early_path_balance(high_pcm)
+    low_balance = METRIC_FUNCS["early_path_balance"](low_pcm, 48000)
+    high_balance = METRIC_FUNCS["early_path_balance"](high_pcm, 48000)
     assert abs(high_balance - low_balance) / max(abs(low_balance), 1.0e-12) > 0.02
 
     summary = _selected_y1_summary(tmp_path, "primary_attenuation_spread")
@@ -159,6 +158,59 @@ def test_y1_selected_probe_is_pure_and_keeps_legacy_artifact_default(tmp_path) -
     summary = _selected_y1_summary(tmp_path, "crank_inertia")
     assert summary["parameter_count"] == 1
     assert not (tmp_path / "parameter_reachability.json").exists()
+
+
+def test_y1_default_p3_render_matches_fixed_pre_task_parent_golden() -> None:
+    """Default Stage-X absence must retain the exact parent runtime behavior."""
+    pcm = _render(load_config("hellcat_v1"), "P3", "full_load_acceleration", 1.6).post_ptr_raw
+    assert pcm is not None
+    assert _sha(pcm) == "7f2906d2a6566f7d49a8b6784e9a1173cb3b2e26ea9f712b4fd01008ea42384e"
+
+
+def test_y1_reachability_rejects_an_inert_perturbation_direction(monkeypatch, tmp_path) -> None:
+    """A one-sided metric/SHA change is not evidence of bilateral reachability."""
+    item = SearchParameter(
+        "one_sided_probe",
+        baseline=1.0,
+        delta=0.5,
+        apply=lambda config, value: config.__setitem__("one_sided_probe", value),
+        target_metrics=("early_path_balance",),
+        scenes=(),
+    )
+    baseline = np.column_stack((np.ones(61440), np.full(61440, 0.5)))
+    minus = np.column_stack((np.ones(61440), np.full(61440, 0.9)))
+
+    def fake_render(_item, config, _traces):
+        pcm = minus if config.get("one_sided_probe") == 0.5 else baseline
+        return [(pcm, pcm, pcm)], {}
+
+    monkeypatch.setattr(search_parameter_module, "hellcat_search_parameters", lambda: [item])
+    monkeypatch.setattr(search_parameter_module, "_render_parameter_probe", fake_render)
+    row = search_parameter_module.run_parameter_reachability(
+        tmp_path, traces=[], parameter_names=(item.name,), write_artifact=False
+    )["results"][0]
+    assert row["status"] == PARAMETER_NOT_REACHABLE
+    assert row["directions"]["minus"]["sha_changed"]
+    assert not row["directions"]["plus"]["sha_changed"]
+
+
+def test_y1_monitor_diagnostic_api_uses_stateful_production_monitor() -> None:
+    """Stage X must obtain monitor evidence without touching private state."""
+    engine = PersistentEventDomainEngine(
+        copy.deepcopy(load_config("hellcat_v1")), 48000, 960, ptr_enabled=True,
+        path_model="waveguide_v1", forced_induction_model="harmonic_v1",
+    )
+    sample = np.arange(engine.block_size, dtype=np.float64) / engine.sample_rate_hz
+    low = 0.02 * np.sqrt(2.0) * np.sin(2.0 * np.pi * 233.0 * sample)
+    high = 0.15 * np.sqrt(2.0) * np.sin(2.0 * np.pi * 233.0 * sample)
+    trace = engine.monitor_diagnostic_trace(
+        [np.column_stack((low, low)) for _ in range(60)]
+        + [np.column_stack((high, high)) for _ in range(40)]
+    )
+    assert np.all(np.isfinite(trace.monitor_pcm))
+    assert trace.gain_trace_db[59] > trace.gain_trace_db[0]
+    assert trace.desired_gain_trace_db[60] < trace.gain_trace_db[59]
+    assert trace.gain_trace_db[-1] < trace.gain_trace_db[59]
 
 
 def test_y1_high_slew_and_idle_recovery_metrics_are_reachable(tmp_path) -> None:

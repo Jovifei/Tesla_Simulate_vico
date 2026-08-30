@@ -103,6 +103,15 @@ class EngineAudioBlock:
     post_ptr_raw: np.ndarray | None = None
 
 
+@dataclass(frozen=True)
+class MonitorDiagnosticTrace:
+    """Supported block-level evidence from the production monitor state machine."""
+
+    monitor_pcm: np.ndarray
+    gain_trace_db: np.ndarray
+    desired_gain_trace_db: np.ndarray
+
+
 class _DelayLine:
     """Bounded persistent fractional delay used by non-waveguide paths."""
 
@@ -473,7 +482,7 @@ class PersistentEventDomainEngine:
 
     def _header_attenuation_tilt(self, entity: int, source: np.ndarray, attenuation: float) -> np.ndarray:
         """One-pole tilt so per-path attenuation spread moves mid-band/roughness, not only SHA."""
-        pole = float(np.clip(float(attenuation) ** 8, 0.03, 0.98))
+        pole = float(np.clip(0.10 + 0.82 * float(attenuation), 0.05, 0.97))
         x = np.asarray(source, dtype=np.float64)
         y, zf = lfilter([pole], [1.0, pole - 1.0], x, zi=[self._path_filter_state[entity]])
         self._path_filter_state[entity] = float(zf[0])
@@ -583,9 +592,9 @@ class PersistentEventDomainEngine:
             forced["blower"] = forced["blower"] * bypass_gain[:, None]
         forced["blowoff"] = self._render_bov(phase, boost_start, boost_state, throttle)
         if self.forced_induction_model == "timbre_map_v1":
-            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 1.60 * forced["broadband"] + 1.40 * forced["casing"]
-            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 1.60 * forced["broadband"] + 1.40 * forced["casing"]
-            forced["intake"] = forced["intake"] + 1.10 * forced["broadband"]
+            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
+            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
+            forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
         mechanical = (
             0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
             + 0.003 * phase_block.torque_ripple
@@ -798,7 +807,8 @@ class PersistentEventDomainEngine:
                 self._place(self._central_collector_event_tail, offset, packet)
             self._last_afterfire_route = {key: value for key, value in event.items() if key != "sequence"}
 
-    def _monitor(self, raw: np.ndarray) -> np.ndarray:
+    def _monitor_step(self, raw: np.ndarray) -> tuple[np.ndarray, float, float]:
+        """Advance the production monitor once and expose its observed state."""
         rms = float(np.sqrt(np.mean(np.square(raw))))
         self._monitor_gain_db = float(np.clip(self._monitor_gain_db, self._monitor_max_attenuation_db, self._monitor_max_makeup_db))
         desired = float(np.clip(20.0 * np.log10(self._monitor_target_rms / max(rms, 1.0e-9)), self._monitor_max_attenuation_db, self._monitor_max_makeup_db))
@@ -810,7 +820,36 @@ class PersistentEventDomainEngine:
         ceiling = 10.0 ** (-1.2 / 20.0)
         if peak > ceiling:
             monitor *= ceiling / peak
-        return monitor
+        return monitor, float(self._monitor_gain_db), desired
+
+    def _monitor(self, raw: np.ndarray) -> np.ndarray:
+        """Production monitor render with no diagnostic behavior changes."""
+        return self._monitor_step(raw)[0]
+
+    def monitor_diagnostic_trace(self, raw_blocks: list[np.ndarray]) -> MonitorDiagnosticTrace:
+        """Render fixed-size raw blocks through the same monitor state machine.
+
+        This diagnostic-only API deliberately shares ``_monitor_step`` with normal
+        rendering; it neither resets nor otherwise changes monitor policy/output.
+        """
+        if not raw_blocks:
+            raise ValueError("raw_blocks must be nonempty")
+        monitor_blocks: list[np.ndarray] = []
+        gains: list[float] = []
+        desired_gains: list[float] = []
+        for index, raw in enumerate(raw_blocks):
+            block = np.asarray(raw, dtype=np.float64)
+            if block.shape != (self.block_size, 2) or not np.all(np.isfinite(block)):
+                raise ValueError(f"raw_blocks[{index}] must be finite stereo with engine block size")
+            monitor, gain_db, desired_gain_db = self._monitor_step(block)
+            monitor_blocks.append(monitor)
+            gains.append(gain_db)
+            desired_gains.append(desired_gain_db)
+        return MonitorDiagnosticTrace(
+            monitor_pcm=np.concatenate(monitor_blocks, axis=0),
+            gain_trace_db=np.asarray(gains, dtype=np.float64),
+            desired_gain_trace_db=np.asarray(desired_gains, dtype=np.float64),
+        )
 
     def snapshot_state(self) -> dict[str, Any]:
         return {
