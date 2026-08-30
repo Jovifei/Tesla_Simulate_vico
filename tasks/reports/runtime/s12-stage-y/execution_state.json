@@ -1,0 +1,12 @@
+{
+  "schema": "s12.stage_y.continuous_execution.v1",
+  "base_stage_x_sha": "3d433e30f2c0238d65baed321aa70355a626ceb6",
+  "current_branch": "agent/s12-stage-y-source-layers-and-reachability",
+  "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-source-layers",
+  "phase_order": ["Y0_SETUP", "Y1_REACHABILITY", "Y2_HARMONIC_MAP", "Y3_CYCLE_SYNC_P4", "Y4_TRANSIENTS", "Y5_DP_CHAIN", "Y6_AUDITION"],
+  "current_phase": "Y0_SETUP",
+  "phases": {
+    "Y0_SETUP": {"status": "IN_PROGRESS"}
+  },
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
+}
