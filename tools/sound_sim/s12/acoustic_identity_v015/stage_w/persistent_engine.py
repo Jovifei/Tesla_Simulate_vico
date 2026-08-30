@@ -473,7 +473,7 @@ class PersistentEventDomainEngine:
 
     def _header_attenuation_tilt(self, entity: int, source: np.ndarray, attenuation: float) -> np.ndarray:
         """One-pole tilt so per-path attenuation spread moves mid-band/roughness, not only SHA."""
-        pole = float(np.clip(0.10 + 0.82 * float(attenuation), 0.05, 0.97))
+        pole = float(np.clip(float(attenuation) ** 8, 0.03, 0.98))
         x = np.asarray(source, dtype=np.float64)
         y, zf = lfilter([pole], [1.0, pole - 1.0], x, zi=[self._path_filter_state[entity]])
         self._path_filter_state[entity] = float(zf[0])
@@ -583,9 +583,9 @@ class PersistentEventDomainEngine:
             forced["blower"] = forced["blower"] * bypass_gain[:, None]
         forced["blowoff"] = self._render_bov(phase, boost_start, boost_state, throttle)
         if self.forced_induction_model == "timbre_map_v1":
-            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
-            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
-            forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
+            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 1.60 * forced["broadband"] + 1.40 * forced["casing"]
+            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 1.60 * forced["broadband"] + 1.40 * forced["casing"]
+            forced["intake"] = forced["intake"] + 1.10 * forced["broadband"]
         mechanical = (
             0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
             + 0.003 * phase_block.torque_ripple

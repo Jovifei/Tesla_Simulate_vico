@@ -68,7 +68,7 @@ class CrankPhasePLL:
             governor = float(unwrap(self.config, "idle_governor")) * (1.0 - throttle[i]) if target_rpm <= float(unwrap(self.config, "idle_target_rpm")) * 1.25 else 0.0
             tracking_gain = 12.0 / max(inertia, 0.05)
             tracking_torque = tracking_gain * sync_error if self.mode == "measured_rpm" else 0.0
-            governor_torque = governor * 0.35 * max(target, 1.0)
+            governor_torque = governor * 4.00 * max(target, 1.0)
             combustion_torque = 0.005 * (0.25 + np.clip(load[i], 0.0, 1.0)) * max(target, 1.0)
             event_torque = float(combustion_torque_input[i])
             acceleration_torque = 0.001 * float(acceleration[i]) * max(target, 1.0)

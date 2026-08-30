@@ -38,6 +38,7 @@ class SearchParameter:
     architecture: str = "P2H"
     scenes: tuple[tuple[str, float], ...] = (("hot_idle_20s", 2.0), ("full_load_acceleration", 2.0))
     stem: str = "post_ptr"
+    probe_mode: str = "engine"
 
 
 def _set_parameter(config: dict[str, Any], path: str, value: Any) -> None:
@@ -76,6 +77,64 @@ def _high_band(audio: np.ndarray, sample_rate: int) -> float:
     return timbre_metrics(audio, sample_rate)["fine_band_shares"][6] + timbre_metrics(audio, sample_rate)["fine_band_shares"][7]
 
 
+def _window_energy_share(audio: np.ndarray, start: float, end: float) -> float:
+    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
+    lower = int(np.clip(round(start * samples.size), 0, samples.size))
+    upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
+    energy = np.square(samples)
+    return float(np.sum(energy[lower:upper]) / max(float(np.sum(energy)), 1.0e-12))
+
+
+def _window_rms(audio: np.ndarray, start: float, end: float) -> float:
+    """RMS in a declared dynamic-probe window (not a whole-scene proxy)."""
+    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
+    lower = int(np.clip(round(start * samples.size), 0, samples.size))
+    upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
+    return float(np.sqrt(np.mean(np.square(samples[lower:upper]))))
+
+
+def _window_high_band_share(audio: np.ndarray, sample_rate: int, start: float, end: float) -> float:
+    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
+    lower = int(np.clip(round(start * samples.size), 0, samples.size))
+    upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
+    return _high_band(samples[lower:upper], sample_rate)
+
+
+def _afterfire_timing(audio: np.ndarray, sample_rate: int) -> float:
+    """Return the burst peak offset after the known 40%-of-scene lift."""
+    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
+    lower = int(round(0.40 * samples.size))
+    upper = int(round(0.70 * samples.size))
+    window = np.square(samples[lower:upper])
+    if window.size == 0:
+        return 0.0
+    smoothing = max(1, int(round(0.002 * sample_rate)))
+    envelope = np.convolve(window, np.ones(smoothing, dtype=np.float64) / smoothing, mode="same")
+    return float(np.argmax(envelope) / sample_rate)
+
+
+def _afterfire_path_balance(audio: np.ndarray, sample_rate: int) -> float:
+    del sample_rate
+    stereo = np.asarray(audio, dtype=np.float64)
+    if stereo.ndim != 2 or stereo.shape[1] != 2:
+        return 0.0
+    lower = int(round(0.40 * stereo.shape[0]))
+    upper = int(round(0.70 * stereo.shape[0]))
+    energy = np.sum(np.square(stereo[lower:upper]), axis=0)
+    return float((energy[0] - energy[1]) / max(float(np.sum(energy)), 1.0e-12))
+
+
+def _early_path_balance(audio: np.ndarray, sample_rate: int) -> float:
+    """Relative left/right energy in the early post-PTR path-arrival window."""
+    del sample_rate
+    stereo = np.asarray(audio, dtype=np.float64)
+    if stereo.ndim != 2 or stereo.shape[1] != 2:
+        return 0.0
+    early = stereo[: int(round(0.20 * stereo.shape[0]))]
+    energy = np.mean(np.square(early), axis=0)
+    return float((energy[0] - energy[1]) / max(float(np.sum(energy)), 1.0e-12))
+
+
 METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "low_band_share": _low_band,
     "band_120_400": _band_120_400,
@@ -89,6 +148,21 @@ METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "crest": lambda audio, sr: raw_dynamic_metrics(audio, sr)["crest_db"],
     "dynamic_range": lambda audio, sr: raw_dynamic_metrics(audio, sr)["dynamic_range_db"],
     "transient_density": lambda audio, sr: raw_dynamic_metrics(audio, sr)["transient_event_density_per_s"],
+    "early_energy_share": lambda audio, sr: _window_energy_share(audio, 0.00, 0.35),
+    "transition_energy_share": lambda audio, sr: _window_energy_share(audio, 0.35, 0.60),
+    "late_energy_share": lambda audio, sr: _window_energy_share(audio, 0.65, 1.00),
+    "afterfire_timing": _afterfire_timing,
+    "early_path_balance": _early_path_balance,
+    "high_slew_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.30, 0.40),
+    "idle_recovery_window_rms": lambda audio, sr: _window_rms(audio, 0.35, 0.65),
+    "path_window_rms": lambda audio, sr: _window_rms(audio, 0.15, 0.45),
+    "blower_window_rms": lambda audio, sr: _window_rms(audio, 0.35, 0.70),
+    "boost_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.3625, 0.3750),
+    "boost_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.3925, 0.4050),
+    "bypass_sweep_window_rms": lambda audio, sr: _window_rms(audio, 0.20, 0.80),
+    "monitor_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.05, 0.30),
+    "monitor_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.65, 0.95),
+    "monitor_makeup_envelope_rms": lambda audio, sr: _window_rms(audio, 0.45, 0.55),
 }
 
 
@@ -103,12 +177,12 @@ def hellcat_search_parameters() -> list[SearchParameter]:
         SearchParameter("combustion_rise_time", 0.0035, 0.0012, lambda c, v: _set_parameter(c, "combustion_event.rise_time_s", v), ("band_120_400", "sharpness"), ("low_band_share",), unit="s"),
         SearchParameter("combustion_decay_time", 0.030, 0.008, lambda c, v: _set_parameter(c, "combustion_event.decay_time_s", v), ("low_band_share", "dynamic_range"), ("tonality",), unit="s"),
         SearchParameter("cycle_variation", 0.08, 0.03, lambda c, v: _set_parameter(c, "cycle_variation", v), ("roughness", "flux"), ("centroid",), unit="normalized"),
-        SearchParameter("crank_inertia", 0.34, 0.10, lambda c, v: _set_parameter(c, "crank_inertia", v), ("flux", "dynamic_range"), (), unit="kg_m2", scenes=(("hot_idle_20s", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("crank_inertia", 0.34, 0.10, lambda c, v: _set_parameter(c, "crank_inertia", v), ("high_slew_high_band_share",), (), unit="kg_m2", scenes=(("throttle_tip_in", 2.5),)),
 
-        SearchParameter("idle_governor", 0.22, 0.07, lambda c, v: _set_parameter(c, "idle_governor", v), ("flux", "dynamic_range"), (), unit="normalized_torque", scenes=(("hot_idle_20s", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("idle_governor", 0.22, 0.07, lambda c, v: _set_parameter(c, "idle_governor", v), ("idle_recovery_window_rms",), (), unit="normalized_torque", scenes=(("y1_idle_dip_recovery", 1.6),)),
 
         SearchParameter("primary_length_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_primary_length_m", v), ("band_120_400", "roughness"), (), unit="spread_scale"),
-        SearchParameter("primary_attenuation_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("mid_band_share", "roughness"), (), unit="spread_scale", scenes=(("full_load_acceleration", 2.0),)),
+        SearchParameter("primary_attenuation_spread", 1.0, 0.25, lambda c, v: _scale_spread(c, "per_path_attenuation", v), ("early_path_balance",), (), unit="spread_scale", scenes=(("full_load_acceleration", 1.6),)),
         SearchParameter("waveguide_reflection", 1.0, 1.0, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"reflection_mode": _fixed("open" if v < 1.0 else "closed", "label", "stage x search reflection mode")}), ("band_120_400", "dynamic_range"), (), unit="mode_scale", note="open vs closed junction reflection", architecture="P2H", scenes=(("full_load_acceleration", 2.0), ("gear_shift", 1.5))),
         SearchParameter("waveguide_loss", 0.08, 0.03, lambda c, v: c.setdefault("exhaust_waveguide", {}).update({"loss_per_meter": _fixed(v, "ratio", "stage x search waveguide loss")}), ("high_band_share", "mid_band_share"), (), unit="per_m"),
         SearchParameter("collector_loss", 0.92, 0.06, lambda c, v: _set_parameter(c, "collector_loss", v), ("mid_band_share", "high_band_share"), (), unit="ratio"),
@@ -117,30 +191,30 @@ def hellcat_search_parameters() -> list[SearchParameter]:
 
         SearchParameter("blower_sideband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"sideband_mix": _fixed(v, "gain", "stage x sideband mix")}), ("tonality", "sharpness"), ("low_band_share",), unit="gain", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
 
-        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("roughness", "flux"), ("tonality",), unit="gain", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("blower_window_rms",), ("tonality",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
-        SearchParameter("blower_casing_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("tonality",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("blower_casing_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_window_rms",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
         SearchParameter("intake_mix", 0.18, 0.06, lambda c, v: _set_parameter(c, "intake_model", v), ("mid_band_share", "flux"), (), unit="normalized_gain"),
-        SearchParameter("boost_attack", 0.0, 0.08, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("flux", "dynamic_range"), (), unit="s", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("boost_attack", 0.08, 0.07, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("boost_attack_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
-        SearchParameter("boost_release", 0.0, 0.20, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_release_s": _fixed(v, "s", "stage x boost release")}), ("flux",), (), unit="s", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("boost_release", 0.25, 0.24, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_release_s": _fixed(v, "s", "stage x boost release")}), ("boost_release_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_precharged_boost_release", 1.6),)),
 
-        SearchParameter("bypass_threshold", 0.20, 0.08, lambda c, v: c.setdefault("timbre_mixes", {}).update({"bypass_threshold": _fixed(v, "throttle", "stage x bypass threshold")}), ("tonality", "sharpness"), (), unit="throttle", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("bypass_threshold", 0.20, 0.08, lambda c, v: c.setdefault("timbre_mixes", {}).update({"bypass_threshold": _fixed(v, "throttle", "stage x bypass threshold")}), ("bypass_sweep_window_rms",), (), unit="throttle", architecture="P3", scenes=(("y1_bypass_threshold_sweep", 1.6),)),
 
-        SearchParameter("afterfire_reservoir_rate", 0.72, 0.20, lambda c, v: c["afterfire"].update({"fuel_reservoir_rate": _fixed(v, "normalized", "stage x reservoir rate")}), ("transient_density",), (), unit="normalized", architecture="P3", scenes=(("high_rpm_lift", 2.5), ("afterfire_eligible", 2.5))),
+        SearchParameter("afterfire_reservoir_rate", 0.72, 0.20, lambda c, v: c["afterfire"].update({"fuel_reservoir_rate": _fixed(v, "normalized", "stage x reservoir rate")}), ("transition_energy_share",), (), unit="normalized", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
 
-        SearchParameter("afterfire_ignition_delay", 0.004, 0.0015, lambda c, v: _set_parameter(c, "afterfire.ignition_delay_s", v), ("transient_density",), (), unit="s", architecture="P3", scenes=(("high_rpm_lift", 2.5), ("afterfire_eligible", 2.5))),
+        SearchParameter("afterfire_ignition_delay", 0.004, 0.0015, lambda c, v: _set_parameter(c, "afterfire.ignition_delay_s", v), ("afterfire_timing",), (), unit="s", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
 
-        SearchParameter("afterfire_location_mix", 0.0, 1.0, lambda c, v: _set_parameter(c, "afterfire.event_location", "bank_collector" if v >= 1.0 else "primary"), ("transient_density", "crest"), (), unit="mode", note="primary vs bank collector routing", architecture="P3", scenes=(("high_rpm_lift", 2.5), ("afterfire_eligible", 2.5))),
+        SearchParameter("afterfire_location_mix", 0.0, 1.0, lambda c, v: _set_parameter(c, "afterfire.event_location", "bank_collector" if v >= 1.0 else "primary"), ("afterfire_path_balance",), (), unit="mode", note="primary vs bank collector routing", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
 
-        SearchParameter("afterfire_energy", 0.06, 0.02, lambda c, v: _set_parameter(c, "afterfire.gain", v), ("transient_density", "crest"), (), unit="normalized_gain", architecture="P3", scenes=(("high_rpm_lift", 2.5), ("afterfire_eligible", 2.5))),
+        SearchParameter("afterfire_energy", 0.06, 0.02, lambda c, v: _set_parameter(c, "afterfire.gain", v), ("transition_energy_share", "crest"), (), unit="normalized_gain", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
 
-        SearchParameter("monitor_attack", 0.12, 0.05, lambda c, v: c.setdefault("monitor_policy", {}).update({"attack_s": _fixed(v, "s", "stage x monitor attack")}), ("dynamic_range",), (), unit="s", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
+        SearchParameter("monitor_attack", 0.12, 0.05, lambda c, v: c.setdefault("monitor_policy", {}).update({"attack_s": _fixed(v, "s", "stage x monitor attack")}), ("monitor_attack_envelope_rms",), (), unit="s", stem="monitor", probe_mode="monitor_step"),
 
-        SearchParameter("monitor_release", 1.20, 0.40, lambda c, v: c.setdefault("monitor_policy", {}).update({"release_s": _fixed(v, "s", "stage x monitor release")}), ("dynamic_range", "crest"), (), unit="s", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
+        SearchParameter("monitor_release", 1.20, 0.40, lambda c, v: c.setdefault("monitor_policy", {}).update({"release_s": _fixed(v, "s", "stage x monitor release")}), ("monitor_release_envelope_rms",), (), unit="s", stem="monitor", probe_mode="monitor_step"),
 
-        SearchParameter("monitor_max_makeup", 9.0, 3.0, lambda c, v: c.setdefault("monitor_policy", {}).update({"max_makeup_db": _fixed(v, "dB", "stage x monitor makeup")}), ("dynamic_range", "crest"), ("low_band_share",), unit="dB", stem="monitor", scenes=(("hot_idle_20s", 2.0),)),
+        SearchParameter("monitor_max_makeup", 9.0, 3.0, lambda c, v: c.setdefault("monitor_policy", {}).update({"max_makeup_db": _fixed(v, "dB", "stage x monitor makeup")}), ("monitor_makeup_envelope_rms",), (), unit="dB", stem="monitor", probe_mode="monitor_step"),
 
     ]
 
@@ -156,12 +230,21 @@ def apply_parameters(base_config: dict[str, Any], overrides: dict[str, float], p
     return config
 
 
+def _engine_settings(architecture: str) -> dict[str, str]:
+    return {
+        "P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"},
+        "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"},
+        "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"},
+        "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"},
+    }[architecture]
+
+
 def _render_config_pcm(config: dict[str, Any], architecture: str, traces: list[Any]) -> list[tuple[np.ndarray, np.ndarray, np.ndarray]]:
     """Render post-PTR and engine-monitor stems for each trace (P1 falls back)."""
     from ..stage_w.bakeoff import _render_architecture, build_hellcat_bakeoff_trace  # noqa: F401
     from ..stage_w.persistent_engine import PersistentEventDomainEngine
 
-    settings = {"P2": {"path_model": "delay_lpf_v1", "forced_induction_model": "harmonic_v1"}, "P2H": {"path_model": "waveguide_v1", "forced_induction_model": "harmonic_v1"}, "P3": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}, "P5": {"path_model": "waveguide_v1", "forced_induction_model": "timbre_map_v1"}}[architecture]
+    settings = _engine_settings(architecture)
     blocks: list[tuple[np.ndarray, np.ndarray, np.ndarray]] = []
     for trace in traces:
         engine = PersistentEventDomainEngine(copy.deepcopy(config), 48000, 960, ptr_enabled=True, **settings)
@@ -171,6 +254,106 @@ def _render_config_pcm(config: dict[str, Any], architecture: str, traces: list[A
     return blocks
 
 
+def _render_monitor_step_pcm(config: dict[str, Any], architecture: str) -> tuple[list[tuple[np.ndarray, np.ndarray, np.ndarray]], dict[str, float]]:
+    """Exercise the stateful monitor with a deterministic attack-to-release input.
+
+    The ordinary engine probe remains the default.  This renderer is intentionally
+    limited to monitor-policy controls: low-RMS blocks first raise makeup gain, then
+    higher-RMS blocks make desired gain lower than the held state and enter release.
+    """
+    from ..stage_w.persistent_engine import PersistentEventDomainEngine
+
+    engine = PersistentEventDomainEngine(copy.deepcopy(config), 48000, 960, ptr_enabled=True, **_engine_settings(architecture))
+    sample_rate = engine.sample_rate_hz
+    block_size = engine.block_size
+    sample_index = np.arange(block_size, dtype=np.float64)
+
+    def tone_block(rms: float, block_index: int) -> np.ndarray:
+        time_s = (block_index * block_size + sample_index) / sample_rate
+        mono = rms * np.sqrt(2.0) * np.sin(2.0 * np.pi * 233.0 * time_s)
+        return np.column_stack((mono, mono))
+
+    raw_blocks: list[np.ndarray] = []
+    monitor_blocks: list[np.ndarray] = []
+    attack_gain_start_db = float(engine._monitor_gain_db)
+    for index in range(60):
+        raw = tone_block(0.02, index)
+        raw_blocks.append(raw)
+        monitor_blocks.append(engine._monitor(raw))
+    attack_gain_end_db = float(engine._monitor_gain_db)
+    release_desired_gain_db = float(
+        np.clip(
+            20.0 * np.log10(engine._monitor_target_rms / 0.15),
+            engine._monitor_max_attenuation_db,
+            engine._monitor_max_makeup_db,
+        )
+    )
+    for index in range(60, 100):
+        raw = tone_block(0.15, index)
+        raw_blocks.append(raw)
+        monitor_blocks.append(engine._monitor(raw))
+    release_gain_end_db = float(engine._monitor_gain_db)
+    raw_pcm = np.concatenate(raw_blocks, axis=0)
+    monitor_pcm = np.concatenate(monitor_blocks, axis=0)
+    evidence = {
+        "attack_gain_start_db": attack_gain_start_db,
+        "attack_gain_end_db": attack_gain_end_db,
+        "release_desired_gain_db": release_desired_gain_db,
+        "release_gain_end_db": release_gain_end_db,
+    }
+    return [(raw_pcm, raw_pcm, monitor_pcm)], evidence
+
+
+def _render_parameter_probe(
+    item: SearchParameter, config: dict[str, Any], traces: list[Any]
+) -> tuple[list[tuple[np.ndarray, np.ndarray, np.ndarray]], dict[str, float]]:
+    if item.probe_mode == "engine":
+        return _render_config_pcm(config, item.architecture, traces), {}
+    if item.probe_mode == "monitor_step":
+        return _render_monitor_step_pcm(config, item.architecture)
+    raise ValueError(f"unsupported probe mode: {item.probe_mode}")
+
+
+def _build_parameter_probe_trace(scene: str, duration_s: float) -> Any:
+    """Build short, parameter-specific traces without changing bake-off scenes."""
+    from ..contracts import VehicleStateTrace
+    from ..stage_w.bakeoff import build_hellcat_bakeoff_trace
+
+    if not scene.startswith("y1_"):
+        return build_hellcat_bakeoff_trace(scene, duration_s)
+    count = max(12, int(round(duration_s * 50.0)))
+    time_s = np.arange(count, dtype=np.float64) / 50.0
+    phase = np.linspace(0.0, 1.0, count, dtype=np.float64)
+    if scene == "y1_high_slew_tip_in":
+        rpm = np.where(phase < 0.35, 1100.0, 4300.0)
+        load = np.where(phase < 0.35, 0.12, 0.92)
+        throttle = np.where(phase < 0.35, 0.10, 0.96)
+    elif scene == "y1_idle_dip_recovery":
+        rpm = np.interp(phase, (0.0, 0.24, 0.38, 0.68, 1.0), (980.0, 980.0, 650.0, 880.0, 860.0))
+        load = np.full(count, 0.12)
+        throttle = np.full(count, 0.03)
+    elif scene == "y1_boost_attack":
+        rpm = np.where(phase < 0.35, 2100.0, 4700.0)
+        load = np.where(phase < 0.35, 0.15, 0.95)
+        throttle = np.where(phase < 0.35, 0.12, 0.98)
+    elif scene == "y1_precharged_boost_release":
+        rpm = np.where(phase < 0.38, 4800.0, 2200.0)
+        load = np.where(phase < 0.38, 0.95, 0.14)
+        throttle = np.where(phase < 0.38, 0.98, 0.10)
+    elif scene == "y1_bypass_threshold_sweep":
+        rpm = np.full(count, 3200.0)
+        throttle = np.interp(phase, (0.0, 0.24, 0.50, 0.76, 1.0), (0.08, 0.16, 0.24, 0.32, 0.18))
+        load = 0.12 + 0.76 * throttle
+    elif scene == "y1_monitor_descending_gain":
+        rpm = np.where(phase < 0.35, 900.0, 4600.0)
+        load = np.where(phase < 0.35, 0.15, 0.94)
+        throttle = np.where(phase < 0.35, 0.12, 0.96)
+    else:
+        raise ValueError(f"unsupported Y1 probe scene: {scene}")
+    acceleration = np.gradient(rpm / 60.0, time_s)
+    return VehicleStateTrace(time_s, rpm, load, throttle, acceleration).validate()
+
+
 def run_parameter_reachability(
     output_root,
     traces: list[Any],
@@ -178,6 +361,8 @@ def run_parameter_reachability(
     *,
     architecture: str = "P2H",
     tolerance: float = 0.02,
+    parameter_names: tuple[str, ...] | list[str] | None = None,
+    write_artifact: bool = True,
 ) -> dict[str, Any]:
     """Render baseline and +/- delta per parameter; classify reachability.
 
@@ -190,16 +375,24 @@ def run_parameter_reachability(
     from ..stage_w.bakeoff import _render_architecture  # local import avoids cycles in docs
 
     root = output_root
-    root.mkdir(parents=True, exist_ok=True)
+    if write_artifact:
+        root.mkdir(parents=True, exist_ok=True)
     base_config = load_config("hellcat_v1")
     parameters = hellcat_search_parameters()
+    if parameter_names is not None:
+        requested = tuple(parameter_names)
+        available = {item.name for item in parameters}
+        unknown = [name for name in requested if name not in available]
+        if unknown:
+            raise KeyError(f"unknown selected search parameters: {unknown}")
+        selected = set(requested)
+        parameters = [item for item in parameters if item.name in selected]
 
     def _stem_blocks(blocks: list[tuple[np.ndarray, np.ndarray, np.ndarray]], stem: str) -> list[np.ndarray]:
         index = {"raw": 0, "post_ptr": 1, "monitor": 2}[stem]
         return [block[index] for block in blocks]
 
     results = []
-    from ..stage_w.bakeoff import build_hellcat_bakeoff_trace as build_scene_trace
     for item in parameters:
         record: dict[str, Any] = {
             "parameter": item.name,
@@ -211,13 +404,16 @@ def run_parameter_reachability(
             "probe_architecture": item.architecture,
             "probe_scenes": [scene for scene, _ in item.scenes],
             "probe_stem": item.stem,
+            "probe_mode": item.probe_mode,
         }
         movement: dict[str, float] = {}
         sha_changed = False
         finite_ok = True
-        item_traces = [build_scene_trace(scene, duration) for scene, duration in item.scenes]
-        item_baseline = _render_config_pcm(base_config, item.architecture, item_traces)
+        item_traces = [_build_parameter_probe_trace(scene, duration) for scene, duration in item.scenes]
+        item_baseline, probe_evidence = _render_parameter_probe(item, base_config, item_traces)
         item_baseline = _stem_blocks(item_baseline, item.stem)
+        if probe_evidence:
+            record["probe_evidence"] = probe_evidence
         baseline_bytes = b"".join(block.tobytes() for block in item_baseline)
         item_baseline_metrics = _pcm_metrics(item_baseline)
         for direction, sign in (("minus", -1.0), ("plus", 1.0)):
@@ -225,7 +421,7 @@ def run_parameter_reachability(
             config = copy.deepcopy(base_config)
             item.apply(config, value)
             try:
-                pcm_blocks = _render_config_pcm(config, item.architecture, item_traces)
+                pcm_blocks, _ = _render_parameter_probe(item, config, item_traces)
                 pcm_blocks = _stem_blocks(pcm_blocks, item.stem)
             except Exception as error:  # noqa: BLE001 - reachability must classify, not crash
                 record[f"{direction}_error"] = str(error)
@@ -268,19 +464,22 @@ def run_parameter_reachability(
         "architecture": architecture,
         "protocol": "per-parameter targeted probe: architecture + scenes + stem declared on each SearchParameter",
         "metric_stem": metric_stem,
+        "selected_parameter_names": list(parameter_names) if parameter_names is not None else None,
         "parameter_count": len(results),
         "reachable_count": sum(1 for item in results if item["status"] == PARAMETER_REACHABLE),
         "unreachable": [item["parameter"] for item in results if item["status"] != PARAMETER_REACHABLE],
         "results": results,
         "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
     }
-    write_json(root / "parameter_reachability.json", summary)
+    if write_artifact:
+        write_json(root / "parameter_reachability.json", summary)
     return summary
 
 
 def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
     """Metric vector over the concatenated scene set (post-PCM domain)."""
-    concat = np.concatenate([block.mean(axis=1) for block in blocks]) if blocks else np.zeros(1)
+    stereo = np.concatenate(blocks, axis=0) if blocks else np.zeros((1, 2))
+    concat = stereo.mean(axis=1)
     sample_rate = 48000
     metrics = raw_dynamic_metrics(concat, sample_rate)
     timbre = timbre_metrics(concat, sample_rate)
@@ -297,6 +496,22 @@ def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
         "roughness": timbre["roughness_proxy"],
         "flux": timbre["spectral_flux"],
         "centroid": timbre["spectral_centroid_hz"],
+        "early_energy_share": _window_energy_share(concat, 0.00, 0.35),
+        "transition_energy_share": _window_energy_share(concat, 0.35, 0.60),
+        "late_energy_share": _window_energy_share(concat, 0.65, 1.00),
+        "afterfire_timing": _afterfire_timing(concat, sample_rate),
+        "afterfire_path_balance": _afterfire_path_balance(stereo, sample_rate),
+        "early_path_balance": _early_path_balance(stereo, sample_rate),
+        "high_slew_high_band_share": _window_high_band_share(concat, sample_rate, 0.30, 0.40),
+        "idle_recovery_window_rms": _window_rms(concat, 0.35, 0.65),
+        "path_window_rms": _window_rms(concat, 0.15, 0.45),
+        "blower_window_rms": _window_rms(concat, 0.35, 0.70),
+        "boost_attack_envelope_rms": _window_rms(concat, 0.3625, 0.3750),
+        "boost_release_envelope_rms": _window_rms(concat, 0.3925, 0.4050),
+        "bypass_sweep_window_rms": _window_rms(concat, 0.20, 0.80),
+        "monitor_attack_envelope_rms": _window_rms(concat, 0.05, 0.30),
+        "monitor_release_envelope_rms": _window_rms(concat, 0.65, 0.95),
+        "monitor_makeup_envelope_rms": _window_rms(concat, 0.45, 0.55),
     }
 
 
