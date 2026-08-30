@@ -1238,3 +1238,9 @@ Rules:
 
 - A positive isolated stem/L2 delta proves parameter reachability only; it does not prove that a listener hears the intended Hellcat identity or that the sound is natural.
 - Anonymous blind packages and named engineering calibration packages are separate evidence products. Resolve file-to-vehicle feedback with a labelled package instead of opening sealed keys or guessing the mapping.
+
+# 2026-08-11 S12 Stage I planning lessons
+
+- A near-perfect blower/load correlation and sub-one-percent order error can coexist with a failed Hellcat likeness judgement. Order tracking proves motion and state coupling; the recognisable identity also depends on cluster width, intake/casing transfer, masking against the V8 exhaust and transient voicing.
+- A supercharger whine made more audible by upper-band gain can become a sharp electronic tone. Increase recognisability through deterministic phase ripple, moving sideband clusters and state-specific mixing while keeping 4–12 kHz guarded; do not substitute broadband treble, global gain or white noise.
+- Numbered listening feedback is not a vehicle binding. Persist the original words, require a named file ID before modifying Ferrari or RX-7, and freeze the SHA of any vehicle described only as “good but improvable” until Jovi supplies a concrete defect.

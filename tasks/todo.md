@@ -3553,3 +3553,19 @@ Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步�
 - Named package：`E:\Tesla_speed\review_packages\s12-stage-h-hellcat-perceptual-calibration-v1\`；first automatic-fail render preserved separately as `...-v1-r1-automated-fail`。
 - Final PCM reference distance：Hellcat average improvement `8.479%`，未达到 30%，所以自动状态仍为 `PARTIAL / AUTOMATED_GATE_FAIL`；这不阻止具名试听，但不允许 Profile Freeze。
 - Review：Stage H 首次执行目标是 `WAITING_FOR_JOVI_NAMED_CALIBRATION`，不是 Human PASS、Approved 或 Profile Freeze。
+
+## 2026-08-11 S12 Stage I Hellcat whine voicing planning
+
+- [x] I-P0：核对 Stage H `6ee4b1a`、干净 Git 状态、自动指标、试听包、任务账本和 Obsidian 当前状态。
+- [x] I-P1：把 Jovi 的 Hellcat 不像、目标“滋滋哟”、第 2 个高频刺耳/低频很好、第 3 个很好但可优化拆成明确车型目标与未绑定编号反馈。
+- [x] I-P2：检索 Stellantis/Dodge 官方资料和 SAE 增压器 NVH/进气传播资料，明确 2.36:1、14,600 rpm、电子旁通以及“排气轰鸣 + blower whine”的证据边界。
+- [x] I-P3：生成 Stage I 详细执行计划，限定为 Hellcat Track-S 音色/遮蔽/时序校准；Ferrari/RX-7 在 file_id 绑定前保持 SHA 冻结。
+- [ ] I0：收到 Jovi“执行此计划”授权后，从 `6ee4b1a` 建立独立 Stage I 工作树并冻结证据。
+- [ ] I1：先写 RED 测试，修正 attack/release/bypass 和纯音集中度的可观测性。
+- [ ] I2：实现 deterministic phase ripple、order cluster、intake/casing voicing 和 boost-history bypass。
+- [ ] I3：执行有界候选搜索，输出 A/B/C 三种合格取向，不由自动指标替代 Jovi 选择。
+- [ ] I4：发布具名 Stage I 包并停止于 `WAITING_FOR_JOVI_STAGE_I_NAMED_REVIEW`。
+- [ ] I5：收到具名反馈后最多三轮 v6→v7→v8；没有反馈不继续。
+- [ ] I6：具名门禁通过后才生成匿名包；自动 30% reference gate 失败时仍不得 Profile Freeze。
+
+Review：本轮只完成计划、在线资料核对和账本更新，未修改声源代码、未生成 Stage I 音频、未读取 sealed key、未 push/merge/rebase。执行计划见 `tasks/plans/2026-08-11-s12-stage-i-hellcat-whine-voicing-calibration.md`。
