@@ -1,0 +1,56 @@
+{
+  "schema": "s12.stage_y.jovi_guided_feedback.v1",
+  "source_schema": "s12-professional-jovi-guided-feedback-receipt-v2",
+  "source_package_manifest_sha256": "ecbe8dc92fa63ed00a76e1554a37a1ff452aaa6af0eff5b3bd3edbadcd64c2a1",
+  "evidence_level": "R3",
+  "automatic_tuning_eligible": false,
+  "profile_update": "FORBIDDEN",
+  "rows": {
+    "ferrari_458": {
+      "vehicle_id": "ferrari_458",
+      "software_agreement": "不符合",
+      "identity": 30,
+      "realism": 10,
+      "preference": "候选",
+      "problems": [
+        "太薄",
+        "太刺",
+        "机械感不足",
+        "回火不自然"
+      ],
+      "notes": "尤其是怠速声音不符合；加速频率变化尚可，但音色不对。",
+      "allowed_use": "bounded engineering ranking only"
+    },
+    "hellcat": {
+      "vehicle_id": "hellcat",
+      "software_agreement": "部分符合",
+      "identity": 60,
+      "realism": 50,
+      "preference": "参考",
+      "problems": [
+        "机械感不足",
+        "低频无冲击",
+        "固定电子哨声",
+        "回火不自然"
+      ],
+      "notes": "低频怠速轰鸣不如原车；增压啸叫有一定相似度，但音色仍不够对。",
+      "allowed_use": "bounded engineering ranking only"
+    },
+    "rx7_fd": {
+      "vehicle_id": "rx7_fd",
+      "software_agreement": "无法判断",
+      "identity": 10,
+      "realism": 10,
+      "preference": "候选",
+      "problems": [],
+      "notes": "试听参考片段含有人讲话，不是真正车型声浪。",
+      "allowed_use": "blocked until clean auditable reference is supplied",
+      "data_quality_status": "HUMAN_DATA_QUALITY_BLOCKED"
+    }
+  },
+  "limitations": [
+    "R3 feedback cannot open R1, Order, Profile Freeze, or OEM likeness claims",
+    "afterfire and shift timing cannot be tuned without synchronized RPM/load/throttle/gear",
+    "RX-7 speech-contaminated feedback is excluded from the objective"
+  ]
+}
