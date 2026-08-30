@@ -276,6 +276,7 @@ class PersistentEventDomainEngine:
         self._afterfire_fuel_reservoir = 0.0
         self._afterfire_temperature = 120.0
         self._afterfire_cooldown_remaining = 0
+        self._afterfire_lift_remaining = 0
         self._afterfire_pending_events: list[dict[str, Any]] = []
         self._afterfire_sequence = 0
         self._afterfire_dropped_events = 0
@@ -571,6 +572,20 @@ class PersistentEventDomainEngine:
         previous = float(self._boost_state)
         rise_tau = self._optional_time_constant("primary_spool_tau", 0.08)
         fall_tau = self._optional_time_constant("secondary_spool_tau", 0.25)
+        mixes = self.config.get("timbre_mixes") or {}
+        def _mix_tau(name: str) -> float | None:
+            node = mixes.get(name)
+            value = node["value"] if isinstance(node, dict) and "value" in node else node
+            if value is None:
+                return None
+            seconds = float(value)
+            return max(seconds, 1.0e-4) if seconds > 0.0 else None
+        attack = _mix_tau("boost_attack_s")
+        release = _mix_tau("boost_release_s")
+        if attack is not None:
+            rise_tau = attack
+        if release is not None:
+            fall_tau = release
         for index, value in enumerate(target):
             tau = rise_tau if value >= previous else fall_tau
             previous += (float(value) - previous) / max(tau * self.sample_rate_hz, 1.0)
@@ -629,13 +644,19 @@ class PersistentEventDomainEngine:
         dt = n / self.sample_rate_hz
         d_rpm = (float(state["rpm"]) - self._last_rpm) / max(dt, 1.0 / self.sample_rate_hz)
         d_throttle = (float(state["throttle"]) - self._last_throttle) / max(dt, 1.0 / self.sample_rate_hz)
+        throttle_drop = float(state["throttle"]) - self._last_throttle
+        if throttle_drop < -0.8:
+            self._afterfire_lift_remaining = 5
+        lift_active = (d_throttle < -0.8) or (self._afterfire_lift_remaining > 0)
+        if self._afterfire_lift_remaining > 0:
+            self._afterfire_lift_remaining -= 1
         reservoir_node = self.config.get("afterfire", {}).get("fuel_reservoir_rate") if isinstance(self.config.get("afterfire"), Mapping) else None
         reservoir_rate = reservoir_node.get("value", 0.72) if isinstance(reservoir_node, Mapping) else 0.72
         self._afterfire_fuel_reservoir = max(0.0, 0.995 * self._afterfire_fuel_reservoir + float(reservoir_rate) * float(state["load"]))
         self._afterfire_temperature = 120.0 + 780.0 * np.clip(float(state["rpm"]) / 6500.0, 0.0, 1.0) * (0.55 + 0.45 * float(state["load"]))
         self._afterfire_cooldown_remaining = max(0, self._afterfire_cooldown_remaining - n)
         oxygen = np.clip(0.82 - 0.48 * float(state["load"]) + 0.15 * (1.0 - float(state["throttle"])), 0.0, 1.0)
-        eligible = (d_throttle < -0.8) and d_rpm < -10.0 and float(state["rpm"]) >= float(unwrap(self.config, "afterfire.minimum_rpm")) and float(state["load"]) >= 0.35 and float(state["throttle"]) <= 0.18 and self._afterfire_temperature >= float(unwrap(self.config, "afterfire.minimum_temperature_c")) and self._afterfire_fuel_reservoir >= 0.2 and oxygen >= 0.15 and self._afterfire_cooldown_remaining == 0
+        eligible = lift_active and d_rpm < -10.0 and float(state["rpm"]) >= float(unwrap(self.config, "afterfire.minimum_rpm")) and float(state["load"]) >= 0.35 and float(state["throttle"]) <= 0.18 and self._afterfire_temperature >= float(unwrap(self.config, "afterfire.minimum_temperature_c")) and self._afterfire_fuel_reservoir >= 0.2 and oxygen >= 0.15 and self._afterfire_cooldown_remaining == 0
         if not eligible:
             return
         delay_s = float(unwrap(self.config, "afterfire.ignition_delay_s")) + 0.000001 * float(state["rpm"])
@@ -722,6 +743,7 @@ class PersistentEventDomainEngine:
 
     def _monitor(self, raw: np.ndarray) -> np.ndarray:
         rms = float(np.sqrt(np.mean(np.square(raw))))
+        self._monitor_gain_db = float(np.clip(self._monitor_gain_db, self._monitor_max_attenuation_db, self._monitor_max_makeup_db))
         desired = float(np.clip(20.0 * np.log10(self._monitor_target_rms / max(rms, 1.0e-9)), self._monitor_max_attenuation_db, self._monitor_max_makeup_db))
         time_constant = self._monitor_attack_s if desired > self._monitor_gain_db else self._monitor_release_s
         alpha = 1.0 - np.exp(-self.block_size / (time_constant * self.sample_rate_hz)) if time_constant > 0.0 else 1.0

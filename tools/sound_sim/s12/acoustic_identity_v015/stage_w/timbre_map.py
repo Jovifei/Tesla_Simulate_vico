@@ -112,6 +112,7 @@ def render_timbre_map(phase: np.ndarray, rpm: np.ndarray, load: np.ndarray, boos
     order_columns = [np.asarray(table.sample_many(rpm, load, boost, order), dtype=np.float64).reshape(-1) for order in (1.0, 2.0, 3.0, 5.0)]
     order_gains = np.column_stack(order_columns) * (gain * np.asarray(order_weight_vector, dtype=np.float64).reshape(1, -1))
     harmonic = inertia_gain * bypass_gain * (order_gains[:, 0] * np.sin(shaft) + order_gains[:, 1] * np.sin(2.0 * shaft) + order_gains[:, 2] * np.sin(3.0 * shaft) + order_gains[:, 3] * np.sin(5.0 * shaft))
+    harmonic = harmonic * (0.65 + 0.35 * sideband_mix)
     sideband = inertia_gain * bypass_gain * (0.16 + 0.24 * throttle) * order_gains[:, 1] * (np.sin(shaft * (1.0 + 0.015 * rpm_factor) + 0.13 * np.sin(phase * 0.5)) + 0.5 * np.sin(shaft * (1.0 - 0.015 * rpm_factor)))
     index = np.arange(phase.size, dtype=np.float64) + float(sample_counter)
     broadband = inertia_gain * bypass_gain[:, None] * order_gains[:, 2, None] * (0.55 * np.sin(index[:, None] * 0.017 + phase[:, None] * 0.31) + 0.35 * np.sin(index[:, None] * 0.041 + phase[:, None] * 0.73) + 0.10 * np.sin(index[:, None] * 0.097))
