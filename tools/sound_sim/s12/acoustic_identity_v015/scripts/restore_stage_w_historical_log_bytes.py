@@ -1,9 +1,9 @@
-"""Restore Stage-W historical raw-log bytes without changing their text.
+"""Restore Stage-W historical raw-log bytes from their receipt-bound commit.
 
-The W9 receipt predates a workspace line-ending conversion.  This script only
-rewrites a log when a deterministic newline/BOM representation of its current
-Unicode text exactly matches the SHA-256 already recorded by W9.  It never
-updates the receipt and never accepts a different logical log body.
+The W9 receipt records both the historical source commit and SHA-256 for each
+raw log. This script retrieves the exact Git blob from that commit and writes
+it back only when the blob hash equals the immutable receipt hash. It never
+updates expected hashes and never guesses replacement content.
 """
 
 from __future__ import annotations
@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[5]
 RECEIPT = (
@@ -30,15 +31,25 @@ def _sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _git_blob(commit: str, relative_path: str) -> bytes | None:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{relative_path}"],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
 def _candidate_encodings(raw: bytes) -> list[tuple[str, bytes]]:
-    """Return byte representations that preserve decoded text exactly."""
+    """Fallback byte representations that preserve decoded text exactly."""
     candidates: list[tuple[str, bytes]] = [("current", raw)]
-    decoders = (
+    for decoder_name, encoding in (
         ("utf8", "utf-8"),
         ("utf8-sig", "utf-8-sig"),
         ("utf16le", "utf-16-le"),
-    )
-    for decoder_name, encoding in decoders:
+    ):
         try:
             text = raw.decode(encoding)
         except UnicodeDecodeError:
@@ -65,12 +76,18 @@ def _candidate_encodings(raw: bytes) -> list[tuple[str, bytes]]:
 
 def restore(*, apply: bool) -> dict[str, object]:
     receipt = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    historical_head = str(
+        receipt.get("head")
+        or receipt.get("audit_provenance", {}).get("tested_code_evidence_head")
+        or ""
+    )
     expected_logs = receipt.get("checks", {}).get("logs", {})
     results: dict[str, object] = {}
     unresolved: dict[str, object] = {}
     changed: list[str] = []
     for name, expected in expected_logs.items():
         path = LOG_ROOT / name
+        relative = path.relative_to(ROOT).as_posix()
         if not path.is_file():
             unresolved[name] = {"status": "MISSING", "expected": expected}
             continue
@@ -79,21 +96,29 @@ def restore(*, apply: bool) -> dict[str, object]:
         if observed == expected:
             results[name] = {"status": "ALREADY_MATCHED", "sha256": observed}
             continue
-        match = next(
-            (
-                (label, data)
-                for label, data in _candidate_encodings(raw)
-                if _sha(data) == expected
-            ),
-            None,
-        )
+
+        match: tuple[str, bytes] | None = None
+        historical = _git_blob(historical_head, relative) if historical_head else None
+        if historical is not None and _sha(historical) == expected:
+            match = (f"git_blob:{historical_head}", historical)
+        if match is None:
+            match = next(
+                (
+                    (label, data)
+                    for label, data in _candidate_encodings(raw)
+                    if _sha(data) == expected
+                ),
+                None,
+            )
         if match is None:
             unresolved[name] = {
-                "status": "LOGICAL_CONTENT_OR_UNSUPPORTED_ENCODING_MISMATCH",
+                "status": "RECEIPT_BOUND_GIT_BLOB_NOT_FOUND",
+                "historical_head": historical_head,
                 "expected": expected,
                 "observed": observed,
             }
             continue
+
         label, data = match
         results[name] = {
             "status": "RESTORABLE" if not apply else "RESTORED",
@@ -107,14 +132,15 @@ def restore(*, apply: bool) -> dict[str, object]:
                 raise RuntimeError(f"post-write SHA mismatch: {name}")
             changed.append(name)
     return {
-        "schema": "s12.stage_y.historical_log_byte_restore.v1",
+        "schema": "s12.stage_y.historical_log_byte_restore.v2",
         "receipt": str(RECEIPT.relative_to(ROOT).as_posix()),
+        "historical_head": historical_head,
         "apply": apply,
         "results": results,
         "unresolved": unresolved,
         "changed": changed,
         "passed": not unresolved,
-        "policy": "receipt SHA is immutable; only text-preserving byte representations are accepted",
+        "policy": "receipt and hashes are immutable; only the receipt-bound Git blob is authoritative",
     }
 
 
