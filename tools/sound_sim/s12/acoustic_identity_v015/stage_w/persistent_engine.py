@@ -644,8 +644,7 @@ class PersistentEventDomainEngine:
         dt = n / self.sample_rate_hz
         d_rpm = (float(state["rpm"]) - self._last_rpm) / max(dt, 1.0 / self.sample_rate_hz)
         d_throttle = (float(state["throttle"]) - self._last_throttle) / max(dt, 1.0 / self.sample_rate_hz)
-        throttle_drop = float(state["throttle"]) - self._last_throttle
-        if throttle_drop < -0.8:
+        if d_throttle < -0.8:
             self._afterfire_lift_remaining = 5
         lift_active = (d_throttle < -0.8) or (self._afterfire_lift_remaining > 0)
         if self._afterfire_lift_remaining > 0:
@@ -767,6 +766,7 @@ class PersistentEventDomainEngine:
             "afterfire_fuel_reservoir": self._afterfire_fuel_reservoir,
             "afterfire_temperature": self._afterfire_temperature,
             "afterfire_cooldown_remaining": self._afterfire_cooldown_remaining,
+            "afterfire_lift_remaining": self._afterfire_lift_remaining,
             "afterfire_pending_events": copy.deepcopy(self._afterfire_pending_events),
             "afterfire_sequence": self._afterfire_sequence,
             "afterfire_dropped_events": self._afterfire_dropped_events,
@@ -820,7 +820,7 @@ class PersistentEventDomainEngine:
             "omega_ripple_sum_sq", "click_max_boundary_jump", "click_sum_sq", "timbre_inertia_state",
         ):
             setattr(self, f"_{name}", state[name])
-        for name in ("bov_event_count", "afterfire_cooldown_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
+        for name in ("bov_event_count", "afterfire_cooldown_remaining", "afterfire_lift_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
             setattr(self, f"_{name}", state[name])
         self._afterfire_location_counts = state["afterfire_location_counts"]
         self._last_afterfire_route = state["afterfire_route"]
@@ -858,7 +858,7 @@ class PersistentEventDomainEngine:
     def _validate_restore_snapshot(self, snapshot: Mapping[str, Any]) -> dict[str, Any]:
         required = {
             "schema_version", "sample_counter", "pll", "pending_combustion_torque", "last_rpm", "last_throttle", "last_load",
-            "afterfire_fuel_reservoir", "afterfire_temperature", "afterfire_cooldown_remaining", "afterfire_pending_events",
+            "afterfire_fuel_reservoir", "afterfire_temperature", "afterfire_cooldown_remaining", "afterfire_lift_remaining", "afterfire_pending_events",
             "afterfire_sequence", "afterfire_dropped_events", "collector_pressure", "afterfire_pressure_energy_map", "event_count",
             "afterfire_event_count", "afterfire_location_counts", "afterfire_route", "combustion_torque_event_count", "boost_state",
             "bov_state", "bov_event_count", "blower_phase", "turbo_phase", "omega_ripple_sum_sq", "omega_ripple_sample_count",
@@ -897,7 +897,7 @@ class PersistentEventDomainEngine:
         state: dict[str, Any] = {"sample_counter": sample_counter, "pll": (phase, omega, pll["initialized"], pll_count), "pending_combustion_torque": pending}
         for name in ("last_rpm", "last_throttle", "last_load", "boost_state", "bov_state", "blower_phase", "turbo_phase", "afterfire_fuel_reservoir", "afterfire_temperature", "collector_pressure", "monitor_gain_db", "omega_ripple_sum_sq", "click_max_boundary_jump", "click_sum_sq", "timbre_inertia_state"):
             state[name] = _finite_scalar(snapshot[name], name)
-        for name in ("bov_event_count", "afterfire_cooldown_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
+        for name in ("bov_event_count", "afterfire_cooldown_remaining", "afterfire_lift_remaining", "event_count", "afterfire_event_count", "combustion_torque_event_count", "omega_ripple_sample_count", "afterfire_sequence", "afterfire_dropped_events", "click_count"):
             state[name] = _counter(snapshot[name], name)
         counts = _mapping(snapshot["afterfire_location_counts"], "afterfire location counts")
         if set(counts) != {"primary", "collector", "bank_collector", "central_collector"}:
