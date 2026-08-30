@@ -1,0 +1,233 @@
+name: S12 Stage Y Final Validation v3
+
+on:
+  push:
+    branches:
+      - agent/s12-stage-y-closed-loop-remediation
+    paths:
+      - ".github/workflows/s12-stage-y-final-validation-v3.yml"
+      - "tools/sound_sim/s12/**"
+      - "tasks/reports/runtime/s12-stage-w/logs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: s12-stage-y-final-validation-v3
+  cancel-in-progress: true
+
+jobs:
+  validate-and-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        id: dependencies
+        continue-on-error: true
+        run: >-
+          python -m pip install --upgrade
+          pip numpy scipy pytest pytest-json-report jsonschema matplotlib pyyaml
+          pandas soundfile pyloudnorm mosqito==1.2.1
+
+      - name: Initialize evidence directory
+        if: always()
+        run: mkdir -p .stage_y_ci
+
+      - name: Restore and verify historical logs
+        id: history
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python tools/sound_sim/s12/acoustic_identity_v015/scripts/restore_stage_w_historical_log_bytes.py --apply \
+            2>&1 | tee .stage_y_ci/history.log
+          git diff --quiet -- tasks/reports/runtime/s12-stage-w/logs
+
+      - name: Compile package
+        id: compile
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015 \
+            2>&1 | tee .stage_y_ci/compile.log
+
+      - name: Focused Stage X/Y tests
+        id: focused
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_selection.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_search.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_remediation.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_hybrid_calibration.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_calibration_bundle.py \
+            --junitxml=.stage_y_ci/focused.xml \
+            2>&1 | tee .stage_y_ci/focused.log
+
+      - name: Full S12 Python regression
+        id: full
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/tests \
+            tools/sound_sim/s12/acoustic_identity_v015/tests \
+            --junitxml=.stage_y_ci/full.xml \
+            2>&1 | tee .stage_y_ci/full.log
+
+      - name: Track-P guard
+        id: trackp
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py \
+            2>&1 | tee .stage_y_ci/track_p.log
+
+      - name: Generate PASS/FAIL receipt
+        if: always()
+        shell: bash
+        env:
+          TESTED_HEAD: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          HISTORY_OUTCOME: ${{ steps.history.outcome }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+          FOCUSED_OUTCOME: ${{ steps.focused.outcome }}
+          FULL_OUTCOME: ${{ steps.full.outcome }}
+          TRACKP_OUTCOME: ${{ steps.trackp.outcome }}
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          root = Path('.stage_y_ci')
+          outcomes = {
+              'dependencies': os.environ['DEPENDENCIES_OUTCOME'],
+              'historical_log_integrity': os.environ['HISTORY_OUTCOME'],
+              'compileall': os.environ['COMPILE_OUTCOME'],
+              'focused_tests': os.environ['FOCUSED_OUTCOME'],
+              'full_s12_tests': os.environ['FULL_OUTCOME'],
+              'track_p': os.environ['TRACKP_OUTCOME'],
+          }
+
+          def xml_summary(path: Path) -> dict:
+              if not path.is_file():
+                  return {'present': False, 'tests': 0, 'failures': 0, 'errors': 0, 'skipped': 0, 'failed_cases': []}
+              node = ET.parse(path).getroot()
+              suites = [node] if node.tag == 'testsuite' else list(node.findall('testsuite'))
+              failed = []
+              for suite in suites:
+                  for case in suite.findall('testcase'):
+                      if case.find('failure') is not None or case.find('error') is not None:
+                          failed.append(f"{case.get('classname')}::{case.get('name')}")
+              return {
+                  'present': True,
+                  'tests': sum(int(float(s.get('tests', '0'))) for s in suites),
+                  'failures': sum(int(float(s.get('failures', '0'))) for s in suites),
+                  'errors': sum(int(float(s.get('errors', '0'))) for s in suites),
+                  'skipped': sum(int(float(s.get('skipped', '0'))) for s in suites),
+                  'failed_cases': failed[:50],
+              }
+
+          def log_record(path: Path) -> dict:
+              if not path.is_file():
+                  return {'present': False, 'tail': []}
+              data = path.read_bytes()
+              text = data.decode('utf-8', errors='replace').splitlines()
+              return {
+                  'present': True,
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'tail': text[-40:],
+              }
+
+          passed = all(value == 'success' for value in outcomes.values())
+          payload = {
+              'schema': 's12.stage_y.ci_acceptance.v3',
+              'status': 'PASS' if passed else 'FAIL',
+              'tested_head': os.environ['TESTED_HEAD'],
+              'workflow_run_id': int(os.environ['RUN_ID']),
+              'completed_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'outcomes': outcomes,
+              'focused': xml_summary(root / 'focused.xml'),
+              'full_s12': xml_summary(root / 'full.xml'),
+              'logs': {
+                  'history': log_record(root / 'history.log'),
+                  'compile': log_record(root / 'compile.log'),
+                  'focused': log_record(root / 'focused.log'),
+                  'full': log_record(root / 'full.log'),
+                  'track_p': log_record(root / 'track_p.log'),
+              },
+              'qualification_boundary': {
+                  'real_r1_reference': 'MISSING',
+                  'real_derived_vehicle_assets': 'NOT_GENERATED',
+                  'human_audition': 'PENDING',
+                  'profile_freeze': False,
+                  'oem_match_claim': False,
+              },
+              'scope': 'software feedback-loop validation; synthetic; uncalibrated; not OEM reproduction',
+          }
+          out = Path('tasks/reports/runtime/s12-stage-y/stage_y_ci_acceptance_receipt_v3.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit validation receipt
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tasks/reports/runtime/s12-stage-y/stage_y_ci_acceptance_receipt_v3.json
+          if ! git diff --cached --quiet; then
+            git commit -m "test(s12): record Stage Y v3 validation receipt"
+            git push origin HEAD:agent/s12-stage-y-closed-loop-remediation
+          fi
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s12-stage-y-validation-v3-${{ github.sha }}
+          path: .stage_y_ci/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Enforce final result
+        if: always()
+        shell: bash
+        env:
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          HISTORY_OUTCOME: ${{ steps.history.outcome }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+          FOCUSED_OUTCOME: ${{ steps.focused.outcome }}
+          FULL_OUTCOME: ${{ steps.full.outcome }}
+          TRACKP_OUTCOME: ${{ steps.trackp.outcome }}
+        run: |
+          for result in "$DEPENDENCIES_OUTCOME" "$HISTORY_OUTCOME" "$COMPILE_OUTCOME" "$FOCUSED_OUTCOME" "$FULL_OUTCOME" "$TRACKP_OUTCOME"; do
+            if [ "$result" != "success" ]; then
+              exit 1
+            fi
+          done
