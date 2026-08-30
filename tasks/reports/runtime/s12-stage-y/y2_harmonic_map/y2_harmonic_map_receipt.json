@@ -18,28 +18,25 @@
     "embedded_pcm": false
   },
   "verification": {
-    "focused_pytest": {
-      "command": "D:\\Python\\Python3.14\\python.exe -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_tip_in_and_shift_stems_change_sha tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py::test_dp_chain_ablation_changes_sha tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py -k not forced_induction_boost_and_bov_state_persist_across_blocks tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q",
-      "started_at_utc": "2026-08-30T10:59:02.0947605Z",
-      "ended_at_utc": "2026-08-30T10:59:26.8303616Z",
+    "final_postfix_focused_pytest": {
+      "command": "D:\\Python\\Python3.14\\python.exe -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q",
+      "source_head": "2dd4ad639617c0c6e2c9a816cfc91d9cecb1ba3d",
+      "started_at_utc": "2026-08-30T11:20:38.4610035Z",
+      "ended_at_utc": "2026-08-30T11:20:46.8950954Z",
       "exit_code": 0,
-      "result": "16 passed, 1 deselected in 24.08s",
-      "stdout_log": "tasks/reports/runtime/s12-stage-y/logs/y2-focused-green-20260830T191300+0800.stdout.log",
-      "stdout_log_sha256": "B12372B072816048BFBA4AD2504C0B25907BE9501D5811A3A5880041FCFEB153"
+      "result": "9 passed in 7.75s",
+      "stdout_log": "tasks/reports/runtime/s12-stage-y/logs/y2-postfix-9-20260830T112038431Z.stdout.log",
+      "stdout_log_sha256": "5B081BA812077D6BAEFD0E273493D822EEF95E4C03EBE72AC9288A990E42A4ED",
+      "stderr_log": "tasks/reports/runtime/s12-stage-y/logs/y2-postfix-9-20260830T112038431Z.stderr.log",
+      "stderr_log_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
     },
-    "compileall": {
-      "command": "D:\\Python\\Python3.14\\python.exe -m compileall -q Stage-Y and touched Y2 modules",
-      "started_at_utc": "2026-08-30T10:55:04.0309235Z",
-      "ended_at_utc": "2026-08-30T10:55:04.1459007Z",
-      "exit_code": 0
-    },
-    "map_json_finite_nonnegative": {
-      "command": "JSON finite/nonnegative validation",
-      "started_at_utc": "2026-08-30T10:55:04.0405290Z",
-      "ended_at_utc": "2026-08-30T10:55:04.1050481Z",
-      "exit_code": 0
-    },
-    "git_diff_check": {"command": "git diff --check", "exit_code": 0}
+    "strict_map_validation": {
+      "facts": "loader rejects missing path, invalid JSON, wrong schema, fixture-SHA mismatch, and nonfinite values; map inventory is deterministic and contains no PCM",
+      "map_file_sha256": "BA2687E0028F1588D0EFDC09156D096AE099524536B429B56302C8E32D00B491"
+    }
+  },
+  "historical_evidence": {
+    "pre_fix_compatibility_run": "The former 16 passed, 1 deselected run is retained only as historical compatibility evidence and is not final Y2 postfix evidence."
   },
   "deferred_out_of_scope_failures": [
     "Y4 equal-power crossfade test failure",

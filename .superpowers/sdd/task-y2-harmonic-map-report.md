@@ -25,3 +25,9 @@ The receipt is `tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_ma
 - Added explicit fail-closed tests for a nonexistent map path and syntactically invalid JSON. Existing wrong-schema, fixture-SHA, and nonfinite-value checks remain in place.
 - TDD evidence: before the production edit, the three new focused cases produced `1 failed, 2 passed`; the expected failure was `KeyError: 'fitted_timbre_map'` in the package configuration contract. After the edit, those cases passed `3 passed`.
 - Focused verification: `test_s12_stage_y_harmonic_map.py` passed `8 passed in 4.94s`; `test_y1_default_p3_render_matches_fixed_pre_task_parent_golden` passed `1 passed in 2.96s`; the existing Stage-Y package render smoke completed with no failure output. No Y6 test or production module was changed, and no Y6 failure was observed.
+
+## Y2 postfix evidence repair (2026-08-30)
+
+The final Y2 postfix evidence is bound to source HEAD `2dd4ad639617c0c6e2c9a816cfc91d9cecb1ba3d`, before this metadata-only commit. One focused execution ran the complete Y2 harmonic-map test file and the Y1 P3 parent golden: `9 passed in 7.75s` (UTC `2026-08-30T11:20:38.4610035Z` to `2026-08-30T11:20:46.8950954Z`, exit 0). Its stdout and empty stderr are hash-bound in `y2_harmonic_map_receipt.json`.
+
+The previously recorded `16 passed, 1 deselected` run remains historical compatibility context only; it is not the final Y2 postfix evidence. The deterministic fixture map SHA remains `BA2687E0028F1588D0EFDC09156D096AE099524536B429B56302C8E32D00B491`; its strict fail-closed scope and non-OEM/synthetic boundaries are unchanged. Y2 remains `PASS` and Y3 remains `IN_PROGRESS`.
