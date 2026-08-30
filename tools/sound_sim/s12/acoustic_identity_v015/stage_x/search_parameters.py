@@ -100,28 +100,57 @@ def _window_high_band_share(audio: np.ndarray, sample_rate: int, start: float, e
     return _high_band(samples[lower:upper], sample_rate)
 
 
-def _afterfire_timing(audio: np.ndarray, sample_rate: int) -> float:
-    """Return the burst peak offset after the known 40%-of-scene lift."""
-    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
-    lower = int(round(0.40 * samples.size))
-    upper = int(round(0.70 * samples.size))
-    window = np.square(samples[lower:upper])
-    if window.size == 0:
-        return 0.0
-    smoothing = max(1, int(round(0.002 * sample_rate)))
-    envelope = np.convolve(window, np.ones(smoothing, dtype=np.float64) / smoothing, mode="same")
-    return float(np.argmax(envelope) / sample_rate)
+def _afterfire_residual_window(audio: np.ndarray, sample_rate: int) -> tuple[np.ndarray, int, int, int]:
+    """Locate one residual afterfire packet relative to the declared 40% lift.
 
-
-def _afterfire_path_balance(audio: np.ndarray, sample_rate: int) -> float:
-    del sample_rate
+    Inputs are always actual post-PTR PCM minus the same render with only
+    ``afterfire.gain`` set to zero.  This removes combustion before selecting a
+    short event-local analysis window; it is not a whole-scene loudness proxy.
+    """
     stereo = np.asarray(audio, dtype=np.float64)
-    if stereo.ndim != 2 or stereo.shape[1] != 2:
-        return 0.0
-    lower = int(round(0.40 * stereo.shape[0]))
-    upper = int(round(0.70 * stereo.shape[0]))
-    energy = np.sum(np.square(stereo[lower:upper]), axis=0)
+    if stereo.ndim != 2 or stereo.shape[1] != 2 or stereo.shape[0] == 0:
+        return np.zeros((1, 2), dtype=np.float64), 0, 0, 0
+    lift_start = int(round(0.40 * stereo.shape[0]))
+    energy = np.sum(np.square(stereo), axis=1)
+    smoothing = max(1, int(round(0.001 * sample_rate)))
+    envelope = np.convolve(energy, np.ones(smoothing, dtype=np.float64) / smoothing, mode="same")
+    post_lift = envelope[lift_start:]
+    if post_lift.size == 0 or float(np.max(post_lift)) <= 1.0e-18:
+        return np.zeros((1, 2), dtype=np.float64), lift_start, lift_start, lift_start
+    peak = lift_start + int(np.argmax(post_lift))
+    threshold = max(float(envelope[peak]) * 0.02, 1.0e-18)
+    onset = peak
+    while onset > lift_start and envelope[onset - 1] >= threshold:
+        onset -= 1
+    window_end = min(stereo.shape[0], onset + max(1, int(round(0.055 * sample_rate))))
+    return stereo[onset:window_end], onset, peak, lift_start
+
+
+def _afterfire_residual_energy_envelope(audio: np.ndarray, sample_rate: int) -> float:
+    window, _, _, _ = _afterfire_residual_window(audio, sample_rate)
+    return float(np.sqrt(np.mean(np.square(window))))
+
+
+def _afterfire_residual_onset(audio: np.ndarray, sample_rate: int) -> float:
+    _, onset, _, lift_start = _afterfire_residual_window(audio, sample_rate)
+    return float((onset - lift_start) / sample_rate)
+
+
+def _afterfire_residual_peak_offset(audio: np.ndarray, sample_rate: int) -> float:
+    _, _, peak, lift_start = _afterfire_residual_window(audio, sample_rate)
+    return float((peak - lift_start) / sample_rate)
+
+
+def _afterfire_residual_path_balance(audio: np.ndarray, sample_rate: int) -> float:
+    window, _, _, _ = _afterfire_residual_window(audio, sample_rate)
+    energy = np.sum(np.square(window), axis=0)
     return float((energy[0] - energy[1]) / max(float(np.sum(energy)), 1.0e-12))
+
+
+def _afterfire_residual_crest(audio: np.ndarray, sample_rate: int) -> float:
+    window, _, _, _ = _afterfire_residual_window(audio, sample_rate)
+    rms = float(np.sqrt(np.mean(np.square(window))))
+    return float(np.max(np.abs(window)) / max(rms, 1.0e-12))
 
 
 def _early_path_balance(audio: np.ndarray, sample_rate: int) -> float:
@@ -151,7 +180,11 @@ METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "early_energy_share": lambda audio, sr: _window_energy_share(audio, 0.00, 0.35),
     "transition_energy_share": lambda audio, sr: _window_energy_share(audio, 0.35, 0.60),
     "late_energy_share": lambda audio, sr: _window_energy_share(audio, 0.65, 1.00),
-    "afterfire_timing": _afterfire_timing,
+    "afterfire_residual_energy_envelope": _afterfire_residual_energy_envelope,
+    "afterfire_residual_onset": _afterfire_residual_onset,
+    "afterfire_residual_peak_offset": _afterfire_residual_peak_offset,
+    "afterfire_residual_path_balance": _afterfire_residual_path_balance,
+    "afterfire_residual_crest": _afterfire_residual_crest,
     "early_path_balance": _early_path_balance,
     "high_slew_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.30, 0.40),
     "idle_recovery_window_rms": lambda audio, sr: _window_rms(audio, 0.775, 0.80),
@@ -203,13 +236,13 @@ def hellcat_search_parameters() -> list[SearchParameter]:
 
         SearchParameter("bypass_threshold", 0.20, 0.08, lambda c, v: c.setdefault("timbre_mixes", {}).update({"bypass_threshold": _fixed(v, "throttle", "stage x bypass threshold")}), ("bypass_sweep_window_rms",), (), unit="throttle", architecture="P3", scenes=(("y1_bypass_threshold_sweep", 1.6),)),
 
-        SearchParameter("afterfire_reservoir_rate", 0.72, 0.20, lambda c, v: c["afterfire"].update({"fuel_reservoir_rate": _fixed(v, "normalized", "stage x reservoir rate")}), ("transition_energy_share",), (), unit="normalized", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
+        SearchParameter("afterfire_reservoir_rate", 0.72, 0.20, lambda c, v: c["afterfire"].update({"fuel_reservoir_rate": _fixed(v, "normalized", "stage x reservoir rate")}), ("afterfire_residual_energy_envelope",), (), unit="normalized", architecture="P3", scenes=(("afterfire_eligible", 2.5),), probe_mode="afterfire_residual"),
 
-        SearchParameter("afterfire_ignition_delay", 0.004, 0.0015, lambda c, v: _set_parameter(c, "afterfire.ignition_delay_s", v), ("afterfire_timing",), (), unit="s", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
+        SearchParameter("afterfire_ignition_delay", 0.004, 0.0015, lambda c, v: _set_parameter(c, "afterfire.ignition_delay_s", v), ("afterfire_residual_onset", "afterfire_residual_peak_offset"), (), unit="s", architecture="P3", scenes=(("afterfire_eligible", 2.5),), probe_mode="afterfire_residual"),
 
-        SearchParameter("afterfire_location_mix", 0.0, 1.0, lambda c, v: _set_parameter(c, "afterfire.event_location", "bank_collector" if v >= 1.0 else "primary"), ("afterfire_path_balance",), (), unit="mode", note="primary vs bank collector routing", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
+        SearchParameter("afterfire_location_mix", 0.0, 1.0, lambda c, v: _set_parameter(c, "afterfire.event_location", "central_collector" if v < 0.0 else "bank_collector"), ("afterfire_residual_path_balance", "afterfire_residual_peak_offset"), (), unit="mode", note="baseline primary, low central collector, high bank collector routing", architecture="P3", scenes=(("afterfire_eligible", 2.5),), probe_mode="afterfire_residual"),
 
-        SearchParameter("afterfire_energy", 0.06, 0.02, lambda c, v: _set_parameter(c, "afterfire.gain", v), ("transition_energy_share", "crest"), (), unit="normalized_gain", architecture="P3", scenes=(("afterfire_eligible", 2.5),)),
+        SearchParameter("afterfire_energy", 0.06, 0.02, lambda c, v: _set_parameter(c, "afterfire.gain", v), ("afterfire_residual_energy_envelope", "afterfire_residual_crest"), (), unit="normalized_gain", architecture="P3", scenes=(("afterfire_eligible", 2.5),), probe_mode="afterfire_residual"),
 
         SearchParameter("monitor_attack", 0.12, 0.05, lambda c, v: c.setdefault("monitor_policy", {}).update({"attack_s": _fixed(v, "s", "stage x monitor attack")}), ("monitor_attack_envelope_rms",), (), unit="s", stem="monitor", probe_mode="monitor_step"),
 
@@ -293,7 +326,7 @@ def _render_monitor_step_pcm(config: dict[str, Any], architecture: str) -> tuple
 def _render_parameter_probe(
     item: SearchParameter, config: dict[str, Any], traces: list[Any]
 ) -> tuple[list[tuple[np.ndarray, np.ndarray, np.ndarray]], dict[str, float]]:
-    if item.probe_mode == "engine":
+    if item.probe_mode in {"engine", "afterfire_residual"}:
         return _render_config_pcm(config, item.architecture, traces), {}
     if item.probe_mode == "monitor_step":
         return _render_monitor_step_pcm(config, item.architecture)
@@ -378,6 +411,31 @@ def run_parameter_reachability(
         index = {"raw": 0, "post_ptr": 1, "monitor": 2}[stem]
         return [block[index] for block in blocks]
 
+    def _render_reachability_probe(
+        item: SearchParameter, config: dict[str, Any], item_traces: list[Any]
+    ) -> tuple[list[np.ndarray], list[np.ndarray], dict[str, Any]]:
+        """Return selected-stem PCM for SHA and metric PCM for the declared probe.
+
+        Afterfire uses actual selected post-PTR PCM for the byte-level acceptance
+        gate, but subtracts an otherwise identical zero-afterfire-gain render for
+        metric evaluation.  Other probes use the selected stem for both.
+        """
+        blocks, evidence = _render_parameter_probe(item, config, item_traces)
+        selected_stem = _stem_blocks(blocks, item.stem)
+        if item.probe_mode != "afterfire_residual":
+            return selected_stem, selected_stem, evidence
+        control_config = copy.deepcopy(config)
+        _set_parameter(control_config, "afterfire.gain", 0.0)
+        control_blocks = _render_config_pcm(control_config, item.architecture, item_traces)
+        control_stem = _stem_blocks(control_blocks, item.stem)
+        if len(selected_stem) != len(control_stem) or any(actual.shape != control.shape for actual, control in zip(selected_stem, control_stem)):
+            raise ValueError("afterfire residual control shape differs from selected post-PTR PCM")
+        residual = [actual - control for actual, control in zip(selected_stem, control_stem)]
+        return selected_stem, residual, evidence | {
+            "afterfire_gain_zero_control": True,
+            "afterfire_residual_domain": "selected_post_ptr_minus_identical_gain_zero_control",
+        }
+
     results = []
     for item in parameters:
         record: dict[str, Any] = {
@@ -395,19 +453,17 @@ def run_parameter_reachability(
         movement: dict[str, float] = {}
         direction_evidence: dict[str, dict[str, Any]] = {}
         item_traces = [_build_parameter_probe_trace(scene, duration) for scene, duration in item.scenes]
-        item_baseline, probe_evidence = _render_parameter_probe(item, base_config, item_traces)
-        item_baseline = _stem_blocks(item_baseline, item.stem)
+        item_baseline, item_baseline_metrics_pcm, probe_evidence = _render_reachability_probe(item, base_config, item_traces)
         if probe_evidence:
             record["probe_evidence"] = probe_evidence
         baseline_bytes = b"".join(block.tobytes() for block in item_baseline)
-        item_baseline_metrics = _pcm_metrics(item_baseline)
+        item_baseline_metrics = _pcm_metrics(item_baseline_metrics_pcm)
         for direction, sign in (("minus", -1.0), ("plus", 1.0)):
             value = item.baseline + sign * item.delta
             config = copy.deepcopy(base_config)
             item.apply(config, value)
             try:
-                pcm_blocks, _ = _render_parameter_probe(item, config, item_traces)
-                pcm_blocks = _stem_blocks(pcm_blocks, item.stem)
+                pcm_blocks, metric_pcm_blocks, _ = _render_reachability_probe(item, config, item_traces)
             except Exception as error:  # noqa: BLE001 - reachability must classify, not crash
                 direction_evidence[direction] = {
                     "value": float(value),
@@ -428,7 +484,7 @@ def run_parameter_reachability(
                 continue
             variant_bytes = b"".join(block.tobytes() for block in pcm_blocks)
             sha_changed = hashlib.sha256(variant_bytes).hexdigest() != hashlib.sha256(baseline_bytes).hexdigest()
-            variant_metrics = _pcm_metrics(pcm_blocks)
+            variant_metrics = _pcm_metrics(metric_pcm_blocks)
             direction_movement: dict[str, float] = {}
             for metric, value_pair in variant_metrics.items():
                 base_value = item_baseline_metrics[metric]
@@ -508,8 +564,11 @@ def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
         "early_energy_share": _window_energy_share(concat, 0.00, 0.35),
         "transition_energy_share": _window_energy_share(concat, 0.35, 0.60),
         "late_energy_share": _window_energy_share(concat, 0.65, 1.00),
-        "afterfire_timing": _afterfire_timing(concat, sample_rate),
-        "afterfire_path_balance": _afterfire_path_balance(stereo, sample_rate),
+        "afterfire_residual_energy_envelope": _afterfire_residual_energy_envelope(stereo, sample_rate),
+        "afterfire_residual_onset": _afterfire_residual_onset(stereo, sample_rate),
+        "afterfire_residual_peak_offset": _afterfire_residual_peak_offset(stereo, sample_rate),
+        "afterfire_residual_path_balance": _afterfire_residual_path_balance(stereo, sample_rate),
+        "afterfire_residual_crest": _afterfire_residual_crest(stereo, sample_rate),
         "early_path_balance": _early_path_balance(stereo, sample_rate),
         "high_slew_high_band_share": _window_high_band_share(concat, sample_rate, 0.30, 0.40),
         "idle_recovery_window_rms": _window_rms(concat, 0.775, 0.80),

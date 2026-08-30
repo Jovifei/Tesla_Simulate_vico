@@ -731,7 +731,8 @@ class PersistentEventDomainEngine:
         delay_samples_exact = max(0.0, delay_s * self.sample_rate_hz)
         delay_samples = int(round(delay_samples_exact))
         pressure_factor = self._pressure_to_energy(self._collector_pressure)
-        energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"]))) * pressure_factor
+        reservoir_factor = self._reservoir_to_energy(self._afterfire_fuel_reservoir)
+        energy = float(unwrap(self.config, "afterfire.gain")) * (0.65 + 0.35 * min(1.0, float(state["load"]))) * pressure_factor * reservoir_factor
         policy = self.afterfire_location_policy
         if policy == "collector":
             policy = "bank_collector"
@@ -790,6 +791,19 @@ class PersistentEventDomainEngine:
         """Bounded synthetic pressure-to-afterfire energy map (v1)."""
         normalized = np.clip(float(pressure), 0.0, 4.0)
         return float(0.55 + 0.45 * normalized / (normalized + 0.20))
+
+    @staticmethod
+    def _reservoir_to_energy(reservoir: float) -> float:
+        """Map accumulated fuel state to bounded afterfire energy, without changing eligibility.
+
+        The four-state-unit scale keeps the existing >= 0.2 eligibility gate intact
+        while allowing a filled reservoir to contribute progressively to an already
+        scheduled afterfire packet; rate remains a state charge rate, never a direct
+        master gain.
+        """
+        stored = max(0.0, float(reservoir))
+        fraction = stored / (stored + 4.0)
+        return float(0.25 + 0.75 * fraction)
 
     def _emit_due_afterfires(self, frame_start: int, block_size: int) -> None:
         """Materialize queued afterfires at absolute sample positions."""

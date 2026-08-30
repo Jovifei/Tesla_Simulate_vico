@@ -127,6 +127,19 @@ def test_afterfire_ineligible_stays_zero() -> None:
     assert int(block.diagnostics["afterfire_event_count"]) == 0
 
 
+def test_afterfire_reservoir_state_fraction_modulates_scheduled_energy() -> None:
+    """Reservoir rate must affect event energy through accumulated state, not eligibility."""
+    parameters = hellcat_search_parameters()
+    base = load_config("hellcat_v1")
+    low = apply_parameters(base, {"afterfire_reservoir_rate": 0.52}, parameters)
+    high = apply_parameters(base, {"afterfire_reservoir_rate": 0.92}, parameters)
+    low_result = _render(low, "P3", "afterfire_eligible", 2.5)
+    high_result = _render(high, "P3", "afterfire_eligible", 2.5)
+    assert int(low_result.diagnostics["afterfire_event_count"]) >= 1
+    assert int(low_result.diagnostics["afterfire_event_count"]) == int(high_result.diagnostics["afterfire_event_count"])
+    assert low_result.diagnostics["afterfire_route"]["energy"] < high_result.diagnostics["afterfire_route"]["energy"]
+
+
 def test_monitor_max_makeup_changes_monitor_sha() -> None:
     parameters = hellcat_search_parameters()
     base = load_config("hellcat_v1")
@@ -142,6 +155,11 @@ NON_AFTERFIRE_Y1 = (
     "blower_sideband_mix", "blower_broadband_mix", "blower_casing_mix",
     "boost_attack", "boost_release", "bypass_threshold",
     "monitor_attack", "monitor_release", "monitor_max_makeup",
+)
+
+AFTERFIRE_Y1 = (
+    "afterfire_reservoir_rate", "afterfire_ignition_delay",
+    "afterfire_location_mix", "afterfire_energy",
 )
 
 
@@ -306,3 +324,28 @@ def test_y1_selected_non_afterfire_parameters_are_reachable(tmp_path) -> None:
     assert tuple(by_name) == NON_AFTERFIRE_Y1
     assert summary["reachable_count"] == len(NON_AFTERFIRE_Y1)
     assert not summary["unreachable"]
+
+
+def test_y1_afterfire_controls_are_bilateral_event_local_residual_probes(tmp_path) -> None:
+    """Afterfire reachability measures event-local residuals but SHA stays post-PTR."""
+    summary = _selected_y1_summary(tmp_path, *AFTERFIRE_Y1)
+    by_name = {row["parameter"]: row for row in summary["results"]}
+    expected_metrics = {
+        "afterfire_reservoir_rate": {"afterfire_residual_energy_envelope"},
+        "afterfire_ignition_delay": {"afterfire_residual_onset", "afterfire_residual_peak_offset"},
+        "afterfire_location_mix": {"afterfire_residual_path_balance", "afterfire_residual_peak_offset"},
+        "afterfire_energy": {"afterfire_residual_energy_envelope", "afterfire_residual_crest"},
+    }
+    assert tuple(by_name) == AFTERFIRE_Y1
+    for name in AFTERFIRE_Y1:
+        row = by_name[name]
+        assert row["probe_mode"] == "afterfire_residual"
+        assert row["probe_stem"] == "post_ptr"
+        assert set(row["target_metrics"]) == expected_metrics[name]
+        assert row["status"] == PARAMETER_REACHABLE, row["reason"]
+        assert row["probe_evidence"]["afterfire_gain_zero_control"] is True
+        for direction in ("minus", "plus"):
+            evidence = row["directions"][direction]
+            assert evidence["finite"]
+            assert evidence["sha_changed"]
+            assert evidence["target_movement"] > 0.02
