@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - agent/s12-stage-y-closed-loop-remediation
+    paths:
+      - ".github/workflows/s12-stage-y-remediation.yml"
+      - "tools/sound_sim/s12/**"
+      - "tasks/reports/runtime/s12-stage-w/logs/**"
   workflow_dispatch:
 
 permissions:
@@ -62,14 +66,53 @@ jobs:
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py \
             2>&1 | tee historical_integrity.log
 
-      - name: Upload Stage Y test logs
+      - name: Upload Stage Y focused logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: s12-stage-y-test-logs-${{ github.sha }}
+          name: s12-stage-y-focused-${{ github.sha }}
           path: |
             historical_byte_restore.log
             stage_y_focused.log
             historical_integrity.log
+          if-no-files-found: warn
+          retention-days: 14
+
+  full-s12-regression:
+    needs: focused-stage-y
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install regression dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest
+
+      - name: Restore receipt-bound logs in regression workspace
+        run: python tools/sound_sim/s12/acoustic_identity_v015/scripts/restore_stage_w_historical_log_bytes.py --apply
+
+      - name: Run complete S12 Python regression
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/tests \
+            tools/sound_sim/s12/acoustic_identity_v015/tests \
+            2>&1 | tee full_s12_stage_y.log
+
+      - name: Upload full regression log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s12-stage-y-full-regression-${{ github.sha }}
+          path: full_s12_stage_y.log
           if-no-files-found: warn
           retention-days: 14
