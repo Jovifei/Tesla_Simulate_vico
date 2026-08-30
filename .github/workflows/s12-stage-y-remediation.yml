@@ -29,7 +29,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install focused dependencies
-        run: python -m pip install --upgrade pip numpy scipy pytest
+        run: python -m pip install --upgrade pip numpy scipy pytest jsonschema matplotlib pyyaml
 
       - name: Restore receipt-bound historical log bytes
         shell: bash
@@ -94,7 +94,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install regression dependencies
-        run: python -m pip install --upgrade pip numpy scipy pytest
+        run: python -m pip install --upgrade pip numpy scipy pytest jsonschema matplotlib pyyaml
 
       - name: Restore receipt-bound logs in regression workspace
         run: python tools/sound_sim/s12/acoustic_identity_v015/scripts/restore_stage_w_historical_log_bytes.py --apply
