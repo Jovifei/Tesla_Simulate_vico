@@ -3646,3 +3646,18 @@ Review：最终事实：PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_O
 - [x] R3: Production package builder now uses Frozen PTR → Edge Fade → one whole-cycle gain → PCM24 for formal A/B; candidate comfort starts from final candidate PCM; diagnostic qualification status is unchanged.
 - [x] R4: Generated and independently validated the absent v5 package; refreshed repository runtime evidence without reading feedback CSV content or untracked artifact contents.
 - [x] R5: Focused non-CSV regressions, compile/diff, v5 package checks, final static review, and the SHA-guarded Obsidian handoff are complete. No status promotion is permitted.
+
+## S12 Stage L Hellcat Round-2 v9 (2026-08-15)
+
+- [x] R2-0: Freeze baseline SHA/PCM, record text-only feedback receipt, preserve existing untracked evidence.
+- [x] R2-1: Add v9 schema and Hellcat v6 SC / cross-plane acceleration / v1 afterfire source paths with RED→GREEN tests. Formal renderer integration is deferred to R2-3.
+- [x] R2-2: Add actual-array Round-2 metrics and Hellcat afterfire source with RED→GREEN tests. Formal renderer/search integration remains R2-3; independent reviewer had no captured final output, so parent static review and focused evidence are the current review layer.
+- [x] R2-3: Add three-track frozen final PCM bundle, v6 named audition package, and receipt/ZIP validation. Post-fix canonical v6 package was rebuilt from commit `22c704a`; it contains 4 formal + 4 source-domain diagnostics and remains PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY.
+- [x] R2-4: Run Stage-L/Stage-K/Track-P/frozen-boundary regression, perform independent review, and report `PARTIAL` status without promotion.
+
+### Round-2 final review (2026-08-15)
+
+- Post-fix commit: `22c704a fix(s12): harden Hellcat round2 package evidence` (exactly four R2-3 production/test paths; `tasks/todo.md` and `tasks/lessons.md` remain uncommitted user ledger changes).
+- Verification: R2 + Stage L/K isolation/protected suite `66 passed`; Track-P `21 passed`; CLI direct/module help, four-file `py_compile`, and `git diff --check` passed.
+- Independent fresh review: `APPROVED`, no Critical/Important/Minor findings. Receipt/PCM hashes, exact artifact set, pre-rename ZIP CRC/member validation, source lineage, v8 baseline metrics role, semantic diagnostic windows, and Comfort terminal PCM24 are all fail-closed.
+- Canonical package: `E:\Tesla_speed\review_packages\s12-stage-l-hellcat-intake-roughness-v6`; status remains `PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY`, `human_pass=false`, `csv_content_read=false`. No promotion, no feedback CSV read, and no next vehicle started.

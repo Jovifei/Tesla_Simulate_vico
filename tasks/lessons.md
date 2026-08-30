@@ -1284,3 +1284,9 @@ Rules:
 
 - Pattern: the named-review test suite contained a convenience assertion that parsed the generated blank feedback CSV. Even blank or fixture CSV rows cross the no-CSV-read boundary when the task forbids all feedback-content reads.
 - Rule: before running a listener-package suite under a no-CSV-read constraint, audit its selected tests for CSV readers. Validate a generated feedback template only by path/transport metadata unless Jovi explicitly authorizes CSV content access; never parse headers, rows, scores, or fixture values by default.
+
+## Stage L Round-2 Hellcat lessons (2026-08-15)
+
+- Schema-v2 source profiles may intentionally omit frozen operating/shift sections. Production wiring must apply those common layers from the immutable v8 baseline while preserving the v9 usage receipt and skipping the generic afterfire path; otherwise the v9 source either crashes on missing keys or double-counts afterfire.
+- Event diagnostics must be event-aligned. A fixed `audio[:duration]` slice can produce a valid but silent Afterfire file when the real event occurs later in the canonical trace; anchor the diagnostic window to the measured nonzero onset and keep the result source-domain labelled.
+- A self-hashed producer manifest is not enough: the package gate must re-open every receipt/PCM payload and validate exact artifact membership, ZIP CRC/member bytes before rename, source lineage, semantic diagnostic windows, and every final PCM stage (including Comfort's terminal PCM24 write).
