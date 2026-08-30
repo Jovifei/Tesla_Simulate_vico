@@ -4,9 +4,28 @@
   "current_branch": "agent/s12-stage-y-source-layers-and-reachability",
   "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-source-layers",
   "phase_order": ["Y0_SETUP", "Y1_REACHABILITY", "Y2_HARMONIC_MAP", "Y3_CYCLE_SYNC_P4", "Y4_TRANSIENTS", "Y5_DP_CHAIN", "Y6_AUDITION"],
-  "current_phase": "Y0_SETUP",
+  "current_phase": "Y2_HARMONIC_MAP",
+  "tested_evidence_head": "e0436dcdf82d0c6acfcc3a05c7195b91790caffc",
+  "runtime_resolved_live_head_at_probe": "e0436dcdf82d0c6acfcc3a05c7195b91790caffc",
   "phases": {
-    "Y0_SETUP": {"status": "IN_PROGRESS"}
+    "Y0_SETUP": {"status": "PASS", "setup_commit": "9dffb65dc885e4b272f0286a6dc1350b83f66a4d", "provenance": "Stage-Y execution ledger initialized from base Stage-X HEAD 3d433e30f2c0238d65baed321aa70355a626ceb6."},
+    "Y1_REACHABILITY": {
+      "status": "PASS",
+      "evidence_head": "e0436dcdf82d0c6acfcc3a05c7195b91790caffc",
+      "evidence_path": "tasks/reports/runtime/s12-stage-y/y1_reachability/parameter_reachability.json",
+      "evidence_sha256": "BB58F993A3863432ADC0FD806C975BFA6886A87DD6BA5908EF4244A13A60CFC5",
+      "run_id": "y1c-canonical-16-20260830T183025350+0800",
+      "started_at_utc": "2026-08-30T10:30:25.4177991Z",
+      "ended_at_utc": "2026-08-30T10:32:33.3060331Z",
+      "exit_code": 0,
+      "log_paths": {"pre_metadata": "tasks/reports/runtime/s12-stage-y/logs/y1c-canonical-16-20260830T183025350+0800.pre.json", "run_metadata": "tasks/reports/runtime/s12-stage-y/logs/y1c-canonical-16-20260830T183025350+0800.run.json", "stdout": "tasks/reports/runtime/s12-stage-y/logs/y1c-canonical-16-20260830T183025350+0800.stdout.log", "stderr": "tasks/reports/runtime/s12-stage-y/logs/y1c-canonical-16-20260830T183025350+0800.stderr.log"},
+      "log_sha256": {"pre_metadata": "29BC562970E6B2BC8EFA60F01275AE2155B6AD5745402E39EB9FBE3E84C5C349", "run_metadata": "A3E22D5E9E528CAE839F0D5E287DBAB4F7350D4EC6CB24EDC52C35A14B64B543", "stdout": "F3797EF6C3A9E5163A8FD66DF09FD90AF8BA33567A567DB0BA1F11EFE7CFBF5D", "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"}
+    },
+    "Y2_HARMONIC_MAP": {"status": "IN_PROGRESS"},
+    "Y3_CYCLE_SYNC_P4": {"status": "NOT_STARTED"},
+    "Y4_TRANSIENTS": {"status": "NOT_STARTED"},
+    "Y5_DP_CHAIN": {"status": "NOT_STARTED"},
+    "Y6_AUDITION": {"status": "NOT_STARTED"}
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
 }
