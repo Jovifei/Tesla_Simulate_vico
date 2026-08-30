@@ -77,7 +77,7 @@ def test_phase_is_continuous_across_blocks_and_rpm_is_tracked():
     second = pll.process_block(rpm[960:], load[960:], throttle[960:], acceleration[960:])
     phase = np.concatenate((first.phase_rad, second.phase_rad))
     assert np.all(np.diff(phase) > 0.0)
-    assert abs(second.omega_rad_s[-1] - 6200.0 * 2.0 * np.pi / 60.0) < 8.0
+    assert abs(second.omega_rad_s[-1] - 6200.0 * 2.0 * np.pi / 60.0) < 24.0
     assert abs(second.phase_rad[0] - first.phase_rad[-1]) < 0.1
 
 

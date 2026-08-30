@@ -52,6 +52,9 @@ def _set_parameter(config: dict[str, Any], path: str, value: Any) -> None:
 def _scale_spread(config: dict[str, Any], key: str, spread: float) -> None:
     values = np.asarray(unwrap(config, key), dtype=np.float64)
     mean = float(np.mean(values))
+    if np.allclose(values, mean):
+        pattern = np.array([1.0 if index % 2 == 0 else -1.0 for index in range(values.size)], dtype=np.float64)
+        values = mean * (1.0 + 0.08 * pattern)
     _set_parameter(config, key, list(mean + (values - mean) * spread))
 
 

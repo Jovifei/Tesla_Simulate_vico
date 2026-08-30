@@ -474,7 +474,7 @@ class PersistentEventDomainEngine:
             source = self._event_tails[entity][:n].copy()
             self._event_tails[entity][:-n] = self._event_tails[entity][n:]
             self._event_tails[entity][-n:] = 0.0
-            entity_sources.append(source)
+            entity_sources.append(source * float(line.attenuation))
             if self.waveguide_network is None:
                 banks[int(bank_assignment[entity])] += line.process(source)
         collector_inputs = banks
@@ -535,7 +535,11 @@ class PersistentEventDomainEngine:
             forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
             forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
             forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
-        mechanical = 0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load) + 0.003 * phase_block.torque_ripple
+        mechanical = (
+            0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
+            + 0.003 * phase_block.torque_ripple
+            + 0.045 * omega_ripple / max(float(np.mean(np.abs(rpm)) * 2.0 * np.pi / 60.0), 1.0)
+        )
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
         if external_transient is not None:
             raw += external_transient
