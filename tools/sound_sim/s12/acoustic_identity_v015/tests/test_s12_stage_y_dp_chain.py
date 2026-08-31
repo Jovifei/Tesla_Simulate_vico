@@ -215,11 +215,14 @@ def test_pre_y5_v2_without_audio_chain_state_restores_on_off_target() -> None:
     legacy = copy.deepcopy(engine.snapshot_state())
     legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v2"
     legacy.pop("audio_chain_state")
+    legacy["runtime_models"].pop("audio_chain")
+    before = copy.deepcopy(legacy)
 
     engine.restore_state(legacy)
     restored = engine.snapshot_state()
     assert restored["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
     assert restored["audio_chain_state"] is None
+    _assert_state_equal(legacy, before)
 
 
 def test_pre_y5_v2_without_audio_chain_state_rejects_active_target_atomically() -> None:
@@ -235,10 +238,13 @@ def test_pre_y5_v2_without_audio_chain_state_rejects_active_target_atomically() 
     legacy = copy.deepcopy(before)
     legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v2"
     legacy.pop("audio_chain_state")
+    legacy["runtime_models"].pop("audio_chain")
+    legacy_before = copy.deepcopy(legacy)
 
     with pytest.raises(ValueError, match="missing active audio chain state"):
         engine.restore_state(legacy)
     _assert_state_equal(engine.snapshot_state(), before)
+    _assert_state_equal(legacy, legacy_before)
 
 
 def test_complete_y5_v2_snapshot_migrates_to_v3_after_validation() -> None:

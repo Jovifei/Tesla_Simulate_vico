@@ -1030,6 +1030,13 @@ class PersistentEventDomainEngine:
             })
         elif snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v2":
             snapshot = dict(snapshot)
+            runtime_models = _mapping(snapshot["runtime_models"], "runtime model snapshot")
+            if "audio_chain" not in runtime_models:
+                if self._audio_chain is not None:
+                    raise ValueError("missing active audio chain state in legacy v2 snapshot")
+                runtime_models = copy.deepcopy(runtime_models)
+                runtime_models["audio_chain"] = "off"
+                snapshot["runtime_models"] = runtime_models
             if "audio_chain_state" not in snapshot:
                 if self._audio_chain is not None:
                     raise ValueError("missing active audio chain state in legacy v2 snapshot")
