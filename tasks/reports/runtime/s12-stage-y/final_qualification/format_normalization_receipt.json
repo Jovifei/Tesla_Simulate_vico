@@ -1,0 +1,33 @@
+{
+  "operation": "LF and trailing-whitespace normalization only",
+  "files": [
+    "docs/superpowers/plans/2026-08-30-s12-stage-y-source-layers.md",
+    "docs/superpowers/specs/2026-08-30-s12-stage-y-source-layers-design.md",
+    "tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md",
+    "tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/audio_chain_dp.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/cycle_sync_resynth.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/fixture_cycles.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/harmonic_map_fit.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/package.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py"
+  ],
+  "comparison": "git show HEAD:path vs working file ast.dump",
+  "python_ast_unchanged": true,
+  "python_ast_sha256": {
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/audio_chain_dp.py": "9d8f5165761fa59dc08cef40049919bfca5e84aac7a1d9121f16e705c6d1eca3",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/cycle_sync_resynth.py": "3a521c4e083074f214b29800265d6088f7d7467eebd9a8e3ea470b74e165bb64",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/fixture_cycles.py": "0428da7a7929ff50d1c09e62f0e195dca1b27a0d6f8558a01c81c3a701d4aa9a",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/harmonic_map_fit.py": "6907374af3c19d5c1f84ce75f2095a14b5163e589a4d0045e7e44e2822e7adb2",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_y/package.py": "6f72327cd64091805b27e15556d35266757df7e3be2c4166dc99853a46a8533e",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py": "3a68cc787953842e3ab24a95c71f447268b8915579571c6a7ca2c863479ef5a9",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py": "bb02aa66a6bb7c45f950dc9ff40bebdff7b0ab011e745c501557c498f3dfd211",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py": "340a52ae4d068cffd677c4edb46ae54904e044722ca3b97c6f6c62894c30cb79",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py": "3c65d9effbb68e5ad54d30ee43568bf9ce7482a9bd779e0d1631b48d45dc192f"
+  },
+  "frozen_algorithm_changed": false,
+  "external_audio_changed": false
+}

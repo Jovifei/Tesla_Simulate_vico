@@ -1,4 +1,4 @@
-﻿# Stage X Resume (final qualification closed)
+# Stage X Resume (final qualification closed)
 
 - Branch: `agent/s12-stage-x-r2-engineering-selection`; HEAD `92959f555ab96a42e73c83bbe696868c7b0fdfd2`
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-x-r2-engineering-selection`

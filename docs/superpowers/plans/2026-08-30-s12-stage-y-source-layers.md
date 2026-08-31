@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3, numpy, scipy (`RegularGridInterpolator` already used), pytest, existing S12 `acoustic_identity_v015` packages.
 
-**Spec:** `docs/superpowers/specs/2026-08-30-s12-stage-y-source-layers-design.md`  
+**Spec:** `docs/superpowers/specs/2026-08-30-s12-stage-y-source-layers-design.md`\
 **Baseline branch HEAD (includes spec):** `eda461e` on `agent/s12-stage-x-r2-engineering-selection`
 
 ---
@@ -960,9 +960,9 @@ Default: do not push. Do not merge main. Do not open a PR.
 
 ## Type names used throughout
 
-`CycleSyncResampler.render(phase, rpm)`  
-`fit_harmonic_map(bank, vehicle_id="hellcat")`  
-`MAP_SCHEMA = "s12.stage_y.harmonic_timbre_map.v1"`  
-`StateTransientMixer.equal_power_crossfade`  
-`PressureAudioChain.warmup` / `process`  
+`CycleSyncResampler.render(phase, rpm)`\
+`fit_harmonic_map(bank, vehicle_id="hellcat")`\
+`MAP_SCHEMA = "s12.stage_y.harmonic_timbre_map.v1"`\
+`StateTransientMixer.equal_power_crossfade`\
+`PressureAudioChain.warmup` / `process`\
 `build_hellcat_layer_package` / `validate_layer_package`
