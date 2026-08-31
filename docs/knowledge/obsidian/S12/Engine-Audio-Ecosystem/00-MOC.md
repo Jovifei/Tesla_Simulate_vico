@@ -44,3 +44,12 @@ repair. Selection remains `null` and the status remains
 - [[11-R1-Formal-Gate-Readiness]]
 - [[12-Stage-X-Final-Status]]
 - [[13-Workspace-Cleanup-20260830]]
+
+<!-- S12-STAGE-Y:AUTO:BEGIN -->
+## Stage Y current software boundary (2026-08-31)
+
+- [[15-Stage-Y-Status]] — Y1–Y6 bounded software evidence is recorded; Y9 final qualification remains `IN_PROGRESS`.
+- [[Open-Source-Ignis]] and [[Open-Source-Markeasting-Engine-Audio]] — intake-pinned method references only; no source or media is copied into S12.
+- Registry: `docs/research/engine-audio-ecosystem/source_registry.json` (existing schema; external checkouts are read-only sparse research inputs).
+- Current scope remains `synthetic; uncalibrated; vehicle-inspired; not OEM reproduction`; human audition, rights-bound R1, Profile Freeze and full S12 remain pending.
+<!-- S12-STAGE-Y:AUTO:END -->
