@@ -4193,26 +4193,25 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Y4：状态瞬态、完整尾音与 snapshot replay，最终80 passed/1 skipped，复审通过。
 - [x] Y5：DC/dP/warmup、v3 snapshot迁移与60s分块等价，43 passed无skip，复审通过。
 - [x] Y6：154 WAV累计分层试听包、两页播放器、158 artifact SHA校验及独立复审通过；人耳/R1未通过。
-- [x] 同步 Stage Y 状态、Obsidian/registry，并在 final software HEAD 完成一次完整 S12 资格（`1369 passed, 2 skipped`）。
+- [x] 同步 Stage Y 状态、Obsidian/registry，并完成历史 software HEAD 的完整 S12 资格（`1369 passed, 2 skipped`；canonical fixture-hash 修复后已标记为历史）。
 
 ### Review
 
 - Y1 canonical probe：历史公式-map 16/16 保留；最终 committed fitted-map 新鲜 receipt `y1-final-fitted-map-20260831T145748162574Z` 为 16/16 bilateral PASS，测试源码 head `59fe45d`，P3 元数据/current head `1ef0883`，artifact SHA `40c5474d`。
 - Y2 committed fitted map：source head `2dd4ad6`，postfix evidence `9 passed`，receipt/state/hash 复审 PASS。
 - Y4/Y5 snapshot/raw replay 缺口已修复并复审；snapshot 现绑定 coupling contract，package config SHA 也绑定该 contract。
-- Final full S12 on tested HEAD `a73322b`: `1369 passed, 2 skipped`, exit `0`; skipped count retained literally because `S12_RUN_SLOW` was not enabled. Receipt/log SHA is under `tasks/reports/runtime/s12-stage-y/final_qualification/`.
+- Historical full S12 on tested HEAD `a73322b`: `1369 passed, 2 skipped`, exit `0`; skipped count retained literally because `S12_RUN_SLOW` was not enabled. The receipt/log SHA remains under `tasks/reports/runtime/s12-stage-y/final_qualification/`; a canonical rerun is pending.
 - 本轮快照说明：`docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md`；最小复验 2 passed/1 failed，未运行 full S12。
 
 ## 2026-08-31 Stage Y final closure handoff
 
 > 状态：执行中；基于 `origin/agent/s12-stage-y-open-source-integration` 的闭包工作树；保留 v1，只有实际 PCM 输入变化才新增 v2。
 
-- [ ] 修复最终 committed fitted-map 的 16 参数双向可达性，优先处理 broadband coupling；补齐 boost/bypass 最终地图证据。
-- [ ] 复核 Y2-Y5、开源方法覆盖矩阵、CI/receipt 契约与当前 HEAD 绑定；补齐必要文档/收据。
-- [ ] 运行 focused、compileall、Track-P、diff/license/media/JSON 检查并完成整树审查。
-- [ ] 在最终 HEAD 仅运行一次完整 S12；更新 PR #2，等待 CI；门禁全绿后通过 PR 合并 main 并做 post-merge smoke。
+- [x] 修复最终 committed fitted-map 的 16 参数双向可达性，优先处理 broadband coupling；补齐 boost/bypass 最终地图证据。
+- [x] 复核 Y2-Y5、开源方法覆盖矩阵、CI/receipt 契约与当前 HEAD 绑定；补齐必要文档/收据。
+- [ ] 运行 canonical-hash 修复后的唯一完整 S12；更新 PR #2，等待 CI；门禁全绿后通过 PR 合并 main 并做 post-merge smoke。
 
 ### Review
 
 - 起始 `origin/main`: `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`；起始 integration: `3aafda52f8c1b9fe5728591ca087b53fa2baf809`。
-- 当前明确阻塞：最终 fitted-map broadband movement 约 `0.00208 < 0.02`；boost/bypass final-map metrics 尚未形成最终证据。历史公式-map 16/16 不可复用为最终资格。
+- 当前明确阻塞：canonical fixture/PCM hash 修复已使先前 `1369 passed, 2 skipped` 全量收据转为历史；需在当前 canonical code HEAD 重新执行一次完整 S12。历史公式-map 16/16 不可复用为最终资格；R1/human/Profile Freeze 仍保持 fail-closed。

@@ -1,6 +1,6 @@
 # S12 Stage Y 最终软件闭包（2026-08-31）
 
-状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PASS / R1_HUMAN_GATES_CLOSED`
+状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / R1_HUMAN_GATES_OPEN`
 
 本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，source-contract HEAD 为 `662eefa`。起始 main 已是 integration 的祖先，无需额外合并。
 
@@ -13,7 +13,7 @@
 
 ## Final fitted-map 证据
 
-新鲜运行 `y1-final-fitted-map-20260831T145748162574Z` 退出码 `0`，artifact SHA `40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847`。测试源码 HEAD 为 `59fe45d76ee67730d06cde3517e2b4745aa19b80`；P3/source-contract HEAD 为 `662eefac78182f94e80a0e11606a19fb216f1a84`。Map SHA `5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc`，fixture SHA `97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570`。
+当前 canonical 运行 `y1-final-fitted-map-20260831T183122590736Z` 退出码 `0`，artifact SHA `3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df`。测试源码 HEAD 为 `f498c99352ad559897b6157d6722d64e05e68a32`；Map SHA `59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519`，fixture SHA `060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1`。原始 fitted-map 运行及其 map/fixture SHA 保留在历史收据中，不再作为当前资格输入。
 
 | 控制 | minus | plus | 目标 |
 | --- | ---: | ---: | --- |
@@ -39,7 +39,7 @@ R1 identity, OEM reproduction, calibration or Profile Freeze.
 - Y4: latch/re-arm, 120 ms tails and snapshot/replay; historical `80 passed, 1 skipped`; PASS.
 - Y5: per-sample DC/dP, warmup, fractional delay and v3 migration; historical `43 passed`, no skip; PASS.
 - Y6 v1: 154 synthetic PCM24 WAVs / 11 scenes / browser playback evidence; preserved unchanged. Because the fitted-map renderer inputs changed, any regenerated package must be a new `s12-stage-y-hellcat-layers-v2` directory; v2 has not been generated in this closure.
-- Full S12: `1369 passed, 2 skipped`, exit `0`, tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf`; receipt `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json` binds command, UTC times and log SHA. The two skips are reported literally because `S12_RUN_SLOW` was not enabled; no no-skip claim is made.
+- Full S12: the earlier `1369 passed, 2 skipped` receipt at tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf` is retained as historical and superseded by the canonical fixture-hash repair. One new complete S12 run is still required; its current receipt will be `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json`.
 
 ## Open-source method boundary
 
@@ -52,8 +52,9 @@ clear individual audio rights; neither source or media is copied into S12.
 
 ## Next gate
 
-Focused repository/Track-P/license checks, whole-branch review and the one
-complete S12 command are now green. The next software action is to push the
-closure commits to the integration PR, wait for CI, and merge through that PR
-only if CI is green. Human audition, legal synchronized R1, OEM/calibration and
-Profile Freeze remain explicit external gates.
+Focused repository/Track-P/license checks and whole-branch review remain the
+bounded verification scope. The next software action is the one complete S12
+command on the canonical code HEAD, followed by a clean commit, push to the
+integration PR, CI, and merge through that PR only if CI is green. Human
+audition, legal synchronized R1, OEM/calibration and Profile Freeze remain
+explicit external gates.

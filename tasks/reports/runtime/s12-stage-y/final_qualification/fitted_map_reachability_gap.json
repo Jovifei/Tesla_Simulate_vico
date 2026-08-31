@@ -3,7 +3,10 @@
   "evidence_kind": "fresh final-map selected-16 qualification",
   "checkpoint_document": "docs/08-reports/07-s12-stage-y-final-closure.md",
   "checkpoint_smoke": "27 passed in 331.42s; final-map coupling and transition metrics verified",
-  "map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
+  "map_sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+  "historical_map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
+  "fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
+  "historical_fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
   "tolerance": 0.02,
   "model_derived_fixed_band_probes": {
     "blower_sideband_mix": {"minus": 0.2109148769648745, "plus": 0.2347261129574541, "status": "PASS"},
@@ -25,14 +28,12 @@
   },
   "unresolved": ["human audition, legal R1 and Profile Freeze remain external gates"],
   "production_audio_changed": true,
-  "full_s12_run": true,
+  "full_s12_run": false,
   "existing_v1_package": "preserved; v2 is required for any regenerated fitted-map package",
-  "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
-  "final_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
-  "tested_source_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
-  "metadata_head": "662eefac78182f94e80a0e11606a19fb216f1a84",
-  "full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
-  "full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
-  "full_s12_result": "1369 passed, 2 skipped",
-  "next_decision": "update PR/CI and, if green, merge through PR; keep R1/human/Profile Freeze fail-closed"
+  "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
+  "final_artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+  "tested_source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "metadata_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "historical_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+  "next_decision": "run one complete S12 after canonical hash repair, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
 }

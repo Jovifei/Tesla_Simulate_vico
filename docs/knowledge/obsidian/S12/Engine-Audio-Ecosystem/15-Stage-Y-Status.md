@@ -4,9 +4,9 @@ project: Tesla-Speed-Sound
 subproject: S12
 stage: Stage-Y
 document_type: engineering_status
-status: software_regression_pass_r1_human_pending
+status: final_map_pass_full_s12_pending_r1_human_pending
 updated: 2026-08-31
-evidence_head: a73322b1ceebe700fc97073cbf50cfd12b961bbf
+evidence_head: f498c99352ad559897b6157d6722d64e05e68a32
 ---
 
 <!-- S12-STAGE-Y:AUTO:BEGIN -->
@@ -17,9 +17,10 @@ Repository final closure report: [Stage Y final software closure](../../../../..
 Y1–Y6 retain their bounded software evidence. The fresh final P3/post_ptr
 selected-16 receipt now proves the committed fitted map bilaterally; the
 bounded local coupling is recorded in the engine diagnostics. Current state is
-`Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PASS`; the final whole-S12 suite
-recorded `1369 passed, 2 skipped` with exit `0` on tested HEAD `a73322b`.
-The two skips are literal because the slow-test environment flag was not enabled.
+`Y9_FINAL_QUALIFICATION / IN_PROGRESS / FULL_S12_PENDING`; the earlier whole-S12
+receipt (`1369 passed, 2 skipped`, exit `0`, tested HEAD `a73322b`) is historical
+and superseded by the canonical fixture-hash repair. One complete S12 run is
+required on the canonical code HEAD.
 All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
@@ -56,7 +57,7 @@ an offline Python source-domain path, not the ESP32 Runtime implementation.
 
 ### Y1 bilateral parameter probe versus human hearing
 
-The canonical artifact [`parameter_reachability.json`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/parameter_reachability.json)
+The canonical artifact [`parameter_reachability.json`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map_canonical/parameter_reachability.json)
 records 16/16 `PARAMETER_REACHABLE` controls. Each declared probe renders
 baseline, minus and plus values on its declared architecture/scene/stem; both
 directions must be finite, change selected-stem PCM bytes, move a target metric
@@ -121,24 +122,24 @@ the match is not LUFS, SPL, calibration or dynamic evidence. Parent-vs-final
 
 | Phase | Verified scope | Exact proof |
 | --- | --- | --- |
-| Y1 | Final committed fitted-map 16/16 bilateral probes; tested source head `59fe45d76ee67730d06cde3517e2b4745aa19b80`; corrected artifact SHA `40C5474D7EAC8B501A7DCDFFBC271ABC77CAF51B7B6EE9C8CF12B4C11F67F847`; source-contract head `662eefac78182f94e80a0e11606a19fb216f1a84`. | [`final fitted-map receipt`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json) and [`final artifact`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json) |
-| Y2 | Fitted synthetic map load/contract; source head `293dcb23768d67f54c5c2bd783aa650e6328ebda`; map SHA `5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC`; focused result `12 passed`. | [`y2_harmonic_map_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_map_receipt.json) |
+| Y1 | Current canonical committed fitted-map 16/16 bilateral probes; source/test head `f498c99352ad559897b6157d6722d64e05e68a32`; artifact SHA `3609D1DDA341C271A0A983FE5E66C1C868746B336CDEA151DC50DA97DC36B1DF`; map SHA `59690572E189D2CA4A5005EA0297C75622DCA244112AC3747635D9FB16AC9519`; fixture SHA `060F511881CD2D5994AFAC7678222BCA95F9239620884BF342BB8C054D4C06D1`. | [`current final fitted-map receipt`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json) and [`current artifact`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map_canonical/parameter_reachability.json) |
+| Y2 | Fitted synthetic map load/contract; map-build source head `293dcb23768d67f54c5c2bd783aa650e6328ebda`; current map SHA `59690572E189D2CA4A5005EA0297C75622DCA244112AC3747635D9FB16AC9519`; fixture SHA `060F511881CD2D5994AFAC7678222BCA95F9239620884BF342BB8C054D4C06D1`; focused result `12 passed`. | [`y2_harmonic_map_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_map_receipt.json) and current [`final fitted-map receipt`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json) |
 | Y3 | Normalized-map integration `66 passed`; final P4 720°/persistent 20 ms postfix `5 passed in 5.09s`; source head `c4b06e6897f449b05f6e30a2f29f72dc0624475e`. | [`y3_normalized_revalidation_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_normalized_revalidation_receipt.json) and [`y3-postfix execution receipt`](../../../../../tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.json) |
 | Y4 | Latch/re-arm, 120 ms tails, snapshot/replay and focused regressions; final result `80 passed, 1 skipped`; source head `fc92a68a147d5fb40b3d5444773d116f59fb3b1e`. | [`y4_transients_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y4_transients/y4_transients_receipt.json) |
 | Y5 | Per-sample DC/dP, warmup, fractional delay, v3 snapshot compatibility, click contract and deterministic 3000×960 equivalence; `43 passed in 28.92s`, no skip; source head `1f3a9cba27fe2ca212ce7f488ebdd5f11b5c83bc`. | [`y5_dp_chain_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json) |
 | Y6 | Production package `11` scenes/`154` synthetic 48 kHz stereo PCM24 WAVs; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`; browser pages each loaded `77` players and sampled playback; source head `091696936abc8ec310f2f937579bc136cf21bc0e`. | [`y6_audition_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json), [`browser_playback_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json) |
 
-The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json).
+The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The historical full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json); the next current receipt is expected at `full_s12_final_receipt_v2.json` after the authorized rerun.
 Y6 is `PASS` for package/browser evidence, while its receipt still records
 `human_status=WAITING_FOR_JOVI_LAYER_AUDITION`,
 `formal_status=FORMAL_R1_REFERENCE_MISSING`,
-`profile_status=NOT_PROFILE_FREEZE_READY`, and
-`full_s12_status=PASS`; because fitted-map renderer inputs changed,
+`profile_status=NOT_PROFILE_FREEZE_READY`, and the old
+`full_s12_status=PASS` receipt is historical; because fitted-map renderer inputs changed,
 future regenerated audio must be published as v2 and must not overwrite v1.
 
 ## Remaining gates
 
-The parent must run one complete S12 qualification on the final metadata/code
+The parent must run one complete S12 qualification on the canonical metadata/code
 HEAD before claiming whole-branch software closure or proposing main merge. After that, human layer audition, a legal
 RPM/state-synchronised R1 Reference, the R1 formal gate, Profile Freeze and
 explicit approval remain separate gates. No receipt in this note authorizes

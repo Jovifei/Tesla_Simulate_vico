@@ -162,15 +162,20 @@ jobs:
           assert all(entry["coverage"] in matrix["status_values"] for entry in matrix_entries)
           receipts = json.loads(Path("docs/research/engine-audio-ecosystem/source_evidence_receipts.json").read_text(encoding="utf-8"))
           assert {entry["id"] for entry in receipts["receipts"]} == registry_ids
-          receipt_path = Path("tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json")
-          artifact_path = Path("tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json")
+          receipt_path = Path("tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json")
+          artifact_path = Path("tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map_canonical/parameter_reachability.json")
           receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
           artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
           assert receipt["exit_code"] == 0
           assert hashlib.sha256(artifact_path.read_bytes()).hexdigest() == receipt["artifact_sha256"]
+          map_info = receipt["map"]
+          map_path = Path(map_info["path"])
+          assert map_info["sha256"].lower() == hashlib.sha256(map_path.read_bytes()).hexdigest()
+          map_payload = json.loads(map_path.read_text(encoding="utf-8"))
+          assert map_info["fixture_sha256"] == map_payload["fixture_sha256"]
           assert artifact["architecture"] == "P3"
           assert artifact["parameter_count"] == artifact["reachable_count"] == 16
-          full_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json").read_text(encoding="utf-8"))
+          full_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json").read_text(encoding="utf-8"))
           assert full_receipt["exit_code"] == 0
           assert full_receipt["tested_head"] == subprocess.check_output(["git", "rev-parse", full_receipt["tested_head"]], text=True).strip()
           assert subprocess.run(["git", "merge-base", "--is-ancestor", full_receipt["tested_head"], "HEAD"]).returncode == 0

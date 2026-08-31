@@ -25,12 +25,13 @@ The final fitted-map selected-16 probe now passes bilaterally on P3/post_ptr.
 The repair is a bounded local fitted-map source-layer balance: broadband
 coupling `4.0` and forced-layer coupling `2.0`; legacy formula-map coupling is
 unchanged (`0.28` / `1.0`). Boost attack/release use scale-invariant high-band
-share in their declared transition windows. The fresh receipt and artifact are
-bound to tested source HEAD `59fe45d`; the corrected P3 metadata is bound to
-metadata HEAD `4224c196`. The historical closed-loop CI receipt remains
-branch-specific evidence and is not acceptance of this combined tree. Full
-S12 must run once on the final metadata/code HEAD before the branch may be
-proposed to main.
+share in their declared transition windows. The current canonical receipt and
+artifact are bound to source/test HEAD `f498c993`; map SHA is
+`59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519` and
+fixture SHA is `060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1`.
+The historical closed-loop CI receipt remains branch-specific evidence and is
+not acceptance of this combined tree. Full S12 must run once on the canonical
+code HEAD before the branch may be proposed to main.
 
 No external source code, presets, copyrighted vehicle audio, IR assets, or
 commercial model data are added. Track-P remains frozen. Human audition, legal

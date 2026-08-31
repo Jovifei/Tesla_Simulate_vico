@@ -14,11 +14,11 @@
     "Y9_FINAL_QUALIFICATION"
   ],
   "current_phase": "Y9_FINAL_QUALIFICATION",
-  "tested_evidence_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
+  "tested_evidence_head": "f498c99352ad559897b6157d6722d64e05e68a32",
   "metadata_head": "662eefac78182f94e80a0e11606a19fb216f1a84",
   "current_head_at_metadata_write": "662eefac78182f94e80a0e11606a19fb216f1a84",
-  "runtime_resolved_live_head_at_probe": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
-  "final_full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
+  "runtime_resolved_live_head_at_probe": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "final_full_s12_tested_head": null,
   "phases": {
     "Y0_SETUP": {
       "status": "PASS",
@@ -47,10 +47,12 @@
         "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
       },
       "final_fitted_map_status": "PASS",
-      "final_fitted_map_evidence_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
-      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
-      "final_fitted_map_artifact_path": "tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json",
-      "final_fitted_map_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
+      "final_fitted_map_evidence_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
+      "final_fitted_map_artifact_path": "tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map_canonical/parameter_reachability.json",
+      "final_fitted_map_artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+      "final_fitted_map_map_sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+      "final_fitted_map_fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
       "final_fitted_map_scope": "committed synthetic fitted map; P3/post_ptr; 16 bilateral selected-control probes",
       "historical_scope": "Original16/16 retained for pre-fitted-map probe configuration; not final-map qualification."
     },
@@ -59,9 +61,11 @@
       "evidence_path": "tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_map_receipt.json",
       "source_head_at_map_build": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
       "map_path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
-      "map_sha256": "5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC",
-      "fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
-      "evidence_head": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+      "map_sha256": "59690572E189D2CA4A5005EA0297C75622DCA244112AC3747635D9FB16AC9519",
+      "fixture_sha256": "060F511881CD2D5994AFAC7678222BCA95F9239620884BF342BB8C054D4C06D1",
+      "historical_map_sha256": "5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC",
+      "historical_fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
+      "evidence_head": "f498c99352ad559897b6157d6722d64e05e68a32",
       "run_id": "y2-normalized-minimal-20260830T205700+0800",
       "started_at_utc": "2026-08-30T11:53:20.5991111Z",
       "ended_at_utc": "2026-08-30T11:53:28.6945328Z",
@@ -150,18 +154,12 @@
       "human_status": "WAITING_FOR_JOVI_LAYER_AUDITION"
     },
     "Y9_FINAL_QUALIFICATION": {
-      "status": "PASS",
+      "status": "IN_PROGRESS",
       "final_fitted_map_status": "PASS",
-      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
-      "full_s12_status": "PASS",
-      "full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
-      "full_s12_run_id": "full-s12-final-20260831T170006408730Z",
-      "full_s12_result": "1369 passed, 2 skipped",
-      "full_s12_exit_code": 0,
-      "full_s12_slow_tests_enabled": false,
-      "full_s12_skipped": 2,
-      "full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
-      "blocker": "Human layer audition, legal synchronized R1 Reference, formal selection and Profile Freeze remain external gates."
+      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
+      "full_s12_status": "PENDING_AFTER_CANONICAL_HASH_REPAIR",
+      "historical_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+      "blocker": "Re-run one complete S12 qualification after the canonical fixture/PCM hash repair; human/R1/Profile Freeze remain external gates."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
