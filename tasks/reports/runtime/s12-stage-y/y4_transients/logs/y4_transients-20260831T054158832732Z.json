@@ -1,0 +1,30 @@
+{
+  "run_id": "y4_transients-20260831T054158832732Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_afterfire_ineligible_stays_zero",
+    "-q"
+  ],
+  "started_at": "2026-08-31T05:41:58.865088+00:00",
+  "ended_at": "2026-08-31T05:42:27.099645+00:00",
+  "exit_code": 0,
+  "source_head": "fc92a68a147d5fb40b3d5444773d116f59fb3b1e",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T054158832732Z.stdout.log",
+      "sha256": "c370e1ce415d90867a3ea501a0e95f844a5d012353996c0cbcac4c56c12fd4c5"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T054158832732Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
