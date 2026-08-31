@@ -112,8 +112,11 @@ def _timbre_layer_coupling_contract(config: dict[str, Any], settings: dict[str, 
     fitted_map = settings.get("forced_induction_model") == "timbre_map_v1" and bool(config.get("require_fitted_timbre_map"))
     return {
         "contract_version": "s12.stage_y.timbre_layer_coupling.v1",
+        "provenance": "bounded_local_fitted_map_source_layer_balance" if fitted_map else "legacy_map_default_coupling",
         "fitted_map": fitted_map,
+        "legacy_broadband": LEGACY_MAP_BROADBAND_COUPLING,
         "broadband": FITTED_MAP_BROADBAND_COUPLING if fitted_map else LEGACY_MAP_BROADBAND_COUPLING,
+        "legacy_forced_layer": LEGACY_MAP_FORCED_LAYER_COUPLING,
         "forced_layer": FITTED_MAP_FORCED_LAYER_COUPLING if fitted_map else LEGACY_MAP_FORCED_LAYER_COUPLING,
     }
 

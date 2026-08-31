@@ -158,7 +158,7 @@ def test_enabled_engine_streaming_and_snapshot_replay_include_audio_chain_state(
     assert np.array_equal(expected.raw_pcm, np.concatenate([item.raw_pcm for item in streamed]))
     assert np.array_equal(expected.post_ptr_raw, np.concatenate([item.post_ptr_raw for item in streamed]))
     snapshot = many.snapshot_state()
-    assert snapshot["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
+    assert snapshot["schema_version"] == "s12.stage_w.persistent_engine_state.v4"
     assert snapshot["audio_chain_state"]["warm"] is True
     next_frame = {key: value[0:1] for key, value in frames.items()}
     expected_next = many.process(next_frame).raw_pcm
@@ -220,9 +220,21 @@ def test_pre_y5_v2_without_audio_chain_state_restores_on_off_target() -> None:
 
     engine.restore_state(legacy)
     restored = engine.snapshot_state()
-    assert restored["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
+    assert restored["schema_version"] == "s12.stage_w.persistent_engine_state.v4"
     assert restored["audio_chain_state"] is None
     _assert_state_equal(legacy, before)
+
+
+def test_v3_snapshot_migrates_to_v4_with_legacy_coupling_identity() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, audio_chain="off")
+    legacy = copy.deepcopy(engine.snapshot_state())
+    legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v3"
+    legacy.pop("timbre_layer_coupling")
+
+    engine.restore_state(legacy)
+    restored = engine.snapshot_state()
+    assert restored["schema_version"] == "s12.stage_w.persistent_engine_state.v4"
+    assert restored["timbre_layer_coupling"]["fitted_map"] is False
 
 
 def test_pre_y5_v2_without_audio_chain_state_rejects_active_target_atomically() -> None:
@@ -247,7 +259,7 @@ def test_pre_y5_v2_without_audio_chain_state_rejects_active_target_atomically() 
     _assert_state_equal(legacy, legacy_before)
 
 
-def test_complete_y5_v2_snapshot_migrates_to_v3_after_validation() -> None:
+def test_complete_y5_v2_snapshot_migrates_to_v4_after_validation() -> None:
     config = load_config("hellcat_v1")
     frame = {
         "rpm": np.asarray([1800.0]),
@@ -262,7 +274,7 @@ def test_complete_y5_v2_snapshot_migrates_to_v3_after_validation() -> None:
 
     restored = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
     restored.restore_state(legacy)
-    assert restored.snapshot_state()["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
+    assert restored.snapshot_state()["schema_version"] == "s12.stage_w.persistent_engine_state.v4"
 
 
 @unittest.skipUnless(os.environ.get("S12_RUN_SLOW") == "1", "set S12_RUN_SLOW=1 for the 3000-block acceptance run")

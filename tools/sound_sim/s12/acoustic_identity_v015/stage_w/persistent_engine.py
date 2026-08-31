@@ -904,7 +904,7 @@ class PersistentEventDomainEngine:
 
     def snapshot_state(self) -> dict[str, Any]:
         return {
-            "schema_version": "s12.stage_w.persistent_engine_state.v3",
+            "schema_version": "s12.stage_w.persistent_engine_state.v4",
             "sample_counter": self.sample_counter,
             "pll": {"phase_rad": self.pll.phase_rad, "omega_rad_s": self.pll.omega_rad_s, "initialized": self.pll.initialized, "sample_count": self.pll.sample_count},
             "pending_combustion_torque": self._pending_combustion_torque.copy(),
@@ -1034,7 +1034,9 @@ class PersistentEventDomainEngine:
             "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "timbre_layer_coupling", "transient_state", "audio_chain_state",
         }
         snapshot = _mapping(snapshot, "persistent engine snapshot")
+        legacy_schema = False
         if snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v1":
+            legacy_schema = True
             legacy_counter = _counter(snapshot.get("sample_counter"), "legacy sample_counter")
             if legacy_counter != 0:
                 raise ValueError("legacy snapshot omits state required for nonzero replay")
@@ -1045,7 +1047,7 @@ class PersistentEventDomainEngine:
                 fresh_audio_chain = type(self._audio_chain)(self.sample_rate_hz, delay_samples=self._audio_chain.delay_samples)
                 audio_chain_state = fresh_audio_chain.snapshot()
             snapshot.update({
-                "schema_version": "s12.stage_w.persistent_engine_state.v3",
+                "schema_version": "s12.stage_w.persistent_engine_state.v4",
                 "path_filter_state": np.zeros_like(self._path_filter_state),
                 "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
                 "timbre_layer_coupling": dict(self._timbre_layer_coupling),
@@ -1053,6 +1055,7 @@ class PersistentEventDomainEngine:
                 "audio_chain_state": audio_chain_state,
             })
         elif snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v2":
+            legacy_schema = True
             snapshot = dict(snapshot)
             runtime_models = _mapping(snapshot["runtime_models"], "runtime model snapshot")
             if "audio_chain" not in runtime_models:
@@ -1065,15 +1068,19 @@ class PersistentEventDomainEngine:
                 if self._audio_chain is not None:
                     raise ValueError("missing active audio chain state in legacy v2 snapshot")
                 snapshot["audio_chain_state"] = None
-            snapshot["schema_version"] = "s12.stage_w.persistent_engine_state.v3"
+            snapshot["schema_version"] = "s12.stage_w.persistent_engine_state.v4"
+        elif snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v3":
+            legacy_schema = True
+            snapshot = dict(snapshot)
+            snapshot["schema_version"] = "s12.stage_w.persistent_engine_state.v4"
         if "timbre_layer_coupling" not in snapshot:
-            if self._timbre_layer_coupling["fitted_map"]:
-                raise ValueError("missing fitted-map coupling identity in legacy snapshot")
+            if not legacy_schema or self._timbre_layer_coupling["fitted_map"]:
+                raise ValueError("missing fitted-map coupling identity in snapshot")
             snapshot = dict(snapshot)
             snapshot["timbre_layer_coupling"] = dict(self._timbre_layer_coupling)
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
-        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v3":
+        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v4":
             raise ValueError("unsupported persistent engine snapshot")
         sample_counter = _counter(snapshot["sample_counter"], "sample_counter")
         pll = _mapping(snapshot["pll"], "PLL snapshot")

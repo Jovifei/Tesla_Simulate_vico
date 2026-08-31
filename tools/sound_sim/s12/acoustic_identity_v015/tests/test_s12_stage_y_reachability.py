@@ -131,6 +131,31 @@ def test_snapshot_rejects_fitted_map_coupling_mismatch() -> None:
         legacy.restore_state(snapshot)
 
 
+def test_fitted_map_coupling_changes_consumed_post_ptr_pcm(monkeypatch) -> None:
+    config = load_config("hellcat_v1")
+    configure_committed_fixture_timbre_map(config)
+    trace = _build_parameter_probe_trace("y1_blower_spectrum", 0.4)
+
+    def render() -> np.ndarray:
+        engine = PersistentEventDomainEngine(
+            copy.deepcopy(config), 48000, 960, ptr_enabled=True,
+            path_model="waveguide_v1", forced_induction_model="timbre_map_v1",
+        )
+        return engine.process_with_trace(
+            {"rpm": trace.rpm, "load": trace.load, "throttle": trace.throttle, "acceleration_mps2": trace.acceleration_mps2}
+        ).post_ptr_raw
+
+    baseline = render()
+    monkeypatch.setattr(
+        persistent_engine_module,
+        "FITTED_MAP_BROADBAND_COUPLING",
+        FITTED_MAP_BROADBAND_COUPLING + 0.5,
+    )
+    changed = render()
+    assert baseline is not None and changed is not None
+    assert _sha(baseline) != _sha(changed)
+
+
 def test_transition_high_band_share_is_gain_invariant_and_selective() -> None:
     sample_rate = 48000
     time_s = np.arange(int(0.2 * sample_rate), dtype=np.float64) / sample_rate
@@ -140,10 +165,12 @@ def test_transition_high_band_share_is_gain_invariant_and_selective() -> None:
     high_share = _window_high_band_share(high, sample_rate, 0.0, 1.0)
     gained_share = _window_high_band_share(7.0 * high, sample_rate, 0.0, 1.0)
     stereo_share = _window_high_band_share(np.column_stack((high, high)), sample_rate, 0.0, 1.0)
+    short_share = _window_high_band_share(high[:1200], sample_rate, 0.0, 1.0)
     assert high_share > 0.95
     assert low_share < 0.01
     assert np.isclose(gained_share, high_share, rtol=1.0e-12, atol=1.0e-15)
     assert np.isclose(stereo_share, high_share, rtol=1.0e-12, atol=1.0e-15)
+    assert short_share > 0.90
 
 
 def test_post_ptr_narrowband_energy_share_is_gain_invariant_and_selective() -> None:

@@ -89,7 +89,7 @@ revolution rather than silently repeating after 360°.
 
 `StateTransientMixer` persists latches, last state, event totals, stem energy,
 crossfade activity and audio/mix tails. The persistent engine emits
-`s12.stage_w.persistent_engine_state.v3`, validates runtime-model identity and
+`s12.stage_w.persistent_engine_state.v4`, validates runtime-model identity and
 all path/filter/PLL/tail state atomically, and embeds the active transient and
 pressure-chain states. Legacy zero-state v1 snapshots are migrated from fresh
 state only; pre-Y5 v2 is accepted only for chain-off targets, while an active

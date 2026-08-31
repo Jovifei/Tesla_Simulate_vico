@@ -9,7 +9,7 @@
 - `stage_w/persistent_engine.py`：仅在 `timbre_map_v1 + require_fitted_timbre_map` 时启用 bounded local source-layer coupling：broadband `4.0`、forced blower/turbo layer `2.0`；legacy/formula-map 保持 `0.28`、`1.0`。诊断字段记录 provenance；不改全局增益、PTR/Radiation、FVM、Track-P 或地图数据。
 - `stage_x/search_parameters.py`：boost attack/release 使用声明过渡窗口内的 scale-invariant high-band share；短窗零填充至 comparator 的 23-frame roughness trend kernel，避免短帧广播异常。旧 RMS 键保留为诊断，不作为这两个控制的 gate。
 - `test_s12_stage_y_reachability.py`：覆盖 fitted/legacy coupling 边界、high-band helper 选择性与增益不变性，以及最终 16 控制契约。
-- `stage_w/persistent_engine.py` 的 v3 snapshot 现在绑定 coupling contract；fitted snapshot 不能恢复到 legacy coupling。`stage_y/package.py` 的 renderer config SHA 同时绑定该 contract，防止 v1/v2 重渲染时静默接受 coupling 漂移。
+- `stage_w/persistent_engine.py` 的 v4 snapshot 现在绑定 coupling contract；v1/v2/v3 输入显式迁移或 fail-closed，fitted snapshot 不能恢复到 legacy coupling。`stage_y/package.py` 的 renderer config SHA 同时绑定该 contract，防止 v1/v2 重渲染时静默接受 coupling 漂移。
 
 ## Final fitted-map 证据
 
