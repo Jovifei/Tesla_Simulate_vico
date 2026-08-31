@@ -30,6 +30,6 @@
   "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
   "final_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
   "tested_source_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
-  "metadata_head": "4224c196b1e2a4288da07c29a0e889656695189d",
+  "metadata_head": "1ef0883a7720bacb9c2054bc63ad63ebf275e51e",
   "next_decision": "run one complete S12 qualification, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
 }

@@ -36,7 +36,7 @@
     "from": "P2H",
     "to": "P3",
     "reason": "per-parameter declarations and map receipt are P3; PCM bytes were not rerendered",
-    "metadata_head": "4224c196b1e2a4288da07c29a0e889656695189d"
+    "metadata_head": "1ef0883a7720bacb9c2054bc63ad63ebf275e51e"
   },
   "output": "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tasks\\reports\\runtime\\s12-stage-y\\y1_reachability\\final_fitted_map",
   "run_id": "y1-final-fitted-map-20260831T145748162574Z",
