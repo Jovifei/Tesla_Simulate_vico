@@ -395,7 +395,12 @@ class PersistentEventDomainEngine:
             from ..stage_y.fixture_cycles import synthesize_hellcat_cycle_bank
             self._cycle_sync = CycleSyncResampler(synthesize_hellcat_cycle_bank(self.sample_rate_hz), self.sample_rate_hz)
         self._transient_mixer = None
-        self._transient_counts = {"transient_shift_count": 0, "transient_tip_in_count": 0, "transient_bov_count": 0}
+        self._transient_counts = {
+            "transient_tip_in_count": 0,
+            "transient_lift_count": 0,
+            "transient_shift_count": 0,
+            "transient_bov_count": 0,
+        }
         if self.transient_model == "state_v1":
             from ..stage_y.state_transients import StateTransientMixer
             self._transient_mixer = StateTransientMixer(self.sample_rate_hz)
@@ -611,7 +616,7 @@ class PersistentEventDomainEngine:
             raw = raw + 0.35 * self._cycle_sync.render(phase, rpm)
         if self._transient_mixer is not None:
             residual, counts = self._transient_mixer.render_block(n, float(state["throttle"]), float(state["rpm"]), float(boost_state[-1]) if boost_state.size else 0.0, n / self.sample_rate_hz)
-            raw = raw + residual
+            raw = self._transient_mixer.equal_power_crossfade(raw, raw + residual, self._transient_mixer.crossfade_mix())
             self._transient_counts = counts
         if external_transient is not None:
             raw += external_transient
@@ -873,7 +878,7 @@ class PersistentEventDomainEngine:
 
     def snapshot_state(self) -> dict[str, Any]:
         return {
-            "schema_version": "s12.stage_w.persistent_engine_state.v1",
+            "schema_version": "s12.stage_w.persistent_engine_state.v2",
             "sample_counter": self.sample_counter,
             "pll": {"phase_rad": self.pll.phase_rad, "omega_rad_s": self.pll.omega_rad_s, "initialized": self.pll.initialized, "sample_count": self.pll.sample_count},
             "pending_combustion_torque": self._pending_combustion_torque.copy(),
@@ -905,6 +910,7 @@ class PersistentEventDomainEngine:
             "collector_event_tails": [tail.copy() for tail in self._collector_event_tails],
             "central_collector_event_tail": self._central_collector_event_tail.copy(),
             "path_lines": [line.snapshot() for line in self._path_lines],
+            "path_filter_state": self._path_filter_state.copy(),
             "collector_lines": [line.snapshot() for line in self._collector_lines],
             "central_collector_line": self._central_collector_line.snapshot(),
             "afterfire_location_policy": self.afterfire_location_policy,
@@ -924,6 +930,14 @@ class PersistentEventDomainEngine:
             "random_seed": self.random_seed,
             "jitter_fraction": self.jitter_fraction,
             "rng_state": copy.deepcopy(self._rng.bit_generator.state),
+            "runtime_models": {
+                "path_model": self.path_model,
+                "forced_induction_model": self.forced_induction_model,
+                "cycle_sync_model": self.cycle_sync_model,
+                "transient_model": self.transient_model,
+                "audio_chain": self.audio_chain_model,
+            },
+            "transient_state": self._transient_mixer.snapshot() if self._transient_mixer is not None else None,
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -931,6 +945,7 @@ class PersistentEventDomainEngine:
         self.sample_counter = state["sample_counter"]
         self.pll.phase_rad, self.pll.omega_rad_s, self.pll.initialized, self.pll.sample_count = state["pll"]
         self._pending_combustion_torque = state["pending_combustion_torque"]
+        self._path_filter_state = state["path_filter_state"]
         for name in (
             "last_rpm", "last_throttle", "last_load", "boost_state", "bov_state", "blower_phase", "turbo_phase",
             "afterfire_fuel_reservoir", "afterfire_temperature", "collector_pressure", "monitor_gain_db",
@@ -957,6 +972,9 @@ class PersistentEventDomainEngine:
         self._click_contract = state["click_contract"]
         self._click_threshold = float(self._click_contract["threshold"])
         self._transfer_ir.state = state["transfer_ir"]
+        if self._transient_mixer is not None:
+            self._transient_mixer.restore(state["transient_state"])
+            self._transient_counts = self._transient_mixer.diagnostics()
         if self.ptr is not None:
             for adapter, adapter_state, upstream, downstream in state["ptr"]:
                 adapter._x0, adapter._x1 = adapter_state["x0"], adapter_state["x1"]
@@ -979,15 +997,26 @@ class PersistentEventDomainEngine:
             "afterfire_sequence", "afterfire_dropped_events", "collector_pressure", "afterfire_pressure_energy_map", "event_count",
             "afterfire_event_count", "afterfire_location_counts", "afterfire_route", "combustion_torque_event_count", "boost_state",
             "bov_state", "bov_event_count", "blower_phase", "turbo_phase", "omega_ripple_sum_sq", "omega_ripple_sample_count",
-            "event_tails", "collector_event_tails", "central_collector_event_tail", "path_lines", "collector_lines", "central_collector_line",
+            "event_tails", "collector_event_tails", "central_collector_event_tail", "path_lines", "path_filter_state", "collector_lines", "central_collector_line",
             "afterfire_location_policy", "monitor_gain_db", "last_output_sample", "click_max_boundary_jump", "click_sum_sq", "click_count",
             "ptr", "waveguide", "teacher_response", "transfer_ir", "parameter_consumption", "parameter_fallbacks", "timbre_inertia_state",
-            "click_contract", "random_seed", "jitter_fraction", "rng_state",
+            "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "transient_state",
         }
         snapshot = _mapping(snapshot, "persistent engine snapshot")
+        if snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v1":
+            legacy_counter = _counter(snapshot.get("sample_counter"), "legacy sample_counter")
+            if legacy_counter != 0:
+                raise ValueError("legacy snapshot omits state required for nonzero replay")
+            snapshot = dict(snapshot)
+            snapshot.update({
+                "schema_version": "s12.stage_w.persistent_engine_state.v2",
+                "path_filter_state": np.zeros_like(self._path_filter_state),
+                "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
+                "transient_state": self._transient_mixer.snapshot() if self._transient_mixer is not None else None,
+            })
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
-        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v1":
+        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v2":
             raise ValueError("unsupported persistent engine snapshot")
         sample_counter = _counter(snapshot["sample_counter"], "sample_counter")
         pll = _mapping(snapshot["pll"], "PLL snapshot")
@@ -1057,6 +1086,7 @@ class PersistentEventDomainEngine:
                 label = "path line" if name == "path_lines" else "collector line"
                 raise ValueError(f"{label} topology differs from snapshot")
             state[name] = [line._validate(item) for line, item in zip(lines, saved)]
+        state["path_filter_state"] = _finite_array(snapshot["path_filter_state"], self._path_filter_state.shape, "path filter state")
         state["central_collector_line"] = self._central_collector_line._validate(snapshot["central_collector_line"])
         policy = snapshot["afterfire_location_policy"]
         if not isinstance(policy, str) or policy not in {"primary", "bank_collector", "central_collector"}:
@@ -1096,6 +1126,19 @@ class PersistentEventDomainEngine:
         except (TypeError, ValueError, KeyError, OverflowError):
             raise ValueError("RNG state differs from topology") from None
         state["rng_state"] = copy.deepcopy(rng.bit_generator.state)
+        models = _mapping(snapshot["runtime_models"], "runtime model snapshot")
+        expected_models = {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model}
+        if dict(models) != expected_models:
+            raise ValueError("runtime model snapshot differs from engine")
+        if self._transient_mixer is None:
+            if snapshot["transient_state"] is not None:
+                raise ValueError("unexpected transient state")
+            state["transient_state"] = None
+        else:
+            if snapshot["transient_state"] is None:
+                raise ValueError("missing transient state")
+            self._transient_mixer._validate_snapshot(snapshot["transient_state"])
+            state["transient_state"] = copy.deepcopy(snapshot["transient_state"])
         return state
 
     def _validate_optional_component(self, snapshot: Any, component: Any, name: str) -> Any:
