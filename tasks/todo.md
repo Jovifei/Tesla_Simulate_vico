@@ -4191,7 +4191,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
 - [x] Y3：按 720°/4π 接入 P4，并统一 bakeoff/validator/review inventory。
 - [x] Y4：状态瞬态、完整尾音与 snapshot replay，最终80 passed/1 skipped，复审通过。
-- [ ] Y5：闭合分块等价 DC/dP/warmup 链。
+- [x] Y5：DC/dP/warmup、v3 snapshot迁移与60s分块等价，43 passed无skip，复审通过。
 - [ ] Y6：生成累计分层试听包并完成 WAV/SHA/边界校验。
 - [ ] 同步 Stage Y 状态、Obsidian/registry，并在最终 HEAD 完成一次完整 S12 资格。
 
