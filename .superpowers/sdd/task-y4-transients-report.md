@@ -12,7 +12,7 @@ No Y5 dP/DC/warmup implementation, harmonic-map change, PLL/default-source-voici
 
 ## Review remediation
 
-Code `98358a7` adds latch/re-arm for lift/shift/BOV, full 120ms shift tail capacity, all four engine/bakeoff diagnostics, and expanded atomic/streaming/reset tests. The preserved RED2 run was 3 failed/9 passed; targeted GREEN was 12 passed plus 3 replay tests. Final parent-captured post-commit proof is `y4_transients-20260831T052411180625Z`: 71 passed, 1 skipped in 21.61s, actual exit0, UTC 05:24:11.214617 to 05:24:33.487349 on 2026-08-31. Exact command and log hashes are in its JSON under Y4 logs and the updated phase receipt. No additional full-suite run was performed.
+Code `98358a7` adds latch/re-arm for lift/shift/BOV, full 120ms shift tail capacity, all four engine/bakeoff diagnostics, and expanded atomic/streaming/reset tests. The preserved RED2 run was 3 failed/9 passed; targeted GREEN was 12 passed plus 3 replay tests. Intermediate parent-captured post-commit proof was `y4_transients-20260831T052411180625Z`: 71 passed, 1 skipped in 21.61s, actual exit0, UTC 05:24:11.214617 to 05:24:33.487349 on 2026-08-31. Exact command and log hashes are in its JSON under Y4 logs and the updated phase receipt. No additional full-suite run was performed.
 
 ## Final compatibility and evidence closure
 
