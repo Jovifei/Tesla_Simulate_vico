@@ -1,0 +1,16 @@
+{
+  "status": "FAIL_REPAIRING",
+  "evidence_kind": "targeted diagnostic on uncommitted probe alignment; not canonical qualification",
+  "map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
+  "tolerance": 0.02,
+  "model_derived_fixed_band_probes": {
+    "blower_sideband_mix": {"minus": 0.2128799, "plus": 0.2380784, "status": "PASS"},
+    "blower_broadband_mix": {"minus": 0.0020768, "plus": 0.0020806, "status": "FAIL"},
+    "blower_casing_mix": {"minus": 0.3540159, "plus": 0.4634793, "status": "PASS"}
+  },
+  "unresolved": ["broadband below threshold", "boost attack/release and bypass final-map envelope metrics incomplete", "helper scale-invariance test uses overly strict float equality"],
+  "production_audio_changed": false,
+  "full_s12_run": false,
+  "existing_v1_package": "preserved; software playback proof only, not final reachability qualification",
+  "next_decision": "authorize bounded fitted-map source-layer energy balancing or retain NOT_QUALIFIED without changing DSP/threshold"
+}

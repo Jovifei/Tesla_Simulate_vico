@@ -42,7 +42,9 @@
         "run_metadata": "A3E22D5E9E528CAE839F0D5E287DBAB4F7350D4EC6CB24EDC52C35A14B64B543",
         "stdout": "F3797EF6C3A9E5163A8FD66DF09FD90AF8BA33567A567DB0BA1F11EFE7CFBF5D",
         "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
-      }
+      },
+      "final_fitted_map_status": "NOT_QUALIFIED",
+      "historical_scope": "Original16/16 retained for pre-fitted-map probe configuration; not final-map qualification."
     },
     "Y2_HARMONIC_MAP": {
       "status": "PASS",
@@ -140,7 +142,8 @@
       "human_status": "WAITING_FOR_JOVI_LAYER_AUDITION"
     },
     "Y9_FINAL_QUALIFICATION": {
-      "status": "IN_PROGRESS"
+      "status": "FAIL_REPAIRING",
+      "blocker": "Final fitted-map broadband reachability below bilateral0.02; renderer voicing or acceptance-domain decision required before further repair."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"

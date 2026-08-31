@@ -1,5 +1,9 @@
 # Stage Y Resume
 
+## Current final-review hold
+
+`Y9_FINAL_QUALIFICATION / FAIL_REPAIRING`: original Y1 16/16 used the formula map, not the final committed map. Probe/config alignment is uncommitted; fixed model-derived bands pass sideband/casing, but broadband remains approximately 0.00208 < 0.02 in both directions. Boost/bypass final-map metrics remain unfinished. Do not claim final reachability or run full S12 yet. No DSP/map/package audio changes were made. The existing v1 package remains intact. Await a decision on bounded fitted-map source-layer balancing; see `final_qualification/fitted_map_reachability_gap.json`. Do not overwrite the old canonical Y1 receipt or v1 audio.
+
 - Branch: `agent/s12-stage-y-source-layers-and-reachability`
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-y-source-layers`
 - Y0 setup receipt: `9dffb65dc885e4b272f0286a6dc1350b83f66a4d` from base Stage-X `3d433e30f2c0238d65baed321aa70355a626ceb6`.

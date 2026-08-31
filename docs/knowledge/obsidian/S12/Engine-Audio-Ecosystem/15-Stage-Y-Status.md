@@ -12,9 +12,12 @@ evidence_head: 091696936abc8ec310f2f937579bc136cf21bc0e
 <!-- S12-STAGE-Y:AUTO:BEGIN -->
 # Stage Y current status
 
-Y1–Y6 are `PASS` for their bounded software evidence. The current execution
-state is `Y9_FINAL_QUALIFICATION / IN_PROGRESS`; the final whole-S12 suite has
-not run. All evidence below is synthetic, uncalibrated, vehicle-inspired and
+Y1–Y6 retain their historical bounded software evidence. Final review found
+that the original Y1 probe used the formula map rather than the committed map;
+final-map broadband reachability remains below the 0.02 bilateral threshold.
+Current state is `Y9_FINAL_QUALIFICATION / FAIL_REPAIRING`; no final whole-S12
+suite has run. Historical 16/16 is not final fitted-map qualification.
+All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
 
