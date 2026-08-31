@@ -27,6 +27,13 @@ from .waveguide import WaveguideNetwork
 from .timbre_map import TimbreMap4D, render_timbre_map
 from .click_contract import click_gate_contract
 
+# These are source-layer couplings, not whole-output gain.  The fitted fixture
+# path is the only path that uses the locally balanced values.
+LEGACY_MAP_BROADBAND_COUPLING = 0.28
+FITTED_MAP_BROADBAND_COUPLING = 4.0
+LEGACY_MAP_FORCED_LAYER_COUPLING = 1.0
+FITTED_MAP_FORCED_LAYER_COUPLING = 2.0
+
 
 def _finite_scalar(value: Any, label: str) -> float:
     if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
@@ -283,6 +290,15 @@ class PersistentEventDomainEngine:
         if forced_induction_model not in {"harmonic_v1", "timbre_map_v1"}:
             raise ValueError("forced_induction_model must be harmonic_v1 or timbre_map_v1")
         self.forced_induction_model = forced_induction_model
+        fitted_map = self.forced_induction_model == "timbre_map_v1" and bool(self.config.get("require_fitted_timbre_map"))
+        self._timbre_layer_coupling = {
+            "provenance": "bounded_local_fitted_map_source_layer_balance",
+            "fitted_map": fitted_map,
+            "legacy_broadband": LEGACY_MAP_BROADBAND_COUPLING,
+            "broadband": FITTED_MAP_BROADBAND_COUPLING if fitted_map else LEGACY_MAP_BROADBAND_COUPLING,
+            "legacy_forced_layer": LEGACY_MAP_FORCED_LAYER_COUPLING,
+            "forced_layer": FITTED_MAP_FORCED_LAYER_COUPLING if fitted_map else LEGACY_MAP_FORCED_LAYER_COUPLING,
+        }
         if not isinstance(random_seed, int) or isinstance(random_seed, bool):
             raise ValueError("random_seed must be a bounded integer")
         if not np.isfinite(jitter_fraction) or not 0.0 <= float(jitter_fraction) <= 0.25:
@@ -608,9 +624,13 @@ class PersistentEventDomainEngine:
             forced["blower"] = forced["blower"] * bypass_gain[:, None]
         forced["blowoff"] = self._render_bov(phase, boost_start, boost_state, throttle)
         if self.forced_induction_model == "timbre_map_v1":
-            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
-            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + 0.28 * forced["broadband"] + 0.25 * forced["casing"]
+            broadband_coupling = self._timbre_layer_coupling["broadband"]
+            forced["blower"] = forced["blower"] + 0.35 * forced["sidebands"] + broadband_coupling * forced["broadband"] + 0.25 * forced["casing"]
+            forced["turbo"] = forced["turbo"] + 0.35 * forced["sidebands"] + broadband_coupling * forced["broadband"] + 0.25 * forced["casing"]
             forced["intake"] = forced["intake"] + 0.20 * forced["broadband"]
+            forced_layer_coupling = self._timbre_layer_coupling["forced_layer"]
+            forced["blower"] *= forced_layer_coupling
+            forced["turbo"] *= forced_layer_coupling
         mechanical = (
             0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
             + 0.003 * phase_block.torque_ripple
@@ -1286,6 +1306,7 @@ class PersistentEventDomainEngine:
             "mode": self.mode,
             "path_model": self.path_model,
             "forced_induction_model": self.forced_induction_model,
+            "timbre_layer_coupling": dict(self._timbre_layer_coupling),
             "cycle_sync_model": self.cycle_sync_model,
             "transient_model": self.transient_model,
             "audio_chain": self.audio_chain_model,
@@ -1338,4 +1359,11 @@ class PersistentEventDomainEngine:
         }
 
 
-__all__ = ["EngineAudioBlock", "PersistentEventDomainEngine"]
+__all__ = [
+    "EngineAudioBlock",
+    "FITTED_MAP_BROADBAND_COUPLING",
+    "FITTED_MAP_FORCED_LAYER_COUPLING",
+    "LEGACY_MAP_BROADBAND_COUPLING",
+    "LEGACY_MAP_FORCED_LAYER_COUPLING",
+    "PersistentEventDomainEngine",
+]

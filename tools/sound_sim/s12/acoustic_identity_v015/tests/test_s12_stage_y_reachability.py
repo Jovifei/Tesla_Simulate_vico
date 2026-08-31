@@ -11,7 +11,14 @@ from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema impor
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import build_hellcat_bakeoff_trace
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w import persistent_engine as persistent_engine_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
-from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import load_committed_fixture_timbre_map
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import (
+    FITTED_MAP_BROADBAND_COUPLING,
+    FITTED_MAP_FORCED_LAYER_COUPLING,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import (
+    configure_committed_fixture_timbre_map,
+    load_committed_fixture_timbre_map,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_x import search_parameters as search_parameter_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_x.search_parameters import (
     METRIC_FUNCS,
@@ -74,6 +81,22 @@ def test_p3_reachability_probe_receives_committed_fitted_map(monkeypatch) -> Non
         "order_axis": expected_table.order_axis.tolist(),
         "values": expected_table.values.tolist(),
     }
+
+
+def test_fitted_map_declares_local_broadband_coupling() -> None:
+    config = load_config("hellcat_v1")
+    configure_committed_fixture_timbre_map(config)
+    engine = PersistentEventDomainEngine(
+        config, 48000, 960, ptr_enabled=True,
+        path_model="waveguide_v1", forced_induction_model="timbre_map_v1",
+    )
+    balance = engine.diagnostics()["timbre_layer_coupling"]
+    assert balance["provenance"] == "bounded_local_fitted_map_source_layer_balance"
+    assert balance["fitted_map"] is True
+    assert balance["broadband"] == FITTED_MAP_BROADBAND_COUPLING
+    assert balance["broadband"] > balance["legacy_broadband"]
+    assert balance["forced_layer"] == FITTED_MAP_FORCED_LAYER_COUPLING
+    assert balance["forced_layer"] > balance["legacy_forced_layer"]
 
 
 def test_post_ptr_narrowband_energy_share_is_gain_invariant_and_selective() -> None:
@@ -348,8 +371,13 @@ def test_y1_boost_and_bypass_dynamic_metrics_are_reachable(tmp_path) -> None:
         assert max(row["metric_movement"][metric] for metric in row["target_metrics"]) > 0.02
 
 
-def test_y1_boost_attack_and_release_have_positive_bilateral_post_ptr_envelopes(tmp_path) -> None:
-    """Boost taus use the engine defaults and move their local post-PTR envelopes."""
+def test_y1_boost_targets_are_transition_high_band_metrics() -> None:
+    assert "boost_attack_high_band_share" in METRIC_FUNCS
+    assert "boost_release_high_band_share" in METRIC_FUNCS
+
+
+def test_y1_boost_attack_and_release_have_positive_bilateral_post_ptr_high_band_share(tmp_path) -> None:
+    """Boost taus move the local post-PTR high-band transition share."""
     summary = _selected_y1_summary(tmp_path, "boost_attack", "boost_release")
     by_name = {row["parameter"]: row for row in summary["results"]}
     parameters = {item.name: item for item in hellcat_search_parameters()}
@@ -362,8 +390,8 @@ def test_y1_boost_attack_and_release_have_positive_bilateral_post_ptr_envelopes(
     assert np.all(np.isfinite(normal_default)) and np.all(np.isfinite(normal_unoverridden))
     assert _sha(normal_default) == _sha(normal_unoverridden)
     expected = {
-        "boost_attack": (0.08, 0.07, "boost_attack_envelope_rms"),
-        "boost_release": (0.25, 0.24, "boost_release_envelope_rms"),
+        "boost_attack": (0.08, 0.07, "boost_attack_high_band_share"),
+        "boost_release": (0.25, 0.24, "boost_release_high_band_share"),
     }
     assert tuple(by_name) == tuple(expected)
     for name, (baseline, delta, metric) in expected.items():

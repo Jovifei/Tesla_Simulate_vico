@@ -98,7 +98,13 @@ def _window_high_band_share(audio: np.ndarray, sample_rate: int, start: float, e
     samples = np.asarray(audio, dtype=np.float64).reshape(-1)
     lower = int(np.clip(round(start * samples.size), 0, samples.size))
     upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
-    return _high_band(samples[lower:upper], sample_rate)
+    window = samples[lower:upper]
+    # The comparator's roughness proxy needs at least 23 analysis frames;
+    # zero-padding keeps short declared transition windows deterministic.
+    minimum = 2048 + 22 * 256
+    if window.size < minimum:
+        window = np.pad(window, (0, minimum - window.size))
+    return _high_band(window, sample_rate)
 
 
 def _post_ptr_narrowband_energy_share(
@@ -257,6 +263,8 @@ METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "blower_casing_narrowband_share": _blower_casing_narrowband_share,
     "boost_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.40, 0.425),
     "boost_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.5875, 0.6125),
+    "boost_attack_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.40, 0.425),
+    "boost_release_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.5875, 0.6125),
     "bypass_sweep_window_rms": lambda audio, sr: _window_rms(audio, 0.2625, 0.2875),
     "blower_component_high_band_share": lambda audio, sr: _window_high_band_share(audio, sr, 0.30, 0.40),
     "monitor_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.05, 0.30),
@@ -295,9 +303,9 @@ def hellcat_search_parameters() -> list[SearchParameter]:
         SearchParameter("blower_casing_mix", 1.0, 0.40, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_casing_narrowband_share",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_blower_spectrum", 2.5),)),
 
         SearchParameter("intake_mix", 0.18, 0.06, lambda c, v: _set_parameter(c, "intake_model", v), ("mid_band_share", "flux"), (), unit="normalized_gain"),
-        SearchParameter("boost_attack", 0.08, 0.07, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("boost_attack_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
+        SearchParameter("boost_attack", 0.08, 0.07, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("boost_attack_high_band_share",), (), unit="s", note="high-band share in the declared boost attack window", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
 
-        SearchParameter("boost_release", 0.25, 0.24, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_release_s": _fixed(v, "s", "stage x boost release")}), ("boost_release_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_precharged_boost_release", 1.6),)),
+        SearchParameter("boost_release", 0.25, 0.24, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_release_s": _fixed(v, "s", "stage x boost release")}), ("boost_release_high_band_share",), (), unit="s", note="high-band share in the declared boost release window", architecture="P3", scenes=(("y1_precharged_boost_release", 1.6),)),
 
         SearchParameter("bypass_threshold", 0.20, 0.08, lambda c, v: c.setdefault("timbre_mixes", {}).update({"bypass_threshold": _fixed(v, "throttle", "stage x bypass threshold")}), ("bypass_sweep_window_rms",), (), unit="throttle", architecture="P3", scenes=(("y1_bypass_threshold_sweep", 1.6),)),
 
@@ -661,6 +669,8 @@ def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
         "blower_casing_narrowband_share": _blower_casing_narrowband_share(concat, sample_rate),
         "boost_attack_envelope_rms": _window_rms(concat, 0.40, 0.425),
         "boost_release_envelope_rms": _window_rms(concat, 0.5875, 0.6125),
+        "boost_attack_high_band_share": _window_high_band_share(concat, sample_rate, 0.40, 0.425),
+        "boost_release_high_band_share": _window_high_band_share(concat, sample_rate, 0.5875, 0.6125),
         "bypass_sweep_window_rms": _window_rms(concat, 0.2625, 0.2875),
         "blower_component_high_band_share": _window_high_band_share(concat, sample_rate, 0.30, 0.40),
         "monitor_attack_envelope_rms": _window_rms(concat, 0.05, 0.30),
