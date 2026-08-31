@@ -109,7 +109,7 @@ jobs:
           combined tree. The combined tree must pass its own integration workflow
           before it may be proposed to main.
           EOF
-          git add docs/08-reports/06-s12-stage-y-open-source-integration.md
+          git add -f docs/08-reports/06-s12-stage-y-open-source-integration.md
 
           git rm .github/workflows/s12-stage-y-integrate-branches.yml
 
