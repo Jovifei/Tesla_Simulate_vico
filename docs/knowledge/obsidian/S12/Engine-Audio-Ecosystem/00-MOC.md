@@ -44,3 +44,11 @@ repair. Selection remains `null` and the status remains
 - [[11-R1-Formal-Gate-Readiness]]
 - [[12-Stage-X-Final-Status]]
 - [[13-Workspace-Cleanup-20260830]]
+- [[14-Borrow-Degree-Audit]]
+- [[Open-Source-Missed-Sources-20260830]]
+
+2026-08-30 borrow audit: research notes for Engine-Sim / ENSIM4 / PTR / VNS
+exist, but runtime method transfer is low (about 25–35% of the methods that
+actually make engines sound real). P4 recorded resynthesis is unimplemented.
+Hellcat engineering search ended
+`NO_MEASURABLE_IMPROVEMENT_AFTER_REDESIGN`. See [[14-Borrow-Degree-Audit]].
