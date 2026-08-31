@@ -1,0 +1,25 @@
+{
+  "run_id": "y6_audition-20260831T070236233421Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py",
+    "-q"
+  ],
+  "started_at": "2026-08-31T07:02:36.299936+00:00",
+  "ended_at": "2026-08-31T07:03:03.307430+00:00",
+  "exit_code": 0,
+  "source_head": "1079bd8031f9d4b05d3e2955e109154fcc9d57b6",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6_audition-20260831T070236233421Z.stdout.log",
+      "sha256": "e8896d6b7bb4ecb7aec2c1b02f88c2bd1e47cba1aa0e7e006af7b361d657b126"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6_audition-20260831T070236233421Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
