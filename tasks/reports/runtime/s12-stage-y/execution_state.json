@@ -159,6 +159,9 @@
       "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
       "full_s12_status": "PENDING_AFTER_CANONICAL_HASH_REPAIR",
       "historical_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+      "historical_failed_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
+      "historical_failed_full_s12_tested_head": "65b33744fd9134cbebff7516013e4b912c4d09d6",
+      "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard failed on CRLF in the newly added Y1 v2 receipt",
       "blocker": "Re-run one complete S12 qualification after the canonical fixture/PCM hash repair; human/R1/Profile Freeze remain external gates."
     }
   },

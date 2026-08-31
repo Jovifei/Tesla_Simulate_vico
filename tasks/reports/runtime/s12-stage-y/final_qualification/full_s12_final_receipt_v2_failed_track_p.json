@@ -1,0 +1,34 @@
+{
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/tests",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests",
+    "-q"
+  ],
+  "ended_at": "2026-08-31T19:24:47.071619+00:00",
+  "exit_code": 1,
+  "logs": {
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/full-s12-final-20260831T184449809820Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/full-s12-final-20260831T184449809820Z.stdout.log",
+      "sha256": "735d28c1e9ee721524110b9d1a607a3c7f93b596c6d267c5274a2a434dd26aaf"
+    }
+  },
+  "pytest_summary": "1368 passed, 2 skipped",
+  "qualification_boundary": {
+    "human_audition": "PENDING",
+    "oem_match_claim": false,
+    "profile_freeze": false,
+    "real_r1_reference": "MISSING",
+    "status": "SOFTWARE_REGRESSION_FAIL"
+  },
+  "run_id": "full-s12-final-20260831T184449809820Z",
+  "schema": "s12.stage_y.full_s12_final_receipt.v1",
+  "started_at": "2026-08-31T18:44:49.840393+00:00",
+  "tested_head": "65b33744fd9134cbebff7516013e4b912c4d09d6"
+}

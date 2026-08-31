@@ -31,7 +31,9 @@ artifact are bound to source/test HEAD `f498c993`; map SHA is
 fixture SHA is `060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1`.
 The historical closed-loop CI receipt remains branch-specific evidence and is
 not acceptance of this combined tree. Full S12 must run once on the canonical
-code HEAD before the branch may be proposed to main.
+code HEAD before the branch may be proposed to main. The first canonical run was
+blocked only by CRLF formatting in the new v2 receipt (`1368 passed, 2 skipped`);
+that failed receipt is retained as historical and a clean rerun is pending.
 
 No external source code, presets, copyrighted vehicle audio, IR assets, or
 commercial model data are added. Track-P remains frozen. Human audition, legal

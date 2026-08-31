@@ -20,7 +20,9 @@ bounded local coupling is recorded in the engine diagnostics. Current state is
 `Y9_FINAL_QUALIFICATION / IN_PROGRESS / FULL_S12_PENDING`; the earlier whole-S12
 receipt (`1369 passed, 2 skipped`, exit `0`, tested HEAD `a73322b`) is historical
 and superseded by the canonical fixture-hash repair. One complete S12 run is
-required on the canonical code HEAD.
+required on the canonical code HEAD. The first canonical attempt at `65b3374`
+had `1368 passed, 2 skipped`, exit `1`, only because Track-P rejected CRLF in
+the new v2 receipt; the failed receipt is retained as historical.
 All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
@@ -129,7 +131,7 @@ the match is not LUFS, SPL, calibration or dynamic evidence. Parent-vs-final
 | Y5 | Per-sample DC/dP, warmup, fractional delay, v3 snapshot compatibility, click contract and deterministic 3000×960 equivalence; `43 passed in 28.92s`, no skip; source head `1f3a9cba27fe2ca212ce7f488ebdd5f11b5c83bc`. | [`y5_dp_chain_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json) |
 | Y6 | Production package `11` scenes/`154` synthetic 48 kHz stereo PCM24 WAVs; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`; browser pages each loaded `77` players and sampled playback; source head `091696936abc8ec310f2f937579bc136cf21bc0e`. | [`y6_audition_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json), [`browser_playback_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json) |
 
-The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The historical full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json); the next current receipt is expected at `full_s12_final_receipt_v2.json` after the authorized rerun.
+The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The historical full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json); the failed canonical attempt is [`full_s12_final_receipt_v2_failed_track_p.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json); the next current receipt is expected at `full_s12_final_receipt_v2.json` after the authorized rerun.
 Y6 is `PASS` for package/browser evidence, while its receipt still records
 `human_status=WAITING_FOR_JOVI_LAYER_AUDITION`,
 `formal_status=FORMAL_R1_REFERENCE_MISSING`,

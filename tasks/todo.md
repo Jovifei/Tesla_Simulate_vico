@@ -4214,4 +4214,4 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 ### Review
 
 - 起始 `origin/main`: `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`；起始 integration: `3aafda52f8c1b9fe5728591ca087b53fa2baf809`。
-- 当前明确阻塞：canonical fixture/PCM hash 修复已使先前 `1369 passed, 2 skipped` 全量收据转为历史；需在当前 canonical code HEAD 重新执行一次完整 S12。历史公式-map 16/16 不可复用为最终资格；R1/human/Profile Freeze 仍保持 fail-closed。
+- 当前明确阻塞：canonical fixture/PCM hash 修复已使先前 `1369 passed, 2 skipped` 全量收据转为历史；首次 canonical rerun 仅因 Y1 v2 收据 CRLF 触发 Track-P，记录 `1368 passed, 2 skipped`, exit `1`，已保留失败证据；LF 修复后仍需重新执行一次完整 S12。历史公式-map 16/16 不可复用为最终资格；R1/human/Profile Freeze 仍保持 fail-closed。

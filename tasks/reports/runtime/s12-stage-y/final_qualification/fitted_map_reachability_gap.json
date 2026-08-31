@@ -35,5 +35,7 @@
   "tested_source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
   "metadata_head": "f498c99352ad559897b6157d6722d64e05e68a32",
   "historical_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+  "historical_failed_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
+  "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard only, caused by CRLF receipt formatting",
   "next_decision": "run one complete S12 after canonical hash repair, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
 }

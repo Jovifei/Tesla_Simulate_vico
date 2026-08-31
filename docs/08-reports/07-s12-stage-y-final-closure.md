@@ -39,7 +39,7 @@ R1 identity, OEM reproduction, calibration or Profile Freeze.
 - Y4: latch/re-arm, 120 ms tails and snapshot/replay; historical `80 passed, 1 skipped`; PASS.
 - Y5: per-sample DC/dP, warmup, fractional delay and v3 migration; historical `43 passed`, no skip; PASS.
 - Y6 v1: 154 synthetic PCM24 WAVs / 11 scenes / browser playback evidence; preserved unchanged. Because the fitted-map renderer inputs changed, any regenerated package must be a new `s12-stage-y-hellcat-layers-v2` directory; v2 has not been generated in this closure.
-- Full S12: the earlier `1369 passed, 2 skipped` receipt at tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf` is retained as historical and superseded by the canonical fixture-hash repair. One new complete S12 run is still required; its current receipt will be `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json`.
+- Full S12: the earlier `1369 passed, 2 skipped` receipt at tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf` is retained as historical and superseded by the canonical fixture-hash repair. The first canonical rerun at `65b3374` recorded `1368 passed, 2 skipped`, exit `1`; both failures were Track-P guard checks caused by CRLF formatting in the newly added Y1 v2 receipt and are retained at `full_s12_final_receipt_v2_failed_track_p.json`. After the LF repair, one new complete S12 run is still required; its current receipt will be `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json`.
 
 ## Open-source method boundary
 
