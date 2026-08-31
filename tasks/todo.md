@@ -4185,9 +4185,9 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## 2026-08-30 S12 Stage Y source layers recovery
 
-> 状态：接管执行中；保留 `f989a8b` 后全部未提交 WIP，不 reset/clean/stash，不 push/merge/PR。
+> 状态：最终 fitted-map 可达性未闭合；本次保存探针 WIP 与问题说明，不调音、不 push/merge/PR。
 
-- [x] Y1：16/16 参数达到既有 0.02 可达性门，pytest 不写仓库。
+- [ ] 最终 Y1：历史公式-map 16/16 保留；最终 fitted-map 的 broadband/boost/bypass 可达性仍未闭合。
 - [x] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
 - [x] Y3：按 720°/4π 接入 P4，并统一 bakeoff/validator/review inventory。
 - [x] Y4：状态瞬态、完整尾音与 snapshot replay，最终80 passed/1 skipped，复审通过。
@@ -4199,4 +4199,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - Y1 canonical probe：16/16 bilateral PASS；evidence HEAD `e0436dc`，metadata commit `7f5f2e9`；独立收据/hash/state 复审 PASS。
 - Y2 committed fitted map：source head `2dd4ad6`，postfix evidence `9 passed`，receipt/state/hash 复审 PASS。
-- Y4/Y5 前必须修复 takeover WIP 中既有的 snapshot/raw replay 缺口；不得把该缺口带入最终资格。
+- Y4/Y5 snapshot/raw replay 缺口已修复并复审；当前阻塞是最终 fitted-map 可达性及一个浮点严格相等测试。
+- 本轮快照说明：`docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md`；最小复验 2 passed/1 failed，未运行 full S12。

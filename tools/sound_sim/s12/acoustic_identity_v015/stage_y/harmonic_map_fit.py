@@ -137,7 +137,23 @@ def load_committed_fixture_timbre_map(path: str | Path = MAP_PATH) -> tuple[dict
     return payload, table
 
 
+def configure_committed_fixture_timbre_map(config: dict[str, Any], path: str | Path = MAP_PATH) -> dict[str, Any]:
+    """Inject the validated committed fixture map into an engine config."""
+    payload, table = load_committed_fixture_timbre_map(path)
+    config["timbre_map"] = {
+        "rpm_axis": table.rpm_axis.tolist(),
+        "load_axis": table.load_axis.tolist(),
+        "boost_axis": table.boost_axis.tolist(),
+        "order_axis": table.order_axis.tolist(),
+        "values": table.values.tolist(),
+    }
+    config["fitted_timbre_map"] = payload
+    config["require_fitted_timbre_map"] = True
+    return payload
+
+
 __all__ = [
     "MAP_BOUNDARY", "MAP_PATH", "MAP_SCHEMA", "build_committed_fixture_timbre_map",
-    "fit_harmonic_map", "load_committed_fixture_timbre_map", "validate_fitted_timbre_map",
+    "configure_committed_fixture_timbre_map", "fit_harmonic_map", "load_committed_fixture_timbre_map",
+    "validate_fitted_timbre_map",
 ]

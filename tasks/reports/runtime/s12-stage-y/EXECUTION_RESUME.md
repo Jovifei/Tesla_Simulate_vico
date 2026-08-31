@@ -2,7 +2,9 @@
 
 ## Current final-review hold
 
-`Y9_FINAL_QUALIFICATION / FAIL_REPAIRING`: original Y1 16/16 used the formula map, not the final committed map. Probe/config alignment is uncommitted; fixed model-derived bands pass sideband/casing, but broadband remains approximately 0.00208 < 0.02 in both directions. Boost/bypass final-map metrics remain unfinished. Do not claim final reachability or run full S12 yet. No DSP/map/package audio changes were made. The existing v1 package remains intact. Await a decision on bounded fitted-map source-layer balancing; see `final_qualification/fitted_map_reachability_gap.json`. Do not overwrite the old canonical Y1 receipt or v1 audio.
+当前保存说明：`docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md`。本次提交只保存 probe/config/test WIP；三节点最小检查为 2 passed/1 failed，不含新调音授权。
+
+`Y9_FINAL_QUALIFICATION / FAIL_REPAIRING`: original Y1 16/16 used the formula map, not the final committed map. Probe/config alignment is retained in the WIP checkpoint; fixed model-derived bands pass sideband/casing, but broadband remains approximately 0.00208 < 0.02 in both directions. Boost/bypass final-map metrics remain unfinished. Do not claim final reachability or run full S12 yet. No DSP/map/package audio changes were made. The existing v1 package remains intact. Await a decision on bounded fitted-map source-layer balancing; see `final_qualification/fitted_map_reachability_gap.json`. Do not overwrite the old canonical Y1 receipt or v1 audio.
 
 - Branch: `agent/s12-stage-y-source-layers-and-reachability`
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-y-source-layers`

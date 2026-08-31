@@ -19,6 +19,7 @@ import numpy as np
 from ..event_domain.config_schema import load_config, parameter, unwrap
 from ..stage_v.io import write_json
 from .multi_reference_comparator import raw_dynamic_metrics, timbre_metrics
+from ..stage_y.harmonic_map_fit import MAP_PATH, configure_committed_fixture_timbre_map
 
 REACHABILITY_SCHEMA = "s12.stage_x.parameter_reachability.v1"
 PARAMETER_NOT_REACHABLE = "PARAMETER_NOT_REACHABLE"
@@ -98,6 +99,67 @@ def _window_high_band_share(audio: np.ndarray, sample_rate: int, start: float, e
     lower = int(np.clip(round(start * samples.size), 0, samples.size))
     upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
     return _high_band(samples[lower:upper], sample_rate)
+
+
+def _post_ptr_narrowband_energy_share(
+    audio: np.ndarray,
+    sample_rate: int,
+    centers_hz: float | tuple[float, ...] | list[float] | np.ndarray,
+    half_width_hz: float = 2.0,
+) -> float:
+    """Return non-DC Hann-windowed energy in the declared narrow bands."""
+    samples = np.asarray(audio, dtype=np.float64)
+    if samples.ndim == 2:
+        if samples.shape[1] == 0:
+            return 0.0
+        samples = samples.mean(axis=1)
+    elif samples.ndim != 1:
+        raise ValueError("narrowband metric expects mono or channel-major PCM")
+    if samples.size == 0:
+        return 0.0
+    samples = samples[-int(sample_rate):]
+    if not np.all(np.isfinite(samples)):
+        return 0.0
+    centers = np.atleast_1d(np.asarray(centers_hz, dtype=np.float64))
+    if centers.size == 0 or not np.all(np.isfinite(centers)) or half_width_hz < 0.0:
+        return 0.0
+    windowed = samples * np.hanning(samples.size)
+    power = np.square(np.abs(np.fft.rfft(windowed)))
+    frequencies = np.fft.rfftfreq(samples.size, d=1.0 / float(sample_rate))
+    denominator = float(np.sum(power[1:]))
+    if denominator <= 0.0 or not np.isfinite(denominator):
+        return 0.0
+    target_bins = np.any(
+        np.abs(frequencies[:, np.newaxis] - centers[np.newaxis, :]) <= float(half_width_hz),
+        axis=1,
+    )
+    target_bins[0] = False
+    numerator = float(np.sum(power[target_bins]))
+    return float(numerator / denominator)
+
+
+_BLOWER_SPECTRUM_RPM = 3000.0
+
+
+def _blower_sideband_narrowband_share(audio: np.ndarray, sample_rate: int) -> float:
+    crank_hz = _BLOWER_SPECTRUM_RPM / 60.0
+    ratio = float(unwrap(load_config("hellcat_v1"), "forced_induction.ratio"))
+    return _post_ptr_narrowband_energy_share(audio, sample_rate, (ratio * crank_hz,))
+
+
+def _blower_broadband_narrowband_share(audio: np.ndarray, sample_rate: int) -> float:
+    crank_hz = _BLOWER_SPECTRUM_RPM / 60.0
+    centers = (
+        float(sample_rate) * 0.017 / (2.0 * np.pi) + 0.31 * crank_hz,
+        float(sample_rate) * 0.041 / (2.0 * np.pi) + 0.73 * crank_hz,
+        float(sample_rate) * 0.097 / (2.0 * np.pi),
+    )
+    return _post_ptr_narrowband_energy_share(audio, sample_rate, centers)
+
+
+def _blower_casing_narrowband_share(audio: np.ndarray, sample_rate: int) -> float:
+    crank_hz = _BLOWER_SPECTRUM_RPM / 60.0
+    return _post_ptr_narrowband_energy_share(audio, sample_rate, (4.7 * crank_hz, 9.3 * crank_hz))
 
 
 def _afterfire_residual_window(audio: np.ndarray, sample_rate: int) -> tuple[np.ndarray, int, int, int]:
@@ -190,6 +252,9 @@ METRIC_FUNCS: dict[str, Callable[[np.ndarray, int], float]] = {
     "idle_recovery_window_rms": lambda audio, sr: _window_rms(audio, 0.775, 0.80),
     "path_window_rms": lambda audio, sr: _window_rms(audio, 0.15, 0.45),
     "blower_window_rms": lambda audio, sr: _window_rms(audio, 0.35, 0.70),
+    "blower_sideband_narrowband_share": _blower_sideband_narrowband_share,
+    "blower_broadband_narrowband_share": _blower_broadband_narrowband_share,
+    "blower_casing_narrowband_share": _blower_casing_narrowband_share,
     "boost_attack_envelope_rms": lambda audio, sr: _window_rms(audio, 0.40, 0.425),
     "boost_release_envelope_rms": lambda audio, sr: _window_rms(audio, 0.5875, 0.6125),
     "bypass_sweep_window_rms": lambda audio, sr: _window_rms(audio, 0.2625, 0.2875),
@@ -223,11 +288,11 @@ def hellcat_search_parameters() -> list[SearchParameter]:
         SearchParameter("attack_mix_120_400", 0.0, 0.20, lambda c, v: c.setdefault("attack_shaping", {}).update({"band_120_400_mix": _fixed(v, "gain", "stage x attack shaping")}), ("band_120_400",), ("low_band_share",), unit="gain"),
         SearchParameter("timbre_map_order_weights", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"order_weights": _fixed([v, v, 1.0, 1.0], "vector", "stage x order weights")}), ("sharpness", "tonality"), (), unit="vector_scale", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
 
-        SearchParameter("blower_sideband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"sideband_mix": _fixed(v, "gain", "stage x sideband mix")}), ("tonality", "sharpness"), ("low_band_share",), unit="gain", architecture="P3", scenes=(("full_load_acceleration", 2.0), ("throttle_tip_in", 2.0))),
+        SearchParameter("blower_sideband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"sideband_mix": _fixed(v, "gain", "stage x sideband mix")}), ("blower_sideband_narrowband_share",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_blower_spectrum", 2.5),)),
 
-        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("blower_component_high_band_share",), ("tonality",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
+        SearchParameter("blower_broadband_mix", 1.0, 0.30, lambda c, v: c.setdefault("timbre_mixes", {}).update({"broadband_mix": _fixed(v, "gain", "stage x broadband mix")}), ("blower_broadband_narrowband_share",), ("tonality",), unit="gain", architecture="P3", scenes=(("y1_blower_spectrum", 2.5),)),
 
-        SearchParameter("blower_casing_mix", 1.0, 0.40, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_component_high_band_share",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
+        SearchParameter("blower_casing_mix", 1.0, 0.40, lambda c, v: c.setdefault("timbre_mixes", {}).update({"casing_mix": _fixed(v, "gain", "stage x casing mix")}), ("blower_casing_narrowband_share",), ("low_band_share",), unit="gain", architecture="P3", scenes=(("y1_blower_spectrum", 2.5),)),
 
         SearchParameter("intake_mix", 0.18, 0.06, lambda c, v: _set_parameter(c, "intake_model", v), ("mid_band_share", "flux"), (), unit="normalized_gain"),
         SearchParameter("boost_attack", 0.08, 0.07, lambda c, v: c.setdefault("timbre_mixes", {}).update({"boost_attack_s": _fixed(v, "s", "stage x boost attack")}), ("boost_attack_envelope_rms",), (), unit="s", architecture="P3", scenes=(("y1_boost_attack", 1.6),)),
@@ -279,6 +344,8 @@ def _render_config_pcm(config: dict[str, Any], architecture: str, traces: list[A
     from ..stage_w.persistent_engine import PersistentEventDomainEngine
 
     settings = _engine_settings(architecture)
+    if settings["forced_induction_model"] == "timbre_map_v1":
+        configure_committed_fixture_timbre_map(config)
     blocks: list[tuple[np.ndarray, np.ndarray, np.ndarray]] = []
     for trace in traces:
         engine = PersistentEventDomainEngine(copy.deepcopy(config), 48000, 960, ptr_enabled=True, **settings)
@@ -327,7 +394,16 @@ def _render_parameter_probe(
     item: SearchParameter, config: dict[str, Any], traces: list[Any]
 ) -> tuple[list[tuple[np.ndarray, np.ndarray, np.ndarray]], dict[str, float]]:
     if item.probe_mode in {"engine", "afterfire_residual"}:
-        return _render_config_pcm(config, item.architecture, traces), {}
+        blocks = _render_config_pcm(config, item.architecture, traces)
+        if _engine_settings(item.architecture)["forced_induction_model"] == "timbre_map_v1":
+            fitted_map = config["fitted_timbre_map"]
+            return blocks, {
+                "fitted_timbre_map_schema": fitted_map["schema"],
+                "fitted_timbre_map_fixture_sha256": fitted_map["fixture_sha256"],
+                "fitted_timbre_map_file_sha256": hashlib.sha256(MAP_PATH.read_bytes()).hexdigest(),
+                "require_fitted_timbre_map": bool(config["require_fitted_timbre_map"]),
+            }
+        return blocks, {}
     if item.probe_mode == "monitor_step":
         return _render_monitor_step_pcm(config, item.architecture)
     raise ValueError(f"unsupported probe mode: {item.probe_mode}")
@@ -343,6 +419,12 @@ def _build_parameter_probe_trace(scene: str, duration_s: float) -> Any:
     count = max(12, int(round(duration_s * 50.0)))
     time_s = np.arange(count, dtype=np.float64) / 50.0
     phase = np.linspace(0.0, 1.0, count, dtype=np.float64)
+    if scene == "y1_blower_spectrum":
+        rpm = np.full(count, 3000.0)
+        load = np.full(count, 0.8)
+        throttle = np.full(count, 0.8)
+        acceleration = np.zeros(count, dtype=np.float64)
+        return VehicleStateTrace(time_s, rpm, load, throttle, acceleration).validate()
     if scene == "y1_high_slew_tip_in":
         rpm = np.where(phase < 0.35, 1100.0, 4300.0)
         load = np.where(phase < 0.35, 0.12, 0.92)
@@ -574,6 +656,9 @@ def _pcm_metrics(blocks: list[np.ndarray]) -> dict[str, float]:
         "idle_recovery_window_rms": _window_rms(concat, 0.775, 0.80),
         "path_window_rms": _window_rms(concat, 0.15, 0.45),
         "blower_window_rms": _window_rms(concat, 0.35, 0.70),
+        "blower_sideband_narrowband_share": _blower_sideband_narrowband_share(concat, sample_rate),
+        "blower_broadband_narrowband_share": _blower_broadband_narrowband_share(concat, sample_rate),
+        "blower_casing_narrowband_share": _blower_casing_narrowband_share(concat, sample_rate),
         "boost_attack_envelope_rms": _window_rms(concat, 0.40, 0.425),
         "boost_release_envelope_rms": _window_rms(concat, 0.5875, 0.6125),
         "bypass_sweep_window_rms": _window_rms(concat, 0.2625, 0.2875),

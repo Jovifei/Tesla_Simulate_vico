@@ -1,6 +1,8 @@
 {
   "status": "FAIL_REPAIRING",
-  "evidence_kind": "targeted diagnostic on uncommitted probe alignment; not canonical qualification",
+  "evidence_kind": "targeted diagnostic retained with WIP probe alignment; not canonical qualification",
+  "checkpoint_document": "docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md",
+  "checkpoint_smoke": "1 failed, 2 passed in 1.57s; strict floating equality failure; no DSP change",
   "map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
   "tolerance": 0.02,
   "model_derived_fixed_band_probes": {

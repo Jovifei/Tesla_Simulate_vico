@@ -12,6 +12,8 @@ evidence_head: 091696936abc8ec310f2f937579bc136cf21bc0e
 <!-- S12-STAGE-Y:AUTO:BEGIN -->
 # Stage Y current status
 
+Repository WIP checkpoint: [changes and current blockers](../../../../../docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md). Probe/config alignment is saved as incomplete work, not accepted final-map qualification; no new DSP balancing is authorized by the checkpoint request.
+
 Y1–Y6 retain their historical bounded software evidence. Final review found
 that the original Y1 probe used the formula map rather than the committed map;
 final-map broadband reachability remains below the 0.02 bilateral threshold.

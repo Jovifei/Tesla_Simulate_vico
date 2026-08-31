@@ -5,6 +5,7 @@ Paths use stable ASCII names for GitHub, scripts, and VSCode. Chinese descriptio
 
 ## Current Entry Points
 
+- [S12 Stage Y WIP changes and current blockers](08-reports/03-s12-stage-y-wip-checkpoint-20260831.md)
 - [Firmware roadmap](04-planning/01-firmware-roadmap.md)
 - [Firmware backlog](09-backlog/01-firmware-backlog.md)
 - [S12 Stage K eight-vehicle Round-2 delivery](08-reports/01-s12-stage-k-eight-vehicle-round2.md)

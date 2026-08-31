@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import copy
+from types import SimpleNamespace
 
 import numpy as np
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import unwrap
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import build_hellcat_bakeoff_trace
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w import persistent_engine as persistent_engine_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import load_committed_fixture_timbre_map
 from tools.sound_sim.s12.acoustic_identity_v015.stage_x import search_parameters as search_parameter_module
 from tools.sound_sim.s12.acoustic_identity_v015.stage_x.search_parameters import (
     METRIC_FUNCS,
@@ -16,6 +19,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_x.search_parameters import
     PARAMETER_REACHABLE,
     SearchParameter,
     _build_parameter_probe_trace,
+    _post_ptr_narrowband_energy_share,
     _render_config_pcm,
     apply_parameters,
     hellcat_search_parameters,
@@ -37,6 +41,88 @@ def _render(config, architecture: str, scene: str, duration_s: float = 2.0):
     return engine.process_with_trace(
         {"rpm": trace.rpm, "load": trace.load, "throttle": trace.throttle, "acceleration_mps2": trace.acceleration_mps2}
     )
+
+
+def test_p3_reachability_probe_receives_committed_fitted_map(monkeypatch) -> None:
+    """P3 probes must receive the same committed map contract as final runtime."""
+    captured: list[tuple[dict, dict]] = []
+
+    class CapturingEngine:
+        def __init__(self, config, sample_rate_hz, block_size, *, ptr_enabled, **settings):
+            del sample_rate_hz, ptr_enabled
+            captured.append((config, {"block_size": block_size, **settings}))
+
+        def process_with_trace(self, state):
+            samples = len(state["rpm"]) * captured[-1][1]["block_size"]
+            pcm = np.zeros((samples, 2), dtype=np.float64)
+            return SimpleNamespace(raw_pcm=pcm, post_ptr_raw=pcm, monitor_pcm=pcm)
+
+    monkeypatch.setattr(persistent_engine_module, "PersistentEventDomainEngine", CapturingEngine)
+    trace = _build_parameter_probe_trace("y1_boost_attack", 1.6)
+    _render_config_pcm(load_config("hellcat_v1"), "P3", [trace])
+
+    expected_payload, expected_table = load_committed_fixture_timbre_map()
+    assert len(captured) == 1
+    config, settings = captured[0]
+    assert settings["forced_induction_model"] == "timbre_map_v1"
+    assert config["require_fitted_timbre_map"] is True
+    assert config["fitted_timbre_map"] == expected_payload
+    assert config["timbre_map"] == {
+        "rpm_axis": expected_table.rpm_axis.tolist(),
+        "load_axis": expected_table.load_axis.tolist(),
+        "boost_axis": expected_table.boost_axis.tolist(),
+        "order_axis": expected_table.order_axis.tolist(),
+        "values": expected_table.values.tolist(),
+    }
+
+
+def test_post_ptr_narrowband_energy_share_is_gain_invariant_and_selective() -> None:
+    sample_rate = 48000
+    time_s = np.arange(sample_rate, dtype=np.float64) / sample_rate
+    target = np.sin(2.0 * np.pi * 118.0 * time_s)
+    non_target = np.sin(2.0 * np.pi * 1000.0 * time_s)
+    target_stereo = np.column_stack((target, target))
+    non_target_stereo = np.column_stack((non_target, non_target))
+
+    target_share = _post_ptr_narrowband_energy_share(target_stereo, sample_rate, (118.0,))
+    gained_share = _post_ptr_narrowband_energy_share(7.0 * target_stereo, sample_rate, (118.0,))
+    non_target_share = _post_ptr_narrowband_energy_share(non_target_stereo, sample_rate, (118.0,))
+
+    assert target_share > 0.95
+    assert gained_share == target_share
+    assert non_target_share < 0.01
+    assert _post_ptr_narrowband_energy_share(np.zeros((sample_rate, 2)), sample_rate, (118.0,)) == 0.0
+
+
+def test_y1_blower_spectrum_trace_is_fixed_condition_probe() -> None:
+    trace = _build_parameter_probe_trace("y1_blower_spectrum", 2.5)
+    assert trace.time_s.size == 125
+    assert np.all(trace.rpm == 3000.0)
+    assert np.all(trace.load == 0.8)
+    assert np.all(trace.throttle == 0.8)
+    assert np.all(trace.acceleration_mps2 == 0.0)
+
+
+def test_y1_blower_spectrum_controls_use_committed_map_narrowband_metrics(tmp_path) -> None:
+    names = ("blower_sideband_mix", "blower_broadband_mix", "blower_casing_mix")
+    summary = _selected_y1_summary(tmp_path, *names)
+    by_name = {row["parameter"]: row for row in summary["results"]}
+    expected_metrics = {
+        "blower_sideband_mix": "blower_sideband_narrowband_share",
+        "blower_broadband_mix": "blower_broadband_narrowband_share",
+        "blower_casing_mix": "blower_casing_narrowband_share",
+    }
+    assert tuple(by_name) == names
+    assert summary["reachable_count"] == len(names)
+    for name, metric in expected_metrics.items():
+        row = by_name[name]
+        assert row["probe_architecture"] == "P3"
+        assert row["probe_scenes"] == ["y1_blower_spectrum"]
+        assert row["target_metrics"] == [metric]
+        assert row["probe_stem"] == "post_ptr"
+        assert row["status"] == PARAMETER_REACHABLE, row["reason"]
+        assert row["metric_movement"][metric] > 0.02
+        assert row["probe_evidence"]["require_fitted_timbre_map"] is True
 
 
 def test_crank_inertia_changes_post_ptr_sha_on_idle() -> None:
