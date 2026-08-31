@@ -1,0 +1,38 @@
+F.F                                                                      [100%]
+================================== FAILURES ===================================
+_________________ test_equal_power_crossfade_preserves_power __________________
+
+    def test_equal_power_crossfade_preserves_power() -> None:
+        mixer = StateTransientMixer(sample_rate_hz=48000)
+        a = np.ones((960, 2))
+        b = np.ones((960, 2)) * 2.0
+        out = mixer.equal_power_crossfade(a, b, mix=0.5)
+        power = float(np.mean(np.square(out)))
+>       assert abs(power - 0.5 * (1.0 + 4.0)) < 0.15
+E       assert 2.000000000000001 < 0.15
+E        +  where 2.000000000000001 = abs((4.500000000000001 - (0.5 * (1.0 + 4.0))))
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:14: AssertionError
+____ test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state _____
+
+    def test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state() -> None:
+        config = load_config("hellcat_v1")
+        blocks = _frames(8)
+        engine = PersistentEventDomainEngine(config, sample_rate_hz=48000, block_size=960)
+        for index in range(4):
+            engine.process(_frame(blocks, index))
+        snapshot = engine.snapshot_state()
+        expected = engine.process(_frame(blocks, 4)).raw_pcm
+        engine.process(_frame(blocks, 5))
+        engine.restore_state(snapshot)
+        replay = engine.process(_frame(blocks, 4)).raw_pcm
+>       assert np.array_equal(expected, replay)
+E       assert False
+E        +  where False = <function array_equal at 0x000001F363B94370>(array([[0.61362843, 0.52013927],\n       [0.61339644, 0.51972519],\n       [0.61353188, 0.51958146],\n       ...,\n       [0.89547353, 0.92294755],\n       [0.89498875, 0.92207731],\n       [0.8944909 , 0.92119501]], shape=(960, 2)), array([[0.61362843, 0.52013927],\n       [0.61339644, 0.51972519],\n       [0.61353188, 0.51958146],\n       ...,\n       [0.89547353, 0.92294755],\n       [0.89498875, 0.92207731],\n       [0.8944909 , 0.92119501]], shape=(960, 2)))
+E        +    where <function array_equal at 0x000001F363B94370> = np.array_equal
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_persistent_engine.py:63: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_equal_power_crossfade_preserves_power
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state
+2 failed, 1 passed in 10.64s

@@ -1,0 +1,40 @@
+{
+  "status": "VERIFIED",
+  "candidate": "hellcat_stage_h_v5",
+  "requested_equals_consumed": true,
+  "requested": [
+    "afterfire.gain_scale",
+    "loudness.transient_peak_shaper.attack_ms",
+    "loudness.transient_peak_shaper.max_reduction_db",
+    "loudness.transient_peak_shaper.release_ms",
+    "shift.impact_scale",
+    "shift.recovery_scale",
+    "source.blower_boost_mix",
+    "source.blower_gain_scale",
+    "source.boost_attack_s",
+    "source.boost_release_s",
+    "source.bypass_release_gain",
+    "source.lobe_family_mix",
+    "source.sideband_depth",
+    "source.upper_family_tilt_db"
+  ],
+  "consumed": [
+    "afterfire.gain_scale",
+    "loudness.transient_peak_shaper.attack_ms",
+    "loudness.transient_peak_shaper.max_reduction_db",
+    "loudness.transient_peak_shaper.release_ms",
+    "shift.impact_scale",
+    "shift.recovery_scale",
+    "source.blower_boost_mix",
+    "source.blower_gain_scale",
+    "source.boost_attack_s",
+    "source.boost_release_s",
+    "source.bypass_release_gain",
+    "source.lobe_family_mix",
+    "source.sideband_depth",
+    "source.upper_family_tilt_db"
+  ],
+  "unused": [],
+  "evidence": "test_s12_stage_h_parameter_reachability.py; deterministic isolated perturbation changes the intended rendered stem",
+  "provenance": "C/synthetic/candidate_assumption"
+}

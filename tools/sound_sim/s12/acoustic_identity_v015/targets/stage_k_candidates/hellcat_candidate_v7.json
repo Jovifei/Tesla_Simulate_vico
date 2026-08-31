@@ -1,0 +1,58 @@
+{
+  "schema_version": "s12-stage-k-hellcat-candidate-profile-1",
+  "candidate_id": "hellcat_stage_k_v7",
+  "vehicle_id": "hellcat",
+  "base_commit": "b78b6c3031269eae1a0b917ce7bbaaed2af81c76",
+  "parent_candidate_id": "hellcat_stage_i_v6_C_SofterMechanical",
+  "parent_candidate_path": "targets/stage_i_candidates/Hellcat_candidate_v6_C_SofterMechanical.json",
+  "parent_candidate_sha256": "A0FED2048002A685796051688214414E83F19BAF9A8234C3923C804F7EB05ABF",
+  "status": "Candidate",
+  "hypothesis": "A load-coupled twin-screw source with explicit shaft, rotor, gear/casing, V8 sidebands, intake voicing and boost-history bypass release will make Hellcat whine recognisable while retaining the HEMI low-frequency body.",
+  "reference_target": {
+    "path": "reference_database/hellcat_reference_targets.json",
+    "sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "canonical_trace_version": "stage-k-four-vehicle-repair-trace-1",
+  "source": {
+    "blower_gain_scale": {"value": 1.12, "unit": "ratio", "range": [0.95, 1.25], "source_level": "C", "source": "synthetic", "source_scope": "load_coupled_twin_screw_output_level", "verification_state": "candidate_assumption"},
+    "blower_boost_mix": {"value": 1.08, "unit": "ratio", "range": [0.90, 1.30], "source_level": "C", "source": "synthetic", "source_scope": "boost_state_envelope", "verification_state": "candidate_assumption"},
+    "upper_family_tilt_db": {"value": -8.5, "unit": "dB", "range": [-9.0, -6.0], "source_level": "C", "source": "synthetic", "source_scope": "upper_order_harshness_guard", "verification_state": "candidate_assumption"},
+    "cluster_spread_ratio": {"value": 0.014, "unit": "ratio", "range": [0.012, 0.020], "source_level": "C", "source": "synthetic", "source_scope": "moving_rotor_order_cluster", "verification_state": "candidate_assumption"},
+    "sideband_main_ratio": {"value": 0.10, "unit": "rms_ratio", "range": [0.08, 0.18], "source_level": "C", "source": "synthetic", "source_scope": "four_event_per_revolution_v8_modulation", "verification_state": "candidate_assumption"},
+    "intake_voicing_mix": {"value": 0.20, "unit": "ratio", "range": [0.18, 0.28], "source_level": "C", "source": "synthetic", "source_scope": "multi_modal_intake_casing_transfer", "verification_state": "candidate_assumption"},
+    "boost_attack_10_90_s": {"value": 0.075, "unit": "s", "range": [0.06, 0.12], "source_level": "C", "source": "synthetic", "source_scope": "measured_10_to_90_boost_build_time", "verification_state": "candidate_assumption"},
+    "boost_release_90_10_s": {"value": 0.24, "unit": "s", "range": [0.18, 0.35], "source_level": "C", "source": "synthetic", "source_scope": "measured_90_to_10_boost_release_time", "verification_state": "candidate_assumption"},
+    "bypass_release_gain": {"value": 0.10, "unit": "ratio", "range": [0.00, 0.20], "source_level": "C", "source": "synthetic", "source_scope": "boost_history_bypass_release", "verification_state": "candidate_assumption"},
+    "bypass_decay_90_10_s": {"value": 0.16, "unit": "s", "range": [0.08, 0.30], "source_level": "C", "source": "synthetic", "source_scope": "measured_90_to_10_bypass_decay", "verification_state": "candidate_assumption"}
+  },
+  "operating_level": {
+    "low_load_gain_db": {"value": 1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "high_load_gain_db": {"value": -1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_low": {"value": 0.25, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_high": {"value": 0.75, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "smoothing_s": {"value": 0.15, "unit": "s", "range": [0.02, 0.5], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"}
+  },
+  "idle": {},
+  "afterfire": {},
+  "shift_or_transient": {},
+  "loudness": {
+    "target_lufs": -16.0,
+    "peak_limit_dbfs": -1.5,
+    "whole_cycle_gain_only": true
+  },
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage_c_low_frequency_body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage_c_exhaust_rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage_c_pre_equalization"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage_c_frozen_ptr"},
+    "formal_loudness_manager": {"unchanged": true, "fingerprint": "stage_c_formal_loudness_manager"}
+  },
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "calibration": "uncalibrated",
+    "claim": "Hellcat-inspired; not OEM reproduction",
+    "parent_status": "UNQUALIFIED_DIAGNOSTIC_PARENT"
+  }
+}

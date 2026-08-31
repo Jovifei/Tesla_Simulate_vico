@@ -1,0 +1,15 @@
+{
+  "schema_version": "s12-stage-m-replay-evidence-1",
+  "replayed_at": "2026-08-21",
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY",
+  "focused_round2": {"actual_test_count": 45, "result": "PASS", "duration_s": 675.33, "note": "Historical 22-test count was not reused."},
+  "stage_k_full": {"actual_test_count": 131, "result": "PASS", "duration_s": 873.73, "warning": "existing SyntaxWarning in test_s12_stage_k_gtr_parallel_turbo_v3.py:167; no failed tests"},
+  "track_p": {"pytest": "21 passed", "guard": "180 files / 2 symbols unchanged", "result": "PASS"},
+  "diff_check": "PASS",
+  "packages": [
+    {"root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-three-vehicle-round2-v4", "wav_count": 24, "zip_sha256": "3f6574633e876d8fd45d2288bf0ee97728a0f0708ce467b1eb65fdd269717a02", "zip_crc": "PASS", "wav_header_finite_clipping": "PASS"},
+    {"root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-remaining-four-round2-v1", "wav_count": 28, "zip_sha256": "91e86dfbc62052e368b9792b3c076fd67a4902d6309b8d81f380f3b93af36656", "zip_crc": "PASS", "wav_header_finite_clipping": "PASS"}
+  ],
+  "human_feedback_content_read": false,
+  "human_pass": false
+}

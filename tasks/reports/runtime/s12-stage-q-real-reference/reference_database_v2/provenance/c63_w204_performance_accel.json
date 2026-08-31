@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_performance_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "c63_w204_performance_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "本地文件但没有可审计来源、授权或车辆工况元数据。",
+  "sha256": "534605237d621e25e9636a3fec937ee5384be6573b636e20008f3992cb2b4dda",
+  "source_kind": "local_unverified",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": null,
+  "source_url_sha256": null,
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "c63_w204"
+}

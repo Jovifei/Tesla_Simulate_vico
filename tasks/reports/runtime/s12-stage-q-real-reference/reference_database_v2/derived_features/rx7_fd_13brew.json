@@ -1,0 +1,15 @@
+{
+  "audio_header": {
+    "channels": 2,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 63.947755,
+    "frames": 2820096,
+    "sample_rate_hz": 44100,
+    "sample_width_bits": 16
+  },
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "rx7_fd_13brew",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "rx7_fd"
+}

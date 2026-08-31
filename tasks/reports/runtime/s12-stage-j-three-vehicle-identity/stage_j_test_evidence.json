@@ -1,0 +1,14 @@
+{
+  "schema_version": "s12-stage-j-test-evidence-1",
+  "base_commit": "d8b8c24530eafc354d420c95e1ff071034e51707",
+  "current_commit": "4351e30257bac1699798749b5f9a7077c5699c7e",
+  "stage_j_focused": {"passed": 39, "duration_s": 27.99},
+  "stage_i_compatibility": {"passed": 108, "duration_s": 55.98},
+  "realism_identity": {"passed": 67, "subtests": 78, "duration_s": 137.64},
+  "full_s12_tests": {"passed": 321, "subtests": 114, "duration_s": 138.82},
+  "full_acoustic_identity_tests": {"passed": 314, "subtests": 118, "duration_s": 626.50},
+  "track_p_pytest": {"passed": 21},
+  "track_p_guard": {"frozen_files": 180, "frozen_symbols": 2, "status": "PASS"},
+  "git_diff_check": "PASS",
+  "scope": "C/synthetic; uncalibrated; not OEM reproduction"
+}

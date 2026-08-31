@@ -1,0 +1,10 @@
+{
+ "schema": "s12.stage_x.x7_summary.v1",
+ "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-x-r2-engineering-selection-v1",
+ "selected_architecture": null,
+ "scenario_count": 10,
+ "reference_bound_scenarios": 4,
+ "validator_errors": [],
+ "package_zip_sha256": "3fd47cd52cbc3647ffc52337ae309ead303c955554aa3dc8632516b2ab438257",
+ "wall_seconds": 145.0
+}

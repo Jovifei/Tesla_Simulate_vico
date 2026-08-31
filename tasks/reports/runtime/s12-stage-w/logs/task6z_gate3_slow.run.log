@@ -1,0 +1,9 @@
+Launcher PID: 25196
+Command: python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_3000_twenty_ms_calls_match_one_shot_sixty_seconds -q
+Start UTC: 2026-08-29T04:52:06.6804935Z
+End UTC: 2026-08-29T04:53:43.6204022Z
+Exit code: 0
+Duration seconds: 97
+Stdout: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate3_slow.stdout.log
+Stderr: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate3_slow.stderr.log
+Exit UTC: 2026-08-29T04:53:43.6204022Z

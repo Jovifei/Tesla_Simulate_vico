@@ -1,0 +1,23 @@
+{
+  "schema": "s12.stage_y.execution_receipt.v1",
+  "run_id": "y4-green-r2-20260831T000000Z",
+  "purpose": "Y4 GREEN rerun after correcting cumulative-count assertion",
+  "exact_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state",
+    "-q"
+  ],
+  "actual_started_at_utc": "2026-08-31T04:48:16.959635+00:00",
+  "actual_ended_at_utc": "2026-08-31T04:48:23.085817+00:00",
+  "exit_code": 0,
+  "source_head": "c6af1d0754ffcbe9578da33e6fdfab9ee86a2aba",
+  "stdout": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-green-r2-20260831T000000Z.stdout.log",
+  "stderr": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-green-r2-20260831T000000Z.stderr.log",
+  "sha256": {
+    "stdout": "B9915F0EA170C65096650C24C8A488D5C2C7FE57721B9C87B86829198CB6EBF9",
+    "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+}

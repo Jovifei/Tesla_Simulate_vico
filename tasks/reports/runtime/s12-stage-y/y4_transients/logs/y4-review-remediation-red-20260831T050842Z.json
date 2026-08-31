@@ -1,0 +1,22 @@
+{
+  "schema": "s12.stage_y.execution_receipt.v1",
+  "run_id": "y4-review-remediation-red-20260831T050842Z",
+  "purpose": "Y4 review remediation RED for latch, tail, diagnostics, and snapshot contracts",
+  "exact_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "-q"
+  ],
+  "actual_started_at_utc": "2026-08-31T05:08:42.1542513Z",
+  "actual_ended_at_utc": "2026-08-31T05:08:51.2407781Z",
+  "exit_code": 1,
+  "source_head": "487bea240655e8e91a2636ad5b09ed906b83915b",
+  "stdout": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-review-remediation-red-20260831T050842Z.stdout.log",
+  "stderr": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-review-remediation-red-20260831T050842Z.stderr.log",
+  "sha256": {
+    "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "stdout": "C29178436995E78E7ADB0B08D58056A84CC898977FC2CDB6F2CBE8ACC3FD86D1"
+  }
+}

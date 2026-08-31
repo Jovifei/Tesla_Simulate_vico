@@ -1,0 +1,8 @@
+.                                                                        [100%]
+1 passed in 92.50s (0:01:32)
+COMMAND=S12_RUN_SLOW=1 python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_3000_twenty_ms_calls_match_one_shot_sixty_seconds -q
+START=2026-08-28T06:25:42.7695670+08:00
+PID=9052
+END=2026-08-28T06:27:15.0000000+08:00
+EXIT=0
+SOURCE_HEAD=38b56e4

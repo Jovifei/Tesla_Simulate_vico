@@ -1,0 +1,11 @@
+HEAD=metadata-head run was beb71a54594c1c189be8aea34814c60e89430648
+MANIFEST=tasks\reports\runtime\s12-stage-w\bakeoff_final_remediation_v24\bakeoff_manifest.json SHA256=e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0
+MANIFEST=tasks\reports\runtime\s12-stage-w\migration_final_remediation_rx7_v24\migration_manifest.json SHA256=86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582
+MANIFEST=tasks\reports\runtime\s12-stage-w\migration_final_remediation_ferrari_v24\migration_manifest.json SHA256=290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d
+VALIDATOR=bakeoff_v24 RESULT=[]
+VALIDATOR=rx7_v24 RESULT=[]
+VALIDATOR=ferrari_v24 RESULT=[]
+JSON_FINITE files=730 nonfinite=0
+WAV_REOPEN files=270 bad_format_or_empty=0
+NESTED_SHA entries=900 matched=900 bad=0
+STATUS=PASS

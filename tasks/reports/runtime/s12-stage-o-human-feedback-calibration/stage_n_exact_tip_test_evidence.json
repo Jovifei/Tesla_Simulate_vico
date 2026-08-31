@@ -1,0 +1,73 @@
+{
+  "acceptance_commit": "fef513e",
+  "acceptance_scope": "governance-only Track-S classification repair; no Track-P file, symbol, or frozen content changed",
+  "baseline_commit": "e0cf90dc7d10f5bb36d8953ae93eb068ab4382c6",
+  "diff_check": {
+    "command": "git diff --check",
+    "status": "PASS"
+  },
+  "final_tree_regression": {
+    "command": "python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q",
+    "note": "includes the three Stage-O feedback-entry tests added after the O0 acceptance run",
+    "result": "830 passed, 232 subtests passed in 1746.77s",
+    "status": "PASS"
+  },
+  "full_regression": {
+    "command": "python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q",
+    "result": "827 passed, 232 subtests passed in 1710.50s",
+    "status": "PASS"
+  },
+  "human_feedback_content_read": false,
+  "human_pass": false,
+  "package_validation": {
+    "stage_m_wav_reopen": {
+      "clipping": false,
+      "finite": true,
+      "status": "PASS",
+      "wav_count": 24
+    },
+    "stage_n_binding_sha": {
+      "mismatches": [],
+      "missing": [],
+      "status": "PASS"
+    },
+    "stage_n_wav_reopen": {
+      "clipping": false,
+      "finite": true,
+      "status": "PASS",
+      "wav_count": 32
+    },
+    "zip_crc_sha": {
+      "note": "no ZIP artifact exists in the preserved Stage-M or Stage-N review packages",
+      "status": "NOT_APPLICABLE_NO_ZIP_PRESENT"
+    }
+  },
+  "pre_repair_exact_tip_observation": {
+    "reason": "Stage-N comparator MATLAB paths and three receipts matched the conservative Track-P matlab substring rule",
+    "result": "814 passed, 2 failed, 232 subtests",
+    "status": "INHERITED_GUARD_FALSE_POSITIVE"
+  },
+  "profile_freeze_ready": false,
+  "schema_version": "s12-stage-n-exact-tip-test-evidence-1",
+  "source_change": false,
+  "stage_n_artifact_manifest": {
+    "errors": [],
+    "status": "PASS"
+  },
+  "stage_n_focused": {
+    "command": "python -m pytest tools/sound_sim/s12/tests/test_s12_stage_n_professional_comparator.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_n_toolchain.py -q",
+    "result": "19 passed in 11.20s",
+    "status": "PASS"
+  },
+  "status": "STAGE_N_ACCEPTED",
+  "track_p_guard": {
+    "command": "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py",
+    "result": "180 frozen files / 2 symbols; original manifest SHA matched",
+    "status": "PASS"
+  },
+  "track_p_pytest": {
+    "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py -q",
+    "result": "32 passed in 2.53s",
+    "status": "PASS"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "s12.stage_w.phase_receipt.v1",
+  "phase": "W9_FINAL_QUALIFICATION",
+  "status": "HISTORICAL_ONLY",
+  "head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
+  "head_role": "historical_full_s12_source_head_not_current_task5_qualification",
+  "current_task5_status": "PASS_LOCAL_REPOSITORY_VERIFICATION_PENDING_CONTROLLER_FULL_S12",
+  "current_task5_source_head": "5038194",
+  "current_task5_latest_validation_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+  "current_task5_receipt": ".superpowers/sdd/final_remediation_evidence_receipt.json",
+  "current_task5_evidence": ["bakeoff_final_remediation_v24", "migration_final_remediation_rx7_v24", "migration_final_remediation_ferrari_v24"],
+  "full_s12_pending_controller_verification": true,
+  "checks": {
+    "full_s12_python": "1015 passed, 1 skipped, 232 subtests passed in 1701.94s",
+    "stage_w_slow_3000_block_equivalence": "1 passed in 92.50s (documentation baseline; fresh Task5D run 92.06s)",
+    "stage_w_focused": "141 passed, 1 skipped (Task5D fresh)",
+    "stage_v_focused": "31 passed, 652 deselected (Task5D fresh)",
+    "track_p": "180 frozen files and 2 frozen symbols unchanged; exit 0",
+    "json_parse_finite": "730 current v24 evidence JSON files, 0 non-finite values",
+    "v24_wav_reopen": "270 WAV files reopened; 48 kHz/24-bit/stereo; format/clipping gates passed",
+    "v24_sha256": "900/900 nested SHA entries matched",
+    "bakeoff_long_v3_manifest_and_wav_reopen": "0 errors; hot_idle_20s=20.0 s/960000 frames; complete_cycle_60s=60.0 s/2880000 frames",
+    "review_package_v5": "STALE_HISTORICAL_REVIEW_PACKAGE; current audition prohibited",
+    "source_evidence_receipts": "23/23 registry ids joined",
+    "obsidian_sync": "16/16 canonical repo/vault SHA pairs match",
+    "compileall": "exit 0 (Task5D fresh)",
+    "git_diff_check": "exit 0",
+    "logs": {
+      "full_s12_regression_final.stdout.log": "f7dc4474fa5d1949710a39f4be134e709337113457e33f889afb1ab956f5361b",
+      "slow_3000_final.stdout.log": "1069615f0a0cda50f5a27cadeac7cc3a3ade346db4f0fd594d1ff500b4488693",
+      "stage_w_focused_final.stdout.log": "e36de7cac97d175925b08bea53370c6dbe5e26b974cac44f286929d330ccbf0a",
+      "stage_v_focused_final.stdout.log": "50890229b8bf0a093a7674b6953a81b1fd0a00f1287aa537cdb19bf5c0ba08ad",
+      "track_p_guard_final.stdout.log": "a3266254ab22c958122cc74d51a6f8f9f150c72912a9af9455d70f995465903c",
+      "compileall_final.stdout.log": "94e3cacd80e4e275e45e567a02d31477f3d8891691113a0445fa4d6f09552a76",
+      "final_gate_check.stdout.log": "566ac84b335093aca8883f75639dbd1ff44baf9b0f1f9ba4be878dc40400d58f"
+    }
+  },
+  "qualification_boundary": {
+    "reference_status": "REFERENCE_TARGET_MISSING",
+    "selected_architecture": null,
+    "r1_pilot": "not ready: rights.json is placeholder-only; sha256.txt and original WAV/FLAC are absent; state CSVs are templates",
+    "human_audition": "not performed",
+    "oem_or_profile_freeze": "not permitted"
+  },
+  "selection_outcome": {
+    "status": "NO_ARCHITECTURE_CANDIDATE_PASSED",
+    "requires_model_redesign": "REQUIRES_MODEL_REDESIGN (conditional review only after a legal synchronized Reference)",
+    "interpretation": "formal qualification closure only; not an acoustic rejection or OEM similarity result"
+  },
+  "next_action": "When R1 file-set or hash changes, run the existing R1 pilot preflight before W10 comparison",
+  "verification_window_end": "2026-08-27T01:09:05.4746724Z",
+  "verification_window_end_role": "source_backed_final_gate_end",
+  "audit_provenance": {
+    "repair_kind": "stage_w_c_closure_metadata_repair",
+    "repair_base": "7d4e49b52b73696af703a1380d83663208c5a897",
+    "tested_code_evidence_head": "24f2c41bccfc26b13a821d959b2f4400d7eb264b",
+    "recorded_at": "2026-08-28T03:40:04.0202119Z",
+    "runtime_timing_claim": false,
+    "note": "This recovery repair timestamp identifies metadata maintenance only; it is not the original W9 execution time."
+  },
+  "task5d_current_verification": {
+    "source_test_head": "fcf74f3f31cb113027ac31475a6f8de65cc6efd9",
+    "audio_generation_head": "5038194e473432f9dc66bc9a1834b375c37cdfe7",
+    "evidence_version": "v24",
+    "selection": null,
+    "external_media_ingested": false,
+    "recorded_at": "2026-08-28T12:23:31.740776+08:00",
+    "vault_status": "PENDING_PARENT_CODEX_MEMORY"
+  }
+}

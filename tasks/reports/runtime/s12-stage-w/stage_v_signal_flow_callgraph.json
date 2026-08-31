@@ -1,0 +1,14 @@
+{
+  "schema_version": "s12.stage_w.stage_v_signal_flow_callgraph.v1",
+  "status": "PARTIAL",
+  "edges": [
+    {"from": "stage_v.pipeline.render_stage_v_case", "to": "event_domain.block_renderer.render_event_domain", "domain": "pre_ptr_source", "evidence": "import/call"},
+    {"from": "event_domain.block_renderer.render_event_domain", "to": "CrankPhasePLL.process_block", "domain": "phase/omega", "evidence": "call"},
+    {"from": "event_domain.block_renderer.render_event_domain", "to": "event_scheduler.schedule_events", "domain": "event schedule", "evidence": "call"},
+    {"from": "event_domain.block_renderer.render_event_domain", "to": "collector_network.route_to_collectors", "domain": "path/bank", "evidence": "call"},
+    {"from": "event_domain.block_renderer.render_event_domain", "to": "afterfire_state.schedule_afterfire", "domain": "eligibility", "evidence": "call"},
+    {"from": "stage_v.pipeline.render_stage_v_case", "to": "render_identity_v02._apply_frozen_ptr", "domain": "post_ptr_pcm", "evidence": "NOT_CONNECTED"},
+    {"from": "stage_v.pipeline.render_stage_v_case", "to": "RuntimePtrAdapter.process", "domain": "frozen radiation", "evidence": "NOT_CONNECTED"},
+    {"from": "stage_v.comparator.compare_three_way", "to": "acoustic_comparator.core.compare_signals", "domain": "raw pair metrics", "evidence": "call"}
+  ]
+}

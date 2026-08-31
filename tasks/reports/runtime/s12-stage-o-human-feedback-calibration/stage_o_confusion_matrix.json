@@ -1,0 +1,7 @@
+{
+  "human_feedback_available": false,
+  "human_pass": false,
+  "matrix": null,
+  "schema_version": "s12-stage-o-confusion-matrix-1",
+  "status": "WAITING_FOR_JOVI_FEEDBACK"
+}

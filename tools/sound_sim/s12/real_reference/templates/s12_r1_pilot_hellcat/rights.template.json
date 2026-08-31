@@ -1,0 +1,17 @@
+{
+  "schema_version": "s12.stage_q.r1_rights_scope.v1",
+  "permission_status": "REPLACE_WITH_CONFIRMED",
+  "source_holder": "REPLACE_WITH_OWNER_OR_LICENSOR",
+  "source_url": "REPLACE_WITH_SOURCE_OR_DELIVERY_URL",
+  "license_identifier": "REPLACE_WITH_LICENSE_OR_INVOICE_ID",
+  "allowed_uses": [
+    "local_analysis",
+    "derived_features",
+    "comparison",
+    "human_audition",
+    "bounded_tuning"
+  ],
+  "raw_media_git_policy": "EXTERNAL_ONLY",
+  "raw_redistribution": "FORBIDDEN_UNLESS_SEPARATELY_GRANTED",
+  "notes_zh": "普通 SFX/试听许可不能自动视为算法开发许可；请逐项确认上述用途。"
+}

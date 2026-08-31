@@ -1,0 +1,19 @@
+{
+  "author": "Edvvc",
+  "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching.",
+  "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\ferrari_458_italia.wav",
+  "legal_permission": "CONFIRMED",
+  "license": "CC BY-SA 3.0",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "web_ferrari_458_goodwood_2010",
+  "rights_evidence": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+  "sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+  "source_kind": "wikimedia_commons_cc",
+  "source_media_sha256": "D98951CAAA3DE712E59B13D4D1EB0472795A3CBFBF9D990B28711CD8C93891DA",
+  "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Ferrari_458_Italia.ogg",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "ferrari_458"
+}

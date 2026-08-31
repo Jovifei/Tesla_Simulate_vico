@@ -1,0 +1,11 @@
+{
+  "schema_version": "s12-stage-j-parameter-reachability-1",
+  "method": "isolated deterministic parameter perturbation; target stem/metric delta",
+  "vehicles": {
+    "c63_w204": {"parameters": ["bank_phase_offset_deg", "pulse_width_scale", "bark_resonance_scale", "mechanical_texture_scale", "high_rpm_growth_scale"], "all_reached": true, "evidence": "source test 8/8; source diagnostics record active/inactive"},
+    "gtr_r35": {"parameters": ["pulse_width_scale", "bank_phase_offset_deg", "primary_spool_tau_s", "secondary_spool_tau_s", "boost_attack_s", "boost_release_s", "wastegate_gain_scale", "turbo_whistle_mix"], "all_reached": true, "evidence": "source test 11/11; response metrics change"},
+    "lfa": {"parameters": ["pulse_width_scale", "phase_offset_deg", "order_family_mix", "intake_resonance_scale", "metallic_texture_scale", "high_rpm_growth_scale"], "all_reached": true, "evidence": "source test 9/9; stem energy/order metrics change"}
+  },
+  "unused": [],
+  "scope": "C/synthetic; uncalibrated; not OEM reproduction"
+}

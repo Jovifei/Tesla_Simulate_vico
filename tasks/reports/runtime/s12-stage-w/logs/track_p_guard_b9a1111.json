@@ -1,0 +1,11 @@
+{
+  "schema": "s12.stage_w.command_receipt.v1",
+  "commands": [
+    "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py",
+    "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py -q"
+  ],
+  "recorded_at": "2026-08-26T15:47:00Z",
+  "exit_codes": [0, 0],
+  "result": "independent guard OK: 180 frozen files, 2 frozen symbols; guard tests 32 passed",
+  "scope": "Track-P frozen boundary only"
+}

@@ -1,0 +1,1210 @@
+{
+  "automatic_reference_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "candidates": {
+    "I6-A Balanced": {
+      "binding": {
+        "candidate_id": "hellcat_stage_i_v6_a_balanced",
+        "candidate_sha256": "1b4db00c1ec40301451d9d47e346e2a10707d5991062d2133dafed3057c56417",
+        "final_pcm_sha256": "f65a2209af0b139e18dd97c1e04ba09f2afc0612fcb2b503014cfe21f4402c49",
+        "profile_sha256": "1bea7b232b21566482cd22ec9411109dff38febec816d794a5af8da86979eca4",
+        "render_sha256": "205c9ead8b9108e9a2fa009081c38d321961c52dbb5976ffc3cf81dce0332e2a",
+        "response_probe_evidence": {
+          "array_sha256": {
+            "boost_command": "379a1b86e92ec41b87ed849f5243892ccd3be0f8075539f953ff4409fe649cbe",
+            "boost_response": "dfa0b707fb8fc9714d5b48f32ee66c0f6c3e51cbf401a84c6bb6490c300cc5dd",
+            "bypass_gate": "974232ee6a4c7778b46a10ef4ab3ef291446c2b5d607bf1a41e368189985f5b3",
+            "bypass_response": "bf3e8a37b45a3511731b177b2721693e73dd85bc010aaabeee9ebba9d0da5cfe"
+          },
+          "candidate_id": "hellcat_stage_i_v6_a_balanced",
+          "candidate_label": "I6-A Balanced",
+          "candidate_sha256": "1b4db00c1ec40301451d9d47e346e2a10707d5991062d2133dafed3057c56417",
+          "probes": {
+            "boost": {
+              "render_sha256": "6a9982d5f217077bbc31d6e5ad2236ac0e73bf53c1f3ff854fb160b5ba11374a",
+              "stem_sha256": {
+                "blower": "7c4d484f57583c5b176a4f2ea12788bdab2a67915df9a5b3360fab7c18ca0c5b",
+                "blower_bypass_release": "92000c550d309e5b8c9bb0f40f8a78e64d0a11dd1c210552d9c88c76a93995a1"
+              },
+              "trace_sha256": "138a92c4ad0181ff0ad8f0a2e940537515b1167c85626796c5085ee41c172784"
+            },
+            "lift": {
+              "render_sha256": "f9b970b57c6e4c4ed13ba6b01f2a111f4267084929accfffff26fdaee89b245a",
+              "stem_sha256": {
+                "blower": "54a903575f802887cf8b77fc350ef75610f5d99fa8832df2520837a5b2848ba8",
+                "blower_bypass_release": "548aaa1ae5d325010038876031b1e787b6b07199975a61210cb771bc773b1545"
+              },
+              "trace_sha256": "fd4b177cad12b28d711c0c53cbf0cd6fc5131d4269d9c312fd5cd4ab92ae4b74"
+            }
+          },
+          "profile_sha256": "1bea7b232b21566482cd22ec9411109dff38febec816d794a5af8da86979eca4",
+          "schema_version": "s12-stage-i-response-probe-evidence-1"
+        }
+      },
+      "candidate_parameter_usage": {
+        "active": [
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "activity_verification": "MEASURED_STAGE_I_RENDER_ACTIVITY",
+        "configured": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "consumed": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "inactive": [
+          "afterfire.gain_scale"
+        ],
+        "read": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "requested": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "unused": []
+      },
+      "gates": {
+        "acceleration_blower_exhaust_delta": false,
+        "all_pass": false,
+        "blower_load_correlation": true,
+        "boost_attack": false,
+        "boost_release": false,
+        "bypass_decay": false,
+        "clipping": true,
+        "finite": true,
+        "full_pull_blower_exhaust_delta": false,
+        "idle_blower_exhaust_delta": true,
+        "lobe_order_error": true,
+        "low_frequency_share": false,
+        "order_cluster_width_ratio": true,
+        "pcm_contract": true,
+        "peak": true,
+        "regression_isolation": true,
+        "rumble_energy": true,
+        "shaft_order_error": true,
+        "sideband_to_main_ratio": false,
+        "single_ridge_reduction": false,
+        "track_p_guard": true,
+        "upper_band_share": false,
+        "upper_band_short_time_peak": true,
+        "whole_cycle_lufs": false
+      },
+      "metrics": {
+        "blower_load_correlation": 0.9565903944485776,
+        "blower_to_exhaust_ratio_acceleration_db": -2.236615457742312,
+        "blower_to_exhaust_ratio_full_pull_db": -0.9620677025534083,
+        "blower_to_exhaust_ratio_idle_db": -53.75131953177469,
+        "boost_attack_10_90_s": 0.25404166666666667,
+        "boost_release_90_10_s": 0.160375,
+        "bypass_decay_90_10_s": 0.3165,
+        "bypass_event_count": 1,
+        "channels": 2,
+        "clipping_count": 0,
+        "crest_factor_db": 23.963821546290173,
+        "finite": true,
+        "lobe_order_error": 0.0009276473725082383,
+        "low_frequency_share_40_200hz": 0.013853825469574768,
+        "order_cluster_width_ratio": 0.01034671173114886,
+        "pcm_bits": 24,
+        "pcm_format": "PCM_24",
+        "peak_dbfs": -1.5000002153229033,
+        "regression_isolation_pass": true,
+        "rms_dbfs": -25.463821761613076,
+        "rumble_energy": 162294.0715341862,
+        "sample_rate_hz": 48000,
+        "shaft_order_error": 6.0498657378697785e-05,
+        "sideband_to_main_ratio": 0.2733066987592978,
+        "single_ridge_concentration": 0.5819931799441752,
+        "track_p_guard_pass": true,
+        "upper_band_share_4_12khz": 0.18358449644715386,
+        "upper_band_short_time_peak": 15.20851734443993,
+        "whole_cycle_lufs": -19.889407153995023
+      },
+      "source_file_id": "stage_i_v6_a_balanced_60s"
+    },
+    "I6-B Whine Forward": {
+      "binding": {
+        "candidate_id": "hellcat_stage_i_v6_b_whine_forward",
+        "candidate_sha256": "fe392e4f3a62ee6fa3d409237022ba19991c27d6fbf90c756392ae9ba2c112ca",
+        "final_pcm_sha256": "baab435e09ea57c6e321320143f485ee02f682234aa119809cd60d22547fee4f",
+        "profile_sha256": "b6ef534c892445157ad115132b95925ee3cfdafd423ec736f53227639109e73d",
+        "render_sha256": "c3855f79fac88305eff7332a4ca088a4a8be662129504112aed41eaa6d1a82fb",
+        "response_probe_evidence": {
+          "array_sha256": {
+            "boost_command": "379a1b86e92ec41b87ed849f5243892ccd3be0f8075539f953ff4409fe649cbe",
+            "boost_response": "13ca95222f83586e6a16ec011644e52261b5453d9511cf54bbe6f0e77c8f3b98",
+            "bypass_gate": "974232ee6a4c7778b46a10ef4ab3ef291446c2b5d607bf1a41e368189985f5b3",
+            "bypass_response": "ffa2b719de01d8248a34280b7fe07743358f1e78c0f1fde3a314e5531fd32fa1"
+          },
+          "candidate_id": "hellcat_stage_i_v6_b_whine_forward",
+          "candidate_label": "I6-B Whine Forward",
+          "candidate_sha256": "fe392e4f3a62ee6fa3d409237022ba19991c27d6fbf90c756392ae9ba2c112ca",
+          "probes": {
+            "boost": {
+              "render_sha256": "d2b554b29444e60c4bbf3fbb9aa2cbb1a0207ed89c3b21ba5d3aca6ce559e58f",
+              "stem_sha256": {
+                "blower": "1feab77c64d7e32e38d802dcca06ae1595c56ef3f8629fe02a5f4dc982bc4575",
+                "blower_bypass_release": "ad1eb960137cdf876528cc706571c4f788016c0423264be94900fca8efba86a6"
+              },
+              "trace_sha256": "138a92c4ad0181ff0ad8f0a2e940537515b1167c85626796c5085ee41c172784"
+            },
+            "lift": {
+              "render_sha256": "f8c8ce75ee8909f304b0c9f9cc91a76ec2bfa462a32f6b1814bf41599efef501",
+              "stem_sha256": {
+                "blower": "be9ec273443cd8f489298d5713b1a81125987ce911716b944a2dcb0d312ced8b",
+                "blower_bypass_release": "0136126a9b429a9d536bf24b24ce82fb03d89dca0f746da2282af8beb95c772e"
+              },
+              "trace_sha256": "fd4b177cad12b28d711c0c53cbf0cd6fc5131d4269d9c312fd5cd4ab92ae4b74"
+            }
+          },
+          "profile_sha256": "b6ef534c892445157ad115132b95925ee3cfdafd423ec736f53227639109e73d",
+          "schema_version": "s12-stage-i-response-probe-evidence-1"
+        }
+      },
+      "candidate_parameter_usage": {
+        "active": [
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "activity_verification": "MEASURED_STAGE_I_RENDER_ACTIVITY",
+        "configured": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "consumed": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "inactive": [
+          "afterfire.gain_scale"
+        ],
+        "read": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "requested": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "unused": []
+      },
+      "gates": {
+        "acceleration_blower_exhaust_delta": false,
+        "all_pass": false,
+        "blower_load_correlation": true,
+        "boost_attack": false,
+        "boost_release": false,
+        "bypass_decay": false,
+        "clipping": true,
+        "finite": true,
+        "full_pull_blower_exhaust_delta": false,
+        "idle_blower_exhaust_delta": true,
+        "lobe_order_error": true,
+        "low_frequency_share": true,
+        "order_cluster_width_ratio": true,
+        "pcm_contract": true,
+        "peak": true,
+        "regression_isolation": true,
+        "rumble_energy": true,
+        "shaft_order_error": true,
+        "sideband_to_main_ratio": false,
+        "single_ridge_reduction": false,
+        "track_p_guard": true,
+        "upper_band_share": false,
+        "upper_band_short_time_peak": false,
+        "whole_cycle_lufs": false
+      },
+      "metrics": {
+        "blower_load_correlation": 0.9560090976120403,
+        "blower_to_exhaust_ratio_acceleration_db": -0.7411251830492256,
+        "blower_to_exhaust_ratio_full_pull_db": 0.5340004219117779,
+        "blower_to_exhaust_ratio_idle_db": -52.56333630211216,
+        "boost_attack_10_90_s": 0.2539166666666667,
+        "boost_release_90_10_s": 0.1721875,
+        "bypass_decay_90_10_s": 0.3165,
+        "bypass_event_count": 1,
+        "channels": 2,
+        "clipping_count": 0,
+        "crest_factor_db": 24.051169059742367,
+        "finite": true,
+        "lobe_order_error": 0.0009276962232621888,
+        "low_frequency_share_40_200hz": 0.011810832764760746,
+        "order_cluster_width_ratio": 0.010346714178893265,
+        "pcm_bits": 24,
+        "pcm_format": "PCM_24",
+        "peak_dbfs": -1.5000002153229033,
+        "regression_isolation_pass": true,
+        "rms_dbfs": -25.55116927506527,
+        "rumble_energy": 162294.0715341862,
+        "sample_rate_hz": 48000,
+        "shaft_order_error": 6.0615308381302815e-05,
+        "sideband_to_main_ratio": 0.25036989597708714,
+        "single_ridge_concentration": 0.5819932814010512,
+        "track_p_guard_pass": true,
+        "upper_band_share_4_12khz": 0.23302232020736885,
+        "upper_band_short_time_peak": 19.292774807866863,
+        "whole_cycle_lufs": -18.99135830720953
+      },
+      "source_file_id": "stage_i_v6_b_whine_forward_60s"
+    },
+    "I6-C Softer Mechanical": {
+      "binding": {
+        "candidate_id": "hellcat_stage_i_v6_c_softer_mechanical",
+        "candidate_sha256": "e8d29bf82fcc829389a8140ee30417f3ef250404897c8f16f28e5f59d284fd03",
+        "final_pcm_sha256": "36fafbc4d90138a15e095ea9b80cda0fe18f18abe232cc930890a3f4ea47c953",
+        "profile_sha256": "a0fed2048002a685796051688214414e83f19baf9a8234c3923c804f7eb05abf",
+        "render_sha256": "41f7272877a7d442e8372ac22ac8e6f87c1134101d4119e8d65ebcb2c6befc1e",
+        "response_probe_evidence": {
+          "array_sha256": {
+            "boost_command": "379a1b86e92ec41b87ed849f5243892ccd3be0f8075539f953ff4409fe649cbe",
+            "boost_response": "6eda58398f199e4fb93e4e0e411c59e04abe5a2426d17544b30ce738a56b5b24",
+            "bypass_gate": "974232ee6a4c7778b46a10ef4ab3ef291446c2b5d607bf1a41e368189985f5b3",
+            "bypass_response": "9cb5ff842d215ff0c8f8532d4fd87e0684c9e7f269fe8f70bfcc02d6a8310558"
+          },
+          "candidate_id": "hellcat_stage_i_v6_c_softer_mechanical",
+          "candidate_label": "I6-C Softer Mechanical",
+          "candidate_sha256": "e8d29bf82fcc829389a8140ee30417f3ef250404897c8f16f28e5f59d284fd03",
+          "probes": {
+            "boost": {
+              "render_sha256": "04750a212b33114f28fea7c76aa5e76fe08cba4f564be7d8a8d0d694b7b796b1",
+              "stem_sha256": {
+                "blower": "a8e28931f3d1ca35bbf456b3c33c04a74795f3e108ca585b3c9a950ad5d0f8e8",
+                "blower_bypass_release": "00692e51a0f6df8de58f16e240480de35a8fdd2f21fb6a1a301018477f4971fb"
+              },
+              "trace_sha256": "138a92c4ad0181ff0ad8f0a2e940537515b1167c85626796c5085ee41c172784"
+            },
+            "lift": {
+              "render_sha256": "ba4950186b29b463bb51a0a1e27c4020df832a27d7de51e19946da70d7fe9daf",
+              "stem_sha256": {
+                "blower": "df523c0e88417e5df2e93fec44feae981ba66afbc2d2ca55810b22061f7ec230",
+                "blower_bypass_release": "7a5e501aa421fa49ee5012a7eab468d2761f91d63ede00b24ec9410282bd31b0"
+              },
+              "trace_sha256": "fd4b177cad12b28d711c0c53cbf0cd6fc5131d4269d9c312fd5cd4ab92ae4b74"
+            }
+          },
+          "profile_sha256": "a0fed2048002a685796051688214414e83f19baf9a8234c3923c804f7eb05abf",
+          "schema_version": "s12-stage-i-response-probe-evidence-1"
+        }
+      },
+      "candidate_parameter_usage": {
+        "active": [
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "activity_verification": "MEASURED_STAGE_I_RENDER_ACTIVITY",
+        "configured": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "consumed": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "inactive": [
+          "afterfire.gain_scale"
+        ],
+        "read": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "requested": [
+          "afterfire.gain_scale",
+          "loudness.transient_peak_shaper.attack_ms",
+          "loudness.transient_peak_shaper.max_reduction_db",
+          "loudness.transient_peak_shaper.release_ms",
+          "shift.impact_scale",
+          "shift.recovery_scale",
+          "source.blower_boost_mix",
+          "source.blower_gain_scale",
+          "source.boost_attack_s",
+          "source.boost_release_s",
+          "source.bypass_decay_s",
+          "source.bypass_pitch_fall_ratio",
+          "source.bypass_release_gain",
+          "source.intake_voicing_mix",
+          "source.lobe_family_mix",
+          "source.order_cluster_spread_ratio",
+          "source.phase_ripple_depth",
+          "source.sideband_depth",
+          "source.upper_family_tilt_db"
+        ],
+        "unused": []
+      },
+      "gates": {
+        "acceleration_blower_exhaust_delta": false,
+        "all_pass": false,
+        "blower_load_correlation": true,
+        "boost_attack": false,
+        "boost_release": false,
+        "bypass_decay": false,
+        "clipping": true,
+        "finite": true,
+        "full_pull_blower_exhaust_delta": false,
+        "idle_blower_exhaust_delta": true,
+        "lobe_order_error": true,
+        "low_frequency_share": false,
+        "order_cluster_width_ratio": true,
+        "pcm_contract": true,
+        "peak": true,
+        "regression_isolation": true,
+        "rumble_energy": true,
+        "shaft_order_error": true,
+        "sideband_to_main_ratio": false,
+        "single_ridge_reduction": false,
+        "track_p_guard": true,
+        "upper_band_share": false,
+        "upper_band_short_time_peak": true,
+        "whole_cycle_lufs": false
+      },
+      "metrics": {
+        "blower_load_correlation": 0.9629136019330138,
+        "blower_to_exhaust_ratio_acceleration_db": -2.2779754923001723,
+        "blower_to_exhaust_ratio_full_pull_db": -1.0306535577263867,
+        "blower_to_exhaust_ratio_idle_db": -53.45482235368635,
+        "boost_attack_10_90_s": 0.48814583333333333,
+        "boost_release_90_10_s": 0.15139583333333334,
+        "bypass_decay_90_10_s": 0.37847916666666664,
+        "bypass_event_count": 1,
+        "channels": 2,
+        "clipping_count": 0,
+        "crest_factor_db": 23.792513569002406,
+        "finite": true,
+        "lobe_order_error": 0.002049564601107687,
+        "low_frequency_share_40_200hz": 0.014074822560692802,
+        "order_cluster_width_ratio": 0.011242223208279894,
+        "pcm_bits": 24,
+        "pcm_format": "PCM_24",
+        "peak_dbfs": -1.5000002153229033,
+        "regression_isolation_pass": true,
+        "rms_dbfs": -25.29251378432531,
+        "rumble_energy": 162294.0715341862,
+        "sample_rate_hz": 48000,
+        "shaft_order_error": 9.227023438903902e-05,
+        "sideband_to_main_ratio": 0.4595128758525652,
+        "single_ridge_concentration": 0.566400364123731,
+        "track_p_guard_pass": true,
+        "upper_band_share_4_12khz": 0.1806860693021983,
+        "upper_band_short_time_peak": 14.923856849728491,
+        "whole_cycle_lufs": -19.384060375245838
+      },
+      "source_file_id": "stage_i_v6_c_softer_mechanical_60s"
+    }
+  },
+  "production_evidence": {
+    "full_render_residency_max": 0,
+    "regression_isolation_pass": true,
+    "sealed_key_read": false,
+    "source": "sequential frozen source manifest",
+    "track_p_guard_pass": true
+  },
+  "reference_summary": {
+    "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+    "bands_hz": [
+      [
+        20.0,
+        250.0
+      ],
+      [
+        250.0,
+        1000.0
+      ],
+      [
+        1000.0,
+        4000.0
+      ],
+      [
+        4000.0,
+        12000.0
+      ]
+    ],
+    "candidates": {
+      "I6-A Balanced": {
+        "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+        "gates": {
+          "all_required_states_available": true,
+          "mean_improvement_at_least_30_percent": false,
+          "no_state_worse_than_10_percent": false
+        },
+        "mean_improvement_ratio": -0.17504581445151712,
+        "states": {
+          "acceleration": {
+            "absolute_error": [
+              0.10168645108947139,
+              0.1455191384441598,
+              0.06896160483216618,
+              0.024973674716590004
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.491215470761536,
+                0.37816480758455,
+                0.12448212556793779,
+                0.006095688883653907
+              ],
+              "spectral_centroid_hz": 600.1177786625144
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.5086023696785172,
+                0.3550049203106212,
+                0.13003030765605925,
+                0.0063181789863813054
+              ],
+              "spectral_centroid_hz": 593.7464038685206
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.17476575632860275,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              0.10168645108947139,
+              -0.1455191384441598,
+              0.06896160483216618,
+              -0.024973674716590004
+            ],
+            "stage_h_distance": 0.08175314940285053,
+            "stage_i_distance": 0.09604080039048496,
+            "target": {
+              "band_shares": [
+                0.40691591858904586,
+                0.500524058754781,
+                0.06106870282389307,
+                0.03129185370297131
+              ],
+              "spectral_centroid_hz": 573.7084358038956
+            }
+          },
+          "afterfire": {
+            "absolute_error": [
+              0.26135356466860404,
+              0.2287443202488334,
+              0.12756411181064545,
+              0.002746250937780811
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.14922554034868107,
+                0.6900398055443524,
+                0.15799850546944308,
+                0.0027305008508091083
+              ],
+              "spectral_centroid_hz": 587.0285396716782
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.1528503901584359,
+                0.7113788947126192,
+                0.13295463919729045,
+                0.002810224187524701
+              ],
+              "spectral_centroid_hz": 568.0856194894964
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.0014016689266679364,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.26135356466860404,
+              0.2287443202488334,
+              0.12756411181064545,
+              0.002746250937780811
+            ],
+            "stage_h_distance": 0.18474766261242334,
+            "stage_i_distance": 0.1850066176703817,
+            "target": {
+              "band_shares": [
+                0.41420395482704,
+                0.48263457446378577,
+                0.005390527386645004,
+                6.397324974389e-05
+              ],
+              "spectral_centroid_hz": 303.31423402354545
+            }
+          },
+          "idle": {
+            "absolute_error": [
+              0.07936483989984822,
+              0.08157474841166418,
+              0.0037912919392340955,
+              0.0001746667170054166
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.6614635001040604,
+                0.31950320125870135,
+                0.015414386628769624,
+                0.0017991730348886513
+              ],
+              "spectral_centroid_hz": 329.72580794224933
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.6413726489296084,
+                0.34102534790455385,
+                0.014160751183078437,
+                0.001673537078324291
+              ],
+              "spectral_centroid_hz": 344.736960077487
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.34897001809928063,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.07936483989984822,
+              0.08157474841166418,
+              -0.0037912919392340955,
+              -0.0001746667170054166
+            ],
+            "stage_h_distance": 0.04220830138360302,
+            "stage_i_distance": 0.05693773308137886,
+            "target": {
+              "band_shares": [
+                0.7207374888294567,
+                0.2594505994928897,
+                0.017952043122312532,
+                0.0018482037953297076
+              ],
+              "spectral_centroid_hz": 266.69029129647316
+            }
+          }
+        }
+      },
+      "I6-B Whine Forward": {
+        "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+        "gates": {
+          "all_required_states_available": true,
+          "mean_improvement_at_least_30_percent": false,
+          "no_state_worse_than_10_percent": false
+        },
+        "mean_improvement_ratio": -0.13520468954317844,
+        "states": {
+          "acceleration": {
+            "absolute_error": [
+              0.0797034389755727,
+              0.13047534323183274,
+              0.07618632181434495,
+              0.025257191149568634
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.491215470761536,
+                0.37816480758455,
+                0.12448212556793779,
+                0.006095688883653907
+              ],
+              "spectral_centroid_hz": 600.1177786625144
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.48661935756461855,
+                0.37004871552294827,
+                0.13725502463823802,
+                0.006034662553402672
+              ],
+              "spectral_centroid_hz": 610.8516770581022
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.05611234178174794,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              0.0797034389755727,
+              -0.13047534323183274,
+              0.07618632181434495,
+              -0.025257191149568634
+            ],
+            "stage_h_distance": 0.08175314940285053,
+            "stage_i_distance": 0.08634051006387758,
+            "target": {
+              "band_shares": [
+                0.40691591858904586,
+                0.500524058754781,
+                0.06106870282389307,
+                0.03129185370297131
+              ],
+              "spectral_centroid_hz": 573.7084358038956
+            }
+          },
+          "afterfire": {
+            "absolute_error": [
+              0.262897684956071,
+              0.22147468028841588,
+              0.13640832090753643,
+              0.002715865199893158
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.14922554034868107,
+                0.6900398055443524,
+                0.15799850546944308,
+                0.0027305008508091083
+              ],
+              "spectral_centroid_hz": 587.0285396716782
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.15130626987096893,
+                0.7041092547522017,
+                0.14179884829418143,
+                0.002779838449637048
+              ],
+              "spectral_centroid_hz": 574.6659211625791
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.0009299246866654134,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.262897684956071,
+              0.22147468028841588,
+              0.13640832090753643,
+              0.002715865199893158
+            ],
+            "stage_h_distance": 0.18474766261242334,
+            "stage_i_distance": 0.18491946402469037,
+            "target": {
+              "band_shares": [
+                0.41420395482704,
+                0.48263457446378577,
+                0.005390527386645004,
+                6.397324974389e-05
+              ],
+              "spectral_centroid_hz": 303.31423402354545
+            }
+          },
+          "idle": {
+            "absolute_error": [
+              0.0793406403091701,
+              0.08155133567024375,
+              0.0037919323527033956,
+              0.00017474236441028545
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.6614635001040604,
+                0.31950320125870135,
+                0.015414386628769624,
+                0.0017991730348886513
+              ],
+              "spectral_centroid_hz": 329.72580794224933
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.6413968485202866,
+                0.34100193516313343,
+                0.014160110769609137,
+                0.0016734614309194221
+              ],
+              "spectral_centroid_hz": 344.72713469775914
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.34857180216112194,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.0793406403091701,
+              0.08155133567024375,
+              -0.0037919323527033956,
+              -0.00017474236441028545
+            ],
+            "stage_h_distance": 0.04220830138360302,
+            "stage_i_distance": 0.0569209250630453,
+            "target": {
+              "band_shares": [
+                0.7207374888294567,
+                0.2594505994928897,
+                0.017952043122312532,
+                0.0018482037953297076
+              ],
+              "spectral_centroid_hz": 266.69029129647316
+            }
+          }
+        }
+      },
+      "I6-C Softer Mechanical": {
+        "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+        "gates": {
+          "all_required_states_available": true,
+          "mean_improvement_at_least_30_percent": false,
+          "no_state_worse_than_10_percent": false
+        },
+        "mean_improvement_ratio": -0.18987904348417392,
+        "states": {
+          "acceleration": {
+            "absolute_error": [
+              0.09988368411189552,
+              0.15208902347251568,
+              0.07735340336322516,
+              0.024992694305157284
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.491215470761536,
+                0.37816480758455,
+                0.12448212556793779,
+                0.006095688883653907
+              ],
+              "spectral_centroid_hz": 600.1177786625144
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.5067996027009414,
+                0.3484350352822653,
+                0.13842210618711823,
+                0.006299159397814025
+              ],
+              "spectral_centroid_hz": 598.3559359150354
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.2188444710747737,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              0.09988368411189552,
+              -0.15208902347251568,
+              0.07735340336322516,
+              -0.024992694305157284
+            ],
+            "stage_h_distance": 0.08175314940285053,
+            "stage_i_distance": 0.0996443741426143,
+            "target": {
+              "band_shares": [
+                0.40691591858904586,
+                0.500524058754781,
+                0.06106870282389307,
+                0.03129185370297131
+              ],
+              "spectral_centroid_hz": 573.7084358038956
+            }
+          },
+          "afterfire": {
+            "absolute_error": [
+              0.26170354743410806,
+              0.22817023188474794,
+              0.1284915316373478,
+              0.002742906984156023
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.14922554034868107,
+                0.6900398055443524,
+                0.15799850546944308,
+                0.0027305008508091083
+              ],
+              "spectral_centroid_hz": 587.0285396716782
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.15250040739293189,
+                0.7108048063485337,
+                0.1338820590239928,
+                0.002806880233899913
+              ],
+              "spectral_centroid_hz": 569.3625107100347
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.0019800803630568163,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.26170354743410806,
+              0.22817023188474794,
+              0.1284915316373478,
+              0.002742906984156023
+            ],
+            "stage_h_distance": 0.18474766261242334,
+            "stage_i_distance": 0.18511347783128285,
+            "target": {
+              "band_shares": [
+                0.41420395482704,
+                0.48263457446378577,
+                0.005390527386645004,
+                6.397324974389e-05
+              ],
+              "spectral_centroid_hz": 303.31423402354545
+            }
+          },
+          "idle": {
+            "absolute_error": [
+              0.07935556260097854,
+              0.08156523078535649,
+              0.003791090070091563,
+              0.00017464299577367145
+            ],
+            "actual_stage_h": {
+              "band_shares": [
+                0.6614635001040604,
+                0.31950320125870135,
+                0.015414386628769624,
+                0.0017991730348886513
+              ],
+              "spectral_centroid_hz": 329.72580794224933
+            },
+            "actual_stage_i": {
+              "band_shares": [
+                0.6413819262284781,
+                0.34101583027824617,
+                0.01416095305222097,
+                0.0016735607995560361
+              ],
+              "spectral_centroid_hz": 344.7378786853507
+            },
+            "availability": "eligible",
+            "improvement_ratio": -0.34881257901469115,
+            "reference_provenance": {
+              "boundary": "synthetic; uncalibrated; not OEM reproduction",
+              "level": "B/R2 relative features",
+              "recording_note": "B/R2 extracted from external recording; microphone/AGC/configuration dependent; not OEM calibration",
+              "schema": "s12.hellcat_reference_targets.v1",
+              "source_file": "hellcat_reference_targets.json"
+            },
+            "signed_error": [
+              -0.07935556260097854,
+              0.08156523078535649,
+              -0.003791090070091563,
+              -0.00017464299577367145
+            ],
+            "stage_h_distance": 0.04220830138360302,
+            "stage_i_distance": 0.05693108784504695,
+            "target": {
+              "band_shares": [
+                0.7207374888294567,
+                0.2594505994928897,
+                0.017952043122312532,
+                0.0018482037953297076
+              ],
+              "spectral_centroid_hz": 266.69029129647316
+            }
+          }
+        }
+      }
+    },
+    "domain": "final_pcm",
+    "provenance": "B/R2 relative features; microphone/AGC dependent; synthetic candidates; uncalibrated; not OEM reproduction",
+    "reference_target_sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff",
+    "schema_version": "s12-stage-i-reference-distance-1",
+    "vehicle_id": "hellcat",
+    "windows_s": {
+      "acceleration": [
+        8.0,
+        26.0
+      ],
+      "afterfire": [
+        36.0,
+        46.0
+      ],
+      "idle": [
+        0.0,
+        8.0
+      ]
+    }
+  },
+  "reference_summary_sha256": "43f93d2ded66a6df06240266db9a59d18b6ff49c89173d4aecc852aff601b623",
+  "schema_version": "s12-stage-i-manifest-qualification-1",
+  "scope": "synthetic / uncalibrated / Hellcat-inspired / not OEM reproduction",
+  "stage_h_baseline_metrics": {
+    "blower_load_correlation": 0.9750828198265203,
+    "blower_to_exhaust_ratio_acceleration_db": -0.44399325482764423,
+    "blower_to_exhaust_ratio_full_pull_db": 0.784490934111498,
+    "blower_to_exhaust_ratio_idle_db": -47.08091063214033,
+    "channels": 2,
+    "clipping_count": 0,
+    "crest_factor_db": 22.856423300841332,
+    "finite": true,
+    "lobe_order_error": 6.558927865221766e-05,
+    "low_frequency_share_40_200hz": 0.011725849051620265,
+    "order_cluster_width_ratio": 0.009720404881108412,
+    "pcm_bits": 24,
+    "pcm_format": "PCM_24",
+    "peak_dbfs": -1.5000002153229033,
+    "rms_dbfs": -24.356423516164234,
+    "rumble_energy": 164443.2336478929,
+    "sample_rate_hz": 48000,
+    "shaft_order_error": 6.207664754472819e-05,
+    "sideband_to_main_ratio": 0.08164417986857495,
+    "single_ridge_concentration": 0.59913571923274,
+    "upper_band_share_4_12khz": 0.18721389037636413,
+    "upper_band_short_time_peak": 15.32517801035054,
+    "whole_cycle_lufs": -18.267853173130323
+  }
+}

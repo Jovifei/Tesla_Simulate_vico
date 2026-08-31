@@ -1,0 +1,2014 @@
+{
+  "anchor_vehicles": [
+    "ferrari_458",
+    "hellcat",
+    "rx7_fd"
+  ],
+  "audited_external_roots": [
+    "E:\\Claude_allow\\Download\\tesla-sound-research",
+    "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+    "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+    "E:\\Claude_allow\\Download\\s12-web-authorized-20260822",
+    "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823"
+  ],
+  "blockers": [
+    "没有任何记录同时通过合法来源、精确车型和同步状态的 R1 资格；不能执行 R1 阶次资格或自动调参。",
+    "八车型尚未全部取得至少一条 R1 参考；Stage T 锚点和其余车辆交接不能启动。",
+    "Ferrari 458、Hellcat、RX-7 FD 三个锚点尚未全部通过 R1。",
+    "公开/改装或缺状态候选仍只能作 R2/R3 参考，不能替代原厂 R1。"
+  ],
+  "evidence_matrix": {
+    "overall_r1_ready": false,
+    "qualification_rule": "只有合法授权、精确车辆/原厂证据、外部后置视角和同步 RPM/state 才能成为 R1。",
+    "schema_version": "s12-stage-q-reference-database-v2",
+    "stage": "Q",
+    "vehicles": [
+      {
+        "anchor_vehicle": true,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 1,
+          "R3": 1
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 2,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 1,
+        "recording_count": 2,
+        "scenario_hints": [
+          "acceleration"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "ferrari_458",
+        "vehicle_name_zh": "法拉利 458"
+      },
+      {
+        "anchor_vehicle": true,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 1,
+          "R3": 4
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 5,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 1,
+        "recording_count": 5,
+        "scenario_hints": [
+          "acceleration",
+          "afterfire",
+          "full_pull",
+          "launch",
+          "shift"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "hellcat",
+        "vehicle_name_zh": "道奇 Hellcat"
+      },
+      {
+        "anchor_vehicle": true,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 5,
+          "R3": 1
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 6,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 5,
+        "recording_count": 6,
+        "scenario_hints": [
+          "acceleration",
+          "full_pull",
+          "full_pull_interior",
+          "idle",
+          "steady_low",
+          "steady_mid"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "rx7_fd",
+        "vehicle_name_zh": "马自达 RX-7 FD"
+      },
+      {
+        "anchor_vehicle": false,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 1
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 1,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 0,
+        "recording_count": 1,
+        "scenario_hints": [
+          "acceleration"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "aventador_lp700",
+        "vehicle_name_zh": "兰博基尼 Aventador LP700"
+      },
+      {
+        "anchor_vehicle": false,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 3
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "source_url_or_controlled_alias",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 3,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 0,
+        "recording_count": 3,
+        "scenario_hints": [
+          "acceleration",
+          "afterfire",
+          "shift"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "c63_w204",
+        "vehicle_name_zh": "奔驰 C63 W204"
+      },
+      {
+        "anchor_vehicle": false,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 3
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "source_url_or_controlled_alias",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 3,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 0,
+        "recording_count": 3,
+        "scenario_hints": [
+          "acceleration",
+          "afterfire"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "gtr_r35",
+        "vehicle_name_zh": "日产 GT-R R35"
+      },
+      {
+        "anchor_vehicle": false,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 1
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 1,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 0,
+        "recording_count": 1,
+        "scenario_hints": [
+          "full_pull"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "lfa",
+        "vehicle_name_zh": "雷克萨斯 LFA"
+      },
+      {
+        "anchor_vehicle": false,
+        "evidence_levels": {
+          "R1": 0,
+          "R2": 1,
+          "R3": 1
+        },
+        "missing_requirements": [
+          "exact_vehicle_trim",
+          "gear_shift_trace",
+          "legal_permission",
+          "load_throttle_trace",
+          "microphone_position",
+          "recording_device_agc_contract",
+          "stock_exhaust_confirmation",
+          "synchronized_rpm_trace"
+        ],
+        "present_count": 2,
+        "r1_eligible_count": 0,
+        "r2_eligible_count": 1,
+        "recording_count": 2,
+        "scenario_hints": [
+          "acceleration",
+          "full_pull"
+        ],
+        "status": "WAITING_FOR_REAL_REFERENCE_DATA",
+        "vehicle_id": "supra_jza80",
+        "vehicle_name_zh": "丰田 Supra JZA80"
+      }
+    ]
+  },
+  "next_input_contract": {
+    "audio": "合法原始 WAV/FLAC；保留未经增益/EQ/AGC 的分析信号。",
+    "capture": "麦克风位置、采样率、通道、录音设备和 AGC/处理链。",
+    "rights": "明确可用于本地分析、派生指标和 Jovi 听审的授权记录。",
+    "state": "与音频同步的 RPM、Load/Throttle、Gear/shift 和场景边界。",
+    "vehicle": "车型、年份、市场、配置和原厂/改装状态。"
+  },
+  "raw_audio_policy": "external_only_not_in_git",
+  "raw_media_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+  "recordings": [
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 177.365333,
+        "frames": 8513536,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\aventador_lp700_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "加速候选；来源日志无车型/原厂/视角/RPM 证据。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\aventador_lp700_accel.download.log",
+        "source_log_sha256": "3ad69bf413e11b6d05c042b1fa924c387ee9f63bc2d6757007a161d22c816cde",
+        "source_url": "https://www.youtube.com/watch?v=kroFvboz7Bo",
+        "source_url_sha256": "5a07bdfef15a4e57d812ab989c2364a0cfd77e1d5f51f6b45b070fa9718630f8",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "aventador_lp700_accel",
+      "reference_id": "q:aventador_lp700_accel",
+      "relative_path": "aventador_lp700_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "7dccc0bd4a553c252f1b949024e9c484ed9bbce093f41ce1245f6f795da2b3ee",
+      "vehicle_id": "aventador_lp700",
+      "vehicle_name_zh": "兰博基尼 Aventador LP700"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 12.0135,
+        "frames": 576648,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_close_downshift.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "换挡候选；车型改款、原厂状态、麦克风位置与 RPM 未验证。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_close_downshift.download.log",
+        "source_log_sha256": "d33236a9ef9af685ae221a500dafdf6665aaa2946fbaddcd4440763b1b473a84",
+        "source_url": "https://www.youtube.com/watch?v=8GsqVnLEnwY",
+        "source_url_sha256": "7586bf1b5f9758b72d4442278b47cde81817aa603c43d27a4946a0352890ac10",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "c63_w204_close_downshift",
+      "reference_id": "q:c63_w204_close_downshift",
+      "relative_path": "c63_w204_close_downshift.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "shift",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "shift",
+      "sha256": "4e7600abe78ddea0e3b51df2546fb21fe286528a48e08908da8fb760764083f1",
+      "vehicle_id": "c63_w204",
+      "vehicle_name_zh": "奔驰 C63 W204"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 62.008896,
+        "frames": 2976427,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_headers_backfire.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "headers/backfire 暗示改装排气，不能作为原厂 C63 标定目标。",
+        "source_kind": "local_unverified",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": null,
+        "source_url_sha256": null,
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "c63_w204_headers_backfire",
+      "reference_id": "q:c63_w204_headers_backfire",
+      "relative_path": "c63_w204_headers_backfire.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "afterfire",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "afterfire",
+      "sha256": "3261aa79236ab992faf43a11ee6b459314514e9516fc97bcfa2e749e7d6b4186",
+      "vehicle_id": "c63_w204",
+      "vehicle_name_zh": "奔驰 C63 W204"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 143.786667,
+        "frames": 6901760,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_performance_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "本地文件但没有可审计来源、授权或车辆工况元数据。",
+        "source_kind": "local_unverified",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": null,
+        "source_url_sha256": null,
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "c63_w204_performance_accel",
+      "reference_id": "q:c63_w204_performance_accel",
+      "relative_path": "c63_w204_performance_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "534605237d621e25e9636a3fec937ee5384be6573b636e20008f3992cb2b4dda",
+      "vehicle_id": "c63_w204",
+      "vehicle_name_zh": "奔驰 C63 W204"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 212.16,
+        "frames": 10183680,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\ferrari_458_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "公开加速候选；车型、原厂状态、视角与 RPM 未完成审计。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\ferrari_458_accel.download.log",
+        "source_log_sha256": "13ee3b2676885e8a55aa2ef0973c99a1ae6bd5790760652ee0f9ea95b1ee99bd",
+        "source_url": "https://www.youtube.com/watch?v=X0yiRilcKME",
+        "source_url_sha256": "c41170785036ee12abb9fa025d84b6aaed8dcd45328a0eeb4db646b0117fb804",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "ferrari_458_accel",
+      "reference_id": "q:ferrari_458_accel",
+      "relative_path": "ferrari_458_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "22b0d0e1da61c8c31667633f58d412022f9563ea0538d1ce002891ffd3f78ddf",
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "法拉利 458"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 119.9935,
+        "frames": 5759688,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_nismo_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Nismo 候选不是冻结的 2007 原厂基线，来源与权限未验证。",
+        "source_kind": "local_unverified",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": null,
+        "source_url_sha256": null,
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "gtr_r35_nismo_accel",
+      "reference_id": "q:gtr_r35_nismo_accel",
+      "relative_path": "gtr_r35_nismo_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "dd3bd936f5d5a5b587d1d87f753e8ebb2f3841455c9a721954fc326223d7a2f8",
+      "vehicle_id": "gtr_r35",
+      "vehicle_name_zh": "日产 GT-R R35"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 30.0135,
+        "frames": 1440648,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tomei_close.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Tomei 改装排气近场候选，不能替代原厂 R35 参考。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tomei_close.download.log",
+        "source_log_sha256": "6cdecc4581d972a4296f46ef74b63a0a47dc2c4652f71dfaee3a9bda583b28a8",
+        "source_url": "https://www.youtube.com/watch?v=uCnpzelFwjM",
+        "source_url_sha256": "30fa59119975069d86c61517628ca693d1552d9137014fa4e4bafee1a64f7264",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "gtr_r35_tomei_close",
+      "reference_id": "q:gtr_r35_tomei_close",
+      "relative_path": "gtr_r35_tomei_close.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "afterfire",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "afterfire",
+      "sha256": "4aeed8ff74b80e5649c3c4ac5515ae78fed251e07603f75d6b2f5e5910061444",
+      "vehicle_id": "gtr_r35",
+      "vehicle_name_zh": "日产 GT-R R35"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 68.661417,
+        "frames": 3295748,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\gtr_r35_tuned_backfire.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "tuned backfire 候选，改装状态与来源不明。",
+        "source_kind": "local_unverified",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": null,
+        "source_url_sha256": null,
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "gtr_r35_tuned_backfire",
+      "reference_id": "q:gtr_r35_tuned_backfire",
+      "relative_path": "gtr_r35_tuned_backfire.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "source_url_or_controlled_alias",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "afterfire",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "afterfire",
+      "sha256": "0058a67bda86b174079ea06eecabf404515127c799d9b7e6658feddb5fc9c462",
+      "vehicle_id": "gtr_r35",
+      "vehicle_name_zh": "日产 GT-R R35"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 11.0135,
+        "frames": 528648,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_burble_tune.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Burble tune 候选，明确不能作为原厂调音标定目标。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_burble_tune.download.log",
+        "source_log_sha256": "38dad464887fe61cc625c6d6c82a84817e4aa4bbe0e7775f5069b5796a074026",
+        "source_url": "https://www.youtube.com/watch?v=qiopd-QP2PE",
+        "source_url_sha256": "b5c4ede664a9c694343901db0b653b60e12a0fbc813cba232e7e48ee8c5e8298",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "hellcat_burble_tune",
+      "reference_id": "q:hellcat_burble_tune",
+      "relative_path": "hellcat_burble_tune.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "afterfire",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "afterfire",
+      "sha256": "c062f3b8fd31c32a1c970eff34b742a6e292e11c62aa754fc0cb1d0a854a946e",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 25.0135,
+        "frames": 1200648,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_downshift.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Redeye 换挡候选；不是已绑定 2022 Challenger 基线。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": "https://www.youtube.com/watch?v=FvORN7EH2cc",
+        "source_url_sha256": "21bdf9e95c6e5e07934af018de73e999555f616d456f4e9e542556d55cec11a3",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "hellcat_redeye_downshift",
+      "reference_id": "q:hellcat_redeye_downshift",
+      "relative_path": "hellcat_redeye_downshift.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "shift",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "shift",
+      "sha256": "4090dd9fa0f70ca47be71ac2c402dd1f7a15e304e9acdf77eaef22ce83006f6e",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 39.0135,
+        "frames": 1872648,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_leave.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Redeye 离开/加速候选；工况与原厂状态未验证。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_leave.download.log",
+        "source_log_sha256": "6b69a5f9c3e3b792c0f8a239e93bef268dc12a8bce52f7397336928a7798d6ba",
+        "source_url": "https://www.youtube.com/watch?v=nnEaamqsieM",
+        "source_url_sha256": "690dda3076f7c17687095d8c733f720572ad25070cce6ba2578a999a44626fcc",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "hellcat_redeye_leave",
+      "reference_id": "q:hellcat_redeye_leave",
+      "relative_path": "hellcat_redeye_leave.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "full_pull",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "full_pull",
+      "sha256": "e5c29a92428b1eab9991aefc17afb607b644ff41c0fdc97ed9222e8f291c7946",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 142.802729,
+        "frames": 6854531,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_stock_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "既有资料将标题车型识别为 Charger 候选，不足以绑定 Challenger Hellcat。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": null,
+        "source_log_sha256": null,
+        "source_url": "https://www.youtube.com/watch?v=eyzGRhXp0do",
+        "source_url_sha256": "14deee0f31de9293b36a2027f6a3f18f4bf830404dca3913a132f76c2d79dede",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "hellcat_stock_accel",
+      "reference_id": "q:hellcat_stock_accel",
+      "relative_path": "hellcat_stock_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "cf2ecf83c8948cb7fc2501d9b21b4e92521fa4b01d674075c4bf232b856c9c92",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 90.430125,
+        "frames": 4340646,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\lfa_full_accel.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "LFA 加速候选；年份、原厂状态、视角与同步 RPM 未验证。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\lfa_full_accel.download.log",
+        "source_log_sha256": "13868d1cba8a4c829ba8023bcf7891622a630372a4050cf9f75fdba658329d04",
+        "source_url": "https://www.youtube.com/watch?v=bpv7N8smafY",
+        "source_url_sha256": "6506a2e2319db5593b84e12c499b98c4fb11da76673470b6395d70ee641edea6",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "lfa_full_accel",
+      "reference_id": "q:lfa_full_accel",
+      "relative_path": "lfa_full_accel.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "full_pull",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "full_pull",
+      "sha256": "ec75623d44c7bae13773e9a270b2df3fe1c3f10746a36373c816f9ad191a3e19",
+      "vehicle_id": "lfa",
+      "vehicle_name_zh": "雷克萨斯 LFA"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 63.947755,
+        "frames": 2820096,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\rx7_fd_13brew.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "13B 双涡轮候选；具体年份、市场、原厂排气、视角与 RPM 未验证。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\rx7_fd_13brew.download.log",
+        "source_log_sha256": "aaafd543988120621b45e7443c7f06a682383d46fbc7695df5d1da5bfcb2f3ee",
+        "source_url": "https://www.youtube.com/watch?v=Thh69Wc5uco",
+        "source_url_sha256": "e878da5e16e4da13a9023defb6c4f7d9ab26a3c56cfaa4646053ec7ea4e98b00",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "rx7_fd_13brew",
+      "reference_id": "q:rx7_fd_13brew",
+      "relative_path": "rx7_fd_13brew.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "c3458bd392e8107e2405de0e3df15ccbd93529523423e7974300216e6e7229db",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "bit_rate": 240000,
+        "channels": 1,
+        "codec": "pcm_s16le",
+        "container": "wav",
+        "duration_s": 14.0,
+        "frames": 672039,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "公开作者录音页面明确为 1993 Mazda RX-7，仓库明确 CC BY-NC-SA 4.0；无同步 RPM/state、精确 trim/原厂排气与完整 AGC 合同，只允许 R2 相对比较。",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_exhaust_idle.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "declared_sha256": "aff55ecf60c3286dd3502efda5531e04852817b0d925aa804da60eab6b469bca",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "audio_origin": "author_recorded_source_edited_or_encoded_as_OGG_asset",
+        "author": "Aaron Cendan; audio recording credited to Aaron Cendan and Paul Boechler",
+        "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+        "decode_note": "OGG asset decoded to PCM_S16LE WAV with ffmpeg; no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-NC-SA 4.0",
+        "license_scope": "NONCOMMERCIAL_ONLY",
+        "microphone_perspective": "exhaust",
+        "raw_audio_confirmed": false,
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "MIXPRE_NAMED_AGC_UNKNOWN",
+        "rights_evidence": "https://raw.githubusercontent.com/acendan/rx7sim/main/README.md; https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md; https://www.aaroncendan.me/rx7sim",
+        "selection_reason": "author-recorded rotary idle loop",
+        "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+        "source_kind": "author_recorded_github_asset",
+        "source_media_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\static\\audio\\exhaust\\idle.ogg",
+        "source_media_sha256": "FE790D479A606440D90060782C76914D7DDAAAEBA857BFF9B98A2CDBC2545754",
+        "source_repository": "https://github.com/acendan/rx7sim",
+        "source_url": "https://github.com/acendan/rx7sim",
+        "stock_exhaust_confirmation": "UNKNOWN",
+        "stock_identity": "VERIFIED_MODEL_YEAR_NOT_TRIM"
+      },
+      "recording_id": "rx7sim_exhaust_idle",
+      "reference_id": "q:rx7sim:exhaust:idle",
+      "relative_path": "decoded_wav/rx7sim_exhaust_idle.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "load_throttle_trace",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "idle",
+      "scenario_confidence": "page_and_asset_explicit",
+      "scenario_hint": "idle",
+      "scenario_identity": "asset_name_and_author_recording_page",
+      "sha256": "AFF55ECF60C3286DD3502EFDA5531E04852817B0D925AA804DA60EAB6B469BCA",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "bit_rate": 240000,
+        "channels": 1,
+        "codec": "pcm_s16le",
+        "container": "wav",
+        "duration_s": 16.5,
+        "frames": 792039,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "公开作者录音页面明确为 1993 Mazda RX-7，仓库明确 CC BY-NC-SA 4.0；无同步 RPM/state、精确 trim/原厂排气与完整 AGC 合同，只允许 R2 相对比较。",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_exhaust_revLong01.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "declared_sha256": "8fb34a9f7a29106f84aa976fb98096898fc3bb3952ea95a865ad7314d85e1ccb",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "audio_origin": "author_recorded_source_edited_or_encoded_as_OGG_asset",
+        "author": "Aaron Cendan; audio recording credited to Aaron Cendan and Paul Boechler",
+        "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+        "decode_note": "OGG asset decoded to PCM_S16LE WAV with ffmpeg; no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-NC-SA 4.0",
+        "license_scope": "NONCOMMERCIAL_ONLY",
+        "microphone_perspective": "exhaust",
+        "raw_audio_confirmed": false,
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "MIXPRE_NAMED_AGC_UNKNOWN",
+        "rights_evidence": "https://raw.githubusercontent.com/acendan/rx7sim/main/README.md; https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md; https://www.aaroncendan.me/rx7sim",
+        "selection_reason": "long rev/full-pull segment",
+        "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+        "source_kind": "author_recorded_github_asset",
+        "source_media_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\static\\audio\\exhaust\\revLong01.ogg",
+        "source_media_sha256": "39A49A9127C44F27C6766A6FAF875C9CCA241178974D9D4302D7D1F663025586",
+        "source_repository": "https://github.com/acendan/rx7sim",
+        "source_url": "https://github.com/acendan/rx7sim",
+        "stock_exhaust_confirmation": "UNKNOWN",
+        "stock_identity": "VERIFIED_MODEL_YEAR_NOT_TRIM"
+      },
+      "recording_id": "rx7sim_exhaust_revLong01",
+      "reference_id": "q:rx7sim:exhaust:revLong01",
+      "relative_path": "decoded_wav/rx7sim_exhaust_revLong01.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "load_throttle_trace",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "full_pull",
+      "scenario_confidence": "page_and_asset_explicit",
+      "scenario_hint": "full_pull",
+      "scenario_identity": "asset_name_and_author_recording_page",
+      "sha256": "8FB34A9F7A29106F84AA976FB98096898FC3BB3952EA95A865AD7314D85E1CCB",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "bit_rate": 240000,
+        "channels": 1,
+        "codec": "pcm_s16le",
+        "container": "wav",
+        "duration_s": 7.679917,
+        "frames": 368675,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "公开作者录音页面明确为 1993 Mazda RX-7，仓库明确 CC BY-NC-SA 4.0；无同步 RPM/state、精确 trim/原厂排气与完整 AGC 合同，只允许 R2 相对比较。",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_exhaust_revMedium01.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "declared_sha256": "12132044fdd43ee6e6634863600740d453ccab4a3c14a2cec0308988220379a9",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "audio_origin": "author_recorded_source_edited_or_encoded_as_OGG_asset",
+        "author": "Aaron Cendan; audio recording credited to Aaron Cendan and Paul Boechler",
+        "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+        "decode_note": "OGG asset decoded to PCM_S16LE WAV with ffmpeg; no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-NC-SA 4.0",
+        "license_scope": "NONCOMMERCIAL_ONLY",
+        "microphone_perspective": "exhaust",
+        "raw_audio_confirmed": false,
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "MIXPRE_NAMED_AGC_UNKNOWN",
+        "rights_evidence": "https://raw.githubusercontent.com/acendan/rx7sim/main/README.md; https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md; https://www.aaroncendan.me/rx7sim",
+        "selection_reason": "medium rev transient",
+        "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+        "source_kind": "author_recorded_github_asset",
+        "source_media_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\static\\audio\\exhaust\\revMedium01.ogg",
+        "source_media_sha256": "D2C0B90CD861B2E754706BDE2E69261D9D48604AEA43CB82C3B5B07F0869716E",
+        "source_repository": "https://github.com/acendan/rx7sim",
+        "source_url": "https://github.com/acendan/rx7sim",
+        "stock_exhaust_confirmation": "UNKNOWN",
+        "stock_identity": "VERIFIED_MODEL_YEAR_NOT_TRIM"
+      },
+      "recording_id": "rx7sim_exhaust_revMedium01",
+      "reference_id": "q:rx7sim:exhaust:revMedium01",
+      "relative_path": "decoded_wav/rx7sim_exhaust_revMedium01.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "load_throttle_trace",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "steady_mid",
+      "scenario_confidence": "page_and_asset_explicit",
+      "scenario_hint": "steady_mid",
+      "scenario_identity": "asset_name_and_author_recording_page",
+      "sha256": "12132044FDD43EE6E6634863600740D453CCAB4A3C14A2CEC0308988220379A9",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "bit_rate": 240000,
+        "channels": 1,
+        "codec": "pcm_s16le",
+        "container": "wav",
+        "duration_s": 7.658208,
+        "frames": 367633,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "公开作者录音页面明确为 1993 Mazda RX-7，仓库明确 CC BY-NC-SA 4.0；无同步 RPM/state、精确 trim/原厂排气与完整 AGC 合同，只允许 R2 相对比较。",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_exhaust_revShort01.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "declared_sha256": "92da5bbc027b9dc4bfe4c09d4c51d1dc702d5000d5a465e8e0ca8281111efc33",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "audio_origin": "author_recorded_source_edited_or_encoded_as_OGG_asset",
+        "author": "Aaron Cendan; audio recording credited to Aaron Cendan and Paul Boechler",
+        "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+        "decode_note": "OGG asset decoded to PCM_S16LE WAV with ffmpeg; no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-NC-SA 4.0",
+        "license_scope": "NONCOMMERCIAL_ONLY",
+        "microphone_perspective": "exhaust",
+        "raw_audio_confirmed": false,
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "MIXPRE_NAMED_AGC_UNKNOWN",
+        "rights_evidence": "https://raw.githubusercontent.com/acendan/rx7sim/main/README.md; https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md; https://www.aaroncendan.me/rx7sim",
+        "selection_reason": "short rev transient",
+        "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+        "source_kind": "author_recorded_github_asset",
+        "source_media_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\static\\audio\\exhaust\\revShort01.ogg",
+        "source_media_sha256": "46AE88CE4CED9ED04958DCB7D66363068D60361238C52218308A5DCBDBD4F424",
+        "source_repository": "https://github.com/acendan/rx7sim",
+        "source_url": "https://github.com/acendan/rx7sim",
+        "stock_exhaust_confirmation": "UNKNOWN",
+        "stock_identity": "VERIFIED_MODEL_YEAR_NOT_TRIM"
+      },
+      "recording_id": "rx7sim_exhaust_revShort01",
+      "reference_id": "q:rx7sim:exhaust:revShort01",
+      "relative_path": "decoded_wav/rx7sim_exhaust_revShort01.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "load_throttle_trace",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "steady_low",
+      "scenario_confidence": "page_and_asset_explicit",
+      "scenario_hint": "steady_low",
+      "scenario_identity": "asset_name_and_author_recording_page",
+      "sha256": "92DA5BBC027B9DC4BFE4C09D4C51D1DC702D5000D5A465E8E0CA8281111EFC33",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "bit_rate": 256000,
+        "channels": 2,
+        "codec": "pcm_s16le",
+        "container": "wav",
+        "duration_s": 16.5,
+        "frames": 792020,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "公开作者录音页面明确为 1993 Mazda RX-7，仓库明确 CC BY-NC-SA 4.0；无同步 RPM/state、精确 trim/原厂排气与完整 AGC 合同，只允许 R2 相对比较。",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\decoded_wav\\rx7sim_interior_revLong01.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "declared_sha256": "e9091580b18374be183cf4b8b758ecd8768d1a5a0de6eb92a14d42904130dfb3",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "audio_origin": "author_recorded_source_edited_or_encoded_as_OGG_asset",
+        "author": "Aaron Cendan; audio recording credited to Aaron Cendan and Paul Boechler",
+        "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+        "decode_note": "OGG asset decoded to PCM_S16LE WAV with ffmpeg; no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-NC-SA 4.0",
+        "license_scope": "NONCOMMERCIAL_ONLY",
+        "microphone_perspective": "interior",
+        "raw_audio_confirmed": false,
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "MIXPRE_NAMED_AGC_UNKNOWN",
+        "rights_evidence": "https://raw.githubusercontent.com/acendan/rx7sim/main/README.md; https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md; https://www.aaroncendan.me/rx7sim",
+        "selection_reason": "long rev interior perspective",
+        "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+        "source_kind": "author_recorded_github_asset",
+        "source_media_path": "E:\\Claude_allow\\Download\\s12-rx7sim-source-audit-20260823\\static\\audio\\interior\\revLong01.ogg",
+        "source_media_sha256": "1E8ECCB23E4BE3545AE374DFB515F0D79548448923457868DB1A421BD0C0634C",
+        "source_repository": "https://github.com/acendan/rx7sim",
+        "source_url": "https://github.com/acendan/rx7sim",
+        "stock_exhaust_confirmation": "UNKNOWN",
+        "stock_identity": "VERIFIED_MODEL_YEAR_NOT_TRIM"
+      },
+      "recording_id": "rx7sim_interior_revLong01",
+      "reference_id": "q:rx7sim:interior:revLong01",
+      "relative_path": "decoded_wav/rx7sim_interior_revLong01.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "load_throttle_trace",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "full_pull_interior",
+      "scenario_confidence": "page_and_asset_explicit",
+      "scenario_hint": "full_pull_interior",
+      "scenario_identity": "asset_name_and_author_recording_page",
+      "sha256": "E9091580B18374BE183CF4B8B758ECD8768D1A5A0DE6EB92A14D42904130DFB3",
+      "vehicle_id": "rx7_fd",
+      "vehicle_name_zh": "马自达 RX-7 FD"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_explicit_review",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 16.695167,
+        "frames": 801368,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 16
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R3",
+        "r1_eligible": false,
+        "r2_eligible": false,
+        "reason": "缺少可审计授权、精确车辆/原厂证据和同步状态数据；仅可作定性参考。",
+        "use_policy": "qualitative_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\supra_jza80_stock.wav",
+      "file_present": true,
+      "provenance": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "MISSING",
+        "screening_note_zh": "Stock 声称候选；具体 JZA80 RZ 身份、视角与 RPM 未验证。",
+        "source_kind": "youtube_extracted",
+        "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\supra_jza80_stock.download.log",
+        "source_log_sha256": "a4e960b8e84486fb730514869d803e4b3d4b6d0ab6f8455f1cd4b79555f325c6",
+        "source_url": "https://www.youtube.com/watch?v=aVY14pGi_LY",
+        "source_url_sha256": "e085ce7c57f387508d57a90b15586f0702ef923d787d90c8bbbc1f993bf6e326",
+        "stock_identity": "UNVERIFIED"
+      },
+      "read_error": null,
+      "recording_id": "supra_jza80_stock",
+      "reference_id": "q:supra_jza80_stock",
+      "relative_path": "supra_jza80_stock.wav",
+      "required_missing": [
+        "exact_vehicle_trim",
+        "gear_shift_trace",
+        "legal_permission",
+        "load_throttle_trace",
+        "microphone_position",
+        "recording_device_agc_contract",
+        "stock_exhaust_confirmation",
+        "synchronized_rpm_trace"
+      ],
+      "scenario": "acceleration",
+      "scenario_confidence": "filename_or_prior_note_only",
+      "scenario_hint": "acceleration",
+      "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",
+      "vehicle_id": "supra_jza80",
+      "vehicle_name_zh": "丰田 Supra JZA80"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 11.638049,
+        "frames": 513238,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "Explicit CC license and vehicle/scene description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\ferrari_458_italia.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+        "declared_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "Edvvc",
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-SA 3.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "source_kind": "wikimedia_commons_cc",
+        "source_media_sha256": "D98951CAAA3DE712E59B13D4D1EB0472795A3CBFBF9D990B28711CD8C93891DA",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Ferrari_458_Italia.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_ferrari_458_goodwood_2010",
+      "reference_id": "q:web:ferrari_458_goodwood_2010",
+      "relative_path": "ferrari_458_italia.wav",
+      "required_missing": [],
+      "scenario": "acceleration",
+      "scenario_confidence": "page_description_explicit",
+      "scenario_hint": "acceleration",
+      "scenario_identity": "pulling_away_from_start",
+      "sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+      "vehicle_id": "ferrari_458",
+      "vehicle_name_zh": "法拉利 458"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 1,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 6.548027,
+        "frames": 288768,
+        "sample_rate_hz": 44100,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "Explicit CC license and Hellcat launch/startup description; no synchronized RPM/state trace, exact stock trim, mic, or AGC contract.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\hellcat_launching_challenger.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+        "declared_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "Axepas12",
+        "decode_note": "Original Ogg Vorbis decoded to PCM24 WAV with no gain, EQ, AGC, or loudness matching.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC BY-SA 4.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "source_kind": "wikimedia_commons_cc",
+        "source_media_sha256": "762E3B294362E3D1E37BE0B737D6AD4518FD61A6BDBCE392BE1C850300D0676A",
+        "source_media_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Launching_sound_Challenger.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_hellcat_launching_sound_2019",
+      "reference_id": "q:web:hellcat_launching_sound_2019",
+      "relative_path": "hellcat_launching_challenger.wav",
+      "required_missing": [],
+      "scenario": "launch",
+      "scenario_confidence": "page_title_and_description_explicit",
+      "scenario_hint": "launch",
+      "scenario_identity": "startup_or_launch_sound",
+      "sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+      "vehicle_id": "hellcat",
+      "vehicle_name_zh": "道奇 Hellcat"
+    },
+    {
+      "analysis_contract": {
+        "analysis_signal": "unaltered_analysis_signal",
+        "channel_policy": "recorded_channels_preserved_until_comparator_fold_down",
+        "estimated_rpm_status": "NOT_ATTEMPTED",
+        "gear_shift_status": "MISSING",
+        "load_throttle_status": "MISSING",
+        "loudness_matched_audition_signal": "NOT_CREATED",
+        "rpm_state_status": "MISSING_RPM_STATE"
+      },
+      "audio": {
+        "channels": 2,
+        "codec": "PCM",
+        "container": "WAV",
+        "duration_s": 35.46875,
+        "frames": 1702500,
+        "sample_rate_hz": 48000,
+        "sample_width_bits": 24
+      },
+      "evidence": {
+        "automatic_tuning_eligible": false,
+        "level": "R2",
+        "order_hard_gate": false,
+        "r1_eligible": false,
+        "r2_eligible": true,
+        "reason": "CC0 license and explicit Toyota Supra chassis-dyno/full-rev description; exact JZA80 generation, synchronized RPM/state, mic, and AGC are not verified.",
+        "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+      },
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\supra_jza80_chassis_dyno_cc0_hq.wav",
+      "file_present": true,
+      "integrity_check": {
+        "actual_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+        "declared_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+        "status": "MATCH"
+      },
+      "provenance": {
+        "author": "editboy23",
+        "decode_note": "Public HQ MP3 preview decoded to PCM24 WAV at 48 kHz with no gain, EQ, AGC, or loudness matching; this is a lossy preview derivative, not the login-gated original WAV.",
+        "legal_permission": "CONFIRMED",
+        "license": "CC0 1.0",
+        "microphone_perspective": "UNKNOWN",
+        "raw_media_stored_outside_git": true,
+        "recording_device_agc": "UNKNOWN",
+        "rights_evidence": "https://freesound.org/people/editboy23/sounds/496171/",
+        "source_kind": "freesound_cc0_preview",
+        "source_media_sha256": "911E96CEAAA27885A71AACDFD08846916E1CD49AAB005F4482071FCBD5D66844",
+        "source_media_url": "https://cdn.freesound.org/previews/496/496171_1784475-hq.mp3",
+        "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+        "stock_identity": "UNVERIFIED"
+      },
+      "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+      "reference_id": "q:web:supra_jza80_chassis_dyno_cc0_2019",
+      "relative_path": "supra_jza80_chassis_dyno_cc0_hq.wav",
+      "required_missing": [],
+      "scenario": "full_pull",
+      "scenario_confidence": "page_description_explicit_vehicle_generation_unverified",
+      "scenario_hint": "full_pull",
+      "scenario_identity": "chassis_dyno_full_throttle_rev_to_max",
+      "sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+      "vehicle_id": "supra_jza80",
+      "vehicle_name_zh": "丰田 Supra JZA80"
+    }
+  ],
+  "schema_version": "s12-stage-q-reference-database-v2",
+  "stage": "Q",
+  "status": "REAL_REFERENCE_DATASET_LIMITED",
+  "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA",
+  "unmapped_external_media": [
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\m5junjbk2eY.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/m5junjbk2eY.mp3",
+      "sha256": "fc09d5ec20449310c9f24ab21d3b7c1fe931c7c284434866224443fe50050404",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\MlQoLofl5qU.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/MlQoLofl5qU.mp3",
+      "sha256": "0f152c55d88d7fe05ccabe641c698495ae7e553c5820e9b194b209efc023d3b3",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\R-pcSGjv8wM.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/R-pcSGjv8wM.mp3",
+      "sha256": "cb037021728d6348905f613c0332f3281e47d6160cf9eb041faa451d90788fb6",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\S4_ybvcunKU.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/S4_ybvcunKU.mp3",
+      "sha256": "2283a92ebb2cfb7c08317826db65777a0af088039d0784e0d0fc79125f12132e",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\sbLXOEcAYMI.wav",
+      "media_kind": "wav",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/sbLXOEcAYMI.wav",
+      "sha256": "56dd596bdf39cc8d001595d3ab26d488714b7014b19190ef339d75b980f4e177",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_v62\\zR_c4wHPqQc.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "c63_v62/zR_c4wHPqQc.mp3",
+      "sha256": "cd89a50e19977fb6a5aff88f6448255e6ce40329e9a19d3c00d37aa17de3d6d2",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\A_hjItNZUAI.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/A_hjItNZUAI.mp3",
+      "sha256": "30bde45fc338e7682e63e51b7d0fab1729f67edd29ee0c90c2ba263285ee66b4",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\cKx-cb0fzeo.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/cKx-cb0fzeo.mp3",
+      "sha256": "df33c9846e4f46f09467b48de6a78d0a8ab187cf2200d6340d1dcfa9c3d81927",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\eyzGRhXp0do.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/eyzGRhXp0do.mp3",
+      "sha256": "1f877ef6411c5ab3615bb8f87b82c4ebf34d83092a247b41c5d0d4301876004f",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\FvORN7EH2cc.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/FvORN7EH2cc.mp3",
+      "sha256": "a792bbf2f3f94f02eccbf69c83b2f2abba866fb81ee530ddc5c51e08f8fda813",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\nnEaamqsieM.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/nnEaamqsieM.mp3",
+      "sha256": "f1c30cc25a0c1aa533a4804b83a0466c4bd7e8365e89cb8e645d29f0ae48b030",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_v6\\qiopd-QP2PE.mp3",
+      "media_kind": "mp3",
+      "reason": "本轮目录审计发现但没有车型/工况/授权合同，保持未登记。",
+      "relative_path": "hellcat_v6/qiopd-QP2PE.mp3",
+      "sha256": "de7cd0fa68592010ace19246c30735f66f83d53ad713ee3e880271525f67b992",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\eyzGRhXp0do.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "eyzGRhXp0do.wav",
+      "sha256": "ac43280a684a75184bb32c57a37a5ae077d37bae9cd6d0c69a9e293949615f9f",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\Thh69Wc5uco.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "Thh69Wc5uco.wav",
+      "sha256": "c3458bd392e8107e2405de0e3df15ccbd93529523423e7974300216e6e7229db",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\tesla-sound-research-v12",
+      "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research-v12\\X0yiRilcKME.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "X0yiRilcKME.wav",
+      "sha256": "f677bf9e41b1360d8c232f1b226568c8150f47b97af0572672668ac139537dfd",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\4B3nGVJWmPg.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "4B3nGVJWmPg.wav",
+      "sha256": "56b98ead29c9f0575bcfbd89f09a120dde9666559f5eacf0e7cf4c2c3f1f887a",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\9eh-Nq6NRmk.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "9eh-Nq6NRmk.wav",
+      "sha256": "a737b618e58ff0d05eaea127c3d04abd1f6e6e8d748531775b7935f99d6988b6",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    },
+    {
+      "audit_root": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10",
+      "external_path": "E:\\Claude_allow\\Download\\s12-acoustic-realism-v10\\WYCWfroymIE.wav",
+      "media_kind": "wav",
+      "reason": "额外相关目录审计发现但没有当前 Q 登记、授权或同步状态合同，保持未登记。",
+      "relative_path": "WYCWfroymIE.wav",
+      "sha256": "8ab93fca8c23de0ff22acfac8f84024b086615ed308203e2fe202e27bceb55c7",
+      "status": "UNMAPPED_NOT_REGISTERED",
+      "use_policy": "DO_NOT_ANALYZE_OR_TUNE"
+    }
+  ],
+  "vehicles": [
+    "ferrari_458",
+    "hellcat",
+    "rx7_fd",
+    "aventador_lp700",
+    "c63_w204",
+    "gtr_r35",
+    "lfa",
+    "supra_jza80"
+  ]
+}

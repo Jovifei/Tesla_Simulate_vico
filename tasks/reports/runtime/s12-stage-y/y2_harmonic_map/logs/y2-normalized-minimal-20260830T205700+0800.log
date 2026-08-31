@@ -1,0 +1,9 @@
+run_id=y2-normalized-minimal-20260830T205700+0800
+started_at_utc=2026-08-30T11:53:20.5991111Z
+command=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py::test_cycle_sync_uses_full_four_stroke_720_degree_fixture_cycle tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q
+
+............                                                             [100%]
+12 passed in 7.26s
+
+ended_at_utc=2026-08-30T11:53:28.6945328Z
+exit_code=0

@@ -1,0 +1,61 @@
+{
+  "schema_version": "s12-stage-k-candidate-profile-1",
+  "candidate_id": "c63_w204_stage_k_v2",
+  "vehicle_id": "c63_w204",
+  "base_commit": "b78b6c3031269eae1a0b917ce7bbaaed2af81c76",
+  "parent_candidate_id": "c63_w204_stage_j_v1",
+  "parent_candidate_path": "targets/stage_j_candidates/c63_w204_candidate_v1.json",
+  "parent_candidate_sha256": "50b9d34ed6e04d39b4304459213e5aeb254954dc1a8aa54393e0525054bf6ac1",
+  "status": "Candidate",
+  "hypothesis": "Separating M156 cross-plane bark order, damped partial mix, event decay and high-RPM compression will reduce harsh upper roughness while preserving the low-frequency C63 body and closed-throttle cadence.",
+  "reference_target": {
+    "path": "reference_database/c63_w204_reference_targets.json",
+    "sha256": "cd86c17a281883d0786a1ba80f4462171dd0040aeb244a6fe032f73d3c96f18a",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "canonical_trace_version": "stage-k-four-vehicle-cycle-v1",
+  "source": {
+    "bank_phase_offset_deg": {"value": 0.0, "unit": "deg", "range": [-12.0, 12.0], "source_level": "C", "source": "synthetic", "source_scope": "cross_plane_bank_event_timing", "verification_state": "candidate_assumption"},
+    "pulse_width_scale": {"value": 1.0, "unit": "ratio", "range": [0.9, 1.1], "source_level": "C", "source": "synthetic", "source_scope": "combustion_pressure_event_width", "verification_state": "candidate_assumption"},
+    "bark_primary_order": {"value": 7.6, "unit": "order", "range": [7.2, 7.8], "source_level": "C", "source": "synthetic", "source_scope": "event_driven_m156_primary_bark", "verification_state": "candidate_assumption"},
+    "bark_upper_partial_mix": {"value": 0.12, "unit": "ratio", "range": [0.06, 0.2], "source_level": "C", "source": "synthetic", "source_scope": "damped_bark_upper_partials", "verification_state": "candidate_assumption"},
+    "bark_decay_ms": {"value": 7.0, "unit": "ms", "range": [4.0, 12.0], "source_level": "C", "source": "synthetic", "source_scope": "event_bark_decay", "verification_state": "candidate_assumption"},
+    "mechanical_upper_tilt_db": {"value": -6.0, "unit": "dB", "range": [-9.0, -3.0], "source_level": "C", "source": "synthetic", "source_scope": "mechanical_upper_mode_tilt", "verification_state": "candidate_assumption"},
+    "high_rpm_compression": {"value": 0.5, "unit": "ratio", "range": [0.35, 0.65], "source_level": "C", "source": "synthetic", "source_scope": "high_rpm_bark_growth_compression", "verification_state": "candidate_assumption"},
+    "mechanical_texture_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "valvetrain_accessory_texture", "verification_state": "candidate_assumption"},
+    "high_rpm_growth_scale": {"value": 1.1, "unit": "ratio", "range": [0.8, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "naturally_aspirated_high_rpm_growth", "verification_state": "candidate_assumption"}
+  },
+  "operating_level": {
+    "low_load_gain_db": {"value": 1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "high_load_gain_db": {"value": -1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_low": {"value": 0.25, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_high": {"value": 0.75, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "smoothing_s": {"value": 0.15, "unit": "s", "range": [0.02, 0.5], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"}
+  },
+  "idle": {
+    "variation": {"value": 0.3, "unit": "ratio", "range": [0.24, 0.38], "source_level": "C", "source": "synthetic", "source_scope": "idle_cycle_variation", "verification_state": "candidate_assumption"},
+    "jitter_ms": {"value": 3.0, "unit": "ms", "range": [1.0, 4.5], "source_level": "C", "source": "synthetic", "source_scope": "idle_phase_jitter", "verification_state": "candidate_assumption"},
+    "mechanical_texture": {"value": 0.04, "unit": "ratio", "range": [0.02, 0.08], "source_level": "C", "source": "synthetic", "source_scope": "idle_mechanical_texture", "verification_state": "candidate_assumption"}
+  },
+  "afterfire": {
+    "gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.8, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_hot_lift_cluster", "verification_state": "candidate_assumption"}
+  },
+  "shift_or_transient": {
+    "impact_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "wet_clutch_shift_impact", "verification_state": "candidate_assumption"},
+    "recovery_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "wet_clutch_shift_recovery", "verification_state": "candidate_assumption"}
+  },
+  "loudness": {"target_lufs": -16.0, "peak_limit_dbfs": -1.5, "whole_cycle_gain_only": true},
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage-c-low-frequency-body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage-c-exhaust-rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage-c-pre-equalization"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage-c-frozen-ptr"}
+  },
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "calibration": "uncalibrated",
+    "claim": "not OEM reproduction",
+    "parent_status": "STAGE_J_CANDIDATE_PARENT"
+  }
+}

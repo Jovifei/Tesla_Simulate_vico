@@ -1,0 +1,12 @@
+{
+  "package_id": "S12_Blind_Audition_Package_v3",
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "listener_package_sha256": "e96b62e31cf9860a2c28670a12a4ae93aba1386146e8d9e253f2ca23692ddf56",
+  "answer_key_sha256": "464416ed8da6c749359c6308bcffce6dd2e616d6dca966c882e9b63d39b7c604",
+  "rounds": {"round_1_trials": 15, "round_2_trials": 15, "total_trials": 30},
+  "full_cycle_pairs": 3,
+  "audio_contract": {"short_scene_duration_s": 8.0, "full_cycle_duration_s": 60.0, "sample_rate_hz": 48000, "channels": 2, "bits_per_sample": 24, "peak_ceiling_dbfs": -1.5, "normalization": "shared attenuation-only target per scene/pair"},
+  "submission": {"blind_responses": "prefilled 30-row template; no answers", "ab_responses": "prefilled 3-row template; no answers", "playback_context": "template only", "sealed_key_read": false},
+  "human_gates": "NOT_PERFORMED",
+  "note": "No confusion matrix, recognition score, realism score, or A/B preference is reported until Jovi returns the completed blind_responses.csv, ab_responses.csv, and playback_context.json."
+}

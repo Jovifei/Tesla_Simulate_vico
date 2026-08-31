@@ -1,0 +1,49 @@
+{
+  "schema": "s12.stage_y.y3_cycle_sync_p4_receipt.v1",
+  "run_id": "y3-stage-w-bakeoff",
+  "status": "FAIL_REPAIRING",
+  "source_head": "49ef180f4cb2c351d0583bd0459144781a4da54f",
+  "worktree_diff_sha256": "e7570d4becf2827cd252291bf78b74e3eae0aed9",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "commands": {
+    "phase_red": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py::test_cycle_sync_uses_full_four_stroke_720_degree_fixture_cycle -q",
+    "stage_y_green_before_pcm_guard": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py -q",
+    "stage_w_failure": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py -q",
+    "compile": "python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_y/cycle_sync_resynth.py tools/sound_sim/s12/acoustic_identity_v015/stage_w/bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/stage_w/review_package.py tools/sound_sim/s12/acoustic_identity_v015/stage_w/v27_pipeline.py",
+    "diff_check": "git diff --check"
+  },
+  "phase_semantics": {
+    "red_result": "1 failed: 0 and 2pi sampled identically before the fix",
+    "green_result": "1 passed after the 4pi full-cycle mapping",
+    "previous_full_stage_y_result": "4 passed in 3.85s before the PCM24 guard was added"
+  },
+  "failure": {
+    "result": "4 failed, 8 passed in 103.06s",
+    "exit_code": 1,
+    "started_at_utc": "2026-08-30T11:35:33.4146021Z",
+    "ended_at_utc": "2026-08-30T11:37:17.4063760Z",
+    "reason": "write_pcm24_wav fails closed because fitted-map candidate raw PCM exceeds abs(1.0)",
+    "raw_peak_by_architecture": {
+      "P1": 0.169871537,
+      "P2": 0.45510522,
+      "P2H": 0.355640209,
+      "P3": 1.989831651,
+      "P4": 1.989985522,
+      "P5": 1.989831651
+    },
+    "logs": {
+      "stdout": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-stage-w-bakeoff.stdout.log",
+      "stderr": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-stage-w-bakeoff.stderr.log"
+    },
+    "log_sha256": {
+      "stdout": "649818F6BFA908812FB62FB2109DC3DC416E5FF1FA01267D70DE27DECD572D45",
+      "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  },
+  "deferred": [
+    "No raw-scaling repair was made.",
+    "No fitted harmonic-map repair was made.",
+    "Y4/Y5 snapshot/replay discrepancy remains separately assigned and untouched.",
+    "No push, merge, or PR was performed."
+  ]
+}

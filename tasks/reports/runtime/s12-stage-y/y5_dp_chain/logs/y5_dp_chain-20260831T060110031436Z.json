@@ -1,0 +1,24 @@
+{
+  "run_id": "y5_dp_chain-20260831T060110031436Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py",
+    "-q"
+  ],
+  "started_at": "2026-08-31T06:01:10.057555+00:00",
+  "ended_at": "2026-08-31T06:01:25.726980+00:00",
+  "exit_code": 0,
+  "source_head": "34318d60541b3d4b2615541f0120caf90d4348b8",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.stdout.log",
+      "sha256": "b631f03b92f153fac8d301a532821a3f4e93f602ecddbf123fb77b5950322d9d"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

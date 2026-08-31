@@ -1,0 +1,7 @@
+...............................                                          [100%]
+31 passed, 590 deselected in 32.57s
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_v -q --disable-warnings
+START=2026-08-28T07:31:27.1623791+08:00
+PID=42308
+END=2026-08-28T07:32:01.5357266+08:00
+EXIT=0

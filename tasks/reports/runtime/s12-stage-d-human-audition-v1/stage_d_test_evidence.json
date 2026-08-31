@@ -1,0 +1,12 @@
+{
+  "stage_d_focused": {"tests": 14, "status": "PASS"},
+  "stage_c_integration": {"tests": 9, "status": "PASS"},
+  "realism_baseline": {"tests": 9, "status": "PASS"},
+  "identity_baseline": {"tests": 58, "subtests": 78, "status": "PASS"},
+  "full_acoustic_regression": {"tests": 429, "subtests": 232, "status": "PASS"},
+  "track_p_guard": {"tests": 21, "status": "PASS"},
+  "artifact_verifier": {"status": "PASS", "listener_trial_count": 30, "listener_zip_leaks": []},
+  "reference_distance": {"status": "PARTIAL", "required_improvement_ratio": 0.30},
+  "remaining_vehicle_verifier": {"exit_code": 0, "status": "INFORMATIONAL_ROUGH_GATE_FAILS", "non_anchor_profiles_changed": false},
+  "note": "Full regression ran against the exact source bytes later recorded by local commits; post-commit Stage-D focused suite, Track-P guard and diff check were rerun."
+}

@@ -1203,3 +1203,153 @@ Rules:
 
 - Pattern: Hellcat 完整试听已测得 `-16 LUFS`、`-3.12 dBFS` peak、零削波，且低频轰鸣获得 Jovi 部分认可；但 Jovi 在实际播放时仍明确感到整体音量偏小。数字健康/响度指标没有覆盖 Windows 音量、声卡、耳机/扬声器低频滚降、环境和人耳感知。
 - Rule: 后续响度阶段必须把“数字 master 合格”和“设备/人耳合格”分开报告。先以单一全程固定 gain 的小幅 audition-master A/B（例如 Hellcat `-16` 与 `-14 LUFS`，并保持 peak/headroom）诊断播放级别；不得用 RPM 音量耦合、per-clip AGC、削波或盲目增加 50 Hz 低频替代设备与人耳审核。
+
+## 浏览器工具用途必须和真实闭环边界分开 (2026-08-22)
+
+- Pattern: S12 早期 webMUSHRA 浏览器包是英文界面的 fixture 听审入口，隐藏参考还是 synthetic parent；若没有先说明“它只收集听感反馈”，用户容易把浏览器误解成真实声浪差异报告或调音系统。
+- Rule: 每次浏览器交接必须显式标注用途为“匿名听审/反馈入口”，并单独报告真实参考、差异分析、调音和候选交接状态。研究包可见文本与上游固定按钮必须提供中文覆盖；真实参考缺失时固定显示 `WAITING_FOR_REAL_REFERENCE_DATA`，不得用 fixture 伪装完成闭环。
+# 2026-08-09 S12 Stage C integration lessons
+
+- The standalone 60-second prototype is a direction probe, not production evidence: its shift count was false, its 70 Hz boom used the wrong time base, its centroid claims were hard-coded, and it duplicated the formal afterfire layer.
+- Python `hash(vehicle_id)` is process-salted; deterministic audio must use explicit stable profile data or fixed integer seeds.
+- Track-P path freezing uses substring matching. A Track-S file whose path contains `ptr` can fail the guard, so equalizer naming must avoid that substring without changing governance.
+
+# 2026-08-09 S12 Stage D human listening lessons
+
+- Automatic source/PCM metrics and a closed-set confusion matrix prove implementation health and identity separability; they do not prove that a listener hears Ferrari, Hellcat, or RX-7 as a realistic engine.
+- Identity recognition and “candidate sounds more realistic than Stage C” are separate human gates. A candidate may pass one and fail the other, so both results must be recorded independently and no human PASS may be inferred from automated tests.
+
+# 2026-08-09 S12 Stage E lessons
+
+- A candidate JSON field is not a tunable parameter until a deterministic perturbation changes the intended stem, event timing, or metric. Stage E must fail closed on dead fields.
+- The documented layer order is evidence: Candidate overlays and named transient shaping must be applied before the shared Pre-PTR EQ. Diagnostics that only claim the order are insufficient without a regression test.
+- Two blind rounds must be scored separately. Per-vehicle recall is five trials per round and ten only when the two rounds are intentionally combined; a scorer must never divide combined counts by five.
+- Playback context and qualitative A/B preference are independent evidence from identity confusion. Missing context or missing A/B notes keeps the status at `WAITING_FOR_JOVI_AUDITION`.
+
+# 2026-08-10 S12 Stage G lessons
+
+- Reference fitting must use the target state actually being measured. A loader that falls back from acceleration/afterfire to idle, or normalizes the four bands to sum to one when the extractor denominator includes out-of-band energy, can create a numerically neat but invalid distance.
+- A final-PCM gate needs labelled state windows and a trace manifest. A report that only names a publisher and a full-cycle WAV cannot prove which samples produced idle, acceleration, or afterfire metrics.
+- Candidate parameter reachability is an execution property: every public field requires an isolated deterministic perturbation that changes its intended stem/event/metric. JSON presence and a hand-written consumed list are not evidence.
+- Blind identity, candidate-vs-baseline preference, and automatic reference distance remain separate gates. Until a complete, context-bound Jovi submission is validated, the only valid human state is `WAITING_FOR_JOVI_AUDITION`.
+
+# 2026-08-10 S12 Stage F lessons
+
+- A listener package is not complete when it has only anonymous short clips: every promised qualitative A/B pair must contain actual PCM files, and public forms must be prefilled with exact trial/pair rows so missing submissions fail closed.
+- Candidate diagnostics must report requested, consumed, and unused parameter names from the renderer/layer return path. Presence in JSON is never proof of reachability.
+- A/B preference and identity confusion are separate gates. The scorer must resolve baseline/candidate roles from the sealed key and keep each round's five-trial-per-vehicle denominator independent.
+
+# 2026-08-10 S12 Stage H lessons
+
+- A positive isolated stem/L2 delta proves parameter reachability only; it does not prove that a listener hears the intended Hellcat identity or that the sound is natural.
+- Anonymous blind packages and named engineering calibration packages are separate evidence products. Resolve file-to-vehicle feedback with a labelled package instead of opening sealed keys or guessing the mapping.
+
+# 2026-08-11 S12 Stage I planning lessons
+
+- A near-perfect blower/load correlation and sub-one-percent order error can coexist with a failed Hellcat likeness judgement. Order tracking proves motion and state coupling; the recognisable identity also depends on cluster width, intake/casing transfer, masking against the V8 exhaust and transient voicing.
+- A supercharger whine made more audible by upper-band gain can become a sharp electronic tone. Increase recognisability through deterministic phase ripple, moving sideband clusters and state-specific mixing while keeping 4–12 kHz guarded; do not substitute broadband treble, global gain or white noise.
+- Numbered listening feedback is not a vehicle binding. Persist the original words, require a named file ID before modifying Ferrari or RX-7, and freeze the SHA of any vehicle described only as “good but improvable” until Jovi supplies a concrete defect.
+
+# 2026-08-11 S12 Stage I execution lessons
+
+- `read != active`: 参数被 loader 读取或列入 consumed 清单，不等于它在本次 trace 中产生了可测作用。Stage I 候选必须分别记录 requested/read/configured/consumed/active/inactive/unused；legacy 阶段没有 active 证据时应写 `NOT_AVAILABLE`，不得伪造通过。
+- `fixture != production`: 单元测试 fixture、短探针和注入 renderer 只能验证契约。正式报告必须绑定真实候选/profile/trace/render/final-PCM SHA，并从生产打包路径重新计算健康和声学指标。
+- Manifest 是资格状态的持久记忆：后续资格判定应读取冻结 manifest 中的 candidate/profile/render/PCM 绑定、source metrics 和 gate 结果，不应为了省内存而依赖仍驻留的 SourceRender，也不能从文件名猜测候选身份。
+- Shared attenuation preserves audible difference：同组 blower-only 或 A/B 诊断必须使用一个共同 attenuation-only 目标，且每个 gain 都不大于 0；逐文件归一化会抹平候选间真正的存在感差异，破坏人耳比较。
+- 未通过自动资格的包只能标为 `UNQUALIFIED_DIAGNOSTIC_ONLY`。即使 Jovi 可以试听和反馈，也不得使用 `WAITING_FOR_JOVI...`、正式人耳门或候选选择措辞；builder 必须默认 fail-closed，诊断发布必须通过显式开关。
+# 2026-08-11 S12 Stage J execution rules
+
+- A louder review copy is not a louder product PCM: apply the requested 1.25 linear review gain only after formal PCM metrics, use one common peak-safe gain, and record the actual applied value.
+- C63, GT-R, and LFA must use independent event/time/order excitation. Fixed tones, broadband noise, or global gain are not identity models.
+- Existing target JSON is the numeric truth when an older research brief conflicts; correct the brief and record the conflict instead of silently tuning to both.
+
+# 2026-08-11 S12 Stage K planning rules
+
+- RPM determines order frequency, not automatic large loudness growth. Source energy must be driven by load, throttle, combustion events and mechanical state; any audition-level gain must remain a single whole-cycle, peak-safe operation.
+- When Jovi accepts a vehicle's main identity but rejects its shift or deceleration behavior, modify only the vehicle-specific transient layer. Do not rewrite a source that already has a useful listening direction.
+- Named engineering calibration packages and sealed anonymous blind packages are separate evidence products. Do not unseal or infer anonymous mappings to accelerate a named repair.
+- A social-media page being reachable does not mean its audio is available or measurable. Without a legally auditable track, record `NOT_AVAILABLE` and keep the page at R2 qualitative evidence; never fit absolute loudness or claim OEM measurement.
+
+# 2026-08-12 S12 Stage K execution lessons
+
+- Diagnostic aliases and aggregate stems are not independent pressure contributors. Rebuild aggregates after trimming primitive continuous stems, and assert pressure equals the primitive sum exactly; otherwise a valid-looking trim can double-count blower, bark, or bank aliases.
+- Source-domain metrics are not final-PCM gates. Reopen the rendered WAV and bind its PCM24/finite/peak/clipping evidence to the package; keep pre-PTR source metrics explicitly labelled as diagnostic.
+- Long 60-second PTR/native numerical renders need isolated workers and streaming release. Do not retain four full `SourceRender` objects or treat a native worker termination as a test failure/pass without recording the actual process result.
+- `read`/`configured` is not `active`: neutral parameters and untriggered event layers must be recorded inactive; active reachability requires a deterministic event and a nonzero before/after effect.
+
+# 2026-08-15 S12 Stage K Round-2 propagation lessons
+
+- Propagating a successful Hellcat measurement pattern to other vehicles still requires vehicle-specific event names and trace windows. A generic `afterfire` fallback can hide C63 bark, GT-R BOV, or LFA ASG semantics; receipts must preserve the named source event and measure the existing Stage-K afterfire separately.
+- Historical aggregate aliases can make a source render fail exact pressure accounting even when primitive stems are correct. Reconcile the Round-2 view explicitly, list excluded aliases, and keep the historical render/profile bytes untouched.
+- A completed formal package can remain diagnostic-only: independent PCM/SHA/ZIP integrity proves transport, not acoustic hard gates or human approval. Keep the package status fail-closed when any vehicle event-eligibility or reference gate is unmet.
+- A continuous identity carrier is not an event stem. LFA `metallic` produced threshold crossings every ~50 ms and became 151 false events when it was passed through an afterfire qualifier. Bind each metric to the physical event array: ASG re-engagement must align with trace-detected RPM-drop/recovery under open throttle, while afterfire alone uses hot-load history plus closed throttle.
+
+# 2026-08-21 S12 Stage K eight-vehicle completion lessons
+
+- A corrected eligibility rule must be proven again through the real 60-second
+  package path, not only a short fixture. The v4 LFA manifest now records the
+  named shift stem, three trace-aligned events, zero wrong-condition events,
+  and `eligible=true`; the package still remains diagnostic-only because other
+  qualification and human gates are independent.
+- Extending a source contract to the remaining vehicles is not a shared-source
+  shortcut: Ferrari/RX-7 legacy anchors and Supra/Aventador source bindings
+  need separate profiles, traces, stems, pressure accounting, and receipts.
+- Transport integrity (PCM24/SHA/ZIP) proves that the package can be heard and
+  audited; it never upgrades acoustic realism, OEM identity, or Profile Freeze.
+
+# 2026-08-22 S12 Stage Q web-reference correction lessons
+
+- 浏览器听审页面只是反馈入口，不是“真实声浪 vs 本地声浪”比较器；对 Jovi 的可见文案必须用中文，并把真实参考、分析报告、试听包三者分开说明。
+- 公开视频不能默认视为可用素材。只有页面上有可审计的作者和明确许可（例如 Wikimedia Commons CC BY-SA）才可进入 R2；普通 YouTube/Douyin 只保留 R3 定性描述，不能下载后冒充 R1。
+- 公开许可音频即使车型和场景可辨，也通常没有同步 RPM/state。它可以支持频谱/响度/心理声学的相对差异报告，但必须关闭阶次硬门、自动调参和 OEM 绝对门限；RX-7 的旋转机械演示不能升级为 RX-7 FD 实车证据。
+- 下载原始媒体只能放在 `E:\Claude_allow\Download`，Git 只保存外部路径、原始/派生 SHA、许可、场景和限制；容器解码/采样率转换必须写明“无增益/EQ/AGC”，不能改写分析信号含义。
+- 用户确认的最终目标是“本地声浪与真实声浪对比 → 差异报告 → 反馈声浪调节系统 → 受限调优”；因此有真实公开音频但没有同步 RPM/state 时，只能完成 R2 诊断，不能把报告或浏览器试听页称为闭环完成。
+
+# 2026-08-22 S12 Stage Q YouTube intake 403 lessons
+
+- Pattern: `yt-dlp` 元数据探测可以成功，但默认视频客户端在批量下载时返回 HTTP 403/SABR，留下零字节或未合并片段；这些文件不能当作成功媒体。
+- Rules:
+  - 对 YouTube 下载先保留默认客户端；遇到失败时才使用 `youtube:player_client=android` 回退，并把两次命令、stdout、stderr 和最终视频路径写入外部下载日志。
+  - intake 成功必须同时有可探测视频、抽取 WAV、视频 SHA、WAV SHA 和记录；目录里有 `.mp4/.webm` 不等于记录成功。
+  - 首轮失败目录只作诊断证据，重试使用全新外部目录，禁止覆盖、拼接或把空文件冒充原始来源。
+
+# 2026-08-22 S12 Stage Q YouTube completeness correction
+
+- `yt-dlp` 返回 0 只能说明下载器完成了自己的请求；YouTube 可能仍返回带完整 MP4 头部、但媒体体被截断的文件。必须用 `ffmpeg` 实际解码音频，并把 `partial file` 等诊断视为失败。
+- 默认客户端→Android→Node.js `web_embedded`/`mweb` 的回退顺序应保留每次尝试的独立文件和日志；替代 URL 补齐的组合库不能描述为原始 URL 全部恢复。
+- 当前 3 条原始失败 URL 的复核结果是 1 条完整、2 条 `INCOMPLETE_MEDIA_BODY`；不完整媒体不得进入 WAV、Comparator、R2 或人耳 A/B 包。
+- 视频体截断不等于音频流一定不可恢复：在保留失败视频证据的前提下，可独立尝试 `web_embedded` 的音频格式；必须把结果标为“完整音频/不完整视频”，分别保存压缩音频与解码 WAV 的 SHA，并继续执行授权、原厂状态和同步状态门禁。仅音频成功不能把 YouTube 来源从 R3 升级到 R2/R1，也不能进入自动调参。
+
+# 2026-08-22 S12 Stage Q direct-proxy retry correction
+
+- 系统代理 `127.0.0.1:7890` 可能让 `googlevideo` 直链返回 403；在保留首轮失败物和独立日志后，用 `yt-dlp --proxy ""`、Node.js EJS 和客户端回退可恢复原始 24 条 URL 的完整可解码音频。
+- 规则：`ffprobe` 通过仍不够，必须逐条用 `ffmpeg` 解码验证并记录音频 SHA；“24/24 音频完整”不能改写成“24/24 视频完整”，也不能改变 YouTube 未核验授权/原厂状态/同步 RPM 的 R3 门禁。
+
+# 2026-08-23 S12 原始录音入库与低速率状态绑定
+
+- 原始 WAV/FLAC 的入库 manifest 可以进入仓库，但音频、视频、PCM 和状态原件必须留在 `E:\Claude_allow\Download` 等批准外部目录；入口必须同时记录原始音频 SHA、每个状态文件 SHA、来源/许可、精确车型/原厂排气、麦位和 AGC。
+- 低于音频采样率的状态遥测只有在每类信号都有严格递增时间戳、明确单位且完整覆盖工况窗口时才能插值到音频网格；连续量线性插值、挡位/换挡事件离散映射，禁止静默外推或仅凭行数补齐。
+- YouTube 下载恢复工具与原始录音 R1 入口必须分开：视频派生音频即使通过严格解码仍保持 R3，不能因下载成功而获得阶次门或调参权限。
+- Raw R1 manifest 不能停留在独立入口；必须提供到 Stage Q canonical `reference_database_v2` 的显式合并路径，并验证场景窗口、state binding、provenance 和 JSON Schema，同时不复制原始媒体。
+
+# 2026-08-22 S12 Stage R direct-audio analysis lessons
+
+- 外部清单必须区分“原始 24 条 URL”与“替代 URL 组合库”；重新分析时按 URL/视频 ID 绑定元数据，不能把替代来源的 provenance 当成原始来源恢复证据。
+- 现有 Python SHA 合同按字符串比较时要统一十六进制大小写；大小写不一致应修复清单格式并重跑校验，不能放宽 SHA 检查。
+
+# 2026-08-23 S12 YouTube fallback revalidation lesson
+
+- 当用户看到首轮 `1/24` 或 `HTTP 403` 时，必须展示当前批量收据与一条全新独立复测；`Node.js + EJS + android` 的成功下载必须再次经过 `ffprobe`、`ffmpeg -xerror` 和 WAV SHA 校验，不能只引用历史收据。
+- 复测成功只证明备用下载链路和媒体完整性，不改变公开视频的授权、原厂状态、同步 RPM/state 或 R3 资格；报告要同时给出“工具链已恢复”和“真实校准仍未闭环”两个结论。
+
+# 2026-08-23 S12 Guided feedback submit correction
+
+- 浏览器 `input[type=number]` 的 `.value` 是字符串；导出层应规范化为整数，导入层也要接受纯 ASCII 整数字符串并继续拒绝小数、越界、空值和布尔值，否则用户已完成的反馈会在后端被误判为缺失。
+- 车型聚合反馈只能确认车型级问题，不能把问题自动绑定到某个 15/30 秒场景；事件类问题（回火、换挡、转速）在没有同步状态时必须保持不调时序。
+- 人声污染或非车辆声源不是“低分调参问题”，而是数据质量阻塞；应先重新取得合格声源，再进入下一轮比较。
+
+# 2026-08-23 S12 RX-7 topic R2 lessons
+
+- 变长 native 音频不能复用“15/30 秒”收据的硬编码窗口列表；窗口元数据必须从 manifest 推导，才能保持输入 SHA、实际时长和工具收据一致。
+- MATLAB R2026a 批处理一次性循环外部 RX-7 音频曾触发 `0xc0000005` 原生崩溃；单条输入在已打开 MATLAB 会话中可执行。遇到这种情况必须保留崩溃转储、改用逐条现有会话执行，并把批处理失败与有效收据分开记录。
+- 参考音频的可播放路径必须在外部包内有字节一致副本，同时保留原始 source path/SHA/provenance；只在 manifest 写一个不可访问的原始路径会让浏览器硬门失败。

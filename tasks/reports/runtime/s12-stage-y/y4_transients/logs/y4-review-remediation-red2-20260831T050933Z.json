@@ -1,0 +1,22 @@
+{
+  "schema": "s12.stage_y.execution_receipt.v1",
+  "run_id": "y4-review-remediation-red2-20260831T050933Z",
+  "purpose": "Y4 review remediation RED after threshold-sustain contract correction",
+  "exact_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "-q"
+  ],
+  "actual_started_at_utc": "2026-08-31T05:09:33.8133148Z",
+  "actual_ended_at_utc": "2026-08-31T05:09:42.8995568Z",
+  "exit_code": 1,
+  "source_head": "487bea240655e8e91a2636ad5b09ed906b83915b",
+  "stdout": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-review-remediation-red2-20260831T050933Z.stdout.log",
+  "stderr": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-review-remediation-red2-20260831T050933Z.stderr.log",
+  "sha256": {
+    "stdout": "08ED0540CE5DA812FD95B69212B47924CAE9D0ED7793BBC58099B28ECE632552",
+    "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "stage_g_focused_tests": {"tests": 17, "passed": 17, "status": "PASS"},
+  "stage_g_package_contract": {"tests": 2, "passed": 2, "status": "PASS"},
+  "stage_c_realism": {"tests": 9, "passed": 9, "status": "PASS"},
+  "identity": {"tests": 58, "subtests": 78, "passed": 58, "status": "PASS"},
+  "track_p_guard": {"tests": 21, "passed": 21, "status": "PASS"},
+  "full_s12_regression": {"tests": 474, "passed": 474, "subtests": 232, "status": "PASS", "duration_s": 664.83},
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "remaining_vehicle_health_script": "INFORMATIONAL_FAIL_FOR_NON_ANCHOR_HEALTH_THRESHOLDS",
+  "remaining_vehicle_note": "verify_remaining_vehicles.py emitted acceptance FAIL for the non-anchor health thresholds; no Stage G anchor gate was weakened or changed.",
+  "provenance": "Tests prove implementation and reproducibility only; they do not prove human realism."
+}

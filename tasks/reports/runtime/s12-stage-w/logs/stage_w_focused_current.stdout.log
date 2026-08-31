@@ -1,0 +1,24 @@
+.........s........F..................                                    [100%]
+================================== FAILURES ===================================
+_ test_waveguide_consumes_collector_and_distinguishes_three_afterfire_locations _
+
+    def test_waveguide_consumes_collector_and_distinguishes_three_afterfire_locations() -> None:
+        config = load_config("hellcat_v1")
+        rpm = np.r_[np.full(10, 6200.0), np.linspace(5800.0, 1100.0, 20)]
+        load = np.r_[np.full(10, 0.90), np.full(20, 0.55)]
+        throttle = np.r_[np.full(10, 0.95), np.full(20, 0.02)]
+        frames = {"rpm": rpm, "load": load, "throttle": throttle, "acceleration_mps2": np.gradient(rpm, 0.02)}
+        outputs = {}
+        for policy in ("primary", "bank_collector", "central_collector"):
+            engine = PersistentEventDomainEngine(config, 48000, 960, path_model="waveguide_v1")
+            engine.afterfire_location_policy = policy
+            outputs[policy] = np.concatenate([engine.process({key: value[i:i + 1] for key, value in frames.items()}).raw_pcm for i in range(30)])
+            assert engine.diagnostics()["afterfire_event_count"] > 0
+>           assert engine.diagnostics()["afterfire_route"]["route"] == policy
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'afterfire_route'
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_waveguide.py:91: KeyError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py::test_waveguide_consumes_collector_and_distinguishes_three_afterfire_locations
+1 failed, 35 passed, 1 skipped in 63.68s (0:01:03)

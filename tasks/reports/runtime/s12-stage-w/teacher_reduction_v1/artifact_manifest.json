@@ -1,0 +1,13 @@
+{
+  "delay_lpf_v1/metrics.json": "49994dc4852e243f580ee93305c863d4e5cacbb162e66113357f1c62a5bed88d",
+  "delay_lpf_v1/monitor.wav": "5f9bf8cab3bc6b1cffc7887e296cc150754e26243193afcc1f19dadf84f83702",
+  "delay_lpf_v1/post_ptr_raw.wav": "f9c97aac6d809c105496118903b08141ae7abd21556b4dcdbf6ef53b9e6087f5",
+  "delay_lpf_v1/raw_source.wav": "638f470af7ded0da752ed782503a7ae9d536d2d6f2c734f2455231c7c1b3066e",
+  "delay_lpf_v1/sha256_manifest.json": "9bf30b28f54370b5a41b22bff3144c21fa106b93b0ed701d875307adcc427eae",
+  "reduced_cfd_teacher_v1/metrics.json": "febab11669190b91fa243e6d9f31c0ea09ecc5ff6cfcf2a61aab62688939b0a1",
+  "reduced_cfd_teacher_v1/monitor.wav": "204000405814fb13dd5d3ac587210fd842c9167ec8633e758969758c39f22037",
+  "reduced_cfd_teacher_v1/post_ptr_raw.wav": "3f1c88cff0aa5514582fa6b6e8c9d9366b08cc8e242908a1fe2f14abdeb671fc",
+  "reduced_cfd_teacher_v1/raw_source.wav": "2af078c1db3cc714a7cd0a7f9d74289eb26a189edaecef73f38322a3864190ed",
+  "reduced_cfd_teacher_v1/sha256_manifest.json": "00509dc4414224c17e62d2f34215c9e7d9a08a18be699034997c8905c0980935",
+  "teacher_reduction_receipt.json": "f7734828183ef15c8fe4b081a2f40a3809749c884f467ba0884c5237e58c4e10"
+}

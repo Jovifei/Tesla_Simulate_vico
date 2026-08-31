@@ -1,0 +1,52 @@
+{
+  "schema_version": "s12-hellcat-supercharger-target-1",
+  "vehicle": "hellcat",
+  "scope": "relative synthetic listening target; uncalibrated; not OEM reproduction",
+  "evidence_classes": {
+    "official_hardware": {
+      "source_level": "A",
+      "facts": ["twin-screw supercharger", "2.36:1 drive ratio", "approximately 14600 rpm maximum blower speed", "electronic bypass path"],
+      "sources": [
+        "https://blog.stellantisnorthamerica.com/2015/11/10/can-you-name-that-engine-day-ii/",
+        "https://blog.stellantisnorthamerica.com/2022/08/15/the-cat-is-back-2023-dodge-durango-srt-hellcat-most-powerful-suv-ever-returns-to-dodge-lineup/"
+      ],
+      "limitation": "hardware facts do not provide an acoustic transfer function or calibrated sound level"
+    },
+    "public_listening_context": {
+      "source_level": "B/R2",
+      "sources": ["https://www.dodgegarage.com/news/article/video/2022/05/driving-every-modern-dodge-performance-vehicle-on-the-road-and-track-part-ii"],
+      "permitted_use": "qualitative combination of deep exhaust pressure and distinct blower whine",
+      "limitation": "vehicle configuration, microphone, processing and level are unknown; not a numeric calibration source"
+    },
+    "synthetic_parameters": {
+      "source_level": "C",
+      "source": "synthetic",
+      "verification_state": "candidate_assumption",
+      "limitation": "all order amplitudes, sidebands, time constants and bypass gains are model seeds"
+    }
+  },
+  "fixed_architecture": {
+    "drive_ratio": {"value": 2.36, "unit": "ratio", "source_level": "A", "source": "official_hardware_fact", "calibration": "not acoustic calibration"},
+    "order_families": [2.36, 11.8, 23.6],
+    "unknowns": ["rotor tooth count", "gear mesh order", "intake transfer function", "casing modes"]
+  },
+  "state_targets": {
+    "idle": {"exhaust_role": "dominant thick low-frequency body", "blower_role": "low and partly masked"},
+    "cruise": {"exhaust_role": "stable low-frequency and mechanical floor", "blower_role": "light continuous whine"},
+    "acceleration": {"exhaust_role": "low-frequency weight remains primary", "blower_role": "continuous RPM/load/boost rise"},
+    "shift": {"exhaust_role": "torque interruption and impact", "blower_role": "short dip then re-establish"},
+    "full_pull": {"exhaust_role": "exhaust remains anchor", "blower_role": "clear order family without harsh upper-band spike"},
+    "lift": {"exhaust_role": "decay with deterministic afterfire", "blower_role": "boost-history-dependent bypass release and decay"}
+  },
+  "synthetic_gates": {
+    "blower_load_correlation_min": 0.82,
+    "order_relative_error_max": 0.01,
+    "sideband_to_main_ratio": [0.05, 0.20],
+    "acceleration_blower_to_exhaust_delta_db": [2.0, 4.0],
+    "idle_blower_to_exhaust_delta_db_max": 1.0,
+    "upper_band_share_max": 0.06,
+    "low_frequency_share_change_max": 0.05,
+    "rumble_energy_change_max": 0.05
+  },
+  "provenance": "C/synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction"
+}

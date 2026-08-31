@@ -1,0 +1,150 @@
+{
+  "limitations_zh": [
+    "参考音频为 R3 页面试听片段，不是 R1 原始录音。",
+    "没有同步 RPM/load/throttle/gear/shift，因此 Order 不资格。",
+    "数字域指标不是绝对 SPL，不能输出一个总相似度百分比。",
+    "Jovi 只需确认诊断是否符合听感，不需要判断具体频率。"
+  ],
+  "overall_status": "R2_DIAGNOSTIC_ONLY_NO_TOTAL_SIMILARITY",
+  "schema_version": "s12-professional-plain-language-diagnosis-v1",
+  "software_domains": [
+    "Professional MATLAB",
+    "Professional MoSQITo",
+    "Legacy Proxy"
+  ],
+  "total_similarity_percent": null,
+  "vehicles": [
+    {
+      "human_confirmation_required": true,
+      "items": [
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "120–400Hz主体不足，主体声压和攻击感偏弱。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "120_250_delta": -0.12636417478694248,
+            "250_400_delta": -0.32359881445102706
+          },
+          "uncertainty": "R3来源/麦位/AGC/工况不确定"
+        },
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "1–4kHz相对偏高，候选可能更集中、更像窄带中高频。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "1000_4000_delta": 0.5086755117724617
+          },
+          "uncertainty": "不是绝对 SPL；仅作相对方向"
+        },
+        {
+          "basis": "Legacy Proxy 高频频带",
+          "diagnosis_zh": "4kHz以上真实 metallic 层偏弱，需检查高阶包络和金属质感。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "4000_5500_delta": -0.00404709042767296,
+            "5500_12000_delta": -0.0024446434288982488
+          },
+          "uncertainty": "公开视频压缩和麦位未知"
+        },
+        {
+          "basis": "Professional MATLAB roughness_asper",
+          "diagnosis_zh": "MATLAB 粗糙度差值偏低，机械粗糙度和动态生命感可能偏弱。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "delta": -0.07330295733885443
+          },
+          "uncertainty": "数字域相对值，不是绝对声学标定"
+        }
+      ],
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "pair_count": 3,
+      "reference_class": "R3",
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "human_confirmation_required": true,
+      "items": [
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "20–120Hz相对偏多，声音容易闷或低频堆积。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "20_60_delta": -0.01594552649066299,
+            "60_120_delta": 0.2329445768629821
+          },
+          "uncertainty": "R3来源与排气状态未知"
+        },
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "120–400Hz不足，V8压力和加速攻击感可能不够。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "120_250_delta": -0.23090646085517963,
+            "250_400_delta": -0.09898423787434818
+          },
+          "uncertainty": "无 RPM/load 同步，不能做阶次判断"
+        },
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "400–1000Hz偏多，可能产生箱体感或中频拥挤。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "400_1000_delta": 0.09310228798139929
+          },
+          "uncertainty": "仅相对频带方向"
+        },
+        {
+          "basis": "Professional MATLAB roughness_asper",
+          "diagnosis_zh": "MATLAB 粗糙度差值已列出，需由 Jovi 判断是自然机械纹理还是伪影。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "delta": 0.19468470108414412
+          },
+          "uncertainty": "MoSQITo/ MATLAB 指标单位不同，不直接合并"
+        }
+      ],
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "pair_count": 3,
+      "reference_class": "R3",
+      "vehicle_id": "hellcat"
+    },
+    {
+      "human_confirmation_required": true,
+      "items": [
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "120–250Hz单峰过强，当前更像窄带嗡鸣而不是宽频转子+涡轮。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "120_250_delta": 0.7906540049361656
+          },
+          "uncertainty": "RX-7sim配置/麦位/压缩状态不确定"
+        },
+        {
+          "basis": "Legacy Proxy 频带能量",
+          "diagnosis_zh": "60–120Hz与400Hz–4kHz不足，宽频转子/涡轮层可能不完整。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "1000_4000_delta": -0.09914351537039111,
+            "400_1000_delta": -0.45442629348424024,
+            "60_120_delta": -0.0705205129124138
+          },
+          "uncertainty": "无同步状态，不能作 Order 结论"
+        },
+        {
+          "basis": "Professional MoSQITo roughness_asper",
+          "diagnosis_zh": "MoSQITo 粗糙度差值已列出，需 Jovi 判断机械纹理是否自然。",
+          "not_a_similarity_score": true,
+          "observed_values": {
+            "delta": 2.159996228616946
+          },
+          "uncertainty": "MoSQITo 当前不提供 fluctuation_vacil"
+        }
+      ],
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "pair_count": 3,
+      "reference_class": "R3",
+      "vehicle_id": "rx7_fd"
+    }
+  ]
+}

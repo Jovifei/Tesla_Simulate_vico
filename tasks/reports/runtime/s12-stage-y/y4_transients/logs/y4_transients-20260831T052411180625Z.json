@@ -1,0 +1,29 @@
+{
+  "run_id": "y4_transients-20260831T052411180625Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "-q",
+    "-k",
+    "not three_thousand"
+  ],
+  "started_at": "2026-08-31T05:24:11.214617+00:00",
+  "ended_at": "2026-08-31T05:24:33.487349+00:00",
+  "exit_code": 0,
+  "source_head": "98358a7ce8a66324890887d038559e58d36f24ef",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T052411180625Z.stdout.log",
+      "sha256": "5978e9a9a84c3c444da37f78af0554b7109b29323bdf11f4c43784eb1eba85be"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T052411180625Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

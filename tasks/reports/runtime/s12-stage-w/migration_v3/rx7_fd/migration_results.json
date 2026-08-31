@@ -1,0 +1,106 @@
+{
+  "architectures": {
+    "P1": {
+      "complete_cycle": {
+        "monitor_sha256": "fa585a7bfdedab596496de28b3433cd38f336db2e35b5b5027e499eab007d8e3",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "66617fc937510b0dc2abdf16214fbd8aee07266baa898505b5780476615fb69c",
+        "raw_source_sha256": "fb8320a02f456b45160a0a38271cebf64e545c9abf43007133630ec6226a502c"
+      },
+      "full_pull": {
+        "monitor_sha256": "24d55d7fc14ede0f227df8bb6c56aaf5dc15eb0d3e14521fb52cf037c051eb18",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "959837cff355cddca8dcef9ba28c65b947a4eaeca01a2f3d6a1a8fbd0badef97",
+        "raw_source_sha256": "69e9f607a78dff3f3a0113be1b5126d062b211e01dfbced7911c9e2184110ac7"
+      },
+      "hot_idle": {
+        "monitor_sha256": "74fa1a1a332ef43d7aefe32bfff4e931bb654ebb700fabc1ff4251d9334a7755",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "b178bb5464b3e0e52413836d6657919612593935440c3df0554847cacee854a1",
+        "raw_source_sha256": "1d92674f11ea001d1acb534e168f62fa0a8a620aefd1e0a3ecfc1ed27ae19700"
+      },
+      "lift": {
+        "monitor_sha256": "83cc3141926bd35afa97e1c6a4381460135903ddc9e69e166457266a029b0b3a",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "fdeca1ceee641e295769a893bf2c29f71a65751e6db4e41c268df9fd46d46acd",
+        "raw_source_sha256": "aeaa57d97bba23696ab0559ebcbb5ff2befa827fa6a419a20dfa6d97480b2caf"
+      },
+      "steady_mid": {
+        "monitor_sha256": "744aeee242ca4b04c08c150dcee4ab7eb2e38472c373b64e98bf4c33cdbaab3e",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "778bd6311a69ebc46ba57002b5e8f0beafcbb940dfa2425172e473f409b3dbfe",
+        "raw_source_sha256": "251c0103b01c7a35818a1b63f7160e817066e2e1bb851dce2b653700f178672d"
+      }
+    },
+    "P2H": {
+      "complete_cycle": {
+        "monitor_sha256": "0f8a9c8b15bc3970caac463c54ebb5575652e8c115e2bc7cc51c22dc658f584d",
+        "parent_post_ptr_difference_rms": 0.005431273263780019,
+        "post_ptr_sha256": "7d6d3fcc034fef165cecfc32cc5e43e51b0e19a7dd0dc81b156feb7da80ccde2",
+        "raw_source_sha256": "eb20e57513f071742f817ff5ab2e24631309201ac7a9e51c1642597b113c963c"
+      },
+      "full_pull": {
+        "monitor_sha256": "0d947704ea4909c119fd02805a079603b563571b1594a6f5fcd680e24ea7c0d3",
+        "parent_post_ptr_difference_rms": 0.012214283059564113,
+        "post_ptr_sha256": "7dcb76ff69df09099240ead81459ee4134f18d732d1ae26eb9ba5d324c95a05f",
+        "raw_source_sha256": "baebabfd8992067df7c45ea4590e4f0490412c084ef75f9415a34cbfaf5fa68b"
+      },
+      "hot_idle": {
+        "monitor_sha256": "9f60fe88054ef710271094baec9fee1a8f3ad238af7c5378d1fb1e785a32aa40",
+        "parent_post_ptr_difference_rms": 0.0019523754114808439,
+        "post_ptr_sha256": "5527fb30c46397466a07a95135600005a79772d6b985d7702f3551bb356633b7",
+        "raw_source_sha256": "b670800a6baef08421e1cfb7858d9c013c0406b859a3532ab2431a24fab10196"
+      },
+      "lift": {
+        "monitor_sha256": "dab4afe804ecf431aebf65b926b7fa7906f4f9c1e84b36bb820e263dd6fb1e37",
+        "parent_post_ptr_difference_rms": 0.007235261972312861,
+        "post_ptr_sha256": "1c8abe201be6cdd8f917ace9a93786691369689d7437287852a600a549f3ae47",
+        "raw_source_sha256": "33bd88c344d47ed9b51d6d9f845ab7e1461dc4019c78142265ca7eb03142cbdc"
+      },
+      "steady_mid": {
+        "monitor_sha256": "9fbb627a0c3c16cc1059e85ebedad83726370ebc3aa2b74f5156cc7e13299385",
+        "parent_post_ptr_difference_rms": 0.004308638024717279,
+        "post_ptr_sha256": "11c2fe3951da0f88b6eb304cf402f719a5d77224dc9277173c5cf6093ad61c8d",
+        "raw_source_sha256": "45843ba20b985ed0b3e180bc109669dc3275d9f9649e99595404b35327888ba5"
+      }
+    },
+    "P3": {
+      "complete_cycle": {
+        "monitor_sha256": "a6f2c954f70f6d93d4ce26cf76fa29f75cfaaf75178b543292d4730a338b46f6",
+        "parent_post_ptr_difference_rms": 0.005432114197976785,
+        "post_ptr_sha256": "0c9baa5cd9d621791f9f80bd3a7f989683eefbb6a3aec69727fb645c8126a866",
+        "raw_source_sha256": "041003be8778a723dca72b82498daf0850a967597350ad31a91e4bdd0865c2bb"
+      },
+      "full_pull": {
+        "monitor_sha256": "79b0a290d88497c02082e16f1b9f809656ed25c3969028843bc14663e4fdab0e",
+        "parent_post_ptr_difference_rms": 0.0122151939729941,
+        "post_ptr_sha256": "9d3722aec78529de816951945b190885c1f35b3c83338d4fcd7c70065d07e92a",
+        "raw_source_sha256": "3c95ee697b8d351b91fc000e4e4fd68e59e5fc85fb960212a0b8bc48111c70ef"
+      },
+      "hot_idle": {
+        "monitor_sha256": "ae9d6cbac288e873813b0a3ccf6148c81a6fc83fb8a0e721a5614bf50507759f",
+        "parent_post_ptr_difference_rms": 0.0019522901330277737,
+        "post_ptr_sha256": "66a58c9b5393fe4b82f0787aa7158a34172ba36faf17083e41cf6b67c0cb1c34",
+        "raw_source_sha256": "d9847f7e251ff7d48f39823316f5175f8bd23c7fb73ed62be347f5c15378fe8d"
+      },
+      "lift": {
+        "monitor_sha256": "8be493b443fb1606dd55a59ca296388f48b454dba576f7baec0053b0900c44ba",
+        "parent_post_ptr_difference_rms": 0.007233948318282244,
+        "post_ptr_sha256": "f9af732169b30f268409f0cc8898b6012b44881b94cc867d4e5f27dab5669498",
+        "raw_source_sha256": "b76cd48bde5a84d38dc82fcb7077cb9be8c806cbde9dd86d06aba274e3e7efb9"
+      },
+      "steady_mid": {
+        "monitor_sha256": "69117c62d32d8cfb424086352906bf4f23f7be4d83106ed31eb14c52e5951fd0",
+        "parent_post_ptr_difference_rms": 0.004308710405866056,
+        "post_ptr_sha256": "f1bcc302ee5c176acdc35f40d266a52bc6bf079e51f71e9783d44394e5eeb924",
+        "raw_source_sha256": "433e02dccfca2039a029d8d8c5eb8e1ef0e4b37af9b4bfea86b89af04316a7e9"
+      }
+    }
+  },
+  "reference_status": "REFERENCE_TARGET_MISSING",
+  "schema_version": "s12.stage_w.vehicle_migration.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "selected_architecture": null,
+  "status": "UNSELECTED_CANDIDATE_MIGRATION",
+  "vehicle_id": "rx7_fd"
+}

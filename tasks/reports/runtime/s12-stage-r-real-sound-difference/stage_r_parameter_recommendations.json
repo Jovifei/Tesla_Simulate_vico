@@ -1,0 +1,7 @@
+{
+  "reason": "在合法真实参考、同步 RPM/state 和可审计差异指标到位前，禁止生成参数方向。",
+  "recommendations": [],
+  "schema_version": "s12-stage-r-parameter-recommendations-v1",
+  "stage": "R",
+  "status": "WITHHELD_MISSING_R1_REFERENCE"
+}

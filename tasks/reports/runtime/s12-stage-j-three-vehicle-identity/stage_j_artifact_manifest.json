@@ -1,0 +1,11 @@
+{
+  "schema_version": "s12-stage-j-artifact-manifest-1",
+  "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-j-three-vehicle-identity-v1",
+  "package_id": "S12_Stage_J_Named_Review_v1",
+  "vehicles": ["c63_w204", "gtr_r35", "lfa"],
+  "wav_contract": {"sample_rate_hz": 48000, "channels": 2, "pcm": "PCM24", "cycle_frames": 2880001, "finite": true, "clipping_count": 0},
+  "review_gain": {"requested_linear": 1.25, "requested_db": 1.9382002601611283, "policy": "common attenuation-only pair cap at -1.5 dBFS"},
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL + WAITING_FOR_JOVI_STAGE_J_NAMED_REVIEW",
+  "zip_sha256": "2c2054dcdd8e96eab6cabc9724ed9a1edc7ff72e5632fcf5051ed13fbd94ac38",
+  "scope": "C/synthetic; uncalibrated; not OEM reproduction"
+}

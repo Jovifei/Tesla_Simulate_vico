@@ -1,0 +1,19 @@
+{
+  "author": "editboy23",
+  "decode_note": "Public HQ MP3 preview decoded to PCM24 WAV at 48 kHz with no gain, EQ, AGC, or loudness matching; this is a lossy preview derivative, not the login-gated original WAV.",
+  "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\supra_jza80_chassis_dyno_cc0_hq.wav",
+  "legal_permission": "CONFIRMED",
+  "license": "CC0 1.0",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+  "rights_evidence": "https://freesound.org/people/editboy23/sounds/496171/",
+  "sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+  "source_kind": "freesound_cc0_preview",
+  "source_media_sha256": "911E96CEAAA27885A71AACDFD08846916E1CD49AAB005F4482071FCBD5D66844",
+  "source_media_url": "https://cdn.freesound.org/previews/496/496171_1784475-hq.mp3",
+  "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "supra_jza80"
+}

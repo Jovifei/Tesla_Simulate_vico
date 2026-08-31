@@ -1,0 +1,34 @@
+{
+  "schema_version": "s12-stage-s-r2-human-ab-receipt-v1",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+  "evidence_level": "R2_LIMITED_COMPARISON_ONLY",
+  "package_root_alias": "E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823\\package",
+  "language": "zh-CN",
+  "study_type": "paired_A_B",
+  "test_id": "s12-stage-s-r2-ab-20260822",
+  "study_manifest_sha256": "68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428",
+  "feedback_binding_sha256": "4ABF650DFED136A327A8828F9B1710417A3051437F7F85435DFBF8CE5FA4BD26",
+  "feedback_template_sha256": "93A97C59FF082CA33DBB6F9C42D2B57E09064C01F89888EAEC40C4C5598BAC3F",
+  "chinese_offline_page_sha256": "586322EE697AACDD0ED429A36DCB4531A1BDA01E4D9598C84A6AC590A25EF6BB",
+  "readme_zh_sha256": "AF2C91F1B3E5ED1B02A02F8FF9B44E8AB149C24C93ECB3178365E65B284C1EBA",
+  "case_count": 1,
+  "cases": [
+    {
+      "case_id": "rx7sim_exhaust_revLong01",
+      "vehicle_id": "rx7_fd",
+      "scenario": "full_pull",
+      "reference_source_sha256": "8FB34A9F7A29106F84AA976FB98096898FC3BB3952EA95A865AD7314D85E1CCB",
+      "candidate_source_sha256": "03FFFFC1F3937EEC52B0DC841E1B54C6C9F90EF4A0A3978E4C0DB99F80603FD8",
+      "reference_audition_sha256": "64A99912FB8801681091723AFB2BFA087484B4498FDD906B780BF924ECA6C84B",
+      "candidate_audition_sha256": "38A8379B987E9C56AA2165DF8B30AC38C2666082DBA77F0A1AD9015A177513E6",
+      "reference_provenance": "https://github.com/acendan/rx7sim (CC BY-NC-SA 4.0; exact trim, stock exhaust, synchronized RPM/state and AGC remain unknown)",
+      "candidate_source_commit": "92d26c55b73ac83fdb6f32d9c8e7fbb8207f324c",
+      "feedback_rows": 0,
+      "automatic_tuning_eligible": false,
+      "profile_update": "FORBIDDEN"
+    }
+  ],
+  "raw_media_policy": "No copyrighted raw source or audition WAV is tracked in Git; only external path aliases, hashes, provenance and this receipt are tracked.",
+  "not_included": "The other four RX-7sim recordings have no semantically matched local candidate and were not placed in the A/B study.",
+  "next_action": "Jovi opens the external Chinese index.html, completes the bound case, and returns the exported JSON; import remains gated on listener/device/playback and SHA bindings."
+}

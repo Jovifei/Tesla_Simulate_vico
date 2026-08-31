@@ -1,0 +1,5 @@
+command=D:\Python\Python3.14\python.exe .superpowers/sdd/task6r_v27_stage_runner.py --mode generate --stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p3 --architecture P3 --parent-stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p1
+started_at_utc=2026-08-28T18:54:40.2075801Z
+pid=10824
+ended_at_utc=2026-08-28T19:24:40.1267743Z
+exit_code=0

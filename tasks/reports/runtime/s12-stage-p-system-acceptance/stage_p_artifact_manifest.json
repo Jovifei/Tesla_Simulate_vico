@@ -1,0 +1,130 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1305,
+      "path": "S12_Stage_P_Baseline_Audit.md",
+      "sha256": "060222526f0b165e68785b863575552a1c6ba616345a5712daf2935e2b488fbe"
+    },
+    {
+      "bytes": 481,
+      "path": "S12_Stage_P_Comparator_Replay.md",
+      "sha256": "bab4248b45122f2301212b2d3108845bfd89551f4a6d97a91e9d96fdd3dba448"
+    },
+    {
+      "bytes": 453,
+      "path": "S12_Stage_P_Feedback_Security.md",
+      "sha256": "5222b37071c4a89f5d44d3eed51292d0c75ad66313f9713955d1a0447b66f8a6"
+    },
+    {
+      "bytes": 2355,
+      "path": "S12_Stage_P_Final_System_Acceptance.md",
+      "sha256": "d265b23c2ebd25837545ed60f727bcac5a94d67e497095b6f1eea0567b5205d5"
+    },
+    {
+      "bytes": 565,
+      "path": "S12_Stage_P_Fixture_Stage_O_Consumption.md",
+      "sha256": "4953f55f24fadbb0efb52b1949419e0301aa6a3f21c14f824ba5341dafeceda2"
+    },
+    {
+      "bytes": 239,
+      "path": "S12_Stage_P_Reproducibility.md",
+      "sha256": "a3d1de8c9810657e2bd991c19812629a8c54a95f71b8bd328cd122cb5c69a4ba"
+    },
+    {
+      "bytes": 315,
+      "path": "S12_Stage_P_Stage_N_Receipt_Validation.md",
+      "sha256": "6580abeaf4b874bb918ec040119b61e1feb568dacd02689d45094e222a08926a"
+    },
+    {
+      "bytes": 2355,
+      "path": "S12_Stage_P_System_Acceptance_Report.md",
+      "sha256": "d265b23c2ebd25837545ed60f727bcac5a94d67e497095b6f1eea0567b5205d5"
+    },
+    {
+      "bytes": 751,
+      "path": "S12_Stage_P_WebMUSHRA_Roundtrip.md",
+      "sha256": "f116b2974037c168e34185ebdd648568c007304d841bae0ad46bafb467eb10ee"
+    },
+    {
+      "bytes": 6166,
+      "path": "stage_p_baseline_state.json",
+      "sha256": "561e0c9f3d177895a432e30d4aa77ab875cd5e36023a692f30d419bce1e91f4f"
+    },
+    {
+      "bytes": 723,
+      "path": "stage_p_comparator_replay.json",
+      "sha256": "8d8dd6de5724d9d1ab142d90429fa957c6b3c1d41f8dbff425cb993b2328c0c8"
+    },
+    {
+      "bytes": 47660,
+      "path": "stage_p_exact_tip_test_evidence.json",
+      "sha256": "c18784d752671ffba51418fefb16e74a10cdba7a58ccf530c38aa7c56726a6f3"
+    },
+    {
+      "bytes": 6576,
+      "path": "stage_p_feedback_security.json",
+      "sha256": "48fb744e9e936fefd152c5f09d1df7bc3341d2229277ba9df5279f781df1c56f"
+    },
+    {
+      "bytes": 6576,
+      "path": "stage_p_feedback_security_tests.json",
+      "sha256": "48fb744e9e936fefd152c5f09d1df7bc3341d2229277ba9df5279f781df1c56f"
+    },
+    {
+      "bytes": 451,
+      "path": "stage_p_fixture_confusion_matrix.json",
+      "sha256": "cc81d8bff900acefaa36949d01605b0e689ac9a1dd9d75ea9ba202e6b5cc7bb0"
+    },
+    {
+      "bytes": 1204,
+      "path": "stage_p_fixture_metric_human_binding.json",
+      "sha256": "0c4c0b61840cffb9c9ce9375f47a33b67464a8d9382c891b547d6ac0767c1684"
+    },
+    {
+      "bytes": 1165,
+      "path": "stage_p_fixture_stage_o_entry_receipt.json",
+      "sha256": "60e5d3c79e56ccf833b52063c884fb1b96e7233135f85c8594dd337a198f92dc"
+    },
+    {
+      "bytes": 949,
+      "path": "stage_p_fixture_stage_o_receipt.json",
+      "sha256": "c8889335803e6968c03c09e2b6578ef781f4eb78470ea5eee3a86e51452dae3d"
+    },
+    {
+      "bytes": 2653,
+      "path": "stage_p_gate_matrix.json",
+      "sha256": "33126d8e9a67dac5119d53ae482be901961cd1d8b1f13365d164b64b61e8d92d"
+    },
+    {
+      "bytes": 887,
+      "path": "stage_p_reproducibility.json",
+      "sha256": "cd19cf71d51f63f2192ae9523f9c01ec893d6a2efe834b10f35099be8ed88beb"
+    },
+    {
+      "bytes": 1987,
+      "path": "stage_p_stage_n_receipt_validation.json",
+      "sha256": "86ec3628bfc261a8de7358cc474cd2eb1705e2d669589e724a5ab082754a4e84"
+    },
+    {
+      "bytes": 1987,
+      "path": "stage_p_tool_receipt_validation.json",
+      "sha256": "86ec3628bfc261a8de7358cc474cd2eb1705e2d669589e724a5ab082754a4e84"
+    },
+    {
+      "bytes": 2817,
+      "path": "stage_p_uat_manifest.json",
+      "sha256": "bb3e563bbfb34c2325b3e162645a085bfa1e8b6f6b93b1361825cb7d878da14d"
+    },
+    {
+      "bytes": 2628,
+      "path": "stage_p_webmushra_roundtrip.json",
+      "sha256": "4070d4feffbf11f753e4ff2e3609e76dbd18bcf0b06ffe60bb7aa4478c962106"
+    }
+  ],
+  "human_feedback_content_read": false,
+  "profile_freeze_ready": false,
+  "ready_for_jovi_uat": true,
+  "schema_version": "s12-stage-p-artifact-manifest-1",
+  "source_commit": "38d84f3540081636b7ea78636ba2479a0afe170e",
+  "status": "SYSTEM_ACCEPTANCE_PASSED"
+}

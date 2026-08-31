@@ -1,0 +1,32 @@
+.F......                                                                 [100%]
+================================== FAILURES ===================================
+___ test_transient_events_are_one_shot_and_tip_tail_continues_across_calls ____
+
+    def test_transient_events_are_one_shot_and_tip_tail_continues_across_calls() -> None:
+        mixer = StateTransientMixer(sample_rate_hz=48000)
+        mixer.render_block(960, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+        first, first_diag = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+        second, second_diag = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+        assert first_diag["transient_tip_in_count"] == 1
+        assert second_diag["transient_tip_in_count"] == 1
+        assert np.any(first)
+        assert np.any(second)
+    
+        mixer.render_block(960, throttle=0.10, rpm=4200.0, boost=0.70, dt=0.020)
+        _shift, shift_diag = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+        _steady_shift, steady_shift_diag = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+        assert shift_diag["transient_shift_count"] == 1
+        assert steady_shift_diag["transient_shift_count"] == 1
+    
+        mixer.render_block(960, throttle=0.90, rpm=3200.0, boost=0.80, dt=0.020)
+        _lift_bov, lift_bov_diag = mixer.render_block(960, throttle=0.05, rpm=3200.0, boost=0.20, dt=0.020)
+        _steady_lift_bov, steady_lift_bov_diag = mixer.render_block(960, throttle=0.05, rpm=3200.0, boost=0.20, dt=0.020)
+        assert lift_bov_diag["transient_lift_count"] >= 1
+        assert lift_bov_diag["transient_bov_count"] == 1
+>       assert steady_lift_bov_diag["transient_lift_count"] == 1
+E       assert 2 == 1
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:110: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_transient_events_are_one_shot_and_tip_tail_continues_across_calls
+1 failed, 7 passed in 6.34s

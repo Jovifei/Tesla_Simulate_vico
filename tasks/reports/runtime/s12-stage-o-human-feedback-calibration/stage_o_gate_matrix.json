@@ -1,0 +1,15 @@
+{
+  "gates": {
+    "O0_exact_tip_acceptance": "PASS",
+    "O1_real_feedback_import": "WAITING_FOR_JOVI_FEEDBACK",
+    "O2_metric_human_binding": "NOT_STARTED_WAITING_FOR_JOVI_FEEDBACK",
+    "O3_repair_scope": "NOT_STARTED_WAITING_FOR_JOVI_FEEDBACK",
+    "O4_bounded_tuning": "NOT_STARTED_WAITING_FOR_JOVI_FEEDBACK",
+    "O5_listening_package": "NOT_STARTED_WAITING_FOR_JOVI_FEEDBACK",
+    "O6_second_feedback": "NOT_STARTED_WAITING_FOR_JOVI_FEEDBACK",
+    "O7_approved_profile_candidate": "BLOCKED_NO_HUMAN_PASS"
+  },
+  "overall_status": "WAITING_FOR_JOVI_FEEDBACK",
+  "profile_freeze_ready": false,
+  "schema_version": "s12-stage-o-gate-matrix-1"
+}

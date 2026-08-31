@@ -1,0 +1,27 @@
+{
+  "run_id": "y6-production-20260831T080019510149Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\.superpowers\\sdd\\run_y6_production.py",
+    "--worker",
+    "E:\\Tesla_speed\\review_packages\\.y6-production-20260831T080019510149Z"
+  ],
+  "source_head": "091696936abc8ec310f2f937579bc136cf21bc0e",
+  "started_at": "2026-08-31T08:00:19.541289+00:00",
+  "ended_at": "2026-08-31T08:10:41.537683+00:00",
+  "exit_code": 0,
+  "output": "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v1",
+  "stage": "E:\\Tesla_speed\\review_packages\\.y6-production-20260831T080019510149Z",
+  "runner_sha256": "cce424bd34b666af2ed24e0def3bc9c57ec19218d54b3d45eb4e8159745adf44",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6-production-20260831T080019510149Z.stdout.log",
+      "sha256": "5a628b54c77b24026265ca9126ff5a0f53cd0fbf7ca8429c684dbdc22d98a8fd"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6-production-20260831T080019510149Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "package_manifest_sha256": "9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c"
+}

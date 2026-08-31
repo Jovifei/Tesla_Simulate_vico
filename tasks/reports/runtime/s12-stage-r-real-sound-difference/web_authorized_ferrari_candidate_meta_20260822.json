@@ -1,0 +1,11 @@
+{
+  "candidate_id": "synthetic_ferrari_458_ab_resampled_44100",
+  "vehicle_id": "ferrari_458",
+  "scenario": "acceleration",
+  "candidate_sha256": "c94ba310a623dfe2c3f465c1b20d053b39c18722280b977d79210860447f3f78",
+  "source_audio": "E:\\Tesla_speed\\worktrees\\s12-stage-q-real-reference-calibration\\tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\ferrari_458_ab.wav",
+  "source_audio_sha256": "6d31eae59a0adcf85d9a194bab707302dbb5417e1c55bf268d63abbd199a5fee",
+  "source_commit": "9a35777997ccb164659891f95f998aba2097caab",
+  "analysis_signal": "unaltered_analysis_signal",
+  "resample_contract": "explicit 48000-to-44100 scipy.signal.resample_poly(147,160); no gain/EQ/AGC"
+}

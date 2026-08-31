@@ -1,0 +1,95 @@
+{
+  "artifacts": [
+    {
+      "bytes": 75155,
+      "path": "comparator_results.json",
+      "sha256": "8ea0bbcef63b5eb722d9a4f074145d40a025b93f76199cb0232bf4b2376cb935"
+    },
+    {
+      "bytes": 1912,
+      "path": "cross_tool_validation.json",
+      "sha256": "ea922386674bf3512cee2b84511e658cc4ef2c92a0103c9fee86c333d8d31207"
+    },
+    {
+      "bytes": 261,
+      "path": "feedback_closure.json",
+      "sha256": "bbde58c7fbadce2ee35e5ae23b3add146b41db1c985ce02ac72d0651ddd7175f"
+    },
+    {
+      "bytes": 8614,
+      "path": "matlab_order_validation.json",
+      "sha256": "228b013a2e94764ff81057eb2d3323cb3989820c3302bab8d260c3e45894ca6a"
+    },
+    {
+      "bytes": 14229,
+      "path": "matlab_psychoacoustic_validation.json",
+      "sha256": "d5e2269a001674373637add853bd70d157eef33f80e31c2884e80b5556e620c0"
+    },
+    {
+      "bytes": 4239,
+      "path": "matlab_shared_psychoacoustic_validation.json",
+      "sha256": "2769e98f35679e2c85c54236d4e8f3cfdce44cbf42833d8ce8459c54027872c7"
+    },
+    {
+      "bytes": 16949,
+      "path": "mosqito_project_analysis.json",
+      "sha256": "ebd2de62259c893ec9ae798a2f1d2a35e5be0a91740c76e70f29ad839fa1e3cc"
+    },
+    {
+      "bytes": 9842,
+      "path": "mosqito_shared_fixture_validation-v2.json",
+      "sha256": "88b1cc0e671f888a20d90f106a8985a995a056e57a4a6c5eaaea792a31c9acf2"
+    },
+    {
+      "bytes": 9842,
+      "path": "mosqito_shared_fixture_validation.json",
+      "sha256": "88b1cc0e671f888a20d90f106a8985a995a056e57a4a6c5eaaea792a31c9acf2"
+    },
+    {
+      "bytes": 9231,
+      "path": "mosqito_validation.json",
+      "sha256": "d8671e321de5d655538046d2b23d4d8259120d556a4a79a764825b155b78dbd2"
+    },
+    {
+      "bytes": 3005,
+      "path": "parameter_recommendations.json",
+      "sha256": "3313b58ea9728b985b4f3477d79916e9b05f66d83c742ffeff79198eedaaf43e"
+    },
+    {
+      "bytes": 348,
+      "path": "publish_receipt.json",
+      "sha256": "b015f034aa699869452fee0a43bdbbb9a5e6a54dfb93ddedff34e0cd86b07b3e"
+    },
+    {
+      "bytes": 3708,
+      "path": "S12_Professional_Acoustic_Toolchain_Matrix.md",
+      "sha256": "5bdf26c0aff339a20e49464e9da78e598e75ea8c3d12fd040e10b6c3e9466046"
+    },
+    {
+      "bytes": 2072,
+      "path": "S12_Stage_N_Professional_Toolchain_Report.md",
+      "sha256": "68b83d73f057bf1804827a166f00589753cf14d802af3b4ba52e594cc1730465"
+    },
+    {
+      "bytes": 3005,
+      "path": "stage_n_parameter_recommendations.json",
+      "sha256": "3313b58ea9728b985b4f3477d79916e9b05f66d83c742ffeff79198eedaaf43e"
+    },
+    {
+      "bytes": 10411,
+      "path": "toolchain_capability_matrix.json",
+      "sha256": "865aba07335ba7022b8eb98509a8c364f966775b9d3f814ab832c0c8076eec6d"
+    },
+    {
+      "bytes": 995,
+      "path": "webmushra_import_validation.json",
+      "sha256": "63a5ad0242fb1c930fe4a5a8bfa90283e025626425fbd0ac8513aa559db02007"
+    },
+    {
+      "bytes": 2138,
+      "path": "webmushra_package_manifest.json",
+      "sha256": "8156f2edfb0afc3f3065f50a51279fccb77445f20ca43c8f8f81dde5ec71276b"
+    }
+  ],
+  "schema_version": "s12-stage-n-artifact-manifest-1"
+}

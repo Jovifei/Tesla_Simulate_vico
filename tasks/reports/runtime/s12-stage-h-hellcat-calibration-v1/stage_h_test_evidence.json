@@ -1,0 +1,25 @@
+{
+  "status": "VERIFIED",
+  "focused_tests": {
+    "stage_h": {"result": "14 passed", "duration_s": 71.04},
+    "stage_g": {"result": "12 passed", "duration_s": 230.87},
+    "stage_c_realism_identity": {"result": "67 passed, 78 subtests passed", "duration_s": 142.80},
+    "track_p_pytest": {"result": "21 passed", "duration_s": 1.12}
+  },
+  "full_regression": {"result": "488 passed, 232 subtests passed", "duration_s": 708.51},
+  "track_p_guard_script": {
+    "result": "OK",
+    "frozen_files": 180,
+    "frozen_symbols": 2,
+    "frozen_path_changes": 0,
+    "diff_check": "PASS"
+  },
+  "commands": [
+    "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_h_*.py -q",
+    "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_g_*.py -q",
+    "python -m pytest tools/sound_sim/s12/tests/test_s12_engine_acoustic_realism_v10.py tools/sound_sim/s12/tests/test_s12_engine_acoustic_identity_v015.py -q",
+    "python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q",
+    "python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py"
+  ],
+  "note": "Counts are fresh Stage-H worktree evidence, not historical reuse. u/skipped tests are not counted as passes."
+}

@@ -1,0 +1,15 @@
+Launcher PID: 75316
+Command: python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests -k stage_w -q --disable-warnings
+Start UTC: 2026-08-29T04:12:56.5202658Z
+End UTC: 2026-08-29T04:50:58.8394790Z
+Exit code: 0
+Duration seconds: 2282
+Stdout: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate1_stage_w2.stdout.log
+Stderr: E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task6z_gate1_stage_w2.stderr.log
+Exit UTC: 2026-08-29T04:50:58.8394790Z
+........................................................................ [ 30%]
+........................................................................ [ 61%]
+..........................s............................................. [ 91%]
+....................                                                     [100%]
+235 passed, 1 skipped, 517 deselected in 2281.53s (0:38:01)
+...

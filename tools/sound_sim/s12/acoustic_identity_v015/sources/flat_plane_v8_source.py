@@ -42,6 +42,7 @@ NOT modified. All tuning is in this source file only.
 from __future__ import annotations
 
 import numpy as np
+from collections.abc import Mapping
 
 from ..acoustic_analysis.spectral_targets import BAND_EDGES
 from ..contracts import SourceRender, VehicleStateTrace
@@ -99,6 +100,7 @@ def render_ferrari_458(
     trace: VehicleStateTrace,
     sample_rate_hz: int = 48000,
     apply_state_shaping: bool = True,
+    overrides: Mapping[str, float] | None = None,
 ) -> SourceRender:
     """Render finite stereo pre-PTR pressure; this is not OEM reproduction.
 
@@ -108,6 +110,7 @@ def render_ferrari_458(
     default shipping render.
     """
     trace.validate()
+    overrides = {} if overrides is None else dict(overrides)
     if not isinstance(sample_rate_hz, int) or sample_rate_hz < 8000:
         raise ValueError("sample_rate_hz must be an integer >= 8000")
     count = int(round((trace.time_s[-1] - trace.time_s[0]) * sample_rate_hz)) + 1
@@ -115,7 +118,7 @@ def render_ferrari_458(
     rpm = np.interp(time_s, trace.time_s, trace.rpm)
     load = np.interp(time_s, trace.time_s, trace.load)
     combustion_drive = 0.25 + 0.75 * load
-    phase = np.cumsum(rpm) / (60.0 * sample_rate_hz)
+    phase = np.cumsum(rpm) / (60.0 * sample_rate_hz) + float(overrides.get("bank_phase_offset_deg", 0.0)) / 360.0
     high_rpm_mix = np.clip((rpm - 3000.0) / 5000.0, 0.0, 1.0)
     # rpm-gated idle gate: suppress the low-band combustion carrier below ~1500 rpm
     # so the frozen low-cut PTR cannot delete the idle. 1.0 at high rpm, ~0.02 at idle.
@@ -128,7 +131,7 @@ def render_ferrari_458(
     # with rpm (test_ferrari_high_frequency_energy_grows_with_rpm).
     rpm_norm = np.clip((rpm - 900.0) / (8000.0 - 900.0), 0.0, 1.0)
     low_drive = 1.0 - 0.55 * rpm_norm
-    high_drive = 0.30 + 0.85 * rpm_norm
+    high_drive = 0.30 + 0.85 * rpm_norm * float(overrides.get("high_rpm_growth_scale", 1.0))
     event_rate_compensation = 1.0
     event_id = np.floor(phase * 4.0).astype(np.int64)
     event_samples = np.flatnonzero(np.r_[True, np.diff(event_id) > 0])
@@ -153,8 +156,9 @@ def render_ferrari_458(
     comb_idle_factor = (1.0 - idle_mask) + idle_mask * 0.02
     # Low/mid combustion carrier, amplitude tapered by low_drive (strong at idle,
     # tapers toward redline) so total RMS stays flat while the high band grows.
-    left_carrier = 0.13 * low_drive * comb_idle_factor * left_envelope * carrier
-    right_carrier = 0.13 * low_drive * comb_idle_factor * right_envelope * carrier
+    pulse_width_scale = float(overrides.get("pulse_width_scale", 1.0))
+    left_carrier = 0.13 * pulse_width_scale * low_drive * comb_idle_factor * left_envelope * carrier
+    right_carrier = 0.13 * pulse_width_scale * low_drive * comb_idle_factor * right_envelope * carrier
     # Idle tonal filler (survives the frozen low-cut PTR): ~1000 Hz (mid) + ~1450 Hz.
     # Engine-order-coupled (phase*N) so time-origin invariant and rpm-tracking,
     # gated OFF at rpm=0. Amplitude kept modest so the idle raw level stays inside
@@ -176,7 +180,7 @@ def render_ferrari_458(
     right_bank = np.column_stack((0.32 * right_mono, right_mono))
 
     metallic_impulses = (left_impulses + right_impulses) * (rpm > 0.0)
-    metallic_radius = float(np.exp(-1.0 / (0.014 * sample_rate_hz)))
+    metallic_radius = float(np.exp(-1.0 / (0.014 * float(overrides.get("metallic_decay_scale", 1.0)) * sample_rate_hz)))
 
     def damped_mode(frequency_hz: float) -> np.ndarray:
         angle = 2.0 * np.pi * frequency_hz / sample_rate_hz
@@ -231,9 +235,21 @@ def render_ferrari_458(
             "combustion_load_floor": 0.25,
             "regression_fix": "idle combustion suppressed below 1500 rpm; ~1000/1450 Hz idle tonal filler survives frozen low-cut PTR",
             "idle_target_lufs": "single shared bundle gain lands idle near -16 LUFS (no double normalization)",
+            "candidate_source_overrides": dict(overrides),
         },
     )
     tuned = apply_deep_realism(render.validate(), "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
     if not apply_state_shaping:
-        return tuned
-    return _inject_state_spectral_targets(tuned, "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
+        shaped = tuned
+    else:
+        shaped = _inject_state_spectral_targets(tuned, "ferrari_458", trace, sample_rate_hz=sample_rate_hz)
+    # Idle-only source trim: keep the 1050 rpm combustion/mechanical identity
+    # audible after the frozen PTR without changing the high-rpm pull.
+    idle_time = trace.time_s[0] + np.arange(shaped.pressure.shape[0], dtype=np.float64) / sample_rate_hz
+    idle_rpm = np.interp(idle_time, trace.time_s, trace.rpm)
+    idle_gain = np.where(idle_rpm <= 1300.0, 1.06, 1.0)[:, np.newaxis]
+    return SourceRender(
+        pressure=shaped.pressure * idle_gain,
+        stems={name: np.asarray(stem, dtype=np.float64) * idle_gain for name, stem in shaped.stems.items()},
+        diagnostics={**shaped.diagnostics, "idle_source_gain": 1.06, "idle_source_gate_rpm": 1300.0},
+    ).validate()

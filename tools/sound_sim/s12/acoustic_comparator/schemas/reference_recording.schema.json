@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/reference_recording.schema.json",
+  "type": "object",
+  "required": ["recording_id", "provenance", "sha256", "sample_rate_hz", "scenario", "rpm_window", "analysis_signal"],
+  "properties": {
+    "recording_id": {"type": "string", "minLength": 1},
+    "provenance": {"type": "object", "required": ["source", "license_or_permission"], "properties": {"source": {"type": "string"}, "license_or_permission": {"type": "string"}}},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "sample_rate_hz": {"type": "integer", "minimum": 1},
+    "scenario": {"type": "string"},
+    "rpm_window": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "analysis_signal": {"const": "unaltered_analysis_signal"}
+  },
+  "additionalProperties": true
+}

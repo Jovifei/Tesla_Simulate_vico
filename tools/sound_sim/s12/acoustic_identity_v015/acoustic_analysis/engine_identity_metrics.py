@@ -169,7 +169,7 @@ def compute_engine_identity_metrics(
             "blower_stem_energy": float(np.sum(np.square(np.asarray(render.stems.get("blower", 0.0), dtype=np.float64)))),
             "blower_load_correlation": _frame_energy_state_correlation(blower, trace, sample_rate_hz, "load"),
         }
-    else:
+    elif vehicle_id == "rx7_fd":
         # Integer/half fractions need a window that resolves the 0.25-order grid
         # (see `_order_fraction_frame`); the plotted `order_map` above keeps the
         # short, time-resolved window.
@@ -196,6 +196,30 @@ def compute_engine_identity_metrics(
             "turbo_secondary_rise": _frame_end_start_ratio(turbine, sample_rate_hz),
             "turbo_transition_s": _turbo_transition_time(turbo, turbine, trace, sample_rate_hz),
             "lift_decay_ratio": _lift_decay_ratio(lift, trace, sample_rate_hz),
+        }
+    elif vehicle_id == "aventador_lp700":
+        metrics["aventador"] = {
+            "wail_energy": float(np.sum(np.square(_stem(render, "wail")))),
+            "even_fire_energy": float(np.sum(np.square(_stem(render, "even_fire")))),
+        }
+    elif vehicle_id == "c63_w204":
+        metrics["c63"] = {
+            "bark_energy": float(np.sum(np.square(_stem(render, "bark")))),
+            "exhaust_bank_energy": float(np.sum(np.square(_stem(render, "exhaust_left_bank")))) + float(np.sum(np.square(_stem(render, "exhaust_right_bank")))),
+        }
+    elif vehicle_id == "gtr_r35":
+        metrics["gtr"] = {
+            "turbo_energy": float(np.sum(np.square(_stem(render, "whistle")))),
+            "racy_energy": float(np.sum(np.square(_stem(render, "racy")))),
+        }
+    elif vehicle_id == "lfa":
+        metrics["lfa"] = {
+            "scream_energy": float(np.sum(np.square(_stem(render, "scream")))),
+        }
+    elif vehicle_id == "supra_jza80":
+        metrics["supra"] = {
+            "turbo_energy": float(np.sum(np.square(_stem(render, "whistle")))),
+            "edge_energy": float(np.sum(np.square(_stem(render, "edge")))),
         }
     return metrics
 

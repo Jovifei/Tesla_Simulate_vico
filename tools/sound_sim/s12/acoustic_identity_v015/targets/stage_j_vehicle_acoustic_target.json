@@ -1,0 +1,24 @@
+{
+  "schema_version": "s12-stage-j-vehicle-acoustic-target-1",
+  "provenance": "B/R2 relative features; C/synthetic candidate direction; uncalibrated; not OEM reproduction",
+  "vehicles": {
+    "c63_w204": {
+      "engine_architecture": "naturally aspirated cross-plane V8",
+      "dominant_character": "lumpy event-driven bark, muscular mid-low exhaust, mechanical texture",
+      "source_model": "mercedes_na_v8_source_v2",
+      "reference_target_file": "reference_database/c63_w204_reference_targets.json"
+    },
+    "gtr_r35": {
+      "engine_architecture": "3.8L V6 twin turbo with dual-clutch transmission",
+      "dominant_character": "crisp V6 event train, boost onset, twin-turbo whistle and release",
+      "source_model": "nissan_twin_turbo_v6_source_v2",
+      "reference_target_file": "reference_database/gtr_r35_reference_targets.json"
+    },
+    "lfa": {
+      "engine_architecture": "4.8L naturally aspirated high-rev V10 with sequential transmission",
+      "dominant_character": "moving high-rev order family, intake resonance, metallic V10 texture",
+      "source_model": "lexus_high_rev_v10_source_v2",
+      "reference_target_file": "reference_database/lfa_reference_targets.json"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "absolute_spl_or_real_reference_claims": [],
+  "comparison_kind": "internal_synthetic_parent_regression_only",
+  "errors": [],
+  "human_feedback_available": false,
+  "no_truth_percentage": true,
+  "qualified_claims": [],
+  "replay_source_sha256": "8ea0bbcef63b5eb722d9a4f074145d40a025b93f76199cb0232bf4b2376cb935",
+  "scenario_count": 40,
+  "scenario_counts": {
+    "acceleration": 8,
+    "full_cycle": 8,
+    "idle": 8,
+    "lift_afterfire": 8,
+    "shift": 8
+  },
+  "schema_version": "s12-stage-p-comparator-replay-1",
+  "status": "PASS",
+  "vehicle_count": 8,
+  "vehicle_ids": [
+    "aventador_lp700",
+    "c63_w204",
+    "ferrari_458",
+    "gtr_r35",
+    "hellcat",
+    "lfa",
+    "rx7_fd",
+    "supra_jza80"
+  ]
+}

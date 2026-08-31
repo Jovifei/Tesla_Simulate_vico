@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-k-candidate-profile-1",
+  "title": "S12 Stage K Track-S candidate profile",
+  "description": "Synthetic, uncalibrated, vehicle-inspired candidate overlay; not OEM reproduction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "candidate_id", "vehicle_id", "base_commit",
+    "parent_candidate_id", "parent_candidate_path", "parent_candidate_sha256",
+    "status", "hypothesis", "reference_target", "canonical_trace_version",
+    "source", "operating_level", "idle", "afterfire", "shift_or_transient",
+    "loudness", "locked_layers", "provenance"
+  ],
+  "properties": {
+    "schema_version": {"enum": [
+      "s12-stage-k-candidate-profile-1",
+      "s12-stage-k-hellcat-candidate-profile-1",
+      "s12-stage-k-c63_w204-candidate-profile-1",
+      "s12-stage-k-gtr_r35-candidate-profile-1",
+      "s12-stage-k-lfa-candidate-profile-1"
+    ]},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"enum": ["hellcat", "c63_w204", "gtr_r35", "lfa"]},
+    "base_commit": {"const": "b78b6c3031269eae1a0b917ce7bbaaed2af81c76"},
+    "parent_candidate_id": {"type": "string", "minLength": 1},
+    "parent_candidate_path": {"type": "string", "minLength": 1},
+    "parent_candidate_sha256": {"$ref": "#/$defs/sha256"},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "reference_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "eligible_states"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "eligible_states": {
+          "type": "array",
+          "const": ["idle", "acceleration", "afterfire"]
+        }
+      }
+    },
+    "canonical_trace_version": {"type": "string", "minLength": 1},
+    "source": {"$ref": "#/$defs/parameterMap"},
+    "operating_level": {"$ref": "#/$defs/parameterMap"},
+    "idle": {"$ref": "#/$defs/parameterMap"},
+    "afterfire": {"$ref": "#/$defs/parameterMap"},
+    "shift_or_transient": {"$ref": "#/$defs/parameterMap"},
+    "loudness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_lufs", "peak_limit_dbfs", "whole_cycle_gain_only"],
+      "properties": {
+        "target_lufs": {"const": -16.0},
+        "peak_limit_dbfs": {"const": -1.5},
+        "whole_cycle_gain_only": {"const": true}
+      }
+    },
+    "locked_layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low_frequency_body", "rumble", "pre_ptr_eq", "frozen_ptr"],
+      "properties": {
+        "low_frequency_body": {"$ref": "#/$defs/lockedLayer"},
+        "rumble": {"$ref": "#/$defs/lockedLayer"},
+        "pre_ptr_eq": {"$ref": "#/$defs/lockedLayer"},
+        "frozen_ptr": {"$ref": "#/$defs/lockedLayer"},
+        "formal_loudness_manager": {"$ref": "#/$defs/lockedLayer"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["source_level", "source", "calibration", "claim"],
+      "properties": {
+        "source_level": {"const": "C"},
+        "source": {"const": "synthetic"},
+        "calibration": {"const": "uncalibrated"},
+        "claim": {"type": "string", "pattern": "not OEM reproduction$"},
+        "parent_status": {"type": "string"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "range", "source_level", "source", "source_scope", "verification_state"],
+      "properties": {
+        "value": {"type": "number", "finite": true},
+        "unit": {"type": "string", "minLength": 1},
+        "range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "finite": true}},
+        "source_level": {"const": "C"},
+        "source": {"const": "synthetic"},
+        "source_scope": {"type": "string", "minLength": 1},
+        "verification_state": {"const": "candidate_assumption"}
+      }
+    },
+    "parameterMap": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/parameter"}
+    },
+    "lockedLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unchanged", "fingerprint"],
+      "properties": {
+        "unchanged": {"const": true},
+        "fingerprint": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

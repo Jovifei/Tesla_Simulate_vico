@@ -1,0 +1,28 @@
+{
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "measurement_domain": "final_pcm",
+  "formula": "sqrt(0.25 * sum((actual_band_share - target_band_share)^2))",
+  "eligible_states": ["idle", "acceleration", "afterfire"],
+  "bands_hz": [[20, 250], [250, 1000], [1000, 4000], [4000, 12000]],
+  "reason": "Stage-F v3 contains a continuous anonymous audition package, but no labelled final-PCM idle/acceleration/afterfire window exports were retained as reference-distance inputs. No distance or improvement ratio is fabricated.",
+  "gate": {
+    "required_average_improvement": 0.30,
+    "required_max_state_regression": 0.10,
+    "result": "NOT_PERFORMED"
+  },
+  "vehicles": {
+    "ferrari_458": {
+      "reference_target": {"path": "reference_database/ferrari_458_reference_targets.json", "sha256": "af53d5ed8511d5731071e53a05705dfa55fa8b35c2c6bb211dbd2b4e7b1d0660"},
+      "states": {"idle": {"availability": "N/A"}, "acceleration": {"availability": "N/A"}, "afterfire": {"availability": "N/A"}}
+    },
+    "hellcat": {
+      "reference_target": {"path": "reference_database/hellcat_reference_targets.json", "sha256": "84030e8204fe228fddb604ca0190869d3fee34ac41e3e693c90fb1ecaad72eff"},
+      "states": {"idle": {"availability": "N/A"}, "acceleration": {"availability": "N/A"}, "afterfire": {"availability": "N/A"}}
+    },
+    "rx7_fd": {
+      "reference_target": {"path": "reference_database/rx7_fd_reference_targets.json", "sha256": "a14deb93fa4e31a0ed207e9998e8346bac1d500eb63a946349a80e2767c049a7"},
+      "states": {"idle": {"availability": "N/A"}, "acceleration": {"availability": "N/A"}, "afterfire": {"availability": "N/A"}}
+    }
+  },
+  "provenance": "Existing B/R2 relative, microphone/AGC-dependent, synthetic comparison target; uncalibrated and not OEM reproduction."
+}

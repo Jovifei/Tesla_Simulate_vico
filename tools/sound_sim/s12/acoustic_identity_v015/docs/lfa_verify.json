@@ -2,30 +2,30 @@
   "clips": {
     "idle": {
       "band_shares": [
-        0.0021,
-        0.4934,
-        0.4168,
-        0.0877
+        0.0175,
+        0.7292,
+        0.2468,
+        0.0064
       ],
-      "centroid_hz": 1365.6
+      "centroid_hz": 838.5
     },
     "acceleration": {
       "band_shares": [
-        0.0,
-        1.0,
+        0.0001,
+        0.9999,
         0.0,
         0.0
       ],
-      "centroid_hz": 612.0
+      "centroid_hz": 599.2
     },
     "deceleration": {
       "band_shares": [
-        0.0219,
-        0.4489,
-        0.4365,
-        0.0925
+        0.009,
+        0.8538,
+        0.1336,
+        0.0035
       ],
-      "centroid_hz": 1325.6
+      "centroid_hz": 613.5
     }
   },
   "reference": {
@@ -36,10 +36,10 @@
     "idle_low": 0.7174810362104375
   },
   "distance_to_reference": {
-    "accel_low": 0.0011,
-    "accel_mid": 0.0255,
+    "accel_low": 0.001,
+    "accel_mid": 0.0254,
     "accel_high": 0.0235,
-    "idle_centroid": 1125.8
+    "idle_centroid": 598.7
   },
   "baseline_distance": {
     "accel_low": 0.0011,
@@ -48,10 +48,10 @@
     "idle_centroid": 618.1
   },
   "improvement_vs_baseline": {
-    "accel_low": 0.0,
-    "accel_mid": 0.0,
+    "accel_low": 0.0909,
+    "accel_mid": 0.0039,
     "accel_high": 0.0,
-    "idle_centroid": -0.8214
+    "idle_centroid": 0.0314
   },
   "acceptance_thresholds": {
     "accel_low": 0.05,

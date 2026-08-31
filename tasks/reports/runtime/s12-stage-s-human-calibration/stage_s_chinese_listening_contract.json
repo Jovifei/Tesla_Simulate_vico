@@ -1,0 +1,177 @@
+{
+  "audio_materialization": {
+    "analysis_signal": "unaltered_analysis_signal",
+    "audition_signal": "loudness_matched_audition_signal_separate",
+    "package_manifest_sha256": "9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6",
+    "package_path_alias": "E:\\Claude_allow\\Download\\s12-stage-s-human-ab-r2-20260822",
+    "reason": "已为三条合法 R2 参考生成外部中文 A/B 试听副本；试听副本不进入分析指标，也不把 R2 升级为 R1。",
+    "status": "R2_AB_PACKAGE_EXTERNAL"
+  },
+  "dimensions": [
+    {
+      "id": "vehicle_identity",
+      "label_zh": "车型身份",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "realism",
+      "label_zh": "真实感",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "low_frequency_weight",
+      "label_zh": "低频重量",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "mechanical_character",
+      "label_zh": "机械感",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "idle_life",
+      "label_zh": "怠速生命感",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "acceleration_aggression",
+      "label_zh": "加速攻击性",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "shift_realism",
+      "label_zh": "换挡真实感",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "afterfire_naturalness",
+      "label_zh": "回火自然度",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "synthetic_artifact_freedom",
+      "label_zh": "合成器感/伪影少",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "preference",
+      "label_zh": "偏好",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    },
+    {
+      "id": "identity_guess",
+      "label_zh": "车型猜测",
+      "scale": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
+    }
+  ],
+  "feedback_binding": {
+    "fixture_is_human_feedback": false,
+    "required": [
+      "package_sha256",
+      "test_id",
+      "file_id",
+      "candidate_sha256",
+      "listener_id",
+      "playback_device",
+      "windows_volume",
+      "playback_endpoint",
+      "system_audio_effects"
+    ],
+    "synthetic_reference_is_real_reference": false
+  },
+  "locale": "zh-CN",
+  "r_status": "R2_LIMITED_COMPARISON_COMPLETE_R1_BLOCKED",
+  "schema_version": "s12-stage-s-chinese-listening-contract-v1",
+  "stage": "S",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK",
+  "study_type": "webMUSHRA_or_AB",
+  "ui_localization_status": "PACKAGE_CONFIG_ZH_CN_AND_UPSTREAM_NLS_PATCH_AVAILABLE",
+  "ui_text": {
+    "finish": "提交前请确认听者编号、播放设备、系统音量、输出端点和系统音效设置。",
+    "instruction": "请在相同工况和循环区间内比较匿名声音。当前结果只有在真实参考、候选 SHA 和听审元数据绑定后才有效。",
+    "playback_level": "请先设置舒适且不失真的播放音量。不要使用系统响度增强、均衡器或自动增益。",
+    "test_name": "S12 真实声浪对比与调音听审"
+  },
+  "upstream_ui_note": "研究包导出器会附带 webmushra_zh_cn_nls.js，并提供幂等脚本把它加载到官方 nls.js 之后；应用覆盖前，固定按钮仍不能声称为中文。",
+  "vehicle_scope": [
+    "ferrari_458",
+    "hellcat",
+    "rx7_fd"
+  ],
+  "r2_cases": [
+    "ferrari_458_goodwood_2010",
+    "hellcat_launching_sound_2019",
+    "supra_jza80_chassis_dyno_cc0_2019"
+  ],
+  "r2_missing_anchor": {
+    "vehicle_id": "rx7_fd",
+    "status": "R3_ONLY",
+    "reason": "Wankel 13B 机械演示不是 RX-7 FD 整车录音，不能进入正式 R2 A/B。"
+  }
+}

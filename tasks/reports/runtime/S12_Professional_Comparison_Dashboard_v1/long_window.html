@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S12 15/30 秒长窗口专业声浪对比</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header>
+    <div>
+      <div class="eyebrow">S12 / LONG WINDOW / 15s + 30s</div>
+      <h1>长窗口动态对比</h1>
+      <p class="lede">保留 5 秒基线；本页使用真实长 reference 和 60 秒本地完整循环的 15/30 秒派生窗口，观察怠速、加速、起步、换挡、收油/减速和技术涡轮场景的时间结构。</p>
+      <p><a href="index.html" style="color:#54d5d0">返回 5 秒 exact 基线 →</a></p>
+    </div>
+    <div class="gate">长窗口仍为 R3 诊断<br>窗口：15s / 30s<br>Order：未资格 · 调音：关闭</div>
+  </header>
+  <main>
+    <nav id="trial-nav" aria-label="长窗口试次导航"></nav>
+    <section id="app" aria-live="polite"><div class="card">正在加载长窗口专业指标…</div></section>
+  </main>
+  <script src="long_window_data.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+{
+  "industry_references": [
+    {
+      "status": "INDUSTRY_REFERENCE_NOT_INSTALLED",
+      "tool": "HEAD ArtemiS"
+    },
+    {
+      "status": "INDUSTRY_REFERENCE_NOT_INSTALLED",
+      "tool": "Simcenter Testlab"
+    },
+    {
+      "status": "INDUSTRY_REFERENCE_NOT_INSTALLED",
+      "tool": "BK Connect"
+    }
+  ],
+  "overall_status": "PROFESSIONAL_COMPARATOR_TOOLCHAIN_PARTIAL",
+  "real_reference_status": "REAL_REFERENCE_CALIBRATION_BLOCKED",
+  "records": [
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; no external reference RPM/state metadata is available.",
+      "output_artifact": "matlab_order_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Signal Processing Toolbox: rpmordermap",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; no external reference RPM/state metadata is available.",
+      "output_artifact": "matlab_order_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Signal Processing Toolbox: ordertrack",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; no external reference RPM/state metadata is available.",
+      "output_artifact": "matlab_order_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Signal Processing Toolbox: orderspectrum",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/psychoacoustics/mosqito_adapter.py",
+      "fixture_validated": true,
+      "installation_mode": "isolated Python 3.12 venv at E:/AI_Tools/Other/S12StageN/mosqito-venv",
+      "license": "Apache-2.0 (distribution metadata)",
+      "limitation": "Fixture and eight hash-bound synthetic candidates were processed in the digital domain; no absolute SPL or real-reference residual is claimed.",
+      "output_artifact": "mosqito_validation.json; mosqito_project_analysis.json",
+      "status": "VALIDATED",
+      "tool": "MoSQITo",
+      "vehicle_data_executed": true,
+      "version": "1.2.1"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; no external reference RPM/state metadata is available.",
+      "output_artifact": "matlab_order_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Signal Processing Toolbox: rpmfreqmap",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticLoudness",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticSharpness",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticRoughness",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticFluctuation",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticToneToNoiseRatio",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+      "fixture_validated": true,
+      "installation_mode": "locally installed, existing-session-only policy",
+      "license": "MathWorks commercial",
+      "limitation": "Fixture plus eight hash-bound synthetic candidates executed in the user-opened Desktop session; metrics are digital-domain relative only.",
+      "output_artifact": "matlab_psychoacoustic_validation.json",
+      "status": "VALIDATED",
+      "tool": "MATLAB Audio Toolbox: acousticProminenceRatio",
+      "vehicle_data_executed": true,
+      "version": "2026a"
+    },
+    {
+      "actually_invoked": false,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/matlab/S12ComparatorPreviewPlugin.m (not created)",
+      "fixture_validated": false,
+      "installation_mode": "not integrated",
+      "license": "MathWorks commercial",
+      "limitation": "AUDIO_TEST_BENCH_NOT_INTEGRATED; no audioPlugin bridge exists.",
+      "output_artifact": null,
+      "status": "BLOCKED",
+      "tool": "MATLAB Audio Test Bench",
+      "vehicle_data_executed": false,
+      "version": "unqueried"
+    },
+    {
+      "actually_invoked": false,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/psychoacoustics/essentia_adapter.py",
+      "fixture_validated": false,
+      "installation_mode": "optional isolated subprocess only",
+      "license": "AGPL-3.0-only",
+      "limitation": "Windows Python binding was not installed; it is not a core dependency.",
+      "output_artifact": null,
+      "status": "OPTIONAL_NOT_INSTALLED",
+      "tool": "Essentia",
+      "vehicle_data_executed": false,
+      "version": "not detected"
+    },
+    {
+      "actually_invoked": false,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/perceptual/visqol_adapter.py",
+      "fixture_validated": false,
+      "installation_mode": "official google/visqol local-build only",
+      "license": "Apache-2.0",
+      "limitation": "No official source checkout/build with commit and SHA is available; PyPI installation is prohibited.",
+      "output_artifact": null,
+      "status": "OPTIONAL_NOT_INSTALLED",
+      "tool": "ViSQOL",
+      "vehicle_data_executed": false,
+      "version": "not detected"
+    },
+    {
+      "actually_invoked": true,
+      "adapter_path": "tools/sound_sim/s12/acoustic_comparator/listening/webmushra_export.py",
+      "fixture_validated": true,
+      "installation_mode": "external checkout under approved download directory",
+      "license": "webMUSHRA.js Software License (external upstream)",
+      "limitation": "External Docker server served the config/audio and a PHP fixture export was SHA/file-ID imported; it is not human feedback or a real-reference study.",
+      "output_artifact": "E:\\Tesla_speed\\review_packages\\s12-stage-n-webmushra-v5\\webmushra_package_manifest.json",
+      "status": "VALIDATED",
+      "tool": "webMUSHRA",
+      "vehicle_data_executed": false,
+      "version": "upstream commit recorded in external tool receipt"
+    }
+  ],
+  "schema_version": "s12-stage-n-toolchain-capability-matrix-1"
+}

@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\c63_w204_headers_backfire.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "c63_w204_headers_backfire",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "headers/backfire 暗示改装排气，不能作为原厂 C63 标定目标。",
+  "sha256": "3261aa79236ab992faf43a11ee6b459314514e9516fc97bcfa2e749e7d6b4186",
+  "source_kind": "local_unverified",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": null,
+  "source_url_sha256": null,
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "c63_w204"
+}

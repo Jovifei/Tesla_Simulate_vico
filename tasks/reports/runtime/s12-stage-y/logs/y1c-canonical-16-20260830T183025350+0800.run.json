@@ -1,0 +1,20 @@
+{
+  "run_id": "y1c-canonical-16-20260830T183025350+0800",
+  "exact_command": "& 'D:\\Python\\Python3.14\\python.exe' 'E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\.superpowers\\sdd\\run_y1c_canonical_probe.py' 'E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\tasks\\reports\\runtime\\s12-stage-y\\tmp\\y1c-canonical-16-20260830T183025350+0800'",
+  "started_at_utc": "2026-08-30T10:30:25.4177991Z",
+  "ended_at_utc": "2026-08-30T10:32:33.3060331Z",
+  "elapsed_seconds": 128.0,
+  "exit_code": 0,
+  "source_evidence_head": "e0436dcdf82d0c6acfcc3a05c7195b91790caffc",
+  "branch": "agent/s12-stage-y-source-layers-and-reachability",
+  "worktree": "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers",
+  "runner_sha256": "D070E428C04351BD61B751628D2EDBD2EE1B261C08AC51D268FF920A05608C71",
+  "temporary_output_root": "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\tasks\\reports\\runtime\\s12-stage-y\\tmp\\y1c-canonical-16-20260830T183025350+0800",
+  "stdout_log": "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\tasks\\reports\\runtime\\s12-stage-y\\logs\\y1c-canonical-16-20260830T183025350+0800.stdout.log",
+  "stderr_log": "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\tasks\\reports\\runtime\\s12-stage-y\\logs\\y1c-canonical-16-20260830T183025350+0800.stderr.log",
+  "stdout_sha256": "F3797EF6C3A9E5163A8FD66DF09FD90AF8BA33567A567DB0BA1F11EFE7CFBF5D",
+  "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "pre_metadata_sha256": "29BC562970E6B2BC8EFA60F01275AE2155B6AD5745402E39EB9FBE3E84C5C349",
+  "temporary_artifact_sha256": "BB58F993A3863432ADC0FD806C975BFA6886A87DD6BA5908EF4244A13A60CFC5",
+  "elapsed_seconds_calculation": "DateTimeOffset(ended_at_utc)-DateTimeOffset(started_at_utc)"
+}

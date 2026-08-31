@@ -1,0 +1,6 @@
+{
+  "cpu_status": "measured_wall_clock",
+  "latency_contract": "offline source render",
+  "memory_bytes": null,
+  "render_seconds": 1.184498300019186
+}

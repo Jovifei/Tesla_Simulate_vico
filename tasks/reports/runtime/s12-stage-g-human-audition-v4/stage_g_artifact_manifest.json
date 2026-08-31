@@ -1,0 +1,27 @@
+{
+  "schema_version": "s12-stage-g-artifact-manifest-1",
+  "repo_branch": "agent/s12-stage-g-qualification-closure",
+  "base_commit": "e38fe62f423b1fb220e9daedf5f4ef291bcc5849",
+  "code_evidence_commit": "dd7bc41",
+  "documentation_commit_at_snapshot": "ed82694",
+  "external_package_root": "E:/Tesla_speed/review_packages/s12-stage-g-human-audition-v4",
+  "artifacts": {
+    "listener_zip": {"path": "S12_Stage_G_Listener_Package.zip", "sha256": "031520b74d80d277f29fa1444df22fdb22249dfa248d9b6b2de0f53adb567f64"},
+    "answer_key_zip": {"path": "S12_Stage_G_Answer_Key.zip", "sha256": "038e06aeacd8f165df72fe43f7ce5c0b8ec40dbe7bc44c5d9779c67f88a96dd5"},
+    "sha256sums": {"path": "SHA256SUMS.txt", "sha256": "72911e0a9e439e920d77874d10bcb51f001258709d9f4e4f8bd7ccc75b3efc15"},
+    "reference_evidence_index": {"path": "source_evidence/reference_pcm/stage_g_reference_evidence_index.json", "sha256": "49adb3a89f32a40836abacc84c2c02cbe0b082d3511604a9e2d75adfe110d6c2"},
+    "reference_distance": {"path": "reference_distance/stage_g_reference_distance.json", "sha256": "27c7fb155b4b00f0efd98af56ecb527775e10b3ba0f4f7f3b2796070009fd963"}
+  },
+  "candidate_sha256": {
+    "ferrari_458": "238906a48bcf70e70157bdcee984dad57fc30d367881847daa0e0c22fbcac3bb",
+    "hellcat": "0f47b57029452d7979e8c0d90acc25f20c301ac3739b106aa5dc94e0277f1e73",
+    "rx7_fd": "de8f053ad10f4a27b479707164f749141ceda34635283d9fd7ad04b9776f7820"
+  },
+  "historical_stage_f_v3": {
+    "listener_zip_sha256": "e96b62e31cf9860a2c28670a12a4ae93aba1386146e8d9e253f2ca23692ddf56",
+    "answer_key_zip_sha256": "464416ed8da6c749359c6308bcffce6dd2e616d6dca966c882e9b63d39b7c604",
+    "status": "HISTORICAL / UNSCORED / SUPERSEDED_BY_STAGE_G_PACKAGE_V4"
+  },
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "claims": ["synthetic", "uncalibrated", "not OEM reproduction"]
+}

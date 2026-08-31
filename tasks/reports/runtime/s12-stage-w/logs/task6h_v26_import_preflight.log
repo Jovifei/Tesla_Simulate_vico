@@ -1,0 +1,42 @@
+Task 6H Step 1 exact Task6G RED record
+RECORDED_UTC=2026-08-28T11:50:22.6186502Z
+TASK6G_NAME=Codex_Task6G_v26_20260828194544793
+TASK6G_STATE=Ready
+TASK6G_LAST_TASK_RESULT=1
+TASK6G_ACTION=D:\Python\Python3.14\python.exe .superpowers/sdd/task6f_v26_runner.py --mode generate
+TASK6G_WORKING_DIRECTORY=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff
+RED_STDERR_SHA256=C9E844FDE2645045E9043DB2A5D15D56F4B514BA4CFB03D9E948830B5F464D4A
+RED_ERROR=ModuleNotFoundError: No module named 'tools'
+RED_OCCURRED_BEFORE_GENERATOR_ENTRY=True
+V25_ROOT=tasks\reports\runtime\s12-stage-w\bakeoff_final_remediation_v25
+V25_ROOT_PRESENT=True
+V25_FILE_COUNT=517
+V26_ROOTS=bakeoff_final_remediation_v26|migration_final_remediation_rx7_v26|migration_final_remediation_ferrari_v26
+V26_ROOTS_ABSENT=True
+NO_GENERATOR_RETRY=True
+ORIGINAL_RED_STDERR_BEGIN
+Traceback (most recent call last):
+  File "E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\.superpowers\sdd\task6f_v26_runner.py", line 136, in main
+    generate()
+    ~~~~~~~~^^^
+  File "E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\.superpowers\sdd\task6f_v26_runner.py", line 78, in generate
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_w.bakeoff import (
+        run_hellcat_bakeoff,
+    )
+ModuleNotFoundError: No module named 'tools'
+ORIGINAL_RED_STDERR_END
+DIRECT_PREFLIGHT_EXIT=0
+DIRECT_PREFLIGHT_MARKER=TASK6F_PREFLIGHT_OK
+DIRECT_GENERATION_STDERR_SHA256_BEFORE=C9E844FDE2645045E9043DB2A5D15D56F4B514BA4CFB03D9E948830B5F464D4A
+DIRECT_GENERATION_STDERR_SHA256_AFTER=C9E844FDE2645045E9043DB2A5D15D56F4B514BA4CFB03D9E948830B5F464D4A
+DIRECT_V26_ROOTS_ABSENT=True
+SCHEDULER_TASK=Codex_Task6H_v26_preflight_20260828115151114
+SCHEDULER_TRIGGER_COUNT=0
+SCHEDULER_MANUAL_START_COUNT=1
+SCHEDULER_LAST_RUN_UTC=2026-08-28T11:51:51Z
+SCHEDULER_LAST_TASK_RESULT=0
+SCHEDULER_FINAL_STATE=Ready
+SCHEDULER_PREFLIGHT_MARKER=TASK6F_PREFLIGHT_OK
+SCHEDULER_V26_ROOTS_ABSENT=True
+SCHEDULER_TASK_DELETED=True
+TASK6G_TASK_DELETED_AFTER_RECORD=True

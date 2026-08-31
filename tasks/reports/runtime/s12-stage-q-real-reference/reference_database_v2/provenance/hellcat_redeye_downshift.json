@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_downshift.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "hellcat_redeye_downshift",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Redeye 换挡候选；不是已绑定 2022 Challenger 基线。",
+  "sha256": "4090dd9fa0f70ca47be71ac2c402dd1f7a15e304e9acdf77eaef22ce83006f6e",
+  "source_kind": "youtube_extracted",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": "https://www.youtube.com/watch?v=FvORN7EH2cc",
+  "source_url_sha256": "21bdf9e95c6e5e07934af018de73e999555f616d456f4e9e542556d55cec11a3",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "hellcat"
+}

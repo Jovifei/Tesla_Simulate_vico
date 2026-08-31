@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_stock_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "hellcat_stock_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "既有资料将标题车型识别为 Charger 候选，不足以绑定 Challenger Hellcat。",
+  "sha256": "cf2ecf83c8948cb7fc2501d9b21b4e92521fa4b01d674075c4bf232b856c9c92",
+  "source_kind": "youtube_extracted",
+  "source_log_path": null,
+  "source_log_sha256": null,
+  "source_url": "https://www.youtube.com/watch?v=eyzGRhXp0do",
+  "source_url_sha256": "14deee0f31de9293b36a2027f6a3f18f4bf830404dca3913a132f76c2d79dede",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "hellcat"
+}

@@ -1,0 +1,2 @@
+E:\Tesla_speed\worktrees\s12-stage-x-r2-engineering-selection\tools\sound_sim\s12\acoustic_identity_v015\stage_x\drivers\drive_x6_migration.py:127: UserWarning: The balance properties of Sobol' points require n to be a power of 2.
+  for index, row in enumerate(sampler2.random(REFINE_COUNT // 2)):

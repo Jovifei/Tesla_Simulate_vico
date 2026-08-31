@@ -1,0 +1,13 @@
+{
+  "schema_version": "s12-stage-d-reference-distance-summary-1",
+  "status": "PARTIAL",
+  "audio_domain": "final_pcm_after_fixed_vehicle_gain",
+  "formula": "sqrt(0.25 * sum((actual_band_share - target_band_share)^2))",
+  "required_mean_improvement_ratio": 0.30,
+  "vehicles": {
+    "ferrari_458": {"stage_c_mean_distance": 0.13034510228571328, "candidate_mean_distance": 0.13549356394770315, "improvement_ratio": -0.0394986967036519, "passes": false},
+    "hellcat": {"stage_c_mean_distance": 0.05897957324770888, "candidate_mean_distance": 0.058977637018210204, "improvement_ratio": 0.0000328288149957615, "passes": false},
+    "rx7_fd": {"stage_c_mean_distance": 0.269799110530113, "candidate_mean_distance": 0.26175414464742386, "improvement_ratio": 0.029818355838468334, "passes": false}
+  },
+  "provenance": "B/R2 relative features; microphone/AGC dependent; synthetic candidate; uncalibrated; not OEM reproduction"
+}

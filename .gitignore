@@ -93,6 +93,10 @@ docs/07-debugging/*
 !docs/08-reports/
 docs/08-reports/*
 !docs/08-reports/00-guide.md
+!docs/08-reports/01-s12-stage-k-eight-vehicle-round2.md
+!docs/08-reports/02-s12-workspace-cleanup-20260830.md
+!docs/knowledge/
+!docs/knowledge/**
 !docs/09-backlog/
 docs/09-backlog/*
 !docs/09-backlog/00-guide.md
@@ -107,3 +111,140 @@ package-lock.json
 
 # S12 benchmark working output (accepted baselines are stored separately).
 tools/sound_sim/s12/benchmark/out/
+
+# Stage-W bake-off keeps reproducible JSON receipts in Git; rendered audio stays local.
+/tasks/reports/runtime/s12-stage-w/bakeoff_v1/**/*.wav
+/tasks/reports/runtime/s12-stage-w/bakeoff_v2/
+/tasks/reports/runtime/s12-stage-w/bakeoff_v3/**/*.wav
+/tasks/reports/runtime/s12-stage-w/bakeoff_v4/
+/tasks/reports/runtime/s12-stage-w/bakeoff_v5/**/*.wav
+/tasks/reports/runtime/s12-stage-w/bakeoff_v6/**/*.wav
+/tasks/reports/runtime/s12-stage-w/teacher_reduction_v1/**/*.wav
+/tasks/reports/runtime/s12-stage-w/migration_v1/
+/tasks/reports/runtime/s12-stage-w/migration_v2/
+/tasks/reports/runtime/s12-stage-w/migration_v3/**/*.wav
+
+# Stage-N MATLAB analysis inputs are regenerated from immutable, hash-bound
+# review packages and are intentionally not source-controlled.
+artifacts/matlab/s12-stage-n-order-inputs-v1/
+
+# Stage-N MATLAB Desktop execution roots are reproducible local evidence.
+# Runtime reports contain the receipt hashes and paths; large maps stay local.
+artifacts/matlab/s12-stage-n-order-execution-*/
+artifacts/matlab/s12-stage-n-psychoacoustic-execution-*/
+artifacts/matlab/s12-stage-n-shared-psychoacoustic-fixture-*/
+artifacts/matlab/s12-stage-n-shared-psychoacoustic-execution-*/
+tasks/reports/runtime/s12-stage-w/bakeoff_v7/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v1/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v2/
+tasks/reports/runtime/s12-stage-w/bakeoff_long_v3/
+
+# Final Stage-W-C remediation outputs are local synthetic evidence; retain
+# manifests/audio in the worktree without letting post-PTR filenames cross
+# the Track-P frozen-path guard.
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v1/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v2/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v3/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v2/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v3/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v3/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v4/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v4/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v4/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v5/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v5/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v5/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v6/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v6/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v6/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v7/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v7/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v7/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v8/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v8/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v8/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v9/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v9/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v9/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v10/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v10/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v10/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v11/
+# Task 5 superseded local synthetic evidence roots (receipts bind only v17/v18).
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v12/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v13/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v15/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v17/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v12/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v13/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v15/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v17/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v14/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v18/
+# Superseded Task 5 command logs retained locally but excluded from the final receipt.
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v12.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v13.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v15.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v12.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v13.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v15.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v14.*.log
+tasks/reports/runtime/s12-stage-w/logs/compileall_task5.log
+tasks/reports/runtime/s12-stage-w/logs/json_finite_scan_task5.log
+tasks/reports/runtime/s12-stage-w/logs/task5_focused_pytest.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_v.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_w.*.log
+tasks/reports/runtime/s12-stage-w/logs/validator_bakeoff_v13.log
+tasks/reports/runtime/s12-stage-w/logs/validator_migration_rx7_v13.log
+tasks/reports/runtime/s12-stage-w/logs/validator_migration_ferrari_v14.log
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v19/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v21/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v23/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v23/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v23/
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v19.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v21.*.log
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v23.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v23.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v23.*.log
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v24/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v24/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v24/
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v24.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v24.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v24.*.log
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v25/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v25/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v25/
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v25.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v25.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v25.*.log
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v26/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v26/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v26/
+tasks/reports/runtime/s12-stage-w/logs/bakeoff_final_remediation_v26.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_rx7_v26.*.log
+tasks/reports/runtime/s12-stage-w/logs/migration_final_remediation_ferrari_v26.*.log
+tasks/reports/runtime/s12-stage-w/v27_stages_*/
+tasks/reports/runtime/s12-stage-w/bakeoff_final_remediation_v27/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_rx7_v27/
+tasks/reports/runtime/s12-stage-w/migration_final_remediation_ferrari_v27/
+tasks/reports/runtime/s12-stage-w/logs/task6p_v27_p1.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_slow_3000.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_v_source_final.*.log
+tasks/reports/runtime/s12-stage-w/logs/task5_stage_w_source_final.*.log
+
+# Workspace-local pytest / EDA / audit sandboxes (never commit)
+_stage_l_*/
+_r2_*/
+_task10_*/
+_lfa_*/
+_pytest_tmp/
+worktrees/**/.pytest_*/
+worktrees/**/.task*/
+worktrees/**/_agent_tmp/
+outputs/
+audit_packages/
+audit-worktrees/

@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "base_commit": "3c2c891b469adc7a507870c71ee94319e7125226",
+  "verification": "Each Stage-F v3 candidate was rendered on the same deterministic 250 ms mixed-state trace. Diagnostics report the requested, consumed and unused parameter names.",
+  "candidates": {
+    "ferrari_458": {
+      "candidate_id": "ferrari_458_stage_f_v3",
+      "requested": ["source.pulse_width_scale", "source.bank_phase_offset_deg", "source.metallic_decay_scale", "source.high_rpm_growth_scale", "idle.variation", "idle.jitter_ms", "idle.mechanical_texture", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale"],
+      "consumed": ["source.pulse_width_scale", "source.bank_phase_offset_deg", "source.metallic_decay_scale", "source.high_rpm_growth_scale", "idle.variation", "idle.jitter_ms", "idle.mechanical_texture", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale"],
+      "unused": []
+    },
+    "hellcat": {
+      "candidate_id": "hellcat_stage_f_v3",
+      "requested": ["source.blower_gain_scale", "source.blower_boost_mix", "source.boost_attack_s", "source.boost_release_s", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale", "loudness.transient_peak_shaper.attack_ms", "loudness.transient_peak_shaper.release_ms", "loudness.transient_peak_shaper.max_reduction_db"],
+      "consumed": ["source.blower_gain_scale", "source.blower_boost_mix", "source.boost_attack_s", "source.boost_release_s", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale", "loudness.transient_peak_shaper.attack_ms", "loudness.transient_peak_shaper.release_ms", "loudness.transient_peak_shaper.max_reduction_db"],
+      "unused": []
+    },
+    "rx7_fd": {
+      "candidate_id": "rx7_fd_stage_f_v3",
+      "requested": ["source.rotary_phase_offset_deg", "source.rotary_pulse_width_scale", "source.primary_spool_tau_s", "source.secondary_spool_tau_s", "source.boost_attack_s", "source.boost_release_s", "source.blow_off_gain_scale", "source.blow_off_release_s", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale"],
+      "consumed": ["source.rotary_phase_offset_deg", "source.rotary_pulse_width_scale", "source.primary_spool_tau_s", "source.secondary_spool_tau_s", "source.boost_attack_s", "source.boost_release_s", "source.blow_off_gain_scale", "source.blow_off_release_s", "afterfire.gain_scale", "shift.impact_scale", "shift.recovery_scale"],
+      "unused": []
+    }
+  },
+  "caveat": "This is parameter-consumption evidence, not a claim that synthetic parameters are acoustically calibrated or perceptually accepted."
+}

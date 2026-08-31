@@ -1,0 +1,106 @@
+{
+  "architectures": {
+    "P1": {
+      "complete_cycle": {
+        "monitor_sha256": "81e4352fe0ac86535256d339f090ebd42a044eaccf94778b1179a13b690b210b",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "0009a0b7fe41aeca2f0cce809cb62516360847d45d853e8417b1446186be2f50",
+        "raw_source_sha256": "77a68789c94d4a915337a1704a8ce0f46f011446aaa1618f8841a1ebed1a50b7"
+      },
+      "full_pull": {
+        "monitor_sha256": "e4e5bed1bc90db32910ef39f67ca9706875d0ce0a4fbf3f4ad75a6815bba6925",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "975593a9ea67d6f5bb7c67ea3633c69314d1b03ac2e44def4aaf30753b2e2432",
+        "raw_source_sha256": "e64c8c60fa35162c27b5c65166000ee05fc34645d59db23b7c8a52b9a4c85c3c"
+      },
+      "hot_idle": {
+        "monitor_sha256": "8a89e722480d244c888ee96881d630c71dce058a40e22facde434a00b734b3a9",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "0dcbc848ab6052ac566cf668f667cc98215efdd68ebf083f25bcd53fba0c153b",
+        "raw_source_sha256": "a4c5b9087054509b56ec3e37647befe473f7e85f9619eb06cda3c9857ce13437"
+      },
+      "lift": {
+        "monitor_sha256": "9e26d900d879eb293952beab34a568c4d54fcb7d91bd4e5392eeaf138f89762b",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "307f136bd94c51916423e868bf4d67330466cccd6334e3947365621498f6d405",
+        "raw_source_sha256": "768252ffb0307ef96a34dd2e9c222e1238b021bf5ded8f01846b00d7d85d1fb6"
+      },
+      "steady_mid": {
+        "monitor_sha256": "7709ce9a7d6fd1deecfa400215cdd84f954530f122d2edb5e9f7a405f656bb46",
+        "parent_post_ptr_difference_rms": null,
+        "post_ptr_sha256": "562b1969f5e81d68d7b70460ec19a2370fc0cba148697849ca8ea5c6ebf384ad",
+        "raw_source_sha256": "9f850168821ac8c888517fa896f9cc1fb019b0ffc3e041681290037c87438bf7"
+      }
+    },
+    "P2H": {
+      "complete_cycle": {
+        "monitor_sha256": "d882b731a4adee910706416bfa2f5f33597cf5ee11157287ba9b77063270f432",
+        "parent_post_ptr_difference_rms": 0.003423545668127957,
+        "post_ptr_sha256": "b98699fbdcc5e860a0a629972795a538839520724b98d4fb07edadbd3ced5564",
+        "raw_source_sha256": "64f376111a829bd6680fe4697c6b9142791a01d3816dbdfd1f2fca8381b69795"
+      },
+      "full_pull": {
+        "monitor_sha256": "0d3d5ab7d322de3190091685d84c072f5beb5a68dc2e386ac17b50db66204873",
+        "parent_post_ptr_difference_rms": 0.00502443458054334,
+        "post_ptr_sha256": "d5b19d6d2807dd8f4e253f62ec9021df3748e2651ed58b86e08529e0e61bf21d",
+        "raw_source_sha256": "f5710ac30db1c4d62c4054cca3843de859a4a1bfe9f8bceae6db6e9d10b56e84"
+      },
+      "hot_idle": {
+        "monitor_sha256": "b4495fb438ebae8299aa4427d4efc100b42875e7de059a878b2e8c9bc76c3eaa",
+        "parent_post_ptr_difference_rms": 0.000954718544766638,
+        "post_ptr_sha256": "e9166352f3859dd8e306d3e211b84953419aff1bdfaff54fdfe08313826feca3",
+        "raw_source_sha256": "6c6039bf3051e1451ba856de2a9d428d0131789fc20752a73de97354f29510de"
+      },
+      "lift": {
+        "monitor_sha256": "f403f66c997de15715fb40d778cffae379b2e3f16c98c3344e1eeaca1cc40f84",
+        "parent_post_ptr_difference_rms": 0.004720080735633598,
+        "post_ptr_sha256": "3917028e86cb0395aeaae9d7b69c0853061830faaf2365cdfb9c9d4f0def1ac5",
+        "raw_source_sha256": "3acb916d75516e74adfc1180d002ecba4d05e8a1c245e20b25ea6304ae722c11"
+      },
+      "steady_mid": {
+        "monitor_sha256": "56cd0551e3e786d85d3e7d0229ea85290c01e66d4537a08e4bfa370b5931ecf4",
+        "parent_post_ptr_difference_rms": 0.0017265944235818093,
+        "post_ptr_sha256": "f61fa37754a504aadad4d8317a1c14e6911da33c5e7390f67b5411f8acc75fe1",
+        "raw_source_sha256": "1441570da39dd1ec8bc982af9cb4d8a3695e969bad151380caf0148a1649584a"
+      }
+    },
+    "P3": {
+      "complete_cycle": {
+        "monitor_sha256": "06c1178dcd5687afa98fef525221d84cb9f8668692b416e76f75ded81f294f41",
+        "parent_post_ptr_difference_rms": 0.0034228260831056082,
+        "post_ptr_sha256": "88fc4b1a34d5fb7743f41e7be8b1dd293e90d1b2c5a3ddb0f687101e9dc993ac",
+        "raw_source_sha256": "14f320a485a391bfdcc7b212e0a4543d094e43de2604d2b46428de5ac6687a19"
+      },
+      "full_pull": {
+        "monitor_sha256": "07d778dbb7c9af2aec3356b1334bcd7e6bdf44dc8b809e3475e8cadb1e954ba4",
+        "parent_post_ptr_difference_rms": 0.005023314813887834,
+        "post_ptr_sha256": "1db3e46bf3bc0641207dd30c708cde8f53aca5bbde77291118f5026748280373",
+        "raw_source_sha256": "9b278a89fa0d55679656b3e6165046d81a1dc9bcb41d6c0f155fc95042699b9d"
+      },
+      "hot_idle": {
+        "monitor_sha256": "acf0be8cf466a48c9c0385af7d2901cef0feaafe3539802cb664a92c655bf2a8",
+        "parent_post_ptr_difference_rms": 0.0009547111967192156,
+        "post_ptr_sha256": "d1664f7dbdd541d72178a82b30bc35275791f0ee28d37b2fe7d458dec2ec434f",
+        "raw_source_sha256": "e62a144e2b15976f09221a37f9f3cadd38688b89a433695b6bd3e2ea2a592c00"
+      },
+      "lift": {
+        "monitor_sha256": "97df8383c1fcfe40c707641e3cff6f36003d937a865f93dd3e00bbabaf936174",
+        "parent_post_ptr_difference_rms": 0.0047188102270477195,
+        "post_ptr_sha256": "dcf02d794ec03d36adbf3c91b15298e0c16227cefd3c386cf56825389fc658c9",
+        "raw_source_sha256": "045b2b5713409dd5829138b338ae3a765c3450885f986611e501079a2e096f4f"
+      },
+      "steady_mid": {
+        "monitor_sha256": "810b2ab450adb23e2551289e41034f12da006627ca710cb626a37500c22c912c",
+        "parent_post_ptr_difference_rms": 0.0017267169152244226,
+        "post_ptr_sha256": "07328341ff1a9550e181cddbdbea3349f6ac4d0ac89ad7047b545ba9b4215512",
+        "raw_source_sha256": "d71dcb90e4b6695bdba06b51060bfd1b2f25b5d2efc0812ee943b896b196de8c"
+      }
+    }
+  },
+  "reference_status": "REFERENCE_TARGET_MISSING",
+  "schema_version": "s12.stage_w.vehicle_migration.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY",
+  "selected_architecture": null,
+  "status": "UNSELECTED_CANDIDATE_MIGRATION",
+  "vehicle_id": "ferrari_458"
+}

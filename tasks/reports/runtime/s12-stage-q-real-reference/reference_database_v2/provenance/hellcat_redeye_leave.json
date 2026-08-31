@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_leave.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "hellcat_redeye_leave",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Redeye 离开/加速候选；工况与原厂状态未验证。",
+  "sha256": "e5c29a92428b1eab9991aefc17afb607b644ff41c0fdc97ed9222e8f291c7946",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\hellcat_redeye_leave.download.log",
+  "source_log_sha256": "6b69a5f9c3e3b792c0f8a239e93bef268dc12a8bce52f7397336928a7798d6ba",
+  "source_url": "https://www.youtube.com/watch?v=nnEaamqsieM",
+  "source_url_sha256": "690dda3076f7c17687095d8c733f720572ad25070cce6ba2578a999a44626fcc",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "hellcat"
+}

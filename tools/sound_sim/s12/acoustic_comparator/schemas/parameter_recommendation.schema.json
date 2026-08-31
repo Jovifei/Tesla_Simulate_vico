@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/parameter_recommendation.schema.json",
+  "type": "object",
+  "required": ["problem", "supporting_metrics", "parameter_group", "direction", "expected_effect", "side_effect_risk", "confidence"],
+  "properties": {
+    "problem": {"type": "string"}, "supporting_metrics": {"type": "object"}, "parameter_group": {"type": "string"},
+    "direction": {"type": "string"}, "expected_effect": {"type": "string"}, "side_effect_risk": {"enum": ["low", "medium", "high"]}, "confidence": {"enum": ["low", "medium", "high"]}
+  }, "additionalProperties": false
+}

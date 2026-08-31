@@ -1,0 +1,15 @@
+{
+  "audio_header": {
+    "channels": 2,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 16.695167,
+    "frames": 801368,
+    "sample_rate_hz": 48000,
+    "sample_width_bits": 16
+  },
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "supra_jza80_stock",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "supra_jza80"
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "s12-stage-q-youtube-node-ejs-probe-v1",
+  "reference_id": "q:url:622aab258c4f2461",
+  "source_url": "https://www.youtube.com/watch?v=cKx-cb0fzeo",
+  "external_root": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_node_ejs_20260822",
+  "tool": {
+    "name": "yt-dlp",
+    "version": "2026.06.30.234726",
+    "js_runtime": "node-24.18.0",
+    "ejs_component": "yt_dlp_ejs-0.8.0",
+    "cookies_used": false
+  },
+  "attempts": [
+    {
+      "id": "proxy_default",
+      "mode": "configured_proxy",
+      "format_selector": "bestaudio/best",
+      "status": "FAILED_HTTP_403",
+      "exit_code": 1,
+      "log_path": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_node_ejs_20260822\\cKx-cb0fzeo-node-ejs.download.log",
+      "log_sha256": "62713E69E051B7F1B8F399FA88B63DD28E4C5928AEFCE7BCA20C5F3F343FF3FD",
+      "media_path": null
+    },
+    {
+      "id": "direct_no_proxy",
+      "mode": "--proxy empty",
+      "format_selector": "bestaudio/best",
+      "status": "FAILED_HTTP_403",
+      "exit_code": 1,
+      "log_path": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_node_ejs_20260822\\cKx-cb0fzeo-node-ejs-direct.download.log",
+      "log_sha256": "9EFB54B776FAB8A9C28DA00D0E13A75DC79188B58619C2FA812A9C63D0DC0002",
+      "media_path": null
+    }
+  ],
+  "metadata_only_artifacts": [
+    {
+      "path": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_node_ejs_20260822\\cKx-cb0fzeo.info.json",
+      "sha256": "B1A3E1C3CEE8A6BAD1CB3A0AC3366280E214020C8EF322C07B9A0C3863E440E3"
+    },
+    {
+      "path": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_node_ejs_20260822\\cKx-cb0fzeo.description",
+      "sha256": "DB010E6BAFE881A110AE83CF1A8710A7A329C86DF9DF0A4C928CD25A144BF6C2"
+    }
+  ],
+  "result": "NO_NEW_COMPLETE_MEDIA",
+  "preservation": "No existing external media was overwritten; failed download evidence remains outside Git.",
+  "classification": "R3_UNQUALIFIED",
+  "r1_eligible": false,
+  "r2_eligible": false,
+  "comparator_status": "NOT_RUN_NO_QUALIFIED_SINGLE_VEHICLE_STATE_TRACE",
+  "automatic_tuning": false,
+  "reason": "Node/EJS solved the page challenge and exposed an audio format, but both configured-proxy and direct requests to the signed googlevideo stream returned HTTP 403. No account cookies or PO token were used; this probe does not alter the prior 24/24 external decode receipt."
+}

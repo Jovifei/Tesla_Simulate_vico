@@ -8,7 +8,14 @@ from pathlib import Path
 import numpy as np
 
 from .acoustic_analysis import compare_identity_renders, compute_order_map, compute_realism_metrics, write_order_map, write_spectrogram
-from .acoustic_layers import apply_afterfire, apply_idle_dynamics, apply_low_frequency_body
+from .acoustic_layers import (
+    apply_afterfire,
+    apply_exhaust_rumble,
+    apply_idle_dynamics,
+    apply_low_frequency_body,
+    apply_pre_ptr_equalization,
+    apply_shift_dynamics,
+)
 from .contracts import SourceRender, VehicleStateTrace
 from .loudness_manager import manage_bundle_loudness, measure_loudness
 from .render_identity_v02 import _apply_frozen_ptr, _edge_fade, _health, _loudness_dict, _pcm24_roundtrip, _ptr_provenance, _read_pcm24_wav, _trace_metadata, _write_json, _write_manifest, _write_pcm24_wav
@@ -101,7 +108,17 @@ def _render_stateful(renderer: object, vehicle_id: str, trace: VehicleStateTrace
     source = renderer(trace)  # type: ignore[operator]
     idle = apply_idle_dynamics(source, vehicle_id, trace, _SAMPLE_RATE_HZ)
     afterfire = apply_afterfire(idle, vehicle_id, trace, _SAMPLE_RATE_HZ)
-    return apply_low_frequency_body(afterfire, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    body = apply_low_frequency_body(afterfire, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    rumble = apply_exhaust_rumble(body, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    shifted = apply_shift_dynamics(rumble, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    equalized = apply_pre_ptr_equalization(shifted, vehicle_id, trace, _SAMPLE_RATE_HZ)
+    diagnostics = dict(equalized.diagnostics)
+    diagnostics["realism_layer_order"] = (
+        "independent_source -> idle_dynamics -> state_dependent_afterfire -> "
+        "low_frequency_pressure_body -> exhaust_rumble -> shift_dynamics -> "
+        "pre_ptr_equalization -> frozen_ptr"
+    )
+    return SourceRender(pressure=equalized.pressure, stems=equalized.stems, diagnostics=diagnostics).validate()
 
 
 def _scenario_trace(vehicle_id: str, clip: str, duration_s: float) -> VehicleStateTrace:

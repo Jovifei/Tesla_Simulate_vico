@@ -1,0 +1,100 @@
+{
+  "schema": "s12.stage_y.y6_audition_receipt.v1",
+  "status": "PASS",
+  "source_head": "091696936abc8ec310f2f937579bc136cf21bc0e",
+  "production_run": {
+    "run_id": "y6-production-20260831T080019510149Z",
+    "command": [
+      "D:\\Python\\Python3.14\\python.exe",
+      "E:\\Tesla_speed\\worktrees\\s12-stage-y-source-layers\\.superpowers\\sdd\\run_y6_production.py",
+      "--worker",
+      "E:\\Tesla_speed\\review_packages\\.y6-production-20260831T080019510149Z"
+    ],
+    "source_head": "091696936abc8ec310f2f937579bc136cf21bc0e",
+    "started_at": "2026-08-31T08:00:19.541289+00:00",
+    "ended_at": "2026-08-31T08:10:41.537683+00:00",
+    "exit_code": 0,
+    "output": "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v1",
+    "stage": "E:\\Tesla_speed\\review_packages\\.y6-production-20260831T080019510149Z",
+    "runner_sha256": "cce424bd34b666af2ed24e0def3bc9c57ec19218d54b3d45eb4e8159745adf44",
+    "logs": {
+      "stdout": {
+        "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6-production-20260831T080019510149Z.stdout.log",
+        "sha256": "5a628b54c77b24026265ca9126ff5a0f53cd0fbf7ca8429c684dbdc22d98a8fd"
+      },
+      "stderr": {
+        "path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6-production-20260831T080019510149Z.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "package_manifest_sha256": "9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c",
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y6_audition/logs/y6-production-20260831T080019510149Z.json"
+  },
+  "package": {
+    "root": "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v1",
+    "manifest_sha256": "9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c",
+    "scenes": 11,
+    "wavs": 154,
+    "format": "48000Hz stereo PCM24",
+    "hot_idle_seconds": 20,
+    "other_scene_seconds": 8,
+    "validator_errors": []
+  },
+  "browser": {
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json",
+    "status": "PASS",
+    "pages": [
+      {
+        "page": "timbre_review.html",
+        "audio_count": 77,
+        "min_duration": 8,
+        "max_duration": 20,
+        "playback": [
+          {
+            "index": 0,
+            "time": 0.152785,
+            "error": null
+          },
+          {
+            "index": 5,
+            "time": 0.198543,
+            "error": null
+          },
+          {
+            "index": 6,
+            "time": 0.210166,
+            "error": null
+          }
+        ]
+      },
+      {
+        "page": "dynamic_review.html",
+        "audio_count": 77,
+        "min_duration": 8,
+        "max_duration": 20,
+        "playback": [
+          {
+            "index": 0,
+            "time": 0.200192,
+            "error": null
+          },
+          {
+            "index": 5,
+            "time": 0.210604,
+            "error": null
+          },
+          {
+            "index": 6,
+            "time": 0.208512,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "human_status": "WAITING_FOR_JOVI_LAYER_AUDITION",
+  "formal_status": "FORMAL_R1_REFERENCE_MISSING",
+  "profile_status": "NOT_PROFILE_FREEZE_READY",
+  "external_media_ingested": false,
+  "full_s12_status": "NOT_RUN_YET"
+}

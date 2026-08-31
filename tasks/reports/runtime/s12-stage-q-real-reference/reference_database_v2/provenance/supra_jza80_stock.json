@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\supra_jza80_stock.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "supra_jza80_stock",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "Stock 声称候选；具体 JZA80 RZ 身份、视角与 RPM 未验证。",
+  "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\supra_jza80_stock.download.log",
+  "source_log_sha256": "a4e960b8e84486fb730514869d803e4b3d4b6d0ab6f8455f1cd4b79555f325c6",
+  "source_url": "https://www.youtube.com/watch?v=aVY14pGi_LY",
+  "source_url_sha256": "e085ce7c57f387508d57a90b15586f0702ef923d787d90c8bbbc1f993bf6e326",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "supra_jza80"
+}

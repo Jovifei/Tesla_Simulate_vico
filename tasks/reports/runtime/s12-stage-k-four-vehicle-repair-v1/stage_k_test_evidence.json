@@ -1,0 +1,70 @@
+{
+  "aggregate_identity": "58 passed / 78 subtests by isolated class/test runs",
+  "fresh_runs": [
+    {
+      "command": "pytest Stage K candidate/source/Hellcat/C63/GT-R/LFA/metrics/isolation/protected suites",
+      "duration_s": 18.1,
+      "result": "84 passed"
+    },
+    {
+      "command": "pytest test_s12_stage_k_named_review.py::test_named_review_records_automatic_status_and_file_level_loudness",
+      "duration_s": 267.63,
+      "note": "isolated package evidence run observed before final report assembly",
+      "result": "1 passed"
+    },
+    {
+      "command": "pytest test_s12_stage_j_c63_source.py",
+      "duration_s": 1.34,
+      "result": "8 passed"
+    },
+    {
+      "command": "pytest acoustic_identity_v015/tests/test_s12_stage_j_gtr_source.py",
+      "duration_s": 4.15,
+      "result": "11 passed"
+    },
+    {
+      "command": "pytest acoustic_identity_v015/tests/test_s12_stage_j_lfa_source.py",
+      "duration_s": 0.97,
+      "result": "9 passed"
+    },
+    {
+      "command": "pytest test_s12_track_p_guard.py",
+      "duration_s": 1.95,
+      "result": "21 passed"
+    },
+    {
+      "command": "identity tests Research/State/Source classes",
+      "duration_s": 9.42,
+      "result": "34 passed / 43 subtests"
+    },
+    {
+      "command": "identity tests Body/Loudness classes",
+      "duration_s": 19.2,
+      "result": "8 passed / 14 subtests"
+    },
+    {
+      "command": "identity tests Metrics classes",
+      "duration_s": 4.93,
+      "result": "12 passed"
+    },
+    {
+      "command": "identity tests SourceToPtr class",
+      "duration_s": 28.82,
+      "result": "2 passed / 21 subtests"
+    },
+    {
+      "command": "identity tests Publication tests (isolated)",
+      "duration_s": 21.7,
+      "result": "2 passed / 15 subtests"
+    },
+    {
+      "command": "Stage C realism test",
+      "note": "not promoted to a single-process PASS; no code failure assertion was observed",
+      "result": "9 tests collected; reference/idle 4 passed and transient 2 passed in isolated runs; publication/complete-cycle subprocesses did not return a complete summary in this Windows shell"
+    }
+  ],
+  "full_suite_one_shot": "NOT_COMPLETED_AS_SINGLE_PROCESS: Windows Python process terminated after partial dot output; decomposed suites above are the auditable evidence",
+  "provenance": "synthetic / uncalibrated / vehicle-inspired / not OEM reproduction",
+  "schema_version": "s12-stage-k-test-evidence-1",
+  "track_p_guard_script": "PASS: 180 frozen files / 2 symbols unchanged; no rebaseline and no allowlist changes"
+}

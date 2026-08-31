@@ -1,0 +1,284 @@
+{
+  "case_count": 15,
+  "cases": [
+    {
+      "case": "wrong_package_sha",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "package_manifest_sha256_mismatch"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "unknown_file_id",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "unknown_anonymous_id"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "candidate_sha",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "candidate_sha256_mismatch"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "test_id",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "webmushra_test_id_mismatch",
+            "source": "mushra.csv"
+          },
+          {
+            "line": 2,
+            "reason": "webmushra_test_id_mismatch",
+            "source": "lss.csv"
+          }
+        ],
+        "status": "IMPORTED_AWAITING_JOVI_CONFIRMATION"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "duplicate_listener_trial",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "reason": "duplicate_listener_trial"
+          },
+          {
+            "actual": 9,
+            "expected": 8,
+            "reason": "insufficient_or_excessive_rows"
+          }
+        ],
+        "status": null
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "missing_likert",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "anonymous_id": "V01",
+            "dimensions": [
+              "identity_guess",
+              "realism",
+              "low_frequency_weight",
+              "mechanical_character",
+              "idle_life",
+              "acceleration_aggression",
+              "shift_realism",
+              "afterfire_naturalness",
+              "synthetic_artifact_freedom"
+            ],
+            "listener_id": "fixture",
+            "reason": "required_likert_dimensions_missing",
+            "source": "lss.csv"
+          }
+        ],
+        "status": "IMPORTED_AWAITING_JOVI_CONFIRMATION"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "illegal_identity",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "identity_guess_not_in_study_vehicle_set"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "insufficient_rows",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "actual": 1,
+            "expected": 8,
+            "reason": "insufficient_or_excessive_rows"
+          }
+        ],
+        "status": null
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "blank_score",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "required_rating_or_binding_field_empty"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "fixture_as_jovi",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [],
+        "status": "REJECTED_LISTENER_ID_NOT_JOVI"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "modified_csv",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "reason": "input_sha256_mismatch"
+          }
+        ],
+        "status": null
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "other_package",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 3,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 4,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 5,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 6,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 7,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 8,
+            "reason": "package_manifest_sha256_mismatch"
+          },
+          {
+            "line": 9,
+            "reason": "package_manifest_sha256_mismatch"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "mushra_lss_mismatch",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "webmushra_test_id_mismatch",
+            "source": "lss.csv"
+          },
+          {
+            "anonymous_id": "V01",
+            "dimensions": [
+              "identity_guess",
+              "vehicle_identity",
+              "realism",
+              "low_frequency_weight",
+              "mechanical_character",
+              "idle_life",
+              "acceleration_aggression",
+              "shift_realism",
+              "afterfire_naturalness",
+              "synthetic_artifact_freedom"
+            ],
+            "listener_id": "fixture",
+            "reason": "required_likert_dimensions_missing",
+            "source": "lss.csv"
+          }
+        ],
+        "status": "IMPORTED_AWAITING_JOVI_CONFIRMATION"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "unknown_vehicle",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "line": 2,
+            "reason": "identity_guess_not_in_study_vehicle_set"
+          }
+        ],
+        "status": "REJECTED_FAIL_CLOSED"
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "path_traversal_external_ref",
+      "detail": {
+        "accepted_rows": 0,
+        "errors": [
+          {
+            "reason": "path_outside_package"
+          }
+        ],
+        "status": null
+      },
+      "status": "PASS"
+    }
+  ],
+  "fail_closed": true,
+  "human_pass": false,
+  "schema_version": "s12-stage-p-feedback-security-1",
+  "status": "PASS",
+  "tuning_authority": false
+}

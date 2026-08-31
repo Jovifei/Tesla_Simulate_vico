@@ -1,0 +1,11 @@
+COMMAND=python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_afterfire_localization.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_boundary_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_closure_metadata.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_review_package.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_vehicle_migration.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py -q --disable-warnings
+START=2026-08-28T13:45:15.8948473+08:00
+PID=49108
+LAUNCHER_PID=54468
+PID_SCOPE=python.exe pytest process (single logical test instance)
+END=2026-08-28T14:05:57.8475803+08:00
+EXIT=0
+HEAD=beb71a54594c1c189be8aea34814c60e89430648
+SUMMARY=141 passed, 1 skipped in 1241.06s (0:20:41)
+STDOUT_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task5d_metadata_head_stage_w.stdout.log
+STDERR_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\logs\task5d_metadata_head_stage_w.stderr.log

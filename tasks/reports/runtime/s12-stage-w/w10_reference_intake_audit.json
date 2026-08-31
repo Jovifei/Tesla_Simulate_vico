@@ -1,0 +1,37 @@
+{
+  "schema_version": "s12.stage_w.w10_reference_intake_audit.v1",
+  "status": "BLOCKED_REFERENCE_QUALIFICATION",
+  "stop_state": "WAITING_FOR_REAL_REFERENCE_DATA",
+  "selected_architecture": null,
+  "examined_external_evidence": [
+    {
+      "path": "E:/Claude_allow/Download/s12-stage-u-v1/reference_quality_matrix.json",
+      "sha256": "bd82b9e2c5f0da5891c368f1b0094fbb0eab07b52d6eb31321519222cab729a3",
+      "classification": "quality-screened public-reference material",
+      "not_r1_reasons": ["microphone uncertainty is unknown", "no legal permission receipt", "no raw capture receipt", "no synchronized RPM/load/gear traces"]
+    },
+    {
+      "path": "E:/Claude_allow/Download/s12-ytdlp-retry-20260823-v1/anchor_ab_zh_v1/anchor_ab_zh_manifest.json",
+      "sha256": "dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052",
+      "classification": "R3 YouTube-derived listening package",
+      "not_r1_reasons": ["manifest evidence_level is R3", "automatic_tuning_eligible is false", "reference source URLs are absent", "no legal permission receipt", "no synchronized RPM/load/gear traces"]
+    }
+  ],
+  "required_r1_fields": [
+    "vehicle_and_scenario_identity",
+    "legal_permission",
+    "source_and_license",
+    "raw_audio_source",
+    "exact_vehicle_trim",
+    "stock_exhaust_confirmation",
+    "sample_rate",
+    "synchronized_rpm_trace",
+    "load_throttle_trace",
+    "gear_shift_trace",
+    "microphone_position",
+    "recording_device_agc_contract"
+  ],
+  "accepted_delivery": "Use E:/Claude_allow/Download/s12-stage-w-r1-capture-v1: original WAV/FLAC plus rights receipt, spec.json and timestamped rpm.csv, load_throttle.csv, gear_shift.csv with window coverage and SHA binding.",
+  "selection_gate": "No R1 input means no multi-reference median improvement, no 20 percent target gate, no non-target regression gate and no architecture selection.",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction; NOT_R1_QUALIFIED; NOT_PROFILE_FREEZE_READY"
+}

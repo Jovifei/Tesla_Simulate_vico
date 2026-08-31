@@ -1,0 +1,51 @@
+{
+  "feedback_id": "jovi-stage-k-named-feedback-2026-08-11",
+  "stage": "S12 Stage K",
+  "source_status": "named_user_feedback",
+  "human_pass": false,
+  "hellcat": {
+    "a_b_c_likeness": "none_match_hellcat",
+    "preferred_direction": "C_softer_mechanical",
+    "target": "recognisable_twin_screw_whine_plus_hemi_body",
+    "requested_features": [
+      "load_coupled_supercharger_whine",
+      "soft_mechanical_voicing",
+      "preserved_low_frequency_hemi_body"
+    ]
+  },
+  "c63_w204": {
+    "keep": "acceleration_low_frequency_rumble",
+    "change": "excess_incorrect_high_frequency",
+    "requested_direction": "retain_low_frequency_body_reduce_high_frequency_harshness"
+  },
+  "gtr_r35": {
+    "keep": "existing_tonal_direction",
+    "estimated_realism_gap": 0.60,
+    "requested_direction": "preserve_tonal_identity_add_realistic_turbo_time_structure"
+  },
+  "lfa": {
+    "keep": "overall_identity",
+    "change": [
+      "shift_jolt",
+      "deceleration",
+      "acceleration_loudness_delta"
+    ],
+    "requested_direction": "keep_v10_identity_rebuild_shift_and_lift_transients"
+  },
+  "global_loudness": {
+    "idle": "slightly_louder",
+    "high_load": "slightly_quieter",
+    "speed_direct_gain_control": false,
+    "rpm_direct_gain_control": false,
+    "strategy": "load_throttle_operating_state_trim_before_common_eq"
+  },
+  "evidence_type": "named_user_feedback",
+  "vehicle_mapping": "explicit_named_feedback",
+  "status": "input_only_not_human_pass",
+  "provenance": {
+    "source_level": "C",
+    "source": "synthetic",
+    "verification_state": "candidate_assumption",
+    "notes": "Feedback is an engineering calibration input; it does not qualify a candidate or authorize Profile Freeze."
+  }
+}

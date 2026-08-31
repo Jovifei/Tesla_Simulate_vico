@@ -1,0 +1,15 @@
+{
+  "audio_header": {
+    "channels": 1,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 30.0135,
+    "frames": 1440648,
+    "sample_rate_hz": 48000,
+    "sample_width_bits": 16
+  },
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "gtr_r35_tomei_close",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "gtr_r35"
+}

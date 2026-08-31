@@ -1,0 +1,567 @@
+{
+  "schema_version": "s12-rx7sim-source-audit.v1",
+  "generated_at": "2026-08-23",
+  "source_repository": "https://github.com/acendan/rx7sim",
+  "source_commit": "89ee503c1e3c6ccc07312ff72b9a00c46e6cba59",
+  "author_recording_page": "https://www.aaroncendan.me/rx7sim",
+  "license": "CC BY-NC-SA 4.0",
+  "license_url": "https://raw.githubusercontent.com/acendan/rx7sim/main/LICENSE.md",
+  "license_sha256": "047D2259741A3EBB30D8C8A43D4BA79B5B229A069ACD1D2BEA49F22B297D8E98",
+  "readme_sha256": "F00DE2DEED17FC4B3DC3200A9C1D1772BE2DCC6B1635D980383155B23BB9487F",
+  "capture_evidence": {
+    "vehicle_target_mapping": "rx7_fd",
+    "stock_trim": "UNKNOWN",
+    "gear_shift": "MISSING",
+    "scene_trace": "MISSING",
+    "microphone_setups": "three intake, three exhaust, two interior, two exterior",
+    "recording_statement": "author page states the author and a friend micd up the authors 1993 Mazda RX-7",
+    "recorder": "Sound Devices MixPre named; exact model/settings and AGC state not documented",
+    "synchronized_rpm": "MISSING",
+    "stock_exhaust": "UNKNOWN",
+    "load_throttle": "MISSING",
+    "vehicle": "1993 Mazda RX-7"
+  },
+  "policy": {
+    "order_hard_gate": false,
+    "automatic_tuning": false,
+    "public_git_media": false,
+    "raw_media_external_only": true,
+    "r2_allowed": true,
+    "r1_allowed": false,
+    "license_scope": "noncommercial_only"
+  },
+  "audio_inventory": [
+    {
+      "relative_path": "exhaust/idle.ogg",
+      "sha256": "FE790D479A606440D90060782C76914D7DDAAAEBA857BFF9B98A2CDBC2545754",
+      "bytes": 432098,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 14.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/ignitionOff.ogg",
+      "sha256": "C0237771E96A86570CAA5E1089D1EA32338473EE3B4B4E99AE918279AB627D98",
+      "bytes": 56583,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 1.728542,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/ignitionOn.ogg",
+      "sha256": "E16753E226C278852AEFEC65D139DD9A36E206C7206FDC276D7DBF6B59502EA9",
+      "bytes": 960168,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 31.360667,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revLong01.ogg",
+      "sha256": "39A49A9127C44F27C6766A6FAF875C9CCA241178974D9D4302D7D1F663025586",
+      "bytes": 506886,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 16.5,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revLong02.ogg",
+      "sha256": "362A08289C61298D2B0E1E1670733DD8C4FCDD91CC8E9188125C757898EF69BA",
+      "bytes": 429654,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.956979,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revLong03.ogg",
+      "sha256": "9C08691A8D4CBB5B82F010BE8FCD454BA024B7BE21B01449828AEF004A9A3447",
+      "bytes": 415540,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.5,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revMedium01.ogg",
+      "sha256": "D2C0B90CD861B2E754706BDE2E69261D9D48604AEA43CB82C3B5B07F0869716E",
+      "bytes": 238078,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.679917,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revMedium02.ogg",
+      "sha256": "4F15E12BB76163337F253DE5836C65DD2643180A4E82C13DBD41C4568D667CC4",
+      "bytes": 309821,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.033417,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revMedium03.ogg",
+      "sha256": "0E874EC5DA2C743DB8976FEA466A3515D7810F06AC3A36E313B7E3CE65AF2A35",
+      "bytes": 308849,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revShort01.ogg",
+      "sha256": "46AE88CE4CED9ED04958DCB7D66363068D60361238C52218308A5DCBDBD4F424",
+      "bytes": 237878,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.658208,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revShort02.ogg",
+      "sha256": "0F809F207FD224CD35762AED64A8D1B7F0D7EB4E36C956493BE0714C3D701916",
+      "bytes": 248011,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "exhaust/revShort03.ogg",
+      "sha256": "50AA4BF279AB954A781C4BBC1A068CCFDA89EE74E3F30902CB4B6A181375C349",
+      "bytes": 248093,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/idle.ogg",
+      "sha256": "EC8A1AE95CCBF3E6EA739914EFAF8297FA6DD4D558AB5EE047B488FDBC4B1EBD",
+      "bytes": 428951,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 14.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/ignitionOff.ogg",
+      "sha256": "B03568D9F7504AA13633AE6EF244E8BC876441B11CD6A60F5D703548D69EF2FC",
+      "bytes": 57157,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 1.728542,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/ignitionOn.ogg",
+      "sha256": "1C11F13F79C675FCE893EE89618A1A0D19E2E2FF3307EAE655C47F3C6BD2728D",
+      "bytes": 956009,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 31.360667,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revLong01.ogg",
+      "sha256": "C7E3798F82735489FFB694B612EB1DCAB6B0DE3DC1B22049D006BAD18456985C",
+      "bytes": 504947,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 16.5,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revLong02.ogg",
+      "sha256": "3C99397A1719635CA3AEB4E5249277113ECC65F472CC0909FBFCDD80560CB113",
+      "bytes": 427676,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.956979,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revLong03.ogg",
+      "sha256": "E10EC79C56AE8CD7C9F394E258B07681DA151B1B6E1779B52AC586EE73E4105A",
+      "bytes": 413990,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.5,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revMedium01.ogg",
+      "sha256": "1CE3A1049F249E1591065DB961191880526DF3501C58EAEF3F92E7DCCF9A9D31",
+      "bytes": 237405,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.679917,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revMedium02.ogg",
+      "sha256": "30E7C4FCB9D14021FEA065E42DCC12EA7D80003E82CC29B57AC9CB4D9DA1A35E",
+      "bytes": 308808,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.033417,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revMedium03.ogg",
+      "sha256": "9371AAB5B4C33EAA6D3CD7AC98BCE34D6BD219ACEED58DC445F2F176BDFFF61E",
+      "bytes": 307714,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revShort01.ogg",
+      "sha256": "0121C8D2216991D80F32129C1B27B0C1A8800507FB99706A45080BE288D800BF",
+      "bytes": 237041,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.658208,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revShort02.ogg",
+      "sha256": "0D64E1D4711F376BFBA54A54FC9C54ADC80AFE65BE57BE1833C2BC8DF0771AD6",
+      "bytes": 247119,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "intake/revShort03.ogg",
+      "sha256": "DA18A0CB0FDCAEAA9BD196D9936BBC3EBAA309D7FB97D7341F47BC7A07F0754C",
+      "bytes": 247067,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 240000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/idle.ogg",
+      "sha256": "4CFE200BC3456991224472D2EEE08A98A3840652A2A293B2BFCD80BCA61756FA",
+      "bytes": 457503,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 14.0,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/ignitionOff.ogg",
+      "sha256": "544A1B317C8EFFE81C57D2ED19F79073E51447DDF0C35933D7A09E78E887AF71",
+      "bytes": 59407,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 1.728542,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/ignitionOn.ogg",
+      "sha256": "69D2CADDE353EEDFECF3A676EF9F6312DE2A867DC6028C8E1E56F516FE35A03E",
+      "bytes": 1019323,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 31.360667,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revLong01.ogg",
+      "sha256": "1E8ECCB23E4BE3545AE374DFB515F0D79548448923457868DB1A421BD0C0634C",
+      "bytes": 539093,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 16.5,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revLong02.ogg",
+      "sha256": "C764EF50225FBE486FCCD86F3D678B306BC0D31E77A2A9FCDCC138F1B76A35E0",
+      "bytes": 456172,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.956979,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revLong03.ogg",
+      "sha256": "8D741E3E409D3BFA8ED5640D6DCC6329572E68113F7E73C7E8E264ED28C859C2",
+      "bytes": 441745,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 13.5,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revMedium01.ogg",
+      "sha256": "9CE20EE5C4A7C338490824CDF841103688517FB22A11A5ED048C051CB65ED3E8",
+      "bytes": 253302,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.679917,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revMedium02.ogg",
+      "sha256": "6D49C647A8616129D15901B0FF53E273721E6998CBED5B9C2EAA75CEB0197C10",
+      "bytes": 329261,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.033417,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revMedium03.ogg",
+      "sha256": "7BB10DAF0B08A497DB104ABD2F54FF51491ACD9C393E29729E5BA3761DB5CB0C",
+      "bytes": 328762,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 10.0,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revShort01.ogg",
+      "sha256": "486C4CFB20E232790A5492A2DE7AD9CC3F77DAB4483D3AB35D1B6B630D764428",
+      "bytes": 253313,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 7.658208,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revShort02.ogg",
+      "sha256": "3F888FBBA661953D5713BB23BBD58E81FBCB05B5007BAA425F6683196985B844",
+      "bytes": 263459,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "interior/revShort03.ogg",
+      "sha256": "4CDF88149D2F96EE47DAC5626B67E868520FAA0844B9BD7522D03CC0638E49CA",
+      "bytes": 263949,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 8.0,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "ir/garage.ogg",
+      "sha256": "FB53FEB9079B7F2038F62ECA1FA034BC061BEA9D224E3245646449AC070286CE",
+      "bytes": 125124,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 3.727062,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    },
+    {
+      "relative_path": "ir/outdoors.ogg",
+      "sha256": "DE111728B4C29C8E3855769F2A5A0FA3FF5FD5DCE8A9EE86A82BB0D8FCE0292E",
+      "bytes": 32524,
+      "audio": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "channels": 2,
+        "sample_rate_hz": 48000,
+        "duration_s": 0.878479,
+        "bit_rate": 256000,
+        "frames": null
+      }
+    }
+  ]
+}

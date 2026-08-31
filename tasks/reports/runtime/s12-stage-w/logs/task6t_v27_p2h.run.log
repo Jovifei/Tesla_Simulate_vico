@@ -1,0 +1,7 @@
+COMMAND=D:\Python\Python3.14\python.exe .superpowers/sdd/task6r_v27_stage_runner.py --mode generate --stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p2h --architecture P2H --parent-stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p1
+PID=69976
+START_UTC=2026-08-28T18:36:36.2886945Z
+END_UTC=2026-08-28T18:38:03.1195359Z
+EXIT_CODE=0
+P1_BEFORE_FILE_COUNT=133
+P1_BEFORE_LATEST_UTC=2026-08-28T17:59:06.4918783Z

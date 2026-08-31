@@ -1,0 +1,12 @@
+{
+  "schema": "s12.stage_y.open_source_integration.audit_request.v1",
+  "requested_code_head": "0d1de9247f17ac083295fecce8e63c382cf77acd",
+  "reason": "validate combined source-layer and closed-loop branches after cross-platform reachability-test repair",
+  "required_workflow": "S12 Stage Y Open-Source Integration Audit",
+  "qualification_boundary": {
+    "real_r1_reference": "MISSING",
+    "human_audition": "PENDING",
+    "profile_freeze": false,
+    "oem_match_claim": false
+  }
+}

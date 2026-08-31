@@ -1,0 +1,64 @@
+{
+  "schema_version": "s12-stage-k-eight-vehicle-round2-delivery-1",
+  "date": "2026-08-21",
+  "worktree": "E:\\Tesla_speed\\worktrees\\s12-stage-k-four-vehicle-perceptual-repair",
+  "implementation_head": "c6ce1cfbc33ba90cf7d7c22fcf86c070d1bb40e1",
+  "documentation_receipts_follow_implementation": true,
+  "status": "PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY",
+  "human_pass": false,
+  "csv_content_read": false,
+  "vehicles": [
+    "c63_w204",
+    "gtr_r35",
+    "lfa",
+    "ferrari_458",
+    "rx7_fd",
+    "supra_jza80",
+    "aventador_lp700",
+    "hellcat_inherited_stage_l"
+  ],
+  "lfa_event_fix": {
+    "historical_event_stem": "metallic",
+    "current_event_stem": "lfa_shift_exhaust_reengagement",
+    "event_kind": "asg_shift_reengagement",
+    "event_count": 3,
+    "wrong_condition_event_count": 0,
+    "eligible": true,
+    "source": "actual_event_array_and_trace_shift_alignment"
+  },
+  "packages": [
+    {
+      "root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-three-vehicle-round2-v4",
+      "vehicles": ["c63_w204", "gtr_r35", "lfa"],
+      "zip_sha256": "3f6574633e876d8fd45d2288bf0ee97728a0f0708ce467b1eb65fdd269717a02",
+      "manifest_sha256": "8446e9e1ccdf1a17477967de02e26d33dd5177b3e164fbbd209f3cd22fb3d157",
+      "wav_count": 24,
+      "sha_entry_count": 28,
+      "zip_member_count": 29,
+      "validation_errors": []
+    },
+    {
+      "root": "E:\\Tesla_speed\\review_packages\\s12-stage-k-remaining-four-round2-v1",
+      "vehicles": ["ferrari_458", "rx7_fd", "supra_jza80", "aventador_lp700"],
+      "zip_sha256": "91e86dfbc62052e368b9792b3c076fd67a4902d6309b8d81f380f3b93af36656",
+      "manifest_sha256": "a07f34dc3fd094af0d20539b4f6b8fbbc017e10ca4bb7bdf8b780ba64bca615e",
+      "wav_count": 28,
+      "sha_entry_count": 35,
+      "zip_member_count": 33,
+      "validation_errors": []
+    }
+  ],
+  "tests": {
+    "round2_combined": "22 passed in 240.73s",
+    "track_p_pytest": "21 passed in 1.16s",
+    "track_p_guard": "180 frozen files / 2 symbols unchanged",
+    "diff_check": "PASS"
+  },
+  "qualification_not_claimed": [
+    "human audition",
+    "OEM reproduction",
+    "Approved Profile",
+    "Profile Freeze",
+    "Simulink/Runtime/Android productization"
+  ]
+}

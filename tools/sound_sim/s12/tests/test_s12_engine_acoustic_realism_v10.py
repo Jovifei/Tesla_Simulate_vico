@@ -18,17 +18,15 @@ sys.path.insert(0, str(S12_ROOT))
 
 import acoustic_identity_v015 as identity
 from acoustic_identity_v015 import SourceRender, VehicleStateTrace
+from acoustic_identity_v015.render_realism_v10 import _RENDERERS as _FORMAL_RENDERERS
 
 
 V015 = S12_ROOT / "acoustic_identity_v015"
 REFERENCE_MANIFEST = V015 / "reference_database" / "realism_reference_manifest.json"
 REFERENCE_TARGETS = V015 / "targets" / "realism_feature_targets.json"
 CHARACTER_MATRIX = V015 / "reference_database" / "vehicle_sound_character_matrix.md"
-_RENDERERS = {
-    "ferrari_458": identity.render_ferrari_458,
-    "hellcat": identity.render_hellcat,
-    "rx7_fd": identity.render_rx7_fd,
-}
+_RENDERERS = dict(_FORMAL_RENDERERS)
+_ANCHOR_VEHICLE_IDS = {"ferrari_458", "hellcat", "rx7_fd"}
 
 
 def _trace(
@@ -72,14 +70,19 @@ class RealismReferenceDatabaseTests(unittest.TestCase):
         targets = json.loads(REFERENCE_TARGETS.read_text(encoding="utf-8"))
         self.assertEqual(manifest["schema_version"], "s12-acoustic-realism-reference-1.0")
         self.assertEqual(set(manifest["vehicles"]), set(_RENDERERS))
-        self.assertEqual(set(targets["vehicles"]), set(_RENDERERS))
+        self.assertEqual(set(targets["vehicles"]), _ANCHOR_VEHICLE_IDS)
         for vehicle_id, record in manifest["vehicles"].items():
-            self.assertEqual(record["source_level"], "R2")
             self.assertEqual(record["calibration_status"], "uncalibrated")
             self.assertIn("risk", record["recording"])
-            self.assertIn("sha256", record["external_media"])
+            if vehicle_id in _ANCHOR_VEHICLE_IDS:
+                self.assertEqual(record["source_level"], "R2")
+                self.assertIn("sha256", record["external_media"])
+            else:
+                self.assertEqual(record["source_level"], "R2")
+                self.assertIn("pending_online_research", record["external_media"].get("note", ""))
             self.assertNotIn("path", json.dumps(record).lower())
-            self.assertTrue(targets["vehicles"][vehicle_id]["targets_are_relative_only"])
+            if vehicle_id in _ANCHOR_VEHICLE_IDS:
+                self.assertTrue(targets["vehicles"][vehicle_id]["targets_are_relative_only"])
         matrix = CHARACTER_MATRIX.read_text(encoding="utf-8").lower()
         for token in ("r2", "idle", "steady", "acceleration", "deceleration", "uncalibrated"):
             self.assertIn(token, matrix)

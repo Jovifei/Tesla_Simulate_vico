@@ -1,0 +1,223 @@
+{
+  "fixtures": {
+    "base": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 172.67699748592383,
+        "global_tnr_db": 107.08597108902752,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 3.29,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": 1000.5,
+        "prominence_present": true,
+        "prominence_ratio_db": 172.67699748592383,
+        "roughness_asper": 0.0005763323597447644,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 1.0090330943282293,
+        "tone_to_noise_frequency_hz": 1000.5,
+        "tone_to_noise_prominent": true,
+        "tone_to_noise_ratio_db": 107.08597108902752
+      },
+      "tool": "MoSQITo"
+    },
+    "fast_am": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 155.02607390541155,
+        "global_tnr_db": 9.599793211953127,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 3.577,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": 1000.5,
+        "prominence_present": true,
+        "prominence_ratio_db": 155.02607390541155,
+        "roughness_asper": 0.5815092947169356,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 1.0045553430698886,
+        "tone_to_noise_frequency_hz": 1000.5,
+        "tone_to_noise_prominent": true,
+        "tone_to_noise_ratio_db": 9.599793211953127
+      },
+      "tool": "MoSQITo"
+    },
+    "gain": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 172.67699748592383,
+        "global_tnr_db": 107.08597108902752,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 5.029,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": 1000.5,
+        "prominence_present": true,
+        "prominence_ratio_db": 172.67699748592383,
+        "roughness_asper": 0.0006151180913456832,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 1.0103634529452894,
+        "tone_to_noise_frequency_hz": 1000.5,
+        "tone_to_noise_prominent": true,
+        "tone_to_noise_ratio_db": 107.08597108902752
+      },
+      "tool": "MoSQITo"
+    },
+    "high_frequency_boost": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 200.93812434647703,
+        "global_tnr_db": 110.09981458587362,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 10.677,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": 4000.5,
+        "prominence_present": true,
+        "prominence_ratio_db": 186.80144385278663,
+        "roughness_asper": 0.0010010745921897656,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 4.0177026984138084,
+        "tone_to_noise_frequency_hz": 4000.5,
+        "tone_to_noise_prominent": true,
+        "tone_to_noise_ratio_db": 107.08951318477142
+      },
+      "tool": "MoSQITo"
+    },
+    "prominent_tone": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 42.494552172087964,
+        "global_tnr_db": 42.30400926636159,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 15.543,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": 1000.5,
+        "prominence_present": true,
+        "prominence_ratio_db": 42.494552172087964,
+        "roughness_asper": 0.005375117373479757,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 1.74860373861269,
+        "tone_to_noise_frequency_hz": 1000.5,
+        "tone_to_noise_prominent": true,
+        "tone_to_noise_ratio_db": 42.30400926636159
+      },
+      "tool": "MoSQITo"
+    },
+    "tonality_noise_floor": {
+      "functions": {
+        "loudness": "loudness_zwst(signal, fs, field_type='free')",
+        "prominence_ratio": "pr_ecma_st(signal, fs, prominence=True)",
+        "roughness": "roughness_dw(signal, fs, overlap=0.5)",
+        "sharpness": "sharpness_din_st(signal, fs, weighting='din', field_type='free')",
+        "tone_to_noise_ratio": "tnr_ecma_st(signal, fs, prominence=True)"
+      },
+      "input_calibration": "digital-domain relative input; full-scale-to-Pascal calibration was not supplied; no absolute SPL claim",
+      "mosqito_version": "1.2.1",
+      "parameters": {
+        "field_type": "free",
+        "roughness_overlap": 0.5,
+        "sample_rate_hz": 48000,
+        "sharpness_weighting": "din"
+      },
+      "results": {
+        "global_prominence_ratio_db": 0.0,
+        "global_tnr_db": 0.0,
+        "loudness_bark_axis_available": true,
+        "loudness_sone": 6.671,
+        "loudness_specific_bark_available": true,
+        "prominence_frequency_hz": null,
+        "prominence_present": false,
+        "prominence_ratio_db": null,
+        "roughness_asper": 0.012721178710523699,
+        "roughness_specific_bark_available": true,
+        "roughness_time_available": true,
+        "sharpness_acum": 2.745833658859547,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_prominent": false,
+        "tone_to_noise_ratio_db": null
+      },
+      "tool": "MoSQITo"
+    }
+  },
+  "schema_version": "s12-stage-n-mosqito-validation-1",
+  "status": "VALIDATED",
+  "validation": {
+    "fast_am_increases_roughness": true,
+    "gain_increases_loudness": true,
+    "high_frequency_increases_sharpness": true,
+    "passed": true,
+    "prominent_tone_reports_tonality": true
+  }
+}

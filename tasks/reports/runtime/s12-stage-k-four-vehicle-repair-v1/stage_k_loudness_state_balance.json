@@ -1,0 +1,1218 @@
+{
+  "note": "This is audition-copy gain evidence only; it does not change the frozen formal loudness manager or product PCM policy.",
+  "policy": "common baseline/candidate gain; attenuation-only headroom cap; no compressor/limiter/EQ/per-section AGC",
+  "provenance": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "requested_review_gain_db": 1.9382002601611283,
+  "requested_review_gain_linear": 1.25,
+  "schema_version": "s12-stage-k-loudness-state-balance-1",
+  "vehicles": {
+    "c63_w204": {
+      "health": {
+        "baseline": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -1.5000002153229033,
+          "sample_rate_hz": 48000
+        },
+        "candidate": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -6.1806037808813645,
+          "sample_rate_hz": 48000
+        },
+        "files": {
+          "Baseline_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          },
+          "C63_BarkOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -20.72669558334362,
+            "sample_rate_hz": 48000
+          },
+          "C63_ExhaustOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -28.548769009206172,
+            "sample_rate_hz": 48000
+          },
+          "C63_MechanicalOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -46.4169765963634,
+            "sample_rate_hz": 48000
+          },
+          "High_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -10.68833066453426,
+            "sample_rate_hz": 48000
+          },
+          "Lift_Deceleration_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -10.601152408113633,
+            "sample_rate_hz": 48000
+          },
+          "Low_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          },
+          "Shift_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -8.534144615897105,
+            "sample_rate_hz": 48000
+          },
+          "StageK_Candidate_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -6.1806037808813645,
+            "sample_rate_hz": 48000
+          }
+        }
+      },
+      "review_loudness": {
+        "applied_gain_db": 2.1532290297522137e-07,
+        "applied_gain_linear": 1.0000000247899656,
+        "files": {
+          "Baseline_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -21.089072745937713,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\Baseline_60s.wav",
+            "raw_lufs": -21.089072745937713,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "C63_BarkOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -24.39540270763875,
+            "final_peak_dbfs": -20.72669558334362,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -20.72669558334362,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\C63_BarkOnly_Acceleration.wav",
+            "raw_lufs": -24.39540270763875,
+            "raw_peak_dbfs": -20.72669558334362,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "C63_ExhaustOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -40.26185819695549,
+            "final_peak_dbfs": -28.548769009206172,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -28.548769009206172,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\C63_ExhaustOnly_Acceleration.wav",
+            "raw_lufs": -40.26185819695549,
+            "raw_peak_dbfs": -28.548769009206172,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "C63_MechanicalOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -53.04462154561322,
+            "final_peak_dbfs": -46.4169765963634,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -46.4169765963634,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\C63_MechanicalOnly_Acceleration.wav",
+            "raw_lufs": -53.04462154561322,
+            "raw_peak_dbfs": -46.4169765963634,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "High_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999996545876,
+            "final_peak_dbfs": -10.68833066453426,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -10.68833066453426,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\High_Load_12s.wav",
+            "raw_lufs": -15.999999996545876,
+            "raw_peak_dbfs": -10.68833066453426,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Lift_Deceleration_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999996393923,
+            "final_peak_dbfs": -10.601152408113633,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -10.601152408113633,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\Lift_Deceleration_12s.wav",
+            "raw_lufs": -15.999999996393923,
+            "raw_peak_dbfs": -10.601152408113633,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Low_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.37228802784512,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\Low_Load_12s.wav",
+            "raw_lufs": -16.37228802784512,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Shift_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000000118565,
+            "final_peak_dbfs": -8.534144615897105,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -8.534144615897105,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\Shift_12s.wav",
+            "raw_lufs": -16.000000000118565,
+            "raw_peak_dbfs": -8.534144615897105,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "StageK_Candidate_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999998355857,
+            "final_peak_dbfs": -6.1806037808813645,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -6.1806037808813645,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\02_C63_W204\\StageK_Candidate_60s.wav",
+            "raw_lufs": -15.999999998355857,
+            "raw_peak_dbfs": -6.1806037808813645,
+            "requested_gain_db": 1.9382002601611283
+          }
+        },
+        "final_lufs": {
+          "baseline": -21.089072745937713,
+          "candidate": -15.999999998355857
+        },
+        "final_peak_dbfs": {
+          "baseline": -1.5000002153229033,
+          "candidate": -6.1806037808813645
+        },
+        "headroom_limited": true,
+        "pair_common": true,
+        "raw_lufs": {
+          "baseline": -21.089072745937713,
+          "candidate": -15.999999998355857
+        },
+        "raw_peak_dbfs": {
+          "baseline": -1.5000002153229033,
+          "candidate": -6.1806037808813645
+        },
+        "requested_gain_db": 1.9382002601611283,
+        "requested_gain_linear": 1.25
+      }
+    },
+    "gtr_r35": {
+      "health": {
+        "baseline": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -6.084160380182158,
+          "sample_rate_hz": 48000
+        },
+        "candidate": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -1.5000002153229033,
+          "sample_rate_hz": 48000
+        },
+        "files": {
+          "Baseline_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -6.084160380182158,
+            "sample_rate_hz": 48000
+          },
+          "GTR_BOVOnly_Lift.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -42.503960722383,
+            "sample_rate_hz": 48000
+          },
+          "GTR_ExhaustOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -21.502071598137423,
+            "sample_rate_hz": 48000
+          },
+          "GTR_TwoTurboOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -19.574554861654804,
+            "sample_rate_hz": 48000
+          },
+          "High_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -7.415220245237855,
+            "sample_rate_hz": 48000
+          },
+          "Lift_Deceleration_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -3.584918898525526,
+            "sample_rate_hz": 48000
+          },
+          "Low_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -6.511450547643043,
+            "sample_rate_hz": 48000
+          },
+          "Shift_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -5.307365137075641,
+            "sample_rate_hz": 48000
+          },
+          "StageK_Candidate_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          }
+        }
+      },
+      "review_loudness": {
+        "applied_gain_db": 2.1532290297522137e-07,
+        "applied_gain_linear": 1.0000000247899656,
+        "files": {
+          "Baseline_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999995645314,
+            "final_peak_dbfs": -6.084160380182158,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -6.084160380182158,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\Baseline_60s.wav",
+            "raw_lufs": -15.999999995645314,
+            "raw_peak_dbfs": -6.084160380182158,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "GTR_BOVOnly_Lift.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -53.137483468316525,
+            "final_peak_dbfs": -42.503960722383,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -42.503960722383,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\GTR_BOVOnly_Lift.wav",
+            "raw_lufs": -53.137483468316525,
+            "raw_peak_dbfs": -42.503960722383,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "GTR_ExhaustOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -26.987488494453036,
+            "final_peak_dbfs": -21.502071598137423,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -21.502071598137423,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\GTR_ExhaustOnly_Acceleration.wav",
+            "raw_lufs": -26.987488494453036,
+            "raw_peak_dbfs": -21.502071598137423,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "GTR_TwoTurboOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -26.400534349256898,
+            "final_peak_dbfs": -19.574554861654804,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -19.574554861654804,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\GTR_TwoTurboOnly_Acceleration.wav",
+            "raw_lufs": -26.400534349256898,
+            "raw_peak_dbfs": -19.574554861654804,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "High_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999993181198,
+            "final_peak_dbfs": -7.415220245237855,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -7.415220245237855,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\High_Load_12s.wav",
+            "raw_lufs": -15.999999993181198,
+            "raw_peak_dbfs": -7.415220245237855,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Lift_Deceleration_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000001854133,
+            "final_peak_dbfs": -3.584918898525526,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -3.584918898525526,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\Lift_Deceleration_12s.wav",
+            "raw_lufs": -16.000000001854133,
+            "raw_peak_dbfs": -3.584918898525526,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Low_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000002678462,
+            "final_peak_dbfs": -6.511450547643043,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -6.511450547643043,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\Low_Load_12s.wav",
+            "raw_lufs": -16.000000002678462,
+            "raw_peak_dbfs": -6.511450547643043,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Shift_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000000458655,
+            "final_peak_dbfs": -5.307365137075641,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -5.307365137075641,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\Shift_12s.wav",
+            "raw_lufs": -16.000000000458655,
+            "raw_peak_dbfs": -5.307365137075641,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "StageK_Candidate_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.504582215355107,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\03_GT-R_R35\\StageK_Candidate_60s.wav",
+            "raw_lufs": -16.504582215355107,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          }
+        },
+        "final_lufs": {
+          "baseline": -15.999999995645314,
+          "candidate": -16.504582215355107
+        },
+        "final_peak_dbfs": {
+          "baseline": -6.084160380182158,
+          "candidate": -1.5000002153229033
+        },
+        "headroom_limited": true,
+        "pair_common": true,
+        "raw_lufs": {
+          "baseline": -15.999999995645314,
+          "candidate": -16.504582215355107
+        },
+        "raw_peak_dbfs": {
+          "baseline": -6.084160380182158,
+          "candidate": -1.5000002153229033
+        },
+        "requested_gain_db": 1.9382002601611283,
+        "requested_gain_linear": 1.25
+      }
+    },
+    "hellcat": {
+      "health": {
+        "baseline": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -1.5000002153229033,
+          "sample_rate_hz": 48000
+        },
+        "candidate": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -1.5000002153229033,
+          "sample_rate_hz": 48000
+        },
+        "files": {
+          "Baseline_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          },
+          "Hellcat_BlowerOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -8.292150938280553,
+            "sample_rate_hz": 48000
+          },
+          "Hellcat_BypassOnly_Lift.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -26.57000331926497,
+            "sample_rate_hz": 48000
+          },
+          "Hellcat_ExhaustOnly_Acceleration.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -11.740912574401488,
+            "sample_rate_hz": 48000
+          },
+          "High_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -6.59817448601951,
+            "sample_rate_hz": 48000
+          },
+          "Lift_Deceleration_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -4.107995896222617,
+            "sample_rate_hz": 48000
+          },
+          "Low_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -5.13347489287608,
+            "sample_rate_hz": 48000
+          },
+          "Shift_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -6.171479182361955,
+            "sample_rate_hz": 48000
+          },
+          "StageK_Candidate_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          }
+        }
+      },
+      "review_loudness": {
+        "applied_gain_db": 2.1532290297522137e-07,
+        "applied_gain_linear": 1.0000000247899656,
+        "files": {
+          "Baseline_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -19.384060375245838,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Baseline_60s.wav",
+            "raw_lufs": -19.384060375245838,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Hellcat_BlowerOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.42457061846501,
+            "final_peak_dbfs": -8.292150938280553,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -8.292150938280553,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Hellcat_BlowerOnly_Acceleration.wav",
+            "raw_lufs": -16.42457061846501,
+            "raw_peak_dbfs": -8.292150938280553,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Hellcat_BypassOnly_Lift.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -40.61002754764874,
+            "final_peak_dbfs": -26.57000331926497,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -26.57000331926497,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Hellcat_BypassOnly_Lift.wav",
+            "raw_lufs": -40.61002754764874,
+            "raw_peak_dbfs": -26.57000331926497,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Hellcat_ExhaustOnly_Acceleration.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -21.336629386847644,
+            "final_peak_dbfs": -11.740912574401488,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -11.740912574401488,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Hellcat_ExhaustOnly_Acceleration.wav",
+            "raw_lufs": -21.336629386847644,
+            "raw_peak_dbfs": -11.740912574401488,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "High_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.99999999687065,
+            "final_peak_dbfs": -6.59817448601951,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -6.59817448601951,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\High_Load_12s.wav",
+            "raw_lufs": -15.99999999687065,
+            "raw_peak_dbfs": -6.59817448601951,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Lift_Deceleration_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.99999999891049,
+            "final_peak_dbfs": -4.107995896222617,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -4.107995896222617,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Lift_Deceleration_12s.wav",
+            "raw_lufs": -15.99999999891049,
+            "raw_peak_dbfs": -4.107995896222617,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Low_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.00000000027608,
+            "final_peak_dbfs": -5.13347489287608,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -5.13347489287608,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Low_Load_12s.wav",
+            "raw_lufs": -16.00000000027608,
+            "raw_peak_dbfs": -5.13347489287608,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Shift_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000002552703,
+            "final_peak_dbfs": -6.171479182361955,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -6.171479182361955,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\Shift_12s.wav",
+            "raw_lufs": -16.000000002552703,
+            "raw_peak_dbfs": -6.171479182361955,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "StageK_Candidate_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -19.92069310438389,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\01_Hellcat\\StageK_Candidate_60s.wav",
+            "raw_lufs": -19.92069310438389,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          }
+        },
+        "final_lufs": {
+          "baseline": -19.384060375245838,
+          "candidate": -19.92069310438389
+        },
+        "final_peak_dbfs": {
+          "baseline": -1.5000002153229033,
+          "candidate": -1.5000002153229033
+        },
+        "headroom_limited": true,
+        "pair_common": true,
+        "raw_lufs": {
+          "baseline": -19.384060375245838,
+          "candidate": -19.92069310438389
+        },
+        "raw_peak_dbfs": {
+          "baseline": -1.5000002153229033,
+          "candidate": -1.5000002153229033
+        },
+        "requested_gain_db": 1.9382002601611283,
+        "requested_gain_linear": 1.25
+      }
+    },
+    "lfa": {
+      "health": {
+        "baseline": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -3.9181341278745756,
+          "sample_rate_hz": 48000
+        },
+        "candidate": {
+          "channels": 2,
+          "clipping_count": 0,
+          "finite": true,
+          "passes": true,
+          "pcm_bits": 24,
+          "peak_dbfs": -3.7789761721378983,
+          "sample_rate_hz": 48000
+        },
+        "files": {
+          "Baseline_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -3.9181341278745756,
+            "sample_rate_hz": 48000
+          },
+          "High_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -9.28703603518833,
+            "sample_rate_hz": 48000
+          },
+          "LFA_ASG_Shift.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -39.12162075750102,
+            "sample_rate_hz": 48000
+          },
+          "LFA_IntakeReopen_Shift.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -71.36093596557518,
+            "sample_rate_hz": 48000
+          },
+          "LFA_Overrun_Lift.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -65.50074306736809,
+            "sample_rate_hz": 48000
+          },
+          "Lift_Deceleration_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -1.5000002153229033,
+            "sample_rate_hz": 48000
+          },
+          "Low_Load_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -5.234697630005653,
+            "sample_rate_hz": 48000
+          },
+          "Shift_12s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -8.29614901167876,
+            "sample_rate_hz": 48000
+          },
+          "StageK_Candidate_60s.wav": {
+            "channels": 2,
+            "clipping_count": 0,
+            "finite": true,
+            "passes": true,
+            "pcm_bits": 24,
+            "peak_dbfs": -3.7789761721378983,
+            "sample_rate_hz": 48000
+          }
+        }
+      },
+      "review_loudness": {
+        "applied_gain_db": 2.1532290297522137e-07,
+        "applied_gain_linear": 1.0000000247899656,
+        "files": {
+          "Baseline_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999999822782,
+            "final_peak_dbfs": -3.9181341278745756,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -3.9181341278745756,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\Baseline_60s.wav",
+            "raw_lufs": -15.999999999822782,
+            "raw_peak_dbfs": -3.9181341278745756,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "High_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -15.999999970594349,
+            "final_peak_dbfs": -9.28703603518833,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -9.28703603518833,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\High_Load_12s.wav",
+            "raw_lufs": -15.999999970594349,
+            "raw_peak_dbfs": -9.28703603518833,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "LFA_ASG_Shift.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -58.285350744900626,
+            "final_peak_dbfs": -39.12162075750102,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -39.12162075750102,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\LFA_ASG_Shift.wav",
+            "raw_lufs": -58.285350744900626,
+            "raw_peak_dbfs": -39.12162075750102,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "LFA_IntakeReopen_Shift.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": null,
+            "final_peak_dbfs": -71.36093596557518,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -71.36093596557518,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\LFA_IntakeReopen_Shift.wav",
+            "raw_lufs": null,
+            "raw_peak_dbfs": -71.36093596557518,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "LFA_Overrun_Lift.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": null,
+            "final_peak_dbfs": -65.50074306736809,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -65.50074306736809,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\LFA_Overrun_Lift.wav",
+            "raw_lufs": null,
+            "raw_peak_dbfs": -65.50074306736809,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Lift_Deceleration_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.478238810248406,
+            "final_peak_dbfs": -1.5000002153229033,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -1.5000002153229033,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\Lift_Deceleration_12s.wav",
+            "raw_lufs": -16.478238810248406,
+            "raw_peak_dbfs": -1.5000002153229033,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Low_Load_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.00000002730645,
+            "final_peak_dbfs": -5.234697630005653,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -5.234697630005653,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\Low_Load_12s.wav",
+            "raw_lufs": -16.00000002730645,
+            "raw_peak_dbfs": -5.234697630005653,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "Shift_12s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000001031466,
+            "final_peak_dbfs": -8.29614901167876,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -8.29614901167876,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\Shift_12s.wav",
+            "raw_lufs": -16.000000001031466,
+            "raw_peak_dbfs": -8.29614901167876,
+            "requested_gain_db": 1.9382002601611283
+          },
+          "StageK_Candidate_60s.wav": {
+            "actual_gain_db": 2.1532290297522137e-07,
+            "final_lufs": -16.000000001837194,
+            "final_peak_dbfs": -3.7789761721378983,
+            "headroom_limited": true,
+            "health": {
+              "channels": 2,
+              "clipping_count": 0,
+              "finite": true,
+              "passes": true,
+              "pcm_bits": 24,
+              "peak_dbfs": -3.7789761721378983,
+              "sample_rate_hz": 48000
+            },
+            "path": "E:\\Tesla_speed\\review_packages\\s12-stage-k-four-vehicle-perceptual-repair-v1\\04_LFA\\StageK_Candidate_60s.wav",
+            "raw_lufs": -16.000000001837194,
+            "raw_peak_dbfs": -3.7789761721378983,
+            "requested_gain_db": 1.9382002601611283
+          }
+        },
+        "final_lufs": {
+          "baseline": -15.999999999822782,
+          "candidate": -16.000000001837194
+        },
+        "final_peak_dbfs": {
+          "baseline": -3.9181341278745756,
+          "candidate": -3.7789761721378983
+        },
+        "headroom_limited": true,
+        "pair_common": true,
+        "raw_lufs": {
+          "baseline": -15.999999999822782,
+          "candidate": -16.000000001837194
+        },
+        "raw_peak_dbfs": {
+          "baseline": -3.9181341278745756,
+          "candidate": -3.7789761721378983
+        },
+        "requested_gain_db": 1.9382002601611283,
+        "requested_gain_linear": 1.25
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "command": "python .superpowers/sdd/check_y6_browser.py",
+  "started_at": "2026-08-31T08:11:14.370015+00:00",
+  "ended_at": "2026-08-31T08:11:17.729879+00:00",
+  "package_manifest_sha256": "9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c",
+  "pages": [
+    {
+      "page": "timbre_review.html",
+      "audio_count": 77,
+      "min_duration": 8,
+      "max_duration": 20,
+      "playback": [
+        {
+          "index": 0,
+          "time": 0.152785,
+          "error": null
+        },
+        {
+          "index": 5,
+          "time": 0.198543,
+          "error": null
+        },
+        {
+          "index": 6,
+          "time": 0.210166,
+          "error": null
+        }
+      ]
+    },
+    {
+      "page": "dynamic_review.html",
+      "audio_count": 77,
+      "min_duration": 8,
+      "max_duration": 20,
+      "playback": [
+        {
+          "index": 0,
+          "time": 0.200192,
+          "error": null
+        },
+        {
+          "index": 5,
+          "time": 0.210604,
+          "error": null
+        },
+        {
+          "index": 6,
+          "time": 0.208512,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "scope": "browser decoding/playback only; no human auditory acceptance"
+}

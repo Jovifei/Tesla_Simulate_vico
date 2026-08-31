@@ -1,0 +1,35 @@
+﻿{
+    "head_sha":  "92959f555ab96a42e73c83bbe696868c7b0fdfd2",
+    "full_pytest_log":  "tasks/reports/runtime/s12-stage-x/logs/x9_full_s12_pytest.log",
+    "completed_at":  "2026-08-30T04:59:07.9707585+08:00",
+    "started_at":  "2026-08-30T04:26:06.3469872+08:00",
+    "pytest_exit_code":  1,
+    "full_s12_pytest_summary":  "1 failed, 1223 passed, 1 skipped, 1 warning, 232 subtests passed in 1974.77s",
+    "git_push": {"exit_code": 0, "branch": "agent/s12-stage-x-r2-engineering-selection", "qualification_head_sha": "92959f555ab96a42e73c83bbe696868c7b0fdfd2", "closure_commit_sha": "b92235fe54aa2a41df7807e46174e90b9c6384f5"},
+    "focused_stage_x":  {
+                            "exit_code":  0,
+                            "files":  [
+                                          "test_s12_stage_x_search.py",
+                                          "test_s12_stage_x_selection.py"
+                                      ],
+                            "failed":  0,
+                            "passed":  17
+                        },
+    "obsidian_log":  "tasks/reports/runtime/s12-stage-x/logs/x9_obsidian.run.log",
+    "schema":  "s12.stage_x.x9_final_qualification.v1",
+    "final_status":  "STAGE_X_CONTINUOUS_EXECUTION_COMPLETE",
+    "compileall_exit_code":  0,
+    "full_s12_pytest":  {
+                            "passed":  1223,
+                            "failed":  1,
+                            "duration_s":  1974.77,
+                            "skipped":  1,
+                            "warnings":  1,
+                            "subtests_passed":  232
+                        },
+    "failed_tests":  [
+                         "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_w9_named_raw_log_bytes_are_not_rewritten"
+                     ],
+    "selection_outcome":  "NO_MEASURABLE_IMPROVEMENT_AFTER_REDESIGN"
+}
+

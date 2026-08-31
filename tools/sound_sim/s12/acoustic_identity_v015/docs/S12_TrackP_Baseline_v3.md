@@ -35,3 +35,14 @@ python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track
 ```
 
 守卫 PASS 只证明冻结边界与本基线一致，不替代 MATLAB/Simulink Runtime Proof 或人工听感验收。
+
+## 3.3 Track-S 豁免（allowlist）
+
+Stage-N comparator 的 MATLAB 适配器、MAT 输入/receipt 绑定器和三份运行
+receipt 属于 Track-S 分析与证据，不属于 Track-P。由于路径守卫保守地匹配
+`matlab` 子串，这些精确路径显式豁免；豁免不改变任何 Track-P 文件、符号或
+180 项冻结清单的内容摘要。
+
+Stage-Q/R 的 `real_reference/run_r2_matlab_psychoacoustic_audit.m` 同样只读取
+仓库外 R2 音频并写入外部收据，不修改 Track-P 物理模型；该精确路径因此加入
+同一 allowlist。它仍然不能把 R2 输入升级为 R1，也不能开启阶次资格或自动调参。

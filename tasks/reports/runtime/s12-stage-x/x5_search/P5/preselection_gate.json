@@ -1,0 +1,78 @@
+{
+ "schema": "s12.stage_x.engineering_gate.v1",
+ "architecture": "P5",
+ "hard_gates": {
+  "finite_pcm": true,
+  "clipping_zero": true,
+  "parent_sha_different": true,
+  "post_ptr_exists": true,
+  "block_no_click": true,
+  "wrong_condition_afterfire_zero": true,
+  "raw_monitor_separated": true,
+  "parameter_consumed": true,
+  "scenario_compatible": true,
+  "reference_not_speech_contaminated": true
+ },
+ "hard_gates_passed": true,
+ "soft_gates": {
+  "valid_reference_count_at_least_2": true,
+  "median_improvement_at_least_15pct": false,
+  "key_dimensions_not_regressed": false,
+  "no_clean_reference_severe_regression": false,
+  "tonality_penalty_reduced": false,
+  "monitor_idle_audible": false
+ },
+ "failed_soft_gates": [
+  "key_dimensions_not_regressed",
+  "median_improvement_at_least_15pct",
+  "monitor_idle_audible",
+  "no_clean_reference_severe_regression",
+  "tonality_penalty_reduced"
+ ],
+ "objective": -0.04238151764798337,
+ "dimension_median_relative_error": {
+  "low_frequency_body": -0.2798338778523968,
+  "120_400_pressure_attack": 0.10019518945421127,
+  "mid_band_congestion": 0.36342874655023216,
+  "mechanical_texture": -0.35448958340119663,
+  "forced_induction_identity": 0.48269976970850315,
+  "idle_life": -0.2919734813372872,
+  "acceleration_continuity": NaN,
+  "shift_transient": NaN,
+  "afterfire_naturalness": NaN,
+  "synthetic_artifact": 0.48269976970850315,
+  "dynamic_range": -0.1636743916467022,
+  "runtime_cost": NaN
+ },
+ "eligibility": {
+  "schema": "s12.stage_x.selection_eligibility.v1",
+  "selection_eligible": false,
+  "blocking_reasons": [
+   "MEDIAN_IMPROVEMENT_BELOW_15PCT"
+  ],
+  "inputs": {
+   "hard_gates_passed": true,
+   "valid_reference_count": 4,
+   "median_improvement_fraction": -0.04238151764798337,
+   "reference_evidence_level": "R2_AUDIO_DIAGNOSTIC"
+  },
+  "scope": "engineering preselection only; formal R1 selection is a separate gate"
+ },
+ "status": "NO_R2_ENGINEERING_CANDIDATE_IMPROVED",
+ "scope": "engineering preselection only; synthetic; uncalibrated; not OEM reproduction",
+ "best_overrides": {
+  "combustion_event_energy": 0.5401751198396086,
+  "combustion_rise_time": 0.0023136766612157226,
+  "combustion_decay_time": 0.02308835954144597,
+  "cycle_variation": 0.08939279183000326,
+  "primary_length_spread": 1.144066050555557,
+  "waveguide_reflection": 0.18060126323252917,
+  "waveguide_loss": 0.07182334145717323,
+  "collector_loss": 0.9190485055856408,
+  "attack_mix_120_400": 0.13636695809662341,
+  "timbre_map_order_weights": 0.8832516053318977,
+  "intake_mix": 0.22707277156971395
+ },
+ "best_objective": -0.04238151764798337,
+ "search_seconds": 837.1
+}

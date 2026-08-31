@@ -1,0 +1,150 @@
+{
+  "fixture": {
+    "artifacts": {
+      "map_mat": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\fixture\\order_rpm_map.mat",
+      "map_png": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\fixture\\order_rpm_map.png",
+      "ridges": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\fixture\\order_ridges.json"
+    },
+    "validation": {
+      "amplitude_ranking_correct": true,
+      "order_errors": [
+        0.002693742229589735,
+        0.001243265644425895,
+        0.0016576875259013413,
+        0.0008288437629504486
+      ],
+      "order_stability": {
+        "passed": true,
+        "per_order": [
+          {
+            "expected_order": 0.5,
+            "max_order_error": 0.002693742229589735,
+            "median_order_error": 0.002693742229589735,
+            "passed": true
+          },
+          {
+            "expected_order": 1,
+            "max_order_error": 0.001243265644425895,
+            "median_order_error": 0.001243265644425895,
+            "passed": true
+          },
+          {
+            "expected_order": 4,
+            "max_order_error": 0.0016576875259013413,
+            "median_order_error": 0.0016576875259013413,
+            "passed": true
+          },
+          {
+            "expected_order": 6,
+            "max_order_error": 0.0008288437629504486,
+            "median_order_error": 0.0008288437629504486,
+            "passed": true
+          }
+        ],
+        "tolerance": 0.08
+      },
+      "order_tolerance": 0.08,
+      "passed": true,
+      "tracked_amplitude_relative_variation_observation": [
+        0.4898966797994347,
+        0.3370220432740659,
+        0.06063802123886139,
+        0.2762866667983073
+      ]
+    }
+  },
+  "fixture_validated": true,
+  "input_manifest_sha256": "90a93140cd1f0ef7f54dfa5775b45a612332b1f3cd8ddbe38bdc6ef071b64786",
+  "limitation": "Order maps use the current candidate PCM with its hash-bound synthetic RPM/state trace; no external reference waveform supplies matching RPM/state metadata.",
+  "matlab_release": "2026a",
+  "order_comparison_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+  "reference_status": "REFERENCE_RPM_UNAVAILABLE",
+  "schema_version": "s12-stage-n-matlab-order-validation-1",
+  "session_receipt_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\matlab_order_session_receipt.json",
+  "session_receipt_sha256": "d9d84670ec84165c45495b897acbcafb1d9f2dd5048c95e77b41c71674d51830",
+  "status": "VALIDATED",
+  "vehicle_count": 8,
+  "vehicle_data_executed": true,
+  "vehicles": {
+    "aventador_lp700": {
+      "candidate_sha256": "d99fa32295f96cbbde74187a04492cfbe7aa16478baf1d4913a4d9ef0a4a3ca9",
+      "input_file": "aventador_lp700_full_cycle.mat",
+      "input_sha256": "de807c14f56ef99802f70de3cf81bc9fc9b51022a8fb10931bc7353026c0e9bf",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\aventador_lp700\\order_metrics.json",
+      "metric_sha256": "c02cc6aad81cd5cfc36242dc520b692e05bb623767cfce6cb372205dfba0f365",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "2310f9a028d926f01b12343db2f4d25fc33c005f7485700f890ea72ee797dbe1"
+    },
+    "c63_w204": {
+      "candidate_sha256": "7b9f5d97ee277adf671e3cc049dde5b4ed9e40d88a8b9f30622508f03acabbc5",
+      "input_file": "c63_w204_full_cycle.mat",
+      "input_sha256": "a31714b49c585f217f64b48dbd58bcbfd1137cce9228b2463fd7ea73bc44acd9",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\c63_w204\\order_metrics.json",
+      "metric_sha256": "f126e92c58b3011f4988976c25d33d1e3560a31e38ea0e67af2f6f2ddcf434ea",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "339798ed72a7c31506c24b998470372261ebeeb6c6f05195669fa6d976c76eee"
+    },
+    "ferrari_458": {
+      "candidate_sha256": "ac6299544179e232d200ab192f3397b69bf17a16a1cd738a93203eb81481364a",
+      "input_file": "ferrari_458_full_cycle.mat",
+      "input_sha256": "783db48beb1df1c84a1c12c397060e0a46c0b6146030845106971ccc353ae837",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\ferrari_458\\order_metrics.json",
+      "metric_sha256": "ae11f2f0e73e5ca917c9a90e253611b56535c40629a6b6075c3864cf429f9c2c",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "6244d227c467eb6f11cc8d13955524b83210975ccb4ae0a1420fa8eab560e908"
+    },
+    "gtr_r35": {
+      "candidate_sha256": "3dac0f74db4272ab7d661835f6bc72f87cf8a791ac7a030cd26f321cda34b246",
+      "input_file": "gtr_r35_full_cycle.mat",
+      "input_sha256": "d29ddfe2526e44800d7c42510849752af62828cd913a1659c0109fed6804b43a",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\gtr_r35\\order_metrics.json",
+      "metric_sha256": "99b3442703e7dfa018f97924bd67dc6147236e8ba01ec1d7f9bcff180466911e",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "95da732bbd0600cd1bf6edc6e1a4362b3ba70f47bc40aa10056ac1aa2267a252"
+    },
+    "hellcat": {
+      "candidate_sha256": "7b4628c024a537283da8e21da217dc9211b7ae646007a6f0b78518c069d7230b",
+      "input_file": "hellcat_full_cycle.mat",
+      "input_sha256": "f86efda1aa8a711ef7c653877348ec67e44bd460a703f1b46876c983304cdd52",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\hellcat\\order_metrics.json",
+      "metric_sha256": "01e725dc4d7c687aa5058ea1cc01ea59aae0744cef7a628a28a918e27264f98b",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "7a1f057a191ed4dc85f5fcbc2750d3dc1a8662031ecc21388ea2aea2d9b92d9f"
+    },
+    "lfa": {
+      "candidate_sha256": "1553e761fa291ccda856fe2d39b33069d5e1491c2a9b2202771e574426ed49d1",
+      "input_file": "lfa_full_cycle.mat",
+      "input_sha256": "e99fff4eb5300cbfaebcfc6876b3d10ac2f41ff49103158343572d299a126965",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\lfa\\order_metrics.json",
+      "metric_sha256": "55665b4b882986ca1942ef4df9de46bc7a053a20ee49a2ba6885ed47bedce88a",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "f04f7455a00c9eca97bb3ea26b059b304fcdb26e4b93d868882f76ecd08bb009"
+    },
+    "rx7_fd": {
+      "candidate_sha256": "4553757c2ca87d2f04b520a2d658300e3c5d8274c3e7d31c1d4bb20f05067b93",
+      "input_file": "rx7_fd_full_cycle.mat",
+      "input_sha256": "ba826c11f1b36631d07ce756c41403b4926e69eea83eb09ae87203e01ce259ad",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\rx7_fd\\order_metrics.json",
+      "metric_sha256": "6c230beab5f32615dcb707b039934592cd4699f4f0faded07349eaaed028db90",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "798c34b6436f40eac54ff28119ec31163cf2b2de9daf7ebb1d5a1c907ed201cb"
+    },
+    "supra_jza80": {
+      "candidate_sha256": "daf9876ba3fb6c6873e6225ec270636c48fe16a16fb51b1a9c4d85bc3b659436",
+      "input_file": "supra_jza80_full_cycle.mat",
+      "input_sha256": "51954a112db5a165e29129e6cfbd547c68c5da8d6398ab811f0e00b4fae653fa",
+      "metric_path": "E:\\Tesla_speed\\worktrees\\s12-stage-n-professional-comparator\\artifacts\\matlab\\s12-stage-n-order-execution-v4\\project\\supra_jza80\\order_metrics.json",
+      "metric_sha256": "700550f59c198c9f5cd78ca7c262f687ad0d0fbeae7a21321215e50996bf10d8",
+      "metrics": null,
+      "reference_comparison": "REFERENCE_RPM_UNAVAILABLE / ORDER_COMPARISON_NOT_QUALIFIED",
+      "trace_sha256": "c59dd507ec454a27e6534604d5763b09d3e2f304cd8d897e8a8d21dad413ebab"
+    }
+  }
+}

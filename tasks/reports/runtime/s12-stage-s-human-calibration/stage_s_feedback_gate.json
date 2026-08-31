@@ -1,0 +1,17 @@
+{
+  "feedback_rows": 0,
+  "audition_package": {
+    "status": "READY_EXTERNAL_R2_AB",
+    "path_alias": "E:\\Claude_allow\\Download\\s12-stage-s-human-ab-r2-20260822",
+    "study_manifest_sha256": "9471784e875c98beb2e2ea91081f1ffa87f851ff461bd8e405d414d3447411e6",
+    "case_count": 3,
+    "language": "zh-CN"
+  },
+  "parameter_changes": 0,
+  "profile_candidate_ready": false,
+  "real_reference_status": "REAL_REFERENCE_DATASET_LIMITED",
+  "reason": "R2 A/B 试听包已就绪，但真实 Jovi 听审行数仍为 0；没有 SHA/file-ID 绑定反馈就不读取、不生成、不提升任何参数建议。",
+  "schema_version": "s12-stage-s-feedback-gate-v1",
+  "stage": "S",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+}

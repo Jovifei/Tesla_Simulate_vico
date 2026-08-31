@@ -1,0 +1,30 @@
+{
+ "schema": "s12.stage_x.structural_redesign.v1",
+ "best_architecture": "P3",
+ "best_objective": -0.04238151764798337,
+ "best_overrides": {
+  "combustion_event_energy": 0.5401751198396086,
+  "combustion_rise_time": 0.0023136766612157226,
+  "combustion_decay_time": 0.02308835954144597,
+  "cycle_variation": 0.08939279183000326,
+  "primary_length_spread": 1.144066050555557,
+  "waveguide_reflection": 0.18060126323252917,
+  "waveguide_loss": 0.07182334145717323,
+  "collector_loss": 0.9190485055856408,
+  "attack_mix_120_400": 0.13636695809662341,
+  "timbre_map_order_weights": 0.8832516053318977,
+  "intake_mix": 0.22707277156971395
+ },
+ "failing_dimensions": {
+  "120_400_pressure_attack": 0.10019518945421127,
+  "mid_band_congestion": 0.36342874655023216,
+  "forced_induction_identity": 0.48269976970850315,
+  "synthetic_artifact": 0.48269976970850315
+ },
+ "key_failures": {
+  "120_400_pressure_attack": 0.10019518945421127,
+  "mid_band_congestion": 0.36342874655023216,
+  "synthetic_artifact": 0.48269976970850315
+ },
+ "redesign_required": true
+}

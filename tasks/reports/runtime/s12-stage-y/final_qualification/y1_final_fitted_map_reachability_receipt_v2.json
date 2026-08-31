@@ -1,0 +1,40 @@
+{
+  "artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\.superpowers\\sdd\\run_y1_final_fitted_map_probe.py",
+    "--worker",
+    "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z"
+  ],
+  "ended_at": "2026-08-31T18:33:21.985309+00:00",
+  "exit_code": 0,
+  "logs": {
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stdout.log",
+      "sha256": "1d8bd7faed4206c112a2488d30ca818efff0bb012cf05747dcb1df1023c7be3e"
+    }
+  },
+  "map": {
+    "architecture": "P3",
+    "fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
+    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+    "scenes": [
+      "y1_blower_spectrum",
+      "y1_boost_attack",
+      "y1_precharged_boost_release",
+      "y1_bypass_threshold_sweep"
+    ],
+    "sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+    "stem": "post_ptr"
+  },
+  "output": "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tasks\\reports\\runtime\\s12-stage-y\\y1_reachability\\final_fitted_map_canonical",
+  "run_id": "y1-final-fitted-map-20260831T183122590736Z",
+  "schema": "s12.stage_y.final_fitted_map_reachability_receipt.v1",
+  "source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "stage": "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z",
+  "started_at": "2026-08-31T18:31:22.630850+00:00"
+}

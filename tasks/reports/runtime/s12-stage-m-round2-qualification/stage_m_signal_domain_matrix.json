@@ -1,0 +1,30 @@
+{
+  "comfort_review_copy": {
+    "analysis_allowed": false,
+    "audition_allowed": true,
+    "gain": "static post-PCM gain/headroom policy"
+  },
+  "loudness_matched_audition_signal": {
+    "analysis_allowed": false,
+    "audition_allowed": true,
+    "gain": "static post-PCM gain/headroom policy"
+  },
+  "reference_recording": {
+    "analysis_allowed": "only when provenance, scenario, RPM and window contracts are bound",
+    "audition_allowed": true
+  },
+  "source_stems": {
+    "analysis_allowed": true,
+    "audition_allowed": false,
+    "restriction": "must not be presented as final PCM reference distance"
+  },
+  "unaltered_analysis_signal": {
+    "analysis_allowed": true,
+    "audition_allowed": false,
+    "pipeline": [
+      "formal_final_pcm",
+      "channel_fold_down",
+      "dc_removal"
+    ]
+  }
+}

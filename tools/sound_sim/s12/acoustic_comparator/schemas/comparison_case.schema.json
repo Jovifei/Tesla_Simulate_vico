@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/comparison_case.schema.json",
+  "type": "object",
+  "required": ["vehicle_id", "scenario", "reference_id", "reference_provenance", "candidate_id", "candidate_source_commit", "sample_rate_hz", "channel_policy", "reference_rpm", "candidate_rpm", "reference_load", "candidate_load", "microphone_setup_uncertainty", "analysis_domain", "loudness_match_policy"],
+  "properties": {
+    "vehicle_id": {"type": "string"}, "scenario": {"type": "string"}, "reference_id": {"type": ["string", "null"]},
+    "candidate_id": {"type": "string"}, "candidate_source_commit": {"type": "string"}, "reference_provenance": {"type": "string"},
+    "sample_rate_hz": {"type": "integer", "minimum": 1}, "channel_policy": {"type": "string"},
+    "reference_rpm": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}, "candidate_rpm": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "reference_load": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}, "candidate_load": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "microphone_setup_uncertainty": {"type": "string"}, "loudness_match_policy": {"type": "string"},
+    "analysis_domain": {"const": "unaltered_analysis_signal"}, "reference_kind": {"enum": ["external_recording", "synthetic_parent"]}
+  }, "additionalProperties": true
+}

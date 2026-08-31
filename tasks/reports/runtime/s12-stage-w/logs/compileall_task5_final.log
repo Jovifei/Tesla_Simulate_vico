@@ -1,0 +1,5 @@
+
+COMMAND=python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
+START=2026-08-28T05:35:19.8568225+08:00
+END=2026-08-28T05:35:20.0697557+08:00
+EXIT=0

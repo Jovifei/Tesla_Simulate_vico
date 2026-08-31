@@ -1,0 +1,73 @@
+{
+  "schema_version": "s12-stage-r-web-authorized-r2-index-v1",
+  "status": "R2_LIMITED_COMPARISON_COMPLETE_R1_BLOCKED",
+  "scope": "relative_digital_domain_only",
+  "analysis_signal": "unaltered_analysis_signal",
+  "audition_signal": "not_created",
+  "automatic_tuning_eligible": false,
+  "order_hard_gate": false,
+  "human_feedback": "NOT_PERFORMED",
+  "cases": [
+    {
+      "recording_id": "web_ferrari_458_goodwood_2010",
+      "vehicle_id": "ferrari_458",
+      "scenario": "acceleration",
+      "result_path": "web-authorized-20260822/ferrari_458/stage_r_r2_limited_result.json",
+      "report_path": "web-authorized-20260822/ferrari_458/S12_Stage_R_R2_Limited_Difference_Report.md",
+      "reference_sha256": "44b236ac66d3b2ea6b75a6e4e738c4a827172184473bca03806bb59d2828f59a",
+      "candidate_sha256": "c94ba310a623dfe2c3f465c1b20d053b39c18722280b977d79210860447f3f78",
+      "metrics": {
+        "spectral_log_distance": 0.574775011791069,
+        "spectral_centroid_delta_hz": -18.8534291085519,
+        "loudness_delta_db": 2.70010449976638,
+        "roughness_proxy_delta": 0.00272601034847047,
+        "fluctuation_proxy_delta": -0.00773951865439487
+      },
+      "order_status": "NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM",
+      "recommendations": "WITHHELD"
+    },
+    {
+      "recording_id": "web_hellcat_launching_sound_2019",
+      "vehicle_id": "hellcat",
+      "scenario": "launch",
+      "result_path": "web-authorized-20260822/hellcat/stage_r_r2_limited_result.json",
+      "report_path": "web-authorized-20260822/hellcat/S12_Stage_R_R2_Limited_Difference_Report.md",
+      "reference_sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+      "candidate_sha256": "fd38f6531304a3a38de80c5d20d24be7960085acebf930b1cf7188758d0053d1",
+      "metrics": {
+        "spectral_log_distance": 0.503287490395887,
+        "spectral_centroid_delta_hz": 37.6043998205917,
+        "loudness_delta_db": 0.453028227277631,
+        "roughness_proxy_delta": 0.004671629031462,
+        "fluctuation_proxy_delta": -0.0032767880765221
+      },
+      "order_status": "NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM",
+      "recommendations": "WITHHELD",
+      "limitation": "Local candidate is a synthetic launch proxy; no synchronized public RPM/state trace is available."
+    },
+    {
+      "recording_id": "web_supra_jza80_chassis_dyno_cc0_2019",
+      "vehicle_id": "supra_jza80",
+      "scenario": "full_pull",
+      "result_path": "web-authorized-20260822/supra_jza80/stage_r_r2_limited_result.json",
+      "report_path": "web-authorized-20260822/supra_jza80/S12_Stage_R_R2_Limited_Difference_Report.md",
+      "reference_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+      "candidate_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+      "metrics": {
+        "spectral_log_distance": 0.854656949465286,
+        "spectral_centroid_delta_hz": -167.121743742475,
+        "loudness_delta_db": -6.47468233211842,
+        "roughness_proxy_delta": -0.0130581167546543,
+        "fluctuation_proxy_delta": -0.023648523944064814
+      },
+      "order_status": "NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM",
+      "recommendations": "WITHHELD",
+      "limitation": "Freesound CC0 source is an HQ MP3 preview derivative; page identifies a Toyota Supra chassis dyno run but not an exact JZA80 generation or synchronized RPM/state."
+    }
+  ],
+  "interpretation": [
+    "These are residuals and relative digital-domain measurements, not a single realism or similarity percentage.",
+    "The public recordings have no synchronized RPM/load/throttle/gear trace; order metrics are diagnostic only and cannot gate tuning.",
+    "No source/profile parameter was changed and no human feedback was consumed."
+  ]
+}

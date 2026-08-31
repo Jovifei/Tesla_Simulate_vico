@@ -1,0 +1,43 @@
+{
+  "status": "WAITING_FOR_JOVI_NAMED_CALIBRATION",
+  "automatic_status": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "duration_s": 60.0,
+  "stage_g": {
+    "wav_sha256": "8fbf28f8136c661f59f85d0002d96af361a295413c26f19ed20116f9bc69bb47",
+    "integrated_lufs": -19.053296003172246,
+    "peak_dbfs": -1.5000002153229033,
+    "clipping_count": 0,
+    "blower_load_correlation": -0.30217568783239596,
+    "blower_energy": 252869.375832377,
+    "low_frequency_energy_40_400hz": 1260646575765.234
+  },
+  "stage_h": {
+    "wav_sha256": "6eacaad7ff2e0fb52734d130d597d43efb6573a5491d93b0f4a70e505232c486",
+    "integrated_lufs": -18.267853173130323,
+    "peak_dbfs": -1.5000002153229033,
+    "clipping_count": 0,
+    "blower_load_correlation": 0.9763520019514941,
+    "blower_energy": 516512.08907690644,
+    "exhaust_energy": 3561190.5493819853,
+    "rumble_energy": 164443.2336478929,
+    "blower_to_exhaust_ratio_db": -8.38514721452746,
+    "shaft_order_measured": 2.3598534991117943,
+    "shaft_order_error": 0.0000620766475477282,
+    "lobe_order_measured": 11.799226046511905,
+    "lobe_order_error": 0.0000655892786536777,
+    "upper_order_measured": 23.599103676565893,
+    "upper_order_error": 0.0000379798065300354,
+    "sideband_to_main_ratio": 0.08164417986857495,
+    "boost_attack_time_s": 4.1,
+    "boost_release_time_s": 0.33427083333333335,
+    "bypass_event_count": 2,
+    "bypass_decay_time_s": 0.0,
+    "upper_band_short_time_peak": 0.00025375783085907226
+  },
+  "provenance": "C/synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+  "notes": [
+    "Stage-H model uses deterministic order families, load/boost envelope, sidebands and boost-history bypass release.",
+    "The measured attack value is a whole-cycle state-trace metric, not a claim that the seed attack parameter equals 4.1 s.",
+    "Peak/headroom and LUFS are digital health evidence only; playback-device loudness remains a human gate."
+  ]
+}

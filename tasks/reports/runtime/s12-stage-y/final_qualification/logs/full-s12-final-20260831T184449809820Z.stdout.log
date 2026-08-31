@@ -1,0 +1,213 @@
+....................................................... [  4%]
+................................ [  6%]
+................................................ [  9%]
+.................................................................. [ 14%]
+............................................. [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 28%]
+........................................................................................................ [ 36%]
+.................................................................. [ 40%]
+........................................................................ [ 46%]
+........................................................................ [ 51%]
+........................................................................ [ 56%]
+........................................................................ [ 61%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+...................F.................................................... [ 77%]
+...............................................s........................ [ 82%]
+........................................................................ [ 88%]
+.................s...................................................... [ 93%]
+........................................................................ [ 98%]
+...................F                                                     [100%]
+================================== FAILURES ===================================
+______ test_final_track_p_guard_is_clean_after_committed_log_attributes _______
+
+    def test_final_track_p_guard_is_clean_after_committed_log_attributes() -> None:
+        guard = ROOT / "tools" / "sound_sim" / "s12" / "acoustic_identity_v015" / "scripts" / "assert_track_p_unchanged.py"
+        result = subprocess.run(["python", str(guard)], cwd=ROOT, capture_output=True, text=True)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）
+E           * git diff --check 发现空白错误：
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:1: trailing whitespace.
+E         +{
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:2: trailing whitespace.
+E         +  "artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:3: trailing whitespace.
+E         +  "command": [
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:4: trailing whitespace.
+E         +    "D:\\Python\\Python3.14\\python.exe",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:5: trailing whitespace.
+E         +    "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\.superpowers\\sdd\\run_y1_final_fitted_map_probe.py",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:6: trailing whitespace.
+E         +    "--worker",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:7: trailing whitespace.
+E         +    "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:8: trailing whitespace.
+E         +  ],
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:9: trailing whitespace.
+E         +  "ended_at": "2026-08-31T18:33:21.985309+00:00",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:10: trailing whitespace.
+E         +  "exit_code": 0,
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:11: trailing whitespace.
+E         +  "logs": {
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:12: trailing whitespace.
+E         +    "stderr": {
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:13: trailing whitespace.
+E         +      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stderr.log",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:14: trailing whitespace.
+E         +      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:15: trailing whitespace.
+E         +    },
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:16: trailing whitespace.
+E         +    "stdout": {
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:17: trailing whitespace.
+E         +      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stdout.log",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:18: trailing whitespace.
+E         +      "sha256": "1d8bd7faed4206c112a2488d30ca818efff0bb012cf05747dcb1df1023c7be3e"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:19: trailing whitespace.
+E         +    }
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:20: trailing whitespace.
+E         +  },
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:21: trailing whitespace.
+E         +  "map": {
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:22: trailing whitespace.
+E         +    "architecture": "P3",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:23: trailing whitespace.
+E         +    "fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:24: trailing whitespace.
+E         +    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:25: trailing whitespace.
+E         +    "scenes": [
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:26: trailing whitespace.
+E         +      "y1_blower_spectrum",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:27: trailing whitespace.
+E         +      "y1_boost_attack",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:28: trailing whitespace.
+E         +      "y1_precharged_boost_release",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:29: trailing whitespace.
+E         +      "y1_bypass_threshold_sweep"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:30: trailing whitespace.
+E         +    ],
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:31: trailing whitespace.
+E         +    "sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:32: trailing whitespace.
+E         +    "stem": "post_ptr"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:33: trailing whitespace.
+E         +  },
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:34: trailing whitespace.
+E         +  "output": "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tasks\\reports\\runtime\\s12-stage-y\\y1_reachability\\final_fitted_map_canonical",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:35: trailing whitespace.
+E         +  "run_id": "y1-final-fitted-map-20260831T183122590736Z",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:36: trailing whitespace.
+E         +  "schema": "s12.stage_y.final_fitted_map_reachability_receipt.v1",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:37: trailing whitespace.
+E         +  "source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:38: trailing whitespace.
+E         +  "stage": "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z",
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:39: trailing whitespace.
+E         +  "started_at": "2026-08-31T18:31:22.630850+00:00"
+E         tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:40: trailing whitespace.
+E         +}
+E         
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', 'E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tools\\sound_sim\\s12\\acoust...ge-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:40: trailing whitespace.\n+}\n\n', stderr='').returncode
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_final_remediation.py:24: AssertionError
+____________________ test_guard_reports_pass_on_clean_tree ____________________
+
+    def test_guard_reports_pass_on_clean_tree() -> None:
+>       assert guard.main() == 0
+E       assert 1 == 0
+E        +  where 1 = <function main at 0x0000012A5B5C26C0>()
+E        +    where <function main at 0x0000012A5B5C26C0> = guard.main
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_track_p_guard.py:212: AssertionError
+---------------------------- Captured stdout call -----------------------------
+FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）
+  * git diff --check 发现空白错误：
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:1: trailing whitespace.
++{
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:2: trailing whitespace.
++  "artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:3: trailing whitespace.
++  "command": [
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:4: trailing whitespace.
++    "D:\\Python\\Python3.14\\python.exe",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:5: trailing whitespace.
++    "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\.superpowers\\sdd\\run_y1_final_fitted_map_probe.py",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:6: trailing whitespace.
++    "--worker",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:7: trailing whitespace.
++    "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:8: trailing whitespace.
++  ],
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:9: trailing whitespace.
++  "ended_at": "2026-08-31T18:33:21.985309+00:00",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:10: trailing whitespace.
++  "exit_code": 0,
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:11: trailing whitespace.
++  "logs": {
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:12: trailing whitespace.
++    "stderr": {
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:13: trailing whitespace.
++      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stderr.log",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:14: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:15: trailing whitespace.
++    },
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:16: trailing whitespace.
++    "stdout": {
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:17: trailing whitespace.
++      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T183122590736Z.stdout.log",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:18: trailing whitespace.
++      "sha256": "1d8bd7faed4206c112a2488d30ca818efff0bb012cf05747dcb1df1023c7be3e"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:19: trailing whitespace.
++    }
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:20: trailing whitespace.
++  },
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:21: trailing whitespace.
++  "map": {
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:22: trailing whitespace.
++    "architecture": "P3",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:23: trailing whitespace.
++    "fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:24: trailing whitespace.
++    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:25: trailing whitespace.
++    "scenes": [
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:26: trailing whitespace.
++      "y1_blower_spectrum",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:27: trailing whitespace.
++      "y1_boost_attack",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:28: trailing whitespace.
++      "y1_precharged_boost_release",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:29: trailing whitespace.
++      "y1_bypass_threshold_sweep"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:30: trailing whitespace.
++    ],
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:31: trailing whitespace.
++    "sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:32: trailing whitespace.
++    "stem": "post_ptr"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:33: trailing whitespace.
++  },
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:34: trailing whitespace.
++  "output": "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tasks\\reports\\runtime\\s12-stage-y\\y1_reachability\\final_fitted_map_canonical",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:35: trailing whitespace.
++  "run_id": "y1-final-fitted-map-20260831T183122590736Z",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:36: trailing whitespace.
++  "schema": "s12.stage_y.final_fitted_map_reachability_receipt.v1",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:37: trailing whitespace.
++  "source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:38: trailing whitespace.
++  "stage": "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T183122590736Z",
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:39: trailing whitespace.
++  "started_at": "2026-08-31T18:31:22.630850+00:00"
+tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json:40: trailing whitespace.
++}
+
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree
+2 failed, 1368 passed, 2 skipped, 232 subtests passed in 2396.35s (0:39:56)

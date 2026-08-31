@@ -1,0 +1,15 @@
+{
+  "audio_header": {
+    "channels": 2,
+    "codec": "PCM",
+    "container": "WAV",
+    "duration_s": 11.638049,
+    "frames": 513238,
+    "sample_rate_hz": 44100,
+    "sample_width_bits": 24
+  },
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "web_ferrari_458_goodwood_2010",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "ferrari_458"
+}

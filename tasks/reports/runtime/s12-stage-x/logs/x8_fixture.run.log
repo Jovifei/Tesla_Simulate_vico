@@ -1,0 +1,4 @@
+command=python tools/sound_sim/s12/acoustic_identity_v015/stage_x/drivers/drive_x8_formal_fixture.py
+start_utc=2026-08-29T14:31:26
+note=fixture objectives exercise the full pass path
+exit=0

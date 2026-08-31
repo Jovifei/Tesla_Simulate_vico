@@ -1,0 +1,18 @@
+{
+  "accepted_rows": 8,
+  "content_read": true,
+  "human_feedback_available": false,
+  "human_pass": false,
+  "package_manifest_sha256": "355907adeb9931ce9b2c836d84989cb5e933275b61eb5344a29f0c7df751cd05",
+  "promotion_block": "explicit Jovi metadata-bound submission and separate sound-fix branch are required",
+  "provenance": "synthetic Stage-P fixture; not Jovi and not a real external recording",
+  "rejected_rows": 0,
+  "schema_version": "s12-stage-p-fixture-stage-o-consumption-1",
+  "source_format": "sha_bound_normalized_csv",
+  "source_path": "E:\\Tesla_speed\\review_packages\\s12-stage-p-system-acceptance-v1\\results\\fixture_stage_p_normalized.csv",
+  "source_sha256": "6aa2e999731e970cba9948c5b0c5462bec41e4e9c2fe26a8392a6d23ddf7e324",
+  "stage_o_entry_accepted_rows": 0,
+  "stage_o_entry_status": "REJECTED_FIXTURE_OR_SYNTHETIC_INPUT",
+  "status": "FIXTURE_ONLY_NOT_HUMAN_FEEDBACK_NOT_TUNING_AUTHORITY",
+  "tuning_authority": false
+}

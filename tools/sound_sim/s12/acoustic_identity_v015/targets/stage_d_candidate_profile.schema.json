@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-d-candidate-profile-1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "vehicle_id", "base_commit", "parent_candidate_id", "status", "hypothesis", "reference_target", "canonical_trace_version", "source", "idle", "afterfire", "shift", "loudness", "locked_layers", "provenance"],
+  "properties": {
+    "schema_version": {"const": "s12-stage-d-candidate-profile-1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"enum": ["ferrari_458", "hellcat", "rx7_fd"]},
+    "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "parent_candidate_id": {"type": ["string", "null"]},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "reference_target": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "eligible_states"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "eligible_states": {"type": "array", "minItems": 1, "items": {"type": "string"}}}},
+    "canonical_trace_version": {"type": "string", "minLength": 1},
+    "source": {"$ref": "#/$defs/parameterSection"},
+    "idle": {"$ref": "#/$defs/parameterSection"},
+    "afterfire": {"$ref": "#/$defs/parameterSection"},
+    "shift": {"$ref": "#/$defs/parameterSection"},
+    "loudness": {"type": "object"},
+    "locked_layers": {"type": "object"},
+    "provenance": {"type": "object"}
+  },
+  "$defs": {
+    "parameter": {"type": "object", "additionalProperties": false, "required": ["value", "unit", "range", "source_level", "source", "source_scope", "verification_state"], "properties": {"value": {"type": "number"}, "unit": {"type": "string"}, "range": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "minItems": 2, "maxItems": 2}, "source_level": {"const": "C"}, "source": {"const": "synthetic"}, "source_scope": {"type": "string"}, "verification_state": {"type": "string"}}},
+    "parameterSection": {"type": "object", "additionalProperties": {"$ref": "#/$defs/parameter"}}
+  }
+}

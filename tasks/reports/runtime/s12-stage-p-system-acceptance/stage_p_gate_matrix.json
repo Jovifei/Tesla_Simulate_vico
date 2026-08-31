@@ -1,0 +1,55 @@
+{
+  "exact_head": "38d84f3540081636b7ea78636ba2479a0afe170e",
+  "final_status": [
+    "SYSTEM_ACCEPTANCE_PASSED",
+    "READY_FOR_JOVI_UAT",
+    "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
+    "NOT_PROFILE_FREEZE_READY"
+  ],
+  "gates": {
+    "A_exact_stage_o_baseline": "PASS",
+    "B_fresh_full_and_focused_regression": "PASS",
+    "C_stage_n_receipts_and_cross_tool_fixture": "PASS",
+    "D_eight_vehicle_comparator_replay": "PASS",
+    "E_official_webmushra_browser_roundtrip": "PASS",
+    "F_security_reproducibility_idempotence": "PASS",
+    "G_jovi_uat_package_and_fixture_stage_o_boundary": "PASS",
+    "H_real_jovi_feedback": "PENDING"
+  },
+  "git_handoff": {
+    "branch": "agent/s12-stage-p-system-acceptance",
+    "current_local_head_at_report": "76f7309dae3884eafcb25dc7b8038002cbddd375",
+    "merge": false,
+    "pull_request": false,
+    "push": false,
+    "status_at_report": "M tasks/reports/runtime/s12-stage-p-system-acceptance/stage_p_exact_tip_test_evidence.json\n M tools/sound_sim/s12/acoustic_identity_v015/stage_p/build_uat_package.py\n M tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_p_acceptance.py"
+  },
+  "human_acoustic_qualification_status": "HUMAN_ACOUSTIC_QUALIFICATION_PENDING",
+  "human_feedback_status": "HUMAN_FEEDBACK_PENDING",
+  "no_source_change": true,
+  "overall_status": "SYSTEM_ACCEPTANCE_PASSED",
+  "profile_freeze_ready": false,
+  "ready_for_jovi_uat": true,
+  "review_package_manifest_sha256": "0930b1596e0d3d095c974bbe0f9a5fb2b140d4fb17777dedf184f3aaab175747",
+  "schema_version": "s12-stage-p-gate-matrix-1",
+  "uat_handoff": {
+    "browser_url": "http://127.0.0.1:8000/?config=s12-stage-p-system-acceptance-v1.yaml",
+    "expected_result_paths": {
+      "official_webmushra": [
+        "results/s12-stage-p-system-acceptance-v1/mushra.csv",
+        "results/s12-stage-p-system-acceptance-v1/lss.csv"
+      ],
+      "package_local": [
+        "s12-stage-p-system-acceptance-v1/results/mushra.csv",
+        "s12-stage-p-system-acceptance-v1/results/lss.csv",
+        "s12-stage-p-system-acceptance-v1/results/browser_import_receipt.json",
+        "s12-stage-p-system-acceptance-v1/results/normalized_import_result.json"
+      ],
+      "uat_receipt": "uat_import_receipt.json"
+    },
+    "manifest_sha256": "f8ba8f91a686ba3273755444a1b9548b2aa36acc3136808461b4f17dba5d37d1",
+    "package": "E:\\Tesla_speed\\review_packages\\s12-stage-p-jovi-uat-v1",
+    "start_command": "powershell -ExecutionPolicy Bypass -File \"E:\\Tesla_speed\\review_packages\\s12-stage-p-jovi-uat-v1\\START_REVIEW.ps1\""
+  },
+  "uat_manifest_sha256": "f8ba8f91a686ba3273755444a1b9548b2aa36acc3136808461b4f17dba5d37d1"
+}

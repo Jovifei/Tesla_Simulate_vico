@@ -1,0 +1,49 @@
+{
+  "human_feedback_available": false,
+  "metric_source": "synthetic fixture only",
+  "per_vehicle_fixture_scores": {
+    "aventador_lp700": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "c63_w204": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "ferrari_458": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "gtr_r35": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "hellcat": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "lfa": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "rx7_fd": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    },
+    "supra_jza80": {
+      "low_frequency_weight": 50.0,
+      "realism": 50.0,
+      "vehicle_identity": 50.0
+    }
+  },
+  "schema_version": "s12-stage-p-fixture-metric-binding-1",
+  "status": "FIXTURE_ONLY_NOT_HUMAN_FEEDBACK_NOT_TUNING_AUTHORITY",
+  "tuning_authority": false
+}

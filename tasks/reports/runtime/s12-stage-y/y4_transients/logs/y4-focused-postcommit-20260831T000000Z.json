@@ -1,0 +1,26 @@
+{
+  "schema": "s12.stage_y.execution_receipt.v1",
+  "run_id": "y4-focused-postcommit-20260831T000000Z",
+  "purpose": "Y4 final post-commit focused regression",
+  "exact_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_afterfire_ineligible_stays_zero",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden",
+    "-q"
+  ],
+  "actual_started_at_utc": "2026-08-31T04:49:53.084521+00:00",
+  "actual_ended_at_utc": "2026-08-31T04:50:14.392308+00:00",
+  "exit_code": 0,
+  "source_head": "7e2e41e779eca41100aaf412ce2f9bb4475b6d63",
+  "stdout": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-focused-postcommit-20260831T000000Z.stdout.log",
+  "stderr": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-focused-postcommit-20260831T000000Z.stderr.log",
+  "sha256": {
+    "stdout": "CB6591BDBB12555F26932B0B9553BE967B2CC3B0D5EBB0827C8224E0382023F5",
+    "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+}

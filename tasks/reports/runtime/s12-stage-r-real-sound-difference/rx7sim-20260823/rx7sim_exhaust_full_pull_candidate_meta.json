@@ -1,0 +1,21 @@
+{
+  "schema_version": "s12-stage-r2-candidate-meta-v1",
+  "candidate_id": "synthetic_rx7_fd_ab_full_pull_proxy",
+  "vehicle_id": "rx7_fd",
+  "scenario": "full_pull",
+  "candidate_wav": "tools/sound_sim/s12/acoustic_identity_v015/docs/rx7_fd_ab.wav",
+  "candidate_sha256": "03FFFFC1F3937EEC52B0DC841E1B54C6C9F90EF4A0A3978E4C0DB99F80603FD8",
+  "source_commit": "74e735768d870182dd39a901262a40f247eb158c",
+  "analysis_signal": "unaltered_analysis_signal",
+  "candidate_kind": "synthetic_local_ab_proxy",
+  "semantic_alignment": "candidate package contains a local RX-7 FD A/B proxy clip labelled for diagnostic full-pull comparison; it is not a synchronized vehicle-state capture",
+  "state_contract": "MISSING_RPM_LOAD_THROTTLE_GEAR_SHIFT",
+  "limitations": [
+    "candidate clip is not an R1 synchronized state capture",
+    "reference has no synchronized RPM/load/throttle/gear/shift trace",
+    "candidate and reference are not asserted to share exact trim or stock exhaust",
+    "result is relative digital-domain evidence only"
+  ],
+  "automatic_tuning_eligible": false,
+  "human_ab_required": true
+}

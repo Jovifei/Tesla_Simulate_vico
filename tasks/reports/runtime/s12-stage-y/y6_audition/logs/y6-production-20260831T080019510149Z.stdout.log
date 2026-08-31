@@ -1,0 +1,12 @@
+[1/11] render hot_idle_20s duration=20.0s
+[2/11] render steady_1200rpm duration=8.0s
+[3/11] render steady_2000rpm duration=8.0s
+[4/11] render steady_3000rpm duration=8.0s
+[5/11] render throttle_tip_in duration=8.0s
+[6/11] render full_load_acceleration duration=8.0s
+[7/11] render gear_shift duration=8.0s
+[8/11] render high_rpm_lift duration=8.0s
+[9/11] render afterfire_eligible duration=8.0s
+[10/11] render afterfire_ineligible duration=8.0s
+[11/11] render idle_return duration=8.0s
+{"status": "PACKAGE_VALIDATED", "output": "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v1", "scene_count": 11}

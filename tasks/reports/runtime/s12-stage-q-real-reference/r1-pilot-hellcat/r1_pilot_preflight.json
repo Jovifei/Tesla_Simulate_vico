@@ -1,0 +1,35 @@
+{
+  "automatic_tuning_eligible": false,
+  "gates": [
+    {
+      "missing": [
+        "spec.json",
+        "rights.json or rights.pdf",
+        "sha256.txt",
+        "raw/raw_audio.wav or raw/raw_audio.flac",
+        "state/rpm.csv",
+        "state/load_throttle.csv",
+        "state/gear_shift.csv"
+      ],
+      "name": "delivery",
+      "status": "MISSING"
+    }
+  ],
+  "missing_files": [
+    "spec.json",
+    "rights.json or rights.pdf",
+    "sha256.txt",
+    "raw/raw_audio.wav or raw/raw_audio.flac",
+    "state/rpm.csv",
+    "state/load_throttle.csv",
+    "state/gear_shift.csv"
+  ],
+  "order_hard_gate_eligible": false,
+  "profile_candidate_ready": false,
+  "r1_pilot_ready": false,
+  "recording_id": "hellcat_full_pull_01",
+  "recording_root": "E:\\Claude_allow\\Download\\s12-r1-pilot\\hellcat_full_pull_01",
+  "schema_version": "s12.stage_q.r1-pilot-preflight.v1",
+  "status": "WAITING_FOR_R1_PILOT_DELIVERY",
+  "vehicle_id": "hellcat"
+}

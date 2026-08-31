@@ -1,0 +1,66 @@
+{
+  "schema": "s12.stage_y.y2_harmonic_map_receipt.v1",
+  "status": "PASS",
+  "phase": "Y2_HARMONIC_MAP",
+  "scope": "synthetic fixture only; uncalibrated; not tuning authority; not OEM reproduction",
+  "source_head_at_map_build": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+  "normalization": {
+    "algorithm": "one-sided Fourier coefficient scaling: 2/N for non-DC/non-Nyquist bins and 1/N for DC or Nyquist",
+    "known_sine_red": "0.25 amplitude recovered as 600.0 at N=4800 and 1200.0 at N=9600 before normalization",
+    "known_sine_green": "0.25 amplitude is recovered for N=4800 and N=9600 after normalization",
+    "global_output_scale_changed": false,
+    "pcm24_validation_relaxed": false
+  },
+  "map": {
+    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+    "file_sha256": "5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC",
+    "schema": "s12.stage_y.harmonic_timbre_map.v1",
+    "fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
+    "created_from_commit": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+    "boundary": {
+      "fixture_scope": "FIXTURE_ONLY",
+      "tuning_authority": "NOT_TUNING_AUTHORITY",
+      "oem_status": "NOT_OEM"
+    },
+    "external_media_ingested": false,
+    "embedded_pcm": false
+  },
+  "verification": {
+    "final_normalized_focused_pytest": {
+      "run_id": "y2-normalized-minimal-20260830T205700+0800",
+      "command": "python -m pytest tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py::test_cycle_sync_uses_full_four_stroke_720_degree_fixture_cycle tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden -q",
+      "source_code_head": "293dcb23768d67f54c5c2bd783aa650e6328ebda",
+      "started_at_utc": "2026-08-30T11:53:20.5991111Z",
+      "ended_at_utc": "2026-08-30T11:53:28.6945328Z",
+      "exit_code": 0,
+      "result": "12 passed in 7.26s",
+      "combined_log": "tasks/reports/runtime/s12-stage-y/y2_harmonic_map/logs/y2-normalized-minimal-20260830T205700+0800.log",
+      "combined_log_sha256": "5348A3616F547BEA40648A873F36DE83CDF7014E75418F22D37E88987A430A0C"
+    },
+    "strict_map_validation": {
+      "facts": "loader rejects missing path, invalid JSON, wrong schema, fixture-SHA mismatch, and nonfinite values; normalized generated values are finite, nonnegative, bounded below 1.0, deterministic, and contain no PCM",
+      "map_file_sha256": "5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC"
+    },
+    "p3_p4_p5_raw_pcm24_smoke": {
+      "trace": "full_load_acceleration, 0.20 s",
+      "raw_peak_by_architecture": {
+        "P3": 0.343335953,
+        "P4": 0.355898385,
+        "P5": 0.343330657
+      },
+      "all_raw_finite": true,
+      "all_raw_peaks_below_one": true,
+      "pcm24_write_reopen_clipping": 0
+    }
+  },
+  "historical_evidence": {
+    "pre_normalization_map_sha256": "BA2687E0028F1588D0EFDC09156D096AE099524536B429B56302C8E32D00B491",
+    "pre_normalization_y3_clipping_receipt": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_cycle_sync_p4_receipt.json",
+    "retention": "The pre-normalization Y3 clipping receipt is retained as superseded historical evidence; it is not rewritten or used as normalized-map proof."
+  },
+  "deferred_out_of_scope_failures": [
+    "Y4 equal-power crossfade test failure",
+    "Y5 PressureAudioChain stream-vs-oneshot exactness failure",
+    "Persistent engine snapshot/replay exactness failure"
+  ]
+}

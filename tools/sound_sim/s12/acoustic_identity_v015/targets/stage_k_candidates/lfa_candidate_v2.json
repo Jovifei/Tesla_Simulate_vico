@@ -1,0 +1,56 @@
+{
+  "schema_version": "s12-stage-k-candidate-profile-1",
+  "candidate_id": "lfa_stage_k_v2",
+  "vehicle_id": "lfa",
+  "base_commit": "b78b6c3031269eae1a0b917ce7bbaaed2af81c76",
+  "parent_candidate_id": "lfa_stage_j_v1",
+  "parent_candidate_path": "targets/stage_j_candidates/lfa_candidate_v1.json",
+  "parent_candidate_sha256": "d049d9d45c560f9c896be00ec092c32dff06f95a1fb4f8ef3fc93f4068773afb",
+  "status": "Candidate",
+  "hypothesis": "Preserve the LFA V10 5/10/15 order identity while replacing the generic shift boom with ASG torque cut, exhaust re-engagement, intake reopen and history-gated lift overrun.",
+  "reference_target": {
+    "path": "reference_database/lfa_reference_targets.json",
+    "sha256": "9856622b2fa8f0f74ea200075fb04314c1621ab2a3ea842a03b6de57026d5115",
+    "eligible_states": ["idle", "acceleration", "afterfire"]
+  },
+  "canonical_trace_version": "stage-k-four-vehicle-cycle-v1",
+  "source": {
+    "pulse_width_scale": {"value": 1.0, "unit": "ratio", "range": [0.85, 1.15], "source_level": "C", "source": "synthetic", "source_scope": "v10_combustion_pressure_event_width", "verification_state": "candidate_assumption"},
+    "phase_offset_deg": {"value": 0.0, "unit": "deg", "range": [-12.0, 12.0], "source_level": "C", "source": "synthetic", "source_scope": "v10_firing_phase_relationship", "verification_state": "candidate_assumption"},
+    "order_family_mix": {"value": 1.0, "unit": "ratio", "range": [0.75, 1.25], "source_level": "C", "source": "synthetic", "source_scope": "moving_5_10_15_order_family", "verification_state": "candidate_assumption"},
+    "intake_resonance_scale": {"value": 1.1, "unit": "ratio", "range": [0.75, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "high_rev_intake_resonance", "verification_state": "candidate_assumption"},
+    "metallic_texture_scale": {"value": 1.0, "unit": "ratio", "range": [0.7, 1.3], "source_level": "C", "source": "synthetic", "source_scope": "event_driven_metallic_texture", "verification_state": "candidate_assumption"},
+    "high_rpm_growth_scale": {"value": 1.15, "unit": "ratio", "range": [0.9, 1.35], "source_level": "C", "source": "synthetic", "source_scope": "high_rev_order_growth", "verification_state": "candidate_assumption"}
+  },
+  "operating_level": {
+    "low_load_gain_db": {"value": 1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "high_load_gain_db": {"value": -1.5, "unit": "dB", "range": [-6.0, 6.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_low": {"value": 0.25, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "blend_load_high": {"value": 0.75, "unit": "ratio", "range": [0.0, 1.0], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"},
+    "smoothing_s": {"value": 0.15, "unit": "s", "range": [0.02, 0.5], "source_level": "C", "source": "synthetic", "source_scope": "state_loudness_balance", "verification_state": "candidate_assumption"}
+  },
+  "idle": {
+    "variation": {"value": 0.12, "unit": "ratio", "range": [0.08, 0.18], "source_level": "C", "source": "synthetic", "source_scope": "idle_cycle_variation", "verification_state": "candidate_assumption"},
+    "jitter_ms": {"value": 0.30, "unit": "ms", "range": [0.15, 0.60], "source_level": "C", "source": "synthetic", "source_scope": "idle_phase_jitter", "verification_state": "candidate_assumption"},
+    "mechanical_texture": {"value": 0.005, "unit": "ratio", "range": [0.002, 0.012], "source_level": "C", "source": "synthetic", "source_scope": "idle_mechanical_texture", "verification_state": "candidate_assumption"}
+  },
+  "afterfire": {
+    "gain_scale": {"value": 1.0, "unit": "ratio", "range": [0.8, 1.2], "source_level": "C", "source": "synthetic", "source_scope": "deterministic_hot_lift_cluster", "verification_state": "candidate_assumption"}
+  },
+  "shift_or_transient": {
+    "shift_interruption_s": {"value": 0.20, "unit": "s", "range": [0.16, 0.24], "source_level": "C", "source": "synthetic", "source_scope": "ASG_torque_cut", "verification_state": "candidate_assumption"},
+    "shift_min_gain": {"value": 0.55, "unit": "ratio", "range": [0.45, 0.65], "source_level": "C", "source": "synthetic", "source_scope": "ASG_torque_cut_depth", "verification_state": "candidate_assumption"},
+    "reengagement_decay_s": {"value": 0.12, "unit": "s", "range": [0.08, 0.18], "source_level": "C", "source": "synthetic", "source_scope": "exhaust_reengagement", "verification_state": "candidate_assumption"},
+    "intake_reopen_gain": {"value": 0.20, "unit": "ratio", "range": [0.10, 0.30], "source_level": "C", "source": "synthetic", "source_scope": "intake_reopen", "verification_state": "candidate_assumption"},
+    "lift_high_order_decay_s": {"value": 0.12, "unit": "s", "range": [0.08, 0.18], "source_level": "C", "source": "synthetic", "source_scope": "high_order_lift_decay", "verification_state": "candidate_assumption"},
+    "overrun_gain": {"value": 0.10, "unit": "ratio", "range": [0.05, 0.18], "source_level": "C", "source": "synthetic", "source_scope": "v10_overrun_history", "verification_state": "candidate_assumption"}
+  },
+  "loudness": {"target_lufs": -16.0, "peak_limit_dbfs": -1.5, "whole_cycle_gain_only": true},
+  "locked_layers": {
+    "low_frequency_body": {"unchanged": true, "fingerprint": "stage-c-low-frequency-body"},
+    "rumble": {"unchanged": true, "fingerprint": "stage-c-exhaust-rumble"},
+    "pre_ptr_eq": {"unchanged": true, "fingerprint": "stage-c-pre-equalization"},
+    "frozen_ptr": {"unchanged": true, "fingerprint": "stage-c-frozen-ptr"}
+  },
+  "provenance": {"source_level": "C", "source": "synthetic", "calibration": "uncalibrated", "claim": "not OEM reproduction", "parent_status": "STAGE_J_CANDIDATE_PARENT"}
+}

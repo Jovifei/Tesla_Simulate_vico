@@ -1,1 +1,15 @@
 tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json text eol=crlf
+tasks/reports/runtime/s12-stage-w/logs/*.log -text -diff -whitespace
+tasks/reports/runtime/s12-stage-y/**/logs/*.log -text -diff -whitespace
+tasks/reports/runtime/s12-stage-y/**/logs/*.json -text -diff -whitespace
+.superpowers/sdd/task-6c-green-output.txt -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/logs/*.log -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x4_reachability/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x5_search/**/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x5_round2/**/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x6_migration/**/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x8_formal_gate_fixture/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/*.json -text -diff -whitespace
+tasks/reports/runtime/s12-stage-x/x7_package_summary.json -text -diff -whitespace
+tools/sound_sim/s12/acoustic_identity_v015/stage_x/drivers/*.py -text -diff -whitespace
+tools/sound_sim/s12/acoustic_identity_v015/stage_x/structural_redesign.py -text -diff -whitespace

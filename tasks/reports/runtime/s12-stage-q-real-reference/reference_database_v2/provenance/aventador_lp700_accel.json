@@ -1,0 +1,18 @@
+{
+  "external_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\aventador_lp700_accel.wav",
+  "legal_permission": "UNVERIFIED",
+  "microphone_perspective": "UNKNOWN",
+  "raw_media_stored_outside_git": true,
+  "recording_device_agc": "UNKNOWN",
+  "recording_id": "aventador_lp700_accel",
+  "rights_evidence": "MISSING",
+  "screening_note_zh": "加速候选；来源日志无车型/原厂/视角/RPM 证据。",
+  "sha256": "7dccc0bd4a553c252f1b949024e9c484ed9bbce093f41ce1245f6f795da2b3ee",
+  "source_kind": "youtube_extracted",
+  "source_log_path": "E:\\Claude_allow\\Download\\tesla-sound-research\\aventador_lp700_accel.download.log",
+  "source_log_sha256": "3ad69bf413e11b6d05c042b1fa924c387ee9f63bc2d6757007a161d22c816cde",
+  "source_url": "https://www.youtube.com/watch?v=kroFvboz7Bo",
+  "source_url_sha256": "5a07bdfef15a4e57d812ab989c2364a0cfd77e1d5f51f6b45b070fa9718630f8",
+  "stock_identity": "UNVERIFIED",
+  "vehicle_id": "aventador_lp700"
+}

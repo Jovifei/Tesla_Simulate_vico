@@ -1,0 +1,419 @@
+"""RED tests for Stage-W Ferrari/RX-7 preselection migration."""
+
+from __future__ import annotations
+
+import json
+import shutil
+
+import pytest
+
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w.migration import (
+    MIGRATION_SCENES,
+    run_preselection_vehicle_migration,
+    validate_vehicle_migration_manifest,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_w import migration as migration_module
+from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import sha256_file
+
+
+def test_migration_uses_the_required_five_vehicle_scenes() -> None:
+    assert MIGRATION_SCENES == ("hot_idle", "steady_mid", "full_pull", "lift", "complete_cycle")
+
+
+@pytest.mark.parametrize("vehicle_id", ("ferrari_458", "rx7_fd"))
+def test_preselection_migration_renders_ptr_bound_candidates(vehicle_id: str, tmp_path) -> None:
+    root = tmp_path / vehicle_id
+    result = run_preselection_vehicle_migration(root, vehicle_id, duration_s=0.25)
+
+    assert result["status"] == "UNSELECTED_CANDIDATE_MIGRATION"
+    assert result["vehicle_id"] == vehicle_id
+    assert result["selected_architecture"] is None
+    assert validate_vehicle_migration_manifest(root) == []
+    frame_counts: dict[str, list[int]] = {scene: [] for scene in MIGRATION_SCENES}
+    for architecture in ("P1", "P2H", "P3"):
+        for scene in MIGRATION_SCENES:
+            case = root / architecture / scene
+            assert (case / "raw_source.wav").is_file()
+            assert (case / "post_ptr_raw.wav").is_file()
+            assert (case / "monitor.wav").is_file()
+            assert (case / "phase_trace.json").is_file()
+            assert (case / "event_trace.json").is_file()
+            assert (case / "path_trace.json").is_file()
+            assert (case / "gain_trace.json").is_file()
+            metrics = json.loads((case / "metrics.json").read_text(encoding="utf-8"))
+            assert metrics["ptr_status"] == "FROZEN_RUNTIME_PTR_ADAPTER"
+            assert 0.0 < metrics["publication_output_scale"] <= 0.05
+            assert metrics["raw_metrics"]["clipping"] == 0
+            assert metrics["post_ptr_metrics"]["frames"] > 0
+            assert metrics["post_ptr_metrics"]["clipping"] == 0
+            frame_counts[scene].append(metrics["post_ptr_metrics"]["frames"])
+            if architecture in {"P2H", "P3"} and scene == "lift":
+                assert metrics["engine_diagnostics"]["afterfire_event_count"] > 0
+                phase_trace = json.loads((case / "phase_trace.json").read_text(encoding="utf-8"))
+                assert phase_trace["status"] == "PERSISTENT_ENGINE_TRACE"
+                assert len(phase_trace["phase_rad"]) == len(phase_trace["sample_counter"])
+    assert all(len(set(counts)) == 1 for counts in frame_counts.values())
+
+
+def test_migration_manifest_keeps_w10_selection_gate_closed(tmp_path) -> None:
+    root = tmp_path / "ferrari"
+    run_preselection_vehicle_migration(root, "ferrari_458", duration_s=0.25)
+
+    manifest = json.loads((root / "migration_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["reference_status"] == "REFERENCE_TARGET_MISSING"
+    assert manifest["selected_architecture"] is None
+    assert manifest["status"] == "UNSELECTED_CANDIDATE_MIGRATION"
+
+
+def test_migration_validator_requires_complete_case_artifact_inventory(tmp_path) -> None:
+    root = tmp_path / "incomplete"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+
+    relative = "P2H/lift/phase_trace.json"
+    (root / relative).unlink()
+    manifest = json.loads((root / "migration_manifest.json").read_text(encoding="utf-8"))
+    manifest["files"].pop(relative)
+    (root / "migration_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert f"missing_required:{relative}" in errors
+
+
+def test_migration_validator_rejects_tampered_case_evidence_classes(tmp_path) -> None:
+    baseline = tmp_path / "baseline"
+    run_preselection_vehicle_migration(baseline, "rx7_fd", duration_s=0.25)
+
+    def resign(root, case_relative: str, changed_file: str | None = None) -> None:
+        case = root / case_relative
+        inner_path = case / "sha256_manifest.json"
+        inner = json.loads(inner_path.read_text(encoding="utf-8"))
+        if changed_file is not None:
+            inner[changed_file] = sha256_file(case / changed_file)
+        inner_path.write_text(json.dumps(inner), encoding="utf-8")
+        manifest_path = root / "migration_manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for path in root.rglob("*"):
+            if path.is_file() and path.name != "migration_manifest.json":
+                manifest["files"][path.relative_to(root).as_posix()] = sha256_file(path)
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    cases = {
+        "internal_sha": ("P2H/lift", None, "case_manifest_sha"),
+        "saved_click": ("P2H/lift", None, "click_saved"),
+        "wrong_afterfire": ("P2H/hot_idle", None, "afterfire_wrong_condition"),
+        "parameter_gate": ("P2H/lift", None, "parameter_consumption"),
+        "raw_monitor": ("P2H/lift", lambda case: shutil.copyfile(case / "raw_source.wav", case / "monitor.wav"), "raw_monitor_separation"),
+    }
+    for name, (case_relative, mutate, expected) in cases.items():
+        root = tmp_path / name
+        shutil.copytree(baseline, root)
+        case = root / case_relative
+        if name in {"saved_click", "wrong_afterfire", "parameter_gate"}:
+            metrics_path = case / "metrics.json"
+            metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+            if name == "saved_click":
+                metrics["click_metrics"]["raw"].update({"passed": True, "max_boundary_jump": 999.0})
+            elif name == "wrong_afterfire":
+                metrics["engine_diagnostics"].update({"afterfire_event_count": 1})
+            else:
+                metrics["engine_diagnostics"]["parameter_consumption"].update({"transfer_ir": "yes"})
+            metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+            resign(root, case_relative, "metrics.json")
+        elif name == "internal_sha":
+            inner_path = case / "sha256_manifest.json"
+            inner = json.loads(inner_path.read_text(encoding="utf-8"))
+            inner["metrics.json"] = "0"
+            inner_path.write_text(json.dumps(inner), encoding="utf-8")
+            resign(root, case_relative)
+        else:
+            mutate(case)
+            resign(root, case_relative, "monitor.wav")
+        assert any(expected in error for error in validate_vehicle_migration_manifest(root)), name
+
+
+def test_migration_validator_cross_checks_nested_results_inventory(tmp_path) -> None:
+    root = tmp_path / "nested"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"].pop("lift")
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert "results_scene_inventory:P2H" in validate_vehicle_migration_manifest(root)
+
+
+@pytest.mark.parametrize(
+    ("vehicle_id", "expected"),
+    (
+        ("rx7_fd", {"crankpin_geometry": False, "rotor_geometry": True}),
+        ("ferrari_458", {"crankpin_geometry": True, "rotor_geometry": False}),
+    ),
+)
+def test_migration_validator_enforces_architecture_geometry_consumption(tmp_path, vehicle_id, expected) -> None:
+    root = tmp_path / vehicle_id
+    run_preselection_vehicle_migration(root, vehicle_id, duration_s=0.25)
+    assert validate_vehicle_migration_manifest(root) == []
+
+    metrics_path = root / "P2H" / "hot_idle" / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    metrics["engine_diagnostics"]["parameter_consumption"].update(
+        {key: not value for key, value in expected.items()}
+    )
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    case_manifest_path = metrics_path.parent / "sha256_manifest.json"
+    case_manifest = json.loads(case_manifest_path.read_text(encoding="utf-8"))
+    case_manifest["metrics.json"] = sha256_file(metrics_path)
+    case_manifest_path.write_text(json.dumps(case_manifest), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["P2H/hot_idle/metrics.json"] = sha256_file(metrics_path)
+    outer["files"]["P2H/hot_idle/sha256_manifest.json"] = sha256_file(case_manifest_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("geometry_consumption:P2H/hot_idle" in error for error in validate_vehicle_migration_manifest(root))
+
+
+@pytest.mark.parametrize("matrix", (None, {}, {"stage_w_consumed_paths": {"geometry": {}}}))
+def test_migration_validator_fails_closed_for_missing_or_malformed_geometry_matrix(tmp_path, monkeypatch, matrix) -> None:
+    root = tmp_path / "matrix"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    matrix_path = tmp_path / "parameter_usage_matrix.json"
+    if matrix is not None:
+        matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+    monkeypatch.setattr(migration_module, "PARAMETER_USAGE_MATRIX_PATH", matrix_path)
+    errors = validate_vehicle_migration_manifest(root)
+    assert "geometry_matrix_invalid" in errors
+
+
+def test_migration_validator_fails_closed_for_mismatched_geometry_matrix(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "matrix_mismatch"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    matrix_path = tmp_path / "parameter_usage_matrix.json"
+    matrix_path.write_text(
+        json.dumps(
+            {
+                "stage_w_consumed_paths": {
+                    "geometry": {
+                        "piston.crankpin_geometry": False,
+                        "piston.rotor_geometry": True,
+                        "rotary.crankpin_geometry": False,
+                        "rotary.rotor_geometry": True,
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(migration_module, "PARAMETER_USAGE_MATRIX_PATH", matrix_path)
+    assert "geometry_matrix_mismatch" in validate_vehicle_migration_manifest(root)
+
+
+@pytest.mark.parametrize("hash_key", ("raw_source_sha256", "post_ptr_sha256", "monitor_sha256"))
+def test_migration_validator_rejects_rebound_nested_result_hash_tampering(tmp_path, hash_key) -> None:
+    root = tmp_path / hash_key
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"][hash_key] = "0" * 64
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["migration_results.json"] = sha256_file(results_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("results_hash:P2H/lift/" in error for error in validate_vehicle_migration_manifest(root))
+
+
+def test_migration_validator_rejects_rebound_nested_result_hash_inventory_tampering(tmp_path) -> None:
+    root = tmp_path / "nested_hash_inventory"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"].pop("monitor_sha256")
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    outer_path = root / "migration_manifest.json"
+    outer = json.loads(outer_path.read_text(encoding="utf-8"))
+    outer["files"]["migration_results.json"] = sha256_file(results_path)
+    outer_path.write_text(json.dumps(outer), encoding="utf-8")
+    assert any("results_hash:P2H/lift/monitor_sha256" in error for error in validate_vehicle_migration_manifest(root))
+
+
+def test_migration_validator_rejects_rebound_malformed_architecture_node(tmp_path) -> None:
+    root = tmp_path / "malformed_architecture"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"] = []
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert isinstance(errors, list)
+    assert "results_architecture_node:P2H" in errors
+
+
+def test_migration_validator_rejects_rebound_malformed_scene_node(tmp_path) -> None:
+    root = tmp_path / "malformed_scene"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    results_path = root / "migration_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results["architectures"]["P2H"]["lift"] = None
+    results_path.write_text(json.dumps(results), encoding="utf-8")
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["migration_results.json"] = sha256_file(results_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+    assert isinstance(errors, list)
+    assert "results_scene_node:P2H/lift" in errors
+
+
+def test_migration_validator_requires_manifest_files_mapping(tmp_path) -> None:
+    root = tmp_path / "malformed_files"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"] = []
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert isinstance(errors, list)
+    assert "manifest_files_invalid" in errors
+
+
+def test_migration_validator_rejects_extra_listed_and_unlisted_files(tmp_path) -> None:
+    listed_root = tmp_path / "extra_listed"
+    run_preselection_vehicle_migration(listed_root, "rx7_fd", duration_s=0.25)
+    extra = listed_root / "unexpected.json"
+    extra.write_text("{}\n", encoding="utf-8")
+    manifest_path = listed_root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["unexpected.json"] = sha256_file(extra)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    errors = validate_vehicle_migration_manifest(listed_root)
+    assert "outer_manifest_extra:unexpected.json" in errors
+
+    unlisted_root = tmp_path / "unlisted"
+    run_preselection_vehicle_migration(unlisted_root, "rx7_fd", duration_s=0.25)
+    (unlisted_root / "unexpected.json").write_text("{}\n", encoding="utf-8")
+    assert "outer_unlisted:unexpected.json" in validate_vehicle_migration_manifest(unlisted_root)
+
+
+def test_migration_validator_rejects_unsafe_and_duplicate_inventory_paths(tmp_path) -> None:
+    root = tmp_path / "unsafe_inventory"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"]["../escape.json"] = "0" * 64
+    manifest["files"]["P1/hot_idle/./raw_source.wav"] = manifest["files"]["P1/hot_idle/raw_source.wav"]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert any(error.startswith("unsafe_path:../escape.json") for error in errors)
+    assert any("duplicate_inventory:P1/hot_idle/raw_source.wav" in error for error in errors)
+
+
+def test_migration_validator_rejects_empty_inventory_path_without_raising(tmp_path) -> None:
+    root = tmp_path / "empty_inventory_path"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"][""] = "0" * 64
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert isinstance(errors, list)
+    assert any(error.startswith("unsafe_path:") for error in errors)
+
+
+def test_migration_validator_rejects_non_mapping_case_json_without_raising(tmp_path) -> None:
+    root = tmp_path / "non_mapping_case_json"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    metrics_path = root / "P1" / "hot_idle" / "metrics.json"
+    metrics_path.write_text("[]", encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert isinstance(errors, list)
+    assert any(error.startswith("artifact:P1/hot_idle:") for error in errors)
+
+
+def test_migration_validator_rejects_duplicate_manifest_keys(tmp_path) -> None:
+    root = tmp_path / "duplicate_keys"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    files = json.dumps(manifest["files"], sort_keys=True)
+    duplicate = (
+        '{"schema_version":"s12.stage_w.vehicle_migration_manifest.v1",'
+        '"status":"UNSELECTED_CANDIDATE_MIGRATION","vehicle_id":"rx7_fd",'
+        '"selected_architecture":null,"reference_status":"REFERENCE_TARGET_MISSING",'
+        '"files":' + files + ',"files":' + files + '}'
+    )
+    manifest_path.write_text(duplicate, encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert any(error.startswith("migration_manifest.json invalid:") for error in errors)
+
+
+def test_migration_validator_rejects_unlisted_nested_same_name_manifest(tmp_path) -> None:
+    root = tmp_path / "nested_manifest"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    nested = root / "P1" / "hot_idle" / "migration_manifest.json"
+    nested.write_text("{}\n", encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    assert "outer_unlisted:P1/hot_idle/migration_manifest.json" in errors
+
+
+def test_migration_validator_rejects_all_cross_platform_unsafe_manifest_paths(tmp_path) -> None:
+    root = tmp_path / "cross_platform_unsafe"
+    run_preselection_vehicle_migration(root, "rx7_fd", duration_s=0.25)
+    manifest_path = root / "migration_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    source = root / "migration_results.json"
+    unsafe_paths = (
+        "",
+        ".",
+        "P1/./hot_idle/raw_source.wav",
+        "P1//hot_idle/raw_source.wav",
+        "P1/hot_idle/",
+        "../escape.json",
+        "/escape",
+        "\\escape",
+        "C:/escape",
+        "C:\\escape",
+        "//server/share/escape",
+        "\\\\server\\share\\escape",
+    )
+    for relative in unsafe_paths:
+        manifest["files"][relative] = sha256_file(source)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    errors = validate_vehicle_migration_manifest(root)
+
+    for relative in unsafe_paths:
+        assert f"unsafe_path:{relative}" in errors
+
+
+def test_migration_is_deterministic_for_identical_rx7_input(tmp_path) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    run_preselection_vehicle_migration(first, "rx7_fd", duration_s=0.25)
+    run_preselection_vehicle_migration(second, "rx7_fd", duration_s=0.25)
+
+    first_manifest = json.loads((first / "migration_manifest.json").read_text(encoding="utf-8"))
+    second_manifest = json.loads((second / "migration_manifest.json").read_text(encoding="utf-8"))
+    for relative, sha256 in first_manifest["files"].items():
+        if relative.endswith(("raw_source.wav", "post_ptr_raw.wav", "monitor.wav")):
+            assert second_manifest["files"][relative] == sha256

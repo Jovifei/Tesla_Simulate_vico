@@ -29,10 +29,23 @@ def compute_realism_metrics(
         "energy_fraction_200_500hz": _band_fraction(energy, frequencies, 200.0, 500.0),
         "radiation_stem_energy": _energy(_stem(render, "radiation")),
     }
+    band_shares = {
+        "20_250hz": _band_fraction(energy, frequencies, 20.0, 250.0),
+        "250_1000hz": _band_fraction(energy, frequencies, 250.0, 1000.0),
+        "1_4khz": _band_fraction(energy, frequencies, 1000.0, 4000.0),
+        "4_12khz": _band_fraction(energy, frequencies, 4000.0, 12000.0),
+    }
     transients = {
         "afterfire_event_count": int(render.diagnostics.get("afterfire_event_count", 0)),
         "afterfire_stem_energy": _energy(afterfire),
         "afterfire_peak_to_rms": _peak_to_rms(afterfire),
+        "afterfire_centroid_hz": float(render.diagnostics.get("afterfire_centroid_hz", 0.0) or 0.0),
+        "afterfire_onset_s": render.diagnostics.get("afterfire_onset_s"),
+        "afterfire_decay_ratio": float(render.diagnostics.get("afterfire_decay_ratio", 0.0) or 0.0),
+        "rumble_energy_30_90hz": _band_energy(_stem(render, "exhaust_rumble"), sample_rate_hz, 30.0, 90.0),
+        "shift_event_count": int(render.diagnostics.get("shift_event_count", 0)),
+        "shift_impact_energy": float(render.diagnostics.get("shift_impact_energy", 0.0) or 0.0),
+        "shift_recovery_boom_energy": float(render.diagnostics.get("shift_recovery_boom_energy", 0.0) or 0.0),
         "closed_throttle_fraction": float(np.mean(trace.throttle < 0.12)),
     }
     idle = {
@@ -45,6 +58,7 @@ def compute_realism_metrics(
         "crest_factor_db": _crest_factor_db(signal),
         "idle": idle,
         "low_frequency": low_frequency,
+        "band_shares": band_shares,
         "transients": transients,
     }
     if vehicle_id == "ferrari_458":
@@ -69,6 +83,7 @@ def compute_realism_metrics(
         "finite": bool(np.all(np.isfinite(signal)) and all(np.isfinite(value) for value in _numbers(feature))),
         "idle": idle,
         "low_frequency": low_frequency,
+        "band_shares": band_shares,
         "transients": transients,
         "vehicle_features": {vehicle_id: feature},
     }
@@ -80,6 +95,16 @@ def _stem(render: SourceRender, name: str) -> np.ndarray:
 
 def _energy(stereo: np.ndarray) -> float:
     return float(np.sum(np.square(np.asarray(stereo, dtype=np.float64))))
+
+
+def _band_energy(stereo: np.ndarray, sample_rate_hz: int, low_hz: float, high_hz: float) -> float:
+    values = np.asarray(stereo, dtype=np.float64)
+    if values.size == 0:
+        return 0.0
+    signal = values.mean(axis=1)
+    energy = np.square(np.abs(np.fft.rfft(signal * np.hanning(signal.size))))
+    frequencies = np.fft.rfftfreq(signal.size, 1.0 / sample_rate_hz)
+    return float(energy[(frequencies >= low_hz) & (frequencies <= high_hz)].sum())
 
 
 def _spectrum(signal: np.ndarray, sample_rate_hz: int) -> tuple[np.ndarray, np.ndarray]:

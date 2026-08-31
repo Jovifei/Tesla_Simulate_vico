@@ -1,0 +1,16 @@
+{
+  "audio_header": {
+    "bit_rate": 256000,
+    "channels": 2,
+    "codec": "pcm_s16le",
+    "container": "wav",
+    "duration_s": 16.5,
+    "frames": 792020,
+    "sample_rate_hz": 48000,
+    "sample_width_bits": 16
+  },
+  "reason": "没有通过 Stage Q 证据门；不会将未授权/未对齐音频的特征提升为标定目标。",
+  "recording_id": "rx7sim_interior_revLong01",
+  "status": "NOT_COMPUTED_UNQUALIFIED",
+  "vehicle_id": "rx7_fd"
+}

@@ -1,0 +1,12 @@
+{
+  "automatic_tuning_eligible": false,
+  "cases": [],
+  "comparator_status": "NOT_RUN",
+  "matlab_order_status": "NOT_RUN_WAITING_FOR_R1_PILOT",
+  "matlab_psychoacoustic_status": "NOT_RUN",
+  "profile_candidate_ready": false,
+  "reason": "没有真实 R1 试点文件；不调用 MATLAB、Comparator 或调音。",
+  "recording_id": "hellcat_full_pull_01",
+  "schema_version": "s12.stage_r.r1-pilot-comparison-results.v1",
+  "status": "NOT_RUN_WAITING_FOR_R1_PILOT"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "s12.stage_w.w3_ptr_receipt.v1",
+  "status": "FROZEN_PTR_INTEGRATION_PASS",
+  "adapter": "RuntimePtrAdapter",
+  "adapter_sha256": "2BDCD21182EA083D2079239179EC6CE749B9519C8EA40095D9F202FE86036CFA",
+  "package_path": "tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json",
+  "package_file_sha256": "0F4B2CA494CD44F79D05968513759578D04E6AB38B1EE37F7621158ABB0D2D6F",
+  "package_asset_sha256": "7DA7AAFDF51BE57ECEE75D98948B7D6C94BEC0944A6316D8A29C9B675D621446",
+  "source_commit": "4afe65a67ed21822422f1eb6dbf43fdd627072d3",
+  "raw_post_ptr_distinct": true,
+  "stateful_across_blocks": true,
+  "snapshot_restore": true,
+  "default_stage_v_path_modified": false,
+  "full_fvm_ptr_network": false,
+  "tests": "2 passed",
+  "scope": ["synthetic", "uncalibrated", "vehicle-inspired", "not OEM reproduction", "NOT_R1_QUALIFIED", "NOT_PROFILE_FREEZE_READY"]
+}

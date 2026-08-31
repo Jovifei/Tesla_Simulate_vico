@@ -1,0 +1,24 @@
+{
+  "run_id": "y3-postfix-20260831T043010185968Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "-q"
+  ],
+  "started_at": "2026-08-31T04:30:10.223585+00:00",
+  "ended_at": "2026-08-31T04:30:15.883292+00:00",
+  "exit_code": 0,
+  "source_head": "c4b06e6897f449b05f6e30a2f29f72dc0624475e",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.stdout.log",
+      "sha256": "ba0317834d46412437cf7a189d268d969f579f3857e1c7c13b77cb8e425f36ad"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

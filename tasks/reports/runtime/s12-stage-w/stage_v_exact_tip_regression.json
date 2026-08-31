@@ -1,0 +1,12 @@
+{
+  "schema_version": "s12.stage_w.stage_v_exact_tip_regression.v1",
+  "exact_tip": "03f45432bd56f348d618ed69f25dfea86bc98a6f",
+  "branch": "agent/s12-stage-w-ecosystem-bakeoff",
+  "stage_v_focused": {"status": "PASS", "result": "31 passed"},
+  "track_p_guard": {"status": "PASS", "frozen_files": 180, "frozen_symbols": 2},
+  "diff_check": "PASS",
+  "commit_file_count": 37,
+  "remote_runtime_outputs": "NOT_VERIFIABLE_FROM_REMOTE",
+  "source_receipt": "03f45432bd56f348d618ed69f25dfea86bc98a6f",
+  "next_gate": "W1 persistent engine state"
+}

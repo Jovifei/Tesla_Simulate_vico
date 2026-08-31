@@ -1,0 +1,2452 @@
+{
+  "dashboard_exact_pair_count": 9,
+  "qualification_boundary": {
+    "automatic_tuning_eligible": false,
+    "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+    "profile_candidate_ready": false,
+    "r1_count": 0,
+    "raw_media_policy": "external_only_not_in_git"
+  },
+  "record_count": 33,
+  "records": [
+    {
+      "candidate_id": "ferrari_01:candidate",
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.0611804980629083,
+        "loudness_sone": -30.51892418676256,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -2.342322563026521,
+        "roughness_asper": -0.05812054961144818,
+        "sharpness_acum": -0.15307800360036183,
+        "tone_to_noise_frequency_hz": 380.25054931640625,
+        "tone_to_noise_ratio_db": 16.402566371100775
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -18.34,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 0.12016245889671064,
+        "sharpness_acum": -0.1556565845136586,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "ferrari_01",
+      "reference_class": "R3",
+      "reference_id": "ferrari_01:reference",
+      "reference_sha256": "b8c63c5f5494fb9241c221bd2b657f73477ad91724de0b58c809d8afcb2f97a1",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.6081751193924506,
+            "delta": 0.4820781097012884,
+            "reference_share": 0.12609700969116225,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.106741455829541,
+            "delta": -0.17291601937041964,
+            "reference_share": 0.27965747519996065,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.00047688709099876826,
+            "delta": 0.0003617876565436362,
+            "reference_share": 0.00011509943445513207,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.053836747378841865,
+            "delta": -0.20376932181872787,
+            "reference_share": 0.25760606919756973,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 6.724577486000683e-05,
+            "delta": -0.001811575347055061,
+            "reference_share": 0.0018788211219150678,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.22967485695799672,
+            "delta": -0.09635192673200638,
+            "reference_share": 0.3260267836900031,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 1.2180133728308865e-05,
+            "delta": -0.0012512770939909564,
+            "reference_share": 0.0012634572277192653,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.0007442888373389672,
+            "delta": -0.004806312253361439,
+            "reference_share": 0.005550601090700406,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.6768960760367677
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 1.4430385487528343,
+          "crest_factor": -0.14502454249123042,
+          "decay_to_10pct_s": 0.00027210884353741496,
+          "event_count_proxy": -12,
+          "impact_peak": -0.5720907544266587,
+          "spectral_flux_proxy": -1.0293618851082824
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 70.62498866213151
+      }
+    },
+    {
+      "candidate_id": "ferrari_02:candidate",
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.01348120703501098,
+        "loudness_sone": -10.879746688404701,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -0.36847792315788075,
+        "roughness_asper": -0.06354459190535812,
+        "sharpness_acum": 0.3315754858033636,
+        "tone_to_noise_frequency_hz": 1671.56982421875,
+        "tone_to_noise_ratio_db": 18.260030867320587
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -6.609999999999996,
+        "prominence_frequency_hz": 1772.3,
+        "prominence_ratio_db": 8.630206072648726,
+        "roughness_asper": 0.12694059600134203,
+        "sharpness_acum": 0.3389200359896797,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "ferrari_02",
+      "reference_class": "R3",
+      "reference_id": "ferrari_02:reference",
+      "reference_sha256": "6796b8aa3c4180c050966126055d9d7975696e9821758be2368054cfb01b8065",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.6081751193924506,
+            "delta": 0.5971012299393975,
+            "reference_share": 0.01107388945305314,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.106741455829541,
+            "delta": -0.05741190555001388,
+            "reference_share": 0.16415336137955489,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.00047688709099876826,
+            "delta": 6.069254357463652e-05,
+            "reference_share": 0.00041619454742413173,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.053836747378841865,
+            "delta": -0.608831180480399,
+            "reference_share": 0.6626679278592408,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 6.724577486000683e-05,
+            "delta": 5.8499076680985655e-05,
+            "reference_share": 8.746698179021176e-06,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.22967485695799672,
+            "delta": 0.07042418207525042,
+            "reference_share": 0.1592506748827463,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 1.2180133728308865e-05,
+            "delta": 1.1133412500791972e-05,
+            "reference_share": 1.0467212275168924e-06,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.0007442888373389672,
+            "delta": -0.0016596069436026271,
+            "reference_share": 0.0024038957809415945,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.5250994951678162
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 2.3904308390022675,
+          "crest_factor": 0.18388777099965203,
+          "decay_to_10pct_s": -0.0003628117913832199,
+          "event_count_proxy": 0,
+          "impact_peak": -0.5432211255204087,
+          "spectral_flux_proxy": -0.9787891738816947
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 101.37501133786849
+      }
+    },
+    {
+      "candidate_id": "ferrari_03:candidate",
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.30194658713687594,
+        "loudness_sone": -30.040716417159203,
+        "prominence_frequency_hz": 0.0,
+        "prominence_ratio_db": -2.687590160830271,
+        "roughness_asper": -0.09824373049975697,
+        "sharpness_acum": -0.34332940124922695,
+        "tone_to_noise_frequency_hz": 1248.6328125,
+        "tone_to_noise_ratio_db": 18.440629144056977
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -17.810000000000002,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 0.10248945734719093,
+        "sharpness_acum": -0.3483502784361585,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "ferrari_03",
+      "reference_class": "R3",
+      "reference_id": "ferrari_03:reference",
+      "reference_sha256": "4cd34d2133f7280389a90e0420575530e065e65ba0cca4bd2c84c12e56045385",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 48000
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.6080063077821912,
+            "delta": 0.4468471956766993,
+            "reference_share": 0.16115911210549194,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.10684169187916064,
+            "delta": -0.14876459944039394,
+            "reference_share": 0.2556062913195546,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.0004773629989287784,
+            "delta": -0.004295080741058925,
+            "reference_share": 0.004772443739987703,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.05388085843990833,
+            "delta": -0.15819594105395438,
+            "reference_share": 0.2120767994938627,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 6.727045785770184e-05,
+            "delta": -0.010388195012644806,
+            "reference_share": 0.010455465470502509,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.22969766486168594,
+            "delta": -0.10458168504677093,
+            "reference_share": 0.33427934990845687,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 1.215063851191066e-05,
+            "delta": -0.006093786605204582,
+            "reference_share": 0.006105937243716493,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.0007450232864599918,
+            "delta": -0.013907153171952374,
+            "reference_share": 0.014652176458412366,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.762764220243177
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 1.9465624999999998,
+          "crest_factor": -1.1093552744376551,
+          "decay_to_10pct_s": -0.00014583333333333343,
+          "event_count_proxy": -19,
+          "impact_peak": -0.5725555419921875,
+          "spectral_flux_proxy": -1.6217559676347424
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 17.375
+      }
+    },
+    {
+      "candidate_id": "hellcat_01:candidate",
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": 0.002614195428309451,
+        "loudness_sone": -5.705058849751296,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -2.7252307853698268,
+        "roughness_asper": 0.17124805249368308,
+        "sharpness_acum": 0.48142226850708736,
+        "tone_to_noise_frequency_hz": 417.41943359375,
+        "tone_to_noise_ratio_db": 11.938116619652659
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -3.3900000000000006,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 1.4027381346859211,
+        "sharpness_acum": 0.5072211409201355,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "hellcat_01",
+      "reference_class": "R3",
+      "reference_id": "hellcat_01:reference",
+      "reference_sha256": "89ed8170e24762f0fc36b0be434716228e10a5eb5e0fb979414ab6eb89e2e0ec",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.014463627003084541,
+            "delta": 0.008308482350804062,
+            "reference_share": 0.006155144652280478,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.1893328878271011,
+            "delta": -0.333930517887702,
+            "reference_share": 0.5232634057148031,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.07407755895927483,
+            "delta": -0.05158220630179754,
+            "reference_share": 0.12565976526107236,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.1550385118978462,
+            "delta": 0.012604012954538751,
+            "reference_share": 0.14243449894330745,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 0.009549577244540464,
+            "delta": 0.009535061072953922,
+            "reference_share": 1.451617158654343e-05,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.15116497075278865,
+            "delta": 0.09516696468694125,
+            "reference_share": 0.05599800606584741,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 0.0015510982763167888,
+            "delta": 0.0015433799154185408,
+            "reference_share": 7.718360898247918e-06,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.40197009414987184,
+            "delta": 0.25655125410419577,
+            "reference_share": 0.1454188400456761,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.6746947297603175
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 1.2251927437641723,
+          "crest_factor": 2.2451292328923507,
+          "decay_to_10pct_s": -0.00308390022675737,
+          "event_count_proxy": 24,
+          "impact_peak": -0.19828520394630667,
+          "spectral_flux_proxy": 1.1710562376537634
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 94.87501133786849
+      }
+    },
+    {
+      "candidate_id": "hellcat_02:candidate",
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.024807992321206236,
+        "loudness_sone": 2.082433077669151,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -1.8043988446383552,
+        "roughness_asper": 0.20424347098076495,
+        "sharpness_acum": 0.48990946054087026,
+        "tone_to_noise_frequency_hz": 774.51171875,
+        "tone_to_noise_ratio_db": 15.147307771884087
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": 1.1999999999999993,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 1.6970044033724627,
+        "sharpness_acum": 0.5061691331912324,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "hellcat_02",
+      "reference_class": "R3",
+      "reference_id": "hellcat_02:reference",
+      "reference_sha256": "0e8f94a9812fd5a2e305cb31e3f2afe13538096155aa93ad5293b780c34bbfcb",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.014463627003084541,
+            "delta": 0.010149147477460433,
+            "reference_share": 0.004314479525624109,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.1893328878271011,
+            "delta": 0.05956353176526638,
+            "reference_share": 0.1297693560618347,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.07407755895927483,
+            "delta": -0.05671828028658803,
+            "reference_share": 0.13079583924586285,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.1550385118978462,
+            "delta": -0.27738101754829825,
+            "reference_share": 0.4324195294461444,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 0.009549577244540464,
+            "delta": 0.00952738108457898,
+            "reference_share": 2.219615996148381e-05,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.15116497075278865,
+            "delta": 0.11504322719579446,
+            "reference_share": 0.036121743556994185,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 0.0015510982763167888,
+            "delta": 0.0015413606656349912,
+            "reference_share": 9.737610681797662e-06,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.40197009414987184,
+            "delta": 0.14391923252987016,
+            "reference_share": 0.2580508616200017,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.715623669401793
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 1.1526530612244898,
+          "crest_factor": 2.352661033857785,
+          "decay_to_10pct_s": 9.0702947845805e-05,
+          "event_count_proxy": 24,
+          "impact_peak": 0.11540498160056833,
+          "spectral_flux_proxy": 0.5680170591792706
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 51.37501133786848
+      }
+    },
+    {
+      "candidate_id": "hellcat_03:candidate",
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.13558423146500853,
+        "loudness_sone": 1.6901150593682388,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -3.2398213036595704,
+        "roughness_asper": 0.2085625797779843,
+        "sharpness_acum": 0.37268730118875404,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": 0.9499999999999993,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 1.4144536443613773,
+        "sharpness_acum": 0.3981802314260434,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "hellcat_03",
+      "reference_class": "R3",
+      "reference_id": "hellcat_03:reference",
+      "reference_sha256": "88639a1fd419f9066f69b9ec45eac59eb07300968dad8dd4799dc3c80a618d7b",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.014463627003084541,
+            "delta": 0.009259865687506528,
+            "reference_share": 0.005203761315578013,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.1893328878271011,
+            "delta": -0.4183523964431033,
+            "reference_share": 0.6076852842702044,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.07407755895927483,
+            "delta": 0.06046390711639659,
+            "reference_share": 0.013613651842878235,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.1550385118978462,
+            "delta": -0.03217570902928504,
+            "reference_share": 0.18721422092713125,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 0.009549577244540464,
+            "delta": 0.009516920355255273,
+            "reference_share": 3.2656889285191845e-05,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.15116497075278865,
+            "delta": 0.06909667206146212,
+            "reference_share": 0.08206829869132652,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 0.0015510982763167888,
+            "delta": 0.0014675538809733027,
+            "reference_share": 8.354439534348608e-05,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.40197009414987184,
+            "delta": 0.2983632439548803,
+            "reference_share": 0.10360685019499155,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.6784730523002086
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 3.151814058956916,
+          "crest_factor": 1.2252722797774984,
+          "decay_to_10pct_s": 0.0,
+          "event_count_proxy": 7,
+          "impact_peak": -0.12556181527443167,
+          "spectral_flux_proxy": 0.8692831373197976
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 4.9999999999999964,
+        "start_s": 27.375011337868482
+      }
+    },
+    {
+      "candidate_id": "rx7_01:candidate",
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.01601700389636693,
+        "loudness_sone": -24.699917156816976,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -0.325694768394006,
+        "roughness_asper": 0.1333251303109234,
+        "sharpness_acum": -0.938390505236045,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -14.828,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 2.421399519641339,
+        "sharpness_acum": -0.9690506532867752,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "rx7_01",
+      "reference_class": "R3",
+      "reference_id": "rx7_01:reference",
+      "reference_sha256": "851ae8ffe0295864942cfa8111d48a4ce1ec5e010bba46a0801c5ee6381eba1e",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.00014047018911381184,
+            "delta": -0.2137710118641462,
+            "reference_share": 0.21391148205326002,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.8821589500980656,
+            "delta": 0.6982576781860477,
+            "reference_share": 0.1839012719120179,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.006066292557606072,
+            "delta": -0.1446891510837719,
+            "reference_share": 0.15075544364137797,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.03661992176238302,
+            "delta": -0.05855216128337312,
+            "reference_share": 0.09517208304575614,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 2.827308235731379e-06,
+            "delta": -0.008675429680970419,
+            "reference_share": 0.00867825698920615,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.00828082877110313,
+            "delta": -0.13313722469740463,
+            "reference_share": 0.14141805346850775,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 4.181424536438149e-06,
+            "delta": -0.0058577698264097,
+            "reference_share": 0.005861951250946138,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.06113202583592151,
+            "delta": -0.13901828172050051,
+            "reference_share": 0.20015030755642202,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.853755733505687
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 2.5155782312925172,
+          "crest_factor": -1.8110818076853525,
+          "decay_to_10pct_s": 0.0014058956916099773,
+          "event_count_proxy": -25,
+          "impact_peak": -0.036357562072005245,
+          "spectral_flux_proxy": -2.0328509392950442
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 181.87501133786847
+      }
+    },
+    {
+      "candidate_id": "rx7_02:candidate",
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -1.2106684779260968,
+        "loudness_sone": -17.88216658293077,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": -0.9429268153544471,
+        "roughness_asper": 0.09811410166945564,
+        "sharpness_acum": -0.95205753960203,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -11.178,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 2.09830571550142,
+        "sharpness_acum": -0.960745320201759,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "rx7_02",
+      "reference_class": "R3",
+      "reference_id": "rx7_02:reference",
+      "reference_sha256": "f8b3ef807221a0761f1ec09eb44b940da55ee5741ac6ea5140fe0f4cc6beccd4",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.00014047018911381184,
+            "delta": -0.05099895577255615,
+            "reference_share": 0.05113942596166996,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.8821589500980656,
+            "delta": 0.8278564969518826,
+            "reference_share": 0.054302453146182955,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.006066292557606072,
+            "delta": 0.00595934509977986,
+            "reference_share": 0.0001069474578262114,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.03661992176238302,
+            "delta": -0.11068355827708246,
+            "reference_share": 0.14730348003946547,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 2.827308235731379e-06,
+            "delta": -0.0020810537056243548,
+            "reference_share": 0.0020838810138600864,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.00828082877110313,
+            "delta": -0.7274813752331719,
+            "reference_share": 0.7357622040042751,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 4.181424536438149e-06,
+            "delta": -0.008733059500698423,
+            "reference_share": 0.008737240925234861,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.06113202583592151,
+            "delta": 0.060832633916667836,
+            "reference_share": 0.0002993919192536764,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.8403131824035964
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 1.388140589569161,
+          "crest_factor": -1.172462283508596,
+          "decay_to_10pct_s": 0.0013151927437641724,
+          "event_count_proxy": -12,
+          "impact_peak": 0.031849225037369755,
+          "spectral_flux_proxy": -5.299076716835173
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 1632.6249886621315
+      }
+    },
+    {
+      "candidate_id": "rx7_03:candidate",
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "evidence_family": "dashboard_exact_ab",
+      "human_status": "WAITING_FOR_JOVI_GUIDED_REVIEW",
+      "matlab_psychoacoustic_residual": {
+        "fluctuation_vacil": -0.9681211360158424,
+        "loudness_sone": -12.806567934402697,
+        "prominence_frequency_hz": -1.6937255859375,
+        "prominence_ratio_db": 0.3044342511528182,
+        "roughness_asper": -0.008591990281416662,
+        "sharpness_acum": -1.0777057054568981,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "microphone_uncertainty": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+      "mosqito_psychoacoustic_residual": {
+        "fluctuation_vacil": null,
+        "loudness_sone": -7.8580000000000005,
+        "prominence_frequency_hz": null,
+        "prominence_ratio_db": null,
+        "roughness_asper": 1.9602834507080793,
+        "sharpness_acum": -1.0839170774632754,
+        "tone_to_noise_frequency_hz": null,
+        "tone_to_noise_ratio_db": null
+      },
+      "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+      "recording_id": "rx7_03",
+      "reference_class": "R3",
+      "reference_id": "rx7_03:reference",
+      "reference_sha256": "6413d2ef5379d224c7e2335a8debfbb34106932f13a64d99266b23e327a99cfe",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "scenario_candidate_peak",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": {
+            "candidate_share": 0.00014047018911381184,
+            "delta": -0.03266057847447094,
+            "reference_share": 0.03280104866358475,
+            "warning": null
+          },
+          "120_250": {
+            "candidate_share": 0.8821589500980656,
+            "delta": 0.8458478396705663,
+            "reference_share": 0.03631111042749919,
+            "warning": null
+          },
+          "20_60": {
+            "candidate_share": 0.006066292557606072,
+            "delta": 0.0059702389132727214,
+            "reference_share": 9.605364433334986e-05,
+            "warning": null
+          },
+          "250_400": {
+            "candidate_share": 0.03661992176238302,
+            "delta": -0.14112680336445785,
+            "reference_share": 0.17774672512684087,
+            "warning": null
+          },
+          "4000_5500": {
+            "candidate_share": 2.827308235731379e-06,
+            "delta": -0.013256691466361234,
+            "reference_share": 0.013259518774596964,
+            "warning": null
+          },
+          "400_1000": {
+            "candidate_share": 0.00828082877110313,
+            "delta": -0.5026602805221442,
+            "reference_share": 0.5109411092932473,
+            "warning": null
+          },
+          "5500_12000": {
+            "candidate_share": 4.181424536438149e-06,
+            "delta": -0.03358375820634081,
+            "reference_share": 0.03358793963087725,
+            "warning": "upstream perceptual compensation; outside validated radiation band; not physical radiation validation"
+          },
+          "60_120": {
+            "candidate_share": 0.06113202583592151,
+            "delta": -0.13337589093340874,
+            "reference_share": 0.19450791676933024,
+            "warning": null
+          }
+        },
+        "legacy_proxy_log_distance": 0.8900053390464808
+      },
+      "tool_domains": [
+        "Professional MATLAB",
+        "Professional MoSQITo",
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "delta": {
+          "attack_s": 2.9212244897959185,
+          "crest_factor": -4.153960493481119,
+          "decay_to_10pct_s": 0.0012698412698412698,
+          "event_count_proxy": -13,
+          "impact_peak": -0.061565081603255245,
+          "spectral_flux_proxy": -3.7906309674131373
+        },
+        "domain": "Legacy Proxy",
+        "status": "PROXY_ONLY"
+      },
+      "uncertainty": {
+        "absolute_spl": "NOT_AVAILABLE",
+        "digital_domain_only": true,
+        "microphone_agc": "UNKNOWN_PUBLIC_VIDEO_CAPTURE",
+        "reference_license_class": "R3",
+        "rpm_state": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 5.0,
+        "start_s": 469.8750113378685
+      }
+    },
+    {
+      "candidate_id": "aventador_lp700_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\aventador_lp700_ab.wav",
+      "candidate_sha256": "88212efe2a36caab458d9ff7c4e48de52717bfbfeb175f61ffc20b40d81de91a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "aventador_01",
+      "reference_class": "R3",
+      "reference_id": "aventador_01:reference",
+      "reference_sha256": "58593d1dfd23a6504d17b2c1e7ace9a92f7bb7b02b80471d86c9f513ee54fa05",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "dyno_full_load_overrun",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.1337014607242564,
+          "120_250": 0.011802710757171396,
+          "20_60": 0.0009258001189760118,
+          "250_400": 0.08972997331863923,
+          "4000_5500": -0.008919598907816862,
+          "400_1000": 0.003511095926787111,
+          "5500_12000": -0.007203692311923061,
+          "60_120": 0.03845321956967702
+        },
+        "legacy_proxy_log_distance": 0.8170840489860227
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "aventador_lp700",
+      "window": {
+        "duration_s": 150.7439455782313,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "aventador_lp700_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\aventador_lp700_ab.wav",
+      "candidate_sha256": "88212efe2a36caab458d9ff7c4e48de52717bfbfeb175f61ffc20b40d81de91a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "aventador_02",
+      "reference_class": "R3",
+      "reference_id": "aventador_02:reference",
+      "reference_sha256": "c904af1080b53eefb3ff2dd08aa1bc2504b6ea76ad2d021981c7bc5a8a67f4b4",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "launch_flyby_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.07100082328421939,
+          "120_250": -0.04765008588324725,
+          "20_60": 0.0007800715202661804,
+          "250_400": -0.040580695208537604,
+          "4000_5500": -0.004397407852154996,
+          "400_1000": 0.12817438341461695,
+          "5500_12000": -0.005155259892847922,
+          "60_120": 0.03354582410088201
+        },
+        "legacy_proxy_log_distance": 0.722384871966175
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "aventador_lp700",
+      "window": {
+        "duration_s": 101.6105215419501,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "aventador_lp700_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\aventador_lp700_ab.wav",
+      "candidate_sha256": "88212efe2a36caab458d9ff7c4e48de52717bfbfeb175f61ffc20b40d81de91a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "aventador_03",
+      "reference_class": "R3",
+      "reference_id": "aventador_03:reference",
+      "reference_sha256": "4ccd09553e3a2b149e298ddba53a9b0e07aee2e3584f71349e89624f262df200",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "onboard_external_launch",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.0010775563419762949,
+          "120_250": -0.009400746567351945,
+          "20_60": -0.0006272401565290484,
+          "250_400": 0.09613609486368835,
+          "4000_5500": -0.0010116854847737672,
+          "400_1000": -0.1232522792189964,
+          "5500_12000": -0.00023300435855837446,
+          "60_120": 0.03081063673491507
+        },
+        "legacy_proxy_log_distance": 0.5721239739330753
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "aventador_lp700",
+      "window": {
+        "duration_s": 96.13061224489796,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "c63_w204_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\c63_w204_ab.wav",
+      "candidate_sha256": "dfcdf88ed4d88b911c9e2cdf99ad9c4a4e97396ebbf3ecd7d5332077ce07df9a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "c63_01",
+      "reference_class": "R3",
+      "reference_id": "c63_01:reference",
+      "reference_sha256": "bc1fc51e55e6e89ba16f301e50561789f6bf0dc17db60e25868ce53338919491",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_idle_rev",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.1151604876745575,
+          "120_250": 0.09685733150865136,
+          "20_60": 0.00689212391225513,
+          "250_400": -0.56366200932523,
+          "4000_5500": -0.004808409682414764,
+          "400_1000": 0.29828206905650534,
+          "5500_12000": -0.008539269355345248,
+          "60_120": 0.05193668554377308
+        },
+        "legacy_proxy_log_distance": 0.7871721570335181
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "c63_w204",
+      "window": {
+        "duration_s": 1207.2518820861678,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "c63_w204_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\c63_w204_ab.wav",
+      "candidate_sha256": "dfcdf88ed4d88b911c9e2cdf99ad9c4a4e97396ebbf3ecd7d5332077ce07df9a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "c63_02",
+      "reference_class": "R3",
+      "reference_id": "c63_02:reference",
+      "reference_sha256": "12b5820bcbf89112386b094518855bcea56bdcaaae974a6de135cb00b87bead6",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "road_acceleration_drift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.2867758802182105,
+          "120_250": -0.5656695882066568,
+          "20_60": 0.008442865902003818,
+          "250_400": -0.04270919014760292,
+          "4000_5500": -0.004925323117827422,
+          "400_1000": 0.2736474335341846,
+          "5500_12000": -0.013378392705501792,
+          "60_120": 0.04993633624107074
+        },
+        "legacy_proxy_log_distance": 0.8584033687960185
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "c63_w204",
+      "window": {
+        "duration_s": 249.4984126984127,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "c63_w204_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\c63_w204_ab.wav",
+      "candidate_sha256": "dfcdf88ed4d88b911c9e2cdf99ad9c4a4e97396ebbf3ecd7d5332077ce07df9a",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "c63_03",
+      "reference_class": "R3",
+      "reference_id": "c63_03:reference",
+      "reference_sha256": "ee1f63ba4e9a0a2bacb679d5dfe737b85f514382468df00d1c60eaaa42584856",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_rev_motion",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.21716444562860807,
+          "120_250": -0.07889264347939942,
+          "20_60": 0.00827222215078305,
+          "250_400": -0.2689235129033998,
+          "4000_5500": -0.00316747494114709,
+          "400_1000": 0.09402137202651373,
+          "5500_12000": -0.001222624393027176,
+          "60_120": 0.02486896503717038
+        },
+        "legacy_proxy_log_distance": 0.7261117048789595
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "c63_w204",
+      "window": {
+        "duration_s": 121.44036281179139,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "ferrari_458_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\ferrari_458_ab.wav",
+      "candidate_sha256": "6d31eae59a0adcf85d9a194bab707302dbb5417e1c55bf268d63abbd199a5fee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "ferrari_01",
+      "reference_class": "R3",
+      "reference_id": "ferrari_01:reference",
+      "reference_sha256": "711a8eda4f1e87365a181402e4799db22e4b9a26c7fd6ac95461f6fe278d02e4",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "start_idle_rev_acceleration",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.4825750054236003,
+          "120_250": -0.17380593402668693,
+          "20_60": 0.000362083252869571,
+          "250_400": -0.20459499300678194,
+          "4000_5500": -0.0016893803158737938,
+          "400_1000": -0.09703878451279724,
+          "5500_12000": -0.0010612636178330063,
+          "60_120": -0.004827286209421903
+        },
+        "legacy_proxy_log_distance": 0.657763640064875
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 143.05814058956915,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "ferrari_458_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\ferrari_458_ab.wav",
+      "candidate_sha256": "6d31eae59a0adcf85d9a194bab707302dbb5417e1c55bf268d63abbd199a5fee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "ferrari_02",
+      "reference_class": "R3",
+      "reference_id": "ferrari_02:reference",
+      "reference_sha256": "2cdedf59c96d7ce6ee725ef67f47aa78492a912de214cf233196ed8c87497769",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "onboard_full_load_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.5970576309542531,
+          "120_250": -0.0573757906415667,
+          "20_60": 6.095280116826093e-05,
+          "250_400": -0.6088697104137372,
+          "4000_5500": 5.906209808707786e-05,
+          "400_1000": 0.07058509502916685,
+          "5500_12000": 1.121952464997127e-05,
+          "60_120": -0.0016602481108846665
+        },
+        "legacy_proxy_log_distance": 0.5181157758311559
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 143.84761904761905,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "ferrari_458_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\ferrari_458_ab.wav",
+      "candidate_sha256": "6d31eae59a0adcf85d9a194bab707302dbb5417e1c55bf268d63abbd199a5fee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "ferrari_03",
+      "reference_class": "R3",
+      "reference_id": "ferrari_03:reference",
+      "reference_sha256": "1165ab8b126db686ef0dc8d53b57ccb12a881a515f9679312392ac303d1cf300",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "launch_acceleration_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.35351741824923255,
+          "120_250": 0.07854186677034061,
+          "20_60": -0.0001437107267564968,
+          "250_400": -0.12276822499426022,
+          "4000_5500": -0.012010666512878385,
+          "400_1000": -0.28922071089565027,
+          "5500_12000": -0.005537674299354569,
+          "60_120": -0.002380522826118469
+        },
+        "legacy_proxy_log_distance": 0.7774662158216076
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "ferrari_458",
+      "window": {
+        "duration_s": 36.664308390022676,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "gtr_r35_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\gtr_r35_ab.wav",
+      "candidate_sha256": "448d99db88d31d8c673de3695612b13535eb3eecc8984a4c2cc15eaad6f78de1",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "gtr_01",
+      "reference_class": "R3",
+      "reference_id": "gtr_01:reference",
+      "reference_sha256": "593697aefec240f2efa1a5e8ca1d75c36e35aed9095fc12f6a8b10020b379144",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "track_road_acceleration",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.17137553149039356,
+          "120_250": 0.13653302620327026,
+          "20_60": -0.02130889185676498,
+          "250_400": 0.017512132053629392,
+          "4000_5500": -0.007674521439909074,
+          "400_1000": 0.13809955843506716,
+          "5500_12000": -0.0033479263029548676,
+          "60_120": -0.0911097531945386
+        },
+        "legacy_proxy_log_distance": 0.7514622784095876
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "gtr_r35",
+      "window": {
+        "duration_s": 344.4680272108844,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "gtr_r35_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\gtr_r35_ab.wav",
+      "candidate_sha256": "448d99db88d31d8c673de3695612b13535eb3eecc8984a4c2cc15eaad6f78de1",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "gtr_02",
+      "reference_class": "R3",
+      "reference_id": "gtr_02:reference",
+      "reference_sha256": "25b5b410ee2f0c5441d4eb734bf3ae06e12621589141ee1dd1cfeb82ca8945b0",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "onboard_full_load_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.004768296409133326,
+          "120_250": 0.07944297606576167,
+          "20_60": 0.01837182347033153,
+          "250_400": -0.5133907810765087,
+          "4000_5500": -1.9918634954536108e-05,
+          "400_1000": 0.398763830450484,
+          "5500_12000": 4.674229610923866e-06,
+          "60_120": 0.018491394916112177
+        },
+        "legacy_proxy_log_distance": 0.5081883504954084
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "gtr_r35",
+      "window": {
+        "duration_s": 480.5369614512472,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "gtr_r35_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\gtr_r35_ab.wav",
+      "candidate_sha256": "448d99db88d31d8c673de3695612b13535eb3eecc8984a4c2cc15eaad6f78de1",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "gtr_03",
+      "reference_class": "R3",
+      "reference_id": "gtr_03:reference",
+      "reference_sha256": "71db37085edf2d7e43d0f46350e478c42254f2a0de1de1ae2f5ab6a0ab450bcd",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "launch_control",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.07099883424537345,
+          "120_250": 0.1419912525565729,
+          "20_60": -0.14711340401596712,
+          "250_400": 0.03533642750042475,
+          "4000_5500": -0.014040256374131196,
+          "400_1000": 0.26777349839459275,
+          "5500_12000": -0.008190090537857403,
+          "60_120": -0.20078545872203504
+        },
+        "legacy_proxy_log_distance": 0.81998934158734
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "gtr_r35",
+      "window": {
+        "duration_s": 70.28680272108843,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "hellcat_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\hellcat_ab.wav",
+      "candidate_sha256": "1bb9027ffe864c5fcb8aec03c1f2f9d121cb6923ec3988eb00d656e045169061",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "hellcat_01",
+      "reference_class": "R3",
+      "reference_id": "hellcat_01:reference",
+      "reference_sha256": "a57ac79e31eff194c221ca129aa8079d0ed3624dc742eca2f3e89da16a99f77a",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "idle_rev_acceleration",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.008328616760517422,
+          "120_250": -0.33396388328917104,
+          "20_60": -0.05159487190439482,
+          "250_400": 0.012621284577901765,
+          "4000_5500": 0.00953334749103642,
+          "400_1000": 0.09516102883548838,
+          "5500_12000": 0.0015411741111092522,
+          "60_120": 0.25658561217014253
+        },
+        "legacy_proxy_log_distance": 0.6734309260707935
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 105.81333333333333,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "hellcat_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\hellcat_ab.wav",
+      "candidate_sha256": "1bb9027ffe864c5fcb8aec03c1f2f9d121cb6923ec3988eb00d656e045169061",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "hellcat_02",
+      "reference_class": "R3",
+      "reference_id": "hellcat_02:reference",
+      "reference_sha256": "8eadb669c105fb3e884488ccc7e98ab0f0cd3ad8a03465b06415314ef284bd81",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "onboard_acceleration_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.01015966658855112,
+          "120_250": 0.05955315865484759,
+          "20_60": -0.0567509478580934,
+          "250_400": -0.2773574134882274,
+          "4000_5500": 0.00952614377278078,
+          "400_1000": 0.11502121967627718,
+          "5500_12000": 0.0015391465677364589,
+          "60_120": 0.14389683615845922
+        },
+        "legacy_proxy_log_distance": 0.7137247185256996
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 162.2378231292517,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "hellcat_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\hellcat_ab.wav",
+      "candidate_sha256": "1bb9027ffe864c5fcb8aec03c1f2f9d121cb6923ec3988eb00d656e045169061",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "hellcat_03",
+      "reference_class": "R3",
+      "reference_id": "hellcat_03:reference",
+      "reference_sha256": "6b33b5c4ecb003a6dd58d93cdf81329aa5850009a621f0fc39182d4c84d9847f",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "idle_rev_acceleration_stock_segment",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.009275165712928156,
+          "120_250": -0.41843343476843675,
+          "20_60": 0.06047211261032137,
+          "250_400": -0.032167577767559574,
+          "4000_5500": 0.0095166094170679,
+          "400_1000": 0.06910840127374404,
+          "5500_12000": 0.0014805215895338031,
+          "60_120": 0.2983989552666725
+        },
+        "legacy_proxy_log_distance": 0.6712651691654616
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "hellcat",
+      "window": {
+        "duration_s": 112.50068027210884,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "lfa_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\lfa_ab.wav",
+      "candidate_sha256": "8e04ec0b50bfedc707ccb7ed534eb1abbba973907e9f1fa5d8059528ea9e34ee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "lfa_01",
+      "reference_class": "R3",
+      "reference_id": "lfa_01:reference",
+      "reference_sha256": "69a7698418a092e5a6d2f17104e6ab120df9c912851ee944460d11f7dbf68062",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_idle_rev",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.3138733868696586,
+          "120_250": -0.15636002913793412,
+          "20_60": 0.0014954239460710666,
+          "250_400": -0.7055297820811857,
+          "4000_5500": 0.04880921857958846,
+          "400_1000": 0.4788917148344494,
+          "5500_12000": 0.023317800915232233,
+          "60_120": -0.004523536886330445
+        },
+        "legacy_proxy_log_distance": 0.7052241560903234
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "lfa",
+      "window": {
+        "duration_s": 153.62321995464853,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "lfa_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\lfa_ab.wav",
+      "candidate_sha256": "8e04ec0b50bfedc707ccb7ed534eb1abbba973907e9f1fa5d8059528ea9e34ee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "lfa_02",
+      "reference_class": "R3",
+      "reference_id": "lfa_02:reference",
+      "reference_sha256": "fd8ba32b4f3a97fdec8f8147c03a9af4327818e3c05b464befd12d6153574031",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "track_acceleration_flyby",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.21932154828431977,
+          "120_250": -0.20760345364815772,
+          "20_60": 0.001558975203264097,
+          "250_400": -0.5760060992385171,
+          "4000_5500": 0.04535998428210816,
+          "400_1000": 0.5060929680411108,
+          "5500_12000": 0.022534138632985416,
+          "60_120": -0.011291501911237086
+        },
+        "legacy_proxy_log_distance": 0.7754674315265868
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "lfa",
+      "window": {
+        "duration_s": 182.76426303854876,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "lfa_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\lfa_ab.wav",
+      "candidate_sha256": "8e04ec0b50bfedc707ccb7ed534eb1abbba973907e9f1fa5d8059528ea9e34ee",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "lfa_03",
+      "reference_class": "R3",
+      "reference_id": "lfa_03:reference",
+      "reference_sha256": "1ce5e16f6b9ac66041cafb5fd9cbc72f170b40aecf6c337dd7cf82fc848f2fc8",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_idle_rev",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": 0.32082347831247726,
+          "120_250": -0.16861640952238854,
+          "20_60": 0.0014545106918458907,
+          "250_400": -0.5332385476404139,
+          "4000_5500": 0.04881663168902971,
+          "400_1000": 0.3210124869285476,
+          "5500_12000": 0.02330474938335698,
+          "60_120": -0.013596877755481306
+        },
+        "legacy_proxy_log_distance": 0.7092895156424578
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "lfa",
+      "window": {
+        "duration_s": 142.05968253968254,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "rx7_fd_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\rx7_fd_ab.wav",
+      "candidate_sha256": "03ffffc1f3937eec52b0dc841e1b54c6c9f90ef4a0a3978e4c0db99f80603fd8",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "rx7_01",
+      "reference_class": "R3",
+      "reference_id": "rx7_01:reference",
+      "reference_sha256": "08334cae15a0e07bd6afa3178c48f7a44fb5819bb505793832e9798700f0aebb",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "period_track_acceleration_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.21186663737537206,
+          "120_250": 0.7020762437844369,
+          "20_60": -0.14541091538861295,
+          "250_400": -0.05879560117237156,
+          "4000_5500": -0.008143950340098557,
+          "400_1000": -0.13356129101048217,
+          "5500_12000": -0.004842449769474159,
+          "60_120": -0.13964686555236172
+        },
+        "legacy_proxy_log_distance": 0.8351563630245674
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 830.3455782312925,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "rx7_fd_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\rx7_fd_ab.wav",
+      "candidate_sha256": "03ffffc1f3937eec52b0dc841e1b54c6c9f90ef4a0a3978e4c0db99f80603fd8",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "rx7_02",
+      "reference_class": "R3",
+      "reference_id": "rx7_02:reference",
+      "reference_sha256": "c5ce73550a99f349be01987bf94d57c806990f0320791c358410187e99759c2b",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_idle_road_acceleration",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.05080012616829568,
+          "120_250": 0.8323944146875769,
+          "20_60": 0.005991599190937273,
+          "250_400": -0.11092530351113192,
+          "4000_5500": -0.0019171979231842465,
+          "400_1000": -0.7287985519868183,
+          "5500_12000": -0.007198597819603877,
+          "60_120": 0.06115907803660967
+        },
+        "legacy_proxy_log_distance": 0.8198211351660423
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 1659.9481179138322,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "rx7_fd_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\rx7_fd_ab.wav",
+      "candidate_sha256": "03ffffc1f3937eec52b0dc841e1b54c6c9f90ef4a0a3978e4c0db99f80603fd8",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "rx7_03",
+      "reference_class": "R3",
+      "reference_id": "rx7_03:reference",
+      "reference_sha256": "ca220552a92065ff75a16b313a1d07203618205f706c6c9181ea6d6d9d156b4c",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "technical_sequential_turbo_demo",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.03251857129490857,
+          "120_250": 0.8503089699387455,
+          "20_60": 0.006002203918660382,
+          "250_400": -0.14208148635646567,
+          "4000_5500": -0.012241194815641484,
+          "400_1000": -0.5055417405050188,
+          "5500_12000": -0.02941862232281102,
+          "60_120": -0.13436610295082965
+        },
+        "legacy_proxy_log_distance": 0.8696532290671004
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "rx7_fd",
+      "window": {
+        "duration_s": 2427.0193197278913,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "supra_jza80_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\supra_jza80_ab.wav",
+      "candidate_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "supra_01",
+      "reference_class": "R3",
+      "reference_id": "supra_01:reference",
+      "reference_sha256": "e8ef231c4f4c2c46dec96d4e0ecd47bab1f9c10cfc23a0efa910052ba5e850de",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "dyno_full_load_sweep",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.08156411757688815,
+          "120_250": 0.31725405375186794,
+          "20_60": -0.3036874299619591,
+          "250_400": -0.028210418983559235,
+          "4000_5500": -0.0007343123183467976,
+          "400_1000": -0.23487262317643337,
+          "5500_12000": -0.0003306926460101575,
+          "60_120": 0.334060992508528
+        },
+        "legacy_proxy_log_distance": 0.814855166956255
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "supra_jza80",
+      "window": {
+        "duration_s": 481.4889795918367,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "supra_jza80_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\supra_jza80_ab.wav",
+      "candidate_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "supra_02",
+      "reference_class": "R3",
+      "reference_id": "supra_02:reference",
+      "reference_sha256": "cbf2e1bc6f3876af414e9a940f88b70ac169cc2ff9977d8d40c1c3b6ae83bd38",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "road_acceleration_shift",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.09728717799419523,
+          "120_250": 0.32046156784000046,
+          "20_60": 0.04309576320611754,
+          "250_400": -0.2910557014493941,
+          "4000_5500": -0.00010681885809715036,
+          "400_1000": -0.45252279675448276,
+          "5500_12000": -6.47700988831336e-05,
+          "60_120": 0.4672498149149938
+        },
+        "legacy_proxy_log_distance": 0.7688029936904351
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "supra_jza80",
+      "window": {
+        "duration_s": 336.3410430839002,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    },
+    {
+      "candidate_id": "supra_jza80_ab",
+      "candidate_path": "tools\\sound_sim\\s12\\acoustic_identity_v015\\docs\\supra_jza80_ab.wav",
+      "candidate_sha256": "e0ddc1809ffbd23d534fbed91a8cfd1863c05e0369fbd388e5a2c566a34a2be0",
+      "evidence_family": "stage_r3_eight_vehicle_summary",
+      "human_status": "WAITING_FOR_JOVI_LISTENING",
+      "matlab_psychoacoustic_residual": null,
+      "microphone_uncertainty": "UNKNOWN",
+      "mosqito_psychoacoustic_residual": null,
+      "order_status": "not_evaluated_without_rpm_trace",
+      "recording_id": "supra_03",
+      "reference_class": "R3",
+      "reference_id": "supra_03:reference",
+      "reference_sha256": "7141923da02d514067465945c4e4c1e8d13da194862f52fd0fd45c91a5212b9b",
+      "sample_rate_hz": {
+        "candidate": 48000,
+        "reference": 44100
+      },
+      "scenario": "startup_road_acceleration",
+      "spectral_residual": {
+        "band_deltas": {
+          "1000_4000": -0.004332308143621513,
+          "120_250": 0.21690556948863152,
+          "20_60": -0.08621471059922367,
+          "250_400": -0.13667492017617117,
+          "4000_5500": -0.0002019427430959072,
+          "400_1000": -0.021492936844733967,
+          "5500_12000": -8.063509599449327e-05,
+          "60_120": 0.021905046085325175
+        },
+        "legacy_proxy_log_distance": 0.6982013740002806
+      },
+      "tool_domains": [
+        "Legacy Proxy",
+        "Not Qualified"
+      ],
+      "transient_status": {
+        "domain": "Legacy Proxy",
+        "reason": "Stage R3 public video derivative; no formal MATLAB/MoSQITo rows in this family",
+        "status": "R3_PROXY_ONLY"
+      },
+      "uncertainty": {
+        "legal_permission": "UNVERIFIED",
+        "microphone_and_agc": "UNKNOWN",
+        "segment_confidence": "LOW",
+        "source_is_lossy_video_derivative": true,
+        "stock_exhaust_confirmation": "UNVERIFIED",
+        "synchronized_rpm_load_gear": "MISSING"
+      },
+      "vehicle": "supra_jza80",
+      "window": {
+        "duration_s": 77.6475283446712,
+        "profile": "heuristic_5s",
+        "reference_segment": "scenario_candidate_peak"
+      }
+    }
+  ],
+  "schema_version": "s12-professional-unified-evidence-matrix-v1",
+  "source_documents": {
+    "exact_pair_metrics": "tasks/reports/runtime/S12_Professional_Comparison_Dashboard_v1/professional_pair_metrics.json",
+    "stage_r3_analysis_manifest": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\analysis_final_video_r3_v1\\source_analysis_manifest_v1.json",
+    "stage_r3_comparator": "E:\\Claude_allow\\Download\\s12-real-vehicle-source-library-v1-20260822\\retry_tools_20260822_v2\\analysis_final_video_r3_v1\\comparator_diagnostics_v1.json",
+    "stage_r_report": "tasks/reports/runtime/s12-stage-r-real-sound-difference/S12_Stage_R_Real_Sound_Difference_Report.md"
+  },
+  "stage_r3_record_count": 24,
+  "status": "UNIFIED_PROFESSIONAL_EVIDENCE_MATRIX_READY",
+  "tool_domains": [
+    "Professional MATLAB",
+    "Professional MoSQITo",
+    "Legacy Proxy",
+    "Not Qualified"
+  ]
+}

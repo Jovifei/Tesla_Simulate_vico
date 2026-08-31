@@ -1,0 +1,110 @@
+{
+  "schema_version": "s12-professional-guided-parameter-recommendations-v1",
+  "status": "LIMITED_R2_R3_MANUAL_REVIEW_ONLY",
+  "evidence_level": "R3",
+  "feedback_scope": "vehicle_aggregate",
+  "feedback_input": {
+    "file_name": "Jovi_Guided_Feedback.json",
+    "sha256": "acfbcbab2022612621aba2cec8a73a5dbc193e0a142f247989f81b00356b673d",
+    "package_manifest_sha256": "ecbe8dc92fa63ed00a76e1554a37a1ff452aaa6af0eff5b3bd3edbadcd64c2a1",
+    "validation_receipt": "Jovi_Guided_Feedback_Long_Window_Validation.json",
+    "window_profiles_s": [15, 30]
+  },
+  "global_gates": {
+    "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+    "parameter_changes": 0,
+    "candidate_audio_rendered": false,
+    "source_modified": false,
+    "automatic_tuning_eligible": false,
+    "profile_update": "FORBIDDEN",
+    "profile_candidate_ready": false,
+    "scene_specific_assignment": "NOT_AVAILABLE_FROM_VEHICLE_AGGREGATE_FEEDBACK",
+    "forbidden_actions": [
+      "修改原始声源或冻结模型",
+      "自动阶次调参或 Order hard gate",
+      "修改回火/换挡/转速事件时序（缺少同步状态）",
+      "把 R3 试听片段升级为 R1",
+      "把 RX-7 含人声片段用于调音"
+    ]
+  },
+  "anchors": [
+    {
+      "vehicle_id": "ferrari_458",
+      "feedback": {
+        "software_agreement": "不符合",
+        "identity": 30,
+        "realism": 10,
+        "preference": "候选",
+        "problems": ["太薄", "太刺", "机械感不足", "回火不自然"],
+        "note_summary": "怠速音色明显不符合；加速频率变化尚可，但音色不对。"
+      },
+      "recommended_parameter_group": "metallic_high_order_envelope_mid_band",
+      "candidate_plan": "long_window_r2_diagnostic_parameter_plan.json",
+      "candidate_spec_count": 64,
+      "bounded_review_scope": {
+        "metallic_envelope_db": [-3.0, -1.0, 1.0, 3.0],
+        "mid_band_balance_db": [-3.0, -1.0, 1.0, 3.0],
+        "texture_mix": [0.0, 0.33, 0.66, 1.0]
+      },
+      "allowed_diagnostic_questions": [
+        "降低金属高阶包络是否缓解太刺",
+        "中频平衡和纹理混合是否能改善太薄与机械感不足"
+      ],
+      "held_items": [
+        "回火不自然：没有同步 RPM/load/throttle/gear/shift，保持不调时序",
+        "反馈是车型聚合，不能把问题绑定到某一个 15 秒或 30 秒场景"
+      ],
+      "status": "BOUNDED_SPECIFICATION_ONLY"
+    },
+    {
+      "vehicle_id": "hellcat",
+      "feedback": {
+        "software_agreement": "部分符合",
+        "identity": 60,
+        "realism": 50,
+        "preference": "参考",
+        "problems": ["机械感不足", "低频无冲击", "固定电子哨声", "回火不自然"],
+        "note_summary": "低频怠速轰鸣不如原车；机械猫啸叫有一定相似度，但音色仍不够对。"
+      },
+      "recommended_parameter_group": "pressure_attack_blower_intake_balance",
+      "candidate_plan": "long_window_r2_diagnostic_parameter_plan.json",
+      "candidate_spec_count": 64,
+      "bounded_review_scope": {
+        "blower_intake_balance": [-0.25, -0.08, 0.08, 0.25],
+        "mid_band_pressure_db": [-3.0, -1.0, 1.0, 3.0],
+        "pressure_attack_db": [-3.0, -1.0, 1.0, 3.0]
+      },
+      "allowed_diagnostic_questions": [
+        "压力攻击和中频压力是否能补足低频冲击与机械感",
+        "进气/增压平衡的有限网格是否能降低固定电子哨声"
+      ],
+      "held_items": [
+        "回火不自然：没有同步 RPM/load/throttle/gear/shift，保持不调时序",
+        "不能用‘相似程度70%’替代软件指标或真实性结论",
+        "反馈是车型聚合，不能把问题绑定到某一个 15 秒或 30 秒场景"
+      ],
+      "status": "BOUNDED_SPECIFICATION_ONLY"
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "feedback": {
+        "software_agreement": "无法判断",
+        "identity": 10,
+        "realism": 10,
+        "preference": "候选",
+        "problems": [],
+        "note_summary": "片段含有人讲话，不是真正车型声浪。"
+      },
+      "recommended_parameter_group": null,
+      "candidate_plan": "long_window_r2_diagnostic_parameter_plan.json",
+      "candidate_spec_count": 0,
+      "allowed_diagnostic_questions": [],
+      "held_items": [
+        "人声污染使该车型反馈不具备调音资格",
+        "先取得无讲话、可审计的车辆声源，再重新做比较和人耳确认"
+      ],
+      "status": "HUMAN_DATA_QUALITY_BLOCKED"
+    }
+  ],
+  "next_step": "若要继续，需由 Jovi 明确选择一个锚点和一个有界参数组做人工候选试听；本收据不授权自动渲染、写回或 Profile Freeze。"
+}

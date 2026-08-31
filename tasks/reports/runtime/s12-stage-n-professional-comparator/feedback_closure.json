@@ -1,0 +1,6 @@
+{
+  "human_feedback_available": false,
+  "promotion_block": "listener provenance must be explicitly confirmed by Jovi; no source changes are authorized here",
+  "schema_version": "s12-stage-n-feedback-closure-1",
+  "status": "WAITING_FOR_JOVI_HUMAN_FEEDBACK"
+}

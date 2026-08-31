@@ -1,0 +1,25 @@
+{
+  "automatic_status": "AUTOMATED_GATE_FAIL",
+  "closure_status": [
+    "AUTOMATED_CLOSURE_COMPLETE",
+    "WAITING_FOR_JOVI_NAMED_REVIEW",
+    "NOT_PROFILE_FREEZE_READY"
+  ],
+  "feedback": {
+    "accepted": false,
+    "content_read": false,
+    "human_pass": false,
+    "reason": "WAITING_FOR_JOVI_NAMED_REVIEW"
+  },
+  "schema_version": "s12-stage-m-gate-matrix-1",
+  "vehicles": {
+    "aventador_lp700": "DIAGNOSTIC_ONLY",
+    "c63_w204": "DIAGNOSTIC_ONLY",
+    "ferrari_458": "DIAGNOSTIC_ONLY",
+    "gtr_r35": "DIAGNOSTIC_ONLY",
+    "hellcat": "DIAGNOSTIC_ONLY",
+    "lfa": "DIAGNOSTIC_ONLY",
+    "rx7_fd": "DIAGNOSTIC_ONLY",
+    "supra_jza80": "DIAGNOSTIC_ONLY"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "evidence_kind": "fresh final-map selected-16 qualification",
+  "checkpoint_document": "docs/08-reports/07-s12-stage-y-final-closure.md",
+  "checkpoint_smoke": "27 passed in 331.42s; final-map coupling and transition metrics verified",
+  "map_sha256": "59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519",
+  "historical_map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
+  "fixture_sha256": "060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1",
+  "historical_fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
+  "tolerance": 0.02,
+  "model_derived_fixed_band_probes": {
+    "blower_sideband_mix": {"minus": 0.2109148769648745, "plus": 0.2347261129574541, "status": "PASS"},
+    "blower_broadband_mix": {"minus": 0.04442598035085183, "plus": 0.045790499859246735, "status": "PASS"},
+    "blower_casing_mix": {"minus": 0.3559940838745665, "plus": 0.4648279266653803, "status": "PASS"}
+  },
+  "transition_metrics": {
+    "boost_attack_high_band_share": {"minus": 0.05845460161411746, "plus": 0.03231943431633307},
+    "boost_release_high_band_share": {"minus": 0.04115447653896002, "plus": 0.029464344063086182},
+    "bypass_sweep_window_rms": {"minus": 0.021147553276449294, "plus": 0.029322447395179096}
+  },
+  "local_balance": {
+    "contract_version": "s12.stage_y.timbre_layer_coupling.v1",
+    "broadband_coupling": 4.0,
+    "forced_layer_coupling": 2.0,
+    "legacy_broadband_coupling": 0.28,
+    "legacy_forced_layer_coupling": 1.0,
+    "provenance": "bounded_local_fitted_map_source_layer_balance"
+  },
+  "unresolved": ["human audition, legal R1 and Profile Freeze remain external gates"],
+  "production_audio_changed": true,
+  "full_s12_run": true,
+  "existing_v1_package": "preserved; v2 is required for any regenerated fitted-map package",
+  "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
+  "final_artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
+  "tested_source_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "metadata_head": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "historical_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+  "historical_failed_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
+  "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard only, caused by CRLF receipt formatting",
+  "full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json",
+  "full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
+  "full_s12_result": "1370 passed, 2 skipped",
+  "full_s12_exit_code": 0,
+  "next_decision": "update PR/CI and merge through PR only if CI is green; keep R1/human/Profile Freeze fail-closed"
+}

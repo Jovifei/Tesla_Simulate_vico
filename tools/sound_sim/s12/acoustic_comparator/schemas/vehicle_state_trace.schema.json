@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/vehicle_state_trace.schema.json",
+  "type": "object",
+  "required": ["trace_id", "sha256", "sample_rate_hz", "states"],
+  "properties": {
+    "trace_id": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "sample_rate_hz": {"type": "integer", "minimum": 1},
+    "states": {"type": "array", "items": {"type": "object", "required": ["sample", "rpm", "load", "state"], "properties": {"sample": {"type": "integer", "minimum": 0}, "rpm": {"type": "number", "minimum": 0}, "load": {"type": "number"}, "state": {"type": "string"}}}}
+  }, "additionalProperties": true
+}

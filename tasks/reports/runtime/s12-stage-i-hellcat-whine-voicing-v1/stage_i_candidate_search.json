@@ -1,0 +1,75 @@
+{
+  "schema_version": "s12-stage-i-candidate-search-report-1",
+  "status": "DIAGNOSTIC_ORIENTATIONS_ONLY",
+  "scope": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction",
+  "search_policy": {
+    "hard_gates_are_fail_closed": true,
+    "human_choice_cannot_override_automatic_freeze_gate": true,
+    "selection_requires_all_pass": true
+  },
+  "candidates": [
+    {
+      "label": "I6-A Balanced",
+      "candidate_id": "hellcat_stage_i_v6_a_balanced",
+      "orientation": "balanced V8 weight and blower presence",
+      "mean_reference_improvement_ratio": -0.17504581445151712,
+      "all_pass": false,
+      "failed_gates": [
+        "acceleration_blower_exhaust_delta",
+        "boost_attack",
+        "boost_release",
+        "bypass_decay",
+        "full_pull_blower_exhaust_delta",
+        "low_frequency_share",
+        "sideband_to_main_ratio",
+        "single_ridge_reduction",
+        "upper_band_share",
+        "whole_cycle_lufs"
+      ]
+    },
+    {
+      "label": "I6-B Whine Forward",
+      "candidate_id": "hellcat_stage_i_v6_b_whine_forward",
+      "orientation": "strongest relative blower presence among the three diagnostics",
+      "mean_reference_improvement_ratio": -0.13520468954317844,
+      "all_pass": false,
+      "failed_gates": [
+        "acceleration_blower_exhaust_delta",
+        "boost_attack",
+        "boost_release",
+        "bypass_decay",
+        "full_pull_blower_exhaust_delta",
+        "sideband_to_main_ratio",
+        "single_ridge_reduction",
+        "upper_band_share",
+        "upper_band_short_time_peak",
+        "whole_cycle_lufs"
+      ]
+    },
+    {
+      "label": "I6-C Softer Mechanical",
+      "candidate_id": "hellcat_stage_i_v6_c_softer_mechanical",
+      "orientation": "softer upper family with stronger mechanical modulation",
+      "mean_reference_improvement_ratio": -0.18987904348417392,
+      "all_pass": false,
+      "failed_gates": [
+        "acceleration_blower_exhaust_delta",
+        "boost_attack",
+        "boost_release",
+        "bypass_decay",
+        "full_pull_blower_exhaust_delta",
+        "low_frequency_share",
+        "sideband_to_main_ratio",
+        "single_ridge_reduction",
+        "upper_band_share",
+        "whole_cycle_lufs"
+      ]
+    }
+  ],
+  "qualified_candidate_count": 0,
+  "selected_candidate": "NONE",
+  "profile_freeze_permitted": false,
+  "next_state": "PARTIAL / AUTOMATED_GATE_FAIL",
+  "diagnostic_package_available": true,
+  "formal_human_gate_unlocked": false
+}

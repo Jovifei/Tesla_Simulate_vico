@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/synthetic_candidate.schema.json",
+  "type": "object",
+  "required": ["candidate_id", "vehicle_id", "sha256", "scenario", "analysis_signal", "source_commit"],
+  "properties": {
+    "candidate_id": {"type": "string"}, "vehicle_id": {"type": "string"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "scenario": {"type": "string"},
+    "analysis_signal": {"const": "unaltered_analysis_signal"}, "source_commit": {"type": "string"},
+    "audition_signal": {"const": "loudness_matched_audition_signal"}
+  }, "additionalProperties": true
+}

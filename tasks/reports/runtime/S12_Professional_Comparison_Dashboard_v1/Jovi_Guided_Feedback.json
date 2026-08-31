@@ -1,0 +1,137 @@
+{
+  "audio_submit_gate": {
+    "required": [
+      "canplaythrough",
+      "duration>0",
+      "reference_sha_match",
+      "candidate_sha_match",
+      "required_files"
+    ],
+    "status": "NOT_SUBMITTED"
+  },
+  "automatic_tuning_eligible": false,
+  "evidence_level": "R3",
+  "package_manifest_sha256": "dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052",
+  "profile_update": "FORBIDDEN",
+  "rows": [
+    {
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "file_id": "ferrari_01-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "ferrari_01",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "b8c63c5f5494fb9241c221bd2b657f73477ad91724de0b58c809d8afcb2f97a1",
+      "software_agreement": null,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "file_id": "ferrari_02-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "ferrari_02",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "6796b8aa3c4180c050966126055d9d7975696e9821758be2368054cfb01b8065",
+      "software_agreement": null,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_sha256": "d865849a250337412234911a65929fbbea0e5dea256f905efaeb20126e0ef252",
+      "file_id": "ferrari_03-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "ferrari_03",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "4cd34d2133f7280389a90e0420575530e065e65ba0cca4bd2c84c12e56045385",
+      "software_agreement": null,
+      "vehicle_id": "ferrari_458"
+    },
+    {
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "file_id": "hellcat_01-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "hellcat_01",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "89ed8170e24762f0fc36b0be434716228e10a5eb5e0fb979414ab6eb89e2e0ec",
+      "software_agreement": null,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "file_id": "hellcat_02-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "hellcat_02",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "0e8f94a9812fd5a2e305cb31e3f2afe13538096155aa93ad5293b780c34bbfcb",
+      "software_agreement": null,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_sha256": "b6f6f515efc39d997265624112c1e0f081198e5fa5a61b7b9f8bc0c3fe490c3b",
+      "file_id": "hellcat_03-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "hellcat_03",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "88639a1fd419f9066f69b9ec45eac59eb07300968dad8dd4799dc3c80a618d7b",
+      "software_agreement": null,
+      "vehicle_id": "hellcat"
+    },
+    {
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "file_id": "rx7_01-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "rx7_01",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "851ae8ffe0295864942cfa8111d48a4ce1ec5e010bba46a0801c5ee6381eba1e",
+      "software_agreement": null,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "file_id": "rx7_02-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "rx7_02",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "f8b3ef807221a0761f1ec09eb44b940da55ee5741ac6ea5140fe0f4cc6beccd4",
+      "software_agreement": null,
+      "vehicle_id": "rx7_fd"
+    },
+    {
+      "candidate_sha256": "e1f7c1e0cb4f2f6292511743ac02f460ec7f1f00c0036f24d984278b13bc63fc",
+      "file_id": "rx7_03-reference-vs-candidate",
+      "identity": null,
+      "notes": null,
+      "pair_id": "rx7_03",
+      "preference": null,
+      "problems": [],
+      "realism": null,
+      "reference_sha256": "6413d2ef5379d224c7e2335a8debfbb34106932f13a64d99266b23e327a99cfe",
+      "software_agreement": null,
+      "vehicle_id": "rx7_fd"
+    }
+  ],
+  "schema_version": "s12-professional-jovi-guided-feedback-v1",
+  "status": "WAITING_FOR_JOVI_GUIDED_REVIEW"
+}

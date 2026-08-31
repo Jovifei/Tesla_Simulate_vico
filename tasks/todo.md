@@ -3462,3 +3462,756 @@ until driver and performance gates pass.
 
 - Jovi feedback recorded: Hellcat low-frequency character is partially convincing, but the actual playback level is still too low. This is an audition calibration gap, not proof that the engine source or the current fixed digital master should be blindly amplified.
 - Next action awaits Jovi's review of the package and authorization for a narrowly bounded Hellcat fixed-master A/B or a source-level low-frequency articulation experiment.
+# S12 Stage C Deep Realism Integration (2026-08-09)
+
+- [x] Phase 0: record `c08eb4c` baseline tests and three-anchor old-pipeline audition.
+- [x] Phase 1: add eight-vehicle realism profiles and RED contracts.
+- [x] Phase 2: implement pre-equalization, pressure-coupled rumble, shift dynamics, and deterministic afterfire refactor.
+- [x] Phase 3: integrate `_render_stateful`, extend drive cycles and metrics to eight vehicles.
+- [x] Phase 4: generate before/after/A-B and eight-vehicle review artifacts.
+- [x] Phase 5: run full verification, write report/lessons, and make local commits only; Stage C evidence was preserved and Stage D remains on the same local branch.
+
+Review: focused Stage C, realism, identity, deep-realism, and Track-P gates are green; full regression and local commit split are complete.
+
+## S12 Stage D Human Listening Deep Realism Calibration (2026-08-09)
+
+- [x] D0：锁定 `a5d0481` 基线、参考 target/manifest SHA、Stage C 试听包和 fresh test evidence。
+- [x] D1：以 TDD 建立 Stage-D candidate schema、typed loader、candidate renderer 和 `candidate=None` bit-identical 合同。
+- [x] D2：实现 Ferrari idle/metallic、Hellcat PTR 前 transient peak shaping、RX-7 rotary/turbo candidate overlay。
+- [x] D3：建立 final-PCM reference-distance evaluator，修复 RX-7 target/manifest 可用状态一致性并执行 30% improvement gate（结果 PARTIAL，未降低门禁）。
+- [x] D4：建立两轮 15 题匿名盲听包、sealed answer key、response validator、confusion matrix 和 3 组 60 秒 full-cycle A/B 附加包。
+- [x] D5：生成三份 candidate JSON、试听包和自动报告；停止等待 Jovi 答卷。
+- [ ] D6：按答卷进行最多三轮窄范围候选迭代；不伪造人耳结果，不降低门禁。
+- [x] D7：写入 Stage-D 报告并同步 Obsidian 项目影子知识库；Stage-D local commits 已完成，Stage-E 在独立分支继续。
+
+Review：Stage D 的自动指标、身份 confusion matrix 和人耳真实性偏好是三个独立证据层；没有 Jovi 答卷时只能标记 `WAITING_FOR_JOVI_AUDITION`。
+
+# S12 Stage E Human Audition Calibration (2026-08-09)
+
+- [x] E0：从本地 Stage D `4e363c6` 建立独立 Stage E worktree；记录远端仍为 `a5d0481`，不把本地 8 个提交写成已推送。
+- [x] E1：以 TDD 修复 Candidate 参数可达性、Candidate overlay 位于公共 Pre-PTR EQ 之前，以及 Hellcat steady blower 不被 transient shaper 压缩。
+- [x] E2：建立 Stage E Candidate v2 schema、参数 usage diagnostics、正确的双轮 scorer、播放环境校验和防泄漏试听包。
+- [x] E3：生成三车 Candidate v2、final-PCM reference distance、listener ZIP、sealed key、SHA256 清单；没有答卷时停止等待。
+- [ ] E4：收到 Jovi 答卷后固化 SHA、校验 30/30 与三组 A/B，读取 sealed key 并输出分轮 confusion/realism 结果。
+- [ ] E5：最多三轮只修改失败车型及对应层；另两车 PCM SHA 必须保持不变。
+- [x] E6：记录 Stage E 自动回归、Track-P guard、reference distance 和人耳结果；当前状态为 WAITING_FOR_JOVI_AUDITION。
+- [x] E7：更新 Obsidian 并生成 cleanup inventory；本轮不删除任何文件。
+
+Review: Stage E candidate v2 and anonymous listener package are generated. Focused Stage E `11 passed`; Stage C realism `9 passed`; identity `58 passed / 78 subtests`; full regression `440 passed / 232 subtests`; Track-P guard `21/21`. No Jovi response has been supplied, so no confusion matrix or human realism PASS is claimed. Cleanup inventory is review-only with `approved=false`.
+
+## 2026-08-10 S12 Stage F human audition qualification
+
+- [x] F0：从 Stage E `3c2c891b` 建立独立 `agent/s12-stage-f-audition-qualification` worktree，保持 Stage E v2 证据只读。
+- [x] F1：新增 Stage-F vehicle-specific candidate contract、source/idle/layer parameter usage diagnostics、RX-7 rotary pulse-width/release reachability。
+- [x] F2：新增 final-PCM band-distance helpers；参考门禁仍需以实际 v3 evidence 重新测量，不能沿用历史 PARTIAL 数字。
+- [x] F3：新增 v3 listener package builder，生成匿名双轮模板和三组真实 A/B 文件；首次包交付后停止等待 Jovi。
+- [x] F4：新增 fail-closed response validator、sealed-role scorer 和分轮人耳门禁。
+- [ ] F5：收到 Jovi 真实答卷后最多 v3→v4→v5 窄范围迭代；当前无答卷，禁止执行。
+- [ ] F6：自动+人耳同时通过后生成 ProfileFreezeCandidate；当前 `NOT_PERFORMED`。
+- [x] F7：完成 Stage-F 全套回归、Obsidian frontmatter 修复和知识库同步；生成 v3 报告、证据清单与本地待提交变更。
+
+Review：Stage F fresh full regression、完整 v3 试听包和 Obsidian 同步已完成；reference-distance 保持 `PARTIAL / AUTOMATED_GATE_FAIL`，人耳答卷尚未返回。在 Jovi 返回三份真实输入前，最终状态只能是 `WAITING_FOR_JOVI_AUDITION`。
+
+## S12 Stage G automatic qualification closure and blind audition v4 (2026-08-10)
+
+- [x] G0：核验 Stage F `e38fe62f`、工作树 clean、Stage F v3/Stage E source manifest/候选/报告/Obsidian SHA；标记 v3 historical/unscored，不修改旧字节。
+- [x] G1：新增 state-specific reference target loader；每个车型三状态独立读取，SHA 和 availability fail-closed。
+- [x] G2：输出 labelled final PCM reference evidence；同一 60 秒 trace、明确窗口、extractor provenance、双跑确定性。
+- [x] G3：新增 Stage G candidate contract、v4 profiles、逐参数 requested/consumed/unused 和单参数扰动证据。
+- [x] G4：修正 final-PCM band-distance 域，执行 9 状态、identity、Hellcat、RX-7、Ferrari 自动门禁；结果为 `PARTIAL / AUTOMATED_GATE_FAIL`，未降低门禁。
+- [x] G5：新增严格 Stage G response validator/scorer；答卷缺失时保持等待，不读 sealed。
+- [x] G6：生成匿名 v4 listener/answer-key ZIP、三组连续 60 秒 A/B、预填 30/3 表、SHA256SUMS，并完成防泄漏扫描。
+- [x] G7：首次包交付后硬停止；当前没有真实答卷，不执行评分/调音/ProfileFreezeCandidate。
+- [x] G8：运行 focused/full/Track-P/diff 验证，生成仓库报告和 Obsidian 更新，只提交本地。
+
+### Stage G review
+
+- Base commit：`e38fe62f423b1fb220e9daedf5f4ef291bcc5849`。
+- Branch/worktree：`agent/s12-stage-g-qualification-closure` / `E:\Tesla_speed\worktrees\s12-stage-g-qualification-closure`。
+- Current status：`WAITING_FOR_JOVI_AUDITION`；自动参考距离为 `PARTIAL / AUTOMATED_GATE_FAIL`，mean improvement `-0.2459%`。
+- Tests：Stage-G focused `17 passed`；package contract `2 passed`；Stage-C realism `9 passed`；Identity `58 passed / 78 subtests`；full S12 `474 passed / 232 subtests`；Track-P `21/21`。
+- Package：30 anonymous clips、6 full-cycle A/B WAV、listener ZIP `031520b7...567f64`、answer-key ZIP `038e06ae...a96dd5`；sealed key 未读取，confusion matrix 未生成。
+- Reference evidence：9/9 state available，但 mean improvement 未达到 30%，因此没有 ProfileFreezeCandidate。
+- 禁止：读取 sealed key、虚构答卷、删除历史/缓存、push、merge、rebase、进入 Approved/Simulink/Runtime/Android。
+
+## 2026-08-10 S12 Stage H Hellcat perceptual calibration
+
+- [x] H0：从 Stage G `60bca7c` 建立独立工作树，冻结 Stage G v4 字节和 SHA；匿名 P01/P02/P03 反馈保持未映射。
+- [x] H1：补充 Hellcat 双螺杆/旁通公开事实与 B/R2 合成目标，所有调音参数保持 C/synthetic。
+- [x] H2：以 TDD 实现确定性的负载/增压耦合 whine、sideband、bypass release 和 Stage-H Candidate v5。
+- [x] H3：执行 Hellcat 专属阶次、侧带、whine/load、低频和峰值门禁；不替换 Stage-G 30% reference gate。
+- [x] H4：生成具名工程试听包，明确每个 WAV 的绝对路径，并停止等待 Jovi 具名反馈。
+- [ ] H5：收到具名反馈后最多三轮，只修改失败车型，另外两车 PCM SHA 保持不变；当前尚未收到反馈。
+- [ ] H6：具名校准通过后再生成 Stage-H 匿名盲听/A-B 包；没有三份正式答卷前不解封评分。
+- [x] H7：完成实际测试、报告、知识库同步和本地提交准备；禁止 push/merge/rebase/Simulink。
+
+### Stage H review
+
+- Base commit：`60bca7cccac91c520a12c0b058f3f70d56dcf4b8`；branch/worktree：`agent/s12-stage-h-hellcat-perceptual-calibration` / `E:\Tesla_speed\worktrees\s12-stage-h-hellcat-perceptual-calibration`。
+- Current status：`WAITING_FOR_JOVI_NAMED_CALIBRATION`；Stage G sealed key 未读取，匿名 P01/P02/P03 未映射。
+- Tests：Stage-H focused `14 passed`；Stage-G focused `12 passed`；Stage-C realism/identity `67 passed / 78 subtests`；full S12 `488 passed / 232 subtests`；Track-P `21 passed`；guard script OK。
+- Named package：`E:\Tesla_speed\review_packages\s12-stage-h-hellcat-perceptual-calibration-v1\`；first automatic-fail render preserved separately as `...-v1-r1-automated-fail`。
+- Final PCM reference distance：Hellcat average improvement `8.479%`，未达到 30%，所以自动状态仍为 `PARTIAL / AUTOMATED_GATE_FAIL`；这不阻止具名试听，但不允许 Profile Freeze。
+- Review：Stage H 首次执行目标是 `WAITING_FOR_JOVI_NAMED_CALIBRATION`，不是 Human PASS、Approved 或 Profile Freeze。
+
+## 2026-08-11 S12 Stage I Hellcat whine voicing planning
+
+- [x] I-P0：核对 Stage H `6ee4b1a`、干净 Git 状态、自动指标、试听包、任务账本和 Obsidian 当前状态。
+- [x] I-P1：把 Jovi 的 Hellcat 不像、目标“滋滋哟”、第 2 个高频刺耳/低频很好、第 3 个很好但可优化拆成明确车型目标与未绑定编号反馈。
+- [x] I-P2：检索 Stellantis/Dodge 官方资料和 SAE 增压器 NVH/进气传播资料，明确 2.36:1、14,600 rpm、电子旁通以及“排气轰鸣 + blower whine”的证据边界。
+- [x] I-P3：生成 Stage I 详细执行计划，限定为 Hellcat Track-S 音色/遮蔽/时序校准；Ferrari/RX-7 在 file_id 绑定前保持 SHA 冻结。
+- [x] I0：收到 Jovi“执行此计划”授权后，从 `6ee4b1a` 建立独立 Stage I 工作树并冻结证据；Stage H focused `9 passed`、Track-P `21 passed`。
+- [x] I1：以 RED/GREEN 测试修正 attack/release/bypass 和纯音集中度的可观测性，并生成绑定 response probe 证据。
+- [x] I2：实现 deterministic phase ripple、order cluster、intake/casing voicing 和 boost-history bypass。
+- [x] I2-R1：关闭独立审查的 strict bool gate、probe/profile/PCM SHA 绑定、顺序低内存 60 秒渲染、四图进入 ZIP、requested/read/active 参数诊断等问题。
+- [x] I3：执行有界候选搜索并输出 A/B/C 三种诊断取向；三者 `all_pass=false`，没有硬门合格候选、没有自动选择，不得把诊断取向写成合格候选。
+- [x] I4：正式 builder 已改为默认 fail-closed；因 A/B/C 均未合格，只生成 `UNQUALIFIED_DIAGNOSTIC_ONLY / PARTIAL / AUTOMATED_GATE_FAIL` 诊断包，正式人耳门未解锁。
+- [ ] I5：收到具名反馈后最多三轮 v6→v7→v8；没有反馈不继续。
+- [ ] I6：具名门禁通过后才生成匿名包；自动 30% reference gate 失败时仍不得 Profile Freeze。
+
+### Stage I review
+
+- Base/branch/worktree：`6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2` / `agent/s12-stage-i-hellcat-whine-voicing` / `E:\Tesla_speed\worktrees\s12-stage-i-hellcat-whine-voicing`。
+- Current status：`PARTIAL / AUTOMATED_GATE_FAIL`。当前只有未合格诊断包，不存在 `WAITING_FOR_JOVI...` 的正式人耳状态。
+- Candidate qualification：A/B/C 的 `all_pass` 均为 false；参考距离平均改善分别为 `-17.5046% / -13.5205% / -18.9879%`；未自动选中候选，未生成 Profile Freeze Candidate。
+- Fresh tests：Stage I focused `108 passed / 56.34 s`；regression isolation `3 passed`；full S12 `596 passed / 232 subtests / 740.41 s`；Track-P guard script PASS（`180 files / 2 symbols`），Track-P guard pytest `21/21 passed / 1.23 s`。旧 `583/232` 仅是 pre-P1 审查过程历史。
+- Current diagnostic package：`E:\Tesla_speed\review_packages\s12-stage-i-hellcat-whine-voicing-v1-unqualified-diagnostic`，27 files / 223.35 MiB；ZIP SHA-256 `98fcdc21d5208b7a43c1522a08ba063ee855023c134203e1389587dc23e507bc`；SHA sums `26/26`。
+- Historical invalid package：旧 `f6997bab...45f5d7` 包已移动到 `E:\Tesla_speed\review_packages\_invalid_s12-stage-i-hellcat-whine-voicing-v1_pre-p1-review`，只可恢复审计，不是当前交付。
+- Evidence boundary：sealed key 未读取；Stage G 第 2/第 3 条编号反馈仍未绑定车型；Ferrari/RX-7 冻结不变；所有输出为 `synthetic / uncalibrated / Hellcat-inspired / not OEM reproduction`。
+- Next：Jovi 可以用显式 `file_id` 提供诊断反馈，但该反馈不构成正式人耳门。I5/I6 保持未完成；必须先关闭自动资格失败，才可发布正式人耳包，且不得自行进入匿名盲听、Profile Freeze、Simulink、Runtime 或 Android。
+# S12 Stage J execution ledger (2026-08-11)
+
+- [x] J0: freeze d8b8c245 baseline and evidence; Stage I focused 108 passed, Track-P 21/21, guard 180 files/2 symbols
+- [x] J1: reconcile C63/GT-R/LFA references and target matrix; target JSON remains numeric authority, official Nissan/Lexus facts recorded
+- [x] J2: candidate schema, loaders, renderer, and usage diagnostics; Stage J focused contract tests 5 passed
+- [x] J3: independent C63, GT-R, and LFA source models; source tests 8+11+9 passed
+- [x] J4: final-PCM qualification and identity separation; fixed bands/windows measured, automatic status remains PARTIAL where 30% is unmet
+- [x] J5: louder named review package and SHA evidence; 3×60 s pairs plus 12 s diagnostics, review request +1.9382 dB, peak-safe applied gain recorded; ZIP SHA `2c2054dcdd8e96eab6cabc9724ed9a1edc7ff72e5632fcf5051ed13fbd94ac38`
+- [ ] J6: real Jovi feedback iterations (maximum v1→v2→v3)
+- [x] J7: reports, Obsidian handoff, local commits, final verification; full S12 `321 passed / 114 subtests`, full acoustic identity `314 passed / 118 subtests`
+
+## Stage J review (2026-08-11)
+
+- Worktree: `E:\Tesla_speed\worktrees\s12-stage-j-three-vehicle-identity`; branch `agent/s12-stage-j-three-vehicle-identity`; base `d8b8c24530eafc354d420c95e1ff071034e51707`.
+- Stage J focused suite: `39 passed / 27.99 s`; Stage I focused: `108 passed / 55.98 s`; realism/identity: `67 passed, 78 subtests / 137.64 s`; Track-P pytest `21 passed`, guard `180 files / 2 symbols`.
+- Full regression: `tools/sound_sim/s12/tests` = `321 passed, 114 subtests / 138.82 s`; `acoustic_identity_v015/tests` = `314 passed, 118 subtests / 626.50 s`.
+- External package: `E:\Tesla_speed\review_packages\s12-stage-j-three-vehicle-identity-v1\`; state `PARTIAL / AUTOMATED_GATE_FAIL` plus `WAITING_FOR_JOVI_STAGE_J_NAMED_REVIEW`; no answer or feedback was invented.
+- Review copy requested `1.25x` (`+1.9382002601611283 dB`). C63 and GT-R pair peaks were already headroom-limited at `-1.5 dBFS`; actual applied gain is recorded as approximately `1.0x`. LFA applied approximately `1.2475x`. Formal `-16 LUFS / -1.5 dBFS` policy was not changed.
+- Reference-distance means: C63 `19.68%`, GT-R `-210.88%`, LFA `14.05%`; none reaches the 30% automatic gate, so no Profile Freeze or Human PASS claim is allowed.
+
+# S12 Stage K four-vehicle perceptual repair (2026-08-11)
+
+- [x] K0-Task1：冻结 Stage J `b78b6c3`、新 Stage K 分支、Jovi 具名反馈和两个视频页面的证据边界；未下载或提交原始媒体。
+- [x] K1：建立 Stage K candidate schema、父候选 lineage、`candidate=None` Stage C bit-identical 回归和 requested/read/configured/active/inactive/unused 诊断。
+- [x] K2：新增只依赖 load/throttle 的 operating-state trim；验证低负载略增、高负载略减、RPM 不直接控制响度、事件 stem 不被 trim。
+- [x] K3：重建 Hellcat twin-screw whine v4/v7；修复 sideband 隐式倍率、真实 attack/release、进气/壳体传递和 boost-history bypass。
+- [x] K4：重建 C63 bark v3；保留低频排气，降低事件驱动的高频 roughness，不使用宽带噪声或全局增益。
+- [x] K5：重建 GT-R 并行双涡轮 v3；两套 shaft state 同时建立，BPF 由 shaft phase 驱动，保留 V6 三事件/转结构。
+- [x] K6：新增 LFA 专属 ASG 换挡、进气重开和 V10 overrun/lift 层；替换通用深切与固定 70 Hz boom。
+- [x] K7：建立车型专属指标、有界候选搜索、最终 PCM reference-distance 和四车具名试听包；自动失败时保持诊断状态。
+- [x] K8：执行 focused/分组回归/Track-P，生成报告与 Stage K Obsidian handoff；完整盲听资格和后续 v1→v2→v3 迭代仍等待 Jovi 具名反馈。
+
+Review：Task 1 已记录 Jovi 的明确车型反馈，但尚未产生任何候选资格、人耳 PASS 或 Profile Freeze 结论。视频页面的可访问性不等同于音轨可测量性；若音轨不可审计，必须保持 `NOT_AVAILABLE`。
+
+## Stage K review (2026-08-12)
+
+- Base/current：Stage J `b78b6c3031269eae1a0b917ce7bbaaed2af81c76`；Stage K `4261bbfe34b11980fcb15a0a9b01bd6d5f75c9e6`；branch `agent/s12-stage-k-four-vehicle-perceptual-repair`。
+- Focused：Stage K `84 passed / 18.10 s`；Stage J C63/GTR/LFA `8/11/9 passed`；Stage C realism `7 passed`；Track-P pytest `21 passed`。
+- Identity：58 个测试按研究/源、body/loudness、metrics、publication 分组均通过（合计 `58 passed / 78 subtests`）；整文件 Windows 进程运行曾在输出末端被中止，因此不将该一次性命令写成单次 PASS。
+- Package：四车 60 s + 场景/诊断 WAV、ZIP SHA `d81bc9e77276bf6066c73bf3444239800067f1a1545f43460061c37bd88fdeef`；状态 `PARTIAL / AUTOMATED_GATE_FAIL` + `WAITING_FOR_JOVI_STAGE_K_NAMED_REVIEW`；sealed key 未读取。
+- Reference distance：Hellcat `4.2019%`、C63 `-209.1852%`、GT-R `-64.6546%`、LFA `18.5617%` 平均改善，均未达到 30%；不得进入 Profile Freeze。
+- Remaining：真实 Jovi 具名 CSV 反馈、最多三轮窄范围调音、匿名盲听和 Profile Freeze 均未开始；禁止 Human PASS、Approved、OEM reproduction、Simulink/Runtime/Android。
+
+# S12 Stage K 三车 Round‑2 经验迁移（2026-08-15）
+
+- [x] R2-K0：冻结 C63 W204、GT‑R R35、LFA 当前 candidate profile、Stage K v1 package 与 Track‑P 边界；保留所有既有未跟踪文件。
+- [x] R2-K0：创建 `tasks/plans/2026-08-15-s12-stage-k-three-vehicle-round2-propagation.md`，明确三车专属声源边界、事件窗口和最终 PCM 证据规则。
+- [x] R2-K1：先补 RED：真实数组/事件窗口、aggregate/pressure 单次会计、三车隔离、最终 PCM/Comfort 与 receipt/ZIP 来源绑定。
+- [x] R2-K2：最小 GREEN：只增加三车 Round‑2 证据/指标契约，不修改公共层、Hellcat v9 或 Track‑P。
+- [x] R2-K3：按车型顺序做 8–12 s bounded probe：C63 bark/body、GT‑R twin‑turbo/V6、LFA V10 ASG/lift；每车最多九个完整快照。
+- [x] R2-K4：只在 hard gates 与包完整性通过后生成不覆盖的 `s12-stage-k-three-vehicle-round2-v3`；自动门未全过，状态保持 `UNQUALIFIED_DIAGNOSTIC_ONLY`。
+- [x] R2-K5：执行三车 focused、Stage K/J、Track‑P、冻结 SHA 与 diff 验证并本地提交；不读取 CSV，不进入 Profile Freeze。
+
+Progress (2026-08-15): R2-K1 actual-array/event-window/pressure/vehicle-isolation tests are green; R2-K2 source metrics now include bands, clock coherence, spectral distance and array-derived event/afterfire CV/centroid/decay; R2-K3 vehicle-specific trace-gated seed overlays and bounded coordinate ranking are implemented. The 30 s real seed probe is recorded in `tasks/reports/runtime/s12-stage-k-three-vehicle-round2/stage_k_round2_seed_probe.json`. Final v3 package is published at `E:\Tesla_speed\review_packages\s12-stage-k-three-vehicle-round2-v3`; v1/v2 remain historical and were not overwritten. Fresh evidence: Round‑2 `19 passed / 1 deselected`, compatibility plus package `77 passed`, boundary suite `11 passed`, Track‑P `21 passed` and guard `180 files / 2 symbols`; independent v3 package validation reports zero errors. Status remains `PARTIAL / AUTOMATED_GATE_FAIL / UNQUALIFIED_DIAGNOSTIC_ONLY` pending Jovi audition; no CSV was read.
+
+### R2-K review (2026-08-15)
+
+- Scope: C63 W204, GT‑R R35, and LFA only. Hellcat/Stage L, public layers, Frozen PTR, loudness manager, MATLAB/Simulink, Android, and Track‑P remain untouched.
+- Actual evidence: event windows are trace-derived; source metrics declare `actual_arrays_and_trace` and `diagnostics_claims_used=false`; LFA's historical aggregate alias is reconciled in the Round‑2 view before pressure accounting.
+- Package: 3 vehicles × (parent/baseline/candidate/comfort + 4 source-domain diagnostics), 24 WAV, 28 SHA entries, 29 ZIP members; all PCM headers/frames/receipt hashes/Comfort input SHA/ZIP CRC independently match.
+- Historical v3 semantic receipts recorded LFA `asg_metallic_event` and therefore failed its wrong-condition gate. Current code fixes that defect by measuring `lfa_shift_exhaust_reengagement` against actual ASG shift alignment; v3 remains historical and is not silently rewritten. Existing Stage-K afterfire remains separately labelled and keeps its closed-throttle history rule.
+- Human/qualification boundary: `human_pass=false`, `csv_content_read=false`, no OEM claim, no Profile Freeze or Approved status. Await Jovi's explicitly labelled audition feedback before another round.
+
+# S12 八车型 Round-2 完成与项目落地（2026-08-15）
+
+- [x] R2-8-0：盘点八车型覆盖与 Obsidian 漂移，确认剩余 Ferrari 458、RX-7 FD、Supra JZA80、Aventador LP700 四车。
+- [x] R2-8-1：修复 LFA 将连续 metallic 误判为 ASG event 的资格根因，并冻结真实 shift-array 回归；12 s actual render 为 3 个 shift / 0 wrong-condition / eligible=true。
+- [x] R2-8-2：补齐 Ferrari/RX-7 与 Supra/Aventador 独立 Round‑2 source、trace window、event qualification 与 pressure accounting；四车 source/package 契约与回归已绿。
+- [x] R2-8-3：建立八车统一 final-PCM/Comfort 与可信 manifest/SHA/ZIP 包；三车 v4 与剩余四车 v1 均为新根，不覆盖历史包。
+- [x] R2-8-4：运行跨阶段、八车冻结与 Track-P 验证；22 项 Round‑2 回归、Track-P 21/21、180 文件/2 符号 guard 与双包独立验收均通过。
+- [x] R2-8-5：读取并同步 Obsidian 当前仓库 tip、包、测试、已完成项与未完成资格门；未读取 CSV，仍保留诊断-only 边界。
+
+Round‑2 completion evidence: `tasks/reports/runtime/s12-stage-k-eight-vehicle-round2/`.
+The LFA fix is `e9aa9b6`; the remaining-four implementation and package contract
+are in `c6ce1cf`. All packages remain `PARTIAL / AUTOMATED_GATE_FAIL /
+UNQUALIFIED_DIAGNOSTIC_ONLY`; no human or OEM qualification is inferred.
+
+## S12 Round-2 documentation and GitHub publication (2026-08-21)
+
+- [x] Add the public `docs/08-reports/01-s12-stage-k-eight-vehicle-round2.md` milestone entry and link it from `docs/README.md`.
+- [x] Append the GitHub branch and publication receipt to the runtime completion report.
+- [x] Push `agent/s12-stage-k-four-vehicle-perceptual-repair` to the project GitHub remote without merging into `main`.
+- [x] Update the five local Obsidian project/context pages with the same branch, package, status, and report links.
+
+## S12 Stage M Eight-Vehicle Round-2 Qualification (2026-08-21)
+
+> Status: `IN_PROGRESS`; scope is only `E:\Tesla_speed\worktrees\s12-stage-m-round2-qualification`. No Simulink, Runtime, Android, merge, push, or PR.
+
+- [x] M0 baseline audit against `5e316934...` and `origin/main c08eb4c...`.
+- [x] M1 fresh test/package/WAV/SHA/CRC replay: 45 focused, 131 Stage-K, 21 Track-P; 52 ZIP WAVs and both CRC/SHA receipts passed.
+- [x] M2 qualification call graph, source-domain and gate-source matrices; confirmed reference distance is not a required Round-2 hard gate.
+- [x] M3 eight-vehicle automatic-gate attribution, including C63/GT-R internal negative-delta routing, LFA ASG 3/0 verification, named remaining-four sources, and independent Hellcat Stage-L v9 diagnostic scope.
+- [x] M4 unaltered-final-PCM comparator evidence: contracts, preprocessing, bounded alignment, spectral/order/psychoacoustic/transient metrics, explicit synthetic-parent uncertainty, seven schemas, and self-tests.
+- [x] M5/M7 named-feedback validator, empty receipt, parameter recommendations withheld by missing reference contract, fail-closed gate matrix, and local eight-vehicle A/B review package.
+- [x] M6/M8 automated closure: no calibration round is run without a lawful state/RPM-bound target; status is `AUTOMATED_CLOSURE_COMPLETE` / `WAITING_FOR_JOVI_NAMED_REVIEW` / `NOT_PROFILE_FREEZE_READY`.
+- [x] Review correction pass: M2 ten-answer evidence, M3 32 vehicle/scenario records and `stage_m_eight_vehicle_failure_attribution.json`, comparator runtime subdirectory, and manifest-SHA feedback binding are regenerated. Final evidence: Stage-M/comparator `31 passed`; Round-2 focused `42 passed / 599.40s`; Stage-K `131 passed / 826.22s`; full S12 `336 passed / 114 subtests / 142.35s`; Track-P `21 passed / 1.09s` plus 180 files/2 symbols guard; original ZIP CRC/SHA and 52 WAV reopen checks plus 24 Stage-M audition WAV/binding checks passed. No feedback content read, push, merge, or PR.
+
+## S12 Stage N Professional Acoustic Comparator (2026-08-21)
+
+> Status: `IN_PROGRESS`; worktree `E:\Tesla_speed\worktrees\s12-stage-n-professional-comparator`, branch `agent/s12-stage-n-professional-comparator`, baseline `ec10ea6`. No vehicle sound-source, Simulink, Runtime, Android, merge, push, or PR changes are authorized.
+
+- [x] N0: Established isolated worktree and current-state preflight. MATLAB Desktop is absent, while six pre-existing `matlab-mcp-server.exe` processes are active; do not stop/reconnect/start MATLAB. Current project Python has no MoSQITo, Essentia, MATLAB Engine, or librosa import.
+- [x] N0: Saved detailed implementation plan at `docs/superpowers/plans/2026-08-21-s12-stage-n-professional-comparator.md`.
+- [x] N1: Added a closed-status, per-function capability matrix and validation contract; only actual versioned fixture receipts can become `VALIDATED`.
+- [x] N2: Added MATLAB order/psychoacoustic source adapters and static fixture contracts. Runtime is truthfully `BLOCKED`: no `MATLAB.exe`/safe existing session was available, and the six pre-existing MCP processes were not touched.
+- [x] N3: Created `E:\AI_Tools\Other\S12StageN\mosqito-venv`, locked MoSQITo `1.2.1`, and ran its real fixture functions. Gain/loudness, high-frequency/sharpness, fast-AM/roughness, and protruding-tone/tonality directions passed. MATLAB cross-tool trend remains `CROSS_TOOL_COMPARISON_BLOCKED`.
+- [x] N4: Added Essentia optional subprocess detection and official-build-only ViSQOL scope validation. Essentia and ViSQOL remain `OPTIONAL_NOT_INSTALLED`; no source vendor or `pip install visqol` was used.
+- [x] N5: Cloned official webMUSHRA upstream only to `E:\Claude_allow\Download\webMUSHRA-stage-n` at `8c353f7...`; exported new v1 study package, served config/audio through a temporary Docker container at `127.0.0.1:18081`, exercised PHP fixture export, SHA/file-ID imported it as `FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK`, then removed the confirmed temporary container.
+- [x] N6: Published unified eight-vehicle results, withheld recommendations, required Stage-N reports, deterministic artifact manifest, and fresh verification evidence. No vehicle-source path changed and no human feedback was claimed.
+- [x] N2a: Bound all eight Stage-M candidate WAVs to their original Stage-K/Stage-L receipts and canonical state traces. Added a non-overwriting MATLAB MAT-input generator plus manual Desktop-session runner; the generated inputs are local artifacts, not source-controlled results.
+- [x] N2b: With Jovi's explicit existing-Desktop authorization, ran real MATLAB R2026a Signal Processing Toolbox fixture plus all eight hash-bound candidate inputs. `rpmordermap`, `rpmfreqmap`, `orderspectrum`, and `ordertrack` are fixture-validated; each candidate order map executed with its original bound RPM/state trace. The external-reference boundary remains `REFERENCE_RPM_UNAVAILABLE` / `ORDER_COMPARISON_NOT_QUALIFIED`.
+- [x] N2c: Ran real MATLAB R2026a Audio Toolbox fixture plus all eight hash-bound candidates. `acousticLoudness`, `acousticSharpness`, `acousticRoughness`, `acousticFluctuation`, `acousticToneToNoiseRatio`, and `acousticProminenceRatio` are fixture-validated, digital-domain relative only. MATLAB and MoSQITo agree on common gain/loudness, high-frequency/sharpness, fast-AM/roughness, and prominent-tone trends.
+
+### Stage N review
+
+- Current status: `PROFESSIONAL_COMPARATOR_TOOLCHAIN_PARTIAL` / `PROFESSIONAL_TOOLCHAIN_VALIDATED_ON_FIXTURES` (MATLAB Signal Processing Toolbox, MATLAB Audio Toolbox, MoSQITo, and webMUSHRA fixture scope) / `PROJECT_CANDIDATES_ANALYZED` / `REAL_REFERENCE_ORDER_COMPARISON_BLOCKED` / `WAITING_FOR_JOVI_HUMAN_FEEDBACK` / `NOT_PROFILE_FREEZE_READY`.
+- Fresh execution evidence: MATLAB R2026a fixture and 8/8 project-data receipts passed independent immutable-input/path validation; order fixture ridge errors for 0.5/1/4/6 are all below `0.003` against a `0.08` tolerance; all five Audio Toolbox direction gates passed; MATLAB/MoSQITo common-trend validation passed; Stage-N runtime artifact manifest verification is zero-error. The earlier full-S12 regression record (`343 passed, 114 subtests passed in 445.42s`) predates this audit correction; no full-S12 result is claimed for the current diff.
+- Boundary: generated MATLAB inputs and execution maps are reproducible local artifacts and deliberately ignored; committed runtime receipts retain SHA/path evidence. A real external reference must still carry lawful raw waveform provenance plus matching RPM/state metadata. After a SHA/file-ID-bound Jovi CSV or webMUSHRA result, use a separate sound-fix branch; do not change vehicle sources here.
+
+## S12 Stage N comparator evidence correction (2026-08-21)
+
+- [x] N2d: Replaced the earlier same-intent cross-tool fixture claim with a non-overwriting 3-second MAT fixture. MATLAB R2026a and MoSQITo now bind the identical fixture manifest SHA `2aef9843...02f077` and MAT SHA `2a1b2d1e...6d04e0`; all four common trends pass. The first row-vector MATLAB output and first MoSQITo tonality interpretation are preserved under separate suffixes and are not promoted.
+- [x] N6b: Exported a non-overwriting webMUSHRA v3 package, launched the external official checkout locally, opened `s12-stage-n-webmushra-v3.yaml` in a browser, and imported one SHA/file-ID-bound raw PHP fixture row. The container was then removed; this is fixture evidence only, not human feedback.
+- [x] N8: Expanded unified comparator results to all available Stage-M scenarios (`full_cycle`, `idle`, `acceleration`, `lift_afterfire`, `shift`) for every vehicle. Scenario PCM/reference absences and order qualification remain explicit.
+- [x] N9: Added a no-source-change, evidence-bound recommendation rule engine. Without confirmed Jovi feedback every recommendation remains `WITHHELD`; future eligible recommendations retain residual, parameter group, direction, evidence, confidence, side-effect risk, and a separate-branch promotion block.
+- [x] N10: Added SHA/file-ID confirmation flow, identity confusion matrix, and objective-residual binding. The current `feedback_closure.json` is `WAITING_FOR_JOVI_HUMAN_FEEDBACK`; no feedback content was created or promoted.
+- [x] Review: Focused Stage-N suite is green after the correction; artifact manifest verification is zero-error. No vehicle-source, Simulink, Runtime, Android, merge, push, or PR change was made.
+- [x] Verification: `python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_n tools/sound_sim/s12/acoustic_comparator` and the two Stage-N test modules passed (`19 passed in 8.21s`); MATLAB Code Analyzer reported no issues for the changed adapter.
+- [ ] Verification note: the expanded all-S12 pytest invocation was not claimed as passing. Its controller detached output, then its single remaining process tree continued past the bounded completion window and was stopped after exact PID/command verification; no test failure was observed, but no exit code was recovered.
+
+## S12 Stage N specification completion audit (2026-08-21)
+
+- [x] N0–N7 audit: capability matrix includes the three industry-reference `INDUSTRY_REFERENCE_NOT_INSTALLED` rows; live MATLAB/MoSQITo receipts retain the eight-candidate and same-MAT fixture evidence; Audio Test Bench, Essentia and ViSQOL remain honestly blocked/optional.
+- [x] N6 correction: added official `mushra.csv` + `lss.csv` joining in `webmushra_import.py`, including SHA/file-ID binding, required-dimension completeness, and identity-guess validation. A new non-overwriting v5 package was opened in the external official Docker checkout and its paired fixture files imported as `FIXTURE_IMPORT_ONLY_NOT_HUMAN_FEEDBACK`.
+- [x] N6 contract: documented participant-settable full-clip loop range and upstream sample-accurate fade behavior. The future-candidate slot is explicitly `INACTIVE_NOT_GENERATED_NO_SOURCE_CHANGE_AUTHORIZED`; no placeholder audio or source mutation was substituted.
+- [x] N9 deliverable correction: emitted the spec-named `stage_n_parameter_recommendations.json` alongside the backward-compatible `parameter_recommendations.json`, with identical hash-bound content.
+- [x] Audit evidence: direct requirement script passed (`15` tool records, `8` vehicles, five scenarios), and `test_s12_acoustic_comparator_core.py` plus both Stage-N suites passed (`30 passed in 8.47s`). Artifact manifest verification is zero-error.
+
+## S12 Stage O human-feedback calibration (2026-08-21)
+
+- [x] O0: Created this worktree from exact Stage-N tip `e0cf90dc7d10f5bb36d8953ae93eb068ab4382c6`; the inherited Track-P false positive was repaired with a precise Track-S allowlist (`fef513e`) without changing the 180-file/2-symbol frozen content.
+- [x] O0 evidence: governance-repaired full S12 `827 passed / 232 subtests / 1710.50s`; final current tree including Stage-O entry tests `830 passed / 232 subtests / 1746.77s`; Stage-N focused `19 passed`; Track-P guard pytest `32 passed`; independent guard `180 files / 2 symbols`; Stage-N artifact manifest, WAV reopen/finite/clipping and SHA binding checks passed.
+- [x] O1 entry gate: added strict real-feedback intake for paired official `mushra.csv`/`lss.csv` or named CSV, requiring package/candidate/file/test/row/identity/listener binding plus playback device, Windows volume, endpoint, environment and system EQ metadata. Fixture/synthetic inputs are rejected and no input paths currently exist.
+- [x] Waiting-state artifacts: published `tasks/reports/runtime/s12-stage-o-human-feedback-calibration/` with exact-tip receipt, entry receipt, empty confusion/metric/parameter/round outputs, gate matrix and artifact manifest. Current state is `STAGE_N_ACCEPTED / WAITING_FOR_JOVI_FEEDBACK / NOT_PROFILE_FREEZE_READY`.
+- [x] Boundary review: no vehicle source/profile, idle/afterfire/shift/body parameter, Runtime, Android, MATLAB receipt, MoSQITo receipt, Stage-N comparator core or frozen Track-P content changed; no push, merge or PR was performed.
+
+## S12 Stage P independent system acceptance (2026-08-22)
+
+> Status: `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT / HUMAN_FEEDBACK_PENDING / NOT_PROFILE_FREEZE_READY`; local-only Stage-P branch.
+
+- [x] P0 exact Stage-O baseline audit: `38d84f3540081636b7ea78636ba2479a0afe170e`, parent/origin/main/branch/worktree and protected hashes recorded.
+- [x] P1 fresh full regression (`830 passed / 232 subtests`) plus Stage-N/O/comparator/Track-P/Stage-P focused tests, compileall, diff and artifact manifest.
+- [x] P2 Stage-N receipts, 8 candidates, SHA/schema/finite/tool enum, MATLAB/MoSQITo constraints and same-fixture cross-tool binding validated.
+- [x] P3 8-vehicle × 5-scenario comparator replay with no truth/absolute SPL/real-reference promotion.
+- [x] P4 official upstream webMUSHRA Docker/PHP and named browser full fixture run generated/imported `mushra.csv + lss.csv`; hidden reference is synthetic parent, not real recording.
+- [x] P5 15 negative security cases fail closed; P6 two persistent independent package rebuilds match audio inventory/SHA and refuse overwrite.
+- [x] P7 Jovi UAT START/OPEN/IMPORT/CHECK/STOP package; P8 fixture-only Stage-O receipt/confusion/metric outputs and explicit fixture rejection at Stage-O entry.
+
+### Review
+
+- A–G gates PASS; H remains `HUMAN_FEEDBACK_PENDING`; no real Jovi content was read and no source/profile/tuning change was made.
+- Final evidence: `tasks/reports/runtime/s12-stage-p-system-acceptance/`; UAT package: `E:\Tesla_speed\review_packages\s12-stage-p-jovi-uat-v1`.
+- No push, merge, PR, or profile freeze was performed.
+
+### Stage P specification-alignment correction (2026-08-22)
+
+- [x] Re-audited the pasted Stage-P deliverable list against the current tree; added the exact report aliases `S12_Stage_P_System_Acceptance_Report.md`, `stage_p_tool_receipt_validation.json`, `stage_p_feedback_security_tests.json`, and `stage_p_uat_manifest.json`.
+- [x] Added recursive `SHA256SUMS`, package-local `normalized_import_result.json`, explicit `README_JOVI.md` listening/setup hand-off, expected result paths, Docker/port/config checks, complete-trial status, and importer SHA/accepted/rejected diagnostics.
+- [x] Re-ran Stage-P acceptance (`5 passed`), compileall, diff check, Track-P frozen guard, package/UAT checksum ledgers, and the official Docker/PHP UAT START/CHECK/IMPORT/STOP smoke (`32` MUSHRA rows, `80` LSS rows, fixture import `8 accepted / 24 rejected`, SHA binding PASS). Docker service was left stopped.
+
+Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT / HUMAN_ACOUSTIC_QUALIFICATION_PENDING / NOT_PROFILE_FREEZE_READY`; H remains `PENDING`, and no source/profile/tuning or GitHub push/merge/PR was performed.
+
+## S12 Stage Q–T real-reference closed loop (2026-08-22)
+
+> Status: `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED / WAITING_FOR_JOVI_HUMAN_FEEDBACK`; independent worktree `E:\Tesla_speed\worktrees\s12-stage-q-real-reference-calibration`, branch `agent/s12-stage-q-real-reference-calibration`. Branch push is authorized and verified; no merge, PR, Profile Freeze, Android, ESP32, CAN, or vehicle deployment.
+
+- [x] Q0: Created the Stage Q worktree from the exact Stage P HEAD and recorded clean starting state.
+- [x] Q1/Q2: Audited the external `E:\Claude_allow\Download\tesla-sound-research` media root; cataloged 15 WAV pointers across all eight vehicles without copying raw audio into Git.
+- [x] Q3/Q4: Added `tools/sound_sim/s12/real_reference/` fail-closed inventory tooling, Stage Q manifest schema, Chinese report generation, provenance/SHA pointers, scenario-window placeholders, and RPM/state binding placeholders.
+- [x] Q gate: Regenerated `tasks/reports/runtime/s12-stage-q-real-reference/` from the current worktree. All 15 present recordings remain R3/qualitative-only; R1=0, R2=0; no automatic tuning eligibility.
+- [x] R gate: Added R1 qualification checks and generated a fail-closed waiting result, withheld parameter recommendations, and Chinese difference-report template under `tasks/reports/runtime/s12-stage-r-real-sound-difference/`.
+- [x] R2 path: Added an authorised-R2 limited comparator adapter. It permits only spectrum/loudness/psychoacoustic/subjective-transient evidence and always disables order hard gates and automatic tuning authority.
+- [x] R execution entry: Added an unaltered PCM-WAV reader, fail-closed R2 limited comparison/report writer, and R1 MATLAB/Stage-N execution-plan builder. The R1 plan names the required MATLAB/Audio Toolbox functions and receipts but does not execute without qualified real inputs.
+- [x] R1 input preparation: Added a fail-closed CSV/JSON state loader and SHA-bound external MAT input package for the existing MATLAB order/psychoacoustic runners plus the MoSQITo project-input entrypoint. It preserves unaltered analysis data, records channel/time/unit policy, and never starts MATLAB or grants tuning authority.
+- [x] Public-license intake: After Jovi explicitly authorized web search/download, downloaded two Wikimedia Commons CC references and one Freesound CC0 Supra chassis-dyno reference to `E:\Claude_allow\Download\s12-web-authorized-20260822`, plus one CC rotary mechanical demo (R3 qualitative only); raw media stayed outside Git and provenance/derived WAV SHA-256 entries were committed.
+- [x] R2 execution: Ran the existing fail-closed R2 comparator on Ferrari 458 acceleration, Hellcat launch proxy, and Supra full-pull dyno preview with explicit sample-rate/conversion metadata. All three cases are `R2_LIMITED_COMPARISON_COMPLETE`; order hard gate, automatic tuning, parameter recommendations, and human feedback remain withheld.
+- [x] S gate: Added the Chinese listening-study contract and feedback gate under `tasks/reports/runtime/s12-stage-s-human-calibration/`; no placeholder audio or fixture feedback is materialized.
+- [x] T gate: Added the blocked Profile Candidate handoff under `tasks/reports/runtime/s12-stage-t-profile-candidate/`; no candidate files, Profile Freeze, or product handoff are generated.
+- [x] Final waiting audit: Generated `tasks/reports/runtime/S12_Real_Sound_Closed_Loop_Final_Report.md` with per-stage/per-vehicle status, metric limits, feedback/tuning counts, Track-P boundary, commits, and the verified branch-push state.
+- [ ] R/S/T execution: R1 MATLAB/MoSQITo baseline, human feedback, and parameter modification still require synchronized RPM/state/capture metadata and a real SHA/file-ID-bound listening receipt. R2 output is diagnostic-only and cannot close S/T.
+
+### Stage Q review
+
+- `python -m pytest tools/sound_sim/s12/tests/test_s12_stage_q_real_reference.py -q`: `5 passed` (including the explicit web-authorized R2 manifest contract).
+- `python -m tools.sound_sim.s12.real_reference.cli --media-root E:\\Claude_allow\\Download\\tesla-sound-research --out-dir tasks\\reports\\runtime\\s12-stage-q-real-reference`: `REAL_REFERENCE_DATASET_LIMITED`, `WAITING_FOR_REAL_REFERENCE_DATA`, 15 records, 0 R1.
+- Q/R/S/T gate tests cover unqualified-reference rejection, withheld recommendations, Chinese dimensions, no placeholder audio, and no profile candidate materialization.
+- R2 limited adapter and waiting final-report test pass; old Stage-G B/R2 derived numbers were not reused as current HEAD real-reference results.
+- R execution/input tests: `7 passed`; full S12 focused suite: `48 passed`; `compileall` and `git diff --check` pass.
+- Raw audio remains outside Git; only external paths, SHA-256, WAV headers, source pointers, and missing-evidence state are recorded.
+
+### Web-authorized R2 review（2026-08-22）
+
+- Ferrari 458 CC BY-SA 3.0 source: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.574775`, loudness residual `+2.7001 dB`; order `NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM`.
+- Hellcat CC BY-SA 4.0 source: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.503287`, loudness residual `+0.4530 dB`; local file is a synthetic launch proxy and order remains `NOT_QUALIFIED_R2_NO_SYNCHRONIZED_RPM`.
+- Supra CC0 chassis-dyno preview: `R2_LIMITED_COMPARISON_COMPLETE`; spectral log residual `0.854657`, loudness residual `-6.4747 dB`; source page describes a full-throttle dyno run but exact JZA80 generation and synchronized RPM/state are not verified.
+- RX-7 FD: no legally usable full-throttle/dyno vehicle recording found in this search. `Wankel3.ogv` is CC BY-SA 2.5 Mazda 13B mechanical demonstration and is registered only as R3 qualitative rotary texture.
+- No overall similarity percentage, no automatic parameter recommendation, no source/profile edit, and no Jovi hearing result was produced.
+
+### Q additional external-root audit（2026-08-22）
+
+- [x] 将 `tesla-sound-research-v12` 与 `s12-acoustic-realism-v10` 纳入 Q 目录审计；新增 6 个外部 WAV 指针，只记录 `audit_root`、路径和 SHA-256。
+- [x] 额外目录媒体保持 `UNMAPPED_NOT_REGISTERED / DO_NOT_ANALYZE_OR_TUNE`，不把旧 manifest 的 R2/R3 标签提升为当前 R1/R2 资格。
+- [x] 更新 Stage Q schema、CLI、报告和 manifest；原始本地基线为 15 条登记候选、18 条未登记外部媒体、R1=0/R2=0；后续 web-authorized overlay 另加 3 条 R2。
+
+### 浏览器中文展示修正（2026-08-22）
+
+- [x] 将 webMUSHRA 研究包的可见标题、说明、评分维度和提交字段统一为中文；机器协议键保留英文以兼容官方导出格式。
+- [x] 提供可审计、可重复应用的上游固定按钮中文覆盖；未应用覆盖前不得声称浏览器界面已全中文。
+- [x] 外部 webMUSHRA 中文 UI 实测：应用 NLS 补丁并用 `language: zh` 最小配置通过浏览器快照验证“播放、暂停、下一页”等中文控件和音频加载；仅验证界面，不写入听审结果。
+- [x] 运行导出包配置测试，确认中文配置不会改变真实参考、SHA/file-ID 绑定或反馈门禁。
+
+### 公开同步数据检索与报告修正（2026-08-22）
+
+- [x] 复核 F1Audio：页面声明同步 RPM/挡位/油门，但 Zenodo 文件受限访问且车辆不是八个锚点；不下载、不升级为 R1。
+- [x] 复核 Procedural Engine Sounds：RPM/扭矩通道属于程序化合成扩增，不是真实车辆原始录音；不升级为 R1。
+- [x] 复核 CC BY 4.0 的 Sounds of Vehicle Internal Combustion Engines：真实声样本可作一般 R2 线索，但页面未提供本项目锚点所需同步状态和采集合同，本轮不下载 8.1 GB 非目标资料。
+- [x] 将 Q/R/总报告的“两个公开参考”“仅 Ferrari/Hellcat”旧口径修正为三条 R2（Ferrari/Hellcat/Supra），并增加 R3/R2 计数与检索边界。
+- [x] 增加本轮报告复核后的 lessons；不把 R2 诊断、浏览器听审入口或合成数据称为已完成闭环。
+
+### 公开同步数据检索复核
+
+- 当前组合状态仍为 `R2_LIMITED_COMPARISON_COMPLETE / R1_BLOCKED / WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
+- 最新验证：完整 S12 测试 `371 passed, 114 subtests passed`；Q/R/S/T 重点测试 `21 passed`；`compileall` 和 `git diff --check` 通过。
+- R1/S/T 未完成的唯一真实缺口仍是：合法原始录音与同步 RPM、Load/Throttle、Gear/shift、麦克风/AGC 采集合同，以及 Jovi 的 SHA/file-ID 绑定听审反馈。
+- [x] 记录三条可采购的三锚点候选（Ferrari 458、Hellcat、RX-7 FD）及其公开页面声称的同步 take/steady RPM/gearshift 元数据；明确它们仍需购买/授权和数值状态验收，不能预先升级为 R1。
+- [x] 下载并审计一条 CC0 Pontiac G8 测功机视频：完成 WebM→PCM WAV 解码、SHA/采样信息和抽帧检查；登记为非目标 R3 流程样本，未进入八车型比较或调音。
+- [x] YouTube 403 对照探针：使用无账号 Cookie 的 Node.js EJS，分别验证默认代理与 `--proxy ""`；页面挑战可解析，但签名媒体请求仍为 HTTP 403，失败日志和 SHA 收据保留在仓库外，未把截断物升级为媒体。
+- [ ] 取得 Jovi 授权的商业原始包或等价自录包后，逐段验收 RPM/Load/Throttle/Gear/shift/麦位/AGC/授权，并重新生成 R1 manifest；未取得前不启动阶次自动调参。
+
+### Jovi 网址输入入口（2026-08-22）
+
+- [x] 新增 `tools/sound_sim/s12/real_reference/url_intake.py`：网址校验、外部目录下载、视频/音频 SHA-256、ffprobe 元数据、无增益 PCM 抽取和中文审计报告。
+- [x] 入口默认 fail-closed：无许可为 R3；有许可但无同步状态最多 R2；视频压缩派生音频不会自动升级为 R1。
+- [x] 增加可选抽帧/OCR 状态线索；没有 Tesseract 时仍保留帧 SHA，OCR 数字统一标记 `ESTIMATED_FROM_VIDEO_NOT_QUALIFIED`。
+- [x] 支持 JSON 批量网址规格：每个网址可单独绑定车型、工况、许可和状态合同，避免多车型批处理时共用错误元数据。
+- [x] 新增 `URL_INTAKE_GUIDE.md` 和 4 项 URL intake 回归测试；不修改 MATLAB、Runtime、Simulink、Android 或 Track-P。
+- [x] 新入口接入后完整 S12 Python 回归：`376 passed, 114 subtests passed in 239.72s`；`compileall` 与 `git diff --check` 通过。
+- [x] 用已核验 CC0 测功机网址完成一次真实端到端冒烟：`URL_INTAKE_COMPLETE`、1 条记录、网页视频→PCM WAV→中文 manifest/report；因 Opus 派生音频和缺少同步状态正确保持 `R2`。
+- [x] 追加抽帧冒烟：4 个 JPEG 帧、`OCR=NOT_AVAILABLE_TESSERACT_MISSING`、`RPM_STATUS=MISSING_RPM_STATE`；结果仍为 `R2`，未产生阶次资格。
+- [ ] 等待 Jovi 提供车辆网址；收到后逐条下载、抽音频、检查画面状态并绑定车辆/工况。
+
+## 项目本地瘦身（2026-08-22）
+
+- [ ] 盘点当前 worktree 的源码、报告、测试、音频/视频、缓存、构建物和历史方案文档，先形成删除候选清单。
+- [ ] 保留当前需求、有效报告、可重建工具、测试、审计 manifest、外部原始录音指针，以及其他 worktree；不删除 `E:\\Claude_allow\\Download` 下的原始媒体。
+- [ ] 只删除证据明确无用的项目内生成物/缓存，并记录每个删除路径与理由；不使用 `git clean`、`git reset` 或宽范围递归删除。
+- [ ] 清理后运行 `git diff --check`、关键测试和路径存在性检查，记录清理前后 Git 状态与可恢复边界。
+
+### 清理评审记录
+
+- 盘点范围：当前 `s12-stage-q-real-reference-calibration` worktree；其他 worktree、`E:\\Claude_allow\\Download` 原始媒体和 MATLAB/Simulink 资产未纳入删除。
+- 明确保留：当前 S12 Q/R/S/T 报告、计划、测试、manifest、8 个仍被 R2 元数据引用的 `*_ab.wav`、历史审计 ZIP 及其校验记录。
+- 删除候选：37 个被 `.gitignore` 排除的 `__pycache__`/`.pytest_cache` 目录，共 445 个文件、5,149,580 bytes；这些目录确认为可重建缓存。
+- 删除结果：安全策略拒绝了递归删除操作；未使用替代命令绕过，故本轮实际删除 `0` 个文件，候选仍保留待后续受控清理。
+
+## S12 Stage Q 真实车辆来源库下载与比较诊断（2026-08-22）
+
+> 状态：`COMPLETE_DIAGNOSTIC_ONLY_R3 / R1=0 / R2=0 / WAITING_FOR_JOVI_HUMAN_AB`；原始媒体仅在 `E:\\Claude_allow\\Download`，未进入 Git。
+
+- [x] 校验用户压缩包 SHA-256 `139A7EC28DE65CF446096A230C6ACBE95D0BD9F902F00A913A57D993305CD375`，安全解压 3 个文档并按每车 3 条选择 24 个来源。
+- [x] 为 YouTube 403/SABR 增加默认客户端→Android→Node.js `web_embedded`/`mweb` 客户端回退；首轮 1/24 的不完整目录和日志保留，组合库通过 3 条替代 URL 达到 24/24 可读视频/WAV/SHA。
+- [x] 对原始 3 条失败 URL 进行 Node.js/Web 重试并执行 `ffprobe` + `ffmpeg` 媒体体完整性校验：`yXw_35i3RMM` 完整，`XWEjZHFQ5lc` 与 `GQ0972wohFs` 明确保持 `INCOMPLETE_MEDIA_BODY`；结果写入外部 `retry_js_20260822/youtube_retry_js_manifest_v1.json`，不进入比较或 A/B。
+- [x] 针对上述两条截断视频追加 `web_embedded` 仅音频格式回退：`XWEjZHFQ5lc`/`140-9` 与 `GQ0972wohFs`/`140-8` 均完整解码，转出外部 WAV 并写入 `audio_format_retry_20260822/youtube_retry_audio_manifest_v2.json`；完整音频为 `3/3`，完整视频仍为 `1/3`，三条继续保持 `R3`、不进入 R2/调参。
+- [x] 复核系统代理导致的媒体直链 403，并在全新外部目录以 `--proxy ""`、Node.js EJS 和 `web_embedded → android_vr → tv_embedded → mweb` 回退重试原始 24 条 URL；完整可解码音频为 `24/24`。清单 `retry_direct_20260822_v1/youtube_retry_direct_audio_manifest_v1.json` SHA-256 `45DDB25441D3F09A35D6875011A8CBF2726DD03D921069F013B1E94385F4FD3F`，`decode_validation_v1.json` SHA-256 `C881F8790B52426F5C9F6FF5CF8A57EF76670C5A651FCE32AAB0DEF3AECA7CE4`；视频完整率不改写为 24/24，24 条继续保持 R3。
+- [x] 将原始 24 条 URL 音频无增益解码为外部 PCM WAV，并用现有 `analyze_downloaded_sources.py` 生成 `24/24` 特征、`24/24` Comparator、8 车参数诊断和中文 R3 差异报告；外部收据 `analysis_r3_direct_v1/direct_analysis_receipt_v1.json` SHA-256 `A007C99EAC91D3A875EF3EDEF4E2A6433EBF6AC18BF1F724D9DD89D46F778876`，不进入 R2/R1 或自动调参。
+- [x] 筛选 Zenodo CC BY 4.0 发动机声数据集：Petrol ZIP 官方 MD5 与本地一致，137 个编号 WAV 无车型/同步元数据；记录外部 `s12-public-vehicle-engine-ccby4-20260822/screening_manifest.json`，结论 `NOT_TARGET_BINDABLE_NO_MODEL_OR_STATE`，不进入目标车型比较。
+- [x] 完成 8 张车型接触表人工视觉复核；车型身份仅标为 `VISUAL_IDENTITY_SUPPORT_ONLY`，原厂排气全部保持 `NOT_CONFIRMED`，变体/测功机/赛道风险逐条记录。
+- [x] 新增 `tools/sound_sim/s12/real_reference/analyze_downloaded_sources.py`：校验外部 WAV SHA、生成 72 个低置信工况候选窗口、派生频谱/响度/心理声学/瞬态特征，并对 8 个本地 synthetic 候选做 24 条 R3 Comparator 诊断。
+- [x] 生成外部 `analysis_20260822_v1` 的来源 manifest、派生特征、Comparator、中文 A/B 清单和带四分位数/范围的不确定性诊断建议；自动调参/Profile 更新保持禁止。
+- [x] 增加中文报告 `tasks/reports/runtime/s12-stage-q-real-reference/S12_Stage_Q_YouTube_Intake_Analysis_20260822.md`，明确区分已完成链路与授权/同步状态/人耳反馈阻塞。
+- [x] 复核三锚点商业同步录音候选的官方商品页、许可页和曲目单；只下载网页/PDF，不下载版权原始音频。外部候选审计 `E:\Claude_allow\Download\s12-licensed-r1-candidates-20260822\candidate_source_audit_v1.json` SHA-256 `082bc43c24ba1aa84f9450fe826244376925bb58c040999ea032396077f8c636`；三项均保持 `PROCUREMENT_CANDIDATE_NOT_R1`。
+- [x] 验证：URL intake、Comparator、Stage-Q 重点测试 `22 passed`；新分析脚本实际跑完 `24/24`；`py_compile` 和 `git diff --check` 通过。
+- [x] 解析三份商业候选曲目单 PDF 的状态字段并固化外部收据 `tracklist_state_screening_v1.json`（SHA-256 `eb185ddcfffe142c97988fe45a4524fecb26bf52a62c81c49a3a3b2d30dffb37`）：三项均无数值 RPM trace、Load/Throttle 字段或 state trace 文件，标签不能升级为 R1。
+- [x] 针对 YouTube 初始 `1/24` 与代理 403 新建外部 `retry_tools_20260822_v2`，启用直接网络、Node.js EJS、`web_embedded` 渐进式格式及两条 `134 + 140` 分流回退；24/24 最终媒体通过严格 ffmpeg 全流解码。`strict_decode_manifest_v3.json` SHA-256 `E029D78938C6B21DB7FD612E8693362A25BED122A0DF73602F0E87CB92F7208E`，`download_recovery_receipt_v2.json` SHA-256 `A5D49E871505A7FAEF6EBEF316191356F06976AB18E8A2830B4BE82355914DF4`；旧截断物保留，全部原始媒体仍在 Git 外。
+- [x] 按 Jovi 要求用当前 `yt-dlp` 独立复试原先 403 的 `XWEjZHFQ5lc`/`GQ0972wohFs`：默认客户端复现 403；`web_embedded + Node.js EJS` 的渐进式短头部被严格 `ffmpeg -xerror` 拒绝，随后 `134 + 140-9/140-8` 分流均通过完整解码。外部收据 `retry_yt_dlp_current_20260822/yt_dlp_node_web_embedded_retry_receipt_v2.json` SHA-256 `52996AB90C3145B292E0E2964560B70A2A2F46443283C0C79ED90458A94E5BF8`；原始媒体和残留不完整物仍在 Git 外。
+- [x] 用仓库 `url_intake.py` 入口再次复现并恢复上述两条 403：默认客户端失败、Android 残片被拒绝，Node.js + `web_embedded` 自动选出完整 XWE MKV 与 GQ WebM；外部收据 `E:\Claude_allow\Download\s12-url-intake-repro-20260822\url_intake_repro_receipt_v2.json` SHA-256 `4F6CF1E7D81ECDB5CF47C9E363D40B6D0FF35D8ECC783AC93F00FF64C58E19B6`。两条仍为 YouTube 派生 R3，不进入 MATLAB/R1。
+- [x] 加固 R1 资格门禁：要求非视频派生原始 PCM/FLAC、来源指针与授权证据、车型/工况、采样率、原厂排气确认；即使视频容器声明 PCM 或手工 raw receipt，YouTube/视频抽取仍不得升级。新增拒绝路径测试；完整 S12 回归 `377 passed, 114 subtests`，Stage Q/R/URL 重点 `16 passed`，Track-P guard `32 passed`。
+- [x] 公开同步数据复核：F1Audio（受限/F1）、Visual-Acoustic（Lincoln MKS）和 HL-CEAD（非锚点固定 RPM）均排除为三个锚点 R1；Ferrari 458/Hellcat/RX-7 专业库保持未购买候选。证据清单 `tasks/reports/runtime/s12-stage-q-real-reference/public_sync_reference_search_audit_20260822.json`（SHA-256 `FB0660B24699791BB4613A4E45C5A492471C1DDF515638AA5BDBB1ADEB796B43`），没有下载版权原始音频。
+- [x] 本轮最终验证：完整 S12 `377 passed, 114 subtests`；Stage Q/R/URL 重点 `16 passed`；Track-P guard pytest `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`git diff --check` 通过。R1 仍为 0，未启动 MATLAB 阶次或调参；本轮提交后的最终 SHA 以 Git/远端复核为准。
+- [x] 从上述 24 条最终完整视频重新抽取无增益 PCM WAV，并以 `intake_manifest_final_video_v1.json`（SHA-256 `2432218DFEF56CAE8A4FA4B475A1A7AEBB43BAB4BA9EBEC7459A4346611881CF`）绑定现有 Comparator；外部分析收据 `final_video_analysis_receipt_v1.json` SHA-256 `62492F2CABE3BBDF6606E7E1C16CAC4FE1703F784E4185D25D8C5D28841C1175`，中文差异报告 SHA-256 `60EAC35526ECF922EC50605EDF320F2A2BFCCD2CD06DA6BC38BF41054FD8F71D`，结果为 24/24、8 车各 3 条、R3 诊断，不进入 MATLAB/调参。
+- [x] 2026-08-23 独立复试 YouTube 24 条：默认 `yt-dlp --proxy ""` 路径为 `2/24` 完整、`22/24 HTTP 403`；`Node.js + EJS + android` 回退补齐后，`ffprobe` 与 `ffmpeg -xerror` 全流/音频严格解码为 `24/24 COMPLETE_MEDIA_AND_AUDIO`，生成 `24/24` 外部 WAV。合并回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\youtube_retry_combined_receipt_20260823.json` SHA-256 `0DAB94BFB99A4AEDC4855929A39EA211D958A4EAA6C3B9F3ADCE98F065363EEE`；严格回执 `strict_decode_receipt_20260823.json` SHA-256 `C120BFE16B0CEF5B80C68FC47E4FB2BB6198CE94BAE8EE1BF9243B04A965C782`。原始/派生媒体均未进入 Git，YouTube 资格仍为 R3。
+- [x] 2026-08-23 按 Jovi 最新要求做独立单条复测：对 `hellcat_01 / cKx-cb0fzeo` 的默认 403，`yt-dlp + Node.js EJS + android` 取得 3,749,435 字节 MP4；`ffprobe`、`ffmpeg -xerror` 全流校验与 48 kHz 双声道 WAV 完整解码均通过。外部收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v2_probe\download_receipt_hellcat_01.json` SHA-256 `7BF6CC011DBDCE68FA26A8F68F2EF10B4513AC7535269FFA42ED9802603317DE`；仍保持 YouTube `R3`，原始/派生媒体不入 Git。
+- [x] 2026-08-23 重新核验两条明确许可的 R2 锚点：Wikimedia Ferrari 458 与 Dodge Challenger SRT Hellcat 外部 OGG/WAV 通过 `ffprobe`、`ffmpeg -xerror`，Stage R R2 Comparator 复跑成功且结果与既有基线一致；外部 manifest SHA-256 `16BB249DEDF7760AB02BB995B9F46953BCCDC4F62340B576AF7D177DC233340F`，R2 收据 SHA-256 `1E470FD6AABB54A7ADAF629FCEDD140B9B15082DD3A77EC4AE594DF98A26C0C1`。两案仍无同步 RPM/state，R1=0，自动调参关闭。
+- [x] 2026-08-23 将上述最新 24 条 WAV 重新绑定并运行 R3 诊断链：`24` 条特征、`72` 个低置信切片、`24` 条 Comparator、`24` 条中文 A/B 试次和参数诊断均生成；外部收据 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\r3_analysis_receipt_20260823.json` SHA-256 `18bea83f660d773b81b138a6982f01012a64cac9fcef8605c0d660dab3bdefc0`。清单仍明确 `R1=0/R2=0/R3=24`、A/B 等待 Jovi，禁止阶次/自动调参，原始与派生媒体不入 Git。
+- [x] 2026-08-23 为三锚点生成中文 A/B 外部包：Ferrari 458、Hellcat、RX-7 FD 各 3 个试次，共 18 个 5 秒试听片段；manifest SHA-256 `dc5bb05c24b338485f567b4e4107620aff76f8d210204b6cccae61eb4c4f6052`，receipt SHA-256 `fbcb0ccc701b4edfb20b371a13478ad8e2ac2172e3203bffb78e6ec15ff6ba6e`。`ffprobe`/SHA 校验通过，反馈字段为空，状态保持 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，不进入自动调参。
+- [x] 2026-08-23 补齐中文离线 A/B 页面：`E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v1\anchor_ab_zh_v1\index.html` 可直接双击打开，固定绑定 9 个试次/18 个片段 SHA，支持中文评分、备注、进度和反馈 JSON 下载；页面 SHA-256 `5C495F4FA900F99A1B90C613E818C61249B58A2D239C60F1A2C09BFD956A869F`。Node 脚本语法、18 个片段 manifest/SHA 校验通过；页面不自动调参，状态仍为 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`。
+- [x] 审计一条 Freesound CC0 Ferrari 458 Italia GT3 现场录音：页面、MP3 预览和 PCM 派生 WAV 的 SHA 已绑定到 `freesound_ferrari_458_gt3_cc0_audit_20260822.json`；因同一文件混合多辆赛车且无分段时间/RPM/state，登记为 `R2_CANDIDATE_NOT_COMPARISON_READY`，未进入比较或调参。
+- [ ] 取得可审计授权、精确原厂/Trim/排气资料、同步 RPM/Load/Throttle/Gear/shift、麦位/AGC 合同后，重新资格化 R2/R1；在 Jovi 提交绑定 SHA 的中文 A/B 反馈前不得调参。
+
+## S12 MATLAB R2 专业指标复核（2026-08-23）
+
+- [x] 核验现有 MATLAB R2026a Audio Toolbox：`rpmordermap`、`ordertrack`、`orderspectrum`、`rpmfreqmap` 及六个心理声学函数均可用。
+- [x] 新增 `tools/sound_sim/s12/real_reference/run_r2_matlab_psychoacoustic_audit.m`，复用仓库现有 `s12_psychoacoustic_analysis`，对 Ferrari 458、Hellcat、RX-7 FD 各一组 R2 参考/本地 synthetic 代理执行 5 秒共同窗口相对测量。
+- [x] MATLAB 运行收据：`E:\Claude_allow\Download\s12-r2-matlab-psychoacoustic-audit-20260823-v3\matlab_r2_psychoacoustic_audit.json`，SHA-256 `523C8264F6A83EE23640A166FDFA15E76771880EFBFE914A4FA79C161AABB70A`；3/3 案例成功，状态 `R2_LIMITED_COMPARISON_COMPLETE`。
+- [x] 复核边界：无同步 RPM/Load/Throttle/Gear/shift，因此没有运行 `rpmordermap`/阶次资格、自动调参、参数写回或 Profile Candidate；Jovi 人耳反馈仍为 0。
+- [x] 当前 worktree 全量回归：`877 passed, 232 subtests passed in 1605.13s`；Stage Q/R/S 聚焦 `31 passed`；Track-P pytest `32 passed`；独立冻结守卫 `180 files / 2 symbols`；`git diff --check` 与 `compileall` 通过。
+
+### Review
+
+- 成功证据：外部组合 intake `URL_INTAKE_COMPLETE`、24 条唯一 URL、24 个 WAV SHA、72 个切片记录、24 条 Comparator 记录、8 车诊断汇总。
+- 诚实边界：所有公开视频是有损派生音频；法律、原厂排气和同步状态未核验，所以没有真实身份分数、阶次图、自动调参或 Profile Candidate。
+- 下载完整性补充：直接无代理路径恢复了原始 24 条 URL 的可解码音频，但仅证明媒体传输/解码完整；不能替代授权、原厂状态或同步 RPM/状态数据。
+- 当前 R3 补充基线：已使用原始 URL 重试结果重算现有 Comparator；逐车中位数和不确定性报告只作为听审排序，不输出真实性百分比。
+- Git 范围：仅入口代码、测试/计划修改和中文报告；`git ls-files '*.mp4' '*.webm' '*.wav'` 不新增本轮版权媒体，原始/派生下载物仍在外部目录。
+- 中文听审交接：Jovi 可双击外部 `anchor_ab_zh_v1\index.html` 完成 9 个 R3 试次；反馈 JSON 回传后，先复核监听人编号、试次/片段 SHA 和完整性，再决定是否进入后续人工评审。页面反馈不能替代 R1 原始录音、同步状态或 MATLAB 阶次资格。
+
+## S12 原始录音 R1 入库与低速率状态绑定（2026-08-23）
+
+### 执行计划
+
+- [x] 审计当前 Q/R 门禁和分支状态，保持 YouTube 派生音频为 R3，不将下载完整性改写成原厂 R1。
+- [x] 以 TDD 新增原始 WAV/FLAC + 同步 RPM/Load/Throttle/Gear/shift 的外部入库合同；输出仅为 manifest/report，不复制原始媒体。
+- [x] 实现批准目录、来源/授权、车型/原厂排气、单位、时间窗口、递增时间戳和原始 SHA-256 的 fail-closed 校验；不完整状态不得进入 R1 或自动调参。
+- [x] 实现 Stage R 对带时间戳低速率遥测的非外推网格绑定：连续量线性插值，挡位/换挡事件离散映射；增加无重采样 FLAC 外部临时输入支持。
+- [x] 将 raw intake manifest 接入 Stage Q canonical `reference_database_v2` 合并入口，生成 evidence matrix、时间窗口切片、RPM/state bindings、provenance 和派生特征指针，并用 JSON Schema 验证。
+- [x] 将已审计授权 R2 manifest 接入同一 Stage Q canonical 合并入口；入口重新核验外部音频 SHA-256，登记 Ferrari/Hellcat/Supra 各一条及 RX-7sim 五条 R2 指针，不复制原始媒体。
+- [x] 2026-08-23 审计 RX-7sim 作者录音：确认 1993 Mazda RX-7 页面/仓库与 `CC BY-NC-SA 4.0`，外部 OGG/WAV SHA 与 `ffprobe` 元数据绑定；5 条进入 R2，R1 仍因缺同步 RPM/state、精确 trim、原厂排气和 AGC 合同而关闭。
+- [x] 2026-08-23 对 RX-7sim `exhaust/revLong01` 的 `full_pull` 运行 Stage R R2 Comparator；结果 `spectral_log_distance=0.662500`、`loudness_delta=-0.1404 dB`、`order=not_evaluated_without_rpm_trace`，无参数建议。其余 4 条因缺语义匹配候选未比较，禁止跨工况复用代理。
+- [x] 修复 Stage R 参考 SHA 校验的大小写兼容性，并新增回归测试；大写清单 SHA 与 `hashlib` 小写输出现在按十六进制等价比较。
+- [x] 更新中文入口指南、Q/闭环报告和本任务接力记录；明确当前真实资料仍为 `R1=0`。
+- [x] 验证完整 S12、Track-P、独立冻结守卫、compileall 和 diff 门禁；仅在验证通过后提交并推送本分支。
+
+### Review
+
+- 原始入库/Stage Q/R/S/T 历史重点测试：`26 passed`；本轮完整 S12：`386 passed, 114 subtests passed`；本轮 Stage S/R 聚焦：`11 passed`；Track-P pytest `32 passed`，冻结守卫仍为 180 个冻结文件、2 个冻结符号。
+- 独立守卫：`180` 个冻结文件、`2` 个冻结符号均未改动；`git diff --check` 干净；未启动 MATLAB、未生成 MATLAB/MoSQITo 收据、未改变 Runtime/Android/ESP32/CAN/Simulink/Track-P。
+- 结果边界：入口和合同已完成，真实 R1 数据、MATLAB 阶次比较、人耳 A/B、参数建议和 Profile Candidate 仍等待 Jovi 提供合法原始录音及同步状态；不得据此宣称闭环完成。
+- 本轮新增验证：Stage Q canonical 为 23 条记录，其中 8 条授权 R2、15 条 R3、R1=0；授权 R2 SHA 完整性、大小写兼容和错哈希拒绝路径均有回归覆盖。RX-7sim Stage R 单案结果保留 `R2_LIMITED_COMPARISON_COMPLETE`，不提升为 R1。
+
+## S12 Stage S RX-7sim 中文 R2 A/B 交接（2026-08-23）
+
+> 状态：`R2_LIMITED_COMPARISON_ONLY / WAITING_FOR_JOVI_HUMAN_FEEDBACK`；只写仓库内元数据和收据，原始/试听音频均在 `E:\\Claude_allow\\Download`。
+
+- [x] 修复中文 A/B 构建器对参考/候选 SHA 的大小写敏感问题，并新增回归测试；不会放宽 SHA、路径或音频完整性门禁。
+- [x] 为唯一语义匹配的 RX-7sim `exhaust/revLong01` `full_pull` 生成外部中文离线 A/B 页面：`E:\\Claude_allow\\Download\\s12-rx7sim-human-ab-zh-20260823\\package\\index.html`。
+- [x] 固化 `test_id=s12-stage-s-r2-ab-20260822`、研究清单 SHA `68D525669E7789AF2A3570BE90E01FCD6AB571DEA0EA4866ACB2AE7DDB2FC428`、反馈绑定 SHA `4ABF650DFED136A327A8828F9B1710417A3051437F7F85435DFBF8CE5FA4BD26`、中文页面 SHA `586322EE697AACDD0ED429A36DCB4531A1BDA01E4D9598C84A6AC590A25EF6BB`、中文说明 SHA `AF2C91F1B3E5ED1B02A02F8FF9B44E8AB149C24C93ECB3178365E65B284C1EBA` 及参考/候选/试听副本 SHA。
+- [x] 写入 `tasks/reports/runtime/s12-stage-s-human-calibration/rx7sim-20260823/` 元数据收据和中文交接报告；4 条无语义匹配候选的 RX-7sim 录音不进入 A/B。
+- [ ] 等待 Jovi 返回带 `test_id`、研究清单 SHA、案例 ID、参考/候选 SHA、监听设备和中文评分的反馈 JSON；在此之前调音轮次为 `0`，不生成 Profile Candidate。
+
+### Review
+
+- 页面只导出反馈，不自动调参；试听副本明确不用于 Comparator 指标。
+- R2 仍无同步 RPM/state，阶次为 `not_evaluated_without_rpm_trace`；R1 仍为 `0`。
+
+## S12 Stage S 反馈绑定修订与 YouTube 403 独立复试（2026-08-23）
+
+### 执行计划
+
+- [x] 先以 TDD 为页面与反馈导入合同写出失败测试，再实现中文页面和 fail-closed 校验。
+- [x] 页面补齐监听人、播放设备、系统音量、输出端点、系统音效、机器维度键、案例 SHA 和中文标签；导出不授予自动调音/Profile 权限。
+- [x] 新增 `feedback_import.py` 与 CLI：校验 study/binding/feedback SHA、test_id、案例集合、参考/候选 SHA、R2 状态和播放元数据；重复/缺失案例拒绝。
+- [x] 用全新外部目录 `E:\Claude_allow\Download\s12-rx7sim-human-ab-zh-20260823-v3\package` 可重建生成中文 A/B 包，原始和试听音频不进 Git。
+- [x] 对 Ferrari 458 的 YouTube 403 用 `web_safari`、`android+bestaudio`、`android+best` 做独立复试；最后一条通过严格 `ffmpeg -xerror`，写入外部回执。
+- [x] 完成全量 S12、Stage S/R 聚焦、Track-P pytest、冻结守卫、compileall、Node 页面脚本和外部 WAV/SHA 检查。
+- [ ] 等待 Jovi 返回完整真实听审 JSON；在 R1 同步录音和反馈到位前，不启动 MATLAB 阶次、自动调音或 Profile Candidate。
+
+### Review
+
+- 最新全量 S12：`391 passed, 114 subtests passed in 148.81s`；Stage S/R 聚焦：`16 passed`；Track-P：`32 passed`。
+- 外部 v3 包：研究清单 SHA `2BF26029B68DCAC80C7A9896DC570C18BC3D9F52B5F07C500F38C9A865CE501C`，中文页面 SHA `65B43B200E4C4A2771CFF8E35A375A3DC62EFFC9B49029CA043F3A004D192A7D`，Node `--check` 通过，试听 WAV 可打开。
+- YouTube 单条复试：`ferrari_01` 最终媒体 SHA `6576BFCEC095E4FD27DD437FA5D32D05319995599F6319A9695545AF62040B40`，`143.058141 s`，H.264/AAC，全流解码通过；仍是 YouTube 派生 `R3_DIAGNOSTIC_ONLY`。
+- 真实闭环仍未完成：`R1=0`、反馈行数 `0`、调音轮次 `0`、Profile Candidate 未生成；下载完整性不等于授权、原厂状态或同步 RPM/state。
+
+## S12 三锚点 R1 入库模板（2026-08-23）
+
+- [x] 新增 `tasks/reports/runtime/s12-stage-q-real-reference/r1_intake_request_v1.json`，固定 Ferrari 458、Hellcat、RX-7 FD 的 R1 必填字段、状态单位、时间戳与 fail-closed 接受门。
+- [x] 模板明确原始 WAV/FLAC、RPM/Load/Throttle/Gear/shift 状态和授权文件只放仓库外；Git 只保存路径别名、SHA、来源和派生特征指针。
+- [x] 模板验证通过：`r1_intake_request=PASS bytes=2954`；当前仍无任何真实 R1 记录，不启动 MATLAB 阶次、Comparator 资格调参或 Profile Candidate。
+- [ ] 等待 Jovi/许可方提供三锚点合法原始音频与同步状态；填充模板后再运行 `raw_audio_intake`、MATLAB 阶次、Comparator 和中文人耳 A/B。
+
+## S12 YouTube 403 回退与导入探针去重审计（2026-08-23）
+
+- [x] 独立复测 `c63_03 / vIbiUABVZO4`：默认 `yt-dlp` 返回 `HTTP 403`，切换 `Node.js + EJS + android`、`format=best` 成功下载 10,340,349 字节 MP4；`ffprobe`、`ffmpeg -xerror` 全流解码和 21,422,158 字节 PCM WAV 再解码均通过。
+- [x] 固化外部回执 `E:\Claude_allow\Download\s12-ytdlp-retry-20260823-v4_probe\probe_receipt_c63_03_v2.json`，SHA-256 `C1E39775BB97B2A833DA915B67F0481CA3702F85B6F476750CACF887EF748DE5`；原始媒体、WAV、日志和不完整探针结果均留在 `E:\Claude_allow\Download`，不进入 Git。
+- [x] 审计 `E:\Claude_allow\Download\s12-rx7sim-q-import-probe-20260823-v2`：无原始媒体；canonical manifest SHA 为 `D317D2E10193D12B6607B59A714ABF4A55DCEE78A94C30ED96070F6D2DBC3E46`，探针元数据/派生文件逐文件相同，23 条外部路径均为既有记录；不重复合并、不改变 `R1=0/R2=8/R3=15`。
+- [x] 复核中文 A/B 包 `s12-rx7sim-human-ab-zh-20260823-v3`：反馈模板仍为空，`feedback_binding.status=WAITING_FOR_JOVI_HUMAN_FEEDBACK`；不把模板当作人耳反馈，不启动 Stage S 调音。
+- [x] 2026-08-23 重新核对 Ferrari 458、Hellcat、RX-7 商业录音库的车型、同步 take、录音链和许可边界；写入 `tasks/reports/runtime/s12-stage-q-real-reference/procurement_candidate_revalidation_20260823.json`。三者均保持 `PROCUREMENT_CANDIDATE_NOT_R1`：未购买/未取得书面许可，且页面未提供数值同步 RPM/Load/Throttle/Gear 文件；未下载版权原始音频。
+- [x] 修复 Track-P guard 对 Stage-Q/R `run_r2_matlab_psychoacoustic_audit.m` 的保守 `matlab` 路径假阳性：按 Baseline v3 §3.3 仅加入精确 Track-S allowlist，不改变 180 个冻结文件或 2 个冻结符号；guard 与聚焦回归重新通过（`69 passed`）。
+- [x] 修正 R1 资格门对采集链的过窄假设：麦位不再限定 `EXTERIOR_REAR`，AGC 不再限定 `DOCUMENTED_NO_AGC`；只要明确记录即可，UNKNOWN/空值仍拒绝。新增测试覆盖 `INTERIOR_CABIN_DASH`、`DOCUMENTED_AGC_ON_WITH_LEVEL_TRACE` 和未知值；R1 计数仍为 0。
+- [x] 当前 HEAD `10a78bc2` 最终回归：S12 核心 `394 passed, 114 subtests`（147.48s）+ Track-P pytest `32 passed`（1.21s），合计 `426 passed, 114 subtests`；独立冻结守卫 `180 files / 2 symbols PASS`，compileall、JSON 包校验和 `git diff --check` 通过。
+- [ ] 仍需合法原始 R1 录音、同步 RPM/Load/Throttle/Gear/shift 和 Jovi 绑定 SHA 的中文反馈；在输入到位前保持 `WAITING_FOR_REAL_REFERENCE_DATA`，不运行 MATLAB 阶次或自动调参。
+- [x] 公开同步数据候选复筛：Lincoln MKS、HL-CEAD 和 Dodge 同步记录功能均不满足三锚点 R1；记录在 `public_synchronized_source_screening_20260823.json`，未下载不合格或未授权原始媒体。
+
+## S12 Stage Q-R1 Pilot Acquisition and R2 Human Feedback Closure（2026-08-23）
+
+- [x] A 线校验 `anchor_ab_zh_v1`：manifest/receipt/page 通过，9 个试次、18 个试听片段 SHA 全部匹配；收据位于 `tasks/reports/runtime/s12-stage-s-human-calibration/anchor_ab_zh_v1/anchor_ab_validation.json`。
+- [x] A 线新增 anchor 导出 JSON 的 fail-closed 适配器：严格绑定 package SHA、试次/试听 SHA、评分、偏好、备注和问题分类；没有反馈时保持 `WAITING_FOR_JOVI_HUMAN_FEEDBACK`，有限建议为空且 `parameter_changes=0`。
+- [x] B 线新增 Hellcat 默认供应方/车主联系模板、OBD/CAN 与音频同步采集说明、spec/rights/三状态 CSV/SHA 空模板；模板树不含任何原始媒体。
+- [x] B 线新增 rights scope、逐文件 SHA、时间戳单调性/窗口覆盖和既有 raw_audio_intake 汇总预检；完整 fixture 可达 `R1_PILOT_READY`，但仍关闭自动调参和 Profile Candidate。
+- [x] 当前真实外部目录 `E:\Claude_allow\Download\s12-r1-pilot\hellcat_full_pull_01` 尚不存在；已生成等待态 `S12_R1_Pilot_Acquisition_Report.md`、`r1_pilot_preflight.json`、`rights_scope_validation.json`、`state_sync_validation.json`、`comparison_results.json`、`parameter_recommendations.json` 和 `feedback_gate.json`，状态 `WAITING_FOR_R1_PILOT_DELIVERY`。
+- [x] 当前 focused TDD：anchor/A 线 `8 passed`；模板 `4 passed`；R1 preflight `7 passed`；端到端等待态 `2 passed`。真实文件到位前不调用 MATLAB、不运行 Order hard gate、不修改声源。
+- [ ] 等待 Jovi 提供完整反馈 JSON 和 Hellcat（或指定车型）R1 试点目录；收到后按 `raw_audio_intake → Stage Q → MATLAB/MoSQITo → Comparator → 中文 A/B → 有界调音 → 回归` 顺序推进。
+
+## S12 Professional Comparison Dashboard v1 + R2 Diagnostic Tuning（2026-08-23）
+
+- [x] Phase 1：按 `anchor_ab_zh_v1` 实际 manifest 审计 9 对/18 个片段；reference/candidate 文件、时长、SHA、file-ID 和 Order 未资格边界已写入 `S12_Professional_Comparison_Dashboard_v1/clip_integrity.json`。
+- [x] Phase 2：MATLAB R2026a Audio Toolbox 对 18 条 exact clip 真实执行六项心理声学指标；隔离 MoSQITo 1.2.1 对同一 18 条执行；两者分别绑定 reference/candidate SHA，MoSQITo 不支持的 fluctuation 列明确为 null，不用 Proxy 冒充。
+- [x] Phase 3：生成 `professional_pair_metrics.json`、`professional_plain_language_diagnosis.json` 和中文 `S12_Professional_Comparison_Report.md`；三类域分列，没有总相似度百分比。
+- [x] Phase 4：生成中文 `S12_Professional_Comparison_Dashboard_v1/index.html`；显示播放器、canplaythrough/时长/SHA 门、R3/麦位不确定性、MATLAB/MoSQITo/Proxy、8 频带、频谱/残差、诊断和简化 Jovi 反馈导出。
+- [x] Phase 5：三锚点各一个参数组、每组 64 个有界规格；`r2_diagnostic_candidate_results.json` 明确 `SPECIFICATIONS_ONLY_NOT_RENDERED`，不修改 source、不运行 Order、不生成 Profile Freeze。
+- [x] Dashboard 静态合同、0-duration/SHA/file-ID 门、Playwright Chromium 音频加载 smoke、Node 语法、JSON 校验已通过。
+- [x] Jovi 已提交长窗口 `Jovi_Guided_Feedback.json`；完成 SHA/file-ID/音频门校验并按确认的问题组生成 R2 有界复核收据。
+
+## S12 Professional Long-Window Extension（2026-08-23）
+
+- [x] 发现旧页面候选 WAV 只有 6.25 秒；未循环拼接或静音补齐，保留 5 秒 exact 基线不变。
+- [x] 外部生成 60 秒本地完整循环（怠速→加速→全负荷→收油/减速→巡航→怠速），目录 `E:\Claude_allow\Download\s12-professional-long-window-candidate-v1`，不进入 Git。
+- [x] 从真实长 reference 和 60 秒本地循环生成 15/30 秒派生窗口：18 对（15 秒 9 对、30 秒 9 对），目录 `E:\Claude_allow\Download\s12-professional-long-window-v1`；只做时间切片，无增益/EQ/AGC/重采样。
+- [x] 长窗口 Legacy Proxy、MATLAB R2026a、MoSQITo 1.2.1 均已执行；长窗口 Order 仍为 `ORDER_COMPARISON_NOT_QUALIFIED`。
+- [x] 新增长窗口页面 `S12_Professional_Comparison_Dashboard_v1/long_window.html`，5 秒基线页面保留；长窗口 Guided Feedback 模板为 `Jovi_Guided_Feedback_Long_Window.json`。
+- [x] Jovi 已完成 15 秒/30 秒长窗口车型聚合反馈；反馈仍保持 R3 诊断边界，不执行自动参数修改。
+
+## Dashboard Feedback UX 修复（2026-08-23）
+
+- [x] 将原生 `select multiple` 改为可直接点击的 `.problem-chip` 标签，不再要求 Ctrl 多选。
+- [x] 将反馈粒度从 18 个试次改为每车型一行；三辆车各完成一次身份/真实感/问题/偏好/备注后，用一个“提交全部车型反馈”按钮导出。
+- [x] 增加“已听完本车型当前窗口”确认；浏览器验证了三车型填写后按钮从禁用变为可提交，空反馈仍 fail-closed。
+- [x] Guided Feedback v2 导入器支持车型聚合 rows，并继续校验 SHA/file-ID、音频门和自动调音/Profile 禁止。
+- [x] 收到 `C:\Users\Admin\Downloads\Jovi_Guided_Feedback.json` 后完成 v2 导入；未修改声源。
+
+## S12 Dashboard 长窗口反馈导入与 R2 有界复核（2026-08-23）
+
+- [x] 复现并定位浏览器 number input 导出为字符串导致的导入失败；新增纯整数字符串规范化，仍拒绝小数、越界、空值和布尔值；Dashboard 导出改为整数并加 `step=1`。
+- [x] 实际反馈文件通过长窗口 metrics：3 个车型、18 对窗口、每车 6 个 pair/file/SHA、音频提交门 `PASS`；验证收据 `Jovi_Guided_Feedback_Long_Window_Validation.json`。
+- [x] 生成 `long_window_parameter_recommendations.json`：Ferrari 与 Hellcat 各保留一个 64 规格参数组；RX-7 因人声污染阻塞；回火/换挡/转速事件保持不调。
+- [x] 更新 `S12_Professional_Long_Window_Report.md`，记录评分、偏好、问题分类、备注摘要和 R1/R2/R3 边界。
+- [x] 聚焦反馈回归 `5 passed`；待执行长窗口 Dashboard smoke、JSON/Node/compileall、全量 S12 与 Track-P 冻结守卫后提交推送。
+
+### Review
+
+- Jovi 反馈输入 SHA-256：`acfbcbab2022612621aba2cec8a73a5dbc193e0a142f247989f81b00356b673d`；长窗口 manifest SHA 保持 `ecbe8dc92fa63ed00a76e1554a37a1ff452aaa6af0eff5b3bd3edbadcd64c2a1`。
+- 当前结果：`R2_DIAGNOSTIC_REVIEW_READY / NOT_R1_QUALIFIED`；`parameter_changes=0`、`automatic_tuning_eligible=false`、`profile_candidate_ready=false`。
+
+## S12 主题化听审与 RX-7 清洁参考 R2（2026-08-23）
+
+- [x] 设计并提交 `docs/superpowers/specs/2026-08-23-s12-rx7-topic-aware-r2-design.md` 与实施计划；保留历史 R3 页面和外部原始音频边界。
+- [x] Dashboard 两套页面新增中文 `focus_topics`：怠速、加速、减速/收油、换挡、回火/爆音、转速变化、音色/机械感；新导出为 v3，每车至少选一个主题；v1/v2 旧反馈仍可导入。
+- [x] 修复 MoSQITo 长窗口收据对非 15/30 秒 native 窗口的硬编码，改为从 manifest 推导窗口时长。
+- [x] 外部构建 `E:\Claude_allow\Download\s12-rx7-topic-r2-v4`：5 条作者 R2 参考、5 条有界 RX-7 候选，原生时长 `7.658208/7.679917/14/16.5 s`；参考为字节一致外部副本，未循环/补静音/处理参考。
+- [x] RX-7 候选只改 `rotary_housing_turbo_distribution` 一组参数，并以一次固定候选增益留出 `-1.5 dBFS` 余量；source/PTR/Radiation 未改，`parameter_changes=1` 仅表示候选版本已渲染。
+- [x] MATLAB R2026a 已在打开会话中逐条执行 `10` 个信号；批处理一次性循环曾触发 `0xc0000005`，未采用崩溃收据；MoSQITo 1.2.1 隔离环境执行 `10` 个信号；MATLAB/MoSQITo/Proxy SHA 交叉校验通过。
+- [x] 生成独立中文页面 `rx7_topic_r2.html`、数据 `rx7_topic_r2_results.json` 和报告 `rx7_topic_r2_report.md`；旧 R3 Dashboard 不覆盖。
+- [x] 当前聚焦测试：主题/反馈/RX-7/专业收据 `32 passed`；统一证据矩阵测试通过；RX-7 页面 Playwright smoke PASS；全量 S12 `455 passed, 114 subtests`；5 秒、15/30 秒和 RX-7 页面 smoke 均 PASS；Track-P `32 passed`，独立守卫 `180 files / 2 symbols`。
+# 2026-08-24 S12 Stage V — Engine-Sim-Inspired Event-Domain Engine Source
+
+> 状态：`EVENT_DOMAIN_THREE_VEHICLE_CANDIDATES_READY / WAITING_FOR_JOVI_THREE_VEHICLE_REVIEW / REFERENCE_POINTER_ONLY / NOT_R1_QUALIFIED`；隔离 worktree `E:\Tesla_speed\worktrees\s12-stage-v-event-domain-engine-source`，不 push、不 merge。
+
+- [x] 从 `b1d500c7c37a71728020c39e6dc115a0cd6743d5` 建立分支 `agent/s12-stage-v-event-domain-engine-source`。
+- [x] 记录初始 HEAD、clean status、diff-check、Track-P 守卫和 Engine-Sim commit `85f7c3b959a908ed5232ede4f1a4ac7eafe6b630`。
+- [x] 完成 Engine-Sim 源码研究报告、S12 traceability 和 source receipt。
+- [x] 先写 Stage V RED 测试并观察失败，再按 RED→GREEN 实现。
+- [x] 实现 `event_domain_v1`，保持 `legacy_v015` 默认源和 Track-P 冻结边界不变。
+- [x] 通过 Hellcat vertical slice：事件、连续曲轴/转矩、路径衰减/温度声速、回火、raw/monitor、PCM24 WAV 重开与三方 comparator。
+- [x] 审核后迁移 Ferrari 458 flat-plane 与 RX-7 rotary event-domain；RX-7 的事件宽度、housing、双 spool 和 blow-off 参数均可达。
+- [x] 生成 Hellcat 五场景及三车型五场景 runtime package、Hellcat candidate grid、最终报告、中文试听指南和隐藏 B/C review package；Reference 保留外部指针，不复制原始媒体。
+- [x] 运行 Stage V、Stage N/Q/R/S/T、Track-P、compileall、JSON/WAV/diff 门禁。
+- [ ] 等待合法且同步的 Reference 后，重新执行 Reference/Parent/Candidate 三方 R2/R1 比较；当前候选网格为 `REFERENCE_TARGET_MISSING`，未选择任何候选。
+
+## Review
+
+## Review（2026-08-25）
+
+- 当前代码测试：Stage V 新增 `31 passed`；完整 `acoustic_identity_v015/tests` 的最近基线为 `513 passed, 118 subtests passed`（旋转扩展后的最终回归待重跑），另有 1 条历史 `SyntaxWarning`；Stage N/Q/R/S/T 聚焦为 `46 passed`。
+- Track-P 独立守卫：`180 files / 2 symbols OK`；`git diff --check`、compileall、JSON finite 校验均通过。
+- 新鲜 runtime：`tasks/reports/runtime/s12-stage-v/hellcat_vertical_slice_v2/`；五场景 manifest/WAV 验证 `0 errors`，one-shot/block PCM 等价性 `5/5 true`，合法 afterfire 场景 `1` 个事件、稳态/错误条件 `0`。
+- 顶层 review package：`E:\Tesla_speed\review_packages\s12-stage-v-event-domain-v1\`；独立校验 `PACKAGE_ERRORS=0`，状态 `WAITING_FOR_JOVI_HELLCAT_REVIEW`，Reference 为 `REFERENCE_POINTER_ONLY`。
+- 三车型新鲜 runtime：`tasks/reports/runtime/s12-stage-v/three_vehicle_slices_v3/`；Hellcat/Ferrari/RX-7 三个 manifest 均 `errors=[]`。三车型 review package：`E:\Tesla_speed\review_packages\s12-stage-v-event-domain-v3\`，独立校验 `ERRORS=[]`，109 文件。
+- v1 旧输出因 afterfire 场景门失败保留作诊断证据；v2 是当前唯一新鲜交付证据。未复制 Engine-Sim 源码、`.mr`、IR、版权原始音频；未修改 FVM/PTR/Radiation/MATLAB/Simulink/Runtime/Android/ESP32/CAN。
+- 未完成项：合法同步 Reference；Jovi 中文盲听反馈；R1 qualification、OEM/校准和 Profile Freeze 均保持关闭。
+
+## 2026-08-25 S12 Stage W — Hardening / Ecosystem Bake-Off / Obsidian Closure
+
+> 状态：`W0_AUDIT_PARTIAL / W1_PENDING`; worktree `E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff`; base `03f45432bd56f348d618ed69f25dfea86bc98a6f`; 不修改 Stage V worktree、main，不自动 push/merge/PR。
+
+- [x] 确认远端 Stage-V exact tip 与 37 文件提交；Stage-V focused `31 passed`；Track-P `180 files / 2 symbols OK`。
+- [x] 完成 W0 独立验收与差距矩阵：`tasks/reports/runtime/s12-stage-w/`。
+- [x] W1：Persistent 20 ms engine state、3000×20 ms / one-shot 60 s 等价、snapshot/restore。
+- [x] W2：scheduled event torque → crank omega/phase、free dynamics 与 measured-RPM tracking。
+- [x] W3：复用 frozen RuntimePtrAdapter，建立 pre-PTR → post-PTR raw PCM 链；适配器和 package SHA 绑定，默认 Stage-V path 不变。
+- [x] W5/W6：位置化 afterfire、timbre-map forced induction。
+- [x] W7/W8/W9：外部生态/论文研究注册表、P1–P6 Hellcat bake-off 与 post-PTR comparator 证据。
+- [ ] W10：合法 Reference 到位后的多参考中位改善门、非目标回归门和架构选择。
+- [ ] W11：将选择的架构迁移并验证 Ferrari 458 与 RX-7 FD。
+- [ ] Obsidian：沿用 `codex_memory/03-项目记忆/tesla-speed`，新增 Stage-W 研究、ADR、实验和 repo mirror；不改 `.obsidian` 配置、不复制版权媒体。
+
+### W11 execution plan
+
+- [ ] 先为 Ferrari 458 与 RX-7 FD 写入 P2H/P3 迁移 RED 测试：每个场景必须生成 source、post-PTR 与 monitor 三条 PCM，且同一输入具有可复现 SHA。
+- [ ] 仅复用 `PersistentEventDomainEngine`、`waveguide_v1`、`timbre_map_v1` 与冻结 PTR；不得修改 PTR/Radiation 或将未选的 P2H/P3 标成 Selected。
+- [ ] 生成并验证迁移 manifest、运行时指标和三车诊断报告；结果只能为 `UNSELECTED_CANDIDATE_MIGRATION`，直到 W10 获得合法且同步的 Reference。
+- [ ] 将证据同步到 Obsidian repo mirror，并在 focused/full Stage-W 回归、JSON/WAV/manifest、`git diff --check` 后提交和推送阶段分支。
+
+### W0 Review
+
+- Stage V prototype remains `synthetic / uncalibrated / vehicle-inspired / not OEM reproduction / NOT_R1_QUALIFIED / NOT_PROFILE_FREEZE_READY`.
+- W0 critical gaps: no persistent cross-call state, no scheduled-event torque feedback, no firing-order-derived phase, no frozen PTR output in Stage-V pipeline, no stateful waveguide, no real reference scene binding.
+
+### W1/W2 Review（2026-08-25）
+
+- `PersistentEventDomainEngine` now persists PLL, event tails, path/collector histories, afterfire reservoir/cooldown, monitor gain and sample counter.
+- Slow acceptance passed: `3000 × 20 ms = 60 s` repeated calls matched one-shot output; receipt: `tasks/reports/runtime/s12-stage-w/w1_persistent_engine_receipt.json`.
+- W7/W8/W9 remain next: external ecosystem/论文 registry, P1–P6 bake-off and professional candidate gates; ENSIM4 teacher build stays toolchain-blocked.
+
+### W5/W6 Review
+
+- W5 focused tests: `3 passed`; afterfire location/delay/dRPM evidence is recorded in `w5_afterfire_receipt.json`.
+- W6 focused tests: `2 passed`; harmonic baseline and `timbre_map_v1` are explicit bake-off branches, not replacements.
+
+### W9/W10 Review
+
+- P1/P2/P2H/P3 rendered across the unified 12-scene Hellcat trace with raw,
+  post-PTR raw, monitor, traces, metrics, CPU timing and SHA manifests.
+- P4/P6 are explicit rejected/pending states; P5 is a rendered clean-room
+  synthetic one-shot branch. No “best failed candidate” was selected.
+- Bake-off status is `REFERENCE_TARGET_MISSING`; W10 selection remains pending a
+  rights-bound synchronized Reference.
+- `w10_reference_intake_audit.json` freshly audits the available Stage-U/R3
+  external packages: neither has legal rights, raw capture receipt or synced
+  RPM/load/gear state. The exact R1 delivery fields are recorded fail-closed.
+- v3 smoke rerender now binds P1/P2/P2H/P3 to identical 20 ms block-aligned
+  frame counts and emits phase/event/path/gain traces. Eligible afterfire is
+  nonzero while the ineligible scenario is zero; the 1.0 s smoke duration is
+  recorded explicitly and is not presented as a 20 s/60 s long-window result.
+- Local labelled engineering package: `E:\Tesla_speed\review_packages\s12-stage-w-engine-audio-bakeoff-v1`; ZIP SHA
+  `7c0b2b8fe3879db287a3a22f015ecceb032bc36d371bbc6f458a7839bab25e62`.
+  It contains P1/P2/P2H/P3 Raw/Post-PTR/Monitor and fail-closed Reference/P4/P5/P6 records; it is not an architecture selection.
+
+### W7/W8 Follow-up Review
+
+- Engine-Sim, DasEtwas, Granular, FiveM, ESP32 RC, VehicleNoiseSynthesizer and
+  PTR are now external exact checkouts with license SHA receipts. FiveM build
+  passed but its Apache LICENSE/README-MIT conflict keeps reuse closed; PTR
+  source parse passed but its weight archive is absent; CMake/Rust/Unity/
+  PlatformIO toolchains are absent and remain explicit build blockers.
+- ENSIM4 later built in a Docker Arch container (`ENGINE_3_CYL`) and survived a
+  5 s dummy-SDL probe. It remains teacher-only: no real audio device, CFD
+  ON/OFF run, CPU receipt or WAV is claimed. DasEtwas Cargo remains blocked by
+  crates.io TLS certificate validation; TLS verification was not bypassed.
+
+### W11 Preselection Review
+
+- Ferrari 458 and RX-7 FD each have P1/P2H/P3 eight-second, five-scene
+  preselection renders with identical Parent/Candidate lengths, zero clipping,
+  frozen PTR output and persistent phase/event/path/gain traces. Lift has one
+  eligible afterfire event in P2H/P3 for both cars.
+- This is `UNSELECTED_CANDIDATE_MIGRATION`, not W11 completion: W10 still has
+  no legal synchronized Reference and no architecture may be selected.
+
+### W3 Review
+
+- `FrozenPtrStereo` uses the existing immutable adapter per channel and preserves its state across blocks/snapshot restore.
+- W3 focused tests: `2 passed`; package source commit and SHA receipt are in `tasks/reports/runtime/s12-stage-w/w3_boundary_adapter_receipt.json`.
+- The adapter is not a full FVM/PTR network; real-time and device qualification remain outside this stage.
+
+### W4 Review
+
+- `waveguide_v1` focused tests: `4 passed`; Stage-V `delay_lpf_v1` remains selectable.
+- ENSIM4 exact checkout and LICENSE SHA are recorded; build/run is `BLOCKED_TOOLCHAIN_NO_CLANG_MAKE`, not a claimed PASS.
+
+## Stage W-C current execution checkpoint (2026-08-26)
+
+- [x] Recovered the existing Stage W worktree at `b9a1111f87e8b2b5eac40ee7dde21602c5198271` without reset or duplicate branches.
+- [x] Added `execution_state.json`, `EXECUTION_RESUME.md`, phase-receipt/log/checkpoint directories, and the W9 command receipts.
+- [x] Completed repository-side W0-W9 hardening, research, bake-off, preselection migration and final verification; full S12 is `1015 passed, 1 skipped, 232 subtests`, Stage-W focused is `43 passed, 1 skipped`, Stage-V focused is `31 passed`, and the explicit 3000-block gate is `1 passed in 77.09s`.
+- [ ] W10 formal Reference/Parent/Candidate selection: remain fail-closed until R1 rights, original WAV/FLAC, SHA manifest and synchronized RPM/load/gear traces arrive.
+
+### Stage W-C review
+
+- The missing R1 package is a non-blocking external qualification gap under the Stage W-C contract; internal Parent/Candidate and R2/R3 diagnostics are complete.
+- No architecture is selected, no OEM reproduction is claimed, and Profile Freeze remains closed.
+- Resume from `tasks/reports/runtime/s12-stage-w/execution_state.json` and `EXECUTION_RESUME.md`; do not rerun the full regression unless source or test inputs change.
+- Final W6 evidence is `bakeoff_long_v3` with real 20 s/60 s windows and review package v5; W8 source evidence is joined for all 23 registry ids and canonical Obsidian repo/vault hashes are 16/16 matched.
+
+## Task 5 addendum rework plan (2026-08-28)
+
+- [ ] RED/GREEN: harden bakeoff/migration validators and self-contained tamper tests.
+- [ ] RED/GREEN: explicit bank phase offsets, engine-level pressure, geometry matrix, timing/restore coverage.
+- [ ] RED/GREEN: historical W9/slow gate, stale package consumer rejection, nested migration inventory, mirror pending-parent state.
+- [ ] Commit source/tests/docs, regenerate once, run slow/Stage-W/V/validators/JSON/compileall/Track-P/diff.
+- [ ] Update receipt/recovery/package metadata separately; rerun Stage-W after metadata; leave clean.
+
+## Task 5D fresh strict evidence (2026-08-28)
+
+- [x] Probe current generator in unique system temp root; strict bakeoff validator returned `[]` with exit 0, so no generator/source repair was required.
+- [x] Generate exactly one new ignored synthetic evidence set: bakeoff v24 (180 WAV), RX-7 v24 (45 WAV), Ferrari v24 (45 WAV); preserve v23 and all earlier roots as history.
+- [x] Run independent v24 validators (`[]` for all three), JSON finite (`730/0`), WAV reopen/format (`270/270`), nested SHA (`900/900`), remediation (`52 passed`), Task5A (`24 passed`), Task5B affected (`104 passed`), slow (`1 passed in 92.06s`), Stage-W (`141 passed, 1 skipped`), Stage-V (`31 passed, 652 deselected`), compileall, Track-P and diff checks.
+- [x] Synchronize receipt, execution state, W9 current pointer, artifact/usage/package metadata, Obsidian repo mirror, Stage-W docs and resume to v24/current validation head; Vault remains `PENDING_PARENT_CODEX_MEMORY`.
+
+### Task 5D Review
+
+- Source/test head: `fcf74f3f31cb113027ac31475a6f8de65cc6efd9`; audio-generation head remains `5038194e473432f9dc66bc9a1834b375c37cdfe7` because no audio DSP source changed.
+- Current status: local synthetic evidence complete and fail-closed; selection remains null, formal R1/W10, OEM reproduction, human PASS, Profile Freeze and full S12 remain parent-owned/external gates.
+- v24 manifest SHA-256: bakeoff `e5de1bcb1e5ab3f62176dec4721dc14d8c9fc2e2393a2ffbe8011fc8051c39d0`, RX-7 `86e518c048d3a0e72bb6016113c18b535b67df30c4a1b9afdf78e416aaae2582`, Ferrari `290816b3cb52db019aab423b6115851a2d5467aef536af13ddacf92b14773f5d`.
+
+## 2026-08-30 S12 Stage Y source layers recovery
+
+> 状态：最终 fitted-map 可达性未闭合；本次保存探针 WIP 与问题说明，不调音、不 push/merge/PR。
+
+- [x] 最终 Y1：历史公式-map 16/16 保留；新鲜 committed fitted-map P3/post_ptr 16/16 双向证据已通过（broadband/boost/bypass 含局部 coupling/transition metric 修复）。
+- [x] Y2：落地并 fail-closed 加载 synthetic fitted harmonic map。
+- [x] Y3：按 720°/4π 接入 P4，并统一 bakeoff/validator/review inventory。
+- [x] Y4：状态瞬态、完整尾音与 snapshot replay，最终80 passed/1 skipped，复审通过。
+- [x] Y5：DC/dP/warmup、v3 snapshot迁移与60s分块等价，43 passed无skip，复审通过。
+- [x] Y6：154 WAV累计分层试听包、两页播放器、158 artifact SHA校验及独立复审通过；人耳/R1未通过。
+- [x] 同步 Stage Y 状态、Obsidian/registry，并完成历史 software HEAD 的完整 S12 资格（`1369 passed, 2 skipped`；canonical fixture-hash 修复后已标记为历史）。
+
+### Review
+
+- Y1 canonical probe：历史公式-map 16/16 保留；最终 committed fitted-map 新鲜 receipt `y1-final-fitted-map-20260831T145748162574Z` 为 16/16 bilateral PASS，测试源码 head `59fe45d`，P3 元数据/current head `1ef0883`，artifact SHA `40c5474d`。
+- Y2 committed fitted map：source head `2dd4ad6`，postfix evidence `9 passed`，receipt/state/hash 复审 PASS。
+- Y4/Y5 snapshot/raw replay 缺口已修复并复审；snapshot 现绑定 coupling contract，package config SHA 也绑定该 contract。
+- Historical full S12 on tested HEAD `a73322b`: `1369 passed, 2 skipped`, exit `0`; skipped count retained literally because `S12_RUN_SLOW` was not enabled. The receipt/log SHA remains under `tasks/reports/runtime/s12-stage-y/final_qualification/`; at that checkpoint a canonical rerun was pending and is now complete.
+- 本轮快照说明：`docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md`；最小复验 2 passed/1 failed，未运行 full S12。
+
+## 2026-08-31 Stage Y final closure handoff
+
+> 状态：执行中；基于 `origin/agent/s12-stage-y-open-source-integration` 的闭包工作树；保留 v1，只有实际 PCM 输入变化才新增 v2。
+
+- [x] 修复最终 committed fitted-map 的 16 参数双向可达性，优先处理 broadband coupling；补齐 boost/bypass 最终地图证据。
+- [x] 复核 Y2-Y5、开源方法覆盖矩阵、CI/receipt 契约与当前 HEAD 绑定；补齐必要文档/收据。
+- [x] 运行 canonical-hash 修复后的唯一完整 S12；当前 `1370 passed, 2 skipped`, exit `0`，更新 PR #2，等待 CI；门禁全绿后通过 PR 合并 main 并做 post-merge smoke。
+
+### Review
+
+- 起始 `origin/main`: `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`；起始 integration: `3aafda52f8c1b9fe5728591ca087b53fa2baf809`。
+- 当前明确阻塞：软件侧 canonical full S12 已通过（`1370 passed, 2 skipped`, exit `0`）；首次 CRLF 失败收据已保留并修复。剩余为 CI/PR 合并，以及历史公式-map 16/16 不可复用为最终资格；R1/human/Profile Freeze 仍保持 fail-closed。

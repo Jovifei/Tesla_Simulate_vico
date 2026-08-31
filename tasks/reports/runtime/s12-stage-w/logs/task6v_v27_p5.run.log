@@ -1,0 +1,9 @@
+command=D:\Python\Python3.14\python.exe .superpowers/sdd/task6r_v27_stage_runner.py --mode generate --stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p5 --architecture P5 --parent-stage-root tasks/reports/runtime/s12-stage-w/v27_stages_20260829/p1
+started_at_utc=2026-08-28T19:41:15.3938812Z
+pid=68892
+p1_file_count_before=133
+p1_wav_count_before=36
+p1_latest_wav_before=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p1\P1\complete_cycle_60s\monitor.wav
+p1_latest_wav_before_utc=2026-08-28T17:59:05.8168653Z
+ended_at_utc=2026-08-28T20:11:01.2339976Z
+exit_code=0

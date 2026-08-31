@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12-stage-i-hellcat-candidate-profile-1",
+  "title": "S12 Stage I Hellcat Candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "candidate_id", "vehicle_id", "base_commit",
+    "parent_candidate_id", "status", "hypothesis", "reference_target",
+    "canonical_trace_version", "source", "idle", "afterfire", "shift",
+    "loudness", "locked_layers", "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12-stage-i-hellcat-candidate-profile-1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "vehicle_id": {"const": "hellcat"},
+    "base_commit": {"const": "6ee4b1a4a7e3925dd4ca2baf206c98ea76e697d2"},
+    "parent_candidate_id": {"const": "hellcat_stage_h_v5"},
+    "status": {"const": "Candidate"},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "reference_target": {"type": "object"},
+    "canonical_trace_version": {"type": "string", "minLength": 1},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blower_gain_scale", "blower_boost_mix", "lobe_family_mix",
+        "upper_family_tilt_db", "sideband_depth", "phase_ripple_depth",
+        "order_cluster_spread_ratio", "intake_voicing_mix", "boost_attack_s",
+        "boost_release_s", "bypass_release_gain", "bypass_pitch_fall_ratio",
+        "bypass_decay_s"
+      ],
+      "properties": {
+        "blower_gain_scale": {"$ref": "#/$defs/parameter"},
+        "blower_boost_mix": {"$ref": "#/$defs/parameter"},
+        "lobe_family_mix": {"$ref": "#/$defs/parameter"},
+        "upper_family_tilt_db": {"$ref": "#/$defs/parameter"},
+        "sideband_depth": {"$ref": "#/$defs/parameter"},
+        "phase_ripple_depth": {"$ref": "#/$defs/parameter"},
+        "order_cluster_spread_ratio": {"$ref": "#/$defs/parameter"},
+        "intake_voicing_mix": {"$ref": "#/$defs/parameter"},
+        "boost_attack_s": {"$ref": "#/$defs/parameter"},
+        "boost_release_s": {"$ref": "#/$defs/parameter"},
+        "bypass_release_gain": {"$ref": "#/$defs/parameter"},
+        "bypass_pitch_fall_ratio": {"$ref": "#/$defs/parameter"},
+        "bypass_decay_s": {"$ref": "#/$defs/parameter"}
+      }
+    },
+    "idle": {"type": "object"},
+    "afterfire": {"type": "object"},
+    "shift": {"type": "object"},
+    "loudness": {"type": "object"},
+    "locked_layers": {"type": "object"},
+    "provenance": {"type": "object"}
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value", "unit", "range", "source_level", "source",
+        "source_scope", "verification_state"
+      ],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "range": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "source_level": {"const": "C"},
+        "source": {"const": "synthetic"},
+        "source_scope": {"type": "string", "minLength": 1},
+        "verification_state": {"const": "candidate_assumption"}
+      }
+    }
+  }
+}

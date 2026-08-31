@@ -1,0 +1,287 @@
+"""Fail-closed importer for the simplified Chinese Jovi Dashboard feedback."""
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any, Mapping
+
+
+class GuidedFeedbackError(ValueError):
+    """Raised when simplified feedback is incomplete or unbound."""
+
+
+_AGREEMENT = {"符合", "部分符合", "不符合", "无法判断"}
+_PREFERENCE = {"参考", "候选", "无明显偏好"}
+_PROBLEMS = {"太闷", "太薄", "太刺", "机械感不足", "机械感过强", "低频无冲击", "固定电子哨声", "转速变化不自然", "换挡不自然", "回火不自然", "循环/合成器伪影", "当前片段不包含", "无法判断", "其它"}
+_FOCUS_TOPICS = ("怠速", "加速", "减速/收油", "换挡", "回火/爆音", "转速变化", "音色/机械感")
+
+
+def _read(path: Path, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise GuidedFeedbackError(f"cannot read {label}: {path}") from exc
+    if not isinstance(value, dict):
+        raise GuidedFeedbackError(f"{label} must be an object")
+    return value
+
+
+def _text(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise GuidedFeedbackError(f"missing {label}")
+    return value.strip()
+
+
+def _score(value: object, label: str) -> int:
+    if isinstance(value, str):
+        candidate = value.strip()
+        if not candidate or not candidate.isascii() or not all("0" <= char <= "9" for char in candidate):
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+        score = int(candidate)
+    elif isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+    else:
+        try:
+            score = int(value)
+        except (TypeError, ValueError, OverflowError):
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100") from None
+        if score != value:
+            raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+    if not 0 <= score <= 100:
+        raise GuidedFeedbackError(f"{label} must be an integer from 0 to 100")
+    return score
+
+
+def _focus_topics(value: object, label: str, *, required: bool) -> list[str] | None:
+    if value is None:
+        if required:
+            raise GuidedFeedbackError(f"{label} must contain at least one focus_topics value")
+        return None
+    if not isinstance(value, list) or not value or any(not isinstance(topic, str) or topic not in _FOCUS_TOPICS for topic in value):
+        raise GuidedFeedbackError(f"{label} contains an unknown or empty focus_topics list")
+    if len(set(value)) != len(value):
+        raise GuidedFeedbackError(f"{label} contains duplicate focus_topics")
+    return list(value)
+
+
+def validate_guided_feedback(feedback_path: Path, metrics_path: Path) -> dict[str, Any]:
+    feedback = _read(Path(feedback_path), "Jovi guided feedback")
+    metrics = _read(Path(metrics_path), "professional pair metrics")
+    schema_version = feedback.get("schema_version")
+    if schema_version not in {"s12-professional-jovi-guided-feedback-v1", "s12-professional-jovi-guided-feedback-v2", "s12-professional-jovi-guided-feedback-v3"}:
+        raise GuidedFeedbackError("unexpected guided feedback schema")
+    if feedback.get("status") != "READY_FOR_REVIEW":
+        raise GuidedFeedbackError("guided feedback must be READY_FOR_REVIEW")
+    if feedback.get("automatic_tuning_eligible") is not False:
+        raise GuidedFeedbackError("feedback cannot grant automatic tuning")
+    if feedback.get("profile_update") != "FORBIDDEN":
+        raise GuidedFeedbackError("feedback cannot grant profile update")
+    gate = feedback.get("audio_submit_gate")
+    if not isinstance(gate, Mapping) or gate.get("status") != "PASS":
+        raise GuidedFeedbackError("audio gate must be PASS before feedback import")
+    if feedback.get("package_manifest_sha256") != metrics.get("manifest_sha256"):
+        raise GuidedFeedbackError("package manifest SHA mismatch")
+    if schema_version == "s12-professional-jovi-guided-feedback-v2" or feedback.get("feedback_scope") == "vehicle":
+        return _validate_vehicle_feedback(feedback, metrics, schema_version == "s12-professional-jovi-guided-feedback-v3")
+    pairs = metrics.get("pairs")
+    if not isinstance(pairs, list) or len(pairs) != 9:
+        raise GuidedFeedbackError("professional metrics must contain 9 pairs")
+    expected = {str(pair["pair_id"]): pair for pair in pairs}
+    rows = feedback.get("rows")
+    if not isinstance(rows, list) or len(rows) != len(expected):
+        raise GuidedFeedbackError(f"guided feedback must cover all {len(expected)} pairs")
+    seen: set[str] = set()
+    vehicle_summary: dict[str, dict[str, Any]] = defaultdict(lambda: {"rows": 0, "identity_sum": 0, "realism_sum": 0, "preferences": Counter(), "agreements": Counter()})
+    problem_summary: Counter[str] = Counter()
+    canonical: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise GuidedFeedbackError("feedback row is malformed")
+        pair_id = _text(row.get("pair_id"), "pair_id")
+        if pair_id in seen or pair_id not in expected:
+            raise GuidedFeedbackError(f"unknown or duplicate pair_id: {pair_id}")
+        seen.add(pair_id)
+        pair = expected[pair_id]
+        if _text(row.get("file_id"), f"{pair_id}.file_id") != pair["file_id"]:
+            raise GuidedFeedbackError(f"file_id mismatch: {pair_id}")
+        if _text(row.get("vehicle_id"), f"{pair_id}.vehicle_id") != pair["vehicle_id"]:
+            raise GuidedFeedbackError(f"vehicle mismatch: {pair_id}")
+        if _text(row.get("reference_sha256"), f"{pair_id}.reference_sha256").lower() != str(pair["reference_sha256"]).lower() or _text(row.get("candidate_sha256"), f"{pair_id}.candidate_sha256").lower() != str(pair["candidate_sha256"]).lower():
+            raise GuidedFeedbackError(f"SHA mismatch: {pair_id}")
+        agreement = _text(row.get("software_agreement"), f"{pair_id}.software_agreement")
+        preference = _text(row.get("preference"), f"{pair_id}.preference")
+        if agreement not in _AGREEMENT:
+            raise GuidedFeedbackError(f"invalid software agreement: {pair_id}")
+        if preference not in _PREFERENCE:
+            raise GuidedFeedbackError(f"invalid preference: {pair_id}")
+        problems = row.get("problems")
+        if not isinstance(problems, list) or any(problem not in _PROBLEMS for problem in problems):
+            raise GuidedFeedbackError(f"invalid problem list: {pair_id}")
+        focus_topics = _focus_topics(row.get("focus_topics"), f"{pair_id}.focus_topics", required=False)
+        identity = _score(row.get("identity"), f"{pair_id}.identity")
+        realism = _score(row.get("realism"), f"{pair_id}.realism")
+        notes = row.get("notes")
+        if notes is not None and not isinstance(notes, str):
+            raise GuidedFeedbackError(f"notes must be text or null: {pair_id}")
+        vehicle = vehicle_summary[str(pair["vehicle_id"])]
+        vehicle["rows"] += 1
+        vehicle["identity_sum"] += identity
+        vehicle["realism_sum"] += realism
+        vehicle["preferences"][preference] += 1
+        vehicle["agreements"][agreement] += 1
+        problem_summary.update(problems)
+        canonical.append({
+            "pair_id": pair_id,
+            "file_id": pair["file_id"],
+            "vehicle_id": pair["vehicle_id"],
+            "reference_sha256": pair["reference_sha256"],
+            "candidate_sha256": pair["candidate_sha256"],
+            "software_agreement": agreement,
+            "identity": identity,
+            "realism": realism,
+            "problems": list(problems),
+            "focus_topics": focus_topics,
+            "preference": preference,
+            "notes": notes.strip() if isinstance(notes, str) and notes.strip() else None,
+        })
+    if seen != set(expected):
+        raise GuidedFeedbackError("guided feedback pair set does not match professional metrics")
+    normalized_summary = {}
+    for vehicle, summary in vehicle_summary.items():
+        normalized_summary[vehicle] = {
+            "rows": summary["rows"],
+            "identity_mean": summary["identity_sum"] / summary["rows"],
+            "realism_mean": summary["realism_sum"] / summary["rows"],
+            "preferences": dict(summary["preferences"]),
+            "agreements": dict(summary["agreements"]),
+        }
+    return {
+        "schema_version": "s12-professional-jovi-guided-feedback-receipt-v1",
+        "status": "VALIDATED_R2_R3_GUIDED_FEEDBACK",
+        "evidence_level": feedback.get("evidence_level"),
+        "package_manifest_sha256": metrics["manifest_sha256"],
+        "feedback_rows": len(canonical),
+        "rows": canonical,
+        "vehicle_summary": normalized_summary,
+        "problem_summary": dict(problem_summary),
+        "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "parameter_changes": 0,
+        "automatic_tuning_eligible": False,
+        "profile_update": "FORBIDDEN",
+        "profile_candidate_ready": False,
+        "legacy_feedback_without_topics": any(row["focus_topics"] is None for row in canonical),
+    }
+
+
+def _validate_vehicle_feedback(feedback: Mapping[str, Any], metrics: Mapping[str, Any], require_focus_topics: bool = False) -> dict[str, Any]:
+    pairs = metrics.get("pairs")
+    if not isinstance(pairs, list) or not pairs:
+        raise GuidedFeedbackError("professional pair metrics are empty")
+    by_vehicle: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+    for pair in pairs:
+        by_vehicle[str(pair["vehicle_id"])].append(pair)
+    rows = feedback.get("rows")
+    if not isinstance(rows, list) or set(str(row.get("vehicle_id")) for row in rows if isinstance(row, Mapping)) != set(by_vehicle) or len(rows) != len(by_vehicle):
+        raise GuidedFeedbackError("vehicle feedback must contain exactly one row per vehicle")
+    vehicle_summary: dict[str, dict[str, Any]] = {}
+    problem_summary: Counter[str] = Counter()
+    canonical: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise GuidedFeedbackError("vehicle feedback row is malformed")
+        vehicle_id = _text(row.get("vehicle_id"), "vehicle_id")
+        expected = by_vehicle.get(vehicle_id)
+        if not expected:
+            raise GuidedFeedbackError(f"unknown vehicle: {vehicle_id}")
+        if row.get("review_ready") is not True:
+            raise GuidedFeedbackError(f"vehicle review_ready must be true: {vehicle_id}")
+        expected_pair_ids = [str(pair["pair_id"]) for pair in expected]
+        expected_file_ids = [str(pair["file_id"]) for pair in expected]
+        expected_ref = [str(pair["reference_sha256"]) for pair in expected]
+        expected_cand = [str(pair["candidate_sha256"]) for pair in expected]
+        for field, expected_values in (("pair_ids", expected_pair_ids), ("file_ids", expected_file_ids), ("reference_sha256s", expected_ref), ("candidate_sha256s", expected_cand)):
+            values = row.get(field)
+            if not isinstance(values, list) or [str(value) for value in values] != expected_values:
+                raise GuidedFeedbackError(f"{field} mismatch: {vehicle_id}")
+        agreement = _text(row.get("software_agreement"), f"{vehicle_id}.software_agreement")
+        preference = _text(row.get("preference"), f"{vehicle_id}.preference")
+        if agreement not in _AGREEMENT:
+            raise GuidedFeedbackError(f"invalid software agreement: {vehicle_id}")
+        if preference not in _PREFERENCE:
+            raise GuidedFeedbackError(f"invalid preference: {vehicle_id}")
+        problems = row.get("problems")
+        if not isinstance(problems, list) or any(problem not in _PROBLEMS for problem in problems):
+            raise GuidedFeedbackError(f"invalid problem list: {vehicle_id}")
+        focus_topics = _focus_topics(row.get("focus_topics"), f"{vehicle_id}.focus_topics", required=require_focus_topics)
+        identity = _score(row.get("identity"), f"{vehicle_id}.identity")
+        realism = _score(row.get("realism"), f"{vehicle_id}.realism")
+        notes = row.get("notes")
+        if notes is not None and not isinstance(notes, str):
+            raise GuidedFeedbackError(f"notes must be text or null: {vehicle_id}")
+        problem_summary.update(problems)
+        vehicle_summary[vehicle_id] = {
+            "rows": 1,
+            "pair_count": len(expected),
+            "identity_mean": identity,
+            "realism_mean": realism,
+            "preferences": {preference: 1},
+            "agreements": {agreement: 1},
+        }
+        canonical.append({
+            "vehicle_id": vehicle_id,
+            "pair_ids": expected_pair_ids,
+            "file_ids": expected_file_ids,
+            "reference_sha256s": expected_ref,
+            "candidate_sha256s": expected_cand,
+            "software_agreement": agreement,
+            "identity": identity,
+            "realism": realism,
+            "problems": list(problems),
+            "focus_topics": focus_topics,
+            "preference": preference,
+            "notes": notes.strip() if isinstance(notes, str) and notes.strip() else None,
+            "review_ready": True,
+        })
+    return {
+        "schema_version": "s12-professional-jovi-guided-feedback-receipt-v3" if require_focus_topics else "s12-professional-jovi-guided-feedback-receipt-v2",
+        "status": "VALIDATED_R2_R3_GUIDED_FEEDBACK",
+        "feedback_scope": "vehicle",
+        "evidence_level": feedback.get("evidence_level"),
+        "package_manifest_sha256": metrics["manifest_sha256"],
+        "feedback_rows": len(canonical),
+        "rows": canonical,
+        "vehicle_summary": vehicle_summary,
+        "problem_summary": dict(problem_summary),
+        "order_status": "ORDER_COMPARISON_NOT_QUALIFIED",
+        "parameter_changes": 0,
+        "automatic_tuning_eligible": False,
+        "profile_update": "FORBIDDEN",
+        "profile_candidate_ready": False,
+        "legacy_feedback_without_topics": not require_focus_topics and any(row["focus_topics"] is None for row in canonical),
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="导入 S12 Dashboard 的 Jovi 简化反馈")
+    parser.add_argument("--feedback", type=Path, required=True)
+    parser.add_argument("--metrics", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    try:
+        receipt = validate_guided_feedback(args.feedback, args.metrics)
+    except GuidedFeedbackError as exc:
+        print(f"ERROR: {exc}")
+        return 2
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    print(json.dumps(receipt, ensure_ascii=False, indent=2))
+    return 0
+
+
+__all__ = ["GuidedFeedbackError", "validate_guided_feedback", "main"]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

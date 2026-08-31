@@ -1,0 +1,7 @@
+{
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "package_id": "S12_Blind_Audition_Package_v2",
+  "responses": "NOT_RECEIVED",
+  "confusion_matrix": "NOT_PERFORMED",
+  "identity_and_realism_are_separate_gates": true
+}

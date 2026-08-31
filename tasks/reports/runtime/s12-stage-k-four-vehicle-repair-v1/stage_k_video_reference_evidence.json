@@ -1,0 +1,36 @@
+{
+  "allowed_use": [
+    "qualitative topology and state-transition hypotheses",
+    "not LUFS/RMS calibration",
+    "not OEM measurement"
+  ],
+  "download_root": "E:\\Claude_allow\\Download\\s12-stage-k-reference",
+  "downloaded_media": false,
+  "pages": [
+    {
+      "audio_status": "NOT_AVAILABLE",
+      "caveats": [
+        "microphone/AGC dependent",
+        "page availability is not an auditable audio file",
+        "not absolute loudness evidence"
+      ],
+      "evidence_class": "R2/social-media-compressed",
+      "label": "Hellcat SRT / twin-screw listening reference",
+      "url": "https://www.douyin.com/video/7442878447719943460"
+    },
+    {
+      "audio_status": "NOT_AVAILABLE",
+      "caveats": [
+        "microphone/AGC dependent",
+        "no extracted source track",
+        "not absolute loudness evidence"
+      ],
+      "evidence_class": "R2/social-media-compressed",
+      "label": "RX-7 / GT-R sound-principles discussion",
+      "url": "https://www.douyin.com/video/7512312931426585890"
+    }
+  ],
+  "provenance": "synthetic / uncalibrated / vehicle-inspired / not OEM reproduction",
+  "schema_version": "s12-stage-k-video-reference-evidence-1",
+  "status": "NOT_AVAILABLE"
+}

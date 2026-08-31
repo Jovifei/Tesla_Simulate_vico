@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s12/comparison_result.schema.json",
+  "type": "object",
+  "required": ["case", "uncertainty", "spectral", "bands", "order", "events"],
+  "properties": {
+    "case": {"type": "object"}, "uncertainty": {"type": "object", "required": ["external_reference_missing", "identity_score_available"]},
+    "spectral": {"type": "object"}, "bands": {"type": "object"}, "order": {"type": "object"}, "events": {"type": "object"},
+    "external_identity_score": {"type": "null"}
+  }, "additionalProperties": true
+}

@@ -1,0 +1,18 @@
+{
+  "status": "WAITING_FOR_JOVI_NAMED_CALIBRATION",
+  "package": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1",
+  "package_id": "S12_Stage_H_Named_Review_v1",
+  "zip_sha256": "5a459753cc41bd1be046bd076cc524ad08f52eca08bd43dc80e9776d06320d3a",
+  "core_wav_sha256": {
+    "stage_g_hellcat": "8fbf28f8136c661f59f85d0002d96af361a295413c26f19ed20116f9bc69bb47",
+    "stage_h_hellcat": "6eacaad7ff2e0fb52734d130d597d43efb6573a5491d93b0f4a70e505232c486",
+    "stage_g_ferrari": "7f50e75e09ea54b40cd6ebdc6cb184156273950bdca61a427216ae9e82e11d80",
+    "stage_g_rx7": "0f4680c370f378dff4286f93fbcf5074d7b8511e9e7dc54dd137fb4cddb0bce8"
+  },
+  "sealed_key_read": false,
+  "anonymous_mapping_read": false,
+  "first_automated_fail_package": "E:/Tesla_speed/review_packages/s12-stage-h-hellcat-perceptual-calibration-v1-r1-automated-fail",
+  "listener_feedback_rows": 7,
+  "listener_feedback_complete": false,
+  "claim_boundary": "synthetic; uncalibrated; Hellcat-inspired; not OEM reproduction"
+}

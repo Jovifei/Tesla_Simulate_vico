@@ -1,0 +1,5 @@
+{'json_files': 730, 'nonfinite': 0}
+COMMAND=python -c "reject JSON non-finite constants for all current v23 roots"
+START=2026-08-28T07:12:45.7859387+08:00
+END=2026-08-28T07:12:45.9354910+08:00
+EXIT=0

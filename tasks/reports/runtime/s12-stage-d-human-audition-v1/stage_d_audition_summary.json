@@ -1,0 +1,14 @@
+{
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "package_id": "S12_Blind_Audition_Package_v1",
+  "trial_count": 30,
+  "rounds": 2,
+  "trials_per_round": 15,
+  "full_cycle_ab_pairs": 3,
+  "full_cycle_pair_key_sha256": "e45db100286f2fdceb87f0cbf4b5af24c4ef01c883eb00a9c37a1f58c07610d9",
+  "answer_key_sha256": "52ec36474dc39265cd46b1c09398a417d5d3073237f683603e283969bd8605ff",
+  "responses_received": false,
+  "confusion_matrix": null,
+  "listener_zip_leaks": [],
+  "provenance": "synthetic / uncalibrated / not OEM reproduction"
+}

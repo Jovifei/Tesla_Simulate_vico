@@ -1,0 +1,5 @@
+bound references: ['hot_idle', 'steady_high', 'steady_low', 'steady_mid']; searchable parameters: 11
+P2H: status=NO_R2_ENGINEERING_CANDIDATE_IMPROVED objective=-0.13111101381214735
+P3: status=NO_R2_ENGINEERING_CANDIDATE_IMPROVED objective=-0.04238151764798337
+P5: status=NO_R2_ENGINEERING_CANDIDATE_IMPROVED objective=-0.04238151764798337
+{"selected": null, "ranking": ["P3", "P5", "P2H"], "seconds": 2482.9}

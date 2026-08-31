@@ -1,0 +1,33 @@
+{
+  "schema_version": "s12.stage_q.r1_pilot_spec.v1",
+  "recording_id": "hellcat_full_pull_01",
+  "vehicle_id": "hellcat",
+  "scenario": "REPLACE_WITH_SCENARIO",
+  "audio_path": "raw/raw_audio.wav",
+  "source_url": "REPLACE_WITH_SOURCE_OR_DELIVERY_URL",
+  "source_kind": "controlled_raw_audio",
+  "license_status": "CONFIRMED_ONLY_AFTER_RIGHTS_REVIEW",
+  "rights_path": "rights.json",
+  "rights_evidence": "rights.json",
+  "exact_vehicle_trim": "REPLACE_WITH_YEAR_MARKET_TRIM_ENGINE_TRANSMISSION",
+  "stock_exhaust_confirmation": "REPLACE_WITH_CONFIRMED_STOCK_OR_EXPLICIT_MODIFICATION",
+  "microphone_position": "REPLACE_WITH_EXPLICIT_POSITION_DISTANCE_DIRECTION",
+  "recording_device_agc": "REPLACE_WITH_RECORDER_GAIN_AGC_AND_POST_PROCESSING",
+  "raw_audio_confirmed": true,
+  "raw_media_stored_outside_git": true,
+  "state": {
+    "trace_root": "state",
+    "rpm_trace_path": "rpm.csv",
+    "load_throttle_trace_path": "load_throttle.csv",
+    "gear_shift_trace_path": "gear_shift.csv",
+    "time_window": {"start_s": null, "end_s": null},
+    "units": {
+      "time_s": "s",
+      "rpm": "rpm",
+      "load": "fraction_0_1",
+      "throttle": "fraction_0_1",
+      "gear": "integer_index",
+      "shift_event": "0_or_1"
+    }
+  }
+}

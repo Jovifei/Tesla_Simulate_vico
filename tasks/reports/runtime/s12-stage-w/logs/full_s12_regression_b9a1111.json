@@ -1,0 +1,11 @@
+{
+  "schema": "s12.stage_w.command_receipt.v1",
+  "command": "python -m pytest tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests -q",
+  "started_at": "2026-08-26T13:36:19Z",
+  "ended_at": "2026-08-26T14:06:34Z",
+  "exit_code": 0,
+  "result": "1000 passed, 1 skipped, 232 subtests passed",
+  "raw_log_sha256": "ba097345b086d87726d3d24a15b4c3b6b3d13e852b94c0056c64037794314154",
+  "raw_log_size_bytes": 1932,
+  "scope": "local S12 Python regression; no R1 or human qualification claim"
+}

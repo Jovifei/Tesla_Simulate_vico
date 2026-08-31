@@ -1,0 +1,64 @@
+{
+  "package_manifest_sha256": "357e47e56bafb31d618ced90d1422237984b4374f4045b2103cd8203a357a55c",
+  "required_result_columns": [
+    "listener_id",
+    "anonymous_id",
+    "package_manifest_sha256",
+    "candidate_sha256",
+    "identity_guess",
+    "vehicle_identity",
+    "realism",
+    "low_frequency_weight",
+    "mechanical_character",
+    "idle_life",
+    "acceleration_aggression",
+    "shift_realism",
+    "afterfire_naturalness",
+    "synthetic_artifact_freedom"
+  ],
+  "result_policy": "fixture imports and raw external rows are not human feedback until explicitly submitted by Jovi",
+  "schema_version": "s12-stage-n-webmushra-package-binding-1",
+  "test_id": "s12-stage-n-webmushra-v5",
+  "trials": {
+    "V01": {
+      "candidate_sha256": "03b05e2e09d7eda37998e6426957ff5ab3a8af03512277507a676d9c6b9a6234",
+      "scenario": "full_cycle",
+      "vehicle_id": "aventador_lp700"
+    },
+    "V02": {
+      "candidate_sha256": "c9406b59f21fbda68f8460ad5918e4f7c363f17b2b269d4a95cd08830ce6dd5a",
+      "scenario": "full_cycle",
+      "vehicle_id": "c63_w204"
+    },
+    "V03": {
+      "candidate_sha256": "3c3bd7f731ef036c23fcccf9363c087477269e26db92815ac19ea624027412aa",
+      "scenario": "full_cycle",
+      "vehicle_id": "ferrari_458"
+    },
+    "V04": {
+      "candidate_sha256": "8a71c1f0a761cc5c163268a3827d9c88c4efb0fb2c7297f8498980dd3237077d",
+      "scenario": "full_cycle",
+      "vehicle_id": "gtr_r35"
+    },
+    "V05": {
+      "candidate_sha256": "ce0bdea4efcb9e9d30d7c01915e575d658986118cc11303ff64dd9bc25e14317",
+      "scenario": "full_cycle",
+      "vehicle_id": "hellcat"
+    },
+    "V06": {
+      "candidate_sha256": "be03b3835b51486c4fef7ac1006486113d7a48c32793fb9c8ee719c4d8824ece",
+      "scenario": "full_cycle",
+      "vehicle_id": "lfa"
+    },
+    "V07": {
+      "candidate_sha256": "7de5f55059e6bc40e0237df3cf2ef8919930aaf94c6ad3e6aebb45a4a9aec513",
+      "scenario": "full_cycle",
+      "vehicle_id": "rx7_fd"
+    },
+    "V08": {
+      "candidate_sha256": "afab90ba0f0914b79a286e61a3689dfbef2d7ded30c5ddaaad669f8e810512fa",
+      "scenario": "full_cycle",
+      "vehicle_id": "supra_jza80"
+    }
+  }
+}

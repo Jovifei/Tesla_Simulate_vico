@@ -1,0 +1,23 @@
+{
+  "schema": "s12.stage_y.execution_receipt.v1",
+  "run_id": "y4-red-20260831T000000Z",
+  "purpose": "Y4 RED reproduction before implementation",
+  "exact_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state",
+    "-q"
+  ],
+  "actual_started_at_utc": "2026-08-31T04:39:41.792885+00:00",
+  "actual_ended_at_utc": "2026-08-31T04:39:53.165811+00:00",
+  "exit_code": 1,
+  "source_head": "c6af1d0754ffcbe9578da33e6fdfab9ee86a2aba",
+  "stdout": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-red-20260831T000000Z.stdout.log",
+  "stderr": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-red-20260831T000000Z.stderr.log",
+  "sha256": {
+    "stdout": "656B6B3C99A6B70410295DA3F14BA1214BA02AA90302910F172F1462B5A52572",
+    "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+}

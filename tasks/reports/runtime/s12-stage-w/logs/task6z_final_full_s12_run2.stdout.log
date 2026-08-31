@@ -1,0 +1,53 @@
+....................................................... [  4%]
+................................ [  7%]
+................................................ [ 11%]
+.................................................................. [ 16%]
+............................................. [ 20%]
+........................................................................ [ 26%]
+........................................................................ [ 32%]
+.................................................................. [ 37%]
+............... [ 38%]
+......................................................................................... [ 46%]
+........................................................................ [ 52%]
+........................................................................ [ 58%]
+........................................................................ [ 64%]
+........................................................................ [ 70%]
+........................................................................ [ 76%]
+........................................................................ [ 82%]
+..................F..................................................... [ 88%]
+..............................................s......................... [ 94%]
+.......................................................................F [100%]
+================================== FAILURES ===================================
+______ test_final_track_p_guard_is_clean_after_committed_log_attributes _______
+
+    def test_final_track_p_guard_is_clean_after_committed_log_attributes() -> None:
+        guard = ROOT / "tools" / "sound_sim" / "s12" / "acoustic_identity_v015" / "scripts" / "assert_track_p_unchanged.py"
+        result = subprocess.run(["python", str(guard)], cwd=ROOT, capture_output=True, text=True)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）
+E           * git diff --check 发现空白错误：
+E         .superpowers/sdd/task-6aa-trackp-output-attributes-report.md:71: new blank line at EOF.
+E         
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', 'E:\\Tesla_speed\\worktrees\\s12-stage-w-ecosystem-bakeoff\\tools\\sound_sim\\s12\\ac...check 发现空白错误：\n.superpowers/sdd/task-6aa-trackp-output-attributes-report.md:71: new blank line at EOF.\n\n', stderr='').returncode
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_final_remediation.py:24: AssertionError
+____________________ test_guard_reports_pass_on_clean_tree ____________________
+
+    def test_guard_reports_pass_on_clean_tree() -> None:
+>       assert guard.main() == 0
+E       assert 1 == 0
+E        +  where 1 = <function main at 0x0000020522320720>()
+E        +    where <function main at 0x0000020522320720> = guard.main
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_track_p_guard.py:212: AssertionError
+---------------------------- Captured stdout call -----------------------------
+FAIL: Track-P 冻结边界被破坏（基线 S12 Track-P Baseline v3 / ea586bc）
+  * git diff --check 发现空白错误：
+.superpowers/sdd/task-6aa-trackp-output-attributes-report.md:71: new blank line at EOF.
+
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree
+2 failed, 1205 passed, 1 skipped, 232 subtests passed in 3902.44s (1:05:02)

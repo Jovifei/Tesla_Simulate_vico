@@ -65,6 +65,22 @@ FROZEN_SUBSTRINGS = (
 TRACK_S_ALLOWLIST = frozenset({
     "tools/sound_sim/s12/acoustic_identity_v015/tests/"
     "test_s12_post_ptr_loudness_compensation.py",
+    # Stage-N comparator artifacts are Track-S analysis/evidence.  Their
+    # MATLAB path token must not classify them as Track-P source/toolchain.
+    "tasks/reports/runtime/s12-stage-n-professional-comparator/matlab_order_validation.json",
+    "tasks/reports/runtime/s12-stage-n-professional-comparator/matlab_psychoacoustic_validation.json",
+    "tasks/reports/runtime/s12-stage-n-professional-comparator/matlab_shared_psychoacoustic_validation.json",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_export_matlab_comparator_result.m",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_order_analysis.m",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_psychoacoustic_analysis.m",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_order_analysis.m",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_psychoacoustic_analysis.m",
+    "tools/sound_sim/s12/acoustic_comparator/matlab/s12_stage_n_run_shared_psychoacoustic_fixture.m",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_n/matlab_inputs.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/stage_n/matlab_receipts.py",
+    # Stage-Q/R MATLAB psychoacoustic audit is analysis/evidence only; it does
+    # not edit or execute the frozen Track-P physical model/toolchain.
+    "tools/sound_sim/s12/real_reference/run_r2_matlab_psychoacoustic_audit.m",
 })
 
 # 冻结文件清单摘要：sha256 over sorted "mode SP type SP blobsha TAB path" 行。

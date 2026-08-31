@@ -1,0 +1,25 @@
+TASK6W_V27_ASSEMBLY_RUN
+COMMAND=D:\Python\Python3.14\python.exe .superpowers\sdd\task6w_v27_assembler_runner.py --p1 tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p1 --p2 tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p2 --p2h tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p2h --p3 tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p3 --p5 tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p5 --final-root tasks\reports\runtime\s12-stage-w\bakeoff_final_remediation_v27
+START_UTC=2026-08-28T20:24:10.2855513Z
+FINAL_ROOT_PRECONDITION_ABSENT=True
+PRE_P1_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p1
+PRE_P1_FILES=133
+PRE_P1_MANIFEST_SHA256=F6E169F413E954D8C3ECFD063D43B51CDD0FE122AA76EDCB2589C39B37EAB6B5
+PRE_P2_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p2
+PRE_P2_FILES=133
+PRE_P2_MANIFEST_SHA256=05582673E6CF85D03343C4E7AC8807DC20CCB24A68F313BA5FA0DBDCEBE6570B
+PRE_P2H_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p2h
+PRE_P2H_FILES=133
+PRE_P2H_MANIFEST_SHA256=26609FB04F49247D958B5D4DF289E987A22C0E60B1F2901DF2AC7301726C10E4
+PRE_P3_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p3
+PRE_P3_FILES=133
+PRE_P3_MANIFEST_SHA256=9C351136194CDBD141916E5CD2F58400C745190FEDEB9A17DA9BB5E11C77CE8F
+PRE_P5_PATH=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\v27_stages_20260829\p5
+PRE_P5_FILES=133
+PRE_P5_MANIFEST_SHA256=08B1F8F2F455B9C07DEDBC279671A822137039B743D3E8576D09FD254FBEC2D8
+MATCHING_PROCESS_PRECONDITION=NONE
+PID=70860
+END_UTC=2026-08-28T20:24:23.9243688Z
+EXIT_CODE=0
+FINAL_ROOT_EXISTS_AFTER_RUN=True
+RETURNED_FINAL_ROOT=E:\Tesla_speed\worktrees\s12-stage-w-ecosystem-bakeoff\tasks\reports\runtime\s12-stage-w\bakeoff_final_remediation_v27

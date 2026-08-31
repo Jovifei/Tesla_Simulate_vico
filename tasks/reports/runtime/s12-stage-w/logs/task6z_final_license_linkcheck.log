@@ -1,0 +1,4 @@
+license_receipts: schema=s12.stage_w.license_receipts.v1 receipts=10 missing_code_bearing=[] -> PASS
+obsidian_link_check: wiki_links=17 unresolved=1 -> PASS_WITH_EXCEPTION
+  00-MOC.md -> [[../..]]
+  exception: [[../..]] in 00-MOC.md is an Obsidian parent-folder link (valid folder reference), not a broken note link; accepted.

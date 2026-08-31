@@ -1,0 +1,17 @@
+{
+  "schema_version": "s12.stage_w.stage_v_missing_contracts.v1",
+  "status": "ACTION_REQUIRED",
+  "contracts": [
+    {"id": "persistent_engine_state", "priority": "P0", "missing": "cross-call engine state and snapshot/restore"},
+    {"id": "event_torque_feedback", "priority": "P0", "missing": "scheduled event torque changes omega/next phase"},
+    {"id": "firing_order_derivation", "priority": "P0", "missing": "firing order + geometry -> derived phase"},
+    {"id": "frozen_ptr_entry", "priority": "P0", "missing": "pre-PTR source to existing RuntimePtrAdapter and post-PTR raw PCM"},
+    {"id": "stateful_path", "priority": "P1", "missing": "persistent delay/collector/waveguide state"},
+    {"id": "localized_afterfire", "priority": "P1", "missing": "ignition delay/location/path-id alters arrival/frequency/SHA"},
+    {"id": "timbre_map", "priority": "P1", "missing": "RPM x load x boost sideband/noise/casing map"},
+    {"id": "teacher_model", "priority": "P1", "missing": "ENSIM4 exact checkout/build/run/CFD ON-OFF teacher"},
+    {"id": "ecosystem_registry", "priority": "P1", "missing": "source/license/build/run registry and bake-off inputs"},
+    {"id": "obsidian_stage_w", "priority": "P1", "missing": "Vault notes, repo mirror and sync manifest"},
+    {"id": "reference_scene_binding", "priority": "P1", "missing": "rights-bound synchronized R1/R2 Reference matching each scenario"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "branch": "agent/s12-stage-c-realism-integration",
+  "base_commit": "c08eb4c0d557c32e0896bef9be4f4eddf5d296ea",
+  "pre_evidence_commit": "adddb75",
+  "current_evidence_commit": "HEAD (verify with git rev-parse HEAD)",
+  "status": "AUTOMATED_REALISM_CANDIDATE / HUMAN_AUDITION_PENDING",
+  "tests": {
+    "stage_c_realism_integration": {"passed": 9, "failed": 0},
+    "engine_acoustic_realism_v10": {"passed": 9, "failed": 0},
+    "engine_acoustic_identity_v015": {"passed": 58, "failed": 0, "subtests_passed": 78},
+    "deep_realism_or_track_p_guard": {"passed": 61, "failed": 0, "subtests_passed": 118},
+    "track_p_guard": {"passed": 21, "failed": 0},
+    "full_s12_tests_and_layers": {"passed": 415, "failed": 0, "subtests_passed": 232},
+    "verify_remaining_vehicles": {"exit_code": 0, "reference_acceptance": "PARTIAL: existing five-vehicle R2 targets remain uncalibrated and do not all meet historical band/centroid gates"}
+  },
+  "known_baseline_debt_closed": [
+    "realism manifest/test vehicle-set mismatch",
+    "Hellcat blower/load correlation below 0.80",
+    "Ferrari idle package below -30 LUFS"
+  ],
+  "boundaries": ["FVM unchanged", "PTR core unchanged", "Radiation boundary unchanged", "Runtime/Android/MATLAB/Simulink unchanged", "no push or main merge"]
+}

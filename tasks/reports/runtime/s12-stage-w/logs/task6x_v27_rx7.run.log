@@ -1,0 +1,7 @@
+command: D:\Python\Python3.14\python.exe .superpowers\sdd\task6x_v27_migration_runner.py --root tasks\reports\runtime\s12-stage-w\migration_final_remediation_rx7_v27 --vehicle rx7_fd
+pid: 72792
+utc_start: 2026-08-28T20:33:02.3946171Z
+utc_end: 2026-08-28T20:33:26.5701117Z
+exit_code: 0
+stdout_log: tasks\reports\runtime\s12-stage-w\logs\task6x_v27_rx7.stdout.log
+stderr_log: tasks\reports\runtime\s12-stage-w\logs\task6x_v27_rx7.stderr.log

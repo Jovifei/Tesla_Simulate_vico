@@ -1,0 +1,10 @@
+{
+  "automatic_tuning_eligible": false,
+  "parameter_changes": 0,
+  "profile_candidate_ready": false,
+  "profile_update": "FORBIDDEN",
+  "recommendations": [],
+  "recording_id": "hellcat_full_pull_01",
+  "schema_version": "s12.stage_r.r1-pilot-parameter-recommendations.v1",
+  "status": "WITHHELD_MISSING_R1_PILOT"
+}
