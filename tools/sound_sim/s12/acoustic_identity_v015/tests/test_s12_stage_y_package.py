@@ -6,6 +6,7 @@ import wave
 import numpy as np
 import pytest
 
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y import package as stage_y_package
 from tools.sound_sim.s12.acoustic_identity_v015.stage_v.io import read_pcm24_wav, write_pcm24_wav
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y.package import (
     build_hellcat_layer_package,
@@ -118,6 +119,85 @@ def test_parent_final_diagnostic_is_hashed_and_summarized_without_a_score(built_
         html = (root / page).read_text(encoding="utf-8")
         assert "Parent vs F" in html
         assert "rms_dbfs" in html
+
+
+@pytest.mark.parametrize("failure", (FileNotFoundError, ValueError))
+def test_validator_reports_fitted_map_load_failure(built_package, monkeypatch, failure) -> None:
+    root, _manifest = built_package
+
+    def broken_loader():
+        raise failure("fixture unavailable")
+
+    monkeypatch.setattr(stage_y_package, "load_committed_fixture_timbre_map", broken_loader)
+    errors = validate_layer_package(root)
+    assert any(error.startswith("fitted_map_fixture_load:") for error in errors)
+
+
+def test_validator_rejects_rebound_parent_final_diagnostic_sha(built_package) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / "invalid-parent-final-diagnostic-sha"
+    import shutil
+    shutil.copytree(source_root, root)
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    diagnostic_path = root / "parent_final_diagnostic.json"
+    diagnostic = json.loads(diagnostic_path.read_text(encoding="utf-8"))
+    scene = SCENES[0]
+    diagnostic["scenes"][scene]["parent_sha256"] = manifest["files"][f"{scene}/y5_dp.wav"]
+    diagnostic_path.write_text(json.dumps(diagnostic), encoding="utf-8")
+    diagnostic_sha = hashlib.sha256(diagnostic_path.read_bytes()).hexdigest()
+    manifest["files"]["parent_final_diagnostic.json"] = diagnostic_sha
+    manifest["parent_final_diagnostic"]["sha256"] = diagnostic_sha
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    sha_path = root / "sha256_manifest.json"
+    sha_manifest = json.loads(sha_path.read_text(encoding="utf-8"))
+    sha_manifest["files"]["parent_final_diagnostic.json"] = diagnostic_sha
+    sha_path.write_text(json.dumps(sha_manifest), encoding="utf-8")
+    errors = validate_layer_package(root)
+    assert any("parent_final_diagnostic_sha:" + scene in error for error in errors)
+
+
+def test_validator_rejects_rebound_parent_final_diagnostic_metric(built_package) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / "invalid-parent-final-diagnostic-metric"
+    import shutil
+    shutil.copytree(source_root, root)
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    diagnostic_path = root / "parent_final_diagnostic.json"
+    diagnostic = json.loads(diagnostic_path.read_text(encoding="utf-8"))
+    scene = SCENES[0]
+    diagnostic["scenes"][scene]["final"]["raw_dynamic"]["rms_dbfs"] += 1.0
+    diagnostic_path.write_text(json.dumps(diagnostic), encoding="utf-8")
+    diagnostic_sha = hashlib.sha256(diagnostic_path.read_bytes()).hexdigest()
+    manifest["files"]["parent_final_diagnostic.json"] = diagnostic_sha
+    manifest["parent_final_diagnostic"]["sha256"] = diagnostic_sha
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    sha_path = root / "sha256_manifest.json"
+    sha_manifest = json.loads(sha_path.read_text(encoding="utf-8"))
+    sha_manifest["files"]["parent_final_diagnostic.json"] = diagnostic_sha
+    sha_path.write_text(json.dumps(sha_manifest), encoding="utf-8")
+    errors = validate_layer_package(root)
+    assert any("parent_final_diagnostic_metrics:" + scene in error for error in errors)
+
+
+def test_validator_rejects_unbound_renderer_config_hashes(built_package) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / "invalid-renderer-config-hashes"
+    import shutil
+    shutil.copytree(source_root, root)
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    scene_stems = manifest["scenes"][SCENES[0]]["stems"]
+    scene_stems["parent"]["engine"]["renderer_config_sha256"] = "not-a-sha"
+    rebound = "a" * 64
+    scene_stems["y5_dp"]["engine"]["renderer_config_sha256"] = rebound
+    scene_stems["monitor"]["engine"]["renderer_config_sha256"] = rebound
+    scene_stems["monitor"]["monitor_provenance"]["source_renderer_config_sha256"] = rebound
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    errors = validate_layer_package(root)
+    assert any("renderer_config_sha256:" in error for error in errors)
+    assert any("monitor_config_binding:" + SCENES[0] in error for error in errors)
 
 
 def test_monitor_is_policy_processed_reuse_of_f_rendering_with_bound_provenance(built_package) -> None:

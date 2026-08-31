@@ -108,6 +108,19 @@ def _config_sha256(config: dict[str, Any], settings: dict[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _monitor_config_sha256(source_renderer_config_sha256: str) -> str:
+    return _config_sha256(
+        {
+            "source_renderer_config_sha256": source_renderer_config_sha256,
+            "monitor_policy": _MONITOR_POLICY,
+        },
+        {
+            "architecture": "monitor",
+            "monitor_source": "PersistentEventDomainEngine.monitor_pcm",
+        },
+    )
+
+
 def _state_arrays(trace: Any) -> dict[str, np.ndarray]:
     return {
         "rpm": trace.rpm,
@@ -136,7 +149,16 @@ def _render_layer(stem: str, trace: Any) -> tuple[np.ndarray, np.ndarray, np.nda
             "architecture": "P1",
             "source_model": "legacy_v015",
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
-            "renderer_config_sha256": None,
+            "renderer_config_sha256": _config_sha256(
+                {
+                    "source_model": "legacy_v015",
+                    "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER",
+                },
+                {
+                    "architecture": "P1",
+                    "sample_rate_hz": SAMPLE_RATE_HZ,
+                },
+            ),
         }
     if stem not in _LAYER_SETTINGS:
         raise ValueError(f"unsupported Stage-Y layer: {stem}")
@@ -399,6 +421,9 @@ def build_hellcat_layer_package(root: str | Path, long_window: bool = False, dur
             if stem == "monitor":
                 _raw, post, monitor, stage_diagnostics = rendered_layers["y5_dp"]
                 stage_diagnostics = dict(stage_diagnostics)
+                stage_diagnostics["renderer_config_sha256"] = _monitor_config_sha256(
+                    stage_diagnostics["renderer_config_sha256"]
+                )
             else:
                 rendered_layers[source_stem] = _render_layer(source_stem, trace)
                 _raw, post, monitor, stage_diagnostics = rendered_layers[source_stem]
@@ -802,12 +827,14 @@ def validate_layer_package(root: str | Path) -> list[str]:
     try:
         expected_fitted_map, _ = load_committed_fixture_timbre_map()
         expected_fitted_map_file_sha256 = sha256_file(MAP_PATH)
-    except Exception:
+    except Exception as exc:
         expected_fitted_map = None
         expected_fitted_map_file_sha256 = None
+        errors.append(f"fitted_map_fixture_load:{exc.__class__.__name__}")
 
     parent_relatives: list[str] = []
     candidate_relatives: list[str] = []
+    reopened_stems: set[tuple[str, str]] = set()
     for scene in SCENES:
         entry = scenes.get(scene)
         if not isinstance(entry, dict):
@@ -862,11 +889,13 @@ def validate_layer_package(root: str | Path) -> list[str]:
                 errors.append(f"dynamic_domain:{relative}")
             proof_stem = "y5_dp" if stem == "monitor" else stem
             model_contract = _LAYER_MODEL_CONTRACT.get(proof_stem)
-            if model_contract is not None:
-                engine = record.get("engine")
-                if not isinstance(engine, dict):
-                    errors.append(f"renderer_diagnostics:{relative}")
-                else:
+            engine = record.get("engine")
+            if not isinstance(engine, dict):
+                errors.append(f"renderer_diagnostics:{relative}")
+            else:
+                if not _is_sha256(engine.get("renderer_config_sha256")):
+                    errors.append(f"renderer_config_sha256:{relative}")
+                if model_contract is not None:
                     model_keys = ("path_model", "forced_induction_model", "cycle_sync_model", "transient_model", "audio_chain")
                     if tuple(engine.get(key) for key in model_keys) != model_contract[:5]:
                         errors.append(f"renderer_models:{relative}")
@@ -877,18 +906,40 @@ def validate_layer_package(root: str | Path) -> list[str]:
                             errors.append(f"fitted_map_proof:{relative}")
                         if expected_fitted_map is not None and engine.get("fitted_timbre_map_file_sha256") != expected_fitted_map_file_sha256:
                             errors.append(f"fitted_map_file_proof:{relative}")
+            if stem == "monitor" and isinstance(engine, dict):
+                final_record = stems.get("y5_dp")
+                final_engine = final_record.get("engine") if isinstance(final_record, dict) else None
+                source_config_sha256 = final_engine.get("renderer_config_sha256") if isinstance(final_engine, dict) else None
+                if (
+                    not isinstance(source_config_sha256, str)
+                    or not _is_sha256(source_config_sha256)
+                    or engine.get("renderer_config_sha256") == source_config_sha256
+                    or engine.get("renderer_config_sha256") != _monitor_config_sha256(source_config_sha256)
+                ):
+                    errors.append(f"monitor_config_binding:{scene}")
             wav_path = root / relative
             if not _safe_relative(relative) or not wav_path.is_file():
                 errors.append(f"missing:{relative}")
                 continue
             try:
                 audio, metadata = read_pcm24_wav(wav_path)
-                if metadata["frames"] <= 0 or metadata["channels"] != 2 or metadata["sample_width_bits"] != 24 or metadata["sample_rate_hz"] != SAMPLE_RATE_HZ or metadata["clipping"] != 0:
+                wav_contract_valid = not (
+                    metadata["frames"] <= 0
+                    or metadata["channels"] != 2
+                    or metadata["sample_width_bits"] != 24
+                    or metadata["sample_rate_hz"] != SAMPLE_RATE_HZ
+                    or metadata["clipping"] != 0
+                )
+                if not wav_contract_valid:
                     errors.append(f"wav_contract:{relative}")
                 if expected_frames != metadata["frames"] or metadata["frames"] != int(round(float(scene_duration) * SAMPLE_RATE_HZ)):
+                    wav_contract_valid = False
                     errors.append(f"duration:{relative}")
                 if not np.all(np.isfinite(audio)):
+                    wav_contract_valid = False
                     errors.append(f"nonfinite_wav:{relative}")
+                if wav_contract_valid and stem in ("parent", "y5_dp"):
+                    reopened_stems.add((scene, stem))
             except Exception as exc:
                 errors.append(f"invalid_wav:{relative}:{exc.__class__.__name__}")
             actual_sha = sha256_file(wav_path)
@@ -918,6 +969,35 @@ def validate_layer_package(root: str | Path) -> list[str]:
             if actual_sha != files.get(relative) or actual_sha != (sha_files or {}).get(relative):
                 errors.append(f"sha_mismatch:{relative}")
 
+    if (
+        isinstance(diagnostic, dict)
+        and isinstance(diagnostic.get("scenes"), dict)
+        and isinstance(target, (int, float))
+        and not isinstance(target, bool)
+        and np.isfinite(target)
+        and target > 0.0
+        and all((scene, stem) in reopened_stems for scene in SCENES for stem in ("parent", "y5_dp"))
+    ):
+        try:
+            expected_diagnostic = _build_parent_final_diagnostic(root, float(target))
+        except Exception as exc:
+            errors.append(f"parent_final_diagnostic_metrics:{exc.__class__.__name__}")
+        else:
+            for scene in SCENES:
+                row = diagnostic["scenes"].get(scene)
+                expected_row = expected_diagnostic["scenes"][scene]
+                if not isinstance(row, dict):
+                    continue
+                if row.get("parent_sha256") != expected_row["parent_sha256"]:
+                    errors.append(f"parent_final_diagnostic_sha:{scene}:parent")
+                if row.get("final_sha256") != expected_row["final_sha256"]:
+                    errors.append(f"parent_final_diagnostic_sha:{scene}:final")
+                for section in ("parent", "final", "relative_deltas"):
+                    if not _metrics_approx_equal(row.get(section), expected_row[section]):
+                        errors.append(f"parent_final_diagnostic_metrics:{scene}:{section}")
+                if row.get("exceeds_15_percent") is not expected_row["exceeds_15_percent"]:
+                    errors.append(f"parent_final_diagnostic_metrics:{scene}:threshold")
+
     if parent_relatives and candidate_relatives:
         parent_sha = _aggregate_file_sha(root, parent_relatives)
         candidate_sha = _aggregate_file_sha(root, candidate_relatives)
@@ -944,3 +1024,19 @@ def validate_layer_package(root: str | Path) -> list[str]:
 def _approx_equal(value: float, target: float, tolerance: float) -> bool:
     """Small local comparator keeps the validator independent of pytest."""
     return abs(float(value) - float(target)) <= float(tolerance)
+
+
+def _metrics_approx_equal(actual: Any, expected: Any, tolerance: float = 1.0e-9) -> bool:
+    if isinstance(actual, dict) and isinstance(expected, dict):
+        return set(actual) == set(expected) and all(
+            _metrics_approx_equal(actual[key], expected[key], tolerance) for key in expected
+        )
+    if isinstance(actual, list) and isinstance(expected, list):
+        return len(actual) == len(expected) and all(
+            _metrics_approx_equal(item, other, tolerance) for item, other in zip(actual, expected)
+        )
+    if isinstance(actual, bool) or isinstance(expected, bool):
+        return type(actual) is type(expected) and actual == expected
+    if isinstance(actual, (int, float)) and isinstance(expected, (int, float)):
+        return abs(float(actual) - float(expected)) <= tolerance
+    return type(actual) is type(expected) and actual == expected
