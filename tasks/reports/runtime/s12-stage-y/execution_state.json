@@ -14,10 +14,11 @@
     "Y9_FINAL_QUALIFICATION"
   ],
   "current_phase": "Y9_FINAL_QUALIFICATION",
-  "tested_evidence_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+  "tested_evidence_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
   "metadata_head": "662eefac78182f94e80a0e11606a19fb216f1a84",
   "current_head_at_metadata_write": "662eefac78182f94e80a0e11606a19fb216f1a84",
   "runtime_resolved_live_head_at_probe": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+  "final_full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
   "phases": {
     "Y0_SETUP": {
       "status": "PASS",
@@ -152,8 +153,15 @@
       "status": "PASS",
       "final_fitted_map_status": "PASS",
       "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
-      "full_s12_status": "NOT_RUN_YET",
-      "blocker": "Complete S12 qualification remains pending on the final metadata/code HEAD."
+      "full_s12_status": "PASS",
+      "full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+      "full_s12_run_id": "full-s12-final-20260831T170006408730Z",
+      "full_s12_result": "1369 passed, 2 skipped",
+      "full_s12_exit_code": 0,
+      "full_s12_slow_tests_enabled": false,
+      "full_s12_skipped": 2,
+      "full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
+      "blocker": "Human layer audition, legal synchronized R1 Reference, formal selection and Profile Freeze remain external gates."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"

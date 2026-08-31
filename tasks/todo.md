@@ -4193,13 +4193,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Y4：状态瞬态、完整尾音与 snapshot replay，最终80 passed/1 skipped，复审通过。
 - [x] Y5：DC/dP/warmup、v3 snapshot迁移与60s分块等价，43 passed无skip，复审通过。
 - [x] Y6：154 WAV累计分层试听包、两页播放器、158 artifact SHA校验及独立复审通过；人耳/R1未通过。
-- [ ] 同步 Stage Y 状态、Obsidian/registry，并在最终 HEAD 完成一次完整 S12 资格。
+- [x] 同步 Stage Y 状态、Obsidian/registry，并在 final software HEAD 完成一次完整 S12 资格（`1369 passed, 2 skipped`）。
 
 ### Review
 
 - Y1 canonical probe：历史公式-map 16/16 保留；最终 committed fitted-map 新鲜 receipt `y1-final-fitted-map-20260831T145748162574Z` 为 16/16 bilateral PASS，测试源码 head `59fe45d`，P3 元数据/current head `1ef0883`，artifact SHA `40c5474d`。
 - Y2 committed fitted map：source head `2dd4ad6`，postfix evidence `9 passed`，receipt/state/hash 复审 PASS。
 - Y4/Y5 snapshot/raw replay 缺口已修复并复审；snapshot 现绑定 coupling contract，package config SHA 也绑定该 contract。
+- Final full S12 on tested HEAD `a73322b`: `1369 passed, 2 skipped`, exit `0`; skipped count retained literally because `S12_RUN_SLOW` was not enabled. Receipt/log SHA is under `tasks/reports/runtime/s12-stage-y/final_qualification/`.
 - 本轮快照说明：`docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md`；最小复验 2 passed/1 failed，未运行 full S12。
 
 ## 2026-08-31 Stage Y final closure handoff

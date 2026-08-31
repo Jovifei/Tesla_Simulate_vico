@@ -1,6 +1,6 @@
 # S12 Stage Y 最终软件闭包（2026-08-31）
 
-状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / R1_HUMAN_GATES_CLOSED`
+状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PASS / R1_HUMAN_GATES_CLOSED`
 
 本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，source-contract HEAD 为 `662eefa`。起始 main 已是 integration 的祖先，无需额外合并。
 
@@ -39,7 +39,7 @@ R1 identity, OEM reproduction, calibration or Profile Freeze.
 - Y4: latch/re-arm, 120 ms tails and snapshot/replay; historical `80 passed, 1 skipped`; PASS.
 - Y5: per-sample DC/dP, warmup, fractional delay and v3 migration; historical `43 passed`, no skip; PASS.
 - Y6 v1: 154 synthetic PCM24 WAVs / 11 scenes / browser playback evidence; preserved unchanged. Because the fitted-map renderer inputs changed, any regenerated package must be a new `s12-stage-y-hellcat-layers-v2` directory; v2 has not been generated in this closure.
-- Full S12: not run yet; it is the next and only complete regression run on the final metadata/code HEAD.
+- Full S12: `1369 passed, 2 skipped`, exit `0`, tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf`; receipt `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json` binds command, UTC times and log SHA. The two skips are reported literally because `S12_RUN_SLOW` was not enabled; no no-skip claim is made.
 
 ## Open-source method boundary
 
@@ -52,8 +52,8 @@ clear individual audio rights; neither source or media is copied into S12.
 
 ## Next gate
 
-Run focused repository/Track-P/license checks and a whole-branch review, then
-run exactly one complete S12 command on the final HEAD. Only if those gates and
-CI pass may the closure branch be pushed to the integration PR and merged into
-main. Human audition, legal synchronized R1, OEM/calibration and Profile Freeze
-remain explicit external gates.
+Focused repository/Track-P/license checks, whole-branch review and the one
+complete S12 command are now green. The next software action is to push the
+closure commits to the integration PR, wait for CI, and merge through that PR
+only if CI is green. Human audition, legal synchronized R1, OEM/calibration and
+Profile Freeze remain explicit external gates.

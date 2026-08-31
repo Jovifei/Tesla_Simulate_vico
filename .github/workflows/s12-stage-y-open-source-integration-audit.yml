@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/s12-stage-y-open-source-integration
+      - agent/s12-stage-y-final-closure
     paths:
       - ".github/workflows/s12-stage-y-open-source-integration-audit.yml"
       - "tools/sound_sim/s12/**"
@@ -11,6 +12,9 @@ on:
       - "docs/research/engine-audio-ecosystem/**"
       - "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/**"
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -140,6 +144,7 @@ jobs:
           python - <<'PY' 2>&1 | tee "${EVIDENCE_DIR}/registry_check.log"
           import json
           import hashlib
+          import subprocess
           from pathlib import Path
 
           registry = Path("docs/research/engine-audio-ecosystem/source_registry.json")
@@ -155,6 +160,8 @@ jobs:
           assert len(matrix_entries) == len(matrix_ids)
           assert matrix_ids == registry_ids
           assert all(entry["coverage"] in matrix["status_values"] for entry in matrix_entries)
+          receipts = json.loads(Path("docs/research/engine-audio-ecosystem/source_evidence_receipts.json").read_text(encoding="utf-8"))
+          assert {entry["id"] for entry in receipts["receipts"]} == registry_ids
           receipt_path = Path("tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json")
           artifact_path = Path("tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json")
           receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
@@ -163,6 +170,11 @@ jobs:
           assert hashlib.sha256(artifact_path.read_bytes()).hexdigest() == receipt["artifact_sha256"]
           assert artifact["architecture"] == "P3"
           assert artifact["parameter_count"] == artifact["reachable_count"] == 16
+          full_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json").read_text(encoding="utf-8"))
+          assert full_receipt["exit_code"] == 0
+          assert full_receipt["tested_head"] == subprocess.check_output(["git", "rev-parse", full_receipt["tested_head"]], text=True).strip()
+          assert subprocess.run(["git", "merge-base", "--is-ancestor", full_receipt["tested_head"], "HEAD"]).returncode == 0
+          assert full_receipt["pytest_summary"] and "failed" not in full_receipt["pytest_summary"]
           PY
           test -z "$(git status --porcelain=v1)"
 

@@ -23,13 +23,16 @@
     "legacy_forced_layer_coupling": 1.0,
     "provenance": "bounded_local_fitted_map_source_layer_balance"
   },
-  "unresolved": ["full S12 qualification pending on the final metadata/code HEAD", "human audition, legal R1 and Profile Freeze remain external gates"],
+  "unresolved": ["human audition, legal R1 and Profile Freeze remain external gates"],
   "production_audio_changed": true,
-  "full_s12_run": false,
+  "full_s12_run": true,
   "existing_v1_package": "preserved; v2 is required for any regenerated fitted-map package",
   "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
   "final_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
   "tested_source_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
   "metadata_head": "662eefac78182f94e80a0e11606a19fb216f1a84",
-  "next_decision": "run one complete S12 qualification, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
+  "full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
+  "full_s12_tested_head": "a73322b1ceebe700fc97073cbf50cfd12b961bbf",
+  "full_s12_result": "1369 passed, 2 skipped",
+  "next_decision": "update PR/CI and, if green, merge through PR; keep R1/human/Profile Freeze fail-closed"
 }

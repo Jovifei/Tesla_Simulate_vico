@@ -4,9 +4,9 @@ project: Tesla-Speed-Sound
 subproject: S12
 stage: Stage-Y
 document_type: engineering_status
-status: final_fitted_map_pass_full_s12_pending
+status: software_regression_pass_r1_human_pending
 updated: 2026-08-31
-evidence_head: 59fe45d76ee67730d06cde3517e2b4745aa19b80
+evidence_head: a73322b1ceebe700fc97073cbf50cfd12b961bbf
 ---
 
 <!-- S12-STAGE-Y:AUTO:BEGIN -->
@@ -17,8 +17,9 @@ Repository final closure report: [Stage Y final software closure](../../../../..
 Y1–Y6 retain their bounded software evidence. The fresh final P3/post_ptr
 selected-16 receipt now proves the committed fitted map bilaterally; the
 bounded local coupling is recorded in the engine diagnostics. Current state is
-`Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PENDING`; no final whole-S12 suite
-has run yet.
+`Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PASS`; the final whole-S12 suite
+recorded `1369 passed, 2 skipped` with exit `0` on tested HEAD `a73322b`.
+The two skips are literal because the slow-test environment flag was not enabled.
 All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
@@ -127,12 +128,12 @@ the match is not LUFS, SPL, calibration or dynamic evidence. Parent-vs-final
 | Y5 | Per-sample DC/dP, warmup, fractional delay, v3 snapshot compatibility, click contract and deterministic 3000×960 equivalence; `43 passed in 28.92s`, no skip; source head `1f3a9cba27fe2ca212ce7f488ebdd5f11b5c83bc`. | [`y5_dp_chain_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json) |
 | Y6 | Production package `11` scenes/`154` synthetic 48 kHz stereo PCM24 WAVs; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`; browser pages each loaded `77` players and sampled playback; source head `091696936abc8ec310f2f937579bc136cf21bc0e`. | [`y6_audition_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json), [`browser_playback_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json) |
 
-The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json).
+The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json).
 Y6 is `PASS` for package/browser evidence, while its receipt still records
 `human_status=WAITING_FOR_JOVI_LAYER_AUDITION`,
 `formal_status=FORMAL_R1_REFERENCE_MISSING`,
 `profile_status=NOT_PROFILE_FREEZE_READY`, and
-`full_s12_status=NOT_RUN_YET`; because fitted-map renderer inputs changed,
+`full_s12_status=PASS`; because fitted-map renderer inputs changed,
 future regenerated audio must be published as v2 and must not overwrite v1.
 
 ## Remaining gates
