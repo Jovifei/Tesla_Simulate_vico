@@ -2,7 +2,7 @@
 
 状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / R1_HUMAN_GATES_CLOSED`
 
-本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，最终 metadata/current HEAD 为 `1ef0883`。起始 main 已是 integration 的祖先，无需额外合并。
+本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，source-contract HEAD 为 `662eefa`。起始 main 已是 integration 的祖先，无需额外合并。
 
 ## 本轮源码调整
 
@@ -13,7 +13,7 @@
 
 ## Final fitted-map 证据
 
-新鲜运行 `y1-final-fitted-map-20260831T145748162574Z` 退出码 `0`，artifact SHA `40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847`。测试源码 HEAD 为 `59fe45d76ee67730d06cde3517e2b4745aa19b80`；P3 元数据/current HEAD 为 `1ef0883a7720bacb9c2054bc63ad63ebf275e51e`。Map SHA `5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc`，fixture SHA `97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570`。
+新鲜运行 `y1-final-fitted-map-20260831T145748162574Z` 退出码 `0`，artifact SHA `40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847`。测试源码 HEAD 为 `59fe45d76ee67730d06cde3517e2b4745aa19b80`；P3/source-contract HEAD 为 `662eefac78182f94e80a0e11606a19fb216f1a84`。Map SHA `5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc`，fixture SHA `97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570`。
 
 | 控制 | minus | plus | 目标 |
 | --- | ---: | ---: | --- |
