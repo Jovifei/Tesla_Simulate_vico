@@ -88,6 +88,140 @@ def test_two_chinese_review_pages_link_relative_playable_audio(built_package) ->
             assert scene in html
 
 
+@pytest.mark.parametrize("relative", ("timbre_review.html", "dynamic_review.html", "AUDITION_GUIDE_ZH.md", "parent_final_diagnostic.json"))
+def test_validator_rejects_tampered_listed_page_guide_or_diagnostic(built_package, relative) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / ("tamper-listed-" + relative.replace("/", "-"))
+    import shutil
+    shutil.copytree(source_root, root)
+    path = root / relative
+    path.write_bytes(path.read_bytes() + b"\n<!-- tampered -->\n")
+    errors = validate_layer_package(root)
+    assert any("sha_mismatch:" + relative in error for error in errors)
+
+
+def test_parent_final_diagnostic_is_hashed_and_summarized_without_a_score(built_package) -> None:
+    root, manifest = built_package
+    diagnostic_ref = manifest["parent_final_diagnostic"]
+    diagnostic_path = root / diagnostic_ref["path"]
+    diagnostic = json.loads(diagnostic_path.read_text(encoding="utf-8"))
+    assert diagnostic_ref["sha256"] == hashlib.sha256(diagnostic_path.read_bytes()).hexdigest()
+    assert diagnostic["diagnostic_only"] is True
+    assert diagnostic["threshold_percent"] == 15.0
+    assert "similarity_score" not in json.dumps(diagnostic)
+    for scene in SCENES:
+        row = diagnostic["scenes"][scene]
+        assert row["parent"]["raw_dynamic"]["rms_dbfs"] != row["final"]["raw_dynamic"]["rms_dbfs"]
+        assert "rms_dbfs" in row["relative_deltas"]["raw_dynamic"]
+        assert isinstance(row["exceeds_15_percent"], bool)
+    for page in ("timbre_review.html", "dynamic_review.html"):
+        html = (root / page).read_text(encoding="utf-8")
+        assert "Parent vs F" in html
+        assert "rms_dbfs" in html
+
+
+def test_monitor_is_policy_processed_reuse_of_f_rendering_with_bound_provenance(built_package) -> None:
+    root, manifest = built_package
+    scene = SCENES[0]
+    final_record = manifest["scenes"][scene]["stems"]["y5_dp"]
+    monitor = manifest["scenes"][scene]["stems"]["monitor"]
+    assert monitor["raw_dynamic"] is False
+    assert monitor["signal_domain"] == "policy_processed_audition_monitor"
+    provenance = monitor["monitor_provenance"]
+    assert provenance["source_stem"] == "y5_dp"
+    assert provenance["source_path"] == f"{scene}/y5_dp.wav"
+    assert provenance["source_pcm_sha256"] == final_record["sha256"]
+    assert provenance["source_renderer_config_sha256"] == final_record["engine"]["renderer_config_sha256"]
+    assert "not raw dynamic" in (root / "dynamic_review.html").read_text(encoding="utf-8").lower()
+
+
+@pytest.mark.parametrize("kind", ("scope", "boundary_type", "chinese_claim"))
+def test_validator_rejects_affirmative_or_malformed_claim_boundary(built_package, kind) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / f"claim-{kind}"
+    import shutil
+    shutil.copytree(source_root, root)
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if kind == "scope":
+        manifest["scope"] = "OEM reproduction"
+    elif kind == "boundary_type":
+        manifest["review_boundaries"]["oem_reproduction"] = "true"
+    else:
+        guide = root / "AUDITION_GUIDE_ZH.md"
+        guide.write_text(guide.read_text(encoding="utf-8") + "\n本包已通过 OEM 资格认证并已冻结。\n", encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert validate_layer_package(root), kind
+
+
+def test_validator_requires_matched_pcm24_clipping_and_shared_headroom(built_package) -> None:
+    root, manifest = built_package
+    tolerance = 1.0 / (1 << 23)
+    for scene in SCENES:
+        for stem in STEMS:
+            audio, metadata = read_pcm24_wav(root / "timbre_review" / scene / f"{stem}_matched.wav")
+            assert metadata["clipping"] == 0
+            assert float(np.max(np.abs(audio))) <= 0.98 + tolerance
+
+
+def test_validator_rejects_rebound_hash_for_clipped_matched_wav(built_package) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / "invalid-matched-clipped"
+    import shutil
+    shutil.copytree(source_root, root)
+    relative = f"timbre_review/{SCENES[0]}/parent_matched.wav"
+    path = root / relative
+    data = bytearray(path.read_bytes())
+    data[-6:-3] = b"\xff\xff\x7f"
+    path.write_bytes(data)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["files"][relative] = digest
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    sha_path = root / "sha256_manifest.json"
+    sha_manifest = json.loads(sha_path.read_text(encoding="utf-8"))
+    sha_manifest["files"][relative] = digest
+    sha_path.write_text(json.dumps(sha_manifest), encoding="utf-8")
+    assert validate_layer_package(root)
+
+
+def test_manifest_binds_renderer_models_and_fitted_map_fixture(built_package) -> None:
+    _root, manifest = built_package
+    expected = {
+        "y1_event": ("waveguide_v1", "harmonic_v1", "off", "off", "off"),
+        "y2_map": ("waveguide_v1", "timbre_map_v1", "off", "off", "off"),
+        "y3_p4": ("waveguide_v1", "timbre_map_v1", "fixture_v1", "off", "off"),
+        "y4_transients": ("waveguide_v1", "timbre_map_v1", "fixture_v1", "state_v1", "off"),
+        "y5_dp": ("waveguide_v1", "timbre_map_v1", "fixture_v1", "state_v1", "dp_v1"),
+    }
+    for stem, models in expected.items():
+        engine = manifest["scenes"][SCENES[0]]["stems"][stem]["engine"]
+        assert tuple(engine[key] for key in ("path_model", "forced_induction_model", "cycle_sync_model", "transient_model", "audio_chain")) == models
+        if stem != "y1_event":
+            assert engine["fitted_timbre_map_schema"] == "s12.stage_y.harmonic_timbre_map.v1"
+            assert len(engine["fitted_timbre_map_fixture_sha256"]) == 64
+
+
+@pytest.mark.parametrize("kind", ("flag", "model", "map"))
+def test_validator_rejects_falsified_layer_proof(built_package, kind) -> None:
+    source_root, _manifest = built_package
+    root = source_root.parent / f"invalid-layer-proof-{kind}"
+    import shutil
+    shutil.copytree(source_root, root)
+    manifest_path = root / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    record = manifest["scenes"][SCENES[0]]["stems"]["y5_dp"]
+    if kind == "flag":
+        record["layer_flags"]["dp_chain"] = False
+    elif kind == "model":
+        record["engine"]["audio_chain"] = "off"
+    else:
+        record["engine"]["fitted_timbre_map_fixture_sha256"] = "0" * 64
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert validate_layer_package(root), kind
+
+
 @pytest.mark.parametrize("kind", ("pcm", "wav", "duration", "status", "unsafe", "extra"))
 def test_validator_fails_closed_for_tampering(built_package, kind) -> None:
     source_root, _manifest = built_package
