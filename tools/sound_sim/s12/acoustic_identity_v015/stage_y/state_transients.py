@@ -61,6 +61,8 @@ class StateTransientMixer:
     def render_block(self, n: int, throttle: float, rpm: float, boost: float, dt: float) -> tuple[np.ndarray, dict[str, float | int]]:
         if not isinstance(n, int) or n <= 0:
             raise ValueError("block size must be a positive integer")
+        if n > self._tail_length:
+            raise ValueError("block size exceeds transient tail capacity")
         current_throttle, current_rpm, current_boost, duration = (
             self._finite(throttle, "throttle"), self._finite(rpm, "rpm"), self._finite(boost, "boost"), self._finite(dt, "dt")
         )

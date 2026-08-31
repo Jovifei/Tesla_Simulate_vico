@@ -1017,7 +1017,7 @@ class PersistentEventDomainEngine:
                 "schema_version": "s12.stage_w.persistent_engine_state.v2",
                 "path_filter_state": np.zeros_like(self._path_filter_state),
                 "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
-                "transient_state": self._transient_mixer.snapshot() if self._transient_mixer is not None else None,
+                "transient_state": type(self._transient_mixer)(self.sample_rate_hz).snapshot() if self._transient_mixer is not None else None,
             })
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")

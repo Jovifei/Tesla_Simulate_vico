@@ -111,6 +111,19 @@ def test_transient_events_are_one_shot_and_tip_tail_continues_across_calls() -> 
     assert steady_lift_bov_diag["transient_bov_count"] == 1
 
 
+def test_render_block_rejects_size_above_tail_capacity_atomically() -> None:
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    capacity = mixer._tail_length
+    block, _ = mixer.render_block(capacity, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+    assert block.shape == (capacity, 2)
+    before = copy.deepcopy(mixer.snapshot())
+
+    with pytest.raises(ValueError, match="tail capacity"):
+        mixer.render_block(capacity + 1, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+
+    _assert_snapshot_equal(mixer.snapshot(), before)
+
+
 def test_each_transient_latch_releases_before_the_same_threshold_can_trigger_again() -> None:
     # Each scenario is isolated so the assertion proves the event-specific
     # latch/re-arm contract rather than relying on another event's state.
@@ -287,3 +300,21 @@ def test_legacy_snapshot_is_accepted_only_at_zero_state_and_off_mode_retains_def
     explicit_off = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, path_model="waveguide_v1", transient_model="off")
     state = _frame(3300.0, 0.72)
     assert np.array_equal(default.process(state).raw_pcm, explicit_off.process(state).raw_pcm)
+
+
+def test_legacy_zero_snapshot_migration_discards_dirty_target_transient_state() -> None:
+    source = _engine()
+    legacy_zero = source.snapshot_state()
+    legacy_zero["schema_version"] = "s12.stage_w.persistent_engine_state.v1"
+    legacy_zero.pop("path_filter_state")
+    legacy_zero.pop("runtime_models")
+    legacy_zero.pop("transient_state")
+
+    restored = _engine()
+    restored.process(_frame(3600.0, 0.18))
+    restored.process(_frame(3600.0, 0.90))
+    restored.restore_state(legacy_zero)
+
+    fresh = _engine()
+    state = _frame(3600.0, 0.18)
+    assert np.array_equal(restored.process(state).raw_pcm, fresh.process(state).raw_pcm)
