@@ -883,7 +883,7 @@ class PersistentEventDomainEngine:
 
     def snapshot_state(self) -> dict[str, Any]:
         return {
-            "schema_version": "s12.stage_w.persistent_engine_state.v2",
+            "schema_version": "s12.stage_w.persistent_engine_state.v3",
             "sample_counter": self.sample_counter,
             "pll": {"phase_rad": self.pll.phase_rad, "omega_rad_s": self.pll.omega_rad_s, "initialized": self.pll.initialized, "sample_count": self.pll.sample_count},
             "pending_combustion_torque": self._pending_combustion_torque.copy(),
@@ -1016,16 +1016,28 @@ class PersistentEventDomainEngine:
             if legacy_counter != 0:
                 raise ValueError("legacy snapshot omits state required for nonzero replay")
             snapshot = dict(snapshot)
+            if self._audio_chain is None:
+                audio_chain_state = None
+            else:
+                fresh_audio_chain = type(self._audio_chain)(self.sample_rate_hz, delay_samples=self._audio_chain.delay_samples)
+                audio_chain_state = fresh_audio_chain.snapshot()
             snapshot.update({
-                "schema_version": "s12.stage_w.persistent_engine_state.v2",
+                "schema_version": "s12.stage_w.persistent_engine_state.v3",
                 "path_filter_state": np.zeros_like(self._path_filter_state),
                 "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
                 "transient_state": type(self._transient_mixer)(self.sample_rate_hz).snapshot() if self._transient_mixer is not None else None,
-                "audio_chain_state": self._audio_chain.snapshot() if self._audio_chain is not None else None,
+                "audio_chain_state": audio_chain_state,
             })
+        elif snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v2":
+            snapshot = dict(snapshot)
+            if "audio_chain_state" not in snapshot:
+                if self._audio_chain is not None:
+                    raise ValueError("missing active audio chain state in legacy v2 snapshot")
+                snapshot["audio_chain_state"] = None
+            snapshot["schema_version"] = "s12.stage_w.persistent_engine_state.v3"
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
-        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v2":
+        if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v3":
             raise ValueError("unsupported persistent engine snapshot")
         sample_counter = _counter(snapshot["sample_counter"], "sample_counter")
         pll = _mapping(snapshot["pll"], "PLL snapshot")

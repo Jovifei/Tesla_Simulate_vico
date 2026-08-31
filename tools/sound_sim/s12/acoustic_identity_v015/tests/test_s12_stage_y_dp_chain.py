@@ -158,6 +158,7 @@ def test_enabled_engine_streaming_and_snapshot_replay_include_audio_chain_state(
     assert np.array_equal(expected.raw_pcm, np.concatenate([item.raw_pcm for item in streamed]))
     assert np.array_equal(expected.post_ptr_raw, np.concatenate([item.post_ptr_raw for item in streamed]))
     snapshot = many.snapshot_state()
+    assert snapshot["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
     assert snapshot["audio_chain_state"]["warm"] is True
     next_frame = {key: value[0:1] for key, value in frames.items()}
     expected_next = many.process(next_frame).raw_pcm
@@ -181,6 +182,81 @@ def test_enabled_engine_streaming_and_snapshot_replay_include_audio_chain_state(
     with pytest.raises(ValueError):
         many.restore_state(null_state)
     _assert_state_equal(many.snapshot_state(), before)
+
+
+def _legacy_v1_snapshot(engine: PersistentEventDomainEngine) -> dict:
+    legacy = copy.deepcopy(engine.snapshot_state())
+    legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v1"
+    for field in ("path_filter_state", "runtime_models", "transient_state", "audio_chain_state"):
+        legacy.pop(field, None)
+    return legacy
+
+
+def test_legacy_zero_dp_migration_ignores_dirty_target_chain_state() -> None:
+    config = load_config("hellcat_v1")
+    frame = {
+        "rpm": np.asarray([1800.0]),
+        "load": np.asarray([0.35]),
+        "throttle": np.asarray([0.40]),
+        "acceleration_mps2": np.asarray([0.0]),
+    }
+    source = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
+    legacy = _legacy_v1_snapshot(source)
+
+    restored = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
+    restored.process(frame)
+    restored.restore_state(legacy)
+    fresh = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
+    assert np.array_equal(restored.process(frame).raw_pcm, fresh.process(frame).raw_pcm)
+
+
+def test_pre_y5_v2_without_audio_chain_state_restores_on_off_target() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, audio_chain="off")
+    legacy = copy.deepcopy(engine.snapshot_state())
+    legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v2"
+    legacy.pop("audio_chain_state")
+
+    engine.restore_state(legacy)
+    restored = engine.snapshot_state()
+    assert restored["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
+    assert restored["audio_chain_state"] is None
+
+
+def test_pre_y5_v2_without_audio_chain_state_rejects_active_target_atomically() -> None:
+    engine = PersistentEventDomainEngine(load_config("hellcat_v1"), 48000, 960, audio_chain="dp_v1")
+    frame = {
+        "rpm": np.asarray([1800.0]),
+        "load": np.asarray([0.35]),
+        "throttle": np.asarray([0.40]),
+        "acceleration_mps2": np.asarray([0.0]),
+    }
+    engine.process(frame)
+    before = copy.deepcopy(engine.snapshot_state())
+    legacy = copy.deepcopy(before)
+    legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v2"
+    legacy.pop("audio_chain_state")
+
+    with pytest.raises(ValueError, match="missing active audio chain state"):
+        engine.restore_state(legacy)
+    _assert_state_equal(engine.snapshot_state(), before)
+
+
+def test_complete_y5_v2_snapshot_migrates_to_v3_after_validation() -> None:
+    config = load_config("hellcat_v1")
+    frame = {
+        "rpm": np.asarray([1800.0]),
+        "load": np.asarray([0.35]),
+        "throttle": np.asarray([0.40]),
+        "acceleration_mps2": np.asarray([0.0]),
+    }
+    source = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
+    source.process(frame)
+    legacy = copy.deepcopy(source.snapshot_state())
+    legacy["schema_version"] = "s12.stage_w.persistent_engine_state.v2"
+
+    restored = PersistentEventDomainEngine(config, 48000, 960, audio_chain="dp_v1")
+    restored.restore_state(legacy)
+    assert restored.snapshot_state()["schema_version"] == "s12.stage_w.persistent_engine_state.v3"
 
 
 @unittest.skipUnless(os.environ.get("S12_RUN_SLOW") == "1", "set S12_RUN_SLOW=1 for the 3000-block acceptance run")
