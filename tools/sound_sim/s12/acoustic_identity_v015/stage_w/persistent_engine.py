@@ -400,6 +400,11 @@ class PersistentEventDomainEngine:
             "transient_lift_count": 0,
             "transient_shift_count": 0,
             "transient_bov_count": 0,
+            "transient_tip_in_stem_energy": 0.0,
+            "transient_lift_stem_energy": 0.0,
+            "transient_shift_stem_energy": 0.0,
+            "transient_bov_stem_energy": 0.0,
+            "transient_crossfade_active_samples": 0,
         }
         if self.transient_model == "state_v1":
             from ..stage_y.state_transients import StateTransientMixer
@@ -617,7 +622,7 @@ class PersistentEventDomainEngine:
         if self._transient_mixer is not None:
             residual, counts = self._transient_mixer.render_block(n, float(state["throttle"]), float(state["rpm"]), float(boost_state[-1]) if boost_state.size else 0.0, n / self.sample_rate_hz)
             raw = self._transient_mixer.equal_power_crossfade(raw, raw + residual, self._transient_mixer.crossfade_mix())
-            self._transient_counts = counts
+            self._transient_counts = self._transient_mixer.cumulative_diagnostics()
         if external_transient is not None:
             raw += external_transient
         if self._audio_chain is not None:
@@ -974,7 +979,7 @@ class PersistentEventDomainEngine:
         self._transfer_ir.state = state["transfer_ir"]
         if self._transient_mixer is not None:
             self._transient_mixer.restore(state["transient_state"])
-            self._transient_counts = self._transient_mixer.diagnostics()
+            self._transient_counts = self._transient_mixer.cumulative_diagnostics()
         if self.ptr is not None:
             for adapter, adapter_state, upstream, downstream in state["ptr"]:
                 adapter._x0, adapter._x1 = adapter_state["x0"], adapter_state["x1"]
@@ -1252,8 +1257,7 @@ class PersistentEventDomainEngine:
             "cycle_sync_model": self.cycle_sync_model,
             "transient_model": self.transient_model,
             "audio_chain": self.audio_chain_model,
-            "transient_shift_count": int(self._transient_counts.get("transient_shift_count", 0)),
-            "transient_tip_in_count": int(self._transient_counts.get("transient_tip_in_count", 0)),
+            **self._transient_counts,
             "sample_counter": self.sample_counter,
             "event_count": self._event_count,
             "afterfire_event_count": self._afterfire_event_count,

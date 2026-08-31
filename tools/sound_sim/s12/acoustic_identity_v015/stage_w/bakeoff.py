@@ -174,7 +174,8 @@ def _render_architecture(architecture: str, trace: VehicleStateTrace) -> tuple[n
         diagnostics["fitted_timbre_map_schema"] = fitted_map["schema"]
         diagnostics["fitted_timbre_map_fixture_sha256"] = fitted_map["fixture_sha256"]
     if architecture == "P5":
-        diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "state_v1", "transient_residual_event_count": int(diagnostics.get("transient_shift_count", 0) + diagnostics.get("transient_tip_in_count", 0))})
+        transient_count_keys = tuple(f"transient_{name}_count" for name in ("tip_in", "lift", "shift", "bov"))
+        diagnostics.update({"ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER", "transient_residual_source": "state_v1", "transient_residual_event_count": int(sum(diagnostics.get(key, 0) for key in transient_count_keys))})
     diagnostics["monitor_source"] = "PersistentEventDomainEngine.monitor_pcm"
     return raw, post_ptr, monitor, diagnostics
 

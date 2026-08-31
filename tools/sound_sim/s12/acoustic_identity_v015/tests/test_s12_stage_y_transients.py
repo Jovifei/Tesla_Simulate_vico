@@ -111,6 +111,111 @@ def test_transient_events_are_one_shot_and_tip_tail_continues_across_calls() -> 
     assert steady_lift_bov_diag["transient_bov_count"] == 1
 
 
+def test_each_transient_latch_releases_before_the_same_threshold_can_trigger_again() -> None:
+    # Each scenario is isolated so the assertion proves the event-specific
+    # latch/re-arm contract rather than relying on another event's state.
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+    for _ in range(3):
+        _, diagnostics = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_tip_in_count"] == 1
+    mixer.render_block(960, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+    _, diagnostics = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_tip_in_count"] == 2
+
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+    for throttle in (0.40, 0.0, 0.0):
+        _, diagnostics = mixer.render_block(960, throttle=throttle, rpm=4200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_lift_count"] == 1
+    mixer.render_block(960, throttle=0.20, rpm=4200.0, boost=0.70, dt=0.020)
+    _, diagnostics = mixer.render_block(960, throttle=0.05, rpm=4200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_lift_count"] == 2
+
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.75, rpm=4200.0, boost=0.70, dt=0.020)
+    for rpm in (3200.0, 2200.0, 1200.0):
+        _, diagnostics = mixer.render_block(960, throttle=0.75, rpm=rpm, boost=0.70, dt=0.020)
+    assert diagnostics["transient_shift_count"] == 1
+    mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+    mixer.render_block(960, throttle=0.75, rpm=4200.0, boost=0.70, dt=0.020)
+    _, diagnostics = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_shift_count"] == 2
+
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.80, dt=0.020)
+    for boost in (0.20, 0.05, 0.0):
+        _, diagnostics = mixer.render_block(960, throttle=0.05, rpm=4200.0, boost=boost, dt=0.020)
+    assert diagnostics["transient_bov_count"] == 1
+    mixer.render_block(960, throttle=0.30, rpm=4200.0, boost=0.20, dt=0.020)
+    mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.80, dt=0.020)
+    _, diagnostics = mixer.render_block(960, throttle=0.05, rpm=4200.0, boost=0.20, dt=0.020)
+    assert diagnostics["transient_bov_count"] == 2
+
+
+def test_shift_tail_uses_maximum_packet_duration_and_drains_completely() -> None:
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.75, rpm=4200.0, boost=0.70, dt=0.020)
+    first, diagnostics = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+    assert diagnostics["transient_shift_count"] == 1
+    later = []
+    for _ in range(5):
+        block, _ = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+        later.append(block)
+    assert np.any(first)
+    assert np.any(later[3])  # 80-100 ms: beyond the old 80 ms allocation.
+    assert np.any(later[4])  # 100-120 ms: the configured shift tail's final block.
+    drained, drained_diagnostics = mixer.render_block(960, throttle=0.75, rpm=3200.0, boost=0.70, dt=0.020)
+    assert not np.any(drained)
+    assert drained_diagnostics["transient_crossfade_active_samples"] == 0
+
+
+def test_transient_snapshot_rejects_malformed_tail_and_latch_atomically() -> None:
+    mixer = StateTransientMixer(sample_rate_hz=48000)
+    mixer.render_block(960, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+    mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+    before = copy.deepcopy(mixer.snapshot())
+    for mutate in (
+        lambda value: value["audio_tails"]["tip_in"].__setitem__(0, np.nan),
+        lambda value: value["mix_tails"]["shift"].__setitem__(0, np.inf),
+        lambda value: value.__setitem__("lift_latched", 1),
+    ):
+        invalid = copy.deepcopy(before)
+        mutate(invalid)
+        with pytest.raises(ValueError):
+            mixer.restore(invalid)
+        _assert_snapshot_equal(mixer.snapshot(), before)
+
+
+def test_state_v1_transient_engine_streaming_matches_one_shot_and_hard_reset_repeats() -> None:
+    states = {
+        "rpm": np.asarray([850.0, 4200.0, 4200.0, 3200.0, 3200.0, 4200.0, 4200.0], dtype=np.float64),
+        "load": np.asarray([0.18, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70], dtype=np.float64),
+        "throttle": np.asarray([0.18, 0.90, 0.90, 0.05, 0.05, 0.90, 0.90], dtype=np.float64),
+        "acceleration_mps2": np.zeros(7, dtype=np.float64),
+    }
+    one = _engine()
+    one_audio = one.process(states).raw_pcm
+    streamed = _engine()
+    streamed_audio = np.concatenate([streamed.process(_frame(float(states["rpm"][i]), float(states["throttle"][i]), float(states["load"][i]))).raw_pcm for i in range(7)], axis=0)
+    assert np.array_equal(one_audio, streamed_audio)
+    streamed.reset("hard")
+    assert np.array_equal(streamed.process(states).raw_pcm, one_audio)
+
+
+def test_real_p5_diagnostics_propagate_all_transient_stems_and_bakeoff_aggregates_them() -> None:
+    trace = build_hellcat_bakeoff_trace("gear_shift", 2.0)
+    _raw, _post, _monitor, diagnostics = _render_architecture("P5", trace)
+    count_keys = tuple(f"transient_{name}_count" for name in ("tip_in", "lift", "shift", "bov"))
+    energy_keys = tuple(f"transient_{name}_stem_energy" for name in ("tip_in", "lift", "shift", "bov"))
+    assert all(key in diagnostics for key in count_keys + energy_keys)
+    assert "transient_crossfade_active_samples" in diagnostics
+    assert diagnostics["transient_residual_event_count"] == sum(diagnostics[key] for key in count_keys)
+    assert diagnostics["transient_shift_count"] >= 1
+    assert diagnostics["transient_shift_stem_energy"] > 0.0
+    assert diagnostics["transient_crossfade_active_samples"] > 0
+
+
 def test_real_renderer_consumes_equal_power_crossfade_and_requires_shift_event(monkeypatch) -> None:
     calls: list[np.ndarray] = []
     original = StateTransientMixer.equal_power_crossfade
