@@ -1,7 +1,7 @@
 {
   "schema": "s12.stage_y.y4_transients_receipt.v1",
   "status": "PASS",
-  "source_head": "7e2e41e779eca41100aaf412ce2f9bb4475b6d63",
+  "source_head": "98358a7ce8a66324890887d038559e58d36f24ef",
   "scope": "Y4 state_v1 transients and persistent snapshot replay only; Y5, maps, PLL, default source voicing, and frozen core unchanged",
   "red_reproduction": {
     "run_id": "y4-red-20260831T000000Z",
@@ -11,14 +11,35 @@
     "stdout_sha256": "656B6B3C99A6B70410295DA3F14BA1214BA02AA90302910F172F1462B5A52572"
   },
   "post_commit_focused_regression": {
-    "run_id": "y4-focused-postcommit-20260831T000000Z",
-    "receipt_path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-focused-postcommit-20260831T000000Z.json",
+    "run_id": "y4_transients-20260831T052411180625Z",
+    "command": [
+      "D:\\Python\\Python3.14\\python.exe",
+      "-m",
+      "pytest",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+      "-q",
+      "-k",
+      "not three_thousand"
+    ],
+    "started_at": "2026-08-31T05:24:11.214617+00:00",
+    "ended_at": "2026-08-31T05:24:33.487349+00:00",
     "exit_code": 0,
-    "actual_started_at_utc": "2026-08-31T04:49:53.084521+00:00",
-    "actual_ended_at_utc": "2026-08-31T04:50:14.392308+00:00",
-    "result": "62 passed, 1 skipped in 20.65s",
-    "stdout_sha256": "CB6591BDBB12555F26932B0B9553BE967B2CC3B0D5EBB0827C8224E0382023F5",
-    "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    "source_head": "98358a7ce8a66324890887d038559e58d36f24ef",
+    "logs": {
+      "stdout": {
+        "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T052411180625Z.stdout.log",
+        "sha256": "5978e9a9a84c3c444da37f78af0554b7109b29323bdf11f4c43784eb1eba85be"
+      },
+      "stderr": {
+        "path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T052411180625Z.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "result": "71 passed, 1 skipped in 21.61s",
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4_transients-20260831T052411180625Z.json"
   },
   "verified_contracts": [
     "orthogonal equal-power endpoints and gain-square sum",
@@ -27,6 +48,19 @@
     "same-instance and fresh-instance replay during active transient tails for default and fitted-timbre-map engines",
     "atomic rejection of malformed/nonfinite filter state and mismatched runtime models",
     "safe legacy v1 compatibility only for zero-state snapshots",
-    "default/P3 golden, afterfire-ineligible zero, and P4 partition-equivalence regressions"
-  ]
+    "default/P3 golden, afterfire-ineligible zero, and P4 partition-equivalence regressions",
+    "sustained-condition latch/re-arm for lift/shift/BOV; complete 120ms shift tail",
+    "four-kind engine and bakeoff diagnostics; malformed transient state atomic rejection; enabled streaming/reset"
+  ],
+  "historical_pre_review_regression": {
+    "run_id": "y4-focused-postcommit-20260831T000000Z",
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-focused-postcommit-20260831T000000Z.json",
+    "exit_code": 0,
+    "actual_started_at_utc": "2026-08-31T04:49:53.084521+00:00",
+    "actual_ended_at_utc": "2026-08-31T04:50:14.392308+00:00",
+    "result": "62 passed, 1 skipped in 20.72s",
+    "stdout_sha256": "CB6591BDBB12555F26932B0B9553BE967B2CC3B0D5EBB0827C8224E0382023F5",
+    "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "status": "superseded_by_post_review_fix"
+  }
 }
