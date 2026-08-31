@@ -28,7 +28,7 @@
   },
   "unresolved": ["human audition, legal R1 and Profile Freeze remain external gates"],
   "production_audio_changed": true,
-  "full_s12_run": false,
+  "full_s12_run": true,
   "existing_v1_package": "preserved; v2 is required for any regenerated fitted-map package",
   "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
   "final_artifact_sha256": "3609d1dda341c271a0a983fe5e66c1c868746b336cdea151dc50da97dc36b1df",
@@ -37,5 +37,9 @@
   "historical_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
   "historical_failed_full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
   "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard only, caused by CRLF receipt formatting",
-  "next_decision": "run one complete S12 after canonical hash repair, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
+  "full_s12_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json",
+  "full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
+  "full_s12_result": "1370 passed, 2 skipped",
+  "full_s12_exit_code": 0,
+  "next_decision": "update PR/CI and merge through PR only if CI is green; keep R1/human/Profile Freeze fail-closed"
 }

@@ -1,6 +1,6 @@
 # S12 Stage Y 最终软件闭包（2026-08-31）
 
-状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / R1_HUMAN_GATES_OPEN`
+状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PASS / R1_HUMAN_GATES_OPEN`
 
 本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，source-contract HEAD 为 `662eefa`。起始 main 已是 integration 的祖先，无需额外合并。
 
@@ -39,7 +39,7 @@ R1 identity, OEM reproduction, calibration or Profile Freeze.
 - Y4: latch/re-arm, 120 ms tails and snapshot/replay; historical `80 passed, 1 skipped`; PASS.
 - Y5: per-sample DC/dP, warmup, fractional delay and v3 migration; historical `43 passed`, no skip; PASS.
 - Y6 v1: 154 synthetic PCM24 WAVs / 11 scenes / browser playback evidence; preserved unchanged. Because the fitted-map renderer inputs changed, any regenerated package must be a new `s12-stage-y-hellcat-layers-v2` directory; v2 has not been generated in this closure.
-- Full S12: the earlier `1369 passed, 2 skipped` receipt at tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf` is retained as historical and superseded by the canonical fixture-hash repair. The first canonical rerun at `65b3374` recorded `1368 passed, 2 skipped`, exit `1`; both failures were Track-P guard checks caused by CRLF formatting in the newly added Y1 v2 receipt and are retained at `full_s12_final_receipt_v2_failed_track_p.json`. After the LF repair, one new complete S12 run is still required; its current receipt will be `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json`.
+- Full S12: the earlier `1369 passed, 2 skipped` receipt at tested HEAD `a73322b1ceebe700fc97073cbf50cfd12b961bbf` is retained as historical and superseded by the canonical fixture-hash repair. The first canonical rerun at `65b3374` recorded `1368 passed, 2 skipped`, exit `1`; both failures were Track-P guard checks caused by CRLF formatting in the newly added Y1 v2 receipt and are retained at `full_s12_final_receipt_v2_failed_track_p.json`. After the LF repair, the current run `full-s12-final-20260831T192757092203Z` passed `1370 passed, 2 skipped`, exit `0`, on tested HEAD `dbf6fa27aab73b41f71399593e3a4673958c8e36`; receipt `tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json` binds the normalized log SHA.
 
 ## Open-source method boundary
 
@@ -53,8 +53,7 @@ clear individual audio rights; neither source or media is copied into S12.
 ## Next gate
 
 Focused repository/Track-P/license checks and whole-branch review remain the
-bounded verification scope. The next software action is the one complete S12
-command on the canonical code HEAD, followed by a clean commit, push to the
-integration PR, CI, and merge through that PR only if CI is green. Human
-audition, legal synchronized R1, OEM/calibration and Profile Freeze remain
-explicit external gates.
+bounded verification scope. The next software action is to commit the current
+receipt/docs, push to the integration PR, wait for CI, and merge through that PR
+only if CI is green. Human audition, legal synchronized R1, OEM/calibration and
+Profile Freeze remain explicit external gates.

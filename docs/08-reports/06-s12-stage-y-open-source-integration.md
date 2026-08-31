@@ -1,6 +1,6 @@
 # S12 Stage Y Open-Source Method Integration
 
-Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / MAIN_NOT_UPDATED`
+Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_PASS / FULL_S12_PASS / MAIN_NOT_UPDATED`
 
 Integration branch: `agent/s12-stage-y-final-closure` (closure branch from the integration tip)
 
@@ -30,10 +30,12 @@ artifact are bound to source/test HEAD `f498c993`; map SHA is
 `59690572e189d2ca4a5005ea0297c75622dca244112ac3747635d9fb16ac9519` and
 fixture SHA is `060f511881cd2d5994afac7678222bca95f9239620884bf342bb8c054d4c06d1`.
 The historical closed-loop CI receipt remains branch-specific evidence and is
-not acceptance of this combined tree. Full S12 must run once on the canonical
-code HEAD before the branch may be proposed to main. The first canonical run was
-blocked only by CRLF formatting in the new v2 receipt (`1368 passed, 2 skipped`);
-that failed receipt is retained as historical and a clean rerun is pending.
+not acceptance of this combined tree. The first canonical run was blocked only
+by CRLF formatting in the new v2 receipt (`1368 passed, 2 skipped`); that failed
+receipt is retained as historical. After the LF repair, the current complete
+S12 receipt records `1370 passed, 2 skipped`, exit `0`, on tested HEAD
+`dbf6fa27`; this is software evidence only. The branch still requires CI before
+it may be proposed to main.
 
 No external source code, presets, copyrighted vehicle audio, IR assets, or
 commercial model data are added. Track-P remains frozen. Human audition, legal

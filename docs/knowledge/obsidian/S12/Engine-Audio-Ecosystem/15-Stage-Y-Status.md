@@ -4,7 +4,7 @@ project: Tesla-Speed-Sound
 subproject: S12
 stage: Stage-Y
 document_type: engineering_status
-status: final_map_pass_full_s12_pending_r1_human_pending
+status: software_regression_pass_r1_human_pending
 updated: 2026-08-31
 evidence_head: f498c99352ad559897b6157d6722d64e05e68a32
 ---
@@ -17,12 +17,12 @@ Repository final closure report: [Stage Y final software closure](../../../../..
 Y1–Y6 retain their bounded software evidence. The fresh final P3/post_ptr
 selected-16 receipt now proves the committed fitted map bilaterally; the
 bounded local coupling is recorded in the engine diagnostics. Current state is
-`Y9_FINAL_QUALIFICATION / IN_PROGRESS / FULL_S12_PENDING`; the earlier whole-S12
-receipt (`1369 passed, 2 skipped`, exit `0`, tested HEAD `a73322b`) is historical
-and superseded by the canonical fixture-hash repair. One complete S12 run is
-required on the canonical code HEAD. The first canonical attempt at `65b3374`
-had `1368 passed, 2 skipped`, exit `1`, only because Track-P rejected CRLF in
-the new v2 receipt; the failed receipt is retained as historical.
+`Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PASS`; the current whole-S12 receipt
+records `1370 passed, 2 skipped`, exit `0`, on tested HEAD `dbf6fa27`. The earlier
+`1369 passed, 2 skipped` receipt is historical and superseded by the canonical
+fixture-hash repair. The first canonical attempt at `65b3374` had `1368 passed,
+2 skipped`, exit `1`, only because Track-P rejected CRLF in the new v2 receipt;
+that failed receipt is retained as historical.
 All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
@@ -131,18 +131,18 @@ the match is not LUFS, SPL, calibration or dynamic evidence. Parent-vs-final
 | Y5 | Per-sample DC/dP, warmup, fractional delay, v3 snapshot compatibility, click contract and deterministic 3000×960 equivalence; `43 passed in 28.92s`, no skip; source head `1f3a9cba27fe2ca212ce7f488ebdd5f11b5c83bc`. | [`y5_dp_chain_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json) |
 | Y6 | Production package `11` scenes/`154` synthetic 48 kHz stereo PCM24 WAVs; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`; browser pages each loaded `77` players and sampled playback; source head `091696936abc8ec310f2f937579bc136cf21bc0e`. | [`y6_audition_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json), [`browser_playback_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y6_audition/browser_playback_receipt.json) |
 
-The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The historical full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json); the failed canonical attempt is [`full_s12_final_receipt_v2_failed_track_p.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json); the next current receipt is expected at `full_s12_final_receipt_v2.json` after the authorized rerun.
+The phase ledger is [`execution_state.json`](../../../../../tasks/reports/runtime/s12-stage-y/execution_state.json). The current full-run receipt is [`full_s12_final_receipt_v2.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json); the historical full-run receipt is [`full_s12_final_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json), and the failed canonical attempt is [`full_s12_final_receipt_v2_failed_track_p.json`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json).
 Y6 is `PASS` for package/browser evidence, while its receipt still records
 `human_status=WAITING_FOR_JOVI_LAYER_AUDITION`,
 `formal_status=FORMAL_R1_REFERENCE_MISSING`,
 `profile_status=NOT_PROFILE_FREEZE_READY`, and the old
-`full_s12_status=PASS` receipt is historical; because fitted-map renderer inputs changed,
+the old `full_s12_status=PASS` field in the Y6 package receipt is historical; because fitted-map renderer inputs changed,
 future regenerated audio must be published as v2 and must not overwrite v1.
 
 ## Remaining gates
 
-The parent must run one complete S12 qualification on the canonical metadata/code
-HEAD before claiming whole-branch software closure or proposing main merge. After that, human layer audition, a legal
+The parent must pass CI on the current committed software evidence before
+proposing main merge. After that, human layer audition, a legal
 RPM/state-synchronised R1 Reference, the R1 formal gate, Profile Freeze and
 explicit approval remain separate gates. No receipt in this note authorizes
 OEM reproduction, calibrated output, product Runtime integration, or hardware

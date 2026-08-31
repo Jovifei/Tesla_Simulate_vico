@@ -14,11 +14,11 @@
     "Y9_FINAL_QUALIFICATION"
   ],
   "current_phase": "Y9_FINAL_QUALIFICATION",
-  "tested_evidence_head": "f498c99352ad559897b6157d6722d64e05e68a32",
-  "metadata_head": "662eefac78182f94e80a0e11606a19fb216f1a84",
-  "current_head_at_metadata_write": "662eefac78182f94e80a0e11606a19fb216f1a84",
+  "tested_evidence_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
+  "metadata_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
+  "current_head_at_metadata_write": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "runtime_resolved_live_head_at_probe": "f498c99352ad559897b6157d6722d64e05e68a32",
-  "final_full_s12_tested_head": null,
+  "final_full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "phases": {
     "Y0_SETUP": {
       "status": "PASS",
@@ -154,15 +154,22 @@
       "human_status": "WAITING_FOR_JOVI_LAYER_AUDITION"
     },
     "Y9_FINAL_QUALIFICATION": {
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "final_fitted_map_status": "PASS",
       "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt_v2.json",
-      "full_s12_status": "PENDING_AFTER_CANONICAL_HASH_REPAIR",
+      "full_s12_status": "PASS",
+      "full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2.json",
+      "full_s12_run_id": "full-s12-final-20260831T192757092203Z",
+      "full_s12_result": "1370 passed, 2 skipped",
+      "full_s12_exit_code": 0,
+      "full_s12_slow_tests_enabled": false,
+      "full_s12_skipped": 2,
+      "full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
       "historical_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt.json",
       "historical_failed_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
       "historical_failed_full_s12_tested_head": "65b33744fd9134cbebff7516013e4b912c4d09d6",
       "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard failed on CRLF in the newly added Y1 v2 receipt",
-      "blocker": "Re-run one complete S12 qualification after the canonical fixture/PCM hash repair; human/R1/Profile Freeze remain external gates."
+      "blocker": "CI/PR integration remains; human/R1/Profile Freeze remain external gates."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
