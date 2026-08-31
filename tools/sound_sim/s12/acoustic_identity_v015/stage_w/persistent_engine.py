@@ -943,6 +943,7 @@ class PersistentEventDomainEngine:
                 "audio_chain": self.audio_chain_model,
             },
             "transient_state": self._transient_mixer.snapshot() if self._transient_mixer is not None else None,
+            "audio_chain_state": self._audio_chain.snapshot() if self._audio_chain is not None else None,
         }
 
     def restore_state(self, snapshot: Mapping[str, Any]) -> None:
@@ -980,6 +981,8 @@ class PersistentEventDomainEngine:
         if self._transient_mixer is not None:
             self._transient_mixer.restore(state["transient_state"])
             self._transient_counts = self._transient_mixer.cumulative_diagnostics()
+        if self._audio_chain is not None:
+            self._audio_chain.restore(state["audio_chain_state"])
         if self.ptr is not None:
             for adapter, adapter_state, upstream, downstream in state["ptr"]:
                 adapter._x0, adapter._x1 = adapter_state["x0"], adapter_state["x1"]
@@ -1005,7 +1008,7 @@ class PersistentEventDomainEngine:
             "event_tails", "collector_event_tails", "central_collector_event_tail", "path_lines", "path_filter_state", "collector_lines", "central_collector_line",
             "afterfire_location_policy", "monitor_gain_db", "last_output_sample", "click_max_boundary_jump", "click_sum_sq", "click_count",
             "ptr", "waveguide", "teacher_response", "transfer_ir", "parameter_consumption", "parameter_fallbacks", "timbre_inertia_state",
-            "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "transient_state",
+            "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "transient_state", "audio_chain_state",
         }
         snapshot = _mapping(snapshot, "persistent engine snapshot")
         if snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v1":
@@ -1018,6 +1021,7 @@ class PersistentEventDomainEngine:
                 "path_filter_state": np.zeros_like(self._path_filter_state),
                 "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
                 "transient_state": type(self._transient_mixer)(self.sample_rate_hz).snapshot() if self._transient_mixer is not None else None,
+                "audio_chain_state": self._audio_chain.snapshot() if self._audio_chain is not None else None,
             })
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
@@ -1144,6 +1148,15 @@ class PersistentEventDomainEngine:
                 raise ValueError("missing transient state")
             self._transient_mixer._validate_snapshot(snapshot["transient_state"])
             state["transient_state"] = copy.deepcopy(snapshot["transient_state"])
+        if self._audio_chain is None:
+            if snapshot["audio_chain_state"] is not None:
+                raise ValueError("unexpected audio chain state")
+            state["audio_chain_state"] = None
+        else:
+            if snapshot["audio_chain_state"] is None:
+                raise ValueError("missing active audio chain state")
+            self._audio_chain._validate_snapshot(snapshot["audio_chain_state"])
+            state["audio_chain_state"] = copy.deepcopy(snapshot["audio_chain_state"])
         return state
 
     def _validate_optional_component(self, snapshot: Any, component: Any, name: str) -> Any:
@@ -1257,6 +1270,7 @@ class PersistentEventDomainEngine:
             "cycle_sync_model": self.cycle_sync_model,
             "transient_model": self.transient_model,
             "audio_chain": self.audio_chain_model,
+            "audio_chain_state": self._audio_chain.diagnostics() if self._audio_chain is not None else None,
             **self._transient_counts,
             "sample_counter": self.sample_counter,
             "event_count": self._event_count,
@@ -1288,7 +1302,7 @@ class PersistentEventDomainEngine:
                 "contract_version": self._click_contract["contract_version"],
                 "provenance": self._click_contract["provenance"],
             },
-            "state_memory_bytes": int(self._pending_combustion_torque.nbytes + sum(tail.nbytes for tail in self._event_tails) + sum(tail.nbytes for tail in self._collector_event_tails) + self._central_collector_event_tail.nbytes + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines) + self._central_collector_line.history.nbytes),
+            "state_memory_bytes": int(self._pending_combustion_torque.nbytes + sum(tail.nbytes for tail in self._event_tails) + sum(tail.nbytes for tail in self._collector_event_tails) + self._central_collector_event_tail.nbytes + sum(line.history.nbytes for line in self._path_lines) + sum(line.history.nbytes for line in self._collector_lines) + self._central_collector_line.history.nbytes + (self._audio_chain.dc.nbytes + self._audio_chain.prev.nbytes + self._audio_chain.history.nbytes if self._audio_chain is not None else 0)),
             "ptr_status": "FROZEN_RUNTIME_PTR_ADAPTER" if self.ptr is not None else "NOT_CONNECTED",
             "ptr_provenance": self.ptr.provenance() if self.ptr is not None else None,
             "teacher_response": self.teacher_response.diagnostics() if self.teacher_response is not None else None,
