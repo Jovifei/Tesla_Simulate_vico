@@ -8,6 +8,9 @@ on:
       - ".github/workflows/s12-stage-y-final-validation-v3.yml"
       - "tools/sound_sim/s12/**"
       - "tasks/reports/runtime/s12-stage-w/logs/**"
+      - "tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md"
+      - "docs/08-reports/03-s12-stage-y-closed-loop-remediation.md"
+      - "docs/08-reports/04-s12-stage-y-hybrid-calibration-tooling.md"
   workflow_dispatch:
 
 permissions:
@@ -135,7 +138,14 @@ jobs:
 
           def xml_summary(path: Path) -> dict:
               if not path.is_file():
-                  return {'present': False, 'tests': 0, 'failures': 0, 'errors': 0, 'skipped': 0, 'failed_cases': []}
+                  return {
+                      'present': False,
+                      'tests': 0,
+                      'failures': 0,
+                      'errors': 0,
+                      'skipped': 0,
+                      'failed_cases': [],
+                  }
               node = ET.parse(path).getroot()
               suites = [node] if node.tag == 'testsuite' else list(node.findall('testsuite'))
               failed = []
@@ -187,11 +197,20 @@ jobs:
                   'profile_freeze': False,
                   'oem_match_claim': False,
               },
-              'scope': 'software feedback-loop validation; synthetic; uncalibrated; not OEM reproduction',
+              'scope': (
+                  'software feedback-loop validation; synthetic; '
+                  'uncalibrated; not OEM reproduction'
+              ),
           }
-          out = Path('tasks/reports/runtime/s12-stage-y/stage_y_ci_acceptance_receipt_v3.json')
+          out = Path(
+              'tasks/reports/runtime/s12-stage-y/'
+              'stage_y_ci_acceptance_receipt_v3.json'
+          )
           out.parent.mkdir(parents=True, exist_ok=True)
-          out.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          out.write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
           PY
 
       - name: Commit validation receipt
@@ -212,7 +231,8 @@ jobs:
         with:
           name: s12-stage-y-validation-v3-${{ github.sha }}
           path: .stage_y_ci/
-          if-no-files-found: warn
+          if-no-files-found: error
+          include-hidden-files: true
           retention-days: 30
 
       - name: Enforce final result
