@@ -1,5 +1,7 @@
 tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json text eol=crlf
 tasks/reports/runtime/s12-stage-w/logs/*.log -text -diff -whitespace
+tasks/reports/runtime/s12-stage-y/**/logs/*.log -text -diff -whitespace
+tasks/reports/runtime/s12-stage-y/**/logs/*.json -text -diff -whitespace
 .superpowers/sdd/task-6c-green-output.txt -text -diff -whitespace
 tasks/reports/runtime/s12-stage-x/logs/*.log -text -diff -whitespace
 tasks/reports/runtime/s12-stage-x/x4_reachability/*.json -text -diff -whitespace

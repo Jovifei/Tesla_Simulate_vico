@@ -32,6 +32,48 @@
       "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
     }
   },
+  "postfix_review_fix": {
+    "run_id": "y3-postfix-20260831T043010185968Z",
+    "source_head": "c4b06e6897f449b05f6e30a2f29f72dc0624475e",
+    "source_test_path": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "source_test_sha256": "3EB820D6E3CE7BAEDE5BE5D46EE205A26FFEF5F3926A6E30B3D4AC76612AF90B",
+    "command": ["D:\\Python\\Python3.14\\python.exe", "-m", "pytest", "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py", "-q"],
+    "result_observed_in_stdout": "5 passed in 5.09s",
+    "process_exit_code": 0,
+    "actual_started_at_utc": "2026-08-31T04:30:10.223585+00:00",
+    "actual_ended_at_utc": "2026-08-31T04:30:15.883292+00:00",
+    "execution_receipt": {
+      "path": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.json",
+      "sha256": "0899B9C303CD24B13A78CD94231F5596E5C137B5CB3C282AF46B4C2FFE46E80D"
+    },
+    "logs": {
+      "stdout": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.stdout.log",
+      "stderr": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.stderr.log"
+    },
+    "log_sha256": {
+      "stdout": "BA0317834D46412437CF7A189D268D969F579F3857E1C7C13B77CB8E425F36AD",
+      "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "coverage": "complete Y3 cycle-sync file, including P4 one-shot versus persistent 20 ms exact PCM equivalence",
+    "production_code_changed": false,
+    "integration_evidence_retained": "The preceding 66-test normalized-map run remains retained as the broader Y3 integration evidence.",
+    "historical_incomplete_capture_retained": {
+      "run_id": "y3-review-fix-focused-20260830T202000+0800",
+      "result_observed_in_stdout": "9 passed in 50.93s",
+      "process_exit_code": null,
+      "actual_started_at_utc": null,
+      "actual_ended_at_utc": null,
+      "metadata_status": "Only stdout/stderr and filesystem observation bounds were retained; this record is not used as final postfix evidence.",
+      "logs": {
+        "stdout": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-review-fix-focused-20260830T202000+0800.stdout.log",
+        "stderr": "tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-review-fix-focused-20260830T202000+0800.stderr.log"
+      },
+      "log_sha256": {
+        "stdout": "662AB35B68D14B24EDDCC9BB9BF33484A76D369B93B8EDE5523DF4A34D9E07D8",
+        "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      }
+    }
+  },
   "post_run_checks": {
     "compileall_exit_code": 0,
     "git_diff_check_exit_code": 0,
