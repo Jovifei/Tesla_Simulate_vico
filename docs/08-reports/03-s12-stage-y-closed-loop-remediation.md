@@ -1,8 +1,8 @@
 # S12 Stage Y — Closed-Loop Remediation
 
-Date: 2026-08-30  
-Branch: `agent/s12-stage-y-closed-loop-remediation`  
-Base: `f1714b969ecd033e991e04cfc59df06a05e3685a`  
+Date: 2026-08-30
+Branch: `agent/s12-stage-y-closed-loop-remediation`
+Base: `f1714b969ecd033e991e04cfc59df06a05e3685a`
 Scope: Python acoustic source/comparator/governance remediation only. Frozen Track-P PTR/FVM/Radiation content is not modified.
 
 ## 1. Purpose
