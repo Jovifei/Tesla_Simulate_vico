@@ -20,6 +20,9 @@ concurrency:
   group: s12-stage-y-open-source-integration-audit
   cancel-in-progress: true
 
+env:
+  EVIDENCE_DIR: ${{ runner.temp }}/s12-stage-y-open-source-integration
+
 jobs:
   audit:
     runs-on: ubuntu-24.04
@@ -36,22 +39,40 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
+        id: dependencies
+        continue-on-error: true
         run: >-
           python -m pip install --upgrade
           pip numpy scipy pytest pytest-json-report jsonschema matplotlib pyyaml
           pandas soundfile pyloudnorm mosqito==1.2.1
 
       - name: Initialize evidence directory
-        run: mkdir -p .stage_y_integration_ci
+        if: always()
+        shell: bash
+        run: mkdir -p "${EVIDENCE_DIR}"
+
+      - name: Restore and verify receipt-bound Stage-W logs
+        id: historical_logs
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python tools/sound_sim/s12/acoustic_identity_v015/scripts/restore_stage_w_historical_log_bytes.py --apply \
+            2>&1 | tee "${EVIDENCE_DIR}/historical_logs.log"
+          git diff --quiet -- tasks/reports/runtime/s12-stage-w/logs
 
       - name: Compile S12 acoustic package
+        id: compileall
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
           python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015 \
-            2>&1 | tee .stage_y_integration_ci/compileall.log
+            2>&1 | tee "${EVIDENCE_DIR}/compileall.log"
 
       - name: Source-layer focused contracts
+        id: source_layers
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -62,10 +83,28 @@ jobs:
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py \
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py \
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py \
-            --junitxml=.stage_y_integration_ci/source_layers.xml \
-            2>&1 | tee .stage_y_integration_ci/source_layers.log
+            --junitxml="${EVIDENCE_DIR}/source_layers.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/source_layers.log"
 
-      - name: Stage W regression contracts touched by source layers
+      - name: Closed-loop and hybrid-tooling focused contracts
+        id: closed_loop
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_selection.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_x_search.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_remediation.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_historical_log_integrity.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_hybrid_calibration.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_calibration_bundle.py \
+            --junitxml="${EVIDENCE_DIR}/closed_loop.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/closed_loop.log"
+
+      - name: Stage V/W regression contracts touched by source layers
+        id: stage_vw
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -74,33 +113,153 @@ jobs:
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py \
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_v27_pipeline.py \
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_v_event_domain.py \
-            --junitxml=.stage_y_integration_ci/stage_w_regression.xml \
-            2>&1 | tee .stage_y_integration_ci/stage_w_regression.log
+            --junitxml="${EVIDENCE_DIR}/stage_vw.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/stage_vw.log"
 
       - name: Complete S12 Python regression
+        id: full_s12
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
           python -m pytest -q --disable-warnings \
             tools/sound_sim/s12/tests \
             tools/sound_sim/s12/acoustic_identity_v015/tests \
-            --junitxml=.stage_y_integration_ci/full_s12.xml \
-            2>&1 | tee .stage_y_integration_ci/full_s12.log
+            --junitxml="${EVIDENCE_DIR}/full_s12.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/full_s12.log"
 
       - name: Track-P frozen-boundary guard
+        id: track_p
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
           python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py \
-            2>&1 | tee .stage_y_integration_ci/track_p.log
+            2>&1 | tee "${EVIDENCE_DIR}/track_p.log"
 
-      - name: Whitespace and repository diff check
+      - name: Repository, JSON, and license-boundary checks
+        id: repository_checks
+        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
           BASE="$(git merge-base HEAD origin/main)"
           git diff --check "${BASE}..HEAD" \
-            2>&1 | tee .stage_y_integration_ci/diff_check.log
+            2>&1 | tee "${EVIDENCE_DIR}/diff_check.log"
+          python - <<'PY' 2>&1 | tee "${EVIDENCE_DIR}/registry_check.log"
+          import json
+          from pathlib import Path
+
+          registry = Path("docs/research/engine-audio-ecosystem/source_registry.json")
+          payload = json.loads(registry.read_text(encoding="utf-8"))
+          assert isinstance(payload, dict)
+          text = registry.read_text(encoding="utf-8").lower()
+          for marker in ("engine-sim", "ignis", "markeasting", "license"):
+              assert marker in text, marker
+          PY
+          test -z "$(git status --porcelain=v1)"
+
+      - name: Generate integration audit receipt
+        if: always()
+        shell: bash
+        env:
+          TESTED_HEAD: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          DEPENDENCIES: ${{ steps.dependencies.outcome }}
+          HISTORICAL_LOGS: ${{ steps.historical_logs.outcome }}
+          COMPILEALL: ${{ steps.compileall.outcome }}
+          SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
+          CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
+          STAGE_VW: ${{ steps.stage_vw.outcome }}
+          FULL_S12: ${{ steps.full_s12.outcome }}
+          TRACK_P: ${{ steps.track_p.outcome }}
+          REPOSITORY_CHECKS: ${{ steps.repository_checks.outcome }}
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          root = Path(os.environ["EVIDENCE_DIR"])
+          outcomes = {
+              "dependencies": os.environ["DEPENDENCIES"],
+              "historical_logs": os.environ["HISTORICAL_LOGS"],
+              "compileall": os.environ["COMPILEALL"],
+              "source_layers": os.environ["SOURCE_LAYERS"],
+              "closed_loop": os.environ["CLOSED_LOOP"],
+              "stage_vw": os.environ["STAGE_VW"],
+              "full_s12": os.environ["FULL_S12"],
+              "track_p": os.environ["TRACK_P"],
+              "repository_checks": os.environ["REPOSITORY_CHECKS"],
+          }
+
+          def junit(name: str) -> dict:
+              path = root / f"{name}.xml"
+              if not path.is_file():
+                  return {"present": False}
+              node = ET.parse(path).getroot()
+              suites = [node] if node.tag == "testsuite" else list(node.findall("testsuite"))
+              failed = []
+              for suite in suites:
+                  for case in suite.findall("testcase"):
+                      if case.find("failure") is not None or case.find("error") is not None:
+                          failed.append(f"{case.get('classname')}::{case.get('name')}")
+              return {
+                  "present": True,
+                  "tests": sum(int(float(s.get("tests", "0"))) for s in suites),
+                  "failures": sum(int(float(s.get("failures", "0"))) for s in suites),
+                  "errors": sum(int(float(s.get("errors", "0"))) for s in suites),
+                  "skipped": sum(int(float(s.get("skipped", "0"))) for s in suites),
+                  "failed_cases": failed,
+              }
+
+          def log_sha(name: str) -> str | None:
+              path = root / f"{name}.log"
+              return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+
+          payload = {
+              "schema": "s12.stage_y.open_source_integration.audit.v1",
+              "status": "PASS" if all(v == "success" for v in outcomes.values()) else "FAIL",
+              "tested_head": os.environ["TESTED_HEAD"],
+              "workflow_run_id": int(os.environ["RUN_ID"]),
+              "completed_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "outcomes": outcomes,
+              "junit": {
+                  name: junit(name)
+                  for name in ("source_layers", "closed_loop", "stage_vw", "full_s12")
+              },
+              "log_sha256": {
+                  name: log_sha(name)
+                  for name in (
+                      "historical_logs",
+                      "compileall",
+                      "source_layers",
+                      "closed_loop",
+                      "stage_vw",
+                      "full_s12",
+                      "track_p",
+                      "diff_check",
+                      "registry_check",
+                  )
+              },
+              "qualification_boundary": {
+                  "final_fitted_map": "NOT_QUALIFIED_UNTIL_TESTS_PROVE_OTHERWISE",
+                  "real_r1_reference": "MISSING",
+                  "human_audition": "PENDING",
+                  "profile_freeze": False,
+                  "oem_match_claim": False,
+              },
+          }
+          (root / "integration_audit_receipt.json").write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
 
       - name: Record exact audit identity
         if: always()
@@ -113,14 +272,35 @@ jobs:
             echo "status_begin"
             git status --porcelain=v1
             echo "status_end"
-          } | tee .stage_y_integration_ci/identity.log
+          } | tee "${EVIDENCE_DIR}/identity.log"
 
       - name: Upload audit evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: s12-stage-y-open-source-integration-${{ github.sha }}
-          path: .stage_y_integration_ci/
+          path: ${{ env.EVIDENCE_DIR }}/
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 30
+
+      - name: Enforce audit result
+        if: always()
+        shell: bash
+        env:
+          DEPENDENCIES: ${{ steps.dependencies.outcome }}
+          HISTORICAL_LOGS: ${{ steps.historical_logs.outcome }}
+          COMPILEALL: ${{ steps.compileall.outcome }}
+          SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
+          CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
+          STAGE_VW: ${{ steps.stage_vw.outcome }}
+          FULL_S12: ${{ steps.full_s12.outcome }}
+          TRACK_P: ${{ steps.track_p.outcome }}
+          REPOSITORY_CHECKS: ${{ steps.repository_checks.outcome }}
+        run: |
+          for result in \
+            "$DEPENDENCIES" "$HISTORICAL_LOGS" "$COMPILEALL" \
+            "$SOURCE_LAYERS" "$CLOSED_LOOP" "$STAGE_VW" "$FULL_S12" \
+            "$TRACK_P" "$REPOSITORY_CHECKS"; do
+            test "$result" = "success"
+          done
