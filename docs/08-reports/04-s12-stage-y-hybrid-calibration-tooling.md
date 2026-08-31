@@ -1,6 +1,6 @@
 # S12 Stage Y — Hybrid Calibration Tooling
 
-Date: 2026-08-30  
+Date: 2026-08-30
 Branch: `agent/s12-stage-y-closed-loop-remediation`
 
 ## Why this was added
