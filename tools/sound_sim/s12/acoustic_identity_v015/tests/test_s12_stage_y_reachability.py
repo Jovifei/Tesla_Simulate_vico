@@ -89,7 +89,9 @@ def test_post_ptr_narrowband_energy_share_is_gain_invariant_and_selective() -> N
     non_target_share = _post_ptr_narrowband_energy_share(non_target_stereo, sample_rate, (118.0,))
 
     assert target_share > 0.95
-    assert gained_share == target_share
+    assert np.isclose(
+        gained_share, target_share, rtol=1.0e-12, atol=1.0e-15
+    )
     assert non_target_share < 0.01
     assert _post_ptr_narrowband_energy_share(np.zeros((sample_rate, 2)), sample_rate, (118.0,)) == 0.0
 
