@@ -1,0 +1,126 @@
+name: S12 Stage Y Open-Source Integration Audit
+
+on:
+  push:
+    branches:
+      - agent/s12-stage-y-open-source-integration
+    paths:
+      - ".github/workflows/s12-stage-y-open-source-integration-audit.yml"
+      - "tools/sound_sim/s12/**"
+      - "tasks/reports/runtime/s12-stage-y/**"
+      - "docs/research/engine-audio-ecosystem/**"
+      - "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: s12-stage-y-open-source-integration-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact integration tip
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: >-
+          python -m pip install --upgrade
+          pip numpy scipy pytest pytest-json-report jsonschema matplotlib pyyaml
+          pandas soundfile pyloudnorm mosqito==1.2.1
+
+      - name: Initialize evidence directory
+        run: mkdir -p .stage_y_integration_ci
+
+      - name: Compile S12 acoustic package
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015 \
+            2>&1 | tee .stage_y_integration_ci/compileall.log
+
+      - name: Source-layer focused contracts
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py \
+            --junitxml=.stage_y_integration_ci/source_layers.xml \
+            2>&1 | tee .stage_y_integration_ci/source_layers.log
+
+      - name: Stage W regression contracts touched by source layers
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_bakeoff_validator.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_v27_pipeline.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_v_event_domain.py \
+            --junitxml=.stage_y_integration_ci/stage_w_regression.xml \
+            2>&1 | tee .stage_y_integration_ci/stage_w_regression.log
+
+      - name: Complete S12 Python regression
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/tests \
+            tools/sound_sim/s12/acoustic_identity_v015/tests \
+            --junitxml=.stage_y_integration_ci/full_s12.xml \
+            2>&1 | tee .stage_y_integration_ci/full_s12.log
+
+      - name: Track-P frozen-boundary guard
+        shell: bash
+        run: |
+          set -o pipefail
+          python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py \
+            2>&1 | tee .stage_y_integration_ci/track_p.log
+
+      - name: Whitespace and repository diff check
+        shell: bash
+        run: |
+          set -o pipefail
+          BASE="$(git merge-base HEAD origin/main)"
+          git diff --check "${BASE}..HEAD" \
+            2>&1 | tee .stage_y_integration_ci/diff_check.log
+
+      - name: Record exact audit identity
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "head=$(git rev-parse HEAD)"
+            echo "main=$(git rev-parse origin/main)"
+            echo "merge_base=$(git merge-base HEAD origin/main)"
+            echo "status_begin"
+            git status --porcelain=v1
+            echo "status_end"
+          } | tee .stage_y_integration_ci/identity.log
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s12-stage-y-open-source-integration-${{ github.sha }}
+          path: .stage_y_integration_ci/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
