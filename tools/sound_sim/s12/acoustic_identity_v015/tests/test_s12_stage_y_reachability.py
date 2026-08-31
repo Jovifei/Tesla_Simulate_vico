@@ -27,6 +27,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_x.search_parameters import
     SearchParameter,
     _build_parameter_probe_trace,
     _post_ptr_narrowband_energy_share,
+    _window_high_band_share,
     _render_config_pcm,
     apply_parameters,
     hellcat_search_parameters,
@@ -97,6 +98,31 @@ def test_fitted_map_declares_local_broadband_coupling() -> None:
     assert balance["broadband"] > balance["legacy_broadband"]
     assert balance["forced_layer"] == FITTED_MAP_FORCED_LAYER_COUPLING
     assert balance["forced_layer"] > balance["legacy_forced_layer"]
+
+
+def test_legacy_map_keeps_default_coupling_boundary() -> None:
+    engine = PersistentEventDomainEngine(
+        load_config("hellcat_v1"), 48000, 960, ptr_enabled=True,
+        path_model="waveguide_v1", forced_induction_model="timbre_map_v1",
+    )
+    balance = engine.diagnostics()["timbre_layer_coupling"]
+    assert balance["provenance"] == "legacy_map_default_coupling"
+    assert balance["fitted_map"] is False
+    assert balance["broadband"] == balance["legacy_broadband"]
+    assert balance["forced_layer"] == balance["legacy_forced_layer"]
+
+
+def test_transition_high_band_share_is_gain_invariant_and_selective() -> None:
+    sample_rate = 48000
+    time_s = np.arange(int(0.2 * sample_rate), dtype=np.float64) / sample_rate
+    low = np.sin(2.0 * np.pi * 180.0 * time_s)
+    high = np.sin(2.0 * np.pi * 7000.0 * time_s)
+    low_share = _window_high_band_share(low, sample_rate, 0.0, 1.0)
+    high_share = _window_high_band_share(high, sample_rate, 0.0, 1.0)
+    gained_share = _window_high_band_share(7.0 * high, sample_rate, 0.0, 1.0)
+    assert high_share > 0.95
+    assert low_share < 0.01
+    assert np.isclose(gained_share, high_share, rtol=1.0e-12, atol=1.0e-15)
 
 
 def test_post_ptr_narrowband_energy_share_is_gain_invariant_and_selective() -> None:

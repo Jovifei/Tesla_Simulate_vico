@@ -292,7 +292,7 @@ class PersistentEventDomainEngine:
         self.forced_induction_model = forced_induction_model
         fitted_map = self.forced_induction_model == "timbre_map_v1" and bool(self.config.get("require_fitted_timbre_map"))
         self._timbre_layer_coupling = {
-            "provenance": "bounded_local_fitted_map_source_layer_balance",
+            "provenance": "bounded_local_fitted_map_source_layer_balance" if fitted_map else "legacy_map_default_coupling",
             "fitted_map": fitted_map,
             "legacy_broadband": LEGACY_MAP_BROADBAND_COUPLING,
             "broadband": FITTED_MAP_BROADBAND_COUPLING if fitted_map else LEGACY_MAP_BROADBAND_COUPLING,
