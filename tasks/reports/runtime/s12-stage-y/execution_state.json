@@ -5,8 +5,8 @@
   "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-source-layers",
   "phase_order": ["Y0_SETUP", "Y1_REACHABILITY", "Y2_HARMONIC_MAP", "Y3_CYCLE_SYNC_P4", "Y4_TRANSIENTS", "Y5_DP_CHAIN", "Y6_AUDITION"],
   "current_phase": "Y6_AUDITION",
-  "tested_evidence_head": "34318d60541b3d4b2615541f0120caf90d4348b8",
-  "runtime_resolved_live_head_at_probe": "34318d60541b3d4b2615541f0120caf90d4348b8",
+  "tested_evidence_head": "a602a23ff17340b43e1e5fa808684a8b8d77300c",
+  "runtime_resolved_live_head_at_probe": "a602a23ff17340b43e1e5fa808684a8b8d77300c",
   "phases": {
     "Y0_SETUP": {"status": "PASS", "setup_commit": "9dffb65dc885e4b272f0286a6dc1350b83f66a4d", "provenance": "Stage-Y execution ledger initialized from base Stage-X HEAD 3d433e30f2c0238d65baed321aa70355a626ceb6."},
     "Y1_REACHABILITY": {
@@ -57,19 +57,22 @@
     "Y4_TRANSIENTS": {"status": "PASS", "evidence_head": "fc92a68a147d5fb40b3d5444773d116f59fb3b1e", "receipt_path": "tasks/reports/runtime/s12-stage-y/y4_transients/y4_transients_receipt.json", "run_id": "y4_transients-20260831T054158832732Z", "actual_started_at_utc": "2026-08-31T05:41:58.865088+00:00", "actual_ended_at_utc": "2026-08-31T05:42:27.099645+00:00", "exit_code": 0},
     "Y5_DP_CHAIN": {
       "status": "PASS",
-      "evidence_head": "34318d60541b3d4b2615541f0120caf90d4348b8",
-      "receipt_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.json",
-      "receipt_sha256": "F6C8E8F2A221A2895948BDFE72691B1C47A56F473848AA1F87BF45A527D01973",
-      "run_id": "y5_dp_chain-20260831T060110031436Z",
-      "actual_started_at_utc": "2026-08-31T06:01:10.057555+00:00",
-      "actual_ended_at_utc": "2026-08-31T06:01:25.726980+00:00",
+      "evidence_head": "a602a23ff17340b43e1e5fa808684a8b8d77300c",
+      "receipt_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json",
+      "receipt_sha256": "BBA28647A1A3F972BDBD3C2B143EBE8DA3F17EF7F0001E00DF423706F453D371",
+      "run_id": "y5_dp_chain-20260831T062518889596Z",
+      "actual_started_at_utc": "2026-08-31T06:25:18.920140+00:00",
+      "actual_ended_at_utc": "2026-08-31T06:25:49.292151+00:00",
       "exit_code": 0,
-      "result": "19 passed in 15.15s",
-      "stdout_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.stdout.log",
-      "stderr_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.stderr.log",
-      "stdout_sha256": "B631F03B92F153FAC8D301A532821A3F4E93F602ECDDBF123FB77B5950322D9D",
-      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
-      "scope": "per-sample stereo DC, persistent dP/fractional delay, configured-rate one-time warmup, atomic chain/engine snapshot replay, click contract, P3 post-PTR SHA ablation, and deterministic 3000x960 60-second equivalence"
+      "result": "43 passed in 29.81s",
+      "stdout_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T062518889596Z.stdout.log",
+      "stderr_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T062518889596Z.stderr.log",
+      "stdout_sha256": "2899fd54229d9d7d1808e84acb21c8928de8d81db15cd818b1bc83adbf45a24e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "per-sample stereo DC, persistent dP/fractional delay, configured-rate one-time warmup, atomic chain/engine snapshot replay, click contract, P3 post-PTR SHA ablation, and deterministic 3000x960 60-second equivalence",
+      "environment": {
+        "S12_RUN_SLOW": "1"
+      }
     },
     "Y6_AUDITION": {"status": "IN_PROGRESS"}
   },

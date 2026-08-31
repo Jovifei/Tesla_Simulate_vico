@@ -1,0 +1,45 @@
+{
+  "schema": "s12.stage_y.y5_dp_chain_receipt.v1",
+  "status": "PASS",
+  "source_head": "a602a23ff17340b43e1e5fa808684a8b8d77300c",
+  "environment": {
+    "S12_RUN_SLOW": "1"
+  },
+  "result": "43 passed in 29.81s",
+  "post_commit_focused_regression": {
+    "run_id": "y5_dp_chain-20260831T062518889596Z",
+    "command": [
+      "D:\\Python\\Python3.14\\python.exe",
+      "-m",
+      "pytest",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden",
+      "-q"
+    ],
+    "started_at": "2026-08-31T06:25:18.920140+00:00",
+    "ended_at": "2026-08-31T06:25:49.292151+00:00",
+    "exit_code": 0,
+    "source_head": "a602a23ff17340b43e1e5fa808684a8b8d77300c",
+    "logs": {
+      "stdout": {
+        "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T062518889596Z.stdout.log",
+        "sha256": "2899fd54229d9d7d1808e84acb21c8928de8d81db15cd818b1bc83adbf45a24e"
+      },
+      "stderr": {
+        "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T062518889596Z.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T062518889596Z.json"
+  },
+  "snapshot_compatibility": "v3 output; legacy zero v1 uses fresh chain; old Y4 v2 off-only migration; complete Y5 v2 validated before migration",
+  "historical_receipt": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T060110031436Z.json",
+  "verified_contracts": [
+    "3000x960 one-shot/stream <1e-9 and click contract",
+    "configured-rate warmup and stereo DC/dP/fractional delay",
+    "atomic snapshot validation and legacy dirty-target rejection/migration",
+    "enabled engine streaming/replay, Y4/P4 and parent golden"
+  ]
+}

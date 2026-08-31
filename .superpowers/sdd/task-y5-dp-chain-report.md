@@ -1,6 +1,6 @@
 # Y5 pressure audio chain closure
 
-Status: `PASS` for the bounded Y5 dP/DC/fractional-delay/warmup and snapshot scope at source commit `34318d60541b3d4b2615541f0120caf90d4348b8`.
+Status: `PASS` for bounded Y5 at final source commit `a602a23ff17340b43e1e5fa808684a8b8d77300c`. The 34318d6 run below is historical pre-review evidence.
 
 The RED capture reproduced the known block-size dependency: the old one-mean-per-block DC update produced a stream-vs-one-shot maximum absolute difference of `3.537902585315153e-06` at `48000 Hz`. The repair keeps the existing pre-PTR dry/delay mix (`0.65/0.35`) and dP mix (`0.35`), replacing the block mean with persistent per-sample, per-channel DC state. Fractional delay remains linear interpolation over persistent stereo history.
 
@@ -17,3 +17,7 @@ That run covers DC removal, stereo isolation, integer/fractional delay, empty/no
 The pre-commit affected Y4 regression run also passed `80 passed, 2 skipped in 19.47s` across the Y5, Y4 transient, and persistent-engine focused files. No full S12 run, push, merge, or PR was performed.
 
 Y5 is now `PASS`; the next bounded phase is Y6 package work (`IN_PROGRESS`).
+
+## Y5 final snapshot compatibility evidence
+
+Source `a602a23` emits snapshot v3; legacy zero v1 restores fresh chain state, pre-Y5 v2 is accepted only for chain-off targets, and complete Y5 v2 is fully validated before migration. Final run `y5_dp_chain-20260831T062518889596Z` used `S12_RUN_SLOW=1`, actual exit0, UTC 2026-08-31T06:25:18.920140+00:00 to 2026-08-31T06:25:49.292151+00:00, and reports 43 passed in 29.81s (no skip). It includes 3000x960/60s equivalence, enabled engine replay, Y4/P4 and default golden. Final receipt: `tasks/reports/runtime/s12-stage-y/y5_dp_chain/y5_dp_chain_receipt.json`. No full S12 has run.
