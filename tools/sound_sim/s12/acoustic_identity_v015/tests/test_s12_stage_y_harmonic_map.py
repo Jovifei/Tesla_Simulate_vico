@@ -7,7 +7,11 @@ import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y.fixture_cycles import synthesize_hellcat_cycle_bank
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y import harmonic_map_fit
-from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import fit_harmonic_map, MAP_SCHEMA
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y.harmonic_map_fit import (
+    _fixture_sha256,
+    fit_harmonic_map,
+    MAP_SCHEMA,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_y.package import _fitted_config
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine import PersistentEventDomainEngine
@@ -35,6 +39,14 @@ def test_fit_harmonic_map_recovers_sample_count_invariant_sinusoid_amplitude() -
         recovered.append(mapped["amplitude"][0][2][2][1])
 
     assert recovered == pytest.approx([input_amplitude, input_amplitude], abs=1e-12)
+
+
+def test_fixture_sha_is_stable_under_cross_platform_float_roundoff() -> None:
+    bank = synthesize_hellcat_cycle_bank(sample_rate_hz=48000)
+    shifted = {"cycles": {rpm: values.copy() for rpm, values in bank["cycles"].items()}}
+    shifted["cycles"][1200.0] += 1.0e-15
+    rpm_axis = np.asarray(sorted(bank["cycles"]), dtype=np.float64)
+    assert _fixture_sha256(bank, rpm_axis) == _fixture_sha256(shifted, rpm_axis)
 
 
 def test_normalized_fitted_map_is_bounded_and_p3_p4_p5_raw_pcm24_safe(tmp_path, monkeypatch) -> None:

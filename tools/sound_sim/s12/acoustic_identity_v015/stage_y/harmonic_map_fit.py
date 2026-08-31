@@ -24,8 +24,15 @@ _MAP_KEYS = {
 
 
 def _fixture_sha256(bank: dict[str, Any], rpm_axis: np.ndarray) -> str:
+    """Hash canonical fixture samples, tolerating platform-level float roundoff."""
     return hashlib.sha256(
-        b"".join(np.asarray(bank["cycles"][float(rpm)], dtype=np.float64).tobytes() for rpm in rpm_axis)
+        b"".join(
+            np.asarray(
+                np.round(bank["cycles"][float(rpm)], decimals=10),
+                dtype="<f8",
+            ).tobytes()
+            for rpm in rpm_axis
+        )
     ).hexdigest()
 
 
