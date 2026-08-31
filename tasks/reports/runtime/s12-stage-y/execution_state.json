@@ -1,8 +1,8 @@
 {
   "schema": "s12.stage_y.continuous_execution.v1",
   "base_stage_x_sha": "3d433e30f2c0238d65baed321aa70355a626ceb6",
-  "current_branch": "agent/s12-stage-y-source-layers-and-reachability",
-  "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-source-layers",
+  "current_branch": "agent/s12-stage-y-final-closure",
+  "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-final-closure",
   "phase_order": [
     "Y0_SETUP",
     "Y1_REACHABILITY",
@@ -14,8 +14,8 @@
     "Y9_FINAL_QUALIFICATION"
   ],
   "current_phase": "Y9_FINAL_QUALIFICATION",
-  "tested_evidence_head": "091696936abc8ec310f2f937579bc136cf21bc0e",
-  "runtime_resolved_live_head_at_probe": "091696936abc8ec310f2f937579bc136cf21bc0e",
+  "tested_evidence_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+  "runtime_resolved_live_head_at_probe": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
   "phases": {
     "Y0_SETUP": {
       "status": "PASS",
@@ -43,7 +43,12 @@
         "stdout": "F3797EF6C3A9E5163A8FD66DF09FD90AF8BA33567A567DB0BA1F11EFE7CFBF5D",
         "stderr": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
       },
-      "final_fitted_map_status": "NOT_QUALIFIED",
+      "final_fitted_map_status": "PASS",
+      "final_fitted_map_evidence_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
+      "final_fitted_map_artifact_path": "tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json",
+      "final_fitted_map_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
+      "final_fitted_map_scope": "committed synthetic fitted map; P3/post_ptr; 16 bilateral selected-control probes",
       "historical_scope": "Original16/16 retained for pre-fitted-map probe configuration; not final-map qualification."
     },
     "Y2_HARMONIC_MAP": {
@@ -142,8 +147,11 @@
       "human_status": "WAITING_FOR_JOVI_LAYER_AUDITION"
     },
     "Y9_FINAL_QUALIFICATION": {
-      "status": "FAIL_REPAIRING",
-      "blocker": "Final fitted-map broadband reachability below bilateral0.02; renderer voicing or acceptance-domain decision required before further repair."
+      "status": "PASS",
+      "final_fitted_map_status": "PASS",
+      "final_fitted_map_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
+      "full_s12_status": "NOT_RUN_YET",
+      "blocker": "Complete S12 qualification remains pending on the final metadata/code HEAD."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"

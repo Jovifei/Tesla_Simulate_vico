@@ -4,21 +4,21 @@ project: Tesla-Speed-Sound
 subproject: S12
 stage: Stage-Y
 document_type: engineering_status
-status: bounded_software_evidence_pending_final_qualification
+status: final_fitted_map_pass_full_s12_pending
 updated: 2026-08-31
-evidence_head: 091696936abc8ec310f2f937579bc136cf21bc0e
+evidence_head: 59fe45d76ee67730d06cde3517e2b4745aa19b80
 ---
 
 <!-- S12-STAGE-Y:AUTO:BEGIN -->
 # Stage Y current status
 
-Repository WIP checkpoint: [changes and current blockers](../../../../../docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md). Probe/config alignment is saved as incomplete work, not accepted final-map qualification; no new DSP balancing is authorized by the checkpoint request.
+Repository final closure report: [Stage Y final software closure](../../../../../docs/08-reports/07-s12-stage-y-final-closure.md). The earlier WIP checkpoint remains historical; its failed-map state is superseded by the fresh final fitted-map receipt.
 
-Y1–Y6 retain their historical bounded software evidence. Final review found
-that the original Y1 probe used the formula map rather than the committed map;
-final-map broadband reachability remains below the 0.02 bilateral threshold.
-Current state is `Y9_FINAL_QUALIFICATION / FAIL_REPAIRING`; no final whole-S12
-suite has run. Historical 16/16 is not final fitted-map qualification.
+Y1–Y6 retain their bounded software evidence. The fresh final P3/post_ptr
+selected-16 receipt now proves the committed fitted map bilaterally; the
+bounded local coupling is recorded in the engine diagnostics. Current state is
+`Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PENDING`; no final whole-S12 suite
+has run yet.
 All evidence below is synthetic, uncalibrated, vehicle-inspired and
 not an OEM reproduction. It does not establish an approved Profile, human
 acceptance, calibration, ESP32/Runtime integration or product release.
@@ -67,6 +67,12 @@ selected controls are `crank_inertia`, `idle_governor`,
 `afterfire_location_mix`, `afterfire_energy`, `monitor_attack`,
 `monitor_release` and `monitor_max_makeup`.
 
+For the fitted-map path only, the local source-layer balance is broadband
+coupling `4.0` and forced-layer coupling `2.0`; the legacy formula-map path
+remains `0.28` and `1.0`. Boost attack/release gates use scale-invariant
+high-band share in their declared transition windows, with short windows
+zero-padded to the comparator's 23-frame roughness-trend kernel.
+
 This is bilateral software reachability evidence only. It does not measure
 human identification, confusion rates or listening preference, and cannot
 create a Human PASS.
@@ -114,7 +120,7 @@ the match is not LUFS, SPL, calibration or dynamic evidence. Parent-vs-final
 
 | Phase | Verified scope | Exact proof |
 | --- | --- | --- |
-| Y1 | 16/16 bilateral selected-control probes; evidence head `e0436dcdf82d0c6acfcc3a05c7195b91790caffc`; artifact SHA `BB58F993A3863432ADC0FD806C975BFA6886A87DD6BA5908EF4244A13A60CFC5`. | [`parameter_reachability.json`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/parameter_reachability.json) |
+| Y1 | Final committed fitted-map 16/16 bilateral probes; tested source head `59fe45d76ee67730d06cde3517e2b4745aa19b80`; corrected artifact SHA `40C5474D7EAC8B501A7DCDFFBC271ABC77CAF51B7B6EE9C8CF12B4C11F67F847`; metadata head `4224c196b1e2a4288da07c29a0e889656695189d`. | [`final fitted-map receipt`](../../../../../tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json) and [`final artifact`](../../../../../tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json) |
 | Y2 | Fitted synthetic map load/contract; source head `293dcb23768d67f54c5c2bd783aa650e6328ebda`; map SHA `5B609A4CDAD621FE7A0C6979B28694BD7D59CAE4F2202F95CF0A84AA2A12DBBC`; focused result `12 passed`. | [`y2_harmonic_map_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y2_harmonic_map/y2_harmonic_map_receipt.json) |
 | Y3 | Normalized-map integration `66 passed`; final P4 720°/persistent 20 ms postfix `5 passed in 5.09s`; source head `c4b06e6897f449b05f6e30a2f29f72dc0624475e`. | [`y3_normalized_revalidation_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/y3_normalized_revalidation_receipt.json) and [`y3-postfix execution receipt`](../../../../../tasks/reports/runtime/s12-stage-y/y3_cycle_sync_p4/logs/y3-postfix-20260831T043010185968Z.json) |
 | Y4 | Latch/re-arm, 120 ms tails, snapshot/replay and focused regressions; final result `80 passed, 1 skipped`; source head `fc92a68a147d5fb40b3d5444773d116f59fb3b1e`. | [`y4_transients_receipt.json`](../../../../../tasks/reports/runtime/s12-stage-y/y4_transients/y4_transients_receipt.json) |
@@ -126,12 +132,13 @@ Y6 is `PASS` for package/browser evidence, while its receipt still records
 `human_status=WAITING_FOR_JOVI_LAYER_AUDITION`,
 `formal_status=FORMAL_R1_REFERENCE_MISSING`,
 `profile_status=NOT_PROFILE_FREEZE_READY`, and
-`full_s12_status=NOT_RUN_YET`.
+`full_s12_status=NOT_RUN_YET`; because fitted-map renderer inputs changed,
+future regenerated audio must be published as v2 and must not overwrite v1.
 
 ## Remaining gates
 
 The parent must run one complete S12 qualification on the final metadata/code
-HEAD before any final-proof claim. After that, human layer audition, a legal
+HEAD before claiming whole-branch software closure or proposing main merge. After that, human layer audition, a legal
 RPM/state-synchronised R1 Reference, the R1 formal gate, Profile Freeze and
 explicit approval remain separate gates. No receipt in this note authorizes
 OEM reproduction, calibrated output, product Runtime integration, or hardware

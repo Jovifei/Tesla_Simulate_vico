@@ -292,6 +292,7 @@ class PersistentEventDomainEngine:
         self.forced_induction_model = forced_induction_model
         fitted_map = self.forced_induction_model == "timbre_map_v1" and bool(self.config.get("require_fitted_timbre_map"))
         self._timbre_layer_coupling = {
+            "contract_version": "s12.stage_y.timbre_layer_coupling.v1",
             "provenance": "bounded_local_fitted_map_source_layer_balance" if fitted_map else "legacy_map_default_coupling",
             "fitted_map": fitted_map,
             "legacy_broadband": LEGACY_MAP_BROADBAND_COUPLING,
@@ -962,6 +963,7 @@ class PersistentEventDomainEngine:
                 "transient_model": self.transient_model,
                 "audio_chain": self.audio_chain_model,
             },
+            "timbre_layer_coupling": dict(self._timbre_layer_coupling),
             "transient_state": self._transient_mixer.snapshot() if self._transient_mixer is not None else None,
             "audio_chain_state": self._audio_chain.snapshot() if self._audio_chain is not None else None,
         }
@@ -995,6 +997,7 @@ class PersistentEventDomainEngine:
         self._last_output_sample = state["last_output_sample"]
         self._parameter_consumption = state["parameter_consumption"]
         self._parameter_fallbacks = state["parameter_fallbacks"]
+        self._timbre_layer_coupling = state["timbre_layer_coupling"]
         self._click_contract = state["click_contract"]
         self._click_threshold = float(self._click_contract["threshold"])
         self._transfer_ir.state = state["transfer_ir"]
@@ -1028,7 +1031,7 @@ class PersistentEventDomainEngine:
             "event_tails", "collector_event_tails", "central_collector_event_tail", "path_lines", "path_filter_state", "collector_lines", "central_collector_line",
             "afterfire_location_policy", "monitor_gain_db", "last_output_sample", "click_max_boundary_jump", "click_sum_sq", "click_count",
             "ptr", "waveguide", "teacher_response", "transfer_ir", "parameter_consumption", "parameter_fallbacks", "timbre_inertia_state",
-            "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "transient_state", "audio_chain_state",
+            "click_contract", "random_seed", "jitter_fraction", "rng_state", "runtime_models", "timbre_layer_coupling", "transient_state", "audio_chain_state",
         }
         snapshot = _mapping(snapshot, "persistent engine snapshot")
         if snapshot.get("schema_version") == "s12.stage_w.persistent_engine_state.v1":
@@ -1045,6 +1048,7 @@ class PersistentEventDomainEngine:
                 "schema_version": "s12.stage_w.persistent_engine_state.v3",
                 "path_filter_state": np.zeros_like(self._path_filter_state),
                 "runtime_models": {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model},
+                "timbre_layer_coupling": dict(self._timbre_layer_coupling),
                 "transient_state": type(self._transient_mixer)(self.sample_rate_hz).snapshot() if self._transient_mixer is not None else None,
                 "audio_chain_state": audio_chain_state,
             })
@@ -1062,6 +1066,11 @@ class PersistentEventDomainEngine:
                     raise ValueError("missing active audio chain state in legacy v2 snapshot")
                 snapshot["audio_chain_state"] = None
             snapshot["schema_version"] = "s12.stage_w.persistent_engine_state.v3"
+        if "timbre_layer_coupling" not in snapshot:
+            if self._timbre_layer_coupling["fitted_map"]:
+                raise ValueError("missing fitted-map coupling identity in legacy snapshot")
+            snapshot = dict(snapshot)
+            snapshot["timbre_layer_coupling"] = dict(self._timbre_layer_coupling)
         if set(snapshot) != required:
             raise ValueError("persistent engine snapshot fields are incomplete or unexpected")
         if snapshot["schema_version"] != "s12.stage_w.persistent_engine_state.v3":
@@ -1178,6 +1187,10 @@ class PersistentEventDomainEngine:
         expected_models = {"path_model": self.path_model, "forced_induction_model": self.forced_induction_model, "cycle_sync_model": self.cycle_sync_model, "transient_model": self.transient_model, "audio_chain": self.audio_chain_model}
         if dict(models) != expected_models:
             raise ValueError("runtime model snapshot differs from engine")
+        coupling = _mapping(snapshot["timbre_layer_coupling"], "timbre layer coupling snapshot")
+        if dict(coupling) != self._timbre_layer_coupling:
+            raise ValueError("timbre layer coupling differs from engine")
+        state["timbre_layer_coupling"] = dict(coupling)
         if self._transient_mixer is None:
             if snapshot["transient_state"] is not None:
                 raise ValueError("unexpected transient state")

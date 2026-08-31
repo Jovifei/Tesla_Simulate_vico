@@ -109,7 +109,8 @@ def test_reference_caseset_binds_and_rejects_rx7(tmp_path: Path) -> None:
     for case in caseset["cases"]:
         if case["status"] == "BOUND":
             assert case["audio_sha256"] == "a737b618e58ff0d0" + "0" * 0 or len(case["audio_sha256"]) == 64
-            assert case["evidence_level"] == "R2_AUDIO_DIAGNOSTIC"
+            assert case["evidence_level"] == "R3"
+            assert case["rights_status"] == "R3_PRIVATE_DIAGNOSTIC_ONLY"
             assert case["rpm_trace"] is None
     rx7 = rc.build_reference_caseset(
         "rx7_fd",

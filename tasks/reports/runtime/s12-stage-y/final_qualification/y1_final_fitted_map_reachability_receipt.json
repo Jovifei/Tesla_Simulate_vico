@@ -1,0 +1,47 @@
+{
+  "artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\.superpowers\\sdd\\run_y1_final_fitted_map_probe.py",
+    "--worker",
+    "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T145748162574Z"
+  ],
+  "ended_at": "2026-08-31T14:59:54.486119+00:00",
+  "exit_code": 0,
+  "logs": {
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T145748162574Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/final_qualification/logs/y1-final-fitted-map-20260831T145748162574Z.stdout.log",
+      "sha256": "1d8bd7faed4206c112a2488d30ca818efff0bb012cf05747dcb1df1023c7be3e"
+    }
+  },
+  "map": {
+    "architecture": "P3",
+    "fixture_sha256": "97ac452d4d00a0c7fe48e074cc4d12d14946094988d2f54ccf837481f14a1570",
+    "path": "tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json",
+    "scenes": [
+      "y1_blower_spectrum",
+      "y1_boost_attack",
+      "y1_precharged_boost_release",
+      "y1_bypass_threshold_sweep"
+    ],
+    "sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
+    "stem": "post_ptr"
+  },
+  "metadata_correction": {
+    "field": "architecture",
+    "from": "P2H",
+    "to": "P3",
+    "reason": "per-parameter declarations and map receipt are P3; PCM bytes were not rerendered",
+    "metadata_head": "4224c196b1e2a4288da07c29a0e889656695189d"
+  },
+  "output": "E:\\Tesla_speed\\worktrees\\s12-stage-y-final-closure\\tasks\\reports\\runtime\\s12-stage-y\\y1_reachability\\final_fitted_map",
+  "run_id": "y1-final-fitted-map-20260831T145748162574Z",
+  "schema": "s12.stage_y.final_fitted_map_reachability_receipt.v1",
+  "source_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+  "stage": "E:\\Tesla_speed\\review_packages\\.y1-final-fitted-map-20260831T145748162574Z",
+  "started_at": "2026-08-31T14:57:48.204968+00:00"
+}

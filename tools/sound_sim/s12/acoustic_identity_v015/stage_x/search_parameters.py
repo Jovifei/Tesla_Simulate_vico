@@ -95,7 +95,13 @@ def _window_rms(audio: np.ndarray, start: float, end: float) -> float:
 
 
 def _window_high_band_share(audio: np.ndarray, sample_rate: int, start: float, end: float) -> float:
-    samples = np.asarray(audio, dtype=np.float64).reshape(-1)
+    values = np.asarray(audio, dtype=np.float64)
+    if values.ndim == 2:
+        if values.shape[1] == 0:
+            return 0.0
+        samples = values.mean(axis=1)
+    else:
+        samples = values.reshape(-1)
     lower = int(np.clip(round(start * samples.size), 0, samples.size))
     upper = int(np.clip(round(end * samples.size), lower + 1, samples.size))
     window = samples[lower:upper]

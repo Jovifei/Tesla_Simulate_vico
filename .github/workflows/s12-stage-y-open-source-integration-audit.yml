@@ -40,7 +40,6 @@ jobs:
 
       - name: Install dependencies
         id: dependencies
-        continue-on-error: true
         run: >-
           python -m pip install --upgrade
           pip numpy scipy pytest pytest-json-report jsonschema matplotlib pyyaml
@@ -53,7 +52,6 @@ jobs:
 
       - name: Restore and verify receipt-bound Stage-W logs
         id: historical_logs
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -63,7 +61,6 @@ jobs:
 
       - name: Compile S12 acoustic package
         id: compileall
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -72,7 +69,6 @@ jobs:
 
       - name: Source-layer focused contracts
         id: source_layers
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -88,7 +84,6 @@ jobs:
 
       - name: Closed-loop and hybrid-tooling focused contracts
         id: closed_loop
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -104,7 +99,6 @@ jobs:
 
       - name: Stage V/W regression contracts touched by source layers
         id: stage_vw
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -118,7 +112,6 @@ jobs:
 
       - name: Complete S12 Python regression
         id: full_s12
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -130,7 +123,6 @@ jobs:
 
       - name: Track-P frozen-boundary guard
         id: track_p
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -139,7 +131,6 @@ jobs:
 
       - name: Repository, JSON, and license-boundary checks
         id: repository_checks
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
@@ -148,6 +139,7 @@ jobs:
             2>&1 | tee "${EVIDENCE_DIR}/diff_check.log"
           python - <<'PY' 2>&1 | tee "${EVIDENCE_DIR}/registry_check.log"
           import json
+          import hashlib
           from pathlib import Path
 
           registry = Path("docs/research/engine-audio-ecosystem/source_registry.json")
@@ -156,6 +148,21 @@ jobs:
           text = registry.read_text(encoding="utf-8").lower()
           for marker in ("engine-sim", "ignis", "markeasting", "license"):
               assert marker in text, marker
+          matrix = json.loads(Path("docs/research/engine-audio-ecosystem/source_coverage_matrix.json").read_text(encoding="utf-8"))
+          registry_ids = {entry["id"] for entry in payload["sources"]}
+          matrix_entries = matrix["entries"]
+          matrix_ids = {entry["id"] for entry in matrix_entries}
+          assert len(matrix_entries) == len(matrix_ids)
+          assert matrix_ids == registry_ids
+          assert all(entry["coverage"] in matrix["status_values"] for entry in matrix_entries)
+          receipt_path = Path("tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json")
+          artifact_path = Path("tasks/reports/runtime/s12-stage-y/y1_reachability/final_fitted_map/parameter_reachability.json")
+          receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+          artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+          assert receipt["exit_code"] == 0
+          assert hashlib.sha256(artifact_path.read_bytes()).hexdigest() == receipt["artifact_sha256"]
+          assert artifact["architecture"] == "P3"
+          assert artifact["parameter_count"] == artifact["reachable_count"] == 16
           PY
           test -z "$(git status --porcelain=v1)"
 

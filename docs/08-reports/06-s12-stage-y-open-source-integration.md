@@ -1,8 +1,8 @@
 # S12 Stage Y Open-Source Method Integration
 
-Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_NOT_QUALIFIED / MAIN_NOT_UPDATED`
+Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_PASS / FULL_S12_PENDING / MAIN_NOT_UPDATED`
 
-Integration branch: `agent/s12-stage-y-open-source-integration`
+Integration branch: `agent/s12-stage-y-final-closure` (closure branch from the integration tip)
 
 Inputs:
 
@@ -21,9 +21,17 @@ The integration retains both clean-room method families:
 No external source code, presets, copyrighted vehicle audio, IR assets, or
 commercial model data are added. Track-P remains frozen.
 
-This merge is not a final qualification. The committed fitted-map broadband
-control remains below the bilateral 0.02 reachability threshold, and the
-final-map boost/bypass evidence is not closed. The historical closed-loop CI
-receipt remains branch-specific evidence and is not acceptance of this
-combined tree. The combined tree must pass its own integration workflow
-before it may be proposed to main.
+The final fitted-map selected-16 probe now passes bilaterally on P3/post_ptr.
+The repair is a bounded local fitted-map source-layer balance: broadband
+coupling `4.0` and forced-layer coupling `2.0`; legacy formula-map coupling is
+unchanged (`0.28` / `1.0`). Boost attack/release use scale-invariant high-band
+share in their declared transition windows. The fresh receipt and artifact are
+bound to tested source HEAD `59fe45d`; the corrected P3 metadata is bound to
+metadata HEAD `4224c196`. The historical closed-loop CI receipt remains
+branch-specific evidence and is not acceptance of this combined tree. Full
+S12 must run once on the final metadata/code HEAD before the branch may be
+proposed to main.
+
+No external source code, presets, copyrighted vehicle audio, IR assets, or
+commercial model data are added. Track-P remains frozen. Human audition, legal
+R1, OEM/calibration, Profile Freeze and Runtime/hardware claims remain closed.

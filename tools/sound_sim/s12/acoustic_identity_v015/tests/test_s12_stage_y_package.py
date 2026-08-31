@@ -283,6 +283,18 @@ def test_manifest_binds_renderer_models_and_fitted_map_fixture(built_package) ->
             assert len(engine["fitted_timbre_map_fixture_sha256"]) == 64
 
 
+def test_renderer_config_sha_binds_fitted_map_coupling_contract(monkeypatch) -> None:
+    config = stage_y_package._fitted_config()
+    settings = dict(stage_y_package._LAYER_SETTINGS["y2_map"])
+    baseline = stage_y_package._config_sha256(config, settings)
+    monkeypatch.setattr(
+        stage_y_package,
+        "FITTED_MAP_BROADBAND_COUPLING",
+        stage_y_package.FITTED_MAP_BROADBAND_COUPLING + 0.5,
+    )
+    assert stage_y_package._config_sha256(config, settings) != baseline
+
+
 @pytest.mark.parametrize("kind", ("flag", "model", "map"))
 def test_validator_rejects_falsified_layer_proof(built_package, kind) -> None:
     source_root, _manifest = built_package

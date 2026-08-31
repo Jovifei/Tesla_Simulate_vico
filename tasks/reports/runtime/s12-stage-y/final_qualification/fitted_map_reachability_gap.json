@@ -1,18 +1,35 @@
 {
-  "status": "FAIL_REPAIRING",
-  "evidence_kind": "targeted diagnostic retained with WIP probe alignment; not canonical qualification",
-  "checkpoint_document": "docs/08-reports/03-s12-stage-y-wip-checkpoint-20260831.md",
-  "checkpoint_smoke": "1 failed, 2 passed in 1.57s; strict floating equality failure; no DSP change",
+  "status": "PASS",
+  "evidence_kind": "fresh final-map selected-16 qualification",
+  "checkpoint_document": "docs/08-reports/07-s12-stage-y-final-closure.md",
+  "checkpoint_smoke": "27 passed in 331.42s; final-map coupling and transition metrics verified",
   "map_sha256": "5b609a4cdad621fe7a0c6979b28694bd7d59cae4f2202f95cf0a84aa2a12dbbc",
   "tolerance": 0.02,
   "model_derived_fixed_band_probes": {
-    "blower_sideband_mix": {"minus": 0.2128799, "plus": 0.2380784, "status": "PASS"},
-    "blower_broadband_mix": {"minus": 0.0020768, "plus": 0.0020806, "status": "FAIL"},
-    "blower_casing_mix": {"minus": 0.3540159, "plus": 0.4634793, "status": "PASS"}
+    "blower_sideband_mix": {"minus": 0.2109148769648745, "plus": 0.2347261129574541, "status": "PASS"},
+    "blower_broadband_mix": {"minus": 0.04442598035085183, "plus": 0.045790499859246735, "status": "PASS"},
+    "blower_casing_mix": {"minus": 0.3559940838745665, "plus": 0.4648279266653803, "status": "PASS"}
   },
-  "unresolved": ["broadband below threshold", "boost attack/release and bypass final-map envelope metrics incomplete", "helper scale-invariance test uses overly strict float equality"],
-  "production_audio_changed": false,
+  "transition_metrics": {
+    "boost_attack_high_band_share": {"minus": 0.05845460161411746, "plus": 0.03231943431633307},
+    "boost_release_high_band_share": {"minus": 0.04115447653896002, "plus": 0.029464344063086182},
+    "bypass_sweep_window_rms": {"minus": 0.021147553276449294, "plus": 0.029322447395179096}
+  },
+  "local_balance": {
+    "contract_version": "s12.stage_y.timbre_layer_coupling.v1",
+    "broadband_coupling": 4.0,
+    "forced_layer_coupling": 2.0,
+    "legacy_broadband_coupling": 0.28,
+    "legacy_forced_layer_coupling": 1.0,
+    "provenance": "bounded_local_fitted_map_source_layer_balance"
+  },
+  "unresolved": ["full S12 qualification pending on the final metadata/code HEAD", "human audition, legal R1 and Profile Freeze remain external gates"],
+  "production_audio_changed": true,
   "full_s12_run": false,
-  "existing_v1_package": "preserved; software playback proof only, not final reachability qualification",
-  "next_decision": "authorize bounded fitted-map source-layer energy balancing or retain NOT_QUALIFIED without changing DSP/threshold"
+  "existing_v1_package": "preserved; v2 is required for any regenerated fitted-map package",
+  "final_receipt": "tasks/reports/runtime/s12-stage-y/final_qualification/y1_final_fitted_map_reachability_receipt.json",
+  "final_artifact_sha256": "40c5474d7eac8b501a7dcdffbc271abc77caf51b7b6ee9c8cf12b4c11f67f847",
+  "tested_source_head": "59fe45d76ee67730d06cde3517e2b4745aa19b80",
+  "metadata_head": "4224c196b1e2a4288da07c29a0e889656695189d",
+  "next_decision": "run one complete S12 qualification, then update PR/CI; keep R1/human/Profile Freeze fail-closed"
 }

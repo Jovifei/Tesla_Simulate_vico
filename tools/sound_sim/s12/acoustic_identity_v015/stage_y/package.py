@@ -16,7 +16,13 @@ from ..stage_w.bakeoff import OUTPUT_SCALE, SAMPLE_RATE_HZ, BLOCK_SIZE, build_he
 from ..stage_w.boundary_adapter import FrozenPtrStereo
 from ..sources.supercharged_hemi_source import render_hellcat
 from ..event_domain.audition_monitor import render_audition_monitor
-from ..stage_w.persistent_engine import PersistentEventDomainEngine
+from ..stage_w.persistent_engine import (
+    FITTED_MAP_BROADBAND_COUPLING,
+    FITTED_MAP_FORCED_LAYER_COUPLING,
+    LEGACY_MAP_BROADBAND_COUPLING,
+    LEGACY_MAP_FORCED_LAYER_COUPLING,
+    PersistentEventDomainEngine,
+)
 from .harmonic_map_fit import MAP_PATH, MAP_SCHEMA, load_committed_fixture_timbre_map
 
 SCENES = (
@@ -102,8 +108,20 @@ def _safe_matched_pcm(audio: np.ndarray) -> np.ndarray:
     return values
 
 
+def _timbre_layer_coupling_contract(config: dict[str, Any], settings: dict[str, Any]) -> dict[str, Any]:
+    fitted_map = settings.get("forced_induction_model") == "timbre_map_v1" and bool(config.get("require_fitted_timbre_map"))
+    return {
+        "contract_version": "s12.stage_y.timbre_layer_coupling.v1",
+        "fitted_map": fitted_map,
+        "broadband": FITTED_MAP_BROADBAND_COUPLING if fitted_map else LEGACY_MAP_BROADBAND_COUPLING,
+        "forced_layer": FITTED_MAP_FORCED_LAYER_COUPLING if fitted_map else LEGACY_MAP_FORCED_LAYER_COUPLING,
+    }
+
+
 def _config_sha256(config: dict[str, Any], settings: dict[str, Any]) -> str:
     payload = {"config": config, "settings": settings}
+    if settings.get("forced_induction_model") == "timbre_map_v1":
+        payload["timbre_layer_coupling_contract"] = _timbre_layer_coupling_contract(config, settings)
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
