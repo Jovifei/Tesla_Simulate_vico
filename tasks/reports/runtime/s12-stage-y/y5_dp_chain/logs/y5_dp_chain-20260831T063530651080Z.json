@@ -1,0 +1,27 @@
+{
+  "run_id": "y5_dp_chain-20260831T063530651080Z",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "pytest",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_cycle_sync.py",
+    "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py::test_y1_default_p3_render_matches_fixed_pre_task_parent_golden",
+    "-q"
+  ],
+  "started_at": "2026-08-31T06:35:30.681154+00:00",
+  "ended_at": "2026-08-31T06:36:00.256467+00:00",
+  "exit_code": 0,
+  "source_head": "1f3a9cba27fe2ca212ce7f488ebdd5f11b5c83bc",
+  "logs": {
+    "stdout": {
+      "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T063530651080Z.stdout.log",
+      "sha256": "c362d17d7e305f99068b49bd6ee1b6cffcaa6db1d0eec4598f41e9018a6f24c9"
+    },
+    "stderr": {
+      "path": "tasks/reports/runtime/s12-stage-y/y5_dp_chain/logs/y5_dp_chain-20260831T063530651080Z.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
