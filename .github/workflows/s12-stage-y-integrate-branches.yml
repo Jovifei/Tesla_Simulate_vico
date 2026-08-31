@@ -27,7 +27,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          SOURCE_LAYER_HEAD="$(git rev-parse HEAD^)"
+          SOURCE_LAYER_HEAD="4ac95c0100b3fde116de26f99959b585fc6987b7"
           CLOSED_LOOP_HEAD="8589b5575e391e75accc7c759049d28bfa22b9ae"
           git fetch origin agent/s12-stage-y-closed-loop-remediation
           test "$(git rev-parse origin/agent/s12-stage-y-closed-loop-remediation)" = "${CLOSED_LOOP_HEAD}"
@@ -42,12 +42,9 @@ jobs:
           EXPECTED=$'tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md\ntools/sound_sim/s12/acoustic_identity_v015/stage_y/__init__.py'
           test "${CONFLICTS}" = "${EXPECTED}"
 
-          # Stage-X resume on the source-layer branch is newer and remains the
-          # recovery authority for this integration.
           git checkout --ours -- tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md
           git add tasks/reports/runtime/s12-stage-x/EXECUTION_RESUME.md
 
-          # Preserve both independent Stage-Y tool families in one package.
           cat > tools/sound_sim/s12/acoustic_identity_v015/stage_y/__init__.py <<'PY'
           """Stage Y source-layer, calibration, and hybrid-source utilities.
 
@@ -76,20 +73,15 @@ jobs:
           PY
           git add tools/sound_sim/s12/acoustic_identity_v015/stage_y/__init__.py
 
-          # The old workflow writes receipts back to its original branch. The
-          # integration branch has a separate read-only authoritative audit.
-          git rm .github/workflows/s12-stage-y-final-validation-v3.yml
+          git rm -f .github/workflows/s12-stage-y-final-validation-v3.yml
 
-          # Restore the receipt-bound Stage-W log bytes after the merge. This
-          # preserves historical evidence rather than accepting line-ending drift.
           python tools/sound_sim/s12/acoustic_identity_v015/scripts/restore_stage_w_historical_log_bytes.py --apply
           git add tasks/reports/runtime/s12-stage-w/logs
 
           cat > docs/08-reports/06-s12-stage-y-open-source-integration.md <<EOF
           # S12 Stage Y Open-Source Method Integration
 
-          Status: \
-          \`INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_NOT_QUALIFIED / MAIN_NOT_UPDATED\`
+          Status: \`INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_NOT_QUALIFIED / MAIN_NOT_UPDATED\`
 
           Integration branch: \`agent/s12-stage-y-open-source-integration\`
 
@@ -119,7 +111,6 @@ jobs:
           EOF
           git add docs/08-reports/06-s12-stage-y-open-source-integration.md
 
-          # This one-shot integration workflow removes itself from the resulting tree.
           git rm .github/workflows/s12-stage-y-integrate-branches.yml
 
           python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
