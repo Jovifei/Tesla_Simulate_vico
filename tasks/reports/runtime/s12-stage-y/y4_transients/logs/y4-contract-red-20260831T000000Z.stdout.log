@@ -1,0 +1,156 @@
+FFFFFFFF                                                                 [100%]
+================================== FAILURES ===================================
+_ test_equal_power_crossfade_has_endpoints_and_unit_gain_square_sum_for_orthogonal_inputs _
+
+    def test_equal_power_crossfade_has_endpoints_and_unit_gain_square_sum_for_orthogonal_inputs() -> None:
+        mixer = StateTransientMixer(sample_rate_hz=48000)
+        a = np.zeros((960, 2)); a[:, 0] = 1.0
+        b = np.zeros((960, 2)); b[:, 1] = 2.0
+        assert np.array_equal(mixer.equal_power_crossfade(a, b, mix=0.0), a)
+>       assert np.array_equal(mixer.equal_power_crossfade(a, b, mix=1.0), b)
+E       assert False
+E        +  where False = <function array_equal at 0x0000023532157F30>(array([[6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       ...6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00]], shape=(960, 2)), array([[0., 2.],\n       [0., 2.],\n       [0., 2.],\n       ...,\n       [0., 2.],\n       [0., 2.],\n       [0., 2.]], shape=(960, 2)))
+E        +    where <function array_equal at 0x0000023532157F30> = np.array_equal
+E        +    and   array([[6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       ...6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00],\n       [6.123234e-17, 2.000000e+00]], shape=(960, 2)) = equal_power_crossfade(array([[1., 0.],\n       [1., 0.],\n       [1., 0.],\n       ...,\n       [1., 0.],\n       [1., 0.],\n       [1., 0.]], shape=(960, 2)), array([[0., 2.],\n       [0., 2.],\n       [0., 2.],\n       ...,\n       [0., 2.],\n       [0., 2.],\n       [0., 2.]], shape=(960, 2)), mix=1.0)
+E        +      where equal_power_crossfade = <tools.sound_sim.s12.acoustic_identity_v015.stage_y.state_transients.StateTransientMixer object at 0x000002355BDA1550>.equal_power_crossfade
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:59: AssertionError
+___ test_transient_events_are_one_shot_and_tip_tail_continues_across_calls ____
+
+    def test_transient_events_are_one_shot_and_tip_tail_continues_across_calls() -> None:
+        mixer = StateTransientMixer(sample_rate_hz=48000)
+        mixer.render_block(960, throttle=0.18, rpm=4200.0, boost=0.70, dt=0.020)
+        first, first_diag = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+        second, second_diag = mixer.render_block(960, throttle=0.90, rpm=4200.0, boost=0.70, dt=0.020)
+        assert first_diag["transient_tip_in_count"] == 1
+        assert second_diag["transient_tip_in_count"] == 1
+        assert np.any(first)
+>       assert np.any(second)
+E       assert np.False_
+E        +  where np.False_ = <function any at 0x000002353214B9B0>(array([[0., 0.],\n       [0., 0.],\n       [0., 0.],\n       ...,\n       [0., 0.],\n       [0., 0.],\n       [0., 0.]], shape=(960, 2)))
+E        +    where <function any at 0x000002353214B9B0> = np.any
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:79: AssertionError
+_ test_real_renderer_consumes_equal_power_crossfade_and_requires_shift_event __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002350BE54770>
+
+    def test_real_renderer_consumes_equal_power_crossfade_and_requires_shift_event(monkeypatch) -> None:
+        calls: list[np.ndarray] = []
+        original = StateTransientMixer.equal_power_crossfade
+    
+        def traced(self, a, b, mix):
+            calls.append(np.asarray(mix, dtype=np.float64).copy())
+            return original(self, a, b, mix)
+    
+        monkeypatch.setattr(StateTransientMixer, "equal_power_crossfade", traced)
+        shift = build_hellcat_bakeoff_trace("gear_shift", 2.0)
+        _raw_on, post_on, _mon_on, diagnostics = _render_architecture("P5", shift)
+        _raw_off, post_off, _mon_off, _ = _render_architecture("P3", shift)
+        assert diagnostics["transient_shift_count"] >= 1
+        assert hashlib.sha256(post_on.tobytes()).hexdigest() != hashlib.sha256(post_off.tobytes()).hexdigest()
+>       assert calls
+E       assert []
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:110: AssertionError
+_ test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine[False] _
+
+fitted_timbre_map = False
+
+    @pytest.mark.parametrize("fitted_timbre_map", (False, True))
+    def test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine(fitted_timbre_map: bool) -> None:
+        engine = _engine(fitted_timbre_map=fitted_timbre_map)
+        snapshot = _active_tip_snapshot(engine)
+        expected = engine.process(_frame(3600.0, 0.90)).raw_pcm
+        engine.process(_frame(3600.0, 0.90))
+        engine.restore_state(snapshot)
+>       assert np.array_equal(engine.process(_frame(3600.0, 0.90)).raw_pcm, expected)
+E       AssertionError: assert False
+E        +  where False = <function array_equal at 0x0000023532157F30>(array([[0.53350168, 0.47436115],\n       [0.53252554, 0.47288753],\n       [0.53150789, 0.47134216],\n       ...,\n       [0.54025655, 0.4892854 ],\n       [0.53987703, 0.48876814],\n       [0.53956183, 0.48836536]], shape=(960, 2)), array([[0.53350168, 0.47436115],\n       [0.53252554, 0.47288753],\n       [0.53150789, 0.47134216],\n       ...,\n       [0.54025655, 0.4892854 ],\n       [0.53987703, 0.48876814],\n       [0.53956183, 0.48836536]], shape=(960, 2)))
+E        +    where <function array_equal at 0x0000023532157F30> = np.array_equal
+E        +    and   array([[0.53350168, 0.47436115],\n       [0.53252554, 0.47288753],\n       [0.53150789, 0.47134216],\n       ...,\n       [0.54025655, 0.4892854 ],\n       [0.53987703, 0.48876814],\n       [0.53956183, 0.48836536]], shape=(960, 2)) = EngineAudioBlock(raw_pcm=array([[0.53350168, 0.47436115],\n       [0.53252554, 0.47288753],\n       [0.53150789, 0.47134...synthetic; uncalibrated; vehicle-inspired; not OEM reproduction', 'frames': 1, 'sample_count': 960}, post_ptr_raw=None).raw_pcm
+E        +      where EngineAudioBlock(raw_pcm=array([[0.53350168, 0.47436115],\n       [0.53252554, 0.47288753],\n       [0.53150789, 0.47134...synthetic; uncalibrated; vehicle-inspired; not OEM reproduction', 'frames': 1, 'sample_count': 960}, post_ptr_raw=None) = process({'acceleration_mps2': array([0.]), 'load': array([0.7]), 'rpm': array([3600.]), 'throttle': array([0.9])})
+E        +        where process = <tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine.PersistentEventDomainEngine object at 0x000002355BDA1BE0>.process
+E        +        and   {'acceleration_mps2': array([0.]), 'load': array([0.7]), 'rpm': array([3600.]), 'throttle': array([0.9])} = _frame(3600.0, 0.9)
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:121: AssertionError
+_ test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine[True] _
+
+fitted_timbre_map = True
+
+    @pytest.mark.parametrize("fitted_timbre_map", (False, True))
+    def test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine(fitted_timbre_map: bool) -> None:
+        engine = _engine(fitted_timbre_map=fitted_timbre_map)
+        snapshot = _active_tip_snapshot(engine)
+        expected = engine.process(_frame(3600.0, 0.90)).raw_pcm
+        engine.process(_frame(3600.0, 0.90))
+        engine.restore_state(snapshot)
+>       assert np.array_equal(engine.process(_frame(3600.0, 0.90)).raw_pcm, expected)
+E       AssertionError: assert False
+E        +  where False = <function array_equal at 0x0000023532157F30>(array([[0.49297371, 0.39726115],\n       [0.4927672 , 0.39714555],\n       [0.49255287, 0.39702114],\n       ...,\n       [0.56665594, 0.54085183],\n       [0.56680347, 0.54121736],\n       [0.56694227, 0.54156519]], shape=(960, 2)), array([[0.49297371, 0.39726115],\n       [0.4927672 , 0.39714555],\n       [0.49255287, 0.39702114],\n       ...,\n       [0.56665594, 0.54085183],\n       [0.56680347, 0.54121736],\n       [0.56694227, 0.54156519]], shape=(960, 2)))
+E        +    where <function array_equal at 0x0000023532157F30> = np.array_equal
+E        +    and   array([[0.49297371, 0.39726115],\n       [0.4927672 , 0.39714555],\n       [0.49255287, 0.39702114],\n       ...,\n       [0.56665594, 0.54085183],\n       [0.56680347, 0.54121736],\n       [0.56694227, 0.54156519]], shape=(960, 2)) = EngineAudioBlock(raw_pcm=array([[0.49297371, 0.39726115],\n       [0.4927672 , 0.39714555],\n       [0.49255287, 0.39702...synthetic; uncalibrated; vehicle-inspired; not OEM reproduction', 'frames': 1, 'sample_count': 960}, post_ptr_raw=None).raw_pcm
+E        +      where EngineAudioBlock(raw_pcm=array([[0.49297371, 0.39726115],\n       [0.4927672 , 0.39714555],\n       [0.49255287, 0.39702...synthetic; uncalibrated; vehicle-inspired; not OEM reproduction', 'frames': 1, 'sample_count': 960}, post_ptr_raw=None) = process({'acceleration_mps2': array([0.]), 'load': array([0.7]), 'rpm': array([3600.]), 'throttle': array([0.9])})
+E        +        where process = <tools.sound_sim.s12.acoustic_identity_v015.stage_w.persistent_engine.PersistentEventDomainEngine object at 0x000002355BDA1D30>.process
+E        +        and   {'acceleration_mps2': array([0.]), 'load': array([0.7]), 'rpm': array([3600.]), 'throttle': array([0.9])} = _frame(3600.0, 0.9)
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:121: AssertionError
+______ test_snapshot_restore_rejects_filter_or_model_mismatch_atomically ______
+
+    def test_snapshot_restore_rejects_filter_or_model_mismatch_atomically() -> None:
+        engine = _engine()
+        _active_tip_snapshot(engine)
+        before = copy.deepcopy(engine.snapshot_state())
+        for mutate in (
+            lambda value: value.__setitem__("path_filter_state", [0.0]),
+            lambda value: value.__setitem__("path_filter_state", [float("nan")] * engine.entity_count),
+            lambda value: value["runtime_models"].__setitem__("transient_model", "off"),
+        ):
+            invalid = copy.deepcopy(before)
+            mutate(invalid)
+            with pytest.raises(ValueError):
+                engine.restore_state(invalid)
+>           assert engine.snapshot_state() == before
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:141: ValueError
+_ test_legacy_snapshot_is_accepted_only_at_zero_state_and_off_mode_retains_default_output _
+
+    def test_legacy_snapshot_is_accepted_only_at_zero_state_and_off_mode_retains_default_output() -> None:
+        pristine = _engine()
+        legacy_zero = pristine.snapshot_state()
+        legacy_zero["schema_version"] = "s12.stage_w.persistent_engine_state.v1"
+>       legacy_zero.pop("path_filter_state")
+E       KeyError: 'path_filter_state'
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_y_transients.py:148: KeyError
+____ test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state _____
+
+    def test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state() -> None:
+        config = load_config("hellcat_v1")
+        blocks = _frames(8)
+        engine = PersistentEventDomainEngine(config, sample_rate_hz=48000, block_size=960)
+        for index in range(4):
+            engine.process(_frame(blocks, index))
+        snapshot = engine.snapshot_state()
+        expected = engine.process(_frame(blocks, 4)).raw_pcm
+        engine.process(_frame(blocks, 5))
+        engine.restore_state(snapshot)
+        replay = engine.process(_frame(blocks, 4)).raw_pcm
+>       assert np.array_equal(expected, replay)
+E       assert False
+E        +  where False = <function array_equal at 0x0000023532157F30>(array([[0.61362843, 0.52013927],\n       [0.61339644, 0.51972519],\n       [0.61353188, 0.51958146],\n       ...,\n       [0.89547353, 0.92294755],\n       [0.89498875, 0.92207731],\n       [0.8944909 , 0.92119501]], shape=(960, 2)), array([[0.61362843, 0.52013927],\n       [0.61339644, 0.51972519],\n       [0.61353188, 0.51958146],\n       ...,\n       [0.89547353, 0.92294755],\n       [0.89498875, 0.92207731],\n       [0.8944909 , 0.92119501]], shape=(960, 2)))
+E        +    where <function array_equal at 0x0000023532157F30> = np.array_equal
+
+tools\sound_sim\s12\acoustic_identity_v015\tests\test_s12_stage_w_persistent_engine.py:63: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_equal_power_crossfade_has_endpoints_and_unit_gain_square_sum_for_orthogonal_inputs
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_transient_events_are_one_shot_and_tip_tail_continues_across_calls
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_real_renderer_consumes_equal_power_crossfade_and_requires_shift_event
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine[False]
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_snapshot_restore_replays_active_transient_tail_in_same_and_fresh_engine[True]
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_snapshot_restore_rejects_filter_or_model_mismatch_atomically
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py::test_legacy_snapshot_is_accepted_only_at_zero_state_and_off_mode_retains_default_output
+FAILED tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py::test_snapshot_restore_replays_exact_audio_and_reset_starts_new_state
+8 failed in 6.30s

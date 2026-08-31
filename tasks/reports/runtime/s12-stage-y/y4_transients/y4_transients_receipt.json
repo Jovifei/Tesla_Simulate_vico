@@ -1,0 +1,32 @@
+{
+  "schema": "s12.stage_y.y4_transients_receipt.v1",
+  "status": "PASS",
+  "source_head": "7e2e41e779eca41100aaf412ce2f9bb4475b6d63",
+  "scope": "Y4 state_v1 transients and persistent snapshot replay only; Y5, maps, PLL, default source voicing, and frozen core unchanged",
+  "red_reproduction": {
+    "run_id": "y4-red-20260831T000000Z",
+    "exit_code": 1,
+    "actual_started_at_utc": "2026-08-31T04:39:41.792885+00:00",
+    "actual_ended_at_utc": "2026-08-31T04:39:53.165811+00:00",
+    "stdout_sha256": "656B6B3C99A6B70410295DA3F14BA1214BA02AA90302910F172F1462B5A52572"
+  },
+  "post_commit_focused_regression": {
+    "run_id": "y4-focused-postcommit-20260831T000000Z",
+    "receipt_path": "tasks/reports/runtime/s12-stage-y/y4_transients/logs/y4-focused-postcommit-20260831T000000Z.json",
+    "exit_code": 0,
+    "actual_started_at_utc": "2026-08-31T04:49:53.084521+00:00",
+    "actual_ended_at_utc": "2026-08-31T04:50:14.392308+00:00",
+    "result": "62 passed, 1 skipped in 20.65s",
+    "stdout_sha256": "CB6591BDBB12555F26932B0B9553BE967B2CC3B0D5EBB0827C8224E0382023F5",
+    "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "verified_contracts": [
+    "orthogonal equal-power endpoints and gain-square sum",
+    "real P5 crossfade invocation, real gear-shift event, and distinct post-PTR SHA",
+    "one-shot tip-in/lift/shift/BOV counts with tails across 20 ms calls",
+    "same-instance and fresh-instance replay during active transient tails for default and fitted-timbre-map engines",
+    "atomic rejection of malformed/nonfinite filter state and mismatched runtime models",
+    "safe legacy v1 compatibility only for zero-state snapshots",
+    "default/P3 golden, afterfire-ineligible zero, and P4 partition-equivalence regressions"
+  ]
+}
