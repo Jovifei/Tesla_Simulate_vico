@@ -267,9 +267,10 @@ def recompute_scorecard_v2(*, duration_s: float = 4.0, repo_root: Path = REPO_RO
     """Re-run every executable Stage-Z ablation, then classify its result."""
     from ..stage_z.method_ablation import METHOD_CATALOG, score_ablation
 
+    executable = [item for item in METHOD_CATALOG if item["ablation_scenario"] is not None]
     rows = []
-    for index, item in enumerate(METHOD_CATALOG, start=1):
-        print(f"[AA0 {index}/{len(METHOD_CATALOG)}] recompute {item['method_id']}", flush=True)
+    for index, item in enumerate(executable, start=1):
+        print(f"[AA0 {index}/{len(executable)}] recompute {item['method_id']}", flush=True)
         result, _ = score_ablation(item["method_id"], item["ablation_scenario"], duration_s=duration_s)
         rows.append(result)
     return build_scorecard_v2(rows, load_metric_significance_contract(repo_root / CONTRACT_PATH))
