@@ -1,0 +1,39 @@
+{
+  "base_main_head": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
+  "boundary": {
+    "copied_audio_asset": false,
+    "copied_model_weight": false,
+    "copied_source_code": false,
+    "human_audition": "PENDING",
+    "oem_reproduction": false,
+    "profile_freeze": false,
+    "ptr_radiation_track_p": "UNCHANGED",
+    "r1_reference": "MISSING"
+  },
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-m",
+    "tools.sound_sim.s12.acoustic_identity_v015.stage_z.publish",
+    "--package-root",
+    "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v2",
+    "--duration-s",
+    "8",
+    "--hot-idle-duration-s",
+    "20"
+  ],
+  "main_head": "6361ce8e3b7b32018e555b5354a95a243b71991f",
+  "matrix_path": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json",
+  "matrix_sha256": "d06763223cd61bac64c759eda1871c8f8921442b5a073ed4e7a9095b3a3a9254",
+  "method_ablation_count": 12,
+  "method_count": 30,
+  "package_final_raw_sha256": "d3a85676952c46578a4222bc74b725ff8856752bd520530201b1b94d5da918fd",
+  "package_manifest_sha256": "cf70e877b4018389df1fede3963d4cf685244860ae3efacf1476c31d0644a64c",
+  "package_parent_sha256": "86fb539985c79c6b069d3bd1e5de500c6b1c25e40280582763bf523721d3c109",
+  "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-y-hellcat-layers-v2",
+  "renderer_source_head": "6361ce8e3b7b32018e555b5354a95a243b71991f",
+  "run_id": "stage-z-publish-20260901T034903793898Z",
+  "schema": "s12.stage_z.publish_receipt.v1",
+  "status": "PUBLISHED_DIAGNOSTIC_ONLY",
+  "teacher_path": "tasks/reports/runtime/s12-stage-z/teacher_vs_reduced_response.json",
+  "teacher_sha256": "abf2c40d0d0df2c40bbb7bc6f0d50bef74ffc0e747e468183f526c422a080290"
+}

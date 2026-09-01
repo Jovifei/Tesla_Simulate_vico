@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 import numpy as np
 
@@ -59,10 +60,7 @@ def test_engine_sim_path_ablation_changes_pcm_and_target_metric() -> None:
 
 def test_adoption_matrix_covers_registry_ids_and_required_rights_split() -> None:
     matrix = build_method_adoption_matrix()
-    registry = json.loads(
-        ("docs/research/engine-audio-ecosystem/source_registry.json")
-        and open("docs/research/engine-audio-ecosystem/source_registry.json", encoding="utf-8").read()
-    )
+    registry = json.loads(Path("docs/research/engine-audio-ecosystem/source_registry.json").read_text(encoding="utf-8"))
     assert {item["source_id"] for item in matrix} == {item["id"] for item in registry["sources"]}
     markeasting = [item for item in matrix if item["source_id"] == "markeasting-engine-audio"]
     assert markeasting

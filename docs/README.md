@@ -11,6 +11,7 @@ Paths use stable ASCII names for GitHub, scripts, and VSCode. Chinese descriptio
 - [S12 Stage K eight-vehicle Round-2 delivery](08-reports/01-s12-stage-k-eight-vehicle-round2.md)
 - [S12 workspace cleanup 2026-08-30](08-reports/02-s12-workspace-cleanup-20260830.md)
 - [S12 engine-audio knowledge mirror](knowledge/obsidian/S12/Engine-Audio-Ecosystem/00-MOC.md)
+- [S12 Stage Z open-source absorption and main v2 audition](08-reports/08-s12-stage-z-open-source-absorption.md)
 - [Documentation guide](GUIDE.md)
 
 ## Directory Map

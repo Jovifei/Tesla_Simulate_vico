@@ -1,0 +1,727 @@
+{
+  "rows": [
+    {
+      "a_path": "ablation_review/ablation_01/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_01/B.wav",
+      "blind_id": "ablation_01",
+      "delta": -0.03951943301985758,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0015957248012028183,
+          "normalized_rms_boundary": 0.706883769645911,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "memory_cost": {
+        "off": 21211892,
+        "on": 21198493
+      },
+      "method_id": "engine_sim_event_pressure",
+      "off_pcm_sha": "c7bb208294e6eb2cd3b1f5d2b4202230538559303392d44049a4ac38213a9632",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> schedule_events -> render_event_packet -> _place",
+      "runtime_cost": {
+        "off": 37.16766399994958,
+        "on": 37.051131100044586
+      },
+      "scene": "complete_cycle",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.24038273006934294,
+      "target_metric_before": 0.2799021630892005
+    },
+    {
+      "a_path": "ablation_review/ablation_02/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_02/B.wav",
+      "blind_id": "ablation_02",
+      "delta": 280.22262111539567,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002839495280977768,
+          "normalized_rms_boundary": 0.6056873153622251,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011931729695046113
+      },
+      "memory_cost": {
+        "off": 21187497,
+        "on": 21205889
+      },
+      "method_id": "engine_sim_path_waveguide",
+      "off_pcm_sha": "559a04c0cbad81dc832ff4f02985ff8c25d044aaf1c4ace7a9755aec9f6c7bd0",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork.process -> StatefulWaveguide.process",
+      "runtime_cost": {
+        "off": 35.32748290000018,
+        "on": 37.426754600019194
+      },
+      "scene": "complete_cycle",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 4898.290568632723,
+      "target_metric_before": 4618.067947517327
+    },
+    {
+      "a_path": "ablation_review/ablation_03/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_03/B.wav",
+      "blind_id": "ablation_03",
+      "delta": 0.00035948059894508333,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0027889379955893514,
+          "normalized_rms_boundary": 0.611467462034285,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012493258938780148
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.00278979618845057,
+          "normalized_rms_boundary": 0.6305443442898577,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012493258938780148
+      },
+      "memory_cost": {
+        "off": 21139222,
+        "on": 21234076
+      },
+      "method_id": "engine_sim_collector_network",
+      "off_pcm_sha": "4a22fa89bb39ccb796e1e8d9e3c17c30298709f730d5f0d7a599388525fef058",
+      "on_pcm_sha": "0ed44dcbbb60f9014d2f5b25c13d474f93bf60a2d47830ab5b32590aa7340ca6",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> collector assignment -> bank/central collector lines",
+      "runtime_cost": {
+        "off": 37.1937150999438,
+        "on": 36.96510909998324
+      },
+      "scene": "afterfire_eligible",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3712.7285856488847,
+      "target_metric_before": 3712.728226168286
+    },
+    {
+      "a_path": "ablation_review/ablation_04/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_04/B.wav",
+      "blind_id": "ablation_04",
+      "delta": 0.05779221778474203,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021107341724345887,
+          "normalized_rms_boundary": 0.7475887101645855,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011134185378821815
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002072691122247571,
+          "normalized_rms_boundary": 0.6451148577830325,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011750367555574504
+      },
+      "memory_cost": {
+        "off": 21202487,
+        "on": 21205605
+      },
+      "method_id": "engine_sim_forced_induction_state",
+      "off_pcm_sha": "f66e295daeadd60857a798974db80d94e7e0c74f519a416fd666d4061c109edf",
+      "on_pcm_sha": "cbf186861bef73c1b48e9a05186963bfda1d4b191ff2620495377c68d84fa0a6",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _advance_boost -> render_timbre_map/render_forced_induction",
+      "runtime_cost": {
+        "off": 35.54639249993488,
+        "on": 37.457617999985814
+      },
+      "scene": "steady_3000rpm",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "sharpness_proxy",
+      "target_metric_after": 0.22439472464715274,
+      "target_metric_before": 0.1666025068624107
+    },
+    {
+      "a_path": "ablation_review/ablation_05/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_05/B.wav",
+      "blind_id": "ablation_05",
+      "delta": 0.07346729563097742,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.003429187727871076,
+          "normalized_rms_boundary": 0.9055320060432107,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.016248338485439412
+      },
+      "memory_cost": {
+        "off": 5816000,
+        "on": 21193684
+      },
+      "method_id": "engine_sim_persistent_block_state",
+      "off_pcm_sha": "f322d6d9a7bdd35c3031f87b2c274b7aacb95238e944f70e146716fe5f9d58a3",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine.process_with_trace -> _process_frame (single engine instance)",
+      "runtime_cost": {
+        "off": 46.70850340009201,
+        "on": 36.840360099915415
+      },
+      "scene": "throttle_tip_in",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "dynamic_range_db",
+      "target_metric_after": 4.546690036454778,
+      "target_metric_before": 4.4732227408238
+    },
+    {
+      "a_path": "ablation_review/ablation_06/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_06/B.wav",
+      "blind_id": "ablation_06",
+      "delta": 2120.1896901164764,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016460975199355616,
+          "normalized_rms_boundary": 0.5233429353372557,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.015589995469898773
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.001906744954322026,
+          "normalized_rms_boundary": 0.34029381132776415,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.01970994036908333
+      },
+      "memory_cost": {
+        "off": 21126241,
+        "on": 21197333
+      },
+      "method_id": "engine_sim_pressure_audio_chain",
+      "off_pcm_sha": "0c0981e9a00e83f7c22ce1280bd98cbb1806e841f68f45e323cb1cda89763963",
+      "on_pcm_sha": "fa41c794ef4f5706b1a60d7783f27ccd77c36aea730a3ce64863e3e043b76794",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process -> FrozenPtrStereo.process",
+      "runtime_cost": {
+        "off": 35.56652609992307,
+        "on": 37.047674100031145
+      },
+      "scene": "full_load_acceleration",
+      "source_id": "engine-sim",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3770.6136283486635,
+      "target_metric_before": 1650.423938232187
+    },
+    {
+      "a_path": "ablation_review/ablation_07/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_07/B.wav",
+      "blind_id": "ablation_07",
+      "delta": -0.00019770301376118016,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002839495280977768,
+          "normalized_rms_boundary": 0.6056873153622251,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011931729695046113
+      },
+      "memory_cost": {
+        "off": 21178732,
+        "on": 21212487
+      },
+      "method_id": "dasetwas_waveguide_lifecycle",
+      "off_pcm_sha": "559a04c0cbad81dc832ff4f02985ff8c25d044aaf1c4ace7a9755aec9f6c7bd0",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork/PressureAudioChain persistent state",
+      "runtime_cost": {
+        "off": 35.22798610001337,
+        "on": 37.537706100032665
+      },
+      "scene": "complete_cycle",
+      "source_id": "dasetwas-enginesound",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "spectral_flux",
+      "target_metric_after": 0.007565264656170643,
+      "target_metric_before": 0.0077629676699318235
+    },
+    {
+      "a_path": "ablation_review/ablation_08/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_08/B.wav",
+      "blind_id": "ablation_08",
+      "delta": -0.20975918895503465,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6580906182059514,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "memory_cost": {
+        "off": 20752110,
+        "on": 21211396
+      },
+      "method_id": "vehicle_noise_state_crossfade",
+      "off_pcm_sha": "868c4d96fa6493ce06fd3615a6d105da84b9419672c8758e8cd9f4646d1a7a98",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> StateTransientMixer.render_block/equal_power_crossfade",
+      "runtime_cost": {
+        "off": 36.683691999991424,
+        "on": 36.904366100090556
+      },
+      "scene": "throttle_tip_in",
+      "source_id": "vehicle-noise-synthesizer",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.6201821309533485,
+      "target_metric_before": 0.8299413199083832
+    },
+    {
+      "a_path": "ablation_review/ablation_09/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_09/B.wav",
+      "blind_id": "ablation_09",
+      "delta": 2120.1896901164764,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016460975199355616,
+          "normalized_rms_boundary": 0.5233429353372557,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.015589995469898773
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.001906744954322026,
+          "normalized_rms_boundary": 0.34029381132776415,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.01970994036908333
+      },
+      "memory_cost": {
+        "off": 21121731,
+        "on": 21212381
+      },
+      "method_id": "ignis_pressure_domain_equivalent",
+      "off_pcm_sha": "0c0981e9a00e83f7c22ce1280bd98cbb1806e841f68f45e323cb1cda89763963",
+      "on_pcm_sha": "fa41c794ef4f5706b1a60d7783f27ccd77c36aea730a3ce64863e3e043b76794",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process",
+      "runtime_cost": {
+        "off": 35.70256710005924,
+        "on": 36.973341200035065
+      },
+      "scene": "full_load_acceleration",
+      "source_id": "ignis",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3770.6136283486635,
+      "target_metric_before": 1650.423938232187
+    },
+    {
+      "a_path": "ablation_review/ablation_10/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_10/B.wav",
+      "blind_id": "ablation_10",
+      "delta": -0.20975918895503465,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6580906182059514,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "memory_cost": {
+        "off": 20748235,
+        "on": 21200592
+      },
+      "method_id": "markeasting_state_layer_equivalent",
+      "off_pcm_sha": "868c4d96fa6493ce06fd3615a6d105da84b9419672c8758e8cd9f4646d1a7a98",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "regression": false,
+      "runtime_call_path": "build_stage_z_package -> cumulative layer records -> PersistentEventDomainEngine",
+      "runtime_cost": {
+        "off": 36.76828199997544,
+        "on": 36.92298400006257
+      },
+      "scene": "throttle_tip_in",
+      "source_id": "markeasting-engine-audio",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.6201821309533485,
+      "target_metric_before": 0.8299413199083832
+    },
+    {
+      "a_path": "ablation_review/ablation_11/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_11/B.wav",
+      "blind_id": "ablation_11",
+      "delta": 0.05779221778474203,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021107341724345887,
+          "normalized_rms_boundary": 0.7475887101645855,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011134185378821815
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002072691122247571,
+          "normalized_rms_boundary": 0.6451148577830325,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011750367555574504
+      },
+      "memory_cost": {
+        "off": 21210544,
+        "on": 21216127
+      },
+      "method_id": "stage_y_fitted_timbre_map",
+      "off_pcm_sha": "f66e295daeadd60857a798974db80d94e7e0c74f519a416fd666d4061c109edf",
+      "on_pcm_sha": "cbf186861bef73c1b48e9a05186963bfda1d4b191ff2620495377c68d84fa0a6",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> render_timbre_map",
+      "runtime_cost": {
+        "off": 35.44872580002993,
+        "on": 36.937889600056224
+      },
+      "scene": "steady_3000rpm",
+      "source_id": "eone",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "sharpness_proxy",
+      "target_metric_after": 0.22439472464715274,
+      "target_metric_before": 0.1666025068624107
+    },
+    {
+      "a_path": "ablation_review/ablation_12/A.wav",
+      "ablation_duration_s": 4.0,
+      "b_path": "ablation_review/ablation_12/B.wav",
+      "blind_id": "ablation_12",
+      "delta": 8.801168297410712,
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.004643481483190685,
+          "normalized_rms_boundary": 0.8750507263157569,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012210401502154798
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016475694114103248,
+          "normalized_rms_boundary": 0.8728277551661631,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414698954946743
+      },
+      "memory_cost": {
+        "off": 21194564,
+        "on": 21194564
+      },
+      "method_id": "monitor_playback_separation",
+      "off_pcm_sha": "b2651cc674ab384620a225c10c349fb304867b61ae08c89bbc36f7a00757e371",
+      "on_pcm_sha": "982f598617720b0c7976dd01d580b72a27c6837b4ef9c7798be5dd563a63eae5",
+      "regression": false,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _monitor_step; raw/post_ptr remain analysis outputs",
+      "runtime_cost": {
+        "off": 40.02452590002213,
+        "on": 40.02452590002213
+      },
+      "scene": "hot_idle_20s",
+      "source_id": "qnx-ese",
+      "status": "PROVEN_CONTRIBUTION",
+      "target_metric": "rms_dbfs",
+      "target_metric_after": -57.07322220446859,
+      "target_metric_before": -65.8743905018793
+    }
+  ],
+  "schema": "s12.stage_z.method_ablation_scorecard.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "status": "DIAGNOSTIC_ONLY"
+}

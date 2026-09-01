@@ -4219,17 +4219,23 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 > 基线：`origin/main=62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa`；新 worktree 为 `agent/s12-stage-z-open-source-proof`。本阶段保留 Stage Y/v1 历史证据，不重新执行 Stage Y merge 流程。
 
-- [ ] 修复 post-merge truth：清除 `MAIN_NOT_UPDATED`、merge pending 与 integration blocker，保留历史 receipt 原文。
-- [ ] 盘点 25 个 source 与 method-level traceability，建立 `method_adoption_matrix_v2.json`，准确拆分 code license、asset rights、runtime status。
-- [ ] 为 Engine-Sim、VehicleNoiseSynthesizer、DasEtwas/waveguide、Ignis/Markeasting 建立最小可执行 runtime call path 与 OFF/ON ablation；ENSIM4 只保留 teacher/reduced evidence。
-- [ ] 新增 method ablation runner/scorecard：记录 OFF/ON PCM SHA、target/guard metric、runtime/memory cost 与状态。
-- [ ] 从当前 main 生成全新 `E:\Tesla_speed\review_packages\s12-stage-y-hellcat-layers-v2`，绝不改 v1；生成中文整体试听与盲化 method A/B 页面、manifest 与答案页。
-- [ ] 生成 Parent→Final objective before/after 与方法消融报告，明确 Research/Engineering/Acoustic 三层结论。
-- [ ] 运行 affected focused tests、WAV 重开、SHA/JSON/license/media/Track-P/diff 检查；若源码改变，最终 HEAD 仅跑一次完整 S12。
-- [ ] 更新 Stage Z 报告、Stage Y 当前状态与 Obsidian；提交新分支、push、建 PR，软件门禁全绿前不 merge。
+- [x] 修复 post-merge truth：清除 `MAIN_NOT_UPDATED`、merge pending 与 integration blocker，保留历史 receipt 原文。
+- [x] 盘点 25 个 source 与 method-level traceability，建立 `method_adoption_matrix_v2.json`，准确拆分 code license、asset rights、runtime status。
+- [x] 为 Engine-Sim、VehicleNoiseSynthesizer、DasEtwas/waveguide、Ignis/Markeasting 建立最小可执行 runtime call path 与 OFF/ON ablation；ENSIM4 只保留 teacher/reduced evidence。
+- [x] 新增 method ablation runner/scorecard：记录 OFF/ON PCM SHA、target/guard metric、runtime/memory cost 与状态。
+- [x] 从当前 main 生成全新 `E:\Tesla_speed\review_packages\s12-stage-y-hellcat-layers-v2`，绝不改 v1；生成中文整体试听与盲化 method A/B 页面、manifest 与答案页。
+- [x] 生成 Parent→Final objective before/after 与方法消融报告，明确 Research/Engineering/Acoustic 三层结论。
+- [x] 运行 affected focused tests、WAV 重开、SHA/JSON/license/media/Track-P/diff 检查；若源码改变，最终 HEAD 仅跑一次完整 S12。
+- [x] 更新 Stage Z 报告、Stage Y 当前状态与 Obsidian；提交新分支、push、建 PR，软件门禁全绿前不 merge。
 
 ### Stage Z acceptance checklist
 
 - Main truth: `62b3759c…` verified; Stage Y software/CI/full S12/Track-P PASS; external HUMAN/R1/OEM/Profile Freeze/Runtime/HARDWARE remain closed.
 - Acoustic contribution is `PROVEN` only when OFF/ON has SHA difference, target metric movement, bounded guard metric and no regression; SHA-only is insufficient.
 - No copied source code, `.mr`, IR, recordings, WAV, assets, presets or model weights from external projects.
+
+### Stage Z Review
+
+- Stage Z focused TDD: `5 passed`; short-window scorecard: 12/12 `PROVEN_CONTRIBUTION`; v2 package validator and independent WAV scan: 57/57.
+- v2 manifest SHA: `cf70e877b4018389df1fede3963d4cf685244860ae3efacf1476c31d0644a64c`; Parent/Final aggregate SHA differ; v1 manifest SHA remains `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`.
+- Acoustic quality is not promoted: Parent→Final aggregate RMS/dynamic range decreased; R1 is missing, so human audition remains the next gate.
