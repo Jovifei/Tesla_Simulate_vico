@@ -352,10 +352,10 @@ def build_method_adoption_matrix() -> list[dict[str, Any]]:
             continue
         entry = coverage.get(source_id, {})
         coverage_status = entry.get("coverage", "REFERENCE_ONLY")
-        if coverage_status == "BLOCKED_BY_LICENSE":
-            adoption = "BLOCKED_CODE_LICENSE"
-        elif source.get("kind") == "commercial":
+        if source.get("kind") in {"commercial", "commercial_status_uncertain"}:
             adoption = "BLOCKED_COMMERCIAL_RUNTIME"
+        elif coverage_status == "BLOCKED_BY_LICENSE":
+            adoption = "BLOCKED_CODE_LICENSE"
         else:
             adoption = "REFERENCE_WORKFLOW_ONLY"
         rows.append(_entry(

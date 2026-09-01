@@ -67,6 +67,8 @@ def test_adoption_matrix_covers_registry_ids_and_required_rights_split() -> None
     markeasting = [item for item in matrix if item["source_id"] == "markeasting-engine-audio"]
     assert markeasting
     assert any(item["source_license"] == "MIT" and item["asset_rights_status"] == "UNVERIFIED" for item in markeasting)
+    fubos = [item for item in matrix if item["source_id"] == "fubos"]
+    assert fubos and fubos[0]["adoption_status"] == "BLOCKED_COMMERCIAL_RUNTIME"
 
 
 def test_teacher_reduction_contract_is_machine_readable() -> None:
