@@ -15,8 +15,8 @@
     "AA7_JOVI_FEEDBACK_ROUND2",
     "AA8_FINAL_QUALIFICATION"
   ],
-  "current_phase": "AA5_PROFESSIONAL_FINALIST_REVIEW",
-  "status": "IN_PROGRESS",
+  "current_phase": "AA7_JOVI_FEEDBACK_ROUND2",
+  "status": "WAITING_FOR_JOVI_AUDITION",
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "stage_z_merge_commit": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "stage_z_pr": 3,
