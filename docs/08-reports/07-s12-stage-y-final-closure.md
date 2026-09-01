@@ -2,7 +2,7 @@
 
 状态：`FINAL_FITTED_MAP_PASS / FULL_S12_PASS / R1_HUMAN_GATES_OPEN`
 
-本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`，测试源码提交为 `59fe45d`，source-contract HEAD 为 `662eefa`。起始 main 已是 integration 的祖先，无需额外合并。
+本报告记录从 integration tip `3aafda52f8c1b9fe5728591ca087b53fa2baf809` 创建的闭包分支 `agent/s12-stage-y-final-closure`。起始 `origin/main` 为 `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`；PR #2 已将闭包合并至当前 main `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa`，CI run `33435858345` 通过。
 
 ## 本轮源码调整
 
@@ -52,8 +52,6 @@ clear individual audio rights; neither source or media is copied into S12.
 
 ## Next gate
 
-Focused repository/Track-P/license checks and whole-branch review remain the
-bounded verification scope. The next software action is to commit the current
-receipt/docs, push to the integration PR, wait for CI, and merge through that PR
-only if CI is green. Human audition, legal synchronized R1, OEM/calibration and
-Profile Freeze remain explicit external gates.
+Focused repository/Track-P/license checks and whole-branch review are complete;
+PR #2 is merged to main. Human audition, legal synchronized R1, OEM/calibration,
+Profile Freeze, Runtime and hardware remain explicit external gates.

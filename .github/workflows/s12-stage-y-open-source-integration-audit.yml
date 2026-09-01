@@ -5,6 +5,7 @@ on:
     branches:
       - agent/s12-stage-y-open-source-integration
       - agent/s12-stage-y-final-closure
+      - agent/s12-stage-z-open-source-proof
     paths:
       - ".github/workflows/s12-stage-y-open-source-integration-audit.yml"
       - "tools/sound_sim/s12/**"
@@ -85,6 +86,16 @@ jobs:
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py \
             --junitxml="${EVIDENCE_DIR}/source_layers.xml" \
             2>&1 | tee "${EVIDENCE_DIR}/source_layers.log"
+
+      - name: Stage-Z method absorption contracts
+        id: stage_z
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_z_method_ablation.py \
+            --junitxml="${EVIDENCE_DIR}/stage_z.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/stage_z.log"
 
       - name: Closed-loop and hybrid-tooling focused contracts
         id: closed_loop
@@ -180,6 +191,16 @@ jobs:
           assert full_receipt["tested_head"] == subprocess.check_output(["git", "rev-parse", full_receipt["tested_head"]], text=True).strip()
           assert subprocess.run(["git", "merge-base", "--is-ancestor", full_receipt["tested_head"], "HEAD"]).returncode == 0
           assert full_receipt["pytest_summary"] and "failed" not in full_receipt["pytest_summary"]
+          stage_z_matrix = json.loads(Path("docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json").read_text(encoding="utf-8"))
+          assert stage_z_matrix["schema"] == "s12.stage_z.method_adoption_matrix.v2"
+          assert stage_z_matrix["rows"] and len({row["source_id"] for row in stage_z_matrix["rows"]}) == len(registry_ids)
+          assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_matrix["main_head"], "HEAD"]).returncode == 0
+          stage_z_scorecard = json.loads(Path("tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json").read_text(encoding="utf-8"))
+          assert len(stage_z_scorecard["rows"]) >= 12
+          assert all(row["off_pcm_sha"] != row["on_pcm_sha"] and row["regression"] is False for row in stage_z_scorecard["rows"])
+          stage_z_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-z/stage_z_publish_receipt.json").read_text(encoding="utf-8"))
+          assert stage_z_receipt["base_main_head"] == subprocess.check_output(["git", "merge-base", "HEAD", "origin/main"], text=True).strip()
+          assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_receipt["renderer_source_head"], "HEAD"]).returncode == 0
           PY
           test -z "$(git status --porcelain=v1)"
 
@@ -193,6 +214,7 @@ jobs:
           HISTORICAL_LOGS: ${{ steps.historical_logs.outcome }}
           COMPILEALL: ${{ steps.compileall.outcome }}
           SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
+          STAGE_Z: ${{ steps.stage_z.outcome }}
           CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
           STAGE_VW: ${{ steps.stage_vw.outcome }}
           FULL_S12: ${{ steps.full_s12.outcome }}
@@ -215,6 +237,7 @@ jobs:
               "historical_logs": os.environ["HISTORICAL_LOGS"],
               "compileall": os.environ["COMPILEALL"],
               "source_layers": os.environ["SOURCE_LAYERS"],
+              "stage_z": os.environ["STAGE_Z"],
               "closed_loop": os.environ["CLOSED_LOOP"],
               "stage_vw": os.environ["STAGE_VW"],
               "full_s12": os.environ["FULL_S12"],
@@ -255,7 +278,7 @@ jobs:
               "outcomes": outcomes,
               "junit": {
                   name: junit(name)
-                  for name in ("source_layers", "closed_loop", "stage_vw", "full_s12")
+                  for name in ("source_layers", "stage_z", "closed_loop", "stage_vw", "full_s12")
               },
               "log_sha256": {
                   name: log_sha(name)
@@ -263,6 +286,7 @@ jobs:
                       "historical_logs",
                       "compileall",
                       "source_layers",
+                      "stage_z",
                       "closed_loop",
                       "stage_vw",
                       "full_s12",
@@ -316,6 +340,7 @@ jobs:
           HISTORICAL_LOGS: ${{ steps.historical_logs.outcome }}
           COMPILEALL: ${{ steps.compileall.outcome }}
           SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
+          STAGE_Z: ${{ steps.stage_z.outcome }}
           CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
           STAGE_VW: ${{ steps.stage_vw.outcome }}
           FULL_S12: ${{ steps.full_s12.outcome }}
@@ -324,7 +349,7 @@ jobs:
         run: |
           for result in \
             "$DEPENDENCIES" "$HISTORICAL_LOGS" "$COMPILEALL" \
-            "$SOURCE_LAYERS" "$CLOSED_LOOP" "$STAGE_VW" "$FULL_S12" \
+            "$SOURCE_LAYERS" "$STAGE_Z" "$CLOSED_LOOP" "$STAGE_VW" "$FULL_S12" \
             "$TRACK_P" "$REPOSITORY_CHECKS"; do
             test "$result" = "success"
           done

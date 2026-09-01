@@ -14,7 +14,8 @@ evidence_head: f498c99352ad559897b6157d6722d64e05e68a32
 
 Repository final closure report: [Stage Y final software closure](../../../../../docs/08-reports/07-s12-stage-y-final-closure.md). The earlier WIP checkpoint remains historical; its failed-map state is superseded by the fresh final fitted-map receipt.
 
-Y1–Y6 retain their bounded software evidence. The fresh final P3/post_ptr
+Y1–Y6 retain their bounded software evidence. Main is now `62b3759c` after PR #2
+merge and CI run `33435858345` PASS. The fresh final P3/post_ptr
 selected-16 receipt now proves the committed fitted map bilaterally; the
 bounded local coupling is recorded in the engine diagnostics. Current state is
 `Y9_FINAL_QUALIFICATION / PASS / FULL_S12_PASS`; the current whole-S12 receipt
@@ -141,8 +142,7 @@ future regenerated audio must be published as v2 and must not overwrite v1.
 
 ## Remaining gates
 
-The parent must pass CI on the current committed software evidence before
-proposing main merge. After that, human layer audition, a legal
+Human layer audition, a legal
 RPM/state-synchronised R1 Reference, the R1 formal gate, Profile Freeze and
 explicit approval remain separate gates. No receipt in this note authorizes
 OEM reproduction, calibrated output, product Runtime integration, or hardware

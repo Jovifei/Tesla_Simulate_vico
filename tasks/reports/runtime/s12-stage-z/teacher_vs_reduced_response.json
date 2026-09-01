@@ -1,0 +1,41 @@
+{
+  "external_audio_embedded": false,
+  "reduction_receipt": "tasks/reports/runtime/s12-stage-w/teacher_reduction_v1/teacher_reduction_receipt.json",
+  "runtime_approximation": {
+    "cpu_cost_status": "local reduced-model measurement only",
+    "model": "ReducedCfdTeacherResponse",
+    "peak_python_allocation_bytes": 4321583,
+    "render_seconds": 6.0975340999430045,
+    "retained_capability": "causal two-channel smoothing derived from teacher metrics",
+    "runtime_candidate": false
+  },
+  "schema": "s12.stage_z.teacher_vs_reduced_response.v1",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "status": "REFERENCE_TEACHER_ONLY",
+  "teacher_source_receipt": "tasks/reports/runtime/s12-stage-w/ensim4_teacher_response_receipt.json",
+  "teacher_vs_reduced": {
+    "arrival_timing": {
+      "finite": true,
+      "note": "centroid proxy; no synchronized teacher waveform is promoted",
+      "reduced_centroid_hz": 1446.9750656210906,
+      "teacher_cfd_off_centroid_hz": 317.3450346424205,
+      "teacher_cfd_on_centroid_hz": 175.61687399694765
+    },
+    "decay": {
+      "finite": true,
+      "reduction_smoothing_ratio": 0.5533941131136022
+    },
+    "pressure_response": {
+      "finite": true,
+      "reduced_raw_rms_dbfs": -52.871518062939664,
+      "teacher_cfd_off_rms": 0.07386597826868908,
+      "teacher_cfd_on_rms": 0.14841886404915552
+    },
+    "spectral_envelope": {
+      "finite": true,
+      "reduced_centroid_hz": 1446.9750656210906,
+      "reduced_sharpness_proxy": 0.10684874948299536,
+      "teacher_on_centroid_hz": 175.61687399694765
+    }
+  }
+}

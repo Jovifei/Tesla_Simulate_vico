@@ -1,0 +1,553 @@
+{
+  "aggregate": {
+    "crest_db": {
+      "delta": 6.251339715979071,
+      "final": 23.317329793324564,
+      "parent": 17.065990077345493
+    },
+    "dynamic_range_db": {
+      "delta": -5.787191621888352,
+      "final": 3.6165799509395344,
+      "parent": 9.403771572827887
+    },
+    "peak_dbfs": {
+      "delta": -10.253767439330577,
+      "final": -38.762060370089806,
+      "parent": -28.50829293075923
+    },
+    "persistent_tone_ratio": {
+      "delta": 0.03673963954131498,
+      "final": 0.48872694047460113,
+      "parent": 0.45198730093328615
+    },
+    "rms_dbfs": {
+      "delta": -16.50510715530966,
+      "final": -62.07939016341438,
+      "parent": -45.57428300810472
+    },
+    "roughness_proxy": {
+      "delta": 0.03364134044514322,
+      "final": 0.5960708767252371,
+      "parent": 0.5624295362800938
+    },
+    "sharpness_proxy": {
+      "delta": 0.1548020916439905,
+      "final": 0.29776832645275453,
+      "parent": 0.14296623480876403
+    },
+    "spectral_centroid_hz": {
+      "delta": 2595.8480668421626,
+      "final": 4258.716195887305,
+      "parent": 1662.8681290451425
+    },
+    "spectral_flux": {
+      "delta": -0.009333632090818791,
+      "final": 0.007473631866939879,
+      "parent": 0.01680726395775867
+    },
+    "tonality_proxy": {
+      "delta": -0.01561428343882984,
+      "final": 0.228650139741337,
+      "parent": 0.24426442318016683
+    },
+    "transient_event_density_per_s": {
+      "delta": -0.9386363636363637,
+      "final": 0.19772727272727272,
+      "parent": 1.1363636363636365
+    }
+  },
+  "comparison": "Legacy Parent vs current Stage Y Final main",
+  "diagnostic_only": true,
+  "metric_names": [
+    "rms_dbfs",
+    "peak_dbfs",
+    "crest_db",
+    "dynamic_range_db",
+    "transient_event_density_per_s",
+    "spectral_centroid_hz",
+    "spectral_flux",
+    "roughness_proxy",
+    "sharpness_proxy",
+    "tonality_proxy",
+    "persistent_tone_ratio"
+  ],
+  "metric_provenance": "Stage-X raw_dynamic_metrics and timbre_metrics",
+  "oem_or_profile_claim": false,
+  "reference_status": "R1_MISSING_DIAGNOSTIC_ONLY",
+  "scenes": {
+    "afterfire_eligible": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 5.403520157502406,
+        "dynamic_range_db": -9.644258529403107,
+        "peak_dbfs": -12.654407061999017,
+        "persistent_tone_ratio": -0.0066979236436705,
+        "rms_dbfs": -18.057927219501423,
+        "roughness_proxy": -0.14369691878271368,
+        "sharpness_proxy": 0.021970994597277055,
+        "spectral_centroid_hz": 1061.8793706684855,
+        "spectral_flux": -0.009241374875714562,
+        "tonality_proxy": -0.025272841696582143,
+        "transient_event_density_per_s": 0.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 21.862457319405717,
+        "dynamic_range_db": 6.507397684941538,
+        "peak_dbfs": -38.10815292783455,
+        "persistent_tone_ratio": 0.39919624916275953,
+        "rms_dbfs": -59.97061024724027,
+        "roughness_proxy": 0.4966293945382067,
+        "sharpness_proxy": 0.23571027670299854,
+        "spectral_centroid_hz": 3706.587339721062,
+        "spectral_flux": 0.006867016532489141,
+        "tonality_proxy": 0.23929399442218943,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 16.45893716190331,
+        "dynamic_range_db": 16.151656214344644,
+        "peak_dbfs": -25.453745865835536,
+        "persistent_tone_ratio": 0.40589417280643003,
+        "rms_dbfs": -41.91268302773885,
+        "roughness_proxy": 0.6403263133209204,
+        "sharpness_proxy": 0.2137392821057215,
+        "spectral_centroid_hz": 2644.7079690525766,
+        "spectral_flux": 0.016108391408203703,
+        "tonality_proxy": 0.2645668361187716,
+        "transient_event_density_per_s": 0.0
+      }
+    },
+    "complete_cycle": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 2.2173002788160403,
+        "dynamic_range_db": -8.809937980057914,
+        "peak_dbfs": -15.4366865471932,
+        "persistent_tone_ratio": 0.09042196918955123,
+        "rms_dbfs": -17.653986826009238,
+        "roughness_proxy": -0.21594751902726783,
+        "sharpness_proxy": 0.26188091032748256,
+        "spectral_centroid_hz": 3810.1060748650107,
+        "spectral_flux": -0.018201266203850725,
+        "tonality_proxy": -0.0093946522441197,
+        "transient_event_density_per_s": -0.875
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 21.43515686234009,
+        "dynamic_range_db": 7.363445844857605,
+        "peak_dbfs": -39.983522836351476,
+        "persistent_tone_ratio": 0.12592096450100468,
+        "rms_dbfs": -61.41867969869156,
+        "roughness_proxy": 0.3282819534670578,
+        "sharpness_proxy": 0.34205302352631206,
+        "spectral_centroid_hz": 4962.772756436728,
+        "spectral_flux": 0.00725029524631881,
+        "tonality_proxy": 0.23510190670595862,
+        "transient_event_density_per_s": 0.875
+      },
+      "parent": {
+        "crest_db": 19.21785658352405,
+        "dynamic_range_db": 16.17338382491552,
+        "peak_dbfs": -24.546836289158275,
+        "persistent_tone_ratio": 0.03549899531145345,
+        "rms_dbfs": -43.764692872682325,
+        "roughness_proxy": 0.5442294724943256,
+        "sharpness_proxy": 0.0801721131988295,
+        "spectral_centroid_hz": 1152.666681571717,
+        "spectral_flux": 0.025451561450169535,
+        "tonality_proxy": 0.24449655895007832,
+        "transient_event_density_per_s": 1.75
+      }
+    },
+    "full_load_acceleration": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 5.873878514715919,
+        "dynamic_range_db": -3.697278066892502,
+        "peak_dbfs": -11.214226569466977,
+        "persistent_tone_ratio": 0.08975217682518419,
+        "rms_dbfs": -17.088105084182892,
+        "roughness_proxy": 0.16574114903409842,
+        "sharpness_proxy": 0.2105170079279035,
+        "spectral_centroid_hz": 2916.111750187886,
+        "spectral_flux": -0.010281922774255426,
+        "tonality_proxy": -0.04153958394052357,
+        "transient_event_density_per_s": -2.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 23.59933624613906,
+        "dynamic_range_db": 6.212762790604622,
+        "peak_dbfs": -36.45636752303931,
+        "persistent_tone_ratio": 0.1145344943067649,
+        "rms_dbfs": -60.05570376917837,
+        "roughness_proxy": 0.7634593241676941,
+        "sharpness_proxy": 0.2546462138887738,
+        "spectral_centroid_hz": 3776.888074031746,
+        "spectral_flux": 0.0073303944115406606,
+        "tonality_proxy": 0.23530041120245007,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 17.72545773142314,
+        "dynamic_range_db": 9.910040857497124,
+        "peak_dbfs": -25.242140953572335,
+        "persistent_tone_ratio": 0.02478231748158071,
+        "rms_dbfs": -42.96759868499548,
+        "roughness_proxy": 0.5977181751335957,
+        "sharpness_proxy": 0.04412920596087027,
+        "spectral_centroid_hz": 860.7763238438597,
+        "spectral_flux": 0.017612317185796086,
+        "tonality_proxy": 0.27683999514297364,
+        "transient_event_density_per_s": 2.25
+      }
+    },
+    "gear_shift": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 9.528648203869112,
+        "dynamic_range_db": -7.584964689602549,
+        "peak_dbfs": -8.230813199701988,
+        "persistent_tone_ratio": 0.11721366376423308,
+        "rms_dbfs": -17.759461403571088,
+        "roughness_proxy": -0.2820239904533428,
+        "sharpness_proxy": 0.18139577612955146,
+        "spectral_centroid_hz": 2678.9445791660446,
+        "spectral_flux": -0.008060826589607347,
+        "tonality_proxy": -0.045662132080483614,
+        "transient_event_density_per_s": 0.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 24.114628831279017,
+        "dynamic_range_db": 1.9887409004919832,
+        "peak_dbfs": -36.44132353127577,
+        "persistent_tone_ratio": 0.15405224380442062,
+        "rms_dbfs": -60.555952362554784,
+        "roughness_proxy": 0.37774026311491427,
+        "sharpness_proxy": 0.24788370924893852,
+        "spectral_centroid_hz": 3651.3219694856175,
+        "spectral_flux": 0.007486158376987824,
+        "tonality_proxy": 0.23136960001168097,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 14.585980627409905,
+        "dynamic_range_db": 9.573705590094532,
+        "peak_dbfs": -28.210510331573783,
+        "persistent_tone_ratio": 0.036838580040187544,
+        "rms_dbfs": -42.796490958983696,
+        "roughness_proxy": 0.6597642535682571,
+        "sharpness_proxy": 0.06648793311938705,
+        "spectral_centroid_hz": 972.3773903195727,
+        "spectral_flux": 0.015546984966595172,
+        "tonality_proxy": 0.2770317320921646,
+        "transient_event_density_per_s": 0.0
+      }
+    },
+    "high_rpm_lift": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 5.403520157502406,
+        "dynamic_range_db": -9.644258529403107,
+        "peak_dbfs": -12.654407061999017,
+        "persistent_tone_ratio": -0.0066979236436705,
+        "rms_dbfs": -18.057927219501423,
+        "roughness_proxy": -0.14369691878271368,
+        "sharpness_proxy": 0.021970994597277055,
+        "spectral_centroid_hz": 1061.8793706684855,
+        "spectral_flux": -0.009241374875714562,
+        "tonality_proxy": -0.025272841696582143,
+        "transient_event_density_per_s": 0.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 21.862457319405717,
+        "dynamic_range_db": 6.507397684941538,
+        "peak_dbfs": -38.10815292783455,
+        "persistent_tone_ratio": 0.39919624916275953,
+        "rms_dbfs": -59.97061024724027,
+        "roughness_proxy": 0.4966293945382067,
+        "sharpness_proxy": 0.23571027670299854,
+        "spectral_centroid_hz": 3706.587339721062,
+        "spectral_flux": 0.006867016532489141,
+        "tonality_proxy": 0.23929399442218943,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 16.45893716190331,
+        "dynamic_range_db": 16.151656214344644,
+        "peak_dbfs": -25.453745865835536,
+        "persistent_tone_ratio": 0.40589417280643003,
+        "rms_dbfs": -41.91268302773885,
+        "roughness_proxy": 0.6403263133209204,
+        "sharpness_proxy": 0.2137392821057215,
+        "spectral_centroid_hz": 2644.7079690525766,
+        "spectral_flux": 0.016108391408203703,
+        "tonality_proxy": 0.2645668361187716,
+        "transient_event_density_per_s": 0.0
+      }
+    },
+    "hot_idle_20s": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 1.9205238140803083,
+        "dynamic_range_db": -2.389993981725164,
+        "peak_dbfs": -12.083722910761413,
+        "persistent_tone_ratio": -0.23216671119422927,
+        "rms_dbfs": -14.004246724841728,
+        "roughness_proxy": 0.12454587440000209,
+        "sharpness_proxy": 0.3567820535372618,
+        "spectral_centroid_hz": 4054.197365028296,
+        "spectral_flux": -0.011764153085003703,
+        "tonality_proxy": 0.02426202913656783,
+        "transient_event_density_per_s": 0.05
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 25.91828905054898,
+        "dynamic_range_db": 0.875468862416402,
+        "peak_dbfs": -39.98352382307555,
+        "persistent_tone_ratio": 0.5327277584825006,
+        "rms_dbfs": -65.90181287362454,
+        "roughness_proxy": 0.6489877063544455,
+        "sharpness_proxy": 0.40568951946400633,
+        "spectral_centroid_hz": 4981.745107417231,
+        "spectral_flux": 0.008398369660721746,
+        "tonality_proxy": 0.18997189886416257,
+        "transient_event_density_per_s": 0.05
+      },
+      "parent": {
+        "crest_db": 23.997765236468673,
+        "dynamic_range_db": 3.265462844141566,
+        "peak_dbfs": -27.899800912314138,
+        "persistent_tone_ratio": 0.7648944696767299,
+        "rms_dbfs": -51.89756614878281,
+        "roughness_proxy": 0.5244418319544434,
+        "sharpness_proxy": 0.048907465926744526,
+        "spectral_centroid_hz": 927.5477423889354,
+        "spectral_flux": 0.02016252274572545,
+        "tonality_proxy": 0.16570986972759474,
+        "transient_event_density_per_s": 0.0
+      }
+    },
+    "idle_return": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 9.469549266296116,
+        "dynamic_range_db": -12.347237560469964,
+        "peak_dbfs": -10.18198852494362,
+        "persistent_tone_ratio": -0.004018754186202234,
+        "rms_dbfs": -19.651537791239747,
+        "roughness_proxy": 0.046775307168649194,
+        "sharpness_proxy": 0.20030515340085533,
+        "spectral_centroid_hz": 2752.228717659878,
+        "spectral_flux": -0.006626470118236349,
+        "tonality_proxy": 0.007938113900208488,
+        "transient_event_density_per_s": 0.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 23.94233874926954,
+        "dynamic_range_db": 3.104492026461668,
+        "peak_dbfs": -38.61010741371347,
+        "persistent_tone_ratio": 0.4474212993971869,
+        "rms_dbfs": -62.55244616298302,
+        "roughness_proxy": 0.3892074399804862,
+        "sharpness_proxy": 0.34987315810707775,
+        "spectral_centroid_hz": 5050.298504315231,
+        "spectral_flux": 0.006951112903891923,
+        "tonality_proxy": 0.2400478830494922,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 14.472789482973422,
+        "dynamic_range_db": 15.451729586931632,
+        "peak_dbfs": -28.428118888769852,
+        "persistent_tone_ratio": 0.4514400535833891,
+        "rms_dbfs": -42.90090837174327,
+        "roughness_proxy": 0.342432132811837,
+        "sharpness_proxy": 0.14956800470622242,
+        "spectral_centroid_hz": 2298.0697866553533,
+        "spectral_flux": 0.013577583022128272,
+        "tonality_proxy": 0.23210976914928372,
+        "transient_event_density_per_s": 0.0
+      }
+    },
+    "steady_1200rpm": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": -1.1043291526700258,
+        "dynamic_range_db": -0.801148069226097,
+        "peak_dbfs": -14.194147112473566,
+        "persistent_tone_ratio": 0.1841929002009377,
+        "rms_dbfs": -13.08981795980354,
+        "roughness_proxy": -0.036095337374787206,
+        "sharpness_proxy": 0.37652219014557026,
+        "spectral_centroid_hz": 4802.747785682482,
+        "spectral_flux": -0.00921409238969604,
+        "tonality_proxy": 0.008338917718446276,
+        "transient_event_density_per_s": 0.0
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 25.015669520143355,
+        "dynamic_range_db": 1.3058446536174986,
+        "peak_dbfs": -40.0127234697402,
+        "persistent_tone_ratio": 0.9959812458137978,
+        "rms_dbfs": -65.02839298988356,
+        "roughness_proxy": 0.5774431826091194,
+        "sharpness_proxy": 0.40984427611743135,
+        "spectral_centroid_hz": 5745.677141228604,
+        "spectral_flux": 0.007530484297731337,
+        "tonality_proxy": 0.22772505299600396,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 26.11999867281338,
+        "dynamic_range_db": 2.1069927228435956,
+        "peak_dbfs": -25.818576357266636,
+        "persistent_tone_ratio": 0.8117883456128601,
+        "rms_dbfs": -51.93857503008002,
+        "roughness_proxy": 0.6135385199839066,
+        "sharpness_proxy": 0.033322085971861086,
+        "spectral_centroid_hz": 942.9293555461228,
+        "spectral_flux": 0.016744576687427376,
+        "tonality_proxy": 0.21938613527755768,
+        "transient_event_density_per_s": 0.125
+      }
+    },
+    "steady_2000rpm": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 11.210002369499747,
+        "dynamic_range_db": 0.21480784837789502,
+        "peak_dbfs": -4.413964351077048,
+        "persistent_tone_ratio": -0.002009377093101117,
+        "rms_dbfs": -15.623966720576803,
+        "roughness_proxy": 0.33293999230482096,
+        "sharpness_proxy": 0.04318421357775615,
+        "spectral_centroid_hz": 2434.315154228658,
+        "spectral_flux": -0.0065016087571343525,
+        "tonality_proxy": -0.012752335612182142,
+        "transient_event_density_per_s": -3.375
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 24.61845023533753,
+        "dynamic_range_db": 0.8876070392589643,
+        "peak_dbfs": -39.308463333116805,
+        "persistent_tone_ratio": 0.9979906229068989,
+        "rms_dbfs": -63.92691356845434,
+        "roughness_proxy": 0.8874014718596749,
+        "sharpness_proxy": 0.31169471085521894,
+        "spectral_centroid_hz": 4290.267822173934,
+        "spectral_flux": 0.00773171586405428,
+        "tonality_proxy": 0.23089373869556723,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 13.408447865837783,
+        "dynamic_range_db": 0.6727991908810693,
+        "peak_dbfs": -34.89449898203976,
+        "persistent_tone_ratio": 1.0,
+        "rms_dbfs": -48.302946847877536,
+        "roughness_proxy": 0.5544614795548539,
+        "sharpness_proxy": 0.2685104972774628,
+        "spectral_centroid_hz": 1855.9526679452763,
+        "spectral_flux": 0.014233324621188632,
+        "tonality_proxy": 0.24364607430774937,
+        "transient_event_density_per_s": 3.5
+      }
+    },
+    "steady_3000rpm": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 11.489202899177076,
+        "dynamic_range_db": -0.11037286206020402,
+        "peak_dbfs": -2.2510507278939826,
+        "persistent_tone_ratio": -0.0026791694574681557,
+        "rms_dbfs": -13.740253627071056,
+        "roughness_proxy": 0.2335514435703987,
+        "sharpness_proxy": -0.1427021215400379,
+        "spectral_centroid_hz": 324.0887457167819,
+        "spectral_flux": -0.0055986787542754764,
+        "tonality_proxy": -0.02865460745402268,
+        "transient_event_density_per_s": -4.625
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 22.960652070840936,
+        "dynamic_range_db": 0.5390280968965377,
+        "peak_dbfs": -39.31825295995321,
+        "persistent_tone_ratio": 0.9973208305425318,
+        "rms_dbfs": -62.27890503079415,
+        "roughness_proxy": 0.9253791833960873,
+        "sharpness_proxy": 0.22479264448899647,
+        "spectral_centroid_hz": 3269.6780372990784,
+        "spectral_flux": 0.008133492157915366,
+        "tonality_proxy": 0.21919074613206765,
+        "transient_event_density_per_s": 0.25
+      },
+      "parent": {
+        "crest_db": 11.47144917166386,
+        "dynamic_range_db": 0.6494009589567418,
+        "peak_dbfs": -37.06720223205923,
+        "persistent_tone_ratio": 1.0,
+        "rms_dbfs": -48.538651403723094,
+        "roughness_proxy": 0.6918277398256886,
+        "sharpness_proxy": 0.36749476602903436,
+        "spectral_centroid_hz": 2945.5892915822965,
+        "spectral_flux": 0.013732170912190842,
+        "tonality_proxy": 0.24784535358609033,
+        "transient_event_density_per_s": 4.875
+      }
+    },
+    "throttle_tip_in": {
+      "analysis_domain": "published_pcm24_reopened; no R1 reference fit",
+      "delta": {
+        "crest_db": 7.35292036698066,
+        "dynamic_range_db": -8.844465420309161,
+        "peak_dbfs": -9.476027765126428,
+        "persistent_tone_ratio": 0.1768251841929002,
+        "rms_dbfs": -16.828948132107087,
+        "roughness_proxy": 0.2879616628394304,
+        "sharpness_proxy": 0.17099583538299884,
+        "spectral_centroid_hz": 2657.8298213917856,
+        "spectral_flux": -0.007938184575518183,
+        "tonality_proxy": -0.023747183857854876,
+        "transient_event_density_per_s": 0.125
+      },
+      "diagnostic_only": true,
+      "final": {
+        "crest_db": 21.16119152186024,
+        "dynamic_range_db": 4.490193875846529,
+        "peak_dbfs": -40.05207332505293,
+        "persistent_tone_ratio": 0.2116543871399866,
+        "rms_dbfs": -61.21326484691317,
+        "roughness_proxy": 0.665620329951714,
+        "sharpness_proxy": 0.2575537818775479,
+        "spectral_centroid_hz": 3704.0540629300644,
+        "spectral_flux": 0.007663894552198436,
+        "tonality_proxy": 0.2269623106529449,
+        "transient_event_density_per_s": 0.125
+      },
+      "parent": {
+        "crest_db": 13.808271154879579,
+        "dynamic_range_db": 13.33465929615569,
+        "peak_dbfs": -30.576045559926502,
+        "persistent_tone_ratio": 0.034829202947086406,
+        "rms_dbfs": -44.38431671480608,
+        "roughness_proxy": 0.37765866711228363,
+        "sharpness_proxy": 0.08655794649454908,
+        "spectral_centroid_hz": 1046.2242415382789,
+        "spectral_flux": 0.015602079127716618,
+        "tonality_proxy": 0.25070949451079977,
+        "transient_event_density_per_s": 0.0
+      }
+    }
+  },
+  "schema": "s12.stage_z.objective_before_after.v1"
+}
