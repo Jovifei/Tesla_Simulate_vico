@@ -15,7 +15,7 @@
     "AA7_JOVI_FEEDBACK_ROUND2",
     "AA8_FINAL_QUALIFICATION"
   ],
-  "current_phase": "AA0_STAGE_Z_CLOSEOUT",
+  "current_phase": "AA1_ENERGY_BUDGET_AUDIT",
   "status": "IN_PROGRESS",
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "stage_z_merge_commit": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
@@ -23,9 +23,21 @@
   "stage_z_ci": {"run_id": 33468755129, "status": "PASS"},
   "v1_package": "E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v1",
   "v2_package": "E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v2",
+  "aa0_semantic_closeout": {
+    "status": "PASS",
+    "tested_head": "a7f22cf",
+    "recomputed_executable_ablations": 12,
+    "metric_significance_contract": "tasks/reports/runtime/s12-stage-aa/metric_significance_contract.json",
+    "scorecard_v2": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+    "matrix_v3": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v3.json",
+    "receipt": "tasks/reports/runtime/s12-stage-aa/stage_z_semantic_closeout_receipt.json",
+    "meaningful_engineering_effects": 9,
+    "below_engineering_significance": 3,
+    "quality_direction": "REFERENCE_UNAVAILABLE"
+  },
   "phases": {
-    "AA0_STAGE_Z_CLOSEOUT": {"status": "IN_PROGRESS", "scope": "classify causal effect, engineering significance and quality direction; preserve v1 history"},
-    "AA1_ENERGY_BUDGET_AUDIT": {"status": "PENDING"},
+    "AA0_STAGE_Z_CLOSEOUT": {"status": "PASS", "scope": "classify causal effect, engineering significance and quality direction; preserve v1 history"},
+    "AA1_ENERGY_BUDGET_AUDIT": {"status": "IN_PROGRESS"},
     "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "PENDING"},
     "AA3_HELLCAT_ROOT_CAUSE": {"status": "PENDING"},
     "AA4_BOUNDED_CANDIDATES": {"status": "PENDING"},

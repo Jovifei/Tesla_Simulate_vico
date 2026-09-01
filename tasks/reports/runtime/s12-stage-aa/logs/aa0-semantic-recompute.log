@@ -1,0 +1,36 @@
+[AA0 1/12] recompute engine_sim_event_pressure
+[AA0 2/12] recompute engine_sim_path_waveguide
+[AA0 3/12] recompute engine_sim_collector_network
+[AA0 4/12] recompute engine_sim_forced_induction_state
+[AA0 5/12] recompute engine_sim_persistent_block_state
+[AA0 6/12] recompute engine_sim_pressure_audio_chain
+[AA0 7/12] recompute dasetwas_waveguide_lifecycle
+[AA0 8/12] recompute vehicle_noise_state_crossfade
+[AA0 9/12] recompute ignis_pressure_domain_equivalent
+[AA0 10/12] recompute markeasting_state_layer_equivalent
+[AA0 11/12] recompute stage_y_fitted_timbre_map
+[AA0 12/12] recompute monitor_playback_separation
+{
+  "schema": "s12.stage_aa.stage_z_semantic_closeout_receipt.v1",
+  "status": "PASS",
+  "base_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "a7f22cf",
+  "recomputed_all_ablations": true,
+  "ablation_duration_s": 4.0,
+  "legacy_scorecard_path": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+  "legacy_scorecard_sha256": "5605aa0a2d2de265d196d344cbbf262fcb41ee94d9863ae37b62562d85216424",
+  "scorecard_v2_path": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+  "scorecard_v2_sha256": "12b46d8fe3b470d9494996ba6d2e2f2436212ef987eabc2df1be7d4799327e55",
+  "metric_significance_contract_path": "tasks/reports/runtime/s12-stage-aa/metric_significance_contract.json",
+  "metric_significance_contract_sha256": "863e9d54344a8d23c84c4b16a82295ab3f2f462610f74e6ffa35af6c6310eb51",
+  "matrix_v2_path": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json",
+  "matrix_v2_sha256": "226f8a058fbf025e7897d2dee7d4701e235b930456aff42dad1cd70bb020d5cd",
+  "matrix_v3_path": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v3.json",
+  "matrix_v3_sha256": "d6bb1a8befb5078cb0cd9798e50b92ccc8a0be9115820ed4c15dbf3a5237b842",
+  "rows": 12,
+  "boundaries": {
+    "r1_reference": "MISSING",
+    "quality_direction": "REFERENCE_UNAVAILABLE",
+    "ptr_radiation_track_p": "UNCHANGED"
+  }
+}

@@ -1,9 +1,18 @@
 {
+  "acoustic_significance_is_separate_from_adoption": true,
   "base_main_head": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
   "main_head": "6361ce8e3b7b32018e555b5354a95a243b71991f",
+  "post_merge_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "rows": [
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -24,6 +33,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -44,6 +60,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -64,6 +87,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_WORKFLOW_ONLY",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -86,6 +116,16 @@
     },
     {
       "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.019770301376118016,
+        "scorecard_row": "dasetwas_waveguide_lifecycle",
+        "target_metric": "spectral_flux"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "EQUIVALENT_CLEAN_ROOM",
@@ -112,6 +152,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_WORKFLOW_ONLY",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -134,6 +181,16 @@
     },
     {
       "ablation_scenario": "afterfire_eligible",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 9.682383871013489e-08,
+        "scorecard_row": "engine_sim_collector_network",
+        "target_metric": "spectral_centroid_hz"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -159,6 +216,16 @@
     },
     {
       "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.1411901665342377,
+        "scorecard_row": "engine_sim_event_pressure",
+        "target_metric": "roughness_proxy"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -185,6 +252,16 @@
     },
     {
       "ablation_scenario": "steady_3000rpm",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.3468868438604585,
+        "scorecard_row": "engine_sim_forced_induction_state",
+        "target_metric": "sharpness_proxy"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -211,6 +288,16 @@
     },
     {
       "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.06067962279897664,
+        "scorecard_row": "engine_sim_path_waveguide",
+        "target_metric": "spectral_centroid_hz"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -237,6 +324,16 @@
     },
     {
       "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.016423795524532162,
+        "scorecard_row": "engine_sim_persistent_block_state",
+        "target_metric": "dynamic_range_db"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -261,6 +358,16 @@
     },
     {
       "ablation_scenario": "full_load_acceleration",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 1.2846333847941322,
+        "scorecard_row": "engine_sim_pressure_audio_chain",
+        "target_metric": "spectral_centroid_hz"
+      },
       "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
@@ -286,6 +393,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_TEACHER_ONLY",
       "asset_rights_status": "EXTERNAL_RECEIPT_ONLY",
       "code_license_status": "TEACHER_REFERENCE_ONLY",
@@ -310,6 +424,16 @@
     },
     {
       "ablation_scenario": "steady_3000rpm",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.3468868438604585,
+        "scorecard_row": "stage_y_fitted_timbre_map",
+        "target_metric": "sharpness_proxy"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "EQUIVALENT_CLEAN_ROOM",
@@ -335,6 +459,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_CODE_LICENSE",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -355,6 +486,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -375,6 +513,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_CODE_LICENSE",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -395,6 +540,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -415,6 +567,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_CODE_LICENSE",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -435,6 +594,16 @@
     },
     {
       "ablation_scenario": "full_load_acceleration",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 1.2846333847941322,
+        "scorecard_row": "ignis_pressure_domain_equivalent",
+        "target_metric": "spectral_centroid_hz"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "CONCEPT_ONLY_SOURCE_NOT_COPIED",
@@ -460,6 +629,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -480,6 +656,16 @@
     },
     {
       "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.25273978282969434,
+        "scorecard_row": "markeasting_state_layer_equivalent",
+        "target_metric": "roughness_proxy"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "UNVERIFIED",
       "code_license_status": "RESEARCH_CODE_NOT_COPIED",
@@ -505,6 +691,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -525,6 +718,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_WORKFLOW_ONLY",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -547,6 +747,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_CODE_LICENSE",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -567,6 +774,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "BLOCKED_CODE_LICENSE",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -587,6 +801,16 @@
     },
     {
       "ablation_scenario": "hot_idle_20s",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.1336053089881663,
+        "scorecard_row": "monitor_playback_separation",
+        "target_metric": "rms_dbfs"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "EQUIVALENT_CLEAN_ROOM",
@@ -612,6 +836,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_WORKFLOW_ONLY",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -634,6 +865,13 @@
     },
     {
       "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
       "adoption_status": "REFERENCE_WORKFLOW_ONLY",
       "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
       "code_license_status": "NOT_EXECUTED",
@@ -656,6 +894,16 @@
     },
     {
       "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.25273978282969434,
+        "scorecard_row": "vehicle_noise_state_crossfade",
+        "target_metric": "roughness_proxy"
+      },
       "adoption_status": "IMPLEMENTED_EQUIVALENT",
       "asset_rights_status": "EXCLUDED",
       "code_license_status": "EQUIVALENT_CLEAN_ROOM",
@@ -682,5 +930,6 @@
   ],
   "schema": "s12.stage_z.method_adoption_matrix.v2",
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "semantic_closeout_scorecard": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
   "tested_head": "6361ce8e3b7b32018e555b5354a95a243b71991f"
 }

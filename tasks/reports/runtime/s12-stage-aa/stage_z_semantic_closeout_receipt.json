@@ -1,0 +1,24 @@
+{
+  "ablation_duration_s": 4.0,
+  "base_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "boundaries": {
+    "ptr_radiation_track_p": "UNCHANGED",
+    "quality_direction": "REFERENCE_UNAVAILABLE",
+    "r1_reference": "MISSING"
+  },
+  "legacy_scorecard_path": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+  "legacy_scorecard_sha256": "5605aa0a2d2de265d196d344cbbf262fcb41ee94d9863ae37b62562d85216424",
+  "matrix_v2_path": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json",
+  "matrix_v2_sha256": "226f8a058fbf025e7897d2dee7d4701e235b930456aff42dad1cd70bb020d5cd",
+  "matrix_v3_path": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v3.json",
+  "matrix_v3_sha256": "d6bb1a8befb5078cb0cd9798e50b92ccc8a0be9115820ed4c15dbf3a5237b842",
+  "metric_significance_contract_path": "tasks/reports/runtime/s12-stage-aa/metric_significance_contract.json",
+  "metric_significance_contract_sha256": "863e9d54344a8d23c84c4b16a82295ab3f2f462610f74e6ffa35af6c6310eb51",
+  "recomputed_all_ablations": true,
+  "rows": 12,
+  "schema": "s12.stage_aa.stage_z_semantic_closeout_receipt.v1",
+  "scorecard_v2_path": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+  "scorecard_v2_sha256": "12b46d8fe3b470d9494996ba6d2e2f2436212ef987eabc2df1be7d4799327e55",
+  "status": "PASS",
+  "tested_head": "a7f22cf"
+}

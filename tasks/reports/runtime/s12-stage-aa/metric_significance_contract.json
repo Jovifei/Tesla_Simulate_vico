@@ -1,0 +1,114 @@
+{
+  "causal_detection": {
+    "absolute_delta_floor": 0.0001,
+    "purpose": "numerical causal detection only; not engineering significance",
+    "rule": "PCM SHA must differ and absolute metric delta must exceed this numerical floor."
+  },
+  "evidence_basis": {
+    "known_engineering_scale": "metric-specific absolute and relative floors above",
+    "pcm24_roundtrip": "Stage-V PCM24 rint/pack/unpack contract",
+    "repeat_render_count": 3,
+    "repeat_render_max_abs_delta": "measured per metric during AA0 audit",
+    "scenario_variance": "Stage-Z ablation baselines and AA1 scene ledger"
+  },
+  "metrics": {
+    "crest_db": {
+      "absolute_floor": 0.25,
+      "estimation_method": "max(repeat-render/quantization floor, 0.25 dB engineering resolution)",
+      "reason": "Crest-factor changes need a quarter-dB movement to exceed numerical and windowing sensitivity.",
+      "reference_scale": 1.0,
+      "relative_floor": 0.05,
+      "unit": "dB"
+    },
+    "dynamic_range_db": {
+      "absolute_floor": 0.25,
+      "estimation_method": "max(repeat-render/quantization floor, 5% of baseline, 0.25 dB engineering resolution)",
+      "reason": "A dynamic-range effect must exceed a quarter dB and five percent of the baseline envelope range.",
+      "reference_scale": 1.0,
+      "relative_floor": 0.05,
+      "unit": "dB"
+    },
+    "narrowband_whine_proxy": {
+      "absolute_floor": 0.01,
+      "estimation_method": "max(10x quantization sensitivity, repeat-render floor, 10% baseline resolution, 0.01 absolute resolution)",
+      "reason": "Whine dominance needs a one-percent absolute and ten-percent relative movement to be treated as an engineering effect.",
+      "reference_scale": 0.1,
+      "relative_floor": 0.1,
+      "unit": "normalized narrowband-whine proxy"
+    },
+    "peak_dbfs": {
+      "absolute_floor": 0.5,
+      "estimation_method": "max(10x PCM24 peak sensitivity, repeat-render floor, 0.5 dB engineering resolution)",
+      "reason": "Peak changes smaller than half a dB are not treated as a meaningful headroom or impact change.",
+      "reference_scale": 1.0,
+      "relative_floor": 0.05,
+      "unit": "dBFS"
+    },
+    "persistent_tone_ratio": {
+      "absolute_floor": 0.02,
+      "estimation_method": "max(10x quantization sensitivity, repeat-render floor, 5% baseline resolution, 0.02 absolute resolution)",
+      "reason": "A two-percentage-point move is the minimum stable change in carrier persistence.",
+      "reference_scale": 0.1,
+      "relative_floor": 0.05,
+      "unit": "fraction of persistent tonal energy"
+    },
+    "rms_dbfs": {
+      "absolute_floor": 0.5,
+      "estimation_method": "max(10x PCM24 level sensitivity, repeat-render floor, 0.5 dB engineering resolution)",
+      "reason": "A half-dB level move is above digital measurement noise and is audible in a matched diagnostic comparison.",
+      "reference_scale": 1.0,
+      "relative_floor": 0.05,
+      "unit": "dBFS"
+    },
+    "roughness_proxy": {
+      "absolute_floor": 0.01,
+      "estimation_method": "max(10x quantization sensitivity, repeat-render floor, 5% baseline resolution, 0.01 absolute resolution)",
+      "reason": "The proxy needs at least a 0.01 absolute and five-percent move to distinguish texture from numerical variation.",
+      "reference_scale": 0.1,
+      "relative_floor": 0.05,
+      "unit": "normalized roughness proxy"
+    },
+    "sharpness_proxy": {
+      "absolute_floor": 0.01,
+      "estimation_method": "max(10x quantization sensitivity, repeat-render floor, 5% baseline resolution, 0.01 absolute resolution)",
+      "reason": "The proxy needs at least a 0.01 absolute and five-percent move; a SHA change alone is insufficient.",
+      "reference_scale": 0.1,
+      "relative_floor": 0.05,
+      "unit": "normalized sharpness proxy"
+    },
+    "spectral_centroid_hz": {
+      "absolute_floor": 5.0,
+      "estimation_method": "max(10x PCM24 round-trip sensitivity, repeat-render floor, 0.5% of 1 kHz reference scale, 5 Hz engineering resolution)",
+      "reason": "Centroid movement must exceed small-bin/quantization sensitivity and one half percent of a kilohertz-scale baseline; 0.000359 Hz is therefore below significance.",
+      "reference_scale": 1000.0,
+      "relative_floor": 0.005,
+      "unit": "Hz"
+    },
+    "spectral_flux": {
+      "absolute_floor": 0.001,
+      "estimation_method": "max(10x PCM24 round-trip sensitivity, repeat-render floor, 10% baseline resolution, 0.001 absolute resolution)",
+      "reason": "Flux is a normalized proxy; a ten-percent and 0.001 absolute move is required to exceed frame-window sensitivity.",
+      "reference_scale": 0.01,
+      "relative_floor": 0.1,
+      "unit": "normalized spectral-flux units"
+    },
+    "tonality_proxy": {
+      "absolute_floor": 0.01,
+      "estimation_method": "max(10x quantization sensitivity, repeat-render floor, 5% baseline resolution, 0.01 absolute resolution)",
+      "reason": "Tonality proxy movement must exceed a one-percent absolute and five-percent relative threshold.",
+      "reference_scale": 0.1,
+      "relative_floor": 0.05,
+      "unit": "normalized tonality proxy"
+    },
+    "transient_event_density_per_s": {
+      "absolute_floor": 0.25,
+      "estimation_method": "max(one event over a four-second ablation window, 10% relative resolution)",
+      "reason": "One quarter event per second is the minimum stable change for a bounded scene-level event-density claim.",
+      "reference_scale": 1.0,
+      "relative_floor": 0.1,
+      "unit": "events/s"
+    }
+  },
+  "schema": "s12.stage_aa.metric_significance_contract.v1",
+  "status": "DIAGNOSTIC_ONLY"
+}

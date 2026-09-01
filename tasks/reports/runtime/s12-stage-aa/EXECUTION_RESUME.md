@@ -2,7 +2,7 @@
 
 ## Current state
 
-`AA0_STAGE_Z_CLOSEOUT`: `IN_PROGRESS` from merged Stage-Z main
+`AA1_ENERGY_BUDGET_AUDIT`: `IN_PROGRESS` from merged Stage-Z main
 `209378bcb9a0c1a352ffd56ca1c765ecce01f81d`. The Stage-Z PR #3 CI run
 `33468755129` passed and was merged normally. Stage AA is limited to Hellcat;
 the v1 and v2 packages are preserved and must not be overwritten.
@@ -36,8 +36,16 @@ AA6_V3_AUDITION → AA7_JOVI_FEEDBACK_ROUND2 → AA8_FINAL_QUALIFICATION`
 - v1: `E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v1`.
 - v2: `E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v2`.
 
+## Completed AA0
+
+AA0 reran all 12 executable Stage-Z ablations at the 4-second evidence
+window. `method_ablation_scorecard_v2.json` separates causal detection from
+engineering significance and quality direction; 12 effects are causal, 9 are
+engineering-significant, and collector/persistent/DasEtwas are below the
+metric-specific significance floors. ENSIM4 remains teacher-only. The legacy
+Stage-Z scorecard remains unchanged.
+
 ## Required next action
 
-Complete AA0 with a metric significance contract and scorecard v2, then use
-focused evidence to locate the layer causing the Parent→Final energy loss
+Use focused evidence to locate the layer causing the Parent→Final energy loss
 before changing any renderer parameter.

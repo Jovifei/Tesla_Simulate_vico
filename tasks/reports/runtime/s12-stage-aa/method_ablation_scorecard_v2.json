@@ -1,0 +1,766 @@
+{
+  "causal_status_is_not_quality_claim": true,
+  "legacy_scorecard": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+  "metric_significance_contract": "tasks/reports/runtime/s12-stage-aa/metric_significance_contract.json",
+  "rows": [
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": -0.03951943301985758,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.01,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0015957248012028183,
+          "normalized_rms_boundary": 0.706883769645911,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "memory_cost": {
+        "off": 21351823,
+        "on": 21201325
+      },
+      "method_id": "engine_sim_event_pressure",
+      "off_pcm_sha": "c7bb208294e6eb2cd3b1f5d2b4202230538559303392d44049a4ac38213a9632",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.1411901665342377,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> schedule_events -> render_event_packet -> _place",
+      "runtime_cost": {
+        "off": 39.70605059992522,
+        "on": 39.11380330007523
+      },
+      "scene": "complete_cycle",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.24038273006934294,
+      "target_metric_before": 0.2799021630892005
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 280.22262111539567,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 5.0,
+      "engineering_relative_floor": 0.005,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002839495280977768,
+          "normalized_rms_boundary": 0.6056873153622251,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011931729695046113
+      },
+      "memory_cost": {
+        "off": 21197996,
+        "on": 21221786
+      },
+      "method_id": "engine_sim_path_waveguide",
+      "off_pcm_sha": "559a04c0cbad81dc832ff4f02985ff8c25d044aaf1c4ace7a9755aec9f6c7bd0",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.06067962279897664,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork.process -> StatefulWaveguide.process",
+      "runtime_cost": {
+        "off": 35.89275850006379,
+        "on": 39.04413890000433
+      },
+      "scene": "complete_cycle",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 4898.290568632723,
+      "target_metric_before": 4618.067947517327
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 0.00035948059894508333,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 5.0,
+      "engineering_relative_floor": 0.005,
+      "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0027889379955893514,
+          "normalized_rms_boundary": 0.611467462034285,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012493258938780148
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.00278979618845057,
+          "normalized_rms_boundary": 0.6305443442898577,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012493258938780148
+      },
+      "memory_cost": {
+        "off": 21144061,
+        "on": 21247670
+      },
+      "method_id": "engine_sim_collector_network",
+      "off_pcm_sha": "4a22fa89bb39ccb796e1e8d9e3c17c30298709f730d5f0d7a599388525fef058",
+      "on_pcm_sha": "0ed44dcbbb60f9014d2f5b25c13d474f93bf60a2d47830ab5b32590aa7340ca6",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 9.682383871013489e-08,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> collector assignment -> bank/central collector lines",
+      "runtime_cost": {
+        "off": 38.53203129989561,
+        "on": 39.15617869992275
+      },
+      "scene": "afterfire_eligible",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3712.7285856488847,
+      "target_metric_before": 3712.728226168286
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 0.05779221778474203,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.01,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021107341724345887,
+          "normalized_rms_boundary": 0.7475887101645855,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011134185378821815
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002072691122247571,
+          "normalized_rms_boundary": 0.6451148577830325,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011750367555574504
+      },
+      "memory_cost": {
+        "off": 21208199,
+        "on": 21206927
+      },
+      "method_id": "engine_sim_forced_induction_state",
+      "off_pcm_sha": "f66e295daeadd60857a798974db80d94e7e0c74f519a416fd666d4061c109edf",
+      "on_pcm_sha": "cbf186861bef73c1b48e9a05186963bfda1d4b191ff2620495377c68d84fa0a6",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.3468868438604585,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _advance_boost -> render_timbre_map/render_forced_induction",
+      "runtime_cost": {
+        "off": 37.55536350002512,
+        "on": 40.126675999956205
+      },
+      "scene": "steady_3000rpm",
+      "target_metric": "sharpness_proxy",
+      "target_metric_after": 0.22439472464715274,
+      "target_metric_before": 0.1666025068624107
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 0.07346729563097742,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.25,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.003429187727871076,
+          "normalized_rms_boundary": 0.9055320060432107,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.016248338485439412
+      },
+      "memory_cost": {
+        "off": 5818524,
+        "on": 21212724
+      },
+      "method_id": "engine_sim_persistent_block_state",
+      "off_pcm_sha": "f322d6d9a7bdd35c3031f87b2c274b7aacb95238e944f70e146716fe5f9d58a3",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.016423795524532162,
+      "runtime_call_path": "PersistentEventDomainEngine.process_with_trace -> _process_frame (single engine instance)",
+      "runtime_cost": {
+        "off": 50.658050999976695,
+        "on": 39.05491029995028
+      },
+      "scene": "throttle_tip_in",
+      "target_metric": "dynamic_range_db",
+      "target_metric_after": 4.546690036454778,
+      "target_metric_before": 4.4732227408238
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 2120.1896901164764,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 5.0,
+      "engineering_relative_floor": 0.005,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016460975199355616,
+          "normalized_rms_boundary": 0.5233429353372557,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.015589995469898773
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.001906744954322026,
+          "normalized_rms_boundary": 0.34029381132776415,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.01970994036908333
+      },
+      "memory_cost": {
+        "off": 21133802,
+        "on": 21209005
+      },
+      "method_id": "engine_sim_pressure_audio_chain",
+      "off_pcm_sha": "0c0981e9a00e83f7c22ce1280bd98cbb1806e841f68f45e323cb1cda89763963",
+      "on_pcm_sha": "fa41c794ef4f5706b1a60d7783f27ccd77c36aea730a3ce64863e3e043b76794",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 1.2846333847941322,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process -> FrozenPtrStereo.process",
+      "runtime_cost": {
+        "off": 37.861928800004534,
+        "on": 38.57453480002005
+      },
+      "scene": "full_load_acceleration",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3770.6136283486635,
+      "target_metric_before": 1650.423938232187
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": -0.00019770301376118016,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.001,
+      "engineering_relative_floor": 0.1,
+      "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0019064541139568875,
+          "normalized_rms_boundary": 0.6552815233953441,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414701568402022
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002839495280977768,
+          "normalized_rms_boundary": 0.6056873153622251,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011931729695046113
+      },
+      "memory_cost": {
+        "off": 21200475,
+        "on": 21214928
+      },
+      "method_id": "dasetwas_waveguide_lifecycle",
+      "off_pcm_sha": "559a04c0cbad81dc832ff4f02985ff8c25d044aaf1c4ace7a9755aec9f6c7bd0",
+      "on_pcm_sha": "b7a7b122461af2fbdc05036b544107d1bb7881cd7383335cda2c44fd734021ac",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.019770301376118016,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork/PressureAudioChain persistent state",
+      "runtime_cost": {
+        "off": 36.870013499981724,
+        "on": 40.7602316000266
+      },
+      "scene": "complete_cycle",
+      "target_metric": "spectral_flux",
+      "target_metric_after": 0.007565264656170643,
+      "target_metric_before": 0.0077629676699318235
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": -0.20975918895503465,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.01,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6580906182059514,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "memory_cost": {
+        "off": 20750982,
+        "on": 21205633
+      },
+      "method_id": "vehicle_noise_state_crossfade",
+      "off_pcm_sha": "868c4d96fa6493ce06fd3615a6d105da84b9419672c8758e8cd9f4646d1a7a98",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.25273978282969434,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> StateTransientMixer.render_block/equal_power_crossfade",
+      "runtime_cost": {
+        "off": 39.11499240004923,
+        "on": 40.259193400037475
+      },
+      "scene": "throttle_tip_in",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.6201821309533485,
+      "target_metric_before": 0.8299413199083832
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 2120.1896901164764,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 5.0,
+      "engineering_relative_floor": 0.005,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016460975199355616,
+          "normalized_rms_boundary": 0.5233429353372557,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.015589995469898773
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.001906744954322026,
+          "normalized_rms_boundary": 0.34029381132776415,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.01970994036908333
+      },
+      "memory_cost": {
+        "off": 21118384,
+        "on": 21204974
+      },
+      "method_id": "ignis_pressure_domain_equivalent",
+      "off_pcm_sha": "0c0981e9a00e83f7c22ce1280bd98cbb1806e841f68f45e323cb1cda89763963",
+      "on_pcm_sha": "fa41c794ef4f5706b1a60d7783f27ccd77c36aea730a3ce64863e3e043b76794",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 1.2846333847941322,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process",
+      "runtime_cost": {
+        "off": 37.865609999978915,
+        "on": 39.73520230001304
+      },
+      "scene": "full_load_acceleration",
+      "target_metric": "spectral_centroid_hz",
+      "target_metric_after": 3770.6136283486635,
+      "target_metric_before": 1650.423938232187
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": -0.20975918895503465,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.01,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6562795945718675,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021867738272298497,
+          "normalized_rms_boundary": 0.6580906182059514,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010327353271153052
+      },
+      "memory_cost": {
+        "off": 20749322,
+        "on": 21204267
+      },
+      "method_id": "markeasting_state_layer_equivalent",
+      "off_pcm_sha": "868c4d96fa6493ce06fd3615a6d105da84b9419672c8758e8cd9f4646d1a7a98",
+      "on_pcm_sha": "2989ee629372ef7ea44d308be690c7d8fbcb913e5fc8ac82412e27887981fa2a",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.25273978282969434,
+      "runtime_call_path": "build_stage_z_package -> cumulative layer records -> PersistentEventDomainEngine",
+      "runtime_cost": {
+        "off": 39.48993440007325,
+        "on": 37.75241830002051
+      },
+      "scene": "throttle_tip_in",
+      "target_metric": "roughness_proxy",
+      "target_metric_after": 0.6201821309533485,
+      "target_metric_before": 0.8299413199083832
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 0.05779221778474203,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.01,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0021107341724345887,
+          "normalized_rms_boundary": 0.7475887101645855,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011134185378821815
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.002072691122247571,
+          "normalized_rms_boundary": 0.6451148577830325,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.011750367555574504
+      },
+      "memory_cost": {
+        "off": 21212479,
+        "on": 21208064
+      },
+      "method_id": "stage_y_fitted_timbre_map",
+      "off_pcm_sha": "f66e295daeadd60857a798974db80d94e7e0c74f519a416fd666d4061c109edf",
+      "on_pcm_sha": "cbf186861bef73c1b48e9a05186963bfda1d4b191ff2620495377c68d84fa0a6",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.3468868438604585,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> render_timbre_map",
+      "runtime_cost": {
+        "off": 36.455499100033194,
+        "on": 37.75934450002387
+      },
+      "scene": "steady_3000rpm",
+      "target_metric": "sharpness_proxy",
+      "target_metric_after": 0.22439472464715274,
+      "target_metric_before": 0.1666025068624107
+    },
+    {
+      "causal_delta_floor": 0.0001,
+      "causal_status": "CAUSAL_EFFECT_DETECTED",
+      "delta": 8.801168297410712,
+      "deprecated_status": "PROVEN_CONTRIBUTION",
+      "engineering_absolute_floor": 0.5,
+      "engineering_relative_floor": 0.05,
+      "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+      "evidence_boundary": "synthetic; uncalibrated; no global gain/PTR/Radiation/Track-P change",
+      "global_gain_changed": false,
+      "guard_metric_after": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.004643481483190685,
+          "normalized_rms_boundary": 0.8750507263157569,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.012210401502154798
+      },
+      "guard_metric_before": {
+        "click": {
+          "contract_version": "s12.stage_w.click_gate.v1",
+          "definition": "block_boundary_only",
+          "max_boundary_jump": 0.0016475694114103248,
+          "normalized_rms_boundary": 0.8728277551661631,
+          "passed": true,
+          "provenance": "bounded_synthetic_engineering_acceptance_threshold",
+          "scope": "synthetic_stage_w_raw_post_ptr_monitor_outputs",
+          "threshold": 0.35
+        },
+        "clipping": 0,
+        "finite": true,
+        "passed": true,
+        "peak": 0.010414698954946743
+      },
+      "memory_cost": {
+        "off": 21193582,
+        "on": 21193582
+      },
+      "method_id": "monitor_playback_separation",
+      "off_pcm_sha": "b2651cc674ab384620a225c10c349fb304867b61ae08c89bbc36f7a00757e371",
+      "on_pcm_sha": "982f598617720b0c7976dd01d580b72a27c6837b4ef9c7798be5dd563a63eae5",
+      "quality_direction_reason": "No synchronized legal R1 reference is available; this field is diagnostic only.",
+      "quality_direction_status": "REFERENCE_UNAVAILABLE",
+      "regression": false,
+      "relative_delta": 0.1336053089881663,
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _monitor_step; raw/post_ptr remain analysis outputs",
+      "runtime_cost": {
+        "off": 40.32475519995205,
+        "on": 40.32475519995205
+      },
+      "scene": "hot_idle_20s",
+      "target_metric": "rms_dbfs",
+      "target_metric_after": -57.07322220446859,
+      "target_metric_before": -65.8743905018793
+    }
+  ],
+  "schema": "s12.stage_aa.method_ablation_scorecard.v2",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; no synchronized R1 reference",
+  "status": "DIAGNOSTIC_ONLY"
+}

@@ -199,7 +199,18 @@ jobs:
           assert len(stage_z_scorecard["rows"]) >= 12
           assert all(row["off_pcm_sha"] != row["on_pcm_sha"] and row["regression"] is False for row in stage_z_scorecard["rows"])
           stage_z_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-z/stage_z_publish_receipt.json").read_text(encoding="utf-8"))
-          assert stage_z_receipt["base_main_head"] == subprocess.check_output(["git", "merge-base", "HEAD", "origin/main"], text=True).strip()
+          merge_base = subprocess.check_output(["git", "merge-base", "HEAD", "origin/main"], text=True).strip()
+          semantic_receipt_path = Path("tasks/reports/runtime/s12-stage-aa/stage_z_semantic_closeout_receipt.json")
+          if semantic_receipt_path.is_file():
+              semantic_receipt = json.loads(semantic_receipt_path.read_text(encoding="utf-8"))
+              assert semantic_receipt["base_main_head"] == merge_base
+              assert semantic_receipt["status"] == "PASS"
+              assert semantic_receipt["rows"] == 12
+              stage_z_v3 = json.loads(Path("docs/research/engine-audio-ecosystem/method_adoption_matrix_v3.json").read_text(encoding="utf-8"))
+              assert stage_z_v3["schema"] == "s12.stage_aa.method_adoption_matrix.v3"
+              assert len(stage_z_v3["rows"]) == len(stage_z_matrix["rows"])
+          else:
+              assert stage_z_receipt["base_main_head"] == merge_base
           assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_receipt["renderer_source_head"], "HEAD"]).returncode == 0
           PY
           test -z "$(git status --porcelain=v1)"
