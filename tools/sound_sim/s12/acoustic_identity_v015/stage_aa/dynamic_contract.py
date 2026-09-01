@@ -14,7 +14,8 @@ from ..stage_v.io import write_json
 
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
-PACKAGE_OBJECTIVE = Path("E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3/objective_before_after_v3.json")
+PACKAGE_OBJECTIVE = Path("tasks/reports/runtime/s12-stage-aa/objective_before_after_v3.json")
+EXTERNAL_PACKAGE_OBJECTIVE = Path("E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3/objective_before_after_v3.json")
 OUTPUT = Path("tasks/reports/runtime/s12-stage-aa/raw_dynamic_contract.json")
 RECEIPT = Path("tasks/reports/runtime/s12-stage-aa/receipts/aa6-raw-dynamic-contract.json")
 
@@ -42,6 +43,8 @@ def _variant_metrics(rows: list[dict[str, Any]], name: str) -> dict[str, Any]:
 
 def build_raw_dynamic_contract(*, package_objective: Path | None = None) -> dict[str, Any]:
     objective_path = package_objective or (REPO_ROOT / PACKAGE_OBJECTIVE)
+    if not objective_path.is_file() and EXTERNAL_PACKAGE_OBJECTIVE.is_file():
+        objective_path = EXTERNAL_PACKAGE_OBJECTIVE
     objective = json.loads(objective_path.read_text(encoding="utf-8"))
     rows = objective["rows"]
     return {
