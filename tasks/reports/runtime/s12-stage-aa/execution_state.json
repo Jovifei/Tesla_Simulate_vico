@@ -72,15 +72,39 @@
     "hard_gates": "4/4 candidates across 11 scenes",
     "diagnostic_preference": "AA-C3"
   },
+  "aa5_finalist_review": {
+    "status": "PASS",
+    "tested_head": "be7f156",
+    "review": "tasks/reports/runtime/s12-stage-aa/finalist_review.json",
+    "finalists": ["AA-C1", "AA-C2", "AA-C3"],
+    "matlab": "MATLAB_FINALIST_RECEIPT_PENDING",
+    "mosqito": "NOT_INSTALLED_LOCAL"
+  },
+  "aa6_v3_audition": {
+    "status": "PASS",
+    "tested_head": "95808f8",
+    "package": "E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3",
+    "manifest": "package_manifest.json",
+    "manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+    "wav_count": 110,
+    "scene_count": 11,
+    "validator": [],
+    "human_status": "WAITING_FOR_JOVI_AUDITION"
+  },
+  "aa7_jovi_feedback_round2": {
+    "status": "WAITING_FOR_JOVI_AUDITION",
+    "package": "E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3",
+    "feedback_received": false
+  },
   "phases": {
     "AA0_STAGE_Z_CLOSEOUT": {"status": "PASS", "scope": "classify causal effect, engineering significance and quality direction; preserve v1 history"},
     "AA1_ENERGY_BUDGET_AUDIT": {"status": "PASS"},
     "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "PASS"},
     "AA3_HELLCAT_ROOT_CAUSE": {"status": "PASS"},
     "AA4_BOUNDED_CANDIDATES": {"status": "PASS"},
-    "AA5_PROFESSIONAL_FINALIST_REVIEW": {"status": "IN_PROGRESS"},
-    "AA6_V3_AUDITION": {"status": "PENDING"},
-    "AA7_JOVI_FEEDBACK_ROUND2": {"status": "PENDING", "human_status": "WAITING_FOR_JOVI_AUDITION"},
+    "AA5_PROFESSIONAL_FINALIST_REVIEW": {"status": "PASS"},
+    "AA6_V3_AUDITION": {"status": "PASS"},
+    "AA7_JOVI_FEEDBACK_ROUND2": {"status": "WAITING_FOR_JOVI_AUDITION", "human_status": "WAITING_FOR_JOVI_AUDITION"},
     "AA8_FINAL_QUALIFICATION": {"status": "PENDING"}
   },
   "boundaries": {

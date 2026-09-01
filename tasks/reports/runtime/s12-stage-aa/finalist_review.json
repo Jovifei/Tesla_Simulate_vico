@@ -1,0 +1,63 @@
+{
+  "diagnostic_preference_from_bounded_audit": "AA-C3",
+  "finalists": [
+    "AA-C1",
+    "AA-C2",
+    "AA-C3"
+  ],
+  "human_approval": "PENDING",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "matlab": {
+    "reason": "No stable human-open MATLAB session was verified; do not launch matlab -batch or a new session.",
+    "status": "MATLAB_FINALIST_RECEIPT_PENDING"
+  },
+  "metric_provenance": "candidate_audit raw PCM metrics; no loudness flattening in Dynamic domain",
+  "metrics": {
+    "AA-C1": {
+      "dynamic_range_db": 5.442572502513936,
+      "fluctuation_proxy": 0.008065705185360218,
+      "loudness_rms_dbfs": -52.29969637449363,
+      "prominence_proxy": 0.10851395779263742,
+      "roughness": 0.4625748265136281,
+      "sharpness": 0.28248048287928035,
+      "tonality": 0.22608299665296833
+    },
+    "AA-C2": {
+      "dynamic_range_db": 5.594666492339049,
+      "fluctuation_proxy": 0.008986227717412643,
+      "loudness_rms_dbfs": -46.28548635833245,
+      "prominence_proxy": 0.10690380943281165,
+      "roughness": 0.42620322026132096,
+      "sharpness": 0.11467039964761967,
+      "tonality": 0.22647021538401654
+    },
+    "AA-C3": {
+      "dynamic_range_db": 5.638147803971631,
+      "fluctuation_proxy": 0.008992134332414348,
+      "loudness_rms_dbfs": -46.272228437536825,
+      "prominence_proxy": 0.10524976369132007,
+      "roughness": 0.42528984937893205,
+      "sharpness": 0.11403019456201138,
+      "tonality": 0.22658017435536612
+    }
+  },
+  "mosqito": {
+    "metrics_requested": [
+      "loudness",
+      "sharpness",
+      "roughness",
+      "fluctuation"
+    ],
+    "status": "NOT_INSTALLED_LOCAL"
+  },
+  "reference": {
+    "contract": "tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json",
+    "order_gate": "NOT_QUALIFIED",
+    "r1": "MISSING"
+  },
+  "schema": "s12.stage_aa.professional_finalist_review.v1",
+  "scope": "Hellcat synthetic; uncalibrated; finalist diagnostic only",
+  "status": "DIAGNOSTIC_ONLY",
+  "tested_head": "be7f156",
+  "vehicle": "hellcat"
+}

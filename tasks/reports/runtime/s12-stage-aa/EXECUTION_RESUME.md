@@ -66,7 +66,23 @@ root cause. AA4 evaluates only AA-C0…AA-C3: all 4 candidates pass hard gates
 across 11 diagnostic scenes, with AA-C3 the deterministic diagnostic preference
 for finalist review. No master gain or fixed-tone filler is used.
 
+## Completed AA5–AA6
+
+AA5 reviewed AA-C1/C2/C3 with Python proxies for loudness, sharpness,
+roughness, fluctuation, tonality and prominence. MATLAB was not launched and
+remains `MATLAB_FINALIST_RECEIPT_PENDING`; local MoSQITo is not installed.
+AA6 generated and independently validated
+`E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3`: 11 scenes,
+110 PCM24 stereo WAVs, Timbre Review, blind Dynamic Review B/C, answer manifest
+and objective receipt. The v1/v2 packages remain untouched.
+
+## Current pause
+
+`AA7_JOVI_FEEDBACK_ROUND2` is waiting for Jovi's human audition. Do not change
+the candidate or merge audio/profile tuning before feedback arrives.
+
 ## Required next action
 
-Run professional finalist metrics (Python/MoSQITo; MATLAB only if a stable
-human-open session already exists), then generate the v3 audition package.
+After feedback, translate each accepted/rejected scene comment into one metric
+hypothesis and one bounded Round-2 change; if no feedback arrives, remain at
+`WAITING_FOR_JOVI_AUDITION`.

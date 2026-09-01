@@ -1,0 +1,54 @@
+{
+  "boundaries": {
+    "global_gain": false,
+    "monitor_excluded": true,
+    "order_gate": "NOT_QUALIFIED",
+    "r1_reference": "MISSING"
+  },
+  "definitions": {
+    "idle_return_time": "idle_return transient-event proxy; exact time requires synchronized capture",
+    "idle_to_wot_peak_delta": "full_load.peak_dbfs - hot_idle.peak_dbfs",
+    "idle_to_wot_rms_delta": "full_load.rms_dbfs - hot_idle.rms_dbfs",
+    "lift_decay": "lift.rms_dbfs - full_load.rms_dbfs",
+    "shift_attack": "gear_shift.transient_event_density_per_s",
+    "tip_in_attack": "tip_in.rms_dbfs - steady_1200.rms_dbfs"
+  },
+  "loudness_matching": false,
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "package_objective": "E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3/objective_before_after_v3.json",
+  "schema": "s12.stage_aa.raw_dynamic_contract.v1",
+  "status": "DIAGNOSTIC_ONLY",
+  "tested_head": "a74e045",
+  "variants": {
+    "aa_c3": {
+      "idle_return_time": 0.25,
+      "idle_to_wot_peak_delta": 15.975364889616685,
+      "idle_to_wot_rms_delta": 11.179988782178185,
+      "lift_decay": -0.8563804562869919,
+      "loudness_matching": false,
+      "shift_attack": 0.75,
+      "source_domain": "published raw PCM; no fast AGC, whole-cycle equalization or loudness flattening",
+      "tip_in_attack": 7.189041769690519
+    },
+    "parent": {
+      "idle_return_time": 0.0,
+      "idle_to_wot_peak_delta": 2.592391858271565,
+      "idle_to_wot_rms_delta": 8.906594961256552,
+      "lift_decay": 1.0475376293783683,
+      "loudness_matching": false,
+      "shift_attack": 0.25,
+      "source_domain": "published raw PCM; no fast AGC, whole-cycle equalization or loudness flattening",
+      "tip_in_attack": 7.519521480783659
+    },
+    "stage_z_final": {
+      "idle_return_time": 0.25,
+      "idle_to_wot_peak_delta": 3.527157101482743,
+      "idle_to_wot_rms_delta": 5.86029507555056,
+      "lift_decay": 0.09958983053285664,
+      "loudness_matching": false,
+      "shift_attack": 0.25,
+      "source_domain": "published raw PCM; no fast AGC, whole-cycle equalization or loudness flattening",
+      "tip_in_attack": 3.795014466103794
+    }
+  }
+}

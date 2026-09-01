@@ -4249,8 +4249,8 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] AA2：绑定 canonical R2/R3 reference contract，区分 Timbre Review 与 Dynamic Review；不提升 R1/R2/R3 evidence level。
 - [x] AA3：只针对 Hellcat 根因检查 idle body、120–400 Hz pressure、blower carrier、transient/afterfire/idle-return，形成可证伪假设。
 - [x] AA4：最多生成 AA-C0…AA-C3 有界候选，执行 focused tests、hard gates 与 Pareto 维度检查；禁止 master-gain 补偿和随机多旋钮搜索。
-- [ ] AA5：对 2–3 finalists 做 Python/MoSQITo 评估；MATLAB 仅在已有稳定人工 session 时使用，否则记录 pending。
-- [ ] AA6：生成 `E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`，保留 v1/v2，提供中文 Timbre/Dynamic/Blind B-C 页面与 objective receipt。
+- [x] AA5：对 2–3 finalists 做 Python/MoSQITo 评估；MATLAB 仅在已有稳定人工 session 时使用，否则记录 pending。
+- [x] AA6：生成 `E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`，保留 v1/v2，提供中文 Timbre/Dynamic/Blind B-C 页面与 objective receipt。
 - [ ] AA7：等待 Jovi 对 v3 的人耳反馈；反馈前不把候选合并到 main、不扩散 Ferrari/RX-7。
 - [ ] AA8：记录最终状态、收据、repo/Vault 定向镜像与下一轮边界；人耳未通过时保持 `ACOUSTIC_QUALITY_NOT_YET_HUMAN_ACCEPTED`。
 
@@ -4261,4 +4261,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - AA1 layer ledger（`f61d7e0`）在 10 个 Hellcat 场景确认主要损失为 `transients→dp_dc` 的压力基线去除，以及不可修改的 frozen PTR attenuation；候选不得用 master gain 掩盖该根因。
 - AA2 绑定 canonical Q `reference_database_v2`（R1=0/R2=8/R3=15，order=`NOT_QUALIFIED`），Timbre 与 Dynamic review contract 已分离。
 - AA3/AA4 根因与候选报告已完成；AA-C0…AA-C3 在 11 个场景全部 hard-gate PASS，诊断偏好 AA-C3，但未宣称人耳质量提升。
+- AA5/AA6 已完成 finalist 代理指标与 v3 包；当前唯一暂停点为 `WAITING_FOR_JOVI_AUDITION`，AA-C3 未合并到 main。
 - 仅在对应阶段完成后填写；所有结论必须区分工程因果、工程显著性与声学质量方向。

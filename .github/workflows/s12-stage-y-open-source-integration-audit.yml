@@ -6,10 +6,12 @@ on:
       - agent/s12-stage-y-open-source-integration
       - agent/s12-stage-y-final-closure
       - agent/s12-stage-z-open-source-proof
+      - agent/s12-stage-aa-acoustic-quality-closure
     paths:
       - ".github/workflows/s12-stage-y-open-source-integration-audit.yml"
       - "tools/sound_sim/s12/**"
       - "tasks/reports/runtime/s12-stage-y/**"
+      - "tasks/reports/runtime/s12-stage-aa/**"
       - "docs/research/engine-audio-ecosystem/**"
       - "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/**"
   workflow_dispatch:
@@ -96,6 +98,25 @@ jobs:
             tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_z_method_ablation.py \
             --junitxml="${EVIDENCE_DIR}/stage_z.xml" \
             2>&1 | tee "${EVIDENCE_DIR}/stage_z.log"
+
+      - name: Stage-AA acoustic closure contracts
+        id: stage_aa
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest -q --disable-warnings \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_semantics.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_energy_budget.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_energy_ledger.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_reference_contract.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_root_cause.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_candidates.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_candidate_audit.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_finalist_review.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_dynamic_contract.py \
+            tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_aa_package_v3.py \
+            --junitxml="${EVIDENCE_DIR}/stage_aa.xml" \
+            2>&1 | tee "${EVIDENCE_DIR}/stage_aa.log"
 
       - name: Closed-loop and hybrid-tooling focused contracts
         id: closed_loop
@@ -212,6 +233,17 @@ jobs:
           else:
               assert stage_z_receipt["base_main_head"] == merge_base
           assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_receipt["renderer_source_head"], "HEAD"]).returncode == 0
+          aa_state = json.loads(Path("tasks/reports/runtime/s12-stage-aa/execution_state.json").read_text(encoding="utf-8"))
+          assert aa_state["base_main_head"] == merge_base
+          assert aa_state["current_phase"] == "AA7_JOVI_FEEDBACK_ROUND2"
+          assert aa_state["aa7_jovi_feedback_round2"]["status"] == "WAITING_FOR_JOVI_AUDITION"
+          aa_reference = json.loads(Path("tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json").read_text(encoding="utf-8"))
+          assert aa_reference["evidence_counts"] == {"R1": 0, "R2": 8, "R3": 15}
+          aa_energy = json.loads(Path("tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json").read_text(encoding="utf-8"))
+          assert len(aa_energy["scenes"]) == 10
+          aa_candidates = json.loads(Path("tasks/reports/runtime/s12-stage-aa/candidate_audit.json").read_text(encoding="utf-8"))
+          assert aa_candidates["candidate_ids"] == ["AA-C0", "AA-C1", "AA-C2", "AA-C3"]
+          assert all(item["hard_gates"]["passed"] for item in aa_candidates["candidates"])
           PY
           test -z "$(git status --porcelain=v1)"
 
@@ -226,6 +258,7 @@ jobs:
           COMPILEALL: ${{ steps.compileall.outcome }}
           SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
           STAGE_Z: ${{ steps.stage_z.outcome }}
+          STAGE_AA: ${{ steps.stage_aa.outcome }}
           CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
           STAGE_VW: ${{ steps.stage_vw.outcome }}
           FULL_S12: ${{ steps.full_s12.outcome }}
@@ -249,6 +282,7 @@ jobs:
               "compileall": os.environ["COMPILEALL"],
               "source_layers": os.environ["SOURCE_LAYERS"],
               "stage_z": os.environ["STAGE_Z"],
+              "stage_aa": os.environ["STAGE_AA"],
               "closed_loop": os.environ["CLOSED_LOOP"],
               "stage_vw": os.environ["STAGE_VW"],
               "full_s12": os.environ["FULL_S12"],
@@ -289,7 +323,7 @@ jobs:
               "outcomes": outcomes,
               "junit": {
                   name: junit(name)
-                  for name in ("source_layers", "stage_z", "closed_loop", "stage_vw", "full_s12")
+                   for name in ("source_layers", "stage_z", "stage_aa", "closed_loop", "stage_vw", "full_s12")
               },
               "log_sha256": {
                   name: log_sha(name)
@@ -298,6 +332,7 @@ jobs:
                       "compileall",
                       "source_layers",
                       "stage_z",
+                      "stage_aa",
                       "closed_loop",
                       "stage_vw",
                       "full_s12",
@@ -352,6 +387,7 @@ jobs:
           COMPILEALL: ${{ steps.compileall.outcome }}
           SOURCE_LAYERS: ${{ steps.source_layers.outcome }}
           STAGE_Z: ${{ steps.stage_z.outcome }}
+          STAGE_AA: ${{ steps.stage_aa.outcome }}
           CLOSED_LOOP: ${{ steps.closed_loop.outcome }}
           STAGE_VW: ${{ steps.stage_vw.outcome }}
           FULL_S12: ${{ steps.full_s12.outcome }}
@@ -360,7 +396,7 @@ jobs:
         run: |
           for result in \
             "$DEPENDENCIES" "$HISTORICAL_LOGS" "$COMPILEALL" \
-            "$SOURCE_LAYERS" "$STAGE_Z" "$CLOSED_LOOP" "$STAGE_VW" "$FULL_S12" \
+            "$SOURCE_LAYERS" "$STAGE_Z" "$STAGE_AA" "$CLOSED_LOOP" "$STAGE_VW" "$FULL_S12" \
             "$TRACK_P" "$REPOSITORY_CHECKS"; do
             test "$result" = "success"
           done

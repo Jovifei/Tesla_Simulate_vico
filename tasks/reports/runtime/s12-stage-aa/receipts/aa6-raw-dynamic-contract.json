@@ -1,0 +1,22 @@
+{
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\dynamic_contract.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "a74e045",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-raw-dynamic-contract.log"
+  ],
+  "ended_at_utc": "2026-09-01T09:56:44.791717Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-raw-dynamic-contract.log",
+  "log_sha256": "aabd0731e6a59f8566885bbde20a89b974cf2303efc66dc8b17d917983dc48be",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "output_path": "tasks/reports/runtime/s12-stage-aa/raw_dynamic_contract.json",
+  "output_sha256": "5b1ee28611cb7232d0de286b17ef77a343da8865d14e3bcaa459e0eca4981471",
+  "schema": "s12.stage_aa.raw_dynamic_contract_receipt.v1",
+  "started_at_utc": "2026-09-01T09:56:44.790584Z",
+  "status": "PASS",
+  "tested_head": "a74e045"
+}

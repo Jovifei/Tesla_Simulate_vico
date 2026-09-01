@@ -1,0 +1,43 @@
+[AA6 1/11] render hot_idle
+[AA6 2/11] render steady_1200
+[AA6 3/11] render steady_2000
+[AA6 4/11] render steady_3000
+[AA6 5/11] render tip_in
+[AA6 6/11] render full_load
+[AA6 7/11] render gear_shift
+[AA6 8/11] render lift
+[AA6 9/11] render afterfire
+[AA6 10/11] render idle_return
+[AA6 11/11] render complete_cycle
+{
+  "schema": "s12.stage_aa.v3_package_receipt.v1",
+  "status": "PASS",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "95808f8",
+  "package_root": "E:\\Tesla_speed\\review_packages\\s12-stage-aa-hellcat-quality-v3",
+  "manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+  "sha_manifest_sha256": "3901994f2b487d5aee51939d5678f5db5a54d3211377a06cf16e0825913bd81b",
+  "scene_count": 11,
+  "wav_count": 110,
+  "validation_errors": [],
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\package_v3.py",
+    "--package-root",
+    "E:\\Tesla_speed\\review_packages\\s12-stage-aa-hellcat-quality-v3",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "95808f8",
+    "--duration-s",
+    "4.0",
+    "--hot-idle-duration-s",
+    "20.0",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-v3-package.log"
+  ],
+  "started_at_utc": "2026-09-01T09:40:42.390813Z",
+  "ended_at_utc": "2026-09-01T09:53:17.801905Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-v3-package.log",
+  "log_sha256": "1499047055356bcbabf6af04fb299b9d4700b476cf370816e533869f4083d790"
+}
