@@ -15,7 +15,7 @@
     "AA7_JOVI_FEEDBACK_ROUND2",
     "AA8_FINAL_QUALIFICATION"
   ],
-  "current_phase": "AA2_REFERENCE_DIAGNOSTIC_CONTRACT",
+  "current_phase": "AA5_PROFESSIONAL_FINALIST_REVIEW",
   "status": "IN_PROGRESS",
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "stage_z_merge_commit": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
@@ -46,13 +46,39 @@
     "finding": "absolute pressure baseline dominates source; dP/DC removes it, then frozen PTR applies additional fixed attenuation",
     "master_gain_repair": false
   },
+  "aa2_reference_contract": {
+    "status": "PASS",
+    "tested_head": "862c69c",
+    "contract": "tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json",
+    "r1": "MISSING",
+    "r2": 8,
+    "r3": 15,
+    "order_gate": "NOT_QUALIFIED",
+    "timbre_loudness_matching": true,
+    "dynamic_loudness_matching": false
+  },
+  "aa3_hellcat_root_cause": {
+    "status": "PASS",
+    "tested_head": "732cdeb",
+    "report": "tasks/reports/runtime/s12-stage-aa/hellcat_root_cause.md",
+    "primary_root_cause": "PRESSURE_BASELINE_REMOVAL_PLUS_FROZEN_PTR_ATTENUATION",
+    "parameter_changes_applied": false
+  },
+  "aa4_bounded_candidates": {
+    "status": "PASS",
+    "tested_head": "732cdeb",
+    "audit": "tasks/reports/runtime/s12-stage-aa/candidate_audit.json",
+    "candidate_count": 4,
+    "hard_gates": "4/4 candidates across 11 scenes",
+    "diagnostic_preference": "AA-C3"
+  },
   "phases": {
     "AA0_STAGE_Z_CLOSEOUT": {"status": "PASS", "scope": "classify causal effect, engineering significance and quality direction; preserve v1 history"},
     "AA1_ENERGY_BUDGET_AUDIT": {"status": "PASS"},
-    "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "IN_PROGRESS"},
-    "AA3_HELLCAT_ROOT_CAUSE": {"status": "PENDING"},
-    "AA4_BOUNDED_CANDIDATES": {"status": "PENDING"},
-    "AA5_PROFESSIONAL_FINALIST_REVIEW": {"status": "PENDING"},
+    "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "PASS"},
+    "AA3_HELLCAT_ROOT_CAUSE": {"status": "PASS"},
+    "AA4_BOUNDED_CANDIDATES": {"status": "PASS"},
+    "AA5_PROFESSIONAL_FINALIST_REVIEW": {"status": "IN_PROGRESS"},
     "AA6_V3_AUDITION": {"status": "PENDING"},
     "AA7_JOVI_FEEDBACK_ROUND2": {"status": "PENDING", "human_status": "WAITING_FOR_JOVI_AUDITION"},
     "AA8_FINAL_QUALIFICATION": {"status": "PENDING"}

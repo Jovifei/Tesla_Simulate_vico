@@ -1,0 +1,32 @@
+[AA4] candidate AA-C0
+[AA4] candidate AA-C1
+[AA4] candidate AA-C2
+[AA4] candidate AA-C3
+{
+  "schema": "s12.stage_aa.candidate_audit_receipt.v1",
+  "status": "PASS",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "732cdeb",
+  "output_path": "tasks/reports/runtime/s12-stage-aa/candidate_audit.json",
+  "output_sha256": "3cc6658dd72b988e3c9a0e4d25b53083fb15beded3fb2bde7d2aab4b68b8b8c6",
+  "report_path": "tasks/reports/runtime/s12-stage-aa/candidate_review.md",
+  "report_sha256": "b81e8f5ae178c19721865042179c1602193d61333a44a02b4e9183fa6cae399f",
+  "candidate_count": 4,
+  "diagnostic_preference": "AA-C3",
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\candidate_audit.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "732cdeb",
+    "--duration-s",
+    "1.0",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa4-candidate-audit.log"
+  ],
+  "started_at_utc": "2026-09-01T09:29:40.551193Z",
+  "ended_at_utc": "2026-09-01T09:31:14.656784Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa4-candidate-audit.log",
+  "log_sha256": "8853f75e7c0bddd8288c2e4d933a615db6bd106b77dd1c3062304daa2e8bcc43"
+}

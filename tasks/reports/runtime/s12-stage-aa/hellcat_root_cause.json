@@ -1,0 +1,97 @@
+{
+  "candidate_boundary": {
+    "hellcat_only": true,
+    "master_gain": false,
+    "ptr_radiation_track_p": "UNCHANGED",
+    "r1": "MISSING"
+  },
+  "energy_trace": "tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json",
+  "findings": [
+    {
+      "evidence": {
+        "full_load_dp_dc_rms_dbfs": -40.64086280331033,
+        "full_load_pre_transients_ac_rms": 0.09486628503759525,
+        "full_load_pre_transients_dc_mean": 0.1870674015204548,
+        "mean_20_80_share_post_ptr": 0.009238084930671138,
+        "mean_20_80_share_pre_transients": 0.055409404288020395
+      },
+      "hypothesis": "absolute event pressure baseline dominates the source; DC/dP removes most of the body before PTR",
+      "id": "low_frequency_body",
+      "next_test": "event-derived AC pressure/body repair; do not add a master gain",
+      "severity": "HIGH"
+    },
+    {
+      "evidence": {
+        "full_load_120_400_share_dp_dc": 0.7855191909209045,
+        "full_load_120_400_share_pre_transients": 0.8639433804097884,
+        "full_load_dp_dc_rms_dbfs": -40.64086280331033
+      },
+      "hypothesis": "the desired pressure attack exists in the source but is attenuated by the pressure chain rather than created by post-EQ",
+      "id": "pressure_120_400",
+      "next_test": "bounded source/event pressure propagation with 120–400 Hz and click guards",
+      "severity": "HIGH"
+    },
+    {
+      "evidence": {
+        "aggregate_centroid_final_hz": 4258.716195887305,
+        "aggregate_centroid_parent_hz": 1662.8681290451425,
+        "aggregate_persistent_tone_final": 0.48872694047460113,
+        "aggregate_persistent_tone_parent": 0.45198730093328615,
+        "full_load_post_ptr_4_8k_share": 0.12678834671489397
+      },
+      "hypothesis": "forced-induction/high-band content becomes disproportionately dominant after the pressure/PTR stages",
+      "id": "blower_tonal_artifact",
+      "next_test": "reduce carrier dominance only through load-linked sideband/broadband hypotheses; no fixed-tone filler",
+      "severity": "MEDIUM"
+    },
+    {
+      "evidence": {
+        "aggregate_dynamic_range_final_db": 3.6165799509395344,
+        "aggregate_dynamic_range_parent_db": 9.403771572827887,
+        "aggregate_rms_final_dbfs": -62.07939016341438,
+        "aggregate_rms_parent_dbfs": -45.57428300810472
+      },
+      "hypothesis": "raw dynamic contrast is lost by pressure/PTR attenuation and is not a monitor-only issue",
+      "id": "dynamic_range",
+      "next_test": "compare idle-to-WOT raw contract before/after every candidate",
+      "severity": "HIGH"
+    },
+    {
+      "evidence": {
+        "afterfire_event_count": 2,
+        "afterfire_route": {
+          "arrival_sample_index": 22655,
+          "arrival_samples": 22654,
+          "arrival_samples_exact": 22654.164261479295,
+          "bank_id": 1,
+          "collector_pressure": 1.6680252366255608,
+          "energy": 0.039698347693048947,
+          "entity": 3,
+          "path_id": "primary_path_3",
+          "pressure_energy_factor": 0.9518207793795239,
+          "route": "primary",
+          "scheduled_sample": 22525,
+          "scheduled_sample_exact": 22525.044897959182
+        },
+        "reference_status": "MISSING"
+      },
+      "hypothesis": "afterfire scheduling is present, but its audible naturalness cannot be inferred from event count alone",
+      "id": "afterfire_naturalness",
+      "next_test": "preserve eligibility/latch and assess afterfire tail in the dynamic candidate package",
+      "severity": "MEDIUM"
+    }
+  ],
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "objective": "tasks/reports/runtime/s12-stage-z/objective_before_after.json",
+  "parameter_changes_applied": false,
+  "primary_root_cause": "PRESSURE_BASELINE_REMOVAL_PLUS_FROZEN_PTR_ATTENUATION",
+  "reference_contract": {
+    "order_gate": "NOT_QUALIFIED",
+    "path": "tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json",
+    "r1_status": "MISSING"
+  },
+  "schema": "s12.stage_aa.hellcat_root_cause.v1",
+  "status": "DIAGNOSTIC_ONLY",
+  "tested_head": "732cdeb",
+  "vehicle": "hellcat"
+}

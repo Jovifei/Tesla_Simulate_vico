@@ -54,7 +54,19 @@ dP/DC output RMS is `0.009289`; the pressure baseline dominates and is removed
 by the existing high-pass/DC stage. The frozen PTR drop is recorded but is not
 modifiable. No master/global gain was used.
 
+## Completed AA2–AA4
+
+AA2 binds `reference_diagnostic_contract.json`: canonical counts are R1=0,
+R2=8 and R3=15; order qualification is `NOT_QUALIFIED`. Timbre review may use
+shared-RMS matching for relative timbre only, while Dynamic review preserves
+relative level and transient behavior.
+
+AA3 identifies `PRESSURE_BASELINE_REMOVAL_PLUS_FROZEN_PTR_ATTENUATION` as the
+root cause. AA4 evaluates only AA-C0…AA-C3: all 4 candidates pass hard gates
+across 11 diagnostic scenes, with AA-C3 the deterministic diagnostic preference
+for finalist review. No master gain or fixed-tone filler is used.
+
 ## Required next action
 
-Bind the canonical R2/R3 reference database and separate timbre from dynamic
-diagnostics before defining any Hellcat candidate.
+Run professional finalist metrics (Python/MoSQITo; MATLAB only if a stable
+human-open session already exists), then generate the v3 audition package.
