@@ -690,6 +690,7 @@ class PersistentEventDomainEngine:
         raw = np.column_stack((0.55 * combustion_left + 0.72 * forced["blower"][:, 0] + 0.62 * forced["turbo"][:, 0] + 0.30 * forced["blowoff"][:, 0] + 0.54 * forced["intake"][:, 0] + 0.40 * mechanical, 0.55 * combustion_right + 0.72 * forced["blower"][:, 1] + 0.62 * forced["turbo"][:, 1] + 0.30 * forced["blowoff"][:, 1] + 0.54 * forced["intake"][:, 1] + 0.33 * mechanical))
         if self._cycle_sync is not None:
             raw = raw + 0.35 * self._cycle_sync.render(phase, rpm)
+        self._capture_layer("pre_transients", raw)
         if self._transient_mixer is not None:
             residual, counts = self._transient_mixer.render_block(n, float(state["throttle"]), float(state["rpm"]), float(boost_state[-1]) if boost_state.size else 0.0, n / self.sample_rate_hz)
             raw = self._transient_mixer.equal_power_crossfade(raw, raw + residual, self._transient_mixer.crossfade_mix())

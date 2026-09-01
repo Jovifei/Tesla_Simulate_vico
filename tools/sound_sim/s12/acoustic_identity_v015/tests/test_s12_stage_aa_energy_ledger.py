@@ -18,4 +18,7 @@ def test_energy_budget_contains_required_layers_and_gain_ratios() -> None:
         assert metrics["bands"]
         assert metrics["spectral_centroid_hz"] is not None
         assert metrics["transient_energy"] >= 0
-        assert metrics["gain_ratio_vs_previous"] is None if index == 0 else True
+        if layer in {"vehicle_state", "combustion_event", "forced_induction", "central_collector", "pre_transients"}:
+            assert metrics["gain_ratio_vs_previous"] is None
+        else:
+            assert metrics["gain_ratio_vs_previous"] is not None

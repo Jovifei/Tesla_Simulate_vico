@@ -35,6 +35,7 @@ def test_layer_trace_exposes_existing_signal_chain_without_changing_output() -> 
         "waveguide",
         "bank_collector",
         "central_collector",
+        "pre_transients",
         "transients",
         "dp_dc",
         "pre_ptr",

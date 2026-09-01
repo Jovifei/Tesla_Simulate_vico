@@ -25,6 +25,7 @@ ENERGY_LAYERS = (
     "waveguide",
     "bank_collector",
     "central_collector",
+    "pre_transients",
     "transients",
     "dp_dc",
     "pre_ptr",
@@ -50,6 +51,16 @@ FINAL_SETTINGS = {
     "transient_model": "state_v1",
     "audio_chain": "dp_v1",
 }
+GAIN_REFERENCES = {
+    "per_cylinder_path": "combustion_event",
+    "waveguide": "per_cylinder_path",
+    "bank_collector": "waveguide",
+    "transients": "pre_transients",
+    "dp_dc": "transients",
+    "pre_ptr": "dp_dc",
+    "post_ptr_raw": "pre_ptr",
+    "monitor": "post_ptr_raw",
+}
 
 
 def _state_arrays(trace: Any) -> dict[str, np.ndarray]:
@@ -74,14 +85,13 @@ def _band_metrics(audio: np.ndarray) -> dict[str, dict[str, float]]:
     return result
 
 
-def _layer_metrics(audio: np.ndarray, *, signal_kind: str, previous_rms: float | None) -> dict[str, Any]:
+def _layer_metrics(audio: np.ndarray, *, signal_kind: str) -> dict[str, Any]:
     values = np.asarray(audio, dtype=np.float64)
     dynamic = raw_dynamic_metrics(values, SAMPLE_RATE_HZ)
     timbre = timbre_metrics(values, SAMPLE_RATE_HZ)
     mono = np.mean(values, axis=1)
     transient = float(np.sqrt(np.mean(np.square(np.diff(mono)))) if mono.size > 1 else 0.0)
     rms = float(np.sqrt(np.mean(np.square(values)))) if values.size else 0.0
-    gain = None if previous_rms is None or previous_rms <= 1.0e-15 else rms / previous_rms
     return {
         "signal_kind": signal_kind,
         "rms_dbfs": float(dynamic["rms_dbfs"]),
@@ -92,7 +102,8 @@ def _layer_metrics(audio: np.ndarray, *, signal_kind: str, previous_rms: float |
         "roughness": float(timbre["roughness_proxy"]),
         "tonality": float(timbre["tonality_proxy"]),
         "transient_energy": transient,
-        "gain_ratio_vs_previous": None if gain is None else float(gain),
+        "gain_ratio_vs_previous": None,
+        "gain_reference": None,
         "rms_linear": rms,
     }
 
@@ -116,15 +127,18 @@ def build_energy_budget(*, duration_s: float = 1.0, scenes: Iterable[str] | None
         print(f"[AA1 {index}/{len(selected)}] trace {scene}", flush=True)
         signals, diagnostics = _render_scene(scene, duration_s)
         layers: dict[str, Any] = {}
-        previous_rms: float | None = None
         for layer in ENERGY_LAYERS:
             if layer not in signals:
                 raise RuntimeError(f"missing layer trace: {layer}")
             kind = "control_proxy" if layer == "vehicle_state" else "audio"
-            metrics = _layer_metrics(signals[layer], signal_kind=kind, previous_rms=previous_rms)
-            if kind == "audio":
-                previous_rms = metrics["rms_linear"]
+            metrics = _layer_metrics(signals[layer], signal_kind=kind)
             layers[layer] = metrics
+        for layer, reference in GAIN_REFERENCES.items():
+            current_rms = float(layers[layer]["rms_linear"])
+            reference_rms = float(layers[reference]["rms_linear"])
+            layers[layer]["gain_reference"] = reference
+            if reference_rms > 1.0e-15:
+                layers[layer]["gain_ratio_vs_previous"] = current_rms / reference_rms
         for metrics in layers.values():
             metrics.pop("rms_linear", None)
         scene_payload[scene] = {"duration_s": float(duration_s), "trace_scene": SCENES[scene], "layers": layers, "diagnostics": diagnostics}
@@ -159,7 +173,8 @@ def render_root_cause_report(payload: dict[str, Any], *, main_head: str) -> str:
         "| --- | --- | ---: | ---: |",
     ]
     for item in payload["largest_losses"][:12]:
-        lines.append(f"| {item['scene']} | {item['layer']} | {item['gain_db']:.3f} dB | {item['gain_ratio']:.6g} |")
+        reference = payload["scenes"][item["scene"]]["layers"][item["layer"]]["gain_reference"]
+        lines.append(f"| {item['scene']} | {reference} → {item['layer']} | {item['gain_db']:.3f} dB | {item['gain_ratio']:.6g} |")
     lines.extend(["", "## 结论", ""])
     losses = payload["largest_losses"]
     if losses:
