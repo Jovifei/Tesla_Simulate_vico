@@ -15,10 +15,10 @@
   },
   "loudness_matching": false,
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
-  "package_objective": "E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3/objective_before_after_v3.json",
+  "package_objective": "tasks/reports/runtime/s12-stage-aa/objective_before_after_v3.json",
   "schema": "s12.stage_aa.raw_dynamic_contract.v1",
   "status": "DIAGNOSTIC_ONLY",
-  "tested_head": "a74e045",
+  "tested_head": "245a3dc",
   "variants": {
     "aa_c3": {
       "idle_return_time": 0.25,

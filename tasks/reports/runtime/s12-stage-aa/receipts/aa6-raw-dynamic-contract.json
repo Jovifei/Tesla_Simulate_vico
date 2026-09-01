@@ -4,19 +4,19 @@
     "--main-head",
     "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
     "--tested-head",
-    "a74e045",
+    "245a3dc",
     "--log-path",
     "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-raw-dynamic-contract.log"
   ],
-  "ended_at_utc": "2026-09-01T09:56:44.791717Z",
+  "ended_at_utc": "2026-09-01T10:19:38.140372Z",
   "exit_code": 0,
   "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa6-raw-dynamic-contract.log",
-  "log_sha256": "aabd0731e6a59f8566885bbde20a89b974cf2303efc66dc8b17d917983dc48be",
+  "log_sha256": "39a6f35dcdaea682ca54a8f5a7dfb60edd4e340a965a3fcf603dbf6060e1a478",
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "output_path": "tasks/reports/runtime/s12-stage-aa/raw_dynamic_contract.json",
-  "output_sha256": "5b1ee28611cb7232d0de286b17ef77a343da8865d14e3bcaa459e0eca4981471",
+  "output_sha256": "7c11d838575245cd448a35b1043d1e7b30dadb169008342aac57e690a644149a",
   "schema": "s12.stage_aa.raw_dynamic_contract_receipt.v1",
-  "started_at_utc": "2026-09-01T09:56:44.790584Z",
+  "started_at_utc": "2026-09-01T10:19:38.138687Z",
   "status": "PASS",
-  "tested_head": "a74e045"
+  "tested_head": "245a3dc"
 }
