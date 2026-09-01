@@ -15,7 +15,7 @@
     "AA7_JOVI_FEEDBACK_ROUND2",
     "AA8_FINAL_QUALIFICATION"
   ],
-  "current_phase": "AA1_ENERGY_BUDGET_AUDIT",
+  "current_phase": "AA2_REFERENCE_DIAGNOSTIC_CONTRACT",
   "status": "IN_PROGRESS",
   "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
   "stage_z_merge_commit": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
@@ -35,10 +35,21 @@
     "below_engineering_significance": 3,
     "quality_direction": "REFERENCE_UNAVAILABLE"
   },
+  "aa1_energy_budget": {
+    "status": "PASS",
+    "tested_head": "f61d7e0",
+    "scenes": 10,
+    "duration_s": 1.0,
+    "trace": "tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json",
+    "root_cause_report": "tasks/reports/runtime/s12-stage-aa/energy_budget_root_cause.md",
+    "primary_loss_layers": ["transients_to_dp_dc", "pre_ptr_to_post_ptr_raw"],
+    "finding": "absolute pressure baseline dominates source; dP/DC removes it, then frozen PTR applies additional fixed attenuation",
+    "master_gain_repair": false
+  },
   "phases": {
     "AA0_STAGE_Z_CLOSEOUT": {"status": "PASS", "scope": "classify causal effect, engineering significance and quality direction; preserve v1 history"},
-    "AA1_ENERGY_BUDGET_AUDIT": {"status": "IN_PROGRESS"},
-    "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "PENDING"},
+    "AA1_ENERGY_BUDGET_AUDIT": {"status": "PASS"},
+    "AA2_REFERENCE_DIAGNOSTIC_CONTRACT": {"status": "IN_PROGRESS"},
     "AA3_HELLCAT_ROOT_CAUSE": {"status": "PENDING"},
     "AA4_BOUNDED_CANDIDATES": {"status": "PENDING"},
     "AA5_PROFESSIONAL_FINALIST_REVIEW": {"status": "PENDING"},

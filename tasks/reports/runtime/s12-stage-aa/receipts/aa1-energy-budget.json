@@ -1,0 +1,33 @@
+{
+  "boundaries": {
+    "master_gain_repair": false,
+    "ptr_radiation_track_p": "UNCHANGED",
+    "r1_reference": "MISSING"
+  },
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\energy_budget.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "f61d7e0",
+    "--duration-s",
+    "1.0",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa1-energy-budget.log"
+  ],
+  "duration_s": 1.0,
+  "ended_at_utc": "2026-09-01T09:00:02.090941Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa1-energy-budget.log",
+  "log_sha256": "ab16a7ab3ea4ab688c7211e3557605afb2aed196fdf70bc7a77875dc79b8c718",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "report_path": "tasks/reports/runtime/s12-stage-aa/energy_budget_root_cause.md",
+  "report_sha256": "0b318792241f71e78c995c839e77e255bbb3917d2f714e69a79182f28d292524",
+  "scenes": 10,
+  "schema": "s12.stage_aa.energy_budget_publish_receipt.v1",
+  "started_at_utc": "2026-09-01T08:59:49.099363Z",
+  "status": "PASS",
+  "tested_head": "f61d7e0",
+  "trace_path": "tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json",
+  "trace_sha256": "613c784304810fd9d0c5c009247ac5bfeec9bee6a2cc8705938e0f98db248ebc"
+}

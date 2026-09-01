@@ -4245,7 +4245,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 > 基线：Stage Z PR #3 已通过 CI 并合并；`STAGE_AA_BASE_MAIN=209378bcb9a0c1a352ffd56ca1c765ecce01f81d`。本阶段只处理 Hellcat，保留 v1/v2 试听包，不扩散其他车型。
 
 - [x] AA0：拆分 Stage Z method scorecard 的 causal、engineering significance 与 quality direction 语义；保留 v1 历史并建立 `metric_significance_contract.json`。
-- [ ] AA1：逐层审计 vehicle_state→monitor 的能量账本，定位 RMS/dynamic range 丢失层，建立 `energy_budget_trace.json` 与 root-cause 报告。
+- [x] AA1：逐层审计 vehicle_state→monitor 的能量账本，定位 RMS/dynamic range 丢失层，建立 `energy_budget_trace.json` 与 root-cause 报告。
 - [ ] AA2：绑定 canonical R2/R3 reference contract，区分 Timbre Review 与 Dynamic Review；不提升 R1/R2/R3 evidence level。
 - [ ] AA3：只针对 Hellcat 根因检查 idle body、120–400 Hz pressure、blower carrier、transient/afterfire/idle-return，形成可证伪假设。
 - [ ] AA4：最多生成 AA-C0…AA-C3 有界候选，执行 focused tests、hard gates 与 Pareto 维度检查；禁止 master-gain 补偿和随机多旋钮搜索。
@@ -4258,4 +4258,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - AA0 已在 `a7f22cf` 之后重算 12 个可执行方法：12/12 `CAUSAL_EFFECT_DETECTED`，9/12 `MEANINGFUL_ENGINEERING_EFFECT`，3/12 `BELOW_ENGINEERING_SIGNIFICANCE`；ENSIM4 保持 teacher-only。
 - `method_ablation_scorecard_v2.json`、`metric_significance_contract.json`、matrix v2 enrichment 与 `method_adoption_matrix_v3.json` 已生成；Stage-Z v1 scorecard 保持不变。
+- AA1 layer ledger（`f61d7e0`）在 10 个 Hellcat 场景确认主要损失为 `transients→dp_dc` 的压力基线去除，以及不可修改的 frozen PTR attenuation；候选不得用 master gain 掩盖该根因。
 - 仅在对应阶段完成后填写；所有结论必须区分工程因果、工程显著性与声学质量方向。

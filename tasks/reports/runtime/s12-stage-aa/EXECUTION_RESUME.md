@@ -2,7 +2,7 @@
 
 ## Current state
 
-`AA1_ENERGY_BUDGET_AUDIT`: `IN_PROGRESS` from merged Stage-Z main
+`AA2_REFERENCE_DIAGNOSTIC_CONTRACT`: `IN_PROGRESS` from merged Stage-Z main
 `209378bcb9a0c1a352ffd56ca1c765ecce01f81d`. The Stage-Z PR #3 CI run
 `33468755129` passed and was merged normally. Stage AA is limited to Hellcat;
 the v1 and v2 packages are preserved and must not be overwritten.
@@ -45,7 +45,16 @@ engineering-significant, and collector/persistent/DasEtwas are below the
 metric-specific significance floors. ENSIM4 remains teacher-only. The legacy
 Stage-Z scorecard remains unchanged.
 
+## Completed AA1
+
+The 10-scene layer ledger shows the main losses at `transients → dp_dc`
+(`-22` to `-25 dB`) and `pre_ptr → post_ptr_raw` (`-21` to `-23 dB`). In
+`full_load`, the source DC mean is `0.187067` with AC RMS `0.094866`, while
+dP/DC output RMS is `0.009289`; the pressure baseline dominates and is removed
+by the existing high-pass/DC stage. The frozen PTR drop is recorded but is not
+modifiable. No master/global gain was used.
+
 ## Required next action
 
-Use focused evidence to locate the layer causing the Parent→Final energy loss
-before changing any renderer parameter.
+Bind the canonical R2/R3 reference database and separate timbre from dynamic
+diagnostics before defining any Hellcat candidate.
