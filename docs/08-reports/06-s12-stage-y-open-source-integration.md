@@ -1,6 +1,6 @@
 # S12 Stage Y Open-Source Method Integration
 
-Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_PASS / FULL_S12_PASS / MAIN_NOT_UPDATED`
+Status: `INTEGRATED_ON_DEDICATED_BRANCH / FINAL_FITTED_MAP_PASS / FULL_S12_PASS / MAIN_MERGED`
 
 Integration branch: `agent/s12-stage-y-final-closure` (closure branch from the integration tip)
 
@@ -34,8 +34,9 @@ not acceptance of this combined tree. The first canonical run was blocked only
 by CRLF formatting in the new v2 receipt (`1368 passed, 2 skipped`); that failed
 receipt is retained as historical. After the LF repair, the current complete
 S12 receipt records `1370 passed, 2 skipped`, exit `0`, on tested HEAD
-`dbf6fa27`; this is software evidence only. The branch still requires CI before
-it may be proposed to main.
+`dbf6fa27`; this is software evidence only. PR #2 is merged to main at
+`62b3759c`; the current remaining gates are human/R1/OEM/Profile Freeze and
+Runtime/hardware, not another Stage Y software run.
 
 No external source code, presets, copyrighted vehicle audio, IR assets, or
 commercial model data are added. Track-P remains frozen. Human audition, legal

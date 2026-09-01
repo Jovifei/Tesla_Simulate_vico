@@ -4205,7 +4205,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## 2026-08-31 Stage Y final closure handoff
 
-> 状态：执行中；基于 `origin/agent/s12-stage-y-open-source-integration` 的闭包工作树；保留 v1，只有实际 PCM 输入变化才新增 v2。
+> 状态：Stage Y 软件闭包已完成并合并 main (`62b3759c`)；后续 Stage Z 使用独立 worktree；保留 v1，只有实际 PCM 输入变化才新增 v2。
 
 - [x] 修复最终 committed fitted-map 的 16 参数双向可达性，优先处理 broadband coupling；补齐 boost/bypass 最终地图证据。
 - [x] 复核 Y2-Y5、开源方法覆盖矩阵、CI/receipt 契约与当前 HEAD 绑定；补齐必要文档/收据。
@@ -4215,3 +4215,21 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - 起始 `origin/main`: `c08eb4c0d557c32e0896bef9be4f4eddf5d296ea`；起始 integration: `3aafda52f8c1b9fe5728591ca087b53fa2baf809`。
 - 当前明确阻塞：软件侧 canonical full S12 已通过（`1370 passed, 2 skipped`, exit `0`）；首次 CRLF 失败收据已保留并修复。剩余为 CI/PR 合并，以及历史公式-map 16/16 不可复用为最终资格；R1/human/Profile Freeze 仍保持 fail-closed。
+## 2026-09-01 S12 Stage Z open-source absorption proof
+
+> 基线：`origin/main=62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa`；新 worktree 为 `agent/s12-stage-z-open-source-proof`。本阶段保留 Stage Y/v1 历史证据，不重新执行 Stage Y merge 流程。
+
+- [ ] 修复 post-merge truth：清除 `MAIN_NOT_UPDATED`、merge pending 与 integration blocker，保留历史 receipt 原文。
+- [ ] 盘点 25 个 source 与 method-level traceability，建立 `method_adoption_matrix_v2.json`，准确拆分 code license、asset rights、runtime status。
+- [ ] 为 Engine-Sim、VehicleNoiseSynthesizer、DasEtwas/waveguide、Ignis/Markeasting 建立最小可执行 runtime call path 与 OFF/ON ablation；ENSIM4 只保留 teacher/reduced evidence。
+- [ ] 新增 method ablation runner/scorecard：记录 OFF/ON PCM SHA、target/guard metric、runtime/memory cost 与状态。
+- [ ] 从当前 main 生成全新 `E:\Tesla_speed\review_packages\s12-stage-y-hellcat-layers-v2`，绝不改 v1；生成中文整体试听与盲化 method A/B 页面、manifest 与答案页。
+- [ ] 生成 Parent→Final objective before/after 与方法消融报告，明确 Research/Engineering/Acoustic 三层结论。
+- [ ] 运行 affected focused tests、WAV 重开、SHA/JSON/license/media/Track-P/diff 检查；若源码改变，最终 HEAD 仅跑一次完整 S12。
+- [ ] 更新 Stage Z 报告、Stage Y 当前状态与 Obsidian；提交新分支、push、建 PR，软件门禁全绿前不 merge。
+
+### Stage Z acceptance checklist
+
+- Main truth: `62b3759c…` verified; Stage Y software/CI/full S12/Track-P PASS; external HUMAN/R1/OEM/Profile Freeze/Runtime/HARDWARE remain closed.
+- Acoustic contribution is `PROVEN` only when OFF/ON has SHA difference, target metric movement, bounded guard metric and no regression; SHA-only is insufficient.
+- No copied source code, `.mr`, IR, recordings, WAV, assets, presets or model weights from external projects.

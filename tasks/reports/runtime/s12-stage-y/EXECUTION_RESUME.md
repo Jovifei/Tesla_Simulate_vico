@@ -18,8 +18,9 @@ formula-map receipt is historical and must not be relabelled. The existing v1
 package remains intact; if the changed fitted-map renderer is packaged, create
 v2 in a new directory.
 
-- Branch: `agent/s12-stage-y-final-closure`
-- Worktree: `E:/Tesla_speed/worktrees/s12-stage-y-final-closure`
+- Main HEAD: `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa` (PR #2 merged; CI run `33435858345` PASS; Stage Y software evidence PASS).
+- Branch: `agent/s12-stage-z-open-source-proof`
+- Worktree: `E:/Tesla_speed/worktrees/s12-stage-z-open-source-proof`
 - Y0 setup receipt: `9dffb65dc885e4b272f0286a6dc1350b83f66a4d` from base Stage-X `3d433e30f2c0238d65baed321aa70355a626ceb6`.
 - Y1 evidence HEAD: `e0436dcdf82d0c6acfcc3a05c7195b91790caffc` (`e0436dc`); the runtime-resolved live HEAD at probe start was the same.
 - Y2 fitted harmonic map: `PASS`. The current committed map is `tools/sound_sim/s12/acoustic_identity_v015/stage_y/data/hellcat_fixture_timbre_map.json` (file SHA-256 `59690572E189D2CA4A5005EA0297C75622DCA244112AC3747635D9FB16AC9519`, fixture SHA `060F511881CD2D5994AFAC7678222BCA95F9239620884BF342BB8C054D4C06D1`), generated from the canonical fixture-hash repair; the old map hash remains historical. The fitter stores one-sided Fourier coefficients (`2/N`, with DC/Nyquist `1/N`); `OUTPUT_SCALE` and PCM24 validation were not changed. It is `FIXTURE_ONLY`, `NOT_TUNING_AUTHORITY`, and `NOT_OEM`.
@@ -51,4 +52,4 @@ Source `1f3a9cb` emits historical snapshot v3; current source emits v4 with expl
 
 ## Y6 published package
 
-`E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v1` contains 154 synthetic PCM24 stereo WAVs, eleven scenes (idle20s, others8s), and two Chinese review pages. Production source `0916969`, exit0; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`. Browser loaded77 players per page and sampled Parent/F/Monitor playback successfully. Receipt: `tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json`. This v1 package is historical and remains untouched; the fitted-map coupling change requires a new v2 package if regeneration is requested. Remaining: PR/CI/main integration, human audition and R1/Profile Freeze gates. Human audition/R1/Profile Freeze remain unaccepted.
+`E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v1` contains 154 synthetic PCM24 stereo WAVs, eleven scenes (idle20s, others8s), and two Chinese review pages. Production source `0916969`, exit0; manifest SHA `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`. Browser loaded77 players per page and sampled Parent/F/Monitor playback successfully. Receipt: `tasks/reports/runtime/s12-stage-y/y6_audition/y6_audition_receipt.json`. This v1 package is historical and remains untouched; the fitted-map coupling change requires a new v2 package if regeneration is requested. PR/CI/main integration is complete; human audition, legal R1, OEM/calibration, Profile Freeze, Runtime and hardware gates remain unaccepted.

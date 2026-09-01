@@ -1,8 +1,8 @@
 {
   "schema": "s12.stage_y.continuous_execution.v1",
   "base_stage_x_sha": "3d433e30f2c0238d65baed321aa70355a626ceb6",
-  "current_branch": "agent/s12-stage-y-final-closure",
-  "worktree": "E:/Tesla_speed/worktrees/s12-stage-y-final-closure",
+  "current_branch": "agent/s12-stage-z-open-source-proof",
+  "worktree": "E:/Tesla_speed/worktrees/s12-stage-z-open-source-proof",
   "phase_order": [
     "Y0_SETUP",
     "Y1_REACHABILITY",
@@ -18,6 +18,10 @@
   "metadata_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "current_head_at_metadata_write": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "runtime_resolved_live_head_at_probe": "f498c99352ad559897b6157d6722d64e05e68a32",
+  "main_head": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
+  "post_merge_commit": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
+  "post_merge_pr": 2,
+  "post_merge_ci": {"run_id": 33435858345, "status": "PASS"},
   "final_full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "phases": {
     "Y0_SETUP": {
@@ -169,7 +173,7 @@
       "historical_failed_full_s12_receipt_path": "tasks/reports/runtime/s12-stage-y/final_qualification/full_s12_final_receipt_v2_failed_track_p.json",
       "historical_failed_full_s12_tested_head": "65b33744fd9134cbebff7516013e4b912c4d09d6",
       "historical_failed_full_s12_result": "1368 passed, 2 skipped; Track-P guard failed on CRLF in the newly added Y1 v2 receipt",
-      "blocker": "CI/PR integration remains; human/R1/Profile Freeze remain external gates."
+      "blocker": "Human audition, legal synchronized R1, OEM/calibration, Profile Freeze, Android Runtime and hardware acceptance remain external gates."
     }
   },
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction"
