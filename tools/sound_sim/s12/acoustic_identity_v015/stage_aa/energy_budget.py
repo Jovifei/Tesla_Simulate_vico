@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
+import sys
 from typing import Any, Iterable
 
 import numpy as np
@@ -187,21 +190,47 @@ def render_root_cause_report(payload: dict[str, Any], *, main_head: str) -> str:
     return "\n".join(lines) + "\n"
 
 
-def publish_energy_budget(*, main_head: str, duration_s: float = 1.0, repo_root: Path = REPO_ROOT) -> dict[str, Any]:
+def publish_energy_budget(*, main_head: str, tested_head: str = "unknown", duration_s: float = 1.0, log_path: str | None = None, command: list[str] | None = None, repo_root: Path = REPO_ROOT) -> dict[str, Any]:
+    started_at = datetime.now(timezone.utc)
     payload = build_energy_budget(duration_s=duration_s)
+    payload["main_head"] = main_head
+    payload["tested_head"] = tested_head
     trace_path = repo_root / "tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json"
     report_path = repo_root / "tasks/reports/runtime/s12-stage-aa/energy_budget_root_cause.md"
     write_json(trace_path, payload)
     report_path.write_text(render_root_cause_report(payload, main_head=main_head), encoding="utf-8", newline="\n")
-    return {"schema": "s12.stage_aa.energy_budget_publish_receipt.v1", "status": "PASS", "main_head": main_head, "duration_s": duration_s, "scenes": len(payload["scenes"]), "trace_path": str(trace_path.relative_to(repo_root)).replace("\\", "/"), "report_path": str(report_path.relative_to(repo_root)).replace("\\", "/")}
+    ended_at = datetime.now(timezone.utc)
+    receipt = {
+        "schema": "s12.stage_aa.energy_budget_publish_receipt.v1",
+        "status": "PASS",
+        "main_head": main_head,
+        "tested_head": tested_head,
+        "duration_s": duration_s,
+        "scenes": len(payload["scenes"]),
+        "trace_path": str(trace_path.relative_to(repo_root)).replace("\\", "/"),
+        "trace_sha256": hashlib.sha256(trace_path.read_bytes()).hexdigest(),
+        "report_path": str(report_path.relative_to(repo_root)).replace("\\", "/"),
+        "report_sha256": hashlib.sha256(report_path.read_bytes()).hexdigest(),
+        "command": command or [],
+        "started_at_utc": started_at.isoformat().replace("+00:00", "Z"),
+        "ended_at_utc": ended_at.isoformat().replace("+00:00", "Z"),
+        "exit_code": 0,
+        "log_path": log_path,
+        "log_sha256": hashlib.sha256(Path(log_path).read_bytes()).hexdigest() if log_path and Path(log_path).is_file() else None,
+        "boundaries": payload["boundaries"],
+    }
+    write_json(repo_root / "tasks/reports/runtime/s12-stage-aa/receipts/aa1-energy-budget.json", receipt)
+    return receipt
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--main-head", required=True)
+    parser.add_argument("--tested-head", required=True)
     parser.add_argument("--duration-s", type=float, default=1.0)
+    parser.add_argument("--log-path")
     args = parser.parse_args()
-    receipt = publish_energy_budget(main_head=args.main_head, duration_s=args.duration_s)
+    receipt = publish_energy_budget(main_head=args.main_head, tested_head=args.tested_head, duration_s=args.duration_s, log_path=args.log_path, command=sys.argv)
     print(json.dumps(receipt, ensure_ascii=False, indent=2))
     return 0
 
