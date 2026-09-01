@@ -35,6 +35,21 @@ LEGACY_MAP_FORCED_LAYER_COUPLING = 1.0
 FITTED_MAP_FORCED_LAYER_COUPLING = 2.0
 
 
+def _mix_bank_signals(bank_audio: np.ndarray) -> np.ndarray:
+    values = np.asarray(bank_audio, dtype=np.float64)
+    if values.ndim == 1:
+        return np.column_stack((values, values))
+    if values.ndim != 2:
+        raise ValueError("bank audio must be one- or two-dimensional")
+    left = np.zeros(values.shape[1], dtype=np.float64)
+    right = np.zeros(values.shape[1], dtype=np.float64)
+    for bank, signal in enumerate(values):
+        pan = -0.65 if bank % 2 == 0 else 0.65
+        left += signal * (1.0 - pan) * 0.5
+        right += signal * (1.0 + pan) * 0.5
+    return np.column_stack((left, right))
+
+
 def _finite_scalar(value: Any, label: str) -> float:
     if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
         raise ValueError(f"{label} must be a finite number")
@@ -315,6 +330,7 @@ class PersistentEventDomainEngine:
         self.cycle_sync_model = cycle_sync_model
         self.transient_model = transient_model
         self.audio_chain_model = audio_chain
+        self._layer_trace_sink: dict[str, list[np.ndarray]] | None = None
         self.entity_count = int(unwrap(self.config, "cylinder_or_rotor_count"))
         self.bank_count = int(unwrap(self.config, "bank_count"))
         self._reset_runtime()
@@ -504,6 +520,29 @@ class PersistentEventDomainEngine:
         diagnostics.update({"frames": len(outputs), "sample_count": int(raw.shape[0]), "frame_trace": trace})
         return EngineAudioBlock(raw, monitor, diagnostics, post_ptr)
 
+    def process_with_layer_trace(self, vehicle_state_block: Mapping[str, np.ndarray], external_transient: np.ndarray | None = None) -> tuple[EngineAudioBlock, dict[str, np.ndarray]]:
+        """Return normal output plus diagnostic-only stereo taps for each signal layer."""
+        if self._layer_trace_sink is not None:
+            raise RuntimeError("layer tracing is already active")
+        sink: dict[str, list[np.ndarray]] = {}
+        self._layer_trace_sink = sink
+        try:
+            result = self.process_with_trace(vehicle_state_block, external_transient)
+            layers = {name: np.concatenate(chunks, axis=0) for name, chunks in sink.items() if chunks}
+            return result, layers
+        finally:
+            self._layer_trace_sink = None
+
+    def _capture_layer(self, name: str, signal: np.ndarray) -> None:
+        if self._layer_trace_sink is None:
+            return
+        values = np.asarray(signal, dtype=np.float64)
+        if values.ndim == 1:
+            values = np.column_stack((values, values))
+        if values.ndim != 2 or values.shape != (self.block_size, 2) or not np.all(np.isfinite(values)):
+            raise ValueError(f"layer trace {name} must be finite stereo block")
+        self._layer_trace_sink.setdefault(name, []).append(values.copy())
+
     def _path_state_energy(self) -> float:
         values = [tail for tail in self._event_tails] + [tail for tail in self._collector_event_tails] + [self._central_collector_event_tail] + [line.history for line in self._path_lines] + [line.history for line in self._collector_lines] + [self._central_collector_line.history]
         if self.waveguide_network is not None:
@@ -535,12 +574,14 @@ class PersistentEventDomainEngine:
         load = np.full(n, np.clip(state["load"], 0.0, 1.0), dtype=np.float64)
         throttle = np.full(n, np.clip(state["throttle"], 0.0, 1.0), dtype=np.float64)
         acceleration = np.full(n, state["acceleration_mps2"], dtype=np.float64)
+        self._capture_layer("vehicle_state", np.column_stack((load, throttle)))
         torque_input = self._consume(self._pending_combustion_torque, n)
         pll_state = (self.pll.phase_rad, self.pll.omega_rad_s, self.pll.initialized, self.pll.sample_count)
         phase_preview = self.pll.process_block(rpm, load, throttle, acceleration, torque_input)
         events = schedule_events(phase_preview.phase_rad, self.config, self.sample_rate_hz)
         self._event_count += events.count
         event_torque_input = torque_input.copy()
+        combustion_event = np.zeros(n, dtype=np.float64)
         for event_index, entity in zip(events.sample_index, events.entity_index):
             energy = self._event_energy(float(load[event_index]), float(throttle[event_index]), int(entity), self._event_count)
             packet = render_event_packet(self.sample_rate_hz, min(0.10, max(0.035, 3.5 * float(unwrap(self.config, "combustion_event.decay_time_s")))), float(unwrap(self.config, "combustion_event.rise_time_s")), float(unwrap(self.config, "combustion_event.decay_time_s")), energy, float(unwrap(self.config, "blowdown_event")))
@@ -551,6 +592,7 @@ class PersistentEventDomainEngine:
             if remainder.size:
                 self._place(self._pending_combustion_torque, 0, remainder)
             self._combustion_torque_event_count += 1
+        combustion_event = np.sum(np.asarray([tail[:n] for tail in self._event_tails], dtype=np.float64), axis=0)
         self.pll.phase_rad, self.pll.omega_rad_s, self.pll.initialized, self.pll.sample_count = pll_state
         phase_block = self.pll.process_block(rpm, load, throttle, acceleration, event_torque_input)
         omega_ripple = phase_block.omega_rad_s - rpm * 2.0 * np.pi / 60.0
@@ -570,11 +612,15 @@ class PersistentEventDomainEngine:
             entity_sources.append(tilted * float(line.attenuation))
             if self.waveguide_network is None:
                 banks[int(bank_assignment[entity])] += line.process(tilted)
+        self._capture_layer("combustion_event", combustion_event)
+        per_cylinder = np.sum(np.asarray(entity_sources, dtype=np.float64), axis=0) if entity_sources else np.zeros(n, dtype=np.float64)
+        self._capture_layer("per_cylinder_path", per_cylinder)
         collector_inputs = banks
         if self.waveguide_network is not None:
             collector_inputs = self.waveguide_network.process(np.asarray(entity_sources, dtype=np.float64)).bank_audio.copy()
             if collector_inputs.shape[0] < self.bank_count:
                 collector_inputs = np.pad(collector_inputs, ((0, self.bank_count - collector_inputs.shape[0]), (0, 0)))
+        self._capture_layer("waveguide", _mix_bank_signals(collector_inputs))
         collector_topology = str(unwrap(self.config, "collector_assignment"))
         self._parameter_consumption["collector_assignment"] = True
         if collector_topology == "central_first":
@@ -592,7 +638,9 @@ class PersistentEventDomainEngine:
         collector = np.zeros_like(collector_inputs)
         for bank, line in enumerate(self._collector_lines):
             collector[bank] = line.process(collector_inputs[bank])
+        self._capture_layer("bank_collector", _mix_bank_signals(collector))
         central = self._central_collector_line.process(self._consume(self._central_collector_event_tail, n))
+        self._capture_layer("central_collector", central)
         self._collector_pressure = float(np.max(np.abs(collector_inputs))) if collector_inputs.size else 0.0
         combustion_left = np.zeros(n, dtype=np.float64)
         combustion_right = np.zeros(n, dtype=np.float64)
@@ -632,6 +680,8 @@ class PersistentEventDomainEngine:
             forced_layer_coupling = self._timbre_layer_coupling["forced_layer"]
             forced["blower"] *= forced_layer_coupling
             forced["turbo"] *= forced_layer_coupling
+        forced_mix = forced["blower"] + forced["turbo"] + forced["blowoff"] + forced["intake"]
+        self._capture_layer("forced_induction", forced_mix)
         mechanical = (
             0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
             + 0.003 * phase_block.torque_ripple
@@ -646,19 +696,24 @@ class PersistentEventDomainEngine:
             self._transient_counts = self._transient_mixer.cumulative_diagnostics()
         if external_transient is not None:
             raw += external_transient
+        self._capture_layer("transients", raw)
         if self._audio_chain is not None:
             raw = self._audio_chain.process(raw)
+        self._capture_layer("dp_dc", raw)
         if self._attack_mix > 0.0:
             raw = raw + self._attack_mix * self._attack_band_state.process(raw)
         self._parameter_consumption["transfer_ir"] = True
         raw = self._transfer_ir.process(raw)
+        self._capture_layer("pre_ptr", raw)
         boundary_jump = float(np.max(np.abs(raw[0] - self._last_output_sample))) if raw.size else 0.0
         self._click_max_boundary_jump = max(self._click_max_boundary_jump, boundary_jump)
         self._click_sum_sq += boundary_jump * boundary_jump
         self._click_count += 1
         self._last_output_sample = raw[-1].copy()
         post_ptr = self.ptr.process(raw) if self.ptr is not None else None
+        self._capture_layer("post_ptr_raw", post_ptr if post_ptr is not None else raw)
         monitor = self._monitor(post_ptr if post_ptr is not None else raw)
+        self._capture_layer("monitor", monitor)
         self.sample_counter += n
         self._last_rpm = float(state["rpm"])
         self._last_throttle = float(state["throttle"])
