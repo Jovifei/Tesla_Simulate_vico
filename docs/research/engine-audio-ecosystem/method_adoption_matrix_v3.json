@@ -1,0 +1,933 @@
+{
+  "adoption_and_acoustic_significance_are_separate": true,
+  "base_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "base_matrix": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json",
+  "rows": [
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "ansys-sound_research_boundary",
+      "method_name": "measurement/simulation/psychoacoustic workflow",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "ansys-sound",
+      "source_license": "Ansys proprietary",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "audiomotors-pro_research_boundary",
+      "method_name": "recording-driven RPM/granular workflow",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "audiomotors-pro",
+      "source_license": "unconfirmed; historical product",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "crankcase-rev_research_boundary",
+      "method_name": "cycle-synchronous recorded resynthesis concept",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "crankcase-rev",
+      "source_license": "commercial evaluation agreement",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_WORKFLOW_ONLY",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "stage_y/cycle_residual_bank.py"
+      ],
+      "method_id": "cylinder-pressure-ola_research_boundary",
+      "method_name": "pressure grain indexing/OLA",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "cylinder-pressure-ola",
+      "source_license": "paper/license must be checked at source",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.019770301376118016,
+        "scorecard_row": "dasetwas_waveguide_lifecycle",
+        "target_metric": "spectral_flux"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "EQUIVALENT_CLEAN_ROOM",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/waveguide.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/audio_chain_dp.py"
+      ],
+      "method_id": "dasetwas_waveguide_lifecycle",
+      "method_name": "stateful waveguide warmup and continuity",
+      "notes": "Shares the Engine-Sim path ablation; no Rust source, presets or example audio are imported.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork/PressureAudioChain persistent state",
+      "source_id": "dasetwas-enginesound",
+      "source_license": "MIT plus separate notices",
+      "target_metric": "spectral_flux",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_WORKFLOW_ONLY",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "stage_x/search_parameters.py"
+      ],
+      "method_id": "ddsp-vehicle_research_boundary",
+      "method_name": "RPM/gear/pedal/speed/acceleration ablation",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "ddsp-vehicle",
+      "source_license": "paper/data license not established",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "afterfire_eligible",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 9.682383871013489e-08,
+        "scorecard_row": "engine_sim_collector_network",
+        "target_metric": "spectral_centroid_hz"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/event_domain/collector_network.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "engine_sim_collector_network",
+      "method_name": "bank and collector combination",
+      "notes": "OFF collapses to the central-first topology; ON retains the committed two-bank-then-central topology.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> collector assignment -> bank/central collector lines",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "spectral_centroid_hz",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py"
+      ]
+    },
+    {
+      "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.1411901665342377,
+        "scorecard_row": "engine_sim_event_pressure",
+        "target_metric": "roughness_proxy"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/event_domain/event_scheduler.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/event_domain/chamber_event.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "engine_sim_event_pressure",
+      "method_name": "cylinder event and chamber pressure packet",
+      "notes": "OFF sets only the synthetic combustion event energy to zero; no global gain or PTR change.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> schedule_events -> render_event_packet -> _place",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "roughness_proxy",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py"
+      ]
+    },
+    {
+      "ablation_scenario": "steady_3000rpm",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.3468868438604585,
+        "scorecard_row": "engine_sim_forced_induction_state",
+        "target_metric": "sharpness_proxy"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/event_domain/forced_induction.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/timbre_map.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "engine_sim_forced_induction_state",
+      "method_name": "forced-induction state and shaft phase",
+      "notes": "OFF uses the existing harmonic_v1 branch; ON uses the committed fitted timbre map.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _advance_boost -> render_timbre_map/render_forced_induction",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "sharpness_proxy",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_timbre_map.py"
+      ]
+    },
+    {
+      "ablation_scenario": "complete_cycle",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.06067962279897664,
+        "scorecard_row": "engine_sim_path_waveguide",
+        "target_metric": "spectral_centroid_hz"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/waveguide.py"
+      ],
+      "method_id": "engine_sim_path_waveguide",
+      "method_name": "per-cylinder exhaust path and propagation delay",
+      "notes": "OFF selects the existing delay_lpf_v1 path; ON selects the existing stateful waveguide path.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> WaveguideNetwork.process -> StatefulWaveguide.process",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "spectral_centroid_hz",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_waveguide.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py"
+      ]
+    },
+    {
+      "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "BELOW_ENGINEERING_SIGNIFICANCE",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.016423795524532162,
+        "scorecard_row": "engine_sim_persistent_block_state",
+        "target_metric": "dynamic_range_db"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "engine_sim_persistent_block_state",
+      "method_name": "persistent block state across 20 ms frames",
+      "notes": "OFF recreates the same engine for every state frame; ON keeps one persistent instance.",
+      "runtime_call_path": "PersistentEventDomainEngine.process_with_trace -> _process_frame (single engine instance)",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "dynamic_range_db",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py"
+      ]
+    },
+    {
+      "ablation_scenario": "full_load_acceleration",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 1.2846333847941322,
+        "scorecard_row": "engine_sim_pressure_audio_chain",
+        "target_metric": "spectral_centroid_hz"
+      },
+      "adoption_status": "IMPLEMENTED_CLEAN_ROOM",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "PINNED_METHOD_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/audio_chain_dp.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "engine_sim_pressure_audio_chain",
+      "method_name": "pressure-domain to audio-chain handoff",
+      "notes": "OFF disables only dp_v1; the frozen PTR boundary remains identical.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process -> FrozenPtrStereo.process",
+      "source_id": "engine-sim",
+      "source_license": "MIT",
+      "target_metric": "spectral_centroid_hz",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_TEACHER_ONLY",
+      "asset_rights_status": "EXTERNAL_RECEIPT_ONLY",
+      "code_license_status": "TEACHER_REFERENCE_ONLY",
+      "commercial_runtime_status": "NOT_A_RUNTIME_CANDIDATE",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/teacher_response.py"
+      ],
+      "method_id": "ensim4_teacher_reduced",
+      "method_name": "CFD teacher to reduced pressure response",
+      "notes": "Teacher-vs-reduced evidence is diagnostic; CFD binary/audio stays external and is never a Runtime candidate.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> ReducedCfdTeacherResponse.process (explicit non-candidate path)",
+      "source_id": "ensim4",
+      "source_license": "MIT",
+      "target_metric": null,
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_persistent_engine.py"
+      ]
+    },
+    {
+      "ablation_scenario": "steady_3000rpm",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.3468868438604585,
+        "scorecard_row": "stage_y_fitted_timbre_map",
+        "target_metric": "sharpness_proxy"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "EQUIVALENT_CLEAN_ROOM",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/harmonic_map_fit.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/timbre_map.py"
+      ],
+      "method_id": "stage_y_fitted_timbre_map",
+      "method_name": "RPM/load/boost lookup timbre map",
+      "notes": "Synthetic committed fixture only; no paper dataset or private weight is used.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> render_timbre_map",
+      "source_id": "eone",
+      "source_license": "CC BY-NC-ND paper; product data proprietary",
+      "target_metric": "sharpness_proxy",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_harmonic_map.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_CODE_LICENSE",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "esp32-rc-engine-sound_research_boundary",
+      "method_name": "embedded state/buffer/voice layering",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "esp32-rc-engine-sound",
+      "source_license": "NONE_FOUND",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "evx-suite_research_boundary",
+      "method_name": "desktop authoring to embedded module boundary",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "evx-suite",
+      "source_license": "commercial suite/evaluation/production licenses",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_CODE_LICENSE",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "fivem-enginesound_research_boundary",
+      "method_name": "layer/state schema only",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "fivem-enginesound",
+      "source_license": "Apache-2.0 file conflicts with README MIT claim",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "fubos_research_boundary",
+      "method_name": "harmonic map authoring/zero-allocation DSP concept",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "fubos",
+      "source_license": "Unity Asset Store commercial EULA",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_CODE_LICENSE",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "granular-engine-audio_research_boundary",
+      "method_name": "grain scheduling, low-amplitude cut, crossfade",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "granular-engine-audio",
+      "source_license": "NONE_FOUND; treat all-rights-reserved",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "full_load_acceleration",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 1.2846333847941322,
+        "scorecard_row": "ignis_pressure_domain_equivalent",
+        "target_metric": "spectral_centroid_hz"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "CONCEPT_ONLY_SOURCE_NOT_COPIED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/audio_chain_dp.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "ignis_pressure_domain_equivalent",
+      "method_name": "pressure/DC/dP/filter lifecycle",
+      "notes": "Equivalent clean-room method only; Ignis has no tracked LICENSE and is not ported.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> PressureAudioChain.process",
+      "source_id": "ignis",
+      "source_license": "NONE_FOUND",
+      "target_metric": "spectral_centroid_hz",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_dp_chain.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "krotos-igniter_research_boundary",
+      "method_name": "hybrid granular/synth/one-shot workflow",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "krotos-igniter",
+      "source_license": "proprietary terms",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.25273978282969434,
+        "scorecard_row": "markeasting_state_layer_equivalent",
+        "target_metric": "roughness_proxy"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "UNVERIFIED",
+      "code_license_status": "RESEARCH_CODE_NOT_COPIED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/package.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/state_transients.py"
+      ],
+      "method_id": "markeasting_state_layer_equivalent",
+      "method_name": "state/layer authoring separation",
+      "notes": "Repository MIT and individual audio rights are separate; no public WAV/recording is used.",
+      "runtime_call_path": "build_stage_z_package -> cumulative layer records -> PersistentEventDomainEngine",
+      "source_id": "markeasting-engine-audio",
+      "source_license": "MIT",
+      "target_metric": "roughness_proxy",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_package.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_COMMERCIAL_RUNTIME",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "nemisindo_research_boundary",
+      "method_name": "low-parameter procedural runtime API",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "nemisindo",
+      "source_license": "Unity Asset Store commercial EULA",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_WORKFLOW_ONLY",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "stage_y/cycle_sync_resynth.py"
+      ],
+      "method_id": "psola-2012_research_boundary",
+      "method_name": "cycle-aligned grains and phase continuity",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "psola-2012",
+      "source_license": "paper/license must be checked at source",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_CODE_LICENSE",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "ptr-model_research_boundary",
+      "method_name": "pressure pulse/resonator/engine-order losses",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "ptr-model",
+      "source_license": "CC BY-NC 4.0",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "BLOCKED_CODE_LICENSE",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [],
+      "method_id": "pyansys-sound_research_boundary",
+      "method_name": "Python analysis workflow only",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "pyansys-sound",
+      "source_license": "MIT wrapper; licensed Ansys core",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "hot_idle_20s",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.1336053089881663,
+        "scorecard_row": "monitor_playback_separation",
+        "target_metric": "rms_dbfs"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "EQUIVALENT_CLEAN_ROOM",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/event_domain/audition_monitor.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "monitor_playback_separation",
+      "method_name": "authoring/runtime and monitor/raw separation",
+      "notes": "Only the public separation concept is used; no QNX runtime or profile is imported.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> _monitor_step; raw/post_ptr remain analysis outputs",
+      "source_id": "qnx-ese",
+      "source_license": "QNX custom license",
+      "target_metric": "rms_dbfs",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_reachability.py"
+      ]
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_WORKFLOW_ONLY",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "stage_x/multi_reference_comparator.py"
+      ],
+      "method_id": "sae-roughness_research_boundary",
+      "method_name": "order roughness diagnostic",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "sae-roughness",
+      "source_license": "SAE publication license",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": null,
+      "acoustic_evidence": {
+        "causal_status": "NO_CAUSAL_EFFECT",
+        "deprecated_status": null,
+        "engineering_significance_status": "NOT_APPLICABLE",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "scorecard_row": null
+      },
+      "adoption_status": "REFERENCE_WORKFLOW_ONLY",
+      "asset_rights_status": "EXCLUDED_OR_UNVERIFIED",
+      "code_license_status": "NOT_EXECUTED",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "docs/research/engine-audio-ecosystem/source_evidence_receipts.json",
+      "implementation_files": [
+        "stage_w/waveguide.py"
+      ],
+      "method_id": "sive-2015_research_boundary",
+      "method_name": "digital waveguide source/intake/exhaust split",
+      "notes": "No source, media, preset, binary or weight is copied; matrix row records the explicit boundary.",
+      "runtime_call_path": "not executed in S12; research/rights boundary only",
+      "source_id": "sive-2015",
+      "source_license": "paper/license must be checked at source",
+      "target_metric": null,
+      "tests": []
+    },
+    {
+      "ablation_scenario": "throttle_tip_in",
+      "acoustic_evidence": {
+        "causal_status": "CAUSAL_EFFECT_DETECTED",
+        "deprecated_status": "PROVEN_CONTRIBUTION",
+        "engineering_significance_status": "MEANINGFUL_ENGINEERING_EFFECT",
+        "evidence_receipt": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
+        "quality_direction_status": "REFERENCE_UNAVAILABLE",
+        "relative_delta": 0.25273978282969434,
+        "scorecard_row": "vehicle_noise_state_crossfade",
+        "target_metric": "roughness_proxy"
+      },
+      "adoption_status": "IMPLEMENTED_EQUIVALENT",
+      "asset_rights_status": "EXCLUDED",
+      "code_license_status": "EQUIVALENT_CLEAN_ROOM",
+      "commercial_runtime_status": "NOT_A_RUNTIME_DEPENDENCY",
+      "copied_audio_asset": false,
+      "copied_model_weight": false,
+      "copied_source_code": false,
+      "evidence_receipt": "tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json",
+      "implementation_files": [
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_y/state_transients.py",
+        "tools/sound_sim/s12/acoustic_identity_v015/stage_w/persistent_engine.py"
+      ],
+      "method_id": "vehicle_noise_state_crossfade",
+      "method_name": "state scheduling, latch/re-arm and equal-power crossfade",
+      "notes": "No Unity code, recordings or NWH assets are copied.",
+      "runtime_call_path": "PersistentEventDomainEngine._process_frame -> StateTransientMixer.render_block/equal_power_crossfade",
+      "source_id": "vehicle-noise-synthesizer",
+      "source_license": "MIT code; recordings separate",
+      "target_metric": "roughness_proxy",
+      "tests": [
+        "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_y_transients.py"
+      ]
+    }
+  ],
+  "schema": "s12.stage_aa.method_adoption_matrix.v3",
+  "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
+  "tested_head": "6361ce8e3b7b32018e555b5354a95a243b71991f"
+}
