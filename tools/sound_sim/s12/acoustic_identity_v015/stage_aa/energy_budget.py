@@ -95,6 +95,8 @@ def _layer_metrics(audio: np.ndarray, *, signal_kind: str) -> dict[str, Any]:
     mono = np.mean(values, axis=1)
     transient = float(np.sqrt(np.mean(np.square(np.diff(mono)))) if mono.size > 1 else 0.0)
     rms = float(np.sqrt(np.mean(np.square(values)))) if values.size else 0.0
+    dc_mean = float(np.mean(mono)) if mono.size else 0.0
+    ac_rms = float(np.std(mono)) if mono.size else 0.0
     return {
         "signal_kind": signal_kind,
         "rms_dbfs": float(dynamic["rms_dbfs"]),
@@ -104,6 +106,9 @@ def _layer_metrics(audio: np.ndarray, *, signal_kind: str) -> dict[str, Any]:
         "spectral_centroid_hz": float(timbre["spectral_centroid_hz"]),
         "roughness": float(timbre["roughness_proxy"]),
         "tonality": float(timbre["tonality_proxy"]),
+        "dc_mean": dc_mean,
+        "ac_rms": ac_rms,
+        "dc_to_rms_ratio": None if rms <= 1.0e-15 else float(abs(dc_mean) / rms),
         "transient_energy": transient,
         "gain_ratio_vs_previous": None,
         "gain_reference": None,
@@ -183,6 +188,11 @@ def render_root_cause_report(payload: dict[str, Any], *, main_head: str) -> str:
     if losses:
         worst = losses[0]
         lines.append(f"最严重的逐层能量变化出现在 `{worst['scene']}` 的 `{worst['layer']}`，相对前一音频层为 `{worst['gain_db']:.3f} dB`。这只是定位线索，不等于可直接调参。")
+    full_load = payload["scenes"].get("full_load")
+    if full_load:
+        before = full_load["layers"]["pre_transients"]
+        after = full_load["layers"]["dp_dc"]
+        lines.append(f"`full_load` 中 pre-transients 的 DC 均值为 `{before['dc_mean']:.6f}`、AC RMS 为 `{before['ac_rms']:.6f}`；经过 dP/DC 后 DC 均值为 `{after['dc_mean']:.6f}`、RMS 为 `{10 ** (after['rms_dbfs'] / 20):.6f}`。因此主要异常是绝对压力基线占主导、dP/DC 高通后只剩小幅波动，而非单纯的播放增益问题。")
     lines.extend([
         "逐层账本必须先用于确认 event/path/collector/waveguide/transient/dP/pre-PTR/post-PTR/monitor 哪一层承担主要损失；任何候选修复都必须回到该层并同时验证低频 body、动态范围、click、afterfire 和 blower guard。",
         "当前结论仍为诊断性：没有使用全局增益补偿，也没有 R1 同步参考，不能从能量恢复本身推出声学质量提升。",
