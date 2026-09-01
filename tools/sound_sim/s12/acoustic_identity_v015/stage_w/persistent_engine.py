@@ -680,7 +680,7 @@ class PersistentEventDomainEngine:
             forced_layer_coupling = self._timbre_layer_coupling["forced_layer"]
             forced["blower"] *= forced_layer_coupling
             forced["turbo"] *= forced_layer_coupling
-        forced_mix = forced["blower"] + forced["turbo"] + forced["blowoff"] + forced["intake"]
+        forced_mix = 0.72 * forced["blower"] + 0.62 * forced["turbo"] + 0.30 * forced["blowoff"] + 0.54 * forced["intake"]
         self._capture_layer("forced_induction", forced_mix)
         mechanical = (
             0.010 * np.sin(phase * 6.0 + 0.2) * (0.35 + 0.65 * load)
