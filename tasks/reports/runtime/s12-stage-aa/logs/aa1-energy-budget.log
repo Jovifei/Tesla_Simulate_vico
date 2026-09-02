@@ -1,0 +1,43 @@
+[AA1 1/10] trace hot_idle
+[AA1 2/10] trace steady_1200
+[AA1 3/10] trace steady_2000
+[AA1 4/10] trace steady_3000
+[AA1 5/10] trace tip_in
+[AA1 6/10] trace full_load
+[AA1 7/10] trace gear_shift
+[AA1 8/10] trace lift
+[AA1 9/10] trace afterfire
+[AA1 10/10] trace idle_return
+{
+  "schema": "s12.stage_aa.energy_budget_publish_receipt.v1",
+  "status": "PASS",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "732cdeb",
+  "duration_s": 1.0,
+  "scenes": 10,
+  "trace_path": "tasks/reports/runtime/s12-stage-aa/energy_budget_trace.json",
+  "trace_sha256": "6a058f66892d1760f5577341775280803181fda07f198159ed88b5f04e9b8450",
+  "report_path": "tasks/reports/runtime/s12-stage-aa/energy_budget_root_cause.md",
+  "report_sha256": "0b318792241f71e78c995c839e77e255bbb3917d2f714e69a79182f28d292524",
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\energy_budget.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "732cdeb",
+    "--duration-s",
+    "1.0",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa1-energy-budget.log"
+  ],
+  "started_at_utc": "2026-09-01T09:28:22.895503Z",
+  "ended_at_utc": "2026-09-01T09:28:35.738827Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa1-energy-budget.log",
+  "log_sha256": "e7c286ef609730158b5d9bdad077b42eb38302d0620fc841b12f3fe0293441c9",
+  "boundaries": {
+    "ptr_radiation_track_p": "UNCHANGED",
+    "master_gain_repair": false,
+    "r1_reference": "MISSING"
+  }
+}

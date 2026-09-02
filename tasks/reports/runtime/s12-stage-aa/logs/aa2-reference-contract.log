@@ -1,0 +1,29 @@
+{
+  "schema": "s12.stage_aa.reference_contract_receipt.v1",
+  "status": "PASS",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "862c69c",
+  "output_path": "tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json",
+  "output_sha256": "56fe222583e5d54a5b247d5cb2899ee2e0f63236202a670f497d1cb09cd6b9de",
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\reference_contract.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "862c69c",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa2-reference-contract.log"
+  ],
+  "started_at_utc": "2026-09-01T09:04:23.214938Z",
+  "ended_at_utc": "2026-09-01T09:04:23.217602Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa2-reference-contract.log",
+  "log_sha256": null,
+  "r1_status": "MISSING",
+  "order_gate": "NOT_QUALIFIED",
+  "evidence_counts": {
+    "R1": 0,
+    "R2": 8,
+    "R3": 15
+  }
+}

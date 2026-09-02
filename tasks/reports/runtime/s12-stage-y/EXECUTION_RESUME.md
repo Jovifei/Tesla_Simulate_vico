@@ -18,7 +18,7 @@ formula-map receipt is historical and must not be relabelled. The existing v1
 package remains intact; if the changed fitted-map renderer is packaged, create
 v2 in a new directory.
 
-- Main HEAD: `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa` (PR #2 merged; CI run `33435858345` PASS; Stage Y software evidence PASS).
+- Stage Y merge HEAD: `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa` (PR #2 merged; CI run `33435858345` PASS; Stage Y software evidence PASS). Current main after Stage-Z PR #3 is `209378bcb9a0c1a352ffd56ca1c765ecce01f81d` (CI run `33468755129` PASS); the Stage-Y receipt binding remains historical.
 - Branch: `agent/s12-stage-z-open-source-proof`
 - Worktree: `E:/Tesla_speed/worktrees/s12-stage-z-open-source-proof`
 - Y0 setup receipt: `9dffb65dc885e4b272f0286a6dc1350b83f66a4d` from base Stage-X `3d433e30f2c0238d65baed321aa70355a626ceb6`.

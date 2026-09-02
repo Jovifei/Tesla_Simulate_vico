@@ -22,6 +22,9 @@
   "post_merge_commit": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
   "post_merge_pr": 2,
   "post_merge_ci": {"run_id": 33435858345, "status": "PASS"},
+  "current_main_head_after_stage_z": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "stage_z_post_merge_pr": 3,
+  "stage_z_post_merge_ci": {"run_id": 33468755129, "status": "PASS"},
   "final_full_s12_tested_head": "dbf6fa27aab73b41f71399593e3a4673958c8e36",
   "phases": {
     "Y0_SETUP": {

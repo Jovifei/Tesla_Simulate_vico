@@ -2,7 +2,7 @@
 
 状态：`STAGE_Z_TRACEABILITY_PASS_ACOUSTIC_GAIN_UNPROVEN`
 
-权威起点是当前 main `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa`。Stage Z 在独立分支 `agent/s12-stage-z-open-source-proof` 上只增加可复现的证据 harness、矩阵和试听包；渲染器使用的 Stage Y/P3/PTR/Radiation/Track-P 代码未被重新调音。Stage Z tested head 为 `6361ce8e3b7b32018e555b5354a95a243b71991f`，包内同时绑定 `base_main_head=62b3759c…`。
+Stage Z 原始输入 main 为 `62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa`；PR #3 已通过 CI 并以普通 merge 合并，当前 main 为 `209378bcb9a0c1a352ffd56ca1c765ecce01f81d`。Stage Z 在独立分支 `agent/s12-stage-z-open-source-proof` 上只增加可复现的证据 harness、矩阵和试听包；渲染器使用的 Stage Y/P3/PTR/Radiation/Track-P 代码未被重新调音。Stage Z tested head 为 `6361ce8e3b7b32018e555b5354a95a243b71991f`，包内原始 `base_main_head=62b3759c…` 保留为历史绑定。
 
 ## 交付物
 
@@ -10,7 +10,7 @@
 - v2 package manifest SHA-256：`cf70e877b4018389df1fede3963d4cf685244860ae3efacf1476c31d0644a64c`。
 - Parent aggregate SHA：`86fb539985c79c6b069d3bd1e5de500c6b1c25e40280582763bf523721d3c109`；Final Raw aggregate SHA：`d3a85676952c46578a4222bc74b725ff8856752bd520530201b1b94d5da918fd`。
 - 包含 11 个整体场景、57 个 PCM24 stereo WAV、12 组盲化 A/B、`overall_review.html`、`method_ablation_review.html`、`answers_manifest.html` 和中文说明。
-- Repo 机器证据：[`method_adoption_matrix_v2.json`](../research/engine-audio-ecosystem/method_adoption_matrix_v2.json)、[`method_ablation_scorecard.json`](../../tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json)、[`objective_before_after.json`](../../tasks/reports/runtime/s12-stage-z/objective_before_after.json)、[`teacher_vs_reduced_response.json`](../../tasks/reports/runtime/s12-stage-z/teacher_vs_reduced_response.json)。
+- Repo 机器证据：[`method_adoption_matrix_v2.json`](../research/engine-audio-ecosystem/method_adoption_matrix_v2.json)、AA0 [`method_adoption_matrix_v3.json`](../research/engine-audio-ecosystem/method_adoption_matrix_v3.json)、[`method_ablation_scorecard.json`](../../tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json)、AA0 [`method_ablation_scorecard_v2.json`](../../tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json)、[`objective_before_after.json`](../../tasks/reports/runtime/s12-stage-z/objective_before_after.json)、[`teacher_vs_reduced_response.json`](../../tasks/reports/runtime/s12-stage-z/teacher_vs_reduced_response.json)。
 
 ## 三层吸收判定
 
@@ -29,7 +29,7 @@
 
 ### Level 3 — Acoustic Absorption
 
-12 组 OFF/ON scorecard 全部为 `PROVEN_CONTRIBUTION`：每组都有不同 PCM SHA、目标指标变化、finite/no-clipping/click guard 和 runtime/memory 记录。这里的 `PROVEN_CONTRIBUTION` 只表示方法在实际 PCM 因果链上可独立观测，不表示 ON 一定比 OFF 更符合人耳偏好。
+Stage-Z v1 的 `PROVEN_CONTRIBUTION` 已降级为 `deprecated_status`，不再作为最终决策字段。AA0 重新计算全部 12 个可执行方法并拆分为 `causal_status`、`engineering_significance_status` 和 `quality_direction_status`：12/12 检出因果 PCM 差异，9/12 达到方法级工程显著性，3/12（collector 的 `0.000359 Hz` centroid、persistent block 的 `0.073 dB` dynamic range、DasEtwas waveguide 的 `0.000198` flux）明确低于显著性阈值；quality direction 全部为 `REFERENCE_UNAVAILABLE`。详见 `tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json` 与 `metric_significance_contract.json`。
 
 Parent→Final objective 使用已发布 PCM 的 raw_dynamic/timbre diagnostics。aggregate 结果显示 Final 的 spectral centroid、sharpness、roughness 等发生变化，但数字 RMS 与 dynamic range 下降；没有合法同步 R1 reference，因此整体声学质量判定保持 `PARTIAL / UNPROVEN`，不生成 OEM、calibrated 或 Profile Freeze 结论。
 
@@ -41,7 +41,7 @@ Parent→Final objective 使用已发布 PCM 的 raw_dynamic/timbre diagnostics�
 
 ## Verification
 
-- Stage Z focused TDD：`5 passed`；method scorecard short-window audit：12/12 `PROVEN_CONTRIBUTION`。
+- Stage Z focused TDD：`5 passed`；AA0 semantic closeout：12 项重新计算并完成 causal/engineering/quality 三层分类。
 - v2 validator：`[]`；独立 WAV reopen/SHA scan：57/57；Parent/Final aggregate SHA 不同。
 - Stage Y full S12 的历史当前证据仍为 `1370 passed, 2 skipped`, exit 0；本阶段未修改 Stage Y renderer/runtime，因此不重复执行完整 S12。若后续修改 renderer/source chain，必须在最终 HEAD 单独重跑。
 - Track-P mathematical baseline、PTR/Radiation、global gain 未修改。
@@ -51,6 +51,8 @@ Parent→Final objective 使用已发布 PCM 的 raw_dynamic/timbre diagnostics�
 ```text
 SOFTWARE: PASS (Stage Z focused + v2 package validation)
 OPEN_SOURCE_ENGINEERING_ABSORPTION: PASS
+METHOD_CAUSAL_EFFECT: CLASSIFIED
+METHOD_ENGINEERING_SIGNIFICANCE: CLASSIFIED
 ACOUSTIC_CONTRIBUTION: PARTIAL / UNPROVEN_AS_QUALITY_IMPROVEMENT
 HUMAN_AUDITION: WAITING_FOR_JOVI
 R1: MISSING

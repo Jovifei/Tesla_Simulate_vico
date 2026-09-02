@@ -1,0 +1,87 @@
+{
+  "canonical_file_sha256": {
+    "reference_evidence_matrix.json": "c9b5d3761d1ff88f90722e285a75b0eac8cd87711459e15796695a13c54273ac",
+    "reference_manifest.json": "d317d2e10193d12b6607b59a714abf4a55dcee78a94c30ed96070f6d2dbc3e46",
+    "rpm_state_bindings.json": "94e56e254a9008901e298bfa4ee48cb6d2bd223885be354845fd7adf8273a23e",
+    "scenario_segments.json": "433cd959cfee0b052bc10504626eaaadabbccbee3cefb7486949585df579e418"
+  },
+  "canonical_root": "tasks/reports/runtime/s12-stage-q-real-reference/reference_database_v2",
+  "dynamic_review": {
+    "loudness_matching": false,
+    "matching_policy": "preserve relative idle-to-WOT and transient level; no per-segment equalization",
+    "metrics": [
+      "idle_vs_wot",
+      "tip_in",
+      "shift",
+      "lift",
+      "afterfire",
+      "idle_return"
+    ]
+  },
+  "evidence_counts": {
+    "R1": 0,
+    "R2": 8,
+    "R3": 15
+  },
+  "external_audio_embedded": false,
+  "hellcat_r2_records": [
+    {
+      "external_path": "E:\\Claude_allow\\Download\\s12-web-authorized-20260822\\hellcat_launching_challenger.wav",
+      "level": "R2",
+      "missing_requirements": [],
+      "recording_id": "web_hellcat_launching_sound_2019",
+      "reference_id": "q:web:hellcat_launching_sound_2019",
+      "scenario": "launch",
+      "sha256": "b5a23a855b80538edfdd3200d1a9e99aba0485d2c703abaef8e235652b7c73e6",
+      "use_policy": "spectrum_loudness_psychoacoustics_transient_subjective_only"
+    }
+  ],
+  "matrix_overall_r1_ready": false,
+  "order_gate": "NOT_QUALIFIED",
+  "r1_status": "MISSING",
+  "r2_r3_rules": {
+    "r2_can_support": [
+      "spectral",
+      "loudness",
+      "temporal",
+      "psychoacoustic",
+      "human_diagnostic"
+    ],
+    "r2_cannot_support": [
+      "synchronized_order_gate",
+      "automatic_oem_tuning",
+      "profile_freeze",
+      "r1_claim"
+    ],
+    "r3_can_support": [
+      "qualitative_timbre_and_human_diagnostic"
+    ],
+    "r3_cannot_support": [
+      "r2_promotion",
+      "r1_promotion",
+      "automatic_tuning"
+    ]
+  },
+  "raw_audio_policy": "external_only_not_in_git",
+  "schema": "s12.stage_aa.reference_diagnostic_contract.v1",
+  "scope": "Hellcat Stage AA diagnostic reference binding; no evidence-level promotion",
+  "status": "DIAGNOSTIC_ONLY",
+  "synchronized_state_records": 0,
+  "timbre_review": {
+    "allowed_levels": [
+      "R2",
+      "R3"
+    ],
+    "loudness_matching": true,
+    "matching_policy": "shared RMS derivative for relative timbre only; never used as dynamic evidence",
+    "metrics": [
+      "spectral_envelope",
+      "band_distribution",
+      "roughness",
+      "sharpness",
+      "tonality",
+      "mechanical_texture",
+      "blower_texture"
+    ]
+  }
+}

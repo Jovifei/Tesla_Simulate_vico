@@ -1,8 +1,7 @@
 {
-  "acoustic_significance_is_separate_from_adoption": true,
-  "base_main_head": "62b3759c9e8026e62b4aa2cefeb0a3fbc73597aa",
-  "main_head": "6361ce8e3b7b32018e555b5354a95a243b71991f",
-  "post_merge_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "adoption_and_acoustic_significance_are_separate": true,
+  "base_main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "base_matrix": "docs/research/engine-audio-ecosystem/method_adoption_matrix_v2.json",
   "rows": [
     {
       "ablation_scenario": null,
@@ -928,8 +927,7 @@
       ]
     }
   ],
-  "schema": "s12.stage_z.method_adoption_matrix.v2",
+  "schema": "s12.stage_aa.method_adoption_matrix.v3",
   "scope": "synthetic; uncalibrated; vehicle-inspired; not OEM reproduction",
-  "semantic_closeout_scorecard": "tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json",
   "tested_head": "6361ce8e3b7b32018e555b5354a95a243b71991f"
 }

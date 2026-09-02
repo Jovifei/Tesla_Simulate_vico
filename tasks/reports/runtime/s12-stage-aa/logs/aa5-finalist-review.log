@@ -1,0 +1,30 @@
+{
+  "schema": "s12.stage_aa.finalist_review_receipt.v1",
+  "status": "PASS",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "tested_head": "be7f156",
+  "output_path": "tasks/reports/runtime/s12-stage-aa/finalist_review.json",
+  "output_sha256": "f5e0eeb1376aac186fb7b2e70abffe88702cc02427d94bc1f97b98807bd8b243",
+  "report_path": "tasks/reports/runtime/s12-stage-aa/finalist_review.md",
+  "report_sha256": "9705ae1151742cf5d916ee2f537719e535425789e586052d9d2ebcdd1e9afda1",
+  "finalists": [
+    "AA-C1",
+    "AA-C2",
+    "AA-C3"
+  ],
+  "matlab_status": "MATLAB_FINALIST_RECEIPT_PENDING",
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\finalist_review.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "be7f156",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa5-finalist-review.log"
+  ],
+  "started_at_utc": "2026-09-01T09:35:49.644537Z",
+  "ended_at_utc": "2026-09-01T09:35:49.646837Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa5-finalist-review.log",
+  "log_sha256": null
+}

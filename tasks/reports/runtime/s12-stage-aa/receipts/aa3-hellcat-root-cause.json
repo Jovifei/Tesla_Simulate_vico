@@ -1,0 +1,25 @@
+{
+  "command": [
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tools\\sound_sim\\s12\\acoustic_identity_v015\\stage_aa\\hellcat_root_cause.py",
+    "--main-head",
+    "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "--tested-head",
+    "732cdeb",
+    "--log-path",
+    "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa3-root-cause.log"
+  ],
+  "ended_at_utc": "2026-09-01T09:29:14.667999Z",
+  "exit_code": 0,
+  "log_path": "E:\\Tesla_speed\\worktrees\\s12-stage-aa-acoustic-quality-closure\\tasks\\reports\\runtime\\s12-stage-aa\\logs\\aa3-root-cause.log",
+  "log_sha256": "0c5e7d61f1b7770dbd1fdf45f1b47da5acefa83b05a21baf15ab76c06abd9b35",
+  "main_head": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+  "output_path": "tasks/reports/runtime/s12-stage-aa/hellcat_root_cause.json",
+  "output_sha256": "d00d4abf7af8d5aec042709ca327dd93a714660b55ccdcebfe6cfa9f7f0c417e",
+  "primary_root_cause": "PRESSURE_BASELINE_REMOVAL_PLUS_FROZEN_PTR_ATTENUATION",
+  "report_path": "tasks/reports/runtime/s12-stage-aa/hellcat_root_cause.md",
+  "report_sha256": "25ab43c53ed1cf1dd64be83968c36c18de56be341bdcd9e1ff048148cc0e9516",
+  "schema": "s12.stage_aa.hellcat_root_cause_receipt.v1",
+  "started_at_utc": "2026-09-01T09:29:14.662599Z",
+  "status": "PASS",
+  "tested_head": "732cdeb"
+}

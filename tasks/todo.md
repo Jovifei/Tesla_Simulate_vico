@@ -4239,3 +4239,27 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Stage Z focused TDD: `5 passed`; short-window scorecard: 12/12 `PROVEN_CONTRIBUTION`; v2 package validator and independent WAV scan: 57/57.
 - v2 manifest SHA: `cf70e877b4018389df1fede3963d4cf685244860ae3efacf1476c31d0644a64c`; Parent/Final aggregate SHA differ; v1 manifest SHA remains `9376d90c57e4efad7dc1e9b8ce15e09f1ed2c124f23a753d389039664506826c`.
 - Acoustic quality is not promoted: Parent→Final aggregate RMS/dynamic range decreased; R1 is missing, so human audition remains the next gate.
+
+## 2026-09-01 S12 Stage AA acoustic quality closure
+
+> 基线：Stage Z PR #3 已通过 CI 并合并；`STAGE_AA_BASE_MAIN=209378bcb9a0c1a352ffd56ca1c765ecce01f81d`。本阶段只处理 Hellcat，保留 v1/v2 试听包，不扩散其他车型。
+
+- [x] AA0：拆分 Stage Z method scorecard 的 causal、engineering significance 与 quality direction 语义；保留 v1 历史并建立 `metric_significance_contract.json`。
+- [x] AA1：逐层审计 vehicle_state→monitor 的能量账本，定位 RMS/dynamic range 丢失层，建立 `energy_budget_trace.json` 与 root-cause 报告。
+- [x] AA2：绑定 canonical R2/R3 reference contract，区分 Timbre Review 与 Dynamic Review；不提升 R1/R2/R3 evidence level。
+- [x] AA3：只针对 Hellcat 根因检查 idle body、120–400 Hz pressure、blower carrier、transient/afterfire/idle-return，形成可证伪假设。
+- [x] AA4：最多生成 AA-C0…AA-C3 有界候选，执行 focused tests、hard gates 与 Pareto 维度检查；禁止 master-gain 补偿和随机多旋钮搜索。
+- [x] AA5：对 2–3 finalists 做 Python/MoSQITo 评估；MATLAB 仅在已有稳定人工 session 时使用，否则记录 pending。
+- [x] AA6：生成 `E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`，保留 v1/v2，提供中文 Timbre/Dynamic/Blind B-C 页面与 objective receipt。
+- [ ] AA7：等待 Jovi 对 v3 的人耳反馈；反馈前不把候选合并到 main、不扩散 Ferrari/RX-7。
+- [ ] AA8：记录最终状态、收据、repo/Vault 定向镜像与下一轮边界；人耳未通过时保持 `ACOUSTIC_QUALITY_NOT_YET_HUMAN_ACCEPTED`。
+
+### Stage AA Review
+
+- AA0 已在 `a7f22cf` 之后重算 12 个可执行方法：12/12 `CAUSAL_EFFECT_DETECTED`，9/12 `MEANINGFUL_ENGINEERING_EFFECT`，3/12 `BELOW_ENGINEERING_SIGNIFICANCE`；ENSIM4 保持 teacher-only。
+- `method_ablation_scorecard_v2.json`、`metric_significance_contract.json`、matrix v2 enrichment 与 `method_adoption_matrix_v3.json` 已生成；Stage-Z v1 scorecard 保持不变。
+- AA1 layer ledger（`f61d7e0`）在 10 个 Hellcat 场景确认主要损失为 `transients→dp_dc` 的压力基线去除，以及不可修改的 frozen PTR attenuation；候选不得用 master gain 掩盖该根因。
+- AA2 绑定 canonical Q `reference_database_v2`（R1=0/R2=8/R3=15，order=`NOT_QUALIFIED`），Timbre 与 Dynamic review contract 已分离。
+- AA3/AA4 根因与候选报告已完成；AA-C0…AA-C3 在 11 个场景全部 hard-gate PASS，诊断偏好 AA-C3，但未宣称人耳质量提升。
+- AA5/AA6 已完成 finalist 代理指标与 v3 包；当前唯一暂停点为 `WAITING_FOR_JOVI_AUDITION`，AA-C3 未合并到 main。
+- 仅在对应阶段完成后填写；所有结论必须区分工程因果、工程显著性与声学质量方向。
