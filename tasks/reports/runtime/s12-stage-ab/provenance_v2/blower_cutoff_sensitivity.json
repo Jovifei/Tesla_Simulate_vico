@@ -1,0 +1,670 @@
+{
+  "schema": "s12.stage_ab.blower_cutoff_sensitivity.v1",
+  "purpose": "Cutoff-sensitivity sweep: re-detect the forced-carrier peak as the search low-cutoff sweeps 900->1500 Hz. A peak pinned at the 1200 Hz suppression corner whose prominence collapses across the sweep is FILTER_CORNER_ARTIFACT_SUSPECTED, not blower identity.",
+  "suppression_corner_hz": 1200.0,
+  "sweep_low_hz": [
+    900.0,
+    1000.0,
+    1100.0,
+    1200.0,
+    1300.0,
+    1400.0,
+    1500.0
+  ],
+  "per_scene": {
+    "hot_idle": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 900.0,
+            "prominence_db": 13.977650357822963,
+            "tonal_share": 0.0011554871543577657
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.759433652800112,
+            "tonal_share": 0.0022651051034301805
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1000.0,
+            "prominence_db": 12.421053836926054,
+            "tonal_share": 0.00105054313774399
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.750928856119184,
+            "tonal_share": 0.002341699915287302
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1100.0,
+            "prominence_db": 11.127977402220013,
+            "tonal_share": 0.000975652562187387
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.63660635607673,
+            "tonal_share": 0.0024073316364189383
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1200.0,
+            "prominence_db": 10.01398920620261,
+            "tonal_share": 0.000920239119388364
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.40096357632986,
+            "tonal_share": 0.00245225386160421
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1300.0,
+            "prominence_db": 9.044103839024324,
+            "tonal_share": 0.0008788649661539199
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.254305037893282,
+            "tonal_share": 0.002506385693278879
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1400.0,
+            "prominence_db": 8.191748635779502,
+            "tonal_share": 0.000848196447419809
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.152761285131906,
+            "tonal_share": 0.002579180130703283
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1500.0,
+            "prominence_db": 7.437449565280771,
+            "tonal_share": 0.00082604480940596
+          },
+          "audible": {
+            "peak_freq_hz": 3024.0,
+            "prominence_db": 18.26033868739658,
+            "tonal_share": 0.002715823046295158
+          }
+        }
+      ],
+      "peak_drift_hz": 0.0,
+      "prominence_range_db": 0.6066723676682066,
+      "pinned_near_suppression_corner": false,
+      "prominence_collapse_gt_8db": false,
+      "suppression_corner_hz": 1200.0
+    },
+    "steady_1200": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 900.0,
+            "prominence_db": 15.329543277044337,
+            "tonal_share": 0.0012759719321425323
+          },
+          "audible": {
+            "peak_freq_hz": 959.0,
+            "prominence_db": 31.951903357981053,
+            "tonal_share": 0.00693231529244671
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1036.0,
+            "prominence_db": 13.850659579833628,
+            "tonal_share": 0.001178978747743188
+          },
+          "audible": {
+            "peak_freq_hz": 1039.0,
+            "prominence_db": 30.82156383321532,
+            "tonal_share": 0.006329030933691872
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1136.0,
+            "prominence_db": 12.61151702845626,
+            "tonal_share": 0.0011095209391947859
+          },
+          "audible": {
+            "peak_freq_hz": 1439.0,
+            "prominence_db": 28.390703729210692,
+            "tonal_share": 0.0049559796374131476
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1236.0,
+            "prominence_db": 11.526760961055324,
+            "tonal_share": 0.0010550586043797066
+          },
+          "audible": {
+            "peak_freq_hz": 1439.0,
+            "prominence_db": 28.55488710827176,
+            "tonal_share": 0.005156553693680966
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1336.0,
+            "prominence_db": 10.561023497343584,
+            "tonal_share": 0.0010126218291496576
+          },
+          "audible": {
+            "peak_freq_hz": 1439.0,
+            "prominence_db": 28.473146607978745,
+            "tonal_share": 0.0052889869632876665
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1436.0,
+            "prominence_db": 9.6879942651936,
+            "tonal_share": 0.0009799573856042868
+          },
+          "audible": {
+            "peak_freq_hz": 1439.0,
+            "prominence_db": 28.312111657825284,
+            "tonal_share": 0.0054214009070877285
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1536.0,
+            "prominence_db": 8.916433948801423,
+            "tonal_share": 0.0009554229909179122
+          },
+          "audible": {
+            "peak_freq_hz": 3028.0,
+            "prominence_db": 27.890919649244836,
+            "tonal_share": 0.005387387086216739
+          }
+        }
+      ],
+      "peak_drift_hz": 480.0,
+      "prominence_range_db": 4.060983708736217,
+      "pinned_near_suppression_corner": false,
+      "prominence_collapse_gt_8db": false,
+      "suppression_corner_hz": 1200.0
+    },
+    "steady_2000": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 902.0,
+            "prominence_db": 16.99143181502272,
+            "tonal_share": 0.001421534984644256
+          },
+          "audible": {
+            "peak_freq_hz": 933.0,
+            "prominence_db": 34.75930428235108,
+            "tonal_share": 0.00936457777491608
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1002.0,
+            "prominence_db": 15.427317304846184,
+            "tonal_share": 0.0013087430400202985
+          },
+          "audible": {
+            "peak_freq_hz": 1066.0,
+            "prominence_db": 34.653329525379,
+            "tonal_share": 0.009935014317485153
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1107.0,
+            "prominence_db": 14.06153279945958,
+            "tonal_share": 0.001223504869451712
+          },
+          "audible": {
+            "peak_freq_hz": 3048.0,
+            "prominence_db": 31.394406123855255,
+            "tonal_share": 0.007231577099684154
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1207.0,
+            "prominence_db": 12.868939049944046,
+            "tonal_share": 0.00115777865506396
+          },
+          "audible": {
+            "peak_freq_hz": 3048.0,
+            "prominence_db": 31.699083019338644,
+            "tonal_share": 0.007712253095221691
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1307.0,
+            "prominence_db": 11.790669961191917,
+            "tonal_share": 0.001106361843855218
+          },
+          "audible": {
+            "peak_freq_hz": 3048.0,
+            "prominence_db": 31.9825528037212,
+            "tonal_share": 0.008165692249054488
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1407.0,
+            "prominence_db": 10.839755033217218,
+            "tonal_share": 0.001066321109638718
+          },
+          "audible": {
+            "peak_freq_hz": 3048.0,
+            "prominence_db": 32.20186730474421,
+            "tonal_share": 0.008660319401721909
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1507.0,
+            "prominence_db": 9.993591891053049,
+            "tonal_share": 0.0010356061665885248
+          },
+          "audible": {
+            "peak_freq_hz": 3048.0,
+            "prominence_db": 32.332900803427464,
+            "tonal_share": 0.009149744744383955
+          }
+        }
+      ],
+      "peak_drift_hz": 2115.0,
+      "prominence_range_db": 3.3648981584958264,
+      "pinned_near_suppression_corner": false,
+      "prominence_collapse_gt_8db": false,
+      "suppression_corner_hz": 1200.0
+    },
+    "steady_3000": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 900.0,
+            "prominence_db": 9.463884088674146,
+            "tonal_share": 0.0008015055124452634
+          },
+          "audible": {
+            "peak_freq_hz": 999.0,
+            "prominence_db": 39.52634454786266,
+            "tonal_share": 0.015275534830908396
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1000.0,
+            "prominence_db": 8.56554942923652,
+            "tonal_share": 0.0007648561368743106
+          },
+          "audible": {
+            "peak_freq_hz": 1199.0,
+            "prominence_db": 34.82397817358436,
+            "tonal_share": 0.009656398206729873
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1100.0,
+            "prominence_db": 7.795057592178514,
+            "tonal_share": 0.0007387630553957039
+          },
+          "audible": {
+            "peak_freq_hz": 1199.0,
+            "prominence_db": 35.2221303199723,
+            "tonal_share": 0.011138415307964545
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1200.0,
+            "prominence_db": 7.123392990782349,
+            "tonal_share": 0.000720464949024567
+          },
+          "audible": {
+            "peak_freq_hz": 1399.0,
+            "prominence_db": 34.89941924952965,
+            "tonal_share": 0.011408438874904914
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1300.0,
+            "prominence_db": 6.529783325141077,
+            "tonal_share": 0.0007081898708270602
+          },
+          "audible": {
+            "peak_freq_hz": 1399.0,
+            "prominence_db": 35.23937386647632,
+            "tonal_share": 0.012486474765366596
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1400.0,
+            "prominence_db": 5.99931954895542,
+            "tonal_share": 0.0007008016792911934
+          },
+          "audible": {
+            "peak_freq_hz": 3023.0,
+            "prominence_db": 31.145014195209622,
+            "tonal_share": 0.008069774045117611
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1500.0,
+            "prominence_db": 5.520991688862649,
+            "tonal_share": 0.0006975647596944115
+          },
+          "audible": {
+            "peak_freq_hz": 3023.0,
+            "prominence_db": 31.413094935856606,
+            "tonal_share": 0.008626406326306497
+          }
+        }
+      ],
+      "peak_drift_hz": 400.0,
+      "prominence_range_db": 8.381330352653034,
+      "pinned_near_suppression_corner": false,
+      "prominence_collapse_gt_8db": true,
+      "suppression_corner_hz": 1200.0
+    },
+    "full_load": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 910.0,
+            "prominence_db": 20.060504434710186,
+            "tonal_share": 0.002338529621621182
+          },
+          "audible": {
+            "peak_freq_hz": 930.0,
+            "prominence_db": 21.664995833065824,
+            "tonal_share": 0.002251789001062581
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1002.0,
+            "prominence_db": 13.748293169100148,
+            "tonal_share": 0.0012856195615150207
+          },
+          "audible": {
+            "peak_freq_hz": 1063.0,
+            "prominence_db": 21.233231880877923,
+            "tonal_share": 0.0023351630682653243
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1101.0,
+            "prominence_db": 11.92755246104606,
+            "tonal_share": 0.0011264350696505825
+          },
+          "audible": {
+            "peak_freq_hz": 1114.0,
+            "prominence_db": 21.044693969045362,
+            "tonal_share": 0.002501972094131414
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1234.0,
+            "prominence_db": 10.097482528021224,
+            "tonal_share": 0.0009746207617797863
+          },
+          "audible": {
+            "peak_freq_hz": 1200.0,
+            "prominence_db": 21.351203215851484,
+            "tonal_share": 0.0028174058243616027
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1310.0,
+            "prominence_db": 9.061704980256216,
+            "tonal_share": 0.0009196945552158206
+          },
+          "audible": {
+            "peak_freq_hz": 1443.0,
+            "prominence_db": 18.030975853505215,
+            "tonal_share": 0.0020520653738008983
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1410.0,
+            "prominence_db": 8.245885980135132,
+            "tonal_share": 0.0008849990059453207
+          },
+          "audible": {
+            "peak_freq_hz": 1443.0,
+            "prominence_db": 18.29618153873099,
+            "tonal_share": 0.0022712671897908016
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1534.0,
+            "prominence_db": 7.566560404552064,
+            "tonal_share": 0.0008662317500431558
+          },
+          "audible": {
+            "peak_freq_hz": 1503.0,
+            "prominence_db": 17.873685681479373,
+            "tonal_share": 0.0023449103748121513
+          }
+        }
+      ],
+      "peak_drift_hz": 270.0,
+      "prominence_range_db": 3.791310151586451,
+      "pinned_near_suppression_corner": false,
+      "prominence_collapse_gt_8db": false,
+      "suppression_corner_hz": 1200.0
+    },
+    "complete_cycle": {
+      "sweep_low_hz": [
+        900.0,
+        1000.0,
+        1100.0,
+        1200.0,
+        1300.0,
+        1400.0,
+        1500.0
+      ],
+      "per_cutoff": [
+        {
+          "cutoff_low_hz": 900.0,
+          "source": {
+            "peak_freq_hz": 941.0,
+            "prominence_db": 29.450306212845845,
+            "tonal_share": 0.006037368499946067
+          },
+          "audible": {
+            "peak_freq_hz": 1100.0,
+            "prominence_db": 18.97581030973376,
+            "tonal_share": 0.002173562061494439
+          }
+        },
+        {
+          "cutoff_low_hz": 1000.0,
+          "source": {
+            "peak_freq_hz": 1005.0,
+            "prominence_db": 21.02518049894782,
+            "tonal_share": 0.002910043725442412
+          },
+          "audible": {
+            "peak_freq_hz": 1100.0,
+            "prominence_db": 19.203740635301155,
+            "tonal_share": 0.0024152425507056852
+          }
+        },
+        {
+          "cutoff_low_hz": 1100.0,
+          "source": {
+            "peak_freq_hz": 1127.0,
+            "prominence_db": 17.312327961084982,
+            "tonal_share": 0.002061792148850608
+          },
+          "audible": {
+            "peak_freq_hz": 1100.0,
+            "prominence_db": 19.4617107346414,
+            "tonal_share": 0.002670217015467734
+          }
+        },
+        {
+          "cutoff_low_hz": 1200.0,
+          "source": {
+            "peak_freq_hz": 1227.0,
+            "prominence_db": 16.082976452202537,
+            "tonal_share": 0.0019092993613074088
+          },
+          "audible": {
+            "peak_freq_hz": 1226.0,
+            "prominence_db": 16.014249282538714,
+            "tonal_share": 0.0019395845653336276
+          }
+        },
+        {
+          "cutoff_low_hz": 1300.0,
+          "source": {
+            "peak_freq_hz": 1327.0,
+            "prominence_db": 15.221296044873782,
+            "tonal_share": 0.0018197314785889794
+          },
+          "audible": {
+            "peak_freq_hz": 1449.0,
+            "prominence_db": 13.541141453816437,
+            "tonal_share": 0.0015370079895138695
+          }
+        },
+        {
+          "cutoff_low_hz": 1400.0,
+          "source": {
+            "peak_freq_hz": 1427.0,
+            "prominence_db": 14.603294591811363,
+            "tonal_share": 0.0017839215170235778
+          },
+          "audible": {
+            "peak_freq_hz": 1449.0,
+            "prominence_db": 13.705294480066343,
+            "tonal_share": 0.0016255348794109313
+          }
+        },
+        {
+          "cutoff_low_hz": 1500.0,
+          "source": {
+            "peak_freq_hz": 1527.0,
+            "prominence_db": 14.070364140519853,
+            "tonal_share": 0.0017643843082200568
+          },
+          "audible": {
+            "peak_freq_hz": 1572.0,
+            "prominence_db": 13.489965107105258,
+            "tonal_share": 0.0016841727760455135
+          }
+        }
+      ],
+      "peak_drift_hz": 126.0,
+      "prominence_range_db": 5.9717456275361425,
+      "pinned_near_suppression_corner": true,
+      "prominence_collapse_gt_8db": false,
+      "suppression_corner_hz": 1200.0
+    }
+  }
+}

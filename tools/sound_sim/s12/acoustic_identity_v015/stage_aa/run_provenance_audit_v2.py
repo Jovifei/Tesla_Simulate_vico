@@ -13,10 +13,13 @@ diagnostics:
   - metric_definition_registry.json
 
 Artifacts (tasks/reports/runtime/s12-stage-ab/provenance_v2/):
-  energy_gain_taxonomy.json        variant_metrics.json
-  aa_c3_metric_attribution.json    source_causal_eligibility.json
-  lf_body_guard_v2.json            dynamic_preservation_audit_v2.json
-  blower_audible_provenance.json   metric_definition_registry.json
+  energy_gain_taxonomy_v2.json     variant_metrics.json
+  aa_c3_metric_attribution_v2.json source_causal_eligibility.json
+  true_source_local_probe_receipt.json
+  lf_body_guard_v2.json            lf_metric_validation.json
+  dynamic_preservation_audit_v2.json
+  blower_provenance_v2.json        blower_cutoff_sensitivity.json
+  afterfire_metric_validation.json metric_definition_registry.json
   AA_C3_Provenance_Audit_V2.md
 """
 
@@ -35,11 +38,13 @@ from .provenance import (
     PROVENANCE_SCENES,
     PROVENANCE_VARIANTS,
     VARIANT_BY_ID,
+    afterfire_metric_validation_document,
     blower_audible_metrics,
     detect_state_event_onset,
     dynamic_preservation_metrics_v2,
     energy_gain_taxonomy_document,
     lf_body_guard_metrics_v2,
+    lf_metric_validation_document,
     metric_definition_registry_document,
     pcm_metrics,
     probe_source_local_off_on,
@@ -97,7 +102,7 @@ def main() -> None:
     started = time.time()
 
     # --- 1) taxonomy (now includes COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE + P6 route) ---
-    _write_json("energy_gain_taxonomy.json", energy_gain_taxonomy_document())
+    _write_json("energy_gain_taxonomy_v2.json", energy_gain_taxonomy_document())
 
     # --- 2) full P-set grid (identical render math => P5 PCM SHAs must match v1) ---
     variant_metrics: dict[str, dict[str, Any]] = {}
@@ -175,11 +180,12 @@ def main() -> None:
         "rms_recovery_shapley_share_broad_scale": per_metric["rms_dbfs"]["shapley"]["broad_scale"],
         "rms_recovery_total": per_metric["rms_dbfs"]["total_effect_p5_minus_p0"],
     }
-    _write_json("aa_c3_metric_attribution.json", attribution)
+    _write_json("aa_c3_metric_attribution_v2.json", attribution)
 
     # --- 5) source-causal eligibility (OFF/ON event_energy probe) ---
     probe = probe_source_local_off_on("full_load", DURATION_S)
     _write_json("source_causal_eligibility.json", source_causal_eligibility_document(probe))
+    _write_json("true_source_local_probe_receipt.json", probe)
 
     # --- 6) LF body guard v2 ---
     lf: dict[str, Any] = {"schema": "s12.stage_ab.lf_body_guard.v2"}
@@ -194,6 +200,7 @@ def main() -> None:
         "note": "v1 boom-risk conclusions (P0/P2/P5 OK) are NOT usable evidence; v2 envelope-shape metrics supersede them.",
     }
     _write_json("lf_body_guard_v2.json", lf)
+    _write_json("lf_metric_validation.json", lf_metric_validation_document())
 
     # --- 7) dynamic preservation v2 (event-aligned windows) ---
     dynamic: dict[str, Any] = {"schema": "s12.stage_ab.dynamic_preservation.v2", "domain": "DYNAMIC_REVIEW_RAW_NO_NORMALIZATION"}
@@ -220,7 +227,12 @@ def main() -> None:
                     render_parent_raw(scene, DURATION_S) if variant_id == "parent_legacy" else raw_store[variant_id][scene]
                 )
         dynamic[variant_id] = dynamic_preservation_metrics_v2(scene_pcm, dynamic_onsets)
+        dynamic_pcm[variant_id] = scene_pcm
     _write_json("dynamic_preservation_audit_v2.json", dynamic)
+    _write_json(
+        "afterfire_metric_validation.json",
+        afterfire_metric_validation_document(dynamic["P5"], dynamic_pcm["P5"], dynamic_onsets),
+    )
 
     # --- 8) blower audit v2 (source / audible / contribution + cutoff sensitivity) ---
     blower: dict[str, Any] = {"schema": "s12.stage_ab.blower_provenance.v2", "per_scene": {}}
@@ -245,7 +257,21 @@ def main() -> None:
         "superseded": "blower_provenance.json (provenance/) v1 search>=1200 Hz only, unused post_ptr argument then `del post_ptr`, no source/audible split",
         "note": "v2 searches the unbiased 600-4000 Hz window, sweeps low cutoffs 900-1500 Hz to test the 1200 Hz filter-corner hypothesis, and splits source vs audible contribution.",
     }
-    _write_json("blower_audible_provenance.json", blower)
+    _write_json("blower_provenance_v2.json", blower)
+    cutoff_sensitivity: dict[str, Any] = {
+        "schema": "s12.stage_ab.blower_cutoff_sensitivity.v1",
+        "purpose": (
+            "Cutoff-sensitivity sweep: re-detect the forced-carrier peak as the search low-cutoff "
+            "sweeps 900->1500 Hz. A peak pinned at the 1200 Hz suppression corner whose prominence "
+            "collapses across the sweep is FILTER_CORNER_ARTIFACT_SUSPECTED, not blower identity."
+        ),
+        "suppression_corner_hz": 1200.0,
+        "sweep_low_hz": list((900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0)),
+        "per_scene": {
+            scene: blower["per_scene"][scene]["cutoff_sensitivity"] for scene in BLOWER_SCENES
+        },
+    }
+    _write_json("blower_cutoff_sensitivity.json", cutoff_sensitivity)
 
     # --- 9) metric definition registry ---
     _write_json("metric_definition_registry.json", metric_definition_registry_document())
@@ -342,9 +368,11 @@ def _write_markdown_audit_v2(
         "for the Jovi audition. See metric_definition_registry.json: dynamic_range_db (Stage-AA per-clip",
         "frame-percentile) is NOT equivalent to complete_cycle_envelope_range_db (Stage-AB scene env).",
         "",
-        "Evidence files (provenance_v2/): energy_gain_taxonomy.json, variant_metrics.json,",
-        "aa_c3_metric_attribution.json, source_causal_eligibility.json, lf_body_guard_v2.json,",
-        "dynamic_preservation_audit_v2.json, blower_audible_provenance.json, metric_definition_registry.json.",
+        "Evidence files (provenance_v2/): energy_gain_taxonomy_v2.json, variant_metrics.json,",
+        "aa_c3_metric_attribution_v2.json, source_causal_eligibility.json, true_source_local_probe_receipt.json,",
+        "lf_body_guard_v2.json, lf_metric_validation.json, dynamic_preservation_audit_v2.json,",
+        "blower_provenance_v2.json, blower_cutoff_sensitivity.json, afterfire_metric_validation.json,",
+        "metric_definition_registry.json.",
         "",
     ]
     (OUT_DIR / "AA_C3_Provenance_Audit_V2.md").write_text("\n".join(lines), encoding="utf-8")

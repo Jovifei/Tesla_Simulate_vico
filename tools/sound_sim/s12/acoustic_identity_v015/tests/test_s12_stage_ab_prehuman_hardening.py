@@ -383,13 +383,17 @@ def test_provenance_v2_p5_sha_parity_with_v1() -> None:
 
 def test_provenance_v2_artifacts_structure() -> None:
     expected_files = {
-        "energy_gain_taxonomy.json",
+        "energy_gain_taxonomy_v2.json",
         "variant_metrics.json",
-        "aa_c3_metric_attribution.json",
+        "aa_c3_metric_attribution_v2.json",
         "source_causal_eligibility.json",
+        "true_source_local_probe_receipt.json",
         "lf_body_guard_v2.json",
+        "lf_metric_validation.json",
         "dynamic_preservation_audit_v2.json",
-        "blower_audible_provenance.json",
+        "blower_provenance_v2.json",
+        "blower_cutoff_sensitivity.json",
+        "afterfire_metric_validation.json",
         "metric_definition_registry.json",
         "AA_C3_Provenance_Audit_V2.md",
     }
@@ -398,11 +402,18 @@ def test_provenance_v2_artifacts_structure() -> None:
     elig = _json(V2_DIR / "source_causal_eligibility.json")
     assert elig["status"] == "SOURCE_LOCAL_PARAMETER_NOT_AVAILABLE"
     assert elig["probe"]["first_changed_layer"] == "combustion_event"
+    probe_receipt = _json(V2_DIR / "true_source_local_probe_receipt.json")
+    assert probe_receipt["first_changed_layer"] == "combustion_event"
+    assert probe_receipt["probe_result"] == "SOURCE_LOCAL_MODULATION_DEMONSTRATED"
     lf = _json(V2_DIR / "lf_body_guard_v2.json")
     assert "v1_supersession" in lf
     for variant in ("P0", "P5"):
         assert lf[variant]["hot_idle"]["boom_risk"] in ("OK", "ELEVATED", "HIGH", "NOT_MEASURABLE")
-    blower = _json(V2_DIR / "blower_audible_provenance.json")
+    lf_val = _json(V2_DIR / "lf_metric_validation.json")
+    assert lf_val["assertions"]["sine_steady_and_high"] is True
+    assert lf_val["assertions"]["silence_not_measurable"] is True
+    assert lf_val["v1_ratio_reproduction"]["defect_demonstrated"] is True
+    blower = _json(V2_DIR / "blower_provenance_v2.json")
     for scene in ("hot_idle", "full_load", "complete_cycle"):
         assert blower["per_scene"][scene]["carrier_verdict"] in (
             "NO_DISTINCT_CARRIER",
@@ -411,9 +422,17 @@ def test_provenance_v2_artifacts_structure() -> None:
             "GENUINE_CARRIER_CANDIDATE",
             "FILTER_CORNER_ARTIFACT_SUSPECTED",
         )
+    cutoff = _json(V2_DIR / "blower_cutoff_sensitivity.json")
+    assert cutoff["suppression_corner_hz"] == 1200.0
+    assert len(cutoff["sweep_low_hz"]) == 7
+    assert "hot_idle" in cutoff["per_scene"]
     dyn = _json(V2_DIR / "dynamic_preservation_audit_v2.json")
     assert dyn["P5"]["events"]["tip_in"]["status"] == "MEASURABLE"
     assert dyn["P5"]["afterfire_red_flag"]["red_flag"] is True
+    afterfire = _json(V2_DIR / "afterfire_metric_validation.json")
+    assert afterfire["assertions"]["red_flag_raised"] is True
+    assert afterfire["assertions"]["red_flag_above_threshold"] is True
+    assert afterfire["assertions"]["whole_clip_matches_dynamic"] is True
     registry = _json(V2_DIR / "metric_definition_registry.json")
     assert "dynamic_range_db_vs_complete_cycle_envelope_range_db" in registry["equivalence_warnings"]
 

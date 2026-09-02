@@ -1,0 +1,31 @@
+{
+  "schema": "s12.stage_ab.afterfire_metric_validation.v1",
+  "purpose": "Validate the afterfire peak-vs-engine-body red flag (firecracker check) retained for the Jovi audition. The red flag is a WHOLE-CLIP aggregate (peak vs body), not an event-aligned attack metric; the event-aligned window honestly reports NOT_MEASURABLE because afterfire has no single clean transient, so no fabricated timing is emitted.",
+  "whole_clip_metric": {
+    "peak_db": -25.145041953489557,
+    "body_db": -45.209094550331486,
+    "peak_vs_engine_body_db": 20.06405259684193,
+    "metric_kind": "WHOLE_CLIP_AGGREGATE (peak envelope frame vs 60th-percentile body dB)"
+  },
+  "peak_vs_engine_body_db": 20.06405259684193,
+  "red_flag": {
+    "peak_vs_engine_body_db": 20.06405259684193,
+    "red_flag": true,
+    "threshold_db": 15.0,
+    "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+  },
+  "event_aligned_window": {
+    "measurable": false,
+    "status": "NOT_MEASURABLE",
+    "reason": "no distinct event transient (peak-floor -2.94 dB < 1.0 dB)",
+    "event_onset_ms": null,
+    "pre_context_ms": null,
+    "post_context_ms": null
+  },
+  "assertions": {
+    "whole_clip_matches_dynamic": true,
+    "red_flag_raised": true,
+    "red_flag_above_threshold": true,
+    "event_window_honestly_not_measurable": true
+  }
+}

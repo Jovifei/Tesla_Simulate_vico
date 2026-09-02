@@ -1367,6 +1367,159 @@ def render_parent_raw(scene: str, duration_s: float = 1.0) -> np.ndarray:
     return np.asarray(pcm, dtype=np.float64)
 
 
+# ---------------------------------------------------------------------------
+# Stage AB-R: synthetic validation receipts (machine-reproducible evidence)
+#
+# These documents encode the same synthetic-signal discriminations the test
+# suite asserts (sine/burst/AM/noise/silence for LF, afterfire window for the
+# dynamic red-flag), so the evidence set is self-contained rather than relying
+# on a pytest run to exist.
+# ---------------------------------------------------------------------------
+
+
+def lf_metric_validation_document(sample_rate: int = SAMPLE_RATE_HZ) -> dict[str, Any]:
+    """LF boom-guard v2 validation against synthetic sine/burst/AM/noise/silence.
+
+    Reproduces the test fixture `lf_signals` (2 s @ SAMPLE_RATE) and runs each signal
+    through `lf_body_guard_metrics_v2` on the 20-90 Hz guard bands. The discriminations
+    below are the AB-R evidence that v2 envelope-shape statistics (crest / contiguity /
+    pulse density / fluctuation depth) separate a sustained resonant boom from gated,
+    event-driven, or stochastic low-frequency content — the thing v1's
+    mean(env>median)~0.5-by-construction metric could NOT do.
+    """
+    sr = sample_rate
+    t = np.arange(int(sr * 2.0)) / sr
+    sine40 = 0.5 * np.sin(2.0 * np.pi * 40.0 * t)
+    rng = np.random.default_rng(0)
+    signals: dict[str, np.ndarray] = {
+        "sine40": sine40,
+        "burst": np.where((t % 1.0) < 0.12, sine40, 0.0),
+        "am": sine40 * (0.5 + 0.5 * np.sin(2.0 * np.pi * 4.0 * t)),
+        "noise": rng.normal(0.0, 0.05, t.size),
+        "silence": np.zeros(t.size),
+    }
+
+    def _guard(pcm: np.ndarray) -> dict[str, Any]:
+        mono = np.asarray(pcm, dtype=np.float64)
+        stereo = np.column_stack((mono, mono))
+        return lf_body_guard_metrics_v2({"s": stereo}, sample_rate)["s"]
+
+    per_signal: dict[str, Any] = {}
+    for name, mono in signals.items():
+        row = _guard(mono)
+        band20 = row["bands"]["20-60Hz"]
+        per_signal[name] = {
+            "boom_risk": row["boom_risk"],
+            "presence_20_60": band20["presence"],
+            "envelope_crest_db": band20.get("envelope_crest_db"),
+            "envelope_contiguity_ratio": band20.get("envelope_contiguity_ratio"),
+            "fluctuation_depth_db": band20.get("fluctuation_depth_db"),
+            "pulse_density_per_s": band20.get("pulse_density_per_s"),
+            "envelope_cv_linear": band20.get("envelope_cv_linear"),
+        }
+
+    v1_ratios: dict[str, float] = {}
+    for name in ("sine40", "noise"):
+        mono = signals[name]
+        env = envelope_db(mono, sr, frame_s=0.010)
+        v1_ratios[name] = float(np.mean(env > float(np.percentile(env, 50))))
+
+    return {
+        "schema": "s12.stage_ab.lf_metric_validation.v1",
+        "purpose": (
+            "Synthetic-signal validation of lf_band_v2_metrics / lf_body_guard_metrics_v2 so the "
+            "v2 envelope-shape statistics are proven discriminating before they are used as LF "
+            "boom-guard evidence. Supersedes v1 mean(env>percentile(env,50)) ~0.5-by-construction."
+        ),
+        "sample_rate": sr,
+        "duration_s": 2.0,
+        "signal_descriptions": {
+            "sine40": "continuous 40 Hz tone (sustained resonant boom analogue) -> expect boom_risk HIGH, contiguity ~1.0, crest <4 dB",
+            "burst": "40 Hz tone gated 120 ms per second (event-driven body analogue) -> expect NOT HIGH (OK/ELEVATED)",
+            "am": "40 Hz tone amplitude-modulated at 4 Hz (breathing boom analogue) -> expect NOT HIGH (OK/ELEVATED)",
+            "noise": "white noise (stochastic low-frequency analogue) -> expect NOT HIGH, contiguity <0.85",
+            "silence": "zeros -> expect NOT_MEASURABLE on both 20-60 and 60-90 Hz bands",
+        },
+        "per_signal": per_signal,
+        "v1_ratio_reproduction": {
+            "note": "Reproduces the v1 defect: mean(env>median) hugs 0.5 for continuous envelopes regardless of signal type.",
+            "sine40": v1_ratios["sine40"],
+            "noise": v1_ratios["noise"],
+            "defect_demonstrated": all(0.35 <= v1_ratios[n] <= 0.65 for n in ("sine40", "noise")),
+        },
+        "assertions": {
+            "sine_steady_and_high": per_signal["sine40"]["boom_risk"] == "HIGH"
+            and per_signal["sine40"]["envelope_crest_db"] < 4.0
+            and per_signal["sine40"]["envelope_contiguity_ratio"] > 0.85,
+            "burst_not_high": per_signal["burst"]["boom_risk"] in ("OK", "ELEVATED"),
+            "am_not_high": per_signal["am"]["boom_risk"] in ("OK", "ELEVATED"),
+            "noise_discriminated": per_signal["noise"]["boom_risk"] in ("OK", "ELEVATED")
+            and per_signal["noise"]["envelope_contiguity_ratio"] < 0.85,
+            "silence_not_measurable": per_signal["silence"]["boom_risk"] == "NOT_MEASURABLE"
+            and per_signal["silence"]["presence_20_60"] == "NOT_MEASURABLE",
+        },
+    }
+
+
+def afterfire_metric_validation_document(
+    dynamic: dict[str, Any],
+    scene_pcm: dict[str, np.ndarray],
+    event_onsets: dict[str, int | None],
+    sample_rate: int = SAMPLE_RATE_HZ,
+) -> dict[str, Any]:
+    """Afterfire ~20 dB red-flag validation (AB-R §23).
+
+    The afterfire peak-vs-engine-body metric is a WHOLE-CLIP aggregate (peak envelope frame
+    vs 60th-percentile body dB), not an event-aligned window metric. It is retained as a RED
+    FLAG (firecracker check) for the Jovi audition. This document records BOTH:
+      - the whole-clip metric and its red-flag status (the retained evidence), and
+      - the event-aligned window attempt, which honestly reports NOT_MEASURABLE because
+        afterfire is a burst of pops without a single clean floor->peak transient — so no
+        fabricated attack/latency number is emitted (§21 semantics).
+    """
+    afterfire_pcm = scene_pcm.get("afterfire")
+    event = dynamic.get("events", {}).get("afterfire", {})
+    whole_clip = {}
+    if afterfire_pcm is not None:
+        mono = np.mean(np.asarray(afterfire_pcm, dtype=np.float64), axis=1) if np.asarray(afterfire_pcm).ndim == 2 else np.asarray(afterfire_pcm, dtype=np.float64)
+        env = envelope_db(mono, sample_rate, frame_s=0.010)
+        whole_clip = {
+            "peak_db": float(np.max(env)),
+            "body_db": float(np.percentile(env, 60)),
+            "peak_vs_engine_body_db": float(np.max(env)) - float(np.percentile(env, 60)),
+            "metric_kind": "WHOLE_CLIP_AGGREGATE (peak envelope frame vs 60th-percentile body dB)",
+        }
+    window = {
+        "measurable": bool(event.get("measurable")),
+        "status": event.get("status"),
+        "reason": event.get("reason"),
+        "event_onset_ms": event.get("event_onset_ms"),
+        "pre_context_ms": event.get("window", {}).get("pre_context_ms") if event.get("window") else None,
+        "post_context_ms": event.get("window", {}).get("post_context_ms") if event.get("window") else None,
+    }
+    peak_vs_body = float(dynamic.get("afterfire_peak_vs_engine_body_db", float("nan")))
+    red_flag = dynamic.get("afterfire_red_flag", {})
+    return {
+        "schema": "s12.stage_ab.afterfire_metric_validation.v1",
+        "purpose": (
+            "Validate the afterfire peak-vs-engine-body red flag (firecracker check) retained for "
+            "the Jovi audition. The red flag is a WHOLE-CLIP aggregate (peak vs body), not an "
+            "event-aligned attack metric; the event-aligned window honestly reports NOT_MEASURABLE "
+            "because afterfire has no single clean transient, so no fabricated timing is emitted."
+        ),
+        "whole_clip_metric": whole_clip,
+        "peak_vs_engine_body_db": peak_vs_body,
+        "red_flag": red_flag,
+        "event_aligned_window": window,
+        "assertions": {
+            "whole_clip_matches_dynamic": abs(float(whole_clip.get("peak_vs_engine_body_db", float("nan"))) - peak_vs_body) < 1.0e-6,
+            "red_flag_raised": bool(red_flag.get("red_flag")),
+            "red_flag_above_threshold": peak_vs_body > float(red_flag.get("threshold_db", 15.0)),
+            "event_window_honestly_not_measurable": window.get("status") == "NOT_MEASURABLE",
+        },
+    }
+
+
 __all__ = [
     "ANALYSIS_BANDS_HZ",
     "BLOWER_CUTOFF_SWEEP_HZ",
@@ -1384,6 +1537,7 @@ __all__ = [
     "ROUND2_ALLOWED_STEM_TARGETS",
     "SOURCE_LOCAL_PROBE_LAYERS",
     "VARIANT_BY_ID",
+    "afterfire_metric_validation_document",
     "assert_no_broad_mix_gain_in_round2_raw_candidate",
     "band_rms",
     "blower_audible_metrics",
@@ -1398,6 +1552,7 @@ __all__ = [
     "lf_band_v2_metrics",
     "lf_body_guard_metrics",
     "lf_body_guard_metrics_v2",
+    "lf_metric_validation_document",
     "metric_definition_registry_document",
     "pcm_metrics",
     "probe_source_local_off_on",

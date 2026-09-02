@@ -1,0 +1,60 @@
+{
+  "probe": "combustion_event.event_energy OFF(0.0) vs ON(default fitted)",
+  "scene": "full_load",
+  "duration_s": 1.0,
+  "method": "OFF/ON re-render of the full engine; per-layer rel-RMS change in causal layer order",
+  "coupling_note": "Non-source stems are NOT expected to be bit-identical: shared engine state (phase, inertia, filter memory) couples stems at the ~1% level. Categories: CHANGED(rel>5%) / UNCHANGED_PRACTICALLY(<=5%) / UNCHANGED_BIT_IDENTICAL.",
+  "first_changed_layer": "combustion_event",
+  "per_layer": [
+    {
+      "layer": "combustion_event",
+      "category": "CHANGED",
+      "rel_rms_change": 1.0,
+      "sha256_on": "bc972d30bf50494b59c0ab257f2000090e3c3536746f0ca95e5cfb4f1126e557",
+      "sha256_off": "351a8054b23144894668c6a51d5dbba82f56523ef43cc45b6f4d7060a969c31a"
+    },
+    {
+      "layer": "per_cylinder_path",
+      "category": "CHANGED",
+      "rel_rms_change": 1.0,
+      "sha256_on": "fb0501664f494a8eb203c72bca0079630af6076d4a58a0853dffad7a28168add",
+      "sha256_off": "351a8054b23144894668c6a51d5dbba82f56523ef43cc45b6f4d7060a969c31a"
+    },
+    {
+      "layer": "forced_induction",
+      "category": "UNCHANGED_PRACTICALLY",
+      "rel_rms_change": 0.02594525456985419,
+      "sha256_on": "a0229dc9ac44f34040f20f530aaa030fa923c75fed7fa939a2732c2463c61abb",
+      "sha256_off": "ce99918dfb39d1abfde3aec4be8c7a1751ab1b732e592655cfbc5c137107e64f"
+    },
+    {
+      "layer": "pre_transients",
+      "category": "CHANGED",
+      "rel_rms_change": 0.9251393245887083,
+      "sha256_on": "5b0d1fbd34185ae3eda301bf1768d870e66371dbc1e5523e8d8f6149af911440",
+      "sha256_off": "d9948f9c5df42196285d7f850fd3572d9e6da3820de99cec267dc8b564dfd0c9"
+    },
+    {
+      "layer": "transients",
+      "category": "CHANGED",
+      "rel_rms_change": 0.9249464524814321,
+      "sha256_on": "fc2f156a267a39d3c6d8ab03c6fb8b718d0be23324ee6b8d36125373c7750bf9",
+      "sha256_off": "d3f190337b938133349c802a6a4e62556c8258f84b35cb803206ae05a873ae84"
+    },
+    {
+      "layer": "dp_dc",
+      "category": "CHANGED",
+      "rel_rms_change": 0.6130141782804689,
+      "sha256_on": "150b98d0161f7de17f0a46956072cd7a7536f20357f60d1adbf1b0887650e4e4",
+      "sha256_off": "52fb68d6ec36e0342ad96a6022ca4c7a56bbaf1b470073b7bb46fc8d527c2118"
+    },
+    {
+      "layer": "pre_ptr",
+      "category": "CHANGED",
+      "rel_rms_change": 0.612115617765632,
+      "sha256_on": "1b2ee486fb7634807168b1e386d7a789908a5ff74533082b7eb2ce4f7fa955de",
+      "sha256_off": "5782824762ff40dfff033ff6967e49cffee1f5ea0a379d04c6dd0871eedd1e60"
+    }
+  ],
+  "probe_result": "SOURCE_LOCAL_MODULATION_DEMONSTRATED"
+}

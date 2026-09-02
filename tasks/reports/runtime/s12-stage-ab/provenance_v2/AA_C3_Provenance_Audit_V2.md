@@ -73,6 +73,8 @@ Afterfire ~20 dB peak-vs-body under AA-C3 (P5) is retained as a RED FLAG (firecr
 for the Jovi audition. See metric_definition_registry.json: dynamic_range_db (Stage-AA per-clip
 frame-percentile) is NOT equivalent to complete_cycle_envelope_range_db (Stage-AB scene env).
 
-Evidence files (provenance_v2/): energy_gain_taxonomy.json, variant_metrics.json,
-aa_c3_metric_attribution.json, source_causal_eligibility.json, lf_body_guard_v2.json,
-dynamic_preservation_audit_v2.json, blower_audible_provenance.json, metric_definition_registry.json.
+Evidence files (provenance_v2/): energy_gain_taxonomy_v2.json, variant_metrics.json,
+aa_c3_metric_attribution_v2.json, source_causal_eligibility.json, true_source_local_probe_receipt.json,
+lf_body_guard_v2.json, lf_metric_validation.json, dynamic_preservation_audit_v2.json,
+blower_provenance_v2.json, blower_cutoff_sensitivity.json, afterfire_metric_validation.json,
+metric_definition_registry.json.

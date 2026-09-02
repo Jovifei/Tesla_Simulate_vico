@@ -1,0 +1,73 @@
+{
+  "schema": "s12.stage_ab.lf_metric_validation.v1",
+  "purpose": "Synthetic-signal validation of lf_band_v2_metrics / lf_body_guard_metrics_v2 so the v2 envelope-shape statistics are proven discriminating before they are used as LF boom-guard evidence. Supersedes v1 mean(env>percentile(env,50)) ~0.5-by-construction.",
+  "sample_rate": 48000,
+  "duration_s": 2.0,
+  "signal_descriptions": {
+    "sine40": "continuous 40 Hz tone (sustained resonant boom analogue) -> expect boom_risk HIGH, contiguity ~1.0, crest <4 dB",
+    "burst": "40 Hz tone gated 120 ms per second (event-driven body analogue) -> expect NOT HIGH (OK/ELEVATED)",
+    "am": "40 Hz tone amplitude-modulated at 4 Hz (breathing boom analogue) -> expect NOT HIGH (OK/ELEVATED)",
+    "noise": "white noise (stochastic low-frequency analogue) -> expect NOT HIGH, contiguity <0.85",
+    "silence": "zeros -> expect NOT_MEASURABLE on both 20-60 and 60-90 Hz bands"
+  },
+  "per_signal": {
+    "sine40": {
+      "boom_risk": "HIGH",
+      "presence_20_60": "MEASURABLE",
+      "envelope_crest_db": 3.6846969919679395e-11,
+      "envelope_contiguity_ratio": 1.0,
+      "fluctuation_depth_db": 3.29544159249906e-05,
+      "pulse_density_per_s": 3.0,
+      "envelope_cv_linear": 0.01822992189889798
+    },
+    "burst": {
+      "boom_risk": "OK",
+      "presence_20_60": "MEASURABLE",
+      "envelope_crest_db": 109.92823150532558,
+      "envelope_contiguity_ratio": 0.65,
+      "fluctuation_depth_db": 108.43019460100138,
+      "pulse_density_per_s": 1.0,
+      "envelope_cv_linear": 2.359739266991071
+    },
+    "am": {
+      "boom_risk": "OK",
+      "presence_20_60": "MEASURABLE",
+      "envelope_crest_db": 3.719199795748864,
+      "envelope_contiguity_ratio": 0.4,
+      "fluctuation_depth_db": 17.016182875951625,
+      "pulse_density_per_s": 4.0,
+      "envelope_cv_linear": 0.6057302125642883
+    },
+    "noise": {
+      "boom_risk": "OK",
+      "presence_20_60": "MEASURABLE",
+      "envelope_crest_db": 3.8203330432748928,
+      "envelope_contiguity_ratio": 0.475,
+      "fluctuation_depth_db": 6.5814212791271345,
+      "pulse_density_per_s": 3.5,
+      "envelope_cv_linear": 0.3027462838176924
+    },
+    "silence": {
+      "boom_risk": "NOT_MEASURABLE",
+      "presence_20_60": "NOT_MEASURABLE",
+      "envelope_crest_db": null,
+      "envelope_contiguity_ratio": null,
+      "fluctuation_depth_db": null,
+      "pulse_density_per_s": null,
+      "envelope_cv_linear": null
+    }
+  },
+  "v1_ratio_reproduction": {
+    "note": "Reproduces the v1 defect: mean(env>median) hugs 0.5 for continuous envelopes regardless of signal type.",
+    "sine40": 0.495,
+    "noise": 0.5,
+    "defect_demonstrated": true
+  },
+  "assertions": {
+    "sine_steady_and_high": true,
+    "burst_not_high": true,
+    "am_not_high": true,
+    "noise_discriminated": true,
+    "silence_not_measurable": true
+  }
+}
