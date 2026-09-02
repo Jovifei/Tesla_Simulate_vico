@@ -160,8 +160,11 @@ def test_p5_is_bit_exact_aa_c3() -> None:
 def test_p6_combustion_stem_isolation_and_signal_health() -> None:
     data = render_scene_layers("full_load", 0.25)
     p6 = render_provenance_variant("P6", "full_load", 0.25, scene_data=data)
-    # Stem isolation: the non-combustion part is bit-identical to the
-    # event_energy=0 render (nothing else was scaled).
+    # AB-R reclassification: P6 rescales the counterfactual total effect of
+    # combustion energy (pre_ptr(full) - pre_ptr(event_energy=0)); the PCM math
+    # is unchanged, so the accounting below still holds (non-combustion part is
+    # bit-identical - nothing else was scaled), but the route is NOT a captured
+    # source stem anymore.
     combustion_part = data["combustion_part"]
     load = np.repeat(np.asarray(data["trace"].load, dtype=np.float64), 960)[:, None]
     scale = 2.0 + 2.0 * load
@@ -175,7 +178,12 @@ def test_p6_combustion_stem_isolation_and_signal_health() -> None:
     assert int(np.count_nonzero(np.abs(raw) >= 1.0)) == 0
     block_jumps = np.abs(np.diff(np.mean(raw, axis=1).reshape(-1, 960), axis=0))
     assert float(np.max(block_jumps)) < 0.5, "suspicious block-boundary discontinuity"
-    assert p6["route"] == {"target": "combustion_event", "kind": "STEM_LOCAL_GAIN", "state_dependency": "load"}
+    assert p6["route"] == {
+        "target": "counterfactual_combustion_residual",
+        "kind": "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
+        "state_dependency": "load",
+        "source_causal_eligible": False,
+    }
 
 
 def test_round2_raw_candidate_forbids_broad_mix_gain() -> None:
@@ -185,11 +193,13 @@ def test_round2_raw_candidate_forbids_broad_mix_gain() -> None:
     assert not route_is_stem_local({"target": "entire_pre_ptr_mix", "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN", "state_dependency": "load"})
     assert not route_is_stem_local({"target": "entire_post_ptr", "kind": "MASTER_OUTPUT_GAIN", "state_dependency": "none"})
     assert not route_is_stem_local({"target": "entire_pcm", "kind": "MASTER_OUTPUT_GAIN", "state_dependency": "none"})
-    # Numeric gate: P6 route passes, P1 broad route fails.
+    # Numeric gate (AB-R semantics): the counterfactual residual route P6 is NOT
+    # stem-local (source_causal_eligible=False) and the broad pre-PTR mix route
+    # P1 is NOT stem-local, so BOTH are rejected by the round-2 raw-candidate gate.
     data = render_scene_layers("full_load", 0.25)
     p6 = render_provenance_variant("P6", "full_load", 0.25, scene_data=data)
     p1 = render_provenance_variant("P1", "full_load", 0.25, scene_data=data)
-    assert assert_no_broad_mix_gain_in_round2_raw_candidate(p6["route"], p6["raw_pcm"], p6["monitor_pcm"])["passed"]
+    assert not assert_no_broad_mix_gain_in_round2_raw_candidate(p6["route"], p6["raw_pcm"], p6["monitor_pcm"])["passed"]
     assert not assert_no_broad_mix_gain_in_round2_raw_candidate(p1["route"], p1["raw_pcm"], p1["monitor_pcm"])["passed"]
 
 

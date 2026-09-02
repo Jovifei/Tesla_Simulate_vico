@@ -1,0 +1,68 @@
+{
+  "schema": "s12.stage_ab.pre_human_hardening.f7ba_scope_audit.v1",
+  "purpose": "AB-R0 diff-scope audit of d156f3d7..f7ba35b. Machine-classifies every changed file to verify the Stage-AB commit was analysis/tests/reports/docs only (no production sound-engine change, no frozen-path change).",
+  "timestamp": "2026-09-02T16:38:00+08:00",
+  "diff_range": "d156f3d729f68df8fd110a802ef16bce7a8f8088..f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+  "conclusion": "F7BA_ANALYSIS_ONLY_CONFIRMED",
+  "summary": {
+    "total_files_changed": 25,
+    "production_sound_engine_changed": 0,
+    "default_sound_changed": false,
+    "frozen_paths_changed": false,
+    "tuning_parameters_changed": false,
+    "runtime_reports_changed": 14,
+    "docs_changed": 8,
+    "analysis_tools_added": 2,
+    "tests_added": 1,
+    "obsidian_knowledge_added": 7
+  },
+  "categories": {
+    "analysis_tools_added": [
+      "tools/sound_sim/s12/acoustic_identity_v015/stage_aa/provenance.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/stage_aa/run_provenance_audit.py"
+    ],
+    "tests_added": [
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ab_provenance.py"
+    ],
+    "runtime_reports": {
+      "stage_ab": [
+        "tasks/reports/runtime/s12-stage-ab/EXECUTION_RESUME.md",
+        "tasks/reports/runtime/s12-stage-ab/STAGE_AB_INTERIM_REPORT.md",
+        "tasks/reports/runtime/s12-stage-ab/execution_state.json",
+        "tasks/reports/runtime/s12-stage-ab/human_feedback/jovi_v3_feedback.schema.json",
+        "tasks/reports/runtime/s12-stage-ab/human_feedback/waiting_status.json",
+        "tasks/reports/runtime/s12-stage-ab/post_merge_truth/stage_aa_post_merge_receipt.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/AA_C3_Provenance_Audit.md",
+        "tasks/reports/runtime/s12-stage-ab/provenance/aa_c3_metric_attribution.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/blower_provenance.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/dynamic_preservation_audit.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/energy_gain_taxonomy.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/lf_body_guard.json",
+        "tasks/reports/runtime/s12-stage-ab/provenance/variant_metrics.json"
+      ],
+      "stage_aa_updated": [
+        "tasks/reports/runtime/s12-stage-aa/execution_state.json"
+      ]
+    },
+    "docs": {
+      "reports": [
+        "docs/08-reports/09-s12-stage-aa-acoustic-quality-closure.md"
+      ],
+      "obsidian_knowledge": [
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/AA-C3-Gain-Provenance.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Broad-Pre-PTR-vs-Source-Causal-Gain.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Hellcat-Human-V3-Feedback.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AA-Post-Merge-Truth.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Final-Status.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Negative-Knowledge.md",
+        "docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Round2-ADR.md"
+      ]
+    }
+  },
+  "production_paths_scanned": {
+    "sound_engine": "tools/sound_sim/s12/acoustic_identity_v015/ (persistent_engine.py, candidates.py, configs, gain tables)",
+    "frozen_paths": ["PTR", "Radiation", "Track-P", "legacy default configs"],
+    "result": "0 files changed under any production or frozen path"
+  },
+  "verification_note": "The new provenance.py / run_provenance_audit.py are diagnostic AUDIT tools under stage_aa/, not part of the runtime sound engine. P5===AA-C3 bit-exact parity was validated by test_s12_stage_ab_provenance.py at f7ba35b."
+}

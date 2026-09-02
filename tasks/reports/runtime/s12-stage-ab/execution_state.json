@@ -1,14 +1,26 @@
 {
-  "schema": "s12.stage_ab.continuous_execution.v1",
+  "schema": "s12.stage_ab.continuous_execution.v2",
   "stage": "Stage-AB",
   "base_main_head": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
-  "current_branch": "s12-stage-ab-hellcat-human-source-causal-closure",
-  "worktree": "E:/Tesla_speed/worktrees/s12-stage-ab-hellcat-human-source-causal-closure",
+  "current_branch": "s12-stage-ab-prehuman-validation-hardening",
+  "worktree": "E:/Tesla_speed/worktrees/s12-stage-ab-prehuman-validation-hardening",
   "branch_name_note": "flat branch name (no slash) used because slash-prefixed branch refs are unstable in this sandbox",
+  "current_remote_truth": {
+    "main": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "verified_via": "git ls-remote origin refs/heads/main (2026-09-02)",
+    "stage_ab_branch_head": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "stage_ab_pr": "NONE_EXISTS",
+    "stage_ab_ci_runs_for_f7ba35b": 0,
+    "conclusion": "MAIN_ADVANCED_TO_STAGE_AB_WITHOUT_PR (ff-only, parent d156f3d7); remediation is FORWARD_ONLY",
+    "receipt": "tasks/reports/runtime/s12-stage-ab/pre_human_hardening/remote_truth_receipt.json"
+  },
+  "ab0_observed_main_at_execution": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+  "ab0_observed_main_at_execution_note": "HISTORICAL_OBSERVATION at AB0 execution time; superseded as current truth by current_remote_truth.main",
   "phase_order": [
     "AB0_POST_MERGE_TRUTH",
     "AB1_AA_C3_PROVENANCE_AUDIT",
     "AB2_HUMAN_FEEDBACK_GATE",
+    "ABR_PREHUMAN_VALIDATION_HARDENING",
     "AB3_HUMAN_FEEDBACK_BINDING",
     "AB4_SOURCE_CAUSAL_ROUND2",
     "AB5_PROFESSIONAL_FINALIST",
@@ -27,18 +39,42 @@
     "ci_run_33510767391": "success on 8bb9df7 (Stage-AA branch tip); merge commit has no dedicated run"
   },
   "ab1_provenance_audit": {
-    "status": "PASS",
+    "status": "AA_C3_PROVENANCE_AUDITED_V2",
+    "v1_status_note": "SUPERSEDES: Stage-AB provenance v1 validation semantics only (P6 semantic overclaim, LF persistence defect, post-PTR blower omission, dynamic attack alignment ambiguity); the v1 factorial/Shapley/bit-exact results remain valid",
     "diagnostic_only": true,
     "classification": "STATE_DEPENDENT_BROAD_PRE_PTR_SCALING",
     "classification_evidence": "candidates.py:90-108 scales the full layers['pre_ptr'] mix by 2+2*load; persistent_engine.py:694-708 shows pre_ptr = combustion+forced+mechanical+sync+transients+dp_dc+transfer_ir",
     "artifacts": "tasks/reports/runtime/s12-stage-ab/provenance/",
-    "p5_equals_aa_c3": "bit-exact (test_p5_is_bit_exact_aa_c3)",
+    "artifacts_v2": "tasks/reports/runtime/s12-stage-ab/provenance_v2/",
+    "p5_equals_aa_c3": "bit-exact (test_p5_is_bit_exact_aa_c3); P5 PCM SHA unchanged from provenance v1 (test_provenance_v2_p5_sha_parity_with_v1)",
     "headline": "AA-C3 RMS recovery +15.5 dB vs Stage-Z: event-body injection ~66% (Shapley +10.25 dB), broad pre-PTR scale ~33% (+5.20 dB), carrier ~0.6%; without broad scale (P4) centroid collapses to 591 Hz so the spectral correction does not hold alone",
     "negative_knowledge": [
       "event-body injection lifts afterfire peak-vs-body to ~20 dB (Parent ~3 dB): firecracker risk if Jovi complains",
-      "carrier peak sits at the 1200 Hz filter corner; blower-identity question stays open",
-      "broad scale is not the primary RMS fix but is required for spectral rebalance"
+      "v1 carrier peak sat at the 1200 Hz filter corner under a >=1200 Hz search; v2 unbiased 600-4000 Hz scan + 900-1500 Hz cutoff sweep finds hot_idle carrier 741 Hz (GENUINE_CARRIER_CANDIDATE), full_load 705 Hz (AMBIGUOUS), complete_cycle 705 Hz (AMBIGUOUS_NEAR_CORNER)",
+      "broad scale is not the primary RMS fix but is required for spectral rebalance",
+      "v1 persistent_energy_ratio = mean(env>median) ~0.5 by construction -> v1 boom_risk=OK conclusions INVALIDATED; v2 envelope-shape guard reports P5 hot_idle boom_risk=ELEVATED (contiguity 0.95), full_load OK",
+      "full - no_source is the counterfactual total effect of the combustion intervention, not an independent source stem; P6 reclassified COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE with source_causal_eligible=false"
     ]
+  },
+  "abr_prehuman_validation_hardening": {
+    "status": "AA_C3_PROVENANCE_AUDITED_V2",
+    "diagnostic_only": true,
+    "no_sound_tuning": true,
+    "default_renderer_changed": false,
+    "p6_classification": "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
+    "p6_source_causal_eligible": false,
+    "source_local_probe": {
+      "result": "event_energy probe: first_changed_layer=combustion_event; probe machinery works",
+      "aa_c3_p6_gain_paths": "SOURCE_LOCAL_PARAMETER_NOT_AVAILABLE (AA-C3/P6 gains are pre_ptr residual reconstructions, not source-layer parameters)"
+    },
+    "lf_guard": "v2 envelope-shape metrics; v1 above-median ratio invalidated; P5 hot_idle ELEVATED (not OK), full_load OK; LF_BOOM_NOT_DETECTED_BY_V2_DIAGNOSTIC only for full_load",
+    "blower_audit": "forced_source vs audible split; unbiased 600-4000 Hz scan; 900-1500 Hz cutoff sweep; hot_idle 741 Hz genuine candidate; full_load/complete_cycle AMBIGUOUS",
+    "dynamic_timing": "event-aligned windows with >=250 ms pre / >=500 ms post; tip_in latency 0.0 ms annotated as frame-quantization (renderer consumes state per block, no transport delay); scenes without isolated events NOT_MEASURABLE",
+    "afterfire_red_flag": "RETAINED (~20.1 dB P5 vs ~3.0 dB parent); metric window/event timing validated",
+    "v3_manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+    "v3_byte_immutable": true,
+    "remote_regression": "required on final hardening HEAD",
+    "artifacts_pre_human_hardening": "tasks/reports/runtime/s12-stage-ab/pre_human_hardening/"
   },
   "ab2_human_feedback": {
     "status": "WAITING_FOR_JOVI_AUDITION",
@@ -52,6 +88,7 @@
     "AB0_POST_MERGE_TRUTH": {"status": "PASS"},
     "AB1_AA_C3_PROVENANCE_AUDIT": {"status": "PASS", "scope": "taxonomy, P0-P8 provenance set, exact Shapley attribution, dynamic preservation, LF body guard, blower provenance, broad-gain hard gate tooling + tests"},
     "AB2_HUMAN_FEEDBACK_GATE": {"status": "REACHED", "human_status": "WAITING_FOR_JOVI_AUDITION"},
+    "ABR_PREHUMAN_VALIDATION_HARDENING": {"status": "COMPLETE", "result": "AA_C3_PROVENANCE_AUDITED_V2", "scope": "remote truth receipt, f7ba scope audit, P6 counterfactual reclassification, source-causal eligibility contract, LF guard v2, blower audible-path audit, event-aligned dynamic metrics, metric registry, provenance v2 artifacts, Obsidian targeted sync"},
     "AB3_HUMAN_FEEDBACK_BINDING": {"status": "BLOCKED_BY_HUMAN"},
     "AB4_SOURCE_CAUSAL_ROUND2": {"status": "BLOCKED_BY_HUMAN", "note": "at most ONE round, max 3 candidates with distinct hypotheses; source-causal only"},
     "AB5_PROFESSIONAL_FINALIST": {"status": "PENDING"},

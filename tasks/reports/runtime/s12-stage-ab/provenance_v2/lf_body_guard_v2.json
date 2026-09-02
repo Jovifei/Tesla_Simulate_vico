@@ -1,0 +1,1366 @@
+{
+  "schema": "s12.stage_ab.lf_body_guard.v2",
+  "parent_legacy": {
+    "hot_idle": {
+      "total_rms": 0.0023767766625255446,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0005149129398234088,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.59646005596267,
+          "envelope_crest_db": 1.988507863905987,
+          "envelope_cv_linear": 0.19684400602701432,
+          "envelope_contiguity_ratio": 0.55,
+          "fluctuation_depth_db": 5.053696519893705,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.216643384269966
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005096651380375293,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -61.53267037881507,
+          "envelope_crest_db": 5.553802441888891,
+          "envelope_cv_linear": 0.3411246019367965,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 7.7284503940432145,
+          "pulse_density_per_s": 5.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.21443543521500377
+        },
+        "90-120Hz": {
+          "band_rms": 0.000617546286664544,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -60.704251789554704,
+          "envelope_crest_db": 3.730223561280752,
+          "envelope_cv_linear": 0.36146753279710936,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 8.161524074012362,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.25982512215024195
+        },
+        "120-180Hz": {
+          "band_rms": 0.0012822038988622832,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -57.01993264916885,
+          "envelope_crest_db": 0.6029298933138278,
+          "envelope_cv_linear": 0.07189887290227658,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.5182042913369642,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5394717640402205
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006116800829875256,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.56346666390149,
+          "envelope_crest_db": 0.5810358196786822,
+          "envelope_cv_linear": 0.04644853323194597,
+          "envelope_contiguity_ratio": 1.0,
+          "fluctuation_depth_db": 0.966187844910074,
+          "pulse_density_per_s": 5.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.25735698798790757
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010913734428841465,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -58.325330081045124,
+          "envelope_crest_db": 0.650838554806711,
+          "envelope_cv_linear": 0.06203566538875477,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.8663658639540657,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.45918216048303906
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0024912508582801167,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003896567263574664,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -65.53682369139126,
+          "envelope_crest_db": 2.116824948124872,
+          "envelope_cv_linear": 0.20611173279676243,
+          "envelope_contiguity_ratio": 0.5,
+          "fluctuation_depth_db": 5.1944878577547655,
+          "pulse_density_per_s": 5.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.15641007209786714
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004591376028366137,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -65.21388758034361,
+          "envelope_crest_db": 1.1578527324578545,
+          "envelope_cv_linear": 0.2049090623417817,
+          "envelope_contiguity_ratio": 0.75,
+          "fluctuation_depth_db": 3.077212131602778,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.184300027960086
+        },
+        "90-120Hz": {
+          "band_rms": 0.00046558815184337535,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -62.75697244381354,
+          "envelope_crest_db": 4.082580933072634,
+          "envelope_cv_linear": 0.2913517722668929,
+          "envelope_contiguity_ratio": 0.55,
+          "fluctuation_depth_db": 5.643903934986724,
+          "pulse_density_per_s": 5.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1868893091580521
+        },
+        "120-180Hz": {
+          "band_rms": 0.0007013270529069659,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.973270795437955,
+          "envelope_crest_db": 3.9231277945160627,
+          "envelope_cv_linear": 0.2575532839422586,
+          "envelope_contiguity_ratio": 0.45,
+          "fluctuation_depth_db": 5.550323220322177,
+          "pulse_density_per_s": 5.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.2815160306221191
+        },
+        "180-250Hz": {
+          "band_rms": 0.0013077248246222653,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -57.3250210395513,
+          "envelope_crest_db": 0.22583787421719137,
+          "envelope_cv_linear": 0.045126303060679517,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.6152596015631957,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5249269941145464
+        },
+        "250-400Hz": {
+          "band_rms": 0.000871505063625739,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.78330439176412,
+          "envelope_crest_db": 0.5146440611101468,
+          "envelope_cv_linear": 0.051518950828493434,
+          "envelope_contiguity_ratio": 1.0,
+          "fluctuation_depth_db": 0.7488164060836056,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.349826297391584
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.007016409623043005,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00014898932930145493,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.8 dB below -70 dB floor",
+          "band_ratio": 0.021234411516133592
+        },
+        "60-90Hz": {
+          "band_rms": 0.00025085855425322005,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -66.18522574071129,
+          "envelope_crest_db": 11.227843449192207,
+          "envelope_cv_linear": 0.6888600816411832,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 13.901278422238406,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.03575312271241415
+        },
+        "90-120Hz": {
+          "band_rms": 0.00035138475111560986,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -64.38163106707981,
+          "envelope_crest_db": 6.687683181566385,
+          "envelope_cv_linear": 0.5096376887353025,
+          "envelope_contiguity_ratio": 0.15,
+          "fluctuation_depth_db": 12.738580639563153,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.05008042146821167
+        },
+        "120-180Hz": {
+          "band_rms": 0.00099083194044285,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.94406199344247,
+          "envelope_crest_db": 4.345457427661174,
+          "envelope_cv_linear": 0.3206741122081292,
+          "envelope_contiguity_ratio": 0.4,
+          "fluctuation_depth_db": 6.683698843494881,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.14121637613471147
+        },
+        "180-250Hz": {
+          "band_rms": 0.0011220228810200426,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -55.01856647197789,
+          "envelope_crest_db": 4.720692191131938,
+          "envelope_cv_linear": 0.32130786661289096,
+          "envelope_contiguity_ratio": 0.6,
+          "fluctuation_depth_db": 7.146463399741741,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1599141072572418
+        },
+        "250-400Hz": {
+          "band_rms": 0.0018110279093281317,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -50.53552752678411,
+          "envelope_crest_db": 4.860388427678224,
+          "envelope_cv_linear": 0.3523103309689654,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 7.376922113990112,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.2581131955837396
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.006269577023538347,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002408966713859201,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -64.30847515428678,
+          "envelope_crest_db": 7.941116170943616,
+          "envelope_cv_linear": 0.6718354405137101,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 12.769549803171287,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.038423113789256204
+        },
+        "60-90Hz": {
+          "band_rms": 0.00030346200880371606,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.35994081633317,
+          "envelope_crest_db": 8.974721747096083,
+          "envelope_cv_linear": 0.7284776038910463,
+          "envelope_contiguity_ratio": 0.15,
+          "fluctuation_depth_db": 16.52718975171217,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.04840230970357422
+        },
+        "90-120Hz": {
+          "band_rms": 0.0003477871352845696,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -64.7381272165219,
+          "envelope_crest_db": 4.705293334495849,
+          "envelope_cv_linear": 0.4973826010930927,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 13.458109206394752,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.05547218480271413
+        },
+        "120-180Hz": {
+          "band_rms": 0.0008568086530865174,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -57.41290755166724,
+          "envelope_crest_db": 5.041006131244728,
+          "envelope_cv_linear": 0.3459756139118336,
+          "envelope_contiguity_ratio": 0.45,
+          "fluctuation_depth_db": 7.181240762146395,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1366613170026839
+        },
+        "180-250Hz": {
+          "band_rms": 0.0010857483721824742,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -52.932159167144974,
+          "envelope_crest_db": 6.250652322316853,
+          "envelope_cv_linear": 0.44331745773371506,
+          "envelope_contiguity_ratio": 0.4,
+          "fluctuation_depth_db": 8.25891557928346,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.17317729220107944
+        },
+        "250-400Hz": {
+          "band_rms": 0.0015205659696115633,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -50.73376799649119,
+          "envelope_crest_db": 8.119800340325703,
+          "envelope_cv_linear": 0.5963929952859806,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 14.14512691690063,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.24253086992994705
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An event-driven engine body pulses with the firing rate (high crest, low contiguity, high pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by construction) is superseded."
+  },
+  "P0": {
+    "hot_idle": {
+      "total_rms": 0.0005144116044625219,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 6.263022263877905e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -83.4 dB below -70 dB floor",
+          "band_ratio": 0.12175118542323252
+        },
+        "60-90Hz": {
+          "band_rms": 5.149288082053201e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -84.9 dB below -70 dB floor",
+          "band_ratio": 0.10010054278292159
+        },
+        "90-120Hz": {
+          "band_rms": 0.00014797057491843025,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -76.2 dB below -70 dB floor",
+          "band_ratio": 0.28765014948104817
+        },
+        "120-180Hz": {
+          "band_rms": 0.00017550931202207944,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -74.7 dB below -70 dB floor",
+          "band_ratio": 0.34118458934350576
+        },
+        "180-250Hz": {
+          "band_rms": 0.0001441997984373805,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -76.5 dB below -70 dB floor",
+          "band_ratio": 0.2803198784522878
+        },
+        "250-400Hz": {
+          "band_rms": 8.146458823724822e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -79.5 dB below -70 dB floor",
+          "band_ratio": 0.15836460050773102
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "steady_1200": {
+      "total_rms": 0.0005792668428673515,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 4.2402488856983314e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -85.5 dB below -70 dB floor",
+          "band_ratio": 0.07320026923531893
+        },
+        "60-90Hz": {
+          "band_rms": 0.00010142770488089877,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -79.0 dB below -70 dB floor",
+          "band_ratio": 0.17509668666487974
+        },
+        "90-120Hz": {
+          "band_rms": 4.3721991801465124e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -82.7 dB below -70 dB floor",
+          "band_ratio": 0.07547815370381417
+        },
+        "120-180Hz": {
+          "band_rms": 0.00023944744127806444,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -69.14852889021819,
+          "envelope_crest_db": 0.488401313531341,
+          "envelope_cv_linear": 0.10957160670880413,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.5732050103027007,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4133629332084806
+        },
+        "180-250Hz": {
+          "band_rms": 0.0002079796448500966,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -69.46922519767557,
+          "envelope_crest_db": 2.1528271393991787,
+          "envelope_cv_linear": 0.15638092102791123,
+          "envelope_contiguity_ratio": 0.9,
+          "fluctuation_depth_db": 0.4426265913299261,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.359039443411959
+        },
+        "250-400Hz": {
+          "band_rms": 0.00016071763861795016,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -73.8 dB below -70 dB floor",
+          "band_ratio": 0.27745009160614686
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "full_load": {
+      "total_rms": 0.0010011632531871793,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.782330306879519e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -82.5 dB below -70 dB floor",
+          "band_ratio": 0.03777935611238787
+        },
+        "60-90Hz": {
+          "band_rms": 3.5066394299713607e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -80.5 dB below -70 dB floor",
+          "band_ratio": 0.0350256506000201
+        },
+        "90-120Hz": {
+          "band_rms": 0.00010437920260324181,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.7 dB below -70 dB floor",
+          "band_ratio": 0.10425792424058025
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002833727414193503,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -64.3127048248383,
+          "envelope_crest_db": 10.98124759573605,
+          "envelope_cv_linear": 0.7811666642198033,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 18.335279692319105,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.2830434901772912
+        },
+        "180-250Hz": {
+          "band_rms": 0.0004377794274019598,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -61.86738442718892,
+          "envelope_crest_db": 7.589666586925517,
+          "envelope_cv_linear": 0.5382460654833209,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 12.831398581060874,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.43727077078418475
+        },
+        "250-400Hz": {
+          "band_rms": 0.0004532602809628504,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.37653323180866,
+          "envelope_crest_db": 2.7169169324455495,
+          "envelope_cv_linear": 0.37011257005561066,
+          "envelope_contiguity_ratio": 0.5,
+          "fluctuation_depth_db": 8.608344135583138,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4527336371165313
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "complete_cycle": {
+      "total_rms": 0.0008957703578384522,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00012174067450436925,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -67.7376059014473,
+          "envelope_crest_db": 14.2290592024263,
+          "envelope_cv_linear": 1.123514804650814,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 15.121338015740278,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1359061208479111
+        },
+        "60-90Hz": {
+          "band_rms": 6.624567956324408e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -76.4 dB below -70 dB floor",
+          "band_ratio": 0.07395386438450464
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012405215477366983,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -71.0 dB below -70 dB floor",
+          "band_ratio": 0.13848655929295892
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002804076067236145,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -65.17334255016647,
+          "envelope_crest_db": 8.0203627508035,
+          "envelope_cv_linear": 0.6578781331854848,
+          "envelope_contiguity_ratio": 0.3,
+          "fluctuation_depth_db": 19.271443526087012,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3130351482050097
+        },
+        "180-250Hz": {
+          "band_rms": 0.00034093438558104185,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -62.76308452785991,
+          "envelope_crest_db": 6.9317299059780595,
+          "envelope_cv_linear": 0.5820019046715706,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 12.998817340827358,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.38060467462189423
+        },
+        "250-400Hz": {
+          "band_rms": 0.0003739165224596907,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.813178324421116,
+          "envelope_crest_db": 4.834906238770614,
+          "envelope_cv_linear": 0.43124565273399734,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 9.211660152585253,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4174245320664258
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An event-driven engine body pulses with the firing rate (high crest, low contiguity, high pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by construction) is superseded."
+  },
+  "P2": {
+    "hot_idle": {
+      "total_rms": 0.0013671503184612634,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0001660534171962262,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -74.7 dB below -70 dB floor",
+          "band_ratio": 0.12145951688993527
+        },
+        "60-90Hz": {
+          "band_rms": 0.00015649969723873983,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.9 dB below -70 dB floor",
+          "band_ratio": 0.11447146310500901
+        },
+        "90-120Hz": {
+          "band_rms": 0.0005014041934052102,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -65.45986818826646,
+          "envelope_crest_db": 0.4006030440671111,
+          "envelope_cv_linear": 0.04838948428733361,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.7111963240114392,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3667513269276373
+        },
+        "120-180Hz": {
+          "band_rms": 0.000622703315819808,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.52330656828637,
+          "envelope_crest_db": 0.7478915466552607,
+          "envelope_cv_linear": 0.16919390864282913,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.9518402291644463,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.455475383658371
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006038062395168901,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -58.458447034665596,
+          "envelope_crest_db": 0.9253961695874153,
+          "envelope_cv_linear": 0.24065014364919124,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.0828815423061116,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4416531462293612
+        },
+        "250-400Hz": {
+          "band_rms": 0.0007275469262208207,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.227586137049954,
+          "envelope_crest_db": 1.0538471632889852,
+          "envelope_cv_linear": 0.2786585752816917,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.0104186875032042,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5321630814083995
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "steady_1200": {
+      "total_rms": 0.0019825604721667423,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00018764062676305374,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.7 dB below -70 dB floor",
+          "band_ratio": 0.09464560067516181
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004583920630162898,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -66.44021045819038,
+          "envelope_crest_db": 0.24148699031174203,
+          "envelope_cv_linear": 0.02337484500702057,
+          "envelope_contiguity_ratio": 1.0,
+          "fluctuation_depth_db": 0.4796255693747611,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.23121214684327518
+        },
+        "90-120Hz": {
+          "band_rms": 0.00026342842830057167,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -60.92740130823235,
+          "envelope_crest_db": 1.2662604672803184,
+          "envelope_cv_linear": 0.7486824626435101,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.7438288547401157,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1328728338927642
+        },
+        "120-180Hz": {
+          "band_rms": 0.0010580268771063143,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -55.29409642367706,
+          "envelope_crest_db": 0.8159780629067868,
+          "envelope_cv_linear": 0.15028920138319693,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.7354638219699225,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5336668878251142
+        },
+        "180-250Hz": {
+          "band_rms": 0.0009014080534009777,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -53.263071506265106,
+          "envelope_crest_db": 1.01316526691582,
+          "envelope_cv_linear": 0.3602252217123879,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.0489608313949077,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4546686298127532
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010866108131966348,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -51.224297687771745,
+          "envelope_crest_db": 1.0390754942418354,
+          "envelope_cv_linear": 0.39595057233423514,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.9665034411444893,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5480845746960126
+        }
+      },
+      "boom_risk": "ELEVATED"
+    },
+    "full_load": {
+      "total_rms": 0.007311666175977148,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003689387853967144,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.40761566497056,
+          "envelope_crest_db": 5.78644320579302,
+          "envelope_cv_linear": 1.397336438188778,
+          "envelope_contiguity_ratio": 0.65,
+          "fluctuation_depth_db": 5.8848138418626945,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.050458920924054435
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005407419282352766,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -52.65616242403179,
+          "envelope_crest_db": 7.285975361086798,
+          "envelope_cv_linear": 1.8942530617843318,
+          "envelope_contiguity_ratio": 0.45,
+          "fluctuation_depth_db": 6.838580269902678,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.07395604711986328
+        },
+        "90-120Hz": {
+          "band_rms": 0.001029394023621373,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -47.55828288901411,
+          "envelope_crest_db": 14.443529396025546,
+          "envelope_cv_linear": 1.6173287921494903,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 11.358778474516761,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1407878859408953
+        },
+        "120-180Hz": {
+          "band_rms": 0.0026631722858277435,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -39.71133263083076,
+          "envelope_crest_db": 11.758404931772503,
+          "envelope_cv_linear": 1.3205212443326955,
+          "envelope_contiguity_ratio": 0.5,
+          "fluctuation_depth_db": 12.506598123384329,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.36423603344716854
+        },
+        "180-250Hz": {
+          "band_rms": 0.003306393594880328,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -38.51240517023236,
+          "envelope_crest_db": 9.673670271826758,
+          "envelope_cv_linear": 1.0687571838073577,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 12.139144223575407,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4522079530577658
+        },
+        "250-400Hz": {
+          "band_rms": 0.005146855477846992,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -36.21636570369582,
+          "envelope_crest_db": 4.1801932951589365,
+          "envelope_cv_linear": 0.7365834856124825,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 10.58431584844002,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.7039237506161383
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.004952371240910546,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002882878244148461,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.985266227323145,
+          "envelope_crest_db": 9.222720645384257,
+          "envelope_cv_linear": 0.9400604201887511,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 9.026519250098161,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.0582120786974446
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004152319418959678,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -55.89262033071657,
+          "envelope_crest_db": 9.156123857033435,
+          "envelope_cv_linear": 1.2853601386584192,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 14.42426100690247,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.08384507576205515
+        },
+        "90-120Hz": {
+          "band_rms": 0.0007953021119895321,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -50.79270005339632,
+          "envelope_crest_db": 11.32048227934493,
+          "envelope_cv_linear": 1.1811646226449286,
+          "envelope_contiguity_ratio": 0.3,
+          "fluctuation_depth_db": 16.65374780486593,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.16059016444884033
+        },
+        "120-180Hz": {
+          "band_rms": 0.0018465104251908855,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -43.43364179877382,
+          "envelope_crest_db": 9.914705945369477,
+          "envelope_cv_linear": 1.093204688655894,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 11.868145169079192,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3728537977801892
+        },
+        "180-250Hz": {
+          "band_rms": 0.0022039765322983034,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -41.985413793121154,
+          "envelope_crest_db": 11.264008349026973,
+          "envelope_cv_linear": 1.0651509516646562,
+          "envelope_contiguity_ratio": 0.4,
+          "fluctuation_depth_db": 9.710323493224031,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4450345955674112
+        },
+        "250-400Hz": {
+          "band_rms": 0.0033491019861778652,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -39.77827302978347,
+          "envelope_crest_db": 8.901155636530632,
+          "envelope_cv_linear": 0.8326980808203528,
+          "envelope_contiguity_ratio": 0.15,
+          "fluctuation_depth_db": 14.36024252283449,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.6762623041083037
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An event-driven engine body pulses with the firing rate (high crest, low contiguity, high pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by construction) is superseded."
+  },
+  "P5": {
+    "hot_idle": {
+      "total_rms": 0.0018060383610138339,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00024597807743658714,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -71.8 dB below -70 dB floor",
+          "band_ratio": 0.13619759288972433
+        },
+        "60-90Hz": {
+          "band_rms": 0.00021925937071307883,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -69.86811089946562,
+          "envelope_crest_db": 0.7986303396913712,
+          "envelope_cv_linear": 0.11408845853240107,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.9723440615896664,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.12140349587591033
+        },
+        "90-120Hz": {
+          "band_rms": 0.0006903158069905755,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -62.7928285298991,
+          "envelope_crest_db": 0.25953657473886693,
+          "envelope_cv_linear": 0.0812433198675342,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.5294535429115186,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3822265472827838
+        },
+        "120-180Hz": {
+          "band_rms": 0.0007796543887598424,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.37305943533418,
+          "envelope_crest_db": 0.6299591480027757,
+          "envelope_cv_linear": 0.09323542928961036,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.8040052846983201,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4316931498189093
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006589469381490319,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -58.95934490790796,
+          "envelope_crest_db": 0.8693051638717222,
+          "envelope_cv_linear": 0.1724689873754217,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.8638980762055866,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3648576643627474
+        },
+        "250-400Hz": {
+          "band_rms": 0.0007254533310716174,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.583714834437004,
+          "envelope_crest_db": 1.0833225807967253,
+          "envelope_cv_linear": 0.25775234238502104,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.0033118910805854,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.40168212742966236
+        }
+      },
+      "boom_risk": "ELEVATED"
+    },
+    "steady_1200": {
+      "total_rms": 0.0024258401693969547,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002452176698196224,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.0 dB below -70 dB floor",
+          "band_ratio": 0.10108566628302706
+        },
+        "60-90Hz": {
+          "band_rms": 0.0006150371032165953,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.79919302100146,
+          "envelope_crest_db": 0.19332681935907203,
+          "envelope_cv_linear": 0.04010063697626862,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.3128613724016276,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.25353570732959246
+        },
+        "90-120Hz": {
+          "band_rms": 0.00030190212374375526,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -60.73508440135349,
+          "envelope_crest_db": 1.0207363629065043,
+          "envelope_cv_linear": 0.5771016547367792,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.5383711822960038,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.12445260308258718
+        },
+        "120-180Hz": {
+          "band_rms": 0.0012722373224009968,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -55.29746240607628,
+          "envelope_crest_db": 0.6289588105437147,
+          "envelope_cv_linear": 0.08550820357060909,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.609333566397531,
+          "pulse_density_per_s": 4.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.5244522448143256
+        },
+        "180-250Hz": {
+          "band_rms": 0.000993817909625533,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -52.89139894153521,
+          "envelope_crest_db": 1.0898187328611613,
+          "envelope_cv_linear": 0.32158317409114423,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.7090160478192615,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.40967988005268646
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010503366113822103,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -51.4085426211727,
+          "envelope_crest_db": 1.1698885847193594,
+          "envelope_cv_linear": 0.40673105058209685,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 1.1080620786832753,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4329784891159239
+        }
+      },
+      "boom_risk": "ELEVATED"
+    },
+    "full_load": {
+      "total_rms": 0.007788640459814412,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003758287280205854,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.522302689658716,
+          "envelope_crest_db": 8.315632536292782,
+          "envelope_cv_linear": 1.2822036952979712,
+          "envelope_contiguity_ratio": 0.5,
+          "fluctuation_depth_db": 8.288871628886483,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.04825344422555881
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005412088538185666,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -52.725638213381394,
+          "envelope_crest_db": 10.903963383865928,
+          "envelope_cv_linear": 1.8586463651590266,
+          "envelope_contiguity_ratio": 0.7,
+          "fluctuation_depth_db": 9.26237482983828,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.06948694789686859
+        },
+        "90-120Hz": {
+          "band_rms": 0.001032231832953607,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -47.97431401548464,
+          "envelope_crest_db": 17.90237080985858,
+          "envelope_cv_linear": 1.5926980017656058,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 14.105817628702837,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.1325304253392386
+        },
+        "120-180Hz": {
+          "band_rms": 0.002825815046365249,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -39.72498827464924,
+          "envelope_crest_db": 13.703494105690275,
+          "envelope_cv_linear": 1.2168987187769666,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 15.170159769216767,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3628123625612297
+        },
+        "180-250Hz": {
+          "band_rms": 0.00347895972518773,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -38.567411899015056,
+          "envelope_crest_db": 8.90337461175097,
+          "envelope_cv_linear": 0.9446335395708483,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 12.409787868748708,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.4466709874640467
+        },
+        "250-400Hz": {
+          "band_rms": 0.00500408115024818,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -36.25739525338013,
+          "envelope_crest_db": 3.032320139685389,
+          "envelope_cv_linear": 0.7432466879515361,
+          "envelope_contiguity_ratio": 0.35,
+          "fluctuation_depth_db": 9.84247792384533,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.6424845486278125
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.005434344134260733,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0004991110331805843,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.13547531055601,
+          "envelope_crest_db": 13.037220635482377,
+          "envelope_cv_linear": 1.0530435199524681,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 18.73608628322812,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.09184384000158306
+        },
+        "60-90Hz": {
+          "band_rms": 0.00046767372946703045,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -55.846757231904824,
+          "envelope_crest_db": 10.913122141335123,
+          "envelope_cv_linear": 1.090388596290892,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 17.238370073448067,
+          "pulse_density_per_s": 0.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.08605890939416021
+        },
+        "90-120Hz": {
+          "band_rms": 0.0008835685127316842,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -51.00689741095253,
+          "envelope_crest_db": 12.996402210761985,
+          "envelope_cv_linear": 1.0742933398487144,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 19.28634664574853,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.16258972396710047
+        },
+        "120-180Hz": {
+          "band_rms": 0.0020236517233168955,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -43.511253595914866,
+          "envelope_crest_db": 10.75243710972439,
+          "envelope_cv_linear": 0.9385256648190687,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 12.37473829486207,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3723819606047428
+        },
+        "180-250Hz": {
+          "band_rms": 0.0023346717815945165,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -42.08459697733665,
+          "envelope_crest_db": 10.798522036470885,
+          "envelope_cv_linear": 0.9404277082424345,
+          "envelope_contiguity_ratio": 0.3,
+          "fluctuation_depth_db": 10.281118433065515,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.42961426879015935
+        },
+        "250-400Hz": {
+          "band_rms": 0.003256672329982902,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -39.84021533193201,
+          "envelope_crest_db": 8.062184043864562,
+          "envelope_cv_linear": 0.8467341979110835,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 13.834720419478046,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.599276057887329
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An event-driven engine body pulses with the firing rate (high crest, low contiguity, high pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by construction) is superseded."
+  },
+  "P6": {
+    "hot_idle": {
+      "total_rms": 0.0005940200622620525,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.872831542748811e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -86.7 dB below -70 dB floor",
+          "band_ratio": 0.0651969822029396
+        },
+        "60-90Hz": {
+          "band_rms": 3.7044658840815786e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -86.8 dB below -70 dB floor",
+          "band_ratio": 0.06236263923435215
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012825458018830165,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -77.4 dB below -70 dB floor",
+          "band_ratio": 0.21590950935209663
+        },
+        "120-180Hz": {
+          "band_rms": 0.00017838776521497367,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -74.5 dB below -70 dB floor",
+          "band_ratio": 0.30030596026616646
+        },
+        "180-250Hz": {
+          "band_rms": 0.00016515818293185867,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -75.3 dB below -70 dB floor",
+          "band_ratio": 0.27803468842942713
+        },
+        "250-400Hz": {
+          "band_rms": 0.00010171285465965283,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -78.6 dB below -70 dB floor",
+          "band_ratio": 0.1712279788536538
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "steady_1200": {
+      "total_rms": 0.0008148976335152528,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.12007192249748e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -83.9 dB below -70 dB floor",
+          "band_ratio": 0.03828790015057861
+        },
+        "60-90Hz": {
+          "band_rms": 3.549851588771359e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -85.7 dB below -70 dB floor",
+          "band_ratio": 0.04356193272347888
+        },
+        "90-120Hz": {
+          "band_rms": 3.7660765161671865e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -82.9 dB below -70 dB floor",
+          "band_ratio": 0.04621533259240586
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002578601185588732,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -68.07050457794024,
+          "envelope_crest_db": 0.5906557873316416,
+          "envelope_cv_linear": 0.12870817045404723,
+          "envelope_contiguity_ratio": 0.95,
+          "fluctuation_depth_db": 0.7185570950686042,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3164325283981166
+        },
+        "180-250Hz": {
+          "band_rms": 0.0002455604893247548,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -68.77831141233906,
+          "envelope_crest_db": 1.6614026298410352,
+          "envelope_cv_linear": 0.12190783388532396,
+          "envelope_contiguity_ratio": 0.9,
+          "fluctuation_depth_db": 0.5699912124248101,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.30133906300043084
+        },
+        "250-400Hz": {
+          "band_rms": 0.0001918993813521017,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -72.5 dB below -70 dB floor",
+          "band_ratio": 0.23548894175124616
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "full_load": {
+      "total_rms": 0.0018182461225596676,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 8.20610493046118e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -76.8 dB below -70 dB floor",
+          "band_ratio": 0.04513198091636182
+        },
+        "60-90Hz": {
+          "band_rms": 5.6094177632924234e-05,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -80.4 dB below -70 dB floor",
+          "band_ratio": 0.030850706588586962
+        },
+        "90-120Hz": {
+          "band_rms": 0.00011786250917832882,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -72.6 dB below -70 dB floor",
+          "band_ratio": 0.06482208745887813
+        },
+        "120-180Hz": {
+          "band_rms": 0.00032661692502697717,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -63.14111330894491,
+          "envelope_crest_db": 9.352099283801834,
+          "envelope_cv_linear": 0.6272684364401863,
+          "envelope_contiguity_ratio": 0.15,
+          "fluctuation_depth_db": 12.78493015379108,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.17963295561283887
+        },
+        "180-250Hz": {
+          "band_rms": 0.0005695944756753302,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.047725724184716,
+          "envelope_crest_db": 9.0695097260745,
+          "envelope_cv_linear": 0.5965602480817906,
+          "envelope_contiguity_ratio": 0.3,
+          "fluctuation_depth_db": 12.902243054718788,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.3132658822192199
+        },
+        "250-400Hz": {
+          "band_rms": 0.0006173785660217762,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -59.93223265939009,
+          "envelope_crest_db": 4.737810340319307,
+          "envelope_cv_linear": 0.4221167020360959,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 10.119509100046677,
+          "pulse_density_per_s": 1.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.33954620244296235
+        }
+      },
+      "boom_risk": "NOT_MEASURABLE"
+    },
+    "complete_cycle": {
+      "total_rms": 0.0014910056527623675,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00039539680002731903,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -56.62179380694355,
+          "envelope_crest_db": 21.9846413274767,
+          "envelope_cv_linear": 1.7572234887532512,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 18.145384047632888,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.2651879952934936
+        },
+        "60-90Hz": {
+          "band_rms": 0.00010056014862393172,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -70.3 dB below -70 dB floor",
+          "band_ratio": 0.06744451198935779
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012218269244420365,
+          "presence": "NOT_MEASURABLE",
+          "reason": "peak envelope frame -72.9 dB below -70 dB floor",
+          "band_ratio": 0.08194649847090607
+        },
+        "120-180Hz": {
+          "band_rms": 0.00030329996127711665,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -64.35578307626088,
+          "envelope_crest_db": 8.139771715284311,
+          "envelope_cv_linear": 0.5605924539896907,
+          "envelope_contiguity_ratio": 0.25,
+          "fluctuation_depth_db": 12.985775374887055,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.20341972595153923
+        },
+        "180-250Hz": {
+          "band_rms": 0.00040535816881108846,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -60.28243937405524,
+          "envelope_crest_db": 7.2968768690467485,
+          "envelope_cv_linear": 0.601594242602115,
+          "envelope_contiguity_ratio": 0.1,
+          "fluctuation_depth_db": 12.282111138063541,
+          "pulse_density_per_s": 3.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.2718689684778099
+        },
+        "250-400Hz": {
+          "band_rms": 0.00044070834488236366,
+          "presence": "MEASURABLE",
+          "envelope_peak_db": -61.59948711775534,
+          "envelope_crest_db": 6.6992687010951,
+          "envelope_cv_linear": 0.47559799806573594,
+          "envelope_contiguity_ratio": 0.2,
+          "fluctuation_depth_db": 9.292634924543393,
+          "pulse_density_per_s": 2.0,
+          "definitions": "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. v1 mean(env>median)~0.5-by-construction is superseded.",
+          "band_ratio": 0.29557791686830215
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An event-driven engine body pulses with the firing rate (high crest, low contiguity, high pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by construction) is superseded."
+  },
+  "v1_supersession": {
+    "superseded": "lf_body_guard.json (provenance/) v1 persistent_energy_ratio = mean(env>percentile(env,50)) ~0.5 by construction",
+    "note": "v1 boom-risk conclusions (P0/P2/P5 OK) are NOT usable evidence; v2 envelope-shape metrics supersede them."
+  }
+}

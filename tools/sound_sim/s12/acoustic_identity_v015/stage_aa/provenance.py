@@ -13,8 +13,10 @@ Provenance variants (P-set):
   P3  = forced-carrier >1200 Hz suppression only
   P4  = event-body + carrier suppression, NO broad scale
   P5  = broad + event-body + carrier (must equal AA-C3 bit-exact)
-  P6  = combustion-difference local state scaling (source-causal diagnostic;
-        NOT an audition winner before Jovi feedback)
+  P6  = combustion-difference (Y(Uc)-Y(0)) counterfactual residual scale; classified
+        COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE, source_causal_eligible=False, and is
+        NOT an audition winner before Jovi feedback (Stage AB-R semantic correction:
+        a counterfactual total-effect residual is not a genuine source stem).
   P7/P8 = remaining factorial corners (broad+event / broad+carrier) so the
         three factors form a complete 2^3 design for exact Shapley attribution.
 
@@ -55,6 +57,10 @@ ENERGY_GAIN_TAXONOMY = (
     "FORCED_INDUCTION_GAIN",
     "TRANSIENT_GAIN",
     "FILTER_REBALANCE",
+    # AB-R addition: a gain derived by rescaling Y(Uc)-Y(0) is a counterfactual
+    # total-effect residual, NOT a genuine source stem. STEM_LOCAL_GAIN is reserved
+    # for parameters whose first changed layer is an actual captured source stem.
+    "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
 )
 
 # Explicit stems a Round-2 raw candidate gain is allowed to target.
@@ -131,7 +137,12 @@ PROVENANCE_VARIANTS = (
     ProvenanceVariant("P3", "only forced-carrier >1200 Hz suppression", carrier_suppression=True),
     ProvenanceVariant("P4", "event body + carrier suppression without broad scale", event_body=True, carrier_suppression=True),
     ProvenanceVariant("P5", "broad scale + event body + carrier suppression (= AA-C3)", broad_scale=True, event_body=True, carrier_suppression=True),
-    ProvenanceVariant("P6", "combustion-difference local state scaling (source-causal diagnostic)", combustion_local_scale=True),
+    ProvenanceVariant(
+        "P6",
+        "combustion-difference (Y(Uc)-Y(0)) counterfactual residual scale - DIAGNOSTIC ONLY, "
+        "NOT a genuine stem-local gain; eligibility=false (Stage AB-R reclassification)",
+        combustion_local_scale=True,
+    ),
     ProvenanceVariant("P7", "broad scale + event body (factorial corner)", broad_scale=True, event_body=True),
     ProvenanceVariant("P8", "broad scale + carrier suppression (factorial corner)", broad_scale=True, carrier_suppression=True),
 )
@@ -207,11 +218,28 @@ def energy_gain_taxonomy_document() -> dict[str, Any]:
             "AA-C2": classification_for_candidate("AA-C2"),
             "AA-C3": classification_for_candidate("AA-C3"),
         },
+        "route_classifications": {
+            "P6": {
+                "route_kind": "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
+                "source_causal_eligible": False,
+                "definition": (
+                    "P6 rescales pre_ptr(full) - pre_ptr(event_energy=0) by 2+2*load. That residual "
+                    "is the interventional counterfactual total effect of combustion energy on the "
+                    "whole pre-PTR mix (shared processing interactions included). It is NOT a "
+                    "captured source stem and no in-engine parameter implements this gain inside "
+                    "the combustion stem, so STEM_LOCAL_GAIN / SOURCE_EVENT_ENERGY would be a "
+                    "semantic overclaim."
+                ),
+            }
+        },
         "notes": [
             "global_gain_changed=False (no constant master gain) does NOT imply stem-local: the AA-C1..C3 "
             "pressure scales multiply the whole pre_ptr mix with a load-dependent factor.",
             "event_body_mix and forced_carrier_reduction are stem-derived (combustion_event / forced_induction "
             "layers) and therefore map to FILTER_REBALANCE, not to BROAD_PRE_PTR_GAIN.",
+            "AB-R: STEM_LOCAL_GAIN requires the gain's first changed layer to be a genuine captured source "
+            "stem (probe-verified); counterfactual residuals belong to "
+            "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE regardless of their nominal shape.",
         ],
     }
 
@@ -292,6 +320,12 @@ def render_provenance_variant(
     load_col = _load_column(trace)
 
     if spec.combustion_local_scale:
+        # AB-R semantic fix: combustion_part = Y(Uc) - Y(0) is an interventional
+        # COUNTERFACTUAL TOTAL EFFECT (shared processing interactions included),
+        # NOT an independent combustion stem. Scaling it is therefore classified
+        # COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE with source_causal_eligible=False.
+        # The only genuine source-local modulations demonstrated in this engine are
+        # combustion_event.* parameters (see source_causal_eligibility probe).
         combustion_part = data["combustion_part"]
         rest = data["no_combustion_pre_ptr"]
         scale = AA_C3_BROAD_IDLE_SCALE + AA_C3_BROAD_LOAD_SCALE * load_col
@@ -304,8 +338,16 @@ def render_provenance_variant(
             "scale_mean": float(np.mean(scale)),
             "scale_min": float(np.min(scale)),
             "scale_max": float(np.max(scale)),
+            "source_causal_eligible": False,
+            "residual_origin": "Y(Uc)-Y(0) counterfactual total effect of combustion_event.event_energy (0.6->0); NOT a captured source stem layer",
+            "first_changed_layer": "pre_ptr (post-mix reconstruction in audit tool; no in-engine stem parameter carries this gain)",
         }
-        route = {"target": "combustion_event", "kind": "STEM_LOCAL_GAIN", "state_dependency": "load"}
+        route = {
+            "target": "counterfactual_combustion_residual",
+            "kind": "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
+            "state_dependency": "load",
+            "source_causal_eligible": False,
+        }
     elif spec.broad_scale:
         pre_ptr = _apply_broad_scale(base, trace)
         stem_accounting = {
@@ -606,6 +648,696 @@ def _boom_risk(bands: dict[str, Any]) -> str:
     return "OK"
 
 
+# ---------------------------------------------------------------------------
+# Stage AB-R: LF boom-guard v2 (fixes v1 math defect)
+#
+# v1 defect: persistent_energy_ratio = mean(env > percentile(env, 50)) is ~0.5
+# BY CONSTRUCTION for any continuous envelope, so thresholds 0.6/0.75 were
+# basically unreachable and the metric could not discriminate a sustained bass
+# boom from an event-driven body.  v2 replaces it with reference-independent
+# envelope-shape statistics: steady-run ratio, crest, CV, fluctuation depth and
+# pulse density.  Silent bands -> NOT_MEASURABLE.
+# ---------------------------------------------------------------------------
+
+LF_PRESENCE_FLOOR_DB = -70.0
+# 50 ms envelope frames: a 20-90 Hz boom tone has a period of 11-50 ms, so a 10 ms
+# frame would alternate above/below its own median and defeat run/crest statistics.
+LF_V2_FRAME_S = 0.050
+LF_BOOM_STEADY_RUN_RATIO = 0.80
+LF_BOOM_STEADY_CREST_DB = 4.0
+
+
+def lf_band_v2_metrics(mono: np.ndarray, low_hz: float, high_hz: float, sample_rate: int = SAMPLE_RATE_HZ) -> dict[str, Any]:
+    """Reference-independent LF band statistics (v2)."""
+    band = _bandpassed(np.asarray(mono, dtype=np.float64), low_hz, high_hz, sample_rate)
+    band_rms_value = _rms(band)
+    env_db = envelope_db(band, sample_rate, frame_s=LF_V2_FRAME_S)
+    peak_db = float(np.max(env_db)) if env_db.size else -np.inf
+    if peak_db < LF_PRESENCE_FLOOR_DB:
+        return {
+            "band_rms": band_rms_value,
+            "presence": "NOT_MEASURABLE",
+            "reason": f"peak envelope frame {peak_db:.1f} dB below {LF_PRESENCE_FLOOR_DB:.0f} dB floor",
+        }
+    env_lin = np.power(10.0, env_db / 20.0)
+    mean_lin = float(np.mean(env_lin))
+    cv = float(np.std(env_lin) / mean_lin) if mean_lin > 1.0e-12 else None
+    crest_db = float(np.percentile(env_db, 95) - np.percentile(env_db, 50))
+    median_db = float(np.median(env_db))
+    # Contiguity: fraction of envelope frames within +-1.5 dB of the median.  A steady
+    # tone sits on its median nearly all the time (~1.0); a burst/idle-gated signal does
+    # not.  (A longest-run-above-median statistic is defeated by a near-constant
+    # envelope whose tiny jitter alternates around the median.)
+    contiguity_ratio = float(np.mean(np.abs(env_db - median_db) <= 1.5))
+    p75 = float(np.percentile(env_db, 75))
+    peaks = 0
+    for index in range(1, env_db.size - 1):
+        if env_db[index] >= p75 and env_db[index] >= env_db[index - 1] and env_db[index] > env_db[index + 1]:
+            peaks += 1
+    duration_s = env_db.size * LF_V2_FRAME_S
+    pulse_density_per_s = float(peaks) / duration_s if duration_s > 0.0 else 0.0
+    return {
+        "band_rms": band_rms_value,
+        "presence": "MEASURABLE",
+        "envelope_peak_db": peak_db,
+        "envelope_crest_db": float(crest_db),
+        "envelope_cv_linear": cv,
+        "envelope_contiguity_ratio": contiguity_ratio,
+        "fluctuation_depth_db": float(np.percentile(env_db, 90) - np.percentile(env_db, 10)),
+        "pulse_density_per_s": pulse_density_per_s,
+        "definitions": (
+            "envelope_crest_db = p95-p50 of the LF envelope (steady tone: small; hits: large); "
+            "envelope_contiguity_ratio = fraction of frames within +-1.5 dB of the median (steady tone: ~1.0); "
+            "fluctuation_depth_db = p90-p10; pulse_density = envelope peaks above p75 per second. "
+            "v1 mean(env>median)~0.5-by-construction is superseded."
+        ),
+    }
+
+
+def _boom_risk_v2(low_bands: dict[str, dict[str, Any]], total_rms: float) -> str:
+    """v2 boom verdict from the 20-60Hz and 60-90Hz band statistics."""
+    measurable = [name for name, stats in low_bands.items() if stats.get("presence") == "MEASURABLE"]
+    if not measurable:
+        return "NOT_MEASURABLE"
+    steady_flags = [
+        float(stats["envelope_crest_db"]) < LF_BOOM_STEADY_CREST_DB
+        and float(stats["envelope_contiguity_ratio"]) > 0.85
+        and float(stats["pulse_density_per_s"]) < 5.0
+        for name, stats in low_bands.items()
+        if name in measurable and stats.get("presence") == "MEASURABLE"
+    ]
+    ratios = [float(low_bands[name]["band_rms"]) / max(total_rms, 1.0e-12) for name in measurable]
+    mean_ratio = float(np.mean(ratios)) if ratios else 0.0
+    any_steady = any(steady_flags)
+    all_steady = bool(steady_flags) and all(steady_flags)
+    if all_steady and mean_ratio > 0.35:
+        return "HIGH"
+    if any_steady or mean_ratio > 0.60:
+        return "ELEVATED"
+    return "OK"
+
+
+def lf_body_guard_metrics_v2(scene_pcm: dict[str, np.ndarray], sample_rate: int = SAMPLE_RATE_HZ) -> dict[str, Any]:
+    """AB-R v2 LF body guard. Validates against synthetic sine/burst/AM/noise/silence."""
+    output: dict[str, Any] = {}
+    for scene, pcm in scene_pcm.items():
+        mono = np.mean(np.asarray(pcm, dtype=np.float64), axis=1) if np.asarray(pcm).ndim == 2 else np.asarray(pcm, dtype=np.float64)
+        total_rms = _rms(mono)
+        bands: dict[str, Any] = {}
+        for low, high in LF_GUARD_BANDS_HZ:
+            stats = lf_band_v2_metrics(mono, low, high, sample_rate)
+            band_ratio = float(stats["band_rms"]) / max(total_rms, 1.0e-12)
+            stats["band_ratio"] = band_ratio
+            bands[f"{low:g}-{high:g}Hz"] = stats
+        low_bands = {name: bands[name] for name in ("20-60Hz", "60-90Hz")}
+        output[scene] = {
+            "total_rms": total_rms,
+            "bands": bands,
+            "boom_risk": _boom_risk_v2(low_bands, total_rms),
+        }
+    output["interpretation"] = (
+        "boom_risk=HIGH when the 20-90Hz envelope is STEADY (crest<4dB AND contiguity>0.85 AND "
+        "pulse density<5/s) AND its band ratio is elevated (>0.35): a sustained resonant boom. An "
+        "event-driven engine body pulses with the firing rate (high crest, low contiguity, high "
+        "pulse density) and is not flagged. v1 persistent_energy_ratio (mean(env>median)~0.5 by "
+        "construction) is superseded."
+    )
+    return output
+
+
+# ---------------------------------------------------------------------------
+# Stage AB-R: blower / forced-carrier audit v2
+#
+# v1 defect: blower_carrier_metrics only searched >=1200 Hz (biased), received a
+# 'post_ptr' argument it never used then `del post_ptr`, and never separated the
+# source-layer carrier from the AUDIBLE post-PTR contribution.  v2 splits
+# source / audible / contribution and scans the unbiased 600-4000 Hz window with
+# a 900-1500 Hz cutoff sensitivity sweep to test whether the ~1200 Hz peak is a
+# filter-corner artifact.
+# ---------------------------------------------------------------------------
+
+BLOWER_SEARCH_LOW_HZ = 600.0
+BLOWER_SEARCH_HIGH_HZ = 4000.0
+BLOWER_SUPPRESSION_CORNER_HZ = 1200.0
+BLOWER_CUTOFF_SWEEP_HZ = (900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0)
+
+
+def _carrier_stats(mono: np.ndarray, sample_rate: int, low_hz: float, high_hz: float) -> dict[str, Any] | None:
+    from numpy.fft import rfft, rfftfreq
+
+    if mono.size < 32:
+        return None
+    spectrum = np.abs(rfft(mono))
+    freqs = rfftfreq(mono.size, 1.0 / sample_rate)
+    band = (freqs >= low_hz) & (freqs <= min(high_hz, sample_rate / 2.0))
+    if not np.any(band):
+        return None
+    band_spec = spectrum[band]
+    if float(np.max(band_spec)) <= 0.0:
+        return None
+    band_freqs = freqs[band]
+    peak_index = int(np.argmax(band_spec))
+    local_median = float(np.median(band_spec)) + 1.0e-15
+    return {
+        "peak_freq_hz": float(band_freqs[peak_index]),
+        "prominence_db": 20.0 * float(np.log10(max(float(band_spec[peak_index]), 1.0e-15) / local_median)),
+        "tonal_share": float(np.max(band_spec)) / max(float(np.sum(band_spec)), 1.0e-15),
+    }
+
+
+def blower_audible_metrics(
+    forced_layer: np.ndarray,
+    base_pre_ptr: np.ndarray,
+    post_ptr_full: np.ndarray,
+    rpm: np.ndarray,
+    load: np.ndarray,
+    boost: np.ndarray,
+    sample_rate: int = SAMPLE_RATE_HZ,
+    block_size: int = BLOCK_SIZE,
+    search_low_hz: float = BLOWER_SEARCH_LOW_HZ,
+    search_high_hz: float = BLOWER_SEARCH_HIGH_HZ,
+    suppression_corner_hz: float = BLOWER_SUPPRESSION_CORNER_HZ,
+    cutoff_sweep_hz: tuple[float, ...] = BLOWER_CUTOFF_SWEEP_HZ,
+) -> dict[str, Any]:
+    """Blower provenance v2: source / audible / contribution split + cutoff sensitivity.
+
+    - source:  forced_induction layer carrier content (pre-PTR), unbiased 600-4000 Hz scan.
+    - audible: post-PTR interventional estimate.  base_pre_ptr is the engine's pre-PTR mix
+      and forced_layer is the engine's captured forced_induction layer; because the pre-PTR
+      chain (attack filter + transfer IR) is linear in the stems, PTR(base) - PTR(base -
+      forced_layer) estimates the audible post-PTR forced residual.  Labeled ESTIMATE.
+    - contribution: audible RMS share of the full post-PTR output, plus a band-limited share
+      around the audible peak.
+    - cutoff sensitivity: re-detect the peak as the low cutoff sweeps 900->1500 Hz.  A peak
+      pinned at the 1200 Hz suppression corner whose prominence collapses across the sweep is
+      a FILTER_CORNER_ARTIFACT_SUSPECTED, not blower identity evidence.
+    """
+    from numpy.fft import rfft, rfftfreq
+
+    full = np.asarray(post_ptr_full, dtype=np.float64)
+    base = np.asarray(base_pre_ptr, dtype=np.float64)
+    forced = np.asarray(forced_layer, dtype=np.float64)
+    mono_forced = np.mean(forced, axis=1) if forced.ndim == 2 else forced
+    mono_full = np.mean(full, axis=1) if full.ndim == 2 else full
+
+    pre_ptr_no_forced = base - forced
+    ptr = FrozenPtrStereo(sample_rate)
+    post_no_forced = ptr.process(pre_ptr_no_forced)
+    mono_no_forced = np.mean(np.asarray(post_no_forced, dtype=np.float64), axis=1)
+    audible = mono_full - mono_no_forced
+
+    source_carrier = _carrier_stats(mono_forced, sample_rate, search_low_hz, search_high_hz)
+    audible_carrier = _carrier_stats(audible, sample_rate, search_low_hz, search_high_hz)
+
+    contribution_rms = _rms(audible) / max(_rms(mono_full), 1.0e-12)
+    band_share = 0.0
+    if audible_carrier is not None:
+        peak = float(audible_carrier["peak_freq_hz"])
+        full_spectrum = np.abs(rfft(mono_full))
+        freqs = rfftfreq(mono_full.size, 1.0 / sample_rate)
+        band_mask = np.abs(freqs - peak) <= 250.0
+        band_share = float(np.sum(full_spectrum[band_mask])) / max(float(np.sum(full_spectrum)), 1.0e-15)
+
+    def _spectral_broadband_ratio(mono: np.ndarray) -> float | None:
+        if mono.size < 32:
+            return None
+        spectrum = np.abs(rfft(mono))
+        tonal = float(np.sum(np.sort(spectrum)[-5:])) + 1.0e-15
+        return float(np.sum(spectrum)) / tonal
+
+    # Cutoff sensitivity sweep.
+    sweep = []
+    for cutoff in cutoff_sweep_hz:
+        row: dict[str, Any] = {"cutoff_low_hz": float(cutoff)}
+        src = _carrier_stats(mono_forced, sample_rate, cutoff, search_high_hz)
+        aud = _carrier_stats(audible, sample_rate, cutoff, search_high_hz)
+        row["source"] = src
+        row["audible"] = aud
+        sweep.append(row)
+    # Search rows whose lower cutoff still admits the suppression corner itself.
+    near_rows = [row for row in sweep if row["cutoff_low_hz"] <= suppression_corner_hz]
+    audible_rows = [row["audible"] for row in sweep if row["audible"] is not None]
+    near_peaks = [row["audible"] for row in near_rows if row["audible"] is not None]
+    near_freqs = [float(row["peak_freq_hz"]) for row in near_peaks if row["peak_freq_hz"] is not None]
+    near_prom = [float(row["prominence_db"]) for row in near_peaks if row["prominence_db"] is not None]
+    all_prom = [float(row["prominence_db"]) for row in audible_rows if row["prominence_db"] is not None]
+    pinned_in_near_rows = bool(near_freqs) and len(near_freqs) >= 2 and (max(near_freqs) - min(near_freqs)) <= 150.0 and abs(float(np.mean(near_freqs)) - suppression_corner_hz) <= 150.0
+    collapse = bool(all_prom) and len(all_prom) >= 2 and (max(all_prom) - min(all_prom)) > 8.0
+    stable_away = bool(near_freqs) and len(near_freqs) >= 2 and (max(near_freqs) - min(near_freqs)) <= 150.0 and abs(float(np.mean(near_freqs)) - suppression_corner_hz) > 200.0
+    max_prom_db = max(all_prom) if all_prom else None
+
+    if max_prom_db is None or max_prom_db < 10.0:
+        verdict = "NO_DISTINCT_CARRIER"
+    elif pinned_in_near_rows and collapse:
+        # The near-corner peak is solitary: its prominence collapses by >8 dB as the
+        # search window passes the corner. Classic suppression-filter corner signature.
+        verdict = "FILTER_CORNER_ARTIFACT_SUSPECTED"
+    elif pinned_in_near_rows:
+        verdict = "AMBIGUOUS_NEAR_CORNER"
+    elif stable_away:
+        verdict = "GENUINE_CARRIER_CANDIDATE"
+    else:
+        verdict = "AMBIGUOUS"
+
+    n = block_size
+    frames = mono_full.size // n
+    env = np.sqrt(np.mean(np.square(mono_full[: frames * n].reshape(frames, n)), axis=1)) + 1.0e-12
+
+    def _tracking_error(reference: np.ndarray) -> float | None:
+        count = min(env.size, np.asarray(reference).size)
+        if count < 2:
+            return None
+        ref = np.asarray(reference, dtype=np.float64)[:count]
+        env_c = env[:count]
+        if np.allclose(ref, ref[0]):
+            return None
+        correlation = float(np.corrcoef(env_c, ref)[0, 1])
+        if not np.isfinite(correlation):
+            return None
+        return float(1.0 - correlation)
+
+    return {
+        "method": (
+            "source = forced_induction layer pre-PTR spectrum; audible = PTR(base) - PTR(base - "
+            "forced_layer) linear-decomposition ESTIMATE of the post-PTR forced residual; "
+            "contribution = audible RMS / full RMS"
+        ),
+        "source_carrier": source_carrier,
+        "audible_carrier": audible_carrier,
+        "audible_present": audible_carrier is not None,
+        "contribution_rms_share": contribution_rms,
+        "audible_peak_band_energy_share": band_share,
+        "source_broadband_to_tonal": _spectral_broadband_ratio(mono_forced),
+        "audible_broadband_to_tonal": _spectral_broadband_ratio(audible),
+        "cutoff_sensitivity": {
+            "sweep_low_hz": list(cutoff_sweep_hz),
+            "per_cutoff": sweep,
+            "peak_drift_hz": (max(near_freqs) - min(near_freqs)) if len(near_freqs) >= 2 else (0.0 if near_freqs else None),
+            "prominence_range_db": (max(all_prom) - min(all_prom)) if len(all_prom) >= 2 else (0.0 if all_prom else None),
+            "pinned_near_suppression_corner": bool(pinned_in_near_rows),
+            "prominence_collapse_gt_8db": bool(collapse),
+            "suppression_corner_hz": suppression_corner_hz,
+        },
+        "carrier_verdict": verdict,
+        "rpm_tracking_error": _tracking_error(rpm),
+        "load_tracking_error": _tracking_error(load),
+        "boost_tracking_error": _tracking_error(boost),
+        "note": (
+            "v1 blower_carrier_metrics (search>=1200 Hz, unused post_ptr argument, `del post_ptr`) "
+            "is superseded by this function for AB-R evidence."
+        ),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Stage AB-R: dynamic attack/settling v2 (event-aligned windows)
+#
+# v1 defect: tip_in_attack_ms / shift_attack_db etc. measured from a whole-clip
+# envelope without an isolated-event contract, so an onset at the clip edge
+# reported attack=0 ms (meaningless).  v2 requires an event-aligned window with
+# >=250 ms pre-event context and >=500 ms post-event context; when no isolated
+# event or insufficient context exists the scene reports NOT_MEASURABLE instead
+# of a fabricated number.
+# ---------------------------------------------------------------------------
+
+DYNAMIC_EVENT_PRE_GUARD_S = 0.250
+DYNAMIC_EVENT_POST_GUARD_S = 0.500
+DYNAMIC_EVENT_MIN_DELTA_DB = 1.0
+
+
+def detect_state_event_onset(trace: Any) -> tuple[int | None, str | None]:
+    """Detect the isolated event onset block index from a VehicleStateTrace."""
+    throttle = np.asarray(trace.throttle, dtype=np.float64)
+    rpm = np.asarray(trace.rpm, dtype=np.float64)
+    rpm_drop = np.nonzero(rpm[1:] - rpm[:-1] < -500.0)[0]
+    if rpm_drop.size:
+        return int(rpm_drop[0]) + 1, "gear_shift_rpm_drop"
+    tip_up = np.nonzero((throttle[1:] >= 0.5) & (throttle[:-1] < 0.5))[0]
+    if tip_up.size:
+        return int(tip_up[0]) + 1, "throttle_tip_in"
+    close = np.nonzero((throttle[1:] <= 0.15) & (throttle[:-1] >= 0.6))[0]
+    if close.size:
+        return int(close[0]) + 1, "throttle_close"
+    peak_rpm = float(np.max(rpm))
+    decay = np.nonzero(rpm < 0.95 * peak_rpm)[0]
+    if decay.size and int(decay[0]) > 2:
+        return int(decay[0]), "rpm_decay"
+    return None, None
+
+
+def event_aligned_dynamic_metrics(
+    pcm: np.ndarray,
+    sample_rate: int = SAMPLE_RATE_HZ,
+    *,
+    onset_sample: int | None = None,
+    pre_guard_ms: float = 250.0,
+    post_guard_ms: float = 500.0,
+    frame_s: float = 0.010,
+) -> dict[str, Any]:
+    """Per-event windowed latency/rise/settling metrics (AB-R v2)."""
+    mono = np.mean(np.asarray(pcm, dtype=np.float64), axis=1) if np.asarray(pcm).ndim == 2 else np.asarray(pcm, dtype=np.float64)
+    env = envelope_db(mono, sample_rate, frame_s=frame_s)
+    frame_ms = frame_s * 1000.0
+    if onset_sample is None:
+        return {"measurable": False, "status": "NOT_MEASURABLE", "reason": "no isolated event onset declared"}
+    onset_frame = max(0, int(onset_sample) // int(round(sample_rate * frame_s)))
+    pre_window = env[:onset_frame]
+    post_window = env[onset_frame:]
+    if pre_window.size * frame_s < pre_guard_ms / 1000.0:
+        return {
+            "measurable": False,
+            "status": "NOT_MEASURABLE",
+            "reason": f"pre-event context {pre_window.size * frame_s * 1000.0:.0f} ms < {pre_guard_ms:.0f} ms",
+        }
+    if post_window.size * frame_s < post_guard_ms / 1000.0:
+        return {
+            "measurable": False,
+            "status": "NOT_MEASURABLE",
+            "reason": f"post-event context {post_window.size * frame_s * 1000.0:.0f} ms < {post_guard_ms:.0f} ms",
+        }
+    floor_window = pre_window[-int(round(0.200 / frame_s)):]
+    if floor_window.size == 0:
+        floor_window = pre_window
+    floor_db = float(np.median(floor_window))
+    peak_offset = int(np.argmax(post_window))
+    peak_db = float(post_window[peak_offset])
+    delta_db = peak_db - floor_db
+    if delta_db < DYNAMIC_EVENT_MIN_DELTA_DB:
+        return {
+            "measurable": False,
+            "status": "NOT_MEASURABLE",
+            "reason": f"no distinct event transient (peak-floor {delta_db:.2f} dB < {DYNAMIC_EVENT_MIN_DELTA_DB:.1f} dB)",
+        }
+
+    def _first_crossing(target_db: float) -> int | None:
+        hits = np.nonzero(post_window >= target_db)[0]
+        return int(hits[0]) if hits.size else None
+
+    t10 = _first_crossing(floor_db + 0.10 * delta_db)
+    t50 = _first_crossing(floor_db + 0.50 * delta_db)
+    t90 = _first_crossing(floor_db + 0.90 * delta_db)
+    settle = np.nonzero(post_window[peak_offset:] <= floor_db + 3.0)[0]
+    settled_index = int(settle[0]) if settle.size else None
+    settled_within_window = settled_index is not None
+    settling_ms = float(settled_index) * frame_ms if settled_index is not None else float((post_window.size - peak_offset) * frame_ms)
+    acoustic_onset_ms = float(t10) * frame_ms if t10 is not None else None
+    result: dict[str, Any] = {
+        "measurable": True,
+        "status": "MEASURABLE",
+        "window": {
+            "onset_frame": onset_frame,
+            "pre_context_ms": float(pre_window.size * frame_ms),
+            "post_context_ms": float(post_window.size * frame_ms),
+            "frame_ms": frame_ms,
+        },
+        "event_onset_ms": float(onset_sample) / sample_rate * 1000.0,
+        "acoustic_onset_ms": acoustic_onset_ms,
+        "latency_ms": float(t50) * frame_ms if t50 is not None else None,
+        "latency_frames": t50,
+        "rise_ms": (float(t90 - t10) * frame_ms) if (t10 is not None and t90 is not None) else None,
+        "onset_to_peak_ms": float(peak_offset) * frame_ms,
+        "settling_ms": settling_ms,
+        "settled_within_window": settled_within_window,
+        "peak_overshoot_db": delta_db,
+        "peak_vs_pre_db": delta_db,
+        "pre_floor_db": floor_db,
+        "event_peak_db": peak_db,
+        "resolution_note": (
+            "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer "
+            "consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 "
+            "means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT "
+            "a claim of instantaneous engine physics response"
+        ),
+        "definitions": (
+            "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); "
+            "latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; "
+            "onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; "
+            "NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+        ),
+    }
+    return result
+
+
+def dynamic_preservation_metrics_v2(
+    scene_pcm: dict[str, np.ndarray],
+    event_onsets: dict[str, int | None] | None = None,
+    sample_rate: int = SAMPLE_RATE_HZ,
+    *,
+    pre_guard_ms: float = 250.0,
+    post_guard_ms: float = 500.0,
+) -> dict[str, Any]:
+    """AB-R v2 dynamic audit: v1 aggregates + event-aligned per-event windows.
+
+    scene_pcm maps scene -> raw PCM (raw review domain, no loudness normalization).
+    event_onsets maps scene -> audio sample index of the isolated event (None when the
+    scene has no single isolated event, e.g. steady/cycle scenes).
+    """
+    base = dynamic_preservation_metrics(scene_pcm, sample_rate)
+    events: dict[str, Any] = {}
+    for scene in ("tip_in", "gear_shift", "lift", "idle_return", "afterfire"):
+        if scene not in scene_pcm:
+            continue
+        events[scene] = event_aligned_dynamic_metrics(
+            scene_pcm[scene], sample_rate, onset_sample=(event_onsets or {}).get(scene), pre_guard_ms=pre_guard_ms, post_guard_ms=post_guard_ms
+        )
+    if "afterfire_peak_vs_engine_body_db" in base:
+        peak_vs_body = float(base["afterfire_peak_vs_engine_body_db"])
+        base["afterfire_red_flag"] = {
+            "peak_vs_engine_body_db": peak_vs_body,
+            "red_flag": peak_vs_body > 15.0,
+            "threshold_db": 15.0,
+            "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check).",
+        }
+    base["events"] = events
+    base["definitions_v2"] = {
+        "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+        "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)",
+    }
+    return base
+
+
+# ---------------------------------------------------------------------------
+# Stage AB-R: metric-definition registry (Stage-AA DR != complete-cycle env DR)
+# ---------------------------------------------------------------------------
+
+
+def metric_definition_registry_document() -> dict[str, Any]:
+    """Registry of every headline metric so cross-domain comparisons are explicit.
+
+    Key non-equivalence: Stage-AA per-clip `dynamic_range_db` (frame-percentile
+    10/95 over the WHOLE clip) is NOT the same metric as Stage-AB
+    `complete_cycle_envelope_range_db` (10ms envelope p10/p95 over the complete
+    cycle scene).  Comparing them as 'the dynamic-range metric' was an error mode.
+    """
+    registry = {
+        "dynamic_range_db": {
+            "definition": "per-clip dynamic range from stage_x.raw_dynamic_metrics: percentile-based frame RMS spread over the WHOLE clip PCM",
+            "domain": "per-clip RAW, frame-percentile (~10/95)",
+            "normalization": "none (raw review domain)",
+            "source_module": "stage_x.multi_reference_comparator.raw_dynamic_metrics",
+            "note": "Used by Stage-AA candidate comparison; a single number per clip.",
+            "not_equivalent_to": ["complete_cycle_envelope_range_db"],
+        },
+        "complete_cycle_envelope_range_db": {
+            "definition": "p95-p10 of the 10ms envelope dB over the complete-cycle scene PCM (scene-level crest/contrast)",
+            "domain": "complete_cycle scene RAW envelope",
+            "normalization": "none (raw review domain)",
+            "source_module": "stage_aa.provenance.dynamic_preservation_metrics",
+            "note": "Scene-level envelope contrast; typically ~10 dB when per-clip DR is ~19.6 dB. Different window, different definition.",
+            "not_equivalent_to": ["dynamic_range_db"],
+        },
+        "rms_dbfs": {"definition": "20*log10 RMS of raw PCM", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.raw_dynamic_metrics"},
+        "peak_dbfs": {"definition": "20*log10 peak abs of raw PCM", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.raw_dynamic_metrics"},
+        "crest_db": {"definition": "peak_dbfs - rms_dbfs", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.raw_dynamic_metrics"},
+        "transient_event_density_per_s": {"definition": "per-second transient event count proxy", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.raw_dynamic_metrics"},
+        "spectral_centroid_hz": {"definition": "amplitude-weighted mean frequency of the mono spectrum", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.multi_reference_comparator.timbre_metrics"},
+        "sharpness_proxy": {"definition": "Aures-style sharpness proxy from timbre_metrics", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.timbre_metrics"},
+        "persistent_tone_ratio": {"definition": "tonal persistence proxy from timbre_metrics", "domain": "per-clip RAW", "normalization": "none", "source_module": "stage_x.timbre_metrics"},
+        "idle_to_wot_rms_delta_db": {"definition": "RMS(full_load) - RMS(hot_idle) raw PCM", "domain": "scene pair RAW", "normalization": "none", "source_module": "stage_aa.provenance"},
+        "afterfire_peak_vs_engine_body_db": {
+            "definition": "peak envelope frame dB minus 60th-percentile body dB in the afterfire scene",
+            "domain": "afterfire scene RAW envelope",
+            "normalization": "none",
+            "source_module": "stage_aa.provenance",
+            "note": "RED FLAG threshold >15 dB (event-body injection lifts this toward ~20 dB).",
+        },
+        "lf_envelope_crest_db_v2": {
+            "definition": "p95-p50 of 10ms band envelope dB (v2; steady tone small, hits large)",
+            "domain": "LF band envelope",
+            "normalization": "none",
+            "source_module": "stage_aa.provenance.lf_band_v2_metrics",
+        },
+        "lf_steady_run_ratio_v2": {
+            "definition": "longest run of env>median / total frames (v2; NOT mean>median so not ~0.5 by construction)",
+            "domain": "LF band envelope",
+            "normalization": "none",
+            "source_module": "stage_aa.provenance.lf_band_v2_metrics",
+        },
+        "blower_carrier_peak_freq_hz_v2": {
+            "definition": "spectral peak within the unbiased 600-4000 Hz window",
+            "domain": "source layer / audible residual spectrum",
+            "normalization": "none",
+            "source_module": "stage_aa.provenance.blower_audible_metrics",
+        },
+        "event_latency_ms_v2": {"definition": "onset -> floor+50% of (peak-floor) crossing; quantized to the 10 ms analysis frame; latency_ms==0.0 means the crossing fell inside the same analysis frame as the state onset (renderer consumes state per 960-sample block with no transport delay) and is NOT an instantaneous-engine-physics claim; missing data is reported as NOT_MEASURABLE, never as 0 ms", "domain": "event-aligned RAW envelope (pre>=250ms, post>=500ms)", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+        "event_acoustic_onset_ms_v2": {"definition": "onset -> first frame >= floor+10% of (peak-floor) crossing (acoustic onset)", "domain": "event-aligned RAW envelope", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+        "event_onset_to_peak_ms_v2": {"definition": "onset -> peak frame within post window", "domain": "event-aligned RAW envelope", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+        "event_peak_overshoot_db_v2": {"definition": "peak minus pre-event floor, dB, within the guarded event window", "domain": "event-aligned RAW envelope", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+        "event_rise_ms_v2": {"definition": "10%->90% crossing time within post window", "domain": "event-aligned RAW envelope", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+        "event_settling_ms_v2": {"definition": "peak -> first frame <= floor+3 dB", "domain": "event-aligned RAW envelope", "normalization": "none", "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"},
+    }
+    return {
+        "schema": "s12.stage_ab.metric_definition_registry.v1",
+        "purpose": "Single source of truth for metric definitions so that different windows/domains are never compared as if they were the same metric.",
+        "metrics": registry,
+        "equivalence_warnings": {
+            "dynamic_range_db_vs_complete_cycle_envelope_range_db": {
+                "left": "dynamic_range_db",
+                "right": "complete_cycle_envelope_range_db",
+                "warning": "NOT the same metric: per-clip frame-percentile DR (Stage-AA candidate domain) vs complete-cycle envelope p95-p10 (Stage-AB scene domain). Never compare as 'the dynamic range metric'.",
+            }
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Stage AB-R: source-causal eligibility contract + real OFF/ON source probe
+# ---------------------------------------------------------------------------
+
+SOURCE_LOCAL_PROBE_LAYERS = (
+    "combustion_event",
+    "per_cylinder_path",
+    "forced_induction",
+    "pre_transients",
+    "transients",
+    "dp_dc",
+    "pre_ptr",
+)
+# Non-source stems are NOT bit-identical across an OFF/ON source probe because the
+# engine shares state (phase/inertia/attack/filter memory) across stems.  A rel RMS
+# change of a few percent is expected coupling; >=5% is a real change.
+SOURCE_PROBE_CHANGED_REL_RMS = 0.05
+SOURCE_PROBE_PRACTICALLY_UNCHANGED_REL_RMS = 0.05
+
+
+def _render_layer_arrays(config: dict[str, Any], trace: Any) -> dict[str, np.ndarray]:
+    engine = PersistentEventDomainEngine(config, SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=False, **FINAL_SETTINGS)
+    _block, layers = engine.process_with_layer_trace(_state_arrays(trace))
+    return {name: np.asarray(layers[name], dtype=np.float64) for name in SOURCE_LOCAL_PROBE_LAYERS if name in layers}
+
+
+def probe_source_local_off_on(scene: str = "full_load", duration_s: float = 1.0) -> dict[str, Any]:
+    """Real OFF/ON source-local probe: combustion_event.event_energy 0.0 (OFF) vs default (ON).
+
+    Evidence contract (AB-R):
+      - first_changed_layer is taken in CAUSAL layer order: the earliest layer whose
+        rel-RMS change exceeds the coupling floor is the source stem.
+      - bit-parity of non-source stems is NOT required (shared engine state couples
+        them at the ~1% level); instead each layer is classified as CHANGED /
+        UNCHANGED_PRACTICALLY / UNCHANGED_BIT_IDENTICAL.
+      - a genuinely source-local parameter therefore shows: source layer rel change
+        ~1.0, other stems <= a few percent coupling, vehicle_state unchanged.
+    """
+    trace = build_hellcat_bakeoff_trace(SCENE_NAMES.get(scene, scene), duration_s)
+    on_arrays = _render_layer_arrays(_fitted_config(), trace)
+    off_arrays = _render_layer_arrays(_zero_combustion_config(), trace)
+    rows: list[dict[str, Any]] = []
+    for name in SOURCE_LOCAL_PROBE_LAYERS:
+        if name not in on_arrays or name not in off_arrays:
+            continue
+        a = on_arrays[name]
+        b = off_arrays[name]
+        rms_a = _rms(a)
+        rel = float(np.sqrt(np.mean(np.square(a - b)))) / max(rms_a, 1.0e-12)
+        identical = np.array_equal(a, b)
+        if identical:
+            category = "UNCHANGED_BIT_IDENTICAL"
+        elif rel <= SOURCE_PROBE_PRACTICALLY_UNCHANGED_REL_RMS:
+            category = "UNCHANGED_PRACTICALLY"
+        else:
+            category = "CHANGED"
+        rows.append(
+            {
+                "layer": name,
+                "category": category,
+                "rel_rms_change": rel,
+                "sha256_on": _sha256_pcm(a),
+                "sha256_off": _sha256_pcm(b),
+            }
+        )
+    first_changed = next((row["layer"] for row in rows if row["category"] == "CHANGED"), None)
+    return {
+        "probe": "combustion_event.event_energy OFF(0.0) vs ON(default fitted)",
+        "scene": scene,
+        "duration_s": float(duration_s),
+        "method": "OFF/ON re-render of the full engine; per-layer rel-RMS change in causal layer order",
+        "coupling_note": (
+            "Non-source stems are NOT expected to be bit-identical: shared engine state (phase, "
+            "inertia, filter memory) couples stems at the ~1% level. Categories: "
+            "CHANGED(rel>5%) / UNCHANGED_PRACTICALLY(<=5%) / UNCHANGED_BIT_IDENTICAL."
+        ),
+        "first_changed_layer": first_changed,
+        "per_layer": rows,
+        "probe_result": (
+            "SOURCE_LOCAL_MODULATION_DEMONSTRATED"
+            if first_changed == "combustion_event"
+            else "PROBE_UNEXPECTED"
+        ),
+    }
+
+
+def source_causal_eligibility_document(probe: dict[str, Any] | None = None) -> dict[str, Any]:
+    """AB-R source-causal eligibility contract for Round-2 raw candidates."""
+    return {
+        "schema": "s12.stage_ab.source_causal_eligibility.v1",
+        "criterion": (
+            "A Round-2 raw-candidate gain is source-causal only if it is implemented by an in-engine "
+            "parameter whose first changed captured layer is a genuine source stem (combustion_event / "
+            "per_cylinder_path / forced_induction / transient sources), or routed through a declared "
+            "transfer stage. Post-mix broad scalings and counterfactual residuals are INELIGIBLE even "
+            "when their spectral shape mimics a stem."
+        ),
+        "probe": probe,
+        "probe_interpretation": (
+            "The OFF/ON probe shows event_energy is a genuine source-local parameter: the first "
+            "CHANGED layer in causal order is combustion_event (rel-RMS ~1.0); non-source stems "
+            "change only through shared-engine-state coupling (<= a few percent, never bit-parity — "
+            "see probe.coupling_note). This is the yardstick for source-local evidence."
+        ),
+        "candidates": {
+            "AA-C1/AA-C2/AA-C3": {
+                "implementation": "candidates.py _candidate_pre_ptr multiplies the whole layers['pre_ptr'] mix by pressure scales",
+                "first_changed_layer": "pre_ptr (change applied post-engine in the candidate transform)",
+                "source_causal_eligible": False,
+                "classification": "STATE_DEPENDENT_BROAD_PRE_PTR_SCALING",
+                "reason": "the gain's first changed layer is the full post-mix pre_ptr output, not a source stem; no in-engine source parameter carries this gain.",
+            },
+            "P6": {
+                "implementation": "audit-only reconstruction: pre_ptr = (Y(Uc)-Y(0))*(2+2*load) + Y(0)",
+                "first_changed_layer": "pre_ptr (audit reconstruction, not an engine path)",
+                "source_causal_eligible": False,
+                "classification": "COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE",
+                "reason": "the residual is the counterfactual total effect of combustion energy on the whole mix; it is not a captured source stem and no engine parameter implements it inside the stem.",
+            },
+            "event_energy (+3 dB source-local demonstration)": {
+                "implementation": "combustion_event.event_energy source parameter",
+                "first_changed_layer": "combustion_event",
+                "source_causal_eligible": True,
+                "classification": "SOURCE_EVENT_ENERGY",
+                "reason": "OFF/ON probe evidence: first CHANGED layer in causal order is combustion_event (rel-RMS ~1.0); non-source stems see only shared-state coupling.",
+            },
+        },
+        "status": "SOURCE_LOCAL_PARAMETER_NOT_AVAILABLE",
+        "status_detail": (
+            "No source-local parameter currently carries the AA-C3 (or P6) gain: the only demonstrated "
+            "source-local modulations (event_energy etc.) are NOT what AA-C3/P6 change. Round 2 must "
+            "re-route gains upstream into genuine source parameters, verified by the same OFF/ON probe "
+            "contract, before any STEM_LOCAL_GAIN classification is allowed."
+        ),
+    }
+
+
+
 def route_is_stem_local(route: dict[str, Any]) -> bool:
     """Round-2 raw-candidate hard gate: gains must target explicit stems or transfer stages."""
     target = str(route.get("target", ""))
@@ -637,24 +1369,41 @@ def render_parent_raw(scene: str, duration_s: float = 1.0) -> np.ndarray:
 
 __all__ = [
     "ANALYSIS_BANDS_HZ",
+    "BLOWER_CUTOFF_SWEEP_HZ",
+    "BLOWER_SEARCH_HIGH_HZ",
+    "BLOWER_SEARCH_LOW_HZ",
+    "BLOWER_SUPPRESSION_CORNER_HZ",
     "CAPTURED_STEM_LAYERS",
+    "DYNAMIC_EVENT_POST_GUARD_S",
+    "DYNAMIC_EVENT_PRE_GUARD_S",
     "ENERGY_GAIN_TAXONOMY",
     "LF_GUARD_BANDS_HZ",
+    "LF_PRESENCE_FLOOR_DB",
     "PROVENANCE_SCENES",
     "PROVENANCE_VARIANTS",
     "ROUND2_ALLOWED_STEM_TARGETS",
+    "SOURCE_LOCAL_PROBE_LAYERS",
     "VARIANT_BY_ID",
     "assert_no_broad_mix_gain_in_round2_raw_candidate",
     "band_rms",
+    "blower_audible_metrics",
     "blower_carrier_metrics",
     "classification_for_candidate",
+    "detect_state_event_onset",
     "dynamic_preservation_metrics",
+    "dynamic_preservation_metrics_v2",
     "energy_gain_taxonomy_document",
     "envelope_db",
+    "event_aligned_dynamic_metrics",
+    "lf_band_v2_metrics",
     "lf_body_guard_metrics",
+    "lf_body_guard_metrics_v2",
+    "metric_definition_registry_document",
     "pcm_metrics",
+    "probe_source_local_off_on",
     "render_parent_raw",
     "render_provenance_variant",
     "render_scene_layers",
     "route_is_stem_local",
+    "source_causal_eligibility_document",
 ]

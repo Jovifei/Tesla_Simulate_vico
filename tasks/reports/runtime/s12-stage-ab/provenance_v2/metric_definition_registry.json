@@ -1,0 +1,142 @@
+{
+  "schema": "s12.stage_ab.metric_definition_registry.v1",
+  "purpose": "Single source of truth for metric definitions so that different windows/domains are never compared as if they were the same metric.",
+  "metrics": {
+    "dynamic_range_db": {
+      "definition": "per-clip dynamic range from stage_x.raw_dynamic_metrics: percentile-based frame RMS spread over the WHOLE clip PCM",
+      "domain": "per-clip RAW, frame-percentile (~10/95)",
+      "normalization": "none (raw review domain)",
+      "source_module": "stage_x.multi_reference_comparator.raw_dynamic_metrics",
+      "note": "Used by Stage-AA candidate comparison; a single number per clip.",
+      "not_equivalent_to": [
+        "complete_cycle_envelope_range_db"
+      ]
+    },
+    "complete_cycle_envelope_range_db": {
+      "definition": "p95-p10 of the 10ms envelope dB over the complete-cycle scene PCM (scene-level crest/contrast)",
+      "domain": "complete_cycle scene RAW envelope",
+      "normalization": "none (raw review domain)",
+      "source_module": "stage_aa.provenance.dynamic_preservation_metrics",
+      "note": "Scene-level envelope contrast; typically ~10 dB when per-clip DR is ~19.6 dB. Different window, different definition.",
+      "not_equivalent_to": [
+        "dynamic_range_db"
+      ]
+    },
+    "rms_dbfs": {
+      "definition": "20*log10 RMS of raw PCM",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.raw_dynamic_metrics"
+    },
+    "peak_dbfs": {
+      "definition": "20*log10 peak abs of raw PCM",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.raw_dynamic_metrics"
+    },
+    "crest_db": {
+      "definition": "peak_dbfs - rms_dbfs",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.raw_dynamic_metrics"
+    },
+    "transient_event_density_per_s": {
+      "definition": "per-second transient event count proxy",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.raw_dynamic_metrics"
+    },
+    "spectral_centroid_hz": {
+      "definition": "amplitude-weighted mean frequency of the mono spectrum",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.multi_reference_comparator.timbre_metrics"
+    },
+    "sharpness_proxy": {
+      "definition": "Aures-style sharpness proxy from timbre_metrics",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.timbre_metrics"
+    },
+    "persistent_tone_ratio": {
+      "definition": "tonal persistence proxy from timbre_metrics",
+      "domain": "per-clip RAW",
+      "normalization": "none",
+      "source_module": "stage_x.timbre_metrics"
+    },
+    "idle_to_wot_rms_delta_db": {
+      "definition": "RMS(full_load) - RMS(hot_idle) raw PCM",
+      "domain": "scene pair RAW",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance"
+    },
+    "afterfire_peak_vs_engine_body_db": {
+      "definition": "peak envelope frame dB minus 60th-percentile body dB in the afterfire scene",
+      "domain": "afterfire scene RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance",
+      "note": "RED FLAG threshold >15 dB (event-body injection lifts this toward ~20 dB)."
+    },
+    "lf_envelope_crest_db_v2": {
+      "definition": "p95-p50 of 10ms band envelope dB (v2; steady tone small, hits large)",
+      "domain": "LF band envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.lf_band_v2_metrics"
+    },
+    "lf_steady_run_ratio_v2": {
+      "definition": "longest run of env>median / total frames (v2; NOT mean>median so not ~0.5 by construction)",
+      "domain": "LF band envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.lf_band_v2_metrics"
+    },
+    "blower_carrier_peak_freq_hz_v2": {
+      "definition": "spectral peak within the unbiased 600-4000 Hz window",
+      "domain": "source layer / audible residual spectrum",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.blower_audible_metrics"
+    },
+    "event_latency_ms_v2": {
+      "definition": "onset -> floor+50% of (peak-floor) crossing; quantized to the 10 ms analysis frame; latency_ms==0.0 means the crossing fell inside the same analysis frame as the state onset (renderer consumes state per 960-sample block with no transport delay) and is NOT an instantaneous-engine-physics claim; missing data is reported as NOT_MEASURABLE, never as 0 ms",
+      "domain": "event-aligned RAW envelope (pre>=250ms, post>=500ms)",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    },
+    "event_acoustic_onset_ms_v2": {
+      "definition": "onset -> first frame >= floor+10% of (peak-floor) crossing (acoustic onset)",
+      "domain": "event-aligned RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    },
+    "event_onset_to_peak_ms_v2": {
+      "definition": "onset -> peak frame within post window",
+      "domain": "event-aligned RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    },
+    "event_peak_overshoot_db_v2": {
+      "definition": "peak minus pre-event floor, dB, within the guarded event window",
+      "domain": "event-aligned RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    },
+    "event_rise_ms_v2": {
+      "definition": "10%->90% crossing time within post window",
+      "domain": "event-aligned RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    },
+    "event_settling_ms_v2": {
+      "definition": "peak -> first frame <= floor+3 dB",
+      "domain": "event-aligned RAW envelope",
+      "normalization": "none",
+      "source_module": "stage_aa.provenance.event_aligned_dynamic_metrics"
+    }
+  },
+  "equivalence_warnings": {
+    "dynamic_range_db_vs_complete_cycle_envelope_range_db": {
+      "left": "dynamic_range_db",
+      "right": "complete_cycle_envelope_range_db",
+      "warning": "NOT the same metric: per-clip frame-percentile DR (Stage-AA candidate domain) vs complete-cycle envelope p95-p10 (Stage-AB scene domain). Never compare as 'the dynamic range metric'."
+    }
+  }
+}

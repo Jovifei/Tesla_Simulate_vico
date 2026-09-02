@@ -24,4 +24,28 @@ status: ACCUMULATING
 6. P6（combustion 差分局部 scaling）动态最像 Parent——如果 Round 2 走 source-causal，
    这条路线已有数值背书。
 
-相关：[[AA-C3-Gain-Provenance]] · [[Hellcat-Human-V3-Feedback]]
+## AB-R 加固新增（2026-09-02，SUPERSEDES v1 validation semantics）
+
+7. **高于 median 的比例 ≈0.5 不能当 persistence**：v1 `mean(env>median)` 对连续分布
+   由构造即 ≈0.5，0.6/0.75 门槛不可达 → 全部旧 `boom_risk=OK` 作废
+   （OLD_LF_GUARD_INVALIDATED）。v2 换 envelope-shape 统计后 P5 hot_idle = ELEVATED。
+   详见 [[LF-Persistence-Metric-Failure]]。
+8. **full − no_source 是 counterfactual total effect，不是真 source stem**：
+   P6 改判 `COUNTERFACTUAL_COMBUSTION_RESIDUAL_SCALE`，`source_causal_eligible=false`，
+   只能做诊断归因，不得当 Round 2 候选。详见 [[Counterfactual-Residual-vs-True-Source-Stem]]。
+9. **source 层 carrier ≠ audible post-PTR carrier**：v1 blower 审计 `del post_ptr`
+   从未真正分析可听层，且只在 ≥1200 Hz 搜索。v2 分层后 hot_idle 741 Hz 双层都在
+   （GENUINE_CARRIER_CANDIDATE），full_load/complete_cycle 仍 AMBIGUOUS。
+   详见 [[Blower-Source-vs-Audible-Path]]。
+10. **0 ms timing 可能只是窗口对齐**：tip_in latency 0.0 ms = acoustic 50% 穿越落在
+   state onset 同一 10 ms 分析帧（离线渲染器按块消费 state、无传输延迟），是帧量化
+   陈述，不是"发动机瞬时响应"；无数据一律 NOT_MEASURABLE。
+   详见 [[Dynamic-Event-Aligned-Metrics]]。
+11. **Stage-AA dynamic_range_db ≠ complete_cycle_envelope_range_db**：两个指标
+   （≈9.37/3.58/5.75 vs ≈19.6/10.5）不得互相比较或混用名称，已登记在
+   `metric_definition_registry.json`。
+12. **remote truth 只认 `git ls-remote` + GitHub API**：local tracking ref 可能陈旧；
+   f7ba 在 main 上但无 PR、无 CI run（MAIN_ADVANCED_TO_STAGE_AB_WITHOUT_PR），
+   处置为 FORWARD_ONLY，不 reset、不 rewrite。
+
+相关：[[AA-C3-Gain-Provenance]] · [[AA-C3-Gain-Provenance-v2]] · [[Hellcat-Human-V3-Feedback]] · [[Stage-AB-PreHuman-Hardening]]

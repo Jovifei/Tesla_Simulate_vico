@@ -1,0 +1,75 @@
+{
+  "schema": "s12.stage_ab.pre_human_hardening.remote_truth_receipt.v1",
+  "stage": "Stage-AB-R (Pre-Human Validation Hardening & Remote CI Closure)",
+  "purpose": "AB-R0 current-truth receipt captured BEFORE any hardening edits. Establishes remote baseline (main / branch / PR / CI) and f7ba diff-scope classification so that all later receipts can distinguish current_remote_truth from HISTORICAL_OBSERVATION.",
+  "timestamp": "2026-09-02T16:36:54+08:00",
+  "verified_via": [
+    "git fetch --all --prune (2026-09-02)",
+    "git ls-remote origin refs/heads/main",
+    "git ls-remote origin refs/heads/s12-stage-ab-hellcat-human-source-causal-closure",
+    "git cat-file -p f7ba35b (local object)",
+    "git merge-base --is-ancestor d156f3d7 f7ba35b",
+    "GitHub API repos/Jovifei/Tesla_Simulate_vico/actions/runs?head_sha=f7ba35b...",
+    "GitHub API repos/Jovifei/Tesla_Simulate_vico/pulls?state=all&head=Jovifei:s12-stage-ab-hellcat-human-source-causal-closure"
+  ],
+  "actual_origin_main": {
+    "head_sha": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "note": "origin/main has advanced to the Stage-AB commit (ff-only, parent d156f3d7). Local origin/main tracking ref may display stale counts (ahead 510 artifact); authoritative truth is the ls-remote value."
+  },
+  "stage_ab_commit": {
+    "sha": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "subject": "s12(stage-ab): post-merge truth, AA-C3 gain provenance audit, human feedback gate",
+    "parent": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+    "is_ff_only_advance": true,
+    "merge_commit_present": false
+  },
+  "pr_status": {
+    "pr_number": null,
+    "state": "NONE_EXISTS",
+    "conclusion": "MAIN_ADVANCED_TO_STAGE_AB_WITHOUT_PR",
+    "detail": "GitHub API pulls?state=all&head=Jovifei:s12-stage-ab-hellcat-human-source-causal-closure returned 0 PRs. Stage-AB commit reached origin/main via direct ff-only push per Jovi instruction, not via a merged PR."
+  },
+  "ci_status": {
+    "workflow_runs_for_f7ba35b": 0,
+    "conclusion": "NO_CI_RUN_ON_DIRECT_PUSH",
+    "detail": "GitHub API actions/runs?head_sha=f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff returned total_count=0. The qualified remote regression for Stage-AB-R must run on the new hardening branch via PR or workflow_dispatch.",
+    "historical_qualified_run": {
+      "run_id": 33510767391,
+      "head_sha": "8bb9df7eece622c282f0427da85d998ed68748d1",
+      "conclusion": "success",
+      "note": "Historical Stage-AA branch-tip run; retained for provenance, NOT claimed as CI for f7ba35b."
+    }
+  },
+  "sound_engine_state": {
+    "default_sound_changed": false,
+    "frozen_paths_changed": false,
+    "evidence": "f7ba_scope_audit.json (diff d156f3d7..f7ba35b): 0 production sound-engine files changed; 0 changes under PTR / Radiation / Track-P / legacy-default paths."
+  },
+  "track_p_status": {
+    "value": "FROZEN",
+    "modified_in_f7ba35b": false
+  },
+  "r1_status": "MISSING",
+  "profile_freeze_status": "NOT_AUTHORIZED",
+  "oem_match_status": "NOT_CLAIMED",
+  "human_status": "WAITING_FOR_JOVI_AUDITION",
+  "v3_package_immutability": {
+    "review_package": "review_packages/s12-stage-aa-hellcat-quality-v3",
+    "manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+    "byte_immutable": true,
+    "note": "Manifest must remain byte-identical through all Stage-AB-R edits; verified at f7ba35b."
+  },
+  "history_integrity": {
+    "historical_receipts_rewritten": false,
+    "stage_aa_post_merge_receipt_untouched": true,
+    "note": "stage_aa_post_merge_receipt.json @ d156f3d7 observation is retained as HISTORICAL_OBSERVATION; this file is the current_remote_truth receipt for AB-R0."
+  },
+  "repository_checks": {
+    "fetch_all_prune": "done (2026-09-02)",
+    "ls_remote_main_sha": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "ls_remote_stage_ab_branch_sha": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "d156f3d7_is_ancestor_of_f7ba35b": true,
+    "hardening_branch": "s12-stage-ab-prehuman-validation-hardening",
+    "hardening_worktree": "E:/Tesla_speed/worktrees/s12-stage-ab-prehuman-validation-hardening"
+  }
+}

@@ -1,0 +1,612 @@
+{
+  "schema": "s12.stage_ab.dynamic_preservation.v2",
+  "domain": "DYNAMIC_REVIEW_RAW_NO_NORMALIZATION",
+  "parent_legacy": {
+    "idle_to_wot_rms_delta_db": 9.368717725144748,
+    "idle_to_wot_peak_delta_db": 1.1372140138643658,
+    "tip_in_attack_db": 14.354597605113149,
+    "tip_in_attack_ms": 100.0,
+    "shift_attack_db": 10.881713292258347,
+    "shift_decay_ms": 260.0,
+    "lift_decay_db_per_s": -32.84049749796633,
+    "idle_return_time_ms": 230.0,
+    "afterfire_peak_vs_engine_body_db": 2.988867608932253,
+    "complete_cycle_envelope_range_db": 19.59291880735485,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 2.988867608932253,
+      "red_flag": false,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 50.0,
+        "onset_to_peak_ms": 70.0,
+        "settling_ms": 550.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 13.264993133119148,
+        "peak_vs_pre_db": 13.264993133119148,
+        "pre_floor_db": -53.67977368446431,
+        "event_peak_db": -40.41478055134516,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 540.0,
+        "onset_to_peak_ms": 610.0,
+        "settling_ms": 90.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 7.924485046460973,
+        "peak_vs_pre_db": 7.924485046460973,
+        "pre_floor_db": -48.28247005273478,
+        "event_peak_db": -40.35798500627381,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.04 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -8.55 dB < 1.0 dB)"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.04 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  },
+  "P0": {
+    "idle_to_wot_rms_delta_db": 6.16981794532736,
+    "idle_to_wot_peak_delta_db": 3.5039904268270092,
+    "tip_in_attack_db": 6.987552434538337,
+    "tip_in_attack_ms": 90.0,
+    "shift_attack_db": 5.9342976811655035,
+    "shift_decay_ms": 180.0,
+    "lift_decay_db_per_s": -8.01386072637721,
+    "idle_return_time_ms": 60.0,
+    "afterfire_peak_vs_engine_body_db": 3.6978268564877794,
+    "complete_cycle_envelope_range_db": 6.637692957580818,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 3.6978268564877794,
+      "red_flag": false,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 30.0,
+        "onset_to_peak_ms": 40.0,
+        "settling_ms": 10.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 6.316165561446361,
+        "peak_vs_pre_db": 6.316165561446361,
+        "pre_floor_db": -63.237467442944535,
+        "event_peak_db": -56.921301881498174,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 30.0,
+        "onset_to_peak_ms": 30.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 2.699339445652832,
+        "peak_vs_pre_db": 2.699339445652832,
+        "pre_floor_db": -60.12822150412855,
+        "event_peak_db": -57.428882058475715,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -1.39 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 46,
+          "pre_context_ms": 460.0,
+          "post_context_ms": 540.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 460.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 80.0,
+        "onset_to_peak_ms": 80.0,
+        "settling_ms": 20.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 3.7569966499808345,
+        "peak_vs_pre_db": 3.7569966499808345,
+        "pre_floor_db": -62.20036215649705,
+        "event_peak_db": -58.443365506516216,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -1.39 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  },
+  "P1": {
+    "idle_to_wot_rms_delta_db": 9.597762358174315,
+    "idle_to_wot_peak_delta_db": 5.112117168365632,
+    "tip_in_attack_db": 10.11450332267772,
+    "tip_in_attack_ms": 70.0,
+    "shift_attack_db": 5.934302164317835,
+    "shift_decay_ms": 180.0,
+    "lift_decay_db_per_s": -14.468682631688823,
+    "idle_return_time_ms": 590.0,
+    "afterfire_peak_vs_engine_body_db": 4.648003573416396,
+    "complete_cycle_envelope_range_db": 10.357352250907532,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 4.648003573416396,
+      "red_flag": false,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 30.0,
+        "onset_to_peak_ms": 40.0,
+        "settling_ms": 600.0,
+        "settled_within_window": false,
+        "peak_overshoot_db": 9.44311518619552,
+        "peak_vs_pre_db": 9.44311518619552,
+        "pre_floor_db": -55.63325017317154,
+        "event_peak_db": -46.19013498697602,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 30.0,
+        "onset_to_peak_ms": 30.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 2.6993413371179287,
+        "peak_vs_pre_db": 2.6993413371179287,
+        "pre_floor_db": -49.498647249466465,
+        "event_peak_db": -46.79930591234854,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.98 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor 0.93 dB < 1.0 dB)"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.98 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  },
+  "P4": {
+    "idle_to_wot_rms_delta_db": 14.574223882647516,
+    "idle_to_wot_peak_delta_db": 19.883078265050266,
+    "tip_in_attack_db": 25.962651214398257,
+    "tip_in_attack_ms": 0.0,
+    "shift_attack_db": 22.070450643522204,
+    "shift_decay_ms": 10.0,
+    "lift_decay_db_per_s": -17.210773389606214,
+    "idle_return_time_ms": 470.0,
+    "afterfire_peak_vs_engine_body_db": 20.63479973488362,
+    "complete_cycle_envelope_range_db": 10.64664175240437,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 20.63479973488362,
+      "red_flag": true,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 440.0,
+        "onset_to_peak_ms": 600.0,
+        "settling_ms": 40.0,
+        "settled_within_window": false,
+        "peak_overshoot_db": 10.966075902871232,
+        "peak_vs_pre_db": 10.966075902871232,
+        "pre_floor_db": -54.38045354762787,
+        "event_peak_db": -43.41437764475664,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 60.0,
+        "onset_to_peak_ms": 60.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 2.171955181719788,
+        "peak_vs_pre_db": 2.171955181719788,
+        "pre_floor_db": -45.987054465711395,
+        "event_peak_db": -43.81509928399161,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -1.44 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -1.86 dB < 1.0 dB)"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -1.44 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  },
+  "P5": {
+    "idle_to_wot_rms_delta_db": 12.773260030323712,
+    "idle_to_wot_peak_delta_db": 15.286534648544034,
+    "tip_in_attack_db": 23.504704964718847,
+    "tip_in_attack_ms": 0.0,
+    "shift_attack_db": 21.137461838557833,
+    "shift_decay_ms": 10.0,
+    "lift_decay_db_per_s": -15.713627340245115,
+    "idle_return_time_ms": 510.0,
+    "afterfire_peak_vs_engine_body_db": 20.06405259684193,
+    "complete_cycle_envelope_range_db": 10.50286602716011,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 20.06405259684193,
+      "red_flag": true,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 20.0,
+        "onset_to_peak_ms": 30.0,
+        "settling_ms": 610.0,
+        "settled_within_window": false,
+        "peak_overshoot_db": 9.11490810195425,
+        "peak_vs_pre_db": 9.11490810195425,
+        "pre_floor_db": -52.07188993279347,
+        "event_peak_db": -42.95698183083922,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 0.0,
+        "latency_frames": 0,
+        "rise_ms": 60.0,
+        "onset_to_peak_ms": 60.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 1.7764307160776127,
+        "peak_vs_pre_db": 1.7764307160776127,
+        "pre_floor_db": -45.12997428641863,
+        "event_peak_db": -43.35354357034102,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.94 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -0.48 dB < 1.0 dB)"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor -2.94 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  },
+  "P6": {
+    "idle_to_wot_rms_delta_db": 10.641207599440826,
+    "idle_to_wot_peak_delta_db": 3.5039904268270092,
+    "tip_in_attack_db": 10.339133062675273,
+    "tip_in_attack_ms": 580.0,
+    "shift_attack_db": 6.280630196490208,
+    "shift_decay_ms": 690.0,
+    "lift_decay_db_per_s": -6.835962572741875,
+    "idle_return_time_ms": 10.0,
+    "afterfire_peak_vs_engine_body_db": 3.1634174655332004,
+    "complete_cycle_envelope_range_db": 9.637340637544845,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    },
+    "afterfire_red_flag": {
+      "peak_vs_engine_body_db": 3.1634174655332004,
+      "red_flag": false,
+      "threshold_db": 15.0,
+      "note": "event-body 120-400Hz injection lifts afterfire transient peaks far above the engine body; keep as RED FLAG for Jovi audition (firecracker check)."
+    },
+    "events": {
+      "tip_in": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 36,
+          "pre_context_ms": 360.0,
+          "post_context_ms": 640.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 360.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 390.0,
+        "onset_to_peak_ms": 550.0,
+        "settling_ms": 90.0,
+        "settled_within_window": false,
+        "peak_overshoot_db": 9.788106611230745,
+        "peak_vs_pre_db": 9.788106611230745,
+        "pre_floor_db": -62.748792233591644,
+        "event_peak_db": -52.9606856223609,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "gear_shift": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 88,
+          "pre_context_ms": 880.0,
+          "post_context_ms": 720.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 880.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 30.0,
+        "onset_to_peak_ms": 30.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 2.9977890787949306,
+        "peak_vs_pre_db": 2.9977890787949306,
+        "pre_floor_db": -53.58123135295557,
+        "event_peak_db": -50.58344227416064,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "lift": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor 0.87 dB < 1.0 dB)"
+      },
+      "idle_return": {
+        "measurable": true,
+        "status": "MEASURABLE",
+        "window": {
+          "onset_frame": 46,
+          "pre_context_ms": 460.0,
+          "post_context_ms": 540.0,
+          "frame_ms": 10.0
+        },
+        "event_onset_ms": 460.0,
+        "acoustic_onset_ms": 0.0,
+        "latency_ms": 10.0,
+        "latency_frames": 1,
+        "rise_ms": 80.0,
+        "onset_to_peak_ms": 80.0,
+        "settling_ms": 0.0,
+        "settled_within_window": true,
+        "peak_overshoot_db": 2.7899881188853826,
+        "peak_vs_pre_db": 2.7899881188853826,
+        "pre_floor_db": -57.47627940549236,
+        "event_peak_db": -54.68629128660698,
+        "resolution_note": "latency/acoustic onset are quantized to the 10 ms analysis frame; the offline renderer consumes vehicle state per 960-sample block with no transport delay, so latency_ms == 0.0 means 'acoustic 50% crossing inside the same analysis frame as the state onset' and is NOT a claim of instantaneous engine physics response",
+        "definitions": "event onset from state trace; acoustic_onset_ms = first frame >= floor+10% of (peak-floor); latency = onset->first frame >= floor+50%; rise = 10%->90% crossing time; onset_to_peak = onset->peak frame; settling = peak->first frame <= floor+3 dB; NOT_MEASURABLE when no isolated event, <250 ms pre or <500 ms post context, or no transient"
+      },
+      "afterfire": {
+        "measurable": false,
+        "status": "NOT_MEASURABLE",
+        "reason": "no distinct event transient (peak-floor 0.87 dB < 1.0 dB)"
+      }
+    },
+    "definitions_v2": {
+      "event_windows": "isolated-event scenes measured in event-aligned windows: pre >= 250 ms, post >= 500 ms; otherwise NOT_MEASURABLE",
+      "supersedes": "v1 tip_in_attack_ms/shift_attack_db measured from whole-clip envelope without an isolated-event contract (attack 0 ms possible)"
+    }
+  }
+}
