@@ -1,0 +1,75 @@
+{
+  "schema": "s12.stage_ab.continuous_execution.v1",
+  "stage": "Stage-AB",
+  "base_main_head": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+  "current_branch": "s12-stage-ab-hellcat-human-source-causal-closure",
+  "worktree": "E:/Tesla_speed/worktrees/s12-stage-ab-hellcat-human-source-causal-closure",
+  "branch_name_note": "flat branch name (no slash) used because slash-prefixed branch refs are unstable in this sandbox",
+  "phase_order": [
+    "AB0_POST_MERGE_TRUTH",
+    "AB1_AA_C3_PROVENANCE_AUDIT",
+    "AB2_HUMAN_FEEDBACK_GATE",
+    "AB3_HUMAN_FEEDBACK_BINDING",
+    "AB4_SOURCE_CAUSAL_ROUND2",
+    "AB5_PROFESSIONAL_FINALIST",
+    "AB6_V4_BLIND_AUDITION",
+    "AB7_FINAL_HUMAN_DECISION",
+    "AB8_FINAL_QUALIFICATION"
+  ],
+  "current_phase": "AB2_HUMAN_FEEDBACK_GATE",
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "ab0_post_merge_truth": {
+    "status": "PASS",
+    "receipt": "tasks/reports/runtime/s12-stage-ab/post_merge_truth/stage_aa_post_merge_receipt.json",
+    "actual_origin_main": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+    "advanced_beyond_pr4_merge": false,
+    "pr4": "MERGED",
+    "ci_run_33510767391": "success on 8bb9df7 (Stage-AA branch tip); merge commit has no dedicated run"
+  },
+  "ab1_provenance_audit": {
+    "status": "PASS",
+    "diagnostic_only": true,
+    "classification": "STATE_DEPENDENT_BROAD_PRE_PTR_SCALING",
+    "classification_evidence": "candidates.py:90-108 scales the full layers['pre_ptr'] mix by 2+2*load; persistent_engine.py:694-708 shows pre_ptr = combustion+forced+mechanical+sync+transients+dp_dc+transfer_ir",
+    "artifacts": "tasks/reports/runtime/s12-stage-ab/provenance/",
+    "p5_equals_aa_c3": "bit-exact (test_p5_is_bit_exact_aa_c3)",
+    "headline": "AA-C3 RMS recovery +15.5 dB vs Stage-Z: event-body injection ~66% (Shapley +10.25 dB), broad pre-PTR scale ~33% (+5.20 dB), carrier ~0.6%; without broad scale (P4) centroid collapses to 591 Hz so the spectral correction does not hold alone",
+    "negative_knowledge": [
+      "event-body injection lifts afterfire peak-vs-body to ~20 dB (Parent ~3 dB): firecracker risk if Jovi complains",
+      "carrier peak sits at the 1200 Hz filter corner; blower-identity question stays open",
+      "broad scale is not the primary RMS fix but is required for spectral rebalance"
+    ]
+  },
+  "ab2_human_feedback": {
+    "status": "WAITING_FOR_JOVI_AUDITION",
+    "feedback_received": false,
+    "schema": "tasks/reports/runtime/s12-stage-ab/human_feedback/jovi_v3_feedback.schema.json",
+    "waiting_status": "tasks/reports/runtime/s12-stage-ab/human_feedback/waiting_status.json",
+    "v3_package": "E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3",
+    "answers_manifest_opened_for_selection": false
+  },
+  "phases": {
+    "AB0_POST_MERGE_TRUTH": {"status": "PASS"},
+    "AB1_AA_C3_PROVENANCE_AUDIT": {"status": "PASS", "scope": "taxonomy, P0-P8 provenance set, exact Shapley attribution, dynamic preservation, LF body guard, blower provenance, broad-gain hard gate tooling + tests"},
+    "AB2_HUMAN_FEEDBACK_GATE": {"status": "REACHED", "human_status": "WAITING_FOR_JOVI_AUDITION"},
+    "AB3_HUMAN_FEEDBACK_BINDING": {"status": "BLOCKED_BY_HUMAN"},
+    "AB4_SOURCE_CAUSAL_ROUND2": {"status": "BLOCKED_BY_HUMAN", "note": "at most ONE round, max 3 candidates with distinct hypotheses; source-causal only"},
+    "AB5_PROFESSIONAL_FINALIST": {"status": "PENDING"},
+    "AB6_V4_BLIND_AUDITION": {"status": "PENDING"},
+    "AB7_FINAL_HUMAN_DECISION": {"status": "PENDING"},
+    "AB8_FINAL_QUALIFICATION": {"status": "PENDING"}
+  },
+  "boundaries": {
+    "hellcat_only": true,
+    "ferrari_rx7_multi_vehicle": "FORBIDDEN",
+    "ptr_radiation_track_p": "FROZEN",
+    "r1_reference": "MISSING",
+    "oem_calibration": "NOT_AUTHORIZED",
+    "profile_freeze": "NOT_AUTHORIZED",
+    "android_runtime": "NOT_AUTHORIZED",
+    "master_gain_repair": false,
+    "new_ecosystem_search": false,
+    "default_sound_changed": false,
+    "third_party_media_added": false
+  }
+}

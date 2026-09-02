@@ -1,0 +1,138 @@
+{
+  "schema": "s12.stage_ab.aa_c3_metric_attribution.v1",
+  "method": "exact Shapley attribution over the complete 2^3 factorial of factors {broad_scale, event_body, carrier_suppression}; corners P0/P1/P2/P3/P4/P5/P7/P8; per-scene Shapley values sum exactly to v(P5)-v(P0) per metric",
+  "factors": [
+    "broad_scale",
+    "event_body",
+    "carrier_suppression"
+  ],
+  "targets": [
+    "rms_dbfs",
+    "dynamic_range_db",
+    "spectral_centroid_hz",
+    "sharpness_proxy",
+    "persistent_tone_ratio",
+    "body_120_250_band_ratio"
+  ],
+  "note": "P6 (combustion-difference local scaling) is a source-causal diagnostic and is not part of the factorial.",
+  "per_metric": {
+    "rms_dbfs": {
+      "corner_values_mean_across_scenes": {
+        "none": -61.81128476334006,
+        "broad_scale": -52.29969637449364,
+        "event_body": -47.22450086426234,
+        "carrier_suppression": -61.588261163107724,
+        "carrier_suppression+event_body": -47.22040484049303,
+        "broad_scale+carrier_suppression+event_body": -46.272228437536825,
+        "broad_scale+event_body": -46.28548635833245,
+        "broad_scale+carrier_suppression": -52.235308653197926
+      },
+      "shapley": {
+        "broad_scale": 5.20191609990749,
+        "event_body": 10.24696576137559,
+        "carrier_suppression": 0.09017446452015794
+      },
+      "total_effect_p5_minus_p0": 15.539056325803237,
+      "broad_scale_share_of_total": 0.3347639644802301
+    },
+    "dynamic_range_db": {
+      "corner_values_mean_across_scenes": {
+        "none": 3.8336351657959735,
+        "broad_scale": 5.442572502513936,
+        "event_body": 6.48171768954458,
+        "carrier_suppression": 4.172598531298835,
+        "carrier_suppression+event_body": 6.498683440125549,
+        "broad_scale+carrier_suppression+event_body": 5.638147803971631,
+        "broad_scale+event_body": 5.594666492339049,
+        "broad_scale+carrier_suppression": 5.526648904784628
+      },
+      "shapley": {
+        "broad_scale": 0.32730042956805844,
+        "event_body": 1.3328902907538407,
+        "carrier_suppression": 0.1443219178537579
+      },
+      "total_effect_p5_minus_p0": 1.804512638175657,
+      "broad_scale_share_of_total": 0.1813788513550981
+    },
+    "spectral_centroid_hz": {
+      "corner_values_mean_across_scenes": {
+        "none": 4180.337816003624,
+        "broad_scale": 4063.429315850435,
+        "event_body": 591.5772291211723,
+        "carrier_suppression": 4053.3037053247735,
+        "carrier_suppression+event_body": 591.485037303853,
+        "broad_scale+carrier_suppression+event_body": 1821.5819523755024,
+        "broad_scale+event_body": 1829.3086775151985,
+        "broad_scale+carrier_suppression": 4026.8180484757872
+      },
+      "shapley": {
+        "broad_scale": 572.9371035636603,
+        "event_body": -2880.655445386938,
+        "carrier_suppression": -51.037521804843266
+      },
+      "total_effect_p5_minus_p0": -2358.755863628121,
+      "broad_scale_share_of_total": -0.24289800924221
+    },
+    "sharpness_proxy": {
+      "corner_values_mean_across_scenes": {
+        "none": 0.2920086795195052,
+        "broad_scale": 0.2824804828792804,
+        "event_body": 0.02182423932301542,
+        "carrier_suppression": 0.2822552189282608,
+        "carrier_suppression+event_body": 0.021766541171012156,
+        "broad_scale+carrier_suppression+event_body": 0.11403019456201138,
+        "broad_scale+event_body": 0.11467039964761967,
+        "broad_scale+carrier_suppression": 0.2796734220693176
+      },
+      "shapley": {
+        "broad_scale": 0.04262254616120165,
+        "event_body": -0.2166590160660836,
+        "carrier_suppression": -0.003942015052611917
+      },
+      "total_effect_p5_minus_p0": -0.17797848495749383,
+      "broad_scale_share_of_total": -0.23948145289235995
+    },
+    "persistent_tone_ratio": {
+      "corner_values_mean_across_scenes": {
+        "none": 0.48333333333333345,
+        "broad_scale": 0.48333333333333345,
+        "event_body": 0.49141414141414147,
+        "carrier_suppression": 0.48434343434343446,
+        "carrier_suppression+event_body": 0.49141414141414147,
+        "broad_scale+carrier_suppression+event_body": 0.45151515151515154,
+        "broad_scale+event_body": 0.45909090909090916,
+        "broad_scale+carrier_suppression": 0.484848484848485
+      },
+      "shapley": {
+        "broad_scale": -0.01860269360269361,
+        "event_body": -0.011279461279461353,
+        "carrier_suppression": -0.0019360269360269484
+      },
+      "total_effect_p5_minus_p0": -0.03181818181818191,
+      "broad_scale_share_of_total": 0.5846560846560832
+    },
+    "body_120_250_band_ratio": {
+      "corner_values_mean_across_scenes": {
+        "none": 0.5634619707340252,
+        "broad_scale": 0.5356422003208691,
+        "event_body": 0.5947589108739826,
+        "carrier_suppression": 0.5533764321153357,
+        "carrier_suppression+event_body": 0.5945459791591867,
+        "broad_scale+carrier_suppression+event_body": 0.5953454971452975,
+        "broad_scale+event_body": 0.5960189206051697,
+        "broad_scale+carrier_suppression": 0.5333688133016149
+      },
+      "shapley": {
+        "broad_scale": -0.01213135232277072,
+        "event_body": 0.04801558588257195,
+        "carrier_suppression": -0.004000707148528885
+      },
+      "total_effect_p5_minus_p0": 0.031883526411272345,
+      "broad_scale_share_of_total": -0.3804896662397328
+    }
+  },
+  "headline": {
+    "rms_recovery_shapley_share_broad_scale": 5.20191609990749,
+    "rms_recovery_total": 15.539056325803237
+  }
+}

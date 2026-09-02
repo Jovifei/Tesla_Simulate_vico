@@ -1,0 +1,4516 @@
+{
+  "P0": {
+    "hot_idle": {
+      "raw_sha256": "6bdd01b50975d6030117ebb969c88d0710e7910db6a86f3db2055030333580d7",
+      "monitor_sha256": "b19295ddcfddd14bdd1ed288cd6d81fe5eae350be8b4db0725e42161ea85305d",
+      "pre_ptr_sha256": "647add462cac64010a397baa66d462836653c84357bf4e36db9b9c0bf57a9ade",
+      "rms_dbfs": -65.77378485699577,
+      "peak_dbfs": -39.98352382307555,
+      "crest_db": 25.790261033920224,
+      "dynamic_range_db": 0.8477201405389766,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4992.6115375768295,
+      "roughness_proxy": 0.6813474999141113,
+      "sharpness_proxy": 0.4062868026406484,
+      "tonality_proxy": 0.1895691562311122,
+      "persistent_tone_ratio": 0.5222222222222223,
+      "band_rms": {
+        "20-80Hz": 9.312227373625517e-05,
+        "80-120Hz": 0.00014224204939433706,
+        "120-250Hz": 0.0002237530677661364,
+        "250-400Hz": 8.146458823724822e-05,
+        "400-1000Hz": 9.90386443193252e-05,
+        "1000-2000Hz": 0.0001237177038212496,
+        "2000-4000Hz": 0.0001987134105728519,
+        "4000-8000Hz": 0.00024733932222068374
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.025809760434087153,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "242786459b16acc6e4f9fb7c532f51657ba0443d6a2bbfdb10111eb389076d9b",
+      "monitor_sha256": "feef45e9974b88b7099799bfb17649ba41f6eb3563a74f75091aac995a797645",
+      "pre_ptr_sha256": "821362615c7dce3612e664666ee456e9513d52bfb7efcb35a3017012d03f6f52",
+      "rms_dbfs": -64.74242659459206,
+      "peak_dbfs": -40.0127234697402,
+      "crest_db": 24.72970312485186,
+      "dynamic_range_db": 1.4278145108270304,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 5726.569719888681,
+      "roughness_proxy": 0.5468786563825113,
+      "sharpness_proxy": 0.40837416046932645,
+      "tonality_proxy": 0.2269122049536227,
+      "persistent_tone_ratio": 0.9666666666666667,
+      "band_rms": {
+        "20-80Hz": 8.480465856144462e-05,
+        "80-120Hz": 8.461230602325506e-05,
+        "120-250Hz": 0.0003005077793142906,
+        "250-400Hz": 0.00016071763861795016,
+        "400-1000Hz": 0.00011595239886474484,
+        "1000-2000Hz": 0.00011949207933789865,
+        "2000-4000Hz": 0.00017942620490367725,
+        "4000-8000Hz": 0.00022845263415997865
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.027354245759178927,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "5191f8fa8a1e705e5a3ebf1c8203de5f2e461cd0d6c65386aa27275ec5cc1a9c",
+      "monitor_sha256": "14b3b868a64e35e7fd43415d4b87ddff5faa72803191124fe0c0441f855d4141",
+      "pre_ptr_sha256": "ba4e9a92e782ec023e1ca37fdaa7a0c6d2fa7baa150be201753d378f1bbd86e2",
+      "rms_dbfs": -63.65905100045723,
+      "peak_dbfs": -39.308463333116805,
+      "crest_db": 24.35058766734042,
+      "dynamic_range_db": 1.6621843556768636,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4321.765841268724,
+      "roughness_proxy": 0.9068948959485925,
+      "sharpness_proxy": 0.31301977386282587,
+      "tonality_proxy": 0.23026948978922224,
+      "persistent_tone_ratio": 0.9833333333333333,
+      "band_rms": {
+        "20-80Hz": 8.676949077904145e-05,
+        "80-120Hz": 0.00014118125456230333,
+        "120-250Hz": 0.0003599465883475622,
+        "250-400Hz": 0.00026476805940115763,
+        "400-1000Hz": 0.0001309210710868511,
+        "1000-2000Hz": 0.00012509953631413906,
+        "2000-4000Hz": 0.00020122175338718116,
+        "4000-8000Hz": 0.00023180162854106675
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.03506508140360389,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "a58bc3e7a1b3acc41e674ed5cb52ad4d6d7ab062451392988df872d58659196f",
+      "monitor_sha256": "505d5197ddea22ac86997316575da1952f8e901cf4399a03266f4e63484304f2",
+      "pre_ptr_sha256": "a8d09289c0f5c13c6103ff5d842243e59bdd24ce895bb01f6592fb6b2fc1308e",
+      "rms_dbfs": -62.06594888487593,
+      "peak_dbfs": -39.31825295995321,
+      "crest_db": 22.747695924922716,
+      "dynamic_range_db": 1.270457037014301,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 3246.6653867472824,
+      "roughness_proxy": 0.9480205433637181,
+      "sharpness_proxy": 0.2232207005343865,
+      "tonality_proxy": 0.21837448313919153,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 6.844924812246589e-05,
+        "80-120Hz": 5.4256429817665465e-05,
+        "120-250Hz": 0.0006175342806399638,
+        "250-400Hz": 0.0001636616056231916,
+        "400-1000Hz": 0.00013550432570392414,
+        "1000-2000Hz": 0.00014575105572948386,
+        "2000-4000Hz": 0.00018729835324519568,
+        "4000-8000Hz": 0.0002312657232853202
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.039950815998252606,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "20382c0a58fc5a311576d0b39b23c40de217c84bc8c2bf9c7357404b5f2b4d0a",
+      "monitor_sha256": "f4f7e31cd09e03950e36af3f5138a68a332398487e22c6fd6e85125bd1b35a83",
+      "pre_ptr_sha256": "ada7a9a8681d11ed0b7ed78131f7287dc16ab702d192a38e2fd8d9d09fba3479",
+      "rms_dbfs": -61.02982726022767,
+      "peak_dbfs": -40.05206816000946,
+      "crest_db": 20.977759100218204,
+      "dynamic_range_db": 4.454205410725855,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3590.9333950713303,
+      "roughness_proxy": 0.34499255057674977,
+      "sharpness_proxy": 0.25063621888365223,
+      "tonality_proxy": 0.2256774630094188,
+      "persistent_tone_ratio": 0.21666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.00010042333709726168,
+        "80-120Hz": 0.00015007320857621934,
+        "120-250Hz": 0.0006140171774673482,
+        "250-400Hz": 0.0003761852170817551,
+        "400-1000Hz": 0.00023043307724663733,
+        "1000-2000Hz": 0.00017069852264605387,
+        "2000-4000Hz": 0.00020233936830943715,
+        "4000-8000Hz": 0.00023726155142710182
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.04848645564804539,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "33a9a0fad8d27bf5978ad0c221a590b390f3c2acab350d4a1151a060c5b0fe07",
+      "monitor_sha256": "a3fe42855a3b77a56501af123f8b63dc486d7f0173c32b61b8a0e2d05b43bb6b",
+      "pre_ptr_sha256": "1b2ee486fb7634807168b1e386d7a789908a5ff74533082b7eb2ce4f7fa955de",
+      "rms_dbfs": -59.98990198333205,
+      "peak_dbfs": -36.45636182704611,
+      "crest_db": 23.533540156285937,
+      "dynamic_range_db": 4.864830139284158,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3761.896332047702,
+      "roughness_proxy": 0.3938994403761747,
+      "sharpness_proxy": 0.25498416682326386,
+      "tonality_proxy": 0.23391112309275194,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 7.499958240088707e-05,
+        "80-120Hz": 0.00011090957797765638,
+        "120-250Hz": 0.0005083780833347793,
+        "250-400Hz": 0.0004532602809628504,
+        "400-1000Hz": 0.0005633572561027116,
+        "1000-2000Hz": 0.000231393932304688,
+        "2000-4000Hz": 0.0002176648010629263,
+        "4000-8000Hz": 0.00024119464083482338
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.04451043989112444,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "9da6e902b3a77a9c5f39d5dd60efcc2a7ae7319cc499c357246b3c0b9ba9643c",
+      "monitor_sha256": "cafe36194802abce99e91b5d1dd3a45f22aabea3e5ed580689b8dab7ac9257f2",
+      "pre_ptr_sha256": "be79c91135cda6232a5a5a2f62f405a0e82f438133e711a6c6d17ae966f4a328",
+      "rms_dbfs": -60.06050867199909,
+      "peak_dbfs": -36.44132089412085,
+      "crest_db": 23.61918777787824,
+      "dynamic_range_db": 3.431057539828273,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3502.9931757279223,
+      "roughness_proxy": 0.3731859941647942,
+      "sharpness_proxy": 0.23820454951193823,
+      "tonality_proxy": 0.23213389749333455,
+      "persistent_tone_ratio": 0.1388888888888889,
+      "band_rms": {
+        "20-80Hz": 7.786064961796554e-05,
+        "80-120Hz": 7.404452996604972e-05,
+        "120-250Hz": 0.000589398372121806,
+        "250-400Hz": 0.0004883248600802405,
+        "400-1000Hz": 0.0004192510576547994,
+        "1000-2000Hz": 0.00021821842966419363,
+        "2000-4000Hz": 0.00022593168350172596,
+        "4000-8000Hz": 0.00025174642089135916
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.05045613273092092,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "lift": {
+      "raw_sha256": "c531f43b20ab1a4913a7dd7e1b2c2244e24b4b25e34b2dd0ee12cfc3443ea08c",
+      "monitor_sha256": "1cb14f5621087ac6091666752c765e78aab3af582c65b8a4c6482cd77aec9b72",
+      "pre_ptr_sha256": "3a9db241f16e6ca5ffb574e1e2b8d5f493a7b3831f3d3775c256f0f3320b7b1a",
+      "rms_dbfs": -59.809501992822895,
+      "peak_dbfs": -38.10815292783455,
+      "crest_db": 21.701349064988335,
+      "dynamic_range_db": 6.2229711542113,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3726.123192706123,
+      "roughness_proxy": 0.3272103787974353,
+      "sharpness_proxy": 0.23660689155424663,
+      "tonality_proxy": 0.23489050315897542,
+      "persistent_tone_ratio": 0.4,
+      "band_rms": {
+        "20-80Hz": 0.00010997469550067933,
+        "80-120Hz": 9.127445082051085e-05,
+        "120-250Hz": 0.0003704538106159909,
+        "250-400Hz": 0.00042867788111408906,
+        "400-1000Hz": 0.0007057589208271237,
+        "1000-2000Hz": 0.00024353233944284658,
+        "2000-4000Hz": 0.00020033556811728526,
+        "4000-8000Hz": 0.00023303675517647894
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.0557582281236334,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "c531f43b20ab1a4913a7dd7e1b2c2244e24b4b25e34b2dd0ee12cfc3443ea08c",
+      "monitor_sha256": "1cb14f5621087ac6091666752c765e78aab3af582c65b8a4c6482cd77aec9b72",
+      "pre_ptr_sha256": "3a9db241f16e6ca5ffb574e1e2b8d5f493a7b3831f3d3775c256f0f3320b7b1a",
+      "rms_dbfs": -59.809501992822895,
+      "peak_dbfs": -38.10815292783455,
+      "crest_db": 21.701349064988335,
+      "dynamic_range_db": 6.2229711542113,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3726.123192706123,
+      "roughness_proxy": 0.3272103787974353,
+      "sharpness_proxy": 0.23660689155424663,
+      "tonality_proxy": 0.23489050315897542,
+      "persistent_tone_ratio": 0.4,
+      "band_rms": {
+        "20-80Hz": 0.00010997469550067933,
+        "80-120Hz": 9.127445082051085e-05,
+        "120-250Hz": 0.0003704538106159909,
+        "250-400Hz": 0.00042867788111408906,
+        "400-1000Hz": 0.0007057589208271237,
+        "1000-2000Hz": 0.00024353233944284658,
+        "2000-4000Hz": 0.00020033556811728526,
+        "4000-8000Hz": 0.00023303675517647894
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.0557582281236334,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "bd8a5e04bfe664dbb650f3925e8bd18a1a50ab6188d6ae3975c5333ce2d114ee",
+      "monitor_sha256": "f664bdf706a1b19d3d387e38c2be664bd6c04051cdbd1ddd5d628e9b02ad8f89",
+      "pre_ptr_sha256": "767037627121beb5e4f7bc2e0474199367fc9b24f0e972aa16d51c6c7673411c",
+      "rms_dbfs": -62.0276128985919,
+      "peak_dbfs": -38.61010741371347,
+      "crest_db": 23.41750548487842,
+      "dynamic_range_db": 4.772033377896308,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4850.923077416912,
+      "roughness_proxy": 0.2772710361973569,
+      "sharpness_proxy": 0.3331610586333375,
+      "tonality_proxy": 0.23714955726437412,
+      "persistent_tone_ratio": 0.45555555555555555,
+      "band_rms": {
+        "20-80Hz": 0.00010197889626762879,
+        "80-120Hz": 0.00013156467466052295,
+        "120-250Hz": 0.0004223282526521449,
+        "250-400Hz": 0.000344563255554671,
+        "400-1000Hz": 0.0003322006078822225,
+        "1000-2000Hz": 0.00016590277777803664,
+        "2000-4000Hz": 0.00019081610702764107,
+        "4000-8000Hz": 0.00024010193567525803
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.044885315535395556,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "cbeca406808e0cd2f1919e1a0378c5a171a932c0ed6ed2db13cb9d80252b8067",
+      "monitor_sha256": "dd1d3a697d5ea2b322754931c91d8f1f8749a98455039973cd7cf8d27661e37e",
+      "pre_ptr_sha256": "cd2279dd0e738c69d6f2c299b3dfc23f37092a869120da1e6f35276ebd294098",
+      "rms_dbfs": -60.956066260023285,
+      "peak_dbfs": -39.983515269713365,
+      "crest_db": 20.97255099030992,
+      "dynamic_range_db": 6.993742003541339,
+      "transient_event_density_per_s": 3.0,
+      "spectral_centroid_hz": 4537.111124882233,
+      "roughness_proxy": 0.1479466593471305,
+      "sharpness_proxy": 0.3109942602466849,
+      "tonality_proxy": 0.22378022565152186,
+      "persistent_tone_ratio": 0.13333333333333333,
+      "band_rms": {
+        "20-80Hz": 0.00014442257080515537,
+        "80-120Hz": 0.00013448211097352952,
+        "120-250Hz": 0.00043261200830343967,
+        "250-400Hz": 0.0003739165224596907,
+        "400-1000Hz": 0.000487229649163019,
+        "1000-2000Hz": 0.000194035105345886,
+        "2000-4000Hz": 0.00020241036614481407,
+        "4000-8000Hz": 0.00024315237262839996
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.05459786584011231,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    }
+  },
+  "P1": {
+    "hot_idle": {
+      "raw_sha256": "0d084bb200d2a8ad3a3cd0709a70a90b4474a1295d36163a67a02660fdd9dab7",
+      "monitor_sha256": "3bfb8d442bf87e35958b618dd4ca9e449fee3fda436cc96bbc5f365063ed4d9d",
+      "pre_ptr_sha256": "0102d7ac6231222ab95a29b6f3ef0741dd27b389da2f6a049bfa1f2a10a3aae8",
+      "rms_dbfs": -58.315544797593645,
+      "peak_dbfs": -32.525283763673414,
+      "crest_db": 25.790261033920224,
+      "dynamic_range_db": 0.8477201432019409,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4992.611537576854,
+      "roughness_proxy": 0.6813474999141853,
+      "sharpness_proxy": 0.40628680264065037,
+      "tonality_proxy": 0.18956915623111972,
+      "persistent_tone_ratio": 0.5222222222222223,
+      "band_rms": {
+        "20-80Hz": 0.00021976856601756364,
+        "80-120Hz": 0.00033569123657062794,
+        "120-250Hz": 0.0005280572399280789,
+        "250-400Hz": 0.00019225642823990797,
+        "400-1000Hz": 0.00023373120059360747,
+        "1000-2000Hz": 0.0002919737810181489,
+        "2000-4000Hz": 0.00046896364895193036,
+        "4000-8000Hz": 0.0005837208004408136
+      },
+      "stem_accounting": {
+        "scale_mean": 2.36,
+        "scale_min": 2.36,
+        "scale_max": 2.36,
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.06091103462444568,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "73aabbd99ec19f2b46cd10cf158d401a63c8f1f7884e4abf1b75830d8975b512",
+      "monitor_sha256": "a5e5c48605b26b2b006e77396c68ca2807e3f780578af00b4a53e9358ad19b06",
+      "pre_ptr_sha256": "399cfabe956129b148a8da485e76b8686aff31462b530b1374175ac25c4b70bc",
+      "rms_dbfs": -56.4429596351757,
+      "peak_dbfs": -31.713256510323838,
+      "crest_db": 24.72970312485186,
+      "dynamic_range_db": 1.427814514609699,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 5726.569719888702,
+      "roughness_proxy": 0.5468786563825728,
+      "sharpness_proxy": 0.40837416046932795,
+      "tonality_proxy": 0.22691220495363262,
+      "persistent_tone_ratio": 0.9666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0002204921122597552,
+        "80-120Hz": 0.00021999199566046366,
+        "120-250Hz": 0.0007813202262171615,
+        "250-400Hz": 0.0004178658604066715,
+        "400-1000Hz": 0.0003014762370483366,
+        "1000-2000Hz": 0.0003106794062785365,
+        "2000-4000Hz": 0.00046650813274956083,
+        "4000-8000Hz": 0.0005939768488159445
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6,
+        "scale_min": 2.6,
+        "scale_max": 2.6,
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.07112103897386521,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "2f0226447ffb98fef37d992972a6812c9421ae0f203db6efea4c9bd57c223148",
+      "monitor_sha256": "55aed0ef8a8488dfff754f7202a155f1046775cae38674d7e608b8d774f76497",
+      "pre_ptr_sha256": "b310342f25a6e942905d6bc1c04d0ff4511035be8df40197428c98170c378026",
+      "rms_dbfs": -55.09635511988145,
+      "peak_dbfs": -30.74576745254103,
+      "crest_db": 24.35058766734042,
+      "dynamic_range_db": 1.6621843589494332,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4321.765841268738,
+      "roughness_proxy": 0.9068948959487383,
+      "sharpness_proxy": 0.3130197738628269,
+      "tonality_proxy": 0.23026948978923126,
+      "persistent_tone_ratio": 0.9833333333333333,
+      "band_rms": {
+        "20-80Hz": 0.0002325422352878272,
+        "80-120Hz": 0.0003783657622269764,
+        "120-250Hz": 0.0009646568567714609,
+        "250-400Hz": 0.0007095783991951023,
+        "400-1000Hz": 0.00035086847051276086,
+        "1000-2000Hz": 0.0003352667573218926,
+        "2000-4000Hz": 0.0005392742990776454,
+        "4000-8000Hz": 0.0006212283644900588
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6799999999999993,
+        "scale_min": 2.6799999999999997,
+        "scale_max": 2.6799999999999997,
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.09397441816165841,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "43eabffc2e6e582f04e44b648eff8c457750777ea7a1ca8ad52ac2a4c138ac6e",
+      "monitor_sha256": "4744362c4d02c2923055c8f65883dd620f7cc671511a81b07f02b3f14f72a916",
+      "pre_ptr_sha256": "53900eb00f0ec48d90562129e2ee2c0c3ac9bc577d9585fdc80abd591cead0b6",
+      "rms_dbfs": -53.185052966514405,
+      "peak_dbfs": -30.437357041591685,
+      "crest_db": 22.747695924922716,
+      "dynamic_range_db": 1.2704570387692946,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 3246.6653867472874,
+      "roughness_proxy": 0.9480205433644328,
+      "sharpness_proxy": 0.22322070053438678,
+      "tonality_proxy": 0.21837448313919836,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.00019028890978045596,
+        "80-120Hz": 0.00015083287489311064,
+        "120-250Hz": 0.0017167453001791038,
+        "250-400Hz": 0.00045497926363247294,
+        "400-1000Hz": 0.000376702025456909,
+        "1000-2000Hz": 0.0004051879349279651,
+        "2000-4000Hz": 0.0005206894220216439,
+        "4000-8000Hz": 0.0006429187107331902
+      },
+      "stem_accounting": {
+        "scale_mean": 2.7800000000000007,
+        "scale_min": 2.7800000000000002,
+        "scale_max": 2.7800000000000002,
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.11106326847514224,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "9c9cff09ad08a37f42e81b2aeaf77824487113cea6a7ad3f860da2e0fde02fef",
+      "monitor_sha256": "71f162a8d2b5e619d29511148015b2c6803663109a270df78315ab14d964dabf",
+      "pre_ptr_sha256": "89e90fc3cfc76ed85a505fe7e93a5c845c52232342b4d06af0bae882c3b3c7a4",
+      "rms_dbfs": -50.798075283256836,
+      "peak_dbfs": -32.44784332577734,
+      "crest_db": 18.35023195747949,
+      "dynamic_range_db": 7.581149433012202,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3442.358979023913,
+      "roughness_proxy": 0.2653607512762067,
+      "sharpness_proxy": 0.23932340198490734,
+      "tonality_proxy": 0.22538685121520594,
+      "persistent_tone_ratio": 0.21666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.00030199713848557037,
+        "80-120Hz": 0.0004002905699675823,
+        "120-250Hz": 0.0020311582024287868,
+        "250-400Hz": 0.0012494224619528105,
+        "400-1000Hz": 0.0007611907441318707,
+        "1000-2000Hz": 0.0005527082723232393,
+        "2000-4000Hz": 0.0006341887638615743,
+        "4000-8000Hz": 0.0007407372195629675
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0656,
+        "scale_min": 2.4,
+        "scale_max": 3.44,
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.15740260533572636,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "9d4c61f55ca2113d560f584290a94fee5cdc2510634057d366a1f106b736bbe6",
+      "monitor_sha256": "25eb05d0aed326f9b494cb8341053092b0fbd6bb160644b38c8ab3264126e348",
+      "pre_ptr_sha256": "7d2e382acc107d89672a98993292a4c2e67f9825f1388c9c9663ae088fbc94dc",
+      "rms_dbfs": -49.14252079261149,
+      "peak_dbfs": -27.389995026105357,
+      "crest_db": 21.752525766506135,
+      "dynamic_range_db": 7.0595726186664,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3715.767387674228,
+      "roughness_proxy": 0.390086252808769,
+      "sharpness_proxy": 0.2504097120159545,
+      "tonality_proxy": 0.23388438869748687,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0002352983769563371,
+        "80-120Hz": 0.00032904592157057916,
+        "120-250Hz": 0.0016458246191573926,
+        "250-400Hz": 0.001596988404451365,
+        "400-1000Hz": 0.002104425753545765,
+        "1000-2000Hz": 0.0008176366414365763,
+        "2000-4000Hz": 0.0007330135772704933,
+        "4000-8000Hz": 0.0008117507275089127
+      },
+      "stem_accounting": {
+        "scale_mean": 3.38,
+        "scale_min": 2.84,
+        "scale_max": 3.92,
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.14922349723439865,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "e3b655932a2a4824d9777517c2a5233d7ca862352cd1041caf0194bf96cbb695",
+      "monitor_sha256": "e87663c0c675ea4b61843958fcf3d34d0a515d03d90be1e7eb53fe6b44fd094d",
+      "pre_ptr_sha256": "9395cd8f9bf84f9fff0a930cfae7fc264b784b1229b40708e1707c2502e8f5dc",
+      "rms_dbfs": -49.43093033115399,
+      "peak_dbfs": -25.811742553275753,
+      "crest_db": 23.61918777787823,
+      "dynamic_range_db": 3.4310575428585426,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3502.9931757279296,
+      "roughness_proxy": 0.37318599416483594,
+      "sharpness_proxy": 0.23820454951193873,
+      "tonality_proxy": 0.23213389749334123,
+      "persistent_tone_ratio": 0.1388888888888889,
+      "band_rms": {
+        "20-80Hz": 0.0002647262087010757,
+        "80-120Hz": 0.0002517514018845709,
+        "120-250Hz": 0.002003954465214148,
+        "250-400Hz": 0.0016603045242728157,
+        "400-1000Hz": 0.0014254535960263183,
+        "1000-2000Hz": 0.0007419426608582582,
+        "2000-4000Hz": 0.0007681677239058682,
+        "4000-8000Hz": 0.000855937831030621
+      },
+      "stem_accounting": {
+        "scale_mean": 3.3999999999999986,
+        "scale_min": 3.4,
+        "scale_max": 3.4,
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.17155085128513115,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "lift": {
+      "raw_sha256": "4af947bae367ad45f6a20ca9b3d175a32c2225554c468209373a6c4b5136d714",
+      "monitor_sha256": "822d6f2a6fb124c6d11bbe26a7cccd7214bf1b2a055d1a1d518a2ceca0de7575",
+      "pre_ptr_sha256": "59a42d8c04d467487dfcd3302b3524fa6df939386c14c61e07ea6f0cdbb42fa7",
+      "rms_dbfs": -49.19473111394301,
+      "peak_dbfs": -26.69729413019661,
+      "crest_db": 22.497436983746404,
+      "dynamic_range_db": 10.33622982293239,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3319.707563221968,
+      "roughness_proxy": 0.3005590934022198,
+      "sharpness_proxy": 0.20427980273051755,
+      "tonality_proxy": 0.23472721784332,
+      "persistent_tone_ratio": 0.4,
+      "band_rms": {
+        "20-80Hz": 0.0003498669753818645,
+        "80-120Hz": 0.0002307715602581081,
+        "120-250Hz": 0.0009975766948507909,
+        "250-400Hz": 0.0014371780798387679,
+        "400-1000Hz": 0.0025877487187251787,
+        "1000-2000Hz": 0.000868004945720701,
+        "2000-4000Hz": 0.000651045435343229,
+        "4000-8000Hz": 0.0007285693161411624
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.18628392038047936,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "4af947bae367ad45f6a20ca9b3d175a32c2225554c468209373a6c4b5136d714",
+      "monitor_sha256": "822d6f2a6fb124c6d11bbe26a7cccd7214bf1b2a055d1a1d518a2ceca0de7575",
+      "pre_ptr_sha256": "59a42d8c04d467487dfcd3302b3524fa6df939386c14c61e07ea6f0cdbb42fa7",
+      "rms_dbfs": -49.19473111394301,
+      "peak_dbfs": -26.69729413019661,
+      "crest_db": 22.497436983746404,
+      "dynamic_range_db": 10.33622982293239,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3319.707563221968,
+      "roughness_proxy": 0.3005590934022198,
+      "sharpness_proxy": 0.20427980273051755,
+      "tonality_proxy": 0.23472721784332,
+      "persistent_tone_ratio": 0.4,
+      "band_rms": {
+        "20-80Hz": 0.0003498669753818645,
+        "80-120Hz": 0.0002307715602581081,
+        "120-250Hz": 0.0009975766948507909,
+        "250-400Hz": 0.0014371780798387679,
+        "400-1000Hz": 0.0025877487187251787,
+        "1000-2000Hz": 0.000868004945720701,
+        "2000-4000Hz": 0.000651045435343229,
+        "4000-8000Hz": 0.0007285693161411624
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.18628392038047936,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "b4ee004ce5563ab1f1dce6335fb4995a6d57a1f51239e976c10e3500d1a714a6",
+      "monitor_sha256": "bf462ca40b8900278db1420e45a86c11a612d944a878c2a3b113026e882ed5b4",
+      "pre_ptr_sha256": "591559cdd6660f1f452f3ae40889165eaf8a52fb8a4de3478f0f87a80afff066",
+      "rms_dbfs": -53.39063062526982,
+      "peak_dbfs": -28.78287353702802,
+      "crest_db": 24.6077570882418,
+      "dynamic_range_db": 5.837794289551437,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4747.401100403454,
+      "roughness_proxy": 0.24807304810864095,
+      "sharpness_proxy": 0.323785309341397,
+      "tonality_proxy": 0.23727447340723198,
+      "persistent_tone_ratio": 0.45555555555555555,
+      "band_rms": {
+        "20-80Hz": 0.0002484656795822205,
+        "80-120Hz": 0.0002983460355671979,
+        "120-250Hz": 0.0010119049400957234,
+        "250-400Hz": 0.0010016315268579238,
+        "400-1000Hz": 0.0009989709192356013,
+        "1000-2000Hz": 0.000481322768248178,
+        "2000-4000Hz": 0.0005149939173559847,
+        "4000-8000Hz": 0.000645844232530958
+      },
+      "stem_accounting": {
+        "scale_mean": 2.635600000000001,
+        "scale_min": 2.24,
+        "scale_max": 3.1,
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.11822799736913178,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "11e2f7f6ec56892237db1f6bd6409c9b7243aa2c9bfa4cb6fefceff8446d35ba",
+      "monitor_sha256": "4757b3dcffdde6a3348334de31d300fc708531ef66a55f3723ee7d43b219b035",
+      "pre_ptr_sha256": "8918aacd92b31c7862d810cd6b8f8e03b9d22d8029e6c0d36a20d938f3cd1c67",
+      "rms_dbfs": -51.10512834008656,
+      "peak_dbfs": -32.402278571932875,
+      "crest_db": 18.70284976815369,
+      "dynamic_range_db": 10.078087942169567,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4362.174219599744,
+      "roughness_proxy": 0.12735726287708746,
+      "sharpness_proxy": 0.29610129584965905,
+      "tonality_proxy": 0.22365358256956383,
+      "persistent_tone_ratio": 0.13333333333333333,
+      "band_rms": {
+        "20-80Hz": 0.000475253513914325,
+        "80-120Hz": 0.000356137890885242,
+        "120-250Hz": 0.0012132743910834205,
+        "250-400Hz": 0.0011537712431324708,
+        "400-1000Hz": 0.0017047939753290914,
+        "1000-2000Hz": 0.0006307640309415854,
+        "2000-4000Hz": 0.0005901777640182849,
+        "4000-8000Hz": 0.0006981496698640017
+      },
+      "stem_accounting": {
+        "scale_mean": 2.837632653061225,
+        "scale_min": 2.32,
+        "scale_max": 3.8428571428571434,
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.17742642124046012,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    }
+  },
+  "P2": {
+    "hot_idle": {
+      "raw_sha256": "96ff02a8f7ffdc195c1877a8e65a7cd09bd9e7c2a1e0f2bd85c1b5efcc186104",
+      "monitor_sha256": "57e8e5ea149e809aed58266893e8833c47e6f91e2e8712bebe60a3c391d63cf3",
+      "pre_ptr_sha256": "132c5c2a81491262fe263d9d86fad6d1bed2e144a4b87ad7c77e1d80f175e121",
+      "rms_dbfs": -57.28367464076919,
+      "peak_dbfs": -37.02250574035379,
+      "crest_db": 20.26116890041541,
+      "dynamic_range_db": 2.516783450594173,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 926.8991354009474,
+      "roughness_proxy": 0.5244781074231285,
+      "sharpness_proxy": 0.05768703454583028,
+      "tonality_proxy": 0.16274379693268126,
+      "persistent_tone_ratio": 0.5611111111111111,
+      "band_rms": {
+        "20-80Hz": 0.00027380965511989547,
+        "80-120Hz": 0.0004841530934994354,
+        "120-250Hz": 0.0008653711537136735,
+        "250-400Hz": 0.0007275469262208207,
+        "400-1000Hz": 0.0005436991843868359,
+        "1000-2000Hz": 0.00016709329905605742,
+        "2000-4000Hz": 0.00020307266348581533,
+        "4000-8000Hz": 0.00024782318314940205
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.08328235137757177,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "66e8c0adee468327d195bcd68bb6fc89b2094ce83accbb362574a6face7cf599",
+      "monitor_sha256": "14adf1eae27907df57d4badd3262ea0a9c4209a692a193b484da2f1479a81502",
+      "pre_ptr_sha256": "20719f81a6f5ac32e663c759ed698debca8332dbe0e71f163c88a2902b116483",
+      "rms_dbfs": -54.05547113869103,
+      "peak_dbfs": -32.16315961078706,
+      "crest_db": 21.892311527903967,
+      "dynamic_range_db": 3.1247720827253356,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 771.5090206127355,
+      "roughness_proxy": 0.5294895430171163,
+      "sharpness_proxy": 0.0380455682624843,
+      "tonality_proxy": 0.26667778713632817,
+      "persistent_tone_ratio": 0.9611111111111111,
+      "band_rms": {
+        "20-80Hz": 0.0003845994350690834,
+        "80-120Hz": 0.00041976024972108103,
+        "120-250Hz": 0.001341106728122671,
+        "250-400Hz": 0.0010866108131966348,
+        "400-1000Hz": 0.0008299040435791684,
+        "1000-2000Hz": 0.00020984777613287602,
+        "2000-4000Hz": 0.00018943325786977027,
+        "4000-8000Hz": 0.0002293911989218726
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.11500044962956414,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "a7a9ec1ff211597c01fe131909deb6db8e5ecd8fc83c5ee1cd969c2eba00a651",
+      "monitor_sha256": "61910503d0cc8e1d0081622c50842b4a1685de13150d114f570fb79c0a69805f",
+      "pre_ptr_sha256": "d239202fe6bfaf9e636c2a6072e21dda57edf6eb0438647700fe04a28862f1ca",
+      "rms_dbfs": -50.37204215890807,
+      "peak_dbfs": -27.295353284197684,
+      "crest_db": 23.07668887471039,
+      "dynamic_range_db": 1.1588215790779735,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 488.05876826168276,
+      "roughness_proxy": 0.7938958058184126,
+      "sharpness_proxy": 0.018567369405918167,
+      "tonality_proxy": 0.25909037537348917,
+      "persistent_tone_ratio": 1.0,
+      "band_rms": {
+        "20-80Hz": 0.00046765386628235765,
+        "80-120Hz": 0.0007531585712141105,
+        "120-250Hz": 0.0020442589867852782,
+        "250-400Hz": 0.0017494452520725318,
+        "400-1000Hz": 0.0012590347669895754,
+        "1000-2000Hz": 0.0002909594249233922,
+        "2000-4000Hz": 0.00022031189301218378,
+        "4000-8000Hz": 0.00023398822593252483
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.17706953231380962,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "80ff969842ba73e5383413cdc3ef6645f99974f1aedaeb47202df5bb773fa967",
+      "monitor_sha256": "fe58a3562cf7155bda09c9956444aeb1c0c5c1a9bf632727f8a23e9f8b9e8fd0",
+      "pre_ptr_sha256": "2616210c941f6cab01aaa89e66e0c3d5b375970cef812fa972cb1306382814c7",
+      "rms_dbfs": -47.82118299108507,
+      "peak_dbfs": -23.18042091401995,
+      "crest_db": 24.640762077065116,
+      "dynamic_range_db": 0.7474951355785717,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 461.0330934096907,
+      "roughness_proxy": 0.4299487899073379,
+      "sharpness_proxy": 0.013654817659742842,
+      "tonality_proxy": 0.22249407492178372,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.0004342367742957418,
+        "80-120Hz": 0.0006008285442099217,
+        "120-250Hz": 0.0029889462303830023,
+        "250-400Hz": 0.0021523137345842323,
+        "400-1000Hz": 0.0018230337633856296,
+        "1000-2000Hz": 0.0003924732622042674,
+        "2000-4000Hz": 0.00022347873678701867,
+        "4000-8000Hz": 0.00023455976787918332
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.19898519937108153,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "f74342a1668b51f69f4e12f7b2b2d5012069ab195e4731604e0dcb1bca2c350a",
+      "monitor_sha256": "37b62aadcafe496447e926406d86608cc20777f69307544b322335656763e737",
+      "pre_ptr_sha256": "16d9b368360a194dce48de2866c03ea6f8ffc0878ef58fed9e118cd4af1c8be4",
+      "rms_dbfs": -45.43368472799,
+      "peak_dbfs": -21.33220578842044,
+      "crest_db": 24.10147893956956,
+      "dynamic_range_db": 10.465832568525762,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 480.2641042377496,
+      "roughness_proxy": 0.2813216914265922,
+      "sharpness_proxy": 0.01541244074778608,
+      "tonality_proxy": 0.22622213833385704,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0005819797517169977,
+        "80-120Hz": 0.0008672838867360417,
+        "120-250Hz": 0.0037113905931130775,
+        "250-400Hz": 0.0032105946362426144,
+        "400-1000Hz": 0.0023450800878270293,
+        "1000-2000Hz": 0.0005098854957604738,
+        "2000-4000Hz": 0.00025423092075101025,
+        "4000-8000Hz": 0.00024218868170890675
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.26212452263404423,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "3069802956c5982111455f17eb243c3fbd7572e306925262b7bd2c82165a5abf",
+      "monitor_sha256": "ad987331b07375bf1ba5bbd6238539d26af6d3f2103ae70df92ee079c5a12ecf",
+      "pre_ptr_sha256": "2333cebda3be3273d062eb110856c76c5377f955e0d68ff3c10b99034ede257c",
+      "rms_dbfs": -42.719672902488284,
+      "peak_dbfs": -17.12640676107133,
+      "crest_db": 25.593266141416954,
+      "dynamic_range_db": 6.0498831686123395,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 493.96884877113064,
+      "roughness_proxy": 0.4008955763611251,
+      "sharpness_proxy": 0.012500304156358595,
+      "tonality_proxy": 0.20297323009983734,
+      "persistent_tone_ratio": 0.11666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007670998302643627,
+        "80-120Hz": 0.001147229229195155,
+        "120-250Hz": 0.0042462731652818135,
+        "250-400Hz": 0.005146855477846992,
+        "400-1000Hz": 0.0035758784617907075,
+        "1000-2000Hz": 0.0007468307032458404,
+        "2000-4000Hz": 0.00031564687349794286,
+        "4000-8000Hz": 0.00025143690606881965
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.33362891394860855,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "97228b92a96f350a3951360edadcd4f9d8520eb7c530add37522ecf9b1feda73",
+      "monitor_sha256": "5d13dfc79fe77a30197ac29ca2b28539e27582c32b46ac8f7d605d63f5efc161",
+      "pre_ptr_sha256": "4c1753dc7ab6d39ae675d1f98e445f2b69ce05a751baed56569b8d4baababdc5",
+      "rms_dbfs": -42.60300605153702,
+      "peak_dbfs": -16.978328604466885,
+      "crest_db": 25.62467744707014,
+      "dynamic_range_db": 1.8363148929530064,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 471.5842410062218,
+      "roughness_proxy": 0.37063012223573844,
+      "sharpness_proxy": 0.011845183066620255,
+      "tonality_proxy": 0.19429136145533285,
+      "persistent_tone_ratio": 0.15,
+      "band_rms": {
+        "20-80Hz": 0.000777256396082067,
+        "80-120Hz": 0.0011785427731988653,
+        "120-250Hz": 0.0044774164028878,
+        "250-400Hz": 0.005195534792678176,
+        "400-1000Hz": 0.0034425634751962943,
+        "1000-2000Hz": 0.0007281044825093986,
+        "2000-4000Hz": 0.0003184305403397623,
+        "4000-8000Hz": 0.000261563587884589
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.3407335643310451,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "lift": {
+      "raw_sha256": "9842d4528709265cff1c52e1763afcb9fc6200098ff5b7db3a3d33b5d3173e25",
+      "monitor_sha256": "6311b7998f80c6e1baa3d056c1f082bff6403fd9985d25ebbf68b50226dd7c54",
+      "pre_ptr_sha256": "7f867b1dd655a84d94174d7ea76ddc423a8c9edf2a46bda1d4ccc2080ddc6658",
+      "rms_dbfs": -43.21284575729273,
+      "peak_dbfs": -17.10385479001056,
+      "crest_db": 26.108990967282175,
+      "dynamic_range_db": 12.052341298598916,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 573.245018351559,
+      "roughness_proxy": 0.44255377072310204,
+      "sharpness_proxy": 0.013914752122570394,
+      "tonality_proxy": 0.19375680230927794,
+      "persistent_tone_ratio": 0.4166666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007788861533271838,
+        "80-120Hz": 0.0012148413491171828,
+        "120-250Hz": 0.003846532309966444,
+        "250-400Hz": 0.004650438505475374,
+        "400-1000Hz": 0.003671736609445411,
+        "1000-2000Hz": 0.0007409830309079812,
+        "2000-4000Hz": 0.00030200693754385327,
+        "4000-8000Hz": 0.0002425193251997592
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.3175100571633913,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "9842d4528709265cff1c52e1763afcb9fc6200098ff5b7db3a3d33b5d3173e25",
+      "monitor_sha256": "6311b7998f80c6e1baa3d056c1f082bff6403fd9985d25ebbf68b50226dd7c54",
+      "pre_ptr_sha256": "7f867b1dd655a84d94174d7ea76ddc423a8c9edf2a46bda1d4ccc2080ddc6658",
+      "rms_dbfs": -43.21284575729273,
+      "peak_dbfs": -17.10385479001056,
+      "crest_db": 26.108990967282175,
+      "dynamic_range_db": 12.052341298598916,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 573.245018351559,
+      "roughness_proxy": 0.44255377072310204,
+      "sharpness_proxy": 0.013914752122570394,
+      "tonality_proxy": 0.19375680230927794,
+      "persistent_tone_ratio": 0.4166666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007788861533271838,
+        "80-120Hz": 0.0012148413491171828,
+        "120-250Hz": 0.003846532309966444,
+        "250-400Hz": 0.004650438505475374,
+        "400-1000Hz": 0.003671736609445411,
+        "1000-2000Hz": 0.0007409830309079812,
+        "2000-4000Hz": 0.00030200693754385327,
+        "4000-8000Hz": 0.0002425193251997592
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.3175100571633913,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "8eb5d8de81f8bfaff6d4b13b93ba38e7ff535690d1c4753d7d6d189af6b5c8e1",
+      "monitor_sha256": "edeae4f14590fa2d411b9e2503fda5aaab2866e0ce8a218bf94b5af2f8be1ba5",
+      "pre_ptr_sha256": "0a284a518a79990def640ad5a4c862b77789551f2c6681fe4ebc44d51b7c56c0",
+      "rms_dbfs": -46.65134723934333,
+      "peak_dbfs": -21.29966221660702,
+      "crest_db": 25.35168502273631,
+      "dynamic_range_db": 10.547462757394543,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 620.4896450593126,
+      "roughness_proxy": 0.3207073900371177,
+      "sharpness_proxy": 0.021098584285633337,
+      "tonality_proxy": 0.2062779485368124,
+      "persistent_tone_ratio": 0.46111111111111114,
+      "band_rms": {
+        "20-80Hz": 0.0005206014261504168,
+        "80-120Hz": 0.0008148258444102291,
+        "120-250Hz": 0.0025682237355519138,
+        "250-400Hz": 0.0034897550412497096,
+        "400-1000Hz": 0.002190944139358416,
+        "1000-2000Hz": 0.000474291205529227,
+        "2000-4000Hz": 0.000245362043772853,
+        "4000-8000Hz": 0.00024519275417790885
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.21505967810116572,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "5019e3aa0cc096fe4e107d86ab2428c9fa3808062cca270c5063710b74d78d08",
+      "monitor_sha256": "54cfb6af01078c2e80f7c4911d00316b0fc47573c3414d5d2df86390aba26e77",
+      "pre_ptr_sha256": "cd6ada8bf665e56e51073bc1d934309b78577d5d6d2f4f90952c028340c04220",
+      "rms_dbfs": -46.103736141488355,
+      "peak_dbfs": -20.664046266590248,
+      "crest_db": 25.439689874898114,
+      "dynamic_range_db": 10.746846352330842,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 647.0526268703063,
+      "roughness_proxy": 0.2144749024751298,
+      "sharpness_proxy": 0.02342582617765493,
+      "tonality_proxy": 0.1933520719552245,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0005695211117124352,
+        "80-120Hz": 0.0008765291192414416,
+        "120-250Hz": 0.00286001979638646,
+        "250-400Hz": 0.0033491019861778652,
+        "400-1000Hz": 0.0025058294747986416,
+        "1000-2000Hz": 0.0005311671896197525,
+        "2000-4000Hz": 0.00025769803151323256,
+        "4000-8000Hz": 0.00024802590006062995
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.232865992931496,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    }
+  },
+  "P3": {
+    "hot_idle": {
+      "raw_sha256": "b1542280a3873411bb52df9e65c7a491db302c326cb9eaa62779cbbee2073474",
+      "monitor_sha256": "0d048a586b72970970ad6fb19bd51537e55ccecaa801074a98b1007965a37787",
+      "pre_ptr_sha256": "c714dc2adad41a6e8414a882852e2dd900d08caf8c2133e2fb8159bafe96b5c0",
+      "rms_dbfs": -65.76169134871135,
+      "peak_dbfs": -40.10374817821167,
+      "crest_db": 25.657943170499685,
+      "dynamic_range_db": 0.8452130392877454,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4975.671166012196,
+      "roughness_proxy": 0.6862730626249555,
+      "sharpness_proxy": 0.404701264625167,
+      "tonality_proxy": 0.1900153798522285,
+      "persistent_tone_ratio": 0.5111111111111111,
+      "band_rms": {
+        "20-80Hz": 9.313474690157063e-05,
+        "80-120Hz": 0.0001422624829185616,
+        "120-250Hz": 0.00022384752693923105,
+        "250-400Hz": 8.261429642687917e-05,
+        "400-1000Hz": 0.00010253899261093423,
+        "1000-2000Hz": 0.00012360447117125005,
+        "2000-4000Hz": 0.00019855779870135414,
+        "4000-8000Hz": 0.0002472821732379201
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.0258215877570373,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "6fe3dd544f50a492c81803fe0d12c9f6d6fe459585fb1e04d7cbc8ba65ffe4ee",
+      "monitor_sha256": "ceed1339f02e5950fa4120ce6ad3bbe7d914dbf88b608221c80c94ade9260c48",
+      "pre_ptr_sha256": "165632aba19a660764b3aadbb531d0b50decad462e52baaa52fe77ca2abe263f",
+      "rms_dbfs": -64.72697721746718,
+      "peak_dbfs": -40.232590451699025,
+      "crest_db": 24.494386765768148,
+      "dynamic_range_db": 1.4444037627578823,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 5703.638440834263,
+      "roughness_proxy": 0.5467547800533571,
+      "sharpness_proxy": 0.4065198409261115,
+      "tonality_proxy": 0.2275674318681215,
+      "persistent_tone_ratio": 0.9666666666666667,
+      "band_rms": {
+        "20-80Hz": 8.482912116956998e-05,
+        "80-120Hz": 8.465745920303043e-05,
+        "120-250Hz": 0.00030062385547850387,
+        "250-400Hz": 0.0001616579197325287,
+        "400-1000Hz": 0.00012081891416737345,
+        "1000-2000Hz": 0.00011936422458042438,
+        "2000-4000Hz": 0.00017915756129695558,
+        "4000-8000Hz": 0.00022834155393848117
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.02737226368248,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "642604c147b1765ce6fbc9a9fa7f2466ae90ccc46cff2b99219c11167672e7b1",
+      "monitor_sha256": "832a63d9b0115a2a05e724d9e7485082bab1ddcec79eaec911c97654f408100a",
+      "pre_ptr_sha256": "8ba1103a0f90b942a763a5aad85c5f335e33c200c89e2dd88d9f17d1d4925caf",
+      "rms_dbfs": -63.65918694818631,
+      "peak_dbfs": -39.68595581547736,
+      "crest_db": 23.973231132708953,
+      "dynamic_range_db": 1.6610711298780265,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4318.434565660131,
+      "roughness_proxy": 0.9100502399678212,
+      "sharpness_proxy": 0.3127443266266956,
+      "tonality_proxy": 0.2298787181836294,
+      "persistent_tone_ratio": 0.9833333333333333,
+      "band_rms": {
+        "20-80Hz": 8.68140428044904e-05,
+        "80-120Hz": 0.00014128178222248326,
+        "120-250Hz": 0.00036006667442759605,
+        "250-400Hz": 0.0002649121946665605,
+        "400-1000Hz": 0.0001315841275642856,
+        "1000-2000Hz": 0.00012476102306698333,
+        "2000-4000Hz": 0.00020089165871629535,
+        "4000-8000Hz": 0.00023162541666477463
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.03507618239079841,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "95ea703d84c94cea1895989251e5f47f772d0ebbf0da328ec28faff1dfb0bf8f",
+      "monitor_sha256": "4262948c3792ed4517564640c7e5824695ed9adaa359c7d939a5d36b2519d20f",
+      "pre_ptr_sha256": "69f96cc4e4be63948369603f96a4980f2048d03b2351b3a92907555b1902af76",
+      "rms_dbfs": -62.061637459216584,
+      "peak_dbfs": -39.96465118573815,
+      "crest_db": 22.096986273478443,
+      "dynamic_range_db": 1.2688050688247716,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 3240.8268099189672,
+      "roughness_proxy": 0.9466058664613279,
+      "sharpness_proxy": 0.22277817481042939,
+      "tonality_proxy": 0.2186512613756641,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 6.855085905078148e-05,
+        "80-120Hz": 5.449565133790568e-05,
+        "120-250Hz": 0.0006178486283558377,
+        "250-400Hz": 0.0001661872368324471,
+        "400-1000Hz": 0.00013620898641712343,
+        "1000-2000Hz": 0.00014524249403090014,
+        "2000-4000Hz": 0.0001867284032517433,
+        "4000-8000Hz": 0.00023094929593483167
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.039989263861938976,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "0ed07d52c463f3b54b203679fa9043aceeda9b58d483dabaf34d17d0dd1ea378",
+      "monitor_sha256": "944531d07734c94499d9a57046c23e3940a8c283864f902fb9cc08e5c46d725e",
+      "pre_ptr_sha256": "12bee047d93f864fcf0b66dbe01785474112c115bed33742d60bb9e0cbc5551c",
+      "rms_dbfs": -60.999305958809515,
+      "peak_dbfs": -40.20057754373856,
+      "crest_db": 20.798728415070954,
+      "dynamic_range_db": 4.499153208141341,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3563.078482014424,
+      "roughness_proxy": 0.3483892722980329,
+      "sharpness_proxy": 0.24852083171491685,
+      "tonality_proxy": 0.2259956649436547,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.00010060072835102263,
+        "80-120Hz": 0.00015026771618067503,
+        "120-250Hz": 0.00061551471947784,
+        "250-400Hz": 0.0003780910510506409,
+        "400-1000Hz": 0.00023589703904658822,
+        "1000-2000Hz": 0.00017051080625335612,
+        "2000-4000Hz": 0.00020215040277020313,
+        "4000-8000Hz": 0.00023718373400165844
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.04859609494999135,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "611fee0fbada9eae823bfe6d5ba0069c4cfc053758b2fad4a6a041d05c0dcac5",
+      "monitor_sha256": "5f6f0ba412897c30380e8bd1aa4f6745e642464e2c5c38e2252683622e3e6bca",
+      "pre_ptr_sha256": "4882aec06117aabc51937cd27d954e0bbdf4678ae0a2da9fd0b9bbe1c1b31ed1",
+      "rms_dbfs": -59.54316048345116,
+      "peak_dbfs": -36.715933283494515,
+      "crest_db": 22.827227199956646,
+      "dynamic_range_db": 5.94223451048702,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3600.255617372702,
+      "roughness_proxy": 0.39315353488128163,
+      "sharpness_proxy": 0.24245109338946266,
+      "tonality_proxy": 0.23330655304250678,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 7.543084488489049e-05,
+        "80-120Hz": 0.00011110522522868222,
+        "120-250Hz": 0.0005140536991296383,
+        "250-400Hz": 0.00046841071558908744,
+        "400-1000Hz": 0.0006396342618093374,
+        "1000-2000Hz": 0.00023809701337726609,
+        "2000-4000Hz": 0.00021737368336978446,
+        "4000-8000Hz": 0.00024095868130850288
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.04520317709752101,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "30c9d8ca9aa019cc3f086f5b908389fe706a44f80780fbb61fa2f7ebab2eab69",
+      "monitor_sha256": "8637d0ca9b4e4c319f0bc2c7434eb0c8e8ddc93f2a5c9fde7d057c34d7e2e24f",
+      "pre_ptr_sha256": "4d9af5568e43cbde4c08b645c548a9cb4a6b30d0fd0fe31ea0f2cfd27605f908",
+      "rms_dbfs": -59.884633302023225,
+      "peak_dbfs": -37.12023047499235,
+      "crest_db": 22.76440282703088,
+      "dynamic_range_db": 3.2644146314185956,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3403.0758389173016,
+      "roughness_proxy": 0.3804348684620727,
+      "sharpness_proxy": 0.2305549177593149,
+      "tonality_proxy": 0.23266766362900454,
+      "persistent_tone_ratio": 0.1388888888888889,
+      "band_rms": {
+        "20-80Hz": 7.822999052873302e-05,
+        "80-120Hz": 7.433067627935224e-05,
+        "120-250Hz": 0.0005938029606787703,
+        "250-400Hz": 0.000494005088823331,
+        "400-1000Hz": 0.0004562226092271309,
+        "1000-2000Hz": 0.00021889622617526347,
+        "2000-4000Hz": 0.00022491552079010395,
+        "4000-8000Hz": 0.00025112019424326055
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.05080769268139911,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "lift": {
+      "raw_sha256": "2109d01d776832b2b09c03cc085497d1a6c08d92df0219643a50e48e70d6a893",
+      "monitor_sha256": "c1eaf01a38af246e3dec93b91d19dddb961b1a6540c83f380e2908c16809417d",
+      "pre_ptr_sha256": "8603bd19fd170af47a87462f20cca2cdafda6a032862a9ad00e8f7aaa284642d",
+      "rms_dbfs": -59.183526830366745,
+      "peak_dbfs": -40.77389150606567,
+      "crest_db": 18.40963532430108,
+      "dynamic_range_db": 7.15513345125276,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3356.3551864765263,
+      "roughness_proxy": 0.31917989125409335,
+      "sharpness_proxy": 0.2085384747562426,
+      "tonality_proxy": 0.23485408602231975,
+      "persistent_tone_ratio": 0.40555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.00011021104431998389,
+        "80-120Hz": 9.135848178448384e-05,
+        "120-250Hz": 0.0003763894658139222,
+        "250-400Hz": 0.0004536617778669811,
+        "400-1000Hz": 0.000801270043247953,
+        "1000-2000Hz": 0.00025388980139166075,
+        "2000-4000Hz": 0.0001987626821501507,
+        "4000-8000Hz": 0.00023147694560181957
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.05644812566671769,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "2109d01d776832b2b09c03cc085497d1a6c08d92df0219643a50e48e70d6a893",
+      "monitor_sha256": "c1eaf01a38af246e3dec93b91d19dddb961b1a6540c83f380e2908c16809417d",
+      "pre_ptr_sha256": "8603bd19fd170af47a87462f20cca2cdafda6a032862a9ad00e8f7aaa284642d",
+      "rms_dbfs": -59.183526830366745,
+      "peak_dbfs": -40.77389150606567,
+      "crest_db": 18.40963532430108,
+      "dynamic_range_db": 7.15513345125276,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3356.3551864765263,
+      "roughness_proxy": 0.31917989125409335,
+      "sharpness_proxy": 0.2085384747562426,
+      "tonality_proxy": 0.23485408602231975,
+      "persistent_tone_ratio": 0.40555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.00011021104431998389,
+        "80-120Hz": 9.135848178448384e-05,
+        "120-250Hz": 0.0003763894658139222,
+        "250-400Hz": 0.0004536617778669811,
+        "400-1000Hz": 0.000801270043247953,
+        "1000-2000Hz": 0.00025388980139166075,
+        "2000-4000Hz": 0.0001987626821501507,
+        "4000-8000Hz": 0.00023147694560181957
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.05644812566671769,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "6849c0b541c832c2e54ddb86af2a42869207d4b497f194c0faab06bdcea74ec6",
+      "monitor_sha256": "0fe9c2ec4fe5076261e911deda280a6cbaef0f757cccd3cad5168aae735d7293",
+      "pre_ptr_sha256": "0f97d4fd319db3d4daa86aa7e697ce32d0d1546e0dc570bf1de3a6cb281286af",
+      "rms_dbfs": -61.86652686826328,
+      "peak_dbfs": -40.13203881786205,
+      "crest_db": 21.734488050401225,
+      "dynamic_range_db": 4.832173105916857,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4697.099033146593,
+      "roughness_proxy": 0.26278678221026724,
+      "sharpness_proxy": 0.3214433533358321,
+      "tonality_proxy": 0.23709252419396298,
+      "persistent_tone_ratio": 0.46111111111111114,
+      "band_rms": {
+        "20-80Hz": 0.00010207924896137621,
+        "80-120Hz": 0.000131602702788419,
+        "120-250Hz": 0.00042511929377079524,
+        "250-400Hz": 0.00034888750918996334,
+        "400-1000Hz": 0.00036127927933014066,
+        "1000-2000Hz": 0.00016599574959339555,
+        "2000-4000Hz": 0.0001895978276679907,
+        "4000-8000Hz": 0.0002395638830805724
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.045085433303538994,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "71b3c1fa48bded66f54f9dce81daa0358dfd52be6d8efb44d2c132b4b8376e97",
+      "monitor_sha256": "802b3740b0fc66249b491b719d36bf2fe3859f845233c1ec64dd5c52f22dc336",
+      "pre_ptr_sha256": "76f3a36efa5798bf22e937b186adab0c37e3e2b3c8ca2a1fa6fd49ac13443a79",
+      "rms_dbfs": -60.60069954732298,
+      "peak_dbfs": -40.10373958328827,
+      "crest_db": 20.49695996403472,
+      "dynamic_range_db": 7.830848485069425,
+      "transient_event_density_per_s": 3.0,
+      "spectral_centroid_hz": 4371.550431742881,
+      "roughness_proxy": 0.14458611738949495,
+      "sharpness_proxy": 0.2980166555104529,
+      "tonality_proxy": 0.2234556140953007,
+      "persistent_tone_ratio": 0.13333333333333333,
+      "band_rms": {
+        "20-80Hz": 0.00014452530319599853,
+        "80-120Hz": 0.0001345584315258857,
+        "120-250Hz": 0.00043533628759643943,
+        "250-400Hz": 0.0003854312836221328,
+        "400-1000Hz": 0.0005452548655535313,
+        "1000-2000Hz": 0.00020009365475693336,
+        "2000-4000Hz": 0.00020228790202670173,
+        "4000-8000Hz": 0.00024299264392234243
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.05490734989129035,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    }
+  },
+  "P4": {
+    "hot_idle": {
+      "raw_sha256": "dfeb9549a846cfbad8f20770799cbebe26773ff9d60b36e14d06d6384ea2b687",
+      "monitor_sha256": "c0207dbff250da95e7f638303b507e83f04a5a6461e50b9df2ea78caf570ddb8",
+      "pre_ptr_sha256": "0b2bc779bf082191dc3b709d1e1ed1ac795534b07ed77a7c2e12a6f5d17d05a9",
+      "rms_dbfs": -57.28292417398768,
+      "peak_dbfs": -37.04082951789539,
+      "crest_db": 20.242094656092284,
+      "dynamic_range_db": 2.517666806011313,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 926.802576883172,
+      "roughness_proxy": 0.5251027391325627,
+      "sharpness_proxy": 0.05766621398149055,
+      "tonality_proxy": 0.16313489743476356,
+      "persistent_tone_ratio": 0.5611111111111111,
+      "band_rms": {
+        "20-80Hz": 0.00027381342717746156,
+        "80-120Hz": 0.0004841588544860061,
+        "120-250Hz": 0.0008653920178647705,
+        "250-400Hz": 0.0007275471175728275,
+        "400-1000Hz": 0.0005441805357509744,
+        "1000-2000Hz": 0.00016678461801793016,
+        "2000-4000Hz": 0.0002028815115715734,
+        "4000-8000Hz": 0.0002477613710612918
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.08328460673961852,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "f106031e5406bb8ae8adff7e989a783594a4b0f33124c13716eb276abbc9bd1e",
+      "monitor_sha256": "e888f6bef81b4d852d426f8b83022b05d3fff33c41ae7e7b35f8f2c7c757b4ae",
+      "pre_ptr_sha256": "f6c6823ff10ec265436489f845dd6f78944bf8808a3128dc2e11687386848f3a",
+      "rms_dbfs": -54.05533307062815,
+      "peak_dbfs": -32.18020775075372,
+      "crest_db": 21.875125319874435,
+      "dynamic_range_db": 3.120731058701221,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 771.4967736011699,
+      "roughness_proxy": 0.5283678997205624,
+      "sharpness_proxy": 0.03803394367249554,
+      "tonality_proxy": 0.2662576338639719,
+      "persistent_tone_ratio": 0.9611111111111111,
+      "band_rms": {
+        "20-80Hz": 0.0003846033441660328,
+        "80-120Hz": 0.00041976318415595657,
+        "120-250Hz": 0.001341123336688439,
+        "250-400Hz": 0.0010865609839175558,
+        "400-1000Hz": 0.0008302965900121872,
+        "1000-2000Hz": 0.00020931173484507154,
+        "2000-4000Hz": 0.00018905806662760115,
+        "4000-8000Hz": 0.0002292641739767332
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.11500186920437465,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "38914c9e18ee12fd2c1a6f6cad8c6eb393b1707d6381a35403545ff5a4812352",
+      "monitor_sha256": "6159d0b81cfa07225567ba233a529a3a0a4b54f7ab47101699c5ce1c70657b01",
+      "pre_ptr_sha256": "ea246cf5d4c2e702e877f9e9558b02178c5fda991a089ceabda1fb185ffa6f46",
+      "rms_dbfs": -50.37291151259396,
+      "peak_dbfs": -27.300763051928914,
+      "crest_db": 23.07214846066504,
+      "dynamic_range_db": 1.1559925181223218,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 488.06164487231337,
+      "roughness_proxy": 0.7936429521275222,
+      "sharpness_proxy": 0.018566547320015732,
+      "tonality_proxy": 0.25893454408333044,
+      "persistent_tone_ratio": 1.0,
+      "band_rms": {
+        "20-80Hz": 0.0004676558756057256,
+        "80-120Hz": 0.0007531680990492589,
+        "120-250Hz": 0.0020442377743301963,
+        "250-400Hz": 0.0017493078048198417,
+        "400-1000Hz": 0.0012587854629890073,
+        "1000-2000Hz": 0.00029020896143164407,
+        "2000-4000Hz": 0.0002197363574062978,
+        "4000-8000Hz": 0.000233762019304518
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.17706756736450255,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "8a5d1b2e94b651ffdd95cfa521388dfa4ad7d38a3949c9f8fb5e4615b6a89a40",
+      "monitor_sha256": "107996c5981892beaaef1930cdc8e1e7a5c8a57d1b969bca68c8fcfb11c16df9",
+      "pre_ptr_sha256": "ae3efeba02896502cdbde27489ca4c8fddd16e43a1d4a84a7d40e0c13101aa74",
+      "rms_dbfs": -47.8221830672451,
+      "peak_dbfs": -23.183744842460953,
+      "crest_db": 24.63843822478415,
+      "dynamic_range_db": 0.747418697681872,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 461.01029596754125,
+      "roughness_proxy": 0.43200334681176006,
+      "sharpness_proxy": 0.01365148941447532,
+      "tonality_proxy": 0.22211296854072862,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.00043421311733305595,
+        "80-120Hz": 0.0006007927533913417,
+        "120-250Hz": 0.0029888582464092416,
+        "250-400Hz": 0.002152487535027427,
+        "400-1000Hz": 0.0018225037807552563,
+        "1000-2000Hz": 0.0003911909640210989,
+        "2000-4000Hz": 0.00022228720884994566,
+        "4000-8000Hz": 0.00023410752188845568
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.19897778300512425,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "0139371079f3556db9918f3343093913b34476485b64190e074d5a88b3efba76",
+      "monitor_sha256": "bdb7a8cc11f712bbcbf4e52d0b45f8766b6e80c8e2b4738854b3c9d3e21ad19f",
+      "pre_ptr_sha256": "5355e78ca1a680a9328516c457f9f4ebd0d756ae41532e07cc37a952be220cd8",
+      "rms_dbfs": -45.433039916313874,
+      "peak_dbfs": -21.3362852572684,
+      "crest_db": 24.096754659045473,
+      "dynamic_range_db": 10.474669056023465,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 480.0944554011887,
+      "roughness_proxy": 0.28109820285076176,
+      "sharpness_proxy": 0.015390302397831762,
+      "tonality_proxy": 0.2261242909312779,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0005820072604097583,
+        "80-120Hz": 0.0008673089905941751,
+        "120-250Hz": 0.003711641542174022,
+        "250-400Hz": 0.003210646929287412,
+        "400-1000Hz": 0.0023456346041483933,
+        "1000-2000Hz": 0.0005093053941582327,
+        "2000-4000Hz": 0.0002538391061519919,
+        "4000-8000Hz": 0.00024207369669378186
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.2621426171458794,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "4728fa82960fa06b88902242650370a06564a0875d9e9fa1f7cc6433ca3399ca",
+      "monitor_sha256": "987c84ae8de8c5cb575273de5f73a6d41101c8803750d326ab6db2e4912c45d0",
+      "pre_ptr_sha256": "6d0a432e71bb4afa3a1e193c9cb3f23691e74d15d8e488144362e71d71e000ca",
+      "rms_dbfs": -42.71058656267944,
+      "peak_dbfs": -17.12856102910726,
+      "crest_db": 25.582025533572185,
+      "dynamic_range_db": 6.075461923369575,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 493.7900849803404,
+      "roughness_proxy": 0.4016564746343696,
+      "sharpness_proxy": 0.012417700530757615,
+      "tonality_proxy": 0.20380923023793443,
+      "persistent_tone_ratio": 0.11666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007671516188389504,
+        "80-120Hz": 0.0011472483070228221,
+        "120-250Hz": 0.004247053484169102,
+        "250-400Hz": 0.005148610525423004,
+        "400-1000Hz": 0.0035883012976897404,
+        "1000-2000Hz": 0.0007480790999698137,
+        "2000-4000Hz": 0.0003148478159968688,
+        "4000-8000Hz": 0.00025106116425942097
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.33373444980298017,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "0a906e69dd7207132853cbee2ecf0736280bb52ffd75439a14c506dc3327d255",
+      "monitor_sha256": "4a5a05f639758f0983736953aec5c25c88a444939eef9dd5ec4f9af3027730f7",
+      "pre_ptr_sha256": "d9f7cd2c7ccdd3359c67967c323060b0c9f3c165ece7e8abe6efe56e7a1b13c6",
+      "rms_dbfs": -42.601565978851326,
+      "peak_dbfs": -16.98039900133828,
+      "crest_db": 25.62116697751305,
+      "dynamic_range_db": 1.8425295146874388,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 471.5726974226985,
+      "roughness_proxy": 0.3699544727104545,
+      "sharpness_proxy": 0.011809460438712187,
+      "tonality_proxy": 0.19480998947144917,
+      "persistent_tone_ratio": 0.15,
+      "band_rms": {
+        "20-80Hz": 0.0007772661195242536,
+        "80-120Hz": 0.0011785155599504835,
+        "120-250Hz": 0.0044777469622423825,
+        "250-400Hz": 0.005195416104653566,
+        "400-1000Hz": 0.0034457343403827174,
+        "1000-2000Hz": 0.0007264947389495843,
+        "2000-4000Hz": 0.00031616050329884635,
+        "4000-8000Hz": 0.0002605803473736761
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.3407594683578306,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "lift": {
+      "raw_sha256": "28374897abf10bafef3fd3692a6245dd0114f0b63def7f30596588612ef5e874",
+      "monitor_sha256": "85cb5a42b2b8bacd30d0a24dc28b77b928fd6d1e7a19eb64df4647e885968208",
+      "pre_ptr_sha256": "5325f73d8a16f694fc839cbe4fd6ffb3e95f14155ed22fbdd5d6fd98ee333a4f",
+      "rms_dbfs": -43.20245017825364,
+      "peak_dbfs": -17.12920853973584,
+      "crest_db": 26.073241638517803,
+      "dynamic_range_db": 12.089680284713971,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 573.5345608181282,
+      "roughness_proxy": 0.4493599198042301,
+      "sharpness_proxy": 0.013789291404636323,
+      "tonality_proxy": 0.19537641646656112,
+      "persistent_tone_ratio": 0.4166666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007788845849990754,
+        "80-120Hz": 0.0012148192183174683,
+        "120-250Hz": 0.0038467029359089324,
+        "250-400Hz": 0.0046505382279868794,
+        "400-1000Hz": 0.0036891892744808728,
+        "1000-2000Hz": 0.0007371522347861518,
+        "2000-4000Hz": 0.0002958710814200588,
+        "4000-8000Hz": 0.0002398297396033263
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.31757957860329433,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "28374897abf10bafef3fd3692a6245dd0114f0b63def7f30596588612ef5e874",
+      "monitor_sha256": "85cb5a42b2b8bacd30d0a24dc28b77b928fd6d1e7a19eb64df4647e885968208",
+      "pre_ptr_sha256": "5325f73d8a16f694fc839cbe4fd6ffb3e95f14155ed22fbdd5d6fd98ee333a4f",
+      "rms_dbfs": -43.20245017825364,
+      "peak_dbfs": -17.12920853973584,
+      "crest_db": 26.073241638517803,
+      "dynamic_range_db": 12.089680284713971,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 573.5345608181282,
+      "roughness_proxy": 0.4493599198042301,
+      "sharpness_proxy": 0.013789291404636323,
+      "tonality_proxy": 0.19537641646656112,
+      "persistent_tone_ratio": 0.4166666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007788845849990754,
+        "80-120Hz": 0.0012148192183174683,
+        "120-250Hz": 0.0038467029359089324,
+        "250-400Hz": 0.0046505382279868794,
+        "400-1000Hz": 0.0036891892744808728,
+        "1000-2000Hz": 0.0007371522347861518,
+        "2000-4000Hz": 0.0002958710814200588,
+        "4000-8000Hz": 0.0002398297396033263
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.31757957860329433,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "a5d913228a1d6609d0a859045d51608ff4d0c632fffb2a1f5503dfbdbe2c244f",
+      "monitor_sha256": "2229e08f85d630623be371308a59ef14d799242ac6427777771efbbe3a9b2979",
+      "pre_ptr_sha256": "ffae8e1a2b83fd4366ef5964a7dc77e629a2824ae26353b3bba8f30a89c87c4f",
+      "rms_dbfs": -46.65005768509029,
+      "peak_dbfs": -21.316454329215535,
+      "crest_db": 25.33360335587475,
+      "dynamic_range_db": 10.545896584580776,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 620.4721695657161,
+      "roughness_proxy": 0.3151835193448994,
+      "sharpness_proxy": 0.02106127523863693,
+      "tonality_proxy": 0.20686988393672484,
+      "persistent_tone_ratio": 0.46111111111111114,
+      "band_rms": {
+        "20-80Hz": 0.0005205857154861496,
+        "80-120Hz": 0.000814809120781123,
+        "120-250Hz": 0.0025680421369029777,
+        "250-400Hz": 0.00348939861213393,
+        "400-1000Hz": 0.0021943027422941202,
+        "1000-2000Hz": 0.0004707135613475553,
+        "2000-4000Hz": 0.00024226374890248307,
+        "4000-8000Hz": 0.0002442542764786516
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.21506271401149307,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "7edc739946d3d25c3a961b800e938b2b787505055184d842ac4e6886dbfac603",
+      "monitor_sha256": "152b9e0be4278e43040b9530bf720febbba440eebbff552a8c0bb45c8855def2",
+      "pre_ptr_sha256": "6fa1270418436b118d801b9f13ee279d2c9fed8849ed094be667fc0c92bc3c68",
+      "rms_dbfs": -46.09095092152627,
+      "peak_dbfs": -20.667222267319517,
+      "crest_db": 25.423728654206748,
+      "dynamic_range_db": 10.825791112775114,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 645.9655900119869,
+      "roughness_proxy": 0.2142390808918365,
+      "sharpness_proxy": 0.02325643707744543,
+      "tonality_proxy": 0.1941769857750138,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0005695561790770878,
+        "80-120Hz": 0.0008765368170390146,
+        "120-250Hz": 0.0028606166171181637,
+        "250-400Hz": 0.0033514921187246653,
+        "400-1000Hz": 0.002517346771069011,
+        "1000-2000Hz": 0.0005329267010588658,
+        "2000-4000Hz": 0.000257368538713508,
+        "4000-8000Hz": 0.00024783853760408094
+      },
+      "stem_accounting": {
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.23295753058100327,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "none",
+        "kind": "none",
+        "state_dependency": "none"
+      }
+    }
+  },
+  "P5": {
+    "hot_idle": {
+      "raw_sha256": "418f80c6f0df4bb9523af336aff9c3b9605960abc36eadeadd9dcc968aed6e92",
+      "monitor_sha256": "574717f1a55532de734a8dd3e2e7037802a86514b4396303b657a9a5f757626c",
+      "pre_ptr_sha256": "84f35f9ba755d7d827a03633dc62aa752ec89d342cddbfd07ba2e391886b6a06",
+      "rms_dbfs": -54.86546058654446,
+      "peak_dbfs": -32.61043466570361,
+      "crest_db": 22.255025920840843,
+      "dynamic_range_db": 1.9014986287589957,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2352.4110182612735,
+      "roughness_proxy": 0.5940511288642792,
+      "sharpness_proxy": 0.18076359144620865,
+      "tonality_proxy": 0.17657995080169264,
+      "persistent_tone_ratio": 0.4666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.00038800935409491813,
+        "80-120Hz": 0.0006635117552772938,
+        "120-250Hz": 0.0010231148828149658,
+        "250-400Hz": 0.0007254533310716174,
+        "400-1000Hz": 0.0006041831058556313,
+        "1000-2000Hz": 0.0003180759438046951,
+        "2000-4000Hz": 0.0004719881167863647,
+        "4000-8000Hz": 0.0005840822246108324
+      },
+      "stem_accounting": {
+        "scale_mean": 2.36,
+        "scale_min": 2.36,
+        "scale_max": 2.36,
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.11020932908265395,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "19dcc3c49f0fb6e9926308c52722e5154d0aad4973d3963a90e8eb0eb4948601",
+      "monitor_sha256": "e7a1d9c4e28c731177b66a66afc72ef616fc916cce1094b5905cefb661f272cd",
+      "pre_ptr_sha256": "3569782cd691ef9861f77fb1c9d7d99d4af6d9dd3800033e7e1507fa2cf2d050",
+      "rms_dbfs": -52.30275633514,
+      "peak_dbfs": -31.609985221721036,
+      "crest_db": 20.692771113418967,
+      "dynamic_range_db": 2.082078896689511,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2470.2807231407523,
+      "roughness_proxy": 0.5063931742518091,
+      "sharpness_proxy": 0.16578819688903682,
+      "tonality_proxy": 0.2507873387147203,
+      "persistent_tone_ratio": 0.9222222222222223,
+      "band_rms": {
+        "20-80Hz": 0.0004991698885277689,
+        "80-120Hz": 0.0005270886273670451,
+        "120-250Hz": 0.0015505981574174103,
+        "250-400Hz": 0.0010503366113822103,
+        "400-1000Hz": 0.0008780988681088106,
+        "1000-2000Hz": 0.00036594729172197046,
+        "2000-4000Hz": 0.0004729149680496977,
+        "4000-8000Hz": 0.0005946160263904992
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6,
+        "scale_min": 2.6,
+        "scale_max": 2.6,
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.1415026607458653,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "710137d1da50bde5abe6319163c70d0cc347164f364f3fde68d69ad2f8719fab",
+      "monitor_sha256": "09254ae024d5f77195f9513033311c16a66ab9f06f9d48f3bb2986de4746943e",
+      "pre_ptr_sha256": "5373941b9c15090e1f4966e8047589acd2fb60402848fc88ed8f432798ed1682",
+      "rms_dbfs": -49.092319036981536,
+      "peak_dbfs": -26.939918381259936,
+      "crest_db": 22.1524006557216,
+      "dynamic_range_db": 1.141842860310236,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1422.5076353882612,
+      "roughness_proxy": 0.8257047029356389,
+      "sharpness_proxy": 0.09155561894387458,
+      "tonality_proxy": 0.2595606399439887,
+      "persistent_tone_ratio": 0.9944444444444445,
+      "band_rms": {
+        "20-80Hz": 0.0005663327252863143,
+        "80-120Hz": 0.000922611517557694,
+        "120-250Hz": 0.002367301481800498,
+        "250-400Hz": 0.0017393739570124803,
+        "400-1000Hz": 0.001302982839105186,
+        "1000-2000Hz": 0.00044676882079182194,
+        "2000-4000Hz": 0.0005512652873548393,
+        "4000-8000Hz": 0.0006228007888209727
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6799999999999993,
+        "scale_min": 2.6799999999999997,
+        "scale_max": 2.6799999999999997,
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.21203547356411487,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "b6dba65a05066876d9e5f246bd1f85385d96d3ca4d2dff6b789127bbaacbbe5c",
+      "monitor_sha256": "b804e99fc7e825bb3a2df7ea7f78d2c71f36360272d4ee2ae987d52d82aff5c6",
+      "pre_ptr_sha256": "8cf744c3f23ca9b62f7a481fc86ed9f78f6bd5d9d13d72327643ec346e67a2a8",
+      "rms_dbfs": -46.89418594247536,
+      "peak_dbfs": -22.91840220014308,
+      "crest_db": 23.975783742332283,
+      "dynamic_range_db": 0.6275396572096831,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1274.644203415078,
+      "roughness_proxy": 0.5576919901059755,
+      "sharpness_proxy": 0.07513842565552448,
+      "tonality_proxy": 0.22952168126749484,
+      "persistent_tone_ratio": 0.9722222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0004621908195228851,
+        "80-120Hz": 0.0006045095194496167,
+        "120-250Hz": 0.0033882085280760857,
+        "250-400Hz": 0.002142649396053981,
+        "400-1000Hz": 0.0018482011081136518,
+        "1000-2000Hz": 0.0005637028474896098,
+        "2000-4000Hz": 0.0005419331599031131,
+        "4000-8000Hz": 0.0006449374061163581
+      },
+      "stem_accounting": {
+        "scale_mean": 2.7800000000000007,
+        "scale_min": 2.7800000000000002,
+        "scale_max": 2.7800000000000002,
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.22305839131766395,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "827e47072f6b2010396aafff5e0807534fa3af2ea8c6d54f05a99ec3359be1f1",
+      "monitor_sha256": "fe92888238f26c8d5960b368d0020952bc4f3a2d182b72981ec09ad40a1792b5",
+      "pre_ptr_sha256": "48792727cd702eaa382bfae0bf7be3d0c277741ec88d60c84776efe461f6df51",
+      "rms_dbfs": -44.58322086223842,
+      "peak_dbfs": -21.185827363058017,
+      "crest_db": 23.39739349918041,
+      "dynamic_range_db": 9.159086579583297,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1549.865785395299,
+      "roughness_proxy": 0.24814334662980078,
+      "sharpness_proxy": 0.09628508831780914,
+      "tonality_proxy": 0.23453745363433445,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0006605493693792676,
+        "80-120Hz": 0.000990957470807155,
+        "120-250Hz": 0.004131361389560501,
+        "250-400Hz": 0.0032150830202767287,
+        "400-1000Hz": 0.0024834783407253463,
+        "1000-2000Hz": 0.0007485163490408187,
+        "2000-4000Hz": 0.0006592850520423238,
+        "4000-8000Hz": 0.000743493021574899
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0656,
+        "scale_min": 2.4,
+        "scale_max": 3.44,
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.300758066780231,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "e6305abe0339948b302444a523c63e26ca183f583e336fcd247df0858f5496b5",
+      "monitor_sha256": "47c3ea659fb1f47c63142abcff2ddf94b6e897b3737b8e0881205ed7b0fabf0f",
+      "pre_ptr_sha256": "29ce5687e7bd2683c4535afd119f0b11a8eadc2cd29c8272ff67bac3d39ef7f5",
+      "rms_dbfs": -42.17076687306861,
+      "peak_dbfs": -16.984833222393075,
+      "crest_db": 25.18593365067553,
+      "dynamic_range_db": 5.627306517237349,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1669.7419155014002,
+      "roughness_proxy": 0.46212242479584287,
+      "sharpness_proxy": 0.09913003090899615,
+      "tonality_proxy": 0.23027852148958372,
+      "persistent_tone_ratio": 0.11666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007861631565108618,
+        "80-120Hz": 0.0011596397688815804,
+        "120-250Hz": 0.004452800152164053,
+        "250-400Hz": 0.00500408115024818,
+        "400-1000Hz": 0.004054254511973803,
+        "1000-2000Hz": 0.001117925994907623,
+        "2000-4000Hz": 0.0007842447281659691,
+        "4000-8000Hz": 0.0008174604275215818
+      },
+      "stem_accounting": {
+        "scale_mean": 3.38,
+        "scale_min": 2.84,
+        "scale_max": 3.92,
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.3549972907842336,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "f0f5505c565466639d0ca4369f47e161e4fc5d8f04a820d4a2165afea0a199d0",
+      "monitor_sha256": "35538e92f407e9e3d6279e9d1217c810b8f2c18a52cc954fb50453dd0d63e987",
+      "pre_ptr_sha256": "6f28d448ccfe391ed611175c2275e0f5e30dfe2f62189c7aaffde1592e3a8107",
+      "rms_dbfs": -42.18768167559749,
+      "peak_dbfs": -16.75711492990216,
+      "crest_db": 25.430566745695337,
+      "dynamic_range_db": 1.8862231738000899,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1621.1458736432332,
+      "roughness_proxy": 0.3216306521918397,
+      "sharpness_proxy": 0.09729055933677236,
+      "tonality_proxy": 0.22270237032952558,
+      "persistent_tone_ratio": 0.15555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.0007969897976219783,
+        "80-120Hz": 0.0011798288680897274,
+        "120-250Hz": 0.004701431147401685,
+        "250-400Hz": 0.005038590111863622,
+        "400-1000Hz": 0.0036796595513812758,
+        "1000-2000Hz": 0.0010501107739851981,
+        "2000-4000Hz": 0.0008177626338933191,
+        "4000-8000Hz": 0.0008616934743252139
+      },
+      "stem_accounting": {
+        "scale_mean": 3.3999999999999986,
+        "scale_min": 3.4,
+        "scale_max": 3.4,
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.3663007890220631,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "lift": {
+      "raw_sha256": "45ea9339ad91da2a604cc7f19e2ff1625a8c4f13079dd1ed75fee10f6998e76f",
+      "monitor_sha256": "5639e370bf335eb80b2b58f23fdc46812d3b9e851fdce7c411d5c67f796969d1",
+      "pre_ptr_sha256": "5e21dc48ad748d7fa3814d3c39ebe06116ded43d92ceda6db996024a3a1bd962",
+      "rms_dbfs": -42.60283271739276,
+      "peak_dbfs": -16.897814755693577,
+      "crest_db": 25.70501796169918,
+      "dynamic_range_db": 10.753292685785505,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1739.5272515366314,
+      "roughness_proxy": 0.37129416405820015,
+      "sharpness_proxy": 0.09415461262905912,
+      "tonality_proxy": 0.2244300774135114,
+      "persistent_tone_ratio": 0.2777777777777778,
+      "band_rms": {
+        "20-80Hz": 0.0008264699766160224,
+        "80-120Hz": 0.001216804310687322,
+        "120-250Hz": 0.0038878546488528573,
+        "250-400Hz": 0.004499427616290112,
+        "400-1000Hz": 0.004364908971168413,
+        "1000-2000Hz": 0.0011642513820324845,
+        "2000-4000Hz": 0.0007104175076116246,
+        "4000-8000Hz": 0.0007320151135509521
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.3559294975813914,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "45ea9339ad91da2a604cc7f19e2ff1625a8c4f13079dd1ed75fee10f6998e76f",
+      "monitor_sha256": "5639e370bf335eb80b2b58f23fdc46812d3b9e851fdce7c411d5c67f796969d1",
+      "pre_ptr_sha256": "5e21dc48ad748d7fa3814d3c39ebe06116ded43d92ceda6db996024a3a1bd962",
+      "rms_dbfs": -42.60283271739276,
+      "peak_dbfs": -16.897814755693577,
+      "crest_db": 25.70501796169918,
+      "dynamic_range_db": 10.753292685785505,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1739.5272515366314,
+      "roughness_proxy": 0.37129416405820015,
+      "sharpness_proxy": 0.09415461262905912,
+      "tonality_proxy": 0.2244300774135114,
+      "persistent_tone_ratio": 0.2777777777777778,
+      "band_rms": {
+        "20-80Hz": 0.0008264699766160224,
+        "80-120Hz": 0.001216804310687322,
+        "120-250Hz": 0.0038878546488528573,
+        "250-400Hz": 0.004499427616290112,
+        "400-1000Hz": 0.004364908971168413,
+        "1000-2000Hz": 0.0011642513820324845,
+        "2000-4000Hz": 0.0007104175076116246,
+        "4000-8000Hz": 0.0007320151135509521
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.3559294975813914,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "34757a01e7a1ee5a333b819f4bfc7d218df663ac66eaf8a35d46a030b799764a",
+      "monitor_sha256": "239aea188b79de9629394155887d7d2b7118412ee691014ced86272af20eb8b3",
+      "pre_ptr_sha256": "1c0c1e586cc0f7648df15a7f19fd49a2421a7e7e0dc2e0c395f322cdcda6cd75",
+      "rms_dbfs": -46.39539880615118,
+      "peak_dbfs": -21.089628643752132,
+      "crest_db": 25.305770162399046,
+      "dynamic_range_db": 7.616612203263681,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2103.503524235372,
+      "roughness_proxy": 0.2633033457140293,
+      "sharpness_proxy": 0.13034666442903137,
+      "tonality_proxy": 0.22359473594717524,
+      "persistent_tone_ratio": 0.43333333333333335,
+      "band_rms": {
+        "20-80Hz": 0.0005695951076632472,
+        "80-120Hz": 0.0008778490867452312,
+        "120-250Hz": 0.0026819456326945303,
+        "250-400Hz": 0.0032225575691856353,
+        "400-1000Hz": 0.0022824417000941737,
+        "1000-2000Hz": 0.0006652456307352008,
+        "2000-4000Hz": 0.000551302774546184,
+        "4000-8000Hz": 0.0006492306235445599
+      },
+      "stem_accounting": {
+        "scale_mean": 2.635600000000001,
+        "scale_min": 2.24,
+        "scale_max": 3.1,
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.2362190295137038,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "d548510c7b7669fca3996991d1f5f84d325938b47621673575ddef9e26ee4be9",
+      "monitor_sha256": "3a3a02d5f873a1343556cca2c0ac42d91fba1b62d51a11bc353998d9b4b5f263",
+      "pre_ptr_sha256": "c1c95cda59f1aac39d0b098dd09f80e4c93489328fb0d928d4b1b298dcf73a87",
+      "rms_dbfs": -45.297057259922475,
+      "peak_dbfs": -20.55444030313106,
+      "crest_db": 24.742616956791412,
+      "dynamic_range_db": 10.470851955264088,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 2094.24629407659,
+      "roughness_proxy": 0.1565592495626366,
+      "sharpness_proxy": 0.12972473899675355,
+      "tonality_proxy": 0.21595907095348918,
+      "persistent_tone_ratio": 0.12777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.0007389314221359499,
+        "80-120Hz": 0.0009717489632626199,
+        "120-250Hz": 0.0030551103398850613,
+        "250-400Hz": 0.003256672329982902,
+        "400-1000Hz": 0.002912942079709005,
+        "1000-2000Hz": 0.0008306190486954872,
+        "2000-4000Hz": 0.0006201185081784275,
+        "4000-8000Hz": 0.0007007907733760279
+      },
+      "stem_accounting": {
+        "scale_mean": 2.837632653061225,
+        "scale_min": 2.32,
+        "scale_max": 3.8428571428571434,
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.28606389882264593,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    }
+  },
+  "P6": {
+    "hot_idle": {
+      "raw_sha256": "fd25b029c67c12a631c7728d2adeb205249553cce222bbb2694b933ed4ffb2d4",
+      "monitor_sha256": "9567edaef75ac27f8dfe8e07274bba645ef3ebe5865ce60a3a648ca0b9a6e7a8",
+      "pre_ptr_sha256": "2ed9cee3fffd4b1888c4751215f418ce2d080bf9872ab2ce695bb6dabcedf6f4",
+      "rms_dbfs": -64.5239777406937,
+      "peak_dbfs": -39.98352382307555,
+      "crest_db": 24.540453917618148,
+      "dynamic_range_db": 2.5245930325756714,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 6144.354542532766,
+      "roughness_proxy": 0.6318417103203572,
+      "sharpness_proxy": 0.466235225225492,
+      "tonality_proxy": 0.1852347647250479,
+      "persistent_tone_ratio": 0.6944444444444444,
+      "band_rms": {
+        "20-80Hz": 6.657606652022215e-05,
+        "80-120Hz": 0.0001237834263750555,
+        "120-250Hz": 0.00023650062984069216,
+        "250-400Hz": 0.00010171285465965283,
+        "400-1000Hz": 0.00014067643463395245,
+        "1000-2000Hz": 0.000148334504520201,
+        "2000-4000Hz": 0.00021084609404116065,
+        "4000-8000Hz": 0.00027025422455209094
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.010528311140722571,
+        "combustion_part_rms_after": 0.024846814292105262,
+        "non_combustion_rms_before": 0.029159398226097345,
+        "non_combustion_rms_after": 0.029159398226097345,
+        "scale_mean": 2.36,
+        "scale_min": 2.36,
+        "scale_max": 2.36,
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.027775898068606263,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "3aa6686d7dd786e4b2c8f3d1d982e1a091861ffced7c6515e7bc2c4d495e7961",
+      "monitor_sha256": "7640286f1d9b36e2a6d0f927b9c5d03793b2dccc13ae580bed7396a09fccbe9e",
+      "pre_ptr_sha256": "2282dbb1ddeda42a990226acdec0511aa5e6b0b14f63c110f3be608ea2e49a51",
+      "rms_dbfs": -61.77793886794086,
+      "peak_dbfs": -40.0127234697402,
+      "crest_db": 21.765215398200667,
+      "dynamic_range_db": 4.7981436186143265,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 8875.601934726517,
+      "roughness_proxy": 0.562188136286085,
+      "sharpness_proxy": 0.5698256837442681,
+      "tonality_proxy": 0.23467464350959766,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 5.6033178583022e-05,
+        "80-120Hz": 5.36633712256554e-05,
+        "120-250Hz": 0.00033548689262044194,
+        "250-400Hz": 0.0001918993813521017,
+        "400-1000Hz": 0.0001849566563427156,
+        "1000-2000Hz": 0.0001763432804233374,
+        "2000-4000Hz": 0.000207003501493375,
+        "4000-8000Hz": 0.0002689026373130804
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.014456142610379806,
+        "combustion_part_rms_after": 0.03758597078698749,
+        "non_combustion_rms_before": 0.028954251069442525,
+        "non_combustion_rms_after": 0.028954251069442525,
+        "scale_mean": 2.6,
+        "scale_min": 2.6,
+        "scale_max": 2.6,
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.0383856949514473,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "43f5c9b28829f5a1cece23075039328cf6d57dbf6530c08c5638af91ed8069b8",
+      "monitor_sha256": "bc56e0583d96d18e417532de3ba43e0d743245d105d5036f57875ca9b444afda",
+      "pre_ptr_sha256": "2e367cad25538a5106362634cfd9032e65963afd9f82435dec25f3a49fc14562",
+      "rms_dbfs": -60.679337514643564,
+      "peak_dbfs": -39.308463333116805,
+      "crest_db": 21.37087418152675,
+      "dynamic_range_db": 4.0939572636432455,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 7327.801595115961,
+      "roughness_proxy": 0.8853327210650089,
+      "sharpness_proxy": 0.47205613369130284,
+      "tonality_proxy": 0.23734968667743853,
+      "persistent_tone_ratio": 0.9944444444444445,
+      "band_rms": {
+        "20-80Hz": 9.011417357540748e-05,
+        "80-120Hz": 0.00014021472853611156,
+        "120-250Hz": 0.00037269894482400476,
+        "250-400Hz": 0.0003311060356847905,
+        "400-1000Hz": 0.0002477301626513967,
+        "1000-2000Hz": 0.0002155735698808426,
+        "2000-4000Hz": 0.00024080897705931124,
+        "4000-8000Hz": 0.00028369036486388446
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.01668196862760184,
+        "combustion_part_rms_after": 0.04470767592197293,
+        "non_combustion_rms_before": 0.03343321990048885,
+        "non_combustion_rms_after": 0.03343321990048885,
+        "scale_mean": 2.6799999999999993,
+        "scale_min": 2.6799999999999997,
+        "scale_max": 2.6799999999999997,
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.051675082368578915,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "41fe3b520308ca32c5d4e2c9ac7ec213cfdeb4ddb4cd33d4d920e8d52b18c381",
+      "monitor_sha256": "ebdc8f4c69e1645a805b7095e905488590a678baa7f42b25a388dd45a66e1c78",
+      "pre_ptr_sha256": "f415aa39c5f1e52c640e77fae35d665b9c6ec3da93347717c1f880f7a11b2a23",
+      "rms_dbfs": -58.6657220053221,
+      "peak_dbfs": -39.31825295995321,
+      "crest_db": 19.347469045368886,
+      "dynamic_range_db": 3.382812237706034,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 5981.354297152582,
+      "roughness_proxy": 0.8124796519214974,
+      "sharpness_proxy": 0.3709138807317899,
+      "tonality_proxy": 0.23617338368599342,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.00010065415920613481,
+        "80-120Hz": 7.044918113075542e-05,
+        "120-250Hz": 0.0007426096761910363,
+        "250-400Hz": 0.00019508134253504888,
+        "400-1000Hz": 0.00028962741777482047,
+        "1000-2000Hz": 0.00029350808697520666,
+        "2000-4000Hz": 0.0002547968999793334,
+        "4000-8000Hz": 0.0002934973441118917
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.019528626003654688,
+        "combustion_part_rms_after": 0.05428958029016004,
+        "non_combustion_rms_before": 0.03221173727167077,
+        "non_combustion_rms_after": 0.03221173727167077,
+        "scale_mean": 2.7800000000000007,
+        "scale_min": 2.7800000000000002,
+        "scale_max": 2.7800000000000002,
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.06691266628650717,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "097625fec41e2397119bbcda22d07303ede058155d133112ad85aabf1646a206",
+      "monitor_sha256": "2213ba0c16dc4a678fb6a1f2ecd5055899273a6518e4c68839ee88a7ece8a4ba",
+      "pre_ptr_sha256": "5fa8dd8904bfb8c80c7d9e00e60021a2256933ab7684029294cf5fe065b71a68",
+      "rms_dbfs": -56.40206320623304,
+      "peak_dbfs": -40.05206816000946,
+      "crest_db": 16.349995046223576,
+      "dynamic_range_db": 9.65893254230648,
+      "transient_event_density_per_s": 0.0,
+      "spectral_centroid_hz": 5645.091371880077,
+      "roughness_proxy": 0.2367629482990082,
+      "sharpness_proxy": 0.353059090429826,
+      "tonality_proxy": 0.24287891512157223,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0001426899691714039,
+        "80-120Hz": 0.0001468085146598725,
+        "120-250Hz": 0.0008133902278698604,
+        "250-400Hz": 0.0005390766331326917,
+        "400-1000Hz": 0.0006020714905428051,
+        "1000-2000Hz": 0.0004719087051489445,
+        "2000-4000Hz": 0.0003610581496541228,
+        "4000-8000Hz": 0.0003340424432142833
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.025810406872022563,
+        "combustion_part_rms_after": 0.0869847107210756,
+        "non_combustion_rms_before": 0.039644073352017875,
+        "non_combustion_rms_after": 0.039644073352017875,
+        "scale_mean": 3.0656,
+        "scale_min": 2.4,
+        "scale_max": 3.44,
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.09801513303145769,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "e858d1bafb308767a7d85d6ae3482c6bfc4352fa803ba5504f5ece2625469870",
+      "monitor_sha256": "51239c0e1913cae5a1ea32612200f471c4f295be150f3ff76ea3175970f6cfb9",
+      "pre_ptr_sha256": "ebb51648111aa646cdfe8f938f251d950d6ff05e465dba840ddd258725b1912d",
+      "rms_dbfs": -54.80694659791605,
+      "peak_dbfs": -36.45636182704611,
+      "crest_db": 18.350584770869943,
+      "dynamic_range_db": 9.26716008459816,
+      "transient_event_density_per_s": 0.0,
+      "spectral_centroid_hz": 6317.776288678308,
+      "roughness_proxy": 0.3381963957407663,
+      "sharpness_proxy": 0.38591518823345455,
+      "tonality_proxy": 0.24255559340999644,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.00011793378975782416,
+        "80-120Hz": 0.0001283987459872871,
+        "120-250Hz": 0.0006421407303010848,
+        "250-400Hz": 0.0006173785660217762,
+        "400-1000Hz": 0.0009580138209723314,
+        "1000-2000Hz": 0.0006567573183986956,
+        "2000-4000Hz": 0.0004644000163475085,
+        "4000-8000Hz": 0.00038285870373506753
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.027245535410975665,
+        "combustion_part_rms_after": 0.09495494041925262,
+        "non_combustion_rms_before": 0.03451268627891939,
+        "non_combustion_rms_after": 0.03451268627891939,
+        "scale_mean": 3.38,
+        "scale_min": 2.84,
+        "scale_max": 3.92,
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.10188015596142962,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "37a445fc351a00c241ba5641d73dadad0cf46c4fcb1e61d2fdac8cbb5435a946",
+      "monitor_sha256": "34e475cf397abe7ad4815962ffced26361db7d5b22f556e6b6bcb243cf1c37a5",
+      "pre_ptr_sha256": "7a8715e1d7cae8a75b7743b8f0978f3a34aa7502a4940e8d39dfa56fecd31b65",
+      "rms_dbfs": -54.56349466802298,
+      "peak_dbfs": -36.44132089412085,
+      "crest_db": 18.122173773902126,
+      "dynamic_range_db": 4.42670003528384,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 6867.628101549019,
+      "roughness_proxy": 0.38070041723238174,
+      "sharpness_proxy": 0.4194252996101965,
+      "tonality_proxy": 0.24448374524481553,
+      "persistent_tone_ratio": 0.14444444444444443,
+      "band_rms": {
+        "20-80Hz": 0.00014689510072217474,
+        "80-120Hz": 0.00010855303062934927,
+        "120-250Hz": 0.0007847283873775422,
+        "250-400Hz": 0.0006958082724292681,
+        "400-1000Hz": 0.0008244616688905018,
+        "1000-2000Hz": 0.0006176765904987774,
+        "2000-4000Hz": 0.00045587873423998224,
+        "4000-8000Hz": 0.00040978364741357164
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.033030323703387064,
+        "combustion_part_rms_after": 0.112303100591516,
+        "non_combustion_rms_before": 0.03465749376856887,
+        "non_combustion_rms_after": 0.03465749376856887,
+        "scale_mean": 3.3999999999999986,
+        "scale_min": 3.4,
+        "scale_max": 3.4,
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.12114301738530894,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "lift": {
+      "raw_sha256": "288ca59836cb386603b18bd891dd49a3667643bdb2b33b9c822b68d26c58573a",
+      "monitor_sha256": "ea7ca5c2f3b699bcfbc58f7f5352a8a9fa5067e5109b83c996f7f85867addec9",
+      "pre_ptr_sha256": "b9f2102de7be029601a95335153936287571224c58b796d63143a52b9590f5bc",
+      "rms_dbfs": -54.64126758924,
+      "peak_dbfs": -38.10815292783455,
+      "crest_db": 16.53311466140545,
+      "dynamic_range_db": 5.856849326456981,
+      "transient_event_density_per_s": 0.0,
+      "spectral_centroid_hz": 7106.43666012683,
+      "roughness_proxy": 0.2846266907001472,
+      "sharpness_proxy": 0.4443403783124483,
+      "tonality_proxy": 0.2258502826910511,
+      "persistent_tone_ratio": 0.42777777777777776,
+      "band_rms": {
+        "20-80Hz": 0.00031190832098722883,
+        "80-120Hz": 0.00013424692531380206,
+        "120-250Hz": 0.0004219421687873218,
+        "250-400Hz": 0.00047399489104858224,
+        "400-1000Hz": 0.0010734937835981972,
+        "1000-2000Hz": 0.0006588877684746123,
+        "2000-4000Hz": 0.0004674928122131397,
+        "4000-8000Hz": 0.00048051624679677676
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.045764465005408074,
+        "combustion_part_rms_after": 0.15920442728963005,
+        "non_combustion_rms_before": 0.029840856818809564,
+        "non_combustion_rms_after": 0.029840856818809564,
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.1632800618650069,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "288ca59836cb386603b18bd891dd49a3667643bdb2b33b9c822b68d26c58573a",
+      "monitor_sha256": "ea7ca5c2f3b699bcfbc58f7f5352a8a9fa5067e5109b83c996f7f85867addec9",
+      "pre_ptr_sha256": "b9f2102de7be029601a95335153936287571224c58b796d63143a52b9590f5bc",
+      "rms_dbfs": -54.64126758924,
+      "peak_dbfs": -38.10815292783455,
+      "crest_db": 16.53311466140545,
+      "dynamic_range_db": 5.856849326456981,
+      "transient_event_density_per_s": 0.0,
+      "spectral_centroid_hz": 7106.43666012683,
+      "roughness_proxy": 0.2846266907001472,
+      "sharpness_proxy": 0.4443403783124483,
+      "tonality_proxy": 0.2258502826910511,
+      "persistent_tone_ratio": 0.42777777777777776,
+      "band_rms": {
+        "20-80Hz": 0.00031190832098722883,
+        "80-120Hz": 0.00013424692531380206,
+        "120-250Hz": 0.0004219421687873218,
+        "250-400Hz": 0.00047399489104858224,
+        "400-1000Hz": 0.0010734937835981972,
+        "1000-2000Hz": 0.0006588877684746123,
+        "2000-4000Hz": 0.0004674928122131397,
+        "4000-8000Hz": 0.00048051624679677676
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.045764465005408074,
+        "combustion_part_rms_after": 0.15920442728963005,
+        "non_combustion_rms_before": 0.029840856818809564,
+        "non_combustion_rms_after": 0.029840856818809564,
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.1632800618650069,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "3d9c01ad019f7cd67e90b45084e3aa05b69157935d1d17f9d3bbf63eef71a3f0",
+      "monitor_sha256": "c00983678554ac35fe1ab9545aa57c058f4ebdba21472888687caf0a698be333",
+      "pre_ptr_sha256": "aaab5d20907684e325f94990096f1ed81839a5c0a2d1b433fddfe92975579919",
+      "rms_dbfs": -57.82426708632969,
+      "peak_dbfs": -38.61010741371347,
+      "crest_db": 19.214159672616212,
+      "dynamic_range_db": 2.5337890585049077,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 7965.48948024954,
+      "roughness_proxy": 0.22438414594404008,
+      "sharpness_proxy": 0.521646393506183,
+      "tonality_proxy": 0.23107719253050726,
+      "persistent_tone_ratio": 0.31666666666666665,
+      "band_rms": {
+        "20-80Hz": 0.00017414013300494477,
+        "80-120Hz": 0.00013190318731676025,
+        "120-250Hz": 0.00045036087401863597,
+        "250-400Hz": 0.0004121762625778046,
+        "400-1000Hz": 0.0004983698261001136,
+        "1000-2000Hz": 0.0003814807911973744,
+        "2000-4000Hz": 0.00032296566829877085,
+        "4000-8000Hz": 0.0004243532038460441
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.0303687237887263,
+        "combustion_part_rms_after": 0.0856917012105577,
+        "non_combustion_rms_before": 0.03258649459822112,
+        "non_combustion_rms_after": 0.03258649459822112,
+        "scale_mean": 2.635600000000001,
+        "scale_min": 2.24,
+        "scale_max": 3.1,
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.09224942155773473,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "703d613df60f5fb03c203488d07577159c6df7108c44ed444ba25909547b0fdf",
+      "monitor_sha256": "e6011ffdb966a90d59437ef8e7fba3b79954844fbe34a9aa6feaec52a2c547ca",
+      "pre_ptr_sha256": "9c4cf171b648e0499a9b514b752c648f2948ac132d4bd554cd76724b4020840a",
+      "rms_dbfs": -56.53041420057324,
+      "peak_dbfs": -39.293111931268044,
+      "crest_db": 17.2373022693052,
+      "dynamic_range_db": 10.147323339181337,
+      "transient_event_density_per_s": 0.0,
+      "spectral_centroid_hz": 6581.928033430994,
+      "roughness_proxy": 0.1389720877135933,
+      "sharpness_proxy": 0.4286294241311433,
+      "tonality_proxy": 0.21910882491972364,
+      "persistent_tone_ratio": 0.13333333333333333,
+      "band_rms": {
+        "20-80Hz": 0.000411307765017913,
+        "80-120Hz": 0.00013513029932564778,
+        "120-250Hz": 0.0004960341066320222,
+        "250-400Hz": 0.00044070834488236366,
+        "400-1000Hz": 0.0007501871461822262,
+        "1000-2000Hz": 0.0004713847747667467,
+        "2000-4000Hz": 0.0003716109428508553,
+        "4000-8000Hz": 0.0004218267412004475
+      },
+      "stem_accounting": {
+        "combustion_part_rms_before": 0.041652777496789514,
+        "combustion_part_rms_after": 0.1446719780546699,
+        "non_combustion_rms_before": 0.033957593060352634,
+        "non_combustion_rms_after": 0.033957593060352634,
+        "scale_mean": 2.837632653061225,
+        "scale_min": 2.32,
+        "scale_max": 3.8428571428571434,
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.1498523073828075,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "combustion_event",
+        "kind": "STEM_LOCAL_GAIN",
+        "state_dependency": "load"
+      }
+    }
+  },
+  "P7": {
+    "hot_idle": {
+      "raw_sha256": "6fb302063efd9b5ab9b27a9608b029044886b8b82e28bf45ba6421295a6f43fa",
+      "monitor_sha256": "42db0441038e87f1df2d965169b31a95fdda56ed1a098a5db934adb8732f780f",
+      "pre_ptr_sha256": "18737d4e31bc2f1d4358d9eab296f2ee3f49d7ae82c672935ad747705aec0e38",
+      "rms_dbfs": -54.86689518005534,
+      "peak_dbfs": -32.55949433902472,
+      "crest_db": 22.307400841030613,
+      "dynamic_range_db": 1.9004976853503361,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2353.404497627111,
+      "roughness_proxy": 0.5928189412253951,
+      "sharpness_proxy": 0.18087061754173184,
+      "tonality_proxy": 0.1763960943637755,
+      "persistent_tone_ratio": 0.4722222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0003880026918972123,
+        "80-120Hz": 0.0006635016349466009,
+        "120-250Hz": 0.0010230703889003866,
+        "250-400Hz": 0.0007252924284545283,
+        "400-1000Hz": 0.0006031406925621586,
+        "1000-2000Hz": 0.0003183221780569788,
+        "2000-4000Hz": 0.00047216049037083146,
+        "4000-8000Hz": 0.0005841416185361672
+      },
+      "stem_accounting": {
+        "scale_mean": 2.36,
+        "scale_min": 2.36,
+        "scale_max": 2.36,
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.11020423397984037,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "e4b514206a6cfa9c398f9e1ac61ab72e192dee4d0373a94695473c4e99b34c4c",
+      "monitor_sha256": "bb5942460e2035dc149c507cf61cb126f7783c8701019a685a7cb3b74c282a98",
+      "pre_ptr_sha256": "92c92e298ed5e2ae052b8ac936e34aeabdb829ce8231b8718954b03c9b2820e2",
+      "rms_dbfs": -52.30392253327508,
+      "peak_dbfs": -31.594019338777038,
+      "crest_db": 20.709903194498033,
+      "dynamic_range_db": 2.083372567344232,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2471.3275662628653,
+      "roughness_proxy": 0.5082103390338987,
+      "sharpness_proxy": 0.16588565237061828,
+      "tonality_proxy": 0.25065349054006947,
+      "persistent_tone_ratio": 0.9222222222222223,
+      "band_rms": {
+        "20-80Hz": 0.0004991603331997418,
+        "80-120Hz": 0.0005270747858139854,
+        "120-250Hz": 0.0015505493335985264,
+        "250-400Hz": 0.00105017906473744,
+        "400-1000Hz": 0.0008769101867070433,
+        "1000-2000Hz": 0.0003663604022533542,
+        "2000-4000Hz": 0.0004732308349922867,
+        "4000-8000Hz": 0.000594734171172412
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6,
+        "scale_min": 2.6,
+        "scale_max": 2.6,
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.14149647783321762,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "925709d78ef9bf6441f732ae71353e8533d278de1d1352e568e379ebda79335b",
+      "monitor_sha256": "e4ce339a04ac7efef32033ece8b7a9bc58c54c4efdf60f7cb693739637821179",
+      "pre_ptr_sha256": "64604514f99175e28ae80306e62883d5fc14822fcdbdb974c87498f2adca91bf",
+      "rms_dbfs": -49.0916255186307,
+      "peak_dbfs": -26.932634404332934,
+      "crest_db": 22.15899111429777,
+      "dynamic_range_db": 1.1420976491934933,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1422.5790782346241,
+      "roughness_proxy": 0.8257133949037171,
+      "sharpness_proxy": 0.09156303499945737,
+      "tonality_proxy": 0.25969220489443307,
+      "persistent_tone_ratio": 0.9944444444444445,
+      "band_rms": {
+        "20-80Hz": 0.0005663196679359921,
+        "80-120Hz": 0.0009225779826363623,
+        "120-250Hz": 0.0023672900134340353,
+        "250-400Hz": 0.001739478643653397,
+        "400-1000Hz": 0.0013031421105752943,
+        "1000-2000Hz": 0.0004474257140224131,
+        "2000-4000Hz": 0.0005517017358822518,
+        "4000-8000Hz": 0.0006229987137579366
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6799999999999993,
+        "scale_min": 2.6799999999999997,
+        "scale_max": 2.6799999999999997,
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.2120341370691612,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "11f263ed2882ea946a7abb66f1764567fc1c28357eb4d8b73c8a6d5b03b44312",
+      "monitor_sha256": "a3d72ab5fca0befb8f2cdfa4a3e683823a4e304c9c55384f23206a3d2a7986ee",
+      "pre_ptr_sha256": "bdf1d8853175b6afe70e3818c1e40f2ff66169fe57931b69f8f7845ae76d521d",
+      "rms_dbfs": -46.893559270496056,
+      "peak_dbfs": -22.915675021238794,
+      "crest_db": 23.977884249257265,
+      "dynamic_range_db": 0.6278960597770964,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1274.9336825364758,
+      "roughness_proxy": 0.5552190661667736,
+      "sharpness_proxy": 0.0751616619882437,
+      "tonality_proxy": 0.22975806303923416,
+      "persistent_tone_ratio": 0.9722222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0004621866288264989,
+        "80-120Hz": 0.000604507103684662,
+        "120-250Hz": 0.0033881864559316237,
+        "250-400Hz": 0.0021421699661745104,
+        "400-1000Hz": 0.0018486477535611954,
+        "1000-2000Hz": 0.0005648374021234023,
+        "2000-4000Hz": 0.0005427861406370738,
+        "4000-8000Hz": 0.00064531183131946
+      },
+      "stem_accounting": {
+        "scale_mean": 2.7800000000000007,
+        "scale_min": 2.7800000000000002,
+        "scale_max": 2.7800000000000002,
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.22305327814144196,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "26e4272640510338b7fa74b38293062c22d817a41341e66ad013c2a46e5016ee",
+      "monitor_sha256": "109d138511c2629d248952ccacf2ebc8599487748620022c7457b5b060400be4",
+      "pre_ptr_sha256": "7323962bf6b744e5aeb9af872e45b4087b885ed0fc57dd435e00e64ae6515f98",
+      "rms_dbfs": -44.585179984115825,
+      "peak_dbfs": -21.181817934517525,
+      "crest_db": 23.403362049598297,
+      "dynamic_range_db": 9.148254119607733,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1552.1771250074446,
+      "roughness_proxy": 0.24798864071040594,
+      "sharpness_proxy": 0.09646671196187341,
+      "tonality_proxy": 0.23462130698221734,
+      "persistent_tone_ratio": 0.2222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.0006604619157273279,
+        "80-120Hz": 0.0009908668021435868,
+        "120-250Hz": 0.004130608210979986,
+        "250-400Hz": 0.003214579237954233,
+        "400-1000Hz": 0.0024820170504551596,
+        "1000-2000Hz": 0.0007489758567105829,
+        "2000-4000Hz": 0.0006595279338079759,
+        "4000-8000Hz": 0.0007435755258024359
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0656,
+        "scale_min": 2.4,
+        "scale_max": 3.44,
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.3007023767211155,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "2e71fd952d5f9b7935ba2fe1cdacea39dfe0b41702e1edc04e13ca920dde3369",
+      "monitor_sha256": "a464ceac3d725e2741a40029c3cfd2f45996e8d3b29a140d1cdf83e6ac316224",
+      "pre_ptr_sha256": "6ee33203b5074ec8f192b742a850fea4350381d59848128dda18ee2428d9563e",
+      "rms_dbfs": -42.19572987779392,
+      "peak_dbfs": -16.982714303998883,
+      "crest_db": 25.213015573795037,
+      "dynamic_range_db": 5.485694434220094,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1679.52201580124,
+      "roughness_proxy": 0.46114782143169636,
+      "sharpness_proxy": 0.09992176666977956,
+      "tonality_proxy": 0.2302172713695008,
+      "persistent_tone_ratio": 0.11666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0007860120690172692,
+        "80-120Hz": 0.001159578687698535,
+        "120-250Hz": 0.004450411322580465,
+        "250-400Hz": 0.004998679720258324,
+        "400-1000Hz": 0.004019415741567186,
+        "1000-2000Hz": 0.0011140801217147192,
+        "2000-4000Hz": 0.0007847432568768892,
+        "4000-8000Hz": 0.0008177286265437861
+      },
+      "stem_accounting": {
+        "scale_mean": 3.38,
+        "scale_min": 2.84,
+        "scale_max": 3.92,
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.354694074904226,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "6ee32896742bd68d8d107e2cc636afdf522bfb007e4244ff08d9bb91afb4f2cb",
+      "monitor_sha256": "03a7cc5476c30180c3a0d7c51f3c9cf5cd799457203f57aeb2c03371be01d280",
+      "pre_ptr_sha256": "4abffe70cbcab29d768411aec6378988e9e2ab385c976b3726d095a03e1f1e42",
+      "rms_dbfs": -42.194470359831016,
+      "peak_dbfs": -16.755097071383155,
+      "crest_db": 25.439373288447857,
+      "dynamic_range_db": 1.9245442200460934,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1627.6791876045415,
+      "roughness_proxy": 0.3211508474016491,
+      "sharpness_proxy": 0.09780811248294743,
+      "tonality_proxy": 0.2225341869245925,
+      "persistent_tone_ratio": 0.15555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.000796897185343259,
+        "80-120Hz": 0.0011798137899047354,
+        "120-250Hz": 0.004699834372440498,
+        "250-400Hz": 0.005037501166163032,
+        "400-1000Hz": 0.0036688497814066335,
+        "1000-2000Hz": 0.0010510925462220556,
+        "2000-4000Hz": 0.0008193697948519087,
+        "4000-8000Hz": 0.000862464716129517
+      },
+      "stem_accounting": {
+        "scale_mean": 3.3999999999999986,
+        "scale_min": 3.4,
+        "scale_max": 3.4,
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.36617392629461853,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "lift": {
+      "raw_sha256": "62c1999f037b9b9165aa0991f9b1034658f76a479fd8221ef0a1d10a3e968018",
+      "monitor_sha256": "e6d6866d369c84e1279df58d4bbe1133632d169aefa867e21c99cdb8e68aa45b",
+      "pre_ptr_sha256": "bf790dff1b44443b29c8b0d834f4a6dc1bbcba7cc279568fb56ee82d8293b967",
+      "rms_dbfs": -42.63839221195714,
+      "peak_dbfs": -16.88732468927119,
+      "crest_db": 25.751067522685958,
+      "dynamic_range_db": 10.647608985378882,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1761.1157728936662,
+      "roughness_proxy": 0.3761493147194775,
+      "sharpness_proxy": 0.0959544922968457,
+      "tonality_proxy": 0.22415380235299612,
+      "persistent_tone_ratio": 0.31666666666666665,
+      "band_rms": {
+        "20-80Hz": 0.000826393873012244,
+        "80-120Hz": 0.0012168107672738487,
+        "120-250Hz": 0.0038862476028571746,
+        "250-400Hz": 0.00449312834037018,
+        "400-1000Hz": 0.004316106874979305,
+        "1000-2000Hz": 0.001163084745656376,
+        "2000-4000Hz": 0.0007159991090560843,
+        "4000-8000Hz": 0.000735447652291016
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.35562065122297704,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "62c1999f037b9b9165aa0991f9b1034658f76a479fd8221ef0a1d10a3e968018",
+      "monitor_sha256": "e6d6866d369c84e1279df58d4bbe1133632d169aefa867e21c99cdb8e68aa45b",
+      "pre_ptr_sha256": "bf790dff1b44443b29c8b0d834f4a6dc1bbcba7cc279568fb56ee82d8293b967",
+      "rms_dbfs": -42.63839221195714,
+      "peak_dbfs": -16.88732468927119,
+      "crest_db": 25.751067522685958,
+      "dynamic_range_db": 10.647608985378882,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 1761.1157728936662,
+      "roughness_proxy": 0.3761493147194775,
+      "sharpness_proxy": 0.0959544922968457,
+      "tonality_proxy": 0.22415380235299612,
+      "persistent_tone_ratio": 0.31666666666666665,
+      "band_rms": {
+        "20-80Hz": 0.000826393873012244,
+        "80-120Hz": 0.0012168107672738487,
+        "120-250Hz": 0.0038862476028571746,
+        "250-400Hz": 0.00449312834037018,
+        "400-1000Hz": 0.004316106874979305,
+        "1000-2000Hz": 0.001163084745656376,
+        "2000-4000Hz": 0.0007159991090560843,
+        "4000-8000Hz": 0.000735447652291016
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.35562065122297704,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "14b560416bcf835ed6ea4ef84860902847bd579fccddb657662cfb9e9a84bdb2",
+      "monitor_sha256": "bbde9e1c006892c4efc6708dc771cbe0e03e6edc818be2bbed0b7297d9e9ae78",
+      "pre_ptr_sha256": "5bb51d7fffd7f62c46720817822b83a037872aec943c6774dc295dc78ebb52cb",
+      "rms_dbfs": -46.40373741031083,
+      "peak_dbfs": -21.065078147851874,
+      "crest_db": 25.338659262458954,
+      "dynamic_range_db": 7.602680007448556,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 2111.8831167857675,
+      "roughness_proxy": 0.2673385938170098,
+      "sharpness_proxy": 0.13102671052535336,
+      "tonality_proxy": 0.2231655358353876,
+      "persistent_tone_ratio": 0.43333333333333335,
+      "band_rms": {
+        "20-80Hz": 0.000569574752762905,
+        "80-120Hz": 0.0008778546460807091,
+        "120-250Hz": 0.0026812384067035795,
+        "250-400Hz": 0.003222034276229174,
+        "400-1000Hz": 0.002272350765680474,
+        "1000-2000Hz": 0.000668050803654338,
+        "2000-4000Hz": 0.0005537303396792228,
+        "4000-8000Hz": 0.0006501078013797464
+      },
+      "stem_accounting": {
+        "scale_mean": 2.635600000000001,
+        "scale_min": 2.24,
+        "scale_max": 3.1,
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.2361474548089352,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "469a77969866f9efecff9927fe3e2b0fdcabc6dc3f584e39612b58e0628cc672",
+      "monitor_sha256": "372b89ea5485431e0e779d1fef4c8a4cc81ad561eb894ab011f68a0b4dc3246c",
+      "pre_ptr_sha256": "23120114a49e68794caac36915c09d7a7569a709d06e764e649d27d6c1692c84",
+      "rms_dbfs": -45.32844538323392,
+      "peak_dbfs": -20.55169185593565,
+      "crest_db": 24.77675352729827,
+      "dynamic_range_db": 10.331076701984136,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 2106.65763701978,
+      "roughness_proxy": 0.15634914874503034,
+      "sharpness_proxy": 0.13076114299012007,
+      "tonality_proxy": 0.21582661056897942,
+      "persistent_tone_ratio": 0.12777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.0007388592880703713,
+        "80-120Hz": 0.0009717209523971382,
+        "120-250Hz": 0.003053640029018681,
+        "250-400Hz": 0.0032509782883778132,
+        "400-1000Hz": 0.0028821940696177766,
+        "1000-2000Hz": 0.0008266095478891274,
+        "2000-4000Hz": 0.0006204815316384289,
+        "4000-8000Hz": 0.0007010852234268304
+      },
+      "stem_accounting": {
+        "scale_mean": 2.837632653061225,
+        "scale_min": 2.32,
+        "scale_max": 3.8428571428571434,
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.2858600866141214,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    }
+  },
+  "P8": {
+    "hot_idle": {
+      "raw_sha256": "3c8a80d5013075a22f9890a785fdbc30475935770283fabbffa0865e8ec84175",
+      "monitor_sha256": "dac801e50eb675c32b3f4da8950bf9cc42cd8209c918df8f0768a4cdf2b9ae77",
+      "pre_ptr_sha256": "27f96976b6962e39517bdcfbb83092a4237ff9bc63ae9d33ad98f40a417eda28",
+      "rms_dbfs": -58.31115004764697,
+      "peak_dbfs": -32.576023263434394,
+      "crest_db": 25.735126784212564,
+      "dynamic_range_db": 0.8469828863013001,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4986.282799754399,
+      "roughness_proxy": 0.6833947733702376,
+      "sharpness_proxy": 0.40569546806709084,
+      "tonality_proxy": 0.1897033252720338,
+      "persistent_tone_ratio": 0.5222222222222223,
+      "band_rms": {
+        "20-80Hz": 0.00021978091387539201,
+        "80-120Hz": 0.00033571158919942074,
+        "120-250Hz": 0.0005281492786238483,
+        "250-400Hz": 0.0001933502712469749,
+        "400-1000Hz": 0.00023679261824996435,
+        "1000-2000Hz": 0.0002918339298695659,
+        "2000-4000Hz": 0.00046880692887361837,
+        "4000-8000Hz": 0.0005836633905500347
+      },
+      "stem_accounting": {
+        "scale_mean": 2.36,
+        "scale_min": 2.36,
+        "scale_max": 2.36,
+        "pre_ptr_rms_before": 0.025809760434087153,
+        "pre_ptr_rms_after": 0.060922181187311075,
+        "per_layer_rms_before": {
+          "bank_collector": 0.12662423840459153,
+          "central_collector": 0.0,
+          "forced_induction": 0.0043932628612551065,
+          "pre_transients": 0.0926005632855153,
+          "transients": 0.0926005632855153,
+          "dp_dc": 0.025986739487294297,
+          "pre_ptr": 0.025809760434087153
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_1200": {
+      "raw_sha256": "95ef4f668bc5b68101fa57bcbaac9af015b54e0a79153c3937211103d6dd7cfa",
+      "monitor_sha256": "0a01ea7629ab61e2a931d447201deb139514b7a5fb46b5644e5ba359a49a6581",
+      "pre_ptr_sha256": "33b80a5a969fff3e35b89a98f215e251e3a61b925291266790e924c072a11eb1",
+      "rms_dbfs": -56.43788730357666,
+      "peak_dbfs": -31.79716338995272,
+      "crest_db": 24.640723913623933,
+      "dynamic_range_db": 1.4385822611529944,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 5718.880221310552,
+      "roughness_proxy": 0.5469223662411543,
+      "sharpness_proxy": 0.40775309764693807,
+      "tonality_proxy": 0.22712095837512702,
+      "persistent_tone_ratio": 0.9666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0002205163344016599,
+        "80-120Hz": 0.00022003692634366376,
+        "120-250Hz": 0.000781433256791244,
+        "250-400Hz": 0.000418753170404442,
+        "400-1000Hz": 0.00030573618285949683,
+        "1000-2000Hz": 0.0003105049393395225,
+        "2000-4000Hz": 0.00046623669646795934,
+        "4000-8000Hz": 0.0005938648847032445
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6,
+        "scale_min": 2.6,
+        "scale_max": 2.6,
+        "pre_ptr_rms_before": 0.027354245759178927,
+        "pre_ptr_rms_after": 0.07113797506414375,
+        "per_layer_rms_before": {
+          "bank_collector": 0.22081511091971023,
+          "central_collector": 0.0,
+          "forced_induction": 0.005881855996456056,
+          "pre_transients": 0.1430986791227584,
+          "transients": 0.14412173822146182,
+          "dp_dc": 0.027588250582038593,
+          "pre_ptr": 0.027354245759178927
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_2000": {
+      "raw_sha256": "0ccf1c513914f3d4bb7f5c9f7ccc532ca10074ac690b4788207e5f0f3015d69a",
+      "monitor_sha256": "50c3e22df42f4458582da75bc7e10f6cc8ff9a81e1d3cf0b5c7121e9c42223da",
+      "pre_ptr_sha256": "2d9180c9b2c96b5cd99d8d09caa8923a310daaafca10a69c4e7015fa55bc3b35",
+      "rms_dbfs": -55.09655799637908,
+      "peak_dbfs": -30.884711308008352,
+      "crest_db": 24.211846688370734,
+      "dynamic_range_db": 1.6615760923383003,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4320.637488410444,
+      "roughness_proxy": 0.9081255250288399,
+      "sharpness_proxy": 0.31292682742436234,
+      "tonality_proxy": 0.23011075538461603,
+      "persistent_tone_ratio": 0.9833333333333333,
+      "band_rms": {
+        "20-80Hz": 0.00023258661782234776,
+        "80-120Hz": 0.0003784660772464466,
+        "120-250Hz": 0.0009647747612633293,
+        "250-400Hz": 0.0007097144177842476,
+        "400-1000Hz": 0.00035141906703579847,
+        "1000-2000Hz": 0.00033491487392412215,
+        "2000-4000Hz": 0.0005389396155921421,
+        "4000-8000Hz": 0.0006210493160092363
+      },
+      "stem_accounting": {
+        "scale_mean": 2.6799999999999993,
+        "scale_min": 2.6799999999999997,
+        "scale_max": 2.6799999999999997,
+        "pre_ptr_rms_before": 0.03506508140360389,
+        "pre_ptr_rms_after": 0.09398527828567978,
+        "per_layer_rms_before": {
+          "bank_collector": 0.3885719796521614,
+          "central_collector": 0.0,
+          "forced_induction": 0.006417712361820197,
+          "pre_transients": 0.2479890675944291,
+          "transients": 0.24961749091344446,
+          "dp_dc": 0.03525574533463938,
+          "pre_ptr": 0.03506508140360389
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "steady_3000": {
+      "raw_sha256": "8546ae247b8ac43531792915206c6f529ed0d8239020083e2c1de7b9abdf2a5c",
+      "monitor_sha256": "dc60cf16348ee9ce1e5b4c5a7712da880cf41ef9c814d7de2e0f0e512b727d41",
+      "pre_ptr_sha256": "a2084837c5f887bf17d044a0204c469481a2294bcb55013f82c3f5be3834ccb1",
+      "rms_dbfs": -53.18372434769174,
+      "peak_dbfs": -30.664374200975356,
+      "crest_db": 22.51935014671638,
+      "dynamic_range_db": 1.2699290754762123,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 3244.6875987915987,
+      "roughness_proxy": 0.9475781210392965,
+      "sharpness_proxy": 0.22307099636605748,
+      "tonality_proxy": 0.21846687690290714,
+      "persistent_tone_ratio": 0.9777777777777777,
+      "band_rms": {
+        "20-80Hz": 0.00019038962305085828,
+        "80-120Hz": 0.00015107117427405197,
+        "120-250Hz": 0.0017170551202693241,
+        "250-400Hz": 0.0004573240655467131,
+        "400-1000Hz": 0.000377328467706939,
+        "1000-2000Hz": 0.00040466501588490154,
+        "2000-4000Hz": 0.0005201059464862163,
+        "4000-8000Hz": 0.0006425940104038812
+      },
+      "stem_accounting": {
+        "scale_mean": 2.7800000000000007,
+        "scale_min": 2.7800000000000002,
+        "scale_max": 2.7800000000000002,
+        "pre_ptr_rms_before": 0.039950815998252606,
+        "pre_ptr_rms_after": 0.11110065533726805,
+        "per_layer_rms_before": {
+          "bank_collector": 0.6271902828941542,
+          "central_collector": 0.0,
+          "forced_induction": 0.009884856962264757,
+          "pre_transients": 0.39432693779808997,
+          "transients": 0.3964853234747638,
+          "dp_dc": 0.040149689300401185,
+          "pre_ptr": 0.039950815998252606
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "tip_in": {
+      "raw_sha256": "37ab47332c6d017e55c4cf83c0dbb966fde57b18cfe5a07cf6cee71589a7a25d",
+      "monitor_sha256": "fab3ec0eed814075893fb9781dba6df9477662232576937e4b42c5f1e4e7a21f",
+      "pre_ptr_sha256": "d2955c387d7379b2de49b28ac19571c76fc16369e49a9526899d2f063535588f",
+      "rms_dbfs": -50.789205221203275,
+      "peak_dbfs": -32.50941395131533,
+      "crest_db": 18.27979126988794,
+      "dynamic_range_db": 7.5926130424956355,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3434.180834420502,
+      "roughness_proxy": 0.26621006616653825,
+      "sharpness_proxy": 0.2387033658344508,
+      "tonality_proxy": 0.22546344553427222,
+      "persistent_tone_ratio": 0.21666666666666667,
+      "band_rms": {
+        "20-80Hz": 0.0003021943729861094,
+        "80-120Hz": 0.0004005335234202953,
+        "120-250Hz": 0.0020326841502197883,
+        "250-400Hz": 0.0012511584143018977,
+        "400-1000Hz": 0.0007659075082148066,
+        "1000-2000Hz": 0.0005525626741143853,
+        "2000-4000Hz": 0.0006340328912665816,
+        "4000-8000Hz": 0.0007406670654284281
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0656,
+        "scale_min": 2.4,
+        "scale_max": 3.44,
+        "pre_ptr_rms_before": 0.04848645564804539,
+        "pre_ptr_rms_after": 0.15751264469636017,
+        "per_layer_rms_before": {
+          "bank_collector": 0.8874478289490282,
+          "central_collector": 0.0,
+          "forced_induction": 0.016953558211753872,
+          "pre_transients": 0.5479365519923778,
+          "transients": 0.5520344483802926,
+          "dp_dc": 0.04866719990053152,
+          "pre_ptr": 0.04848645564804539
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "full_load": {
+      "raw_sha256": "0fdc7f50c65a9b9c4c3288cf57eff0bda47674e7e7674a356e6f000c03676f54",
+      "monitor_sha256": "4f9312b4f063220db5662a472463602d756a7f4efb97ea91120d11ecefd89689",
+      "pre_ptr_sha256": "7a3cdd3212b239b08b757e19767e5081fcc659dc3b47e147f46a32cd4206f0de",
+      "rms_dbfs": -49.02148166922099,
+      "peak_dbfs": -27.480511245898715,
+      "crest_db": 21.54097042332227,
+      "dynamic_range_db": 7.316177167512868,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3670.5072797713888,
+      "roughness_proxy": 0.39002023265477676,
+      "sharpness_proxy": 0.24692301360896485,
+      "tonality_proxy": 0.23376256521376018,
+      "persistent_tone_ratio": 0.12222222222222222,
+      "band_rms": {
+        "20-80Hz": 0.00023577167030152077,
+        "80-120Hz": 0.0003292605989917445,
+        "120-250Hz": 0.0016520237161604153,
+        "250-400Hz": 0.0016125432893498827,
+        "400-1000Hz": 0.0021708628832476226,
+        "1000-2000Hz": 0.0008236470635416457,
+        "2000-4000Hz": 0.0007327372469147894,
+        "4000-8000Hz": 0.0008115267884490859
+      },
+      "stem_accounting": {
+        "scale_mean": 3.38,
+        "scale_min": 2.84,
+        "scale_max": 3.92,
+        "pre_ptr_rms_before": 0.04451043989112444,
+        "pre_ptr_rms_after": 0.14991517273606497,
+        "per_layer_rms_before": {
+          "bank_collector": 1.4122605427293815,
+          "central_collector": 0.0,
+          "forced_induction": 0.028087646364235382,
+          "pre_transients": 0.8400807175893332,
+          "transients": 0.8405542299498775,
+          "dp_dc": 0.04474468533330133,
+          "pre_ptr": 0.04451043989112444
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "gear_shift": {
+      "raw_sha256": "1071e88bccf0f2e251a7fea08e80774159284a9c584a741b13f427168353e3bb",
+      "monitor_sha256": "4232892ceb9fc09376500e626f4a6da8057fe576827e50979d8bc67d2b664d3f",
+      "pre_ptr_sha256": "c244486cd3fc1c4a4b8643a073b02f953e6013fbd4f3a0d10e569df37d3ba265",
+      "rms_dbfs": -49.38661307940581,
+      "peak_dbfs": -26.005973104662097,
+      "crest_db": 23.380639974743715,
+      "dynamic_range_db": 3.3706515774530543,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3475.0831232911837,
+      "roughness_proxy": 0.37567675579069865,
+      "sharpness_proxy": 0.23607604033778967,
+      "tonality_proxy": 0.23229935086914405,
+      "persistent_tone_ratio": 0.1388888888888889,
+      "band_rms": {
+        "20-80Hz": 0.00026508510789638467,
+        "80-120Hz": 0.0002520336241680102,
+        "120-250Hz": 0.002008257081666984,
+        "250-400Hz": 0.0016656519954193231,
+        "400-1000Hz": 0.0014566672255722527,
+        "1000-2000Hz": 0.0007423299909307073,
+        "2000-4000Hz": 0.0007670938194148445,
+        "4000-8000Hz": 0.0008552767460363522
+      },
+      "stem_accounting": {
+        "scale_mean": 3.3999999999999986,
+        "scale_min": 3.4,
+        "scale_max": 3.4,
+        "pre_ptr_rms_before": 0.05045613273092092,
+        "pre_ptr_rms_after": 0.1718736896924504,
+        "per_layer_rms_before": {
+          "bank_collector": 1.313059631625552,
+          "central_collector": 0.0,
+          "forced_induction": 0.024466478416521054,
+          "pre_transients": 0.7929428887949764,
+          "transients": 0.8181469698107298,
+          "dp_dc": 0.05066591844955335,
+          "pre_ptr": 0.05045613273092092
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "lift": {
+      "raw_sha256": "0af2b8006de568aa1e46c440be52c52f9b0059c049d4d144c3145a4323dc316e",
+      "monitor_sha256": "3efc3dc92d70b0ec71ae1517c237bb1adf9066985ba2666290944caa62f06504",
+      "pre_ptr_sha256": "8be85e5c859bad80fd5b33b5df333c257b037cd81dcb2c9a6613eb27dc6cae54",
+      "rms_dbfs": -49.01955571939347,
+      "peak_dbfs": -27.337379831169734,
+      "crest_db": 21.682175888223746,
+      "dynamic_range_db": 10.568892082847546,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3221.4864960265095,
+      "roughness_proxy": 0.29391815863740983,
+      "sharpness_proxy": 0.19683603680324532,
+      "tonality_proxy": 0.2347984603126396,
+      "persistent_tone_ratio": 0.40555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.0003501245108438302,
+        "80-120Hz": 0.00023088723942773175,
+        "120-250Hz": 0.0010053720409213798,
+        "250-400Hz": 0.0014639823054077641,
+        "400-1000Hz": 0.0026712479210442342,
+        "1000-2000Hz": 0.0008757637846595036,
+        "2000-4000Hz": 0.0006472551485309713,
+        "4000-8000Hz": 0.0007254990639609122
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.18696180681214192,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "afterfire": {
+      "raw_sha256": "0af2b8006de568aa1e46c440be52c52f9b0059c049d4d144c3145a4323dc316e",
+      "monitor_sha256": "3efc3dc92d70b0ec71ae1517c237bb1adf9066985ba2666290944caa62f06504",
+      "pre_ptr_sha256": "8be85e5c859bad80fd5b33b5df333c257b037cd81dcb2c9a6613eb27dc6cae54",
+      "rms_dbfs": -49.01955571939347,
+      "peak_dbfs": -27.337379831169734,
+      "crest_db": 21.682175888223746,
+      "dynamic_range_db": 10.568892082847546,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 3221.4864960265095,
+      "roughness_proxy": 0.29391815863740983,
+      "sharpness_proxy": 0.19683603680324532,
+      "tonality_proxy": 0.2347984603126396,
+      "persistent_tone_ratio": 0.40555555555555556,
+      "band_rms": {
+        "20-80Hz": 0.0003501245108438302,
+        "80-120Hz": 0.00023088723942773175,
+        "120-250Hz": 0.0010053720409213798,
+        "250-400Hz": 0.0014639823054077641,
+        "400-1000Hz": 0.0026712479210442342,
+        "1000-2000Hz": 0.0008757637846595036,
+        "2000-4000Hz": 0.0006472551485309713,
+        "4000-8000Hz": 0.0007254990639609122
+      },
+      "stem_accounting": {
+        "scale_mean": 3.0384,
+        "scale_min": 2.24,
+        "scale_max": 3.7199999999999998,
+        "pre_ptr_rms_before": 0.0557582281236334,
+        "pre_ptr_rms_after": 0.18696180681214192,
+        "per_layer_rms_before": {
+          "bank_collector": 1.5063820698130197,
+          "central_collector": 0.0,
+          "forced_induction": 0.027161101111031222,
+          "pre_transients": 0.8884868049169695,
+          "transients": 0.9146418814480889,
+          "dp_dc": 0.05595844431657845,
+          "pre_ptr": 0.0557582281236334
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "idle_return": {
+      "raw_sha256": "2a71ece298cf759850e7297d5a381f2a25ef9a713d1d6a87ecfb840617139afc",
+      "monitor_sha256": "183923b872219777bb29b6aeede6aec37d3d534ea21acdbad815190d6117fb13",
+      "pre_ptr_sha256": "97fa41417f524f876db6d18d347cc619803b05253aac3a12042dc634f5d62d13",
+      "rms_dbfs": -53.33293535809296,
+      "peak_dbfs": -29.24530789182308,
+      "crest_db": 24.08762746626988,
+      "dynamic_range_db": 5.845402264930728,
+      "transient_event_density_per_s": 1.0,
+      "spectral_centroid_hz": 4693.519576689468,
+      "roughness_proxy": 0.24502982827458622,
+      "sharpness_proxy": 0.31970289302007593,
+      "tonality_proxy": 0.2372761903886404,
+      "persistent_tone_ratio": 0.46111111111111114,
+      "band_rms": {
+        "20-80Hz": 0.00024858643797590107,
+        "80-120Hz": 0.00029839212048287403,
+        "120-250Hz": 0.001015402674227217,
+        "250-400Hz": 0.0010060439133910374,
+        "400-1000Hz": 0.0010243740431424495,
+        "1000-2000Hz": 0.00048098152583818447,
+        "2000-4000Hz": 0.0005134038888653447,
+        "4000-8000Hz": 0.0006451172540799291
+      },
+      "stem_accounting": {
+        "scale_mean": 2.635600000000001,
+        "scale_min": 2.24,
+        "scale_max": 3.1,
+        "pre_ptr_rms_before": 0.044885315535395556,
+        "pre_ptr_rms_after": 0.11844141077350005,
+        "per_layer_rms_before": {
+          "bank_collector": 0.9445306311913422,
+          "central_collector": 0.0,
+          "forced_induction": 0.015759767788807777,
+          "pre_transients": 0.5746286755897851,
+          "transients": 0.5904742026253987,
+          "dp_dc": 0.04507491967063042,
+          "pre_ptr": 0.044885315535395556
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    },
+    "complete_cycle": {
+      "raw_sha256": "01e2a408b07eb350c79b84d6f85467fa92ef7390d4496c9d55af7fea57340ef7",
+      "monitor_sha256": "87838d7ea518b9a14f859d05d7d8ec5a49eb909c08421e3333bf3acfd62561a2",
+      "pre_ptr_sha256": "26ffa8deb7b2974ce1ded5b567588950207af6435837aa893975b99257f3649d",
+      "rms_dbfs": -50.98972872317276,
+      "peak_dbfs": -32.246301596397636,
+      "crest_db": 18.743427126775124,
+      "dynamic_range_db": 10.31343941927473,
+      "transient_event_density_per_s": 2.0,
+      "spectral_centroid_hz": 4308.246618741099,
+      "roughness_proxy": 0.1266499626473018,
+      "sharpness_proxy": 0.2918838668502732,
+      "tonality_proxy": 0.2236275809431052,
+      "persistent_tone_ratio": 0.13333333333333333,
+      "band_rms": {
+        "20-80Hz": 0.0004753548584029043,
+        "80-120Hz": 0.00035622419088915174,
+        "120-250Hz": 0.0012165388811152514,
+        "250-400Hz": 0.0011666067526914696,
+        "400-1000Hz": 0.0017568631510343341,
+        "1000-2000Hz": 0.0006364145546092282,
+        "2000-4000Hz": 0.0005898979368775969,
+        "4000-8000Hz": 0.0006978649110948647
+      },
+      "stem_accounting": {
+        "scale_mean": 2.837632653061225,
+        "scale_min": 2.32,
+        "scale_max": 3.8428571428571434,
+        "pre_ptr_rms_before": 0.05459786584011231,
+        "pre_ptr_rms_after": 0.17772999120052702,
+        "per_layer_rms_before": {
+          "bank_collector": 1.0655793118530854,
+          "central_collector": 0.0,
+          "forced_induction": 0.0188980051051693,
+          "pre_transients": 0.6397819663992764,
+          "transients": 0.6793281154167502,
+          "dp_dc": 0.0547708555768095,
+          "pre_ptr": 0.05459786584011231
+        }
+      },
+      "route": {
+        "target": "entire_pre_ptr_mix",
+        "kind": "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "state_dependency": "load"
+      }
+    }
+  },
+  "_meta": {
+    "schema": "s12.stage_ab.provenance.v1",
+    "duration_s": 1.0,
+    "scenes": [
+      "hot_idle",
+      "steady_1200",
+      "steady_2000",
+      "steady_3000",
+      "tip_in",
+      "full_load",
+      "gear_shift",
+      "lift",
+      "afterfire",
+      "idle_return",
+      "complete_cycle"
+    ],
+    "variants": {
+      "P0": "Stage-Z / AA-C0 baseline; no candidate factor",
+      "P1": "only broad pre-PTR state scaling base*(2+2*load)",
+      "P2": "only event-derived 120-400 Hz body injection",
+      "P3": "only forced-carrier >1200 Hz suppression",
+      "P4": "event body + carrier suppression without broad scale",
+      "P5": "broad scale + event body + carrier suppression (= AA-C3)",
+      "P6": "combustion-difference local state scaling (source-causal diagnostic)",
+      "P7": "broad scale + event body (factorial corner)",
+      "P8": "broad scale + carrier suppression (factorial corner)"
+    },
+    "p5_equals_aa_c3_bit_exact": "verified in tests/test_s12_stage_ab_provenance.py",
+    "generated_at": "2026-09-02T15:30:13+0800"
+  }
+}

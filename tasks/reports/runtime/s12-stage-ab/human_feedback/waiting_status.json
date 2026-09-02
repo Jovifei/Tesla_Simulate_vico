@@ -1,0 +1,25 @@
+{
+  "schema": "s12.stage_ab.waiting_status.v1",
+  "stage": "Stage-AB",
+  "status": "WAITING_FOR_JOVI_AUDITION",
+  "timestamp": "2026-09-02T15:30:00+08:00",
+  "phases_completed": {
+    "AB0_POST_MERGE_TRUTH": "PASS",
+    "AB1_AA_C3_PROVENANCE_AUDIT": "PASS (DIAGNOSTIC_ONLY)",
+    "AB2_HUMAN_FEEDBACK_GATE": "REACHED - no Jovi v3 feedback receipt found"
+  },
+  "verified": {
+    "v3_package_manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+    "blind_answers_manifest_unopened_by_agent": true,
+    "reveal_receipt_exists": false,
+    "feedback_receipt_exists": false
+  },
+  "acoustic_parameter_changes_since_v3": 0,
+  "allowed_next_action": "Jovi audition of E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3 using jovi_v3_feedback.schema.json",
+  "forbidden_until_feedback": [
+    "any acoustic parameter change",
+    "any Round 2 candidate rendering",
+    "opening answers_manifest.html for candidate selection",
+    "Ferrari / RX-7 / multi-vehicle propagation"
+  ]
+}

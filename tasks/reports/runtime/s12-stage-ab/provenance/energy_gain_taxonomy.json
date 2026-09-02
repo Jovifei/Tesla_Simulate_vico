@@ -1,0 +1,115 @@
+{
+  "schema": "s12.stage_ab.energy_gain_taxonomy.v1",
+  "categories": [
+    "MASTER_OUTPUT_GAIN",
+    "MONITOR_GAIN",
+    "BROAD_PRE_PTR_GAIN",
+    "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+    "STEM_LOCAL_GAIN",
+    "SOURCE_EVENT_ENERGY",
+    "PATH_TRANSFER_GAIN",
+    "COLLECTOR_TRANSFER_GAIN",
+    "FORCED_INDUCTION_GAIN",
+    "TRANSIENT_GAIN",
+    "FILTER_REBALANCE"
+  ],
+  "hard_gate_extension_required": [
+    "gain_scope",
+    "affected_stems",
+    "location_in_chain",
+    "state_dependency",
+    "is_broad_mix_scaling",
+    "physical_interpretability"
+  ],
+  "candidate_mapping": {
+    "AA-C0": {
+      "parameters": {},
+      "gain_scope": "none",
+      "affected_stems": [],
+      "location_in_chain": "n/a",
+      "state_dependency": "none",
+      "is_broad_mix_scaling": false,
+      "physical_interpretability": "baseline",
+      "taxonomy_categories": []
+    },
+    "AA-C1": {
+      "parameters": {
+        "pressure_idle_scale": "entire pre_ptr mix scaled by pressure_idle_scale + pressure_load_scale * load (candidates.py:94-96)",
+        "pressure_load_scale": "see pressure_idle_scale",
+        "event_body_mix": "adds band-limited combustion_event layer content (stem-derived additive)",
+        "forced_carrier_reduction": "subtracts high-passed forced_induction layer content (stem-derived subtractive)"
+      },
+      "gain_scope": "BROAD_PRE_PTR (multiplicative) + stem-derived additive/subtractive rebalance",
+      "affected_stems": [
+        "bank_collector",
+        "central_collector",
+        "forced_induction",
+        "mechanical",
+        "transients",
+        "dp_dc chain output"
+      ],
+      "location_in_chain": "post transfer_ir, pre PTR (the entire layers['pre_ptr'] output)",
+      "state_dependency": "load-dependent: scale = pressure_idle_scale + pressure_load_scale * load",
+      "is_broad_mix_scaling": true,
+      "physical_interpretability": "NOT a source-pressure-AC repair. layers['pre_ptr'] is the full mix of combustion, forced induction, mechanical, cycle-sync, transient and dp_dc/transfer-IR chain output (persistent_engine.py:694-708), so base*(2+2*load) scales all of it. Classified STATE_DEPENDENT_BROAD_PRE_PTR_SCALING.",
+      "taxonomy_categories": [
+        "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "FILTER_REBALANCE"
+      ]
+    },
+    "AA-C2": {
+      "parameters": {
+        "pressure_idle_scale": "entire pre_ptr mix scaled by pressure_idle_scale + pressure_load_scale * load (candidates.py:94-96)",
+        "pressure_load_scale": "see pressure_idle_scale",
+        "event_body_mix": "adds band-limited combustion_event layer content (stem-derived additive)",
+        "forced_carrier_reduction": "subtracts high-passed forced_induction layer content (stem-derived subtractive)"
+      },
+      "gain_scope": "BROAD_PRE_PTR (multiplicative) + stem-derived additive/subtractive rebalance",
+      "affected_stems": [
+        "bank_collector",
+        "central_collector",
+        "forced_induction",
+        "mechanical",
+        "transients",
+        "dp_dc chain output"
+      ],
+      "location_in_chain": "post transfer_ir, pre PTR (the entire layers['pre_ptr'] output)",
+      "state_dependency": "load-dependent: scale = pressure_idle_scale + pressure_load_scale * load",
+      "is_broad_mix_scaling": true,
+      "physical_interpretability": "NOT a source-pressure-AC repair. layers['pre_ptr'] is the full mix of combustion, forced induction, mechanical, cycle-sync, transient and dp_dc/transfer-IR chain output (persistent_engine.py:694-708), so base*(2+2*load) scales all of it. Classified STATE_DEPENDENT_BROAD_PRE_PTR_SCALING.",
+      "taxonomy_categories": [
+        "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "FILTER_REBALANCE"
+      ]
+    },
+    "AA-C3": {
+      "parameters": {
+        "pressure_idle_scale": "entire pre_ptr mix scaled by pressure_idle_scale + pressure_load_scale * load (candidates.py:94-96)",
+        "pressure_load_scale": "see pressure_idle_scale",
+        "event_body_mix": "adds band-limited combustion_event layer content (stem-derived additive)",
+        "forced_carrier_reduction": "subtracts high-passed forced_induction layer content (stem-derived subtractive)"
+      },
+      "gain_scope": "BROAD_PRE_PTR (multiplicative) + stem-derived additive/subtractive rebalance",
+      "affected_stems": [
+        "bank_collector",
+        "central_collector",
+        "forced_induction",
+        "mechanical",
+        "transients",
+        "dp_dc chain output"
+      ],
+      "location_in_chain": "post transfer_ir, pre PTR (the entire layers['pre_ptr'] output)",
+      "state_dependency": "load-dependent: scale = pressure_idle_scale + pressure_load_scale * load",
+      "is_broad_mix_scaling": true,
+      "physical_interpretability": "NOT a source-pressure-AC repair. layers['pre_ptr'] is the full mix of combustion, forced induction, mechanical, cycle-sync, transient and dp_dc/transfer-IR chain output (persistent_engine.py:694-708), so base*(2+2*load) scales all of it. Classified STATE_DEPENDENT_BROAD_PRE_PTR_SCALING.",
+      "taxonomy_categories": [
+        "STATE_DEPENDENT_BROAD_PRE_PTR_GAIN",
+        "FILTER_REBALANCE"
+      ]
+    }
+  },
+  "notes": [
+    "global_gain_changed=False (no constant master gain) does NOT imply stem-local: the AA-C1..C3 pressure scales multiply the whole pre_ptr mix with a load-dependent factor.",
+    "event_body_mix and forced_carrier_reduction are stem-derived (combustion_event / forced_induction layers) and therefore map to FILTER_REBALANCE, not to BROAD_PRE_PTR_GAIN."
+  ]
+}

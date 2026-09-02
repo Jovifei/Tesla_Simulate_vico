@@ -1,0 +1,170 @@
+{
+  "schema": "s12.stage_ab.blower_provenance.v1",
+  "per_scene": {
+    "hot_idle": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1200.0,
+      "carrier_peak_prominence_db": 24.052902032895453,
+      "sideband_to_carrier": 0.4880654652210135,
+      "broadband_to_tonal": 508.1813134823551,
+      "rpm_tracking_error": 0.9731976735016462,
+      "load_tracking_error": null,
+      "boost_tracking_error": null,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "steady_1200": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1236.0,
+      "carrier_peak_prominence_db": 26.508219005428572,
+      "sideband_to_carrier": 0.5118929161128258,
+      "broadband_to_tonal": 411.63594348657807,
+      "rpm_tracking_error": null,
+      "load_tracking_error": null,
+      "boost_tracking_error": null,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "steady_2000": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1207.0,
+      "carrier_peak_prominence_db": 30.67081216549021,
+      "sideband_to_carrier": 0.49282409993597975,
+      "broadband_to_tonal": 314.4410489056354,
+      "rpm_tracking_error": null,
+      "load_tracking_error": null,
+      "boost_tracking_error": null,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "steady_3000": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1200.0,
+      "carrier_peak_prominence_db": 19.962672178359114,
+      "sideband_to_carrier": 0.4710392982991422,
+      "broadband_to_tonal": 742.5669529327046,
+      "rpm_tracking_error": null,
+      "load_tracking_error": null,
+      "boost_tracking_error": null,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "tip_in": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1212.0,
+      "carrier_peak_prominence_db": 20.555518959127376,
+      "sideband_to_carrier": 0.46625402817371503,
+      "broadband_to_tonal": 696.5440279954579,
+      "rpm_tracking_error": 0.050254085401946647,
+      "load_tracking_error": 0.08119491461476513,
+      "boost_tracking_error": 0.009907723817711545,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "full_load": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1234.0,
+      "carrier_peak_prominence_db": 23.165252670267012,
+      "sideband_to_carrier": 0.4951853919747475,
+      "broadband_to_tonal": 528.6672390187423,
+      "rpm_tracking_error": 0.02143915591690293,
+      "load_tracking_error": 0.02143915591690293,
+      "boost_tracking_error": 0.005507391910194781,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "gear_shift": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1201.0,
+      "carrier_peak_prominence_db": 22.95533496004225,
+      "sideband_to_carrier": 0.47429510641536893,
+      "broadband_to_tonal": 559.6494126155194,
+      "rpm_tracking_error": 0.01576483024185582,
+      "load_tracking_error": null,
+      "boost_tracking_error": 0.015764830241855488,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "lift": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1213.0,
+      "carrier_peak_prominence_db": 25.345022606478054,
+      "sideband_to_carrier": 0.415859272583533,
+      "broadband_to_tonal": 404.0137708230944,
+      "rpm_tracking_error": 0.22783901132473827,
+      "load_tracking_error": 0.11095851730918649,
+      "boost_tracking_error": 0.007133391817719548,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "afterfire": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1213.0,
+      "carrier_peak_prominence_db": 25.345022606478054,
+      "sideband_to_carrier": 0.415859272583533,
+      "broadband_to_tonal": 404.0137708230944,
+      "rpm_tracking_error": 0.22783901132473827,
+      "load_tracking_error": 0.11095851730918649,
+      "boost_tracking_error": 0.007133391817719548,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "idle_return": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1200.0,
+      "carrier_peak_prominence_db": 25.547764883422825,
+      "sideband_to_carrier": 0.40464039737938196,
+      "broadband_to_tonal": 377.5844668238713,
+      "rpm_tracking_error": 0.04858513218823657,
+      "load_tracking_error": 0.0025217032854313315,
+      "boost_tracking_error": 0.00254713659747019,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    },
+    "complete_cycle": {
+      "carrier_present": true,
+      "carrier_peak_freq_hz": 1227.0,
+      "carrier_peak_prominence_db": 28.440410268920466,
+      "sideband_to_carrier": 0.3826266263090381,
+      "broadband_to_tonal": 304.7492879041209,
+      "rpm_tracking_error": 0.23453048328646553,
+      "load_tracking_error": 0.050245873892867166,
+      "boost_tracking_error": 0.02934498101602301,
+      "definitions": {
+        "carrier_peak_prominence_db": "peak >1200 Hz magnitude vs local median magnitude",
+        "sideband_to_carrier": "energy within +/-100 Hz around peak-120 Hz offsets vs top 2% bins",
+        "tracking_error": "1 - corr(envelope, state trace); null when the trace is constant or correlation is undefined"
+      }
+    }
+  }
+}

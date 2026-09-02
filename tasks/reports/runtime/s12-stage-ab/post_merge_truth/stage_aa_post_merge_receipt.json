@@ -1,0 +1,76 @@
+{
+  "schema": "s12.stage_ab.post_merge_truth.v1",
+  "stage": "Stage-AB",
+  "purpose": "Post-merge current-truth receipt for the Stage-AA work after PR #4 landed on main. Historical Stage-AA receipts keep their original SHAs and are NOT rewritten.",
+  "timestamp": "2026-09-02T15:00:40+08:00",
+  "actual_origin_main": {
+    "head_sha": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+    "verified_via": "git ls-remote origin main (runtime, 2026-09-02)",
+    "advanced_beyond_pr4_merge": false,
+    "note": "Local origin/main tracking ref may display a stale ancestor (c08eb4c0); authoritative truth is the ls-remote value."
+  },
+  "stage_aa_base_main": {
+    "head_sha": "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+    "role": "historical Stage-AA base main (Stage-Z merge); preserved as-is, not confused with post-merge main"
+  },
+  "stage_aa_branch_tip": {
+    "head_sha": "8bb9df7eece622c282f0427da85d998ed68748d1",
+    "branch": "agent/s12-stage-aa-acoustic-quality-closure",
+    "exists_locally": true
+  },
+  "pr_number": 4,
+  "pr_state": "MERGED",
+  "pr_detail": {
+    "title": "S12 Stage AA Hellcat acoustic quality closure",
+    "merged": true,
+    "merged_at": "2026-09-02T00:22:50Z",
+    "verified_via": "GitHub API repos/Jovifei/Tesla_Simulate_vico/pulls/4"
+  },
+  "merge_commit": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+  "ci": {
+    "run_id": 33510767391,
+    "head_sha": "8bb9df7eece622c282f0427da85d998ed68748d1",
+    "status": "completed",
+    "conclusion": "success",
+    "workflow": "S12 Stage Y Open-Source Integration Audit",
+    "merge_commit_own_run": "NONE",
+    "note": "The qualified CI run is on the Stage-AA branch tip. The merge commit d156f3d7 itself has no dedicated CI run; this is recorded honestly rather than inferred."
+  },
+  "full_s12_summary": {
+    "branch_tip_ci": "PASS (run 33510767391)",
+    "execution_state_source": "tasks/reports/runtime/s12-stage-aa/execution_state.json @ d156f3d7",
+    "aa_phases_pass": ["AA0", "AA1", "AA2", "AA3", "AA4", "AA5", "AA6"],
+    "aa_phase_waiting": "AA7_JOVI_FEEDBACK_ROUND2"
+  },
+  "track_p_status": {
+    "value": "FROZEN",
+    "evidence": "execution_state boundaries.ptr_radiation_track_p=FROZEN; candidate_audit.json ptr_radiation_track_p=UNCHANGED, track_p_unchanged=true",
+    "modified_in_stage_ab": false
+  },
+  "repository_checks": {
+    "fetch_all_prune": "done (2026-09-02)",
+    "ls_remote_main_sha": "d156f3d729f68df8fd110a802ef16bce7a8f8088",
+    "historical_shas_exist_locally": [
+      "209378bcb9a0c1a352ffd56ca1c765ecce01f81d",
+      "8bb9df7eece622c282f0427da85d998ed68748d1",
+      "d156f3d729f68df8fd110a802ef16bce7a8f8088"
+    ],
+    "stage_ab_branch": "s12-stage-ab-hellcat-human-source-causal-closure",
+    "stage_ab_branch_note": "Flat branch name used instead of agent/s12-stage-ab-hellcat-human-source-causal-closure because slash-prefixed branch refs are unstable in this sandbox (refs subdirectory writes are cleared); same commit base d156f3d7.",
+    "stage_ab_worktree": "E:/Tesla_speed/worktrees/s12-stage-ab-hellcat-human-source-causal-closure",
+    "v3_package_manifest_sha256": "b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f",
+    "v3_manifest_matches_execution_state": true
+  },
+  "human_status": "WAITING_FOR_JOVI_AUDITION",
+  "r1_status": "MISSING",
+  "profile_freeze_status": "NOT_AUTHORIZED",
+  "oem_match_status": "NOT_CLAIMED",
+  "history_integrity": {
+    "historical_receipts_rewritten": false,
+    "base_main_head_retargeted_to_post_merge_main": false,
+    "current_truth_updates": [
+      "docs/08-reports/09-s12-stage-aa-acoustic-quality-closure.md: 'final branch CI pending' resolved to final CI PASS",
+      "tasks/reports/runtime/s12-stage-aa/execution_state.json: added post_merge_main_head / merge_commit / merge_status / final_ci_status; historical main_head and base_main_head kept at 209378b"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "s12.stage_ab.jovi_v3_feedback.schema.v1",
+  "purpose": "Jovi Stage-AA v3 audition feedback. One entry per key scene. Scores are 0-100 integers. Blind identity is NOT included; binding happens after feedback receipt.",
+  "scenes": ["hot_idle", "steady_1200", "steady_2000", "steady_3000", "tip_in", "full_load", "gear_shift", "lift", "afterfire", "idle_return", "complete_cycle"],
+  "scene_fields": {
+    "vehicle_identity_0_100": "does it sound like a supercharged 6.2L V8 Hellcat",
+    "realism_0_100": "overall realism vs a real recording",
+    "idle_life_0_100": "idle feels alive, large-displacement pulsing",
+    "low_frequency_pressure_0_100": "LF body pressure without boom",
+    "mechanical_texture_0_100": "mechanical detail and texture",
+    "blower_identity_0_100": "supercharger presence: real whine vs electronic whistle",
+    "acceleration_continuity_0_100": "idle->WOT power feel and continuity",
+    "shift_naturalness_0_100": "gear shift naturalness",
+    "lift_naturalness_0_100": "high-rpm lift naturalness",
+    "afterfire_naturalness_0_100": "exhaust afterfire/overrun naturalness",
+    "synthetic_artifact_0_100": "0 = no synthetic artifacts, 100 = overwhelming artifacts",
+    "overall_preference": "one of: AA-C3 | Stage-Z | Parent | tie | cannot_decide"
+  },
+  "score_range": [0, 100],
+  "free_text_tags": [
+    "too_thin",
+    "too_boomy",
+    "too_bright",
+    "too_dark",
+    "electronic_whine",
+    "fixed_tone",
+    "too_smooth",
+    "too_noisy",
+    "afterfire_firecracker",
+    "afterfire_too_regular",
+    "dynamic_flat",
+    "idle_dead",
+    "good"
+  ],
+  "free_form_notes": "allowed; raw feedback is stored verbatim and hashed before any reveal",
+  "binding_protocol": {
+    "before_analysis": "do NOT open answers_manifest.html",
+    "on_receipt": "save raw feedback file, compute feedback_sha256, then reveal B/C identity, then write human_feedback_binding.json",
+    "binding_fields": ["feedback_sha256", "blind_manifest_sha256", "answer_manifest_sha256", "candidate_identity", "reveal_timestamp"],
+    "audition_domains": {
+      "timbre_review": "shared RMS matching allowed; judge body, mechanical texture, blower timbre, spectral balance, synthetic character",
+      "dynamic_review": "NO per-clip loudness normalization; judge idle->WOT, tip-in, shift, lift, idle return, afterfire relative impact",
+      "do_not_average_domains": true
+    }
+  }
+}

@@ -40,7 +40,7 @@ AA-C3 相比 Stage-Z 的 RMS、动态范围、centroid、roughness、sharpness �
 最终门禁：
 
 ```text
-SOFTWARE: PASS (focused/package/validator; final branch CI pending)
+SOFTWARE: PASS (focused/package/validator; final branch CI run 33510767391 = success on 8bb9df7)
 ENERGY_BUDGET_ROOT_CAUSE: IDENTIFIED
 HELLCAT_BOUNDED_CANDIDATES: COMPLETE
 PROFESSIONAL_FINALIST_REVIEW: COMPLETE_WITH_MATLAB_PENDING

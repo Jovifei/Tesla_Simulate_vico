@@ -1,0 +1,738 @@
+{
+  "schema": "s12.stage_ab.lf_body_guard.v1",
+  "parent_legacy": {
+    "hot_idle": {
+      "total_rms": 0.0023767766625255446,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0005149129398234088,
+          "band_ratio": 0.216643384269966,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005096651380375293,
+          "band_ratio": 0.21443543521500377,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.000617546286664544,
+          "band_ratio": 0.25982512215024195,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0012822038988622832,
+          "band_ratio": 0.5394717640402205,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006116800829875256,
+          "band_ratio": 0.25735698798790757,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010913734428841465,
+          "band_ratio": 0.45918216048303906,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0024912508582801167,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003896567263574664,
+          "band_ratio": 0.15641007209786714,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004591376028366137,
+          "band_ratio": 0.184300027960086,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00046558815184337535,
+          "band_ratio": 0.1868893091580521,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0007013270529069659,
+          "band_ratio": 0.2815160306221191,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0013077248246222653,
+          "band_ratio": 0.5249269941145464,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.000871505063625739,
+          "band_ratio": 0.349826297391584,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.007016409623043005,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00014898932930145493,
+          "band_ratio": 0.021234411516133592,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00025085855425322005,
+          "band_ratio": 0.03575312271241415,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00035138475111560986,
+          "band_ratio": 0.05008042146821167,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00099083194044285,
+          "band_ratio": 0.14121637613471147,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0011220228810200426,
+          "band_ratio": 0.1599141072572418,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0018110279093281317,
+          "band_ratio": 0.2581131955837396,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.006269577023538347,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002408966713859201,
+          "band_ratio": 0.038423113789256204,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00030346200880371606,
+          "band_ratio": 0.04840230970357422,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.0003477871352845696,
+          "band_ratio": 0.05547218480271413,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0008568086530865174,
+          "band_ratio": 0.1366613170026839,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0010857483721824742,
+          "band_ratio": 0.17317729220107944,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0015205659696115633,
+          "band_ratio": 0.24253086992994705,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when 20-90 Hz persistent-energy ratio is high AND its band ratio is elevated; a fixed bass boost or steady sinusoid would appear as high persistent ratio with low attack variance."
+  },
+  "P0": {
+    "hot_idle": {
+      "total_rms": 0.0005144116044625219,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 6.263022263877905e-05,
+          "band_ratio": 0.12175118542323252,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 5.149288082053201e-05,
+          "band_ratio": 0.10010054278292159,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00014797057491843025,
+          "band_ratio": 0.28765014948104817,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00017550931202207944,
+          "band_ratio": 0.34118458934350576,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0001441997984373805,
+          "band_ratio": 0.2803198784522878,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 8.146458823724822e-05,
+          "band_ratio": 0.15836460050773102,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0005792668428673515,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 4.2402488856983314e-05,
+          "band_ratio": 0.07320026923531893,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00010142770488089877,
+          "band_ratio": 0.17509668666487974,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 4.3721991801465124e-05,
+          "band_ratio": 0.07547815370381417,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00023944744127806444,
+          "band_ratio": 0.4133629332084806,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0002079796448500966,
+          "band_ratio": 0.359039443411959,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.00016071763861795016,
+          "band_ratio": 0.27745009160614686,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.0010011632531871793,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.782330306879519e-05,
+          "band_ratio": 0.03777935611238787,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 3.5066394299713607e-05,
+          "band_ratio": 0.0350256506000201,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00010437920260324181,
+          "band_ratio": 0.10425792424058025,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002833727414193503,
+          "band_ratio": 0.2830434901772912,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0004377794274019598,
+          "band_ratio": 0.43727077078418475,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0004532602809628504,
+          "band_ratio": 0.4527336371165313,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.0008957703578384522,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00012174067450436925,
+          "band_ratio": 0.1359061208479111,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 6.624567956324408e-05,
+          "band_ratio": 0.07395386438450464,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012405215477366983,
+          "band_ratio": 0.13848655929295892,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002804076067236145,
+          "band_ratio": 0.3130351482050097,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.00034093438558104185,
+          "band_ratio": 0.38060467462189423,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0003739165224596907,
+          "band_ratio": 0.4174245320664258,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when 20-90 Hz persistent-energy ratio is high AND its band ratio is elevated; a fixed bass boost or steady sinusoid would appear as high persistent ratio with low attack variance."
+  },
+  "P2": {
+    "hot_idle": {
+      "total_rms": 0.0013671503184612634,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0001660534171962262,
+          "band_ratio": 0.12145951688993527,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00015649969723873983,
+          "band_ratio": 0.11447146310500901,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.0005014041934052102,
+          "band_ratio": 0.3667513269276373,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.000622703315819808,
+          "band_ratio": 0.455475383658371,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006038062395168901,
+          "band_ratio": 0.4416531462293612,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0007275469262208207,
+          "band_ratio": 0.5321630814083995,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0019825604721667423,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00018764062676305374,
+          "band_ratio": 0.09464560067516181,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004583920630162898,
+          "band_ratio": 0.23121214684327518,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00026342842830057167,
+          "band_ratio": 0.1328728338927642,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0010580268771063143,
+          "band_ratio": 0.5336668878251142,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0009014080534009777,
+          "band_ratio": 0.4546686298127532,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010866108131966348,
+          "band_ratio": 0.5480845746960126,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.007311666175977148,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003689387853967144,
+          "band_ratio": 0.050458920924054435,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005407419282352766,
+          "band_ratio": 0.07395604711986328,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.001029394023621373,
+          "band_ratio": 0.1407878859408953,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0026631722858277435,
+          "band_ratio": 0.36423603344716854,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.003306393594880328,
+          "band_ratio": 0.4522079530577658,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.005146855477846992,
+          "band_ratio": 0.7039237506161383,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.004952371240910546,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002882878244148461,
+          "band_ratio": 0.0582120786974446,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0004152319418959678,
+          "band_ratio": 0.08384507576205515,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.0007953021119895321,
+          "band_ratio": 0.16059016444884033,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0018465104251908855,
+          "band_ratio": 0.3728537977801892,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0022039765322983034,
+          "band_ratio": 0.4450345955674112,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0033491019861778652,
+          "band_ratio": 0.6762623041083037,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when 20-90 Hz persistent-energy ratio is high AND its band ratio is elevated; a fixed bass boost or steady sinusoid would appear as high persistent ratio with low attack variance."
+  },
+  "P5": {
+    "hot_idle": {
+      "total_rms": 0.0018060383610138339,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00024597807743658714,
+          "band_ratio": 0.13619759288972433,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00021925937071307883,
+          "band_ratio": 0.12140349587591033,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.0006903158069905755,
+          "band_ratio": 0.3822265472827838,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0007796543887598424,
+          "band_ratio": 0.4316931498189093,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0006589469381490319,
+          "band_ratio": 0.3648576643627474,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0007254533310716174,
+          "band_ratio": 0.40168212742966236,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0024258401693969547,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0002452176698196224,
+          "band_ratio": 0.10108566628302706,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0006150371032165953,
+          "band_ratio": 0.25353570732959246,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00030190212374375526,
+          "band_ratio": 0.12445260308258718,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0012722373224009968,
+          "band_ratio": 0.5244522448143256,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.000993817909625533,
+          "band_ratio": 0.40967988005268646,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0010503366113822103,
+          "band_ratio": 0.4329784891159239,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.007788640459814412,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0003758287280205854,
+          "band_ratio": 0.04825344422555881,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.0005412088538185666,
+          "band_ratio": 0.06948694789686859,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.001032231832953607,
+          "band_ratio": 0.1325304253392386,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.002825815046365249,
+          "band_ratio": 0.3628123625612297,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.00347895972518773,
+          "band_ratio": 0.4466709874640467,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.00500408115024818,
+          "band_ratio": 0.6424845486278125,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.005434344134260733,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.0004991110331805843,
+          "band_ratio": 0.09184384000158306,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00046767372946703045,
+          "band_ratio": 0.08605890939416021,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.0008835685127316842,
+          "band_ratio": 0.16258972396710047,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0020236517233168955,
+          "band_ratio": 0.3723819606047428,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0023346717815945165,
+          "band_ratio": 0.42961426879015935,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.003256672329982902,
+          "band_ratio": 0.599276057887329,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when 20-90 Hz persistent-energy ratio is high AND its band ratio is elevated; a fixed bass boost or steady sinusoid would appear as high persistent ratio with low attack variance."
+  },
+  "P6": {
+    "hot_idle": {
+      "total_rms": 0.0005940200622620525,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.872831542748811e-05,
+          "band_ratio": 0.0651969822029396,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 3.7044658840815786e-05,
+          "band_ratio": 0.06236263923435215,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012825458018830165,
+          "band_ratio": 0.21590950935209663,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00017838776521497367,
+          "band_ratio": 0.30030596026616646,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.00016515818293185867,
+          "band_ratio": 0.27803468842942713,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.00010171285465965283,
+          "band_ratio": 0.1712279788536538,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "steady_1200": {
+      "total_rms": 0.0008148976335152528,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 3.12007192249748e-05,
+          "band_ratio": 0.03828790015057861,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 3.549851588771359e-05,
+          "band_ratio": 0.04356193272347888,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 3.7660765161671865e-05,
+          "band_ratio": 0.04621533259240586,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.0002578601185588732,
+          "band_ratio": 0.3164325283981166,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0002455604893247548,
+          "band_ratio": 0.30133906300043084,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0001918993813521017,
+          "band_ratio": 0.23548894175124616,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "full_load": {
+      "total_rms": 0.0018182461225596676,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 8.20610493046118e-05,
+          "band_ratio": 0.04513198091636182,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 5.6094177632924234e-05,
+          "band_ratio": 0.030850706588586962,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00011786250917832882,
+          "band_ratio": 0.06482208745887813,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00032661692502697717,
+          "band_ratio": 0.17963295561283887,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.0005695944756753302,
+          "band_ratio": 0.3132658822192199,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.0006173785660217762,
+          "band_ratio": 0.33954620244296235,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "complete_cycle": {
+      "total_rms": 0.0014910056527623675,
+      "bands": {
+        "20-60Hz": {
+          "band_rms": 0.00039539680002731903,
+          "band_ratio": 0.2651879952934936,
+          "persistent_energy_ratio": 0.5
+        },
+        "60-90Hz": {
+          "band_rms": 0.00010056014862393172,
+          "band_ratio": 0.06744451198935779,
+          "persistent_energy_ratio": 0.5
+        },
+        "90-120Hz": {
+          "band_rms": 0.00012218269244420365,
+          "band_ratio": 0.08194649847090607,
+          "persistent_energy_ratio": 0.5
+        },
+        "120-180Hz": {
+          "band_rms": 0.00030329996127711665,
+          "band_ratio": 0.20341972595153923,
+          "persistent_energy_ratio": 0.5
+        },
+        "180-250Hz": {
+          "band_rms": 0.00040535816881108846,
+          "band_ratio": 0.2718689684778099,
+          "persistent_energy_ratio": 0.5
+        },
+        "250-400Hz": {
+          "band_rms": 0.00044070834488236366,
+          "band_ratio": 0.29557791686830215,
+          "persistent_energy_ratio": 0.5
+        }
+      },
+      "boom_risk": "OK"
+    },
+    "interpretation": "boom_risk=HIGH when 20-90 Hz persistent-energy ratio is high AND its band ratio is elevated; a fixed bass boost or steady sinusoid would appear as high persistent ratio with low attack variance."
+  }
+}

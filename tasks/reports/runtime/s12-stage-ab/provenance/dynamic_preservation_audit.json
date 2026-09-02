@@ -1,0 +1,124 @@
+{
+  "schema": "s12.stage_ab.dynamic_preservation.v1",
+  "domain": "DYNAMIC_REVIEW_RAW_NO_NORMALIZATION",
+  "parent_legacy": {
+    "idle_to_wot_rms_delta_db": 9.368717725144748,
+    "idle_to_wot_peak_delta_db": 1.1372140138643658,
+    "tip_in_attack_db": 14.354597605113149,
+    "tip_in_attack_ms": 100.0,
+    "shift_attack_db": 10.645051304690945,
+    "shift_decay_ms": 160.0,
+    "lift_decay_db_per_s": -32.84049749796633,
+    "idle_return_time_ms": 230.0,
+    "afterfire_peak_vs_engine_body_db": 2.988867608932253,
+    "complete_cycle_envelope_range_db": 19.59291880735485,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  },
+  "P0": {
+    "idle_to_wot_rms_delta_db": 6.16981794532736,
+    "idle_to_wot_peak_delta_db": 3.5039904268270092,
+    "tip_in_attack_db": 6.987552434538337,
+    "tip_in_attack_ms": 90.0,
+    "shift_attack_db": 5.877932827165189,
+    "shift_decay_ms": 110.0,
+    "lift_decay_db_per_s": -8.01386072637721,
+    "idle_return_time_ms": 60.0,
+    "afterfire_peak_vs_engine_body_db": 3.6978268564877794,
+    "complete_cycle_envelope_range_db": 6.637692957580818,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  },
+  "P1": {
+    "idle_to_wot_rms_delta_db": 9.597762358174315,
+    "idle_to_wot_peak_delta_db": 5.112117168365632,
+    "tip_in_attack_db": 10.11450332267772,
+    "tip_in_attack_ms": 70.0,
+    "shift_attack_db": 5.877937234184479,
+    "shift_decay_ms": 110.0,
+    "lift_decay_db_per_s": -14.468682631688823,
+    "idle_return_time_ms": 590.0,
+    "afterfire_peak_vs_engine_body_db": 4.648003573416396,
+    "complete_cycle_envelope_range_db": 10.357352250907532,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  },
+  "P4": {
+    "idle_to_wot_rms_delta_db": 14.574223882647516,
+    "idle_to_wot_peak_delta_db": 19.883078265050266,
+    "tip_in_attack_db": 25.962651214398257,
+    "tip_in_attack_ms": 0.0,
+    "shift_attack_db": 21.83452938054938,
+    "shift_decay_ms": 10.0,
+    "lift_decay_db_per_s": -17.210773389606214,
+    "idle_return_time_ms": 470.0,
+    "afterfire_peak_vs_engine_body_db": 20.63479973488362,
+    "complete_cycle_envelope_range_db": 10.64664175240437,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  },
+  "P5": {
+    "idle_to_wot_rms_delta_db": 12.773260030323712,
+    "idle_to_wot_peak_delta_db": 15.286534648544034,
+    "tip_in_attack_db": 23.504704964718847,
+    "tip_in_attack_ms": 0.0,
+    "shift_attack_db": 20.88175569032792,
+    "shift_decay_ms": 10.0,
+    "lift_decay_db_per_s": -15.713627340245115,
+    "idle_return_time_ms": 510.0,
+    "afterfire_peak_vs_engine_body_db": 20.06405259684193,
+    "complete_cycle_envelope_range_db": 10.50286602716011,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  },
+  "P6": {
+    "idle_to_wot_rms_delta_db": 10.641207599440826,
+    "idle_to_wot_peak_delta_db": 3.5039904268270092,
+    "tip_in_attack_db": 10.339133062675273,
+    "tip_in_attack_ms": 580.0,
+    "shift_attack_db": 5.668332977712474,
+    "shift_decay_ms": 440.0,
+    "lift_decay_db_per_s": -6.835962572741875,
+    "idle_return_time_ms": 10.0,
+    "afterfire_peak_vs_engine_body_db": 3.1634174655332004,
+    "complete_cycle_envelope_range_db": 9.637340637544845,
+    "definitions": {
+      "envelope_frame_s": 0.01,
+      "attack": "10th-percentile floor to peak; onset at floor + 10% of range",
+      "decay_ms": "time from peak to peak-6 dB",
+      "idle_return": "time from peak to within 3 dB of final-quintile median",
+      "afterfire_peak_vs_body": "peak frame dB minus 60th-percentile body dB",
+      "loudness_normalization": "NONE (raw PCM, dynamic review domain)"
+    }
+  }
+}
