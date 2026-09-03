@@ -1,0 +1,103 @@
+{
+  "schema": "s12.stage_ac.ci_failure_inventory.v1",
+  "source_run": {
+    "run_id": 33635680420,
+    "workflow": "S12 Stage Y Open-Source Integration Audit",
+    "tested_head": "4f6b0a236570c476fc0991aed1951c3059047e2a",
+    "pr_head_sha": "ea5cc9fb254b20f03d3c44ecbdf4d7ca7426029b",
+    "pr_merge_base": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
+    "runner_os": "ubuntu-24.04",
+    "python": "3.12",
+    "note": "run on pull_request merge-ref head; the CI checkout tested a merge commit 4f6b0a2 whose merge_base==main==f7ba35b"
+  },
+  "per_suite_summary": {
+    "source_layers": {"tests": 125, "failures": 0, "errors": 0, "skipped": 1},
+    "stage_z": {"tests": 5, "failures": 0, "errors": 0, "skipped": 0},
+    "stage_aa": {"tests": 14, "failures": 0, "errors": 0, "skipped": 0},
+    "closed_loop": {"tests": 38, "failures": 0, "errors": 0, "skipped": 1},
+    "stage_vw": {"tests": 61, "failures": 0, "errors": 0, "skipped": 0},
+    "full_s12": {"tests": 1658, "failures": 4, "errors": 0, "skipped": 10}
+  },
+  "skipped_steps_in_ci": ["track_p", "repository_checks", "Enforce"],
+  "skipped_steps_reason": "full_s12 step failed -> job aborted before later steps ran (no if: always / continue-on-error). Spec §18 requires these to actually run and PASS on the final green run.",
+  "legitimate_skips": [
+    "test_obsidian_research_docs_disclose_pending_measurement_state",
+    "test_rx7_source_manifest_has_five_audited_native_recordings",
+    "test_rx7_external_package_inputs_are_explicitly_available",
+    "test_stage_p_receipt_validation_is_closed",
+    "test_stage_p_security_matrix_is_fail_closed",
+    "test_stage_p_fixture_consumption_is_not_human_feedback",
+    "test_stage_p_external_delivery_contract_is_present",
+    "test_3000_twenty_ms_calls_match_one_shot_sixty_seconds",
+    "test_reference_caseset_binds_and_rejects_rx7",
+    "test_3000x960_stream_matches_one_shot_for_enabled_chain"
+  ],
+  "failures": [
+    {
+      "test_nodeid": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ab_provenance.py::test_v1_v2_v3_packages_untouched",
+      "source_file": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ab_provenance.py:291",
+      "failure_type": "AssertionError",
+      "message": "PosixPath('E:/Tesla_speed/review_packages/s12-stage-y-hellcat-layers-v1').is_dir() is False on ubuntu",
+      "reproduces_on_pr_head": true,
+      "reproduces_on_clean_main": true,
+      "platform_specific": true,
+      "order_dependent": false,
+      "shared_fixture_related": false,
+      "track_p_related": false,
+      "product_bug": false,
+      "test_bug": true,
+      "classification": "PRE_EXISTING_PORTABILITY_BUG",
+      "fix": "hermetic: build synthetic review-package tree in tmp_path, or read package root from env, or assert manifest bytes-immutability differently; do not require developer-machine E:/ path"
+    },
+    {
+      "test_nodeid": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ab_provenance.py::test_blind_map_not_revealed_and_feedback_not_yet_submitted",
+      "source_file": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ab_provenance.py:300",
+      "failure_type": "AssertionError",
+      "message": "(PosixPath('E:/Tesla_speed/review_packages/s12-stage-aa-hellcat-quality-v3') / 'answers_manifest.html').is_file() is False on ubuntu",
+      "reproduces_on_pr_head": true,
+      "reproduces_on_clean_main": true,
+      "platform_specific": true,
+      "order_dependent": false,
+      "shared_fixture_related": false,
+      "track_p_related": false,
+      "product_bug": false,
+      "test_bug": true,
+      "classification": "PRE_EXISTING_PORTABILITY_BUG",
+      "fix": "hermetic: bind to a synthetic package manifest, or gate blind-map check on package-root availability via env without skip"
+    },
+    {
+      "test_nodeid": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py::test_final_track_p_guard_is_clean_after_committed_log_attributes",
+      "source_file": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_w_final_remediation.py",
+      "failure_type": "AssertionError",
+      "message": "Track-P guard returns nonzero: 'git diff --check 发现空白错误' flagging tasks/reports/runtime/s12-stage-ab/provenance/AA_C3_Provenance_Audit.md trailing whitespace vs STALE base ea586bc",
+      "reproduces_on_pr_head": true,
+      "reproduces_on_clean_main": true,
+      "platform_specific": false,
+      "order_dependent": false,
+      "shared_fixture_related": false,
+      "track_p_related": true,
+      "product_bug": false,
+      "test_bug": true,
+      "classification": "STALE_GUARD",
+      "fix": "Track-P guard must compare CURRENT vs track_p_frozen_manifest (path+sha256+symbols), NOT git diff --check against a months-old base SHA ea586bc. Files added later legitimately differ from that base; that is not a frozen-boundary break."
+    },
+    {
+      "test_nodeid": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree",
+      "source_file": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py:212",
+      "failure_type": "AssertionError",
+      "message": "guard.main() returned 1 (expected 0) on a clean tree because guard's base is stale (ea586bc << HEAD); a clean current tree differs from the ancient base and is flagged.",
+      "reproduces_on_pr_head": true,
+      "reproduces_on_clean_main": true,
+      "platform_specific": false,
+      "order_dependent": false,
+      "shared_fixture_related": false,
+      "track_p_related": true,
+      "product_bug": false,
+      "test_bug": true,
+      "classification": "STALE_GUARD",
+      "fix": "Repair guard semantics to compare current file bytes/symbols vs frozen manifest, not base-commit ancestry. On a clean tree with no frozen-boundary change, guard must return 0."
+    }
+  ],
+  "acoustic_pcm_change": "NONE - all 4 failures are test/guard portability, not PCM. P5/AA-C3 raw PCM unchanged (variant_metrics v2 match=true).",
+  "correction_note": "Previous session chat summary claimed '97 error' on this CI run; the downloaded JUnit (full_s12.xml) proves the actual run has 4 failures / 0 errors / 10 skips. Per spec §5, the on-disk evidence governs, not chat recollection."
+}
