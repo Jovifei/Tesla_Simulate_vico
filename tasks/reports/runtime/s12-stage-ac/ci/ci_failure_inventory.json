@@ -79,7 +79,8 @@
       "product_bug": false,
       "test_bug": true,
       "classification": "STALE_GUARD",
-      "fix": "Track-P guard must compare CURRENT vs track_p_frozen_manifest (path+sha256+symbols), NOT git diff --check against a months-old base SHA ea586bc. Files added later legitimately differ from that base; that is not a frozen-boundary break."
+      "fix": "Track-P guard must compare CURRENT vs track_p_frozen_manifest (path+sha256+symbols), NOT git diff --check against a months-old base SHA ea586bc. Files added later legitimately differ from that base; that is not a frozen-boundary break.",
+      "status": "FIXED_AC3"
     },
     {
       "test_nodeid": "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py::test_guard_reports_pass_on_clean_tree",
@@ -95,9 +96,11 @@
       "product_bug": false,
       "test_bug": true,
       "classification": "STALE_GUARD",
-      "fix": "Repair guard semantics to compare current file bytes/symbols vs frozen manifest, not base-commit ancestry. On a clean tree with no frozen-boundary change, guard must return 0."
+      "fix": "Repair guard semantics to compare current file bytes/symbols vs frozen manifest, not base-commit ancestry. On a clean tree with no frozen-boundary change, guard must return 0.",
+      "status": "FIXED_AC3"
     }
   ],
+  "ac3_fix_detail": "assert_track_p_unchanged.py: scoped git diff --check to ONLY run on frozen files that actually changed since BASE. Root cause: the guard ran `git diff --check ea586bc` over the ENTIRE 3477-file history since the ancient BASE, flagging pre-existing CRLF in non-frozen files added by later stages. Frozen boundary itself was intact (manifest 180 files match, symbol digest match, 0 frozen hits in base diff). Frozen content integrity remains strictly enforced by the content-addressed manifest + symbol checks (any change to a frozen file/symbol alters the digest -> FAIL).",
   "acoustic_pcm_change": "NONE - all 4 failures are test/guard portability, not PCM. P5/AA-C3 raw PCM unchanged (variant_metrics v2 match=true).",
   "correction_note": "Previous session chat summary claimed '97 error' on this CI run; the downloaded JUnit (full_s12.xml) proves the actual run has 4 failures / 0 errors / 10 skips. Per spec §5, the on-disk evidence governs, not chat recollection."
 }

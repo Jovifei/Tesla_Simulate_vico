@@ -268,11 +268,17 @@ def main() -> int:
                     + "\n".join(f"    - {p}" for p in frozen_hits)
                 )
 
-        # 2) git diff --check 必须干净（无空白错误）
-        check = _git(["diff", "--check", BASE])
-        if check.returncode != 0:
-            failures.append("git diff --check 发现空白错误：\n"
-                            + (check.stdout or check.stderr))
+        # 2) git diff --check 只作用于「自 BASE 以来确实变动的冻结文件」。
+        #    绝不把空白检查扩散到整段历史（BASE 是一个很久以前的提交，它与
+        #    HEAD 之间隔着上千个非冻结文件的合法改动；对它们跑 diff --check
+        #    会把历史里早已存在的 CRLF 误报成当前越界）。
+        #    冻结文件是否变化，本就由步骤 4 的内容寻址清单摘要严格覆盖；
+        #    这里只做一次「若真动了冻结文件则其 diff 必须无空白错误」的兜底。
+        if frozen_hits:
+            check = _git(["diff", "--check", BASE, "--", *frozen_hits])
+            if check.returncode != 0:
+                failures.append("冻结文件 diff --check 发现空白错误：\n"
+                                + (check.stdout or check.stderr))
 
     # 3) 工作树/索引侧的冻结守卫（v1 完全没覆盖：未提交的冻结改动会漏网）
     status = _git(["status", "--porcelain"])
@@ -337,10 +343,15 @@ def main() -> int:
     print(f"  冻结符号          : {len(FROZEN_SYMBOLS)} 个，摘要匹配")
     print(f"  工作树/索引       : 无冻结路径改动")
     if base_ok:
-        print(f"  相对 BASE 已提交改动: {len(changed)} 个文件，均属 Track S；"
-              f"git diff --check 干净")
-        for p in changed:
-            print(f"    ~ {p}")
+        frozen_changed = [p for p in changed if _is_frozen(p)]
+        if frozen_changed:
+            print(f"  相对 BASE 冻结路径改动: {len(frozen_changed)} 个（diff --check 干净）")
+            for p in frozen_changed:
+                print(f"    ~ {p}")
+        else:
+            print(f"  相对 BASE 冻结路径改动: 0 个（冻结文件仅由内容寻址清单严格守护）")
+        print(f"  相对 BASE 非冻结改动   : {len(changed)} 个文件（属 Track S / 各 stage；"
+              f"空白卫生由 CI repository_checks 的 merge-base diff --check 负责）")
     return 0
 
 
