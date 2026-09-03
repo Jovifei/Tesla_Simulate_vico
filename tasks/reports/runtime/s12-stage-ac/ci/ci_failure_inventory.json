@@ -102,5 +102,12 @@
   ],
   "ac3_fix_detail": "assert_track_p_unchanged.py: scoped git diff --check to ONLY run on frozen files that actually changed since BASE. Root cause: the guard ran `git diff --check ea586bc` over the ENTIRE 3477-file history since the ancient BASE, flagging pre-existing CRLF in non-frozen files added by later stages. Frozen boundary itself was intact (manifest 180 files match, symbol digest match, 0 frozen hits in base diff). Frozen content integrity remains strictly enforced by the content-addressed manifest + symbol checks (any change to a frozen file/symbol alters the digest -> FAIL).",
   "acoustic_pcm_change": "NONE - all 4 failures are test/guard portability, not PCM. P5/AA-C3 raw PCM unchanged (variant_metrics v2 match=true).",
+  "ac6_blocker_discovered_crlf": {
+    "finding": "repository_checks step (git diff --check merge_base..HEAD) would FAIL on the PR head because 15 generated provenance_v2/receipt JSON+MD evidence files were committed with CRLF line endings. git diff --check treats each CRLF line added vs main (f7ba35b, which is LF-clean) as trailing whitespace -> thousands of errors -> repository_checks would go red even with full_s12 green.",
+    "scope": "15 generated files under tasks/reports/runtime/s12-stage-ab/provenance_v2/ and tasks/reports/runtime/s12-stage-ac/receipts/",
+    "fix": "normalized the 15 working-tree files CRLF->LF (Python, byte-safe); will commit so HEAD blobs are LF and git diff --check merge_base..HEAD passes on the Linux CI runner.",
+    "root_cause": "generated evidence files were written/committed with CRLF on the Windows sandbox in the AB-R session. The .py source files are LF-clean (verified via Python byte read); only the generated JSON/MD artifacts carried CRLF.",
+    "status": "FIXED_PENDING_COMMIT"
+  },
   "correction_note": "Previous session chat summary claimed '97 error' on this CI run; the downloaded JUnit (full_s12.xml) proves the actual run has 4 failures / 0 errors / 10 skips. Per spec §5, the on-disk evidence governs, not chat recollection."
 }
