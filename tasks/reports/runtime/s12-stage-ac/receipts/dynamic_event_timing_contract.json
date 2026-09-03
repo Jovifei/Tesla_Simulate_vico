@@ -1,0 +1,188 @@
+{
+  "schema": "s12.stage_ac.dynamic_event_timing_contract.v1",
+  "duration_s": 2.0,
+  "state_block_ms": 20.0,
+  "semantics": "state and renderer response share the 20 ms audio block; a response within the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), never an 'instant physical response' or transport-delay claim. Sub-20 ms distinctions are not resolvable at the 50-frame/sec block rate and are not asserted as delay.",
+  "isolated_scenes": [
+    "isolated_tip_in",
+    "isolated_gear_shift",
+    "isolated_high_rpm_lift",
+    "isolated_afterfire_eligible",
+    "isolated_afterfire_ineligible"
+  ],
+  "isolated_tip_in": {
+    "scene": "isolated_tip_in",
+    "duration_s": 2.0,
+    "state_rate_hz": 50.0,
+    "block_ms": 20.0,
+    "state_event_onset_block": 40,
+    "state_event_onset_ms": 800.0,
+    "timing_semantics": "STATE_BLOCK_ONSET and the renderer response share the same 20 ms block; responses within that block are SAME_BLOCK_RESPONSE, not transport/physics delay. No claim of physical delay is made unless a distinct later block is observed.",
+    "stage_responses": {
+      "pre_ptr": {
+        "onset_ms": 810.0,
+        "onset_block": 40,
+        "peak_db": -24.789428597962285,
+        "floor_db": -31.21614666273348,
+        "peak_floor_db": 6.426718064771194,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "post_ptr": {
+        "onset_ms": 810.0,
+        "onset_block": 40,
+        "peak_db": -46.44453951160243,
+        "floor_db": -53.67608918058454,
+        "peak_floor_db": 7.231549668982112,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "monitor": {
+        "onset_ms": 810.0,
+        "onset_block": 40,
+        "peak_db": -17.102982441539755,
+        "floor_db": -24.43017893505901,
+        "peak_floor_db": 7.327196493519256,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      }
+    }
+  },
+  "isolated_gear_shift": {
+    "scene": "isolated_gear_shift",
+    "duration_s": 2.0,
+    "state_rate_hz": 50.0,
+    "block_ms": 20.0,
+    "state_event_onset_block": 40,
+    "state_event_onset_ms": 800.0,
+    "timing_semantics": "STATE_BLOCK_ONSET and the renderer response share the same 20 ms block; responses within that block are SAME_BLOCK_RESPONSE, not transport/physics delay. No claim of physical delay is made unless a distinct later block is observed.",
+    "stage_responses": {
+      "pre_ptr": {
+        "onset_ms": 800.0,
+        "onset_block": 40,
+        "peak_db": -21.399701130400175,
+        "floor_db": -29.23861025829456,
+        "peak_floor_db": 7.838909127894386,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "post_ptr": {
+        "onset_ms": 820.0,
+        "onset_block": 41,
+        "peak_db": -45.87137884974304,
+        "floor_db": -48.13811581759467,
+        "peak_floor_db": 2.266736967851628,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "monitor": {
+        "onset_ms": 800.0,
+        "onset_block": 40,
+        "peak_db": -15.531475036610987,
+        "floor_db": -24.620948258938704,
+        "peak_floor_db": 9.089473222327717,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      }
+    }
+  },
+  "isolated_high_rpm_lift": {
+    "scene": "isolated_high_rpm_lift",
+    "duration_s": 2.0,
+    "state_rate_hz": 50.0,
+    "block_ms": 20.0,
+    "state_event_onset_block": 40,
+    "state_event_onset_ms": 800.0,
+    "timing_semantics": "STATE_BLOCK_ONSET and the renderer response share the same 20 ms block; responses within that block are SAME_BLOCK_RESPONSE, not transport/physics delay. No claim of physical delay is made unless a distinct later block is observed.",
+    "stage_responses": {
+      "pre_ptr": {
+        "onset_ms": 800.0,
+        "onset_block": 40,
+        "peak_db": -14.643689071581294,
+        "floor_db": -31.23184691544325,
+        "peak_floor_db": 16.588157843861957,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "post_ptr": {
+        "onset_ms": 800.0,
+        "onset_block": 40,
+        "peak_db": -44.899736194289204,
+        "floor_db": -47.58301890801212,
+        "peak_floor_db": 2.6832827137229174,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "monitor": {
+        "onset_ms": 800.0,
+        "onset_block": 40,
+        "peak_db": -8.777141770629825,
+        "floor_db": -25.7875363588439,
+        "peak_floor_db": 17.010394588214076,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      }
+    }
+  },
+  "isolated_afterfire_eligible": {
+    "scene": "isolated_afterfire_eligible",
+    "duration_s": 2.0,
+    "state_rate_hz": 50.0,
+    "block_ms": 20.0,
+    "state_event_onset_block": 43,
+    "state_event_onset_ms": 860.0,
+    "timing_semantics": "STATE_BLOCK_ONSET and the renderer response share the same 20 ms block; responses within that block are SAME_BLOCK_RESPONSE, not transport/physics delay. No claim of physical delay is made unless a distinct later block is observed.",
+    "stage_responses": {
+      "pre_ptr": {
+        "onset_ms": 860.0,
+        "onset_block": 43,
+        "peak_db": -19.23422089580139,
+        "floor_db": -33.252162611520376,
+        "peak_floor_db": 14.017941715718987,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "post_ptr": {
+        "onset_ms": 860.0,
+        "onset_block": 43,
+        "peak_db": -45.75215040956496,
+        "floor_db": -49.2545567618871,
+        "peak_floor_db": 3.50240635232214,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      },
+      "monitor": {
+        "onset_ms": 860.0,
+        "onset_block": 43,
+        "peak_db": -11.80126607209289,
+        "floor_db": -25.66194591302368,
+        "peak_floor_db": 13.86067984093079,
+        "measurable": true,
+        "timing_class": "SAME_BLOCK_RESPONSE",
+        "resolution_note": "state and audio are quantized to the 20 ms audio block; a response landing in the same block as the state onset is SAME_BLOCK_RESPONSE (frame quantization), not an instant-engine-physics claim. Sub-20 ms distinctions are not resolvable at this block rate and are NOT asserted as physical delay."
+      }
+    }
+  },
+  "isolated_afterfire_ineligible": {
+    "scene": "isolated_afterfire_ineligible",
+    "duration_s": 2.0,
+    "state_rate_hz": 50.0,
+    "block_ms": 20.0,
+    "state_event_onset_block": null,
+    "state_event_onset_ms": null,
+    "timing_semantics": "STATE_BLOCK_ONSET and the renderer response share the same 20 ms block; responses within that block are SAME_BLOCK_RESPONSE, not transport/physics delay. No claim of physical delay is made unless a distinct later block is observed.",
+    "stage_responses": {},
+    "status": "NO_ISOLATED_STATE_EVENT"
+  }
+}

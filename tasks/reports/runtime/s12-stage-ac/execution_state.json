@@ -29,8 +29,8 @@
     "AC1_FULL_REGRESSION_ROOT_CAUSE": {"status": "PASS", "note": "real run 33635680420: 4 failures / 0 errors / 10 skips (NOT 97 errors). All 4 = portability/stale-guard, no PCM change"},
     "AC2_CROSS_PLATFORM_HERMETICITY": {"status": "PASS", "note": "2 review-package tests made hermetic via S12_REVIEW_PACKAGE_ROOT env; Stage-P tests already env-gated"},
     "AC3_TRACK_P_GUARD_REPAIR": {"status": "PASS", "note": "scoped git diff --check to frozen-only; manifest/symbol checks enforce real frozen boundary"},
-    "AC4_FIXTURE_ISOLATION": {"status": "PENDING"},
-    "AC5_DYNAMIC_MEASURABILITY": {"status": "PENDING"},
+    "AC4_FIXTURE_ISOLATION": {"status": "PENDING", "note": "awaiting full-S12 local run (in progress) to confirm 0-error; CI inventory showed 0 errors on PR head"},
+    "AC5_DYNAMIC_MEASURABILITY": {"status": "PASS", "note": "isolated_event_timing_contract.json + afterfire_metric_validation_v2.json receipts generated; 7 tests pass; no product scene/PCM change"},
     "AC6_FINAL_REMOTE_QUALIFICATION": {"status": "PENDING"},
     "AC7_PR5_MERGE": {"status": "PENDING"},
     "AC8_POST_MERGE_PREHUMAN_GATE": {"status": "PENDING"}

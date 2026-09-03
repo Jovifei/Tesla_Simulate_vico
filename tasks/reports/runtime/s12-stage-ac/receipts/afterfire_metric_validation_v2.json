@@ -1,0 +1,29 @@
+{
+  "schema": "s12.stage_ac.afterfire_metric_validation.v2",
+  "purpose": "Afterfire energy-window validation on ISOLATED diagnostic fixtures. Builds an eligible (>=1 afterfire event) and an ineligible (0 events) trace, so the metric is testable rather than relying on a whole-clip bake-off scene. The AA-C3 ~20 dB peak-vs-body RED FLAG is retained as an ACOUSTIC_RED_FLAG when the eligible event window still shows >15 dB event-vs-baseline. NO production afterfire gain change.",
+  "eligible_window": {
+    "afterfire_event_count": 1,
+    "status": "MEASURABLE",
+    "measurable": true,
+    "eligible_local_baseline_db": -32.680467555621256,
+    "event_peak_db": -17.01453026937234,
+    "event_peak_vs_baseline_db": 15.665937286248916,
+    "event_rms": 0.029496244339265197,
+    "event_integrated_energy": 47.60795569625583,
+    "attack_ms": 5.0,
+    "decay_ms": 5.0,
+    "spectral_centroid_hz": 4740.401604873212,
+    "band_energy_db": {
+      "120_400_hz_db": -34.698263786430935,
+      "400_1000_hz_db": -39.93162519131182,
+      "1_4k_hz_db": -53.50222515819879
+    }
+  },
+  "ineligible_window": {
+    "afterfire_event_count": 0,
+    "status": "NO_ISOLATED_STATE_EVENT",
+    "measurable": false
+  },
+  "acoustic_red_flag": true,
+  "note": "ineligible_window.afterfire_event_count == 0 is the required negative control; production gain untouched (Stage AC is not a tuning stage)."
+}
