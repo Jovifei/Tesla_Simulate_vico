@@ -221,20 +221,27 @@ jobs:
           assert all(row["off_pcm_sha"] != row["on_pcm_sha"] and row["regression"] is False for row in stage_z_scorecard["rows"])
           stage_z_receipt = json.loads(Path("tasks/reports/runtime/s12-stage-z/stage_z_publish_receipt.json").read_text(encoding="utf-8"))
           merge_base = subprocess.check_output(["git", "merge-base", "HEAD", "origin/main"], text=True).strip()
+          # A stage receipt records the main HEAD it was built against. As the S12 lineage
+          # advances stage by stage (Stage-AA -> Stage-AB -> Stage-AC, each based on the prior
+          # tip), those recorded base_main_head values are legitimately EARLIER than the current
+          # merge_base. The correct provenance check is that the recorded base is an ANCESTOR of
+          # the current merge_base (proving the stage content is genuinely in main's lineage),
+          # NOT that it equals the newest tip. Requiring equality was a stale-workflow bug that
+          # made repository_checks fail for every PR once main advanced past the recorded base.
           semantic_receipt_path = Path("tasks/reports/runtime/s12-stage-aa/stage_z_semantic_closeout_receipt.json")
           if semantic_receipt_path.is_file():
               semantic_receipt = json.loads(semantic_receipt_path.read_text(encoding="utf-8"))
-              assert semantic_receipt["base_main_head"] == merge_base
+              assert subprocess.run(["git", "merge-base", "--is-ancestor", semantic_receipt["base_main_head"], merge_base]).returncode == 0
               assert semantic_receipt["status"] == "PASS"
               assert semantic_receipt["rows"] == 12
               stage_z_v3 = json.loads(Path("docs/research/engine-audio-ecosystem/method_adoption_matrix_v3.json").read_text(encoding="utf-8"))
               assert stage_z_v3["schema"] == "s12.stage_aa.method_adoption_matrix.v3"
               assert len(stage_z_v3["rows"]) == len(stage_z_matrix["rows"])
           else:
-              assert stage_z_receipt["base_main_head"] == merge_base
+              assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_receipt["base_main_head"], merge_base]).returncode == 0
           assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_receipt["renderer_source_head"], "HEAD"]).returncode == 0
           aa_state = json.loads(Path("tasks/reports/runtime/s12-stage-aa/execution_state.json").read_text(encoding="utf-8"))
-          assert aa_state["base_main_head"] == merge_base
+          assert subprocess.run(["git", "merge-base", "--is-ancestor", aa_state["base_main_head"], merge_base]).returncode == 0
           assert aa_state["current_phase"] == "AA7_JOVI_FEEDBACK_ROUND2"
           assert aa_state["aa7_jovi_feedback_round2"]["status"] == "WAITING_FOR_JOVI_AUDITION"
           aa_reference = json.loads(Path("tasks/reports/runtime/s12-stage-aa/reference_diagnostic_contract.json").read_text(encoding="utf-8"))
