@@ -1,6 +1,10 @@
 # Tesla Simulate Vico Engineering Plan
 
 > Status snapshot: 2026-09-04. 当前主线是 **S12 声音真实性 → Jovi 人耳闭环 → Android App 实时声浪**。ESP32 不属于当前实施阶段，保留为后期可选简化 runtime。
+>
+> Canonical memory：`docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`。
+>
+> 研究来源索引：`docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`。
 
 ## Goal
 
