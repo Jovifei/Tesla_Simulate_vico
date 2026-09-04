@@ -68,43 +68,25 @@ manifest：
 
 `b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
 
-重点听：
-
-- vehicle identity / realism；
-- hot-idle life / LF body；
-- blower identity；
-- acceleration continuity；
-- shift/lift；
-- afterfire；
-- synthetic artifact。
+重点听 vehicle identity / realism / hot-idle LF / blower / acceleration / shift/lift / afterfire / synthetic artifact。
 
 反馈前不调音、不揭盲。
 
 ## 5. M2 — ONE source-causal Round2（仅需要时）
 
-如果 AA-C3 不直接接受：
-
-- 仅一轮；
-- 最多 3 candidates；
-- 每个 candidate 对应不同 hypothesis；
-- feedback → scene → source/stem → metric → parameter family → guard；
-- 禁止 whole-mix/master/broad pre-PTR gain；
-- objective regression → professional finalist → v4 blind audition。
-
-失败则 `MODEL_REDESIGN_REQUIRED`，不无限搜参数。
+如果 AA-C3 不直接接受：仅一轮、最多 3 candidates、每个 candidate 对应不同 hypothesis，禁止 whole-mix/master/broad pre-PTR gain；失败则 `MODEL_REDESIGN_REQUIRED`。
 
 ## 6. M3 — Engineering Profiles
 
-Hellcat Human PASS 后：
-
 ```text
-Hellcat Engineering Profile
-→ Ferrari 458 diagnostic/human migration
-→ RX-7 FD diagnostic/human migration
+Hellcat Human PASS
+→ Hellcat Engineering Profile
+→ Ferrari 458 migration
+→ RX-7 FD migration
 → multi-vehicle profile schema
 ```
 
-Engineering Profile 代表“工程模型 + 人耳接受”，不等于 R1/OEM Freeze。
+Engineering Profile 不等于 R1/OEM Freeze。
 
 ## 7. M4 — App 输入与虚拟发动机状态合同
 
@@ -115,7 +97,7 @@ speed
 acceleration
 ```
 
-定义稳定接口：
+定义：
 
 ```text
 AppInput
@@ -129,145 +111,43 @@ AppInput
    └─ transient lifecycle
 ```
 
-完成标准：
-
-- speed 抖动不会导致声浪抖动；
-- acceleration 正负变化能自然驱动 load/lift；
-- virtual RPM 连续；
-- virtual gear/shift 不频繁误触发；
-- pause/resume 后状态可恢复；
-- offline/test trace 可重放。
-
-未来 CAN/OBD 只是可插拔的 richer input adapter，不阻塞当前实现。
+未来 CAN/OBD 是 richer input adapter，不阻塞当前实现。
 
 ## 8. M5 — AudioParameterPackage
 
-统一可版本化合同：
-
-- vehicle/profile id；
-- source topology；
-- event/cycle parameters；
-- speed/acceleration operating axes；
-- virtual RPM/load/gear mapping；
-- transient rules；
-- path/filter/monitor parameters；
-- schema version；
-- generator commit / SHA；
-- qualification metadata。
+统一可版本化合同：vehicle/profile id、source topology、event/cycle、speed/acceleration axes、virtual RPM/load/gear mapping、transient、path/filter/monitor、schema/version/SHA/provenance。
 
 ## 9. M6 — Golden Evidence
 
-生成：
-
-- deterministic speed/acceleration traces；
-- derived VirtualEngineState traces；
-- Golden PCM；
-- metrics；
-- block/snapshot cases；
-- exact profile/package SHA。
+生成 deterministic speed/acceleration traces、VirtualEngineState traces、Golden PCM、metrics、block/snapshot cases 和 exact hashes。
 
 ## 10. M7 — Portable C++ reference runtime
 
-只移植 App realtime 所需的最小集合：
-
-- persistent phase/event；
-- source layers；
-- reduced path/waveguide；
-- transient state machines；
-- dP/DC；
-- frozen boundary equivalent adapter；
-- monitor/output；
-- snapshot/restore。
-
-完整 CFD/teacher systems 不进入手机 callback。
+只移植 App realtime 所需 subset：persistent phase/event、source layers、reduced path/waveguide、transients、dP/DC、frozen boundary adapter、monitor/output、snapshot/restore。
 
 ## 11. M8 — Python ↔ C++ equivalence
 
-同一 speed/acceleration trace + 同一 profile：
-
-- block output bounded；
-- long-stream continuity；
-- snapshot/restore deterministic；
-- event timing一致；
-- 无平台特供声音逻辑。
+同一 state trace/profile 下验证 block output、long-stream continuity、snapshot/restore 和 event timing。
 
 ## 12. M9 — Android App 产品化
 
-当前产品载体：Android App。
-
-必须完成：
-
-- speed source；
-- acceleration source / filtering；
-- VirtualEngineState mapper；
-- vehicle profile selection；
-- package loader；
-- native C++ engine；
-- AAudio/Oboe 48 kHz；
-- realtime-safe callback；
-- state double-buffer/ring-buffer；
-- underrun / callback time metrics；
-- CPU / memory / battery / thermal；
-- pause/resume/audio focus；
-- long-drive continuity；
-- 车内试听。
+必须完成：speed source、acceleration/filter、VirtualEngineState、profile selector、package loader、native C++、AAudio/Oboe 48 kHz、realtime-safe callback、state buffer、underrun、CPU/memory/battery/thermal、pause/resume/audio focus、long-drive continuity 和车内试听。
 
 ## 13. M10 — App 车内验收
 
-场景至少覆盖：
+覆盖 stationary idle、low speed、cruise、gentle/hard acceleration、virtual shift、deceleration/lift、afterfire、idle return、input异常、background/foreground、audio interruption/recovery。
 
-- 静止/idle；
-- 低速；
-- 匀速；
-- gentle acceleration；
-- hard acceleration；
-- virtual shift；
-- deceleration/lift；
-- afterfire；
-- stop/idle return；
-- GPS/传感器短时异常；
-- App background/foreground；
-- audio interruption/recovery。
-
-重点指标：
-
-- input→audio latency；
-- continuity；
-- underrun；
-- CPU/memory；
-- 车型切换；
-- 人耳自然度。
+重点：input→audio latency、continuity、underrun、CPU/memory、车型切换、听感。
 
 ## 14. R1 并行工作流
 
-R1 不阻塞 App Engineering Profile，但仍独立存在：
-
-```text
-legal raw audio
-+ exact vehicle/config
-+ recording metadata
-+ synced real state
-→ R1 reference
-→ formal calibration
-→ higher-level freeze
-```
+R1 不阻塞 App Engineering Profile，但 formal OEM calibration 仍需要 legal raw audio + exact vehicle/config + recording metadata + synchronized real state。
 
 ## 15. Deferred — ESP32
 
-仓库已有 ESP32 资产保留，但统一状态：
-
 `ESP32_SIMPLIFIED_RUNTIME = DEFERRED`
 
-当前不做：
-
-- advanced sound port；
-- board bring-up；
-- IRAM 优化；
-- BLE/WiFi/MQTT/OTA 验收；
-- CAN analyser；
-- 外置功放/扬声器产品链。
-
-App 版本稳定后，才重新评估是否有必要做独立嵌入式简化版。
+当前不做 advanced sound port、board bring-up、IRAM、BLE/WiFi/MQTT/OTA 验收、CAN analyser 或外置硬件产品链。
 
 ## 16. 当前 Next Agent 顺序
 
