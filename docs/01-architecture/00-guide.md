@@ -2,7 +2,12 @@
 
 Purpose: current product architecture, sound-authoring authority, state flow, runtime boundaries and integration contracts.
 
-Current authoritative entry:
+Before reading architecture details, read the canonical project memory:
+
+- `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
+- `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`
+
+Current authoritative architecture entry:
 
 - `01-project-system-architecture.md` — **App-first realtime sound architecture**.
 
