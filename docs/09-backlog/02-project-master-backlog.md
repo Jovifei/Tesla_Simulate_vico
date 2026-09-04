@@ -1,91 +1,71 @@
 # 项目总待办 / Master Backlog
 
-日期：2026-09-04
-
-> 当前 backlog 只追踪**声音真实性 + App 产品化**。ESP32 单独标记 Deferred，不作为当前 P0/P1/P2 工作。
+> 当前只追踪声音真实性 + Android App 产品化。ESP32 = Deferred Future。
 >
-> 项目历史知识以 `S12_Handoff_Package_2026-09-03` 为约 90% 主证据，旧聊天/此前总结约 10% 补充；当前 GitHub remote truth 与用户当前明确决策优先。
+> 证据：handoff package ≈90%，旧聊天/总结 ≈10%，动态 GitHub 现场复核。
 
-## P0 当前立即项
+## P0
 
-| ID | 工作 | 状态 | 完成证据 |
-|---|---|---|---|
-| P0-01 | Stage AC post-merge AC8 | Pending | post-merge smoke / Track-P guard / exact receipt |
-| P0-02 | Jovi V3 blind audition | Blocked by human | raw feedback + SHA |
-| P0-03 | Human feedback binding | Blocked by P0-02 | reveal only after SHA + binding receipt |
-| P0-04 | AA-C3 human decision | Waiting | scene-level accept/reject |
+1. AC8 post-merge smoke / Track-P / receipt；
+2. Jovi Hellcat V3 blind audition；
+3. feedback SHA + blind binding；
+4. AA-C3 human decision。
 
-## P1 Hellcat closure
+## P1 Hellcat
 
-| ID | 工作 | 状态 |
-|---|---|---|
-| H-01 | Source-causal Round2（若需要） | Blocked |
-| H-02 | Professional finalist | Blocked |
-| H-03 | V4 blind audition（若需要） | Blocked |
-| H-04 | Hellcat Engineering Profile | Blocked |
+- ONE source-causal Round2 if needed；
+- ≤3 candidates；
+- professional finalist；
+- v4 if needed；
+- Hellcat Engineering Profile。
 
-Round2：one round / ≤3 candidates / no broad gain。
+## P2 Vehicles
 
-## P2 车型迁移
-
-- Ferrari 458 profile migration；
-- RX-7 FD profile migration；
+- Ferrari 458；
+- RX-7 FD；
 - multi-vehicle profile schema；
-- App vehicle selector data model。
+- App selector model。
 
-## P3 App VehicleState / VirtualEngineState
+## P3 App state
 
-- speed input contract；
-- acceleration input/filter；
+- speed input；
+- acceleration/filter；
 - virtual RPM；
-- virtual load/throttle proxy；
+- virtual load/throttle；
 - virtual gear/shift；
-- lift/overrun/braking；
-- pause/resume state restore；
+- lift/overrun；
+- pause/resume state；
 - offline trace replay。
 
-## P4 Runtime Contract
+## P4 Runtime contract
 
-- AudioParameterPackage schema；
-- Golden speed/acceleration traces；
-- Golden VirtualEngineState；
+- AudioParameterPackage；
+- Golden speed/accel / VirtualEngineState traces；
 - Golden PCM/metrics；
-- Portable C++ core；
+- portable C++；
 - Python↔C++ equivalence。
 
-## P5 Android App Runtime
+## P5 Android
 
-- Native C++ integration；
-- AAudio/Oboe 48 kHz；
+- NDK C++；
+- AAudio/Oboe；
 - realtime-safe callback；
-- state ring/double buffer；
-- vehicle profile selector UI；
-- package/profile persistence；
-- latency / underrun；
+- state buffer；
+- vehicle selector；
+- persistence；
+- latency/underrun；
 - CPU/memory/battery/thermal；
-- pause/resume/audio focus；
-- in-car driving validation。
+- lifecycle；
+- in-car validation。
 
-## P6 Optional richer vehicle inputs
+## P6 Future richer inputs
 
-GPS/phone sensor refinement、OBD/CAN richer adapter、real RPM/load/gear override 都是 future enhancement，不是当前 blocker。
-
-核心算法必须在 speed + acceleration 最小输入下可运行。
+CAN/OBD/real RPM/load/gear override = future enhancement；核心算法必须先在 speed + acceleration 下运行。
 
 ## P7 R1
 
-合法原始录音、同步真实状态、recording metadata、formal Order-RPM/calibration、higher-level freeze 均是独立后续链。
+合法原始录音、同步真实状态、recording metadata、formal calibration、higher-level freeze。
 
-## Deferred — ESP32
+## Deferred ESP32
 
-ESP32 advanced sound port、board bring-up、BLE/WiFi/MQTT/OTA、IRAM/PSRAM、CAN analyser、I2S DAC/AMP/speaker、ESP32 vehicle pilot 全部移出当前 active backlog。
-
-统一状态：`DEFERRED_FUTURE_OPTION`。
-
-## 禁止替代完成度
-
-- tests green ≠ human sound pass；
-- human pass ≠ R1/OEM calibration；
-- desktop PCM ≠ Android realtime；
-- Android realtime ≠ 车内动态体验通过；
-- 仓库存在 ESP32 代码 ≠ 当前需要做 ESP32。
+advanced port、board、BLE/WiFi/OTA、IRAM、CAN analyser、hardware audio chain 全部不在 active backlog。
