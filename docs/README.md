@@ -4,15 +4,26 @@
 
 仓库中的 ESP32-S3 固件、CAN/BLE/SD/WiFi/OTA/I2S 等内容属于早期工程资产，目前统一标记为 `Deferred/Future`，不作为当前 blocker 或实施主线。
 
+## Evidence / Memory Rule
+
+用户已明确指定项目记忆的证据权重：
+
+- `S12_Handoff_Package_2026-09-03`：约 **90% 主证据**；
+- 旧聊天/此前助手总结：约 **10% 补充证据**；
+- SHA / PR / CI / branch 等会变化的事实：现场 GitHub 远端真值优先；
+- 用户当前明确决策优先于历史规划。
+
 ## Read These First
 
-1. [当前 App-first 产品方向](04-planning/03-current-app-product-direction.md)
-2. [当前系统架构](01-architecture/01-project-system-architecture.md)
-3. [项目总路线图](04-planning/02-project-master-roadmap.md)
-4. [当前项目状态审计 — 2026-09-04](08-reports/10-project-status-20260904.md)
-5. [项目总 Backlog](09-backlog/02-project-master-backlog.md)
-6. [Stage AA Hellcat 声学收口](08-reports/09-s12-stage-aa-acoustic-quality-closure.md)
-7. [Documentation guide](GUIDE.md)
+1. [项目长期记忆：目标、历史、当前卡点、执行路线](knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md)
+2. [研究来源、论文、开源项目与方法吸收历史](knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md)
+3. [当前 App-first 产品方向](04-planning/03-current-app-product-direction.md)
+4. [当前系统架构](01-architecture/01-project-system-architecture.md)
+5. [项目总路线图](04-planning/02-project-master-roadmap.md)
+6. [当前项目状态审计 — 2026-09-04](08-reports/10-project-status-20260904.md)
+7. [项目总 Backlog](09-backlog/02-project-master-backlog.md)
+8. [Stage AA Hellcat 声学收口](08-reports/09-s12-stage-aa-acoustic-quality-closure.md)
+9. [Documentation guide](GUIDE.md)
 
 ## Current Product Truth
 
