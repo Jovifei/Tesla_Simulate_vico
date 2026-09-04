@@ -4,79 +4,53 @@
 
 > 当前阶段的产品载体是车内 App。ESP32 仅保留为后期可选简化方案，不是当前 blocker，也不进入当前实施计划。
 >
-> 本方向依据：`S12_Handoff_Package_2026-09-03` 为约 90% 主证据，旧聊天/此前总结约 10% 补充证据；用户 2026-09-04 再次明确确认 App-first / ESP32 后移。
+> 主证据：`S12_Handoff_Package_2026-09-03` ≈ 90%；旧聊天/此前总结 ≈ 10%；用户当前明确方向优先。
 
 ## 当前目标
 
-当前项目要先完成**声音真实性算法 + App 实时运行**：
-
 ```text
 车内 App
-  ↓
-采集/获得车辆速度 speed
-采集/计算车辆加速度 acceleration
-  ↓
-VehicleState / VirtualEngineState
-  ├─ virtual RPM
-  ├─ virtual load / throttle proxy
-  ├─ virtual gear / shift
-  ├─ lift / overrun
-  └─ transient state
-  ↓
-用户选择 Vehicle Profile
-  ├─ Hellcat
-  ├─ Ferrari 458
-  ├─ RX-7 FD
-  └─ 后续车型
-  ↓
-S12 实时声浪算法
-  ↓
-App 实时音频输出
+→ speed + acceleration
+→ VehicleState / VirtualEngineState
+   ├─ virtual RPM
+   ├─ virtual load / throttle proxy
+   ├─ virtual gear / shift
+   ├─ lift / overrun
+   └─ transient state
+→ Vehicle Profile (Hellcat / Ferrari / RX-7 / ...)
+→ S12 实时声浪算法
+→ App 实时音频输出
 ```
 
-当前最小必须输入是 **speed + acceleration**。RPM/load/gear 等可以由 App 内部虚拟发动机状态模型推导；以后如接入 CAN/OBD 或其他车辆接口，可以作为更高质量的 VehicleState input adapter，但不是当前算法阶段的前置条件。
+当前最小必须输入是 **speed + acceleration**。其它发动机状态由 App 内部推导；CAN/OBD 是 future richer input adapter，不是当前前置条件。
 
-## 当前阶段不做什么
+## 当前阶段不做
 
-- 不把 ESP32 作为当前产品主线；
-- 不做 ESP32 advanced sound port；
-- 不做 ESP32 板级 BLE/WiFi/MQTT/OTA/IRAM 验收作为当前 gate；
-- 不因为仓库已有 ESP32 代码就让固件工作阻塞声音算法/App；
-- 不要求当前 App 先依赖 Tesla CAN 才能运行。
-
-仓库中的 ESP32-S3 固件、原理图和历史路线仍保留，作为**历史资产 / 未来可选简化 runtime**。只有 App 版声音真实性、实时性和车内体验稳定后，才重新评估是否需要嵌入式版本。
+- ESP32 current mainline；
+- ESP32 advanced sound port；
+- ESP32 BLE/WiFi/MQTT/OTA/IRAM board gates；
+- App 前置 Tesla CAN。
 
 ## 当前产品化顺序
 
 ```text
-Stage-AC closeout
-→ Jovi Hellcat V3 盲听
-→ AA-C3 接受或 ONE source-causal Round2
+AC8
+→ Jovi Hellcat V3 blind audition
+→ AA-C3 accept OR ONE source-causal Round2
 → Hellcat Engineering Profile
-→ Ferrari / RX-7 车型迁移
+→ Ferrari / RX-7
 → AudioParameterPackage
-→ speed/acceleration → VirtualEngineState 合同
-→ Golden traces / Golden PCM
-→ portable C++ realtime core
+→ speed/acceleration → VirtualEngineState
+→ Golden traces / PCM
+→ portable C++
 → Python ↔ C++ equivalence
-→ Android App realtime engine
-→ App 车型选择 + 实时播放
-→ 车内延迟/连续性/CPU/underrun 验收
-→ R1 数据具备时做正式标定
-→ ESP32 simplified runtime（仅后期可选）
+→ Android App realtime
+→ vehicle selector + playback
+→ in-car validation
+→ R1 formal calibration when available
+→ ESP32 only if later explicitly reopened
 ```
 
 ## 当前成功标准
 
-当前阶段真正完成必须满足：
-
-1. 声音真实感经 Jovi 人耳接受；
-2. 不同车型有可辨识身份；
-3. speed/acceleration 连续变化时，虚拟 RPM/load/gear 和声音连续、自然；
-4. tip-in / acceleration / shift / lift / afterfire / idle return 不出现不自然跳变；
-5. App 内可选择不同车型 profile；
-6. App 实时播放 CPU、内存、延迟、underrun 达到可用水平；
-7. App pause/resume、音频焦点、状态恢复不破坏持续相位/事件状态；
-8. 车内实测时声音变化和车辆运动感一致。
-
-这就是当前项目主线。
+声音 Human accepted、车型可辨识、speed/acceleration 驱动自然、状态连续、App 可实时稳定播放、车型可选择、latency/underrun/CPU/memory 达标、车内体验通过。
