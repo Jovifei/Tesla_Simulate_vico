@@ -3,6 +3,9 @@
 日期：2026-09-04
 
 > 当前产品架构以**车内 App 实时声浪**为主线。ESP32 不是当前产品载体，不参与当前 gate；仓库中的 ESP32 固件仅作为历史资产和后期可选 simplified runtime 保留。
+>
+> 历史和架构依据优先读取：
+> `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`。
 
 ## 1. 当前产品北极星
 
