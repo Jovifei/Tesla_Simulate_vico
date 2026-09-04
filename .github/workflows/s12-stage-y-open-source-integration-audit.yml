@@ -26,7 +26,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: s12-stage-y-open-source-integration-audit
+  group: s12-stage-y-open-source-integration-audit-${{ github.ref }}
   cancel-in-progress: true
 
 env:
