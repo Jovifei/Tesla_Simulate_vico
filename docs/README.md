@@ -16,8 +16,6 @@
 
 ## Current Product Truth
 
-当前产品形态：
-
 ```text
 车内 Android App
 → speed + acceleration
