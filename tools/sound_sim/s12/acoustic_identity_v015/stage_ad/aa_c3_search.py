@@ -4,10 +4,8 @@ The search preserves the frozen AA-C3 pressure/event-body/carrier processing and
 Track-P boundary while perturbing upstream S12 parameters. Results are new
 Stage-AD diagnostic candidates; the official v3 package is never overwritten.
 
-Cross-iteration convergence uses an *absolute reference-distance* whose scale is
-anchored only to the real reference metric (plus fixed metric floors). It does
-not compare changing per-iteration improvement fractions as if they shared one
-origin.
+Cross-iteration convergence uses an absolute reference-distance whose scale is
+anchored only to the real reference metric (plus fixed metric floors).
 """
 
 from __future__ import annotations
@@ -31,29 +29,38 @@ from ..stage_y.package import _fitted_config
 
 AA_C3_SEARCH_SCHEMA = "s12.stage_ad.aa_c3_reference_search.v2"
 
-AA_C3_SOURCE_CAUSAL_PARAMETERS = (
-    "combustion_event_energy",
-    "combustion_rise_time",
-    "combustion_decay_time",
-    "cycle_variation",
-    "crank_inertia",
-    "idle_governor",
-    "primary_length_spread",
-    "primary_attenuation_spread",
-    "waveguide_reflection",
-    "waveguide_loss",
-    "collector_loss",
-    "blower_sideband_mix",
-    "blower_broadband_mix",
-    "blower_casing_mix",
-    "intake_mix",
-    "boost_attack",
-    "boost_release",
-    "bypass_threshold",
-    "afterfire_reservoir_rate",
-    "afterfire_ignition_delay",
-    "afterfire_location_mix",
-    "afterfire_energy",
+AA_C3_PARAMETER_FAMILIES: dict[str, tuple[str, ...]] = {
+    "body": (
+        "combustion_event_energy",
+        "combustion_rise_time",
+        "combustion_decay_time",
+        "cycle_variation",
+        "crank_inertia",
+        "idle_governor",
+        "primary_length_spread",
+        "primary_attenuation_spread",
+        "waveguide_reflection",
+        "waveguide_loss",
+        "collector_loss",
+    ),
+    "blower": (
+        "blower_sideband_mix",
+        "blower_broadband_mix",
+        "blower_casing_mix",
+        "intake_mix",
+        "boost_attack",
+        "boost_release",
+        "bypass_threshold",
+    ),
+    "afterfire": (
+        "afterfire_reservoir_rate",
+        "afterfire_ignition_delay",
+        "afterfire_location_mix",
+        "afterfire_energy",
+    ),
+}
+AA_C3_SOURCE_CAUSAL_PARAMETERS = tuple(
+    name for family in ("body", "blower", "afterfire") for name in AA_C3_PARAMETER_FAMILIES[family]
 )
 
 _AA_SCENE = {
@@ -118,13 +125,7 @@ def _metric_floor(name: str) -> float:
 
 
 def _absolute_reference_distance(case_comparison: dict[str, Any]) -> float:
-    """Stable distance independent of the changing parent candidate.
-
-    Each metric is normalized by ``max(abs(reference), fixed_floor)``. Floors
-    are fixed by metric semantics so a later iteration cannot change the ruler.
-    The median is robust to one pathological proxy; individual terms are capped
-    to keep near-zero reference metrics from dominating the whole objective.
-    """
+    """Stable distance independent of the changing parent candidate."""
     values: list[float] = []
     for name, row in dict(case_comparison.get("metrics") or {}).items():
         reference = float(row["reference"])
@@ -137,12 +138,10 @@ def _absolute_reference_distance(case_comparison: dict[str, Any]) -> float:
 
 
 def _render_context(config: dict[str, Any]) -> dict[str, Any]:
-    context: dict[str, Any] = {}
-    for _, scenario, duration_s in SEARCH_SCENES:
-        context[scenario] = render_candidate(
-            "AA-C3", _AA_SCENE[scenario], duration_s, config_override=config
-        )
-    return context
+    return {
+        scenario: render_candidate("AA-C3", _AA_SCENE[scenario], duration_s, config_override=config)
+        for _, scenario, duration_s in SEARCH_SCENES
+    }
 
 
 def _evaluate(
@@ -212,16 +211,14 @@ def _evaluate(
         if comparisons
         else {"improvement_fraction": None, "dimension_median_relative_error": {}}
     )
-    absolute_reference_distance = (
-        float(np.median(absolute_distances)) if absolute_distances else None
-    )
+    absolute_reference_distance = float(np.median(absolute_distances)) if absolute_distances else None
     human = combine_reference_and_feedback_objective(
         multi.get("improvement_fraction"),
         multi.get("dimension_median_relative_error", {}),
         human_feedback,
     )
     feedback_adjustment = float(human.get("feedback_adjustment") or 0.0)
-    fixed_scale_objective = (
+    objective = (
         -float(absolute_reference_distance) + feedback_adjustment
         if absolute_reference_distance is not None
         else None
@@ -237,16 +234,12 @@ def _evaluate(
         "reference_objective": multi.get("improvement_fraction"),
         "absolute_reference_distance": absolute_reference_distance,
         "human_objective": human,
-        "objective": fixed_scale_objective,
+        "objective": objective,
         "independent_reference_count": int(independent_reference_count),
     }
 
 
-def _materialize(
-    output_root: Path,
-    config: dict[str, Any],
-    overrides: dict[str, float],
-) -> dict[str, Any]:
+def _materialize(output_root: Path, config: dict[str, Any], overrides: dict[str, float]) -> dict[str, Any]:
     root = output_root / "best_candidate"
     scenes: dict[str, Any] = {}
     for _, scenario, duration_s in SEARCH_SCENES:
@@ -387,6 +380,7 @@ def run_aa_c3_search(
 
 __all__ = [
     "AA_C3_SEARCH_SCHEMA",
+    "AA_C3_PARAMETER_FAMILIES",
     "AA_C3_SOURCE_CAUSAL_PARAMETERS",
     "run_aa_c3_search",
 ]
