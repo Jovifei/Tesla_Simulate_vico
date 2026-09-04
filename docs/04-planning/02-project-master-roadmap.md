@@ -2,45 +2,25 @@
 
 日期：2026-09-04
 
-> 这是全项目主路线。`01-firmware-roadmap.md` 继续作为 ESP32 固件子路线；本文负责把固件、S12 声学、跨语言实时化和实车产品化串成一条交付链。
+> 当前全项目主线：**声音真实性 → Human Gate → Android App 实时运行**。ESP32 simplified runtime 明确后移，不属于当前实施计划。
 
 ## 1. 当前总状态
 
-按“真正产品完成度”分层：
-
 ```text
-A. 软件正确性            已较成熟
-B. 声学工程方法          已较成熟
-C. Hellcat 声学质量      部分完成
-D. Human acceptance      等待 Jovi
-E. R1 正式标定           未具备数据条件
-F. C++/Android 实时化    未开始
-G. ESP32 高级声浪集成    未开始
-H. 硬件/实车验收         未完成
+A. S12 软件正确性            已较成熟
+B. 声学工程方法              已较成熟
+C. Hellcat 声学质量          部分完成
+D. Human acceptance          等待 Jovi
+E. Ferrari/RX-7 车型闭环      待 Hellcat 后迁移
+F. App runtime contract       未开始
+G. C++/Android 实时化         未开始
+H. speed/acceleration 驱动    未开始产品实现
+I. 车内 App 验收              未开始
+J. R1 正式标定               外部数据条件未具备
+K. ESP32 simplified runtime   Deferred future option
 ```
 
-当前不能用单一百分比描述项目，因为不同子系统成熟度差异很大。
-
-## 2. 已完成主线
-
-### Firmware S0–S7 baseline
-
-已经完成到代码层：
-
-- CAN listen-only parser/source；
-- I2S audio baseline；
-- BLE GATT；
-- SD JSON；
-- encoder / throttle pot / WS2812；
-- status / network / iot / ota 分层；
-- 25 ms App tick；
-- build/size/OpenSpec 基线。
-
-仍需硬件证明，不把 Implemented 写成 Verified-on-board。
-
-### S12 Stage V → AC
-
-已完成的工程演进：
+## 2. 已完成：S12 Stage V → AC
 
 ```text
 Stage V   event-domain prototype
@@ -48,44 +28,36 @@ Stage W   persistent streaming architecture
 Stage X   comparator / candidate search / reachability
 Stage Y   source layers + closed-loop integration
 Stage Z   open-source method absorption proof
-Stage AA  Hellcat acoustic quality closure / AA-C3 / v3 package
-Stage AB  AA-C3 gain provenance + human gate
+Stage AA  Hellcat acoustic quality closure / AA-C3 / v3
+Stage AB  gain provenance + human gate
 Stage AB-R validation semantics hardening
 Stage AC  CI / hermeticity / measurability closure
 ```
 
-最新远端快照（2026-09-04 复核）：
+远端快照：
 
 ```text
 main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
-PR #5 head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
-PR #5 = MERGED at 2026-09-04T13:51:52Z
-latest CI run = 33703659821
-latest CI = SUCCESS on exact PR head
+PR #5 = MERGED
+qualified head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
+CI 33703659821 = SUCCESS
 full S12 = 1423 passed / 10 skipped / 232 subtests passed
 Track-P = PASS
-artifact = 9875918055
-artifact sha256 = 6d9892d60c6f9552aea790f91d9679a1739b77b4aa4fb0a01c5dc729560ea5ae
+R1 = MISSING
+AC8 = PENDING
 ```
 
-## 3. 当前关卡：Stage AC closeout → Human Gate
+## 3. M0 — Stage-AC post-merge closeout
 
-### M0 — Stage-AC post-merge truth closure
+- 核对 qualified head 到 current main 仅是状态/治理变化；
+- 完成最小充分 post-merge smoke / Track-P guard；
+- 写 AC8 exact receipt；
+- 进入 `WAITING_FOR_JOVI_AUDITION`；
+- 不改声音。
 
-PR #5 已于 2026-09-04 合并。`021fe294...` 是当前 main `82c7cb77...` 的直接祖先；前者已经被 run `33703659821` exact-head 全量资格化。其后只有一笔 Stage-AC 状态记录提交进入 main，目前未看到 main 分支新的完整 workflow run。
+## 4. M1 — Hellcat V3 Human Gate
 
-当前完成标准：
-
-- AC6 = PASS：以 `33703659821` exact-head success 为证据；
-- AC7 = PASS：以 PR #5 实际 merged + ancestry 为证据；
-- 核对 `021fe... → 82c7...` diff 仅为状态/治理元数据，不改变 renderer/PCM/Track-P 数学；
-- 执行最小充分的 post-merge smoke + Track-P frozen guard；
-- AC8 只有在 post-merge receipt 形成后才能 PASS；
-- 然后整体状态进入 `WAITING_FOR_JOVI_AUDITION`。
-
-### M1 — Jovi V3 blind audition
-
-当前 package：
+Package：
 
 `E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`
 
@@ -93,229 +65,223 @@ manifest：
 
 `b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
 
-重点评价：
+重点听：
 
-- vehicle identity；
-- realism；
-- idle life；
-- LF pressure/body；
-- mechanical texture；
+- vehicle identity / realism；
+- hot-idle life / LF body；
 - blower identity；
 - acceleration continuity；
-- shift；
-- lift/decel；
+- shift/lift；
 - afterfire；
-- synthetic artifact；
-- overall preference。
+- synthetic artifact。
 
-反馈前禁止调音、禁止揭盲。
+反馈前不调音、不揭盲。
 
-### M2 — ONE source-causal Round 2（仅在需要时）
+## 5. M2 — ONE source-causal Round2（仅需要时）
 
-如果 AA-C3 不能直接接受：
+如果 AA-C3 不直接接受：
 
-- 只允许一轮；
+- 仅一轮；
 - 最多 3 candidates；
-- 每个 candidate 一个明确 hypothesis；
-- 禁止 whole-mix / master / broad pre-PTR gain；
-- feedback → scene → stem → metric → parameter family → guard；
+- 每个 candidate 对应不同 hypothesis；
+- feedback → scene → source/stem → metric → parameter family → guard；
+- 禁止 whole-mix/master/broad pre-PTR gain；
 - objective regression → professional finalist → v4 blind audition。
 
-若一轮 source-causal repair 仍失败：
+失败则 `MODEL_REDESIGN_REQUIRED`，不无限搜参数。
 
-`MODEL_REDESIGN_REQUIRED`
+## 6. M3 — Engineering Profiles
 
-而不是继续无限调参。
-
-## 4. Hellcat Human PASS 后
-
-### M3 — Engineering Profile
-
-冻结：
-
-`Hellcat Engineering Profile`
-
-它代表“当前工程模型 + 人耳接受”的 profile，不等于 R1/OEM 标定。
-
-### M4 — 三锚点迁移
-
-顺序：
+Hellcat Human PASS 后：
 
 ```text
-Hellcat Human PASS
-→ Ferrari 458 diagnostic migration
-→ RX-7 FD diagnostic migration
-→ 其余车型
+Hellcat Engineering Profile
+→ Ferrari 458 diagnostic/human migration
+→ RX-7 FD diagnostic/human migration
+→ multi-vehicle profile schema
 ```
 
-每个车型必须有自己的 source identity，不允许仅复制 EQ/pitch。
+Engineering Profile 代表“工程模型 + 人耳接受”，不等于 R1/OEM Freeze。
 
-## 5. 跨语言实时化
+## 7. M4 — App 输入与虚拟发动机状态合同
 
-### M5 — AudioParameterPackage v1
+当前 App 最小输入：
 
-定义统一可版本化合同：
+```text
+speed
+acceleration
+```
+
+定义稳定接口：
+
+```text
+AppInput
+→ filtering / freshness
+→ VehicleState
+→ VirtualEngineState
+   ├─ virtual RPM
+   ├─ load/throttle proxy
+   ├─ gear / shift
+   ├─ tip-in / lift / overrun
+   └─ transient lifecycle
+```
+
+完成标准：
+
+- speed 抖动不会导致声浪抖动；
+- acceleration 正负变化能自然驱动 load/lift；
+- virtual RPM 连续；
+- virtual gear/shift 不频繁误触发；
+- pause/resume 后状态可恢复；
+- offline/test trace 可重放。
+
+未来 CAN/OBD 只是可插拔的 richer input adapter，不阻塞当前实现。
+
+## 8. M5 — AudioParameterPackage
+
+统一可版本化合同：
 
 - vehicle/profile id；
 - source topology；
 - event/cycle parameters；
-- RPM/load domain；
+- speed/acceleration operating axes；
+- virtual RPM/load/gear mapping；
 - transient rules；
-- filter/resonance/path parameters；
-- monitor config；
-- provenance / qualification level；
-- schema version / commit / SHA。
+- path/filter/monitor parameters；
+- schema version；
+- generator commit / SHA；
+- qualification metadata。
 
-### M6 — Golden Evidence
+## 9. M6 — Golden Evidence
 
 生成：
 
-- deterministic VehicleState traces；
+- deterministic speed/acceleration traces；
+- derived VirtualEngineState traces；
 - Golden PCM；
 - metrics；
-- block sizes；
-- snapshot/restore cases；
-- exact package/render hashes。
+- block/snapshot cases；
+- exact profile/package SHA。
 
-### M7 — Portable C++17 reference runtime
+## 10. M7 — Portable C++ reference runtime
 
-只实现移动/嵌入式真正需要的最小集合：
+只移植 App realtime 所需的最小集合：
 
 - persistent phase/event；
 - source layers；
 - reduced path/waveguide；
-- transients；
+- transient state machines；
 - dP/DC；
-- PTR adapter equivalent boundary；
-- monitor；
+- frozen boundary equivalent adapter；
+- monitor/output；
 - snapshot/restore。
 
-### M8 — Python ↔ C++ equivalence
+完整 CFD/teacher systems 不进入手机 callback。
 
-完成标准：
+## 11. M8 — Python ↔ C++ equivalence
 
-- same state + same profile；
+同一 speed/acceleration trace + 同一 profile：
+
 - block output bounded；
-- long streaming continuity；
+- long-stream continuity；
 - snapshot/restore deterministic；
-- no allocation/state reset artifacts。
+- event timing一致；
+- 无平台特供声音逻辑。
 
-### M9 — Android / desktop realtime proof
+## 12. M9 — Android App 产品化
 
-目标不是改变产品方向，而是验证 portable runtime：
+当前产品载体：Android App。
 
-- 48 kHz；
-- realtime-safe audio callback；
-- AAudio/Oboe 或桌面 host；
-- CPU / memory / underrun / latency metrics；
-- VehicleState ring/double buffer；
-- 不在 callback heap allocate。
+必须完成：
 
-## 6. ESP32-S3 高级声浪落地
+- speed source；
+- acceleration source / filtering；
+- VirtualEngineState mapper；
+- vehicle profile selection；
+- package loader；
+- native C++ engine；
+- AAudio/Oboe 48 kHz；
+- realtime-safe callback；
+- state double-buffer/ring-buffer；
+- underrun / callback time metrics；
+- CPU / memory / battery / thermal；
+- pause/resume/audio focus；
+- long-drive continuity；
+- 车内试听。
 
-### M10 — Embedded profile reduction
+## 13. M10 — App 车内验收
 
-依据 C++ profile/性能数据决定：
+场景至少覆盖：
 
-- 哪些 source/stem 保留；
-- filters/order simplification；
-- fixed-point / lookup table；
-- PSRAM / IRAM / DMA budget；
-- sampling/block strategy；
-- quality tier。
-
-### M11 — 接入现有 firmware shell
-
-重点连接点：
-
-```text
-components/domain/VehicleState
-        ↓
-portable sound core / ESP32 adapter
-        ↓
-components/audio/I2S
-```
-
-BLE/SD/WiFi/OTA 只负责配置/管理，不侵入实时音频 callback。
-
-### M12 — Board acceptance
-
-必须覆盖：
-
-- boot；
-- BLE；
-- SD；
-- I2S；
-- encoder/pot/LED；
-- WiFi/MQTT/OTA；
-- IRAM/heap/PSRAM；
-- audio underrun；
-- startup pop/mute；
-- long-running thermal；
-- CAN analyser no-transmit proof。
-
-## 7. 实车路线
-
-### M13 — VehicleState truth
-
-- Tesla CAN IDs / signals 重新现场确认；
-- decode confidence；
-- timing/freshness；
-- offline/test fallback；
-- disconnect/reconnect state。
-
-### M14 — Controlled vehicle pilot
-
-覆盖：
-
-- idle/low speed；
-- cruise；
-- tip-in；
-- acceleration；
+- 静止/idle；
+- 低速；
+- 匀速；
+- gentle acceleration；
+- hard acceleration；
 - virtual shift；
-- lift/coast；
+- deceleration/lift；
 - afterfire；
-- idle return；
-- CAN loss；
-- BLE loss；
-- overspeed mute；
-- thermal duration。
+- stop/idle return；
+- GPS/传感器短时异常；
+- App background/foreground；
+- audio interruption/recovery。
 
-## 8. R1 并行工作流
+重点指标：
 
-R1 不必阻塞所有工程研发，但必须独立维护：
+- input→audio latency；
+- continuity；
+- underrun；
+- CPU/memory；
+- 车型切换；
+- 人耳自然度。
+
+## 14. R1 并行工作流
+
+R1 不阻塞 App Engineering Profile，但仍独立存在：
 
 ```text
-legal raw WAV/FLAC
+legal raw audio
 + exact vehicle/config
-+ mic/AGC/processing record
-+ synced RPM/load/throttle/gear/shift
++ recording metadata
++ synced real state
 → R1 reference
-→ formal Order-RPM / calibration
-→ higher-level Profile Freeze
+→ formal calibration
+→ higher-level freeze
 ```
 
-没有 R1 时只能称：
+## 15. Deferred — ESP32
 
-- synthetic / vehicle-inspired；
-- engineering candidate/profile；
-- R2/R3 diagnostic；
-- human accepted engineering profile。
+仓库已有 ESP32 资产保留，但统一状态：
 
-## 9. 当前实施顺序（next agent）
+`ESP32_SIMPLIFIED_RUNTIME = DEFERRED`
+
+当前不做：
+
+- advanced sound port；
+- board bring-up；
+- IRAM 优化；
+- BLE/WiFi/MQTT/OTA 验收；
+- CAN analyser；
+- 外置功放/扬声器产品链。
+
+App 版本稳定后，才重新评估是否有必要做独立嵌入式简化版。
+
+## 16. 当前 Next Agent 顺序
 
 ```text
-1. Re-verify remote truth
-2. Close Stage-AC post-merge truth (AC6/AC7 factual PASS; AC8 smoke/receipt)
-3. Reach WAITING_FOR_JOVI_AUDITION
-4. Collect Jovi v3 feedback
-5. Accept AA-C3 OR run one source-causal Round2
-6. Professional finalist + v4 if needed
-7. Hellcat Engineering Profile
-8. Ferrari/RX-7 migration
-9. AudioParameterPackage + Golden Evidence
-10. C++ realtime + Android/desktop proof
-11. ESP32 advanced sound integration
-12. board + CAN + vehicle pilot
-13. R1 calibration when data becomes available
+1. AC8 post-merge receipt
+2. Jovi Hellcat V3 audition
+3. AA-C3 accept OR ONE source-causal Round2
+4. Hellcat Engineering Profile
+5. Ferrari / RX-7 migration
+6. AudioParameterPackage
+7. speed/acceleration → VirtualEngineState contract
+8. Golden traces / PCM
+9. portable C++
+10. Python↔C++ equivalence
+11. Android App realtime
+12. vehicle selector + realtime playback
+13. in-car App validation
+14. R1 calibration when data becomes available
+15. ESP32 only if later explicitly reopened
 ```
