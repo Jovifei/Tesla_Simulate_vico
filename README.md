@@ -1,60 +1,44 @@
 # Tesla Simulate Vico
 
-## 当前主线
+## Current Direction
 
-**S12 声音真实性 → Jovi Human Gate → Android App 实时声浪。**
+**S12 acoustic realism → Jovi Human Gate → Android App realtime engine sound.**
 
-当前 App：
+Current App model:
 
 ```text
 speed + acceleration
 → VirtualEngineState
 → Vehicle Profile (Hellcat/Ferrari/RX-7/...)
-→ S12 realtime sound
+→ S12 realtime sound engine
 → App playback
 ```
 
-真实 RPM/CAN 不是当前前置条件；CAN/OBD 可后续作为 richer input adapter。
+Real RPM/CAN is not a current prerequisite; CAN/OBD can be added later as a richer input adapter. ESP32 is `DEFERRED_FUTURE_OPTION`.
 
-ESP32 代码保留，但统一状态：`DEFERRED_FUTURE_OPTION`，不是当前 blocker。
+## Canonical Memory
 
-## 先读项目长期记忆
+- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
+- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`
+- `docs/04-planning/03-current-app-product-direction.md`
+- `docs/04-planning/02-project-master-roadmap.md`
+- `docs/08-reports/10-project-status-20260904.md`
 
-- [Project Long-Term Memory](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md)
-- [Research Sources And Adoption History](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md)
-- [App-first Current Direction](docs/04-planning/03-current-app-product-direction.md)
-- [Master Roadmap](docs/04-planning/02-project-master-roadmap.md)
-- [Current Status](docs/08-reports/10-project-status-20260904.md)
+Evidence rule: `S12_Handoff_Package_2026-09-03` ≈90%, old chat/assistant summaries ≈10%; dynamic GitHub truth is always re-fetched; current user decisions override historical plans.
 
-证据规则：handoff package ≈90%，旧聊天/此前总结 ≈10%；动态 GitHub 状态现场复核；用户当前明确决策优先。
-
-## 当前状态
-
-```text
-PR #5 = MERGED
-qualified head = 021fe294...
-CI 33703659821 = SUCCESS
-full S12 = 1423 passed / 10 skipped / 232 subtests
-Track-P = PASS
-AC8 = PENDING
-Hellcat AA-C3 = Engineering candidate
-Human = not passed yet
-R1 = MISSING
-```
-
-## 下一步
+## Current Gate
 
 ```text
 AC8 post-merge receipt
-→ Jovi Hellcat V3 audition
+→ Jovi Hellcat V3 blind audition
 → AA-C3 accept OR ONE source-causal Round2
 → Engineering Profile
 → Ferrari/RX-7
 → AudioParameterPackage
 → speed/acceleration state model
 → portable C++
-→ Android realtime App
+→ Android App realtime
 → in-car validation
 ```
 
-当前禁止：feedback 前调音/揭盲、whole-mix/master gain Round2、把 CI 当 Human PASS、把 ESP32 重新拉回当前主线。
+Current boundaries: `HUMAN_PASS=false`, `R1=MISSING`, `ESP32=DEFERRED_FUTURE_OPTION`.
