@@ -1,156 +1,74 @@
 # 项目整体状态审计与交接（2026-09-04）
 
-## 1. 本次审计来源
+## 1. 本次修正
 
-本状态报告综合：
+本报告综合当前 GitHub 真值、S12 Stage 报告、`S12_Handoff_Package_2026-09-03` 与用户已确认的产品方向。
 
-- 当前 GitHub `main` / PR #5 / CI 实测真值；
-- 仓库现有 S12 Stage V→AB/AA 报告与执行状态；
-- `S12_Handoff_Package_2026-09-03` 下一 Agent 交接包；
-- 项目固件 `README.md` / `PLAN.md` / S7 roadmap/backlog；
-- 当前统一的产品架构判断。
-
-原则：远端当前事实优先于历史聊天和旧 SHA。
+关键修正：**当前阶段不是 ESP32 产品化，而是声音真实性算法 + Android App 实时声浪。ESP32 只在后期可选 simplified runtime 中考虑。**
 
 ## 2. 一句话状态
 
-**产品壳已经存在，S12 声音工程已经走到 Hellcat pre-human gate，PR #5 已完成合并；高级声音尚未进入最终 ESP32 runtime。当前最近关卡是 Stage-AC post-merge truth/AC8 收口和 Jovi V3 盲听，而不是继续扩算法或车型。**
+**S12 声音工程已经到 Hellcat pre-human gate；PR #5 已合并；当前先完成 AC8 和 Jovi V3 试听，然后把通过的人耳声音做成由 speed/acceleration 驱动、可选择不同车型并实时播放的车内 App。ESP32 不属于当前 blocker。**
 
 ## 3. 当前远端事实
 
-审计时间：2026-09-04。
-
 ```text
-main:
-82c7cb77d26f446251e63d1a6899b08bf08be65b
-
-PR #5:
-S12 Stage AB pre-human validation hardening
-state = MERGED
-merged_at = 2026-09-04T13:51:52Z
-head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
-current main direct parent chain includes PR head; `82c7...` is a later Stage-AC state-record commit
-
-latest successful CI:
-run = 33703659821
-head_sha = 021fe29480aadabd4d9ba4c20bbc111d1c386795
-result = SUCCESS
-
-full S12:
-1423 passed
-10 skipped
-232 subtests passed
-1 warning
-
-Track-P frozen guard:
-PASS
-
-CI artifact:
-9875918055
-sha256:6d9892d60c6f9552aea790f91d9679a1739b77b4aa4fb0a01c5dc729560ea5ae
+main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
+PR #5 = MERGED
+qualified head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
+CI 33703659821 = SUCCESS
+full S12 = 1423 passed / 10 skipped / 232 subtests passed / 1 warning
+Track-P = PASS
+AC8 = PENDING
+R1 = MISSING
 ```
 
-所以：**PR exact-head CI 已不是 blocker。当前只剩 post-merge governance/smoke 需要闭合，不能把旧 `execution_state.json` 的 IN_PROGRESS 当作真实 CI 失败。**
+所以 exact-head CI 已不是 blocker；当前只剩 post-merge AC8 governance/smoke，然后进入 Human Gate。
 
-## 4. 已经完成到哪里
-
-### 4.1 ESP32 固件产品壳
-
-Implemented：
-
-- ESP-IDF baseline；
-- CAN listen-only receive/parser；
-- I2S baseline audio；
-- BLE GATT；
-- SD JSON；
-- encoder / throttle pot / WS2812；
-- Network / IoT / OTA / RuntimeStatus；
-- 25 ms App loop；
-- build/OpenSpec/size 工程门。
-
-未完成：真实板级验收和高级 S12 runtime 接入。
-
-### 4.2 S12 声音架构
+## 4. 已完成的声音工程
 
 Software-verified：
 
 - persistent event-domain engine；
+- continuous phase / event state；
 - per-cylinder/path/bank/collector；
 - forced induction / mechanical / transient lifecycle；
-- waveguide/path state；
 - dP/DC pressure-to-audio；
-- frozen PTR/Radiation adapter；
+- frozen PTR/Radiation boundary；
 - comparator/reference governance；
 - open-source method traceability；
-- candidate ablation / reachability / receipts；
 - block/stream/snapshot regression；
-- Track-P frozen boundary guard。
+- Track-P frozen guard；
+- Hellcat AA-C3；
+- v3 blind audition package；
+- gain provenance / source-causal hardening；
+- LF/blower/dynamics measurement repair；
+- remote CI closure。
 
-### 4.3 Hellcat 声学收口
+## 5. 当前声音事实
 
-完成：
+AA-C3 比 Stage-Z 更接近 Parent，但还没有 Human PASS。
 
-- Stage AA energy budget/root cause；
-- AA-C0…C3 bounded candidates；
-- AA-C3 finalist candidate；
-- v3 audition package；
-- Stage AB gain provenance / Shapley；
-- source-causal eligibility hardening；
-- LF metric v2；
-- blower post-PTR audit；
-- isolated-event dynamic timing；
-- Stage AC hermetic CI closure。
+主要 human risks：
 
-仍未完成：human acceptance。
+1. `hot_idle` LF persistence = `ELEVATED`；
+2. blower hot-idle ~741 Hz persistent carrier；
+3. afterfire 约 20 dB above body red flag。
 
-## 5. 当前最重要的声音事实
-
-AA-C3 相对 Stage-Z 的主要诊断均值：
-
-| Metric | Parent | Stage-Z | AA-C3 |
-|---|---:|---:|---:|
-| RMS dBFS | -45.588 | -62.039 | -47.801 |
-| Dynamic range dB | 9.368 | 3.582 | 5.747 |
-| Spectral centroid Hz | 1683.1 | 4247.3 | 1830.4 |
-| Roughness proxy | 0.546 | 0.580 | 0.517 |
-| Sharpness proxy | 0.146 | 0.297 | 0.115 |
-| Persistent-tone ratio | 0.453 | 0.488 | 0.444 |
-
-这些数字说明 AA-C3 比 Stage-Z 更合理，但**不等于真实感已通过**。
-
-### Provenance
-
-AA-C3 RMS recovery 约 +15.5 dB，Shapley 归因主要来自：
-
-- event-body：约 66%；
-- broad pre-PTR scale：约 33%；
-- carrier：很小。
-
-因此 Round 2 明确禁止 whole-mix / broad-mix gain。
-
-### 三个 Human 风险
-
-1. Afterfire：约 20 dB above body 的 red flag，可能像“鞭炮”；
-2. Hot idle LF：v2 guard 结果 `ELEVATED`，可能从重量感变成 boom；
-3. Blower：hot idle 约 741 Hz persistent carrier，需要判断是真机械增压身份还是电子蜂鸣。
+这些必须由 Jovi 试听判断，不能由自动指标替代。
 
 ## 6. 当前真正 blocker
 
-### P0 — Stage-AC post-merge truth 尚未闭合
+### P0 — AC8
 
-PR #5 已合并，AC7 在事实层已经完成；run `33703659821` 证明 AC6 对 PR head 已 green。当前 main 又多一笔状态记录提交，且没有新的 main workflow，因此需要：
-
-- 记录 AC6=PASS；
-- 记录 AC7=PASS；
-- 核对 post-merge delta 仅为治理元数据；
-- 做 AC8 最小充分 smoke/Track-P guard；
-- 生成 post-merge receipt。
+- post-merge truth；
+- 最小充分 smoke / Track-P guard；
+- exact receipt；
+- 然后进入 `WAITING_FOR_JOVI_AUDITION`。
 
 ### P1 — Jovi V3 blind audition
 
-这是当前声学产品门。
-
-试听包：
+Package：
 
 `E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`
 
@@ -158,16 +76,27 @@ manifest：
 
 `b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
 
-反馈前：
+反馈前不调音、不揭盲、不做 Round2。
 
-- 不改 AA-C3；
-- 不揭盲；
-- 不做 Round 2；
-- 不宣称 HUMAN_PASS。
+### P2 — App 产品化尚未开始
 
-### P2 — R1 missing
+当前缺：
 
-当前：
+- speed input；
+- acceleration input/filter；
+- speed/acceleration → VirtualEngineState；
+- virtual RPM/load/gear/shift；
+- vehicle profile selector；
+- AudioParameterPackage；
+- portable C++ runtime；
+- Python↔C++ equivalence；
+- Android realtime output；
+- CPU/memory/latency/underrun；
+- 车内动态验收。
+
+### P3 — R1 missing
+
+仍然：
 
 ```text
 R1 = MISSING
@@ -175,66 +104,67 @@ OEM_CALIBRATION = NOT_AUTHORIZED
 PROFILE_FREEZE = NOT_AUTHORIZED
 ```
 
-这和 Human Gate 是不同维度。
+Human Engineering Profile 可以先形成，但不能冒充 OEM/R1 calibration。
 
-### P3 — Product runtime bridge 未开始
-
-仍缺：
-
-- AudioParameterPackage；
-- Golden state/PCM；
-- portable C++ runtime；
-- Android/desktop realtime proof；
-- ESP32 advanced runtime port；
-- CPU/heap/latency/underrun；
-- board/vehicle validation。
-
-## 7. 已经关闭、不要重复调查的问题
-
-- Ubuntu CI 访问 Windows review-package path；
-- Track-P guard ancient-base whitespace false positive；
-- generated evidence CRLF；
-- stage receipt base 必须等于 current merge-base 的错误规则；
-- “97 errors”旧误判；
-- P6 被错误当成 source stem；
-- LF persistence v1 数学无效；
-- blower v1 未真正分析 audible post-PTR；
-- dynamic 0 ms 在缺 isolated event 时的错误解释。
-
-## 8. 当前应该做什么
-
-最近动作只有：
+## 7. 当前 App 产品定义
 
 ```text
-Stage-AC exact-head/merge truth reconciliation
-→ AC8 post-merge smoke + receipt
-→ WAITING_FOR_JOVI_AUDITION
-→ Jovi V3 feedback
-→ feedback hash/binding
-→ accept AA-C3 OR one source-causal Round2
+App
+  ↓
+speed + acceleration
+  ↓
+VirtualEngineState
+  ├─ virtual RPM
+  ├─ load/throttle proxy
+  ├─ gear / shift
+  ├─ lift / overrun
+  └─ transient lifecycle
+  ↓
+Vehicle Profile Selector
+  ↓
+S12 realtime sound engine
+  ↓
+App playback
 ```
 
-不应该做：
+当前最小输入合同就是 `speed + acceleration`。真实 RPM/CAN 不是当前前置条件。
 
-- 扩更多开源项目；
-- 重写 Track-P；
-- 提前做 Ferrari/RX-7；
-- 用 master gain 修 Hellcat；
-- 把 Python candidate 直接塞入 ESP32；
-- 因为 CI green 宣称声音完成。
+## 8. 当前不应该做什么
 
-## 9. 后续产品路线
+- 不把 ESP32 拉回当前主线；
+- 不做 ESP32 advanced sound port；
+- 不做板级 BLE/WiFi/OTA/IRAM 作为当前 gate；
+- 不要求当前 App 先依赖 Tesla CAN；
+- 不扩更多开源项目；
+- 不重写 Track-P；
+- 不提前扩 Ferrari/RX-7；
+- 不用 master gain 修 Hellcat；
+- 不因为 CI green 宣称声音完成。
+
+## 9. 正确后续路线
 
 ```text
-Hellcat Human PASS
+AC8
+→ Hellcat V3 Human Gate
+→ AA-C3 accept OR ONE source-causal Round2
 → Hellcat Engineering Profile
-→ Ferrari/RX-7
+→ Ferrari / RX-7
 → AudioParameterPackage
-→ Golden evidence
+→ speed/acceleration → VirtualEngineState
+→ Golden traces / PCM
 → portable C++
-→ Android/desktop realtime proof
-→ ESP32 reduced realtime runtime
-→ board validation
-→ Tesla CAN listen-only pilot
+→ Python↔C++ equivalence
+→ Android App realtime
+→ vehicle profile selector
+→ App in-car validation
 → R1 formal calibration when available
+→ ESP32 simplified runtime only if later explicitly reopened
 ```
+
+## 10. ESP32 当前状态
+
+仓库中的 ESP32-S3 代码、原理图和固件文档保留为历史资产，不删除；但当前统一状态是：
+
+`ESP32 = DEFERRED_FUTURE_OPTION`
+
+它不进入当前完成度，不阻塞当前声音算法，也不阻塞 App 产品化。
