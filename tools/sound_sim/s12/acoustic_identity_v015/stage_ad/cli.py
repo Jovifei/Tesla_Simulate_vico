@@ -39,9 +39,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--seed", type=int, default=20260904)
     parser.add_argument("--domain-shrink", type=float, default=0.55)
     parser.add_argument("--minimum-delta-fraction", type=float, default=0.20)
-    parser.add_argument("--minimum-objective-gain", type=float, default=0.01)
+    parser.add_argument("--minimum-reference-distance-gain", type=float, default=0.005)
     parser.add_argument("--plateau-patience", type=int, default=1)
-    parser.add_argument("--target-objective", type=float, default=0.15)
+    parser.add_argument(
+        "--target-reference-distance",
+        type=float,
+        default=None,
+        help="optional absolute fixed-scale reference-distance stop threshold",
+    )
+    parser.add_argument(
+        "--generic-iteration-target",
+        type=float,
+        default=0.15,
+        help="fallback per-iteration improvement target for --baseline stage-x only",
+    )
     parser.add_argument("--human-feedback-json", type=Path)
     parser.add_argument("--allow-parameter", action="append", default=None)
     args = parser.parse_args(argv)
@@ -63,9 +74,10 @@ def main(argv: list[str] | None = None) -> int:
         seed=args.seed,
         domain_shrink=args.domain_shrink,
         minimum_delta_fraction=args.minimum_delta_fraction,
-        minimum_objective_gain=args.minimum_objective_gain,
+        minimum_reference_distance_gain=args.minimum_reference_distance_gain,
         plateau_patience=args.plateau_patience,
-        target_objective=args.target_objective,
+        target_reference_distance=args.target_reference_distance,
+        generic_iteration_target=args.generic_iteration_target,
     )
     feedback = _load_json(args.human_feedback_json)
 
