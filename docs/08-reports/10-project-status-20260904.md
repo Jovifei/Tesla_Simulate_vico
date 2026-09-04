@@ -1,12 +1,8 @@
 # 项目整体状态审计与交接（2026-09-04）
 
-Evidence priority: handoff package ≈90%, old chat/summary ≈10%; current GitHub truth and current user decisions override historical snapshots.
+Evidence: handoff ≈90%, old chat ≈10%, dynamic GitHub current truth, current user decision wins.
 
-## Current Direction
-
-**S12 acoustic realism + Android App realtime sound. ESP32 = Deferred Future.**
-
-## Remote Snapshot
+Current direction: **S12 acoustic realism + Android App realtime sound**. ESP32 = Deferred Future.
 
 ```text
 main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
@@ -19,38 +15,20 @@ AC8 = PENDING
 R1 = MISSING
 ```
 
-## Completed
+Human risks: hot-idle LF ELEVATED; blower ~741 Hz carrier; afterfire ~20 dB above body; dynamics compressed vs Parent.
 
-Persistent event-domain engine, continuous state, source/path/bank/collector, forced induction/mechanical/transients, dP/DC, frozen PTR/Radiation, comparator/reference governance, method traceability, block/snapshot regression, AA-C3, v3 blind package, provenance/source-causal hardening, LF/blower/dynamics measurement repair, remote CI closure.
-
-## Human Risks
-
-- hot-idle LF `ELEVATED`
-- blower ~741 Hz carrier
-- afterfire ~20 dB above body
-- dynamics compressed vs Parent
-
-## Current Blockers
-
-1. AC8 post-merge receipt
-2. Jovi V3 blind audition
-3. App productization
-4. R1 external data
-
-## Next
+Blockers: AC8 receipt → Jovi V3 audition → App productization → R1 external data.
 
 ```text
 AC8
-→ Hellcat V3 Human Gate
+→ Human Gate
 → AA-C3 accept OR ONE source-causal Round2
 → Engineering Profile
 → Ferrari/RX-7
 → AudioParameterPackage
-→ speed+acceleration→VirtualEngineState
-→ Golden traces/PCM
-→ portable C++
-→ Python↔C++ equivalence
-→ Android realtime App
+→ speed+acceleration VirtualEngineState
+→ C++
+→ Android realtime
 → in-car validation
 ```
 
