@@ -4,7 +4,7 @@ Purpose: current product architecture, sound-authoring authority, state flow, ru
 
 Current authoritative entry:
 
-- `01-project-system-architecture.md` — **App-first** realtime sound architecture.
+- `01-project-system-architecture.md` — **App-first realtime sound architecture**.
 
 Keep these boundaries visible:
 
