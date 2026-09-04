@@ -4,6 +4,8 @@
 
 - [[Project-Long-Term-Memory]] — **当前项目长期记忆真值**：最终目标、历史阶段、当前 blocker、App-first 产品路线、负面知识、执行顺序。
 - [[Research-Sources-And-Adoption-History]] — 参考论文、开源项目、商业工作流、许可证和方法吸收历史。
+- [[Decision-History-And-Negative-Knowledge]] — 关键决策、已证伪路线、指标陷阱、CI/治理踩坑和禁止重复事项。
+- Android App 详细实施计划：`docs/04-planning/04-android-app-runtime-implementation-plan.md`。
 
 证据权重：`S12_Handoff_Package_2026-09-03` 约 90%，旧聊天/此前总结约 10%；会变化的远端状态以现场 GitHub 为准。
 
