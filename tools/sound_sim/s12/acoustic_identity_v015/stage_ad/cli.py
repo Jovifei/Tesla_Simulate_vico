@@ -32,6 +32,11 @@ def main(argv: list[str] | None = None) -> int:
         default="aa-c3",
         help="AA-C3 preserves the current candidate processing; stage-x runs the generic P3 search.",
     )
+    parser.add_argument(
+        "--base-config-json",
+        type=Path,
+        help="start this loop from a prior Stage-AD final_config.json (useful for body→blower→afterfire staging)",
+    )
     parser.add_argument("--architecture", default="P3", help="used only with --baseline stage-x")
     parser.add_argument("--iterations", type=int, default=3)
     parser.add_argument("--coarse-count", type=int, default=48)
@@ -80,15 +85,16 @@ def main(argv: list[str] | None = None) -> int:
         generic_iteration_target=args.generic_iteration_target,
     )
     feedback = _load_json(args.human_feedback_json)
+    supplied_base_config = _load_json(args.base_config_json)
 
     if args.baseline == "aa-c3":
         search_fn = run_aa_c3_search
-        base_config = _fitted_config()
+        base_config = supplied_base_config or _fitted_config()
         architecture = "AA-C3"
         allowed_parameters = args.allow_parameter or list(AA_C3_SOURCE_CAUSAL_PARAMETERS)
     else:
         search_fn = None
-        base_config = None
+        base_config = supplied_base_config
         architecture = args.architecture
         allowed_parameters = args.allow_parameter
 
