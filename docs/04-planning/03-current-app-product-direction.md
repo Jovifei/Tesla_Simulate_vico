@@ -2,7 +2,7 @@
 
 日期：2026-09-04
 
-> 本文覆盖旧的“当前阶段以 ESP32 为产品主线”理解。当前阶段的产品载体是车内 App；ESP32 仅保留为后期可选简化方案，不是当前 blocker，也不进入当前实施计划。
+> 当前阶段的产品载体是车内 App。ESP32 仅保留为后期可选简化方案，不是当前 blocker，也不进入当前实施计划。
 
 ## 当前目标
 
@@ -48,16 +48,18 @@ App 实时音频输出
 
 ```text
 Stage-AC closeout
-→ Jovi Hellcat V3 试听
+→ Jovi Hellcat V3 盲听
 → AA-C3 接受或 ONE source-causal Round2
 → Hellcat Engineering Profile
 → Ferrari / RX-7 车型迁移
 → AudioParameterPackage
-→ C++/Android realtime sound core
-→ App speed/acceleration state adapter
+→ speed/acceleration → VirtualEngineState 合同
+→ Golden traces / Golden PCM
+→ portable C++ realtime core
+→ Python ↔ C++ equivalence
+→ Android App realtime engine
 → App 车型选择 + 实时播放
 → 车内延迟/连续性/CPU/underrun 验收
-→ 继续提高声音真实感与车型覆盖
 → R1 数据具备时做正式标定
 → ESP32 simplified runtime（仅后期可选）
 ```
@@ -69,9 +71,10 @@ Stage-AC closeout
 1. 声音真实感经 Jovi 人耳接受；
 2. 不同车型有可辨识身份；
 3. speed/acceleration 连续变化时，虚拟 RPM/load/gear 和声音连续、自然；
-4. tip-in / acceleration / shift / lift / afterfire / idle return 不出现跳变；
+4. tip-in / acceleration / shift / lift / afterfire / idle return 不出现不自然跳变；
 5. App 内可选择不同车型 profile；
 6. App 实时播放 CPU、内存、延迟、underrun 达到可用水平；
-7. App pause/resume、音频焦点、状态恢复不破坏持续相位/事件状态。
+7. App pause/resume、音频焦点、状态恢复不破坏持续相位/事件状态；
+8. 车内实测时声音变化和车辆运动感一致。
 
 这就是当前项目主线。
