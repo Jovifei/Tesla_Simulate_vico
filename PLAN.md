@@ -18,50 +18,15 @@ speed + acceleration
 → App playback
 ```
 
-App 内部需要将 speed / acceleration 映射为：
-
-- virtual RPM；
-- load / throttle proxy；
-- virtual gear / shift；
-- tip-in / lift / overrun；
-- transient lifecycle；
-- continuous phase/event state。
+App 内部需要将 speed / acceleration 映射为 virtual RPM、load/throttle proxy、virtual gear/shift、tip-in/lift/overrun、transient lifecycle 和 continuous phase/event state。
 
 未来 CAN/OBD 可以作为更高质量输入源，但不是当前 App 算法阶段的必备前提。
 
-## Current Sound Architecture
-
-```text
-VehicleState(speed, acceleration, derived states)
-→ PersistentEventDomainEngine
-→ source/path/transient layers
-→ pressure/dP chain
-→ frozen PTR/Radiation boundary
-→ realtime PCM
-→ Android audio output
-```
-
-Track-P / PTR / Radiation 保持冻结；Track-S 负责车型身份与听感。
-
 ## Delivered S12 Work
 
-已走过：
+已走过：`V → W → X → Y → Z → AA → AB / AB-R → AC`。
 
-`V → W → X → Y → Z → AA → AB / AB-R → AC`
-
-已具备：
-
-- persistent crank/event state；
-- block continuity / snapshot restore；
-- combustion / path / bank / collector；
-- forced induction / mechanical / transient layers；
-- state-gated afterfire；
-- comparator / reference governance；
-- frozen Track-P guard；
-- Hellcat AA-C3；
-- v3 blind audition package；
-- provenance / causality / measurement hardening；
-- exact-head remote CI closure。
+已具备 persistent event state、source/path/bank/collector、forced induction、mechanical/transients、state-gated afterfire、comparator/reference governance、Track-P guard、Hellcat AA-C3、v3 blind package、provenance/causality hardening 和 exact-head remote CI closure。
 
 ## Current Remote Truth
 
@@ -78,104 +43,29 @@ AC8 = PENDING
 
 ## Immediate Phase
 
-### 1. Stage-AC Post-Merge Closeout
-
-- 核对 `021fe294... → 82c7cb77...` 仅为治理/状态元数据；
-- 完成最小充分 post-merge smoke / Track-P guard；
-- 写 AC8 receipt；
-- 进入 `WAITING_FOR_JOVI_AUDITION`；
-- 不改 PCM/profile。
-
-### 2. Hellcat V3 Human Gate
-
-Package：
-
-`E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`
-
-manifest：
-
-`b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
-
-反馈前：不调音、不揭盲、不扩车型。
-
-收到反馈后：
-
-`raw feedback → SHA → reveal → binding → accept AA-C3 OR ONE source-causal Round2`
-
-Round2：最多 3 个候选，禁止 whole-mix/master/broad-pre-PTR gain。
-
-### 3. Vehicle Profile Closure
-
-Hellcat Human PASS 后：
-
-1. 冻结 Hellcat Engineering Profile；
-2. 迁移 Ferrari 458；
-3. 迁移 RX-7 FD；
-4. 定义统一 Vehicle Profile schema。
+1. Stage-AC post-merge AC8 closeout；
+2. Hellcat V3 Human Gate；
+3. AA-C3 accept 或 ONE source-causal Round2；
+4. Hellcat Engineering Profile；
+5. Ferrari / RX-7 migration。
 
 ## App Productization
 
-### 4. AudioParameterPackage
+之后：
 
-冻结跨语言合同：
+```text
+AudioParameterPackage
+→ Golden speed/acceleration + VirtualEngineState traces
+→ Golden PCM
+→ Portable C++ runtime
+→ Python↔C++ equivalence
+→ Android NDK + AAudio/Oboe
+→ speed/acceleration input/filter
+→ vehicle profile selector
+→ in-car validation
+```
 
-- profile id / vehicle identity；
-- source parameters；
-- event/cycle parameters；
-- transient rules；
-- speed/acceleration operating axes；
-- virtual RPM/load/gear mapping；
-- filter/path/monitor parameters；
-- schema version / SHA / provenance。
-
-### 5. Golden Evidence
-
-- deterministic speed/acceleration traces；
-- derived VirtualEngineState traces；
-- Golden PCM / metrics；
-- block/snapshot cases；
-- exact package/render SHA。
-
-### 6. Portable C++ Runtime
-
-实现 Android 真正需要的 realtime subset：
-
-- persistent phase/event；
-- source layers；
-- reduced path/waveguide；
-- transient state machine；
-- dP/DC；
-- frozen boundary equivalent adapter；
-- monitor/output；
-- snapshot/restore。
-
-不把完整 CFD/teacher 系统放入 App runtime。
-
-### 7. Python ↔ C++ Equivalence
-
-同一 speed/acceleration trace + 同一 profile：
-
-- block outputs bounded；
-- streaming continuity；
-- snapshot/restore deterministic；
-- 无错误重置/爆音/状态断层。
-
-### 8. Android App
-
-当前 App 是产品载体，需要完成：
-
-- speed input adapter；
-- acceleration input/filtering；
-- VirtualEngineState mapper；
-- vehicle profile selector；
-- realtime C++ sound core；
-- AAudio/Oboe；
-- 48 kHz realtime-safe callback；
-- no heap allocation in audio callback；
-- state double-buffer/ring-buffer；
-- CPU / memory / latency / underrun metrics；
-- pause/resume/audio-focus/snapshot recovery；
-- 车内试听与长时间运行。
+Android App 是当前产品载体。
 
 ## Current Success Criteria
 
@@ -191,16 +81,15 @@ Hellcat Human PASS 后：
 
 ## Deferred / Future
 
-ESP32-S3、CAN 硬件、BLE/WiFi/OTA 板级验收、I2S 外置功放等全部标记：
+ESP32-S3 和其 board/CAN/BLE/WiFi/OTA/I2S hardware line 统一标记：
 
 `DEFERRED_FUTURE_OPTION`
 
-它们不阻塞当前声音算法和 App 产品化。只有 App 路线成熟后，再决定是否做 ESP32 simplified runtime。
+它们不阻塞当前声音算法和 App 产品化。只有 App 路线成熟后，再决定是否重新开启嵌入式简化版。
 
 ## Evidence Boundaries
 
 - CI green ≠ Human PASS；
 - Human PASS ≠ R1/OEM calibration；
-- R1 仍需合法同步真实数据；
 - current App Engineering Profile 可以先于 R1 形成；
 - ESP32 历史代码存在 ≠ 当前产品路线必须使用 ESP32。
