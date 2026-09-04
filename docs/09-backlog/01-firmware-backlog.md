@@ -1,4 +1,4 @@
-# Tesla Simulate Vico ESP32 固件待完成清单（Deferred）
+# Tesla Simulate Vico ESP32 固件待完成清单（Deferred / Historical）
 
 更新：2026-09-04
 
@@ -38,7 +38,7 @@ AC8
 → Jovi Hellcat V3 audition
 → Engineering Profile
 → Ferrari / RX-7
-→ speed + acceleration VehicleState
+→ speed + acceleration → VirtualEngineState
 → AudioParameterPackage
 → portable C++
 → Android realtime App
@@ -52,4 +52,7 @@ AC8
 
 在此之前统一标记：
 
-`ESP32_ACTIVE_BACKLOG = false`
+```text
+ESP32_ACTIVE_BACKLOG = false
+ESP32_BLOCKS_CURRENT_PRODUCT = false
+```
