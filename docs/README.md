@@ -1,20 +1,19 @@
 # Tesla Simulate Vico Documentation
 
-当前主线：**S12 声音真实性 → Human Gate → Android App 实时声浪**。
+Current mainline: **S12 acoustic realism → Human Gate → Android App realtime sound**.
 
-## Read First
+Read first:
+1. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
+2. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`
+3. `04-planning/03-current-app-product-direction.md`
+4. `01-architecture/01-project-system-architecture.md`
+5. `04-planning/02-project-master-roadmap.md`
+6. `08-reports/10-project-status-20260904.md`
+7. `09-backlog/02-project-master-backlog.md`
 
-1. [项目长期记忆](knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md)
-2. [研究来源与方法吸收历史](knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md)
-3. [当前 App-first 产品方向](04-planning/03-current-app-product-direction.md)
-4. [当前系统架构](01-architecture/01-project-system-architecture.md)
-5. [项目总路线图](04-planning/02-project-master-roadmap.md)
-6. [当前状态](08-reports/10-project-status-20260904.md)
-7. [项目总 Backlog](09-backlog/02-project-master-backlog.md)
+Evidence rule: handoff package ≈90%, old chat/summary ≈10%; dynamic GitHub truth is re-fetched; current user decision wins.
 
-证据：handoff package ≈90%，旧聊天/总结 ≈10%；动态 GitHub 真值现场复核；当前用户决策优先。
-
-当前产品：
+Current product:
 
 ```text
 Android App
@@ -25,6 +24,4 @@ Android App
 → playback
 ```
 
-当前最小输入 = `speed + acceleration`。CAN/OBD 后续可选。ESP32 = `DEFERRED_FUTURE_OPTION`。
-
-当前 gate：`AC8 → Jovi V3 audition → AA-C3 accept/ONE Round2 → Engineering Profile → App productization`。
+CAN/OBD is optional future richer input. ESP32 = `DEFERRED_FUTURE_OPTION`.
