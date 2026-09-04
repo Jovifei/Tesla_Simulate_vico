@@ -1,78 +1,141 @@
-# Tesla Simulate Vico 固件完成路线图
+# Tesla Simulate Vico ESP32 固件子路线图
 
-日期：2026-07-09
+更新：2026-09-04
+
+> 本文只负责 ESP32-S3 产品壳、硬件与嵌入式集成路线。全项目主路线见 `02-project-master-roadmap.md`。旧版本把“S8 声浪算法”写成待开始已经过时：S12 PC/Python 声学研发已推进到 Hellcat pre-human gate，但**高级声浪尚未进入 ESP32 runtime**。
 
 ## 目标
 
-从当前可编译 ESP-IDF baseline 推进到最初设计需求：安全 CAN 监听、可信声浪模拟、BLE/SD/WiFi/IoT/OTA 配置闭环、硬件实机验收和可交付固件包。
+把当前可编译 ESP-IDF 产品壳推进到：
 
-当前主线是 S7 “旧工程逻辑对齐”：参考 `wifi_esp32_ct`、`smart-controller-esp32s3`、`smart-controller-gd32f4` 的分层状态机，把网络、MQTT、OTA 从 `App` 主循环中拆出。
+- 安全 CAN listen-only；
+- 稳定 VehicleState；
+- BLE/SD/WiFi/IoT/OTA 配置与诊断；
+- 高级 approved sound runtime；
+- I2S / DAC / AMP / speaker；
+- 板级与实车验收。
 
 ## 固定决策
 
-- BLE UUID 不变：主服务 `0xfff0`，兼容服务 `0xffe0`。
-- `ffe8` 继续承载 WiFi / OTA / IoT JSON 配置。
-- CAN 继续 listen-only，不新增 transmit。
-- `App::tick()` 保持 25 ms，不执行 WiFi/MQTT/OTA 阻塞工作。
-- OTA 使用 HTTPS，证书由固件或构建资源提供，不从 BLE 明文注入。
-- USB CDC、高级调参和 MATLAB 声浪建模不纳入 S7，后移到 S8/S9。
+- CAN 永远 listen-only，不新增产品 transmit API；
+- BLE 主服务 `0xfff0`、兼容服务 `0xffe0` 保持稳定；
+- `ffe8` 承载 WiFi / OTA / IoT 配置；
+- `App::tick()` 保持非阻塞协调职责；
+- OTA 后台执行；
+- 声音算法的权威模型来自 S12，不在 ESP32 上重新发明另一套车型算法；
+- 平台适配前先有 `AudioParameterPackage` + portable C++ equivalence。
 
-## 当前基线
+## 当前固件基线
 
-| 范围 | 当前状态 | 证据 |
+| 范围 | 状态 | 证据/说明 |
 |---|---|---|
-| CAN listen-only | 已实现 | `components/can/` |
-| CAN frame parser | 已实现 `0x256` / `0x116` baseline | `components/can/include/can/CanFrames.h` |
-| I2S audio | 已实现 RPM baseline | `components/audio/` |
-| BLE GATT | 已实现，待实机验收 | `components/ble/` |
-| SD JSON | 已实现，待实机验收 | `components/storage/` |
-| 外设 | 已接入，待实机验收 | `components/input/`, `components/ui/` |
-| S7 分层 | 已迁移到代码 baseline | `components/status`, `components/network`, `components/iot`, `components/ota` |
-| IRAM | 风险未关闭 | `size` 报告 `16383 / 16384` |
-| 声浪算法 | 未产品化 | 缺少速度/加速度/负载分层和 MATLAB 定参 |
+| CAN listen-only | Implemented | `components/can/` |
+| CAN frame parser | Implemented | 当前 `0x256` / `0x116` baseline |
+| I2S audio baseline | Implemented | 当前 RPM/基础合成，非 S12 高级模型 |
+| BLE GATT | Implemented / board blocked | `components/ble/` |
+| SD JSON | Implemented / board blocked | `components/storage/` |
+| input / UI | Implemented / board blocked | encoder / pot / WS2812 |
+| Network/IoT/OTA | Implemented / board blocked | `status/network/iot/ota` |
+| IRAM | Risk open | 历史 size 接近上限，需要 fresh build + board stress |
+| S12 advanced sound | Verified on PC/Python only | Hellcat AA-C3 pre-human; 未接入 firmware |
 
-## 阶段计划
+## 固件阶段
 
-| 阶段 | 目标 | 完成标准 | 状态 |
-|---|---|---|---|
-| S7.0 文档与架构对齐 | 写清旧工程到 Tesla_speed 的模块映射 | README/PLAN/docs/OpenSpec 口径一致 | 代码已完成，文档持续修正 |
-| S7.1 状态与配置模型 | 引入统一状态和 WiFi/OTA/IoT 配置 | `RuntimeStatus`、`RuntimeConfig`、SD load/save 通过构建 | 已完成，待实机 |
-| S7.2 Link/WiFi | 独立 WiFi STA 与重连状态机 | WiFi 状态可复制到 BLE 诊断，主循环不阻塞 | 已完成，待实机 |
-| S7.3 IoT/MQTT | MQTT 上下行与 OTA 命令 | `ota_start` 可转为 OTA request，状态可上报 | 已完成，待实机 |
-| S7.4 OTA | 后台 OTA worker | boot/config/cloud request 均走后台任务 | 已完成，待实机 |
-| S7.5 App 集成验证 | App 只协调状态和车辆模拟 | build/size/OpenSpec 通过，硬件项单独标记 | 已完成，待实机 |
-| S7.6 Release hardening | 处理 IRAM 和文档交付风险 | IRAM 有接受记录或功能分档，公开文档无乱码 | 进行中 |
-| S8 声浪算法 | 速度/加速度/负载差异化模型 | MATLAB/仿真参数 + bench listening + 固件集成 | 待开始 |
-| S9 USB CDC/调参 | 主机侧诊断和参数调试 | host 可读写状态和配置并保存 | 待开始 |
-| S10 交付 | release 包和验收报告 | bin/分区/bootloader/测试记录/风险清单齐全 | 待开始 |
+### F0 — S0–S7 product shell baseline
 
-## S7 执行顺序
+代码已完成；硬件证明未完成。
 
-1. 关闭文档和 OpenSpec 漂移。
-2. 完成 BLE `ffe8` 配置写入到 SD 持久化的闭环。
-3. 验证 network/iot/ota 只在后台任务运行。
-4. 重跑 `build`、`size`、`size-components`、`openspec validate --all --strict --json`。
-5. 上板执行 BLE/WiFi/MQTT/OTA 验收。
-6. 把实机结果写入 `06-testing`，把剩余项写入 `09-backlog`。
+### F1 — Board bring-up / S7 acceptance
 
-## IRAM 判断
+必须验证：
 
-当前 IRAM 压力不是业务代码大常量或误用 `IRAM_ATTR` 导致。符号归因显示，主要来自 ESP-IDF 框架和必须常驻的系统路径：FreeRTOS、PHY、RTC clock、Xtensa vectors、RMT、PSRAM、flash、BT/WiFi。
+1. flash/boot；
+2. BLE advertising/read/write/notify；
+3. SD load/save；
+4. I2S output；
+5. encoder/pot/WS2812；
+6. WiFi join/reconnect；
+7. MQTT uplink/downlink；
+8. HTTPS OTA success/failure；
+9. 25 ms app coordination 不被后台任务阻塞；
+10. CAN analyser 证明无发送。
 
-短期不建议因为 `16383 / 16384` 直接换 MCU。ESP32-S3 的 16 MB Flash 和 8 MB PSRAM 对当前镜像空间足够，问题集中在 ESP-IDF 报告的高优先级 IRAM 区域。更现实的路线是：
+### F2 — Resource/release hardening
 
-1. 保留 ESP32-S3，先做实机压力测试。
-2. 如果 BLE + WiFi + OTA + WS2812 同时运行稳定，则把 IRAM 作为已知接受风险进入 S7.6。
-3. 如果实机出现 cache/flash erase/中断相关问题，再做功能分档：例如 OTA 时暂停声浪/LED 动画，或把 WS2812/RMT 作为可关闭功能。
-4. 只有在必须同时保留 BLE、WiFi、OTA、高级声浪和复杂 UI 且压力测试失败时，再评估换平台或双 MCU。
+- fresh `idf.py size` / `size-components`；
+- BLE + WiFi + OTA + I2S + LED 并发；
+- heap/PSRAM/IRAM；
+- watchdog；
+- OTA 时 audio/UI 降级策略；
+- thermal/long-run。
 
-## Release Gate
+### F3 — Advanced sound contract integration
 
-S7 只能在以下条件满足后归档：
+**只有 Hellcat Human PASS / Engineering Profile 后启动。**
 
-- ESP-IDF build 和 OpenSpec 均通过。
-- BLE 广播和 `ffe2`/`ffe8` 读写在实机验证通过。
-- WiFi 能使用 BLE 写入的配置联网。
-- MQTT 能完成最小上线、上报和 `ota_start` 下行。
-- HTTPS OTA 成功路径和失败保护路径都有记录。
-- IRAM 风险被解决，或有明确的实机压力测试接受记录。
+依赖：
+
+```text
+AudioParameterPackage
++ Golden VehicleState
++ Golden PCM/metrics
++ portable C++ runtime
++ Python↔C++ equivalence
+```
+
+然后：
+
+```text
+components/domain/VehicleState
+→ ESP32 sound adapter
+→ components/audio/I2S
+```
+
+### F4 — Embedded optimization
+
+根据 ESP32-S3 实测资源：
+
+- source layer reduction；
+- LUT / fixed-point；
+- filter/order simplification；
+- block/DMA strategy；
+- PSRAM policy；
+- quality tier；
+- underrun/latency gate。
+
+### F5 — Vehicle pilot
+
+- Tesla CAN signal truth；
+- state freshness/fallback；
+- no-TX hardware proof；
+- startup/fault/overspeed mute；
+- external speaker chain；
+- real driving scene validation；
+- power/thermal/EMC。
+
+## 与 S12 声学主线的接口
+
+ESP32 固件不直接消费 Python implementation detail，而消费受版本控制的产品合同：
+
+```text
+AudioParameterPackage
+VehicleState schema
+Golden traces
+Realtime C++ core
+```
+
+这样可以避免：
+
+- PC 一套算法、Android 一套算法、ESP32 又一套算法；
+- 声学修复被平台特供 hack 吞掉；
+- 无法复现试听 winner。
+
+## 当前正确执行顺序
+
+1. 保持现有固件 shell 可构建；
+2. 在独立硬件工作流完成 F1/F2；
+3. 声学主线先关闭 Stage-AC post-merge truth + Human Hellcat；
+4. Human PASS 后定义 cross-language runtime contract；
+5. C++/Android/desktop 实时证明；
+6. 再做 ESP32 advanced sound port；
+7. 最后进入 controlled vehicle pilot。
