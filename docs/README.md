@@ -1,85 +1,83 @@
 # Tesla Simulate Vico Documentation
 
-This directory is the public documentation entry for the ESP32-S3 vehicle-sound product and the S12 acoustic-authoring/validation work.
+当前文档主入口服务于 **S12 声音真实性 + 车内 Android App 实时声浪**。
 
-Paths use stable ASCII names for GitHub/scripts/VSCode. Chinese descriptions are kept in document titles and body text.
+仓库中的 ESP32-S3 固件、CAN/BLE/SD/WiFi/OTA/I2S 等内容属于早期工程资产，目前统一标记为 `Deferred/Future`，不作为当前 blocker 或实施主线。
 
 ## Read These First
 
-1. [Unified system architecture](01-architecture/01-project-system-architecture.md)
-2. [Project master roadmap](04-planning/02-project-master-roadmap.md)
-3. [Current project status audit — 2026-09-04](08-reports/10-project-status-20260904.md)
-4. [Project master backlog](09-backlog/02-project-master-backlog.md)
-5. [Firmware sub-roadmap](04-planning/01-firmware-roadmap.md)
-6. [Firmware/hardware backlog](09-backlog/01-firmware-backlog.md)
+1. [当前 App-first 产品方向](04-planning/03-current-app-product-direction.md)
+2. [当前系统架构](01-architecture/01-project-system-architecture.md)
+3. [项目总路线图](04-planning/02-project-master-roadmap.md)
+4. [当前项目状态审计 — 2026-09-04](08-reports/10-project-status-20260904.md)
+5. [项目总 Backlog](09-backlog/02-project-master-backlog.md)
+6. [Stage AA Hellcat 声学收口](08-reports/09-s12-stage-aa-acoustic-quality-closure.md)
 7. [Documentation guide](GUIDE.md)
 
-## Current Project Truth
+## Current Product Truth
 
-The repository contains **two major tracks that are both real but not yet fully joined**:
-
-### ESP32-S3 product shell
-
-Implemented in code:
-
-- CAN/TWAI listen-only receive and parser baseline;
-- I2S audio baseline;
-- BLE GATT;
-- SD JSON persistence;
-- encoder / throttle potentiometer / WS2812;
-- Network / MQTT / HTTPS OTA / RuntimeStatus layering;
-- 25 ms application coordination loop.
-
-Most board-level behavior is still `Blocked` on hardware evidence.
-
-### S12 acoustic-authoring and validation system
-
-The sound work is **not “waiting to start”**. It has progressed through Stage V/W/X/Y/Z/AA/AB/AC and now has:
-
-- persistent event-domain source architecture;
-- source/path/transient state;
-- comparator/reference governance;
-- Track-P frozen-boundary protection;
-- Hellcat AA-C3 engineering candidate;
-- validated v3 blind-audition package;
-- exact-head full-S12 CI closure on PR #5 and subsequent merge;
-- explicit human/R1 qualification boundaries.
-
-Current nearest gate:
+当前产品形态：
 
 ```text
-Stage-AC post-merge truth
-→ AC8 pre-human receipt
-→ WAITING_FOR_JOVI_AUDITION
-→ feedback binding
-→ AA-C3 accept OR one source-causal Round 2
+车内 Android App
+→ speed + acceleration
+→ VirtualEngineState
+→ vehicle profile selection
+→ S12 realtime sound engine
+→ App playback
 ```
 
-Current qualification boundary remains:
+当前最小输入合同：`speed + acceleration`。
+
+App 内部负责派生 virtual RPM/load/gear/shift/lift/overrun 等状态。CAN/OBD 可以以后作为 richer input adapter，但不是当前算法/App 的前置条件。
+
+## Current Nearest Gate
+
+```text
+Stage-AC AC8 post-merge receipt
+→ WAITING_FOR_JOVI_AUDITION
+→ Hellcat V3 feedback
+→ AA-C3 accept OR ONE source-causal Round2
+→ Hellcat Engineering Profile
+→ Ferrari / RX-7
+→ App runtime productization
+```
+
+当前证据边界：
 
 ```text
 R1 = MISSING
 HUMAN_PASS = false
 OEM_CALIBRATION = NOT_AUTHORIZED
 PROFILE_FREEZE = NOT_AUTHORIZED
+ESP32 = DEFERRED_FUTURE_OPTION
 ```
 
-## Productization Direction
-
-After a human-accepted Engineering Profile:
+## App Productization Direction
 
 ```text
 S12 Python authority
 → AudioParameterPackage
-→ Golden VehicleState / PCM
-→ portable C++ realtime core
-→ Android/desktop realtime equivalence proof
-→ ESP32-S3 resource-reduced adapter
-→ existing firmware shell
-→ board/CAN/vehicle pilot
+→ Golden speed/acceleration + VirtualEngineState traces
+→ Golden PCM
+→ portable C++ core
+→ Python↔C++ equivalence
+→ Android AAudio/Oboe realtime engine
+→ speed/acceleration input adapter
+→ vehicle profile selector
+→ in-car validation
 ```
 
-Android is an intermediate real-time/equivalence host, not a replacement for the existing ESP32-S3 embedded product target.
+Android 是当前目标 runtime，不是临时验证宿主。
+
+## ESP32 Documents
+
+以下文档继续保留，但当前只用于历史/未来参考：
+
+- `04-planning/01-firmware-roadmap.md`
+- `09-backlog/01-firmware-backlog.md`
+
+它们不得覆盖 `03-current-app-product-direction.md` 和项目总路线图。
 
 ## S12 Key Reports
 
@@ -88,34 +86,13 @@ Android is an intermediate real-time/equivalence host, not a replacement for the
 - [2026-09-04 integrated status audit](08-reports/10-project-status-20260904.md)
 - [S12 engine-audio knowledge mirror](knowledge/obsidian/S12/Engine-Audio-Ecosystem/00-MOC.md)
 
-## Directory Map
-
-| Directory | Purpose | Current rule |
-|---|---|---|
-| `00-reference` | External datasheets, reference projects, original notes | Raw references only; conclusions belong in planning or architecture docs |
-| `01-architecture` | System architecture and module boundaries | Holds product + S12 + runtime integration architecture |
-| `02-requirements` | PRD, acceptance criteria, product requirements | Requirement truth before implementation details |
-| `03-protocols` | BLE, CAN, MQTT, OTA, USB contracts | UUID/topic/frame contracts stay explicit |
-| `04-planning` | Roadmaps and phase plans | `02-project-master-roadmap.md` is the overall plan; firmware roadmap remains a sub-plan |
-| `05-execution` | Execution records and migration logs | Step-by-step runbooks and bring-up records |
-| `06-testing` | Test plans and hardware acceptance | Board evidence, logs, screenshots |
-| `07-debugging` | Bug analysis and troubleshooting | Failures, root cause, recovery |
-| `08-reports` | Milestone reports and delivery summaries | Current state audits and stage reports |
-| `09-backlog` | Remaining work and technical debt | Overall and firmware-specific backlog |
-| `10-learning` | Study notes and experiments | MATLAB/audio-model learning notes |
-| `knowledge` | Curated S12/Obsidian mirror | Do not confuse knowledge notes with qualification truth |
-| `superpowers` | Agent planning/spec artifacts | Local skill workflow artifacts |
-
 ## Documentation Status Rules
 
-Use these words precisely:
-
-- `Implemented`: code exists and builds.
-- `Verified`: fresh software/build/CI evidence exists.
-- `Verified-on-board`: fresh hardware evidence exists.
+- `Implemented`: code exists.
+- `Verified`: fresh software/CI evidence exists.
 - `Human accepted`: Jovi listening gate passed.
 - `R1 qualified`: legal synchronized real-reference gate passed.
-- `Blocked`: external hardware/data/human/tool decision is required.
-- `Deferred`: intentionally moved later.
+- `Blocked`: external input/human/tool is required.
+- `Deferred`: intentionally not part of current implementation.
 
-Never promote one evidence class into another.
+不要把历史 ESP32 代码存在写成当前产品路线要求。
