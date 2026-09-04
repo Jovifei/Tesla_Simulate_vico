@@ -3,6 +3,9 @@
 日期：2026-09-04
 
 > 当前全项目主线：**声音真实性 → Human Gate → Android App 实时运行**。ESP32 simplified runtime 明确后移，不属于当前实施计划。
+>
+> 详细历史、参考来源、负面知识和 Agent 接管规则见：
+> `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`。
 
 ## 1. 当前总状态
 
