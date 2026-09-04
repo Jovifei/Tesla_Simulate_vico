@@ -4,152 +4,165 @@ Language: [中文说明](#中文说明) | [English Overview](#english-overview)
 
 ## 中文说明
 
-`Tesla Simulate Vico` 是一个面向 ESP32-S3 的车载声浪模拟固件工程。目标是在不向车辆 CAN 总线发送报文的前提下，监听 Tesla CAN/OBD-II 车辆状态，生成可调的模拟发动机声浪，并通过 BLE、SD 卡、WiFi/IoT/OTA 和本地外设完成配置、诊断和升级闭环。
+`Tesla Simulate Vico` 是一个面向 Tesla/电动车的**实时发动机声浪模拟产品工程**。仓库同时包含：
 
-当前工程已经具备可编译 ESP-IDF baseline，并完成 S7 架构迁移基线：BLE 作为配置入口，Network/Link 管 WiFi，IoT/MQTT 管云端上下行，OTA 管后台升级执行，App 保留 25 ms 车辆模拟主循环协调。
+1. 已经存在的 ESP32-S3 车端产品壳（CAN、BLE、SD、WiFi/MQTT/OTA、I2S、UI/输入）；
+2. S12 声学研发与验证体系（persistent event-domain source、车型 identity、reference/comparator、human gate）；
+3. 后续把 approved sound profile 变成 portable C++、Android/desktop realtime proof，再移植回 ESP32-S3 的产品化路线。
 
-### 当前结论
+最终产品硬规则：**车辆 CAN 只监听，不提供产品 transmit 路径。**
+
+### 当前整体状态（2026-09-04）
 
 | 范围 | 状态 | 说明 |
 |---|---|---|
-| CAN listen-only | 已实现 | TWAI listen-only，当前解析 `0x256` / `0x116` baseline，不提供 transmit API |
-| I2S audio baseline | 已实现 | RPM 驱动的基础合成、音量、overspeed mute |
-| BLE GATT | 已实现，待实机验收 | 主服务 `0xfff0`，兼容服务 `0xffe0`，`ffe1..ffee` 已挂载 |
-| SD JSON 配置 | 已实现，待实机验收 | 保存 runtime config，缺卡或缺字段使用默认值 |
-| 外设 | 已接入，待实机验收 | encoder、throttle pot、WS2812 |
-| S7 Network/IoT/OTA | 代码基线已完成，待实机验收 | `status`、`network`、`iot`、`ota` 分层已存在 |
-| IRAM release gate | 风险未关闭 | 当前 ESP-IDF size 报告 IRAM `16383 / 16384`，需实机压测或功能分档 |
-| 声浪算法 | 未产品化 | 当前不是速度/加速度/负载差异化声浪模型，需要 MATLAB 或等效仿真定参 |
+| ESP32-S3 产品壳 | Implemented | CAN/I2S/BLE/SD/input/UI/network/iot/ota 代码基线存在 |
+| ESP32 板级验收 | Blocked | BLE/WiFi/MQTT/OTA/SD/I2S/CAN no-TX 等待实机证据 |
+| S12 声音架构 | Verified in software | Stage V→AC persistent source / comparator / frozen Track-P / CI 已建立 |
+| Hellcat AA-C3 | Engineering candidate | 自动指标改善，尚未 Human accepted |
+| PR #5 hardening | Merged | PR head `021fe294...` 已通过 run `33703659821`; current `main=82c7cb77...` |
+| V3 blind audition | Package verified | 等待 Jovi 试听 |
+| R1 | Missing | 无同步合法 R1，不得称 OEM calibration |
+| Portable C++ runtime | Not started | Human Engineering Profile 后启动 |
+| Android/desktop realtime | Not started | 用作跨语言 realtime/equivalence proof |
+| ESP32 advanced sound port | Not started | C++/resource characterization 后启动 |
+| Vehicle pilot | Not started | 需要硬件/CAN/安全/热/EMC/延迟证据 |
+
+### 统一产品架构
+
+```text
+Tesla CAN/OBD (listen-only)
+        ↓
+VehicleState
+        ↓
+S12 authoritative sound model
+        ↓
+Reference + Human qualification
+        ↓
+AudioParameterPackage + Golden Evidence
+        ↓
+Portable C++ realtime core
+        ↓
+Android/desktop realtime proof
+        ↓
+ESP32-S3 resource-reduced adapter
+        ↓
+I2S → DAC/AMP/Speaker
+        ↓
+Controlled vehicle pilot
+```
+
+现有 ESP32 firmware 并不会被 Android 取代。Android/desktop 是高级声音模型冻结后的**中间实时验证宿主**，最终仍要把受控的实时子集接入现有 ESP32-S3 产品壳。
+
+### 当前最近关卡
+
+截至 2026-09-04 远端复核：
+
+```text
+main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
+PR #5 = MERGED at 2026-09-04T13:51:52Z
+PR #5 head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
+CI 33703659821 = SUCCESS on exact PR head
+full S12 = 1423 passed / 10 skipped / 232 subtests passed
+Track-P frozen guard = PASS
+```
+
+因此当前不是继续排查 CI，而是：
+
+```text
+Stage-AC post-merge truth reconciliation
+→ AC8 pre-human smoke/receipt
+→ WAITING_FOR_JOVI_AUDITION
+→ feedback SHA/binding
+→ accept AA-C3 OR one source-causal Round 2
+```
+
+V3 package：
+
+`E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`
+
+manifest SHA-256：
+
+`b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
+
+当前明确禁止：反馈前调音/揭盲、whole-mix/master gain Round2、提前扩 Ferrari/RX-7、把 CI green 写成 Human PASS、在 R1 missing 时声称 OEM calibration/Profile Freeze。
 
 ### 工程结构
 
 | 路径 | 作用 |
 |---|---|
-| `main/` | ESP-IDF `app_main` 入口 |
-| `components/app/` | 应用协调层，保留 25 ms 车辆模拟主循环 |
-| `components/status/` | 统一运行状态镜像：WiFi/IoT/OTA/版本/分区/错误 |
-| `components/network/` | WiFi STA、EventGroup、连接/重连/停止状态机 |
-| `components/iot/` | MQTT 上下行、设备/车辆/OTA 进度发布、`ota_start` 下行解析 |
-| `components/ota/` | HTTPS OTA worker、请求队列、进度和失败原因 |
-| `components/ble/` | NimBLE GATT，`ffe8` 配置入口，`ffe5`/`ffea` 状态输出 |
-| `components/config/` | pin map 和 `RuntimeConfig` |
-| `components/storage/` | SD FATFS JSON 配置持久化 |
-| `components/can/` | CAN parser 和 TWAI listen-only source |
-| `components/audio/` | I2S PCM 输出和基础声浪合成 |
-| `components/domain/` | 车辆状态与虚拟 RPM 模型 |
-| `components/input/` | encoder 和 throttle potentiometer |
-| `components/ui/` | WS2812 状态灯 |
-| `docs/` | 公开文档入口，目录使用 `NN-english-kebab` 命名 |
-| `openspec/` | 当前固件规格与变更提案 |
-| `scripts/esp-idf.ps1` | Windows PowerShell ESP-IDF v5.3.2 环境脚本 |
+| `components/app/` | ESP32 应用协调层 |
+| `components/status/` | 统一运行状态 |
+| `components/network/` | WiFi 状态机 |
+| `components/iot/` | MQTT 上下行 |
+| `components/ota/` | HTTPS OTA worker |
+| `components/ble/` | NimBLE GATT |
+| `components/config/` | pin/runtime config |
+| `components/storage/` | SD JSON |
+| `components/can/` | CAN parser + TWAI listen-only |
+| `components/audio/` | I2S + 当前基础合成；未来接 advanced sound adapter |
+| `components/domain/` | VehicleState / virtual RPM baseline |
+| `components/input/` | encoder / throttle pot |
+| `components/ui/` | WS2812 |
+| `tools/sound_sim/s12/` | S12 声学模型、validation、comparator、reports tooling |
+| `tasks/reports/runtime/` | S12 机器证据/receipts/runtime reports |
+| `docs/` | 公开架构、计划、报告、backlog |
 
 ### 文档入口
 
 - [文档总入口](docs/README.md)
-- [文档命名规则](docs/GUIDE.md)
-- [固件完成路线图](docs/04-planning/01-firmware-roadmap.md)
-- [固件待完成清单](docs/09-backlog/01-firmware-backlog.md)
+- [统一系统架构](docs/01-architecture/01-project-system-architecture.md)
+- [项目总路线图](docs/04-planning/02-project-master-roadmap.md)
+- [2026-09-04 项目整体状态](docs/08-reports/10-project-status-20260904.md)
+- [项目总 Backlog](docs/09-backlog/02-project-master-backlog.md)
+- [ESP32 固件子路线](docs/04-planning/01-firmware-roadmap.md)
 
-### BLE 合约
+### Evidence boundary
 
-BLE UUID 合约保持不变：
+当前允许说：
 
-| UUID | 当前用途 |
-|---|---|
-| `0xfff0` | 主 BLE GATT 服务 |
-| `0xffe0` | 历史兼容服务 |
-| `ffe2` | 车辆状态快照 |
-| `ffe5` | 诊断 JSON：version、partition、wifi_state、iot_state、ota_state、ota_progress、last_error |
-| `ffe8` | WiFi / OTA / IoT 配置 JSON |
-| `ffea` | live device status read/notify |
+- software verified；
+- engineering candidate；
+- R2/R3 diagnostic；
+- waiting for human audition。
 
-`ffe8` 写入只更新配置和待持久化状态，不在 BLE 写回调中直接执行 OTA。OTA 由启动配置或 MQTT 下行命令进入后台任务执行。
+当前不允许说：
 
-### 构建
-
-普通 PowerShell 推荐使用项目脚本：
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 build
-```
-
-常用验证命令：
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 build
-.\scripts\esp-idf.ps1 size
-.\scripts\esp-idf.ps1 size-components
-openspec validate --all --strict --json
-```
-
-烧录与串口：
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 -p COMx flash monitor
-```
-
-如果 PowerShell 或 VSCode 输出 `Not using an unsupported version of tool ninja found in PATH: 1.13.0`，说明系统 PATH 里有比 ESP-IDF 自带版本更靠前的 Ninja。优先使用 `.\scripts\esp-idf.ps1 build`，该脚本会把 ESP-IDF v5.3.2 自带 Python、Ninja 1.12.1 和 CMake 放到 PATH 前面。
-
-### 当前未完成项
-
-- BLE 广播、连接、`ffe2`/`ffe5`/`ffe8`/`ffea` 读写需要 ESP32-S3 实机证明。
-- WiFi join、MQTT 上线、MQTT 下行 `ota_start`、HTTPS OTA 成功/失败路径需要实机证明。
-- IRAM release gate 仍有风险，当前 `size` 报告 `16383 / 16384`，需继续压测或形成明确接受记录。
-- 产品级声浪算法尚未完成，缺少速度/加速度/负载分层模型、MATLAB 或等效仿真、听感样本和固件定点化验证。
-- USB CDC 与高级调参工具推迟到 S8/S9。
+- OEM match/reproduction；
+- calibrated；
+- human passed；
+- profile freeze；
+- vehicle pilot ready。
 
 ## English Overview
 
-`Tesla Simulate Vico` is an ESP32-S3 firmware project for in-car engine-sound simulation. It listens to Tesla CAN/OBD-II vehicle state in listen-only mode, generates a configurable engine-like sound over I2S, and exposes runtime configuration, diagnostics, and upgrade hooks through BLE, SD-card persistence, WiFi/IoT/OTA, and local peripherals.
+`Tesla Simulate Vico` is a vehicle-state-driven engine-sound product project with two existing tracks: an ESP32-S3 embedded product shell and the S12 acoustic-authoring/validation system.
 
-The current project is a buildable ESP-IDF baseline. S7 aligns the firmware with Jovi's earlier project architecture: BLE remains the configuration entry point, Network/Link owns WiFi, IoT/MQTT owns cloud interaction, OTA owns upgrade execution, and App keeps the 25 ms vehicle simulation loop focused.
+The final embedded target remains ESP32-S3 with listen-only CAN, I2S audio, BLE/SD/WiFi/IoT/OTA and safe mute/fallback behavior. The S12 sound model is currently a PC/Python engineering authority. After human acceptance, the plan is to freeze a versioned `AudioParameterPackage`, implement a portable C++ realtime core, prove Python/C++ behavior and realtime constraints on desktop/Android, and then integrate a resource-bounded runtime into the existing ESP32 firmware shell.
 
 ### Current Status
 
-| Area | Status | Notes |
-|---|---|---|
-| CAN listen-only | Implemented | TWAI listen-only, current parser baseline covers `0x256` / `0x116`, no transmit API |
-| I2S audio baseline | Implemented | RPM-based baseline synth, volume, overspeed mute |
-| BLE GATT | Implemented, hardware pending | Primary service `0xfff0`, compatibility service `0xffe0`, `ffe1..ffee` exposed |
-| SD JSON config | Implemented, hardware pending | Runtime config persistence with defaults for missing fields |
-| Peripherals | Integrated, hardware pending | Encoder, throttle potentiometer, WS2812 |
-| S7 Network/IoT/OTA | Code baseline complete, hardware pending | `status`, `network`, `iot`, and `ota` layers exist |
-| IRAM release gate | Still risky | ESP-IDF size currently reports `16383 / 16384`; board stress testing or feature-tier acceptance is required |
-| Sound model | Not product-complete | Current output is not yet a speed/acceleration/load layered sound model |
+- ESP32 product shell: implemented in code, board acceptance pending.
+- S12 acoustic stack: software-verified through the pre-human Hellcat closure stages.
+- Hellcat AA-C3: engineering candidate, not human accepted.
+- PR #5: merged on 2026-09-04; exact-head CI run `33703659821` succeeded before merge; current `main=82c7cb77...`.
+- R1 synchronized real-reference data: missing.
+- Portable C++ / Android realtime / advanced ESP32 sound runtime: not started.
+- Vehicle pilot: not started.
 
-### Build
+### Immediate Path
 
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 build
+```text
+Stage-AC post-merge closure
+→ Jovi V3 blind audition
+→ feedback binding
+→ accept AA-C3 or one bounded source-causal Round 2
+→ Engineering Profile
+→ AudioParameterPackage / Golden Evidence
+→ portable C++ / Android-desktop realtime proof
+→ ESP32 integration
+→ board and vehicle validation
 ```
-
-Common verification:
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 build
-.\scripts\esp-idf.ps1 size
-.\scripts\esp-idf.ps1 size-components
-openspec validate --all --strict --json
-```
-
-Flash and monitor:
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 -p COMx flash monitor
-```
-
-### Known Boundaries
-
-- BLE, WiFi, MQTT, and OTA still require on-device acceptance evidence.
-- IRAM remains a release-hardening risk until fresh board testing accepts it or the feature set is split.
-- The production sound model still needs capture/modeling, MATLAB or equivalent simulation, firmware parameterization, and bench listening validation.
-- USB CDC and advanced tuning tools are deferred to S8/S9.
 
 ### License
 

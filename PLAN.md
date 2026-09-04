@@ -1,156 +1,168 @@
 # Tesla Simulate Vico Engineering Plan
 
-> Status: S0-S6 delivered. S7 BLE / Network / IoT / OTA architecture migration is in progress: code layers exist, final build/size/OpenSpec gates and hardware acceptance are still open.
+> Status snapshot: 2026-09-04. The project now has two mature but not yet joined tracks: an ESP32-S3 product shell and an S12 acoustic-authoring/validation system. PR #5 has merged; the immediate gate is Stage-AC post-merge truth/smoke closure followed by Jovi's Hellcat V3 blind audition.
 
 ## Goal
 
-ESP32-S3 firmware for Tesla vehicle engine sound simulation:
+Build a productizable vehicle engine-sound system that:
 
-- OBD-II / CAN listen-only receive, with no firmware transmit API.
-- RPM-based I2S audio baseline that can later evolve into speed/acceleration/load-aware sound modeling.
-- BLE GATT service for runtime configuration, telemetry, diagnostics, and OTA/IoT settings.
-- SD JSON persistence for runtime configuration.
-- Local peripherals: rotary encoder, throttle potentiometer, WS2812 status LED.
-- S7 network architecture: WiFi link state, MQTT cloud interaction, request-driven HTTPS OTA, and unified runtime diagnostics.
+- listens to Tesla CAN/OBD in listen-only mode;
+- maps live vehicle state into a continuous virtual engine state;
+- generates vehicle-specific real-time sound with persistent event/source dynamics;
+- preserves a strict separation between physics authority, acoustic authoring, monitor playback, and product adapters;
+- exposes configuration/diagnostics through the existing ESP32 BLE/SD/WiFi/IoT/OTA shell;
+- reaches a safe external-speaker vehicle pilot without ever transmitting on the vehicle CAN bus.
 
-## Environment
+## Current architecture
 
-- ESP-IDF v5.3.2: `E:\project\ESP_IDF_support\v5.3.2\esp-idf`
-- Tools: `E:\project\ESP_IDF_support\tools`
-- Python env: `E:\project\ESP_IDF_support\tools\python_env\idf5.3_py3.14_env`
-- Target: esp32s3 / 16MB Flash / 8MB PSRAM
-- Repo: `https://github.com/Jovifei/Tesla_Simulate_vico`
+See:
 
-## Documentation Layout
+- `docs/01-architecture/01-project-system-architecture.md`
+- `docs/04-planning/02-project-master-roadmap.md`
+- `docs/08-reports/10-project-status-20260904.md`
 
-- Public docs live under `docs/` with ASCII paths: `NN-english-kebab`.
-- Active roadmap: `docs/04-planning/01-firmware-roadmap.md`.
-- Active backlog: `docs/09-backlog/01-firmware-backlog.md`.
-- Category guides are named `00-guide.md`.
-- Chinese descriptions belong in Markdown titles/body, not in path names.
+High level:
 
-## Execution Phases
-
-### S0 Repository + Verification
-
-- [x] Workspace baseline established
-- [x] ESP-IDF compile path verified
-- [x] Remote GitHub push path verified
-
-### S1 CAN Listen-Only Layer
-
-- [x] `components/can/CanFrames.*` parses current Tesla `0x256` / `0x116` baseline frames
-- [x] `components/can/TwaiCanSource.*` integrates TWAI listen-only receive
-- [x] No CAN transmit API exposed by the application layer
-
-### S2 Audio Engine
-
-- [x] I2S PCM output path
-- [x] Runtime volume scaling
-- [x] Overspeed mute
-- [x] Engine model and render loop baseline
-- [ ] Product sound model with speed/acceleration/load layers and MATLAB or equivalent tuning evidence
-
-### S3 BLE Configuration
-
-- [x] ESP-IDF NimBLE GATT server
-- [x] Primary service `0xfff0`
-- [x] Compatibility service `0xffe0`
-- [x] Characteristics `ffe1..ffee` exposed under the primary service
-- [x] `ffe8` retained as the configuration entry point
-- [ ] Hardware proof for advertising, reconnect, read/write, and notify flows
-
-### S4 Peripherals & Persistence
-
-- [x] SD card JSON config load/save
-- [x] Encoder, throttle potentiometer, WS2812 status LED code path
-- [ ] Hardware proof for SD/encoder/pot/LED/I2S behavior
-
-### S5 Firmware Integration & Loop
-
-- [x] Main tick loop set to 25 ms
-- [x] BLE vehicle snapshot publish from tick path
-- [x] LED heartbeat/state update separated from blocking work
-- [x] Build/size/spec gates introduced
-
-### S6 Verification Closure
-
-- [x] Build and OpenSpec snapshots captured
-- [x] IRAM risk documented and carried forward explicitly
-- [x] Hardware acceptance tracked as blocked instead of implied complete
-
-### S7 BLE / IoT / OTA Architecture Migration
-
-Locked decisions:
-
-- BLE UUID contract remains unchanged.
-- `ffe8` carries WiFi / OTA / IoT JSON configuration.
-- WiFi, MQTT, and OTA do not run as blocking operations inside the 25 ms App tick.
-- OTA is request-driven and runs in a background OTA worker task.
-- USB CDC and advanced tuning remain deferred to S8/S9.
-
-Implementation scope:
-
-- [x] `components/status`: `status::RuntimeStatus` model and diagnostics JSON helper
-- [x] `RuntimeConfig`: WiFi, OTA, IoT, MQTT, device ID, and product ID fields
-- [x] `SdConfigStore`: load/save new fields while accepting older config files with missing keys
-- [x] BLE `ffe8`: read/write WiFi / OTA / IoT JSON while preserving the UUID contract
-- [x] `components/network`: WiFi STA manager with EventGroup state bits and reconnect API
-- [x] `components/iot`: MQTT manager with uplink publishing and `ota_start` downlink parsing
-- [x] `components/ota`: request-driven HTTPS OTA worker with status/progress reporting
-- [x] `components/app`: App composes status/network/iot/ota and publishes unified BLE diagnostics
-- [ ] Verification gate: build / size / size-components / OpenSpec re-run after final fixes
-- [ ] Hardware gate: BLE, WiFi, MQTT, and OTA on-device acceptance
-- [ ] IRAM gate: reduce or explicitly accept the current IRAM headroom risk
-
-### S8 Sound Modeling
-
-- [ ] Define target sound scenes: idle, gentle acceleration, hard acceleration, cruise, deceleration, overspeed mute
-- [ ] Add acceleration/dynamics model design
-- [ ] Tune in MATLAB or equivalent simulation/probing workflow
-- [ ] Port bounded parameters to firmware
-- [ ] Verify bench listening and CPU/heap safety
-
-### S9 USB CDC / Advanced Tuning
-
-- [ ] Freeze command schema
-- [ ] Implement read-only status first
-- [ ] Add writable tuning parameters after S7 hardware acceptance
-
-### S10 Product Delivery
-
-- [ ] Release bin / bootloader / partition table package
-- [ ] Flash command and version/commit record
-- [ ] Hardware acceptance report
-- [ ] Known-risk list
-
-## Current Verification Gates To Run Before Commit
-
-```powershell
-cd E:\Tesla_speed\prj
-.\scripts\esp-idf.ps1 build
-.\scripts\esp-idf.ps1 size
-.\scripts\esp-idf.ps1 size-components
-openspec validate --all --strict --json
-git diff --check
+```text
+Vehicle CAN/OBD
+→ VehicleState
+→ S12 authoritative sound model
+→ Human / Reference qualification
+→ AudioParameterPackage
+→ Portable C++ realtime core
+→ Android/desktop realtime proof
+→ ESP32-S3 reduced adapter
+→ I2S/DAC/AMP/Speaker
 ```
 
-## Pin Map
+The existing ESP32 firmware shell is not discarded; it is the product-control/safety/runtime container into which the approved portable sound core will later be integrated.
 
-| Function | GPIO |
-|---|---|
-| POT_IO1 throttle | 1 |
-| I2S BCK / LCK / DIN | 6 / 7 / 12 |
-| CAN RX / TX / RS | 13 / 14 / 38 |
-| Encoder CLK / DT | 4 / 5 |
-| LED_PWR | 21 |
-| WS2812 DATA | 48 |
-| SD CS / CLK / MOSI / MISO | 45 / 39 / 40 / 41 |
+## Delivered work
 
-## Next Actions
+### S0–S7 firmware shell
 
-1. Finish S7 source/doc/OpenSpec synchronization.
-2. Run fresh build, size, size-components, OpenSpec, and whitespace gates.
-3. Commit and push the verified migration baseline.
-4. Move to hardware acceptance: BLE, WiFi, MQTT, OTA, SD, I2S, CAN.
-5. Start S8 sound modeling only after S7 risk and hardware gates are understood.
+Implemented in code:
+
+- TWAI CAN listen-only source + current frame parser baseline;
+- I2S PCM baseline, volume and overspeed mute;
+- NimBLE GATT (`0xfff0` primary, `0xffe0` compatibility);
+- SD JSON RuntimeConfig;
+- encoder / throttle potentiometer / WS2812;
+- `status` / `network` / `iot` / `ota` separation;
+- 25 ms `App::tick()` coordination;
+- ESP-IDF/OpenSpec build gates.
+
+Board verification remains incomplete.
+
+### S12 acoustic system
+
+Software architecture and evidence have advanced through:
+
+```text
+V → W → X → Y → Z → AA → AB / AB-R → AC
+```
+
+Delivered capabilities include:
+
+- persistent crank/event state and snapshot/restore;
+- per-cylinder/path/bank/collector processing;
+- forced induction, mechanical, cycle-sync and transient layers;
+- state-gated afterfire;
+- pressure/dP audio chain;
+- frozen Track-P PTR/Radiation boundary;
+- comparator/reference governance;
+- open-source method traceability and license boundaries;
+- candidate ablation/reachability;
+- Hellcat AA-C3 v3 blind-audition package;
+- provenance/causality hardening;
+- hermetic full remote CI and Track-P frozen guard.
+
+## Current remote truth snapshot
+
+Verified on 2026-09-04:
+
+```text
+main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
+PR #5 = MERGED at 2026-09-04T13:51:52Z
+PR #5 head = 021fe29480aadabd4d9ba4c20bbc111d1c386795
+CI run 33703659821 = SUCCESS on exact head
+full S12 = 1423 passed, 10 skipped, 232 subtests passed
+Track-P = PASS
+R1 = MISSING
+Human audition = WAITING_FOR_JOVI
+Profile Freeze = NOT_AUTHORIZED
+```
+
+This is a snapshot, not a hard-coded future truth. Every executing agent must re-fetch the remote state first.
+
+## Immediate execution phase
+
+### S12-AC Post-Merge Closeout
+
+PR #5 is already merged. Current `main=82c7cb77...`; `021fe294...` is its direct ancestor and was exactly qualified by successful run `33703659821`. A metadata-only Stage-AC state commit followed the merge, and no new full workflow run is recorded on current main.
+
+1. Verify current main ancestry and confirm the post-merge-only delta is governance/state metadata rather than renderer/PCM/Track-P math.
+2. Run the repository-defined focused post-merge smoke / Track-P frozen guard needed for AC8; do not rerun multi-hour suites without an input change unless the gate explicitly requires it.
+3. Update Stage-AC machine truth: AC6 PASS (exact-head CI), AC7 PASS (actual merge), AC8 PASS only after the post-merge smoke/receipt.
+4. Keep R1/Profile Freeze/OEM flags unchanged.
+5. Reach `WAITING_FOR_JOVI_AUDITION` without any acoustic tuning.
+
+### Human V3 Gate
+
+Package:
+
+`E:\Tesla_speed\review_packages\s12-stage-aa-hellcat-quality-v3`
+
+Manifest SHA-256:
+
+`b1ea99d36179229ff7d31f30f4790b6b84d8af587c14d44398e8e595f5f0964f`
+
+Before feedback:
+
+- no sound tuning;
+- no blind-answer reveal;
+- no Ferrari/RX-7 propagation;
+- no Profile Freeze claim.
+
+After feedback:
+
+- save raw feedback;
+- hash it;
+- reveal blind identity;
+- bind scene/stem/metric/hypothesis;
+- either accept AA-C3 or run ONE source-causal Round 2 with at most 3 distinct candidates.
+
+## Productization after Human PASS
+
+1. Freeze Hellcat Engineering Profile (not R1/OEM freeze).
+2. Migrate Ferrari 458 and RX-7 using the same method, not the same parameters.
+3. Define `AudioParameterPackage`.
+4. Produce Golden VehicleState traces and Golden PCM/metrics.
+5. Implement portable C++17 realtime core.
+6. Prove Python ↔ C++ streaming/snapshot equivalence.
+7. Run Android/desktop realtime CPU/memory/latency/underrun proof.
+8. Reduce/port the approved runtime to ESP32-S3.
+9. Integrate with current CAN/BLE/SD/WiFi/OTA firmware shell.
+10. Complete board and CAN listen-only hardware acceptance.
+11. Run controlled Tesla vehicle pilot.
+12. Perform R1 formal calibration only when legal synchronized data exists.
+
+## Hard boundaries
+
+- CAN product path: listen-only forever.
+- Track-P/FVM/PTR/Radiation: frozen unless explicit boundary review.
+- Whole-mix/master gain is not a valid source-causal Round-2 fix.
+- CI success is software evidence, not human realism acceptance.
+- Human acceptance is not OEM/R1 calibration.
+- Public media availability does not imply audio rights.
+- Do not copy third-party source/media whose license/rights are not explicitly compatible.
+- Do not put full CFD/teacher systems directly into mobile/ESP32 runtime.
+
+## Documentation truth
+
+- Overall architecture: `docs/01-architecture/01-project-system-architecture.md`
+- Master roadmap: `docs/04-planning/02-project-master-roadmap.md`
+- Current audit: `docs/08-reports/10-project-status-20260904.md`
+- Master backlog: `docs/09-backlog/02-project-master-backlog.md`
+- ESP32 firmware sub-roadmap: `docs/04-planning/01-firmware-roadmap.md`
+- ESP32 hardware backlog: `docs/09-backlog/01-firmware-backlog.md`
