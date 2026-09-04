@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from ..stage_x.reference_caseset import build_reference_caseset_from_registry
+from ..stage_y.package import _fitted_config
+from .aa_c3_search import AA_C3_SOURCE_CAUSAL_PARAMETERS, run_aa_c3_search
 from .closed_loop import ClosedLoopPolicy, run_closed_loop
 
 
@@ -24,7 +26,13 @@ def main(argv: list[str] | None = None) -> int:
     source.add_argument("--reference-registry", type=Path)
     parser.add_argument("--vehicle-id", default="hellcat_v1")
     parser.add_argument("--output-root", type=Path, required=True)
-    parser.add_argument("--architecture", default="P3")
+    parser.add_argument(
+        "--baseline",
+        choices=("aa-c3", "stage-x"),
+        default="aa-c3",
+        help="AA-C3 preserves the current candidate processing; stage-x runs the generic P3 search.",
+    )
+    parser.add_argument("--architecture", default="P3", help="used only with --baseline stage-x")
     parser.add_argument("--iterations", type=int, default=3)
     parser.add_argument("--coarse-count", type=int, default=48)
     parser.add_argument("--refine-count", type=int, default=24)
@@ -60,14 +68,31 @@ def main(argv: list[str] | None = None) -> int:
         target_objective=args.target_objective,
     )
     feedback = _load_json(args.human_feedback_json)
+
+    if args.baseline == "aa-c3":
+        search_fn = run_aa_c3_search
+        base_config = _fitted_config()
+        architecture = "AA-C3"
+        allowed_parameters = args.allow_parameter or list(AA_C3_SOURCE_CAUSAL_PARAMETERS)
+    else:
+        search_fn = None
+        base_config = None
+        architecture = args.architecture
+        allowed_parameters = args.allow_parameter
+
+    kwargs: dict[str, Any] = {}
+    if search_fn is not None:
+        kwargs["search_fn"] = search_fn
     summary = run_closed_loop(
         args.output_root,
         caseset,
         vehicle_id=args.vehicle_id,
-        architecture=args.architecture,
+        architecture=architecture,
         policy=policy,
-        allowed_parameter_names=args.allow_parameter,
+        allowed_parameter_names=allowed_parameters,
         human_feedback=feedback,
+        base_config=base_config,
+        **kwargs,
     )
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0
