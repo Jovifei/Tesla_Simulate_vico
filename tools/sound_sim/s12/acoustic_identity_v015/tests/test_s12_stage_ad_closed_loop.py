@@ -5,11 +5,16 @@ from pathlib import Path
 
 import numpy as np
 
+from tools.sound_sim.s12.acoustic_identity_v015.stage_aa.candidates import render_candidate
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ad.aa_c3_search import (
+    AA_C3_SOURCE_CAUSAL_PARAMETERS,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ad.closed_loop import (
     ClosedLoopPolicy,
     reference_audio_from_caseset,
     run_closed_loop,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_y.package import _fitted_config
 
 
 def _write_pcm16(path: Path, sample_rate: int = 48000, duration_s: float = 0.1) -> None:
@@ -58,20 +63,21 @@ def test_reference_audio_from_caseset(tmp_path: Path) -> None:
     assert reference_audio["hot_idle"]["audio"].ndim == 1
 
 
-def test_closed_loop_reaches_target_with_fake_search(tmp_path: Path) -> None:
+def test_closed_loop_uses_fixed_reference_distance_for_stop(tmp_path: Path) -> None:
     wav = tmp_path / "reference.wav"
     _write_pcm16(wav)
-    objectives = iter((0.05, 0.16))
+    distances = iter((0.40, 0.12))
 
     def fake_search(output_root: Path, reference_audio: dict, **kwargs: object) -> dict:
         del reference_audio
         output_root.mkdir(parents=True, exist_ok=True)
-        value = next(objectives)
+        distance = next(distances)
         parameter = kwargs["parameters_override"][0]  # type: ignore[index]
         return {
             "best": {
-                "objective": value,
-                "reference_objective": value,
+                "objective": -distance,
+                "absolute_reference_distance": distance,
+                "reference_objective": 0.01,
                 "parameter_consumed": True,
                 "overrides": {parameter.name: float(parameter.baseline)},
                 "scene_results": {},
@@ -82,8 +88,8 @@ def test_closed_loop_reaches_target_with_fake_search(tmp_path: Path) -> None:
         max_iterations=3,
         coarse_count=2,
         refine_count=0,
-        target_objective=0.15,
-        minimum_objective_gain=0.001,
+        target_reference_distance=0.15,
+        minimum_reference_distance_gain=0.001,
     )
     summary = run_closed_loop(
         tmp_path / "loop",
@@ -94,10 +100,25 @@ def test_closed_loop_reaches_target_with_fake_search(tmp_path: Path) -> None:
         search_fn=fake_search,
     )
     assert summary["iteration_count"] == 2
-    assert summary["stop_reason"] == "TARGET_OBJECTIVE_REACHED"
-    assert summary["final_objective"] == 0.16
+    assert summary["stop_reason"] == "TARGET_REFERENCE_DISTANCE_REACHED"
+    assert summary["final_absolute_reference_distance"] == 0.12
     assert summary["automatic_profile_promotion"] is False
     assert (tmp_path / "loop" / "closed_loop_summary.json").is_file()
+
+
+def test_aa_c3_config_injection_preserves_default_render() -> None:
+    default = render_candidate("AA-C3", "steady_1200", 0.20)
+    injected = render_candidate("AA-C3", "steady_1200", 0.20, config_override=_fitted_config())
+    assert np.array_equal(default.pre_ptr_pcm, injected.pre_ptr_pcm)
+    assert np.array_equal(default.raw_pcm, injected.raw_pcm)
+    assert np.array_equal(default.monitor_pcm, injected.monitor_pcm)
+
+
+def test_aa_c3_default_search_excludes_monitor_and_broad_mix_controls() -> None:
+    assert "monitor_attack" not in AA_C3_SOURCE_CAUSAL_PARAMETERS
+    assert "monitor_release" not in AA_C3_SOURCE_CAUSAL_PARAMETERS
+    assert "monitor_max_makeup" not in AA_C3_SOURCE_CAUSAL_PARAMETERS
+    assert "attack_mix_120_400" not in AA_C3_SOURCE_CAUSAL_PARAMETERS
 
 
 def test_policy_rejects_invalid_shrink() -> None:
