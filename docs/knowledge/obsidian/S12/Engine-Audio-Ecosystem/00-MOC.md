@@ -1,6 +1,27 @@
 # S12 Engine-Audio Ecosystem — MOC
 
-Project: `[[../..]]` / Tesla-Speed S12 Stage W.
+## 当前首先阅读
+
+- [[Project-Long-Term-Memory]] — **当前项目长期记忆真值**：最终目标、历史阶段、当前 blocker、App-first 产品路线、负面知识、执行顺序。
+- [[Research-Sources-And-Adoption-History]] — 参考论文、开源项目、商业工作流、许可证和方法吸收历史。
+
+证据权重：`S12_Handoff_Package_2026-09-03` 约 90%，旧聊天/此前总结约 10%；会变化的远端状态以现场 GitHub 为准。
+
+当前产品方向：
+
+```text
+S12 声音真实性
+→ Jovi Human Gate
+→ Hellcat/Ferrari/RX-7 Engineering Profiles
+→ speed + acceleration → VirtualEngineState
+→ portable C++
+→ Android App realtime sound
+→ in-car validation
+```
+
+ESP32 当前状态：`DEFERRED_FUTURE_OPTION`，不是当前 blocker。
+
+## 历史知识节点
 
 - [[01-Stage-V-Independent-Audit]]
 - [[02-Architecture-Comparison]]
@@ -17,26 +38,8 @@ Project: `[[../..]]` / Tesla-Speed S12 Stage W.
 - [[Open-Source-VehicleNoiseSynthesizer]]
 - [[Open-Source-FiveM-License-Boundary]]
 - [[Open-Source-Granular-ESP32-Boundaries]]
-- Repository research: `docs/research/engine-audio-ecosystem/README.md`
-
-Current state: W0 audit complete; W1/W2 persistent state and event torque,
-W3 frozen PTR bridge, W4 waveguide, W5 localized afterfire, W6 true 20 s/60 s
-bake-off and W9 diagnostic closure are implemented. W9 bake-off and
-Ferrari/RX-7 migration are preselection evidence only because synchronized
-rights-bound Reference evidence is missing. Per-source evidence is joined in
-`docs/research/engine-audio-ecosystem/source_evidence_receipts.json`. Keep all
-outputs synthetic, uncalibrated, vehicle-inspired, not OEM reproduction,
-NOT_R1_QUALIFIED and NOT_PROFILE_FREEZE_READY.
-
-v27 closure (2026-08-29): the rejected in-place v26 resume path was replaced
-by the v27 external staged architecture (stage renderer → verification →
-atomic final-root publication). Authoritative synthetic evidence roots are
-`bakeoff_final_remediation_v27`, `migration_final_remediation_rx7_v27` and
-`migration_final_remediation_ferrari_v27`; all eight Task 6Z verification
-gates rerun green after the Task 6AA configuration-only Track-P whitespace
-repair. Selection remains `null` and the status remains
-`NO_ARCHITECTURE_CANDIDATE_PASSED / NOT_R1_QUALIFIED`.
-
+- [[Open-Source-Ignis]]
+- [[Open-Source-Markeasting-Engine-Audio]]
 - [[07-Stage-X-Remote-Reconciliation]]
 - [[08-Engineering-Selection-Contract]]
 - [[09-Hellcat-R2-Engineering-Selection]]
@@ -44,14 +47,33 @@ repair. Selection remains `null` and the status remains
 - [[11-R1-Formal-Gate-Readiness]]
 - [[12-Stage-X-Final-Status]]
 - [[13-Workspace-Cleanup-20260830]]
+- [[15-Stage-Y-Status]]
+- [[16-Stage-Z-Status]]
+- [[17-Stage-AA-Status]]
+- [[AA-C3-Gain-Provenance]]
+- [[Broad-Pre-PTR-vs-Source-Causal-Gain]]
+- [[Hellcat-Human-V3-Feedback]]
 
-<!-- S12-STAGE-Y:AUTO:BEGIN -->
-## Stage Y current software boundary (2026-08-31)
+Repository research registry：
 
-- [[15-Stage-Y-Status]] and repository [[../../../../08-reports/07-s12-stage-y-final-closure|final closure report]] — canonical fitted-map Y1 is `PASS` (16/16) and current full S12 is `1370 passed, 2 skipped`; R1/human/Profile Freeze remain pending.
-- [[16-Stage-Z-Status]] and repository [[../../../../08-reports/08-s12-stage-z-open-source-absorption|Stage Z absorption proof]] — 25 sources / 30 method rows, 12/12 executable A/B contributions, v2 package published; Parent→Final acoustic quality remains `PARTIAL / UNPROVEN` pending Jovi audition/R1.
-- [[17-Stage-AA-Status]] and repository [[../../../../08-reports/09-s12-stage-aa-acoustic-quality-closure|Stage AA Hellcat acoustic quality closure]] — energy root cause identified, AA-C0…AA-C3 bounded candidates complete, v3 package valid; waiting for Jovi audition.
-- [[Open-Source-Ignis]] and [[Open-Source-Markeasting-Engine-Audio]] — intake-pinned method references only; no source or media is copied into S12.
-- Registry: `docs/research/engine-audio-ecosystem/source_registry.json` plus `source_coverage_matrix.json` (25 pinned sources; external checkouts are read-only sparse research inputs).
-- Current scope remains `synthetic; uncalibrated; vehicle-inspired; not OEM reproduction`; full S12 software evidence is current, while human audition, rights-bound R1 and Profile Freeze remain pending.
-<!-- S12-STAGE-Y:AUTO:END -->
+`docs/research/engine-audio-ecosystem/`
+
+关键 runtime evidence：
+
+```text
+tasks/reports/runtime/s12-stage-aa/
+tasks/reports/runtime/s12-stage-ab/
+tasks/reports/runtime/s12-stage-ac/
+```
+
+当前长期边界：
+
+```text
+R1 = MISSING
+HUMAN_PASS = false
+OEM_CALIBRATION = NOT_AUTHORIZED
+PROFILE_FREEZE = NOT_AUTHORIZED
+ESP32 = DEFERRED_FUTURE_OPTION
+```
+
+如果历史节点与 `Project-Long-Term-Memory.md` 的当前产品方向冲突，以长期记忆文档 + 当前用户明确决策为准。
