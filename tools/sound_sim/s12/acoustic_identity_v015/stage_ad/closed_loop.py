@@ -1,8 +1,5 @@
 """Stage AD reference-driven closed-loop calibration orchestration.
 
-This module composes the existing Stage-X/Y reference comparator and rendered
-candidate search into an explicit iterative controller:
-
 reference -> render -> compare -> update parameter center/domain -> render...
 
 The controller is engineering-only. It never promotes a profile, never turns
@@ -26,8 +23,8 @@ from ..stage_x.candidate_search import SOFT_IMPROVEMENT_TARGET, run_engineering_
 from ..stage_x.reference_caseset import load_case_segment_audio
 from ..stage_x.search_parameters import apply_parameters, hellcat_search_parameters
 
-CLOSED_LOOP_SCHEMA = "s12.stage_ad.closed_loop.v1"
-ITERATION_SCHEMA = "s12.stage_ad.closed_loop_iteration.v1"
+CLOSED_LOOP_SCHEMA = "s12.stage_ad.closed_loop.v2"
+ITERATION_SCHEMA = "s12.stage_ad.closed_loop_iteration.v2"
 
 
 @dataclass(frozen=True)
@@ -38,9 +35,10 @@ class ClosedLoopPolicy:
     seed: int = 20260904
     domain_shrink: float = 0.55
     minimum_delta_fraction: float = 0.20
-    minimum_objective_gain: float = 0.01
+    minimum_reference_distance_gain: float = 0.005
     plateau_patience: int = 1
-    target_objective: float = SOFT_IMPROVEMENT_TARGET
+    target_reference_distance: float | None = None
+    generic_iteration_target: float = SOFT_IMPROVEMENT_TARGET
 
     def validate(self) -> None:
         if self.max_iterations <= 0:
@@ -53,10 +51,12 @@ class ClosedLoopPolicy:
             raise ValueError("domain_shrink must be in (0, 1]")
         if not 0.0 < self.minimum_delta_fraction <= 1.0:
             raise ValueError("minimum_delta_fraction must be in (0, 1]")
-        if self.minimum_objective_gain < 0.0:
-            raise ValueError("minimum_objective_gain must be non-negative")
+        if self.minimum_reference_distance_gain < 0.0:
+            raise ValueError("minimum_reference_distance_gain must be non-negative")
         if self.plateau_patience < 0:
             raise ValueError("plateau_patience must be non-negative")
+        if self.target_reference_distance is not None and self.target_reference_distance < 0.0:
+            raise ValueError("target_reference_distance must be non-negative")
 
 
 def _canonical_sha(value: Any) -> str:
@@ -76,12 +76,7 @@ def _evidence_rank(level: str) -> int:
 
 
 def reference_audio_from_caseset(caseset: dict[str, Any]) -> tuple[dict[str, Any], int]:
-    """Convert a governed ReferenceCaseSet into candidate-search inputs.
-
-    When multiple bound cases exist for one scenario, use the strongest evidence
-    level, then deterministic reference-id ordering. Independent recording count
-    remains separate so several windows from one recording do not inflate evidence.
-    """
+    """Convert a governed ReferenceCaseSet into candidate-search inputs."""
     cases = [dict(case) for case in caseset.get("cases", []) if case.get("status") == "BOUND"]
     if not cases:
         raise ValueError("closed loop requires at least one BOUND reference case")
@@ -96,9 +91,8 @@ def reference_audio_from_caseset(caseset: dict[str, Any]) -> tuple[dict[str, Any
         ),
     ):
         scenario = str(case.get("scenario") or "")
-        if not scenario or scenario in selected:
-            continue
-        selected[scenario] = case
+        if scenario and scenario not in selected:
+            selected[scenario] = case
 
     reference_audio: dict[str, Any] = {}
     for scenario, case in sorted(selected.items()):
@@ -157,17 +151,20 @@ def _shrink_parameters(
 def _audition_manifest(iteration_root: Path, best: dict[str, Any]) -> dict[str, Any]:
     scenes = []
     for scene, result in sorted((best.get("scene_results") or {}).items()):
+        output_scene = str(result.get("aa_scene") or scene)
         scenes.append({
             "scene": scene,
-            "bound_scenario": result.get("bound_scenario"),
-            "monitor_wav": f"best_candidate/{scene}/monitor.wav",
-            "post_ptr_wav": f"best_candidate/{scene}/post_ptr_raw.wav",
-            "raw_source_wav": f"best_candidate/{scene}/raw_source.wav",
+            "output_scene": output_scene,
+            "bound_scenario": result.get("bound_scenario") or scene,
+            "monitor_wav": f"best_candidate/{output_scene}/monitor.wav",
+            "post_ptr_wav": f"best_candidate/{output_scene}/post_ptr_raw.wav",
+            "raw_source_wav": f"best_candidate/{output_scene}/raw_source.wav",
         })
     payload = {
-        "schema": "s12.stage_ad.audition_manifest.v1",
+        "schema": "s12.stage_ad.audition_manifest.v2",
         "iteration_root": str(iteration_root),
         "objective": best.get("objective"),
+        "absolute_reference_distance": best.get("absolute_reference_distance"),
         "reference_objective": best.get("reference_objective"),
         "overrides": best.get("overrides"),
         "scenes": scenes,
@@ -189,7 +186,13 @@ def run_closed_loop(
     base_config: dict[str, Any] | None = None,
     search_fn: Callable[..., dict[str, Any]] = run_engineering_search,
 ) -> dict[str, Any]:
-    """Run an explicit multi-iteration reference-driven engineering loop."""
+    """Run an explicit multi-iteration reference-driven engineering loop.
+
+    If the search provides ``absolute_reference_distance`` (AA-C3 Stage AD),
+    convergence/plateau decisions use that fixed ruler. Generic Stage-X search
+    remains supported, but changing-parent objectives are not compared across
+    iterations for plateau detection.
+    """
     policy = policy or ClosedLoopPolicy()
     policy.validate()
     output_root = Path(output_root)
@@ -201,7 +204,7 @@ def run_closed_loop(
     current_config = copy.deepcopy(base_config if base_config is not None else load_config(vehicle_id))
 
     iterations: list[dict[str, Any]] = []
-    previous_objective: float | None = None
+    previous_distance: float | None = None
     plateau_count = 0
     stop_reason = "MAX_ITERATIONS"
     final_best: dict[str, Any] | None = None
@@ -233,44 +236,66 @@ def run_closed_loop(
             break
 
         objective = float(objective)
-        best_overrides = {name: float(value) for name, value in dict(best.get("overrides") or {}).items()}
-        gain = None if previous_objective is None else objective - previous_objective
+        distance_value = best.get("absolute_reference_distance")
+        absolute_distance = (
+            float(distance_value)
+            if distance_value is not None and np.isfinite(float(distance_value))
+            else None
+        )
+        distance_gain = (
+            previous_distance - absolute_distance
+            if previous_distance is not None and absolute_distance is not None
+            else None
+        )
+        best_overrides = {
+            name: float(value) for name, value in dict(best.get("overrides") or {}).items()
+        }
         audition = _audition_manifest(iteration_root, best)
         iteration_receipt = {
             "schema": ITERATION_SCHEMA,
             "iteration": index,
             "objective": objective,
+            "absolute_reference_distance": absolute_distance,
+            "reference_distance_gain_from_previous": distance_gain,
             "reference_objective": best.get("reference_objective"),
-            "objective_gain_from_previous": gain,
             "best_overrides": best_overrides,
             "parameter_count": len(parameters),
             "parameter_centers": {item.name: float(item.baseline) for item in parameters},
             "parameter_deltas": {item.name: float(item.delta) for item in parameters},
             "input_config_sha256": _canonical_sha(current_config),
-            "audition_manifest": str((iteration_root / "audition_manifest.json").relative_to(output_root)),
+            "audition_manifest": str(
+                (iteration_root / "audition_manifest.json").relative_to(output_root)
+            ),
             "audition_scene_count": len(audition["scenes"]),
         }
         iterations.append(iteration_receipt)
         write_json(iteration_root / "closed_loop_iteration.json", iteration_receipt)
         final_best = best
-
-        if objective >= float(policy.target_objective):
-            stop_reason = "TARGET_OBJECTIVE_REACHED"
-            current_config = apply_parameters(current_config, best_overrides, parameters)
-            break
-
-        if gain is not None and gain < float(policy.minimum_objective_gain):
-            plateau_count += 1
-        else:
-            plateau_count = 0
-        if gain is not None and plateau_count > int(policy.plateau_patience):
-            stop_reason = "OBJECTIVE_PLATEAU"
-            current_config = apply_parameters(current_config, best_overrides, parameters)
-            break
-
         current_config = apply_parameters(current_config, best_overrides, parameters)
+
+        if (
+            absolute_distance is not None
+            and policy.target_reference_distance is not None
+            and absolute_distance <= float(policy.target_reference_distance)
+        ):
+            stop_reason = "TARGET_REFERENCE_DISTANCE_REACHED"
+            break
+
+        if distance_gain is not None:
+            if distance_gain < float(policy.minimum_reference_distance_gain):
+                plateau_count += 1
+            else:
+                plateau_count = 0
+            if plateau_count > int(policy.plateau_patience):
+                stop_reason = "REFERENCE_DISTANCE_PLATEAU"
+                break
+        elif absolute_distance is None and objective >= float(policy.generic_iteration_target):
+            stop_reason = "GENERIC_ITERATION_TARGET_REACHED"
+            break
+
         parameters = _shrink_parameters(parameters, best_overrides, original_deltas, policy)
-        previous_objective = objective
+        if absolute_distance is not None:
+            previous_distance = absolute_distance
 
     summary = {
         "schema": CLOSED_LOOP_SCHEMA,
@@ -284,6 +309,9 @@ def run_closed_loop(
         "iterations": iterations,
         "stop_reason": stop_reason,
         "final_objective": final_best.get("objective") if final_best else None,
+        "final_absolute_reference_distance": (
+            final_best.get("absolute_reference_distance") if final_best else None
+        ),
         "final_reference_objective": final_best.get("reference_objective") if final_best else None,
         "final_overrides": final_best.get("overrides") if final_best else None,
         "final_config_sha256": _canonical_sha(current_config),
