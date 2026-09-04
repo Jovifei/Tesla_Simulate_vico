@@ -1,0 +1,36 @@
+{
+  "schema": "s12.stage_ad.simulink_contract.v1",
+  "model_role": "optional diagnostic/teaching mirror of the Python authoritative sound chain",
+  "authority": "Python S12 remains authoritative until Simulink passes compile/simulation/equivalence gates",
+  "sample_rate_hz": 48000,
+  "frame_period_s": 0.02,
+  "samples_per_frame": 960,
+  "signals": {
+    "configuration": {"width": 19, "orientation": "column"},
+    "engine_excitation": {"shape": [960, 1], "dtype": "double"},
+    "pressure": {"shape": [960, 1], "dtype": "double"},
+    "pcm": {"shape": [960, 2], "dtype": "double"}
+  },
+  "required_top_level_flow": [
+    "Dashboard.Configuration",
+    "Vehicle State.Vehicle State Out",
+    "Engine Excitation.Excitation",
+    "PTR Radiation Tuning Adapter.Pressure",
+    "Audio Renderer.PCM",
+    "PCM To Workspace"
+  ],
+  "forbidden": [
+    "default In1/Out1 bypass lines",
+    "inherited variable-size packed configuration",
+    "Audio Device Writer connected to bypass output",
+    "saving a candidate SLX before update/compile/simulation validation",
+    "promoting Simulink PCM without Python equivalence receipt"
+  ],
+  "closed_loop_exchange": {
+    "request_variable": "S12ClosedLoopRequest",
+    "result_variable": "S12ClosedLoopResult",
+    "parameter_overrides_field": "parameter_overrides",
+    "scene_field": "scene",
+    "iteration_field": "iteration"
+  }
+}
