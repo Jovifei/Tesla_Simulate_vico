@@ -1,12 +1,12 @@
-# Tesla Simulate Vico ESP32 固件子路线图（Deferred）
+# Tesla Simulate Vico ESP32 固件子路线图（Deferred / Historical）
 
 更新：2026-09-04
 
 > **状态：DEFERRED_FUTURE_OPTION**
 >
-> 当前项目主线不是 ESP32。当前主线是 S12 声音真实性 → Human Gate → Android App 实时声浪。本文仅保留已有 ESP32 工程资产和未来可能的嵌入式简化路线，不得作为当前 blocker 或优先级来源。
+> 当前项目主线不是 ESP32。当前主线是 S12 声音真实性 → Human Gate → Android App 实时声浪。本文仅保留已有 ESP32 工程资产和未来可能的嵌入式简化路线，不得作为当前 blocker、优先级来源或“当前最终产品”描述。
 
-## 已有资产
+## 历史已有资产
 
 仓库已经存在：
 
@@ -42,7 +42,7 @@
 4. CPU/memory/latency/quality 已有真实数据；
 5. 确实存在独立硬件运行的产品需求。
 
-届时可评估：
+届时才可评估：
 
 ```text
 Approved App/C++ runtime
@@ -59,6 +59,7 @@ Approved App/C++ runtime
 - `03-current-app-product-direction.md`
 - `02-project-master-roadmap.md`
 - `../08-reports/10-project-status-20260904.md`
+- `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
 - `../09-backlog/02-project-master-backlog.md`
 
-如果本文与这些 active 文档冲突，以 App-first active 文档为准。
+如果历史固件文档与这些 active 文档冲突，以 App-first active 文档为准。
