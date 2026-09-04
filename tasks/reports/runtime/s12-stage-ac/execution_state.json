@@ -1,8 +1,23 @@
 {
   "schema": "s12.stage_ac.continuous_execution.v1",
-  "stage": "Stage-AC (Remote CI Closure / Pre-Human Measurability / Product Baseline Gate)",
+  "stage": "Stage-AC (Remote CI Closure / Pre-Human Measurability / App-First Product Baseline Gate)",
   "base_main_head": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
   "current_branch": "main",
+  "product_direction": {
+    "current_product_runtime": "ANDROID_APP",
+    "current_product_strategy": "APP_FIRST",
+    "minimum_live_inputs": ["speed", "acceleration"],
+    "derived_runtime_state": ["virtual_rpm", "virtual_load", "virtual_gear", "shift", "lift", "overrun", "transient_state"],
+    "can_obd_role": "FUTURE_RICHER_INPUT_ADAPTER_NOT_CURRENT_PREREQUISITE",
+    "esp32_status": "DEFERRED_FUTURE_OPTION",
+    "esp32_blocks_current_stage": false,
+    "memory_evidence_policy": {
+      "handoff_package_weight": 0.9,
+      "old_chat_summary_weight": 0.1,
+      "dynamic_remote_truth_rule": "CURRENT_GITHUB_REMOTE_OVERRIDES_HISTORICAL_SNAPSHOT",
+      "current_user_decision_rule": "CURRENT_EXPLICIT_USER_DIRECTION_OVERRIDES_HISTORICAL_PLAN"
+    }
+  },
   "current_remote_truth": {
     "main": "82c7cb77d26f446251e63d1a6899b08bf08be65b",
     "verified_via": "GitHub remote/API truth (2026-09-04)",
@@ -48,6 +63,7 @@
     "R1": "MISSING",
     "HUMAN_AUDITION": "WAITING_AFTER_AC8",
     "PROFILE_FREEZE": "NOT_AUTHORIZED",
-    "OEM_CALIBRATION": "NOT_AUTHORIZED"
+    "OEM_CALIBRATION": "NOT_AUTHORIZED",
+    "ESP32": "DEFERRED_FUTURE_OPTION"
   }
 }
