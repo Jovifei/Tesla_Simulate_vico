@@ -2,18 +2,23 @@
   "schema": "s12.stage_ac.continuous_execution.v1",
   "stage": "Stage-AC (Remote CI Closure / Pre-Human Measurability / Product Baseline Gate)",
   "base_main_head": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
-  "current_branch": "s12-stage-ac-ci-prehuman-closure",
-  "worktree": "E:/Tesla_speed/worktrees/s12-stage-ac-ci-prehuman-closure",
-  "branch_name_note": "flat branch name (no slash) used because slash-prefixed branch refs are unstable in this sandbox",
+  "current_branch": "main",
   "current_remote_truth": {
-    "main": "f7ba35b7e3dff8da3e8860532f7592bb7c4e8fff",
-    "verified_via": "git ls-remote origin refs/heads/main (2026-09-03)",
+    "main": "82c7cb77d26f446251e63d1a6899b08bf08be65b",
+    "verified_via": "GitHub remote/API truth (2026-09-04)",
     "pr5_head_branch": "s12-stage-ab-prehuman-validation-hardening",
     "pr5_head": "021fe29480aadabd4d9ba4c20bbc111d1c386795",
     "pr5": "https://github.com/Jovifei/Tesla_Simulate_vico/pull/5",
+    "pr5_state": "MERGED",
+    "pr5_merged_at": "2026-09-04T13:51:52Z",
     "ac_remote_qualification_run": "33703659821",
-    "ac_remote_qualification_status": "in_progress",
-    "latest_known_failed_run": "33635680420"
+    "ac_remote_qualification_head": "021fe29480aadabd4d9ba4c20bbc111d1c386795",
+    "ac_remote_qualification_status": "SUCCESS",
+    "ac_remote_full_s12": "1423 passed / 10 skipped / 232 subtests passed / 1 warning",
+    "ac_remote_track_p_guard": "PASS",
+    "ac_remote_artifact_id": "9875918055",
+    "ac_remote_artifact_sha256": "6d9892d60c6f9552aea790f91d9679a1739b77b4aa4fb0a01c5dc729560ea5ae",
+    "post_merge_main_note": "current main adds only Stage-AC state-record metadata after the qualified PR head; no new full workflow run was found on main at 2026-09-04 audit time"
   },
   "phase_order": [
     "AC0_REMOTE_TRUTH",
@@ -27,20 +32,21 @@
     "AC8_POST_MERGE_PREHUMAN_GATE"
   ],
   "phases": {
-    "AC0_REMOTE_TRUTH": {"status": "PASS", "note": "remote truth pulled; AC worktree created from PR #5 head ea5cc9f"},
-    "AC1_FULL_REGRESSION_ROOT_CAUSE": {"status": "PASS", "note": "real run 33635680420: 4 failures / 0 errors / 10 skips (NOT 97 errors). All 4 = portability/stale-guard, no PCM change"},
-    "AC2_CROSS_PLATFORM_HERMETICITY": {"status": "PASS", "note": "2 review-package tests made hermetic via S12_REVIEW_PACKAGE_ROOT env; Stage-P tests already env-gated"},
-    "AC3_TRACK_P_GUARD_REPAIR": {"status": "PASS", "note": "scoped git diff --check to frozen-only; manifest/symbol checks enforce real frozen boundary"},
-    "AC4_FIXTURE_ISOLATION": {"status": "PASS", "note": "CI run 33635680420 proved full_s12 in one process = 0 errors (no systemic order/shared-fixture error). Local full run hung at 64% (env-specific slow test) but progressed to 64% with 0 failures. Found+removed one stray test artifact (_stage_h_probe.json) but it causes no CI failure."},
-    "AC5_DYNAMIC_MEASURABILITY": {"status": "PASS", "note": "isolated_event_timing_contract.json + afterfire_metric_validation_v2.json receipts generated; 7 tests pass; no product scene/PCM change"},
-    "AC6_FINAL_REMOTE_QUALIFICATION": {"status": "IN_PROGRESS", "note": "all locally-fixable gates addressed: AC2 hermetic, AC3 Track-P guard, CRLF normalization (repo-check diff-clean), workflow base==merge_base->ancestor. repository_checks block verified PASS locally. full_s12 needs real remote CI confirmation."},
-    "AC7_PR5_MERGE": {"status": "PENDING"},
-    "AC8_POST_MERGE_PREHUMAN_GATE": {"status": "PENDING"}
+    "AC0_REMOTE_TRUTH": {"status": "PASS", "note": "remote truth reconciled through current main 82c7cb77 on 2026-09-04"},
+    "AC1_FULL_REGRESSION_ROOT_CAUSE": {"status": "PASS", "note": "historical run 33635680420 failures were portability/stale-guard issues, not PCM regressions"},
+    "AC2_CROSS_PLATFORM_HERMETICITY": {"status": "PASS", "note": "review package paths and Stage-P fixtures are hermetic/env-gated"},
+    "AC3_TRACK_P_GUARD_REPAIR": {"status": "PASS", "note": "frozen boundary enforced by manifest/symbol checks and scoped diff semantics"},
+    "AC4_FIXTURE_ISOLATION": {"status": "PASS", "note": "exact-head full S12 remote run completed without systemic shared-fixture/order errors"},
+    "AC5_DYNAMIC_MEASURABILITY": {"status": "PASS", "note": "isolated-event timing and afterfire metric validation receipts exist; no product PCM change"},
+    "AC6_FINAL_REMOTE_QUALIFICATION": {"status": "PASS", "note": "GitHub Actions run 33703659821 succeeded on exact PR head 021fe294; full S12 1423 passed / 10 skipped / 232 subtests, Track-P and repository checks PASS"},
+    "AC7_PR5_MERGE": {"status": "PASS", "note": "PR #5 merged 2026-09-04T13:51:52Z; qualified head 021fe294 is direct ancestor of current main"},
+    "AC8_POST_MERGE_PREHUMAN_GATE": {"status": "PENDING", "note": "current main has one later Stage-AC state-record metadata commit and no new main workflow run; perform minimal sufficient post-merge smoke/Track-P guard and write exact receipt before declaring WAITING_FOR_JOVI_AUDITION"}
   },
-  "overall_status": "REMOTE_CI_CLOSURE_IN_PROGRESS",
-  "overall_status_note": "PR #5 must reach real remote green before this becomes WAITING_FOR_JOVI_AUDITION",
+  "overall_status": "POST_MERGE_PREHUMAN_GATE_PENDING",
+  "overall_status_note": "software qualification and merge are closed; only post-merge truth/smoke receipt remains before the human audition gate. No acoustic tuning is authorized before Jovi feedback.",
   "standing_flags": {
     "R1": "MISSING",
+    "HUMAN_AUDITION": "WAITING_AFTER_AC8",
     "PROFILE_FREEZE": "NOT_AUTHORIZED",
     "OEM_CALIBRATION": "NOT_AUTHORIZED"
   }
