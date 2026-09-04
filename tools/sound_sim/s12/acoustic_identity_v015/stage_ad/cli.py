@@ -9,7 +9,11 @@ from typing import Any
 
 from ..stage_x.reference_caseset import build_reference_caseset_from_registry
 from ..stage_y.package import _fitted_config
-from .aa_c3_search import AA_C3_SOURCE_CAUSAL_PARAMETERS, run_aa_c3_search
+from .aa_c3_search import (
+    AA_C3_PARAMETER_FAMILIES,
+    AA_C3_SOURCE_CAUSAL_PARAMETERS,
+    run_aa_c3_search,
+)
 from .closed_loop import ClosedLoopPolicy, run_closed_loop
 
 
@@ -33,9 +37,15 @@ def main(argv: list[str] | None = None) -> int:
         help="AA-C3 preserves the current candidate processing; stage-x runs the generic P3 search.",
     )
     parser.add_argument(
+        "--family",
+        choices=("body", "blower", "afterfire", "all"),
+        default="all",
+        help="interpretable AA-C3 source-causal parameter family; overridden by --allow-parameter",
+    )
+    parser.add_argument(
         "--base-config-json",
         type=Path,
-        help="start this loop from a prior Stage-AD final_config.json (useful for body→blower→afterfire staging)",
+        help="start from a prior Stage-AD final_config.json (body→blower→afterfire staging)",
     )
     parser.add_argument("--architecture", default="P3", help="used only with --baseline stage-x")
     parser.add_argument("--iterations", type=int, default=3)
@@ -91,7 +101,12 @@ def main(argv: list[str] | None = None) -> int:
         search_fn = run_aa_c3_search
         base_config = supplied_base_config or _fitted_config()
         architecture = "AA-C3"
-        allowed_parameters = args.allow_parameter or list(AA_C3_SOURCE_CAUSAL_PARAMETERS)
+        if args.allow_parameter:
+            allowed_parameters = args.allow_parameter
+        elif args.family == "all":
+            allowed_parameters = list(AA_C3_SOURCE_CAUSAL_PARAMETERS)
+        else:
+            allowed_parameters = list(AA_C3_PARAMETER_FAMILIES[args.family])
     else:
         search_fn = None
         base_config = supplied_base_config
