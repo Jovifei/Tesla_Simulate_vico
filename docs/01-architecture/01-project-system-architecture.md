@@ -1,210 +1,207 @@
-# Tesla Simulate Vico / S12 统一系统架构
+# Tesla Simulate Vico / S12 当前系统架构
 
 日期：2026-09-04
 
-> 本文是当前项目的高层架构真值。它把“已经存在的 ESP32-S3 固件产品壳”和“S12 声学研发主线”放到同一张架构图中，避免继续把两者当成互不相关的项目。
+> 当前产品架构以**车内 App 实时声浪**为主线。ESP32 不是当前产品载体，不参与当前 gate；仓库中的 ESP32 固件仅作为历史资产和后期可选 simplified runtime 保留。
 
-## 1. 产品北极星
+## 1. 当前产品北极星
 
-最终目标是一套**车辆状态驱动、CAN 只监听、低延迟、车型可辨识、经人工验证的实时发动机声浪系统**。
+当前目标：
 
-最终车端产品形态仍以现有 ESP32-S3 固件为嵌入式目标；在高级 S12 声音模型冻结后，优先通过跨语言参数包与 C++/Android 实时运行验证完成模型降风险，再把满足资源约束的实时子集移植回 ESP32-S3。
+**App 放在车内，获得车辆速度与加速度，App 自己计算虚拟发动机状态，用户选择车型，App 实时生成并播放该车型声浪。**
 
 ```text
-Tesla / Vehicle CAN-OBD
-        │
-        │ listen-only
-        ▼
-VehicleState abstraction
-(speed / acceleration / throttle / load / gear / shift / lift / online)
-        │
-        ├──────────────────────────────┐
-        │                              │
-        ▼                              ▼
-Existing ESP32 product shell       S12 sound-authoring authority
-CAN/BLE/SD/WiFi/OTA/I2S            Persistent Event-Domain Engine
-safety / mute / status             source layers / transients / comparator
-        │                              │
-        │                              ▼
-        │                         Human / Reference gate
-        │                              │
-        └──────────────┬───────────────┘
-                       ▼
-               AudioParameterPackage
-                       │
-                       ▼
-             Portable C++ realtime core
-                       │
-             ┌─────────┴─────────┐
-             ▼                   ▼
-        Android/PC proof     ESP32-S3 adapter
-        realtime/equivalence resource-reduced runtime
-             │                   │
-             └─────────┬─────────┘
-                       ▼
-                I2S → DAC/AMP/Speaker
-                       ▼
-                 controlled vehicle pilot
+            App Input Layer
+        speed + acceleration
+                │
+                ▼
+        VehicleState Normalizer
+                │
+                ▼
+       VirtualEngineState Mapper
+        ├─ virtual RPM
+        ├─ load/throttle proxy
+        ├─ virtual gear / shift
+        ├─ tip-in / lift / overrun
+        └─ transient state
+                │
+                ▼
+        Vehicle Profile Selector
+       Hellcat / Ferrari / RX-7 / ...
+                │
+                ▼
+     Persistent Event-Domain Engine
+        ├─ combustion events
+        ├─ exhaust/path/bank/collector
+        ├─ forced induction
+        ├─ mechanical texture
+        ├─ shift/lift transients
+        └─ state-gated afterfire
+                │
+                ▼
+        Pressure Audio Chain
+                │
+                ▼
+     Frozen PTR / Radiation boundary
+                │
+                ▼
+        Realtime PCM Renderer
+                │
+                ▼
+         Android Audio Output
 ```
 
-## 2. 三个架构层
+## 2. 当前输入合同
 
-### A. Product Shell — 已有 ESP32-S3 固件基线
+### 当前最小必需输入
 
-当前仓库已经有真实代码的产品壳：
+- `speed`
+- `acceleration`
 
-- `components/can/`：TWAI listen-only + Tesla frame baseline；
-- `components/domain/`：车辆状态/虚拟 RPM 基线；
-- `components/audio/`：I2S PCM + 当前基础合成；
-- `components/ble/`：NimBLE GATT；
-- `components/storage/`：SD JSON 持久化；
-- `components/network/`：WiFi；
-- `components/iot/`：MQTT；
-- `components/ota/`：HTTPS OTA；
-- `components/status/`：运行状态；
-- `components/input/` / `components/ui/`：旋钮、油门电位器、WS2812；
-- `components/app/`：25 ms 主循环协调。
+App 必须能在只有这两个连续输入时运行完整声浪模型。
 
-这个层已经证明“产品骨架存在并能编译”，但 BLE/WiFi/MQTT/OTA/SD/I2S/CAN 无发送等多数行为仍需要板级验收。
+### App 内部派生状态
 
-### B. Sound Authority — S12 声学研发主线
+当前不要把真实 RPM/CAN 当作算法前置条件。App 内部负责从 speed/acceleration 构造合理的：
 
-S12 已经不是“待开始的 MATLAB 声浪任务”，而是经过多个 Stage 的独立工程体系。
+- virtual RPM；
+- virtual engine load；
+- throttle proxy；
+- gear / shift state；
+- lift / braking / coast state；
+- idle/launch/overspeed state。
 
-当前主数据流：
+以后如果获得 CAN/OBD/车辆 API，可增加新的输入 adapter 覆盖或修正这些状态，但核心声浪 runtime 不与某个具体 CAN ID 绑定。
+
+## 3. Sound Authority — 当前核心研发
+
+S12 仍是当前声音算法权威：
 
 ```text
-VehicleState
+VehicleState / VirtualEngineState
   ↓
 PersistentEventDomainEngine
   ├─ continuous crank / rotor phase
-  ├─ combustion events
-  ├─ per-cylinder / per-path propagation
+  ├─ combustion event
+  ├─ per-cylinder / path propagation
   ├─ bank / collector
   ├─ forced induction
-  ├─ mechanical / cycle-sync layers
-  ├─ tip-in / shift / lift / BOV / afterfire
+  ├─ mechanical / cycle-sync
+  ├─ tip-in / shift / lift / BOV
+  └─ afterfire lifecycle
   ↓
 PressureAudioChain
-  ├─ DC handling
-  ├─ dP / pressure-to-audio transformation
-  ├─ persistent filter / delay state
   ↓
-Frozen Track-P PTR / Radiation boundary
+Frozen Track-P PTR / Radiation
   ↓
-Raw analysis PCM
-  +
-Monitor / audition PCM
+Raw / Realtime PCM
 ```
 
-S12 的工程约束：
+工程边界：
 
-- Track-P / FVM / PTR / Radiation 数学边界冻结；
-- Track-S 负责车型身份和声音创作；
-- Raw analysis 与 Monitor audition 分离；
+- Track-P / PTR / Radiation 冻结；
+- Track-S 负责车型身份、状态和听感；
+- Human audition 与自动指标分开；
 - no clipping/click；
-- block / one-shot / snapshot-restore 连续性；
-- afterfire 必须由状态门控和路径传播产生；
-- 自动指标不能替代 human audition；
-- 没有同步合法 R1 时不得宣称 OEM calibration / Profile Freeze。
+- block/stream/snapshot 连续；
+- afterfire 必须状态因果；
+- 没有 R1 不声称 OEM calibration。
 
-### C. Productization Bridge — 尚未正式开始
+## 4. App Productization Bridge
 
-S12 Human PASS 后才进入这一层：
-
-1. 冻结 `Engineering Profile`（注意：不是 R1 OEM Profile Freeze）；
-2. 定义 `AudioParameterPackage`；
-3. 固化 deterministic VehicleState traces；
-4. 生成 Golden PCM / metrics；
-5. 实现最小 portable C++17 realtime core；
-6. Python ↔ C++ block / snapshot / streaming equivalence；
-7. Android/PC 实时证明（AAudio/Oboe 或桌面实时 host）；
-8. 根据 CPU / memory / latency 结果抽取 ESP32-S3 可运行子集；
-9. 接入现有 `components/audio/` 与 `components/domain/`；
-10. 完成真实 CAN、安全 mute、I2S、功放、扬声器和实车验收。
-
-Android 在这里是**实时等价验证与产品化中间宿主**，不是替代 ESP32 最终产品目标。
-
-## 3. Track P / Track S 边界
-
-### Track P — Physics / Numerical Authority
-
-负责：
-
-- FVM / Simulink / PTR / Radiation；
-- 数值和传播边界；
-- 已冻结的物理核心；
-- 作为 Track-S 输出的受控后级。
-
-默认不允许因“听起来不够像”而修改。
-
-### Track S — Acoustic Identity / Authoring Authority
-
-负责：
-
-- persistent event-domain source；
-- combustion / exhaust / mechanical / forced-induction；
-- Ferrari / Hellcat / RX-7 等车型身份；
-- transient lifecycle；
-- reference comparator；
-- bounded calibration；
-- human audition package；
-- Engineering Profile。
-
-## 4. 三锚点车型策略
-
-深度真实感优先锚点：
-
-1. Hellcat：cross-plane V8、低频 body、机械增压器、换挡/收油/afterfire；
-2. Ferrari 458：flat-plane V8、高转 order sweep、高频机械纹理；
-3. RX-7 FD：rotary event timing、housing buzz、sequential turbo/BOV。
-
-当前只允许先关闭 Hellcat human loop。Ferrari/RX-7 在 Hellcat Human PASS 前保持冻结，避免把尚未验证的方法扩散到更多车型。
-
-## 5. 当前证据等级
-
-### R3
-公共/不同步参考，可用于方向诊断。
-
-### R2
-来源/权利较清楚但缺同步状态，可用于相对频谱/心理声学比较。
-
-### R1
-必须具备合法原始音频 + 同步 RPM/load/throttle/gear/shift 等状态，才能支撑正式真实标定和高等级 Profile Freeze。
-
-当前仓库状态仍是：
+Hellcat Human PASS 后进入：
 
 ```text
-R1 = MISSING
-OEM_CALIBRATION = NOT_AUTHORIZED
-PROFILE_FREEZE = NOT_AUTHORIZED
+Engineering Profile
+→ AudioParameterPackage
+→ Golden speed/acceleration traces
+→ Golden VirtualEngineState
+→ Golden PCM
+→ portable C++ realtime core
+→ Python ↔ C++ equivalence
+→ Android integration
 ```
 
-## 6. 当前架构完成度
+Android App 不是“中间证明宿主”，而是**当前目标产品 runtime**。
 
-| 架构块 | 状态 | 说明 |
-|---|---|---|
-| ESP32 产品壳 | Implemented | 编译基线存在，S7 分层已进入代码 |
-| ESP32 硬件验收 | Blocked | 需要真实板卡 / CAN analyser / audio hardware |
-| S12 persistent source | Verified in software | Stage V/W/Y/Z/AA/AB/AC tests + CI |
-| Track-P frozen guard | Verified | 最新 PR #5 CI 已通过 frozen-boundary guard |
-| Hellcat AA-C3 | Engineering candidate | 自动指标改善，未 human accepted |
-| V3 blind audition package | Verified package | manifest 已固定，等待 Jovi |
-| Human feedback loop | Blocked | 需要 Jovi 试听 |
-| R1 qualification | Blocked | 缺合法同步参考 |
-| AudioParameterPackage | Not started as product contract | Human PASS 后启动 |
-| Portable C++ realtime | Not started | Human PASS / profile 后启动 |
-| Android realtime proof | Not started | C++ reference 后启动 |
-| ESP32 advanced sound port | Not started | C++/resource characterization 后启动 |
-| Vehicle pilot | Not started | 需要硬件、CAN、安全、热/EMC/延迟验收 |
+### App Runtime 模块建议
 
-## 7. 架构上的硬规则
+```text
+app/
+  vehicle-input/
+    speed-source
+    acceleration-source
+    filters
+  engine-state/
+    virtual-rpm
+    virtual-load
+    virtual-gear
+    transient-state
+  profiles/
+    selector
+    package-loader
+  audio/
+    native-cpp-core
+    realtime-output
+    metrics
+  ui/
+    vehicle-selector
+    status
+    tuning-debug
+```
 
-- CAN 产品路径永远 listen-only；
-- 不用 CI 通过替代声音真实感通过；
-- 不用 human preference 替代 R1 qualification；
-- 不把 whole-mix / master gain 当 source-causal 修复；
-- 不在反馈前打开 blind answer；
-- 不在 Hellcat 通过前扩散车型；
-- 不把完整 ENSIM4 CFD 搬进 Android/ESP32 runtime；
-- 平台差异只能在 adapter / scheduling / I/O 层，不允许各端形成不同的声音算法真值。
+## 5. 三锚点车型
+
+当前深度验证顺序：
+
+1. Hellcat；
+2. Ferrari 458；
+3. RX-7 FD。
+
+Hellcat 先完成 human loop，然后把**方法**迁移到 Ferrari/RX-7；不能只复制 pitch/EQ。
+
+## 6. 当前完成度
+
+| 架构块 | 状态 |
+|---|---|
+| S12 persistent sound architecture | Verified in software |
+| Hellcat AA-C3 | Engineering candidate |
+| V3 audition package | Verified package |
+| Stage-AC AC8 | Pending |
+| Human acceptance | Waiting after AC8 |
+| Ferrari/RX-7 final profiles | Frozen pending Hellcat |
+| AudioParameterPackage | Not started |
+| speed/acceleration → VirtualEngineState | Product implementation not started |
+| portable C++ realtime | Not started |
+| Android App realtime audio | Not started |
+| vehicle profile selector | Not started |
+| in-car App validation | Not started |
+| R1 formal calibration | Blocked external data |
+| ESP32 simplified runtime | Deferred future option |
+
+## 7. ESP32 的正确定位
+
+仓库已有 ESP32-S3/CAN/BLE/SD/WiFi/OTA/I2S 代码，但**当前不继续推进它，也不要求当前声浪算法接入 ESP32**。
+
+它只保留为：
+
+- 既有历史工程资产；
+- 未来如果 App 路线稳定后，可能评估的低成本/独立硬件 simplified runtime；
+- 不进入当前产品完成度；
+- 不进入当前 P0/P1 blocker。
+
+状态统一标记：
+
+`ESP32 = DEFERRED_FUTURE_OPTION`
+
+## 8. 硬规则
+
+- 当前 App 不要求先接 Tesla CAN 才能工作；
+- speed + acceleration 是当前最小输入合同；
+- 不用 CI green 替代 Human PASS；
+- 不用 Human PASS 替代 R1；
+- 不用 whole-mix/master gain 做 source-causal 修复；
+- 不在反馈前揭盲；
+- 不把完整 CFD/teacher 系统塞入手机 realtime callback；
+- Android/C++ 实现必须能由 Golden trace 与 Python 权威模型做等价回归；
+- ESP32 不得重新被提升为当前 blocker。
