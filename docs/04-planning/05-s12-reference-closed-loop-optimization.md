@@ -1,238 +1,375 @@
 # S12 Stage AD — 真实参考负反馈闭环优化
 
 日期：2026-09-04
-状态：`INFRASTRUCTURE_IMPLEMENTED / LOCAL_AUDIO_EXECUTION_PENDING`
+状态：`REMOTE_INFRASTRUCTURE_IMPLEMENTED / LOCAL_REFERENCE_AUDIO_EXECUTION_PENDING`
 
-## 1. 用户要求的闭环
+## 1. 目标闭环
 
-目标不是一次性调参，而是：
+这一阶段正式实现用户要求的负反馈优化：
 
 ```text
 真实参考声音 Reference
         ↓
-当前参数 θ_k
+当前配置 θ_k
         ↓
-S12 / Simulink / Python render
+AA-C3 当前声音处理链
         ↓
 Candidate PCM
         ↓
 Reference Comparator
         ↓
-误差 / objective / human feedback
+固定尺度 absolute_reference_distance
         ↓
-参数搜索与域收缩
+source-causal 参数搜索
+        ↓
+recenter 参数中心 + shrink 参数域
         ↓
 θ_(k+1)
-        └──────────────→ 再 render
+        └──────────────→ 再渲染
 ```
 
-直到满足停止条件，再把最终候选交给 Jovi 人耳试听。
+最终只产生新的 **Stage-AD diagnostic audition**，交给 Jovi 听；不自动 Human PASS，不自动 Profile Freeze。
 
-## 2. 之前做到哪里
+## 2. Stage AD 前已经有的零件
 
-已有零件：
+仓库此前已经具备：
 
-- `stage_x/reference_caseset.py`：真实参考治理、R1/R2/R3、场景绑定、污染检测；
+- `stage_x/reference_caseset.py`：Reference 治理、R1/R2/R3、场景绑定、rights/污染；
 - `stage_x/multi_reference_comparator.py`：Reference / Parent / Candidate 对比；
-- `stage_x/search_parameters.py`：可达参数及 metric/guard；
+- `stage_x/search_parameters.py`：可达参数、metric/guard；
 - `stage_x/parameter_domains.py`：参数物理域；
-- `stage_x/candidate_search.py`：Sobol coarse search + local refine + PCM materialization；
-- `stage_x/human_feedback_objective.py`：Human feedback 的有界 objective adjustment。
+- `stage_x/candidate_search.py`：Sobol coarse + local refine + PCM materialization；
+- `stage_x/human_feedback_objective.py`：Human feedback bounded adjustment。
 
-因此旧系统已经是“一轮 analysis-by-synthesis search”，但缺少显式的跨轮 controller：没有统一 iteration receipt、参数中心更新、搜索域收缩、plateau/target stop、final audition manifest。
+所以旧系统已经能做“一轮 analysis-by-synthesis search”，但没有完整的跨轮 controller。
 
-## 3. Stage AD 新增
+## 3. Stage AD 新增的完整控制器
 
-`stage_ad/closed_loop.py` 把已有零件组合成真正的多轮 controller：
+新增 `stage_ad/closed_loop.py`：
 
 ```text
 iteration 0
-  coarse + refine
+  render/search
   → best θ0
-  → objective0
+  → fixed reference distance d0
   → audition WAV
   ↓
-recenter parameter domains around θ0
-shrink search deltas
+recenter around θ0
+shrink search range
   ↓
 iteration 1
   → best θ1
-  → objective1
+  → fixed reference distance d1
   ↓
 ...
 ```
 
 每轮保存：
 
-- objective / reference objective；
-- gain from previous iteration；
-- parameter center/delta；
+- fixed-scale `absolute_reference_distance`；
+- 旧 `improvement_fraction` 仅作诊断；
+- parameter centers / deltas；
 - best overrides；
 - input config SHA；
-- best-candidate WAV receipt；
+- best candidate WAV receipt；
 - audition manifest。
+
+### 为什么不能直接比较每轮 improvement_fraction
+
+旧 `improvement_fraction` 的 Parent 会随着每轮最佳配置变化，因此不同轮次的 improvement 没有同一个零点。
+
+Stage AD 新增固定标尺：
+
+```text
+abs(candidate_metric - reference_metric)
+---------------------------------------
+max(abs(reference_metric), fixed_metric_floor)
+```
+
+对各 metric 做 robust median，得到 `absolute_reference_distance`。这个尺子只由 Reference 与固定 floor 定义，因此跨轮可比较。
 
 停止条件：
 
-- target objective reached；
-- objective plateau；
+- 达到 optional target reference distance；
+- reference-distance improvement plateau；
 - no eligible candidate；
 - parameter not consumed；
 - objective unavailable；
 - max iterations。
 
-Stage AD 永远：
+## 4. 当前 baseline：AA-C3-aware，不回退到旧 P3
+
+Stage AD 默认：
 
 ```text
-automatic_profile_promotion = false
-human_audition_required = true
-r1_promotion_forbidden = true
+--baseline aa-c3
 ```
 
-## 4. Reference 输入
+这是关键约束。
 
-优先使用 canonical reference registry：
+AA-C3 本身除了 upstream config，还有固定：
 
-```bash
-python -m tools.sound_sim.s12.acoustic_identity_v015.stage_ad.cli \
-  --reference-registry <local_reference_registry.json> \
-  --vehicle-id hellcat_v1 \
-  --output-root <output_dir>
+- pressure/load scaling；
+- event-derived 120–400 Hz body；
+- forced-carrier suppression；
+- frozen PTR/Radiation。
+
+Stage AD 保留这些处理，只修改其上游 source config。`render_candidate()` 新增 `config_override` 工程入口；不传 override 时仍使用原 `_fitted_config()`。
+
+新增测试要求：
+
+```text
+render_candidate(AA-C3, default)
+==
+render_candidate(AA-C3, config_override=_fitted_config())
 ```
 
-也可以直接使用已经生成的 ReferenceCaseSet：
+官方 V3 WAV / manifest 不覆盖、不重写。
 
-```bash
-python -m tools.sound_sim.s12.acoustic_identity_v015.stage_ad.cli \
-  --caseset-json <reference_caseset.json> \
-  --vehicle-id hellcat_v1 \
-  --output-root <output_dir>
+## 5. 三个可解释参数家族
+
+不要一次乱搜全部参数，推荐顺序：
+
+```text
+BODY / IDLE
+→ BLOWER
+→ AFTERFIRE
 ```
 
-ReferenceCaseSet 会 fail-closed：REJECTED/speech-contaminated reference 不进入闭环；R2/R3 不会被提升为 R1。
+### body
 
-## 5. Human feedback 如何进入闭环
-
-可传：
-
-```bash
---human-feedback-json <jovi_feedback.json>
-```
-
-但仍遵循现有协议：V3 feedback 必须先保存 SHA，再揭 blind identity。
-
-Human feedback 只作为有界 engineering guidance，不能覆盖 hard gate，也不能自动 Profile Freeze。
-
-## 6. 当前建议 parameter family
-
-第一轮不要全参数无脑搜索。按 Jovi feedback / reference error 选择 source-causal family：
-
-### idle/LF
-
-- combustion event energy/rise/decay；
-- cycle variation；
-- crank inertia / idle governor；
-- primary path spread；
-- collector/path loss。
+- combustion_event_energy；
+- combustion_rise_time / decay_time；
+- cycle_variation；
+- crank_inertia；
+- idle_governor；
+- primary_length_spread；
+- primary_attenuation_spread；
+- waveguide_reflection / loss；
+- collector_loss。
 
 ### blower
 
-- sideband mix；
-- broadband mix；
-- casing mix；
-- intake mix；
-- boost attack/release；
-- bypass threshold。
+- blower_sideband_mix；
+- blower_broadband_mix；
+- blower_casing_mix；
+- intake_mix；
+- boost_attack / release；
+- bypass_threshold。
 
 ### afterfire
 
-- reservoir rate；
-- ignition delay；
-- event location；
-- afterfire energy。
+- afterfire_reservoir_rate；
+- afterfire_ignition_delay；
+- afterfire_location_mix；
+- afterfire_energy。
 
-Round2 仍禁止 whole-mix/master/broad pre-PTR gain。
+默认搜索集明确排除：
 
-## 7. Simulink 当前真实状态
+- monitor attack/release/max makeup；
+- master/global gain；
+- broad pre-PTR `attack_mix_120_400`；
+- P6 counterfactual residual scaling。
 
-旧 v0.9 offline audit 已证明当前 `.slx`：
+## 6. Family 链式闭环
+
+CLI 支持：
+
+```text
+--family body|blower|afterfire|all
+--base-config-json <previous/final_config.json>
+```
+
+因此本地推荐：
+
+```text
+body final_config
+→ blower base_config
+→ blower final_config
+→ afterfire base_config
+→ final audition
+```
+
+每个 family 单独看 reference error，保持可解释因果关系。
+
+## 7. Reference 输入
+
+优先使用本地已有、rights-governed canonical registry：
+
+```powershell
+python -m tools.sound_sim.s12.acoustic_identity_v015.stage_ad.cli `
+  --reference-registry <reference_registry.json> `
+  --vehicle-id hellcat_v1 `
+  --baseline aa-c3 `
+  --family body `
+  --output-root <output_dir>
+```
+
+或者：
+
+```powershell
+--caseset-json <reference_caseset.json>
+```
+
+规则：
+
+- REJECTED / speech-contaminated 不进入闭环；
+- R2/R3 保持 R2/R3；
+- 不从公网临时下载未授权音频充当 Reference；
+- 无本地可用 reference 时，只允许 baseline smoke，不做参数优化。
+
+## 8. Human feedback
+
+可追加：
+
+```text
+--human-feedback-json <feedback.json>
+```
+
+但 Human adjustment 只是 bounded guidance；fixed reference distance 单独保存。
+
+V3 feedback 协议仍是：
+
+```text
+save verbatim
+→ SHA256
+→ reveal
+→ bind
+```
+
+## 9. Simulink 的当前真实状态
+
+历史 `S12_Simulink_Playground_v09_Offline_Audit.md` 已证明旧 `.slx`：
 
 - default `In1→Out1` bypass；
-- 设计端口未正确连接；
-- packed configuration 未固定为 19x1；
-- excitation/pressure/PCM dimensions inherited；
-- Audio Device Writer/To Workspace 接错 bypass；
-- compile evidence FAIL；
-- simulation/audio 未证明。
+- packed configuration 不是固定 19x1；
+- excitation / pressure / PCM 尺寸未锁定；
+- Audio Device Writer / To Workspace 接错 bypass；
+- Update Diagram / compile 失败；
+- simulation/audio 没有有效证据。
 
-因此 Stage AD **不把 Simulink 当权威 renderer**。
+所以 **Python S12 继续是权威 renderer**。
 
-新增：
+Stage AD 新增：
 
 - `stage_ad/simulink/closed_loop_contract.json`；
 - `s12_stage_ad_validate_model.m`；
 - `s12_stage_ad_closed_loop_bridge.m`；
 - `stage_ad/simulink_exchange.py`。
 
-这些工具要求：
+固定合同：
 
 ```text
 48 kHz
 20 ms fixed step
 960 samples/frame
-configuration = 19x1
+config = 19x1
 excitation = 960x1
 pressure = 960x1
 PCM = 960x2
-PCM To Workspace = S12ClosedLoopPCM
+workspace variable = S12ClosedLoopPCM
 ```
 
-并禁止 silent fallback 到历史 bypass。
-
-Simulink 只有在：
+只有：
 
 ```text
 Update Diagram PASS
-→ simulation PASS
-→ finite 960x2 PCM
+→ Simulation PASS
+→ finite Nx2 PCM
+→ sample count multiple of 960
 → Python equivalence receipt
 ```
 
-后才可作为 diagnostic mirror。
+后，Simulink 才可以保留为 diagnostic mirror。
 
-## 8. 为什么现在不直接使用 differentiable gradient 优化全部 S12
+旧 SLX 不远端强改；本地 Codex 在用户已有 MATLAB session 中复制候选 SLX 后修复，禁止覆盖原始文件。
 
-当前 S12 包含离散 routing、afterfire event state、persistent path、snapshot、Human gate 等非平滑/离散结构；直接把整套重写成 differentiable graph 风险很高。
+## 10. 本轮开源方法研究结论
 
-Stage AD 采用两层路线：
+这次不再搜索“哪个项目声音更像”，而是研究**闭环反演 / analysis-by-synthesis**：
 
-1. **现在**：保留现有 renderer，使用 governed reference + Sobol/local search + iterative domain shrink；
-2. **后续可选**：对连续、局部、可微的 source submodule 引入 DDSP/differentiable surrogate，作为 warm-start/parameter proposal，不替换权威 renderer。
+- DiffMoog：differentiable synth + sound matching；
+- Magenta DDSP：differentiable DSP/audio loss；
+- SSSSM-DDSP：synthetic↔real domain gap；
+- Modulation Discovery：受约束、可解释 modulation；
+- InverSynth / synth-setter / TorchSynth：audio→parameter proposal + re-synthesis；
+- SenaTaka engine-simulator：GPS/accelerometer → continuous vehicle state；
+- EV-engine-sound-sonification：低频 telemetry 与高频 DSP 的连续状态重建；
+- ddsp-realtime：后续 C++/mobile realtime 参考。
 
-## 9. 与开源 sound matching 项目的关系
+本阶段没有复制任何外部 source/audio/weights；只 clean-room 吸收架构思想。
 
-Stage AD 新研究重点不是复制其它 synth，而是吸收 analysis-by-synthesis / synth inversion 的控制结构：
+详见：
 
-- DiffMoog：differentiable modular synth + sound matching；
-- Magenta DDSP：可微 DSP processors/loss；
-- SSSSM-DDSP：synthetic→real domain sound matching；
-- InverSynth/synth-setter：reference audio→parameter prediction→re-synthesis confidence；
-- Modulation Discovery：有约束的 time-varying modulation 参数化；
-- SenaTaka engine-simulator：GPS/accelerometer real-vehicle state → continuous engine state；
-- EV-engine-sound-sonification：低频 telemetry 与高频 DSP 之间的连续状态重建。
+`docs/research/engine-audio-ecosystem/stage_ad_closed_loop_sources.md`
 
-详细来源见 `docs/research/engine-audio-ecosystem/stage_ad_closed_loop_sources.md`。
+## 11. 为什么现在不把整套 S12 改成 differentiable graph
 
-## 10. 本地执行后给 Jovi 的输出
+当前 S12 有：
 
-Codex 本地只需要交付试听结果，不自动宣布 winner：
+- discrete event routing；
+- afterfire eligibility/state；
+- persistent path/filter；
+- snapshot；
+- Human gate；
+- frozen Track-P boundary。
+
+直接全量 differentiable rewrite 风险大。
+
+当前路线：
+
+1. 保留现有权威 renderer；
+2. 用 governed real reference + bounded search + fixed-distance closed loop；
+3. 未来只对连续局部 submodule 做 differentiable surrogate/warm-start；
+4. surrogate 永不自动替换权威 renderer。
+
+## 12. 试听输出
+
+每轮已有：
 
 ```text
-<output>/iteration_00/best_candidate/*/monitor.wav
-<output>/iteration_00/audition_manifest.json
-...
-<output>/closed_loop_summary.json
-<output>/final_config.json
+<loop>/iteration_XX/best_candidate/<scene>/monitor.wav
+<loop>/iteration_XX/audition_manifest.json
+<loop>/closed_loop_summary.json
+<loop>/final_config.json
 ```
 
-最后整理出一个 audition folder，Jovi 只听 monitor WAV；Raw/post-PTR 保留作工程证据。
+最终用：
+
+```powershell
+python -m tools.sound_sim.s12.acoustic_identity_v015.stage_ad.package_audition `
+  --loop-root <last_successful_loop> `
+  --output-root E:\Tesla_speed\review_packages\s12-stage-ad-hellcat-closed-loop-v1
+```
+
+生成简洁试听目录：
+
+```text
+01_hot_idle.wav
+02_steady_low.wav
+03_steady_mid.wav
+04_steady_high.wav
+05_tip_in.wav
+06_full_pull.wav
+07_shift.wav
+08_lift.wav
+09_afterfire.wav
+10_idle_return.wav
+audition_manifest.json
+```
+
+这是**非盲 Stage-AD diagnostic audition**，与官方 V3 分离。
+
+## 13. 本地 Codex 接手
+
+完整执行 Prompt：
+
+`docs/05-execution/02-stage-ad-local-codex-execution-prompt.md`
+
+本地 Codex 的终点不是继续自动调参，而是：
+
+```text
+生成 Stage-AD monitor WAV 试听目录
+→ 回复 Jovi 目录位置
+→ STOP: WAITING_FOR_JOVI_STAGE_AD_AUDITION
+```
