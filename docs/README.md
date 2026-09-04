@@ -11,9 +11,7 @@ Read first:
 6. `08-reports/10-project-status-20260904.md`
 7. `09-backlog/02-project-master-backlog.md`
 
-Evidence rule: handoff package ≈90%, old chat/summary ≈10%; dynamic GitHub truth is re-fetched; current user decision wins.
-
-Current product:
+Evidence: handoff ≈90%, old chat ≈10%; dynamic GitHub truth re-fetched; current user direction wins.
 
 ```text
 Android App
@@ -24,4 +22,4 @@ Android App
 → playback
 ```
 
-CAN/OBD is optional future richer input. ESP32 = `DEFERRED_FUTURE_OPTION`.
+CAN/OBD = future richer input. ESP32 = `DEFERRED_FUTURE_OPTION`.
