@@ -1,10 +1,22 @@
 # 项目整体状态审计与交接（2026-09-04）
 
-## 1. 本次修正
+## 1. 本次审计来源与证据权重
 
-本报告综合当前 GitHub 真值、S12 Stage 报告、`S12_Handoff_Package_2026-09-03` 与用户已确认的产品方向。
+用户明确指定：
 
-关键修正：**当前阶段不是 ESP32 产品化，而是声音真实性算法 + Android App 实时声浪。ESP32 只在后期可选 simplified runtime 中考虑。**
+- `S12_Handoff_Package_2026-09-03`：约 **90% 主证据**；
+- 旧聊天/此前助手总结：约 **10% 补充证据**；
+- 对 main/PR/CI/SHA 等可变化状态：当前 GitHub 远端真值优先于历史快照；
+- 当前用户明确产品决策优先于旧规划。
+
+交付包 7 个 Markdown 已重新解压并与包内 `SHA256SUMS.json` 逐项校验一致。
+
+关键产品方向修正：**当前阶段不是 ESP32 产品化，而是声音真实性算法 + Android App 实时声浪。ESP32 只在后期可选 simplified runtime 中考虑。**
+
+长期项目记忆：
+
+- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
+- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`
 
 ## 2. 一句话状态
 
