@@ -6,6 +6,15 @@
 
 当前产品主线不是 ESP32。仓库里虽然保留了早期 ESP32-S3 固件、CAN/BLE/SD/WiFi/OTA/I2S 等资产，但这些内容现在属于**历史资产 / Future Deferred**，不作为当前 blocker、验收门或实施优先级。
 
+### 项目长期记忆 / 证据规则
+
+后续 Agent 不应重新依赖超长聊天恢复上下文。优先阅读：
+
+- [项目长期记忆](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md)
+- [研究论文/开源项目/方法吸收历史](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md)
+
+用户明确指定：`S12_Handoff_Package_2026-09-03` 作为约 **90% 主证据**，旧聊天/此前总结约 **10% 补充证据**；SHA/PR/CI 等会变化的事实始终以当前 GitHub 远端为准。
+
 当前目标是做一个放在车内运行的 App：
 
 ```text
@@ -122,8 +131,10 @@ App audio output
 
 ## 文档入口
 
+- [项目长期记忆](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md)
+- [研究来源与方法吸收历史](docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md)
 - [当前 App-first 产品方向](docs/04-planning/03-current-app-product-direction.md)
-- [统一系统架构](docs/01-architecture/01-project-system-architecture.md)
+- [当前系统架构](docs/01-architecture/01-project-system-architecture.md)
 - [项目总路线图](docs/04-planning/02-project-master-roadmap.md)
 - [项目整体状态](docs/08-reports/10-project-status-20260904.md)
 - [项目总 Backlog](docs/09-backlog/02-project-master-backlog.md)
