@@ -1,28 +1,12 @@
 # 项目整体状态审计与交接（2026-09-04）
 
-## Evidence
+Evidence priority: handoff package ≈90%, old chat/summary ≈10%; current GitHub truth and current user decisions override historical snapshots.
 
-- `S12_Handoff_Package_2026-09-03` ≈ 90% 主证据；
-- 旧聊天/此前总结 ≈ 10%；
-- 动态 GitHub 状态现场复核；
-- 用户当前决策优先。
+## Current Direction
 
-交付包已重新解压并通过包内 SHA256 校验。
+**S12 acoustic realism + Android App realtime sound. ESP32 = Deferred Future.**
 
-## Current direction
-
-**S12 声音真实性 + Android App 实时声浪。ESP32 = Deferred Future。**
-
-```text
-App
-→ speed + acceleration
-→ VirtualEngineState
-→ selected Vehicle Profile
-→ S12 realtime sound
-→ playback
-```
-
-## Remote truth snapshot
+## Remote Snapshot
 
 ```text
 main = 82c7cb77d26f446251e63d1a6899b08bf08be65b
@@ -37,39 +21,37 @@ R1 = MISSING
 
 ## Completed
 
-Persistent event-domain engine、state continuity、source/path/bank/collector、forced induction/mechanical/transients、dP/DC、frozen PTR/Radiation、comparator/reference governance、source traceability、block/snapshot regression、Hellcat AA-C3、v3 blind package、provenance/source-causal hardening、LF/blower/dynamics measurement repair、remote CI closure。
+Persistent event-domain engine, continuous state, source/path/bank/collector, forced induction/mechanical/transients, dP/DC, frozen PTR/Radiation, comparator/reference governance, method traceability, block/snapshot regression, AA-C3, v3 blind package, provenance/source-causal hardening, LF/blower/dynamics measurement repair, remote CI closure.
 
-## Human risks
+## Human Risks
 
-- hot-idle LF = `ELEVATED`；
-- blower ~741 Hz carrier；
-- afterfire ~20 dB above body；
-- dynamic still compressed vs Parent。
+- hot-idle LF `ELEVATED`
+- blower ~741 Hz carrier
+- afterfire ~20 dB above body
+- dynamics compressed vs Parent
 
-## Current blockers
+## Current Blockers
 
-1. AC8 post-merge receipt；
-2. Jovi V3 blind audition；
-3. App runtime productization；
-4. R1 formal calibration data。
+1. AC8 post-merge receipt
+2. Jovi V3 blind audition
+3. App productization
+4. R1 external data
 
-## Next path
+## Next
 
 ```text
 AC8
 → Hellcat V3 Human Gate
 → AA-C3 accept OR ONE source-causal Round2
-→ Hellcat Engineering Profile
-→ Ferrari / RX-7
+→ Engineering Profile
+→ Ferrari/RX-7
 → AudioParameterPackage
-→ speed/acceleration → VirtualEngineState
-→ Golden traces / PCM
+→ speed+acceleration→VirtualEngineState
+→ Golden traces/PCM
 → portable C++
 → Python↔C++ equivalence
-→ Android App realtime
-→ vehicle selector
+→ Android realtime App
 → in-car validation
-→ R1 when available
 ```
 
-ESP32 不进入当前完成度或 blocker。详细历史见 `Project-Long-Term-Memory.md`。
+Detailed history: `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`.
