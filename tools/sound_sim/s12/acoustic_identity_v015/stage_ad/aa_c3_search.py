@@ -1,8 +1,13 @@
 """AA-C3-aware Stage AD reference search.
 
 The search preserves the frozen AA-C3 pressure/event-body/carrier processing and
-Track-P boundary while perturbing upstream S12 parameters.  Results are new
+Track-P boundary while perturbing upstream S12 parameters. Results are new
 Stage-AD diagnostic candidates; the official v3 package is never overwritten.
+
+Cross-iteration convergence uses an *absolute reference-distance* whose scale is
+anchored only to the real reference metric (plus fixed metric floors). It does
+not compare changing per-iteration improvement fractions as if they shared one
+origin.
 """
 
 from __future__ import annotations
@@ -24,7 +29,7 @@ from ..stage_x.parameter_domains import sanitize_overrides, validate_parameter_s
 from ..stage_x.search_parameters import apply_parameters, hellcat_search_parameters
 from ..stage_y.package import _fitted_config
 
-AA_C3_SEARCH_SCHEMA = "s12.stage_ad.aa_c3_reference_search.v1"
+AA_C3_SEARCH_SCHEMA = "s12.stage_ad.aa_c3_reference_search.v2"
 
 AA_C3_SOURCE_CAUSAL_PARAMETERS = (
     "combustion_event_energy",
@@ -64,6 +69,21 @@ _AA_SCENE = {
     "idle_return": "idle_return",
 }
 
+_METRIC_FLOORS: dict[str, float] = {
+    "rms_dbfs": 1.0,
+    "peak_dbfs": 1.0,
+    "crest_db": 1.0,
+    "dynamic_range_db": 1.0,
+    "transient_event_density_per_s": 0.5,
+    "spectral_centroid_hz": 100.0,
+    "spectral_flux": 0.01,
+    "roughness_proxy": 0.05,
+    "sharpness_proxy": 0.05,
+    "tonality_proxy": 0.05,
+    "persistent_tone_ratio": 0.05,
+    "narrowband_whine_proxy": 0.02,
+}
+
 
 def _sha(audio: np.ndarray) -> str:
     return hashlib.sha256(np.ascontiguousarray(audio).tobytes()).hexdigest()
@@ -91,11 +111,37 @@ def _reference_entry(value: Any) -> tuple[np.ndarray, int, dict[str, Any]]:
     return audio, sample_rate, metadata
 
 
+def _metric_floor(name: str) -> float:
+    if name.startswith("band_share_"):
+        return 0.02
+    return _METRIC_FLOORS.get(name, 0.01)
+
+
+def _absolute_reference_distance(case_comparison: dict[str, Any]) -> float:
+    """Stable distance independent of the changing parent candidate.
+
+    Each metric is normalized by ``max(abs(reference), fixed_floor)``. Floors
+    are fixed by metric semantics so a later iteration cannot change the ruler.
+    The median is robust to one pathological proxy; individual terms are capped
+    to keep near-zero reference metrics from dominating the whole objective.
+    """
+    values: list[float] = []
+    for name, row in dict(case_comparison.get("metrics") or {}).items():
+        reference = float(row["reference"])
+        candidate = float(row["candidate"])
+        if not np.isfinite(reference) or not np.isfinite(candidate):
+            continue
+        scale = max(abs(reference), _metric_floor(name))
+        values.append(float(np.clip(abs(candidate - reference) / scale, 0.0, 10.0)))
+    return float(np.median(values)) if values else float("nan")
+
+
 def _render_context(config: dict[str, Any]) -> dict[str, Any]:
     context: dict[str, Any] = {}
     for _, scenario, duration_s in SEARCH_SCENES:
-        rendered = render_candidate("AA-C3", _AA_SCENE[scenario], duration_s, config_override=config)
-        context[scenario] = rendered
+        context[scenario] = render_candidate(
+            "AA-C3", _AA_SCENE[scenario], duration_s, config_override=config
+        )
     return context
 
 
@@ -114,6 +160,7 @@ def _evaluate(
     audio_changed = False
     scene_results: dict[str, Any] = {}
     comparisons: dict[str, list[dict[str, Any]]] = {}
+    absolute_distances: list[float] = []
 
     for _, scenario, _ in SEARCH_SCENES:
         candidate = candidate_context[scenario]
@@ -126,6 +173,7 @@ def _evaluate(
         audio_changed = audio_changed or _sha(audio) != _sha(baseline.raw_pcm)
 
         dimensions: dict[str, float] = {}
+        absolute_distance: float | None = None
         if scenario in reference_audio:
             reference, sample_rate, metadata = _reference_entry(reference_audio[scenario])
             clean = not bool(metadata.get("speech_contaminated") or metadata.get("rejected"))
@@ -139,6 +187,9 @@ def _evaluate(
                     candidate_id="AA-C3-StageAD",
                 )
                 dimensions = aggregate_dimensions(comparison, scenario, render_seconds=0.0)
+                absolute_distance = _absolute_reference_distance(comparison)
+                if np.isfinite(absolute_distance):
+                    absolute_distances.append(float(absolute_distance))
                 comparisons.setdefault(scenario, []).append({
                     "dimensions": dimensions,
                     "reference_metadata": metadata,
@@ -148,6 +199,7 @@ def _evaluate(
             "raw_sha256": _sha(audio),
             "baseline_raw_sha256": _sha(baseline.raw_pcm),
             "dimensions": dimensions,
+            "absolute_reference_distance": absolute_distance,
             "click_passed": bool(click["passed"]),
         }
 
@@ -160,10 +212,19 @@ def _evaluate(
         if comparisons
         else {"improvement_fraction": None, "dimension_median_relative_error": {}}
     )
+    absolute_reference_distance = (
+        float(np.median(absolute_distances)) if absolute_distances else None
+    )
     human = combine_reference_and_feedback_objective(
         multi.get("improvement_fraction"),
         multi.get("dimension_median_relative_error", {}),
         human_feedback,
+    )
+    feedback_adjustment = float(human.get("feedback_adjustment") or 0.0)
+    fixed_scale_objective = (
+        -float(absolute_reference_distance) + feedback_adjustment
+        if absolute_reference_distance is not None
+        else None
     )
     return {
         "scene_results": scene_results,
@@ -174,8 +235,9 @@ def _evaluate(
         "parameter_consumed": audio_changed,
         "comparison": multi,
         "reference_objective": multi.get("improvement_fraction"),
+        "absolute_reference_distance": absolute_reference_distance,
         "human_objective": human,
-        "objective": human.get("combined_engineering_objective"),
+        "objective": fixed_scale_objective,
         "independent_reference_count": int(independent_reference_count),
     }
 
@@ -262,16 +324,22 @@ def run_aa_c3_search(
         record.update({"stage": 1, "candidate_index": index, "overrides": safe})
         records.append(record)
 
-    eligible = [
-        item for item in records
-        if item["finite"]
-        and item["clipping_samples"] == 0
-        and item["click_ok"]
-        and item["wrong_condition_afterfire_count"] == 0
-        and item["parameter_consumed"]
-        and item["objective"] is not None
-    ]
-    top = sorted(eligible, key=lambda item: item["objective"], reverse=True)[:3]
+    def eligible(item: dict[str, Any]) -> bool:
+        return bool(
+            item["finite"]
+            and item["clipping_samples"] == 0
+            and item["click_ok"]
+            and item["wrong_condition_afterfire_count"] == 0
+            and item["parameter_consumed"]
+            and item["objective"] is not None
+            and item["absolute_reference_distance"] is not None
+        )
+
+    top = sorted(
+        [item for item in records if eligible(item)],
+        key=lambda item: item["objective"],
+        reverse=True,
+    )[:3]
     per_center = refine_count // max(len(top), 1)
     for rank, center in enumerate(top):
         for index, overrides in enumerate(
@@ -289,15 +357,7 @@ def run_aa_c3_search(
             record.update({"stage": 2, "candidate_index": f"r{rank}_{index}", "overrides": safe})
             records.append(record)
 
-    evaluated = [
-        item for item in records
-        if item["finite"]
-        and item["clipping_samples"] == 0
-        and item["click_ok"]
-        and item["wrong_condition_afterfire_count"] == 0
-        and item["parameter_consumed"]
-        and item["objective"] is not None
-    ]
+    evaluated = [item for item in records if eligible(item)]
     best = max(evaluated, key=lambda item: item["objective"]) if evaluated else None
     materialized = None
     if best is not None:
@@ -314,13 +374,19 @@ def run_aa_c3_search(
         "candidate_count": len(records),
         "searched_parameters": [item.name for item in parameters],
         "best_objective": best.get("objective") if best else None,
+        "best_absolute_reference_distance": best.get("absolute_reference_distance") if best else None,
         "best_reference_objective": best.get("reference_objective") if best else None,
         "best_overrides": best.get("overrides") if best else None,
         "best_candidate_materialized": materialized is not None,
+        "objective_interpretation": "maximize -absolute_reference_distance + bounded human adjustment",
         "scope": "Stage-AD diagnostic audition only; no automatic profile promotion",
     }
     write_json(output_root / "aa_c3_search_summary.json", summary)
     return {"summary": summary, "best": best, "records": records}
 
 
-__all__ = ["AA_C3_SEARCH_SCHEMA", "AA_C3_SOURCE_CAUSAL_PARAMETERS", "run_aa_c3_search"]
+__all__ = [
+    "AA_C3_SEARCH_SCHEMA",
+    "AA_C3_SOURCE_CAUSAL_PARAMETERS",
+    "run_aa_c3_search",
+]
