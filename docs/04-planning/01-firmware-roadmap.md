@@ -1,141 +1,64 @@
-# Tesla Simulate Vico ESP32 固件子路线图
+# Tesla Simulate Vico ESP32 固件子路线图（Deferred）
 
 更新：2026-09-04
 
-> 本文只负责 ESP32-S3 产品壳、硬件与嵌入式集成路线。全项目主路线见 `02-project-master-roadmap.md`。旧版本把“S8 声浪算法”写成待开始已经过时：S12 PC/Python 声学研发已推进到 Hellcat pre-human gate，但**高级声浪尚未进入 ESP32 runtime**。
+> **状态：DEFERRED_FUTURE_OPTION**
+>
+> 当前项目主线不是 ESP32。当前主线是 S12 声音真实性 → Human Gate → Android App 实时声浪。本文仅保留已有 ESP32 工程资产和未来可能的嵌入式简化路线，不得作为当前 blocker 或优先级来源。
 
-## 目标
+## 已有资产
 
-把当前可编译 ESP-IDF 产品壳推进到：
+仓库已经存在：
 
-- 安全 CAN listen-only；
-- 稳定 VehicleState；
-- BLE/SD/WiFi/IoT/OTA 配置与诊断；
-- 高级 approved sound runtime；
-- I2S / DAC / AMP / speaker；
-- 板级与实车验收。
+- ESP-IDF baseline；
+- TWAI CAN listen-only/parser baseline；
+- I2S audio baseline；
+- BLE GATT；
+- SD JSON；
+- encoder / throttle pot / WS2812；
+- WiFi / MQTT / OTA / RuntimeStatus；
+- 25 ms App tick；
+- build/size/OpenSpec 相关工程设施。
 
-## 固定决策
+这些内容说明历史固件骨架存在，但**当前不要求继续上板、不要求高级 S12 声音接入、不要求完成 BLE/WiFi/OTA/IRAM 验收**。
 
-- CAN 永远 listen-only，不新增产品 transmit API；
-- BLE 主服务 `0xfff0`、兼容服务 `0xffe0` 保持稳定；
-- `ffe8` 承载 WiFi / OTA / IoT 配置；
-- `App::tick()` 保持非阻塞协调职责；
-- OTA 后台执行；
-- 声音算法的权威模型来自 S12，不在 ESP32 上重新发明另一套车型算法；
-- 平台适配前先有 `AudioParameterPackage` + portable C++ equivalence。
+## 当前不执行
 
-## 当前固件基线
+- board bring-up；
+- BLE/WiFi/MQTT/OTA 板级验收；
+- IRAM/PSRAM release hardening；
+- CAN analyser no-TX 证明；
+- advanced S12 sound port；
+- I2S DAC/AMP/speaker 产品化；
+- ESP32 vehicle pilot。
 
-| 范围 | 状态 | 证据/说明 |
-|---|---|---|
-| CAN listen-only | Implemented | `components/can/` |
-| CAN frame parser | Implemented | 当前 `0x256` / `0x116` baseline |
-| I2S audio baseline | Implemented | 当前 RPM/基础合成，非 S12 高级模型 |
-| BLE GATT | Implemented / board blocked | `components/ble/` |
-| SD JSON | Implemented / board blocked | `components/storage/` |
-| input / UI | Implemented / board blocked | encoder / pot / WS2812 |
-| Network/IoT/OTA | Implemented / board blocked | `status/network/iot/ota` |
-| IRAM | Risk open | 历史 size 接近上限，需要 fresh build + board stress |
-| S12 advanced sound | Verified on PC/Python only | Hellcat AA-C3 pre-human; 未接入 firmware |
+## 何时可以重新开启
 
-## 固件阶段
+只有满足以下前提并且用户明确重新开启 ESP32 路线时：
 
-### F0 — S0–S7 product shell baseline
+1. Android App 版声音真实性已经 Human accepted；
+2. App 能稳定使用 speed + acceleration 驱动多车型实时声浪；
+3. AudioParameterPackage / portable C++ 已稳定；
+4. CPU/memory/latency/quality 已有真实数据；
+5. 确实存在独立硬件运行的产品需求。
 
-代码已完成；硬件证明未完成。
-
-### F1 — Board bring-up / S7 acceptance
-
-必须验证：
-
-1. flash/boot；
-2. BLE advertising/read/write/notify；
-3. SD load/save；
-4. I2S output；
-5. encoder/pot/WS2812；
-6. WiFi join/reconnect；
-7. MQTT uplink/downlink；
-8. HTTPS OTA success/failure；
-9. 25 ms app coordination 不被后台任务阻塞；
-10. CAN analyser 证明无发送。
-
-### F2 — Resource/release hardening
-
-- fresh `idf.py size` / `size-components`；
-- BLE + WiFi + OTA + I2S + LED 并发；
-- heap/PSRAM/IRAM；
-- watchdog；
-- OTA 时 audio/UI 降级策略；
-- thermal/long-run。
-
-### F3 — Advanced sound contract integration
-
-**只有 Hellcat Human PASS / Engineering Profile 后启动。**
-
-依赖：
+届时可评估：
 
 ```text
-AudioParameterPackage
-+ Golden VehicleState
-+ Golden PCM/metrics
-+ portable C++ runtime
-+ Python↔C++ equivalence
+Approved App/C++ runtime
+→ resource reduction
+→ ESP32 simplified runtime
+→ I2S output
+→ hardware validation
 ```
 
-然后：
+## 当前权威路线
 
-```text
-components/domain/VehicleState
-→ ESP32 sound adapter
-→ components/audio/I2S
-```
+请以以下文档为准：
 
-### F4 — Embedded optimization
+- `03-current-app-product-direction.md`
+- `02-project-master-roadmap.md`
+- `../08-reports/10-project-status-20260904.md`
+- `../09-backlog/02-project-master-backlog.md`
 
-根据 ESP32-S3 实测资源：
-
-- source layer reduction；
-- LUT / fixed-point；
-- filter/order simplification；
-- block/DMA strategy；
-- PSRAM policy；
-- quality tier；
-- underrun/latency gate。
-
-### F5 — Vehicle pilot
-
-- Tesla CAN signal truth；
-- state freshness/fallback；
-- no-TX hardware proof；
-- startup/fault/overspeed mute；
-- external speaker chain；
-- real driving scene validation；
-- power/thermal/EMC。
-
-## 与 S12 声学主线的接口
-
-ESP32 固件不直接消费 Python implementation detail，而消费受版本控制的产品合同：
-
-```text
-AudioParameterPackage
-VehicleState schema
-Golden traces
-Realtime C++ core
-```
-
-这样可以避免：
-
-- PC 一套算法、Android 一套算法、ESP32 又一套算法；
-- 声学修复被平台特供 hack 吞掉；
-- 无法复现试听 winner。
-
-## 当前正确执行顺序
-
-1. 保持现有固件 shell 可构建；
-2. 在独立硬件工作流完成 F1/F2；
-3. 声学主线先关闭 Stage-AC post-merge truth + Human Hellcat；
-4. Human PASS 后定义 cross-language runtime contract；
-5. C++/Android/desktop 实时证明；
-6. 再做 ESP32 advanced sound port；
-7. 最后进入 controlled vehicle pilot。
+如果本文与这些 active 文档冲突，以 App-first active 文档为准。
