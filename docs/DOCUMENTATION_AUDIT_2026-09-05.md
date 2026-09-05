@@ -4,6 +4,16 @@
 
 目标：逐文件确认“当前 authority / 更新 / 历史保留 / superseded / deferred”。**本次不物理删除历史证据文件**；删除的是它们在 active navigation 中的错误权威地位。
 
+## 内容保留原则
+
+本轮最初的 active 文档重写会显著缩短三份长文。提交后 diff review 发现这不符合“好记性不如烂笔头”的要求，因此将原始详细版本逐字节保留为历史档案：
+
+- `knowledge/.../Project-Historical-Memory-Through-2026-09-04.md` — 原 1150+ 行长期记忆；
+- `04-planning/history/05-s12-reference-closed-loop-optimization-20260904.md` — 原详细 Stage AD 计划；
+- `05-execution/history/02-stage-ad-local-codex-execution-prompt-20260904.md` — 原详细 Codex runbook。
+
+当前同名 active 文档用于消除过期冲突和突出今天的执行真值；历史细节没有被删除。
+
 ## 发现的主要问题
 
 1. `00-reference` / `02-requirements` guide 仍以 firmware 语义描述项目；
@@ -33,9 +43,9 @@
 - `docs/04-planning/00-guide.md` — UPDATED
 - `docs/04-planning/02-project-master-roadmap.md` — UPDATED
 - `docs/04-planning/03-current-app-product-direction.md` — UPDATED
-- `docs/04-planning/05-s12-reference-closed-loop-optimization.md` — UPDATED
+- `docs/04-planning/05-s12-reference-closed-loop-optimization.md` — UPDATED + detailed old version archived
 - `docs/05-execution/00-guide.md` — UPDATED
-- `docs/05-execution/02-stage-ad-local-codex-execution-prompt.md` — UPDATED
+- `docs/05-execution/02-stage-ad-local-codex-execution-prompt.md` — UPDATED + detailed old version archived
 - `docs/06-testing/00-guide.md` — UPDATED
 - `docs/06-testing/01-audio-and-runtime-validation-strategy.md` — NEW
 - `docs/07-debugging/00-guide.md` — UPDATED
@@ -49,7 +59,7 @@
 - `docs/research/engine-audio-ecosystem/README.md` — UPDATED
 - `docs/superpowers/README.md` — NEW
 - `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/00-MOC.md` — UPDATED
-- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — UPDATED
+- `docs/knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — UPDATED current synthesis; detailed prior memory archived intact
 
 ## 已审计、保留为 Deferred
 
@@ -80,7 +90,8 @@
 ### Canonical/current
 
 - `00-MOC.md` — UPDATED current index
-- `Project-Long-Term-Memory.md` — UPDATED canonical memory
+- `Project-Long-Term-Memory.md` — UPDATED current synthesis
+- `Project-Historical-Memory-Through-2026-09-04.md` — NEW archival copy of original detailed memory
 - `Research-Sources-And-Adoption-History.md` — RETAIN canonical research history；Stage AD 由 dedicated research doc 补充
 - `Decision-History-And-Negative-Knowledge.md` — RETAIN active negative knowledge；新增 debug doc 提供快捷入口
 - `AA-C3-Gain-Provenance-v2.md` — CURRENT topic reference
@@ -121,23 +132,9 @@
 - `Stage-AB-PreHuman-Hardening.md`
 - `Stage-AB-Round2-ADR.md`
 
-这些文件不改写；通过 MOC 降级为历史快照。
-
 ### External-source topic notes
 
-- `Open-Source-Engine-Sim.md`
-- `Open-Source-ENSIM4.md`
-- `Open-Source-DasEtwas-Enginesound.md`
-- `Open-Source-PTR-Model.md`
-- `Open-Source-VehicleNoiseSynthesizer.md`
-- `Open-Source-FiveM-License-Boundary.md`
-- `Open-Source-Granular-ESP32-Boundaries.md`
-- `Open-Source-Ignis.md`
-- `Open-Source-Markeasting-Engine-Audio.md`
-- `Papers-PTR-EONE-DDSP.md`
-- `Commercial-Public-Workflow-References.md`
-
-RETAIN as source/topic notes；current aggregate truth in research history/registry。
+`Open-Source-Engine-Sim.md`, `Open-Source-ENSIM4.md`, `Open-Source-DasEtwas-Enginesound.md`, `Open-Source-PTR-Model.md`, `Open-Source-VehicleNoiseSynthesizer.md`, `Open-Source-FiveM-License-Boundary.md`, `Open-Source-Granular-ESP32-Boundaries.md`, `Open-Source-Ignis.md`, `Open-Source-Markeasting-Engine-Audio.md`, `Papers-PTR-EONE-DDSP.md`, `Commercial-Public-Workflow-References.md` — RETAIN source/topic notes；current aggregate truth in research history/registry。
 
 ## research：机器证据优先保留
 

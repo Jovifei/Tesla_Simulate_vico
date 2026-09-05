@@ -2,12 +2,13 @@
 
 ## Current authority / first read
 
-1. [[Project-Long-Term-Memory]]
-2. [[Research-Sources-And-Adoption-History]]
-3. [[Decision-History-And-Negative-Knowledge]]
-4. `docs/08-reports/11-project-status-20260905.md`
-5. `docs/04-planning/05-s12-reference-closed-loop-optimization.md`
-6. `docs/10-learning/01-s12-reusable-engineering-playbook.md`
+1. [[Project-Long-Term-Memory]] — 当前综合真值（Stage AD / App-first）。
+2. [[Project-Historical-Memory-Through-2026-09-04]] — 1150+ 行详细历史档案，保留原始 Stage V→AC 细节，不因当前摘要而丢失。
+3. [[Research-Sources-And-Adoption-History]]
+4. [[Decision-History-And-Negative-Knowledge]]
+5. `docs/08-reports/11-project-status-20260905.md`
+6. `docs/04-planning/05-s12-reference-closed-loop-optimization.md`
+7. `docs/10-learning/01-s12-reusable-engineering-playbook.md`
 
 当前路线：
 
