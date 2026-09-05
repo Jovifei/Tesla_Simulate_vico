@@ -1,0 +1,80 @@
+name: S12 Stage AE Canonical Physical Convergence
+
+on:
+  push:
+    branches:
+      - s12-stage-ae-canonical-physical-convergence
+    paths:
+      - ".github/workflows/s12-stage-ae-canonical-physics.yml"
+      - "tools/sound_sim/s12/**"
+      - "third_party/fftconvolver/**"
+      - "docs/04-planning/06-stage-ae-canonical-physical-convergence.md"
+      - "docs/05-execution/03-stage-ae-local-ai-handoff.md"
+      - "docs/07-debugging/02-acoustic-tuning-pitfalls-and-breakthroughs.md"
+      - "docs/10-learning/02-engine-acoustic-physical-simulation-playbook.md"
+      - "docs/sound-simulation/**"
+      - "docs/research/engine-audio-ecosystem/stage_ae_sources.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: s12-stage-ae-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact Stage AE head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest jsonschema matplotlib pyyaml pandas soundfile pyloudnorm mosqito==1.2.1
+
+      - name: Compile S12 package
+        run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
+
+      - name: Stage AE focused contracts
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ae_canonical_physics.py
+
+      - name: Stage AD closed-loop regression
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ad_closed_loop.py
+
+      - name: Canonical config smoke
+        run: |
+          python - <<'PY'
+          from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
+          from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.vehicle_profiles import VEHICLES, build_standard_trace
+          from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.canonical_renderer import CanonicalStageAERenderer
+          for key, profile in VEHICLES.items():
+              load_config(profile.config_id)
+              trace = build_standard_trace(key, "hot_idle", duration_s=0.08)
+              result = CanonicalStageAERenderer(profile.config_id, random_seed=20260905).render(trace)
+              assert result.post_ptr_pcm.ndim == 2 and result.post_ptr_pcm.shape[1] == 2
+              assert result.post_ptr_pcm.shape[0] > 0
+              print(key, result.post_ptr_pcm.shape)
+          PY
+
+      - name: Track-P frozen-boundary guard
+        run: python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py
+
+      - name: Repository and license checks
+        run: |
+          git diff --check "$(git merge-base HEAD origin/main)..HEAD"
+          test -f third_party/fftconvolver/COPYING.txt
+          grep -q "f2cdeb04c42141d2caec19ca4f137398b2a76b85" third_party/fftconvolver/README.md
+          grep -q "R3_PRIVATE_DIAGNOSTIC_ONLY" docs/sound-simulation/S12_Real_Vehicle_Sound_Collection_and_Calibration_Workflow.md
+
+      - name: Full S12 regression
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests
