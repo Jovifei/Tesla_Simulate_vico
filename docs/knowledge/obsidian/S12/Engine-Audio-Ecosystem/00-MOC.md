@@ -1,81 +1,54 @@
 # S12 Engine-Audio Ecosystem — MOC
 
-## 当前首先阅读
+## Current authority / first read
 
-- [[Project-Long-Term-Memory]] — **当前项目长期记忆真值**：最终目标、历史阶段、当前 blocker、App-first 产品路线、负面知识、执行顺序。
-- [[Research-Sources-And-Adoption-History]] — 参考论文、开源项目、商业工作流、许可证和方法吸收历史。
-- [[Decision-History-And-Negative-Knowledge]] — 关键决策、已证伪路线、指标陷阱、CI/治理踩坑和禁止重复事项。
-- Android App 详细实施计划：`docs/04-planning/04-android-app-runtime-implementation-plan.md`。
+1. [[Project-Long-Term-Memory]] — 当前综合真值（Stage AD / App-first）。
+2. [[Project-Historical-Memory-Through-2026-09-04]] — 1150+ 行详细历史档案，保留原始 Stage V→AC 细节，不因当前摘要而丢失。
+3. [[Research-Sources-And-Adoption-History]]
+4. [[Decision-History-And-Negative-Knowledge]]
+5. `docs/08-reports/11-project-status-20260905.md`
+6. `docs/04-planning/05-s12-reference-closed-loop-optimization.md`
+7. `docs/10-learning/01-s12-reusable-engineering-playbook.md`
 
-证据权重：`S12_Handoff_Package_2026-09-03` 约 90%，旧聊天/此前总结约 10%；会变化的远端状态以现场 GitHub 为准。
-
-当前产品方向：
+当前路线：
 
 ```text
-S12 声音真实性
-→ Jovi Human Gate
-→ Hellcat/Ferrari/RX-7 Engineering Profiles
-→ speed + acceleration → VirtualEngineState
-→ portable C++
-→ Android App realtime sound
-→ in-car validation
+Stage AD reference loop
+→ Jovi listening/Human Gate
+→ Hellcat Engineering Profile
+→ Ferrari/RX-7
+→ AudioParameterPackage/Golden Evidence
+→ C++
+→ Android App
 ```
 
-ESP32 当前状态：`DEFERRED_FUTURE_OPTION`，不是当前 blocker。
+ESP32=`DEFERRED_FUTURE_OPTION`；R1=`MISSING`；Python S12=authoritative renderer；Simulink=diagnostic mirror。
 
-## 历史知识节点
+## Current topic knowledge
 
-- [[01-Stage-V-Independent-Audit]]
-- [[02-Architecture-Comparison]]
-- [[03-License-Matrix]]
-- [[04-Source-To-S12-Traceability]]
-- [[05-Stage-W-Logs]]
-- [[Open-Source-Engine-Sim]]
-- [[Open-Source-ENSIM4]]
-- [[Open-Source-DasEtwas-Enginesound]]
-- [[Papers-PTR-EONE-DDSP]]
-- [[Commercial-Public-Workflow-References]]
-- [[06-Bakeoff-And-Migration-V3]]
-- [[Open-Source-PTR-Model]]
-- [[Open-Source-VehicleNoiseSynthesizer]]
-- [[Open-Source-FiveM-License-Boundary]]
-- [[Open-Source-Granular-ESP32-Boundaries]]
-- [[Open-Source-Ignis]]
-- [[Open-Source-Markeasting-Engine-Audio]]
-- [[07-Stage-X-Remote-Reconciliation]]
-- [[08-Engineering-Selection-Contract]]
-- [[09-Hellcat-R2-Engineering-Selection]]
-- [[10-Ferrari-RX7-Diagnostic-Migration]]
-- [[11-R1-Formal-Gate-Readiness]]
-- [[12-Stage-X-Final-Status]]
-- [[13-Workspace-Cleanup-20260830]]
-- [[15-Stage-Y-Status]]
-- [[16-Stage-Z-Status]]
-- [[17-Stage-AA-Status]]
-- [[AA-C3-Gain-Provenance]]
+- [[AA-C3-Gain-Provenance-v2]] — 当前 provenance 参考；旧 `AA-C3-Gain-Provenance` 保留为 superseded history。
 - [[Broad-Pre-PTR-vs-Source-Causal-Gain]]
+- [[Counterfactual-Residual-vs-True-Source-Stem]]
+- [[Blower-Source-vs-Audible-Path]]
+- [[Dynamic-Event-Aligned-Metrics]]
+- [[LF-Persistence-Metric-Failure]]
 - [[Hellcat-Human-V3-Feedback]]
 
-Repository research registry：
+## Historical stage snapshots
 
-`docs/research/engine-audio-ecosystem/`
+01–17 Stage V/W/X/Y/Z/AA 节点，以及 Stage-AB-*、Stage-AA-Post-Merge-Truth 等，全部按其日期保留，不能覆盖 current status。
 
-关键 runtime evidence：
+## Open-source / research nodes
+
+Engine-Sim、ENSIM4、DasEtwas、VehicleNoiseSynthesizer、PTR Model、Ignis、Markeasting、FiveM/Granular/ESP32 boundaries、Papers、Commercial workflow 等个别节点仍可查；完整当前索引在 `Research-Sources-And-Adoption-History.md` 与 `docs/research/engine-audio-ecosystem/`。
+
+## Runtime evidence
 
 ```text
 tasks/reports/runtime/s12-stage-aa/
 tasks/reports/runtime/s12-stage-ab/
 tasks/reports/runtime/s12-stage-ac/
+tasks/reports/runtime/s12-stage-ad/
 ```
 
-当前长期边界：
-
-```text
-R1 = MISSING
-HUMAN_PASS = false
-OEM_CALIBRATION = NOT_AUTHORIZED
-PROFILE_FREEZE = NOT_AUTHORIZED
-ESP32 = DEFERRED_FUTURE_OPTION
-```
-
-如果历史节点与 `Project-Long-Term-Memory.md` 的当前产品方向冲突，以长期记忆文档 + 当前用户明确决策为准。
+历史节点与当前 authority 冲突时，以 current docs + current remote truth 为准。

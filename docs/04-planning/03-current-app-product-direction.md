@@ -1,35 +1,31 @@
 # 当前产品方向：App-first 实时声浪
 
-**当前产品 = 车内 Android App。ESP32 = `DEFERRED_FUTURE_OPTION`。**
+更新：2026-09-05
+状态：`ACTIVE_AUTHORITY`
 
-Evidence: `S12_Handoff_Package_2026-09-03` ≈90%, old chat/summary ≈10%, current user decisions override historical plans.
+最终产品：车内 Android App，而不是当前 ESP32 盒子。
 
 ```text
 speed + acceleration
 → VirtualEngineState
-→ Vehicle Profile
-→ S12 realtime sound
+→ selected Vehicle Profile
+→ realtime engine-sound core
 → Android playback
 ```
 
-Current minimum input = speed + acceleration. Virtual RPM/load/gear/shift/lift/overrun are derived in App. CAN/OBD is future richer input.
+当前不是立即写 App UI 的阶段；当前优先完成声音算法的 reference/Human 闭环。Stage AD 是 App 之前的 authoring/calibration 工程阶段。
 
-Current sequence:
+完成声音 profile 后：
 
 ```text
-AC8
-→ Jovi V3
-→ AA-C3 accept OR ONE source-causal Round2
-→ Hellcat Engineering Profile
-→ Ferrari/RX-7
+Engineering Profiles
 → AudioParameterPackage
-→ Golden traces/PCM
+→ Golden traces / PCM
 → portable C++
 → Python↔C++ equivalence
-→ Android realtime
-→ profile selector
+→ Android NDK + Oboe/AAudio
+→ vehicle selector
 → in-car validation
-→ R1 when available
 ```
 
-No current ESP32 board/IRAM/BLE/WiFi/OTA/advanced-port work.
+App MVP 不依赖 Tesla CAN；CAN/OBD/真实 RPM 是未来 richer adapter。ESP32 = `DEFERRED_FUTURE_OPTION`。

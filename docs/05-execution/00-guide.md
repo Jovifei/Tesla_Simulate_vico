@@ -1,5 +1,9 @@
 # 05-execution
 
-Purpose: concrete runbooks, migration logs, flash procedures, OTA server setup notes, and bring-up steps.
+状态：`ACTIVE_RUNBOOK_INDEX`
 
-Use this directory for repeatable operating procedures rather than long-term requirements.
+当前主要执行入口：
+
+- `02-stage-ad-local-codex-execution-prompt.md` — 本地 Stage AD reference loop / 试听生成。
+
+本目录保存可重复执行步骤，不保存长期产品 authority。旧 firmware flash/OTA/bring-up runbook 如后续恢复，应明确标 `DEFERRED_FUTURE`。

@@ -1,21 +1,45 @@
 # 项目总待办 / Master Backlog
 
-Current active scope = acoustic realism + Android App productization. Handoff ≈90%, old chat ≈10%. ESP32 = Deferred Future.
+更新：2026-09-05
 
-P0: AC8 → Jovi V3 → feedback binding → AA-C3 decision.
+## P0 Remote/Governance
 
-P1: ONE source-causal Round2 if needed → professional finalist/v4 → Hellcat Engineering Profile.
+- PR #6 current docs merge/qualification；
+- PR #7 Stage AD exact-head CI/merge；
+- AC8 post-merge pre-human receipt。
 
-P2: Ferrari 458 → RX-7 FD → multi-vehicle profile schema → App vehicle selector.
+## P1 Stage AD local acoustic loop
 
-P3: speed + acceleration input/filter → virtual RPM/load/gear/shift/lift/overrun → state restore/replay.
+- locate/verify governed Hellcat Reference；
+- body closed loop；
+- blower closed loop；
+- afterfire loop where reference is valid；
+- hard-gate review；
+- monitor audition package；
+- Jovi feedback。
 
-P4: AudioParameterPackage → Golden traces/PCM → portable C++ → Python↔C++ equivalence.
+Public extractor output = optional R3 human A/B only, not default optimizer input。
 
-P5: Android NDK + AAudio/Oboe → realtime-safe callback → state buffer → profile selector → latency/underrun/CPU/memory/thermal → in-car validation.
+## P2 Hellcat closure
 
-P6: CAN/OBD/real RPM/load/gear are future richer inputs, not prerequisites.
+Human decision → accept candidate 或最多一轮/三个 source-causal finalists → Hellcat Engineering Profile。
 
-P7: R1 legal synchronized real-reference calibration.
+## P3 Vehicle migration
 
-Deferred: all ESP32 board/IRAM/BLE/WiFi/OTA/CAN-analyser/advanced-port work.
+Ferrari 458、RX-7 FD、multi-vehicle profile schema。
+
+## P4 App state/product contracts
+
+speed/acceleration conditioning、Virtual RPM/load/gear/shift/lift/overrun、AudioParameterPackage、Golden traces/PCM。
+
+## P5 Product runtime
+
+portable C++、Python↔C++ equivalence、Android NDK + Oboe/AAudio、vehicle selector、latency/xrun/CPU/memory/thermal/lifecycle、in-car validation。
+
+## P6 Formal reference
+
+R1 legal synchronized acquisition/calibration。
+
+## Deferred
+
+ESP32 board/BLE/WiFi/OTA/CAN-analyser/I2S external hardware chain，以及 CAN-only product dependence。
