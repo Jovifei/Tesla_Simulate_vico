@@ -4,9 +4,11 @@ import numpy as np
 import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
-from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.canonical_renderer import apply_package_monitor_gain, package_gain_db
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.canonical_renderer import CanonicalStageAERenderer, apply_package_monitor_gain, package_gain_db
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.ir_assets import IrAssetSpec, load_ir_asset
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.parameter_fit import family_parameters, apply_overrides
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.partitioned_convolver import UniformPartitionedConvolver
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.package_audition import _standalone_html
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.vehicle_profiles import build_standard_trace
 
 
@@ -30,3 +32,16 @@ def test_standard_trace_is_deterministic_and_finite():
 def test_unverified_ir_is_rejected_for_product(tmp_path):
     spec=IrAssetSpec("x",tmp_path/"x.wav","0"*64,"https://example.invalid","RESEARCH_DIAGNOSTIC_ONLY","diagnostic","none")
     with pytest.raises(PermissionError): load_ir_asset(spec,use="product")
+
+
+def test_generic_family_parameters_and_overrides_are_config_valid():
+    cfg=load_config("gtr_r35_v1"); params=family_parameters(cfg,"induction"); assert params
+    changed=apply_overrides(cfg,{params[0].name:(params[0].minimum+params[0].maximum)/2.0},params); assert changed["vehicle_id"]=="gtr_r35_v1"
+
+
+def test_canonical_renderer_is_deterministic_for_same_seed():
+    trace=build_standard_trace("hellcat","hot_idle",0.08); a=CanonicalStageAERenderer("hellcat_v1",random_seed=77).render(trace).post_ptr_pcm; b=CanonicalStageAERenderer("hellcat_v1",random_seed=77).render(trace).post_ptr_pcm; assert np.array_equal(a,b)
+
+
+def test_stage_ae_dashboard_has_no_remote_runtime_dependency():
+    html=_standalone_html("test",[{"scene":"idle","candidate_b64":"data:audio/wav;base64,AA==","reference_b64":""}]); assert "https://" not in html and "http://" not in html and "<script src=" not in html

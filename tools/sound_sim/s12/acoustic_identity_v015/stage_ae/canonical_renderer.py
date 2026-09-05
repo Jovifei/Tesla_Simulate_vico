@@ -1,18 +1,18 @@
 """Single-authority Stage AE renderer.
 
-The authoritative source remains PersistentEventDomainEngine.  Optional governed IR
+The authoritative source remains PersistentEventDomainEngine. Optional governed IR
 convolution is inserted after the S12 source/path/audio-chain output and before the
-unchanged Frozen PTR boundary.  Monitor gain is a separate package-level operation
+unchanged Frozen PTR boundary. Monitor gain is a separate package-level operation
 and is never fed back into reference-distance optimization.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping
+from typing import Mapping, Any
 import copy
 import numpy as np
 
-from ..event_domain.config_schema import load_config
+from ..event_domain.config_schema import load_config, validate_config
 from ..stage_w.boundary_adapter import FrozenPtrStereo
 from ..stage_w.persistent_engine import PersistentEventDomainEngine
 from .ir_assets import IrAssetSpec, load_ir_asset
@@ -27,15 +27,16 @@ class CanonicalRenderResult:
 
 
 class CanonicalStageAERenderer:
-    def __init__(self, vehicle_config_id: str, sample_rate_hz: int = 48000, block_size: int = 960, random_seed: int = 20260905, ir_spec: IrAssetSpec | None = None) -> None:
+    def __init__(self, vehicle_config_id: str, sample_rate_hz: int = 48000, block_size: int = 960, random_seed: int = 20260905, ir_spec: IrAssetSpec | None = None, config_override: Mapping[str, Any] | None = None) -> None:
         self.vehicle_config_id = vehicle_config_id
         self.sample_rate_hz = int(sample_rate_hz)
         self.block_size = int(block_size)
         self.random_seed = int(random_seed)
         self.ir_spec = ir_spec
+        self.config_override = validate_config(config_override) if config_override is not None else None
 
     def render(self, trace: Mapping[str, np.ndarray]) -> CanonicalRenderResult:
-        cfg = load_config(self.vehicle_config_id)
+        cfg = copy.deepcopy(self.config_override) if self.config_override is not None else load_config(self.vehicle_config_id)
         engine = PersistentEventDomainEngine(
             copy.deepcopy(cfg), self.sample_rate_hz, self.block_size,
             ptr_enabled=False, path_model="waveguide_v1", forced_induction_model="harmonic_v1",
