@@ -6,7 +6,7 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.event_domain.config_schema import load_config
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.canonical_renderer import CanonicalStageAERenderer, apply_package_monitor_gain, package_gain_db
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.ir_assets import IrAssetSpec, load_ir_asset
-from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.parameter_fit import family_parameters, apply_overrides
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.parameter_fit import family_parameters, apply_overrides, validate_caseset_identity
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.partitioned_convolver import UniformPartitionedConvolver
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.package_audition import _standalone_html
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.vehicle_profiles import build_standard_trace
@@ -45,3 +45,8 @@ def test_canonical_renderer_is_deterministic_for_same_seed():
 
 def test_stage_ae_dashboard_has_no_remote_runtime_dependency():
     html=_standalone_html("test",[{"scene":"idle","candidate_b64":"data:audio/wav;base64,AA==","reference_b64":""}]); assert "https://" not in html and "http://" not in html and "<script src=" not in html
+
+
+def test_caseset_vehicle_identity_is_fail_closed():
+    validate_caseset_identity({"vehicle_id":"lfa"},"lfa")
+    with pytest.raises(ValueError): validate_caseset_identity({"vehicle_id":"gtr_r35"},"lfa")
