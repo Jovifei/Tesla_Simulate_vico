@@ -250,7 +250,9 @@ def _materialize(output_root: Path, config: dict[str, Any], overrides: dict[str,
             ("post_ptr_raw", rendered.raw_pcm),
             ("monitor", rendered.monitor_pcm),
         ):
-            receipt = write_pcm24_wav(root / _AA_SCENE[scenario] / f"{stem}.wav", audio, 48000)
+            peak = float(np.max(np.abs(audio))) if audio.size else 0.0
+            safe_audio = audio * (0.999 / peak) if peak >= 1.0 else audio
+            receipt = write_pcm24_wav(root / _AA_SCENE[scenario] / f"{stem}.wav", safe_audio, 48000)
             stem_receipts[stem] = {
                 "path": str(Path(receipt.path).relative_to(output_root).as_posix()),
                 "sha256": receipt.sha256,
@@ -304,7 +306,10 @@ def run_aa_c3_search(
     independent_count = int(independent_reference_count) if independent_reference_count is not None else len(reference_audio)
 
     records: list[dict[str, Any]] = []
-    for index, overrides in enumerate(sobol_overrides(parameters, coarse_count, seed)):
+    sobol_candidates = list(sobol_overrides(parameters, coarse_count, seed))
+    print(f"  [Stage 1/2 Sobol] Evaluating {len(sobol_candidates)} candidates...", flush=True)
+    for index, overrides in enumerate(sobol_candidates):
+        print(f"    - Sobol candidate {index + 1}/{len(sobol_candidates)}", flush=True)
         safe = sanitize_overrides(overrides)
         config = apply_parameters(base_config, safe, parameters)
         record = _evaluate(
@@ -334,10 +339,12 @@ def run_aa_c3_search(
         reverse=True,
     )[:3]
     per_center = refine_count // max(len(top), 1)
+    print(f"  [Stage 2/2 Refine] Refining {len(top)} centers ({per_center} per center)...", flush=True)
     for rank, center in enumerate(top):
         for index, overrides in enumerate(
             refine_overrides(parameters, center["overrides"], per_center, seed + 1 + rank)
         ):
+            print(f"    - Refine center {rank + 1}/{len(top)}, candidate {index + 1}/{per_center}", flush=True)
             safe = sanitize_overrides(overrides)
             config = apply_parameters(base_config, safe, parameters)
             record = _evaluate(

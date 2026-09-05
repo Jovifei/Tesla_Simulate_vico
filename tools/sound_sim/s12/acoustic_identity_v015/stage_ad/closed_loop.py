@@ -210,6 +210,7 @@ def run_closed_loop(
     final_best: dict[str, Any] | None = None
 
     for index in range(policy.max_iterations):
+        print(f"\n>>> [Stage AD Closed-Loop] Iteration {index + 1}/{policy.max_iterations} starting...", flush=True)
         iteration_root = output_root / f"iteration_{index:02d}"
         result = search_fn(
             iteration_root,
