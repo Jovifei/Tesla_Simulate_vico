@@ -4,7 +4,7 @@
 
 - **R1**：合法原始音频 + 明确车辆状态/改装状态 + mic/recording metadata + synchronized RPM/load/gear。可进入正式标定。
 - **R2**：受治理但信息不完整的工程 reference，可做 comparator/diagnostic，不能称 OEM calibration。
-- **R3**：公开视频/POV/私人诊断切片。允许 Human A/B 和明确标注的 diagnostic fitting；不可升 R1/R2，不作为产品音频资产。
+- **R3**：公开视频/POV/私人诊断切片。统一机器状态为 `R3_PRIVATE_DIAGNOSTIC_ONLY`。允许 Human A/B 和明确标注的 diagnostic fitting；不可升 R1/R2，不作为产品音频资产。
 
 ## 收集优先级
 
