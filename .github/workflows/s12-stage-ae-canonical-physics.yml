@@ -24,6 +24,9 @@ concurrency:
   group: s12-stage-ae-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  STAGE_AE_BASE: 2045dfb21adb0a75fdfbad080817a5818a7f8227
+
 jobs:
   qualify:
     runs-on: ubuntu-24.04
@@ -69,9 +72,11 @@ jobs:
       - name: Track-P frozen-boundary guard
         run: python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py
 
-      - name: Repository and license checks
+      - name: Stage AE repository and license checks
         run: |
-          git diff --check "$(git merge-base HEAD origin/main)..HEAD"
+          git cat-file -e "${STAGE_AE_BASE}^{commit}"
+          git merge-base --is-ancestor "${STAGE_AE_BASE}" HEAD
+          git diff --check "${STAGE_AE_BASE}..HEAD"
           test -f third_party/fftconvolver/COPYING.txt
           grep -q "f2cdeb04c42141d2caec19ca4f137398b2a76b85" third_party/fftconvolver/README.md
           grep -q "R3_PRIVATE_DIAGNOSTIC_ONLY" docs/sound-simulation/S12_Real_Vehicle_Sound_Collection_and_Calibration_Workflow.md
