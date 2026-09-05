@@ -1,8 +1,9 @@
 # 03-protocols
 
-Purpose: BLE UUIDs, CAN frames, MQTT topics, OTA payloads, and future USB CDC contracts.
+状态：`ACTIVE_AUTHORITY_INDEX`
 
-Rules:
-- Keep wire contracts explicit and versioned.
-- Do not rename or reuse protocol fields without a migration note.
-- BLE `0xfff0`, compatibility `0xffe0`, and `ffe8` config behavior must remain easy to find.
+本目录当前优先记录**项目级数据/证据协议**，而不是旧 BLE/CAN/OTA 协议。当前协议入口：
+
+- `01-reference-and-human-evidence-protocol.md`
+
+未来 Android VehicleState、AudioParameterPackage、CAN/OBD adapter 等协议稳定后再在这里版本化。历史 BLE/CAN/OTA 字段属于 Deferred ESP32 资产，不是当前产品协议 authority。

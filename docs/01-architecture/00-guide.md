@@ -1,10 +1,14 @@
 # 01-architecture
 
-Current architecture = **Android App-first realtime sound**.
+状态：`ACTIVE_AUTHORITY_INDEX`
 
-Read:
-- `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md`
-- `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md`
-- `01-project-system-architecture.md`
+当前权威架构：`01-project-system-architecture.md`。
 
-Minimum input = speed + acceleration; App derives VirtualEngineState; S12 Python is sound authority; ESP32 = Deferred Future.
+必须同时理解四层：
+
+1. **S12 Python authoring/calibration authority**；
+2. **Stage AD reference-driven negative-feedback loop**；
+3. **Profile/Golden Evidence/portable C++ product bridge**；
+4. **Android App target runtime**。
+
+Simulink 是 diagnostic/teaching mirror，不是当前声音 authority。ESP32 = `DEFERRED_FUTURE_OPTION`。

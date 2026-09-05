@@ -1,6 +1,7 @@
 # 09-backlog
 
-Purpose: remaining work, technical debt, release blockers, and deferred features.
+状态：`ACTIVE_BACKLOG_INDEX`
 
-Active document:
-- [Firmware backlog](01-firmware-backlog.md)
+当前 active backlog：`02-project-master-backlog.md`。
+
+`01-firmware-backlog.md` = `DEFERRED_FUTURE`，不再是 active backlog。
