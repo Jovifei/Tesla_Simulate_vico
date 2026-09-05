@@ -1,0 +1,40 @@
+{
+  "schema": "s12.stage_ae.execution_state.v1",
+  "updated": "2026-09-05",
+  "branch": "s12-stage-ae-canonical-physical-convergence",
+  "parent_stage_ad_head": "2045dfb21adb0a75fdfbad080817a5818a7f8227",
+  "status": "REMOTE_IMPLEMENTATION_COMPLETE_CI_PENDING",
+  "product_direction": {
+    "runtime": "ANDROID_APP",
+    "minimum_inputs": ["speed", "acceleration"],
+    "esp32": "DEFERRED_FUTURE_OPTION"
+  },
+  "authority": {
+    "canonical_renderer": "PersistentEventDomainEngine",
+    "stage_ad_engine_acoustics": "TEACHER_DIAGNOSTIC_ONLY",
+    "track_p_ptr_radiation": "FROZEN"
+  },
+  "implemented": [
+    "single canonical four-vehicle renderer",
+    "lfa_v1 and gtr_r35_v1 event-domain configs",
+    "package-wide attenuation-only monitor gain",
+    "governed external IR manifest with SHA and rights",
+    "clean-room partitioned convolution Python reference",
+    "generic body/path/induction/afterfire family fit",
+    "fully standalone A/B dashboard",
+    "local AI sound-generation handoff"
+  ],
+  "evidence_boundaries": {
+    "public_video": "R3_PRIVATE_DIAGNOSTIC_ONLY",
+    "lfa_gtr": "EXPERIMENTAL_R3_AUDITION_PROFILE",
+    "human_pass": false,
+    "r1": "MISSING",
+    "oem_calibration": "NOT_AUTHORIZED"
+  },
+  "next_local_action": "Run docs/05-execution/03-stage-ae-local-ai-handoff.md and stop after producing four-vehicle audition packages for Jovi.",
+  "ci": {
+    "workflow": "S12 Stage AE Canonical Physical Convergence",
+    "required": true,
+    "latest_exact_head_result": "PENDING"
+  }
+}
