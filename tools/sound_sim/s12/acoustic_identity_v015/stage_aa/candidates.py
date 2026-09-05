@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 from typing import Any
 
@@ -108,15 +109,31 @@ def _candidate_pre_ptr(spec: CandidateSpec, trace: Any, layers: dict[str, np.nda
     return result
 
 
-def render_candidate(candidate_id: str, scene: str, duration_s: float = 1.0) -> CandidateRender:
+def render_candidate(
+    candidate_id: str,
+    scene: str,
+    duration_s: float = 1.0,
+    *,
+    config_override: dict[str, Any] | None = None,
+) -> CandidateRender:
+    """Render one bounded candidate.
+
+    ``config_override`` is an opt-in Stage-AD engineering hook.  The default
+    path remains byte-for-byte semantically identical to Stage AA: it uses the
+    committed fitted config.  Stage AD can inject a deep-copied upstream source
+    config while preserving the AA candidate's fixed pressure/event-body/
+    carrier processing and frozen PTR boundary.  It never mutates the official
+    v3 package or the committed fitted config.
+    """
     spec = _spec(candidate_id)
     trace = build_hellcat_bakeoff_trace(SCENE_NAMES.get(scene, scene), duration_s)
-    engine = PersistentEventDomainEngine(_fitted_config(), SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=False, **FINAL_SETTINGS)
+    config = copy.deepcopy(config_override) if config_override is not None else _fitted_config()
+    engine = PersistentEventDomainEngine(copy.deepcopy(config), SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=False, **FINAL_SETTINGS)
     block, layers = engine.process_with_layer_trace(_state_arrays(trace))
     pre_ptr = _candidate_pre_ptr(spec, trace, layers)
     ptr = FrozenPtrStereo(SAMPLE_RATE_HZ)
     post_ptr = ptr.process(pre_ptr)
-    monitor_engine = PersistentEventDomainEngine(_fitted_config(), SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=False, **FINAL_SETTINGS)
+    monitor_engine = PersistentEventDomainEngine(copy.deepcopy(config), SAMPLE_RATE_HZ, BLOCK_SIZE, ptr_enabled=False, **FINAL_SETTINGS)
     monitor_trace = monitor_engine.monitor_diagnostic_trace([post_ptr[index : index + BLOCK_SIZE] for index in range(0, post_ptr.shape[0], BLOCK_SIZE)])
     raw = post_ptr * OUTPUT_SCALE
     monitor = monitor_trace.monitor_pcm * OUTPUT_SCALE
@@ -128,7 +145,7 @@ def render_candidate(candidate_id: str, scene: str, duration_s: float = 1.0) -> 
         monitor_pcm=monitor,
         pre_ptr_pcm=pre_ptr * OUTPUT_SCALE,
         diagnostics={"engine": block.diagnostics, "monitor": {"gain_trace_db": monitor_trace.gain_trace_db.tolist(), "desired_gain_trace_db": monitor_trace.desired_gain_trace_db.tolist()}, "spec": spec.__dict__},
-        parameter_consumed=spec.candidate_id != "AA-C0",
+        parameter_consumed=spec.candidate_id != "AA-C0" or config_override is not None,
     )
 
 

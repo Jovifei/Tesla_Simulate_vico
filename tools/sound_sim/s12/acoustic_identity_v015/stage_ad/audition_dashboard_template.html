@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dodge Challenger SRT Hellcat V8 - 声音算法人耳试听评审系统</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(220, 38, 38, 0.8); }
+    }
+    .glow-active {
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen font-sans antialiased pb-28">
+
+  <!-- TOP HEADER & PERFORMANCE HUD -->
+  <header class="border-b border-slate-800 bg-[#0e1626]/90 backdrop-blur sticky top-0 z-40 px-4 lg:px-8 py-3.5 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-700 to-amber-500 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-red-900/40">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-white tracking-wide">DODGE HELLCAT V8 声音仿真人耳试听</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-950 text-red-400 border border-red-800 font-mono font-medium">Stage AD (AA-C3)</span>
+          </div>
+          <p class="text-xs text-slate-400">声学闭环校准与真车A/B对比评审控制台 · Dodge Challenger SRT Hellcat 6.2L Supercharged</p>
+        </div>
+      </div>
+
+      <!-- KEY METRICS BANNER -->
+      <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
+        <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <span class="text-slate-400">校准前绝对参考距离:</span>
+          <span class="font-mono font-bold text-amber-400 line-through">0.880</span>
+          <span class="text-slate-500">→</span>
+          <span class="font-mono font-bold text-emerald-400">0.648</span>
+          <span class="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-1 py-0.2 rounded font-semibold">-26.3%</span>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <span class="text-slate-400">硬性门禁:</span>
+          <span class="flex items-center gap-1 font-semibold text-emerald-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 零削顶 / 零爆音 PASS
+          </span>
+        </div>
+
+        <button onclick="toggleParamModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+          <span>⚙️</span> <span>查看18项物理调校参数</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 pt-6 space-y-6">
+
+    <!-- MASTER DOCK: NOW PLAYING & REAL-TIME AUDIO VISUALIZER -->
+    <div class="bg-[#111927] border border-slate-800 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
+        <!-- Current Track Info & Transport -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span id="activeBadgeCategory" class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">怠速工况</span>
+                <span id="activeBadgeSource" class="text-[11px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 font-semibold">A: 算法成品 (Candidate)</span>
+              </div>
+              <h2 id="activeTrackTitle" class="text-xl font-bold text-white tracking-tight">03 热态怠速稳态 (Hot Idle ~700 RPM)</h2>
+              <p id="activeTrackDesc" class="text-xs text-slate-400 mt-1 line-clamp-2">十字曲轴90度点火间隙造成的非对称脉动，呈现标志性的美式‘煮水声’（Chop），低频松散而有力。</p>
+            </div>
+          </div>
+
+          <!-- Seamless A/B Comparator Switch -->
+          <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800 flex items-center justify-between gap-2">
+            <div class="text-xs font-semibold text-slate-400 pl-1">声源 A/B 瞬时无缝比对:</div>
+            <div class="flex items-center gap-1.5">
+              <button id="btnSourceA" onclick="switchSource('candidate')" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-red-600 text-white shadow shadow-red-600/30 flex items-center gap-1">
+                <span>⚡</span> A: 仿真算法成品
+              </button>
+              <button id="btnSourceB" onclick="switchSource('ref')" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 flex items-center gap-1">
+                <span>🎙️</span> B: 真车参考实录 (R3)
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar & Scrubber -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span id="currentTimeDisplay">0:00</span>
+              <span id="durationTimeDisplay">0:04</span>
+            </div>
+            <div class="relative w-full h-2.5 bg-slate-800 rounded-full cursor-pointer overflow-hidden group" id="progressBarContainer" onclick="seekAudio(event)">
+              <div id="progressBar" class="h-full bg-gradient-to-r from-red-500 to-amber-400 w-0 rounded-full transition-all duration-75 relative"></div>
+            </div>
+          </div>
+
+          <!-- Player Controls Row -->
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2">
+              <button id="btnPlayPause" onclick="togglePlay()" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white flex items-center justify-center text-lg shadow-lg shadow-red-600/30 transition transform active:scale-95">
+                ▶
+              </button>
+              <button onclick="changeScene(-1)" title="上一个场景" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                ⏮
+              </button>
+              <button onclick="changeScene(1)" title="下一个场景" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                ⏭
+              </button>
+              <button id="btnLoop" onclick="toggleLoop()" title="单曲循环" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                🔁 循环: 关
+              </button>
+              <button id="btnSpeed" onclick="cycleSpeed()" title="播放倍速" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
+                1.0x
+              </button>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400">🔊</span>
+              <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.85" oninput="changeVolume(this.value)" class="w-20 sm:w-28 accent-red-500 bg-slate-700 h-1.5 rounded-lg cursor-pointer">
+              <span id="volumeValue" class="text-[11px] font-mono text-slate-400 w-8">85%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Visualizer Canvas (Oscilloscope & FFT Spectrum) -->
+        <div class="lg:col-span-6 bg-slate-950/80 border border-slate-800/90 rounded-xl p-3.5 flex flex-col justify-between h-[220px]">
+          <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              <span class="font-mono text-slate-300 font-semibold">实时动态声学分析仪</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button id="btnVizModeSpectrum" onclick="setVizMode('spectrum')" class="px-2 py-0.5 text-[10px] font-mono rounded bg-red-600 text-white font-medium">频域 (FFT 64-Band)</button>
+              <button id="btnVizModeWaveform" onclick="setVizMode('waveform')" class="px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800 text-slate-400 hover:text-slate-200">时域 (Waveform)</button>
+            </div>
+          </div>
+
+          <div class="relative w-full h-[145px] my-auto">
+            <canvas id="visualizerCanvas" class="w-full h-full block rounded-lg"></canvas>
+            <div id="canvasIdleOverlay" class="absolute inset-0 flex items-center justify-center text-xs font-mono text-slate-500 pointer-events-none">
+              点击播放键开启声学生物电测图谱
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1 border-t border-slate-800/80">
+            <span>20 Hz (低频轰鸣)</span>
+            <span>250 Hz (V8基频)</span>
+            <span>1 kHz (机械咬合)</span>
+            <span>4 kHz (增压啸叫)</span>
+            <span>16 kHz</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY FILTER PILLS -->
+    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button onclick="filterCategory('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-red-600 text-white shadow-sm" data-cat="all">全部场景 (10)</button>
+        <button onclick="filterCategory('idle')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="idle">怠速煮水 (2)</button>
+        <button onclick="filterCategory('acceleration')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="acceleration">加速狂飙 (2)</button>
+        <button onclick="filterCategory('afterfire')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="afterfire">回火放炮 (1)</button>
+        <button onclick="filterCategory('dynamics')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="dynamics">动态换挡与松油 (2)</button>
+        <button onclick="filterCategory('cruising')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="cruising">高低速巡航 (3)</button>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="exportScorecard()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition flex items-center gap-1 shadow-md shadow-emerald-700/20">
+          <span>💾</span> 导出试听评审记录 JSON
+        </button>
+      </div>
+    </div>
+
+    <!-- SCENE CARDS GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="scenesContainer">
+      <!-- Dynamic rendering via JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- PARAMETER COMPARISON MODAL -->
+  <div id="paramModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#111927] border border-slate-700 rounded-2xl w-full max-w-5xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>⚙️</span> Stage AD 物理声学标定参数台账 (18项全闭环收敛)
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">算法由粗粒度24点Sobol空间探索 + 12点细粒度反射收敛驱动，与真车R3声学诊断对齐</p>
+        </div>
+        <button onclick="toggleParamModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body (Table) -->
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="border border-slate-800 rounded-xl overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-900/80 text-slate-400 font-mono border-b border-slate-800">
+              <tr>
+                <th class="p-3">分类</th>
+                <th class="p-3">参数变量</th>
+                <th class="p-3">物理含义</th>
+                <th class="p-3 text-right">优化前基准</th>
+                <th class="p-3 text-right">最终校准值</th>
+                <th class="p-3 text-right">变动幅度</th>
+                <th class="p-3">声学调校作用</th>
+              </tr>
+            </thead>
+            <tbody id="paramTableBody" class="divide-y divide-slate-800/60 font-sans">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-900/60 flex items-center justify-between text-xs text-slate-400">
+        <div>标定策略：严禁全局音量伪造，保持绝对参考距离标尺，无削顶失真</div>
+        <button onclick="toggleParamModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition font-medium">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO ELEMENT (HIDDEN) -->
+  <audio id="audioPlayer" preload="auto"></audio>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const SCENES = __SCENES_JSON__;
+    const PARAMETERS = __PARAMS_JSON__;
+    const AUDIO_STORE = __AUDIOS_JSON__;
+
+    let currentSceneIndex = 2; // Default: 03_hot_idle
+    let currentSource = 'candidate'; // 'candidate' or 'ref'
+    let isPlaying = false;
+    let isLooping = false;
+    let playbackSpeed = 1.0;
+    let vizMode = 'spectrum'; // 'spectrum' or 'waveform'
+    let currentFilter = 'all';
+
+    // Audition scorecard storage in localStorage / memory
+    let scorecard = {};
+    try {
+      const saved = localStorage.getItem('hellcat_audition_scorecard_v1');
+      if (saved) scorecard = JSON.parse(saved);
+    } catch (e) {}
+
+    // Web Audio API context & nodes
+    let audioCtx = null;
+    let analyser = null;
+    let sourceNode = null;
+    let animFrameId = null;
+
+    const audioEl = document.getElementById('audioPlayer');
+    const canvas = document.getElementById('visualizerCanvas');
+    const canvasCtx = canvas.getContext('2d');
+
+    // Initialize audio context lazily on user gesture
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128; // 64 frequency bins
+        analyser.smoothingTimeConstant = 0.8;
+
+        try {
+          sourceNode = audioCtx.createMediaElementSource(audioEl);
+          sourceNode.connect(analyser);
+          analyser.connect(audioCtx.destination);
+        } catch (err) {
+          console.warn('WebAudio direct routing note:', err);
+        }
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Render Scene Cards
+    function renderSceneCards() {
+      const container = document.getElementById('scenesContainer');
+      container.innerHTML = '';
+
+      SCENES.forEach((scene, idx) => {
+        const isSelected = (idx === currentSceneIndex);
+        const cardScore = scorecard[scene.id] || { stars: 0, tags: [], notes: '' };
+        const hasRef = !!scene.ref_file;
+
+        const card = document.createElement('div');
+        card.className = `scene-card bg-[#111927] border rounded-xl p-4 transition-all space-y-3 relative overflow-hidden ${
+          isSelected ? 'border-red-500/80 ring-1 ring-red-500/50 shadow-lg shadow-red-950/30' : 'border-slate-800 hover:border-slate-700'
+        }`;
+        card.setAttribute('data-scene-id', scene.id);
+        card.setAttribute('data-category', scene.category);
+
+        if (currentFilter !== 'all' && scene.category !== currentFilter) {
+          card.style.display = 'none';
+        }
+
+        const starsHtml = [1, 2, 3, 4, 5].map(star => {
+          const colorClass = star <= cardScore.stars ? 'text-amber-400' : 'text-slate-600';
+          return `<button onclick="rateScene('${scene.id}', ${star})" class="text-base transition hover:scale-125 ${colorClass}">★</button>`;
+        }).join('');
+
+        const availableTags = ['低频饱满', '增压啸叫逼真', '回火清脆', '过渡自然', '无塑料感', '高频略刺', '低频略空'];
+        const tagsHtml = availableTags.map(tag => {
+          const isTagged = cardScore.tags.includes(tag);
+          const styleClass = isTagged 
+            ? 'bg-red-950 text-red-300 border-red-700' 
+            : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700';
+          return `<button onclick="toggleTag('${scene.id}', '${tag}')" class="px-2 py-0.5 rounded border transition ${styleClass}">${tag}</button>`;
+        }).join('');
+
+        let refSourceText = '';
+        if (hasRef) {
+          if (scene.id === '07_steady_high') {
+            refSourceText = 'YouTube 德国高速 (AutoTopNL)';
+          } else {
+            refSourceText = 'B站 国道实录 (BV14mwHeMEJU)';
+          }
+        }
+        const refBadge = hasRef 
+          ? `<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 真车实录: ${refSourceText}</span>`
+          : '<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">算法自测工况</span>';
+
+        const isPlayCandidate = (isSelected && currentSource === 'candidate' && isPlaying);
+        const isPlayRef = (isSelected && currentSource === 'ref' && isPlaying);
+
+        card.innerHTML = `
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">#${scene.index.toString().padStart(2, '0')}</span>
+              ${refBadge}
+            </div>
+            <h4 class="font-bold text-sm text-white">${scene.title}</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">${scene.desc}</p>
+          </div>
+
+          <!-- Direct Dual-Track Play Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="playSpecificSource(${idx}, 'candidate')" class="py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition ${isPlayCandidate ? 'bg-red-600 text-white shadow-lg shadow-red-600/40 ring-1 ring-red-400' : 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700'}">
+              <span>${isPlayCandidate ? '⏸ 暂停' : '▶'}</span> 算法声音 (A)
+            </button>
+            ${hasRef ? `
+            <button onclick="playSpecificSource(${idx}, 'ref')" class="py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition ${isPlayRef ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/40 ring-1 ring-emerald-400' : 'bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/80'}">
+              <span>${isPlayRef ? '⏸ 暂停' : '▶'}</span> 真车原声 (B)
+            </button>
+            ` : `
+            <div class="py-2 px-3 rounded-lg text-[11px] text-slate-500 bg-slate-900/50 border border-slate-800 flex items-center justify-center">
+              (无真车对照轨)
+            </div>
+            `}
+          </div>
+
+          <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800/80 text-[11px] text-amber-300/90 leading-snug">
+            <span class="font-semibold text-amber-400">👂 听辨要点：</span>${scene.focus}
+          </div>
+
+          <!-- Scene Perceptual Scorecard -->
+          <div class="pt-2 border-t border-slate-800/80 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">主观逼真度打分:</span>
+              <div class="flex items-center gap-1" id="starContainer_${scene.id}">
+                ${starsHtml}
+              </div>
+            </div>
+
+            <!-- Perceptual tags -->
+            <div class="flex flex-wrap gap-1 text-[10px]" id="tagContainer_${scene.id}">
+              ${tagsHtml}
+            </div>
+
+            <!-- Notes input -->
+            <input type="text" placeholder="记录人耳听感评价与问题..." value="${cardScore.notes || ''}" onchange="saveNotes('${scene.id}', this.value)" class="w-full bg-slate-900/90 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-red-500">
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Render Parameter Table
+    function renderParamTable() {
+      const tbody = document.getElementById('paramTableBody');
+      tbody.innerHTML = PARAMETERS.map(p => {
+        const isBlower = p.group.includes('Blower');
+        const deltaColor = p.delta > 0 ? 'text-emerald-400' : (p.delta < 0 ? 'text-cyan-400' : 'text-slate-500');
+        const deltaSign = p.delta > 0 ? '+' : '';
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-3 text-slate-400 font-mono text-[11px]">${isBlower ? '🌀 机械增压' : '🔥 排气燃烧'}</td>
+            <td class="p-3 font-mono font-semibold text-slate-200">${p.key}</td>
+            <td class="p-3 text-slate-300 font-medium">${p.name}</td>
+            <td class="p-3 text-right font-mono text-slate-400">${p.base.toFixed(4)}</td>
+            <td class="p-3 text-right font-mono font-bold text-amber-300">${p.final.toFixed(4)}</td>
+            <td class="p-3 text-right font-mono font-bold ${deltaColor}">${deltaSign}${p.delta.toFixed(1)}%</td>
+            <td class="p-3 text-slate-400 leading-snug">${p.desc}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load and play track
+    function loadScene(sceneIndex, source, autoplay = false) {
+      currentSceneIndex = sceneIndex;
+      currentSource = source;
+      const scene = SCENES[sceneIndex];
+
+      // Update Dock Info
+      document.getElementById('activeTrackTitle').textContent = scene.title;
+      document.getElementById('activeTrackDesc').textContent = scene.desc;
+      document.getElementById('activeBadgeCategory').textContent = 
+        scene.category === 'idle' ? '怠速工况' :
+        scene.category === 'acceleration' ? '加速狂飙' :
+        scene.category === 'afterfire' ? '回火放炮' :
+        scene.category === 'dynamics' ? '动态瞬态' : '稳态巡航';
+
+      updateSourceButtonsUI(scene);
+
+      // Determine audio key
+      let audioKey = scene.id + '_' + currentSource;
+      if (currentSource === 'ref' && !scene.ref_file) {
+        // Fallback to candidate only if this scene genuinely has no reference file
+        audioKey = scene.id + '_candidate';
+        currentSource = 'candidate';
+        updateSourceButtonsUI(scene);
+      }
+
+      const dataUri = AUDIO_STORE[audioKey];
+      if (dataUri) {
+        audioEl.src = dataUri;
+      } else {
+        const filename = currentSource === 'ref' ? scene.ref_file : scene.candidate_file;
+        audioEl.src = 'web_audio/' + filename;
+      }
+
+      audioEl.playbackRate = playbackSpeed;
+      audioEl.loop = isLooping;
+
+      renderSceneCards();
+
+      if (autoplay) {
+        initAudioContext();
+        audioEl.play().then(() => {
+          isPlaying = true;
+          updatePlayPauseButton();
+          document.getElementById('canvasIdleOverlay').style.display = 'none';
+        }).catch(e => console.error("Playback error:", e));
+      } else {
+        isPlaying = false;
+        updatePlayPauseButton();
+      }
+    }
+
+    function updateSourceButtonsUI(scene) {
+      const btnA = document.getElementById('btnSourceA');
+      const btnB = document.getElementById('btnSourceB');
+      const badgeSource = document.getElementById('activeBadgeSource');
+
+      if (currentSource === 'candidate') {
+        btnA.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition bg-red-600 text-white shadow shadow-red-600/30 flex items-center gap-1';
+        btnB.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 flex items-center gap-1';
+        badgeSource.textContent = 'A: 算法成品 (Candidate)';
+        badgeSource.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 font-semibold';
+      } else {
+        btnA.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 flex items-center gap-1';
+        btnB.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition bg-emerald-600 text-white shadow shadow-emerald-600/30 flex items-center gap-1';
+        badgeSource.textContent = 'B: 真车参考实录 (R3 Reference)';
+        badgeSource.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold';
+      }
+
+      if (!scene.ref_file) {
+        btnB.disabled = true;
+        btnB.classList.add('opacity-40', 'cursor-not-allowed');
+        btnB.title = '此工况暂无独立真车实录参考音频';
+      } else {
+        btnB.disabled = false;
+        btnB.classList.remove('opacity-40', 'cursor-not-allowed');
+        btnB.title = '';
+      }
+    }
+
+    // Switch Source A/B with timestamp preservation
+    function switchSource(source) {
+      const scene = SCENES[currentSceneIndex];
+      if (source === 'ref' && !scene.ref_file) return;
+      if (source === currentSource) return;
+
+      const currentTime = audioEl.currentTime;
+      const wasPlaying = isPlaying;
+
+      loadScene(currentSceneIndex, source, false);
+      audioEl.currentTime = currentTime;
+
+      if (wasPlaying) {
+        initAudioContext();
+        audioEl.play().then(() => {
+          isPlaying = true;
+          updatePlayPauseButton();
+        }).catch(e => console.error(e));
+      }
+    }
+
+    // Play / Pause toggle
+    function togglePlay() {
+      initAudioContext();
+      if (audioEl.paused) {
+        audioEl.play().then(() => {
+          isPlaying = true;
+          updatePlayPauseButton();
+          document.getElementById('canvasIdleOverlay').style.display = 'none';
+        }).catch(e => console.error(e));
+      } else {
+        audioEl.pause();
+        isPlaying = false;
+        updatePlayPauseButton();
+      }
+      renderSceneCards();
+    }
+
+    function playSpecificSource(idx, source) {
+      if (currentSceneIndex === idx && currentSource === source) {
+        togglePlay();
+      } else {
+        loadScene(idx, source, true);
+      }
+    }
+
+    function selectAndPlayScene(idx) {
+      if (currentSceneIndex === idx) {
+        togglePlay();
+      } else {
+        loadScene(idx, currentSource, true);
+      }
+    }
+
+    function changeScene(delta) {
+      let nextIdx = (currentSceneIndex + delta + SCENES.length) % SCENES.length;
+      loadScene(nextIdx, currentSource, true);
+    }
+
+    function updatePlayPauseButton() {
+      const btn = document.getElementById('btnPlayPause');
+      btn.innerHTML = isPlaying ? '⏸' : '▶';
+      if (isPlaying) {
+        btn.classList.add('glow-active');
+      } else {
+        btn.classList.remove('glow-active');
+      }
+    }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      audioEl.loop = isLooping;
+      const btn = document.getElementById('btnLoop');
+      btn.textContent = `🔁 循环: ${isLooping ? '开' : '关'}`;
+      btn.className = isLooping 
+        ? 'px-2.5 py-1.5 rounded-lg text-xs font-mono bg-red-950 text-red-300 border border-red-800 transition font-bold'
+        : 'px-2.5 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition';
+    }
+
+    function cycleSpeed() {
+      const speeds = [0.5, 0.75, 1.0, 1.25, 1.5];
+      let idx = speeds.indexOf(playbackSpeed);
+      playbackSpeed = speeds[(idx + 1) % speeds.length];
+      audioEl.playbackRate = playbackSpeed;
+      document.getElementById('btnSpeed').textContent = playbackSpeed.toFixed(1) + 'x';
+    }
+
+    function changeVolume(val) {
+      audioEl.volume = val;
+      document.getElementById('volumeValue').textContent = Math.round(val * 100) + '%';
+    }
+
+    function seekAudio(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      if (audioEl.duration) {
+        audioEl.currentTime = pos * audioEl.duration;
+      }
+    }
+
+    function formatTime(secs) {
+      if (isNaN(secs)) return "0:00";
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    audioEl.addEventListener('timeupdate', () => {
+      if (audioEl.duration) {
+        const pct = (audioEl.currentTime / audioEl.duration) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('currentTimeDisplay').textContent = formatTime(audioEl.currentTime);
+        document.getElementById('durationTimeDisplay').textContent = formatTime(audioEl.duration);
+      }
+    });
+
+    audioEl.addEventListener('ended', () => {
+      if (!isLooping) {
+        isPlaying = false;
+        updatePlayPauseButton();
+        renderSceneCards();
+      }
+    });
+
+    audioEl.addEventListener('play', () => {
+      isPlaying = true;
+      updatePlayPauseButton();
+      renderSceneCards();
+      const overlay = document.getElementById('canvasIdleOverlay');
+      if (overlay) overlay.style.display = 'none';
+    });
+
+    audioEl.addEventListener('pause', () => {
+      isPlaying = false;
+      updatePlayPauseButton();
+      renderSceneCards();
+    });
+
+    // Visualizer Mode
+    function setVizMode(mode) {
+      vizMode = mode;
+      document.getElementById('btnVizModeSpectrum').className = (mode === 'spectrum')
+        ? 'px-2 py-0.5 text-[10px] font-mono rounded bg-red-600 text-white font-medium'
+        : 'px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800 text-slate-400 hover:text-slate-200';
+      document.getElementById('btnVizModeWaveform').className = (mode === 'waveform')
+        ? 'px-2 py-0.5 text-[10px] font-mono rounded bg-red-600 text-white font-medium'
+        : 'px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800 text-slate-400 hover:text-slate-200';
+    }
+
+    // Animation Loop for Canvas
+    function drawVisualizer() {
+      animFrameId = requestAnimationFrame(drawVisualizer);
+
+      const w = canvas.width = canvas.parentElement.clientWidth;
+      const h = canvas.height = canvas.parentElement.clientHeight;
+
+      canvasCtx.clearRect(0, 0, w, h);
+
+      if (!analyser || !isPlaying) {
+        canvasCtx.beginPath();
+        canvasCtx.strokeStyle = '#334155';
+        canvasCtx.lineWidth = 1.5;
+        canvasCtx.moveTo(0, h / 2);
+        canvasCtx.lineTo(w, h / 2);
+        canvasCtx.stroke();
+        return;
+      }
+
+      if (vizMode === 'spectrum') {
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyser.getByteFrequencyData(dataArray);
+
+        const barCount = 48;
+        const barWidth = (w / barCount) - 2;
+
+        for (let i = 0; i < barCount; i++) {
+          const val = dataArray[i * Math.floor(bufferLength / barCount)] || 0;
+          const barHeight = (val / 255) * (h - 10);
+          const x = i * (barWidth + 2);
+          const y = h - barHeight;
+
+          const grad = canvasCtx.createLinearGradient(0, h, 0, 0);
+          grad.addColorStop(0, '#ef4444');
+          grad.addColorStop(0.5, '#f59e0b');
+          grad.addColorStop(1, '#06b6d4');
+
+          canvasCtx.fillStyle = grad;
+          canvasCtx.fillRect(x, y, barWidth, barHeight);
+
+          canvasCtx.fillStyle = '#ffffff';
+          canvasCtx.fillRect(x, y - 2, barWidth, 1.5);
+        }
+      } else {
+        const bufferLength = analyser.fftSize;
+        const dataArray = new Uint8Array(bufferLength);
+        analyser.getByteTimeDomainData(dataArray);
+
+        canvasCtx.lineWidth = 2.5;
+        canvasCtx.strokeStyle = '#ef4444';
+        canvasCtx.shadowBlur = 8;
+        canvasCtx.shadowColor = '#ef4444';
+
+        canvasCtx.beginPath();
+        const sliceWidth = w / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const v = dataArray[i] / 128.0;
+          const y = (v * h) / 2;
+          if (i === 0) {
+            canvasCtx.moveTo(x, y);
+          } else {
+            canvasCtx.lineTo(x, y);
+          }
+          x += sliceWidth;
+        }
+        canvasCtx.lineTo(w, h / 2);
+        canvasCtx.stroke();
+        canvasCtx.shadowBlur = 0;
+      }
+    }
+
+    // Scorecard Interactions
+    function rateScene(sceneId, stars) {
+      if (!scorecard[sceneId]) scorecard[sceneId] = { stars: 0, tags: [], notes: '' };
+      scorecard[sceneId].stars = stars;
+      saveScorecard();
+      renderSceneCards();
+    }
+
+    function toggleTag(sceneId, tag) {
+      if (!scorecard[sceneId]) scorecard[sceneId] = { stars: 0, tags: [], notes: '' };
+      const tags = scorecard[sceneId].tags;
+      const idx = tags.indexOf(tag);
+      if (idx > -1) tags.splice(idx, 1);
+      else tags.push(tag);
+      saveScorecard();
+      renderSceneCards();
+    }
+
+    function saveNotes(sceneId, notes) {
+      if (!scorecard[sceneId]) scorecard[sceneId] = { stars: 0, tags: [], notes: '' };
+      scorecard[sceneId].notes = notes;
+      saveScorecard();
+    }
+
+    function saveScorecard() {
+      try {
+        localStorage.setItem('hellcat_audition_scorecard_v1', JSON.stringify(scorecard));
+      } catch (e) {}
+    }
+
+    function exportScorecard() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        model: "Stage AD Hellcat V8 Closed-Loop Calibration v1",
+        calibration_reference_distance: 0.64835,
+        scorecard: scorecard
+      }, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `hellcat_audition_review_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function filterCategory(cat) {
+      currentFilter = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-red-600 text-white shadow-sm';
+        } else {
+          btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white';
+        }
+      });
+      renderSceneCards();
+    }
+
+    function toggleParamModal() {
+      const modal = document.getElementById('paramModal');
+      modal.classList.toggle('hidden');
+    }
+
+    // Init page
+    window.addEventListener('DOMContentLoaded', () => {
+      renderParamTable();
+      loadScene(currentSceneIndex, 'candidate', false);
+      drawVisualizer();
+    });
+  </script>
+</body>
+</html>

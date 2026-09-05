@@ -1,0 +1,64 @@
+{
+  "schema": "s12.stage_ad.execution_state.v1",
+  "stage": "Stage-AD Reference-Driven Closed-Loop Calibration",
+  "branch": "s12-stage-ad-closed-loop-calibration",
+  "branch_base": "3e024684c7160e7af62e86c37b07a840f3116185",
+  "product_direction": {
+    "runtime": "ANDROID_APP",
+    "current_task": "AUDIO_ALGORITHM_AND_DIAGNOSTIC_AUDITION_ONLY",
+    "minimum_future_app_inputs": ["speed", "acceleration"],
+    "esp32": "DEFERRED_FUTURE_OPTION"
+  },
+  "closed_loop": {
+    "status": "REMOTE_INFRASTRUCTURE_IMPLEMENTED_LOCAL_REFERENCE_EXECUTION_PENDING",
+    "baseline": "AA-C3_AWARE",
+    "official_v3_modified": false,
+    "track_p": "FROZEN",
+    "objective": "fixed_scale_absolute_reference_distance_plus_bounded_human_adjustment",
+    "families": ["body", "blower", "afterfire"],
+    "iteration_policy": "render_compare_recenter_shrink_repeat",
+    "automatic_profile_promotion": false,
+    "human_audition_required": true
+  },
+  "implemented": [
+    "ReferenceCaseSet_to_reference_audio_adapter",
+    "multi_iteration_controller",
+    "fixed_reference_distance_convergence",
+    "AA_C3_config_injection_without_default_pcm_change",
+    "AA_C3_source_causal_search",
+    "body_blower_afterfire_parameter_families",
+    "staged_base_config_handoff",
+    "monitor_audition_packager",
+    "Simulink_fixed_dimension_contract",
+    "Simulink_fail_closed_validation_bridge",
+    "focused_python_tests",
+    "local_Codex_execution_prompt"
+  ],
+  "local_pending": [
+    "locate_existing_rights_governed_Hellcat_reference_audio",
+    "run_focused_tests_in_full_repository_environment",
+    "run_body_closed_loop",
+    "run_blower_closed_loop",
+    "run_afterfire_closed_loop_if_reference_exists",
+    "package_monitor_wavs",
+    "Jovi_listening_feedback",
+    "optional_Simulink_candidate_repair_in_existing_MATLAB_session"
+  ],
+  "reference_boundary": {
+    "R1": "MISSING_UNLESS_LOCAL_NEW_EVIDENCE_PROVES_OTHERWISE",
+    "R2_R3": "ALLOWED_FOR_DIAGNOSTIC_LOOP_WITH_ORIGINAL_LABEL",
+    "public_download": "FORBIDDEN_AS_AUTOMATIC_REFERENCE_SOURCE"
+  },
+  "stop_after_local_run": "WAITING_FOR_JOVI_STAGE_AD_AUDITION",
+  "forbidden": [
+    "overwrite_official_v3",
+    "blind_mapping_reveal_or_mutation",
+    "master_or_global_gain_repair",
+    "broad_pre_ptr_gain_repair",
+    "Track_P_PTR_Radiation_retune",
+    "R2_R3_to_R1_promotion",
+    "automatic_Profile_Freeze",
+    "ESP32_work",
+    "Android_App_work_in_this_local_round"
+  ]
+}
