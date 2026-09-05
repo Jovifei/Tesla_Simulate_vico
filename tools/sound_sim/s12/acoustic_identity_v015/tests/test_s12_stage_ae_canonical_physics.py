@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import numpy as np
 import pytest
 
@@ -8,7 +10,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.canonical_renderer impo
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.ir_assets import IrAssetSpec, load_ir_asset
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.parameter_fit import family_parameters, apply_overrides, validate_caseset_identity
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.partitioned_convolver import UniformPartitionedConvolver
-from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.package_audition import _standalone_html
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.package_audition import _standalone_html, _resolve_fit_config
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ae.vehicle_profiles import build_standard_trace
 
 
@@ -50,3 +52,12 @@ def test_stage_ae_dashboard_has_no_remote_runtime_dependency():
 def test_caseset_vehicle_identity_is_fail_closed():
     validate_caseset_identity({"vehicle_id":"lfa"},"lfa")
     with pytest.raises(ValueError): validate_caseset_identity({"vehicle_id":"gtr_r35"},"lfa")
+
+
+def test_audition_resolves_final_family_fit_and_hashes_it(tmp_path):
+    config_path=tmp_path/"lfa"/"afterfire"/"final_r3_diagnostic_fit.json"; config_path.parent.mkdir(parents=True)
+    config_path.write_text(json.dumps(load_config("lfa_v1"),ensure_ascii=False),encoding="utf-8")
+    config, source, digest=_resolve_fit_config(tmp_path,"lfa")
+    assert config is not None and config["vehicle_id"]=="lfa_v1"
+    assert source==str(config_path)
+    assert digest and len(digest)==64
