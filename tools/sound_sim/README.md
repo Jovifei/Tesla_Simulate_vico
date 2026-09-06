@@ -1,4 +1,9 @@
-# Jovi Sound Simulation Prototype
+# Jovi Sound Simulation Prototype (legacy v0)
+
+> This folder is retained as a small historical prototype. It is not the
+> current S12/Stage-AF renderer, not the active Android runtime, and not an
+> ESP32 implementation target. Current S12 sound work starts under
+> `tools/sound_sim/s12/acoustic_identity_v015/`.
 
 This folder contains the first offline sound-model prototype for the Tesla_speed firmware.
 It is intentionally Python standard-library only, so it can run before MATLAB/Octave is installed.

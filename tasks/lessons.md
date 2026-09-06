@@ -1342,6 +1342,10 @@ Rules:
 - 当用户看到首轮 `1/24` 或 `HTTP 403` 时，必须展示当前批量收据与一条全新独立复测；`Node.js + EJS + android` 的成功下载必须再次经过 `ffprobe`、`ffmpeg -xerror` 和 WAV SHA 校验，不能只引用历史收据。
 - 复测成功只证明备用下载链路和媒体完整性，不改变公开视频的授权、原厂状态、同步 RPM/state 或 R3 资格；报告要同时给出“工具链已恢复”和“真实校准仍未闭环”两个结论。
 
+# 2026-09-07 S12 repository simplification lesson
+
+- 删除候选必须同时扫描业务代码、测试按 basename 读取的静态合同、manifest 和文档链接；“没有业务调用”不等于“可以删除”。本轮误删 12 个 playground manifest 后由静态测试发现并恢复，最终只删除 45 个已确认无当前调用的历史/过程文件，并把删除边界写入当前 report。
+
 # 2026-08-23 S12 Guided feedback submit correction
 
 - 浏览器 `input[type=number]` 的 `.value` 是字符串；导出层应规范化为整数，导入层也要接受纯 ASCII 整数字符串并继续拒绝小数、越界、空值和布尔值，否则用户已完成的反馈会在后端被误判为缺失。

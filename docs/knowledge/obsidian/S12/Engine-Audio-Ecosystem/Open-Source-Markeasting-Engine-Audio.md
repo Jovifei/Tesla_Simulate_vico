@@ -40,6 +40,7 @@ and the stateful monitor/source split in
 Those are independent clean-room software paths and remain synthetic,
 uncalibrated and not OEM reproduction.
 
-The intake record is [stage-y-research-intake.json](../../../../../.superpowers/sdd/stage-y-research-intake.json);
-the machine-readable registry is [`source_registry.json`](../../../../research/engine-audio-ecosystem/source_registry.json).
+The historical intake receipt is no longer kept in the repository process
+directory; the machine-readable registry is the authority:
+[`source_registry.json`](../../../../research/engine-audio-ecosystem/source_registry.json).
 <!-- S12-STAGE-Y:AUTO:END -->

@@ -1,6 +1,8 @@
-# Stage AF 状态：回到已通过人耳方向的 main，并清理生成物
+# Stage AF 历史状态：回到已通过人耳方向的 main，并清理生成物
 
 日期：2026-09-06
+
+状态：`HISTORICAL_SNAPSHOT / SUPERSEDED_BY_14-STAGE-AF-NUMERICAL-FIXES`
 
 ## 决策
 

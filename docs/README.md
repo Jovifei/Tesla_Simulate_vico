@@ -9,7 +9,8 @@
 ## 先读这些
 
 1. `00-reference/01-authority-and-evidence-precedence.md` — 谁是当前真值、证据等级怎么判。
-2. `08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` — 当前 Stage AF 数值修正、试听候选、服务修复与验证边界。
+2. `08-reports/15-repository-simplification-20260907.md` — 当前仓库简化、路线纠偏、保留/删除边界与验证。
+3. `08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` — Stage AF 数值修正、试听候选、服务修复与验证边界。
 3. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
 4. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
 5. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。

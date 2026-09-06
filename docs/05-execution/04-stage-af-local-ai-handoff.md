@@ -2,7 +2,7 @@
 
 ## 0. 唯一目标
 
-从远端 `s12-stage-af-physical-closed-loop` 拉取代码，在本地 Engine-Sim IR/真实 reference 环境中运行 Stage AF，**只优化 main=f81d3a3 已经好听的 EngineAcoustics**，然后使用原有四车型 A/B 工作台生成声音给 Jovi 听。
+从最新 `origin/main` 建立独立 worktree，在本地 Engine-Sim IR/真实 reference 环境中运行 Stage AF，**只围绕已试听过的 EngineAcoustics authority 做有界修正**，然后使用原有四车型 A/B 工作台生成声音给 Jovi 听。`f81d3a3` 仅是已试听 baseline 的 lineage，不是当前动态 HEAD。
 
 不要切换到 Stage AE renderer，不要开发新的 dashboard/backend，不做 Android，不做 ESP32。
 
@@ -11,8 +11,8 @@
 ```powershell
 cd E:\Tesla_speed\prj
 git fetch origin --prune
-git worktree add E:\Tesla_speed\worktrees\s12-stage-af-physical-closed-loop origin/s12-stage-af-physical-closed-loop
-cd E:\Tesla_speed\worktrees\s12-stage-af-physical-closed-loop
+git worktree add -b local/<task-name> E:\Tesla_speed\worktrees\<task-name> origin/main
+cd E:\Tesla_speed\worktrees\<task-name>
 ```
 
 确认 HEAD 与远端一致。
@@ -52,6 +52,7 @@ python -m tools.sound_sim.s12.acoustic_identity_v015.stage_af.fit_cli `
   --vehicle hellcat `
   --reference-dir E:\Tesla_speed\stage_af_references\hellcat `
   --output-dir E:\Tesla_speed\stage_af_runs\hellcat `
+  --numerical-fixes `
   --candidates 8 `
   --rounds 2 `
   --seed 20260906

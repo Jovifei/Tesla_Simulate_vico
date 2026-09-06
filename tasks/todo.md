@@ -4294,3 +4294,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Merge the isolated branch into local `main`, update local files, and push `origin/main` without reset or force-push.
 - [x] Run codex-memory checkpoint DryRun/apply and filtered document-mirror DryRun/apply; report memory status separately.
 - [x] Re-run final focused checks and verify main/remote SHA, then stop and wait for Jovi feedback.
+## 2026-09-06 Repository simplification and route cleanup
+
+- [x] Reconfirm latest `origin/main` and the isolated cleanup worktree.
+- [x] Inventory root historical reports, `.superpowers/sdd` process artifacts, and playground audit snapshots with exact reference scans.
+- [x] Correct active runbooks/indexes that still point to superseded branches or missing process files.
+- [x] Delete only unreferenced root duplicates and process/audit snapshots; retain current source, tests, governed manifests, and durable knowledge.
+- [x] Run focused/static/full-impact tests, compileall, Track-P, JSON/link checks, and `git diff --check`.
+- [ ] Commit/push the cleanup branch, fast-forward main, update local main, and synchronize durable memory after verification.
+
+### Simplification Review
+
+- Candidate deletion inventory: 57 exact tracked files; 45 deleted after reference checks, 12 playground manifests restored because static tests consume them by basename.
+- Root historical reports and `.superpowers/sdd` process artifacts remain recoverable through the cleanup commit; current source, tests, retained manifests, Reference/IR records, and durable docs remain.
+- Affected static/focused tests: `122 passed, 1 warning`; full S12: `1460 passed, 2 skipped, 2 warnings, 232 subtests passed`.
+- Warnings are pre-existing: one invalid escape in a test string and one non-data chunk notice in the original IR WAV.

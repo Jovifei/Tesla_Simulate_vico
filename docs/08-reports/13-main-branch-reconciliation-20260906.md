@@ -1,5 +1,7 @@
 # 主分支合并与审查入口（2026-09-06）
 
+状态：`HISTORICAL_SNAPSHOT / SUPERSEDED_BY_14-STAGE-AF-NUMERICAL-FIXES`
+
 ## 用户要求与本次实际处理
 
 本次按用户要求统一最近的开发历史到 main。合并不是重新启用被人耳否决的 Stage AE，也不是用旧分支覆盖最新 main。所有后续修复必须在本次合并提交之上继续。

@@ -38,6 +38,7 @@ There is no Ignis source, C++ file, demo media, preset, or asset copied into
 S12. Do not promote this note into a Runtime replacement, OEM identity proof,
 or license grant.
 
-The intake record is [stage-y-research-intake.json](../../../../../.superpowers/sdd/stage-y-research-intake.json);
-the machine-readable registry is [`source_registry.json`](../../../../research/engine-audio-ecosystem/source_registry.json).
+The historical intake receipt is no longer kept in the repository process
+directory; the machine-readable registry is the authority:
+[`source_registry.json`](../../../../research/engine-audio-ecosystem/source_registry.json).
 <!-- S12-STAGE-Y:AUTO:END -->

@@ -41,8 +41,7 @@ current authoritative synthetic evidence is the v27 external staged set:
 `bakeoff_final_remediation_v27`, `migration_final_remediation_rx7_v27`,
 `migration_final_remediation_ferrari_v27`, produced by the external stage
 renderer → strict verification → atomic final-root publication pipeline and
-validated by all eight Task 6Z gates rerun green (see
-`.superpowers/sdd/task-6ab-current-verification-rerun-report.md` and
-[[05-Stage-W-Logs]]). Selection remains `null`
+validated by all eight Task 6Z gates rerun green (see the retained Stage-W
+logs and workspace-cleanup knowledge note). Selection remains `null`
 (`REFERENCE_TARGET_MISSING`); nothing here is a Human PASS, Approved Profile,
 OEM reproduction or productization claim.

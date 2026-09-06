@@ -1,6 +1,6 @@
-# 项目当前状态审计 — 2026-09-05
+# 项目历史状态审计 — 2026-09-05
 
-状态：`CURRENT_STATUS`
+状态：`HISTORICAL_SNAPSHOT / SUPERSEDED_BY_2026-09-06_STAGE_AF_REPORT`
 
 ## Remote snapshot
 

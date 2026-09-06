@@ -4,7 +4,8 @@
 
 ## Current status
 
-- `14-stage-af-numerical-fixes-and-review-server-20260906.md` — 当前 Stage AF 数值修正、试听候选、服务修复与验证边界。
+- `15-repository-simplification-20260907.md` — 当前仓库简化、路线纠偏、保留/删除边界与验证。
+- `14-stage-af-numerical-fixes-and-review-server-20260906.md` — Stage AF 数值修正、试听候选、服务修复与验证边界。
 
 `11-project-status-20260905.md` 保留为 2026-09-05 历史快照；当前动态 SHA 和合并状态以 GitHub remote truth 与最新 report 为准。
 

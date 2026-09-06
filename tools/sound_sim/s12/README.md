@@ -1,8 +1,10 @@
 # S12 Physical Engine and Exhaust Model
 
-S12 replaces the V6 procedural pressure-pulse path with inspectable Simulink
-physics. The models in this directory are reference tests, not final vehicle
-audio and not yet App assets.
+This directory contains inspectable Simulink physics reference models and the
+validation assets used by S12. They are diagnostic/teaching references, not the
+current final vehicle-audio renderer or App assets; Python S12/Stage AF remains
+the authoring and listening authority, and Simulink must pass its separate
+compile/simulation/equivalence gates before it can be called a verified mirror.
 
 ## Current Models
 
