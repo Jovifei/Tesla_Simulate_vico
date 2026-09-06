@@ -1,0 +1,7 @@
+# Generated A/B audition packages are local review artifacts.
+# Keep the proven portal/server in Git; regenerate vehicle packages locally.
+s12-stage-ad-hellcat-closed-loop-v1/
+s12-stage-ad-ferrari-458-closed-loop-v1/
+s12-stage-ad-lfa-closed-loop-v1/
+s12-stage-ad-gtr-r35-closed-loop-v1/
+*.wav

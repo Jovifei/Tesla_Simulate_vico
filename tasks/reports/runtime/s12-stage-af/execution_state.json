@@ -1,0 +1,38 @@
+{
+  "schema": "s12.stage_af.execution_state.v1",
+  "updated": "2026-09-06",
+  "base_branch": "main",
+  "base_head": "f81d3a3aa1b32fcd35aa8b66a253492c70ed47b4",
+  "branch": "s12-stage-af-physical-closed-loop",
+  "sound_authority": "tools/sound_sim/s12/acoustic_identity_v015/stage_ad/engine_sim_acoustics.py::EngineAcoustics.render_track",
+  "human_baseline": {
+    "status": "ACCEPTED_AS_DIRECTION_NOT_PROFILE_FREEZE",
+    "user_estimated_similarity": "70-80%",
+    "note": "main f81d3a3 physical acoustic implementation; retain as tuning baseline"
+  },
+  "rejected_route": {
+    "stage": "AE",
+    "status": "HUMAN_FAIL",
+    "action": "DO_NOT_USE_AS_SOUND_BASELINE"
+  },
+  "closed_loop": {
+    "status": "IMPLEMENTED_REMOTE_AWAITING_LOCAL_REAL_REFERENCE_RUN",
+    "families": ["body", "path", "induction", "afterfire"],
+    "optimizer": "deterministic_sobol_then_shrinking_local_search",
+    "objective": "scale_invariant_spectral_envelope_fixed_distance",
+    "human_gate_required": true
+  },
+  "review_workbench": {
+    "reuse_existing": true,
+    "portal": 8080,
+    "hellcat": 8088,
+    "ferrari_458": 8089,
+    "lfa": 8090,
+    "gtr_r35": 8091,
+    "generated_packages_in_git": false,
+    "default_local_root": "E:/Tesla_speed/review_packages"
+  },
+  "product_direction": "ANDROID_APP_FIRST_AFTER_SOUND_PROFILE_ACCEPTANCE",
+  "esp32": "DEFERRED_FUTURE_OPTION",
+  "r1": "MISSING"
+}
