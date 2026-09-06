@@ -4292,5 +4292,5 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Verify Markdown paths/headings, source/test claims, and repository `git diff --check`.
 - [x] Commit and push the documentation updates on the isolated branch.
 - [x] Merge the isolated branch into local `main`, update local files, and push `origin/main` without reset or force-push.
-- [ ] Run codex-memory checkpoint DryRun/apply and filtered document-mirror DryRun/apply; report memory status separately.
+- [x] Run codex-memory checkpoint DryRun/apply and filtered document-mirror DryRun/apply; report memory status separately.
 - [x] Re-run final focused checks and verify main/remote SHA, then stop and wait for Jovi feedback.
