@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import hashlib
 import numpy as np
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ad import engine_sim_acoustics
+from tools.sound_sim.s12.acoustic_identity_v015.stage_af.build_existing_dashboards import (
+    _bind_references,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
     FAMILY_PARAMETERS,
     FAMILY_SCENES,
@@ -74,3 +78,27 @@ def test_tunable_adapter_makes_baseline_noise_deterministic(monkeypatch):
         rpm, throttle, duration
     )
     assert np.array_equal(a, b)
+
+
+def test_existing_dashboard_reference_binding_copies_governed_bytes(tmp_path):
+    reference_root = tmp_path / "refs"
+    source_dir = reference_root / "hellcat"
+    source_dir.mkdir(parents=True)
+    reference_bytes = b"RIFF-stage-af-reference-fixture"
+    (source_dir / "ref_hot_idle.wav").write_bytes(reference_bytes)
+
+    output_dir = tmp_path / "review" / "s12-stage-ad-hellcat-closed-loop-v1"
+    cfg = {
+        "dir": output_dir,
+        "scenes": [
+            {"ref_file": "ref_hot_idle.wav"},
+            {"ref_file": ""},
+        ],
+    }
+    bound = _bind_references("hellcat", cfg, reference_root)
+    destination = output_dir / "web_audio" / "ref_hot_idle.wav"
+
+    assert destination.read_bytes() == reference_bytes
+    assert bound["ref_hot_idle.wav"]["sha256"] == hashlib.sha256(
+        reference_bytes
+    ).hexdigest()
