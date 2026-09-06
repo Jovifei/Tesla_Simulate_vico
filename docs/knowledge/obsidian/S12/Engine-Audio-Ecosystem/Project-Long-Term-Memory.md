@@ -202,7 +202,7 @@ Engine-Sim、ENSIM4、DasEtwas enginesound、VehicleNoiseSynthesizer、Ignis、P
 
 ## 15. Stage AF 数值修正与服务恢复（2026-09-06）
 
-当前 Stage AF 接力已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成并推送到隔离分支 `local/main-audio-review-20260906`，待本轮文档验证后并入 main。声音 authority 仍是 `stage_ad.engine_sim_acoustics.EngineAcoustics`；原 `build_unified_dashboards.py`、`audition_dashboard_template.html` 和 `review_packages/serve_dashboards.py` 保持不变的页面/渲染职责。Stage AE 默认 renderer、第二套试听后台和 Track-P/FVM/PTR/Radiation 修改仍被明确排除。
+当前 Stage AF 接力已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成，并由隔离分支 `local/main-audio-review-20260906` fast-forward 合并到 `main=df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093`。声音 authority 仍是 `stage_ad.engine_sim_acoustics.EngineAcoustics`；原 `build_unified_dashboards.py`、`audition_dashboard_template.html` 和 `review_packages/serve_dashboards.py` 保持不变的页面/渲染职责。Stage AE 默认 renderer、第二套试听后台和 Track-P/FVM/PTR/Radiation 修改仍被明确排除。
 
 本轮新增的是可审计、默认关闭的数值修正：`cycle_phase` 将 720° crank radians 单次换算到 cycle domain；`causal_delays` 用零状态分数延迟消除 `np.roll` 未来样本回卷；`causal_convolution` 用已有分块卷积消除 centered `same` IR 的提前响应；`causal_derivative` 用后向差分移除 look-ahead；`shift_cut` 用 unity→cut→unity 约束换挡包络。H0 空旗标必须与旧 EngineAcoustics 在相同输入、seed、IR 下逐 PCM 相等；H1 仅开相位旗标；H2 再开四项时间修正。它们是听感诊断候选，不能自动转成 Human PASS 或 Profile。
 

@@ -3,7 +3,9 @@
   "updated": "2026-09-06",
   "base_branch": "main",
   "base_head": "28ee2bd73298959dc4831320e8b080b833c8c3d8",
-  "branch": "local/main-audio-review-20260906",
+  "merged_main_head": "df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093",
+  "branch": "main",
+  "source_branch": "local/main-audio-review-20260906",
   "sound_authority": "tools/sound_sim/s12/acoustic_identity_v015/stage_ad/engine_sim_acoustics.py::EngineAcoustics.render_track",
   "human_baseline": {
     "status": "ACCEPTED_AS_DIRECTION_NOT_PROFILE_FREEZE",

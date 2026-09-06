@@ -4290,7 +4290,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Create the dated Stage-AF numerical-fix/current-status report and reusable execution/debugging runbooks.
 - [x] Update Stage-AF handoff, long-term knowledge, negative knowledge, and reusable engineering playbook with verified facts and evidence boundaries.
 - [x] Verify Markdown paths/headings, source/test claims, and repository `git diff --check`.
-- [ ] Commit and push the documentation updates on the isolated branch.
-- [ ] Merge the isolated branch into local `main`, update local files, and push `origin/main` without reset or force-push.
+- [x] Commit and push the documentation updates on the isolated branch.
+- [x] Merge the isolated branch into local `main`, update local files, and push `origin/main` without reset or force-push.
 - [ ] Run codex-memory checkpoint DryRun/apply and filtered document-mirror DryRun/apply; report memory status separately.
-- [ ] Re-run final focused checks and verify main/remote SHA, then stop and wait for Jovi feedback.
+- [x] Re-run final focused checks and verify main/remote SHA, then stop and wait for Jovi feedback.
