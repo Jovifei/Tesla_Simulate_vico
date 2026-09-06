@@ -25,11 +25,19 @@ python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_st
 
 ## 3. Reference 来源
 
-优先直接复用当前已经能在旧工作台听到的 `ref_*.wav`。如果 Git 清理后本地旧包仍存在，可以从：
+优先直接复用当前已经能在旧工作台听到的 `ref_*.wav`。不要重新下载一套“更好听”的参考造成标尺变化。
 
-`E:\Tesla_speed\review_packages\s12-stage-ad-<vehicle>-closed-loop-v1\`
+建议把参考音频单独保存在：
 
-读取；不要重新下载一套“更好听”的参考造成标尺变化。
+```text
+E:\Tesla_speed\stage_af_references\hellcat\ref_hot_idle.wav
+E:\Tesla_speed\stage_af_references\hellcat\ref_steady_mid.wav
+E:\Tesla_speed\stage_af_references\hellcat\ref_full_pull.wav
+E:\Tesla_speed\stage_af_references\hellcat\ref_afterfire.wav
+... ferrari_458 / lfa / gtr_r35 同结构
+```
+
+如果当前 reference 仍只在旧本地 review 包里，也可以直接把旧包根目录作为 reference source；Stage AF 不联网、不重新抓取素材。
 
 公开视频保持 `R3_PRIVATE_DIAGNOSTIC_ONLY`。
 
@@ -42,7 +50,7 @@ python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_st
 ```powershell
 python -m tools.sound_sim.s12.acoustic_identity_v015.stage_af.fit_cli `
   --vehicle hellcat `
-  --reference-dir E:\Tesla_speed\review_packages\s12-stage-ad-hellcat-closed-loop-v1 `
+  --reference-dir E:\Tesla_speed\stage_af_references\hellcat `
   --output-dir E:\Tesla_speed\stage_af_runs\hellcat `
   --candidates 8 `
   --rounds 2 `
@@ -68,9 +76,17 @@ Stage AF v2 不是让所有 family 共用一把模糊总分：
 ```powershell
 python -m tools.sound_sim.s12.acoustic_identity_v015.stage_af.build_existing_dashboards `
   --fit-root E:\Tesla_speed\stage_af_runs `
+  --reference-root E:\Tesla_speed\stage_af_references `
   --output-root E:\Tesla_speed\review_packages `
   --seed 20260906
 ```
+
+这里没有新 UI。Stage AF 只做两件事：
+
+1. 把 tuned `EngineAcoustics` 注入原 `build_unified_dashboards.py`；
+2. 把 `--reference-root` 里**已经存在、受治理的** `ref_*.wav` 复制到原 dashboard 所要求的 `web_audio` 位置，并把 SHA 写进 `stage_af_binding.json`。
+
+它不会下载 reference，也不会替换真车字节。
 
 然后**仍然运行原服务台**：
 
@@ -103,6 +119,7 @@ python review_packages\serve_dashboards.py
 - 每车 baseline_distance → final_distance；
 - final fit 路径 + SHA；
 - 哪些 family 改了哪些参数；
+- `stage_af_binding.json` 中 reference SHA；
 - focused/full tests；
 - 8088–8091 是否正常；
 - 然后等待实际听感。
