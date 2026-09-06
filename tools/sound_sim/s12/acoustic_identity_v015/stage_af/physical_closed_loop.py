@@ -10,19 +10,21 @@ numerical distance is not Human PASS, R1 calibration or OEM reproduction.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 from scipy.io import wavfile
-from scipy.signal import stft
+from scipy.signal import stft, resample_poly
 from scipy.stats import qmc
 
 from ..stage_ad import engine_sim_acoustics as stage_ad_audio
+from .spectral_guard import multires_spectral_distance
 
 SAMPLE_RATE = 48_000
 
@@ -148,6 +150,12 @@ REFERENCE_FILENAMES = {
     "full_pull": "ref_full_pull.wav",
     "afterfire": "ref_afterfire.wav",
 }
+IR_NAMES = {
+    "hellcat": "test_engine_16_eq_adjusted_16",
+    "ferrari_458": "mild_exhaust_reverb",
+    "lfa": "mild_exhaust_reverb",
+    "gtr_r35": "test_engine_14_eq_adjusted_16",
+}
 
 
 @dataclass(frozen=True)
@@ -160,10 +168,20 @@ class PhysicalFitResult:
     final_distance: float
     rounds: list[dict[str, Any]]
     seed: int
+    numerical_fixes: tuple[str, ...] = ()
+    renderer_identity: dict[str, Any] = field(default_factory=dict)
+    reference_sources: dict[str, Any] = field(default_factory=dict)
+    scene_inputs_sha256: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
-        payload["schema"] = "s12.stage_af.physical_fit.v2"
+        payload["schema"] = "s12.stage_af.physical_fit.v4"
+        payload["objective"] = "mean_features_plus_multires_spectrum.v1"
+        payload["numerical_fixes"] = sorted(self.numerical_fixes)
+        payload["human_status"] = "NOT_EVALUATED_THIS_FIT"
+        payload["gain_policy"] = "legacy_per_scene_peak_tanh_preserved"
+        payload["state_alignment"] = "SYNTHETIC_SCENE_NOT_SYNCHRONIZED_REAL_RPM"
+        payload["trajectory_scope"] = "fit scenes differ from longer dashboard scenes; both require listening"
         payload["scope"] = (
             "R3/R2 diagnostic analysis-by-synthesis; numerical improvement "
             "proposes candidates only; Human A/B remains final gate"
@@ -184,6 +202,7 @@ class TunableEngineAcoustics:
         sr: int = SAMPLE_RATE,
         overrides: Mapping[str, float] | None = None,
         seed: int = 20260906,
+        numerical_fixes: Sequence[str] = (),
     ) -> None:
         if vehicle_type not in VEHICLE_SPECS:
             raise ValueError(f"unsupported vehicle: {vehicle_type}")
@@ -191,7 +210,15 @@ class TunableEngineAcoustics:
         self.sr = int(sr)
         self.seed = int(seed)
         self.overrides = {str(k): float(v) for k, v in (overrides or {}).items()}
-        self.engine = stage_ad_audio.EngineAcoustics(vehicle_type=vehicle_type, sr=sr)
+        limits = {p.name:p for group in FAMILY_PARAMETERS.values() for p in group}
+        for name, value in self.overrides.items():
+            if name not in limits or not np.isfinite(value):
+                raise ValueError(f"unknown/non-finite physical parameter: {name}")
+            if not limits[name].minimum <= value <= limits[name].maximum:
+                raise ValueError(f"physical parameter outside approved bounds: {name}")
+        self.engine = stage_ad_audio.EngineAcoustics(
+            vehicle_type=vehicle_type, sr=sr, numerical_fixes=numerical_fixes
+        )
         self._apply_overrides()
 
     def _apply_overrides(self) -> None:
@@ -305,7 +332,9 @@ def build_fit_scene(
 
 def _to_float_mono(audio: np.ndarray) -> np.ndarray:
     arr = np.asarray(audio)
-    if np.issubdtype(arr.dtype, np.integer):
+    if arr.dtype == np.uint8:
+        arr = (arr.astype(np.float64) - 128.0) / 128.0
+    elif np.issubdtype(arr.dtype, np.integer):
         info = np.iinfo(arr.dtype)
         arr = arr.astype(np.float64) / max(abs(info.min), info.max)
     else:
@@ -328,8 +357,8 @@ def _feature_vector(audio: np.ndarray, sr: int = SAMPLE_RATE) -> np.ndarray:
     frequencies, _, spectrum = stft(
         x,
         fs=sr,
-        nperseg=2048,
-        noverlap=1536,
+        nperseg=min(2048, x.size),
+        noverlap=3 * min(2048, x.size) // 4,
         boundary=None,
         padded=False,
     )
@@ -354,7 +383,7 @@ def _feature_vector(audio: np.ndarray, sr: int = SAMPLE_RATE) -> np.ndarray:
 
     centroid = float(np.sum(frequencies * mean_power) / total) / (sr * 0.5)
 
-    frame = 1024
+    frame = min(1024, x.size)
     frame_count = max(1, x.size // frame)
     framed = x[: frame_count * frame].reshape(frame_count, frame)
     envelope = np.sqrt(np.mean(np.square(framed), axis=1) + 1e-12)
@@ -377,13 +406,18 @@ def fixed_reference_distance(
     reference: np.ndarray,
     sr: int = SAMPLE_RATE,
 ) -> float:
-    """Fixed feature-space ruler used only to rank diagnostic candidates."""
+    """V3 diagnostic ruler; old v2 scores/thresholds are NOT comparable.
+
+    Preserve coarse timbre/envelope features but do not let a coordinate median
+    discard a pitch error. Add multi-resolution full-spectrum distance.
+    Still not an RPM-aligned temporal/order validation or Human realism score.
+    """
     candidate_features = _feature_vector(candidate, sr)
     reference_features = _feature_vector(reference, sr)
     scale = np.maximum(np.abs(reference_features), 0.15)
-    return float(
-        np.median(np.abs(candidate_features - reference_features) / scale)
-    )
+    coarse = float(np.mean(np.abs(candidate_features - reference_features) / scale))
+    spectral = multires_spectral_distance(candidate, reference, sr)
+    return coarse + spectral
 
 
 def load_reference_audio(reference_dir: str | Path) -> dict[str, np.ndarray]:
@@ -401,15 +435,8 @@ def load_reference_audio(reference_dir: str | Path) -> dict[str, np.ndarray]:
             source_sr, audio = wavfile.read(path)
             if int(source_sr) != SAMPLE_RATE:
                 values = _to_float_mono(audio)
-                target_count = max(
-                    32,
-                    int(round(values.size * SAMPLE_RATE / int(source_sr))),
-                )
-                audio = np.interp(
-                    np.linspace(0.0, 1.0, target_count, endpoint=False),
-                    np.linspace(0.0, 1.0, values.size, endpoint=False),
-                    values,
-                )
+                divisor = math.gcd(int(source_sr), SAMPLE_RATE)
+                audio = resample_poly(values, SAMPLE_RATE // divisor, int(source_sr) // divisor)
             found[scene] = audio
             break
     if not found:
@@ -434,8 +461,10 @@ def _render_scenes(
     overrides: Mapping[str, float],
     references: Mapping[str, np.ndarray],
     seed: int,
+    numerical_fixes: Sequence[str] = (),
 ) -> dict[str, np.ndarray]:
-    renderer = TunableEngineAcoustics(vehicle, overrides=overrides, seed=seed)
+    renderer = TunableEngineAcoustics(vehicle, overrides=overrides, seed=seed,
+                                    numerical_fixes=numerical_fixes)
     rendered: dict[str, np.ndarray] = {}
     for scene in references:
         rpm, throttle, duration, shift, afterfire, bov = build_fit_scene(
@@ -459,14 +488,15 @@ def evaluate_overrides(
     seed: int,
     *,
     scenes: Sequence[str] | None = None,
+    numerical_fixes: Sequence[str] = (),
 ) -> tuple[float, dict[str, float]]:
     selected = _select_references(references, scenes)
-    rendered = _render_scenes(vehicle, overrides, selected, seed)
+    rendered = _render_scenes(vehicle, overrides, selected, seed, numerical_fixes)
     distances = {
         scene: fixed_reference_distance(rendered[scene], selected[scene])
         for scene in selected
     }
-    return float(np.median(list(distances.values()))), distances
+    return float(np.mean(list(distances.values()))), distances
 
 
 def _sample_family(
@@ -508,186 +538,165 @@ def _sample_family(
     return samples
 
 
+def _resolve_ir_source(vehicle: str) -> Path:
+    library_dir = Path(os.environ.get("S12_ENGINE_SIM_IR_ROOT", stage_ad_audio.SOUND_LIB_DIR))
+    name = IR_NAMES[vehicle]
+    candidates = (
+        library_dir / f"{name}.wav",
+        library_dir / "new" / f"{name}.wav",
+        library_dir / "archive" / f"{name}.wav",
+        library_dir / "smooth" / f"{name}.wav",
+    )
+    for path in candidates:
+        if path.is_file():
+            return path.resolve()
+    raise FileNotFoundError(f"Could not resolve IR source for {vehicle}: {name} in {library_dir}")
+
+
+def renderer_identity(vehicle: str, numerical_fixes: Sequence[str] = ()) -> dict[str, Any]:
+    renderer = TunableEngineAcoustics(vehicle, numerical_fixes=numerical_fixes)
+    ir_source = _resolve_ir_source(vehicle)
+    return {
+        "vehicle": vehicle,
+        "sample_rate": SAMPLE_RATE,
+        "renderer": "stage_ad.engine_sim_acoustics.EngineAcoustics",
+        "source_sha256": hashlib.sha256(Path(stage_ad_audio.__file__).read_bytes()).hexdigest(),
+        "ir_source_path": str(ir_source),
+        "ir_source_sha256": hashlib.sha256(ir_source.read_bytes()).hexdigest(),
+        "ir_effective_sha256": hashlib.sha256(np.asarray(renderer.engine.ir, dtype="<f8").tobytes()).hexdigest(),
+        "ir_provenance": "LOCAL_ASSET_REQUIRES_SEPARATE_RIGHTS_RECEIPT",
+        "ir_rights_status": "UNVERIFIED_LOCAL_ASSET",
+        "numerical_fixes": sorted(renderer.engine.numerical_fixes),
+    }
+
+
+def reference_sources(reference_dir: str | Path) -> dict[str, Any]:
+    root = Path(reference_dir)
+    result = {}
+    for scene, name in REFERENCE_FILENAMES.items():
+        for path in (root/name, root/"web_audio"/name, root/"references"/name):
+            if path.is_file():
+                result[scene] = {"path": str(path.resolve()), "filename": name,
+                                 "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+                break
+    return result
+
+
+def validate_fit_payload(payload: Mapping[str, Any], vehicle: str,
+                         numerical_fixes: Sequence[str], seed: int) -> dict[str, float]:
+    if payload.get("schema") != "s12.stage_af.physical_fit.v4":
+        raise ValueError("old/unversioned fit cannot be silently reused; refit on current main")
+    if payload.get("vehicle") != vehicle or payload.get("seed") != seed:
+        raise ValueError("fit vehicle/seed mismatch")
+    if sorted(payload.get("numerical_fixes", [])) != sorted(numerical_fixes):
+        raise ValueError("fit/render numerical mode mismatch")
+    canonical = dict(payload)
+    checksum = canonical.pop("fit_sha256", None)
+    encoded = json.dumps(canonical, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":")).encode("utf-8")
+    if checksum != hashlib.sha256(encoded).hexdigest():
+        raise ValueError("fit checksum mismatch")
+    if payload.get("renderer_identity") != renderer_identity(vehicle, numerical_fixes):
+        raise ValueError("renderer source or effective IR changed; refit rather than fallback")
+    return {str(k): float(v) for k, v in payload["overrides"].items()}
+
+
+def per_scene_guard(candidate: Mapping[str, float], anchor: Mapping[str, float],
+                    fraction: float, tolerance: float = 1e-10) -> bool:
+    return candidate.keys() == anchor.keys() and all(
+        np.isfinite(v) and v <= anchor[k] * (1.0 + fraction) + tolerance
+        for k, v in candidate.items()
+    )
+
+
 def fit_vehicle(
-    vehicle: str,
-    reference_dir: str | Path,
-    *,
+    vehicle: str, reference_dir: str | Path, *,
     families: Iterable[str] = ("body", "path", "induction", "afterfire"),
     base_overrides: Mapping[str, float] | None = None,
-    candidates_per_round: int = 8,
-    max_rounds: int = 2,
-    plateau_fraction: float = 0.01,
-    max_global_regression_fraction: float = 0.03,
-    seed: int = 20260906,
-    reference_level: str = "R3_PRIVATE_DIAGNOSTIC_ONLY",
+    candidates_per_round: int = 8, max_rounds: int = 2,
+    plateau_fraction: float = 0.01, max_global_regression_fraction: float = 0.03,
+    seed: int = 20260906, reference_level: str = "R3_PRIVATE_DIAGNOSTIC_ONLY",
+    numerical_fixes: Sequence[str] = (),
 ) -> PhysicalFitResult:
     if vehicle not in VEHICLE_SPECS:
-        raise ValueError(vehicle)
+        raise ValueError(f"unsupported vehicle: {vehicle}")
+    if reference_level not in ("R3_PRIVATE_DIAGNOSTIC_ONLY", "R2_AUTHORIZED_DIAGNOSTIC"):
+        raise ValueError("only explicit diagnostic evidence levels accepted; no inferred R1")
+    if candidates_per_round < 1 or max_rounds < 1:
+        raise ValueError("candidate and round budgets must be positive")
+    if not 0 <= max_global_regression_fraction <= 0.1 or not 0 <= plateau_fraction < 1:
+        raise ValueError("invalid bounded stopping/guard policy")
+    identity = renderer_identity(vehicle, numerical_fixes)
+    flags = tuple(identity["numerical_fixes"])
     references = load_reference_audio(reference_dir)
-    selected_families = [family for family in families if family in FAMILY_PARAMETERS]
+    sources = reference_sources(reference_dir)
+    selected_families = list(dict.fromkeys(families))
+    if any(f not in FAMILY_PARAMETERS for f in selected_families):
+        raise ValueError("unknown parameter family")
     if not VEHICLE_SPECS[vehicle].has_induction:
-        selected_families = [
-            family for family in selected_families if family != "induction"
-        ]
+        selected_families = [f for f in selected_families if f != "induction"]
+    current = {str(k): float(v) for k,v in (base_overrides or {}).items()}
 
-    current = {str(key): float(value) for key, value in (base_overrides or {}).items()}
-    baseline_distance, baseline_scenes = evaluate_overrides(
-        vehicle, current, references, seed
-    )
-    current_global_distance = baseline_distance
-    rounds: list[dict[str, Any]] = [
-        {
-            "stage": "baseline",
-            "distance": baseline_distance,
-            "scene_distances": baseline_scenes,
-            "overrides": dict(current),
-        }
-    ]
+    def score(overrides):
+        return evaluate_overrides(vehicle, overrides, references, seed, numerical_fixes=flags)
 
+    baseline_distance, baseline_scenes = score(current)
+    rounds = [{"stage":"baseline", "distance":baseline_distance,
+               "scene_distances":baseline_scenes, "overrides":dict(current)}]
+    current_scenes = dict(baseline_scenes)
     for family_index, family in enumerate(selected_families):
-        parameters = FAMILY_PARAMETERS[family]
-        objective_scenes = tuple(
-            scene for scene in FAMILY_SCENES[family] if scene in references
-        )
-        if not objective_scenes:
-            rounds.append(
-                {
-                    "stage": family,
-                    "status": "SKIPPED_NO_TARGET_REFERENCE",
-                    "objective_scenes": list(FAMILY_SCENES[family]),
-                }
-            )
+        target_scenes = tuple(s for s in FAMILY_SCENES[family] if s in references)
+        if not target_scenes:
+            rounds.append({"stage":family,"status":"SKIPPED_NO_TARGET_REFERENCE"})
             continue
-
-        family_center = {
-            parameter.name: current.get(parameter.name, parameter.baseline)
-            for parameter in parameters
-        }
-        family_start_target, _ = evaluate_overrides(
-            vehicle,
-            current,
-            references,
-            seed,
-            scenes=objective_scenes,
-        )
-        accepted_target_distance = family_start_target
-        accepted_overrides = dict(current)
-        accepted_global_distance = current_global_distance
-
+        params = FAMILY_PARAMETERS[family]
+        start_target = float(np.mean([current_scenes[s] for s in target_scenes]))
+        accepted_target = start_target
         for round_index in range(max_rounds):
-            shrink = 1.0 if round_index == 0 else 0.45**round_index
-            candidates = _sample_family(
-                parameters,
-                candidates_per_round,
-                seed + family_index * 100 + round_index,
-                family_center,
-                shrink,
-            )
-            candidates.insert(0, dict(family_center))
-            scored: list[
-                tuple[float, float, dict[str, float], dict[str, float]]
-            ] = []
-            for candidate_family in candidates:
-                merged = dict(current)
-                merged.update(candidate_family)
-                target_distance, target_scene_distances = evaluate_overrides(
-                    vehicle,
-                    merged,
-                    references,
-                    seed,
-                    scenes=objective_scenes,
-                )
-                global_distance, _ = evaluate_overrides(
-                    vehicle,
-                    merged,
-                    references,
-                    seed,
-                )
-                scored.append(
-                    (
-                        target_distance,
-                        global_distance,
-                        candidate_family,
-                        target_scene_distances,
-                    )
-                )
-
-            # Prefer the target family objective, but reject candidates that
-            # materially damage the full reference set.
-            global_guard = current_global_distance * (
-                1.0 + max_global_regression_fraction
-            )
-            guarded = [row for row in scored if row[1] <= global_guard]
-            ranked = guarded or scored
-            ranked.sort(key=lambda row: (row[0], row[1]))
-            (
-                target_distance,
-                global_distance,
-                family_center,
-                target_scene_distances,
-            ) = ranked[0]
-            merged_best = dict(current)
-            merged_best.update(family_center)
-
-            improvement = (
-                accepted_target_distance - target_distance
-            ) / max(accepted_target_distance, 1e-9)
-            rounds.append(
-                {
-                    "stage": family,
-                    "round": round_index,
-                    "objective_scenes": list(objective_scenes),
-                    "target_distance": target_distance,
-                    "overall_distance": global_distance,
-                    "target_scene_distances": target_scene_distances,
-                    "family_overrides": dict(family_center),
-                    "overrides": merged_best,
-                    "candidate_count": len(scored),
-                    "global_guard": global_guard,
-                    "relative_target_improvement": improvement,
-                }
-            )
-
-            if (
-                target_distance < accepted_target_distance
-                and global_distance <= global_guard
-            ):
-                accepted_target_distance = target_distance
-                accepted_overrides = merged_best
-                accepted_global_distance = global_distance
-
-            if round_index > 0 and improvement < plateau_fraction:
-                break
-
-        current = accepted_overrides
-        current_global_distance = accepted_global_distance
-        rounds.append(
-            {
-                "stage": family,
-                "status": "ACCEPTED"
-                if accepted_target_distance < family_start_target
-                else "NO_IMPROVEMENT_KEEP_BASELINE",
-                "objective_scenes": list(objective_scenes),
-                "start_target_distance": family_start_target,
-                "accepted_target_distance": accepted_target_distance,
-                "accepted_overall_distance": current_global_distance,
-                "overrides": dict(current),
-            }
-        )
-
-    final_distance, _ = evaluate_overrides(
-        vehicle, current, references, seed
-    )
-    return PhysicalFitResult(
-        vehicle=vehicle,
-        reference_level=reference_level,
-        families=tuple(selected_families),
-        overrides=current,
-        baseline_distance=baseline_distance,
-        final_distance=final_distance,
-        rounds=rounds,
-        seed=seed,
-    )
+            center = {p.name:current.get(p.name,p.baseline) for p in params}
+            proposals = [center] + _sample_family(params,candidates_per_round,
+                seed+100*family_index+round_index,center,0.45**round_index)
+            candidates = []
+            accepted = []
+            for proposal in proposals:
+                merged = dict(current); merged.update(proposal)
+                overall, by_scene = score(merged)
+                target = float(np.mean([by_scene[s] for s in target_scenes]))
+                ok = per_scene_guard(by_scene, baseline_scenes, max_global_regression_fraction)
+                item = {"target_distance":target,"overall_distance":overall,
+                        "scene_distances":by_scene,"overrides":merged,"guard_pass":ok}
+                candidates.append(item)
+                if ok: accepted.append(item)
+            # Never select an unguarded proposal, even when all candidates fail.
+            winner = min(accepted,key=lambda r:(r["target_distance"],r["overall_distance"])) if accepted else None
+            previous = accepted_target
+            changed = winner is not None and winner["target_distance"] < accepted_target - 1e-12
+            if changed:
+                current = dict(winner["overrides"])
+                current_scenes = dict(winner["scene_distances"])
+                accepted_target = winner["target_distance"]
+            improvement = (previous-accepted_target)/max(previous,1e-9)
+            rounds.append({"stage":family,"round":round_index,"objective_scenes":list(target_scenes),
+                "status":"ACCEPTED_PROPOSAL" if changed else "KEEP_PREVIOUS",
+                "relative_target_improvement":improvement,"candidates":candidates,
+                "guard_anchor":"INITIAL_BASELINE_EACH_SCENE","overrides":dict(current)})
+            if improvement < plateau_fraction: break
+        rounds.append({"stage":family,"status":"ACCEPTED" if accepted_target < start_target else "NO_IMPROVEMENT_KEEP_BASELINE",
+                       "start_target_distance":start_target,"accepted_target_distance":accepted_target,
+                       "overrides":dict(current)})
+    final_distance, final_scenes = score(current)
+    if not per_scene_guard(final_scenes, baseline_scenes, max_global_regression_fraction):
+        raise RuntimeError("final candidate violates initial per-scene anchor")
+    if renderer_identity(vehicle,flags) != identity or reference_sources(reference_dir) != sources:
+        raise RuntimeError("renderer/IR/reference changed during fit; result not publishable")
+    trace_hashes = {}
+    for scene in references:
+        rpm, throttle, duration, shift, afterfire, bov = build_fit_scene(vehicle,scene)
+        data = np.asarray(rpm,dtype="<f8").tobytes()+np.asarray(throttle,dtype="<f8").tobytes()
+        data += json.dumps([duration,shift,afterfire,bov],sort_keys=True).encode()
+        trace_hashes[scene]=hashlib.sha256(data).hexdigest()
+    return PhysicalFitResult(vehicle,reference_level,tuple(selected_families),current,
+        baseline_distance,final_distance,rounds,seed,flags,identity,sources,trace_hashes)
 
 
 def write_fit_result(

@@ -1,7 +1,7 @@
 """
 engine_sim_acoustics.py - Physics-based Engine Acoustic Simulator
-Ported and synthesized from AngeTheGreat Engine Simulator (C++) acoustics pipeline:
-- Physical cylinder blowdown pressure shockwave generation
+Engine-Sim-inspired procedural synthesis (not a port of its gas/combustion solver):
+- Analytic, dimensionless cylinder blowdown-shaped excitation
 - Variable RPM cycle phase integration (720 deg 4-stroke)
 - Crankshaft geometry, throw angles & cylinder firing order for:
     * Ferrari 458 Italia (4.5L NA Flat-plane V8, 9000 RPM)
@@ -10,7 +10,7 @@ Ported and synthesized from AngeTheGreat Engine Simulator (C++) acoustics pipeli
     * Nissan GT-R R35 (3.8L Twin-Turbo 60° V6, 7200 RPM)
 - Exhaust primary runner propagation delays (speed of sound)
 - Acoustic velocity derivative df/dt + 2000 Hz turbulence flow noise modulation
-- Authentic exhaust impulse response FFT convolution (mild_exhaust_reverb, test_engine_14, test_engine_16)
+- External exhaust-transfer IR convolution (asset provenance reviewed separately) (mild_exhaust_reverb, test_engine_14, test_engine_16)
 - Load-dependent throttle response, shift ignition cut, overrun crackles, afterfire
 - Supercharger whine (Hellcat) & Twin-turbo spool + BOV dump (GT-R)
 """
@@ -24,11 +24,14 @@ SOUND_LIB_DIR = r"E:\project\engine-sim\runtime\v0.1.11a\engine-sim-build_0_1_11
 
 def load_impulse_response(ir_name: str, target_sr: int = 48000, max_samples: int = 12000) -> np.ndarray:
     """Load an impulse response from the engine-sim sound library and resample to target_sr."""
+    library_dir = os.environ.get("S12_ENGINE_SIM_IR_ROOT", SOUND_LIB_DIR)
+    # Keep the reconciled main/root asset first so numerical_fixes=() preserves
+    # the prior EngineAcoustics output when the caller provides the same IR.
     candidates = [
-        os.path.join(SOUND_LIB_DIR, "new", f"{ir_name}.wav"),
-        os.path.join(SOUND_LIB_DIR, "archive", f"{ir_name}.wav"),
-        os.path.join(SOUND_LIB_DIR, "smooth", f"{ir_name}.wav"),
-        os.path.join(SOUND_LIB_DIR, f"{ir_name}.wav")
+        os.path.join(library_dir, f"{ir_name}.wav"),
+        os.path.join(library_dir, "new", f"{ir_name}.wav"),
+        os.path.join(library_dir, "archive", f"{ir_name}.wav"),
+        os.path.join(library_dir, "smooth", f"{ir_name}.wav"),
     ]
     path = None
     for c in candidates:
@@ -36,27 +39,96 @@ def load_impulse_response(ir_name: str, target_sr: int = 48000, max_samples: int
             path = c
             break
     if path is None:
-        raise FileNotFoundError(f"Could not find impulse response: {ir_name} in {SOUND_LIB_DIR}")
-    
+        raise FileNotFoundError(f"Could not find impulse response: {ir_name} in {library_dir}")
+
     sr, data = wavfile.read(path)
     if data.ndim > 1:
         data = data[:, 0]
-    data = data.astype(np.float64) / 32768.0
-    
+    # WAV PCM may be unsigned 8-bit, signed 16/32-bit, or float.
+    # Preserve the original int16 division exactly for the listening baseline.
+    if data.dtype == np.uint8:
+        data = (data.astype(np.float64) - 128.0) / 128.0
+    elif np.issubdtype(data.dtype, np.signedinteger):
+        data = data.astype(np.float64) / float(-np.iinfo(data.dtype).min)
+    else:
+        data = data.astype(np.float64)
+    if data.size == 0 or not np.all(np.isfinite(data)) or not np.any(data):
+        raise ValueError("IR must contain finite nonzero samples")
+
     if sr != target_sr:
         num_samples = int(len(data) * target_sr / sr)
         data = signal.resample(data, num_samples)
-        
+
     data = data[:min(len(data), max_samples)]
     return data
 
+# Opt-in correctness experiments. Empty set preserves the Human-reviewed audio.
+# These are NOT optimizer knobs and do not establish OEM physical calibration.
+NUMERICAL_FIXES = frozenset({
+    "cycle_phase", "causal_delays", "causal_convolution",
+    "causal_derivative", "shift_cut",
+})
+
+
+def causal_fractional_delay(values: np.ndarray, delay_samples: float) -> np.ndarray:
+    """Zero-state causal linear fractional delay; never wraps future samples.
+
+    For d = k + f, y[n] = (1-f)*x[n-k] + f*x[n-k-1]. This is a
+    first-order interpolation approximation, not a dispersion-correct waveguide.
+    Tail samples beyond the requested output duration are discarded.
+    """
+    x = np.asarray(values, dtype=np.float64)
+    if x.ndim != 1 or not np.all(np.isfinite(x)):
+        raise ValueError("delay input must be a finite 1-D array")
+    if not np.isfinite(delay_samples) or delay_samples < 0:
+        raise ValueError("delay_samples must be finite and non-negative")
+    k = int(np.floor(delay_samples))
+    fraction = float(delay_samples - k)
+    y = np.zeros_like(x)
+    if k < x.size:
+        y[k:] = (1.0 - fraction) * x[:x.size-k]
+    if fraction > 0.0 and k + 1 < x.size:
+        y[k+1:] += fraction * x[:x.size-k-1]
+    return y
+
+
+def causal_backward_difference(values: np.ndarray, dt: float) -> np.ndarray:
+    """Return a zero-state backward difference without future-sample access."""
+    x = np.asarray(values, dtype=np.float64)
+    if x.ndim != 1 or not np.all(np.isfinite(x)):
+        raise ValueError("difference input must be a finite 1-D array")
+    if not np.isfinite(dt) or dt <= 0.0:
+        raise ValueError("dt must be finite and positive")
+    return np.diff(x, prepend=0.0) / float(dt)
+
+
+def shift_cut_mask(cut_len: int, corrected: bool) -> np.ndarray:
+    """Build either the legacy cut→unity ramp or corrected unity→cut→unity."""
+    if int(cut_len) < 1:
+        raise ValueError("cut_len must be positive")
+    window = 0.5 * (1.0 - np.cos(2.0 * np.pi * np.linspace(0.0, 1.0, int(cut_len))))
+    return 1.0 - 0.95 * window if corrected else 0.05 + 0.95 * window
+
+
+def firing_phase_for_cycle(firing_angle: float, numerical_fixes: frozenset[str]) -> float:
+    """Convert legacy crank-radian firing angles to the cycle-phase domain once."""
+    return float(firing_angle) * 0.5 if "cycle_phase" in numerical_fixes else float(firing_angle)
+
+
 class EngineAcoustics:
-    def __init__(self, vehicle_type: str = "ferrari_458", sr: int = 48000):
+    def __init__(self, vehicle_type: str = "ferrari_458", sr: int = 48000,
+                 *, numerical_fixes=()):
+        if isinstance(numerical_fixes, str):
+            raise ValueError("numerical_fixes must be a sequence of flag names")
+        self.numerical_fixes = frozenset(numerical_fixes)
+        unknown = self.numerical_fixes - NUMERICAL_FIXES
+        if unknown:
+            raise ValueError(f"unknown numerical fixes: {sorted(unknown)}")
         self.sr = sr
         self.vehicle_type = vehicle_type
         self.has_supercharger = False
         self.has_turbo = False
-        
+
         if vehicle_type == "ferrari_458":
             # 4.5L Flat-plane V8 (Ferrari F136 FL)
             # Firing Order: 1-5-3-7-4-8-2-6 (8 cyl)
@@ -72,7 +144,7 @@ class EngineAcoustics:
             self.air_noise_amount = 0.70
             self.exhaust_gain = 1.6
             self.mechanical_resonance_freq = 135.0
-            
+
         elif vehicle_type == "hellcat":
             # 6.2L Supercharged Cross-plane V8 (HEMI Hellcat)
             # Firing Order: 1-8-7-2-6-5-4-3 (8 cyl)
@@ -89,7 +161,7 @@ class EngineAcoustics:
             self.air_noise_amount = 0.85
             self.exhaust_gain = 2.2
             self.mechanical_resonance_freq = 95.0
-            
+
         elif vehicle_type == "lfa":
             # 4.8L Even-Firing 72° Naturally Aspirated V10 (1LR-GUE)
             # Firing Order: 1-2-3-4-7-8-9-10-5-6 (10 cyl, 72° equal interval)
@@ -107,8 +179,8 @@ class EngineAcoustics:
             self.dF_F_mix = 0.010
             self.air_noise_amount = 0.65
             self.exhaust_gain = 1.8
-            self.mechanical_resonance_freq = 380.0 # Yamaha acoustic chamber resonance
-            
+            self.mechanical_resonance_freq = 380.0 # heuristic resonance, not measured Yamaha geometry
+
         elif vehicle_type == "gtr_r35":
             # 3.8L 60° Twin-Turbo V6 (VR38DETT)
             # Firing Order: 1-2-3-4-5-6 (6 cyl, 120° equal interval)
@@ -125,7 +197,7 @@ class EngineAcoustics:
             self.air_noise_amount = 0.80
             self.exhaust_gain = 1.9
             self.mechanical_resonance_freq = 145.0
-            
+
         else:
             raise ValueError(f"Unknown vehicle type: {vehicle_type}")
 
@@ -133,59 +205,67 @@ class EngineAcoustics:
         c_sound = 343.0
         self.delays_sec = (self.primary_lengths + self.exhaust_length) / c_sound
 
-    def render_track(self, rpm_curve: np.ndarray, throttle_curve: np.ndarray, duration: float, 
+    def render_track(self, rpm_curve: np.ndarray, throttle_curve: np.ndarray, duration: float,
                      shift_events: list = None, afterfire_events: list = None, bov_events: list = None) -> np.ndarray:
         """
         Synthesize full track audio given RPM and throttle trajectories over duration.
         """
         N = int(self.sr * duration)
         t = np.linspace(0, duration, N, endpoint=False)
-        
+
         # Ensure curves have length N
         if len(rpm_curve) != N:
             rpm_curve = np.interp(np.linspace(0, 1, N), np.linspace(0, 1, len(rpm_curve)), rpm_curve)
         if len(throttle_curve) != N:
             throttle_curve = np.interp(np.linspace(0, 1, N), np.linspace(0, 1, len(throttle_curve)), throttle_curve)
-            
+
         # 4-stroke cycle frequency f_cycle = (RPM / 60) / 2
         f_cycle = (rpm_curve / 60.0) / 2.0
         cycle_phase = 2.0 * np.pi * np.cumsum(f_cycle) / self.sr
-        
-        # Cylinder combustion variability (subtle 0.5% jitter)
+
+        # Fixed per-cylinder 3.5% gain spread; NOT cycle-to-cycle combustion jitter
         rng = np.random.RandomState(42)
         cyl_gain_jitter = 1.0 + rng.normal(0.0, 0.035, self.cylinders)
-        
+
         bank_signals = [np.zeros(N, dtype=np.float64), np.zeros(N, dtype=np.float64)]
-        
+
         # Calculate pressure pulse for each cylinder
         for cyl in range(self.cylinders):
-            cyl_angle = (cycle_phase - self.firing_angles[cyl]) % (2.0 * np.pi)
-            
+            # firing_angles are CRANK radians over 0..4*pi (720 crank degrees).
+            # cycle_phase is CYCLE radians over 0..2*pi: convert once, not twice.
+            firing_phase = firing_phase_for_cycle(self.firing_angles[cyl], self.numerical_fixes)
+            cyl_angle = (cycle_phase - firing_phase) % (2.0 * np.pi)
+
             ev_center = 1.0 * np.pi
             rel_angle = (cyl_angle - ev_center) % (2.0 * np.pi)
-            
+
             pulse = np.zeros(N, dtype=np.float64)
             pulse_width = (2.0 * np.pi / self.cylinders) * 1.15
             active_mask = rel_angle < pulse_width
             tau = rel_angle[active_mask] / pulse_width
-            
+
             # Asymmetric blowdown pulse shape
             pulse_shape = (tau / 0.12) * np.exp(-(tau - 0.12) / 0.24) + 0.12 * np.sin(np.pi * tau)
-            
+
             load_factor = 0.35 + 0.65 * (throttle_curve[active_mask] ** 0.8)
             pulse[active_mask] = np.maximum(0.0, pulse_shape * load_factor * cyl_gain_jitter[cyl])
-            
+
             # Primary runner delay
             delay_samples = int(self.delays_sec[cyl] * self.sr)
-            delayed_pulse = np.roll(pulse, delay_samples)
-            
+            if "causal_delays" in self.numerical_fixes:
+                delayed_pulse = causal_fractional_delay(
+                    pulse, self.delays_sec[cyl] * self.sr
+                )
+            else:
+                delayed_pulse = np.roll(pulse, delay_samples)
+
             bank = self.cyl_bank[cyl]
             bank_signals[bank] += delayed_pulse
-            
+
         # Combine dual banks
         left_raw = bank_signals[0] + 0.35 * bank_signals[1]
         right_raw = bank_signals[1] + 0.35 * bank_signals[0]
-        
+
         # Shift ignition cut
         shift_mask = np.ones(N, dtype=np.float64)
         shift_pops = np.zeros(N, dtype=np.float64)
@@ -195,18 +275,21 @@ class EngineAcoustics:
                 d_len = int(s_dur * self.sr)
                 if s_idx < N:
                     cut_len = min(d_len, N - s_idx)
-                    window = 0.5 * (1.0 - np.cos(2.0 * np.pi * np.linspace(0, 1, cut_len)))
-                    shift_mask[s_idx:s_idx + cut_len] *= (0.05 + 0.95 * window)
+                    if "shift_cut" in self.numerical_fixes:
+                        # Continuous unity -> cut -> unity, not cut -> unity -> cut.
+                        shift_mask[s_idx:s_idx + cut_len] *= shift_cut_mask(cut_len, corrected=True)
+                    else:
+                        shift_mask[s_idx:s_idx + cut_len] *= shift_cut_mask(cut_len, corrected=False)
                     crack_idx = min(s_idx + cut_len, N - 1)
                     crack_len = int(0.04 * self.sr)
                     if crack_idx + crack_len < N:
                         shift_pops[crack_idx:crack_idx + crack_len] += (
                             np.random.normal(0, 1.3, crack_len) * np.exp(-np.linspace(0, 5, crack_len))
                         )
-                        
+
         left_raw = left_raw * shift_mask + shift_pops
         right_raw = right_raw * shift_mask + shift_pops
-        
+
         # Afterfire crackles and pops on overrun/lift
         afterfire_pops = np.zeros(N, dtype=np.float64)
         if afterfire_events:
@@ -216,14 +299,14 @@ class EngineAcoustics:
                 if af_idx + pop_len < N:
                     pop_wave = np.random.normal(0, af_intensity * 2.5, pop_len) * np.exp(-np.linspace(0, 6, pop_len))
                     afterfire_pops[af_idx:af_idx + pop_len] += pop_wave
-                    
+
         left_raw += afterfire_pops
         right_raw += afterfire_pops
-        
+
         # Synthesizer acoustic pipeline
         out_left = self._synthesize_channel(left_raw, t, throttle_curve, rpm_curve)
         out_right = self._synthesize_channel(right_raw, t, throttle_curve, rpm_curve)
-        
+
         # Supercharger Whine (Hellcat)
         if self.has_supercharger:
             sc_drive_ratio = 2.36
@@ -239,7 +322,7 @@ class EngineAcoustics:
             whine_rasp = np.random.normal(0.0, 0.1, N) * whine_gain * np.sin(3.0 * sc_phase)
             out_left += (sc_tone + whine_rasp)
             out_right += (sc_tone + whine_rasp)
-            
+
         # Twin Turbo Whine & BOV (GT-R R35)
         if self.has_turbo:
             # Turbine speed: 18x to 26x engine RPM under load
@@ -249,13 +332,17 @@ class EngineAcoustics:
             turbo_gain = 0.04 * (throttle_curve ** 1.2) * (rpm_curve / self.redline)
             # High-pitch aerodynamic turbine spool hiss & blade pass tone
             turbo_spool = (
-                0.7 * np.sin(turbo_phase) + 
+                0.7 * np.sin(turbo_phase) +
                 0.3 * np.sin(2.0 * turbo_phase) +
                 0.5 * np.random.normal(0, 0.3, N) * np.sin(turbo_phase)
             ) * turbo_gain
             out_left += turbo_spool
-            out_right += np.roll(turbo_spool, 10)
-            
+            out_right += (
+                causal_fractional_delay(turbo_spool, 10)
+                if "causal_delays" in self.numerical_fixes
+                else np.roll(turbo_spool, 10)
+            )
+
             # Blow-Off Valve (BOV) air release hiss
             if bov_events:
                 for b_time, b_dur in bov_events:
@@ -266,8 +353,8 @@ class EngineAcoustics:
                         b_t = np.linspace(0, b_dur, b_len)
                         bov_flutter = np.sin(2.0 * np.pi * 32.0 * b_t) # 32 Hz valve flutter
                         bov_hiss = (
-                            np.random.normal(0, 0.8, b_len) * 
-                            np.exp(-b_t * 6.0) * 
+                            np.random.normal(0, 0.8, b_len) *
+                            np.exp(-b_t * 6.0) *
                             (1.0 + 0.6 * bov_flutter)
                         )
                         # Bandpass filter around 2500 - 5500 Hz
@@ -275,22 +362,26 @@ class EngineAcoustics:
                         bov_filtered = signal.sosfilt(sos_bov, bov_hiss) * 0.45
                         out_left[b_idx:b_idx + b_len] += bov_filtered
                         out_right[b_idx:b_idx + b_len] += bov_filtered
-            
+
         # Mechanical Bass Chest-Resonator
         firing_orders_per_rev = self.cylinders / 2.0
         firing_freq = (rpm_curve / 60.0) * firing_orders_per_rev
         bass_phase = 2.0 * np.pi * np.cumsum(firing_freq) / self.sr
         bank_phase = bass_phase * 0.5
-        
+
         bass_body = (
-            0.50 * np.sin(bass_phase) + 
-            0.35 * np.sin(bank_phase + 0.4) + 
+            0.50 * np.sin(bass_phase) +
+            0.35 * np.sin(bank_phase + 0.4) +
             0.15 * np.sin(bass_phase * 2.0)
         ) * (0.45 + 0.55 * throttle_curve) * (self.exhaust_gain * 0.16)
-        
+
         out_left += bass_body
-        out_right += np.roll(bass_body, 16)
-        
+        out_right += (
+            causal_fractional_delay(bass_body, 16)
+            if "causal_delays" in self.numerical_fixes
+            else np.roll(bass_body, 16)
+        )
+
         # Soft analog valve saturation
         stereo = np.column_stack([out_left, out_right])
         peak = np.max(np.abs(stereo))
@@ -298,44 +389,53 @@ class EngineAcoustics:
             stereo = stereo / peak
             stereo = np.tanh(stereo * 1.5) / np.tanh(1.5)
             stereo = stereo * 0.94
-            
+
         out_int16 = (stereo * 32767).astype(np.int16)
         return out_int16
 
-    def _synthesize_channel(self, raw_signal: np.ndarray, t: np.ndarray, 
+    def _synthesize_channel(self, raw_signal: np.ndarray, t: np.ndarray,
                             throttle: np.ndarray, rpm: np.ndarray) -> np.ndarray:
-        """Process raw cylinder pulse stream through Synthesizer C++ acoustic filters."""
+        """Process dimensionless pulse excitation through Engine-Sim-inspired audio filters."""
         N = len(raw_signal)
-        
+
         # 1. 10 Hz DC blocking high-pass filter
         sos_dc = signal.butter(1, 10.0, 'highpass', fs=self.sr, output='sos')
         f_in = signal.sosfilt(sos_dc, raw_signal)
-        
+
         # 2. Derivative filter (acoustic velocity front df/dt)
         dt = 1.0 / self.sr
-        f_p = np.gradient(f_in, dt) * 0.0005
-        
+        if "causal_derivative" in self.numerical_fixes:
+            # Backward difference: no x[n+1] look-ahead. Zero initial state.
+            f_p = causal_backward_difference(f_in, dt) * 0.0005
+        else:
+            f_p = np.gradient(f_in, dt) * 0.0005
+
         # 3. 2200 Hz low-pass turbulent air noise modulation
         sos_air = signal.butter(1, 2200.0, 'lowpass', fs=self.sr, output='sos')
         white_noise = np.random.uniform(-1.0, 1.0, N)
         lp_noise = signal.sosfilt(sos_air, white_noise)
         r_mixed = self.air_noise_amount * lp_noise + (1.0 - self.air_noise_amount)
-        
+
         # 4. Mix acoustic pressure velocity front & turbulent pressure wave
         v_in = f_p * self.dF_F_mix + f_in * r_mixed * (1.0 - self.dF_F_mix)
-        
-        # 5. FFT Convolution with authentic exhaust impulse response
+
+        # 5. Convolution with local exhaust-transfer impulse response
         ir_scaled = self.ir * self.ir_volume
-        v_conv = signal.fftconvolve(v_in, ir_scaled, mode='same')
-        
+        if "causal_convolution" in self.numerical_fixes:
+            # h[0] denotes time zero. Centered 'same' advances a causal IR.
+            from tools.sound_sim.s12.acoustic_identity_v015.stage_af.partitioned_convolver import UniformPartitionedConvolver
+            v_conv = UniformPartitionedConvolver(ir_scaled).process(v_in)
+        else:
+            v_conv = signal.fftconvolve(v_in, ir_scaled, mode='same')
+
         # 6. Blend convolved resonance and direct wave
         conv_amount = 0.88
         v_out = conv_amount * v_conv + (1.0 - conv_amount) * v_in
-        
+
         # 7. Add mechanical body tone at exhaust resonance
-        sos_body = signal.butter(2, [self.mechanical_resonance_freq * 0.7, self.mechanical_resonance_freq * 1.5], 
+        sos_body = signal.butter(2, [self.mechanical_resonance_freq * 0.7, self.mechanical_resonance_freq * 1.5],
                                  'bandpass', fs=self.sr, output='sos')
         body_ring = signal.sosfilt(sos_body, v_in) * 0.35
         v_out += body_ring
-        
+
         return v_out

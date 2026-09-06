@@ -181,6 +181,7 @@ jobs:
           import hashlib
           import subprocess
           from pathlib import Path
+          from tools.sound_sim.s12.acoustic_identity_v015.stage_af.scorecard_rows import executable_row_count
 
           registry = Path("docs/research/engine-audio-ecosystem/source_registry.json")
           payload = json.loads(registry.read_text(encoding="utf-8"))
@@ -221,9 +222,9 @@ jobs:
           assert subprocess.run(["git", "merge-base", "--is-ancestor", stage_z_matrix["main_head"], "HEAD"]).returncode == 0
           stage_z_scorecard = json.loads(Path("tasks/reports/runtime/s12-stage-z/method_ablation_scorecard.json").read_text(encoding="utf-8"))
           assert len(stage_z_scorecard["rows"]) >= 12
-          assert stage_z_scorecard["executable_count"] >= 12
+          assert executable_row_count(stage_z_scorecard["rows"]) >= 12
           stage_aa_scorecard = json.loads(Path("tasks/reports/runtime/s12-stage-aa/method_ablation_scorecard_v2.json").read_text(encoding="utf-8"))
-          assert stage_aa_scorecard["executable_count"] >= 12
+          assert executable_row_count(stage_aa_scorecard["rows"]) >= 12
           print("registry and historical receipts: PASS")
           PY
 

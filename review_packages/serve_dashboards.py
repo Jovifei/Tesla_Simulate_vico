@@ -20,13 +20,19 @@ DEFAULT_EXTERNAL_ROOT = Path(r"E:\Tesla_speed\review_packages")
 VEHICLE_ROOT = Path(os.environ.get("S12_REVIEW_ROOT", "")) if os.environ.get("S12_REVIEW_ROOT") else (
     DEFAULT_EXTERNAL_ROOT if DEFAULT_EXTERNAL_ROOT.exists() else REPO_REVIEW_ROOT
 )
+try:
+    REVIEW_PORT_BASE = int(os.environ.get("S12_REVIEW_PORT_BASE", "8088"))
+except ValueError as exc:
+    raise ValueError("S12_REVIEW_PORT_BASE must be an integer") from exc
+if not 1024 <= REVIEW_PORT_BASE <= 65532:
+    raise ValueError("S12_REVIEW_PORT_BASE must leave room for four vehicle ports")
 
 SERVERS = [
     {"name": "Unified Portal", "dir": REPO_REVIEW_ROOT, "port": 8080},
-    {"name": "Dodge Hellcat", "dir": VEHICLE_ROOT / "s12-stage-ad-hellcat-closed-loop-v1", "port": 8088},
-    {"name": "Ferrari 458", "dir": VEHICLE_ROOT / "s12-stage-ad-ferrari-458-closed-loop-v1", "port": 8089},
-    {"name": "Lexus LFA", "dir": VEHICLE_ROOT / "s12-stage-ad-lfa-closed-loop-v1", "port": 8090},
-    {"name": "Nissan GT-R", "dir": VEHICLE_ROOT / "s12-stage-ad-gtr-r35-closed-loop-v1", "port": 8091},
+    {"name": "Dodge Hellcat", "dir": VEHICLE_ROOT / "s12-stage-ad-hellcat-closed-loop-v1", "port": REVIEW_PORT_BASE},
+    {"name": "Ferrari 458", "dir": VEHICLE_ROOT / "s12-stage-ad-ferrari-458-closed-loop-v1", "port": REVIEW_PORT_BASE + 1},
+    {"name": "Lexus LFA", "dir": VEHICLE_ROOT / "s12-stage-ad-lfa-closed-loop-v1", "port": REVIEW_PORT_BASE + 2},
+    {"name": "Nissan GT-R", "dir": VEHICLE_ROOT / "s12-stage-ad-gtr-r35-closed-loop-v1", "port": REVIEW_PORT_BASE + 3},
 ]
 
 

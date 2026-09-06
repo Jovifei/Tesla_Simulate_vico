@@ -1,29 +1,16 @@
-"""CLI for Stage-AF physical negative-feedback tuning."""
+"""Bounded fitting of the same EngineAcoustics mode used by the old dashboard."""
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
 
-from .physical_closed_loop import fit_vehicle, write_fit_result
-
-
-def _load_base(path: Path | None) -> dict[str, float]:
-    if path is None:
-        return {}
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    if "overrides" in payload:
-        payload = payload["overrides"]
-    return {str(k): float(v) for k, v in payload.items()}
+from ..stage_ad.engine_sim_acoustics import NUMERICAL_FIXES
+from .physical_closed_loop import fit_vehicle, write_fit_result, validate_fit_payload
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Tune the successful Stage-AD EngineAcoustics against governed "
-            "reference WAVs without replacing the renderer"
-        )
-    )
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--vehicle",
         required=True,
@@ -37,32 +24,48 @@ def main(argv=None) -> int:
         choices=["body", "path", "induction", "afterfire"],
     )
     parser.add_argument("--base-fit", type=Path)
-    # The current baseline is already good by Human A/B. Start with a small,
-    # interpretable search. Only increase these after listening evidence.
     parser.add_argument("--candidates", type=int, default=8)
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--seed", type=int, default=20260906)
     parser.add_argument(
         "--reference-level",
         default="R3_PRIVATE_DIAGNOSTIC_ONLY",
+        choices=["R3_PRIVATE_DIAGNOSTIC_ONLY", "R2_AUTHORIZED_DIAGNOSTIC"],
+    )
+    parser.add_argument(
+        "--numerical-fixes",
+        nargs="*",
+        default=[],
+        choices=sorted(NUMERICAL_FIXES),
     )
     args = parser.parse_args(argv)
-
+    if (args.output_dir / "final_r3_diagnostic_fit.json").exists():
+        parser.error(
+            "fit output exists; preserve previous experiment and use a fresh directory"
+        )
+    base: dict[str, float] = {}
+    if args.base_fit:
+        base = validate_fit_payload(
+            json.loads(args.base_fit.read_text(encoding="utf-8")),
+            args.vehicle,
+            args.numerical_fixes,
+            args.seed,
+        )
     result = fit_vehicle(
         args.vehicle,
         args.reference_dir,
         families=args.family or ("body", "path", "induction", "afterfire"),
-        base_overrides=_load_base(args.base_fit),
+        base_overrides=base,
         candidates_per_round=args.candidates,
         max_rounds=args.rounds,
         seed=args.seed,
         reference_level=args.reference_level,
+        numerical_fixes=args.numerical_fixes,
     )
-    path = write_fit_result(result, args.output_dir)
-    print(f"Stage AF fit: {args.vehicle}")
+    output = write_fit_result(result, args.output_dir)
     print(f"baseline_distance={result.baseline_distance:.6f}")
     print(f"final_distance={result.final_distance:.6f}")
-    print(f"fit={path}")
+    print(f"fit={output}; HUMAN_NOT_EVALUATED")
     return 0
 
 

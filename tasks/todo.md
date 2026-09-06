@@ -4263,3 +4263,23 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - AA3/AA4 根因与候选报告已完成；AA-C0…AA-C3 在 11 个场景全部 hard-gate PASS，诊断偏好 AA-C3，但未宣称人耳质量提升。
 - AA5/AA6 已完成 finalist 代理指标与 v3 包；当前唯一暂停点为 `WAITING_FOR_JOVI_AUDITION`，AA-C3 未合并到 main。
 - 仅在对应阶段完成后填写；所有结论必须区分工程因果、工程显著性与声学质量方向。
+
+## 2026-09-06 Main audio review: numerical-fixes selective adoption
+
+- [x] Confirm `origin/main` ancestry and read the reconciliation report; preserve `EngineAcoustics`, original dashboard template and `serve_dashboards.py` as the active path.
+- [x] Read candidate tree `c863dd014b55512f1923cd41682debd8f25d599d` only through GitHub Git Data API; compare target blobs and corresponding tests/CI against this worktree one file at a time.
+- [x] RED: add focused regression tests for phase/angle conversion, non-wrapping delay, causal IR response, cutfire envelope, octave-separated spectral distance, shared numerical-fixes propagation, missing-fit fail-closed behavior, per-scene degradation, and executable-count row/hash evidence.
+- [x] GREEN: adopt only reviewed candidate hunks into the isolated branch, retaining EngineAcoustics output when numerical fixes are disabled and keeping Stage AE renderer/UI disabled.
+- [x] Generate Hellcat H0 (original), H1 (phase only), H2 (time correction) through the existing `S12_REVIEW_ROOT` workbench; stop after numbered comparison WAVs and preserve prior audition packages.
+- [x] Run focused, AF/AD regressions, full S12, Track-P and CI-equivalent checks; review all receipts and diffs.
+- [x] Commit and push this branch normally only after all verification passes; never merge/reset/force-push main and never claim Human PASS.
+
+### Review
+
+- [x] Candidate API audit, implementation, verification and Jovi audition package generation completed; pending Jovi human listening only.
+- Full S12: `1459 passed, 2 skipped, 1 warning, 232 subtests passed` (warning is the existing IR WAV non-data chunk notice).
+- Focused AF/AD/numerical-fixes: `28 passed, 1 warning`.
+- Track-P guard: frozen 180 files / 2 symbols, zero frozen-path changes.
+- CI-equivalent scorecard rows: Stage-Z `12/12`, Stage-AA `12/12` executable rows from real OFF/ON hashes and runtime call paths.
+- Hellcat H0/H1/H2 v2 packages retain the original governed references and IR SHA; services restored on ports 8188/8488/8388. No Human PASS or OEM claim.
+- Commit/push gate is clear; the next operation is the normal push of this isolated branch.

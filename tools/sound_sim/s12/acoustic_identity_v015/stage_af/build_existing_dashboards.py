@@ -12,6 +12,7 @@ downloads or invents reference audio.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import shutil
@@ -19,7 +20,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .physical_closed_loop import TunableEngineAcoustics
+from .physical_closed_loop import (
+    TunableEngineAcoustics,
+    renderer_identity,
+    validate_fit_payload,
+)
+from ..stage_ad.engine_sim_acoustics import NUMERICAL_FIXES
 
 VEHICLES = ("hellcat", "ferrari_458", "lfa", "gtr_r35")
 DIR_NAMES = {
@@ -30,12 +36,16 @@ DIR_NAMES = {
 }
 
 
-def _load_fit(path: Path | None) -> dict[str, float]:
+def _load_fit(
+    path: Path | None,
+    vehicle: str,
+    numerical_fixes: tuple[str, ...] = (),
+    seed: int = 20260906,
+) -> dict[str, float]:
     if path is None or not path.is_file():
-        return {}
+        raise ValueError(f"requested fit missing: {path}; refusing default-config fallback")
     payload = json.loads(path.read_text(encoding="utf-8"))
-    source = payload.get("overrides", payload)
-    return {str(key): float(value) for key, value in source.items()}
+    return validate_fit_payload(payload, vehicle, numerical_fixes, seed)
 
 
 def _reference_candidates(root: Path, vehicle: str, filename: str) -> tuple[Path, ...]:
@@ -69,19 +79,32 @@ def _bind_references(
     )
     bound: dict[str, dict[str, str]] = {}
     for filename in filenames:
+        if Path(filename).name != filename:
+            raise ValueError("reference filename must not contain a directory")
         destination = web_dir / filename
-        source: Path | None = destination if destination.is_file() else None
+        source = next(
+            (
+                candidate
+                for candidate in _reference_candidates(reference_root, vehicle, filename)
+                if candidate.is_file()
+            ),
+            None,
+        )
+        if source is None and destination.is_file():
+            source = destination
         if source is None:
-            for candidate in _reference_candidates(reference_root, vehicle, filename):
-                if candidate.is_file() and candidate.resolve() != destination.resolve():
-                    shutil.copy2(candidate, destination)
-                    source = candidate
-                    break
+            continue
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()
+        if destination.is_file():
+            if hashlib.sha256(destination.read_bytes()).hexdigest() != digest:
+                raise ValueError("reference collision; refusing to use stale destination bytes")
+        elif source.resolve() != destination.resolve():
+            shutil.copy2(source, destination)
         if destination.is_file():
             bound[filename] = {
                 "source": str(source or destination),
                 "destination": str(destination),
-                "sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+                "sha256": digest,
             }
     return bound
 
@@ -111,9 +134,21 @@ def main(argv=None) -> int:
             "No network download is performed"
         ),
     )
+    parser.add_argument("--vehicle", choices=["all", *VEHICLES], default="all")
+    parser.add_argument(
+        "--baseline",
+        action="store_true",
+        help="explicitly render the original baseline; required when --fit-root is absent",
+    )
     parser.add_argument("--seed", type=int, default=20260906)
+    parser.add_argument("--numerical-fixes", nargs="*", choices=sorted(NUMERICAL_FIXES), default=[])
     args = parser.parse_args(argv)
     reference_root = args.reference_root or args.output_root
+    selected = VEHICLES if args.vehicle == "all" else (args.vehicle,)
+    if args.fit_root is None and not args.baseline:
+        parser.error("--fit-root is required unless --baseline is explicitly supplied")
+    if args.fit_root is not None and args.baseline:
+        parser.error("--fit-root and --baseline are mutually exclusive")
 
     stage_ad_dir = Path(__file__).resolve().parents[1] / "stage_ad"
     sys.path.insert(0, str(stage_ad_dir))
@@ -128,13 +163,15 @@ def main(argv=None) -> int:
     dashboards.TEMPLATE_PATH = stage_ad_dir / "audition_dashboard_template.html"
 
     fit_by_vehicle: dict[str, dict[str, float]] = {}
-    for vehicle in VEHICLES:
-        path = (
-            args.fit_root / vehicle / "final_r3_diagnostic_fit.json"
-            if args.fit_root
-            else None
+    fit_paths: dict[str, Path | None] = {}
+    for vehicle in selected:
+        path = args.fit_root / vehicle / "final_r3_diagnostic_fit.json" if args.fit_root else None
+        fit_paths[vehicle] = path
+        fit_by_vehicle[vehicle] = (
+            {}
+            if args.baseline
+            else _load_fit(path, vehicle, tuple(args.numerical_fixes), args.seed)
         )
-        fit_by_vehicle[vehicle] = _load_fit(path)
 
     class _Factory:
         def __new__(
@@ -147,12 +184,16 @@ def main(argv=None) -> int:
                 sr=sr,
                 overrides=fit_by_vehicle.get(vehicle_type, {}),
                 seed=args.seed,
+                numerical_fixes=args.numerical_fixes,
             )
 
     dashboards.EngineAcoustics = _Factory
 
     # Keep the proven directory names/ports expected by serve_dashboards.py.
-    for vehicle, cfg in dashboards.VEHICLE_CONFIGS.items():
+    for vehicle, source_cfg in dashboards.VEHICLE_CONFIGS.items():
+        if vehicle not in selected:
+            continue
+        cfg = copy.deepcopy(source_cfg)
         cfg["dir"] = args.output_root / DIR_NAMES[vehicle]
         cfg["dir"].mkdir(parents=True, exist_ok=True)
 
@@ -164,21 +205,23 @@ def main(argv=None) -> int:
         dashboards.render_vehicle_audio(vehicle, cfg)
         dashboards.build_dashboard(vehicle, cfg)
 
-        fit_path = (
-            args.fit_root / vehicle / "final_r3_diagnostic_fit.json"
-            if args.fit_root
-            else None
-        )
+        fit_path = fit_paths[vehicle]
         receipt: dict[str, Any] = {
-            "schema": "s12.stage_af.dashboard_binding.v2",
+            "schema": "s12.stage_af.dashboard_binding.v4",
             "vehicle": vehicle,
+            "renderer_identity": renderer_identity(vehicle, args.numerical_fixes),
             "renderer": "stage_ad.engine_sim_acoustics.EngineAcoustics",
+            "numerical_fixes": sorted(set(args.numerical_fixes)),
+            "human_status": "NOT_EVALUATED_THIS_RENDER",
             "fit_path": str(fit_path) if fit_path and fit_path.is_file() else None,
+            "fit_file_sha256": hashlib.sha256(fit_path.read_bytes()).hexdigest() if fit_path and fit_path.is_file() else None,
             "overrides": fit_by_vehicle[vehicle],
             "seed": args.seed,
             "reference_root": str(reference_root),
             "references": references,
-            "reference_policy": "EXISTING_GOVERNED_BYTES_ONLY_NO_NETWORK_DOWNLOAD",
+            "reference_policy": "EXISTING_BYTES_ONLY_NO_NETWORK_DOWNLOAD",
+            "gain_policy": "legacy_per_scene_peak_tanh_preserved",
+            "trajectory_scope": "original dashboard 10 scenes; not synchronized real RPM",
         }
         (cfg["dir"] / "stage_af_binding.json").write_text(
             json.dumps(receipt, indent=2, ensure_ascii=False) + "\n",
