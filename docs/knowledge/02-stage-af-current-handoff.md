@@ -104,7 +104,7 @@ Engine-Sim 继续是 physical architecture 最重要来源；SSSSM-DDSP / DDSP /
 
 ## 2026-09-06 数值修正与页面服务接力真值
 
-接力分支 `local/main-audio-review-20260906` 已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成 Stage AF 数值修正审查，并 fast-forward 合并到当前 `main=9616d8cbe1555829e51baaf50b3f1343fbedb8be`。实现保留 `stage_ad/engine_sim_acoustics.py::EngineAcoustics` 以及原 `build_unified_dashboards.py`、HTML 模板和 `review_packages/serve_dashboards.py`；Stage AE 被否决的默认 renderer、另一个后台和 Track-P/FVM/PTR/Radiation 改动均未恢复。
+接力分支 `local/main-audio-review-20260906` 已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成 Stage AF 数值修正审查，并在 `df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093` 合并点 fast-forward 进入 main；其后的文档状态提交继续位于 main，动态 SHA 必须现场读取。实现保留 `stage_ad/engine_sim_acoustics.py::EngineAcoustics` 以及原 `build_unified_dashboards.py`、HTML 模板和 `review_packages/serve_dashboards.py`；Stage AE 被否决的默认 renderer、另一个后台和 Track-P/FVM/PTR/Radiation 改动均未恢复。
 
 新增的数值旗标是显式 opt-in，不改变 H0 默认输出：
 

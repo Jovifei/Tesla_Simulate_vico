@@ -12,7 +12,7 @@
 
 `EngineAcoustics` 仍是当前已被 Jovi 试听过的声音 authority；原 `build_unified_dashboards.py`、HTML 模板和 `serve_dashboards.py` 仍是试听工作台。没有启用被否决的 Stage AE 默认 renderer，没有新建试听后台，也没有修改 Track-P/FVM/PTR/Radiation。
 
-本报告及实现已从隔离分支 fast-forward 合并并推送到 `origin/main`；当前 main tip 为 `9616d8cbe1555829e51baaf50b3f1343fbedb8be`。后续 Agent 仍必须在新的独立 worktree 中从最新 `origin/main` 接手。
+本报告及实现已从隔离分支 fast-forward 合并并推送到 `origin/main`，合并点为 `df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093`；其后的文档状态提交继续位于 main。当前动态 SHA 必须以现场 `git rev-parse origin/main` 为准，后续 Agent 仍必须在新的独立 worktree 中从最新 `origin/main` 接手。
 
 本轮只完成 Hellcat 的可编号对照试听：H0 原声音、H1 点火相位修正、H2 时间处理修正。它们是诊断候选，不是 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze。
 
