@@ -2,8 +2,8 @@
   "schema": "s12.stage_af.execution_state.v1",
   "updated": "2026-09-06",
   "base_branch": "main",
-  "base_head": "f81d3a3aa1b32fcd35aa8b66a253492c70ed47b4",
-  "branch": "s12-stage-af-physical-closed-loop",
+  "base_head": "28ee2bd73298959dc4831320e8b080b833c8c3d8",
+  "branch": "local/main-audio-review-20260906",
   "sound_authority": "tools/sound_sim/s12/acoustic_identity_v015/stage_ad/engine_sim_acoustics.py::EngineAcoustics.render_track",
   "human_baseline": {
     "status": "ACCEPTED_AS_DIRECTION_NOT_PROFILE_FREEZE",
@@ -16,11 +16,17 @@
     "action": "DO_NOT_USE_AS_SOUND_BASELINE"
   },
   "closed_loop": {
-    "status": "IMPLEMENTED_REMOTE_AWAITING_LOCAL_REAL_REFERENCE_RUN",
+    "status": "LOCAL_H0_H1_H2_DIAGNOSTIC_COMPLETE_WAITING_FOR_HUMAN_AUDITION",
     "families": ["body", "path", "induction", "afterfire"],
     "optimizer": "deterministic_sobol_then_shrinking_local_search",
     "objective": "scale_invariant_spectral_envelope_fixed_distance",
-    "human_gate_required": true
+    "human_gate_required": true,
+    "numerical_fixes": ["cycle_phase", "causal_delays", "causal_convolution", "causal_derivative", "shift_cut"],
+    "latest_commits": [
+      "b1b5b4109f9daff698f69057ae04218606e420f9",
+      "6feb0eca475d021e3e8facfe204691abb0dce80d",
+      "3c22a6327819995e15c7073e47eb9970c422a96f"
+    ]
   },
   "review_workbench": {
     "reuse_existing": true,
@@ -29,8 +35,21 @@
     "ferrari_458": 8089,
     "lfa": 8090,
     "gtr_r35": 8091,
+    "diagnostic_candidates": {
+      "root": "E:/Tesla_speed/review_packages/s12-stage-af-hellcat-numerical-review-20260906-v2",
+      "H0": 8188,
+      "H1": 8488,
+      "H2": 8388
+    },
     "generated_packages_in_git": false,
     "default_local_root": "E:/Tesla_speed/review_packages"
+  },
+  "verification": {
+    "focused": "29 passed, 1 warning",
+    "full_s12": "1459 passed, 2 skipped, 1 warning, 232 subtests passed",
+    "track_p": "frozen path changes=0",
+    "scorecard_rows": "stage_z=12/12 executable; stage_aa=12/12 executable",
+    "human_status": "WAITING_FOR_JOVI_AUDITION"
   },
   "product_direction": "ANDROID_APP_FIRST_AFTER_SOUND_PROFILE_ACCEPTANCE",
   "esp32": "DEFERRED_FUTURE_OPTION",

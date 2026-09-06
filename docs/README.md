@@ -9,7 +9,7 @@
 ## 先读这些
 
 1. `00-reference/01-authority-and-evidence-precedence.md` — 谁是当前真值、证据等级怎么判。
-2. `08-reports/11-project-status-20260905.md` — 当前远端、已完成、当前 blocker。
+2. `08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` — 当前 Stage AF 数值修正、试听候选、服务修复与验证边界。
 3. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
 4. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
 5. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。
@@ -49,6 +49,8 @@ CAN/OBD/真实 RPM 可以以后作为 richer input adapter，但不是当前 MVP
 ## 当前声音研发状态
 
 已经完成/具备的软件基础包括：persistent event-domain engine、source/path/bank/collector、forced induction、transients、dP/DC、frozen PTR/Radiation、ReferenceCaseSet、comparator、parameter reachability、Stage Z 方法追踪、AA-C3、AB/AB-R 因果/指标 hardening、AC remote qualification，以及 Stage AD 的显式多轮 reference-driven controller。
+
+2026-09-06 的 Stage AF 接力在保留 `EngineAcoustics` 和原 A/B 工作台的前提下，新增了显式 opt-in 的 cycle-phase、causal delay/convolution/derivative、shift-cut 数值修正，fit/render provenance 与 per-scene guard；Hellcat 已生成 H0/H1/H2 诊断候选。它们已通过软件验证，但仍等待 Jovi 人耳反馈，不代表 Human PASS、OEM calibration 或 Profile Freeze。
 
 Stage AD 当前是：
 

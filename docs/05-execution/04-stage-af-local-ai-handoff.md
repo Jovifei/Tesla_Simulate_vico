@@ -131,3 +131,23 @@ python review_packages\serve_dashboards.py
 - 不用 master/global gain 当优化参数；
 - 不把 R3 写成 calibrated/OEM；
 - 不因为 numerical distance 下降就宣告 Human PASS。
+
+## 9. 2026-09-06 数值修正与刷新故障接力经验
+
+本节追加当前验证过的复用规则，不替代前面的原始接管步骤。
+
+### 9.1 H0/H1/H2 数值顺序
+
+先固定车型、采样率、RPM/throttle 轨迹、seed、已有 IR 路径/SHA 和 Reference 路径/SHA。H0 使用空 `numerical_fixes`，在相同输入/seed/IR 下必须与旧 `EngineAcoustics` 逐 PCM 相等；H1 只打开 `cycle_phase`，修复 720° 曲轴角到 360° 四冲程循环相位的一次换算；H2 再打开 `causal_delays`、`causal_convolution`、`causal_derivative`、`shift_cut`，分别验证不回卷、不提前响应、无 look-ahead 和 unity→cut→unity 包络。所有旗标都必须是显式 opt-in，不能成为默认 renderer 或 master/global gain。
+
+### 9.2 Fit/Reference/IR provenance
+
+Stage AF v4 fit receipt 必须绑定 vehicle、seed、numerical fixes、renderer source SHA、IR 原始/有效 SHA、Reference source SHA 和自哈希。缺 fit、旧 schema、IR 漂移、模式不一致时 fail-closed；只有显式 `--baseline` 才允许生成 H0。真实 IR 找不到时停止，不能用单位脉冲替代。公开视频/未核实 rights 仍是 R3/private diagnostic，不能升级 R1/R2 或产品素材。参数阶段遵循 body → path → induction（NA 跳过）→ afterfire，每个 scene 单独 guard，不能用总体均值掩盖退化。
+
+### 9.3 大体积 HTML 刷新
+
+原工作台的自包含 HTML 可能约 34.5 MB。若 `ReusableTCPServer` 只是单线程 `TCPServer`，一个慢客户端会卡住整个 accept 循环；端口显示 Listen 不代表刷新可用。先查看 `Get-NetTCPConnection` 的 `ESTABLISHED` 连接、真实 `serve_dashboards.py` PID，再用 `127.0.0.1` curl 复现。修复只将 server 改为 `ThreadingMixIn + TCPServer`，设置 `daemon_threads=True`、`block_on_close=False`，不改页面/声音。用一个不读取的慢 socket 加第二 HTTP 请求验证并发；只停止已确认属于当前候选的 PID，不终止无关服务。
+
+### 9.4 当前接力状态
+
+代码验证提交：`b1b5b4109f9daff698f69057ae04218606e420f9`、`6feb0eca475d021e3e8facfe204691abb0dce80d`、`3c22a6327819995e15c7073e47eb9970c422a96f`。focused AF/AD/numerical 为 `29 passed`，full S12 为 `1459 passed, 2 skipped, 1 warning, 232 subtests passed`，Track-P 冻结路径改动 0；自动证据不能替代 Jovi 人耳试听。后续 Agent 读完本节后，生成明确编号候选即停止等待 Jovi，不自动扩车型或无限调参。

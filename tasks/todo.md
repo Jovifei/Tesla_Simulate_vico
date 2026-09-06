@@ -4283,3 +4283,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - CI-equivalent scorecard rows: Stage-Z `12/12`, Stage-AA `12/12` executable rows from real OFF/ON hashes and runtime call paths.
 - Hellcat H0/H1/H2 v2 packages retain the original governed references and IR SHA; services restored on ports 8188/8488/8388. No Human PASS or OEM claim.
 - Commit/push gate is clear; the next operation is the normal push of this isolated branch.
+
+## 2026-09-06 Merge and knowledge retention
+
+- [x] Reconfirm `origin/main`, isolated branch ancestry, and clean local main before integration.
+- [x] Create the dated Stage-AF numerical-fix/current-status report and reusable execution/debugging runbooks.
+- [x] Update Stage-AF handoff, long-term knowledge, negative knowledge, and reusable engineering playbook with verified facts and evidence boundaries.
+- [x] Verify Markdown paths/headings, source/test claims, and repository `git diff --check`.
+- [ ] Commit and push the documentation updates on the isolated branch.
+- [ ] Merge the isolated branch into local `main`, update local files, and push `origin/main` without reset or force-push.
+- [ ] Run codex-memory checkpoint DryRun/apply and filtered document-mirror DryRun/apply; report memory status separately.
+- [ ] Re-run final focused checks and verify main/remote SHA, then stop and wait for Jovi feedback.

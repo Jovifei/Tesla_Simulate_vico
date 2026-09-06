@@ -4,7 +4,9 @@
 
 ## Current status
 
-- `11-project-status-20260905.md` — 当前权威状态快照。
+- `14-stage-af-numerical-fixes-and-review-server-20260906.md` — 当前 Stage AF 数值修正、试听候选、服务修复与验证边界。
+
+`11-project-status-20260905.md` 保留为 2026-09-05 历史快照；当前动态 SHA 和合并状态以 GitHub remote truth 与最新 report 为准。
 
 ## Historical snapshots
 

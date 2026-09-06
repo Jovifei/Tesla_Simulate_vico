@@ -1,6 +1,6 @@
 ---
 type: canonical-project-memory
-updated: 2026-09-05
+updated: 2026-09-06
 status: ACTIVE
 current_product_direction: APP_FIRST
 current_acoustic_stage: STAGE_AD
@@ -199,3 +199,15 @@ Engine-Sim、ENSIM4、DasEtwas enginesound、VehicleNoiseSynthesizer、Ignis、P
 6. 不把公网 R3 当 optimizer/R1；
 7. 不覆盖 V3；
 8. 声音生成后等待 Jovi 听，不自动无限调参。
+
+## 15. Stage AF 数值修正与服务恢复（2026-09-06）
+
+当前 Stage AF 接力已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成并推送到隔离分支 `local/main-audio-review-20260906`，待本轮文档验证后并入 main。声音 authority 仍是 `stage_ad.engine_sim_acoustics.EngineAcoustics`；原 `build_unified_dashboards.py`、`audition_dashboard_template.html` 和 `review_packages/serve_dashboards.py` 保持不变的页面/渲染职责。Stage AE 默认 renderer、第二套试听后台和 Track-P/FVM/PTR/Radiation 修改仍被明确排除。
+
+本轮新增的是可审计、默认关闭的数值修正：`cycle_phase` 将 720° crank radians 单次换算到 cycle domain；`causal_delays` 用零状态分数延迟消除 `np.roll` 未来样本回卷；`causal_convolution` 用已有分块卷积消除 centered `same` IR 的提前响应；`causal_derivative` 用后向差分移除 look-ahead；`shift_cut` 用 unity→cut→unity 约束换挡包络。H0 空旗标必须与旧 EngineAcoustics 在相同输入、seed、IR 下逐 PCM 相等；H1 仅开相位旗标；H2 再开四项时间修正。它们是听感诊断候选，不能自动转成 Human PASS 或 Profile。
+
+Stage AF fit v4 现在把车型、seed、numerical_fixes、renderer source SHA、IR 原始/有效 SHA 和 Reference source SHA 放入同一 receipt，并在 build 时 fail-closed 校验。多分辨率 STFT distance 负责捕捉同一宽频带内的八度错误，per-scene guard 负责阻止单个参考场景被总体均值掩盖。缺 fit、缺 IR、IR provenance 漂移、旧 schema 或模式不一致，都必须停止；`R3_PRIVATE_DIAGNOSTIC_ONLY` 不能升级为 R1/R2 或产品素材。
+
+Hellcat H0/H1/H2 三套本地试听均为原工作台 10 个 candidate WAV + 真车 Reference 字节副本 + `stage_af_binding.json`，共用已有 IR SHA `44ce5af25a55efdf996c7e5026271f80949625b95fbdc1c4b83863b6e991b152`，rights=`UNVERIFIED_LOCAL_ASSET`。页面刷新故障的根因是约 34.5 MB 自包含 HTML 被单线程 `TCPServer` 的慢客户端写入占住；服务改为 `ThreadingMixIn + TCPServer` 并以慢 socket + 第二请求验证。页面服务恢复不代表声音真实感或人耳通过。
+
+可复用证据：focused AF/AD/numerical=`29 passed`；full S12=`1459 passed, 2 skipped, 1 warning, 232 subtests passed`；Track-P 冻结路径改动 0；Stage-Z/AA 真实 rows 各 `12/12 executable`。后续 Agent 必须先读 `docs/08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` 与 `docs/05-execution/04-stage-af-local-ai-handoff.md`，完成编号候选后停止等待 Jovi。

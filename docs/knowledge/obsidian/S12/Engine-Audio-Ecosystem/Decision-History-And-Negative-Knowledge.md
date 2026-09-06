@@ -1,6 +1,6 @@
 ---
 type: decision-history-negative-knowledge
-updated: 2026-09-04
+updated: 2026-09-06
 status: ACTIVE
 ---
 
@@ -249,3 +249,23 @@ Current bottleneck = Human realism judgment + App realtime productization.
 - Android realtime；
 
 就应该质疑它是否属于当前主线。
+
+---
+
+# 13. 2026-09-06 Stage AF 数值与服务接力决策
+
+## D-AF-01：保留旧 renderer，数值修正全部 opt-in
+
+`EngineAcoustics` 仍是已试听过的声音 baseline；空 `numerical_fixes` 是 H0 合同，不能因为候选树包含新算法就改变默认输出。H1 只验证 `cycle_phase` 的 720° crank→360° cycle 换算，H2 才验证 causal delay/convolution/derivative 和 shift-cut 包络。每个开关都必须能够追溯到 first changed layer、OFF/ON PCM 和场景级结果，不能用新的默认 renderer 或 global gain 隐藏差异。
+
+## D-AF-02：fit/render 的 provenance 必须可比对
+
+Stage AF v4 fit receipt 绑定车型、seed、数值模式、renderer source SHA、IR 原始/有效 SHA、Reference source SHA 和自哈希。试听 builder 不再接受缺失 fit 的隐式默认参数；只有显式 `--baseline` 才能生成 H0。IR 缺失、旧 schema、模式不一致或 source SHA 漂移均 fail-closed。自动距离仍是诊断排序，不是 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze。
+
+## N-SERVICE-01：大自包含 HTML 不能由单线程 server 提供
+
+34.5 MB 左右的内嵌 WAV/Base64 页面会让单线程 `TCPServer` 在慢客户端写 socket 时阻塞整个监听循环；“端口 Listen”不等于“刷新可用”。诊断顺序必须查看 `ESTABLISHED` 连接、真实 `serve_dashboards.py` PID 和 `127.0.0.1` curl，再做慢 socket + 第二请求复现。修复只把 `ReusableTCPServer` 改成 `ThreadingMixIn + TCPServer`，设置 daemon/thread-close 选项，不修改页面或声音路径。每个新车型服务都要保留该并发合同。
+
+## N-SERVICE-02：不要因页面故障破坏声音证据
+
+页面刷新失败时，不得删除或重生成旧试听包、替换 Reference、切换到另一套后台或终止无关端口。先确认端口归属，只停止已确认属于当前候选的服务进程；修复后验证所有目标端口 HTTP 200，再把页面可用性与声音真实感分开记录。

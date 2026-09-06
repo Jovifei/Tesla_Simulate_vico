@@ -102,3 +102,15 @@ Engineering Profile
 ## 12. 最重要的复用经验
 
 **不要以“找一个更像的项目”为路线；以“可解释 source model + governed reference + causal reachability + negative feedback + Human gate + versioned product runtime”为路线。**
+
+## 13. Stage AF 数值修正的可迁移做法（2026-09-06）
+
+对另一车型做声音修正时，先把“原声音是否被改变”和“修正是否有因果依据”分开。`EngineAcoustics` 的空 `numerical_fixes` 是 H0 anchor；固定车型、采样率、RPM/throttle 轨迹、seed 和 IR 后，H0 必须与旧输出逐 PCM 相等。之后一次只打开一个旗标：`cycle_phase` 处理 720° 曲轴角到 360° 四冲程循环相位的一次性换算；`causal_delays` 禁止 `np.roll` 回卷未来样本；`causal_convolution` 用 `UniformPartitionedConvolver` 让 IR 的 `h[0]` 成为时间零点；`causal_derivative` 用后向差分消除 look-ahead；`shift_cut` 保证换挡切断包络是 unity→cut→unity。每个旗标都要有最小 fixture、OFF/ON PCM SHA 和首个改变层的记录，不能只凭“听起来更响”或总体距离下降保留。
+
+fit 阶段必须把车型、seed、数值旗标、renderer source SHA、IR 原始/有效 SHA 和 Reference source SHA 写入同一个 v4 receipt。候选参数只能来自明确的 source-causal family 范围；`body → path → induction（NA 跳过）→ afterfire` 的阶段顺序要稳定，后一阶段读取前一阶段的 `final_r3_diagnostic_fit.json`。每个参考场景单独执行退化 guard，不能用总体均值掩盖一个坏场景。缺少 fit、IR、Reference 或 provenance 时宁可停止，也不要回退默认配置、单位脉冲或新造一个 renderer。自动 metric 只做 engineering/diagnostic ranking，不能升级 Human accepted、R1、OEM 或 Profile Freeze。
+
+## 14. 大体积试听页面的服务可用性经验（2026-09-06）
+
+原 A/B 工作台采用自包含 HTML，把 WAV/Base64 嵌入单页后，文件可能达到几十 MB。此时“端口在 Listen”并不等于“可以刷新”：如果 `SimpleHTTPRequestHandler` 由单线程 `TCPServer` 承载，一个客户端慢慢读取响应会占住 handler，后续浏览器刷新只能等待或被拒绝。正确诊断顺序是查看监听端口、该端口的 `ESTABLISHED` 连接、实际进程命令行和 `127.0.0.1` 的 curl 结果；不要先删除试听包、改页面或终止其他端口。
+
+修复只改变服务并发模型，不改变声音链路或页面内容：`ThreadingMixIn + TCPServer`，配合 `daemon_threads=True` 与 `block_on_close=False`。回归测试要故意保留一个不读取的 socket，再发第二个 HTTP 请求，第二请求必须在固定超时内返回 200；同时检查 H0/H1/H2 或四车型端口。这个经验适用于所有自包含试听包，也适用于未来车型迁移；服务修复成功仍只证明页面可用，不证明声音真实或人耳通过。
