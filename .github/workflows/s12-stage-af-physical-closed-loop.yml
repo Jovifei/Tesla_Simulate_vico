@@ -1,0 +1,67 @@
+name: S12 Stage AF Physical Closed Loop
+
+on:
+  push:
+    branches:
+      - s12-stage-af-physical-closed-loop
+    paths:
+      - ".github/workflows/s12-stage-af-physical-closed-loop.yml"
+      - "tools/sound_sim/s12/**"
+      - "review_packages/serve_dashboards.py"
+      - "review_packages/.gitignore"
+      - "docs/**"
+      - "tasks/reports/runtime/s12-stage-af/**"
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  STAGE_AF_BASE: f81d3a3aa1b32fcd35aa8b66a253492c70ed47b4
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact Stage AF head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest jsonschema matplotlib pyyaml pandas soundfile pyloudnorm mosqito==1.2.1
+
+      - name: Compile S12 package
+        run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
+
+      - name: Stage AF focused tests
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_physical_closed_loop.py
+
+      - name: Preserve Stage AD closed-loop contracts
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ad_closed_loop.py
+
+      - name: Diff and cleanup policy
+        shell: bash
+        run: |
+          git merge-base --is-ancestor "${STAGE_AF_BASE}" HEAD
+          git diff --check "${STAGE_AF_BASE}..HEAD"
+          test -f review_packages/index.html
+          test -f review_packages/serve_dashboards.py
+          test -f review_packages/.gitignore
+          for d in hellcat ferrari-458 lfa gtr-r35; do true; done
+          test ! -e review_packages/s12-stage-ad-hellcat-closed-loop-v1
+          test ! -e review_packages/s12-stage-ad-ferrari-458-closed-loop-v1
+          test ! -e review_packages/s12-stage-ad-lfa-closed-loop-v1
+          test ! -e review_packages/s12-stage-ad-gtr-r35-closed-loop-v1
+          test ! -e tasks/reports/runtime/S12_Acoustic_Realism_Phase_Review_2026-08-04.zip
+
+      - name: Full S12 regression
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests
