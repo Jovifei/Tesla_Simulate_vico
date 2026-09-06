@@ -4278,11 +4278,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - [x] Candidate API audit, implementation, verification and Jovi audition package generation completed; pending Jovi human listening only.
 - Full S12: `1459 passed, 2 skipped, 1 warning, 232 subtests passed` (warning is the existing IR WAV non-data chunk notice).
-- Focused AF/AD/numerical-fixes: `28 passed, 1 warning`.
+- Focused AF/AD/numerical-fixes: `29 passed, 1 warning` (including the slow-client review-server regression).
 - Track-P guard: frozen 180 files / 2 symbols, zero frozen-path changes.
 - CI-equivalent scorecard rows: Stage-Z `12/12`, Stage-AA `12/12` executable rows from real OFF/ON hashes and runtime call paths.
 - Hellcat H0/H1/H2 v2 packages retain the original governed references and IR SHA; services restored on ports 8188/8488/8388. No Human PASS or OEM claim.
-- Commit/push gate is clear; the next operation is the normal push of this isolated branch.
+- Commit/push gate completed on the isolated branch; main integration and documentation synchronization are recorded below.
 
 ## 2026-09-06 Merge and knowledge retention
 
