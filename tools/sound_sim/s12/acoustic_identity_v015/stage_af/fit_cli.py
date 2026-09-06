@@ -18,16 +18,34 @@ def _load_base(path: Path | None) -> dict[str, float]:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Tune the successful Stage-AD EngineAcoustics against governed reference WAVs")
-    parser.add_argument("--vehicle", required=True, choices=["hellcat", "ferrari_458", "lfa", "gtr_r35"])
+    parser = argparse.ArgumentParser(
+        description=(
+            "Tune the successful Stage-AD EngineAcoustics against governed "
+            "reference WAVs without replacing the renderer"
+        )
+    )
+    parser.add_argument(
+        "--vehicle",
+        required=True,
+        choices=["hellcat", "ferrari_458", "lfa", "gtr_r35"],
+    )
     parser.add_argument("--reference-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
-    parser.add_argument("--family", action="append", choices=["body", "path", "induction", "afterfire"])
+    parser.add_argument(
+        "--family",
+        action="append",
+        choices=["body", "path", "induction", "afterfire"],
+    )
     parser.add_argument("--base-fit", type=Path)
-    parser.add_argument("--candidates", type=int, default=12)
-    parser.add_argument("--rounds", type=int, default=3)
+    # The current baseline is already good by Human A/B. Start with a small,
+    # interpretable search. Only increase these after listening evidence.
+    parser.add_argument("--candidates", type=int, default=8)
+    parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--seed", type=int, default=20260906)
-    parser.add_argument("--reference-level", default="R3_PRIVATE_DIAGNOSTIC_ONLY")
+    parser.add_argument(
+        "--reference-level",
+        default="R3_PRIVATE_DIAGNOSTIC_ONLY",
+    )
     args = parser.parse_args(argv)
 
     result = fit_vehicle(
