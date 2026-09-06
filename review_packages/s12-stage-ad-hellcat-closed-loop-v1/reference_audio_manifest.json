@@ -1,0 +1,90 @@
+{
+  "schema": "s12.stage_ad.reference_audio.v2",
+  "note": "Real vehicle reference audio extracted from publicly uploaded YouTube and Bilibili recordings of Dodge Challenger SRT Hellcat (6.2L Supercharged V8). Used for human audition A/B comparison only. Not used as optimization target.",
+  "vehicle": "Dodge Challenger SRT Hellcat (6.2L Supercharged V8, 707+ HP)",
+  "extraction_tool": "yt-dlp + ffmpeg (RMS energy-based automatic segment selection)",
+  "clip_duration_s": 9.0,
+  "target_sr_hz": 48000,
+  "bit_depth": 16,
+  "channels": "stereo",
+  "references": [
+    {
+      "file": "ref_hot_idle.wav",
+      "source": "bilibili",
+      "bvid": "BV14mwHeMEJU",
+      "title": "地狱猫国道暴力加速",
+      "uploader": "Trojx",
+      "clip_start_s": 58.8,
+      "clip_end_s": 67.8,
+      "scenario": "hot_idle",
+      "sha256": "d8bcf939a435f137e755ac9d3ce78d22ef537db18e4b47af8ff2198471e5f9be",
+      "size_bytes": 1728078,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    },
+    {
+      "file": "ref_steady_low.wav",
+      "source": "bilibili",
+      "bvid": "BV14mwHeMEJU",
+      "title": "地狱猫国道暴力加速",
+      "uploader": "Trojx",
+      "clip_start_s": 125.3,
+      "clip_end_s": 134.3,
+      "scenario": "steady_low",
+      "sha256": "8db8525c65ad938ab91555eed50cb91ad2aea2d5ad968ba1723740a6d2f013fa",
+      "size_bytes": 1728078,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    },
+    {
+      "file": "ref_steady_mid.wav",
+      "source": "bilibili",
+      "bvid": "BV14mwHeMEJU",
+      "title": "地狱猫国道暴力加速",
+      "uploader": "Trojx",
+      "clip_start_s": 31.4,
+      "clip_end_s": 40.4,
+      "scenario": "steady_mid",
+      "sha256": "91a275febb9b54de0b8b4f5e6276671f9c61499ce56242e2c79c4d995de1cee0",
+      "size_bytes": 1728078,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    },
+    {
+      "file": "ref_full_pull.wav",
+      "source": "bilibili",
+      "bvid": "BV14mwHeMEJU",
+      "title": "地狱猫国道暴力加速",
+      "uploader": "Trojx",
+      "clip_start_s": 17.2,
+      "clip_end_s": 26.2,
+      "scenario": "full_pull",
+      "sha256": "cf20aab291be0a87c461e4d5ecae0b815e6163faac5db1993a9800ccb192839c",
+      "size_bytes": 1728078,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    },
+    {
+      "file": "ref_afterfire.wav",
+      "source": "bilibili",
+      "bvid": "BV14mwHeMEJU",
+      "title": "地狱猫国道暴力加速",
+      "uploader": "Trojx",
+      "clip_start_s": 6.9,
+      "clip_end_s": 15.9,
+      "scenario": "afterfire_lift",
+      "sha256": "efb1c176858df91c183b535c8e6071e2a831dd6b3928a909a19791b7657cf93e",
+      "size_bytes": 1728078,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    },
+    {
+      "file": "ref_steady_high.wav",
+      "source": "youtube",
+      "vid": "ZzzkrRazdJo",
+      "title": "DODGE HELLCAT XR 888HP | AUTOBAHN POV",
+      "uploader": "AutoTopNL",
+      "clip_start_s": 270.0,
+      "clip_end_s": 282.0,
+      "scenario": "steady_high_autobahn",
+      "sha256": "2da119c153a9116e8e20ade2834196c03a75ed6a92cead137cc766dacb7f9c1f",
+      "size_bytes": 1685290,
+      "format": "48000Hz stereo 16-bit PCM WAV"
+    }
+  ]
+}

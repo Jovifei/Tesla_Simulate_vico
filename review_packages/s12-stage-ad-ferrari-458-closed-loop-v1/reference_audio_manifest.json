@@ -1,0 +1,72 @@
+{
+  "schema": "s12.stage_ad.reference_audio.ferrari_458.v1",
+  "vehicle": "Ferrari 458 Italia (4.5L Flat-Plane V8, 570 HP @ 9000 RPM)",
+  "references": [
+    {
+      "file": "ref_hot_idle.wav",
+      "scenario": "hot_idle",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 99.0,
+      "clip_end_s": 108.0,
+      "sha256": "a8fba796a2d030a7f036a5eaef6644fefdaab699b1cda9ee1b8dfbddd9e8bc05",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "850 RPM 紧凑平整自吸怠速机械敲击"
+    },
+    {
+      "file": "ref_steady_low.wav",
+      "scenario": "steady_low",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 107.0,
+      "clip_end_s": 116.0,
+      "sha256": "0b1dc40938ec983612f878482ee62f13dd13637ce94824c99eaccb370f3beba9",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "~1500 RPM 低速平顺巡航"
+    },
+    {
+      "file": "ref_steady_mid.wav",
+      "scenario": "steady_mid",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 139.0,
+      "clip_end_s": 148.0,
+      "sha256": "8648aca1665825398886fcc422a97679bf0de8ea1cfbb2446b52816859b41a62",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "~3500 RPM 巡航中频自吸共振"
+    },
+    {
+      "file": "ref_steady_high.wav",
+      "scenario": "steady_high",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 167.0,
+      "clip_end_s": 176.0,
+      "sha256": "f44bcd7abaec148a90a076a30a7c20737e95f87b4b780cabafdec7374d15e4ad",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "7000+ RPM 德国不限速高速超高转巡航"
+    },
+    {
+      "file": "ref_full_pull.wav",
+      "scenario": "full_pull",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 54.0,
+      "clip_end_s": 63.0,
+      "sha256": "f6a1bf6f55f04398cc052788c57b2d07786e290a31237185a892e0ffec69996e",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "全负荷 WOT 3000 拉至 9000 RPM 撕裂红线"
+    },
+    {
+      "file": "ref_afterfire.wav",
+      "scenario": "afterfire",
+      "source": "YouTube AutoTopNL (X0yiRilcKME)",
+      "title": "FERRARI 458 0-310 KM/H ACCELERATION & SOUND",
+      "clip_start_s": 59.0,
+      "clip_end_s": 68.0,
+      "sha256": "563499b64e76b135ef710e282651af8b150d78a799cf486298fd5d49f1d1acee",
+      "format": "48000Hz stereo 16-bit PCM WAV",
+      "desc": "9000 转急收油排气金属截断与脆爆"
+    }
+  ]
+}

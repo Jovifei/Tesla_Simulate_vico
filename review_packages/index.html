@@ -1,0 +1,327 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S12 物理声学引擎 · 4车型真车A/B对比评审中枢</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #07090e;
+            --bg-card: rgba(18, 22, 34, 0.85);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f4fc;
+            --text-muted: #8a99b5;
+            --font-sans: 'Outfit', 'Noto Sans SC', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --accent-cyan: #00d2ff;
+            --accent-amber: #f59e0b;
+            --accent-crimson: #ef4444;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 20% 15%, rgba(0, 210, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 60%);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            max-width: 900px;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(0, 210, 255, 0.12);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1280px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+            transition: height 0.3s ease;
+        }
+
+        .card.hellcat::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+        .card.ferrari::before { background: linear-gradient(90deg, #ef4444, #f43f5e); }
+        .card.lfa::before { background: linear-gradient(90deg, #a855f7, #6366f1); }
+        .card.gtr::before { background: linear-gradient(90deg, #00d2ff, #3b82f6); }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .car-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-specs {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .card-metrics {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .metric-pill {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d1d5db;
+        }
+
+        .btn-launch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .card.hellcat .btn-launch { background: linear-gradient(135deg, #d97706, #b45309); }
+        .card.hellcat .btn-launch:hover { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .card.ferrari .btn-launch { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .card.ferrari .btn-launch:hover { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .card.lfa .btn-launch { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+        .card.lfa .btn-launch:hover { background: linear-gradient(135deg, #a855f7, #9333ea); }
+
+        .card.gtr .btn-launch { background: linear-gradient(135deg, #0284c7, #0369a1); }
+        .card.gtr .btn-launch:hover { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+
+        .footer-note {
+            text-align: center;
+            max-width: 800px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-card);
+        }
+
+        .footer-note code {
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="badge">⚡ S12 Closed-Loop Physical Acoustics Portal</div>
+        <h1>声浪仿真算法 · 4车型真车A/B对比评审中枢</h1>
+        <p class="subtitle">
+            基于 AngeTheGreat <code>engine-sim</code> 物理排气冲击波模型、点火顺序声学叠加与物理排气脉冲响应卷积。<br>
+            每个车型页面均包含 10 个标准测试工况，支持算法声音与真车原声无缝双轨切换对比。
+        </p>
+    </div>
+
+    <div class="grid">
+        <!-- Hellcat -->
+        <div class="card hellcat">
+            <div>
+                <div class="card-header">
+                    <div class="card-title">Dodge Hellcat</div>
+                    <span class="car-tag">PORT 8088</span>
+                </div>
+                <div class="card-specs">6.2L Supercharged HEMI V8 · 6,500 RPM<br>十字曲轴 Cross-plane (1-8-7-2-6-5-4-3)</div>
+                <p class="card-desc">典型美式肌肉低频咕噜咕噜声、低沉重低音与高转速机械增压双螺杆高频尖啸声。</p>
+                <div class="card-metrics">
+                    <span class="metric-pill">SC Whine 增压尖啸</span>
+                    <span class="metric-pill">Cross-plane 点火重叠</span>
+                    <span class="metric-pill">8AT 降档回火</span>
+                </div>
+            </div>
+            <a href="s12-stage-ad-hellcat-closed-loop-v1/index.html" class="btn-launch">
+                进入地狱猫对比试听 ➔
+            </a>
+        </div>
+
+        <!-- Ferrari 458 -->
+        <div class="card ferrari">
+            <div>
+                <div class="card-header">
+                    <div class="card-title">Ferrari 458 Italia</div>
+                    <span class="car-tag">PORT 8089</span>
+                </div>
+                <div class="card-specs">4.5L 自然吸气 Flat-plane V8 · 9,000 RPM<br>平面曲轴 180° (1-5-3-7-4-8-2-6)</div>
+                <p class="card-desc">纯粹欧系赛车高亢声浪、高转速机械撕裂感、4阶高谐波能量与 50ms 极速双离合切挡切火。</p>
+                <div class="card-metrics">
+                    <span class="metric-pill">9000 RPM 高转撕裂</span>
+                    <span class="metric-pill">Flat-plane 高频激振</span>
+                    <span class="metric-pill">DCT 极速断油切挡</span>
+                </div>
+            </div>
+            <a href="s12-stage-ad-ferrari-458-closed-loop-v1/index.html" class="btn-launch">
+                进入法拉利458对比试听 ➔
+            </a>
+        </div>
+
+        <!-- Lexus LFA -->
+        <div class="card lfa">
+            <div>
+                <div class="card-header">
+                    <div class="card-title">Lexus LFA</div>
+                    <span class="car-tag">PORT 8090</span>
+                </div>
+                <div class="card-specs">4.8L 雅马哈调音 NA V10 · 9,500 RPM<br>72° 夹角 5阶均匀点火 (1-2-3-4-7-8-9-10-5-6)</div>
+                <p class="card-desc">“天使之音”F1天籁声浪，极具穿透力的 5阶排气基频、雅马哈声学腔体共振与高转升档顿挫切火。</p>
+                <div class="card-metrics">
+                    <span class="metric-pill">9500 RPM 天使之音</span>
+                    <span class="metric-pill">Yamaha 声学共振腔</span>
+                    <span class="metric-pill">72° V10 5阶纯净基波</span>
+                </div>
+            </div>
+            <a href="s12-stage-ad-lfa-closed-loop-v1/index.html" class="btn-launch">
+                进入雷克萨斯LFA对比试听 ➔
+            </a>
+        </div>
+
+        <!-- Nissan GT-R R35 -->
+        <div class="card gtr">
+            <div>
+                <div class="card-header">
+                    <div class="card-title">Nissan GT-R R35</div>
+                    <span class="car-tag">PORT 8091</span>
+                </div>
+                <div class="card-specs">3.8L VR38DETT 双涡轮 V6 · 7,000 RPM<br>60° 夹角 3阶点火 (1-2-3-4-5-6)</div>
+                <p class="card-desc">东瀛战神浑厚V6排气声浪、双涡轮低沉吸气增压 Spool 声与松油门泄压阀 (Blow-off Valve) 泄压声。</p>
+                <div class="card-metrics">
+                    <span class="metric-pill">Twin-Turbo 涡轮起压</span>
+                    <span class="metric-pill">BOV 泄压回火</span>
+                    <span class="metric-pill">VR38 赛道重低音</span>
+                </div>
+            </div>
+            <a href="s12-stage-ad-gtr-r35-closed-loop-v1/index.html" class="btn-launch">
+                进入战神GT-R对比试听 ➔
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        💡 <strong>使用说明</strong>：本目录下的所有 HTML 页面均为<strong>离线单文件独立封装</strong>（音频已内嵌为 Base64 无损 PCM），无需开启本地服务或联网，直接使用 Chrome / Edge 浏览器双击打开任意 <code>index.html</code> 即可试听与对比。亦可通过运行 <code>python serve_dashboards.py</code> 开启本地端口服务。
+    </div>
+</body>
+</html>
