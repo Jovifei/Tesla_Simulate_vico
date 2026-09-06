@@ -35,21 +35,31 @@ python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_st
 
 ## 4. 逐车运行负反馈
 
-推荐先 Hellcat 和 Ferrari，确认方向以后再 LFA/GT-R。
+第一轮保持小范围、小搜索量。当前 baseline 已经是 Human 判断方向正确的声音，不允许用大搜索把它搜坏。
+
+建议先 Hellcat 和 Ferrari，确认方向以后再 LFA/GT-R。
 
 ```powershell
 python -m tools.sound_sim.s12.acoustic_identity_v015.stage_af.fit_cli `
   --vehicle hellcat `
   --reference-dir E:\Tesla_speed\review_packages\s12-stage-ad-hellcat-closed-loop-v1 `
   --output-dir E:\Tesla_speed\stage_af_runs\hellcat `
-  --candidates 12 `
-  --rounds 3 `
+  --candidates 8 `
+  --rounds 2 `
   --seed 20260906
 ```
 
 Ferrari/LFA/GT-R 只替换 vehicle/reference/output。
 
 默认 family：body → path → induction（仅增压车）→ afterfire。
+
+Stage AF v2 不是让所有 family 共用一把模糊总分：
+
+- body：hot_idle + steady_mid + full_pull；
+- path：steady_mid + full_pull；
+- induction：steady_mid + full_pull；
+- afterfire：afterfire；
+- 每个 family 还必须满足全 reference set 不明显退化的 guard。
 
 如果某一 family 人耳明显变差，即使 metric 变好也回退它。
 
