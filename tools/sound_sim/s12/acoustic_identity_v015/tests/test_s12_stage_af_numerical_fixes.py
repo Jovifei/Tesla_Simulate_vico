@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import importlib
 import hashlib
+import socketserver
 from pathlib import Path
 
 import numpy as np
@@ -191,3 +192,10 @@ def test_existing_dashboard_port_base_is_overridable_without_changing_default(mo
     monkeypatch.delenv("S12_REVIEW_PORT_BASE")
     restored = importlib.reload(dashboards)
     assert [server["port"] for server in restored.SERVERS[1:]] == [8088, 8089, 8090, 8091]
+
+
+def test_review_server_accepts_concurrent_slow_html_clients():
+    from review_packages.serve_dashboards import ReusableTCPServer
+
+    assert issubclass(ReusableTCPServer, socketserver.ThreadingMixIn)
+    assert ReusableTCPServer.daemon_threads is True

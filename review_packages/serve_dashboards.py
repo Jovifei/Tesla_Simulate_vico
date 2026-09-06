@@ -36,7 +36,9 @@ SERVERS = [
 ]
 
 
-class ReusableTCPServer(socketserver.TCPServer):
+class ReusableTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    block_on_close = False
     allow_reuse_address = True
 
 
