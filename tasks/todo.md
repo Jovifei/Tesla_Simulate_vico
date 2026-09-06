@@ -4301,7 +4301,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Correct active runbooks/indexes that still point to superseded branches or missing process files.
 - [x] Delete only unreferenced root duplicates and process/audit snapshots; retain current source, tests, governed manifests, and durable knowledge.
 - [x] Run focused/static/full-impact tests, compileall, Track-P, JSON/link checks, and `git diff --check`.
-- [ ] Commit/push the cleanup branch, fast-forward main, update local main, and synchronize durable memory after verification.
+- [x] Commit/push the cleanup branch, fast-forward main, update local main, and synchronize durable memory after verification.
 
 ### Simplification Review
 
@@ -4309,3 +4309,4 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Root historical reports and `.superpowers/sdd` process artifacts remain recoverable through the cleanup commit; current source, tests, retained manifests, Reference/IR records, and durable docs remain.
 - Affected static/focused tests: `122 passed, 1 warning`; full S12: `1460 passed, 2 skipped, 2 warnings, 232 subtests passed`.
 - Warnings are pre-existing: one invalid escape in a test string and one non-data chunk notice in the original IR WAV.
+- Cleanup merge point: `75fb6617884489d7f4894984bc7304a19a32a963`; current main SHA is always read from `git rev-parse origin/main`.
