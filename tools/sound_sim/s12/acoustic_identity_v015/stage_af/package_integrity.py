@@ -130,6 +130,7 @@ def package_ui_fingerprint() -> list[dict[str, str]]:
     """Dashboard/package/service files; these do not invalidate a fit."""
     return _fingerprint_paths(
         (
+            PACKAGE_ROOT / "package_integrity.py",
             PACKAGE_ROOT / "build_existing_dashboards.py",
             PACKAGE_ROOT.parent / "stage_ad" / "build_unified_dashboards.py",
             PACKAGE_ROOT.parent / "stage_ad" / "audition_dashboard_template.html",
@@ -237,7 +238,21 @@ def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
         remote = git("config", "--get", "remote.origin.url")
         git_head = git("rev-parse", "HEAD")
         base_main = git("rev-parse", "origin/main")
-        dirty_output = git("status", "--porcelain", "--untracked-files=no")
+        scopes = dependency_fingerprint()
+        tracked_paths = sorted(
+            {
+                entry["path"]
+                for entries in scopes.values()
+                for entry in entries
+            }
+        )
+        dirty_output = git(
+            "status",
+            "--porcelain",
+            "--untracked-files=no",
+            "--",
+            *tracked_paths,
+        )
     except subprocess.CalledProcessError as exc:
         raise RuntimeError("could not capture Git source receipt") from exc
     repository = remote
@@ -257,6 +272,11 @@ def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
         "git_head": git_head,
         "base_main": base_main,
         "dependency_dirty": dependency_dirty,
+        "dependency_dirty_paths": [
+            line[3:].strip()
+            for line in dirty_output.splitlines()
+            if len(line) >= 4
+        ],
         "source_policy": (
             "DEV_DIRTY_SOURCE / NOT_PROMOTABLE"
             if dependency_dirty

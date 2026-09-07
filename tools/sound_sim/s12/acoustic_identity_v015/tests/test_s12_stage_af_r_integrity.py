@@ -648,6 +648,8 @@ def test_git_source_receipt_has_required_fields():
         "dependency_dirty",
         "source_policy",
     } <= set(receipt)
+    assert isinstance(receipt["dependency_dirty"], bool)
+    assert isinstance(receipt["dependency_dirty_paths"], list)
     assert receipt["source_policy"] in {
         "TRACKED_SOURCE_CLEAN_REQUIRED",
         "DEV_DIRTY_SOURCE / NOT_PROMOTABLE",
