@@ -1377,3 +1377,4 @@ Rules:
 - Git source receipt 要区分正式 clean tracked source 与开发 smoke：正式默认 fail-closed；`--allow-dirty-dev` 只能产生 `DEV_DIRTY_SOURCE` + `NOT_PROMOTABLE`，不能进入资格或试听发布。
 - 单车型包的导航必须按当前 package 成员生成，不能把缺席车型导向历史 8088–8091。外网样式依赖仍存在时，只能标记 `AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY`，不能声称完全 self-contained。
 - R2 资格以最终 pushed SHA 的 exact-head Actions 为准；本机 full pytest 只是本地证据。H0 oracle 至少覆盖 steady/body、shift、afterfire，事件必须落在输出窗口并在相同 IR/seed/input 下逐 PCM 相等。
+- 远端 Ubuntu runner 没有 Jovi 本机 `E:\project\engine-sim` IR；所有直接调用 `renderer_identity` 的测试必须建立临时受控 IR fixture。dirty-source 与 clean-source 分支也必须在测试中显式模拟，不能把本机工作树状态写死成断言。
