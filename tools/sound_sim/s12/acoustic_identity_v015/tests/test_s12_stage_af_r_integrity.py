@@ -281,6 +281,20 @@ def test_builder_publishes_fresh_package_with_manifest_and_contract(tmp_path, mo
     from tools.sound_sim.s12.acoustic_identity_v015.stage_af import build_existing_dashboards as builder
 
     monkeypatch.setattr(dashboards, "VEHICLE_CONFIGS", {"hellcat": _scene_config(tmp_path / "unused")})
+    monkeypatch.setattr(
+        builder,
+        "git_source_receipt",
+        lambda allow_dirty_dev=False: {
+            "repository": "Jovifei/Tesla_Simulate_vico",
+            "git_head": "fixture-head",
+            "base_main": "fixture-main",
+            "dependency_dirty": True,
+            "source_policy": "DEV_DIRTY_SOURCE / NOT_PROMOTABLE",
+            "source_status": "DEV_DIRTY_SOURCE",
+            "promotable": False,
+            "promotion_status": "NOT_PROMOTABLE",
+        },
+    )
 
     def fake_render(vehicle, cfg):
         web_dir = Path(cfg["dir"]) / "web_audio"
@@ -423,8 +437,23 @@ def test_builder_cleans_staging_when_fit_is_missing(tmp_path):
     assert not (args.output_root / ".stage_af_r_staging" / "pkg-missing-fit").exists()
 
 
-def test_builder_rejects_dirty_tracked_source_without_dev_flag(tmp_path):
+def test_builder_rejects_dirty_tracked_source_without_dev_flag(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_af import build_existing_dashboards as builder
+
+    def fake_receipt(*, allow_dirty_dev=False):
+        if not allow_dirty_dev:
+            raise ValueError("tracked source is dirty; use --allow-dirty-dev for a non-promotable smoke")
+        return {
+            "repository": "fixture",
+            "git_head": "fixture-head",
+            "base_main": "fixture-main",
+            "dependency_dirty": True,
+            "source_policy": "DEV_DIRTY_SOURCE / NOT_PROMOTABLE",
+            "source_status": "DEV_DIRTY_SOURCE",
+            "promotable": False,
+            "promotion_status": "NOT_PROMOTABLE",
+        }
+    monkeypatch.setattr(builder, "git_source_receipt", fake_receipt)
 
     args = argparse.Namespace(
         package_id="pkg-dirty-source",
