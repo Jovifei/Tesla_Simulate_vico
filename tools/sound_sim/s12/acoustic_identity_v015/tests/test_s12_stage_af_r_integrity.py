@@ -555,6 +555,11 @@ def test_fitted_package_keeps_an_independent_fit_snapshot(tmp_path, monkeypatch)
     assert manifest["vehicles"][0]["fit_snapshot"]["snapshot_sha256"] == restored["snapshot_sha256"]
     assert json.loads(snapshot.read_text(encoding="utf-8"))["fit_sha256"] == fit_payload["fit_sha256"]
     assert source_sha == restored["snapshot_sha256"]
+    tampered = bytearray(snapshot.read_bytes())
+    tampered[-2] ^= 1
+    snapshot.write_bytes(tampered)
+    with pytest.raises(ValueError, match="fit snapshot (checksum mismatch|is not valid JSON)"):
+        validate_fit_snapshot(snapshot)
 
 
 def test_dependency_fingerprint_covers_renderer_adapter_and_convolver():
