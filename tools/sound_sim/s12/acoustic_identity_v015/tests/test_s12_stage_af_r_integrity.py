@@ -79,6 +79,17 @@ def _scene_config(tmp_path: Path) -> dict:
     }
 
 
+def _hermetic_hellcat_ir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    root = tmp_path / "ir" / "new"
+    root.mkdir(parents=True)
+    wavfile.write(
+        root / "test_engine_16_eq_adjusted_16.wav",
+        48_000,
+        np.asarray([1000, 2000, 1000, 500], dtype=np.int16),
+    )
+    monkeypatch.setenv("S12_ENGINE_SIM_IR_ROOT", str(tmp_path / "ir"))
+
+
 def _contract() -> dict:
     return {
         "schema": "s12.stage_af.dashboard_contract.v1",
@@ -547,22 +558,24 @@ def test_dependency_identity_has_explicit_scopes():
     assert any(path.endswith("serve_dashboards.py") for path in ui)
 
 
-def test_ui_fingerprint_does_not_invalidate_fit_identity():
+def test_ui_fingerprint_does_not_invalidate_fit_identity(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
         renderer_identity,
     )
 
+    _hermetic_hellcat_ir(tmp_path, monkeypatch)
     identity = renderer_identity("hellcat")
     changed = json.loads(json.dumps(identity))
     changed["package_ui_fingerprint"][0]["sha256"] = "0" * 64
     assert fit_identity_projection(identity) == fit_identity_projection(changed)
 
 
-def test_audio_or_fit_fingerprint_invalidates_fit_identity():
+def test_audio_or_fit_fingerprint_invalidates_fit_identity(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
         renderer_identity,
     )
 
+    _hermetic_hellcat_ir(tmp_path, monkeypatch)
     identity = renderer_identity("hellcat")
     for field in ("audio_runtime_fingerprint", "fit_algorithm_fingerprint"):
         changed = json.loads(json.dumps(identity))
