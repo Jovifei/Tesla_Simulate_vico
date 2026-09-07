@@ -17,11 +17,21 @@ from scipy.io import wavfile
 import numpy as np
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import (
+    audio_runtime_fingerprint,
     canonical_json_bytes,
     compare_h0_with_legacy,
     dependency_fingerprint,
+    fit_identity_projection,
+    git_source_receipt,
+    h0_oracle_cases,
+    package_ui_fingerprint,
     publish_staged_package,
+    snapshot_fit_file,
+    validate_fit_snapshot,
     validate_reference_sources,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import (
+    fit_algorithm_fingerprint,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.build_existing_dashboards import (
     _bind_references,
@@ -120,6 +130,7 @@ def test_dashboard_contract_removes_fixed_metrics_and_uses_truthful_state(tmp_pa
     assert "http://localhost:19088/" in html
     assert "SCORECARD_STORAGE_KEY" in html
     assert "hasReference(scene)" in html
+    assert "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY" in html
 
 
 def test_dashboard_build_keeps_missing_reference_unavailable(tmp_path, monkeypatch):
@@ -136,6 +147,23 @@ def test_dashboard_build_keeps_missing_reference_unavailable(tmp_path, monkeypat
     dashboards.build_dashboard("hellcat", cfg)
     html = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert '"03_hot_idle_ref":' not in html
+
+
+def test_single_vehicle_dashboard_navigation_is_package_scoped(tmp_path, monkeypatch):
+    cfg = _scene_config(tmp_path)
+    cfg["_dashboard_contract"] = _contract()
+    cfg["_nav_ports"] = {"hellcat": 21088}
+    cfg["_nav_vehicles"] = ("hellcat",)
+    monkeypatch.setattr(
+        dashboards,
+        "TEMPLATE_PATH",
+        Path(dashboards.__file__).with_name("audition_dashboard_template.html"),
+    )
+    dashboards.build_dashboard("hellcat", cfg)
+    html = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert "localhost:21088/" in html
+    assert "Ferrari 458 Italia" not in html
+    assert "localhost:19089/" not in html
 
 
 def test_reference_fit_drift_is_rejected(tmp_path):
@@ -182,7 +210,7 @@ def test_fit_payload_requires_all_fit_reference_scenes():
     )
 
     payload = {
-        "schema": "s12.stage_af.physical_fit.v4",
+        "schema": "s12.stage_af.physical_fit.v5",
         "vehicle": "hellcat",
         "seed": 20260906,
         "numerical_fixes": [],
@@ -199,7 +227,7 @@ def test_fit_payload_rejects_unapproved_reference_level():
     )
 
     payload = {
-        "schema": "s12.stage_af.physical_fit.v4",
+        "schema": "s12.stage_af.physical_fit.v5",
         "vehicle": "hellcat",
         "seed": 20260906,
         "numerical_fixes": [],
@@ -207,6 +235,21 @@ def test_fit_payload_rejects_unapproved_reference_level():
         "reference_sources": {},
     }
     with pytest.raises(ValueError, match="unsupported reference evidence level"):
+        validate_fit_payload(payload, "hellcat", (), 20260906)
+
+
+def test_fit_v4_is_not_silently_reinterpreted():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
+        validate_fit_payload,
+    )
+
+    payload = {
+        "schema": "s12.stage_af.physical_fit.v4",
+        "vehicle": "hellcat",
+        "seed": 20260906,
+        "numerical_fixes": [],
+    }
+    with pytest.raises(ValueError, match="old/unversioned fit"):
         validate_fit_payload(payload, "hellcat", (), 20260906)
 
 
@@ -242,7 +285,15 @@ def test_builder_publishes_fresh_package_with_manifest_and_contract(tmp_path, mo
     monkeypatch.setattr(dashboards, "render_vehicle_audio", fake_render)
     monkeypatch.setattr(dashboards, "build_dashboard", fake_dashboard)
     monkeypatch.setattr(builder, "renderer_identity", lambda *args, **kwargs: {"vehicle": "hellcat", "numerical_fixes": []})
-    monkeypatch.setattr(builder, "dependency_fingerprint", lambda: [{"path": "fixture.py", "sha256": "a" * 64}])
+    monkeypatch.setattr(
+        builder,
+        "dependency_fingerprint",
+        lambda: {
+            "audio_runtime_fingerprint": [{"path": "audio.py", "sha256": "a" * 64}],
+            "fit_algorithm_fingerprint": [{"path": "fit.py", "sha256": "a" * 64}],
+            "package_ui_fingerprint": [{"path": "ui.py", "sha256": "a" * 64}],
+        },
+    )
 
     reference_root = tmp_path / "references"
     source = reference_root / "hellcat" / "ref_hot_idle.wav"
@@ -260,6 +311,7 @@ def test_builder_publishes_fresh_package_with_manifest_and_contract(tmp_path, mo
         numerical_fixes=[],
         seed=20260906,
         port_base=19088,
+        allow_dirty_dev=True,
     )
 
     published = builder._build_package(args)
@@ -268,10 +320,21 @@ def test_builder_publishes_fresh_package_with_manifest_and_contract(tmp_path, mo
     contract = json.loads((published / builder.DIR_NAMES["hellcat"] / "dashboard_contract.json").read_text(encoding="utf-8"))
     assert manifest["schema"] == "s12.stage_af.package_manifest.v1"
     assert manifest["manifest_sha256"]
+    assert manifest["audio_runtime_fingerprint"]
+    assert manifest["fit_algorithm_fingerprint"]
+    assert manifest["package_ui_fingerprint"]
+    assert manifest["source_status"] == "DEV_DIRTY_SOURCE"
+    assert manifest["promotable"] is False
+    assert manifest["promotion_status"] == "NOT_PROMOTABLE"
+    assert manifest["source_receipt"]["source_policy"] == "DEV_DIRTY_SOURCE / NOT_PROMOTABLE"
+    assert manifest["vehicles"][0]["fit_snapshot"] is None
     manifest_without_checksum = dict(manifest)
     manifest_sha = manifest_without_checksum.pop("manifest_sha256")
     assert hashlib.sha256(canonical_json_bytes(manifest_without_checksum)).hexdigest() == manifest_sha
     assert contract["package_id"] == "pkg-fresh"
+    assert contract["fit_status"] == "NOT_FITTED"
+    assert contract["fit_metric_status"] == "NOT_MEASURED"
+    assert contract["human_status"] == "WAITING_FOR_JOVI_FEEDBACK"
     assert contract["candidate_pcm_sha256"]["03_hot_idle.wav"]
     assert contract["contract_sha256"]
     contract_without_checksum = dict(contract)
@@ -292,7 +355,15 @@ def test_builder_cleans_failed_staging_and_refuses_existing_package(tmp_path, mo
 
     monkeypatch.setattr(dashboards, "VEHICLE_CONFIGS", {"hellcat": _scene_config(tmp_path / "unused")})
     monkeypatch.setattr(builder, "renderer_identity", lambda *args, **kwargs: {"vehicle": "hellcat", "numerical_fixes": []})
-    monkeypatch.setattr(builder, "dependency_fingerprint", lambda: [{"path": "fixture.py", "sha256": "a" * 64}])
+    monkeypatch.setattr(
+        builder,
+        "dependency_fingerprint",
+        lambda: {
+            "audio_runtime_fingerprint": [{"path": "audio.py", "sha256": "a" * 64}],
+            "fit_algorithm_fingerprint": [{"path": "fit.py", "sha256": "a" * 64}],
+            "package_ui_fingerprint": [{"path": "ui.py", "sha256": "a" * 64}],
+        },
+    )
     monkeypatch.setattr(dashboards, "render_vehicle_audio", lambda vehicle, cfg: (_ for _ in ()).throw(RuntimeError("injected render failure")))
     monkeypatch.setattr(dashboards, "build_dashboard", lambda vehicle, cfg: None)
     args = argparse.Namespace(
@@ -306,6 +377,7 @@ def test_builder_cleans_failed_staging_and_refuses_existing_package(tmp_path, mo
         numerical_fixes=[],
         seed=20260906,
         port_base=19088,
+        allow_dirty_dev=True,
     )
     with pytest.raises(RuntimeError, match="injected render failure"):
         builder._build_package(args)
@@ -333,18 +405,215 @@ def test_builder_cleans_staging_when_fit_is_missing(tmp_path):
         numerical_fixes=[],
         seed=20260906,
         port_base=19088,
+        allow_dirty_dev=True,
     )
     with pytest.raises(ValueError, match="requested fit missing"):
         builder._build_package(args)
     assert not (args.output_root / ".stage_af_r_staging" / "pkg-missing-fit").exists()
 
 
+def test_builder_rejects_dirty_tracked_source_without_dev_flag(tmp_path):
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af import build_existing_dashboards as builder
+
+    args = argparse.Namespace(
+        package_id="pkg-dirty-source",
+        candidate_id="candidate-r",
+        output_root=tmp_path / "packages",
+        reference_root=None,
+        vehicle="hellcat",
+        baseline=True,
+        fit_root=None,
+        numerical_fixes=[],
+        seed=20260906,
+        port_base=19088,
+        allow_dirty_dev=False,
+    )
+    with pytest.raises(ValueError, match="tracked source is dirty"):
+        builder._build_package(args)
+    assert not (args.output_root / ".stage_af_r_staging" / "pkg-dirty-source").exists()
+
+
+def test_fitted_package_keeps_an_independent_fit_snapshot(tmp_path, monkeypatch):
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af import build_existing_dashboards as builder
+
+    monkeypatch.setattr(dashboards, "VEHICLE_CONFIGS", {"hellcat": _scene_config(tmp_path / "unused")})
+    monkeypatch.setattr(builder, "renderer_identity", lambda *args, **kwargs: {"vehicle": "hellcat", "numerical_fixes": []})
+    monkeypatch.setattr(builder, "validate_fit_payload", lambda *args, **kwargs: {})
+    monkeypatch.setattr(
+        builder,
+        "dependency_fingerprint",
+        lambda: {
+            "audio_runtime_fingerprint": [{"path": "audio.py", "sha256": "a" * 64}],
+            "fit_algorithm_fingerprint": [{"path": "fit.py", "sha256": "a" * 64}],
+            "package_ui_fingerprint": [{"path": "ui.py", "sha256": "a" * 64}],
+        },
+    )
+
+    def fake_render(vehicle, cfg):
+        web_dir = Path(cfg["dir"]) / "web_audio"
+        web_dir.mkdir(parents=True, exist_ok=True)
+        payload = b"candidate-pcm"
+        (web_dir / "03_hot_idle.wav").write_bytes(payload)
+        (Path(cfg["dir"]) / "03_hot_idle.wav").write_bytes(payload)
+
+    monkeypatch.setattr(dashboards, "render_vehicle_audio", fake_render)
+    monkeypatch.setattr(
+        dashboards,
+        "build_dashboard",
+        lambda vehicle, cfg: (
+            (Path(cfg["dir"]) / "index.html").write_text("<html>index</html>", encoding="utf-8"),
+            (Path(cfg["dir"]) / "index_standalone.html").write_text("<html>standalone</html>", encoding="utf-8"),
+        ),
+    )
+
+    fit_payload = {
+        "schema": "s12.stage_af.physical_fit.v5",
+        "vehicle": "hellcat",
+        "seed": 20260906,
+        "numerical_fixes": [],
+        "reference_level": "R3_PRIVATE_DIAGNOSTIC_ONLY",
+        "reference_sources": {},
+        "overrides": {},
+        "fit_identity": {},
+        "baseline_distance": 1.0,
+        "final_distance": 0.5,
+        "renderer_identity": {"vehicle": "hellcat", "numerical_fixes": []},
+    }
+    fit_payload["fit_sha256"] = hashlib.sha256(canonical_json_bytes(fit_payload)).hexdigest()
+    fit_root = tmp_path / "fits" / "hellcat"
+    fit_root.mkdir(parents=True)
+    fit_source = fit_root / "final_r3_diagnostic_fit.json"
+    fit_source.write_text(json.dumps(fit_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    args = argparse.Namespace(
+        package_id="pkg-fit-snapshot",
+        candidate_id="candidate-r",
+        output_root=tmp_path / "packages",
+        reference_root=None,
+        vehicle="hellcat",
+        baseline=False,
+        fit_root=tmp_path / "fits",
+        numerical_fixes=[],
+        seed=20260906,
+        port_base=19088,
+        allow_dirty_dev=True,
+    )
+    published = builder._build_package(args)
+    snapshot = published / builder.DIR_NAMES["hellcat"] / "evidence" / "fit" / "final_fit.json"
+    source_sha = hashlib.sha256(fit_source.read_bytes()).hexdigest()
+    fit_source.unlink()
+    restored = validate_fit_snapshot(snapshot)
+    manifest = json.loads((published / "audition_manifest.json").read_text(encoding="utf-8"))
+    contract = json.loads(
+        (published / builder.DIR_NAMES["hellcat"] / "dashboard_contract.json").read_text(encoding="utf-8")
+    )
+    assert contract["fit_status"] == "FITTED"
+    assert contract["fit_metric_status"] == "FIT_DIAGNOSTIC_DISTANCE_AVAILABLE"
+    assert contract["human_status"] == "WAITING_FOR_JOVI_FEEDBACK"
+    assert restored["snapshot_sha256"] == hashlib.sha256(snapshot.read_bytes()).hexdigest()
+    assert any(item["role"] == "fit:snapshot" for item in manifest["artifacts"])
+    assert manifest["vehicles"][0]["fit_snapshot"]["snapshot_sha256"] == restored["snapshot_sha256"]
+    assert json.loads(snapshot.read_text(encoding="utf-8"))["fit_sha256"] == fit_payload["fit_sha256"]
+    assert source_sha == restored["snapshot_sha256"]
+
+
 def test_dependency_fingerprint_covers_renderer_adapter_and_convolver():
     fingerprint = dependency_fingerprint()
-    paths = {entry["path"] for entry in fingerprint}
+    assert set(fingerprint) == {
+        "audio_runtime_fingerprint",
+        "fit_algorithm_fingerprint",
+        "package_ui_fingerprint",
+    }
+    paths = {
+        entry["path"]
+        for entries in fingerprint.values()
+        for entry in entries
+    }
     assert any(path.endswith("engine_sim_acoustics.py") for path in paths)
     assert any(path.endswith("physical_closed_loop.py") for path in paths)
     assert any(path.endswith("partitioned_convolver.py") for path in paths)
+
+
+def test_dependency_identity_has_explicit_scopes():
+    audio = {entry["path"] for entry in audio_runtime_fingerprint()}
+    fit = {entry["path"] for entry in fit_algorithm_fingerprint()}
+    ui = {entry["path"] for entry in package_ui_fingerprint()}
+    assert any(path.endswith("engine_sim_acoustics.py") for path in audio)
+    assert any(path.endswith("partitioned_convolver.py") for path in audio)
+    assert any(path.endswith("physical_closed_loop.py") for path in fit)
+    assert any(path.endswith("spectral_guard.py") for path in fit)
+    assert any(path.endswith("fit_cli.py") for path in fit)
+    assert any(path.endswith("audition_dashboard_template.html") for path in ui)
+    assert any(path.endswith("serve_dashboards.py") for path in ui)
+
+
+def test_ui_fingerprint_does_not_invalidate_fit_identity():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
+        renderer_identity,
+    )
+
+    identity = renderer_identity("hellcat")
+    changed = json.loads(json.dumps(identity))
+    changed["package_ui_fingerprint"][0]["sha256"] = "0" * 64
+    assert fit_identity_projection(identity) == fit_identity_projection(changed)
+
+
+def test_audio_or_fit_fingerprint_invalidates_fit_identity():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af.physical_closed_loop import (
+        renderer_identity,
+    )
+
+    identity = renderer_identity("hellcat")
+    for field in ("audio_runtime_fingerprint", "fit_algorithm_fingerprint"):
+        changed = json.loads(json.dumps(identity))
+        changed[field][0]["sha256"] = "0" * 64
+        assert fit_identity_projection(identity) != fit_identity_projection(changed)
+
+
+def test_fit_snapshot_is_exact_and_self_validating(tmp_path):
+    payload = {
+        "schema": "s12.stage_af.physical_fit.v5",
+        "vehicle": "hellcat",
+        "seed": 20260906,
+        "numerical_fixes": [],
+        "reference_level": "R3_PRIVATE_DIAGNOSTIC_ONLY",
+        "reference_sources": {},
+        "overrides": {},
+        "fit_identity": {},
+    }
+    payload["fit_sha256"] = hashlib.sha256(canonical_json_bytes(payload)).hexdigest()
+    source = tmp_path / "source-fit.json"
+    source.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    snapshot = tmp_path / "evidence" / "fit" / "final_fit.json"
+    record = snapshot_fit_file(source, snapshot)
+    source.unlink()
+    restored = validate_fit_snapshot(snapshot)
+    assert record["snapshot_sha256"] == restored["snapshot_sha256"]
+    assert restored["fit_sha256"] == payload["fit_sha256"]
+
+
+def test_git_source_receipt_has_required_fields():
+    receipt = git_source_receipt(allow_dirty_dev=True)
+    assert {
+        "repository",
+        "git_head",
+        "base_main",
+        "dependency_dirty",
+        "source_policy",
+    } <= set(receipt)
+    assert receipt["source_policy"] in {
+        "TRACKED_SOURCE_CLEAN_REQUIRED",
+        "DEV_DIRTY_SOURCE / NOT_PROMOTABLE",
+    }
+
+
+def test_h0_oracle_cases_cover_steady_shift_afterfire_windows():
+    cases = h0_oracle_cases(3.0)
+    assert set(cases) == {"steady_body", "shift", "afterfire"}
+    for name in ("shift", "afterfire"):
+        events = cases[name][name + "_events"]
+        assert events
+        assert all(0.0 < event[0] < 3.0 for event in events)
 
 
 def test_h0_uses_legacy_ir_search_priority(tmp_path, monkeypatch):

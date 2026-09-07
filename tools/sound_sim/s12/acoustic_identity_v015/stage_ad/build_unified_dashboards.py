@@ -405,10 +405,15 @@ def _default_dashboard_contract(v_key: str, cfg: dict) -> dict:
         "flags": [],
         "seed": None,
         "fit_status": "NOT_FITTED",
+        "fit_metric_status": "NOT_MEASURED",
         "measurement_status": "NOT_MEASURED",
         "sample_rate_hz": 48000,
         "package_port": cfg.get("port"),
         "nav_urls": {},
+        "source_status": "SOURCE_CLEAN",
+        "promotable": False,
+        "promotion_status": "NOT_PROMOTABLE",
+        "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY",
         "references": references,
         "candidate_pcm_sha256": {},
         "reference_sha256": {},
@@ -590,7 +595,10 @@ def build_dashboard(v_key: str, cfg: dict):
     # Global 4-Vehicle Top Switcher Navigation Bar
     nav_links = []
     nav_ports = cfg.get("_nav_ports", {})
+    nav_vehicles = cfg.get("_nav_vehicles")
     for vk, other_cfg in VEHICLE_CONFIGS.items():
+        if nav_vehicles is not None and vk not in nav_vehicles:
+            continue
         is_current = (vk == v_key)
         port = nav_ports.get(vk, other_cfg["port"])
         if is_current:

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:,">
+  <meta name="s12-style-dependency" content="AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY">
   <title>Dodge Challenger SRT Hellcat V8 - 声音算法人耳试听评审系统</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
@@ -59,10 +60,15 @@
         </div>
 
         <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
-          <span class="text-slate-400">Measurement:</span>
+          <span class="text-slate-400">Fit metric:</span>
           <span id="measurementStatus" class="flex items-center gap-1 font-semibold text-slate-400">
             <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> NOT_MEASURED
           </span>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <span class="text-slate-400">Human:</span>
+          <span id="humanStatus" class="font-mono font-semibold text-slate-400">WAITING_FOR_JOVI_FEEDBACK</span>
         </div>
 
         <button onclick="toggleParamModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
@@ -309,6 +315,7 @@
       const finalNode = document.getElementById('fitDistanceFinal');
       const improvementNode = document.getElementById('fitImprovement');
       const measurementNode = document.getElementById('measurementStatus');
+      const humanNode = document.getElementById('humanStatus');
       const paramLabel = document.getElementById('paramCountLabel');
       const modalStatus = document.getElementById('paramModalStatus');
       const finiteNumber = value => typeof value === 'number' && Number.isFinite(value);
@@ -321,8 +328,9 @@
       } else {
         improvementNode.textContent = 'NOT_MEASURED';
       }
-      const measurement = DASHBOARD_CONTRACT.measurement_status || 'NOT_MEASURED';
+      const measurement = DASHBOARD_CONTRACT.fit_metric_status || DASHBOARD_CONTRACT.measurement_status || 'NOT_MEASURED';
       measurementNode.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> ${measurement}`;
+      humanNode.textContent = DASHBOARD_CONTRACT.human_status || 'WAITING_FOR_JOVI_FEEDBACK';
       const parameterCount = Array.isArray(PARAMETERS) ? PARAMETERS.length : 0;
       paramLabel.textContent = `当前包参数 (${parameterCount})`;
       modalStatus.textContent = DASHBOARD_CONTRACT.fit_status || 'NOT_FITTED';

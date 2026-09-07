@@ -174,3 +174,25 @@ fit v4 的 `reference_sources` 是 fit 的硬输入：四个 `hot_idle / steady_
 H0 必须用固定的 pre-fix Git commit 作为 oracle，在同一输入、seed 和 IR 下与当前空 flags 输出逐 PCM 比较；不能拿当前代码与当前代码比较。IR 搜索顺序保持 `new → archive → smooth → root`。H1/H2 描述要以实际 flags 为准：当前 H1 是 `cycle_phase`，H2 是四项时间处理修正，不能写成“只增加了时间修正”而忽略相位差异。
 
 完成后至少运行 AF-R focused、受影响 AF/AD、完整 S12、compileall、Track-P 和 `git diff --check`；服务回归必须是真实慢连接加第二请求，并保留 single-thread negative control。软件/指标通过仍不等于 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze；生成编号试听包后停止，等待 Jovi 实际 A/B 反馈。
+
+## 11. 2026-09-07 Stage AF-R2 PRE-FIT QUALIFICATION
+
+Stage AF-R2 先证明“远端 exact-head 资格 + 证据范围正确”，再允许 Stage AF-R3 重新生成 H0/H1/H2。接手必须先 `git fetch origin --prune`，读取 Draft PR #15 的当前 head/base 与匹配 Actions run；旧 SHA、本机历史计数或另一个提交的绿色 CI 不能充当资格。
+
+当前 fit identity 拆成三个独立 scope：
+
+```text
+audio_runtime_fingerprint  → EngineAcoustics / partitioned convolver；改变会使 PCM/fit 失效
+fit_algorithm_fingerprint  → physical_closed_loop / spectral_guard / fit_cli；改变会使 fit 失效
+package_ui_fingerprint     → builder / original dashboard / HTML / serve_dashboards；只改页面不使 fit 失效
+```
+
+由于 identity 合同发生实质变化，当前 fit schema 升为 `s12.stage_af.physical_fit.v5`，旧 v4 必须拒绝，不能静默 reinterpret。fitted package 必须把 fit JSON 原始字节复制到 `<vehicle>/evidence/fit/final_fit.json`，同时记录 source path/SHA、snapshot path/SHA、schema 和 fit self SHA；删除 source 后，snapshot 仍需独立校验。
+
+正式 package 的 Git source receipt 必须含 `repository`、`git_head`、`base_main`、`dependency_dirty`、`source_policy`。默认只接受 tracked source clean；开发 smoke 必须显式 `--allow-dirty-dev`，并标记 `DEV_DIRTY_SOURCE`、`NOT_PROMOTABLE`，不可被当成正式资格。
+
+单车型 build（例如 `--vehicle hellcat`）的页面只显示 package 内实际车型，不能把导航链接写回历史 8088–8091。页面仍使用原 HTML/UI；因 Tailwind 仍从外网加载，状态必须写为 `AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY`，不能称完全 self-contained。
+
+fit/measurement/human 三个状态必须分开：fitted diagnostic package 可是 `FITTED` + `FIT_DIAGNOSTIC_DISTANCE_AVAILABLE` + `WAITING_FOR_JOVI_FEEDBACK`，但绝不能写 Human PASS/OEM/R1。H0 fixed oracle 至少覆盖 steady/body、shift、afterfire，事件时间必须落在实际输出窗口；固定 pre-fix Git implementation、同一 IR/seed/input、`numerical_fixes=[]` 下逐 PCM 相等，不能为测试修改生产声音。
+
+执行顺序：R2 focused → compileall/Track-P/diff-check → full S12 → fresh non-overwriting smoke → push 隔离分支 → 按 exact pushed SHA 读取 GitHub Actions。只有 `STAGE_AF_R2_REMOTE_QUALIFIED` 且所有证据项闭合，才进入 R3；否则停止并报告 blocker。R3 只生成三个全新 Hellcat H0/H1/H2 package，三包共享 vehicle/seed/IR/scene input/Reference，逐 WAV 结果标记 `BYTE_IDENTICAL`、`EXPECTED_DIFFERENCE_WITH_EXPLAINED_CAUSE` 或 `UNEXPECTED_DRIFT`，后者立即停止。

@@ -90,17 +90,7 @@ def validate_artifacts(records: Sequence[Mapping[str, Any]], root: str | Path) -
             raise ValueError(f"artifact SHA mismatch: {relative}")
 
 
-def dependency_fingerprint() -> list[dict[str, str]]:
-    """Hash every source file that can affect Stage AF-R rendered bytes."""
-    paths = (
-        PACKAGE_ROOT.parent / "stage_ad" / "engine_sim_acoustics.py",
-        PACKAGE_ROOT / "physical_closed_loop.py",
-        PACKAGE_ROOT / "partitioned_convolver.py",
-        PACKAGE_ROOT / "spectral_guard.py",
-        PACKAGE_ROOT / "build_existing_dashboards.py",
-        PACKAGE_ROOT.parent / "stage_ad" / "build_unified_dashboards.py",
-        PACKAGE_ROOT.parent / "stage_ad" / "audition_dashboard_template.html",
-    )
+def _fingerprint_paths(paths: Sequence[Path]) -> list[dict[str, str]]:
     records: list[dict[str, str]] = []
     for path in paths:
         resolved = path.resolve()
@@ -113,6 +103,187 @@ def dependency_fingerprint() -> list[dict[str, str]]:
             }
         )
     return sorted(records, key=lambda item: item["path"])
+
+
+def audio_runtime_fingerprint() -> list[dict[str, str]]:
+    """Files whose implementation changes can alter rendered PCM bytes."""
+    return _fingerprint_paths(
+        (
+            PACKAGE_ROOT.parent / "stage_ad" / "engine_sim_acoustics.py",
+            PACKAGE_ROOT / "partitioned_convolver.py",
+        )
+    )
+
+
+def fit_algorithm_fingerprint() -> list[dict[str, str]]:
+    """Files whose objective/search/guard changes invalidate a fit."""
+    return _fingerprint_paths(
+        (
+            PACKAGE_ROOT / "physical_closed_loop.py",
+            PACKAGE_ROOT / "spectral_guard.py",
+            PACKAGE_ROOT / "fit_cli.py",
+        )
+    )
+
+
+def package_ui_fingerprint() -> list[dict[str, str]]:
+    """Dashboard/package/service files; these do not invalidate a fit."""
+    return _fingerprint_paths(
+        (
+            PACKAGE_ROOT / "build_existing_dashboards.py",
+            PACKAGE_ROOT.parent / "stage_ad" / "build_unified_dashboards.py",
+            PACKAGE_ROOT.parent / "stage_ad" / "audition_dashboard_template.html",
+            REPOSITORY_ROOT / "review_packages" / "serve_dashboards.py",
+        )
+    )
+
+
+def dependency_fingerprint() -> dict[str, list[dict[str, str]]]:
+    """Return explicit runtime/fit/UI identity scopes."""
+    return {
+        "audio_runtime_fingerprint": audio_runtime_fingerprint(),
+        "fit_algorithm_fingerprint": fit_algorithm_fingerprint(),
+        "package_ui_fingerprint": package_ui_fingerprint(),
+    }
+
+
+def fit_identity_projection(identity: Mapping[str, Any]) -> dict[str, Any]:
+    """Project renderer identity to fields that can invalidate a fit.
+
+    Package UI/template/service changes are intentionally excluded so a page
+    correction does not force an otherwise byte-identical fit to be rerun.
+    """
+    fields = (
+        "vehicle",
+        "sample_rate",
+        "renderer",
+        "source_sha256",
+        "ir_source_path",
+        "ir_source_sha256",
+        "ir_effective_sha256",
+        "ir_provenance",
+        "ir_rights_status",
+        "numerical_fixes",
+        "audio_runtime_fingerprint",
+        "fit_algorithm_fingerprint",
+    )
+    return {field: identity.get(field) for field in fields}
+
+
+def _fit_checksum(payload: Mapping[str, Any]) -> tuple[str, str]:
+    canonical = dict(payload)
+    checksum = canonical.pop("fit_sha256", None)
+    encoded = canonical_json_bytes(canonical)
+    return str(checksum or ""), hashlib.sha256(encoded).hexdigest()
+
+
+def snapshot_fit_file(source: str | Path, snapshot: str | Path) -> dict[str, str]:
+    """Copy exact fit JSON bytes into an immutable package evidence path."""
+    source_path = Path(source)
+    snapshot_path = Path(snapshot)
+    if not source_path.is_file():
+        raise FileNotFoundError(source_path)
+    snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+    source_bytes = source_path.read_bytes()
+    snapshot_path.write_bytes(source_bytes)
+    restored = validate_fit_snapshot(snapshot_path)
+    return {
+        "source_path": str(source_path.resolve()),
+        "source_sha256": hashlib.sha256(source_bytes).hexdigest(),
+        "snapshot_path": str(snapshot_path.resolve()),
+        "snapshot_sha256": restored["snapshot_sha256"],
+        "schema": restored["schema"],
+        "fit_sha256": restored["fit_sha256"],
+    }
+
+
+def validate_fit_snapshot(snapshot: str | Path) -> dict[str, str]:
+    """Validate a copied fit using only its own bytes (source may be gone)."""
+    snapshot_path = Path(snapshot)
+    if not snapshot_path.is_file():
+        raise FileNotFoundError(snapshot_path)
+    try:
+        payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"fit snapshot is not valid JSON: {snapshot_path}") from exc
+    if payload.get("schema") != "s12.stage_af.physical_fit.v5":
+        raise ValueError("fit snapshot schema mismatch")
+    if not isinstance(payload.get("fit_identity"), Mapping):
+        raise ValueError("fit snapshot identity missing")
+    recorded, calculated = _fit_checksum(payload)
+    if not recorded or recorded != calculated:
+        raise ValueError("fit snapshot checksum mismatch")
+    return {
+        "snapshot_path": str(snapshot_path.resolve()),
+        "snapshot_sha256": sha256_file(snapshot_path),
+        "schema": str(payload["schema"]),
+        "fit_sha256": recorded,
+    }
+
+
+def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
+    """Capture Git provenance and enforce clean tracked sources by default."""
+    def git(*args: str) -> str:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return result.stdout.strip()
+
+    try:
+        remote = git("config", "--get", "remote.origin.url")
+        git_head = git("rev-parse", "HEAD")
+        base_main = git("rev-parse", "origin/main")
+        dirty_output = git("status", "--porcelain", "--untracked-files=no")
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError("could not capture Git source receipt") from exc
+    repository = remote
+    if remote.startswith("https://github.com/"):
+        repository = remote.removeprefix("https://github.com/")
+    elif remote.startswith("git@github.com:"):
+        repository = remote.removeprefix("git@github.com:")
+    if repository.endswith(".git"):
+        repository = repository[:-4]
+    dependency_dirty = bool(dirty_output)
+    if dependency_dirty and not allow_dirty_dev:
+        raise ValueError(
+            "tracked source is dirty; use --allow-dirty-dev for a non-promotable smoke"
+        )
+    return {
+        "repository": repository,
+        "git_head": git_head,
+        "base_main": base_main,
+        "dependency_dirty": dependency_dirty,
+        "source_policy": (
+            "DEV_DIRTY_SOURCE / NOT_PROMOTABLE"
+            if dependency_dirty
+            else "TRACKED_SOURCE_CLEAN_REQUIRED"
+        ),
+        "source_status": "DEV_DIRTY_SOURCE" if dependency_dirty else "SOURCE_CLEAN",
+        "promotable": not dependency_dirty,
+        "promotion_status": "NOT_PROMOTABLE" if dependency_dirty else "PROMOTABLE",
+    }
+
+
+def h0_oracle_cases(duration: float) -> dict[str, dict[str, Any]]:
+    """Return deterministic steady/body, shift and afterfire windows."""
+    duration = float(duration)
+    if duration <= 0.0:
+        raise ValueError("duration must be positive")
+    return {
+        "steady_body": {"shift_events": None, "afterfire_events": None},
+        "shift": {
+            "shift_events": [(duration * 0.55, min(0.12, duration * 0.1))],
+            "afterfire_events": None,
+        },
+        "afterfire": {
+            "shift_events": None,
+            "afterfire_events": [(duration * 0.70, 0.40)],
+        },
+    }
 
 
 def validate_reference_sources(
@@ -188,12 +359,15 @@ def compare_h0_with_legacy(
     legacy_module = _load_legacy_module(legacy_commit)
     legacy_module.load_impulse_response = lambda *args, **kwargs: reference_ir.copy()
     legacy = legacy_module.EngineAcoustics(vehicle_type=vehicle, sr=48_000)
-    kwargs = {
-        "shift_events": [(duration * 0.55, min(0.12, duration * 0.1))],
-        "afterfire_events": [(duration * 0.70, 0.40)],
-    }
-    np.random.seed(seed)
-    current_pcm = current.render_track(rpm, throttle, duration, **kwargs)
-    np.random.seed(seed)
-    legacy_pcm = legacy.render_track(rpm, throttle, duration, **kwargs)
-    return bool(np.array_equal(current_pcm, legacy_pcm))
+    random_state = np.random.get_state()
+    try:
+        for case in h0_oracle_cases(duration).values():
+            np.random.seed(seed)
+            current_pcm = current.render_track(rpm, throttle, duration, **case)
+            np.random.seed(seed)
+            legacy_pcm = legacy.render_track(rpm, throttle, duration, **case)
+            if not np.array_equal(current_pcm, legacy_pcm):
+                return False
+        return True
+    finally:
+        np.random.set_state(random_state)

@@ -1369,3 +1369,11 @@ Rules:
 - H0 回归必须引用固定 pre-fix Git commit，并在相同输入、seed、IR 下逐 PCM 比较；current-vs-current 不是回归 oracle。IR 多副本的选择顺序必须有测试守护（`new → archive → smooth → root`）。
 - 发布包先写新 staging 目录，manifest/binding/contract 与所有候选、Reference、HTML artifact SHA 重算通过后再原子 rename；已存在 package id、部分 staging 或旧包都不能覆盖。总 manifest 要下钻到每个 scene 的输入/候选/Reference/IR/fit/HTML identity。
 - 浏览器并发验证必须同时保留真实慢客户端第二请求和 single-thread negative control；软件测试、指标下降、HTTP 200 仍只是工程证据，不能改写成 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze。
+
+# 2026-09-07 S12 Stage AF-R2 pre-fit qualification lessons
+
+- Fit identity 不能绑定整棵代码树：把 audio runtime、fit algorithm 和 package UI 分成三个 fingerprint scope；页面/服务修复不应使声音未变的 fit 失效，而 runtime、objective、guard、CLI search 或 IR 变化必须失效。
+- Fitted package 必须复制 fit JSON 原字节到包内 `evidence/fit/final_fit.json`，同时保留 source/snapshot/self SHA；source 删除后仍要能仅凭 snapshot 验证。合同语义变化时升级 fit schema，旧 v4 不得静默解释成 v5。
+- Git source receipt 要区分正式 clean tracked source 与开发 smoke：正式默认 fail-closed；`--allow-dirty-dev` 只能产生 `DEV_DIRTY_SOURCE` + `NOT_PROMOTABLE`，不能进入资格或试听发布。
+- 单车型包的导航必须按当前 package 成员生成，不能把缺席车型导向历史 8088–8091。外网样式依赖仍存在时，只能标记 `AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY`，不能声称完全 self-contained。
+- R2 资格以最终 pushed SHA 的 exact-head Actions 为准；本机 full pytest 只是本地证据。H0 oracle 至少覆盖 steady/body、shift、afterfire，事件必须落在输出窗口并在相同 IR/seed/input 下逐 PCM 相等。

@@ -15,6 +15,7 @@ import argparse
 import copy
 import hashlib
 import json
+import math
 import shutil
 import sys
 import uuid
@@ -28,7 +29,7 @@ from .physical_closed_loop import (
     renderer_identity,
     validate_fit_payload,
 )
-from .package_integrity import validate_reference_sources
+from .package_integrity import git_source_receipt, snapshot_fit_file, validate_reference_sources
 from .package_integrity import (
     DASHBOARD_CONTRACT_SCHEMA,
     PACKAGE_MANIFEST_SCHEMA,
@@ -213,12 +214,24 @@ def _dashboard_contract(
     fit_payload: Mapping[str, Any] | None,
     bound: Mapping[str, Mapping[str, str]],
     nav_ports: Mapping[str, int],
+    nav_vehicles: tuple[str, ...],
+    source_receipt: Mapping[str, Any],
 ) -> dict[str, Any]:
     identity = renderer_identity(vehicle, numerical_fixes)
     reference_level = (
         str(fit_payload.get("reference_level"))
         if fit_payload
         else "AUDITION_ONLY"
+    )
+    fit_metric_status = (
+        "FIT_DIAGNOSTIC_DISTANCE_AVAILABLE"
+        if fit_payload
+        and all(
+            isinstance(fit_payload.get(field), (int, float))
+            and math.isfinite(float(fit_payload[field]))
+            for field in ("baseline_distance", "final_distance")
+        )
+        else "NOT_MEASURED"
     )
     contract = {
         "schema": DASHBOARD_CONTRACT_SCHEMA,
@@ -228,13 +241,18 @@ def _dashboard_contract(
         "flags": sorted(set(numerical_fixes)),
         "seed": seed,
         "fit_status": "FITTED" if fit_payload else "NOT_FITTED",
+        "fit_metric_status": fit_metric_status,
         "reference_evidence_level": reference_level,
         "reference_rights_status": "UNVERIFIED_LOCAL_ASSET",
         "measurement_status": "NOT_MEASURED",
         "human_status": "WAITING_FOR_JOVI_FEEDBACK",
         "sample_rate_hz": 48_000,
         "package_port": int(nav_ports[vehicle]),
-        "nav_urls": {key: f"http://localhost:{port}/" for key, port in nav_ports.items()},
+        "nav_urls": {
+            key: f"http://localhost:{port}/"
+            for key, port in nav_ports.items()
+            if key in nav_vehicles
+        },
         "fit_baseline_distance": fit_payload.get("baseline_distance") if fit_payload else None,
         "fit_final_distance": fit_payload.get("final_distance") if fit_payload else None,
         "renderer_identity": identity,
@@ -249,6 +267,11 @@ def _dashboard_contract(
         "parameters": _parameter_rows(fit_payload),
         "package_gain_db": 0.0,
         "gain_policy": "no_additional_package_gain",
+        "source_receipt": dict(source_receipt),
+        "source_status": source_receipt.get("source_status"),
+        "promotable": bool(source_receipt.get("promotable", False)),
+        "promotion_status": source_receipt.get("promotion_status"),
+        "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY",
     }
     return seal_contract(contract)
 
@@ -384,10 +407,15 @@ def _vehicle_artifacts(cfg: Mapping[str, Any]) -> list[dict[str, str]]:
     records.append(artifact_record(root / "index.html", package_root, "dashboard:index"))
     records.append(artifact_record(root / "index_standalone.html", package_root, "dashboard:standalone"))
     records.append(artifact_record(root / "dashboard_contract.json", package_root, "dashboard:contract"))
+    fit_snapshot = root / "evidence" / "fit" / "final_fit.json"
+    if fit_snapshot.is_file():
+        records.append(artifact_record(fit_snapshot, package_root, "fit:snapshot"))
     return records
 
 
 def _build_package(args: argparse.Namespace) -> Path:
+    allow_dirty_dev = bool(getattr(args, "allow_dirty_dev", False))
+    source_receipt = git_source_receipt(allow_dirty_dev=allow_dirty_dev)
     package_id = _package_id(args.package_id)
     output_root = args.output_root.resolve()
     published_root = output_root / package_id
@@ -402,7 +430,11 @@ def _build_package(args: argparse.Namespace) -> Path:
     reference_root = args.reference_root.resolve() if args.reference_root else None
     selected = VEHICLES if args.vehicle == "all" else (args.vehicle,)
     flags = tuple(sorted(set(args.numerical_fixes)))
-    nav_ports = {vehicle: int(args.port_base) + index for index, vehicle in enumerate(VEHICLES)}
+    nav_vehicles = tuple(selected)
+    nav_ports = {
+        vehicle: int(args.port_base) + index
+        for index, vehicle in enumerate(nav_vehicles)
+    }
 
     stage_ad_dir = Path(__file__).resolve().parents[1] / "stage_ad"
     sys.path.insert(0, str(stage_ad_dir))
@@ -460,6 +492,12 @@ def _build_package(args: argparse.Namespace) -> Path:
             cfg = copy.deepcopy(source_cfg)
             cfg["dir"] = staging_root / DIR_NAMES[vehicle]
             cfg["dir"].mkdir(parents=True, exist_ok=False)
+            fit_snapshot = None
+            if fit_paths[vehicle]:
+                fit_snapshot = snapshot_fit_file(
+                    fit_paths[vehicle],
+                    cfg["dir"] / "evidence" / "fit" / "final_fit.json",
+                )
             expected_sources = (
                 fit_payloads[vehicle].get("reference_sources", {})
                 if fit_payloads[vehicle]
@@ -481,10 +519,13 @@ def _build_package(args: argparse.Namespace) -> Path:
                 fit_payloads[vehicle],
                 references,
                 nav_ports,
+                nav_vehicles,
+                source_receipt,
             )
             cfg["_dashboard_contract"] = contract
             cfg["_dashboard_params"] = contract["parameters"]
             cfg["_nav_ports"] = nav_ports
+            cfg["_nav_vehicles"] = nav_vehicles
             dashboards.render_vehicle_audio(vehicle, cfg)
             dashboards.build_dashboard(vehicle, cfg)
 
@@ -521,6 +562,7 @@ def _build_package(args: argparse.Namespace) -> Path:
                 "renderer_identity": contract["renderer_identity"],
                 "fit_path": str(fit_paths[vehicle]) if fit_paths[vehicle] else None,
                 "fit_file_sha256": sha256_file(fit_paths[vehicle]) if fit_paths[vehicle] else None,
+                "fit_snapshot": fit_snapshot,
                 "fit_identity": (
                     {
                         "schema": fit_payloads[vehicle].get("schema"),
@@ -536,6 +578,10 @@ def _build_package(args: argparse.Namespace) -> Path:
                 "scenes": scene_records,
                 "artifacts": artifacts,
                 "human_status": "WAITING_FOR_JOVI_FEEDBACK",
+                "source_receipt": source_receipt,
+                "source_status": source_receipt["source_status"],
+                "promotable": source_receipt["promotable"],
+                "promotion_status": source_receipt["promotion_status"],
             }
             _write_json(cfg["dir"] / "stage_af_binding.json", binding)
             artifacts.append(artifact_record(cfg["dir"] / "stage_af_binding.json", staging_root, f"binding:{vehicle}"))
@@ -549,6 +595,7 @@ def _build_package(args: argparse.Namespace) -> Path:
                     "binding_sha256": artifacts[-1]["sha256"],
                     "candidate_pcm_sha256": candidate_hashes,
                     "reference_sha256": reference_hashes,
+                    "fit_snapshot": fit_snapshot,
                     "scenes": scene_records,
                     "html": {
                         "index": f"{DIR_NAMES[vehicle]}/index.html",
@@ -557,16 +604,25 @@ def _build_package(args: argparse.Namespace) -> Path:
                 }
             )
 
+        fingerprints = dependency_fingerprint()
         manifest = {
             "schema": PACKAGE_MANIFEST_SCHEMA,
             "package_id": package_id,
             "candidate_id": args.candidate_id,
             "created_utc": datetime.now(timezone.utc).isoformat(),
+            "source_receipt": source_receipt,
+            "source_status": source_receipt["source_status"],
+            "promotable": source_receipt["promotable"],
+            "promotion_status": source_receipt["promotion_status"],
+            "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY",
             "human_status": "WAITING_FOR_JOVI_FEEDBACK",
             "package_gain_db": 0.0,
             "gain_policy": "no_additional_package_gain",
             "vehicles": vehicle_entries,
-            "dependency_fingerprint": dependency_fingerprint(),
+            "audio_runtime_fingerprint": fingerprints["audio_runtime_fingerprint"],
+            "fit_algorithm_fingerprint": fingerprints["fit_algorithm_fingerprint"],
+            "package_ui_fingerprint": fingerprints["package_ui_fingerprint"],
+            "dependency_fingerprints": fingerprints,
             "artifacts": all_artifacts,
         }
         _write_json(staging_root / "audition_manifest.json", seal_payload(manifest, PACKAGE_MANIFEST_SCHEMA))
@@ -618,6 +674,11 @@ def main(argv=None) -> int:
     parser.add_argument("--package-id", help="fresh package id; existing ids are rejected")
     parser.add_argument("--candidate-id", default="candidate-af-r", help="candidate identity embedded in the contract")
     parser.add_argument("--port-base", type=int, default=8088, help="first loopback port used by the existing workbench")
+    parser.add_argument(
+        "--allow-dirty-dev",
+        action="store_true",
+        help="allow a development smoke from dirty tracked source; marks it DEV_DIRTY_SOURCE / NOT_PROMOTABLE",
+    )
     args = parser.parse_args(argv)
     if args.fit_root is None and not args.baseline:
         parser.error("--fit-root is required unless --baseline is explicitly supplied")

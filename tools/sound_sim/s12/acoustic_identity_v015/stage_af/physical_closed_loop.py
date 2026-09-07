@@ -24,7 +24,7 @@ from scipy.signal import stft, resample_poly
 from scipy.stats import qmc
 
 from ..stage_ad import engine_sim_acoustics as stage_ad_audio
-from .package_integrity import dependency_fingerprint
+from .package_integrity import dependency_fingerprint, fit_identity_projection
 from .spectral_guard import multires_spectral_distance
 
 SAMPLE_RATE = 48_000
@@ -176,7 +176,7 @@ class PhysicalFitResult:
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
-        payload["schema"] = "s12.stage_af.physical_fit.v4"
+        payload["schema"] = "s12.stage_af.physical_fit.v5"
         payload["objective"] = "mean_features_plus_multires_spectrum.v1"
         payload["numerical_fixes"] = sorted(self.numerical_fixes)
         payload["human_status"] = "NOT_EVALUATED_THIS_FIT"
@@ -187,6 +187,7 @@ class PhysicalFitResult:
             "R3/R2 diagnostic analysis-by-synthesis; numerical improvement "
             "proposes candidates only; Human A/B remains final gate"
         )
+        payload["fit_identity"] = fit_identity_projection(self.renderer_identity)
         return payload
 
 
@@ -557,6 +558,7 @@ def _resolve_ir_source(vehicle: str) -> Path:
 def renderer_identity(vehicle: str, numerical_fixes: Sequence[str] = ()) -> dict[str, Any]:
     renderer = TunableEngineAcoustics(vehicle, numerical_fixes=numerical_fixes)
     ir_source = _resolve_ir_source(vehicle)
+    fingerprints = dependency_fingerprint()
     return {
         "vehicle": vehicle,
         "sample_rate": SAMPLE_RATE,
@@ -568,7 +570,9 @@ def renderer_identity(vehicle: str, numerical_fixes: Sequence[str] = ()) -> dict
         "ir_provenance": "LOCAL_ASSET_REQUIRES_SEPARATE_RIGHTS_RECEIPT",
         "ir_rights_status": "UNVERIFIED_LOCAL_ASSET",
         "numerical_fixes": sorted(renderer.engine.numerical_fixes),
-        "dependency_fingerprint": dependency_fingerprint(),
+        "audio_runtime_fingerprint": fingerprints["audio_runtime_fingerprint"],
+        "fit_algorithm_fingerprint": fingerprints["fit_algorithm_fingerprint"],
+        "package_ui_fingerprint": fingerprints["package_ui_fingerprint"],
     }
 
 
@@ -586,7 +590,7 @@ def reference_sources(reference_dir: str | Path) -> dict[str, Any]:
 
 def validate_fit_payload(payload: Mapping[str, Any], vehicle: str,
                          numerical_fixes: Sequence[str], seed: int) -> dict[str, float]:
-    if payload.get("schema") != "s12.stage_af.physical_fit.v4":
+    if payload.get("schema") != "s12.stage_af.physical_fit.v5":
         raise ValueError("old/unversioned fit cannot be silently reused; refit on current main")
     if payload.get("vehicle") != vehicle or payload.get("seed") != seed:
         raise ValueError("fit vehicle/seed mismatch")
@@ -609,8 +613,16 @@ def validate_fit_payload(payload: Mapping[str, Any], vehicle: str,
                          separators=(",", ":")).encode("utf-8")
     if checksum != hashlib.sha256(encoded).hexdigest():
         raise ValueError("fit checksum mismatch")
-    if payload.get("renderer_identity") != renderer_identity(vehicle, numerical_fixes):
-        raise ValueError("renderer source or effective IR changed; refit rather than fallback")
+    recorded_identity = payload.get("renderer_identity")
+    if not isinstance(recorded_identity, Mapping):
+        raise ValueError("fit renderer identity missing")
+    recorded_fit_identity = payload.get("fit_identity")
+    if recorded_fit_identity != fit_identity_projection(recorded_identity):
+        raise ValueError("fit identity projection missing or inconsistent")
+    if fit_identity_projection(recorded_identity) != fit_identity_projection(
+        renderer_identity(vehicle, numerical_fixes)
+    ):
+        raise ValueError("audio runtime/fit algorithm or IR changed; refit rather than fallback")
     return {str(k): float(v) for k, v in payload["overrides"].items()}
 
 

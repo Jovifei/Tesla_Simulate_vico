@@ -4328,3 +4328,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full current S12: `1476 passed, 2 skipped, 1 warning, 232 subtests passed`, exit code 0.
 - Smoke package manifest SHA and 32 artifact records recomputed successfully; browser console errors: 0.
 - Existing H0/H1/H2 roots remained outside the new staging/publish path; no old package was overwritten.
+
+## 2026-09-07 Stage AF-R2 pre-fit qualification
+
+- [ ] Reconfirm PR #15 exact head/base and latest exact-head GitHub Actions; do not reuse local historical counts.
+- [ ] Add RED tests for split fingerprints, fit snapshot/recovery, Git source receipt/dirty policy, single-vehicle nav, status split, H0 steady/shift/afterfire oracle, and CSS dependency label.
+- [ ] Implement identity-scoped invalidation, immutable fit snapshot, Git source receipt, status split and package source recovery.
+- [ ] Fix single-vehicle navigation and truthful style dependency metadata without creating a new UI/backend.
+- [ ] Strengthen H0 fixed Git oracle across steady/body, shift and afterfire windows.
+- [ ] Run required focused/full/compileall/Track-P/diff checks, build only a fresh qualification smoke, then push isolated branch.
+- [ ] Read latest exact-head CI; proceed to AF-R3 only if green, otherwise stop and report the blocker.

@@ -12,14 +12,15 @@
 2. `08-reports/15-repository-simplification-20260907.md` — 当前仓库简化、路线纠偏、保留/删除边界与验证。
 3. `08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` — Stage AF 数值修正、试听候选、服务修复与验证边界。
 4. `08-reports/16-stage-af-r-evidence-integrity-20260907.md` — Stage AF-R 证据契约、Reference/fit 闭合、H0 oracle、原工作台和发布保护。
-5. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
-6. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
-7. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。
-8. `04-planning/05-s12-reference-closed-loop-optimization.md` — Stage AD 负反馈优化。
-9. `04-planning/02-project-master-roadmap.md` — 从现在到 App 的总路线。
-10. `06-testing/01-audio-and-runtime-validation-strategy.md` — 软件、声学、人耳、App 的测试层级。
-11. `10-learning/01-s12-reusable-engineering-playbook.md` — 可复用工程方法。
-12. `DOCUMENTATION_AUDIT_2026-09-05.md` — 本轮逐文件审计结果。
+5. `08-reports/17-stage-af-r2-pre-fit-qualification-20260907.md` — Stage AF-R2 exact-head CI、identity 分层、fit snapshot、source receipt 与 H0 资格边界。
+6. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
+7. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
+8. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。
+9. `04-planning/05-s12-reference-closed-loop-optimization.md` — Stage AD 负反馈优化。
+10. `04-planning/02-project-master-roadmap.md` — 从现在到 App 的总路线。
+11. `06-testing/01-audio-and-runtime-validation-strategy.md` — 软件、声学、人耳、App 的测试层级。
+12. `10-learning/01-s12-reusable-engineering-playbook.md` — 可复用工程方法。
+13. `DOCUMENTATION_AUDIT_2026-09-05.md` — 本轮逐文件审计结果。
 
 ## 当前产品最终效果
 
@@ -52,7 +53,7 @@ CAN/OBD/真实 RPM 可以以后作为 richer input adapter，但不是当前 MVP
 
 已经完成/具备的软件基础包括：persistent event-domain engine、source/path/bank/collector、forced induction、transients、dP/DC、frozen PTR/Radiation、ReferenceCaseSet、comparator、parameter reachability、Stage Z 方法追踪、AA-C3、AB/AB-R 因果/指标 hardening、AC remote qualification，以及 Stage AD 的显式多轮 reference-driven controller。
 
-2026-09-06 的 Stage AF 接力在保留 `EngineAcoustics` 和原 A/B 工作台的前提下，新增了显式 opt-in 的 cycle-phase、causal delay/convolution/derivative、shift-cut 数值修正，fit/render provenance 与 per-scene guard；Hellcat 已生成 H0/H1/H2 诊断候选。2026-09-07 的 Stage AF-R 进一步把页面、fit/Reference、IR/H0 oracle、逐场景 manifest、原子发布和慢客户端回归改成 fail-closed 证据契约。它们已通过软件验证，但仍等待 Jovi 人耳反馈，不代表 Human PASS、OEM calibration 或 Profile Freeze。
+2026-09-06 的 Stage AF 接力在保留 `EngineAcoustics` 和原 A/B 工作台的前提下，新增了显式 opt-in 的 cycle-phase、causal delay/convolution/derivative、shift-cut 数值修正，fit/render provenance 与 per-scene guard；Hellcat 已生成 H0/H1/H2 诊断候选。2026-09-07 的 Stage AF-R 进一步把页面、fit/Reference、IR/H0 oracle、逐场景 manifest、原子发布和慢客户端回归改成 fail-closed 证据契约。Stage AF-R2 在此基础上收紧 exact-head CI、audio/fit/UI identity 失效边界、fit 原字节 snapshot、Git source receipt 和单车型导航；只有远端 exact-head CI 全绿才可进入 R3。它们已通过软件验证，但仍等待 Jovi 人耳反馈，不代表 Human PASS、OEM calibration 或 Profile Freeze。
 
 Stage AD 当前是：
 

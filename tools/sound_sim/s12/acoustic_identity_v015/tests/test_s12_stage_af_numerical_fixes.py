@@ -152,7 +152,7 @@ def test_octave_separated_same_band_signals_have_nonzero_distance():
 
 def test_fit_payload_rejects_numerical_fix_mismatch():
     payload = {
-        "schema": "s12.stage_af.physical_fit.v4",
+        "schema": "s12.stage_af.physical_fit.v5",
         "vehicle": "hellcat",
         "seed": 20260906,
         "numerical_fixes": [],

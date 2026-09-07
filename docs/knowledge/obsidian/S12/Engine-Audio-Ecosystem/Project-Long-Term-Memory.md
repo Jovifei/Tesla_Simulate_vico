@@ -206,7 +206,7 @@ Engine-Sim、ENSIM4、DasEtwas enginesound、VehicleNoiseSynthesizer、Ignis、P
 
 本轮新增的是可审计、默认关闭的数值修正：`cycle_phase` 将 720° crank radians 单次换算到 cycle domain；`causal_delays` 用零状态分数延迟消除 `np.roll` 未来样本回卷；`causal_convolution` 用已有分块卷积消除 centered `same` IR 的提前响应；`causal_derivative` 用后向差分移除 look-ahead；`shift_cut` 用 unity→cut→unity 约束换挡包络。H0 空旗标必须与旧 EngineAcoustics 在相同输入、seed、IR 下逐 PCM 相等；H1 仅开相位旗标；H2 再开四项时间修正。它们是听感诊断候选，不能自动转成 Human PASS 或 Profile。
 
-Stage AF fit v4 现在把车型、seed、numerical_fixes、renderer source SHA、IR 原始/有效 SHA 和 Reference source SHA 放入同一 receipt，并在 build 时 fail-closed 校验。多分辨率 STFT distance 负责捕捉同一宽频带内的八度错误，per-scene guard 负责阻止单个参考场景被总体均值掩盖。缺 fit、缺 IR、IR provenance 漂移、旧 schema 或模式不一致，都必须停止；`R3_PRIVATE_DIAGNOSTIC_ONLY` 不能升级为 R1/R2 或产品素材。
+Stage AF fit v4 是历史状态；Stage AF-R2 将 identity 合同升级为 fit v5，并把车型、seed、numerical_fixes、renderer source SHA、IR 原始/有效 SHA、Reference source SHA 及 audio/fit fingerprint 放入同一 receipt，并在 build 时 fail-closed 校验。多分辨率 STFT distance 负责捕捉同一宽频带内的八度错误，per-scene guard 负责阻止单个参考场景被总体均值掩盖。缺 fit、缺 IR、IR provenance 漂移、旧 schema 或模式不一致，都必须停止；`R3_PRIVATE_DIAGNOSTIC_ONLY` 不能升级为 R1/R2 或产品素材。
 
 Hellcat H0/H1/H2 三套本地试听均为原工作台 10 个 candidate WAV + 真车 Reference 字节副本 + `stage_af_binding.json`，共用已有 IR SHA `44ce5af25a55efdf996c7e5026271f80949625b95fbdc1c4b83863b6e991b152`，rights=`UNVERIFIED_LOCAL_ASSET`。页面刷新故障的根因是约 34.5 MB 自包含 HTML 被单线程 `TCPServer` 的慢客户端写入占住；服务改为 `ThreadingMixIn + TCPServer` 并以慢 socket + 第二请求验证。页面服务恢复不代表声音真实感或人耳通过。
 
@@ -221,3 +221,11 @@ fit v4 必须包含 `hot_idle / steady_mid / full_pull / afterfire` 四个 Refer
 H0 回归必须以固定 pre-fix Git commit 加载旧 renderer，并在同一 IR、输入、随机 seed 下逐 PCM 比较当前空 flags 输出；当前 IR 名称搜索顺序为 `new → archive → smooth → root`。不要把 H0 写成 current-vs-current，也不要把 H1/H2 的实际 flags 描述错。页面应从 contract 渲染 `NOT_FITTED`/`NOT_MEASURED`、真实 Reference label、实际 scene counts、B 轨 availability 和 sample-rate FFT 轴；feedback JSON 必须带 package/candidate/vehicle/contract SHA，状态停在 `WAITING_FOR_JOVI_FEEDBACK`。
 
 验证顺序固定为：AF-R/受影响 AF/AD focused → compileall/diff-check → Track-P guard → full S12 → 原服务真实慢客户端+第二请求及 single-thread negative control → manifest/contract SHA 重算。软件测试、自动距离下降、浏览器 HTTP 200 都不能替代 Jovi 人耳试听或宣称 Human PASS/OEM calibration/Profile Freeze；生成编号候选后停止等待反馈。
+
+## 17. Stage AF-R2 预拟合资格（2026-09-07）
+
+当 package UI 继续演进而声音 renderer 不变时，必须把 dependency identity 拆成 `audio_runtime_fingerprint`、`fit_algorithm_fingerprint`、`package_ui_fingerprint`。fit 只比较前两段、车型/采样率/IR/flags 等 fit identity；HTML、dashboard 或服务修改不能无故使 fit 失效。若 fit objective、guard、CLI search 或 runtime/IR 改变，则必须失效；合同语义实质变化时升 schema，不能静默复用旧 v4。
+
+正式 fitted package 要把 fit JSON 原始字节快照到 `<vehicle>/evidence/fit/final_fit.json`，并记录 source/snapshot SHA、schema、fit self SHA，使 source 删除后仍可独立验证。包还要保存 repository、git_head、base_main、dependency_dirty、source_policy；正式默认只接受 tracked source clean，开发 smoke 必须明确 `DEV_DIRTY_SOURCE` + `NOT_PROMOTABLE`。单车型 package 的导航只能指向实际存在的车型，外网 CSS 依赖必须标明 `AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY`。
+
+R2 的资格来源是最终 pushed SHA 的 GitHub Actions，而不是本机历史计数。H0 fixed oracle 至少覆盖 steady/body、shift、afterfire，事件必须落在输出窗口，并在同一 pre-fix implementation、IR、seed、输入和 `numerical_fixes=[]` 下逐 PCM 相等。只有 exact-head CI、source receipt、snapshot、manifest 和 oracle 全部闭合，才可进入 R3 重新生成 H0/H1/H2；否则停止等待外部证据。

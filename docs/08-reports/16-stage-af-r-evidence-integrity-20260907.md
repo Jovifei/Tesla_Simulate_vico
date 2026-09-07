@@ -2,6 +2,8 @@
 
 状态：`IMPLEMENTED / VERIFIED / DIAGNOSTIC_ONLY / WAITING_FOR_JOVI`
 
+> 2026-09-07 AF-R2 已将本报告中的 fit v4 identity 合同升级为 fit v5；本报告保留为 2026-09-07 前的历史 AF-R 快照，当前接手以 `17-stage-af-r2-pre-fit-qualification-20260907.md` 为准。
+
 ## 1. 范围与基线
 
 本轮从 `origin/main=ba13ced7f9eafdf0e4e4287c9c23eefc838c53f8` 建立独立 worktree：
