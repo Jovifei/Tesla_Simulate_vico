@@ -4332,9 +4332,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 ## 2026-09-07 Stage AF-R2 pre-fit qualification
 
 - [ ] Reconfirm PR #15 exact head/base and latest exact-head GitHub Actions; do not reuse local historical counts.
-- [ ] Add RED tests for split fingerprints, fit snapshot/recovery, Git source receipt/dirty policy, single-vehicle nav, status split, H0 steady/shift/afterfire oracle, and CSS dependency label.
-- [ ] Implement identity-scoped invalidation, immutable fit snapshot, Git source receipt, status split and package source recovery.
-- [ ] Fix single-vehicle navigation and truthful style dependency metadata without creating a new UI/backend.
-- [ ] Strengthen H0 fixed Git oracle across steady/body, shift and afterfire windows.
-- [ ] Run required focused/full/compileall/Track-P/diff checks, build only a fresh qualification smoke, then push isolated branch.
+- [x] Add RED tests for split fingerprints, fit snapshot/recovery, Git source receipt/dirty policy, single-vehicle nav, status split, H0 steady/shift/afterfire oracle, and CSS dependency label.
+- [x] Implement identity-scoped invalidation, immutable fit snapshot, Git source receipt, status split and package source recovery.
+- [x] Fix single-vehicle navigation and truthful style dependency metadata without creating a new UI/backend.
+- [x] Strengthen H0 fixed Git oracle across steady/body, shift and afterfire windows.
+- [x] Run required focused/full/compileall/Track-P/diff checks and build fresh qualification smokes.
 - [ ] Read latest exact-head CI; proceed to AF-R3 only if green, otherwise stop and report the blocker.
+
+### Stage AF-R2 local review
+
+- Local focused: `55 passed, 2 warnings`.
+- Full S12: `1486 passed, 2 skipped, 3 warnings, 232 subtests passed`, exit code 0.
+- Clean qualification smoke manifest: `d6a43479c5e82d7a1ebee96dda9367be01901d95b9379597e5b2dc89718ddba1`, 32 artifacts matched.
+- Exact-head Actions for the pre-change PR head were still `in_progress`; final qualification waits for the pushed SHA.

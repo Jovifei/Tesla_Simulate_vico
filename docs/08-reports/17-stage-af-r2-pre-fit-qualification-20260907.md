@@ -79,6 +79,18 @@ E:\Tesla_speed\review_packages\stage-af-r2-qualification-smoke-20260907\hellcat-
 
 正式 clean package 必须在提交后的 clean tracked source 上重新生成；若 source receipt 报告 dirty，R2 仍不成立。
 
+提交后已在 clean tracked source 上重新生成 qualification smoke：
+
+```text
+E:\Tesla_speed\review_packages\stage-af-r2-qualification-smoke-20260907-clean\hellcat-r2-clean-smoke
+manifest SHA = d6a43479c5e82d7a1ebee96dda9367be01901d95b9379597e5b2dc89718ddba1
+git_head = f0ef7ffb41391499a42ad91086ba9bade99b8c64
+source_status = SOURCE_CLEAN
+promotion_status = PROMOTABLE
+```
+
+该 clean smoke 的 32 个 artifact SHA 全部重算匹配，单车型 contract 只含 Hellcat package navigation；它仍是资格链路验证，不是 H0/H1/H2 R3 试听包。
+
 ## 4. 验证与停止门
 
 最终代码必须运行：
