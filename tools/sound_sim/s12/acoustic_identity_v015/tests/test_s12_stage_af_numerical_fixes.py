@@ -84,10 +84,21 @@ def test_default_ir_search_preserves_legacy_subdirectory_priority(tmp_path, monk
     assert loaded[0] == pytest.approx(3000.0 / 32768.0)
 
 
-def test_renderer_identity_records_original_ir_path_and_sha():
+def test_renderer_identity_records_original_ir_path_and_sha(tmp_path, monkeypatch):
+    root = tmp_path / "ir"
+    ir_dir = root / "new"
+    ir_dir.mkdir(parents=True)
+    source = ir_dir / "test_engine_16_eq_adjusted_16.wav"
+    wavfile.write(
+        source,
+        48000,
+        np.asarray([1000, 2000, 1000, 500], dtype=np.int16),
+    )
+    monkeypatch.setenv("S12_ENGINE_SIM_IR_ROOT", str(root))
+
     identity = renderer_identity("hellcat")
-    source = Path(identity["ir_source_path"])
-    assert source.is_file()
+    resolved = Path(identity["ir_source_path"])
+    assert resolved == source.resolve()
     assert identity["ir_source_sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
     assert identity["ir_provenance"] == "LOCAL_ASSET_REQUIRES_SEPARATE_RIGHTS_RECEIPT"
 
