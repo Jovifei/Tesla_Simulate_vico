@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
   <title>Dodge Challenger SRT Hellcat V8 - 声音算法人耳试听评审系统</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
@@ -41,31 +42,31 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-lg text-white tracking-wide">DODGE HELLCAT V8 声音仿真人耳试听</h1>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-red-950 text-red-400 border border-red-800 font-mono font-medium">Stage AD (AA-C3)</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-950 text-red-400 border border-red-800 font-mono font-medium">Stage AF-R (diagnostic)</span>
           </div>
           <p class="text-xs text-slate-400">声学闭环校准与真车A/B对比评审控制台 · Dodge Challenger SRT Hellcat 6.2L Supercharged</p>
         </div>
       </div>
 
-      <!-- KEY METRICS BANNER -->
+      <!-- KEY METRICS BANNER: values come from the current package contract -->
       <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
         <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
-          <span class="text-slate-400">校准前绝对参考距离:</span>
-          <span class="font-mono font-bold text-amber-400 line-through">0.880</span>
+          <span class="text-slate-400">Reference distance:</span>
+          <span id="fitDistanceBefore" class="font-mono font-bold text-amber-400">NOT_MEASURED</span>
           <span class="text-slate-500">→</span>
-          <span class="font-mono font-bold text-emerald-400">0.648</span>
-          <span class="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-1 py-0.2 rounded font-semibold">-26.3%</span>
+          <span id="fitDistanceFinal" class="font-mono font-bold text-emerald-400">NOT_MEASURED</span>
+          <span id="fitImprovement" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-1 py-0.2 rounded font-semibold">NOT_MEASURED</span>
         </div>
 
         <div class="bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
-          <span class="text-slate-400">硬性门禁:</span>
-          <span class="flex items-center gap-1 font-semibold text-emerald-400">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 零削顶 / 零爆音 PASS
+          <span class="text-slate-400">Measurement:</span>
+          <span id="measurementStatus" class="flex items-center gap-1 font-semibold text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> NOT_MEASURED
           </span>
         </div>
 
         <button onclick="toggleParamModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-          <span>⚙️</span> <span>查看18项物理调校参数</span>
+          <span>⚙️</span> <span id="paramCountLabel">当前包参数 (0)</span>
         </button>
       </div>
     </div>
@@ -167,11 +168,11 @@
           </div>
 
           <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1 border-t border-slate-800/80">
-            <span>20 Hz (低频轰鸣)</span>
-            <span>250 Hz (V8基频)</span>
-            <span>1 kHz (机械咬合)</span>
-            <span>4 kHz (增压啸叫)</span>
-            <span>16 kHz</span>
+            <span id="vizAxisMin">0 Hz</span>
+            <span id="vizAxisQuarter">6 kHz</span>
+            <span id="vizAxisMid">12 kHz</span>
+            <span id="vizAxisThreeQuarter">18 kHz</span>
+            <span id="vizAxisMax">24 kHz</span>
           </div>
         </div>
       </div>
@@ -180,12 +181,12 @@
     <!-- CATEGORY FILTER PILLS -->
     <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-1.5 flex-wrap">
-        <button onclick="filterCategory('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-red-600 text-white shadow-sm" data-cat="all">全部场景 (10)</button>
-        <button onclick="filterCategory('idle')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="idle">怠速煮水 (2)</button>
-        <button onclick="filterCategory('acceleration')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="acceleration">加速狂飙 (2)</button>
-        <button onclick="filterCategory('afterfire')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="afterfire">回火放炮 (1)</button>
-        <button onclick="filterCategory('dynamics')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="dynamics">动态换挡与松油 (2)</button>
-        <button onclick="filterCategory('cruising')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="cruising">高低速巡航 (3)</button>
+        <button onclick="filterCategory('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-red-600 text-white shadow-sm" data-cat="all"><span id="categoryAllLabel">全部场景</span></button>
+        <button onclick="filterCategory('idle')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="idle"><span id="categoryIdleLabel">怠速煮水</span></button>
+        <button onclick="filterCategory('acceleration')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="acceleration"><span id="categoryAccelerationLabel">加速狂飙</span></button>
+        <button onclick="filterCategory('afterfire')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="afterfire"><span id="categoryAfterfireLabel">回火放炮</span></button>
+        <button onclick="filterCategory('dynamics')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="dynamics"><span id="categoryDynamicsLabel">动态换挡与松油</span></button>
+        <button onclick="filterCategory('cruise')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition bg-slate-800 text-slate-300 hover:text-white" data-cat="cruise"><span id="categoryCruiseLabel">巡航</span></button>
       </div>
 
       <!-- Action buttons -->
@@ -210,9 +211,9 @@
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
         <div>
           <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <span>⚙️</span> Stage AD 物理声学标定参数台账 (18项全闭环收敛)
+            <span>⚙️</span> Stage AF-R 当前包参数台账 <span id="paramModalStatus" class="text-xs font-mono text-slate-400">NOT_FITTED</span>
           </h3>
-          <p class="text-xs text-slate-400 mt-0.5">算法由粗粒度24点Sobol空间探索 + 12点细粒度反射收敛驱动，与真车R3声学诊断对齐</p>
+          <p class="text-xs text-slate-400 mt-0.5">参数与当前 package contract 绑定；没有 fit 时不显示虚构的收敛数字。</p>
         </div>
         <button onclick="toggleParamModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
           ✕
@@ -256,7 +257,14 @@
   <script>
     const SCENES = __SCENES_JSON__;
     const PARAMETERS = __PARAMS_JSON__;
+    const DASHBOARD_CONTRACT = __DASHBOARD_CONTRACT_JSON__;
     const AUDIO_STORE = __AUDIOS_JSON__;
+    const SCORECARD_STORAGE_KEY = [
+      's12_audition',
+      DASHBOARD_CONTRACT.package_id || 'UNBOUND_PACKAGE',
+      DASHBOARD_CONTRACT.candidate_id || 'UNBOUND_CANDIDATE',
+      DASHBOARD_CONTRACT.vehicle || 'unknown'
+    ].join(':');
 
     let currentSceneIndex = 2; // Default: 03_hot_idle
     let currentSource = 'candidate'; // 'candidate' or 'ref'
@@ -269,7 +277,7 @@
     // Audition scorecard storage in localStorage / memory
     let scorecard = {};
     try {
-      const saved = localStorage.getItem('hellcat_audition_scorecard_v1');
+      const saved = localStorage.getItem(SCORECARD_STORAGE_KEY);
       if (saved) scorecard = JSON.parse(saved);
     } catch (e) {}
 
@@ -282,6 +290,73 @@
     const audioEl = document.getElementById('audioPlayer');
     const canvas = document.getElementById('visualizerCanvas');
     const canvasCtx = canvas.getContext('2d');
+
+    function referenceBinding(scene) {
+      const references = DASHBOARD_CONTRACT.references || {};
+      return scene.ref_file ? references[scene.ref_file] || null : null;
+    }
+
+    function hasReference(scene) {
+      const binding = referenceBinding(scene);
+      if (!binding || !binding.available || !scene.ref_file) return false;
+      return Boolean(AUDIO_STORE[scene.id + '_ref'] || binding.url);
+    }
+
+    function renderContractStatus() {
+      const before = DASHBOARD_CONTRACT.fit_baseline_distance;
+      const finalDistance = DASHBOARD_CONTRACT.fit_final_distance;
+      const beforeNode = document.getElementById('fitDistanceBefore');
+      const finalNode = document.getElementById('fitDistanceFinal');
+      const improvementNode = document.getElementById('fitImprovement');
+      const measurementNode = document.getElementById('measurementStatus');
+      const paramLabel = document.getElementById('paramCountLabel');
+      const modalStatus = document.getElementById('paramModalStatus');
+      const finiteNumber = value => typeof value === 'number' && Number.isFinite(value);
+      const formatDistance = value => finiteNumber(value) ? value.toFixed(6) : 'NOT_MEASURED';
+      beforeNode.textContent = formatDistance(before);
+      finalNode.textContent = formatDistance(finalDistance);
+      if (finiteNumber(before) && before > 0 && finiteNumber(finalDistance)) {
+        const improvement = (before - finalDistance) / before * 100;
+        improvementNode.textContent = `${improvement >= 0 ? '' : '+'}${improvement.toFixed(1)}%`;
+      } else {
+        improvementNode.textContent = 'NOT_MEASURED';
+      }
+      const measurement = DASHBOARD_CONTRACT.measurement_status || 'NOT_MEASURED';
+      measurementNode.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> ${measurement}`;
+      const parameterCount = Array.isArray(PARAMETERS) ? PARAMETERS.length : 0;
+      paramLabel.textContent = `当前包参数 (${parameterCount})`;
+      modalStatus.textContent = DASHBOARD_CONTRACT.fit_status || 'NOT_FITTED';
+    }
+
+    function renderFrequencyAxis() {
+      const sampleRate = Number(DASHBOARD_CONTRACT.sample_rate_hz) || 48000;
+      const nyquist = sampleRate / 2;
+      const labels = [0, 0.25, 0.5, 0.75, 1].map(frequency => {
+        const hz = Math.round(nyquist * frequency);
+        return hz >= 1000 ? `${(hz / 1000).toFixed(hz % 1000 ? 1 : 0)} kHz` : `${hz} Hz`;
+      });
+      ['vizAxisMin', 'vizAxisQuarter', 'vizAxisMid', 'vizAxisThreeQuarter', 'vizAxisMax']
+        .forEach((id, index) => { document.getElementById(id).textContent = labels[index]; });
+    }
+
+    function renderCategoryFilters() {
+      const labels = {
+        all: ['全部场景', SCENES.length],
+        idle: ['怠速煮水', SCENES.filter(scene => scene.category === 'idle').length],
+        acceleration: ['加速狂飙', SCENES.filter(scene => scene.category === 'acceleration').length],
+        afterfire: ['回火放炮', SCENES.filter(scene => scene.category === 'afterfire').length],
+        dynamics: ['动态换挡与松油', SCENES.filter(scene => scene.category === 'dynamics').length],
+        cruise: ['巡航', SCENES.filter(scene => scene.category === 'cruise').length]
+      };
+      Object.entries(labels).forEach(([category, [label, count]]) => {
+        const node = document.getElementById(`category${category[0].toUpperCase()}${category.slice(1)}Label`);
+        if (node) node.textContent = `${label} (${count})`;
+      });
+      const allButton = document.querySelector('[data-cat="all"]');
+      if (allButton && !document.getElementById('categoryAllLabel')) {
+        allButton.textContent = `${labels.all[0]} (${labels.all[1]})`;
+      }
+    }
 
     // Initialize audio context lazily on user gesture
     function initAudioContext() {
@@ -313,7 +388,7 @@
       SCENES.forEach((scene, idx) => {
         const isSelected = (idx === currentSceneIndex);
         const cardScore = scorecard[scene.id] || { stars: 0, tags: [], notes: '' };
-        const hasRef = !!scene.ref_file;
+        const hasRef = hasReference(scene);
 
         const card = document.createElement('div');
         card.className = `scene-card bg-[#111927] border rounded-xl p-4 transition-all space-y-3 relative overflow-hidden ${
@@ -340,14 +415,8 @@
           return `<button onclick="toggleTag('${scene.id}', '${tag}')" class="px-2 py-0.5 rounded border transition ${styleClass}">${tag}</button>`;
         }).join('');
 
-        let refSourceText = '';
-        if (hasRef) {
-          if (scene.id === '07_steady_high') {
-            refSourceText = 'YouTube 德国高速 (AutoTopNL)';
-          } else {
-            refSourceText = 'B站 国道实录 (BV14mwHeMEJU)';
-          }
-        }
+        const refBinding = referenceBinding(scene);
+        const refSourceText = hasRef ? (refBinding.source_label || '已绑定 Reference') : '';
         const refBadge = hasRef 
           ? `<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 真车实录: ${refSourceText}</span>`
           : '<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">算法自测工况</span>';
@@ -447,8 +516,8 @@
 
       // Determine audio key
       let audioKey = scene.id + '_' + currentSource;
-      if (currentSource === 'ref' && !scene.ref_file) {
-        // Fallback to candidate only if this scene genuinely has no reference file
+      if (currentSource === 'ref' && !hasReference(scene)) {
+        // Do not play an unverified/missing Reference as a candidate fallback.
         audioKey = scene.id + '_candidate';
         currentSource = 'candidate';
         updateSourceButtonsUI(scene);
@@ -497,10 +566,10 @@
         badgeSource.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold';
       }
 
-      if (!scene.ref_file) {
+      if (!hasReference(scene)) {
         btnB.disabled = true;
         btnB.classList.add('opacity-40', 'cursor-not-allowed');
-        btnB.title = '此工况暂无独立真车实录参考音频';
+        btnB.title = '此工况暂无已验证真车参考音频';
       } else {
         btnB.disabled = false;
         btnB.classList.remove('opacity-40', 'cursor-not-allowed');
@@ -511,7 +580,7 @@
     // Switch Source A/B with timestamp preservation
     function switchSource(source) {
       const scene = SCENES[currentSceneIndex];
-      if (source === 'ref' && !scene.ref_file) return;
+      if (source === 'ref' && !hasReference(scene)) return;
       if (source === currentSource) return;
 
       const currentTime = audioEl.currentTime;
@@ -757,20 +826,31 @@
 
     function saveScorecard() {
       try {
-        localStorage.setItem('hellcat_audition_scorecard_v1', JSON.stringify(scorecard));
+        localStorage.setItem(SCORECARD_STORAGE_KEY, JSON.stringify(scorecard));
       } catch (e) {}
     }
 
     function exportScorecard() {
+      const candidateHashes = DASHBOARD_CONTRACT.candidate_pcm_sha256 || {};
+      const referenceHashes = DASHBOARD_CONTRACT.reference_sha256 || {};
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
         timestamp: new Date().toISOString(),
-        model: "Stage AD Hellcat V8 Closed-Loop Calibration v1",
-        calibration_reference_distance: 0.64835,
+        schema: "s12.stage_af.feedback.v1",
+        package_id: DASHBOARD_CONTRACT.package_id || null,
+        candidate_id: DASHBOARD_CONTRACT.candidate_id || null,
+        vehicle: DASHBOARD_CONTRACT.vehicle || null,
+        flags: DASHBOARD_CONTRACT.flags || [],
+        contract_sha256: DASHBOARD_CONTRACT.contract_sha256 || null,
+        candidate_pcm_sha256: candidateHashes,
+        reference_sha256: referenceHashes,
+        human_status: "WAITING_FOR_JOVI_FEEDBACK",
         scorecard: scorecard
       }, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `hellcat_audition_review_${Date.now()}.json`);
+      const vehicle = DASHBOARD_CONTRACT.vehicle || 'vehicle';
+      const packageId = DASHBOARD_CONTRACT.package_id || 'unbound-package';
+      downloadAnchor.setAttribute("download", `${vehicle}_${packageId}_audition_feedback_${Date.now()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -795,6 +875,9 @@
 
     // Init page
     window.addEventListener('DOMContentLoaded', () => {
+      renderContractStatus();
+      renderFrequencyAxis();
+      renderCategoryFilters();
       renderParamTable();
       loadScene(currentSceneIndex, 'candidate', false);
       drawVisualizer();

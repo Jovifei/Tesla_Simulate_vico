@@ -4310,3 +4310,21 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Affected static/focused tests: `122 passed, 1 warning`; full S12: `1460 passed, 2 skipped, 2 warnings, 232 subtests passed`.
 - Warnings are pre-existing: one invalid escape in a test string and one non-data chunk notice in the original IR WAV.
 - Cleanup merge point: `75fb6617884489d7f4894984bc7304a19a32a963`; current main SHA is always read from `git rev-parse origin/main`.
+## 2026-09-07 Stage AF-R evidence integrity
+
+- [x] Verify `origin/main=ba13ced7f9eafdf0e4e4287c9c23eefc838c53f8`, old package roots, and the new isolated worktree.
+- [x] Add RED fixtures for Reference drift/missing files, old/new H0 oracle, package overwrite/partial publish, feedback identity, cruise/hasRef/FFT behavior, and real slow-client concurrency.
+- [x] Implement package/fit/renderer/IR/Reference/PCM provenance contracts and dependency fingerprints.
+- [x] Implement fresh staging + atomic publish protection without changing the original renderer, workbench, or old package bytes.
+- [x] Make the original dashboard truthful and package-scoped; keep unavailable/reference/measurement states fail-closed.
+- [x] Run focused, affected static, full S12, compileall, Track-P and diff checks; record fresh evidence.
+- [x] Update current docs/knowledge with Stage AF-R lessons.
+- [x] Commit/push only the isolated branch and stop for review.
+
+### Review
+
+- Initial RED exposed the missing `stage_af.package_integrity` module before implementation; the same fixtures are now GREEN.
+- AF-R/AF/AD/Track-P focused: `77 passed, 1 warning`.
+- Full current S12: `1476 passed, 2 skipped, 1 warning, 232 subtests passed`, exit code 0.
+- Smoke package manifest SHA and 32 artifact records recomputed successfully; browser console errors: 0.
+- Existing H0/H1/H2 roots remained outside the new staging/publish path; no old package was overwritten.

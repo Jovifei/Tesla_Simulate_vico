@@ -152,3 +152,25 @@ Stage AF v4 fit receipt 必须绑定 vehicle、seed、numerical fixes、renderer
 ### 9.4 当前接力状态
 
 代码验证提交：`b1b5b4109f9daff698f69057ae04218606e420f9`、`6feb0eca475d021e3e8facfe204691abb0dce80d`、`3c22a6327819995e15c7073e47eb9970c422a96f`。focused AF/AD/numerical 为 `29 passed`，full S12 为 `1459 passed, 2 skipped, 1 warning, 232 subtests passed`，Track-P 冻结路径改动 0；自动证据不能替代 Jovi 人耳试听。后续 Agent 读完本节后，生成明确编号候选即停止等待 Jovi，不自动扩车型或无限调参。
+
+## 10. 2026-09-07 Stage AF-R 证据完整性接力
+
+Stage AF-R 是对现有 Stage AF/AD 链的证据治理修正，不是第三套 renderer 或新试听服务。唯一允许的声音链仍是：
+
+```text
+VehicleState / existing scene trace
+→ stage_ad.EngineAcoustics
+→ original build_unified_dashboards.py
+→ original HTML A/B workbench
+→ existing serve_dashboards.py
+```
+
+接手时从现场 `origin/main` 建立新 worktree；不要引用旧 HEAD、不要覆盖已发布 package。每个新包必须使用新的安全 `package_id`，先写 `output_root/.stage_af_r_staging/<package_id>`，校验 manifest/binding/contract 和所有候选、Reference、HTML artifact 的 SHA，再原子发布到不存在的目标目录。目标已存在或 staging 失败必须停止/清理，不能覆盖旧包。
+
+fit v4 的 `reference_sources` 是 fit 的硬输入：四个 `hot_idle / steady_mid / full_pull / afterfire` 场景都必须有 filename/SHA；build 必须从调用者显式传入的 `--reference-root` 找到相同 source bytes，并拒绝 SHA 漂移、缺失和 stale destination。省略 `--reference-root` 只允许生成没有 Reference 绑定的 audition-only candidate，绝不从 output root 或旧 package 猜测来源。参考素材仍按 rights/evidence 边界记录，`UNVERIFIED_LOCAL_ASSET`/R3 不能升级为 R1/R2。
+
+页面只显示 `dashboard_contract.json` 的真实数据：没有 fit 或测量就显示 `NOT_FITTED` / `NOT_MEASURED`；参数数、fit distance、Reference source label、scene category/count、B 轨可用性和 FFT 轴都从当前 package 读取。反馈导出必须带 package/candidate/vehicle/contract SHA，状态保持 `WAITING_FOR_JOVI_FEEDBACK`。不要保留旧页面的固定分数、固定车型、PASS 文案或 `cruising` 假类别。
+
+H0 必须用固定的 pre-fix Git commit 作为 oracle，在同一输入、seed 和 IR 下与当前空 flags 输出逐 PCM 比较；不能拿当前代码与当前代码比较。IR 搜索顺序保持 `new → archive → smooth → root`。H1/H2 描述要以实际 flags 为准：当前 H1 是 `cycle_phase`，H2 是四项时间处理修正，不能写成“只增加了时间修正”而忽略相位差异。
+
+完成后至少运行 AF-R focused、受影响 AF/AD、完整 S12、compileall、Track-P 和 `git diff --check`；服务回归必须是真实慢连接加第二请求，并保留 single-thread negative control。软件/指标通过仍不等于 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze；生成编号试听包后停止，等待 Jovi 实际 A/B 反馈。

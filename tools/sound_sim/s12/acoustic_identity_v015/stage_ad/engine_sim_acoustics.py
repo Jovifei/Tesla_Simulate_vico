@@ -25,13 +25,13 @@ SOUND_LIB_DIR = r"E:\project\engine-sim\runtime\v0.1.11a\engine-sim-build_0_1_11
 def load_impulse_response(ir_name: str, target_sr: int = 48000, max_samples: int = 12000) -> np.ndarray:
     """Load an impulse response from the engine-sim sound library and resample to target_sr."""
     library_dir = os.environ.get("S12_ENGINE_SIM_IR_ROOT", SOUND_LIB_DIR)
-    # Keep the reconciled main/root asset first so numerical_fixes=() preserves
-    # the prior EngineAcoustics output when the caller provides the same IR.
+    # Preserve the pre-AF lookup order so numerical_fixes=() selects the same
+    # named IR when multiple local copies exist.
     candidates = [
-        os.path.join(library_dir, f"{ir_name}.wav"),
         os.path.join(library_dir, "new", f"{ir_name}.wav"),
         os.path.join(library_dir, "archive", f"{ir_name}.wav"),
         os.path.join(library_dir, "smooth", f"{ir_name}.wav"),
+        os.path.join(library_dir, f"{ir_name}.wav"),
     ]
     path = None
     for c in candidates:

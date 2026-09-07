@@ -74,14 +74,14 @@ def test_firing_phase_conversion_is_exactly_one_half_in_cycle_domain():
     assert firing_phase_for_cycle(3.0 * np.pi, frozenset()) == pytest.approx(3.0 * np.pi)
 
 
-def test_default_ir_search_keeps_root_asset_before_optional_subdirectories(tmp_path, monkeypatch):
+def test_default_ir_search_preserves_legacy_subdirectory_priority(tmp_path, monkeypatch):
     root = tmp_path / "ir"
     (root / "new").mkdir(parents=True)
     wavfile.write(root / "example.wav", 48000, np.asarray([1000], dtype=np.int16))
     wavfile.write(root / "new" / "example.wav", 48000, np.asarray([3000], dtype=np.int16))
     monkeypatch.setenv("S12_ENGINE_SIM_IR_ROOT", str(root))
     loaded = load_impulse_response("example", target_sr=48000)
-    assert loaded[0] == pytest.approx(1000.0 / 32768.0)
+    assert loaded[0] == pytest.approx(3000.0 / 32768.0)
 
 
 def test_renderer_identity_records_original_ir_path_and_sha():

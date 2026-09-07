@@ -382,6 +382,39 @@ def load_audio_b64(path: Path) -> str:
         return "data:audio/wav;base64," + base64.b64encode(path.read_bytes()).decode("ascii")
     return ""
 
+
+def _default_dashboard_contract(v_key: str, cfg: dict) -> dict:
+    references = {}
+    web_dir = cfg["dir"] / "web_audio"
+    for scene in cfg.get("scenes", []):
+        filename = scene.get("ref_file")
+        if not filename or filename in references:
+            continue
+        path = web_dir / filename
+        references[filename] = {
+            "available": bool(path.is_file() and load_audio_b64(path)),
+            "fit_required": False,
+            "source_label": "未绑定 Reference",
+            "sha256": None,
+        }
+    return {
+        "schema": "s12.stage_af.dashboard_contract.v1",
+        "package_id": "UNBOUND_PACKAGE",
+        "candidate_id": "UNBOUND_CANDIDATE",
+        "vehicle": v_key,
+        "flags": [],
+        "seed": None,
+        "fit_status": "NOT_FITTED",
+        "measurement_status": "NOT_MEASURED",
+        "sample_rate_hz": 48000,
+        "package_port": cfg.get("port"),
+        "nav_urls": {},
+        "references": references,
+        "candidate_pcm_sha256": {},
+        "reference_sha256": {},
+        "parameters": [],
+    }
+
 def render_vehicle_audio(v_key: str, cfg: dict):
     print(f"\n=======================================================")
     print(f"--> Rendering 10 Physics Tracks for {cfg['name']} ({v_key})")
@@ -556,17 +589,19 @@ def build_dashboard(v_key: str, cfg: dict):
     
     # Global 4-Vehicle Top Switcher Navigation Bar
     nav_links = []
+    nav_ports = cfg.get("_nav_ports", {})
     for vk, other_cfg in VEHICLE_CONFIGS.items():
         is_current = (vk == v_key)
+        port = nav_ports.get(vk, other_cfg["port"])
         if is_current:
             nav_links.append(f'''
-              <a href="http://localhost:{other_cfg['port']}" class="text-xs px-3 py-1 rounded-md bg-red-950/90 text-red-400 border border-red-700/80 font-bold flex items-center gap-1 pointer-events-none">
+              <a href="http://localhost:{port}/" class="text-xs px-3 py-1 rounded-md bg-red-950/90 text-red-400 border border-red-700/80 font-bold flex items-center gap-1 pointer-events-none">
                 {other_cfg['icon']} {other_cfg['name']} (当前)
               </a>
             ''')
         else:
             nav_links.append(f'''
-              <a href="http://localhost:{other_cfg['port']}" class="text-xs px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors flex items-center gap-1 font-medium">
+              <a href="http://localhost:{port}/" class="text-xs px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors flex items-center gap-1 font-medium">
                 {other_cfg['icon']} {other_cfg['name']}
               </a>
             ''')
@@ -590,8 +625,13 @@ def build_dashboard(v_key: str, cfg: dict):
     '''
     html = html.replace("</header>", "</header>\n" + vehicle_nav)
     
+    contract = cfg.get("_dashboard_contract") or _default_dashboard_contract(v_key, cfg)
     scenes_json = json.dumps(cfg["scenes"], ensure_ascii=False)
-    params_json = "[]"
+    params_json = json.dumps(
+        cfg.get("_dashboard_params", contract.get("parameters", [])),
+        ensure_ascii=False,
+    )
+    contract_json = json.dumps(contract, ensure_ascii=False)
     
     # Pack Base64 audio store
     web_dir = cfg["dir"] / "web_audio"
@@ -602,7 +642,7 @@ def build_dashboard(v_key: str, cfg: dict):
         cand_path = web_dir / scene["candidate_file"]
         audio_store[cand_key] = load_audio_b64(cand_path)
         
-        if scene.get("ref_file"):
+        if scene.get("ref_file") and (web_dir / scene["ref_file"]).is_file():
             ref_key = scene["id"] + "_ref"
             ref_path = web_dir / scene["ref_file"]
             audio_store[ref_key] = load_audio_b64(ref_path)
@@ -615,6 +655,7 @@ def build_dashboard(v_key: str, cfg: dict):
     full_html = (html
                  .replace("__SCENES_JSON__", scenes_json)
                  .replace("__PARAMS_JSON__", params_json)
+                 .replace("__DASHBOARD_CONTRACT_JSON__", contract_json)
                  .replace("__AUDIOS_JSON__", audios_json))
                  
     out_index = cfg["dir"] / "index.html"

@@ -1361,3 +1361,11 @@ Rules:
 # 2026-09-06 S12 review-server refresh lesson
 
 - 自包含的大体积 A/B HTML 由单线程 `TCPServer` 提供时，一个慢客户端会阻塞后续刷新；评审服务必须使用 `ThreadingMixIn`（并保留端口/根目录边界），并用“慢连接 + 第二请求”回归测试验证。
+
+# 2026-09-07 S12 Stage AF-R evidence-integrity lessons
+
+- 页面是当前 package 的证据投影，不是静态宣传页：fit distance、参数数、Reference label、scene counts、B 轨 availability 和 FFT 轴必须由当前 contract/实际 bytes 计算；JSON `null` 不能通过 `Number(null)` 被误显示成 `0.000000`。
+- fit-required Reference 与 audition-only Reference 必须分开标记。构建时只搜索调用者显式给出的 `--reference-root`；不传 root 不得回看 output/旧 package，source 缺失而 destination 已有字节时必须 fail-closed，不能把 stale destination 当真车参考。
+- H0 回归必须引用固定 pre-fix Git commit，并在相同输入、seed、IR 下逐 PCM 比较；current-vs-current 不是回归 oracle。IR 多副本的选择顺序必须有测试守护（`new → archive → smooth → root`）。
+- 发布包先写新 staging 目录，manifest/binding/contract 与所有候选、Reference、HTML artifact SHA 重算通过后再原子 rename；已存在 package id、部分 staging 或旧包都不能覆盖。总 manifest 要下钻到每个 scene 的输入/候选/Reference/IR/fit/HTML identity。
+- 浏览器并发验证必须同时保留真实慢客户端第二请求和 single-thread negative control；软件测试、指标下降、HTTP 200 仍只是工程证据，不能改写成 Human PASS、OEM_MATCH、CALIBRATED 或 Profile Freeze。

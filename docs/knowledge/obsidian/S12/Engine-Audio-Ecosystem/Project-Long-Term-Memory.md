@@ -211,3 +211,13 @@ Stage AF fit v4 现在把车型、seed、numerical_fixes、renderer source SHA�
 Hellcat H0/H1/H2 三套本地试听均为原工作台 10 个 candidate WAV + 真车 Reference 字节副本 + `stage_af_binding.json`，共用已有 IR SHA `44ce5af25a55efdf996c7e5026271f80949625b95fbdc1c4b83863b6e991b152`，rights=`UNVERIFIED_LOCAL_ASSET`。页面刷新故障的根因是约 34.5 MB 自包含 HTML 被单线程 `TCPServer` 的慢客户端写入占住；服务改为 `ThreadingMixIn + TCPServer` 并以慢 socket + 第二请求验证。页面服务恢复不代表声音真实感或人耳通过。
 
 可复用证据：focused AF/AD/numerical=`29 passed`；full S12=`1459 passed, 2 skipped, 1 warning, 232 subtests passed`；Track-P 冻结路径改动 0；Stage-Z/AA 真实 rows 各 `12/12 executable`。后续 Agent 必须先读 `docs/08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` 与 `docs/05-execution/04-stage-af-local-ai-handoff.md`，完成编号候选后停止等待 Jovi。
+
+## 16. Stage AF-R 证据完整性（2026-09-07）
+
+Stage AF-R 的核心经验是：页面和试听包本身也是证据边界，不能靠静态文案或旧包路径“看起来完成”。保留 `EngineAcoustics` 与原 A/B 工作台后，新增的 `package_integrity.py` 将 dashboard contract、fit/reference/IR identity、逐场景 PCM/Reference SHA、binding、依赖源码 fingerprint 和 manifest 自哈希串成一条可重算链；所有新包先进入新 staging 目录，artifact 校验通过后才原子发布，已存在目标绝不覆盖。
+
+fit v4 必须包含 `hot_idle / steady_mid / full_pull / afterfire` 四个 Reference source filename/SHA。构建时只接受调用者显式提供的 `--reference-root`；不传 root 时不搜索 output/旧包，目标目录已有而 source 缺失时也拒绝 stale destination。Reference provenance 要保留 source path、SHA、rights/evidence 状态；`UNVERIFIED_LOCAL_ASSET` 和 R3 只能支持受控诊断试听，不能升级为 R1、OEM 或产品素材。
+
+H0 回归必须以固定 pre-fix Git commit 加载旧 renderer，并在同一 IR、输入、随机 seed 下逐 PCM 比较当前空 flags 输出；当前 IR 名称搜索顺序为 `new → archive → smooth → root`。不要把 H0 写成 current-vs-current，也不要把 H1/H2 的实际 flags 描述错。页面应从 contract 渲染 `NOT_FITTED`/`NOT_MEASURED`、真实 Reference label、实际 scene counts、B 轨 availability 和 sample-rate FFT 轴；feedback JSON 必须带 package/candidate/vehicle/contract SHA，状态停在 `WAITING_FOR_JOVI_FEEDBACK`。
+
+验证顺序固定为：AF-R/受影响 AF/AD focused → compileall/diff-check → Track-P guard → full S12 → 原服务真实慢客户端+第二请求及 single-thread negative control → manifest/contract SHA 重算。软件测试、自动距离下降、浏览器 HTTP 200 都不能替代 Jovi 人耳试听或宣称 Human PASS/OEM calibration/Profile Freeze；生成编号候选后停止等待反馈。

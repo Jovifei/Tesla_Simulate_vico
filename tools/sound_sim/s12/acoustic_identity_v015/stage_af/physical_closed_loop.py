@@ -24,6 +24,7 @@ from scipy.signal import stft, resample_poly
 from scipy.stats import qmc
 
 from ..stage_ad import engine_sim_acoustics as stage_ad_audio
+from .package_integrity import dependency_fingerprint
 from .spectral_guard import multires_spectral_distance
 
 SAMPLE_RATE = 48_000
@@ -542,10 +543,10 @@ def _resolve_ir_source(vehicle: str) -> Path:
     library_dir = Path(os.environ.get("S12_ENGINE_SIM_IR_ROOT", stage_ad_audio.SOUND_LIB_DIR))
     name = IR_NAMES[vehicle]
     candidates = (
-        library_dir / f"{name}.wav",
         library_dir / "new" / f"{name}.wav",
         library_dir / "archive" / f"{name}.wav",
         library_dir / "smooth" / f"{name}.wav",
+        library_dir / f"{name}.wav",
     )
     for path in candidates:
         if path.is_file():
@@ -567,6 +568,7 @@ def renderer_identity(vehicle: str, numerical_fixes: Sequence[str] = ()) -> dict
         "ir_provenance": "LOCAL_ASSET_REQUIRES_SEPARATE_RIGHTS_RECEIPT",
         "ir_rights_status": "UNVERIFIED_LOCAL_ASSET",
         "numerical_fixes": sorted(renderer.engine.numerical_fixes),
+        "dependency_fingerprint": dependency_fingerprint(),
     }
 
 
@@ -590,6 +592,17 @@ def validate_fit_payload(payload: Mapping[str, Any], vehicle: str,
         raise ValueError("fit vehicle/seed mismatch")
     if sorted(payload.get("numerical_fixes", [])) != sorted(numerical_fixes):
         raise ValueError("fit/render numerical mode mismatch")
+    if payload.get("reference_level") not in (
+        "R3_PRIVATE_DIAGNOSTIC_ONLY",
+        "R2_AUTHORIZED_DIAGNOSTIC",
+    ):
+        raise ValueError("unsupported reference evidence level")
+    recorded_references = payload.get("reference_sources")
+    if not isinstance(recorded_references, Mapping):
+        raise ValueError("fit reference sources missing")
+    missing_scenes = [scene for scene in FIT_SCENES if scene not in recorded_references]
+    if missing_scenes:
+        raise ValueError(f"fit reference missing: {','.join(missing_scenes)}")
     canonical = dict(payload)
     checksum = canonical.pop("fit_sha256", None)
     encoded = json.dumps(canonical, ensure_ascii=False, sort_keys=True,
@@ -630,6 +643,11 @@ def fit_vehicle(
     flags = tuple(identity["numerical_fixes"])
     references = load_reference_audio(reference_dir)
     sources = reference_sources(reference_dir)
+    missing_scenes = [scene for scene in FIT_SCENES if scene not in sources]
+    if missing_scenes:
+        raise FileNotFoundError(
+            f"missing required fit reference scenes: {','.join(missing_scenes)}"
+        )
     selected_families = list(dict.fromkeys(families))
     if any(f not in FAMILY_PARAMETERS for f in selected_families):
         raise ValueError("unknown parameter family")
