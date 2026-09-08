@@ -8,6 +8,7 @@ on:
       - ".github/workflows/s12-stage-ag-r1-reference-remediation.yml"
       - "tools/sound_sim/s12/acoustic_identity_v015/stage_ag/**"
       - "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py"
+      - "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_review_server.py"
   workflow_dispatch:
 
 permissions:
@@ -34,7 +35,10 @@ jobs:
         run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ag
 
       - name: Stage AG-R1 focused contracts
-        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py
+        run: >-
+          python -m pytest -q
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_review_server.py
 
       - name: Preserve Stage AG v1 and AF-R focused contracts
         run: >-
