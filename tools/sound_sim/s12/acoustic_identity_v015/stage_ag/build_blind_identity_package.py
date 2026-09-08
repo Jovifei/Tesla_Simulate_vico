@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import random
+import secrets
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
@@ -94,7 +95,7 @@ def build_blind_package(
     output_root: Path,
     mapping_output: Path,
     *,
-    seed: int = 20260908,
+    seed: int | None = None,
     scenes: tuple[str, ...] = tuple(SCENE_FILES),
 ) -> Path:
     source_package = source_package.resolve()
@@ -106,15 +107,26 @@ def build_blind_package(
         raise ValueError("sealed mapping must be outside the public blind package")
     source_manifest_path = source_package / "audition_manifest.json"
     source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
-    if source_manifest.get("identity_mode") not in ("legacy", "vehicle_identity_v1"):
+    if source_manifest.get("schema") != "s12.stage_ag.package_manifest.v1":
         raise ValueError("source package is not a Stage AG identity package")
+    if source_manifest.get("identity_mode") not in ("legacy", "vehicle_identity_v1"):
+        raise ValueError("source package has unsupported identity mode")
+    recorded_manifest_sha = str(source_manifest.get("manifest_sha256", ""))
+    source_for_hash = dict(source_manifest)
+    source_for_hash.pop("manifest_sha256", None)
+    calculated_manifest_sha = _manifest_checksum(source_for_hash)
+    if not recorded_manifest_sha or recorded_manifest_sha != calculated_manifest_sha:
+        raise ValueError("source Stage AG manifest checksum mismatch")
     for vehicle in VEHICLES:
         _vehicle_entry(source_manifest, vehicle)
 
-    rng = random.Random(int(seed))
+    rng = random.Random(int(seed)) if seed is not None else secrets.SystemRandom()
     shuffled = list(VEHICLES)
     rng.shuffle(shuffled)
     mapping = dict(zip(LABELS, shuffled))
+    randomization_mode = (
+        "DETERMINISTIC_DIAGNOSTIC" if seed is not None else "SYSTEM_RANDOM_BLIND"
+    )
 
     output_root.mkdir(parents=True, exist_ok=False)
     artifacts: list[dict[str, str]] = []
@@ -148,7 +160,8 @@ def build_blind_package(
     private_mapping = {
         "schema": "s12.stage_ag.blind_mapping.v1",
         "status": "SEALED_UNTIL_JOVI_FEEDBACK",
-        "seed": int(seed),
+        "randomization_mode": randomization_mode,
+        "seed": int(seed) if seed is not None else None,
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
         "mapping": mapping,
     }
@@ -165,7 +178,12 @@ def build_blind_package(
         "schema": "s12.stage_ag.blind_identity_manifest.v1",
         "status": "WAITING_FOR_JOVI_BLIND_IDENTITY_FEEDBACK",
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "seed_commitment_sha256": hashlib.sha256(str(seed).encode()).hexdigest(),
+        "randomization_mode": randomization_mode,
+        "seed_commitment_sha256": (
+            hashlib.sha256(str(seed).encode()).hexdigest()
+            if seed is not None
+            else None
+        ),
         "source_identity_mode": source_manifest["identity_mode"],
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
         "mapping_sha256": mapping_sha,
@@ -193,7 +211,11 @@ def main(argv=None) -> int:
     parser.add_argument("--source-package", required=True, type=Path)
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--mapping-output", required=True, type=Path)
-    parser.add_argument("--seed", type=int, default=20260908)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        help="deterministic diagnostic only; omit for a true system-random blind mapping",
+    )
     parser.add_argument("--scenes", nargs="+", choices=sorted(SCENE_FILES), default=list(SCENE_FILES))
     args = parser.parse_args(argv)
     result = build_blind_package(
