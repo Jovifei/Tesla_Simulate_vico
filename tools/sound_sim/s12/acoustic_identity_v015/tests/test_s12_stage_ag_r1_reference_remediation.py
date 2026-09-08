@@ -1,10 +1,17 @@
 from __future__ import annotations
 
+import argparse
 import json
 
 import numpy as np
 import pytest
 
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ag import (
+    build_identity_dashboards as base_identity_builder,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.build_identity_dashboards_r1 import (
+    build_identity_package_r1,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.render_identity_probe_r1 import (
     render_probe_r1,
 )
@@ -117,3 +124,37 @@ def test_r1_probe_binds_new_mode(monkeypatch, tmp_path):
     assert modes == {IDENTITY_MODE_LEGACY, IDENTITY_MODE_V1R1}
     rows = {row["identity_mode"]: row for row in payload["artifacts"]}
     assert rows[IDENTITY_MODE_LEGACY]["sha256"] == rows[IDENTITY_MODE_V1R1]["sha256"]
+
+
+def test_r1_package_adapter_binds_and_restores_globals(monkeypatch, tmp_path):
+    original_mode = base_identity_builder.IDENTITY_MODE_V1
+    original_modes = base_identity_builder.IDENTITY_MODES
+    original_engine = base_identity_builder.VehicleIdentityEngine
+    original_signature = base_identity_builder.vehicle_identity_signature
+    original_fingerprint = base_identity_builder.identity_runtime_fingerprint
+
+    captured = {}
+
+    def fake_build(args):
+        captured["mode"] = base_identity_builder.IDENTITY_MODE_V1
+        captured["modes"] = base_identity_builder.IDENTITY_MODES
+        captured["engine"] = base_identity_builder.VehicleIdentityEngine
+        captured["signature"] = base_identity_builder.vehicle_identity_signature("lfa")
+        captured["fingerprint"] = base_identity_builder.identity_runtime_fingerprint()
+        return tmp_path / "published"
+
+    monkeypatch.setattr(base_identity_builder, "build_identity_package", fake_build)
+    result = build_identity_package_r1(argparse.Namespace(identity_mode=IDENTITY_MODE_V1R1))
+
+    assert result == tmp_path / "published"
+    assert captured["mode"] == IDENTITY_MODE_V1R1
+    assert IDENTITY_MODE_V1R1 in captured["modes"]
+    assert captured["engine"] is VehicleIdentityR1Engine
+    assert captured["signature"]["identity_mode"] == IDENTITY_MODE_V1R1
+    assert captured["fingerprint"][0]["path"].endswith("vehicle_identity_r1.py")
+
+    assert base_identity_builder.IDENTITY_MODE_V1 == original_mode
+    assert base_identity_builder.IDENTITY_MODES == original_modes
+    assert base_identity_builder.VehicleIdentityEngine is original_engine
+    assert base_identity_builder.vehicle_identity_signature is original_signature
+    assert base_identity_builder.identity_runtime_fingerprint is original_fingerprint
