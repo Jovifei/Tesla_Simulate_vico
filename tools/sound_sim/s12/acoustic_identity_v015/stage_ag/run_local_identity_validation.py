@@ -116,11 +116,14 @@ def run_validation(
 
     blind_root = run_root / "blind_identity"
     mapping_output = mapping_root / f"{run_id}-blind-identity-mapping.json"
+    # The render/probe seed remains deterministic, but the official blind label
+    # mapping must not be derivable from that public seed.  Omit the blind seed
+    # so build_blind_package uses a system-random mapping.
     blind_manifest = build_blind_package(
         identity,
         blind_root,
         mapping_output,
-        seed=seed,
+        seed=None,
     )
 
     summary = {
