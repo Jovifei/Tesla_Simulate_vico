@@ -1,0 +1,47 @@
+name: S12 Stage AG-R1 Reference Remediation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/s12-stage-ag-r1-reference-remediation.yml"
+      - "tools/sound_sim/s12/acoustic_identity_v015/stage_ag/**"
+      - "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-r1:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact Stage AG-R1 head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install focused dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest
+
+      - name: Compile Stage AG-R1
+        run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ag
+
+      - name: Stage AG-R1 focused contracts
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py
+
+      - name: Preserve Stage AG v1 and AF-R focused contracts
+        run: >-
+          python -m pytest -q
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_vehicle_identity.py
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_tools.py
+          tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_r_integrity.py
+
+      - name: Diff check
+        run: git diff --check
