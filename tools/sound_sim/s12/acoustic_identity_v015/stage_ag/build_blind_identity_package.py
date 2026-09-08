@@ -26,6 +26,9 @@ SCENE_FILES = {
     "full_pull": "02_full_pull.wav",
 }
 LABELS = ("Car_A", "Car_B", "Car_C", "Car_D")
+SUPPORTED_SOURCE_IDENTITY_MODES = frozenset(
+    {"legacy", "vehicle_identity_v1", "vehicle_identity_v1r1"}
+)
 
 
 def _manifest_checksum(payload: Mapping[str, Any]) -> str:
@@ -112,8 +115,12 @@ def build_blind_package(
     source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
     if source_manifest.get("schema") != "s12.stage_ag.package_manifest.v1":
         raise ValueError("source package is not a Stage AG identity package")
-    if source_manifest.get("identity_mode") not in ("legacy", "vehicle_identity_v1"):
-        raise ValueError("source package has unsupported identity mode")
+    source_identity_mode = str(source_manifest.get("identity_mode", ""))
+    if source_identity_mode not in SUPPORTED_SOURCE_IDENTITY_MODES:
+        raise ValueError(
+            "source package has unsupported identity mode: "
+            f"{source_identity_mode or '<missing>'}"
+        )
     recorded_manifest_sha = str(source_manifest.get("manifest_sha256", ""))
     source_for_hash = dict(source_manifest)
     source_for_hash.pop("manifest_sha256", None)
@@ -183,6 +190,7 @@ def build_blind_package(
         "seed": int(seed) if seed is not None else None,
         "commitment_nonce": commitment_nonce,
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
+        "source_identity_mode": source_identity_mode,
         "mapping": mapping,
         "artifact_bindings": private_bindings,
     }
@@ -205,7 +213,7 @@ def build_blind_package(
             if seed is not None
             else None
         ),
-        "source_identity_mode": source_manifest["identity_mode"],
+        "source_identity_mode": source_identity_mode,
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
         "mapping_commitment_sha256": mapping_commitment,
         "mapping_status": "SEALED_UNTIL_JOVI_FEEDBACK",
