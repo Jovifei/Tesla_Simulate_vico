@@ -46,6 +46,7 @@ def _write_probe(root: Path) -> None:
         vehicle_root.mkdir(parents=True, exist_ok=True)
         for scene_index, scene in enumerate(DEFAULT_SCENES):
             for mode in (IDENTITY_MODE_LEGACY, IDENTITY_MODE_V1):
+                # Hellcat stays identical; other identity candidates shift slightly.
                 freq = vehicle_freq[vehicle] + 20.0 * scene_index
                 if mode == IDENTITY_MODE_V1 and vehicle != "hellcat":
                     freq += {"ferrari_458": 25.0, "lfa": 45.0, "gtr_r35": 15.0}[vehicle]
@@ -78,12 +79,17 @@ def test_identity_analyzer_emits_pairwise_scorecard_without_claiming_realism(
     probe.mkdir()
     _write_probe(probe)
 
-    states = (
-        "quarter_redline",
-        "mid_redline",
-        "high_redline",
-        "normalized_full_pull",
-    )
+    # Keep this unit test hermetic: matched-state renderer behavior is tested by
+    # the Stage AG engine tests; here we test scorecard logic only.
+    fake_rendered = {
+        vehicle: {
+            "quarter_redline": _tone(120 + 30 * i),
+            "mid_redline": _tone(180 + 40 * i),
+            "high_redline": _tone(240 + 50 * i),
+            "normalized_full_pull": _tone(300 + 60 * i),
+        }
+        for i, vehicle in enumerate(VEHICLES)
+    }
 
     def fake_render(vehicle, mode, **kwargs):
         offset = 0.0 if mode == IDENTITY_MODE_LEGACY or vehicle == "hellcat" else 17.0
@@ -91,10 +97,10 @@ def test_identity_analyzer_emits_pairwise_scorecard_without_claiming_realism(
             state: _tone(
                 140.0
                 + 45.0 * VEHICLES.index(vehicle)
-                + 25.0 * states.index(state)
+                + 25.0 * list(fake_rendered[vehicle]).index(state)
                 + offset
             )
-            for state in states
+            for state in fake_rendered[vehicle]
         }
 
     monkeypatch.setattr(analyzer, "_render_matched", fake_render)
@@ -238,7 +244,7 @@ def test_identity_package_reuses_af_r_integrity_and_stays_not_fitted(
 
 def _fake_source_identity_package(root: Path) -> Path:
     vehicles = []
-    for vehicle in VEHICLES:
+    for vehicle_index, vehicle in enumerate(VEHICLES):
         directory = f"pkg-{vehicle}"
         web = root / directory / "web_audio"
         web.mkdir(parents=True, exist_ok=True)
@@ -260,6 +266,10 @@ def _fake_source_identity_package(root: Path) -> Path:
         "identity_mode": IDENTITY_MODE_V1,
         "vehicles": vehicles,
     }
+    encoded = json.dumps(
+        manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    manifest["manifest_sha256"] = hashlib.sha256(encoded).hexdigest()
     (root / "audition_manifest.json").write_text(
         json.dumps(manifest), encoding="utf-8"
     )
@@ -281,6 +291,7 @@ def test_blind_package_keeps_mapping_outside_public_package_and_copies_bytes(
     assert all(vehicle not in html_text for vehicle in VEHICLES)
     public = json.loads(public_text)
     assert public["mapping_status"] == "SEALED_UNTIL_JOVI_FEEDBACK"
+    assert public["randomization_mode"] == "DETERMINISTIC_DIAGNOSTIC"
     assert public["status"] == "WAITING_FOR_JOVI_BLIND_IDENTITY_FEEDBACK"
     assert len(public["artifacts"]) == 12
     for record in public["artifacts"]:
