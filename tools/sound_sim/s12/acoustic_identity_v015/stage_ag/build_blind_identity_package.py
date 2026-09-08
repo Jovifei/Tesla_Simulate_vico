@@ -1,8 +1,9 @@
 """Create a sealed Stage AG blind vehicle-identification package.
 
-The public package contains anonymous Car A/B/C/D audio only.  The identity
-mapping is written to a separate caller-supplied path and is never embedded in
-HTML or the public manifest.
+The public package contains anonymous Car A/B/C/D audio only.  The true vehicle
+mapping and source/destination PCM hashes are written to a separate private file.
+The public manifest keeps only a nonce-hardened commitment to that private receipt,
+so it cannot be trivially joined against the source package's candidate hashes.
 """
 from __future__ import annotations
 
@@ -80,6 +81,7 @@ function exportFeedback(){{
     schema:'s12.stage_ag.blind_feedback.v1',
     timestamp:new Date().toISOString(),
     blind_manifest_sha256:MANIFEST.manifest_sha256,
+    mapping_commitment_sha256:MANIFEST.mapping_commitment_sha256,
     human_status:'JOVI_BLIND_FEEDBACK_SUBMITTED',
     feedback
   }};
@@ -105,6 +107,7 @@ def build_blind_package(
         raise FileExistsError(output_root)
     if output_root == mapping_output or output_root in mapping_output.parents:
         raise ValueError("sealed mapping must be outside the public blind package")
+
     source_manifest_path = source_package / "audition_manifest.json"
     source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
     if source_manifest.get("schema") != "s12.stage_ag.package_manifest.v1":
@@ -129,7 +132,8 @@ def build_blind_package(
     )
 
     output_root.mkdir(parents=True, exist_ok=False)
-    artifacts: list[dict[str, str]] = []
+    public_artifacts: list[dict[str, str]] = []
+    private_bindings: list[dict[str, str]] = []
     for scene in scenes:
         if scene not in SCENE_FILES:
             raise ValueError(f"unsupported blind scene: {scene}")
@@ -148,34 +152,51 @@ def build_blind_package(
             copied = sha256_file(destination)
             if copied != actual:
                 raise RuntimeError("blind package byte copy changed candidate PCM")
-            artifacts.append(
+            relative = destination.relative_to(output_root).as_posix()
+            # Public metadata intentionally omits raw PCM hashes, because those
+            # hashes could be joined against the source package to reveal labels.
+            public_artifacts.append(
                 {
                     "scene": scene,
                     "label": label,
-                    "path": destination.relative_to(output_root).as_posix(),
-                    "sha256": copied,
+                    "path": relative,
+                }
+            )
+            private_bindings.append(
+                {
+                    "scene": scene,
+                    "label": label,
+                    "vehicle": vehicle,
+                    "source_sha256": actual,
+                    "blind_copy_sha256": copied,
+                    "path": relative,
                 }
             )
 
+    # A random nonce makes the published commitment non-enumerable even though
+    # the vehicle mapping itself has only 4! permutations.
+    commitment_nonce = secrets.token_hex(32)
     private_mapping = {
-        "schema": "s12.stage_ag.blind_mapping.v1",
+        "schema": "s12.stage_ag.blind_mapping.v2",
         "status": "SEALED_UNTIL_JOVI_FEEDBACK",
         "randomization_mode": randomization_mode,
         "seed": int(seed) if seed is not None else None,
+        "commitment_nonce": commitment_nonce,
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
         "mapping": mapping,
+        "artifact_bindings": private_bindings,
     }
     mapping_output.parent.mkdir(parents=True, exist_ok=True)
     if mapping_output.exists():
         raise FileExistsError(mapping_output)
     mapping_output.write_text(
-        json.dumps(private_mapping, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(private_mapping, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    mapping_sha = sha256_file(mapping_output)
+    mapping_commitment = sha256_file(mapping_output)
 
     public = {
-        "schema": "s12.stage_ag.blind_identity_manifest.v1",
+        "schema": "s12.stage_ag.blind_identity_manifest.v2",
         "status": "WAITING_FOR_JOVI_BLIND_IDENTITY_FEEDBACK",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "randomization_mode": randomization_mode,
@@ -186,20 +207,20 @@ def build_blind_package(
         ),
         "source_identity_mode": source_manifest["identity_mode"],
         "source_package_manifest_sha256": sha256_file(source_manifest_path),
-        "mapping_sha256": mapping_sha,
+        "mapping_commitment_sha256": mapping_commitment,
         "mapping_status": "SEALED_UNTIL_JOVI_FEEDBACK",
         "scenes": list(scenes),
         "labels": list(LABELS),
-        "artifacts": artifacts,
+        "artifacts": public_artifacts,
         "rules": [
-            "mapping is intentionally excluded from this public package",
+            "mapping and raw source/copy SHA bindings are intentionally excluded from this public package",
             "audio bytes are copied without normalization or re-rendering",
             "do not reveal mapping before Jovi submits blind feedback",
         ],
     }
     public["manifest_sha256"] = _manifest_checksum(public)
     (output_root / "blind_identity_manifest.json").write_text(
-        json.dumps(public, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(public, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     (output_root / "index.html").write_text(_html(public), encoding="utf-8")
