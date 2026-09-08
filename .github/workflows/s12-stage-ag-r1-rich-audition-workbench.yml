@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - local/stage-ag-r1-rich-audition-workbench-20260909
+      - local/stage-ag-r1-rich-audition-workbench-r2-20260909
     paths:
       - ".github/workflows/s12-stage-ag-r1-rich-audition-workbench.yml"
       - "tools/sound_sim/s12/acoustic_identity_v015/stage_ag/build_r1_rich_audition_view.py"
