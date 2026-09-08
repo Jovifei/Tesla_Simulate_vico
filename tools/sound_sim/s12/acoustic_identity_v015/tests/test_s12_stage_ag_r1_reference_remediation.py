@@ -1,19 +1,31 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
 
+from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import (
+    canonical_json_bytes,
+    sha256_file,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ag import (
     build_identity_dashboards as base_identity_builder,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.build_blind_identity_package import (
+    build_blind_package,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.build_identity_dashboards_r1 import (
     build_identity_package_r1,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.render_identity_probe_r1 import (
     render_probe_r1,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.run_local_identity_validation_r1 import (
+    resume_after_package_r1,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ag.vehicle_identity import (
     VEHICLE_IDENTITY_PROFILES,
@@ -40,6 +52,41 @@ def _trace(rpm: float, throttle: float, duration: float = 0.18, sr: int = 48_000
         np.full(n, throttle, dtype=np.float64),
         duration,
     )
+
+
+def _write_fake_stage_ag_package(root: Path, identity_mode: str) -> Path:
+    scene_files = ("03_hot_idle.wav", "09_steady_mid.wav", "02_full_pull.wav")
+    vehicles = []
+    for vehicle in ("hellcat", "ferrari_458", "lfa", "gtr_r35"):
+        directory = f"pkg-{vehicle}"
+        web_audio = root / directory / "web_audio"
+        web_audio.mkdir(parents=True, exist_ok=True)
+        hashes = {}
+        for filename in scene_files:
+            # Hellcat remains the byte-identical anchor; non-Hellcat R1 differs.
+            mode_token = "anchor" if vehicle == "hellcat" else identity_mode
+            data = f"{vehicle}:{filename}:{mode_token}".encode("utf-8")
+            path = web_audio / filename
+            path.write_bytes(data)
+            hashes[filename] = sha256_file(path)
+        vehicles.append(
+            {
+                "vehicle": vehicle,
+                "directory": directory,
+                "candidate_pcm_sha256": hashes,
+                "reference_sha256": {"same-reference": "a" * 64},
+            }
+        )
+    payload = {
+        "schema": "s12.stage_ag.package_manifest.v1",
+        "identity_mode": identity_mode,
+        "vehicles": vehicles,
+    }
+    payload["manifest_sha256"] = hashlib.sha256(canonical_json_bytes(payload)).hexdigest()
+    (root / "audition_manifest.json").write_text(
+        json.dumps(payload, indent=2) + "\n", encoding="utf-8"
+    )
+    return root
 
 
 def test_r1_signature_records_absolute_state_policy():
@@ -158,3 +205,67 @@ def test_r1_package_adapter_binds_and_restores_globals(monkeypatch, tmp_path):
     assert base_identity_builder.VehicleIdentityEngine is original_engine
     assert base_identity_builder.vehicle_identity_signature is original_signature
     assert base_identity_builder.identity_runtime_fingerprint is original_fingerprint
+
+
+def test_blind_builder_accepts_r1_identity_package(tmp_path):
+    source = _write_fake_stage_ag_package(tmp_path / "source-r1", IDENTITY_MODE_V1R1)
+    public_root = tmp_path / "blind"
+    mapping = tmp_path / "private" / "mapping.json"
+    manifest = build_blind_package(source, public_root, mapping, seed=123)
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    assert payload["source_identity_mode"] == IDENTITY_MODE_V1R1
+    assert payload["status"] == "WAITING_FOR_JOVI_BLIND_IDENTITY_FEEDBACK"
+    assert mapping.is_file()
+    private = json.loads(mapping.read_text(encoding="utf-8"))
+    assert private["source_identity_mode"] == IDENTITY_MODE_V1R1
+
+
+def test_r1_resume_after_package_builds_blind_and_summary(tmp_path):
+    output_root = tmp_path / "review"
+    mapping_root = tmp_path / "private"
+    run_id = "r1-resume-test"
+    run_root = output_root / run_id
+    (run_root / "probe").mkdir(parents=True)
+    probe = run_root / "probe" / "identity_probe_manifest.json"
+    probe.write_text("{}\n", encoding="utf-8")
+
+    scorecard = {
+        "seed": 20260908,
+        "numerical_fixes": [],
+        "summary": {
+            "reference_regressions_gt_3pct": 0,
+            "separation_nonnegative": True,
+        },
+    }
+    scorecard_path = run_root / "identity_separation_scorecard_r1.json"
+    scorecard_path.write_text(json.dumps(scorecard) + "\n", encoding="utf-8")
+    gate = {
+        "schema": "s12.stage_ag.r1_gate_receipt.v1",
+        "scorecard_sha256": sha256_file(scorecard_path),
+        "reference_regressions_gt_3pct": 0,
+        "separation_nonnegative": True,
+    }
+    (run_root / "stage_ag_r1_gate_receipt.json").write_text(
+        json.dumps(gate) + "\n", encoding="utf-8"
+    )
+
+    package_root = run_root / "packages"
+    _write_fake_stage_ag_package(
+        package_root / f"{run_id}-legacy", IDENTITY_MODE_LEGACY
+    )
+    _write_fake_stage_ag_package(
+        package_root / f"{run_id}-identity-v1r1", IDENTITY_MODE_V1R1
+    )
+
+    summary_path = resume_after_package_r1(
+        output_root=output_root,
+        mapping_root=mapping_root,
+        run_id=run_id,
+        reference_root=None,
+    )
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert summary["status"] == "STAGE_AG_R1_IDENTITY_CANDIDATES_READY"
+    assert summary["candidate_identity_mode"] == IDENTITY_MODE_V1R1
+    assert summary["hellcat_anchor_byte_identical"] is True
+    assert Path(summary["blind_manifest"]).is_file()
+    assert Path(summary["sealed_mapping_path"]).is_file()
