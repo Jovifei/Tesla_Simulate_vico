@@ -290,9 +290,18 @@ def test_blind_package_keeps_mapping_outside_public_package_and_copies_bytes(
     assert all(vehicle not in public_text for vehicle in VEHICLES)
     assert all(vehicle not in html_text for vehicle in VEHICLES)
     public = json.loads(public_text)
+    assert public["schema"] == "s12.stage_ag.blind_identity_manifest.v2"
     assert public["mapping_status"] == "SEALED_UNTIL_JOVI_FEEDBACK"
     assert public["randomization_mode"] == "DETERMINISTIC_DIAGNOSTIC"
     assert public["status"] == "WAITING_FOR_JOVI_BLIND_IDENTITY_FEEDBACK"
     assert len(public["artifacts"]) == 12
-    for record in public["artifacts"]:
-        assert _sha(output / record["path"]) == record["sha256"]
+    # Raw PCM hashes stay private so anonymous labels cannot be trivially joined
+    # against the source package manifest.
+    assert all("sha256" not in record for record in public["artifacts"])
+    private = json.loads(mapping.read_text(encoding="utf-8"))
+    assert private["schema"] == "s12.stage_ag.blind_mapping.v2"
+    assert private["commitment_nonce"]
+    assert len(private["artifact_bindings"]) == 12
+    assert _sha(mapping) == public["mapping_commitment_sha256"]
+    for record in private["artifact_bindings"]:
+        assert _sha(output / record["path"]) == record["blind_copy_sha256"]
