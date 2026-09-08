@@ -1,0 +1,46 @@
+name: S12 Stage AG-R1 Rich Audition Workbench
+
+on:
+  push:
+    branches:
+      - local/stage-ag-r1-rich-audition-workbench-20260909
+    paths:
+      - ".github/workflows/s12-stage-ag-r1-rich-audition-workbench.yml"
+      - "tools/sound_sim/s12/acoustic_identity_v015/stage_ag/build_r1_rich_audition_view.py"
+      - "tools/sound_sim/s12/acoustic_identity_v015/stage_ag/serve_r1_rich_audition.py"
+      - "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_rich_workbench.py"
+      - "tools/sound_sim/s12/acoustic_identity_v015/stage_ad/audition_dashboard_template.html"
+      - "tools/sound_sim/s12/acoustic_identity_v015/stage_ad/build_unified_dashboards.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rich-workbench:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact rich-workbench head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install focused dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest
+
+      - name: Compile rich workbench
+        run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ag tools/sound_sim/s12/acoustic_identity_v015/stage_ad
+
+      - name: Rich view fail-closed contracts
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_rich_workbench.py
+
+      - name: Preserve R1 audio contracts
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_r1_reference_remediation.py
+
+      - name: Diff check
+        run: git diff --check
