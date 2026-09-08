@@ -43,7 +43,7 @@ jobs:
         run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
 
       - name: Stage AF / AG focused tests
-        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_physical_closed_loop.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_numerical_fixes.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_r_integrity.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_vehicle_identity.py
+        run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_physical_closed_loop.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_numerical_fixes.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_r_integrity.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_vehicle_identity.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_tools.py
 
       - name: Preserve Stage AD closed-loop contracts
         run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ad_closed_loop.py
