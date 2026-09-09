@@ -13,8 +13,21 @@ repo   = Jovifei/Tesla_Simulate_vico
 branch = local/stage-ag-vehicle-identity-20260908
 head   = 717a5226eef39491938f7e796cb87de521c2c477
 base   = 4ee1f83369681d2789ef8e6e547398d233f6521d (AF-R2)
-main   = 71bb91804e0b89b5af40aaf1130999b058d906fa (source + strict-route docs merged)
+main   = 374c7b50db51fee935601954c9ee28de5ad15797 (source + strict-route docs merged)
 PR #16 = closed after main integration; source branch remains the AG code authority
+
+Frozen authority map:
+
+```text
+CODE AUTHORITY  = local/stage-ag-vehicle-identity-20260908@717a5226...
+REVIEW RECORD   = local/stage-ag-r1-strict-review-20260909@71bb9180...
+AUDIO PACKAGE   = s12-stage-ag-r1-identity-20260908-v1
+DO NOT USE      = Stage AE; local/stage-ag-r1-rich-audition-workbench-20260909;
+                 local/stage-ag-r1-rich-audition-workbench-r2-20260909;
+                 8080 / 8088–8091
+```
+
+The two `rich-audition-workbench*` branches are experimental alternatives, not source or review authority; their presence must not cause a second renderer/server route to be adopted.
 ```
 
 R1 package 的 source receipt `git_head=0e9207a...` 是 package 构建时的事实；当前 717a source 新增的是严格 review serving，不重新 render candidate PCM。二者不能混为“源码落后”或“重新调音”。
