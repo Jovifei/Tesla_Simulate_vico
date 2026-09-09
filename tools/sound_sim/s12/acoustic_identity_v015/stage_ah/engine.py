@@ -30,13 +30,19 @@ def spectrum_report(values: np.ndarray, sr: int = 48_000) -> dict:
     total = max(float(power.sum()), 1e-30)
     peak_bin = int(low[np.argmax(power[low])]) if len(low) else 0
     selected = sorted(low, key=lambda k: power[k], reverse=True)[:5]
+    broad = np.flatnonzero((frequencies >= 20) & (frequencies <= 600))
+    broad_peak = int(broad[np.argmax(power[broad])]) if len(broad) else 0
+    silent = not bool(np.any(x))
     return {
+        "silence": silent,
+        "body_20_600_peak_hz": None if silent else float(frequencies[broad_peak]),
+        "body_20_600_ratio": float(power[broad].sum() / total),
         "rms_digital": float(np.sqrt(np.mean(x * x))),
         "dc_digital": float(np.mean(x)),
         "welch_bin_hz": float(sr / nperseg),
         "lf_20_250_ratio": float(power[mask].sum() / total),
-        "lf_peak_hz": float(frequencies[peak_bin]),
-        "lf_top_bins_hz": [float(frequencies[k]) for k in selected],
+        "lf_peak_hz": None if silent else float(frequencies[peak_bin]),
+        "lf_top_bins_hz": [] if silent else [float(frequencies[k]) for k in selected],
         "peak_digital": float(np.max(np.abs(x))),
         "level_kind": "UNCALIBRATED_DIGITAL_NOT_SPL",
     }
@@ -100,6 +106,13 @@ class RemediationEngine(VehicleIdentityR1Engine):
         self.last_report = {
             "vehicle": self.vehicle_type,
             "variant": self.variant,
+            "rpm_min_max": [float(np.min(rpm_curve)), float(np.max(rpm_curve))],
+            "throttle_min_max": [float(np.min(throttle_curve)), float(np.max(throttle_curve))],
+            "nominal_body_band_hz": [self.base.mechanical_resonance_freq * .7,
+                                     self.base.mechanical_resonance_freq * 1.5],
+            "firing_order": self.base.cylinders / 2.,
+            "expected_firing_hz_min_max": [float(np.min(rpm_curve)) / 60. * self.base.cylinders / 2.,
+                                            float(np.max(rpm_curve)) / 60. * self.base.cylinders / 2.],
             "input_sha256": input_sha(rpm_curve, throttle_curve, duration,
                                       [shift_events, afterfire_events, bov_events]),
             "parent_pcm_sha256": pcm_sha256(parent_pcm),

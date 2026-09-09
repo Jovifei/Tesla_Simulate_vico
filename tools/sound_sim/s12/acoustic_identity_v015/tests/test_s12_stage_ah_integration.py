@@ -116,3 +116,14 @@ def test_all_variants_build_real_rich_html_and_embedded_wav(tmp_path, monkeypatc
     page.write_text(page.read_text(encoding='utf-8') + '\n<!--tamper-->\n', encoding='utf-8')
     with pytest.raises(ValueError):
         run_experiment.verify_package(Path(baseline["package"]), baseline["package_manifest_sha256"])
+
+
+def test_silence_and_lfa_body_range_are_not_misreported():
+    report = spectrum_report(np.zeros((48000, 2)))
+    assert report["silence"] is True
+    assert report["lf_peak_hz"] is None
+    assert report["body_20_600_peak_hz"] is None
+    t = np.arange(48000) / 48000.
+    tone = np.sin(2*np.pi*380*t)
+    report = spectrum_report(tone)
+    assert abs(report["body_20_600_peak_hz"] - 380.) < 3.
