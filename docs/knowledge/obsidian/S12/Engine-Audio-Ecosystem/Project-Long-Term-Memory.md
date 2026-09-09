@@ -202,7 +202,7 @@ Engine-Sim、ENSIM4、DasEtwas enginesound、VehicleNoiseSynthesizer、Ignis、P
 
 ## 15. Stage AF 数值修正与服务恢复（2026-09-06）
 
-当前 Stage AF 接力已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成，并由隔离分支 `local/main-audio-review-20260906` 在 `df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093` 合并点 fast-forward 进入 main；其后的文档状态提交继续位于 main，动态 SHA 必须现场读取。声音 authority 仍是 `stage_ad.engine_sim_acoustics.EngineAcoustics`；原 `build_unified_dashboards.py`、`audition_dashboard_template.html` 和 `review_packages/serve_dashboards.py` 保持不变的页面/渲染职责。Stage AE 默认 renderer、第二套试听后台和 Track-P/FVM/PTR/Radiation 修改仍被明确排除。
+历史 Stage AF 接力已在 `origin/main=28ee2bd73298959dc4831320e8b080b833c8c3d8` 之上完成，并由隔离分支 `local/main-audio-review-20260906` 在 `df2fb6a3e2b490eb62fc78183a1b7a7bafbc5093` 合并点 fast-forward 进入 main；这段只作为 Historical Stage-AF sound baseline 保留，不能覆盖当前 AG-R1 source authority。原 `stage_ad.engine_sim_acoustics.EngineAcoustics`、`build_unified_dashboards.py`、`audition_dashboard_template.html` 和 `review_packages/serve_dashboards.py` 的历史职责仍可追溯；Stage AE 默认 renderer、第二套试听后台和 Track-P/FVM/PTR/Radiation 修改仍被明确排除。
 
 本轮新增的是可审计、默认关闭的数值修正：`cycle_phase` 将 720° crank radians 单次换算到 cycle domain；`causal_delays` 用零状态分数延迟消除 `np.roll` 未来样本回卷；`causal_convolution` 用已有分块卷积消除 centered `same` IR 的提前响应；`causal_derivative` 用后向差分移除 look-ahead；`shift_cut` 用 unity→cut→unity 约束换挡包络。H0 空旗标必须与旧 EngineAcoustics 在相同输入、seed、IR 下逐 PCM 相等；H1 仅开相位旗标；H2 再开四项时间修正。它们是听感诊断候选，不能自动转成 Human PASS 或 Profile。
 
@@ -235,6 +235,8 @@ R2 的资格来源是最终 pushed SHA 的 GitHub Actions，而不是本机历�
 Stage AG 解决的是 Hellcat、Ferrari 458、LFA、GT-R R35 之间的车型身份，不是 H0/H1/H2 这一辆 Hellcat 的数值修正差异。v1 提高 pairwise separation 但在 Ferrari hot-idle、LFA hot-idle、GT-R full-pull 出现 >3% governed Reference 回退；这些失败必须保留为负证据，不能通过放宽阈值或 global/master gain 掩盖。R1 `vehicle_identity_v1r1` 以 redline-relative RPM、取消 identity layer per-track peak recovery、GT-R 仅对新增 identity source 的 WOT attenuation 修复，保持 Hellcat legacy/R1 byte-identical；16 个 Reference row 回退数为 0，separation 不低于 legacy，但这仍不是 Human PASS/OEM/R1 calibration。
 
 当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`，它从 AF-R2 `4ee1f833...` 向前发展。固定 local package 的 legacy/R1 manifest SHA 分别是 `0f9338...d7a541` 与 `3fecb566...f599519`；package source receipt 仍指向 R1 package 构建时的 `0e9207a...`，而 717a 负责严格 review serving，不重渲染声音。
+
+文档/路由提交 `71bb91804e0b89b5af40aaf1130999b058d906fa` 已正常 fast-forward 合并到 `origin/main`；这不改变 source branch 的身份，也不把 R1 package 或 Jovi 的人耳结论升级为产品资格。
 
 试听路由本身是证据边界：`stage_ag.serve_r1_review_strict` 先验证 manifest 自哈希与 exact SHA、4 车型目录、R1 mode、dashboard contract、candidate/Reference WAV SHA、rich HTML required marker，再原子性地绑定全部 8 个 loopback ports。它要求 23380–23383 是 legacy、23480–23483 是 R1；`8080/8088–8091` 与 `review_packages/serve_dashboards.py` 是历史路由，禁止用于 AG-R1，因为 collision 后可能继续暴露旧 package/旧 WAV。正确页面必须显示 A/B 瞬时比对、FFT/Waveform、分类、10 场景和反馈输入；若出现 `canonical S12 renderer` 或 `package-wide gain`，停止且不听音。
 

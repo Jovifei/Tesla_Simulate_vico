@@ -13,7 +13,8 @@ repo   = Jovifei/Tesla_Simulate_vico
 branch = local/stage-ag-vehicle-identity-20260908
 head   = 717a5226eef39491938f7e796cb87de521c2c477
 base   = 4ee1f83369681d2789ef8e6e547398d233f6521d (AF-R2)
-PR #16 = Draft; main remains ba13ced7... and is not merged
+main   = 71bb91804e0b89b5af40aaf1130999b058d906fa (source + strict-route docs merged)
+PR #16 = closed after main integration; source branch remains the AG code authority
 ```
 
 R1 package 的 source receipt `git_head=0e9207a...` 是 package 构建时的事实；当前 717a source 新增的是严格 review serving，不重新 render candidate PCM。二者不能混为“源码落后”或“重新调音”。
