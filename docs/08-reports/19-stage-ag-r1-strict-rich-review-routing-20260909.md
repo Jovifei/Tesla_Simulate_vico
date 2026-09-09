@@ -13,7 +13,7 @@ repo   = Jovifei/Tesla_Simulate_vico
 branch = local/stage-ag-vehicle-identity-20260908
 head   = 717a5226eef39491938f7e796cb87de521c2c477
 base   = 4ee1f83369681d2789ef8e6e547398d233f6521d (AF-R2)
-main   = 11ff226c42f64a66e72b19f04f1a67cef030b332 (source + strict-route docs + Jovi checkpoint merged)
+main   = 08c16fee05cd6a0c096fb7b5f0027e5fa3775ae6 (source + strict-route docs + Jovi checkpoint merged)
 PR #16 = closed after main integration; source branch remains the AG code authority
 
 Frozen authority map:
