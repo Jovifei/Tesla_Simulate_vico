@@ -4354,3 +4354,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Identify and stop only the confirmed stale `serve_dashboards.py` PIDs that occupied 23380–23483; do not use 8080/8088–8091.
 - [x] Start strict review server, verify all eight URLs HTTP 200, validate Ferrari R1 rich markers in a real browser, and retain the screenshot as local review evidence.
 - [ ] Wait for Jovi acoustic review. Do not auto fit, rerender, alter Stage AG-R1, profile-freeze, merge main, or enter Android/ESP32.
+
+## 2026-09-09 Stage AG-R1 main integration and Jovi listening checkpoint
+
+- [x] Merge the verified Stage AG-R1 source plus strict-route documentation into `main`; final remote main is `682a468...` and PR #16 is closed.
+- [x] Record Jovi feedback: four vehicle identities are distinguishable at approximately 80%; frequency/waveform mismatch remains an optimization item, not a perfect-fit or Human PASS claim.
+- [x] Freeze `CODE AUTHORITY`, `REVIEW RECORD`, and `AUDIO PACKAGE`; keep `rich-audition-workbench*` branches and historical routes as `DO NOT USE`.
+- [ ] Wait for a new explicit, scene/frequency-scoped acoustic optimization request; do not auto-tune or re-render the current R1 package.

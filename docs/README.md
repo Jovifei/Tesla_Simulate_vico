@@ -60,6 +60,8 @@ CAN/OBD/真实 RPM 可以以后作为 richer input adapter，但不是当前 MVP
 
 当前四车型的即时试听路径是 Stage AG-R1：先保留 AG v1 的 3% Reference 回退作为负证据，再以 `vehicle_identity_v1r1` 同时满足 16 个既有 Reference 场景无 >3% 回退及 matched-state separation 不低于 legacy。Jovi 试听必须通过 `stage_ag.serve_r1_review_strict`：它在绑定 23380–23383（legacy）和 23480–23483（R1）前，重验 manifest self-hash、exact manifest SHA、4 车型、dashboard contract、candidate PCM SHA、Reference SHA 和富交互 HTML marker。`8080/8088–8091` 及 `review_packages/serve_dashboards.py` 是历史路由，不能用于此 R1 试听；详见 Report 19。当前状态仍是 `WAITING_FOR_JOVI_ACOUSTIC_REVIEW`，不是 Human PASS、OEM/R1 calibration 或 Profile Freeze。
 
+Jovi 的 2026-09-09 首轮 R1 试听确认四车型身份已经可以区分，整体听感约为 80%；但真车与算法的频率/波形仍不完全一致，因此“可区分”不等于“完美贴合”。后续只有在 Jovi 明确授权新的窄范围声学优化后，才能进入下一轮；不能自动 fit、无限调参或把本轮反馈写成批准结论。
+
 Stage AD 当前是：
 
 ```text

@@ -91,3 +91,7 @@ review_packages/serve_dashboards.py
 ## 6. Jovi 试听边界
 
 Jovi 当前主要试听 R1：23480–23483。只有在上述 route、manifest 和 WAV byte 验证成立后，听感才可归因给 current R1 package；若仍然“不像”，记录为 `HUMAN_ACOUSTIC_FAIL`，再由后续授权任务处理声音本身。当前不自动调参、重新渲染、fit、R2、profile freeze、Android、ESP32 或 merge main。
+
+## 7. Jovi 试听反馈（2026-09-09）
+
+Jovi 已实际试听 strict R1 页面，确认 Hellcat、Ferrari 458、LFA、GT-R R35 的身份已经能够区分，当前整体听感约为 80%。同时指出真车与算法的频率图/波形仍有差异，因此当前结论是“车型身份有效、声学仍需优化”，不是完美贴合、Human PASS、OEM calibration 或 Profile Freeze。下一轮必须等待 Jovi 对具体频带/场景的授权反馈，不能从这个比例自动推导参数或继续调音。
