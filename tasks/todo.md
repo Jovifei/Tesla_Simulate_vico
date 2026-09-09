@@ -4357,7 +4357,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## 2026-09-09 Stage AG-R1 main integration and Jovi listening checkpoint
 
-- [x] Merge the verified Stage AG-R1 source plus strict-route documentation into `main`; final remote main is `682a468...` and PR #16 is closed.
+- [x] Merge the verified Stage AG-R1 source plus strict-route documentation into `main`; final remote main is `11ff226...` and PR #16 is closed.
 - [x] Record Jovi feedback: four vehicle identities are distinguishable at approximately 80%; frequency/waveform mismatch remains an optimization item, not a perfect-fit or Human PASS claim.
 - [x] Freeze `CODE AUTHORITY`, `REVIEW RECORD`, and `AUDIO PACKAGE`; keep `rich-audition-workbench*` branches and historical routes as `DO NOT USE`.
 - [ ] Wait for a new explicit, scene/frequency-scoped acoustic optimization request; do not auto-tune or re-render the current R1 package.

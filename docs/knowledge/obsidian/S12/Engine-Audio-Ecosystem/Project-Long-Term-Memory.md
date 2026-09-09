@@ -236,7 +236,7 @@ Stage AG 解决的是 Hellcat、Ferrari 458、LFA、GT-R R35 之间的车型身�
 
 当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`，它从 AF-R2 `4ee1f833...` 向前发展。固定 local package 的 legacy/R1 manifest SHA 分别是 `0f9338...d7a541` 与 `3fecb566...f599519`；package source receipt 仍指向 R1 package 构建时的 `0e9207a...`，而 717a 负责严格 review serving，不重渲染声音。
 
-文档/路由提交 `71bb91804e0b89b5af40aaf1130999b058d906fa` 及后续状态修正已正常 fast-forward 合并到 `origin/main@374c7b50db51fee935601954c9ee28de5ad15797`；这不改变 source branch 的身份，也不把 R1 package 或 Jovi 的人耳结论升级为产品资格。`local/stage-ag-r1-rich-audition-workbench-20260909` 与 `local/stage-ag-r1-rich-audition-workbench-r2-20260909` 仅是实验分支，必须保持 `DO NOT USE`。
+文档/路由提交 `71bb91804e0b89b5af40aaf1130999b058d906fa` 及后续状态修正已正常 fast-forward 合并到 `origin/main@11ff226c42f64a66e72b19f04f1a67cef030b332`；这不改变 source branch 的身份，也不把 R1 package 或 Jovi 的人耳结论升级为产品资格。`local/stage-ag-r1-rich-audition-workbench-20260909` 与 `local/stage-ag-r1-rich-audition-workbench-r2-20260909` 仅是实验分支，必须保持 `DO NOT USE`。
 
 试听路由本身是证据边界：`stage_ag.serve_r1_review_strict` 先验证 manifest 自哈希与 exact SHA、4 车型目录、R1 mode、dashboard contract、candidate/Reference WAV SHA、rich HTML required marker，再原子性地绑定全部 8 个 loopback ports。它要求 23380–23383 是 legacy、23480–23483 是 R1；`8080/8088–8091` 与 `review_packages/serve_dashboards.py` 是历史路由，禁止用于 AG-R1，因为 collision 后可能继续暴露旧 package/旧 WAV。正确页面必须显示 A/B 瞬时比对、FFT/Waveform、分类、10 场景和反馈输入；若出现 `canonical S12 renderer` 或 `package-wide gain`，停止且不听音。
 
