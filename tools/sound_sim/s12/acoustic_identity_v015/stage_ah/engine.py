@@ -1,0 +1,115 @@
+"""AG-R1 composition with source-local interventions and a fixed-parent scale."""
+from __future__ import annotations
+
+import hashlib
+import json
+
+import numpy as np
+from scipy.signal import welch
+
+from ..stage_ag.vehicle_identity_r1 import VehicleIdentityR1Engine, IDENTITY_MODE_V1R1
+from .source_policy import SourcePolicy, VARIANTS, pcm_sha256, signature, validate_events
+
+
+def spectrum_report(values: np.ndarray, sr: int = 48_000) -> dict:
+    """Linear-power stereo average (not cancellation-prone mono downmix).
+
+    Uncalibrated digital levels only. Do not interpret these as dB SPL or a
+    percentage of vehicle realism. Stem energies do not add due to correlation.
+    """
+    x = np.asarray(values, dtype=np.float64)
+    if x.ndim == 1:
+        x = x[:, None]
+    if len(x) < 32 or not np.all(np.isfinite(x)):
+        raise ValueError("spectrum input too short or non-finite")
+    nperseg = min(16384, len(x))
+    frequencies, psd = welch(x, fs=sr, nperseg=nperseg, axis=0)
+    power = psd.mean(axis=1)
+    mask = (frequencies >= 20) & (frequencies <= 250)
+    low = np.flatnonzero(mask)
+    total = max(float(power.sum()), 1e-30)
+    peak_bin = int(low[np.argmax(power[low])]) if len(low) else 0
+    selected = sorted(low, key=lambda k: power[k], reverse=True)[:5]
+    return {
+        "rms_digital": float(np.sqrt(np.mean(x * x))),
+        "dc_digital": float(np.mean(x)),
+        "welch_bin_hz": float(sr / nperseg),
+        "lf_20_250_ratio": float(power[mask].sum() / total),
+        "lf_peak_hz": float(frequencies[peak_bin]),
+        "lf_top_bins_hz": [float(frequencies[k]) for k in selected],
+        "peak_digital": float(np.max(np.abs(x))),
+        "level_kind": "UNCALIBRATED_DIGITAL_NOT_SPL",
+    }
+
+
+def input_sha(rpm, throttle, duration, events) -> str:
+    digest = hashlib.sha256()
+    for curve in (rpm, throttle):
+        a = np.ascontiguousarray(curve, dtype="<f8")
+        digest.update(str(a.shape).encode())
+        digest.update(a.tobytes())
+    digest.update(json.dumps([float(duration), events], sort_keys=True).encode())
+    return digest.hexdigest()
+
+
+class RemediationEngine(VehicleIdentityR1Engine):
+    """Preserves AG-R1 identity parameters; no second renderer or fit path.
+
+    Each candidate first renders its identical parent trace to obtain a fixed
+    normalization denominator. This is a comparison control, NOT a tunable gain.
+    It prevents removing a resonance from amplifying every remaining source.
+    The inherited whole-track engine remains offline, not realtime-qualified.
+    """
+
+    def __init__(self, vehicle_type="ferrari_458", sr=48_000, *,
+                 identity_mode=IDENTITY_MODE_V1R1, numerical_fixes=(), seed=20260908,
+                 variant="r1_baseline", collect=True):
+        if variant not in VARIANTS or identity_mode != IDENTITY_MODE_V1R1:
+            raise ValueError("AH requires an explicit variant and AG-R1 identity mode")
+        if int(sr) != 48_000 or int(seed) < 0:
+            raise ValueError("AH qualification currently requires 48 kHz and seed >= 0")
+        super().__init__(vehicle_type, sr, identity_mode=identity_mode,
+                         numerical_fixes=numerical_fixes, seed=seed)
+        self.variant, self.collect = variant, collect
+        self.last_report = {}
+
+    def render_track(self, rpm_curve, throttle_curve, duration,
+                     shift_events=None, afterfire_events=None, bov_events=None):
+        if not np.isfinite(duration) or duration <= 0:
+            raise ValueError("duration must be finite and positive")
+        for curve in (rpm_curve, throttle_curve):
+            if not np.asarray(curve).size or not np.all(np.isfinite(curve)):
+                raise ValueError("curves must be nonempty and finite")
+        validate_events(afterfire_events, duration)
+        args = (rpm_curve, throttle_curve, duration, shift_events, afterfire_events, bov_events)
+        anchor = SourcePolicy(self.vehicle_type, "r1_baseline", seed=self.seed,
+                              collect=self.collect)
+        self.base._source_policy = anchor
+        try:
+            parent_pcm = super().render_track(*args)
+            if self.variant == "r1_baseline":
+                policy, pcm = anchor, parent_pcm
+            else:
+                parent_peak = anchor.receipt["pre_saturation_peak"]
+                policy = SourcePolicy(self.vehicle_type, self.variant, seed=self.seed,
+                                      parent_peak=parent_peak, collect=self.collect)
+                self.base._source_policy = policy
+                pcm = super().render_track(*args)
+        finally:
+            self.base._source_policy = None
+        self.last_report = {
+            "vehicle": self.vehicle_type,
+            "variant": self.variant,
+            "input_sha256": input_sha(rpm_curve, throttle_curve, duration,
+                                      [shift_events, afterfire_events, bov_events]),
+            "parent_pcm_sha256": pcm_sha256(parent_pcm),
+            "candidate_pcm_sha256": pcm_sha256(pcm),
+            "signature": signature(self.vehicle_type, self.variant),
+            "normalization": policy.receipt,
+            "parent_spectrum": spectrum_report(parent_pcm.astype(float) / 32767.),
+            "candidate_spectrum": spectrum_report(pcm.astype(float) / 32767.),
+            "parent_stems": {name: spectrum_report(x) for name, x in anchor.stems.items()},
+            "candidate_stems": {name: spectrum_report(x) for name, x in policy.stems.items()},
+            "note": "Correlated stem energies are not additive; fixed peak != proven noise",
+        }
+        return pcm

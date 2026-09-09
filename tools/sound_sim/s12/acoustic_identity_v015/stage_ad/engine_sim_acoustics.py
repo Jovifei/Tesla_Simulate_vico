@@ -210,6 +210,9 @@ class EngineAcoustics:
         """
         Synthesize full track audio given RPM and throttle trajectories over duration.
         """
+        policy = getattr(self, "_source_policy", None)
+        if policy is not None:
+            policy.begin_render()
         N = int(self.sr * duration)
         t = np.linspace(0, duration, N, endpoint=False)
 
@@ -300,12 +303,23 @@ class EngineAcoustics:
                     pop_wave = np.random.normal(0, af_intensity * 2.5, pop_len) * np.exp(-np.linspace(0, 6, pop_len))
                     afterfire_pops[af_idx:af_idx + pop_len] += pop_wave
 
+        if policy is not None:
+            # Legacy draws above are intentionally retained: other stochastic
+            # sources must not change when only afterfire changes.
+            afterfire_pops = policy.afterfire_input(
+                self, afterfire_pops, afterfire_events or [], N
+            )
         left_raw += afterfire_pops
         right_raw += afterfire_pops
 
         # Synthesizer acoustic pipeline
         out_left = self._synthesize_channel(left_raw, t, throttle_curve, rpm_curve)
         out_right = self._synthesize_channel(right_raw, t, throttle_curve, rpm_curve)
+
+        if policy is not None:
+            af_left, af_right = policy.afterfire_output(self, N)
+            out_left += af_left
+            out_right += af_right
 
         # Supercharger Whine (Hellcat)
         if self.has_supercharger:
@@ -375,6 +389,8 @@ class EngineAcoustics:
             0.15 * np.sin(bass_phase * 2.0)
         ) * (0.45 + 0.55 * throttle_curve) * (self.exhaust_gain * 0.16)
 
+        if policy is not None:
+            policy.observe("bass_body", bass_body)
         out_left += bass_body
         out_right += (
             causal_fractional_delay(bass_body, 16)
@@ -385,11 +401,15 @@ class EngineAcoustics:
         # Soft analog valve saturation
         stereo = np.column_stack([out_left, out_right])
         peak = np.max(np.abs(stereo))
+        if policy is not None:
+            peak = policy.output_peak(float(peak), stereo)
         if peak > 0:
             stereo = stereo / peak
             stereo = np.tanh(stereo * 1.5) / np.tanh(1.5)
             stereo = stereo * 0.94
 
+        if policy is not None:
+            stereo = policy.finish(stereo)
         out_int16 = (stereo * 32767).astype(np.int16)
         return out_int16
 
@@ -436,6 +456,11 @@ class EngineAcoustics:
         sos_body = signal.butter(2, [self.mechanical_resonance_freq * 0.7, self.mechanical_resonance_freq * 1.5],
                                  'bandpass', fs=self.sr, output='sos')
         body_ring = signal.sosfilt(sos_body, v_in) * 0.35
+        policy = getattr(self, "_source_policy", None)
+        if policy is not None:
+            body_ring = policy.channel_sources(
+                body_ring, v_conv, v_in, lp_noise, throttle, self.sr
+            )
         v_out += body_ring
 
         return v_out
