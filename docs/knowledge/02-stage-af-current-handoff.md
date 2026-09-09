@@ -1,6 +1,6 @@
 # Stage AF 当前接管真值（2026-09-06；Stage AG-R1 路由更新 2026-09-09）
 
-> **2026-09-09 当前试听入口优先级：** 对已生成的四车型 Stage AG-R1 package，当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`，并已随最终文档提交 `08c16fee05cd6a0c096fb7b5f0027e5fa3775ae6` 合并进 main。不要用本文件历史的 `serve_dashboards.py` / 8080 / 8088–8091 指引打开 R1 页面。只能使用 `stage_ag.serve_r1_review_strict` 对固定 legacy/R1 manifest 做 SHA、contract、rich HTML 与端口预检后，访问 23380–23383（legacy）或 23480–23483（R1）。`local/stage-ag-r1-rich-audition-workbench-20260909` 与 `local/stage-ag-r1-rich-audition-workbench-r2-20260909` 是实验分支，不能作为 source/review authority。R1 mode=`vehicle_identity_v1r1`，status=`WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；不是 Human PASS、OEM/R1 calibration 或 Profile Freeze。
+> **2026-09-09 当前试听入口优先级：** 对已生成的四车型 Stage AG-R1 package，当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`，main 当前 SHA 必须现场执行 `git rev-parse origin/main`，已合并 source 与 strict-route 文档。不要用本文件历史的 `serve_dashboards.py` / 8080 / 8088–8091 指引打开 R1 页面。只能使用 `stage_ag.serve_r1_review_strict` 对固定 legacy/R1 manifest 做 SHA、contract、rich HTML 与端口预检后，访问 23380–23383（legacy）或 23480–23483（R1）。`local/stage-ag-r1-rich-audition-workbench-20260909` 与 `local/stage-ag-r1-rich-audition-workbench-r2-20260909` 是实验分支，不能作为 source/review authority。R1 mode=`vehicle_identity_v1r1`，status=`WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；不是 Human PASS、OEM/R1 calibration 或 Profile Freeze。
 
 ## 先读结论
 
