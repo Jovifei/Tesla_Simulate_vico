@@ -4345,3 +4345,12 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full S12: `1486 passed, 2 skipped, 3 warnings, 232 subtests passed`, exit code 0.
 - Clean qualification smoke manifest: `d6a43479c5e82d7a1ebee96dda9367be01901d95b9379597e5b2dc89718ddba1`, 32 artifacts matched.
 - Exact-head Actions for the pre-change PR head were still `in_progress`; final qualification waits for the pushed SHA.
+
+## 2026-09-09 Stage AG-R1 strict rich-review routing
+
+- [x] Fetch `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`; verify AF-R2 `4ee1f833...` is its merge-base and keep PR #16 Draft/main untouched.
+- [x] Verify fixed legacy/R1 package manifests `0f9338...d7a541` / `3fecb566...f599519` without regenerating probe, scorecard, package or Reference bytes.
+- [x] Use `stage_ag.serve_r1_review_strict --preflight-only`; it passed rich-marker, contract, candidate/Reference SHA and 4-car checks.
+- [x] Identify and stop only the confirmed stale `serve_dashboards.py` PIDs that occupied 23380–23483; do not use 8080/8088–8091.
+- [x] Start strict review server, verify all eight URLs HTTP 200, validate Ferrari R1 rich markers in a real browser, and retain the screenshot as local review evidence.
+- [ ] Wait for Jovi acoustic review. Do not auto fit, rerender, alter Stage AG-R1, profile-freeze, merge main, or enter Android/ESP32.

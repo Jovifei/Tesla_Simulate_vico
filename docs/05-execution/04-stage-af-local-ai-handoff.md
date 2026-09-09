@@ -196,3 +196,17 @@ package_ui_fingerprint     → builder / original dashboard / HTML / serve_dashb
 fit/measurement/human 三个状态必须分开：fitted diagnostic package 可是 `FITTED` + `FIT_DIAGNOSTIC_DISTANCE_AVAILABLE` + `WAITING_FOR_JOVI_FEEDBACK`，但绝不能写 Human PASS/OEM/R1。H0 fixed oracle 至少覆盖 steady/body、shift、afterfire，事件时间必须落在实际输出窗口；固定 pre-fix Git implementation、同一 IR/seed/input、`numerical_fixes=[]` 下逐 PCM 相等，不能为测试修改生产声音。
 
 执行顺序：R2 focused → compileall/Track-P/diff-check → full S12 → fresh non-overwriting smoke → push 隔离分支 → 按 exact pushed SHA 读取 GitHub Actions。只有 `STAGE_AF_R2_REMOTE_QUALIFIED` 且所有证据项闭合，才进入 R3；否则停止并报告 blocker。R3 只生成三个全新 Hellcat H0/H1/H2 package，三包共享 vehicle/seed/IR/scene input/Reference，逐 WAV 结果标记 `BYTE_IDENTICAL`、`EXPECTED_DIFFERENCE_WITH_EXPLAINED_CAUSE` 或 `UNEXPECTED_DRIFT`，后者立即停止。
+
+## 12. 2026-09-09 Stage AG-R1 严格富交互试听路由
+
+当 Jovi 要试听四车型 Stage AG-R1 时，这不是新的渲染/fit/算法任务。固定 package 已在本地 `E:\Tesla_speed\review_packages\s12-stage-ag-r1-identity-20260908-v1\packages\`，legacy manifest 为 `0f9338bfd97911f2ac78143b6e92586cd19926df9ef2f19f0d7c10ca30d7a541`，R1 manifest 为 `3fecb566416d498bcedcb6c1a5267f6c7b36e82e9e9a87af7c2740705f599519`。不要重渲染或替换 bytes。
+
+唯一允许的服务是：
+
+```text
+python -m tools.sound_sim.s12.acoustic_identity_v015.stage_ag.serve_r1_review_strict
+```
+
+它在 bind 23380–23383（legacy）及 23480–23483（`vehicle_identity_v1r1`）之前，验证 package schema/self-hash/exact manifest SHA、四车型目录、contract mode、candidate PCM SHA、Reference SHA，以及页面必须同时有 `声源 A/B 瞬时无缝比对`、`实时动态声学分析仪`、`visualizerCanvas`、`categoryAllLabel`。`package-wide gain` 或 `canonical S12 renderer` 一旦出现即视为 stale Stage-AE/simple page 并停止。所有 8 个端口必须预先可绑定；有旧服务先确认 PID/command 后停掉，不能让新旧服务混用。
+
+禁止对这组 R1 package 使用 `review_packages/serve_dashboards.py`、8080 portal、8088–8091 或 Stage AE 页面。浏览器确认正确富交互页面、manifest、contract 和 WAV SHA 后，才允许 Jovi 试听；仍只能写 `WAITING_FOR_JOVI_ACOUSTIC_REVIEW`，不得评价为 Human PASS/OEM/R1/Profile Freeze。

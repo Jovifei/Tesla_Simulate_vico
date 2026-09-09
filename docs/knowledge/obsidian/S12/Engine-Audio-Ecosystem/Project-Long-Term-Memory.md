@@ -1,9 +1,9 @@
 ---
 type: canonical-project-memory
-updated: 2026-09-06
+updated: 2026-09-09
 status: ACTIVE
 current_product_direction: APP_FIRST
-current_acoustic_stage: STAGE_AD
+current_acoustic_stage: STAGE_AG_R1_STRICT_RICH_REVIEW
 esp32_status: DEFERRED_FUTURE_OPTION
 ---
 
@@ -229,3 +229,13 @@ H0 回归必须以固定 pre-fix Git commit 加载旧 renderer，并在同一 IR
 正式 fitted package 要把 fit JSON 原始字节快照到 `<vehicle>/evidence/fit/final_fit.json`，并记录 source/snapshot SHA、schema、fit self SHA，使 source 删除后仍可独立验证。包还要保存 repository、git_head、base_main、dependency_dirty、source_policy；正式默认只接受 tracked source clean，开发 smoke 必须明确 `DEV_DIRTY_SOURCE` + `NOT_PROMOTABLE`。单车型 package 的导航只能指向实际存在的车型，外网 CSS 依赖必须标明 `AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY`。
 
 R2 的资格来源是最终 pushed SHA 的 GitHub Actions，而不是本机历史计数。H0 fixed oracle 至少覆盖 steady/body、shift、afterfire，事件必须落在输出窗口，并在同一 pre-fix implementation、IR、seed、输入和 `numerical_fixes=[]` 下逐 PCM 相等。只有 exact-head CI、source receipt、snapshot、manifest 和 oracle 全部闭合，才可进入 R3 重新生成 H0/H1/H2；否则停止等待外部证据。
+
+## 18. Stage AG-R1 严格富交互试听路由（2026-09-09）
+
+Stage AG 解决的是 Hellcat、Ferrari 458、LFA、GT-R R35 之间的车型身份，不是 H0/H1/H2 这一辆 Hellcat 的数值修正差异。v1 提高 pairwise separation 但在 Ferrari hot-idle、LFA hot-idle、GT-R full-pull 出现 >3% governed Reference 回退；这些失败必须保留为负证据，不能通过放宽阈值或 global/master gain 掩盖。R1 `vehicle_identity_v1r1` 以 redline-relative RPM、取消 identity layer per-track peak recovery、GT-R 仅对新增 identity source 的 WOT attenuation 修复，保持 Hellcat legacy/R1 byte-identical；16 个 Reference row 回退数为 0，separation 不低于 legacy，但这仍不是 Human PASS/OEM/R1 calibration。
+
+当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`，它从 AF-R2 `4ee1f833...` 向前发展。固定 local package 的 legacy/R1 manifest SHA 分别是 `0f9338...d7a541` 与 `3fecb566...f599519`；package source receipt 仍指向 R1 package 构建时的 `0e9207a...`，而 717a 负责严格 review serving，不重渲染声音。
+
+试听路由本身是证据边界：`stage_ag.serve_r1_review_strict` 先验证 manifest 自哈希与 exact SHA、4 车型目录、R1 mode、dashboard contract、candidate/Reference WAV SHA、rich HTML required marker，再原子性地绑定全部 8 个 loopback ports。它要求 23380–23383 是 legacy、23480–23483 是 R1；`8080/8088–8091` 与 `review_packages/serve_dashboards.py` 是历史路由，禁止用于 AG-R1，因为 collision 后可能继续暴露旧 package/旧 WAV。正确页面必须显示 A/B 瞬时比对、FFT/Waveform、分类、10 场景和反馈输入；若出现 `canonical S12 renderer` 或 `package-wide gain`，停止且不听音。
+
+本轮已通过 strict preflight、8 端口 HTTP 200、Ferrari R1 rich UI 浏览器截图与 HTML marker 检查。状态固定为 `STAGE_AG_R1_STRICT_RICH_REVIEW_READY / WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；下一动作仅是 Jovi 在 R1 页面实际试听，记录人耳反馈，不自动 fit/R2/profile freeze/Android/ESP32。

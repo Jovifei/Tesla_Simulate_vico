@@ -1,4 +1,6 @@
-# Stage AF 当前接管真值（2026-09-06）
+# Stage AF 当前接管真值（2026-09-06；Stage AG-R1 路由更新 2026-09-09）
+
+> **2026-09-09 当前试听入口优先级：** 对已生成的四车型 Stage AG-R1 package，当前 source authority 是 `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`。不要用本文件历史的 `serve_dashboards.py` / 8080 / 8088–8091 指引打开 R1 页面。只能使用 `stage_ag.serve_r1_review_strict` 对固定 legacy/R1 manifest 做 SHA、contract、rich HTML 与端口预检后，访问 23380–23383（legacy）或 23480–23483（R1）。R1 mode=`vehicle_identity_v1r1`，status=`WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；不是 Human PASS、OEM/R1 calibration 或 Profile Freeze。
 
 ## 先读结论
 
@@ -60,9 +62,9 @@ R2/R3 Reference WAV
 
 范围均围绕 f81d3a3 手工调好的 baseline，禁止大范围黑盒重搜。
 
-## 工作台
+## 工作台（Stage AF 历史路径）
 
-继续使用原有端口：
+以下是 Stage AF/H0-H2 的历史端口，不能用于 Stage AG-R1：
 
 - 8080 portal
 - 8088 Hellcat
@@ -96,11 +98,13 @@ Git 只保留：source、generator、server、fit JSON/receipt、关键 evidence
 
 Engine-Sim 继续是 physical architecture 最重要来源；SSSSM-DDSP / DDSP / CMA-ES sound matching 只吸收“audio-domain inverse parameter search”的方法。Stage AF 不复制神经网络，也不让黑盒 ML 替代 physical renderer。
 
-## 下一位 AI 的唯一执行入口
+## 下一位 AI 的历史执行入口
 
 `docs/05-execution/04-stage-af-local-ai-handoff.md`
 
 先 pull Stage AF，跑 focused test；再在本地 reference/IR 环境跑 fit；最后用原工作台试听，完成后停止等待 Jovi。
+
+Stage AG-R1 当前固定入口见 `docs/08-reports/19-stage-ag-r1-strict-rich-review-routing-20260909.md`；它是“现有 immutable package 的严格试听路由”，不是新算法、fit 或重渲染任务。
 
 ## 2026-09-06 数值修正与页面服务接力真值
 

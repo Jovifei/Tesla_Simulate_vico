@@ -1,6 +1,6 @@
 # Documentation Guide
 
-更新：2026-09-05
+更新：2026-09-09
 
 ## 1. Authority hierarchy
 
@@ -30,14 +30,19 @@
 ## 3. Current direction
 
 ```text
-Stage AD acoustic loop
-→ Jovi Human feedback
-→ Hellcat Engineering Profile
+Stage AF-R2 evidence scope
+→ Stage AG v1 Reference-regression negative evidence
+→ Stage AG-R1 Reference + separation gates
+→ strict rich A/B review routing
+→ Jovi Human acoustic feedback
+→ Engineering Profile review
 → Ferrari / RX-7
 → AudioParameterPackage + Golden Evidence
 → portable C++
 → Android App
 ```
+
+Stage AG-R1 的正式试听入口不是历史 portal：只从 `local/stage-ag-vehicle-identity-20260908` 的 `stage_ag.serve_r1_review_strict` 打开 23380–23383（legacy）或 23480–23483（R1）。该 server 在 bind 端口前验证 package manifest、页面 rich marker、candidate/Reference WAV SHA；`8080/8088–8091` 与 `review_packages/serve_dashboards.py` 对 Stage AG-R1 都是 `HISTORICAL_ROUTE_NOT_AUTHORIZED`。
 
 App minimum input = `speed + acceleration`；ESP32 = `DEFERRED_FUTURE_OPTION`。
 

@@ -92,7 +92,7 @@ Reference
 - FFTConvolver：未来 Android/C++ 实时 IR；
 - Oboe：未来 Android 低延迟 audio output。
 
-## 7. 现有 A/B 工作台继续复用
+## 7. 现有 A/B 工作台与 Stage AG-R1 严格路由
 
 不开发新后台。继续使用：
 
@@ -100,7 +100,7 @@ Reference
 - `stage_ad/audition_dashboard_template.html`
 - `stage_ad/build_unified_dashboards.py`
 
-端口：8080 portal，8088 Hellcat，8089 Ferrari，8090 LFA，8091 GT-R。
+`8080 portal / 8088 Hellcat / 8089 Ferrari / 8090 LFA / 8091 GT-R` 是 Stage AF 历史服务端口，不得作为 Stage AG-R1 的试听入口。Stage AG-R1 复用同一个富交互 HTML template 与 package bytes，但只能由 `stage_ag/serve_r1_review_strict.py` 提供：legacy 为 23380–23383，R1 为 23480–23483。它必须在任何 bind 前验证 exact manifest、自哈希、candidate/Reference WAV SHA、contract mode 和 rich HTML marker；一处 port collision 或 stale Stage-AE marker 即 fail-closed。
 
 音频被 Base64 嵌入生成页面，A/B 可以热切换。当前模板样式仍引用远端 Tailwind runtime，因此“音频零依赖”成立，但严格断网下的完整样式不能假设永久可用；Stage AF 不重写 UI，仅保留这项已知技术债。
 
