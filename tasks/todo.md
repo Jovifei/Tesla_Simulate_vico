@@ -4348,7 +4348,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## 2026-09-09 Stage AG-R1 strict rich-review routing
 
-- [x] Fetch `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`; verify AF-R2 `4ee1f833...` is its merge-base and keep PR #16 Draft/main untouched.
+- [x] Fetch `origin/local/stage-ag-vehicle-identity-20260908@717a5226eef39491938f7e796cb87de521c2c477`; verify AF-R2 `4ee1f833...` is its merge-base; source plus strict-route docs are now in main at `71bb918...`, and PR #16 is closed.
 - [x] Verify fixed legacy/R1 package manifests `0f9338...d7a541` / `3fecb566...f599519` without regenerating probe, scorecard, package or Reference bytes.
 - [x] Use `stage_ag.serve_r1_review_strict --preflight-only`; it passed rich-marker, contract, candidate/Reference SHA and 4-car checks.
 - [x] Identify and stop only the confirmed stale `serve_dashboards.py` PIDs that occupied 23380–23483; do not use 8080/8088–8091.
