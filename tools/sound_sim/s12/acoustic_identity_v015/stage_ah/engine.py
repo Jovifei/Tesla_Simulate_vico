@@ -8,6 +8,7 @@ import numpy as np
 from scipy.signal import welch
 
 from ..stage_ag.vehicle_identity_r1 import VehicleIdentityR1Engine, IDENTITY_MODE_V1R1
+from .output_guard import LEGACY_CLIP_V1
 from .source_policy import SourcePolicy, VARIANTS, pcm_sha256, signature, validate_events
 
 
@@ -69,14 +70,15 @@ class RemediationEngine(VehicleIdentityR1Engine):
 
     def __init__(self, vehicle_type="ferrari_458", sr=48_000, *,
                  identity_mode=IDENTITY_MODE_V1R1, numerical_fixes=(), seed=20260908,
-                 variant="r1_baseline", collect=True):
+                 variant="r1_baseline", collect=True,
+                 output_policy=LEGACY_CLIP_V1):
         if variant not in VARIANTS or identity_mode != IDENTITY_MODE_V1R1:
             raise ValueError("AH requires an explicit variant and AG-R1 identity mode")
         if int(sr) != 48_000 or int(seed) < 0:
             raise ValueError("AH qualification currently requires 48 kHz and seed >= 0")
         super().__init__(vehicle_type, sr, identity_mode=identity_mode,
                          numerical_fixes=numerical_fixes, seed=seed)
-        self.variant, self.collect = variant, collect
+        self.variant, self.collect, self.output_policy = variant, collect, output_policy
         self.last_report = {}
 
     def render_track(self, rpm_curve, throttle_curve, duration,
@@ -89,16 +91,19 @@ class RemediationEngine(VehicleIdentityR1Engine):
         validate_events(afterfire_events, duration)
         args = (rpm_curve, throttle_curve, duration, shift_events, afterfire_events, bov_events)
         anchor = SourcePolicy(self.vehicle_type, "r1_baseline", seed=self.seed,
-                              collect=self.collect)
+                              collect=self.collect, output_policy=LEGACY_CLIP_V1,
+                              sample_rate=self.sr)
         self.base._source_policy = anchor
         try:
             parent_pcm = super().render_track(*args)
-            if self.variant == "r1_baseline":
+            if self.variant == "r1_baseline" and self.output_policy == LEGACY_CLIP_V1:
                 policy, pcm = anchor, parent_pcm
             else:
                 parent_peak = anchor.receipt["pre_saturation_peak"]
                 policy = SourcePolicy(self.vehicle_type, self.variant, seed=self.seed,
-                                      parent_peak=parent_peak, collect=self.collect)
+                                      parent_peak=parent_peak, collect=self.collect,
+                                      output_policy=self.output_policy,
+                                      sample_rate=self.sr)
                 self.base._source_policy = policy
                 pcm = super().render_track(*args)
         finally:
@@ -106,6 +111,8 @@ class RemediationEngine(VehicleIdentityR1Engine):
         self.last_report = {
             "vehicle": self.vehicle_type,
             "variant": self.variant,
+            "source_variant": self.variant,
+            "output_policy": self.output_policy,
             "rpm_min_max": [float(np.min(rpm_curve)), float(np.max(rpm_curve))],
             "throttle_min_max": [float(np.min(throttle_curve)), float(np.max(throttle_curve))],
             "nominal_body_band_hz": [self.base.mechanical_resonance_freq * .7,
@@ -117,12 +124,20 @@ class RemediationEngine(VehicleIdentityR1Engine):
                                       [shift_events, afterfire_events, bov_events]),
             "parent_pcm_sha256": pcm_sha256(parent_pcm),
             "candidate_pcm_sha256": pcm_sha256(pcm),
-            "signature": signature(self.vehicle_type, self.variant),
+            "signature": signature(self.vehicle_type, self.variant, self.output_policy),
             "normalization": policy.receipt,
+            "parent_pre_saturation_peak": anchor.receipt["pre_saturation_peak"],
+            "parent_peak": anchor.receipt["pre_saturation_peak"],
+            "candidate_raw_peak": policy.receipt.get("pre_saturation_peak"),
+            "parent_output_policy": anchor.output_policy,
             "parent_spectrum": spectrum_report(parent_pcm.astype(float) / 32767.),
             "candidate_spectrum": spectrum_report(pcm.astype(float) / 32767.),
             "parent_stems": {name: spectrum_report(x) for name, x in anchor.stems.items()},
             "candidate_stems": {name: spectrum_report(x) for name, x in policy.stems.items()},
+            "post_identity_mix_peak": self.last_identity_receipt.get("post_identity_mix_peak"),
+            "post_identity_clip_count": self.last_identity_receipt.get("post_identity_clip_count", 0),
+            "post_identity_clip_error": self.last_identity_receipt.get("post_identity_clip_error", 0.0),
+            "post_identity_clip_error_rms": self.last_identity_receipt.get("post_identity_clip_error_rms", 0.0),
             "note": "Correlated stem energies are not additive; fixed peak != proven noise",
         }
         return pcm

@@ -210,6 +210,12 @@ class VehicleIdentityR1Engine:
             sr=sr,
             numerical_fixes=tuple(numerical_fixes),
         )
+        self.last_identity_receipt = {
+            "post_identity_mix_peak": None,
+            "post_identity_clip_count": 0,
+            "post_identity_clip_error": 0.0,
+            "post_identity_clip_error_rms": 0.0,
+        }
 
     @property
     def redline(self) -> float:
@@ -240,6 +246,12 @@ class VehicleIdentityR1Engine:
 
         profile = VEHICLE_IDENTITY_PROFILES[self.vehicle_type]
         if self.identity_mode == IDENTITY_MODE_LEGACY or profile.identity_mix <= 0.0:
+            self.last_identity_receipt = {
+                "post_identity_mix_peak": float(np.max(np.abs(base_pcm)) / 32767.0),
+                "post_identity_clip_count": 0,
+                "post_identity_clip_error": 0.0,
+                "post_identity_clip_error_rms": 0.0,
+            }
             return base_pcm
 
         n = base_pcm.shape[0]
@@ -257,5 +269,13 @@ class VehicleIdentityR1Engine:
 
         base = base_pcm.astype(np.float64) / 32767.0
         combined = (1.0 - mix_curve[:, None]) * base + mix_curve[:, None] * identity
-        combined = np.clip(combined, -0.94, 0.94)
-        return (combined * 32767.0).astype(np.int16)
+        clip_mask = np.abs(combined) > 0.94 + 1e-12
+        clip_output = np.clip(combined, -0.94, 0.94)
+        clip_error = combined - clip_output
+        self.last_identity_receipt = {
+            "post_identity_mix_peak": float(np.max(np.abs(combined))),
+            "post_identity_clip_count": int(np.count_nonzero(clip_mask)),
+            "post_identity_clip_error": float(np.max(np.abs(clip_error))),
+            "post_identity_clip_error_rms": float(np.sqrt(np.mean(clip_error * clip_error))),
+        }
+        return (clip_output * 32767.0).astype(np.int16)
