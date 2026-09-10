@@ -68,7 +68,8 @@ def build_package(args: argparse.Namespace, variant: str, render_records: list,
             sys.path.pop(0)
         names = ("IDENTITY_MODE_V1", "IDENTITY_MODES", "VehicleIdentityEngine",
                  "vehicle_identity_signature", "identity_runtime_fingerprint",
-                 "stage_ag_source_receipt", "_contract", "dependency_fingerprint")
+                 "stage_ag_source_receipt", "_contract", "dependency_fingerprint",
+                 "publish_staged_package")
         saved = {key: getattr(ag, key) for key in names}
         old_configs = dashboards.VEHICLE_CONFIGS
 
@@ -109,6 +110,10 @@ def build_package(args: argparse.Namespace, variant: str, render_records: list,
                     key=lambda item: item["path"],
                 )
             return result
+
+        def publish_staged_package(staging_root, published_root):
+            _add_manifest_metadata(staging_root, getattr(args, "package_metadata", {}))
+            return saved["publish_staged_package"](staging_root, published_root)
 
         def receipt(*, allow_dirty_dev=False):
             result = _extend_source_receipt(saved["stage_ag_source_receipt"],
@@ -153,6 +158,7 @@ def build_package(args: argparse.Namespace, variant: str, render_records: list,
         ag.stage_ag_source_receipt = receipt
         ag._contract = contract
         ag.dependency_fingerprint = dependency_fingerprint
+        ag.publish_staged_package = publish_staged_package
         dashboards.VEHICLE_CONFIGS = copy.deepcopy(old_configs)
         c1 = bool(getattr(args, "c1_experiment", False))
         group_label = str(getattr(args, "group_label", variant))
@@ -164,9 +170,7 @@ def build_package(args: argparse.Namespace, variant: str, render_records: list,
                                f"output_policy={output_policy} / 原始真车参考 / "
                                "诊断候选，未经人耳验收 · " + cfg["subtitle"])
         try:
-            published = ag.build_identity_package(args)
-            _add_manifest_metadata(published, getattr(args, "package_metadata", {}))
-            return published
+            return ag.build_identity_package(args)
         finally:
             dashboards.VEHICLE_CONFIGS = old_configs
             for key, value in saved.items():

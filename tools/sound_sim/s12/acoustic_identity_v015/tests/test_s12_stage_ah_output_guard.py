@@ -141,3 +141,26 @@ def test_linked_policy_preserves_source_variant_no_event_controls(monkeypatch):
     p3 = c3.render_track(rpm, throttle, 0.25)
     assert np.array_equal(p0, p2)
     assert np.array_equal(p1, p3)
+
+
+def test_identity_layer_reports_its_own_first_clip(monkeypatch):
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ag import vehicle_identity_r1 as identity
+
+    monkeypatch.setattr(
+        identity,
+        "_state_envelope",
+        lambda vehicle, rpm, throttle: (
+            np.full(len(rpm), 2.0, dtype=np.float64),
+            np.ones(len(rpm), dtype=np.float64),
+        ),
+    )
+    stereo, receipt = identity.synthesize_vehicle_identity_layer_r1(
+        "ferrari_458",
+        np.full(2400, 4200.0),
+        np.full(2400, 0.8),
+        seed=17,
+        return_receipt=True,
+    )
+    assert receipt["identity_layer_clip_count"] > 0
+    assert receipt["identity_layer_clip_error"] > 0
+    assert np.max(np.abs(stereo)) <= 0.94

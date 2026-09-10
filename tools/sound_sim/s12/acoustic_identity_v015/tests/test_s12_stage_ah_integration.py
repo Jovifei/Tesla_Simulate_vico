@@ -182,6 +182,7 @@ def test_c1_build_has_five_policy_groups_and_fair_comparisons(tmp_path, monkeypa
     assert groups["c0"]["output_policy"] == "linked_soft_ceiling_v1"
     assert groups["c0"]["post_guard_ceiling_exceedance_samples"] == 0
     assert groups["c0"]["emergency_clip_count"] == 0
+    assert groups["c0"]["identity_layer_clip_count"] == 0
     assert groups["c0"]["post_identity_clip_count"] == 0
     c0_report = run_experiment.read_sealed(groups["c0"]["report"])
     assert all("final_pcm_sha256" in row and "wav_file_sha256" in row for row in c0_report["records"])

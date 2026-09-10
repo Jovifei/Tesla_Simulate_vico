@@ -88,7 +88,7 @@ def verify_package(path: Path, expected_sha: str | None = None, variant: str | N
                      expected_manifest_sha256=expected_sha)
     manifest = load(path / "audition_manifest.json")
     expected_source = source_variant or variant
-    if expected_source and manifest.get("source_variant") not in (None, expected_source):
+    if source_variant and manifest.get("source_variant") != expected_source:
         raise ValueError("wrong AH source variant in manifest")
     if output_policy and manifest.get("output_policy") != output_policy:
         raise ValueError("wrong AH output policy in manifest")
@@ -195,6 +195,9 @@ def guard_totals(records):
               for field in fields}
     totals["post_identity_clip_count"] = sum(
         int(r.get("post_identity_clip_count", 0) or 0) for r in records
+    )
+    totals["identity_layer_clip_count"] = sum(
+        int(r.get("identity_layer_clip_count", 0) or 0) for r in records
     )
     totals["soft_guard_active_frames"] = sum(
         int(r["normalization"].get("soft_guard_active_frames", 0) or 0)
@@ -307,6 +310,7 @@ def _c1_group_status(spec, report, true_peak_review_records):
         or report["post_guard_ceiling_exceedance_samples"]
         or report["emergency_clip_count"]
         or report["post_identity_clip_count"]
+        or report["identity_layer_clip_count"]
         or true_peak_review_records
     )
     return "DIAGNOSTIC_GATE_BLOCKED" if blocked else "READY_FOR_HUMAN_REVIEW"
@@ -409,12 +413,17 @@ def build_c1(args):
                 ),
                 "emergency_clip_count": int(totals["emergency_clip_count"]),
                 "post_identity_clip_count": int(totals["post_identity_clip_count"]),
+                "identity_layer_clip_count": int(totals["identity_layer_clip_count"]),
                 "emergency_clip_error": float(max(
                     (record["normalization"].get("emergency_clip_error", 0.0)
                      for record in records), default=0.0
                 )),
                 "post_identity_clip_error": float(max(
                     (record.get("post_identity_clip_error", 0.0) for record in records),
+                    default=0.0
+                )),
+                "identity_layer_clip_error": float(max(
+                    (record.get("identity_layer_clip_error", 0.0) for record in records),
                     default=0.0
                 )),
                 "soft_guard_active_frames": int(totals["soft_guard_active_frames"]),
