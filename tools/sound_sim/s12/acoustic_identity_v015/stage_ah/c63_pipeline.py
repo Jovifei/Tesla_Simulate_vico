@@ -94,6 +94,24 @@ def _spectrum(values: np.ndarray, sample_rate: int) -> dict[str, object]:
     return spectrum_report(values, sample_rate)
 
 
+def _json_safe(value: object) -> object:
+    if isinstance(value, np.ndarray):
+        array = np.asarray(value, dtype=np.float64)
+        return {
+            "shape": list(array.shape),
+            "min": float(np.min(array)) if array.size else 0.0,
+            "max": float(np.max(array)) if array.size else 0.0,
+            "rms": float(np.sqrt(np.mean(array * array))) if array.size else 0.0,
+        }
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, Mapping):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
+
+
 class C63Engine:
     """Render C63 Stage-K source through the AH-C1 final-domain contract."""
 
@@ -255,7 +273,7 @@ class C63Engine:
             "ir_volume": C63_IR_VOLUME,
             "ir_source_path": str(self.ir_source_path) if self.ir_source_path else "INJECTED_TEST_IR",
             "ir_source_sha256": self.ir_source_sha256,
-            "candidate_source_diagnostics": dict(source.diagnostics),
+            "candidate_source_diagnostics": _json_safe(source.diagnostics),
             "candidate_stems": source_stems,
             "normalization": {
                 **guard,
