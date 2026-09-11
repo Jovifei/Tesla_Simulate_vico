@@ -108,9 +108,13 @@ def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
 def _read_sealed(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     checksum = payload.pop("manifest_sha256", None)
+    checksum_field = "manifest_sha256"
+    if checksum is None:
+        checksum = payload.pop("contract_sha256", None)
+        checksum_field = "contract_sha256"
     if checksum != _sha256_bytes(canonical_json_bytes(payload)):
         raise ValueError(f"sealed receipt mismatch: {path}")
-    payload["manifest_sha256"] = checksum
+    payload[checksum_field] = checksum
     return payload
 
 
