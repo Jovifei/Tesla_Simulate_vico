@@ -245,7 +245,7 @@ def _reference_map(reference_receipt: Mapping[str, Any]) -> dict[str, dict[str, 
 def _renderer_identity(candidate_path: Path, engine: C63Engine) -> dict[str, Any]:
     source_path = candidate_path.parents[2] / "sources" / "mercedes_na_v8_source_v3.py"
     target_path = candidate_path.parents[2] / "reference_database" / "c63_w204_reference_targets.json"
-    ptr_path = candidate_path.parents[2] / "acoustic_demo" / "runtime_ptr_adapter.py"
+    ptr_path = candidate_path.parents[3] / "acoustic_demo" / "runtime_ptr_adapter.py"
     return {
         "vehicle": C63_VEHICLE,
         "renderer": "stage_k.render_stage_k_candidate + frozen_ptr + AH-C1 output guard",
