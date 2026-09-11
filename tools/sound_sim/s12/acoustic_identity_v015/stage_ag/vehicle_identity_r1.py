@@ -136,7 +136,8 @@ def synthesize_vehicle_identity_layer_r1(
     *,
     sr: int = 48_000,
     seed: int = 20260908,
-) -> np.ndarray:
+    return_receipt: bool = False,
+) -> np.ndarray | tuple[np.ndarray, dict[str, float | int]]:
     """Render the R1 source without track-relative peak recovery."""
     if vehicle not in VEHICLE_IDENTITY_PROFILES or vehicle not in R1_CONTROLS:
         raise ValueError(f"unsupported R1 identity vehicle: {vehicle}")
@@ -173,15 +174,24 @@ def synthesize_vehicle_identity_layer_r1(
 
     # Unlike v1, do not normalize this track back to 0.94.  Clipping is only a
     # hard numerical safety bound and therefore cannot amplify idle/low-load audio.
-    layer = np.clip(layer, -0.94, 0.94)
+    identity_clip_mask = np.abs(layer) > 0.94 + 1e-12
+    clipped_layer = np.clip(layer, -0.94, 0.94)
+    identity_clip_error = layer - clipped_layer
     right = (
-        causal_fractional_delay(layer, profile.stereo_delay_samples)
+        causal_fractional_delay(clipped_layer, profile.stereo_delay_samples)
         if profile.stereo_delay_samples > 0.0
-        else layer.copy()
+        else clipped_layer.copy()
     )
-    stereo = np.column_stack([layer, right])
+    stereo = np.column_stack([clipped_layer, right])
     if not np.all(np.isfinite(stereo)):
         raise RuntimeError("R1 vehicle identity layer produced non-finite samples")
+    if return_receipt:
+        return stereo, {
+            "identity_layer_preclip_peak": float(np.max(np.abs(layer))),
+            "identity_layer_clip_count": int(np.count_nonzero(identity_clip_mask)),
+            "identity_layer_clip_error": float(np.max(np.abs(identity_clip_error))),
+            "identity_layer_clip_error_rms": float(np.sqrt(np.mean(identity_clip_error * identity_clip_error))),
+        }
     return stereo
 
 
@@ -210,6 +220,16 @@ class VehicleIdentityR1Engine:
             sr=sr,
             numerical_fixes=tuple(numerical_fixes),
         )
+        self.last_identity_receipt = {
+            "post_identity_mix_peak": None,
+            "post_identity_clip_count": 0,
+            "post_identity_clip_error": 0.0,
+            "post_identity_clip_error_rms": 0.0,
+            "identity_layer_preclip_peak": None,
+            "identity_layer_clip_count": 0,
+            "identity_layer_clip_error": 0.0,
+            "identity_layer_clip_error_rms": 0.0,
+        }
 
     @property
     def redline(self) -> float:
@@ -240,22 +260,42 @@ class VehicleIdentityR1Engine:
 
         profile = VEHICLE_IDENTITY_PROFILES[self.vehicle_type]
         if self.identity_mode == IDENTITY_MODE_LEGACY or profile.identity_mix <= 0.0:
+            self.last_identity_receipt = {
+                "post_identity_mix_peak": float(np.max(np.abs(base_pcm)) / 32767.0),
+                "post_identity_clip_count": 0,
+                "post_identity_clip_error": 0.0,
+                "post_identity_clip_error_rms": 0.0,
+                "identity_layer_preclip_peak": 0.0,
+                "identity_layer_clip_count": 0,
+                "identity_layer_clip_error": 0.0,
+                "identity_layer_clip_error_rms": 0.0,
+            }
             return base_pcm
 
         n = base_pcm.shape[0]
         rpm = _finite_curve(rpm_curve, n)
         throttle = np.clip(_finite_curve(throttle_curve, n), 0.0, 1.0)
-        identity = synthesize_vehicle_identity_layer_r1(
+        identity, identity_receipt = synthesize_vehicle_identity_layer_r1(
             self.vehicle_type,
             rpm,
             throttle,
             sr=self.sr,
             seed=self.seed,
+            return_receipt=True,
         )
         _, blend_scale = _state_envelope(self.vehicle_type, rpm, throttle)
         mix_curve = np.clip(float(profile.identity_mix) * blend_scale, 0.0, 0.25)
 
         base = base_pcm.astype(np.float64) / 32767.0
         combined = (1.0 - mix_curve[:, None]) * base + mix_curve[:, None] * identity
-        combined = np.clip(combined, -0.94, 0.94)
-        return (combined * 32767.0).astype(np.int16)
+        clip_mask = np.abs(combined) > 0.94 + 1e-12
+        clip_output = np.clip(combined, -0.94, 0.94)
+        clip_error = combined - clip_output
+        self.last_identity_receipt = {
+            **identity_receipt,
+            "post_identity_mix_peak": float(np.max(np.abs(combined))),
+            "post_identity_clip_count": int(np.count_nonzero(clip_mask)),
+            "post_identity_clip_error": float(np.max(np.abs(clip_error))),
+            "post_identity_clip_error_rms": float(np.sqrt(np.mean(clip_error * clip_error))),
+        }
+        return (clip_output * 32767.0).astype(np.int16)
