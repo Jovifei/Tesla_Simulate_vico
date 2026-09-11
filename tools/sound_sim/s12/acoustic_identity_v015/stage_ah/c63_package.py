@@ -370,6 +370,11 @@ def build_group(
         shutil.copy2(source, web_dir / source.name)
     shutil.copy2(reference_bundle / "reference_clip_receipt.json", package_root / "reference_clip_receipt.json")
     cfg = _c63_config(vehicle_root, port)
+    cfg["title"] = f"[AH-C63 · {group} · {output_policy}] " + cfg["title"]
+    cfg["subtitle"] = (
+        f"Stage AH-C63 / {group} / output_policy={output_policy} / "
+        + cfg["subtitle"]
+    )
     cfg["reference_bundle"] = reference_bundle
     cfg["_nav_ports"] = {C63_VEHICLE: int(port)}
     cfg["_nav_vehicles"] = (C63_VEHICLE,)
