@@ -487,7 +487,8 @@ def build_group(
         validate_artifacts(artifacts, package_root)
 
         for scene, record in zip(cfg["scenes"], records):
-            record["candidate_wav_sha256"] = sha256_file(vehicle_root / "web_audio" / scene["candidate_file"])
+            record["wav_file_sha256"] = sha256_file(vehicle_root / "web_audio" / scene["candidate_file"])
+            record["candidate_wav_sha256"] = record["wav_file_sha256"]
             record["true_peak_4x"] = _true_peak(vehicle_root / "web_audio" / scene["candidate_file"])
         aggregate = {
             "legacy_ceiling_input_exceedance_samples": int(sum(r["normalization"].get("legacy_ceiling_input_exceedance_samples", 0) for r in records)),
@@ -547,8 +548,19 @@ def _comparison(left: Mapping[str, Any], right: Mapping[str, Any]) -> dict[str, 
             "comparison_type": "OUTPUT_POLICY_ONLY",
             "pre_guard_pcm_equal": a["normalization"]["pre_guard_pcm_sha256"] == b["normalization"]["pre_guard_pcm_sha256"],
             "pcm_equal": a["final_pcm_sha256"] == b["final_pcm_sha256"],
+            "rms_delta": float(b["final_rms"] - a["final_rms"]),
+            "peak_delta": float(b["final_peak"] - a["final_peak"]),
         })
-    return {"record_count": len(rows), "pre_guard_equal_count": sum(r["pre_guard_pcm_equal"] for r in rows), "pcm_equal_count": sum(r["pcm_equal"] for r in rows), "rows": rows}
+    return {
+        "record_count": len(rows),
+        "pre_guard_equal_count": sum(r["pre_guard_pcm_equal"] for r in rows),
+        "pcm_equal_count": sum(r["pcm_equal"] for r in rows),
+        "mean_rms_delta": float(np.mean([r["rms_delta"] for r in rows])) if rows else 0.0,
+        "mean_peak_delta": float(np.mean([r["peak_delta"] for r in rows])) if rows else 0.0,
+        "max_abs_rms_delta": float(np.max(np.abs([r["rms_delta"] for r in rows]))) if rows else 0.0,
+        "max_abs_peak_delta": float(np.max(np.abs([r["peak_delta"] for r in rows]))) if rows else 0.0,
+        "rows": rows,
+    }
 
 
 def build_run(

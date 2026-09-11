@@ -264,6 +264,14 @@ class C63Engine:
             "vehicle": C63_VEHICLE,
             "source_variant": C63_SOURCE_VARIANT,
             "output_policy": self.output_policy,
+            "output_policy_config": {
+                "policy_id": self.output_policy,
+                "knee_linear": 0.90 if self.output_policy == LINKED_SOFT_CEILING_V1 else None,
+                "ceiling_linear": 0.94,
+                "stereo_link": "instantaneous_frame_peak_common_gain" if self.output_policy == LINKED_SOFT_CEILING_V1 else "legacy_renderer_path",
+                "parent_denominator_policy": "fixed_parent_peak",
+            },
+            "output_guard_receipt_schema": guard["receipt_schema"],
             "trace_sha256": trace_sha,
             "parent_peak": denominator,
             "candidate_raw_peak": actual_peak,
@@ -289,6 +297,8 @@ class C63Engine:
             "identity_layer_clip_error": 0.0,
             "post_identity_clip_count": 0,
             "post_identity_clip_error": 0.0,
+            "final_peak": float(np.max(np.abs(final_float))),
+            "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "C63 Stage-K source; reference audio is local unverified R2 material",
         }
