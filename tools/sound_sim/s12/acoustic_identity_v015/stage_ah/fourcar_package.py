@@ -169,6 +169,7 @@ def _source_receipt() -> dict[str, Any]:
 
 def _contract(
     *,
+    package_id: str,
     group: str,
     vehicle: str,
     cfg: Mapping[str, Any],
@@ -194,7 +195,7 @@ def _contract(
         params.append(
             {
                 "name": profile_metadata["changed_source_parameter"],
-                "scope": "source_before_shared_layers",
+                "scope": "ah_r1_pre_saturation_before_output_guard",
                 "base_value": profile_metadata["base_value"],
                 "candidate_value": profile_metadata["candidate_value"],
                 "unit": "profile-defined",
@@ -203,7 +204,7 @@ def _contract(
         )
     return {
         "schema": "s12.stage_af.dashboard_contract.v1",
-        "package_id": f"ah-fourcar-realref-{group.lower()}",
+        "package_id": package_id,
         "candidate_id": f"AH-FOURCAR-REALREF-{group}",
         "vehicle": vehicle,
         "group": group,
@@ -355,6 +356,7 @@ def _build_group(
                 for scene in cfg["scenes"]
             }
             contract = _contract(
+                package_id=group_root.name,
                 group=group,
                 vehicle=vehicle,
                 cfg=cfg,
