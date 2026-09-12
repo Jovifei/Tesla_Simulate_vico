@@ -111,6 +111,7 @@ def _reference_files(reference_root: Path, vehicle: str) -> dict[str, dict[str, 
 
 def _source_receipt() -> dict[str, Any]:
     receipt = dict(git_source_receipt(allow_dirty_dev=False))
+    target_payload = json.loads(FOURCAR_TARGET_PATH.read_text(encoding="utf-8"))
     paths = [
         Path(__file__),
         FOURCAR_TARGET_PATH,
@@ -141,6 +142,21 @@ def _source_receipt() -> dict[str, Any]:
             "promotable": False,
             "promotion_status": "NOT_PROMOTABLE_R3_UNSYNCED_PUBLIC_RECORDINGS",
             "reference_target_sha256": sha256_file(FOURCAR_TARGET_PATH),
+            "real_reference_sources": {
+                vehicle: [
+                    {
+                        "id": source["id"],
+                        "source_url": source["source_url"],
+                        "wav_sha256": source["wav_sha256"],
+                        "role": source["role"],
+                        "evidence_level": source["evidence_level"],
+                        "rights_status": source["rights_status"],
+                        "synchronization": source["synchronization"],
+                    }
+                    for source in target_payload["vehicles"][vehicle]["sources"]
+                ]
+                for vehicle in FOURCAR_VEHICLES
+            },
         }
     )
     return receipt

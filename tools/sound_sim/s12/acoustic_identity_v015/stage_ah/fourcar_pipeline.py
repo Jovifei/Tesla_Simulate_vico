@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -71,6 +72,19 @@ IR_NAMES = {
 
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
+
+
+def _resolve_ir_path(name: str) -> Path | None:
+    root = Path(os.environ.get("S12_ENGINE_SIM_IR_ROOT", SOUND_LIB_DIR))
+    for candidate in (
+        root / "new" / f"{name}.wav",
+        root / "archive" / f"{name}.wav",
+        root / "smooth" / f"{name}.wav",
+        root / f"{name}.wav",
+    ):
+        if candidate.is_file():
+            return candidate.resolve()
+    return None
 
 
 def _json_safe(value: object) -> object:
@@ -237,6 +251,18 @@ class FourCarRealReferenceEngine:
         self.output_policy = output_policy
         self.seed = int(seed)
         self.base = EngineAcoustics(vehicle_type=vehicle_type, sr=self.sr)
+        self.ir_name = IR_NAMES[vehicle_type]
+        self.ir_source_path = _resolve_ir_path(self.ir_name)
+        self.base_source_payload = json.loads(
+            REAL_REFERENCE_BASE_PATHS[vehicle_type].read_text(encoding="utf-8")
+        )
+        self.changed_source_parameter = REAL_REFERENCE_CHANGED_PARAMETERS[vehicle_type]
+        self.base_source_value = float(
+            self.base_source_payload["source"][self.changed_source_parameter]["value"]
+        )
+        self.candidate_source_value = float(
+            self.profile.payload["source"][self.changed_source_parameter]["value"]
+        )
         self.parent_peaks = dict(parent_peaks or {})
         self.scene_index = 0
         self.reports: list[dict[str, object]] = []
@@ -313,20 +339,12 @@ class FourCarRealReferenceEngine:
             bov_events,
             seed=self.seed,
         )
-        base_value = float(
-            json.loads(REAL_REFERENCE_BASE_PATHS[self.vehicle_type].read_text(encoding="utf-8"))["source"][
-                REAL_REFERENCE_CHANGED_PARAMETERS[self.vehicle_type]
-            ]["value"]
-        )
-        candidate_value = float(
-            self.profile.payload["source"][REAL_REFERENCE_CHANGED_PARAMETERS[self.vehicle_type]]["value"]
-        )
         adjusted = _apply_profile_shelf(
             pre_saturation,
             vehicle=self.vehicle_type,
             profile=self.profile,
-            base_value=base_value,
-            candidate_value=candidate_value,
+            base_value=self.base_source_value,
+            candidate_value=self.candidate_source_value,
             sample_rate_hz=self.sr,
         )
         candidate_raw_peak = float(np.max(np.abs(adjusted)))
@@ -377,6 +395,12 @@ class FourCarRealReferenceEngine:
             "candidate_render_path": "current_ah_engine_pre_saturation_overlay",
             "source_candidate_id": self.profile.candidate_id,
             "source_parameter_values": _json_safe(self.profile.payload.get("source", {})),
+            "source_parameter_change": {
+                "name": self.changed_source_parameter,
+                "base_value": self.base_source_value,
+                "candidate_value": self.candidate_source_value,
+                "ratio": self.candidate_source_value / self.base_source_value,
+            },
             "trace_sha256": _sha256_bytes(
                 np.ascontiguousarray(np.column_stack([rpm, throttle]), dtype="<f8").tobytes()
             ),
@@ -384,8 +408,13 @@ class FourCarRealReferenceEngine:
             "candidate_raw_peak": candidate_raw_peak,
             "normalization_denominator": denominator,
             "parent_denominator_policy": "fixed_parent_peak_from_ah_r1_control",
-            "ir_name": IR_NAMES[self.vehicle_type],
-            "ir_source_sha256": _sha256_bytes(np.ascontiguousarray(self.base.ir, dtype="<f8").tobytes()),
+            "ir_name": self.ir_name,
+            "ir_source_path": str(self.ir_source_path) if self.ir_source_path else "UNRESOLVED_IR_PATH",
+            "ir_source_sha256": (
+                _sha256_bytes(self.ir_source_path.read_bytes())
+                if self.ir_source_path
+                else _sha256_bytes(np.ascontiguousarray(self.base.ir, dtype="<f8").tobytes())
+            ),
             "candidate_source_diagnostics": _json_safe({"source_policy_receipt": source_receipt}),
             "candidate_stems": stem_reports,
             "normalization": {
