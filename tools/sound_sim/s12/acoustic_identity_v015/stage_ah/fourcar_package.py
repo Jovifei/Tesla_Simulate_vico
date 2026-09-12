@@ -92,7 +92,8 @@ def _import_dashboards():
 
 
 def _vehicle_directory(vehicle: str) -> str:
-    return f"s12-stage-ad-{vehicle}-closed-loop-v1"
+    directory_id = {"ferrari_458": "ferrari-458"}.get(vehicle, vehicle)
+    return f"s12-stage-ad-{directory_id}-closed-loop-v1"
 
 
 def _reference_files(reference_root: Path, vehicle: str) -> dict[str, dict[str, str]]:
