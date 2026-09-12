@@ -5,8 +5,19 @@ import numpy as np
 import pytest
 from pathlib import Path
 
-from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.supra_package import _supra_config
+import json
+
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.supra_package import (
+    REFERENCE_CLIPS,
+    REFERENCE_SOURCES,
+    _supra_config,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.supra_pipeline import SupraEngine
+from tools.sound_sim.s12.acoustic_identity_v015.sources.toyota_i6_turbo_source_v2 import (
+    SUPRA_V2_EDGE_SCALE,
+    SUPRA_V2_HIBAND_SCALE,
+    render_supra_jza80_v2,
+)
 
 
 @pytest.fixture
@@ -81,3 +92,37 @@ def test_supra_receipt_is_explicit_about_unverified_reference():
     cfg = _supra_config(Path("supra"), 24680)
     assert "未核验" in cfg["subtitle"]
     assert "unverified" in cfg["ref_source"].lower()
+
+
+def test_supra_real_reference_contract_has_three_recordings():
+    payload = json.loads(
+        Path(
+            "tools/sound_sim/s12/acoustic_identity_v015/reference_database/"
+            "supra_jza80_multi_reference_targets_v2.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert len(payload["recordings"]) == 3
+    assert payload["aggregate"]["source_adjustment"] == {
+        "edge_scale": SUPRA_V2_EDGE_SCALE,
+        "hiband_scale": SUPRA_V2_HIBAND_SCALE,
+    }
+    assert set(REFERENCE_SOURCES) >= {
+        "supra_01_bone_stock_dyno",
+        "supra_02_mostly_stock_road",
+        "supra_03_stock_start_acceleration",
+    }
+    assert "ref_full_pull_dyno.wav" in REFERENCE_CLIPS
+
+
+def test_supra_v2_source_reports_fixed_overlay():
+    rpm, throttle = _curves()
+    from tools.sound_sim.s12.acoustic_identity_v015.contracts import VehicleStateTrace
+
+    time = np.arange(rpm.size, dtype=np.float64) / 48_000.0
+    trace = VehicleStateTrace(
+        time, rpm, throttle, throttle, np.gradient(rpm / 60.0, time)
+    ).validate()
+    render = render_supra_jza80_v2(trace)
+    assert render.diagnostics["source_variant"] == "supra_i6_twin_turbo_realref_v2"
+    assert render.diagnostics["source_overlay"]["edge_scale"] == SUPRA_V2_EDGE_SCALE
+    assert render.diagnostics["source_overlay"]["hiband_scale"] == SUPRA_V2_HIBAND_SCALE

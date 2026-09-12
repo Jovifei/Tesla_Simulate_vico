@@ -11,8 +11,15 @@ from scipy import signal
 
 from ..contracts import SourceRender, VehicleStateTrace
 from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade
-from ..render_realism_v10 import _render_stateful
-from ..sources.toyota_i6_turbo_source import render_supra_jza80
+from ..acoustic_layers import (
+    apply_afterfire,
+    apply_exhaust_rumble,
+    apply_idle_dynamics,
+    apply_low_frequency_body,
+    apply_pre_ptr_equalization,
+    apply_shift_dynamics,
+)
+from ..sources.toyota_i6_turbo_source_v2 import render_supra_jza80_v2
 from ..stage_ad.engine_sim_acoustics import SOUND_LIB_DIR, load_impulse_response
 from .engine import spectrum_report
 from .output_guard import (
@@ -25,11 +32,14 @@ from .output_guard import (
 
 
 SUPRA_VEHICLE = "supra_jza80"
-SUPRA_SOURCE_VARIANT = "supra_i6_twin_turbo_v1"
-SUPRA_SOURCE_PATH = Path(__file__).resolve().parents[1] / "sources" / "toyota_i6_turbo_source.py"
+SUPRA_SOURCE_VARIANT = "supra_i6_twin_turbo_realref_v2"
+SUPRA_SOURCE_PATH = Path(__file__).resolve().parents[1] / "sources" / "toyota_i6_turbo_source_v2.py"
+SUPRA_BASE_SOURCE_PATH = Path(__file__).resolve().parents[1] / "sources" / "toyota_i6_turbo_source.py"
 SUPRA_REFERENCE_TARGET_PATH = Path(__file__).resolve().parents[1] / "reference_database" / "supra_jza80_reference_targets.json"
+SUPRA_MULTI_REFERENCE_PATH = Path(__file__).resolve().parents[1] / "reference_database" / "supra_jza80_multi_reference_targets_v2.json"
 SUPRA_IR_NAME = "mild_exhaust_reverb"
 SUPRA_IR_VOLUME = 0.015
+_SAMPLE_RATE_HZ = 48_000
 
 
 def _sha256_bytes(value: bytes) -> str:
@@ -78,6 +88,26 @@ def _resolve_ir_path(name: str) -> Path | None:
         if candidate.is_file():
             return candidate.resolve()
     return None
+
+
+def _render_stateful(trace: VehicleStateTrace) -> SourceRender:
+    """Apply the existing shared layers after the v2 source overlay."""
+    source = render_supra_jza80_v2(trace, _SAMPLE_RATE_HZ)
+    idle = apply_idle_dynamics(source, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    afterfire = apply_afterfire(idle, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    body = apply_low_frequency_body(afterfire, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    rumble = apply_exhaust_rumble(body, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    shifted = apply_shift_dynamics(rumble, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    equalized = apply_pre_ptr_equalization(shifted, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
+    diagnostics = dict(equalized.diagnostics)
+    diagnostics["realism_layer_order"] = (
+        "supra_v2_source_overlay -> idle_dynamics -> state_dependent_afterfire -> "
+        "low_frequency_pressure_body -> exhaust_rumble -> shift_dynamics -> "
+        "pre_ptr_equalization -> frozen_ptr"
+    )
+    return SourceRender(
+        pressure=equalized.pressure, stems=equalized.stems, diagnostics=diagnostics
+    ).validate()
 
 
 def _trace_sha256(
@@ -162,7 +192,7 @@ class SupraEngine:
             throttle=throttle,
             acceleration_mps2=np.gradient(rpm / 60.0, time_s),
         ).validate()
-        source = _render_stateful(render_supra_jza80, SUPRA_VEHICLE, trace)
+        source = _render_stateful(trace)
         pressure = np.asarray(source.pressure, dtype=np.float64)
         ir_scaled = self.ir * SUPRA_IR_VOLUME
         convolved = np.column_stack(
@@ -274,7 +304,7 @@ class SupraEngine:
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
-            "note": "Synthetic Supra JZA80 source; reference audio is local unverified R2 material",
+            "note": "Synthetic Supra JZA80 source; v2 uses relative cues from three real R2 recordings",
         }
         self.reports.append(report)
         self.scene_index += 1
@@ -284,6 +314,8 @@ class SupraEngine:
 __all__ = (
     "SUPRA_IR_NAME",
     "SUPRA_IR_VOLUME",
+    "SUPRA_MULTI_REFERENCE_PATH",
+    "SUPRA_BASE_SOURCE_PATH",
     "SUPRA_REFERENCE_TARGET_PATH",
     "SUPRA_SOURCE_PATH",
     "SUPRA_SOURCE_VARIANT",
