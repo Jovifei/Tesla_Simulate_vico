@@ -53,6 +53,7 @@ DEFAULT_REFERENCE_ROOT = Path(
 )
 DEFAULT_PORT_C0 = 25380
 DEFAULT_PORT_REALREF = 25480
+EXPECTED_PARENT_MANIFEST_SHA256 = "3fecb566416d498bcedcb6c1a5267f6c7b36e82e9e9a87af7c2740705f599519"
 _LOCK = threading.RLock()
 
 
@@ -155,6 +156,10 @@ def _source_receipt() -> dict[str, Any]:
                     }
                     for source in target_payload["vehicles"][vehicle]["sources"]
                 ]
+                for vehicle in FOURCAR_VEHICLES
+            },
+            "real_reference_target_metrics": {
+                vehicle: target_payload["vehicles"][vehicle]["target_metrics"]
                 for vehicle in FOURCAR_VEHICLES
             },
         }
@@ -532,6 +537,14 @@ def build_run(
         raise FileExistsError(run_root)
     run_root.mkdir(parents=True)
     source_receipt = _source_receipt()
+    parent_manifest = reference_root.resolve() / "audition_manifest.json"
+    if not parent_manifest.is_file():
+        raise FileNotFoundError(f"accepted R1 parent manifest missing: {parent_manifest}")
+    parent_manifest_sha256 = sha256_file(parent_manifest)
+    if parent_manifest_sha256.lower() != EXPECTED_PARENT_MANIFEST_SHA256:
+        raise ValueError("accepted R1 parent manifest SHA drift")
+    source_receipt["accepted_r1_parent_manifest_sha256"] = parent_manifest_sha256
+    source_receipt["accepted_r1_parent_manifest_path"] = str(parent_manifest)
     profiles: dict[str, Any] = {}
     profile_metadata: dict[str, Mapping[str, Any]] = {}
     for vehicle in FOURCAR_VEHICLES:

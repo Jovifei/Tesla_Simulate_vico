@@ -28,6 +28,16 @@ def test_real_reference_inventory_has_five_verified_wav_entries_per_vehicle() ->
             assert hashlib.sha256(path.read_bytes()).hexdigest() == source["wav_sha256"]
 
 
+def test_package_binds_the_accepted_r1_parent_manifest() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_package import (
+        EXPECTED_PARENT_MANIFEST_SHA256,
+    )
+
+    assert EXPECTED_PARENT_MANIFEST_SHA256 == (
+        "3fecb566416d498bcedcb6c1a5267f6c7b36e82e9e9a87af7c2740705f599519"
+    )
+
+
 @pytest.mark.parametrize("vehicle", ("hellcat", "ferrari_458", "lfa", "gtr_r35"))
 def test_real_reference_profile_is_a_single_source_parameter_delta(vehicle: str) -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_pipeline import load_real_reference_profile
