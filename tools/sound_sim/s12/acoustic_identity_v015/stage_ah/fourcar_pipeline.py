@@ -17,16 +17,14 @@ from scipy import signal
 
 from ..contracts import SourceRender, VehicleStateTrace
 from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade
-from ..stage_ad.engine_sim_acoustics import EngineAcoustics
+from ..stage_ad.engine_sim_acoustics import EngineAcoustics, SOUND_LIB_DIR
 from ..stage_ag.vehicle_identity_r1 import (
     _state_envelope,
     synthesize_vehicle_identity_layer_r1,
 )
 from ..stage_ag.vehicle_identity import VEHICLE_IDENTITY_PROFILES
 from ..stage_g.candidate_profiles import load_stage_g_candidate
-from ..stage_g.render_candidate import render_stage_g_candidate
 from ..stage_k.candidate_profiles import load_stage_k_candidate
-from ..stage_k.render_candidate import render_stage_k_candidate
 from .engine import spectrum_report
 from .output_guard import (
     LEGACY_CLIP_V1,
@@ -35,7 +33,7 @@ from .output_guard import (
     ceiling_run_metrics,
     linked_soft_ceiling,
 )
-from .source_policy import validate_events
+from .source_policy import SourcePolicy, validate_events
 
 
 _SAMPLE_RATE_HZ = 48_000
@@ -62,6 +60,12 @@ REAL_REFERENCE_CHANGED_PARAMETERS = {
 }
 REAL_REFERENCE_SOURCE_VARIANTS = {
     vehicle: f"{vehicle}_real_reference_v1" for vehicle in FOURCAR_VEHICLES
+}
+IR_NAMES = {
+    "hellcat": "test_engine_16_eq_adjusted_16",
+    "ferrari_458": "mild_exhaust_reverb",
+    "lfa": "mild_exhaust_reverb",
+    "gtr_r35": "test_engine_14_eq_adjusted_16",
 }
 
 
@@ -132,10 +136,78 @@ def _curve(values: np.ndarray, count: int, name: str) -> np.ndarray:
     return array
 
 
-def _render_source(vehicle: str, trace: VehicleStateTrace, profile) -> SourceRender:
-    if vehicle == "ferrari_458":
-        return render_stage_g_candidate(vehicle, trace, profile)
-    return render_stage_k_candidate(vehicle, trace, profile)
+def _apply_profile_shelf(
+    values: np.ndarray,
+    *,
+    vehicle: str,
+    profile,
+    base_value: float,
+    candidate_value: float,
+    sample_rate_hz: int,
+) -> np.ndarray:
+    """Apply one fixed source-profile ratio to the upper source band."""
+    x = np.asarray(values, dtype=np.float64)
+    if x.ndim != 2 or x.shape[1] != 2 or not np.all(np.isfinite(x)):
+        raise ValueError("pre-saturation source must be finite stereo")
+    ratio = float(candidate_value) / float(base_value)
+    if not np.isfinite(ratio) or ratio <= 0.0:
+        raise ValueError("source profile ratio must be finite and positive")
+    if np.isclose(ratio, 1.0):
+        return x.copy()
+    # A causal shelf keeps the adjustment before the existing tanh/int16
+    # boundary while leaving the parent denominator and low band untouched.
+    cutoff_hz = {"hellcat": 1_000.0, "ferrari_458": 1_000.0, "lfa": 1_000.0, "gtr_r35": 1_000.0}[vehicle]
+    sos = signal.butter(2, cutoff_hz, btype="highpass", fs=sample_rate_hz, output="sos")
+    high = np.column_stack(
+        [signal.sosfilt(sos, x[:, channel]) for channel in range(x.shape[1])]
+    )
+    return x + (ratio - 1.0) * high
+
+
+def _render_pre_saturation(
+    vehicle: str,
+    rpm: np.ndarray,
+    throttle: np.ndarray,
+    duration: float,
+    shift_events: list | None,
+    afterfire_events: list | None,
+    bov_events: list | None,
+    *,
+    seed: int,
+) -> tuple[np.ndarray, dict[str, np.ndarray], dict[str, Any]]:
+    """Capture the current AH engine at its pre-tanh, pre-int16 boundary."""
+    engine = EngineAcoustics(vehicle_type=vehicle, sr=_SAMPLE_RATE_HZ)
+    policy = SourcePolicy(
+        vehicle,
+        "r1_baseline",
+        seed=seed,
+        collect=True,
+        output_policy=LEGACY_CLIP_V1,
+        sample_rate=_SAMPLE_RATE_HZ,
+    )
+    saved_state = np.random.get_state()
+    np.random.seed(seed)
+    engine._source_policy = policy
+    try:
+        engine.render_track(
+            rpm,
+            throttle,
+            duration,
+            shift_events=shift_events,
+            afterfire_events=afterfire_events,
+            bov_events=bov_events,
+        )
+    finally:
+        engine._source_policy = None
+        np.random.set_state(saved_state)
+    pre_saturation = policy.stems.get("pre_saturation")
+    if pre_saturation is None:
+        raise RuntimeError("AH engine did not expose pre-saturation stereo")
+    return (
+        np.asarray(pre_saturation, dtype=np.float64),
+        {name: np.asarray(value, dtype=np.float64) for name, value in policy.stems.items()},
+        dict(policy.receipt),
+    )
 
 
 class FourCarRealReferenceEngine:
@@ -231,29 +303,39 @@ class FourCarRealReferenceEngine:
             acceleration_mps2=np.gradient(rpm / 60.0, time_s),
         ).validate()
 
-        state = np.random.get_state()
-        np.random.seed(self.seed)
-        try:
-            source = _render_source(self.vehicle_type, trace, self.profile)
-        finally:
-            np.random.set_state(state)
-        pressure = np.asarray(source.pressure, dtype=np.float64)
-        if pressure.ndim != 2 or pressure.shape != (count, 2) or not np.all(np.isfinite(pressure)):
-            raise ValueError("candidate source must be finite stereo at the shared-layer boundary")
-
-        ir_scaled = np.asarray(self.base.ir, dtype=np.float64) * float(self.base.ir_volume)
-        convolved = np.column_stack(
-            [signal.fftconvolve(pressure[:, channel], ir_scaled, mode="same") for channel in range(2)]
+        pre_saturation, source_stems, source_receipt = _render_pre_saturation(
+            self.vehicle_type,
+            rpm,
+            throttle,
+            duration,
+            shift_events,
+            afterfire_events,
+            bov_events,
+            seed=self.seed,
         )
-        post_ir = 0.12 * pressure + 0.88 * convolved
-        ptr_audio = _edge_fade(_apply_frozen_ptr(post_ir))
-        candidate_raw_peak = float(np.max(np.abs(ptr_audio)))
+        base_value = float(
+            json.loads(REAL_REFERENCE_BASE_PATHS[self.vehicle_type].read_text(encoding="utf-8"))["source"][
+                REAL_REFERENCE_CHANGED_PARAMETERS[self.vehicle_type]
+            ]["value"]
+        )
+        candidate_value = float(
+            self.profile.payload["source"][REAL_REFERENCE_CHANGED_PARAMETERS[self.vehicle_type]]["value"]
+        )
+        adjusted = _apply_profile_shelf(
+            pre_saturation,
+            vehicle=self.vehicle_type,
+            profile=self.profile,
+            base_value=base_value,
+            candidate_value=candidate_value,
+            sample_rate_hz=self.sr,
+        )
+        candidate_raw_peak = float(np.max(np.abs(adjusted)))
         if not np.isfinite(candidate_raw_peak) or candidate_raw_peak <= 0.0:
             raise ValueError("candidate source is silent before normalization")
         denominator = float(self.parent_peaks.get(self.scene_index, candidate_raw_peak))
         if not np.isfinite(denominator) or denominator <= 0.0:
             raise ValueError("parent denominator must be finite and positive")
-        normalized = ptr_audio / denominator
+        normalized = adjusted / denominator
         pre_guard = np.tanh(normalized * 1.5) / np.tanh(1.5) * 0.94
         guarded, guard = self._guard(pre_guard)
 
@@ -282,15 +364,17 @@ class FourCarRealReferenceEngine:
         final_float = np.clip(combined, -0.94, 0.94)
         identity_error = combined - final_float
         pcm = (final_float * 32767.0).astype(np.int16)
-        source_stems = {
+        stem_reports = {
             name: spectrum_report(np.asarray(values, dtype=np.float64), self.sr)
-            for name, values in source.stems.items()
+            for name, values in source_stems.items()
         }
+        stem_reports["pre_saturation_adjusted"] = spectrum_report(adjusted, self.sr)
         report = {
             "vehicle": self.vehicle_type,
             "source_variant": REAL_REFERENCE_SOURCE_VARIANTS[self.vehicle_type],
             "output_policy": self.output_policy,
-            "source_adjustment_domain": "source_before_shared_layers",
+            "source_adjustment_domain": "ah_r1_pre_saturation_before_output_guard",
+            "candidate_render_path": "current_ah_engine_pre_saturation_overlay",
             "source_candidate_id": self.profile.candidate_id,
             "source_parameter_values": _json_safe(self.profile.payload.get("source", {})),
             "trace_sha256": _sha256_bytes(
@@ -300,10 +384,10 @@ class FourCarRealReferenceEngine:
             "candidate_raw_peak": candidate_raw_peak,
             "normalization_denominator": denominator,
             "parent_denominator_policy": "fixed_parent_peak_from_ah_r1_control",
-            "ir_name": self.vehicle_type,
+            "ir_name": IR_NAMES[self.vehicle_type],
             "ir_source_sha256": _sha256_bytes(np.ascontiguousarray(self.base.ir, dtype="<f8").tobytes()),
-            "candidate_source_diagnostics": _json_safe(source.diagnostics),
-            "candidate_stems": source_stems,
+            "candidate_source_diagnostics": _json_safe({"source_policy_receipt": source_receipt}),
+            "candidate_stems": stem_reports,
             "normalization": {
                 **guard,
                 "source_variant": REAL_REFERENCE_SOURCE_VARIANTS[self.vehicle_type],
