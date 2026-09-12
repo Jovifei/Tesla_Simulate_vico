@@ -194,10 +194,17 @@ def _contract(
     if profile_metadata:
         params.append(
             {
-                "name": profile_metadata["changed_source_parameter"],
+                "group": "Source",
+                "key": profile_metadata["changed_source_parameter"],
+                "name": "source profile upper-band ratio",
+                "base": float(profile_metadata["base_value"]),
+                "final": float(profile_metadata["candidate_value"]),
+                "delta": (
+                    (float(profile_metadata["candidate_value"]) / float(profile_metadata["base_value"]) - 1.0)
+                    * 100.0
+                ),
+                "desc": "One fixed source-profile ratio applied before the existing output guard.",
                 "scope": "ah_r1_pre_saturation_before_output_guard",
-                "base_value": profile_metadata["base_value"],
-                "candidate_value": profile_metadata["candidate_value"],
                 "unit": "profile-defined",
                 "basis": "five public recordings; primary-three median used for one bounded change",
             }

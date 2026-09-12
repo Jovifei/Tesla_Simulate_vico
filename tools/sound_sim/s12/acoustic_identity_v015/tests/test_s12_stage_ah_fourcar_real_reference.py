@@ -38,6 +38,29 @@ def test_package_binds_the_accepted_r1_parent_manifest() -> None:
     )
 
 
+def test_dashboard_parameter_rows_match_the_original_template_contract() -> None:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_package import _contract
+
+    contract = _contract(
+        package_id="fourcar-test",
+        group="REALREF",
+        vehicle="lfa",
+        cfg={"port": 1, "_nav_ports": {}},
+        source_receipt={},
+        reference_sources={},
+        candidate_hashes={},
+        records=[],
+        profile_metadata={
+            "changed_source_parameter": "intake_resonance_scale",
+            "base_value": 1.1,
+            "candidate_value": 0.95,
+        },
+    )
+    assert set(("group", "key", "name", "base", "final", "delta", "desc")) <= set(
+        contract["parameters"][0]
+    )
+
+
 @pytest.mark.parametrize("vehicle", ("hellcat", "ferrari_458", "lfa", "gtr_r35"))
 def test_real_reference_profile_is_a_single_source_parameter_delta(vehicle: str) -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_pipeline import load_real_reference_profile
