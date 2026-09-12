@@ -7,7 +7,7 @@
   "parent_candidate_path": "targets/stage_j_candidates/lfa_candidate_v1.json",
   "parent_candidate_sha256": "d049d9d45c560f9c896be00ec092c32dff06f95a1fb4f8ef3fc93f4068773afb",
   "status": "Candidate",
-  "hypothesis": "Use five public recordings as relative cues; reduce the source intake resonance slightly toward the primary LFA median while keeping shared layers locked.",
+  "hypothesis": "Use five public recordings as relative cues; increase bounded high-rpm source growth toward the primary LFA median while keeping shared layers locked.",
   "reference_target": {
     "path": "reference_database/lfa_reference_targets.json",
     "sha256": "9856622b2fa8f0f74ea200075fb04314c1621ab2a3ea842a03b6de57026d5115",
@@ -80,7 +80,7 @@
       "verification_state": "candidate_assumption"
     },
     "high_rpm_growth_scale": {
-      "value": 1.15,
+      "value": 1.35,
       "unit": "ratio",
       "range": [
         0.9,

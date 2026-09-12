@@ -56,7 +56,7 @@ REAL_REFERENCE_BASE_PATHS = {
 REAL_REFERENCE_CHANGED_PARAMETERS = {
     "hellcat": "blower_gain_scale",
     "ferrari_458": "high_rpm_growth_scale",
-    "lfa": "intake_resonance_scale",
+    "lfa": "high_rpm_growth_scale",
     "gtr_r35": "turbo_whistle_mix",
 }
 REAL_REFERENCE_SOURCE_VARIANTS = {
