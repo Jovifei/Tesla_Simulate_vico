@@ -37,6 +37,8 @@ from ..stage_af.package_integrity import (
     validate_identifier,
 )
 from .supra_pipeline import (
+    SUPRA_BASE_SOURCE_PATH,
+    SUPRA_MULTI_REFERENCE_PATH,
     SUPRA_REFERENCE_TARGET_PATH,
     SUPRA_SOURCE_PATH,
     SupraEngine,
@@ -60,30 +62,47 @@ from .output_guard import (
 )
 
 
-SUPRA_RUN_SCHEMA = "s12.stage_ah.supra.experiment_manifest.v1"
-SUPRA_PACKAGE_SCHEMA = "s12.stage_ah.supra.package_manifest.v1"
-SUPRA_BINDING_SCHEMA = "s12.stage_ah.supra.binding.v1"
-SUPRA_REFERENCE_SCHEMA = "s12.stage_ah.supra.reference_clip_receipt.v1"
-DEFAULT_RUN_ID = "s12-stage-ah-supra-jza80-20260912-v1"
-DEFAULT_REFERENCE_ROOT = Path(r"E:\Claude_allow\Download\tesla-sound-research")
+SUPRA_RUN_SCHEMA = "s12.stage_ah.supra.real_reference.experiment_manifest.v1"
+SUPRA_PACKAGE_SCHEMA = "s12.stage_ah.supra.real_reference.package_manifest.v1"
+SUPRA_BINDING_SCHEMA = "s12.stage_ah.supra.real_reference.binding.v1"
+SUPRA_REFERENCE_SCHEMA = "s12.stage_ah.supra.real_reference.reference_clip_receipt.v2"
+DEFAULT_RUN_ID = "s12-stage-ah-supra-real-reference-20260912-v1"
+DEFAULT_REFERENCE_ROOT = Path(r"E:\Claude_allow\Download\s12-stage-ah-supra-real-reference-20260912")
 DEFAULT_OUTPUT_ROOT = Path(r"E:\Tesla_speed\review_packages")
-DEFAULT_PORT_B0 = 24780
-DEFAULT_PORT_C0 = 24880
+DEFAULT_PORT_B0 = 24980
+DEFAULT_PORT_C0 = 25080
 
 REFERENCE_SOURCES = {
-    "performance_accel": {
+    "supra_01_bone_stock_dyno": {
+        "filename": "supra_01.wav",
+        "sha256": "e8ef231c4f4c2c46dec96d4e0ecd47bab1f9c10cfc23a0efa910052ba5e850de",
+        "sample_rate_hz": 44_100,
+    },
+    "supra_02_mostly_stock_road": {
+        "filename": "supra_02.wav",
+        "sha256": "104182c07227f344c505b27d79b7501900ab5ce3b99312b64bc6492e89eb5122",
+        "sample_rate_hz": 44_100,
+    },
+    "supra_03_stock_start_acceleration": {
+        "filename": "supra_03.wav",
+        "sha256": "d645f2036644b2166891d797e0a72aeea4d5427af3d37504fae8c3123a272189",
+        "sample_rate_hz": 48_000,
+    },
+    "supra_stock_existing": {
         "filename": "supra_jza80_stock.wav",
         "sha256": "ccde31e8ec6e178eeb64019294d42a35f83c1903c8321d471eefb7f0b72e55bb",
+        "sample_rate_hz": 48_000,
     },
 }
 REFERENCE_CLIPS = {
-    "ref_hot_idle.wav": ("performance_accel", 0.0, 4.0),
-    "ref_full_pull.wav": ("performance_accel", 6.0, 6.0),
-    "ref_steady_mid.wav": ("performance_accel", 7.0, 5.0),
-    "ref_steady_high.wav": ("performance_accel", 11.5, 5.0),
-    "ref_steady_low.wav": ("performance_accel", 1.0, 4.0),
-    "ref_afterfire.wav": ("performance_accel", 12.5, 4.0),
-    "ref_shift.wav": ("performance_accel", 8.0, 4.0),
+    "ref_afterfire.wav": ("supra_stock_existing", 12.5, 4.0),
+    "ref_full_pull_dyno.wav": ("supra_01_bone_stock_dyno", 354.625, 5.0),
+    "ref_hot_idle.wav": ("supra_03_stock_start_acceleration", 0.0, 5.0),
+    "ref_idle_return.wav": ("supra_stock_existing", 0.0, 4.0),
+    "ref_shift_road.wav": ("supra_02_mostly_stock_road", 780.375, 5.0),
+    "ref_steady_high_stock.wav": ("supra_03_stock_start_acceleration", 20.625, 5.0),
+    "ref_steady_low.wav": ("supra_stock_existing", 1.0, 4.0),
+    "ref_steady_mid_road.wav": ("supra_02_mostly_stock_road", 780.375, 5.0),
 }
 
 
@@ -130,6 +149,7 @@ def build_reference_bundle(destination: Path, source_root: Path) -> dict[str, An
         raise FileExistsError(destination)
     destination.mkdir(parents=True)
     sources: dict[str, Any] = {}
+    source_arrays: dict[str, np.ndarray] = {}
     for source_id, spec in REFERENCE_SOURCES.items():
         path = source_root / spec["filename"]
         if not path.is_file():
@@ -138,24 +158,30 @@ def build_reference_bundle(destination: Path, source_root: Path) -> dict[str, An
         if actual.lower() != spec["sha256"].lower():
             raise ValueError(f"reference source SHA mismatch: {path}")
         sample_rate, data = wavfile.read(path)
-        if int(sample_rate) != 48_000:
-            raise ValueError(f"reference source must be 48 kHz: {path}")
+        if int(sample_rate) != int(spec["sample_rate_hz"]):
+            raise ValueError(f"reference source sample rate mismatch: {path}")
         mono = _to_float_mono(data)
         if mono.size == 0 or not np.all(np.isfinite(mono)):
             raise ValueError(f"reference source is empty/non-finite: {path}")
+        original_frames = int(mono.size)
+        if int(sample_rate) != 48_000:
+            mono = resample_poly(mono, 48_000, int(sample_rate))
+        source_arrays[source_id] = np.asarray(mono, dtype=np.float64)
         sources[source_id] = {
             "path": str(path),
             "sha256": actual,
             "sample_rate_hz": int(sample_rate),
+            "normalized_sample_rate_hz": 48_000,
+            "resample_method": "scipy.signal.resample_poly" if int(sample_rate) != 48_000 else "none",
+            "original_frames": original_frames,
             "frames": int(mono.size),
-            "duration_s": float(mono.size / sample_rate),
+            "duration_s": float(mono.size / 48_000),
         }
 
     clips: dict[str, Any] = {}
     for filename, (source_id, start_s, duration_s) in REFERENCE_CLIPS.items():
         source = sources[source_id]
-        _, data = wavfile.read(source["path"])
-        mono = _to_float_mono(data)
+        mono = source_arrays[source_id]
         start = int(round(float(start_s) * 48_000))
         count = int(round(float(duration_s) * 48_000))
         stop = start + count
@@ -175,7 +201,7 @@ def build_reference_bundle(destination: Path, source_root: Path) -> dict[str, An
             "start_sample": start,
             "end_sample_exclusive": stop,
             "sha256": sha256_file(path),
-            "evidence_level": "R2_UNVERIFIED_LOCAL",
+            "evidence_level": "R3_PUBLIC_RECORDING_UNVERIFIED",
             "rights_status": "UNVERIFIED_LOCAL_ASSET",
         }
     receipt = {
@@ -183,7 +209,7 @@ def build_reference_bundle(destination: Path, source_root: Path) -> dict[str, An
         "source_root": str(source_root),
         "sources": sources,
         "clips": clips,
-        "status": "LOCAL_DIAGNOSTIC_ONLY_UNSYNCHRONIZED_R2",
+        "status": "LOCAL_DIAGNOSTIC_ONLY_UNSYNCHRONIZED_R3",
     }
     sealed = seal_payload(receipt, SUPRA_REFERENCE_SCHEMA)
     _write_json(destination / "reference_clip_receipt.json", sealed)
@@ -196,7 +222,7 @@ def _supra_config(directory: Path, port: int) -> dict[str, Any]:
         "port": int(port),
         "name": "Toyota Supra JZA80",
         "title": "TOYOTA SUPRA JZA80 2JZ 声音仿真人耳试听",
-        "subtitle": "Stage AH-SUPRA / 2JZ-GTE 3.0L inline-six twin-turbo / 本地 R2 参考片段，未核验",
+        "subtitle": "Stage AH-SUPRA / 2JZ-GTE 3.0L inline-six twin-turbo / 三组 R3 公开录音，未核验未同步",
         "badge": "🏁 Toyota Supra JZA80 (2JZ-GTE 3.0L I6 twin-turbo)",
         "icon": "🏁",
         "color": "red",
@@ -205,17 +231,17 @@ def _supra_config(directory: Path, port: int) -> dict[str, Any]:
         "pull_start": 2500.0,
         "pull_end": 7000.0,
         "shift_cut": 0.08,
-        "ref_source": "Local R2 diagnostic clips / unverified provenance",
+        "ref_source": "Three local R3 public recordings / unverified provenance and unsynchronized state",
         "scenes": [
             {"id": "01_afterfire", "index": 1, "category": "afterfire", "candidate_file": "01_afterfire.wav", "ref_file": "ref_afterfire.wav", "title": "01 收油回火与 2JZ 爆音 (Afterfire)", "desc": "高转速急收油后的直六涡轮排气回火与短促爆音。", "focus": "关注收油瞬态的脆度、涡轮泄压感与尾部衰减。"},
-            {"id": "02_full_pull", "index": 2, "category": "acceleration", "candidate_file": "02_full_pull.wav", "ref_file": "ref_full_pull.wav", "title": "02 全负荷 2JZ-GTE 加速 (Full Pull)", "desc": "2JZ-GTE 双涡轮从中转速拉向红线的深沉直六咆哮。", "focus": "关注均匀直六脉冲、涡轮 spool 和中高频张力。"},
+            {"id": "02_full_pull", "index": 2, "category": "acceleration", "candidate_file": "02_full_pull.wav", "ref_file": "ref_full_pull_dyno.wav", "title": "02 全负荷 2JZ-GTE 加速 (Full Pull)", "desc": "2JZ-GTE 双涡轮从中转速拉向红线的深沉直六咆哮。", "focus": "关注均匀直六脉冲、涡轮 spool 和中高频张力。"},
             {"id": "03_hot_idle", "index": 3, "category": "idle", "candidate_file": "03_hot_idle.wav", "ref_file": "ref_hot_idle.wav", "title": "03 热态怠速平顺直六 (Hot Idle)", "desc": "2JZ-GTE 热态低转怠速的均匀直六燃烧节奏。", "focus": "关注低频厚度、均匀脉冲和轻微机械纹理。"},
-            {"id": "04_idle_return", "index": 4, "category": "idle", "candidate_file": "04_idle_return.wav", "ref_file": "ref_hot_idle.wav", "title": "04 轰油回落怠速 (Idle Return)", "desc": "短暂轰油后回到稳定怠速的能量包络。", "focus": "关注回落的连续性与怠速接管。"},
+            {"id": "04_idle_return", "index": 4, "category": "idle", "candidate_file": "04_idle_return.wav", "ref_file": "ref_idle_return.wav", "title": "04 轰油回落怠速 (Idle Return)", "desc": "短暂轰油后回到稳定怠速的能量包络。", "focus": "关注回落的连续性与怠速接管。"},
             {"id": "05_lift", "index": 5, "category": "dynamics", "candidate_file": "05_lift.wav", "ref_file": "ref_afterfire.wav", "title": "05 高负荷收油与涡轮泄压 (Lift-off)", "desc": "高负荷后关闭节气门，保留排气尾部、回火和涡轮收束。", "focus": "关注闭节气门冲击、泄压尾音和回火。"},
-            {"id": "06_shift", "index": 6, "category": "dynamics", "candidate_file": "06_shift.wav", "ref_file": "ref_shift.wav", "title": "06 6MT 换挡断火 (Shift Crack)", "desc": "六速手动换挡中的扭矩交接、短暂断火和重新接合。", "focus": "关注切断瞬间、重接合与涡轮回压。"},
-            {"id": "07_steady_high", "index": 7, "category": "cruise", "candidate_file": "07_steady_high.wav", "ref_file": "ref_steady_high.wav", "title": "07 高转巡航 (Steady High)", "desc": "高转速稳定负荷下的 2JZ-GTE 中高频张力。", "focus": "关注高转连续性与机械上层。"},
+            {"id": "06_shift", "index": 6, "category": "dynamics", "candidate_file": "06_shift.wav", "ref_file": "ref_shift_road.wav", "title": "06 6MT 换挡断火 (Shift Crack)", "desc": "六速手动换挡中的扭矩交接、短暂断火和重新接合。", "focus": "关注切断瞬间、重接合与涡轮回压。"},
+            {"id": "07_steady_high", "index": 7, "category": "cruise", "candidate_file": "07_steady_high.wav", "ref_file": "ref_steady_high_stock.wav", "title": "07 高转巡航 (Steady High)", "desc": "高转速稳定负荷下的 2JZ-GTE 中高频张力。", "focus": "关注高转连续性与机械上层。"},
             {"id": "08_steady_low", "index": 8, "category": "cruise", "candidate_file": "08_steady_low.wav", "ref_file": "ref_steady_low.wav", "title": "08 低转跟车 (Steady Low)", "desc": "低负荷低转速的深沉、收束声浪。", "focus": "关注低频厚度与空腔感。"},
-            {"id": "09_steady_mid", "index": 9, "category": "cruise", "candidate_file": "09_steady_mid.wav", "ref_file": "ref_steady_mid.wav", "title": "09 中转动力巡航 (Steady Mid)", "desc": "中转速持续负荷下的直六排气与涡轮中频张力。", "focus": "关注中频主体、涡轮连续性和均匀节奏。"},
+            {"id": "09_steady_mid", "index": 9, "category": "cruise", "candidate_file": "09_steady_mid.wav", "ref_file": "ref_steady_mid_road.wav", "title": "09 中转动力巡航 (Steady Mid)", "desc": "中转速持续负荷下的直六排气与涡轮中频张力。", "focus": "关注中频主体、涡轮连续性和均匀节奏。"},
             {"id": "10_tip_in", "index": 10, "category": "dynamics", "candidate_file": "10_tip_in.wav", "ref_file": "", "title": "10 急踩油门瞬态 (Tip-in)", "desc": "低负荷巡航到双涡轮建立增压的瞬间响应。", "focus": "关注油门踩下后的 spool 迟滞与声浪增长。"},
         ],
     }
@@ -226,7 +252,7 @@ def _reference_map(reference_receipt: Mapping[str, Any]) -> dict[str, dict[str, 
         filename: {
             "available": True,
             "fit_required": False,
-            "source_label": f"local R2 diagnostic clip: {info['source_id']} [{info['start_s']:.1f}-{info['start_s'] + info['duration_s']:.1f}s]",
+            "source_label": f"local R3 public recording: {info['source_id']} [{info['start_s']:.1f}-{info['start_s'] + info['duration_s']:.1f}s]",
             "sha256": info["sha256"],
             "evidence_level": info["evidence_level"],
             "rights_status": info["rights_status"],
@@ -242,8 +268,12 @@ def _renderer_identity(engine: SupraEngine) -> dict[str, Any]:
         "renderer": "render_realism_v10._render_stateful + frozen_ptr + AH-C1 output guard",
         "source_sha256": sha256_file(SUPRA_SOURCE_PATH),
         "source_path": str(SUPRA_SOURCE_PATH),
+        "base_source_sha256": sha256_file(SUPRA_BASE_SOURCE_PATH),
+        "base_source_path": str(SUPRA_BASE_SOURCE_PATH),
         "reference_target_sha256": sha256_file(SUPRA_REFERENCE_TARGET_PATH),
         "reference_target_path": str(SUPRA_REFERENCE_TARGET_PATH),
+        "multi_reference_target_sha256": sha256_file(SUPRA_MULTI_REFERENCE_PATH),
+        "multi_reference_target_path": str(SUPRA_MULTI_REFERENCE_PATH),
         "frozen_ptr_sha256": sha256_file(ptr_path),
         "ir_name": SUPRA_IR_NAME,
         "ir_volume": SUPRA_IR_VOLUME,
@@ -285,12 +315,13 @@ def _build_contract(
     policy = engine.output_policy
     return seal_contract(
         {
-            "schema": "s12.stage_ah.supra.dashboard_contract.v1",
-            "stage": "AH-SUPRA",
+            "schema": "s12.stage_ah.supra.real_reference.dashboard_contract.v1",
+            "stage": "AH-SUPRA-REALREF",
             "package_id": package_id,
             "candidate_id": candidate_id,
             "vehicle": SUPRA_VEHICLE,
             "source_variant": SUPRA_SOURCE_VARIANT,
+            "source_adjustment": {"edge_scale": 2.2, "hiband_scale": 6.0, "domain": "source_only"},
             "output_policy": policy,
             "output_policy_config": {
                 "policy_id": policy,
@@ -307,7 +338,7 @@ def _build_contract(
             "fit_metric_status": "NOT_MEASURED",
             "measurement_status": "NOT_MEASURED",
             "human_status": "WAITING_FOR_JOVI_FEEDBACK",
-            "reference_evidence_level": "R2_UNVERIFIED_LOCAL",
+            "reference_evidence_level": "R3_PUBLIC_RECORDINGS_RELATIVE_CUES",
             "reference_rights_status": "UNVERIFIED_LOCAL_ASSET",
             "sample_rate_hz": 48_000,
             "package_port": int(cfg["port"]),
@@ -322,7 +353,7 @@ def _build_contract(
             "gain_policy": "fixed_parent_peak_tanh_then_optional_linked_soft_ceiling",
             "source_status": "SOURCE_CLEAN",
             "promotable": False,
-            "promotion_status": "NOT_PROMOTABLE_R2_UNVERIFIED_REFERENCE",
+            "promotion_status": "NOT_PROMOTABLE_UNSYNCED_UNVERIFIED_REFERENCE",
             "self_contained_status": "AUDIO_SELF_CONTAINED / LOCAL_REFERENCE_PROVENANCE_REQUIRED",
         }
     )
@@ -338,6 +369,7 @@ def _artifact_paths(cfg: Mapping[str, Any], reference_receipt: Mapping[str, Any]
             paths.append(root / "web_audio" / ref)
     paths.extend((root / "index.html", root / "index_standalone.html", root / "dashboard_contract.json", root / "stage_ah_supra_binding.json"))
     paths.append(root.parent / "reference_clip_receipt.json")
+    paths.append(root.parent / SUPRA_MULTI_REFERENCE_PATH.name)
     return list(dict.fromkeys(paths))
 
 
@@ -351,7 +383,7 @@ def build_group(
     parent_peaks: Mapping[int, float] | None,
     port: int,
 ) -> dict[str, Any]:
-    package_id = validate_identifier(f"ah-supra-{run_root.name}-{group.lower()}", "package_id")
+    package_id = validate_identifier(f"ah-supra-realref-{run_root.name}-{group.lower()}", "package_id")
     package_root = run_root / "packages" / package_id
     if package_root.exists():
         raise FileExistsError(package_root)
@@ -361,10 +393,11 @@ def build_group(
     for source in reference_bundle.glob("ref_*.wav"):
         shutil.copy2(source, web_dir / source.name)
     shutil.copy2(reference_bundle / "reference_clip_receipt.json", package_root / "reference_clip_receipt.json")
+    shutil.copy2(SUPRA_MULTI_REFERENCE_PATH, package_root / SUPRA_MULTI_REFERENCE_PATH.name)
     cfg = _supra_config(vehicle_root, port)
-    cfg["title"] = f"[AH-SUPRA · {group} · {output_policy}] " + cfg["title"]
+    cfg["title"] = f"[AH-SUPRA-REALREF · {group} · {output_policy}] " + cfg["title"]
     cfg["subtitle"] = (
-        f"Stage AH-SUPRA / {group} / output_policy={output_policy} / "
+        f"Stage AH-SUPRA-REALREF / {group} / output_policy={output_policy} / "
         + cfg["subtitle"]
     )
     cfg["reference_bundle"] = reference_bundle
@@ -406,7 +439,7 @@ def build_group(
         reference_receipt = _read_sealed(reference_bundle / "reference_clip_receipt.json")
         contract = _build_contract(
             package_id,
-            f"AH-SUPRA-{group}",
+            f"AH-SUPRA-REALREF-{group}",
             cfg,
             source_receipt,
             reference_receipt,
@@ -420,15 +453,15 @@ def build_group(
         _dashboards.build_dashboard(SUPRA_VEHICLE, cfg)
         for path in (vehicle_root / "index.html", vehicle_root / "index_standalone.html"):
             text = path.read_text(encoding="utf-8")
-            text = text.replace("B: 真车参考实录 (R3)", "B: 真车参考实录 (R2 / 本地未核验)")
-            text = text.replace("B: 真车参考实录 (R3 Reference)", "B: 真车参考实录 (R2 / 本地未核验)")
+            text = text.replace("B: 真车参考实录 (R3 Reference)", "B: 真车参考实录 (R3 / 公开录音未核验)")
+            text = text.replace("B: 真车参考实录 (R3)", "B: 真车参考实录 (R3 / 公开录音未核验)")
             path.write_text(text, encoding="utf-8")
 
         binding = seal_payload(
             {
                 "schema": SUPRA_BINDING_SCHEMA,
                 "package_id": package_id,
-                "candidate_id": f"AH-SUPRA-{group}",
+                "candidate_id": f"AH-SUPRA-REALREF-{group}",
                 "vehicle": SUPRA_VEHICLE,
                 "source_variant": SUPRA_SOURCE_VARIANT,
                 "output_policy": output_policy,
@@ -448,9 +481,9 @@ def build_group(
         manifest = seal_payload(
             {
                 "schema": SUPRA_PACKAGE_SCHEMA,
-                "stage": "AH-SUPRA",
+                "stage": "AH-SUPRA-REALREF",
                 "package_id": package_id,
-                "candidate_id": f"AH-SUPRA-{group}",
+                "candidate_id": f"AH-SUPRA-REALREF-{group}",
                 "created_utc": datetime.now(timezone.utc).isoformat(),
                 "vehicle": SUPRA_VEHICLE,
                 "source_variant": SUPRA_SOURCE_VARIANT,
@@ -458,7 +491,7 @@ def build_group(
                 "output_policy_config": contract["output_policy_config"],
                 "output_guard_receipt_schema": contract["output_guard_receipt_schema"],
                 "source_receipt": source_receipt,
-                "reference_evidence_level": "R2_UNVERIFIED_LOCAL",
+                "reference_evidence_level": "R3_PUBLIC_RECORDINGS_RELATIVE_CUES",
                 "reference_rights_status": "UNVERIFIED_LOCAL_ASSET",
                 "human_status": "WAITING_FOR_JOVI_FEEDBACK",
                 "fit_status": "NOT_FITTED",
@@ -474,7 +507,7 @@ def build_group(
                 "artifacts": artifacts,
                 "rules": [
                     "SUPRA is a separate local diagnostic package; it is not an AG-R1 parent.",
-                    "Reference clips remain R2/unverified and unsynchronized.",
+                    "Reference clips are public recordings with unverified rights and unsynchronized state.",
                     "No Human PASS, OEM reproduction, or profile freeze is claimed.",
                 ],
             },
@@ -501,22 +534,22 @@ def build_group(
             "post_identity_clip_count": 0,
         }
         report = {
-            "schema": "s12.stage_ah.supra.report_manifest.v1",
+            "schema": "s12.stage_ah.supra.real_reference.report_manifest.v1",
             "group": group,
             "source_variant": SUPRA_SOURCE_VARIANT,
             "output_policy": output_policy,
-            "package": str(package_root),
+        "package": str(package_root),
             "package_manifest_sha256": sha256_file(package_root / "audition_manifest.json"),
             "source_receipt": source_receipt,
             "reference_clip_receipt": reference_receipt,
             "records": records,
             "aggregate": aggregate,
-            "reference_gate": {"status": "NOT_APPLICABLE_UNSYNCHRONIZED_R2", "rows": 0, "regressions": 0, "missing": 0},
+            "reference_gate": {"status": "NOT_APPLICABLE_UNSYNCHRONIZED_R3", "rows": 0, "regressions": 0, "missing": 0},
             "status": "READY_FOR_LOCAL_HUMAN_REVIEW",
             "human_status": "WAITING_FOR_JOVI_FEEDBACK",
         }
         report_path = run_root / f"{group.lower()}_report.json"
-        _write_json(report_path, seal_payload(report, "s12.stage_ah.supra.report_manifest.v1"))
+        _write_json(report_path, seal_payload(report, "s12.stage_ah.supra.real_reference.report_manifest.v1"))
         return {
             "group": group,
             "source_variant": SUPRA_SOURCE_VARIANT,
@@ -576,12 +609,15 @@ def build_run(
     reference_receipt = build_reference_bundle(reference_bundle, reference_root)
     source_receipt = dict(git_source_receipt(allow_dirty_dev=False))
     source_receipt.update({
-        "stage": "AH-SUPRA",
+        "stage": "AH-SUPRA-REALREF",
         "source_variant": SUPRA_SOURCE_VARIANT,
         "source_sha256": sha256_file(SUPRA_SOURCE_PATH),
+        "base_source_sha256": sha256_file(SUPRA_BASE_SOURCE_PATH),
+        "multi_reference_source_adjustment": {"edge_scale": 2.2, "hiband_scale": 6.0, "domain": "source_only"},
         "reference_target_sha256": sha256_file(SUPRA_REFERENCE_TARGET_PATH),
         "reference_clip_receipt_sha256": sha256_file(reference_bundle / "reference_clip_receipt.json"),
-        "reference_status": "R2_UNVERIFIED_LOCAL_UNSYNCHRONIZED",
+        "multi_reference_target_sha256": sha256_file(SUPRA_MULTI_REFERENCE_PATH),
+        "reference_status": "R3_PUBLIC_RECORDINGS_UNVERIFIED_UNSYNCHRONIZED",
     })
     b0 = build_group(
         run_root=run_root,
@@ -608,7 +644,7 @@ def build_run(
     experiment = seal_payload(
         {
             "schema": SUPRA_RUN_SCHEMA,
-            "stage": "AH-SUPRA",
+            "stage": "AH-SUPRA-REALREF",
             "run_id": run_id,
             "source_variant": SUPRA_SOURCE_VARIANT,
             "source_receipt": source_receipt,
@@ -619,7 +655,7 @@ def build_run(
             "human_status": "WAITING_FOR_JOVI_FEEDBACK",
             "rules": [
                 "SUPRA is not an AG-R1 parent and no old package is overwritten.",
-                "Reference clips are local R2 diagnostic material with unsynchronized state and unverified rights.",
+                "Reference clips are local R3 public-recording diagnostics with unsynchronized state and unverified rights.",
                 "C0 output-policy effects are separated from SUPRA source behavior.",
             ],
         },
