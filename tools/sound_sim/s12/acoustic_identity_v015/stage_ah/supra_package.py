@@ -321,7 +321,7 @@ def _build_contract(
             "candidate_id": candidate_id,
             "vehicle": SUPRA_VEHICLE,
             "source_variant": SUPRA_SOURCE_VARIANT,
-            "source_adjustment": {"edge_scale": 2.2, "hiband_scale": 6.0, "domain": "source_only"},
+            "source_adjustment": {"edge_scale": 1.4, "hiband_scale": 3.4, "domain": "source_only"},
             "output_policy": policy,
             "output_policy_config": {
                 "policy_id": policy,
@@ -613,7 +613,7 @@ def build_run(
         "source_variant": SUPRA_SOURCE_VARIANT,
         "source_sha256": sha256_file(SUPRA_SOURCE_PATH),
         "base_source_sha256": sha256_file(SUPRA_BASE_SOURCE_PATH),
-        "multi_reference_source_adjustment": {"edge_scale": 2.2, "hiband_scale": 6.0, "domain": "source_only"},
+        "multi_reference_source_adjustment": {"edge_scale": 1.4, "hiband_scale": 3.4, "domain": "source_only"},
         "reference_target_sha256": sha256_file(SUPRA_REFERENCE_TARGET_PATH),
         "reference_clip_receipt_sha256": sha256_file(reference_bundle / "reference_clip_receipt.json"),
         "multi_reference_target_sha256": sha256_file(SUPRA_MULTI_REFERENCE_PATH),
