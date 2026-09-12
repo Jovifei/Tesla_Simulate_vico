@@ -92,7 +92,7 @@ def _import_dashboards():
 
 
 def _vehicle_directory(vehicle: str) -> str:
-    directory_id = {"ferrari_458": "ferrari-458"}.get(vehicle, vehicle)
+    directory_id = {"ferrari_458": "ferrari-458", "gtr_r35": "gtr-r35"}.get(vehicle, vehicle)
     return f"s12-stage-ad-{directory_id}-closed-loop-v1"
 
 
