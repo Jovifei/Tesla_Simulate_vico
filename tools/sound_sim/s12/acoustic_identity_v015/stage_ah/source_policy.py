@@ -13,7 +13,17 @@ from dataclasses import asdict, dataclass
 import numpy as np
 from scipy import signal
 
+from .output_guard import (
+    LEGACY_CLIP_V1,
+    LINKED_SOFT_CEILING_V1,
+    OUTPUT_GUARD_RECEIPT_SCHEMA,
+    GuardConfig,
+    ceiling_run_metrics,
+    linked_soft_ceiling,
+)
+
 VARIANTS = ("r1_baseline", "body_damping", "afterfire_pressure", "combined")
+OUTPUT_POLICIES = (LEGACY_CLIP_V1, LINKED_SOFT_CEILING_V1)
 
 
 @dataclass(frozen=True)
@@ -34,18 +44,29 @@ EVENT_SHAPES = {
 }
 
 
-def signature(vehicle: str, variant: str) -> dict:
+def signature(vehicle: str, variant: str, output_policy: str = LEGACY_CLIP_V1) -> dict:
     if vehicle not in EVENT_SHAPES or variant not in VARIANTS:
         raise ValueError("unknown AH vehicle or variant")
+    if output_policy not in OUTPUT_POLICIES:
+        raise ValueError(f"unknown AH output policy: {output_policy}")
     return {
         "schema": "s12.stage_ah.source_policy.v1",
+        "source_variant": variant,
         "variant": variant,
         "event_shape": asdict(EVENT_SHAPES[vehicle]),
         "body_ring_idle_scale": .72,
         "body_ring_wot_scale": 1.,
         "pressure_event_energy_fraction": .04,
         "event_schedule": "EXPLICIT_EVENTS_UNCHANGED_NO_EXTRA_POPS",
-        "output_policy": "PARENT_SCENE_PEAK_LOCKED_NO_CANDIDATE_RENORMALIZATION",
+        "output_policy": output_policy,
+        "parent_denominator_policy": "PARENT_SCENE_PEAK_LOCKED_NO_CANDIDATE_RENORMALIZATION",
+        "output_guard": (
+            {"policy_id": LINKED_SOFT_CEILING_V1, "knee_linear": .90,
+             "ceiling_linear": .94,
+             "stereo_link": "instantaneous_frame_peak_common_gain"}
+            if output_policy == LINKED_SOFT_CEILING_V1
+            else {"policy_id": LEGACY_CLIP_V1, "ceiling_linear": .94}
+        ),
         "rights": "ORIGINAL_IMPLEMENTATION_NO_THIRD_PARTY_ASSETS",
         "qualification": "ENGINEERING_HYPOTHESIS_NOT_HUMAN_VALIDATED",
     }
@@ -112,17 +133,30 @@ class SourcePolicy:
     """Per-render observer/policy. Not a streaming or concurrent DSP object."""
 
     def __init__(self, vehicle: str, variant: str, *, seed: int,
-                 parent_peak: float | None = None, collect: bool = False):
-        signature(vehicle, variant)  # validate even unused option combinations
+                 parent_peak: float | None = None, collect: bool = False,
+                 output_policy: str = LEGACY_CLIP_V1, sample_rate: int = 48_000):
+        signature(vehicle, variant, output_policy)  # validate even unused combinations
         if parent_peak is not None and (not np.isfinite(parent_peak) or parent_peak <= 0):
             raise ValueError("parent_peak must be finite and positive")
         self.vehicle, self.variant, self.seed = vehicle, variant, int(seed)
+        self.output_policy = output_policy
+        self.sample_rate = int(sample_rate)
         self.parent_peak, self.collect = parent_peak, bool(collect)
         self.begin_render()
 
     def begin_render(self):
         self.stems = {}
-        self.receipt = {"variant": self.variant, "ceiling_samples": 0}
+        self.receipt = {
+            "receipt_schema": (
+                OUTPUT_GUARD_RECEIPT_SCHEMA
+                if self.output_policy == LINKED_SOFT_CEILING_V1
+                else "s12.stage_ah.output_guard_receipt.v1"
+            ),
+            "source_variant": self.variant,
+            "variant": self.variant,
+            "output_policy": self.output_policy,
+            "ceiling_samples": 0,
+        }
         self._channel = 0
         self._event_source = None
 
@@ -181,11 +215,35 @@ class SourcePolicy:
         return used
 
     def finish(self, stereo):
+        if self.output_policy == LINKED_SOFT_CEILING_V1:
+            guarded, metrics = linked_soft_ceiling(
+                stereo, GuardConfig(), sample_rate=self.sample_rate
+            )
+            self.receipt.update(metrics)
+            # Preserve the AH legacy field as the pre-guard input count.
+            self.receipt["ceiling_samples"] = metrics[
+                "legacy_ceiling_input_exceedance_samples"
+            ]
+            self.receipt["guard_applied"] = True
+            return guarded
+        legacy_metrics = ceiling_run_metrics(stereo, sample_rate=self.sample_rate)
+        legacy_count = legacy_metrics["ceiling_input_exceedance_samples"]
+        self.receipt.update({
+            "legacy_ceiling_input_exceedance_samples": legacy_count,
+            "legacy_transfer_pre_guard_peak": float(np.max(np.abs(stereo))),
+            "pre_guard_peak": float(np.max(np.abs(stereo))),
+            "post_guard_peak": float(np.max(np.abs(stereo))),
+            "post_guard_ceiling_exceedance_samples": 0,
+            "pre_guard_exceedance_longest_run": legacy_metrics["exceedance_longest_run"],
+            "emergency_clip_count": 0,
+            "emergency_clip_error": 0.0,
+            "guard_applied": False,
+        })
         if self.variant == "r1_baseline":
             return stereo
         # Never wrap int16 on an unexpectedly high transient. A nonzero count
         # is a numerical-review blocker, not an automatic limiter qualification.
-        self.receipt["ceiling_samples"] = int(np.count_nonzero(np.abs(stereo) > .94 + 1e-12))
+        self.receipt["ceiling_samples"] = legacy_count
         return np.clip(stereo, -.94, .94)
 
 

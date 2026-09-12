@@ -127,3 +127,66 @@ def test_silence_and_lfa_body_range_are_not_misreported():
     tone = np.sin(2*np.pi*380*t)
     report = spectrum_report(tone)
     assert abs(report["body_20_600_peak_hz"] - 380.) < 3.
+
+
+def test_c1_build_has_five_policy_groups_and_fair_comparisons(tmp_path, monkeypatch, ir_root):
+    stage_ad = Path(package.__file__).parents[1] / "stage_ad"
+    sys.path.insert(0, str(stage_ad))
+    try:
+        from tools.sound_sim.s12.acoustic_identity_v015.stage_ad import build_unified_dashboards as dashboards
+    finally:
+        sys.path.pop(0)
+
+    def small_schedule(vehicle, cfg):
+        engine = dashboards.EngineAcoustics(vehicle_type=vehicle, sr=48000)
+        root = cfg["dir"]
+        web = root / "web_audio"
+        web.mkdir(exist_ok=True)
+        for scene in cfg["scenes"]:
+            n = 12000
+            rpm = np.full(n, 3100.)
+            throttle = np.full(n, .35)
+            events = [(.11, .25)] if scene["id"] in ("01_afterfire", "05_lift") else None
+            pcm = engine.render_track(rpm, throttle, .25, afterfire_events=events)
+            wavfile.write(web / scene["candidate_file"], 48000, pcm)
+            wavfile.write(root / scene["candidate_file"], 48000, pcm)
+
+    monkeypatch.setattr(dashboards, "render_vehicle_audio", small_schedule)
+    references = tmp_path / "references"
+    for directory in run_experiment.EXPECTED_DIRS.values():
+        root = references / directory / "web_audio"
+        root.mkdir(parents=True)
+        t = np.arange(12000) / 48000.
+        tone = (12000 * np.sin(2 * np.pi * 200 * t)).astype(np.int16)
+        for name in ("afterfire", "full_pull", "hot_idle", "steady_low", "steady_mid", "steady_high"):
+            wavfile.write(root / f"ref_{name}.wav", 48000, tone)
+    parent_args = argparse.Namespace(
+        output_root=tmp_path / "parent", reference_root=references,
+        vehicle="all", seed=20260908, numerical_fixes=[], package_id="c1-parent",
+        candidate_id="c1-parent", port_base=25100, allow_dirty_dev=False,
+        identity_mode="vehicle_identity_v1r1", fit_root=None,
+    )
+    parent = build_identity_package_r1(parent_args)
+    parent_sha = sha256_file(parent / "audition_manifest.json")
+    output = run_experiment.build_c1(argparse.Namespace(
+        parent_package=parent, parent_manifest_sha256=parent_sha,
+        output_root=tmp_path / "c1-experiments",
+        run_id="ci-c1", port_base=24080,
+    ))
+    result = run_experiment.read_sealed(output)
+    assert {row["group_key"] for row in result["groups"]} == {"b0", "c0", "c1", "c2", "c3"}
+    assert result["status"] == "STAGE_AH_C1_OUTPUT_CONTRACT_QUALIFIED"
+    groups = {row["group_key"]: row for row in result["groups"]}
+    assert groups["b0"]["output_policy"] == "legacy_clip_v1"
+    assert groups["c0"]["source_variant"] == "r1_baseline"
+    assert groups["c0"]["output_policy"] == "linked_soft_ceiling_v1"
+    assert groups["c0"]["post_guard_ceiling_exceedance_samples"] == 0
+    assert groups["c0"]["emergency_clip_count"] == 0
+    assert groups["c0"]["identity_layer_clip_count"] == 0
+    assert groups["c0"]["post_identity_clip_count"] == 0
+    c0_report = run_experiment.read_sealed(groups["c0"]["report"])
+    assert all("final_pcm_sha256" in row and "wav_file_sha256" in row for row in c0_report["records"])
+    assert all(row["true_peak_4x"]["estimator_up"] == 4 for row in c0_report["records"])
+    assert len(result["comparisons"]["B0_to_C0"]["rows"]) == 40
+    assert result["comparisons"]["B0_to_C0"]["rows"][0]["comparison_type"] == "OUTPUT_POLICY_ONLY"
+    run_experiment.serve_c1(argparse.Namespace(experiment=output, group="c0", preflight_only=True))
