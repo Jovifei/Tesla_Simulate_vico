@@ -32,11 +32,11 @@ from .output_guard import (
 
 
 SUPRA_VEHICLE = "supra_jza80"
-SUPRA_SOURCE_VARIANT = "supra_i6_twin_turbo_realref_v2"
+SUPRA_SOURCE_VARIANT = "supra_i6_twin_turbo_realref_v3"
 SUPRA_SOURCE_PATH = Path(__file__).resolve().parents[1] / "sources" / "toyota_i6_turbo_source_v2.py"
 SUPRA_BASE_SOURCE_PATH = Path(__file__).resolve().parents[1] / "sources" / "toyota_i6_turbo_source.py"
 SUPRA_REFERENCE_TARGET_PATH = Path(__file__).resolve().parents[1] / "reference_database" / "supra_jza80_reference_targets.json"
-SUPRA_MULTI_REFERENCE_PATH = Path(__file__).resolve().parents[1] / "reference_database" / "supra_jza80_multi_reference_targets_v2.json"
+SUPRA_MULTI_REFERENCE_PATH = Path(__file__).resolve().parents[1] / "reference_database" / "supra_jza80_multi_reference_targets_v3.json"
 SUPRA_IR_NAME = "mild_exhaust_reverb"
 SUPRA_IR_VOLUME = 0.015
 _SAMPLE_RATE_HZ = 48_000
@@ -304,7 +304,7 @@ class SupraEngine:
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
-            "note": "Synthetic Supra JZA80 source; v2 uses relative cues from three real R2 recordings",
+            "note": "Synthetic Supra JZA80 source; v3 uses relative cues from three real R3 recordings",
         }
         self.reports.append(report)
         self.scene_index += 1

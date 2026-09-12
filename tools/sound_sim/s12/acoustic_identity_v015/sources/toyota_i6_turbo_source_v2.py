@@ -14,9 +14,9 @@ from ..contracts import SourceRender, VehicleStateTrace
 from .toyota_i6_turbo_source import render_supra_jza80
 
 
-SUPRA_V2_EDGE_SCALE = 2.2
-SUPRA_V2_HIBAND_SCALE = 6.0
-SUPRA_V2_REFERENCE_BASIS = "supra_jza80_multi_reference_targets_v2"
+SUPRA_V2_EDGE_SCALE = 1.4
+SUPRA_V2_HIBAND_SCALE = 3.4
+SUPRA_V2_REFERENCE_BASIS = "supra_jza80_multi_reference_targets_v3"
 
 
 def render_supra_jza80_v2(
@@ -35,7 +35,7 @@ def render_supra_jza80_v2(
     diagnostics = dict(base.diagnostics)
     diagnostics.update(
         {
-            "source_variant": "supra_i6_twin_turbo_realref_v2",
+            "source_variant": "supra_i6_twin_turbo_realref_v3",
             "source_overlay": {
                 "edge_scale": SUPRA_V2_EDGE_SCALE,
                 "hiband_scale": SUPRA_V2_HIBAND_SCALE,

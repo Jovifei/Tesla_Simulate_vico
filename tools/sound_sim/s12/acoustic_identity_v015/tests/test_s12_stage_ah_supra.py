@@ -98,7 +98,7 @@ def test_supra_real_reference_contract_has_three_recordings():
     payload = json.loads(
         Path(
             "tools/sound_sim/s12/acoustic_identity_v015/reference_database/"
-            "supra_jza80_multi_reference_targets_v2.json"
+            "supra_jza80_multi_reference_targets_v3.json"
         ).read_text(encoding="utf-8")
     )
     assert len(payload["recordings"]) == 3
@@ -123,6 +123,6 @@ def test_supra_v2_source_reports_fixed_overlay():
         time, rpm, throttle, throttle, np.gradient(rpm / 60.0, time)
     ).validate()
     render = render_supra_jza80_v2(trace)
-    assert render.diagnostics["source_variant"] == "supra_i6_twin_turbo_realref_v2"
+    assert render.diagnostics["source_variant"] == "supra_i6_twin_turbo_realref_v3"
     assert render.diagnostics["source_overlay"]["edge_scale"] == SUPRA_V2_EDGE_SCALE
     assert render.diagnostics["source_overlay"]["hiband_scale"] == SUPRA_V2_HIBAND_SCALE
