@@ -285,6 +285,7 @@ def _build_group(
     records_by_vehicle: dict[str, list[dict[str, Any]]] = {}
     references_by_vehicle: dict[str, dict[str, dict[str, str]]] = {}
     holders: dict[str, Any] = {}
+    vehicle_entries: list[dict[str, Any]] = []
 
     class Factory:
         def __new__(cls, vehicle_type: str = "ferrari_458", sr: int = 48_000):
@@ -368,53 +369,61 @@ def _build_group(
                 for path in sorted(cfg["dir"].rglob("*"))
                 if path.is_file()
             ]
-            _write_json(cfg["dir"] / "dashboard_contract.json", cfg["_dashboard_contract"])
-            manifest = seal_payload(
+            vehicle_entries.append(
                 {
-                    "schema": PACKAGE_SCHEMA,
-                    "stage": "AH-FOURCAR-REALREF",
-                    "package_id": group_root.name,
-                    "candidate_id": f"AH-FOURCAR-REALREF-{group}",
-                    "created_utc": datetime.now(timezone.utc).isoformat(),
-                    "group": group,
                     "vehicle": vehicle,
-                    "identity_mode": IDENTITY_MODE_V1R1,
+                    "directory": _vehicle_directory(vehicle),
+                    "port": int(cfg["port"]),
                     "source_variant": contract["source_variant"],
-                    "output_policy": LINKED_SOFT_CEILING_V1,
-                    "output_policy_config": contract["output_policy_config"],
-                    "output_guard_receipt_schema": contract["output_guard_receipt_schema"],
-                    "source_receipt": dict(source_receipt),
-                    "reference_evidence_level": "R1_PARENT_REFERENCE_COPY_PLUS_R3_RELATIVE_CUES",
-                    "human_status": "WAITING_FOR_JOVI_FEEDBACK",
-                    "promotable": False,
-                    "vehicles": [{
-                        "vehicle": vehicle,
-                        "directory": _vehicle_directory(vehicle),
-                        "port": int(cfg["port"]),
-                        "candidate_sha256": candidate_hashes,
-                        "reference_sha256": {name: item["sha256"] for name, item in refs.items()},
-                        "scenes": [scene["id"] for scene in cfg["scenes"]],
-                    }],
-                    "artifacts": artifacts,
-                    "rules": [
-                        "The accepted AG-R1 Reference bytes are copied without modification.",
-                        "Five public recordings remain R3 relative cues with no RPM/mic/AGC synchronization.",
-                        "This package makes no Human PASS, OEM reproduction or profile-freeze claim.",
-                    ],
-                },
-                PACKAGE_SCHEMA,
+                    "candidate_sha256": candidate_hashes,
+                    "reference_sha256": {name: item["sha256"] for name, item in refs.items()},
+                    "scenes": [scene["id"] for scene in cfg["scenes"]],
+                }
             )
-            _write_json(group_root / "audition_manifest.json", manifest)
-            validate_artifacts(artifacts, group_root)
         all_artifacts = [
             artifact_record(path, group_root, f"package:{path.relative_to(group_root).as_posix()}")
             for path in sorted(group_root.rglob("*"))
             if path.is_file() and path.name != "audition_manifest.json"
         ]
         manifest_path = group_root / "audition_manifest.json"
-        manifest = _read_sealed(manifest_path)
-        manifest["artifacts"] = all_artifacts
-        _write_json(manifest_path, seal_payload(manifest, PACKAGE_SCHEMA))
+        manifest = seal_payload(
+            {
+                "schema": PACKAGE_SCHEMA,
+                "stage": "AH-FOURCAR-REALREF",
+                "package_id": group_root.name,
+                "candidate_id": f"AH-FOURCAR-REALREF-{group}",
+                "created_utc": datetime.now(timezone.utc).isoformat(),
+                "group": group,
+                "identity_mode": IDENTITY_MODE_V1R1,
+                "source_variant": (
+                    "r1_baseline"
+                    if profiles is None
+                    else "four_vehicle_source_profiles_real_reference_v1"
+                ),
+                "output_policy": LINKED_SOFT_CEILING_V1,
+                "output_policy_config": {
+                    "policy_id": LINKED_SOFT_CEILING_V1,
+                    "knee_linear": 0.90,
+                    "ceiling_linear": 0.94,
+                    "stereo_link": "instantaneous_frame_peak_common_gain",
+                    "parent_denominator_policy": "fixed_parent_peak_from_ah_r1_control",
+                },
+                "output_guard_receipt_schema": "s12.stage_ah.output_guard_receipt.v2",
+                "source_receipt": dict(source_receipt),
+                "reference_evidence_level": "R1_PARENT_REFERENCE_COPY_PLUS_R3_RELATIVE_CUES",
+                "human_status": "WAITING_FOR_JOVI_FEEDBACK",
+                "promotable": False,
+                "vehicles": vehicle_entries,
+                "artifacts": all_artifacts,
+                "rules": [
+                    "The accepted AG-R1 Reference bytes are copied without modification.",
+                    "Five public recordings remain R3 relative cues with no RPM/mic/AGC synchronization.",
+                    "This package makes no Human PASS, OEM reproduction or profile-freeze claim.",
+                ],
+            },
+            PACKAGE_SCHEMA,
+        )
+        _write_json(manifest_path, manifest)
         validate_artifacts(all_artifacts, group_root)
         flat_records = [
             dict(record, vehicle=vehicle)
