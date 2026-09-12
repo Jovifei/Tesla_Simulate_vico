@@ -367,6 +367,13 @@ def _build_group(
             cfg["_dashboard_contract"] = seal_payload(contract, "s12.stage_af.dashboard_contract.v1")
             cfg["_dashboard_params"] = contract["parameters"]
             dashboards.build_dashboard(vehicle, cfg)
+            for page in (cfg["dir"] / "index.html", cfg["dir"] / "index_standalone.html"):
+                page.write_text(
+                    page.read_text(encoding="utf-8")
+                    .replace("B: 真车参考实录 (R3)", "B: AG-R1 真车Reference（原字节）")
+                    .replace("B: 真车参考实录 (R3 Reference)", "B: AG-R1 真车Reference（原字节）"),
+                    encoding="utf-8",
+                )
             _write_json(cfg["dir"] / "dashboard_contract.json", cfg["_dashboard_contract"])
             binding = seal_payload(
                 {
