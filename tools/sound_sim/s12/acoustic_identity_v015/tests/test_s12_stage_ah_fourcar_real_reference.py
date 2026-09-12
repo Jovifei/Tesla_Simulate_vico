@@ -104,5 +104,6 @@ def test_real_reference_engine_is_deterministic_bounded_and_reports_parent_denom
     assert report["output_policy"] == LINKED_SOFT_CEILING_V1
     assert report["source_adjustment_domain"] == "ah_r1_pre_saturation_before_output_guard"
     assert report["candidate_render_path"] == "current_ah_engine_pre_saturation_overlay"
+    assert report["source_adjustment"]["method"] == "causal_butterworth_highpass"
     assert report["final_peak"] <= 0.94 + 1e-12
     assert report["normalization"]["post_guard_ceiling_exceedance_samples"] == 0

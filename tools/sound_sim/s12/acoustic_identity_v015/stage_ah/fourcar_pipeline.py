@@ -68,6 +68,7 @@ IR_NAMES = {
     "lfa": "mild_exhaust_reverb",
     "gtr_r35": "test_engine_14_eq_adjusted_16",
 }
+SOURCE_SHELF_CUTOFF_HZ = 1_000.0
 
 
 def _sha256_bytes(value: bytes) -> str:
@@ -170,8 +171,7 @@ def _apply_profile_shelf(
         return x.copy()
     # A causal shelf keeps the adjustment before the existing tanh/int16
     # boundary while leaving the parent denominator and low band untouched.
-    cutoff_hz = {"hellcat": 1_000.0, "ferrari_458": 1_000.0, "lfa": 1_000.0, "gtr_r35": 1_000.0}[vehicle]
-    sos = signal.butter(2, cutoff_hz, btype="highpass", fs=sample_rate_hz, output="sos")
+    sos = signal.butter(2, SOURCE_SHELF_CUTOFF_HZ, btype="highpass", fs=sample_rate_hz, output="sos")
     high = np.column_stack(
         [signal.sosfilt(sos, x[:, channel]) for channel in range(x.shape[1])]
     )
@@ -400,6 +400,13 @@ class FourCarRealReferenceEngine:
                 "base_value": self.base_source_value,
                 "candidate_value": self.candidate_source_value,
                 "ratio": self.candidate_source_value / self.base_source_value,
+            },
+            "source_adjustment": {
+                "method": "causal_butterworth_highpass",
+                "order": 2,
+                "cutoff_hz": SOURCE_SHELF_CUTOFF_HZ,
+                "gain_ratio": self.candidate_source_value / self.base_source_value,
+                "low_band_policy": "unchanged_by_design",
             },
             "trace_sha256": _sha256_bytes(
                 np.ascontiguousarray(np.column_stack([rpm, throttle]), dtype="<f8").tobytes()
