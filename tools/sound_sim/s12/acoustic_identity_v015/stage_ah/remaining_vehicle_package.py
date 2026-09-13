@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import sys
 import threading
@@ -566,6 +567,36 @@ def _aggregate(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _relative_comparison(candidate: Path, reference: Path) -> dict[str, Any]:
+    candidate_sr, candidate_data = wavfile.read(candidate)
+    reference_sr, reference_data = wavfile.read(reference)
+    if int(candidate_sr) != _SAMPLE_RATE_HZ or int(reference_sr) != _SAMPLE_RATE_HZ:
+        raise ValueError("relative comparison requires 48 kHz WAVs")
+    candidate_data = np.asarray(candidate_data, dtype=np.float64) / 32767.0
+    reference_data = np.asarray(reference_data, dtype=np.float64) / 32767.0
+    frames = min(candidate_data.shape[0], reference_data.shape[0])
+    candidate_data = candidate_data[:frames]
+    reference_data = reference_data[:frames]
+    candidate_rms = float(np.sqrt(np.mean(candidate_data * candidate_data)))
+    reference_rms = float(np.sqrt(np.mean(reference_data * reference_data)))
+    return {
+        "status": "R3_RELATIVE_ONLY_UNSYNCHRONIZED",
+        "overlap_frames": int(frames),
+        "candidate_rms": candidate_rms,
+        "reference_rms": reference_rms,
+        "rms_ratio": candidate_rms / reference_rms if reference_rms > 1e-12 else None,
+        "candidate_peak": float(np.max(np.abs(candidate_data))),
+        "reference_peak": float(np.max(np.abs(reference_data))),
+    }
+
+
+def _embedded_json(text: str, name: str) -> Any:
+    match = re.search(r"\bconst\s+" + re.escape(name) + r"\s*=\s*", text)
+    if match is None:
+        raise ValueError(f"missing embedded {name}")
+    return json.JSONDecoder().raw_decode(text[match.end():])[0]
+
+
 def _build_group(
     *,
     run_root: Path,
@@ -640,6 +671,10 @@ def _build_group(
                 record["scene"] = scene["id"]
                 record["wav_file_sha256"] = sha256_file(web_dir / scene["candidate_file"])
                 record["candidate_wav_sha256"] = record["wav_file_sha256"]
+                record["reference_comparison"] = _relative_comparison(
+                    web_dir / scene["candidate_file"],
+                    web_dir / scene["ref_file"],
+                )
             candidate_hashes = {scene["candidate_file"]: sha256_file(web_dir / scene["candidate_file"]) for scene in cfg["scenes"]}
             reference_hashes = {scene["ref_file"]: sha256_file(web_dir / scene["ref_file"]) for scene in cfg["scenes"]}
             records_by_vehicle[vehicle] = records
@@ -768,9 +803,11 @@ def _build_group(
             "records": report_records,
             "reference_gate": {
                 "status": "NOT_EVALUATED_UNSYNCHRONIZED_R3",
-                "rows": 0,
+                "rows": len(report_records),
+                "evaluated": 0,
                 "missing": 0,
                 "regressions": 0,
+                "relative_diagnostics": len(report_records),
                 "reason": "R3 recordings have no synchronized RPM/microphone/AGC contract",
             },
         }
@@ -954,9 +991,25 @@ def _verify_package(package: Path) -> dict[str, Any]:
         root = package / str(vehicle["directory"])
         if len(vehicle.get("scenes", [])) != 10:
             raise ValueError(f"remaining package must contain ten scenes: {vehicle.get('vehicle')}")
-        for scene in vehicle["scenes"]:
-            if not (root / "web_audio" / f"{scene}.wav").is_file():
-                raise FileNotFoundError(root / "web_audio" / f"{scene}.wav")
+        html = (root / "index.html").read_text(encoding="utf-8")
+        scenes = _embedded_json(html, "SCENES")
+        store = _embedded_json(html, "AUDIO_STORE")
+        if len(scenes) != 10:
+            raise ValueError(f"embedded scene count mismatch: {vehicle.get('vehicle')}")
+        for scene in scenes:
+            candidate = scene["candidate_file"]
+            reference = scene.get("ref_file")
+            for role, filename in (("candidate", candidate), ("reference", reference)):
+                if not filename:
+                    continue
+                key = scene["id"] + ("_candidate" if role == "candidate" else "_ref")
+                encoded = store.get(key)
+                if not isinstance(encoded, str):
+                    raise ValueError(f"missing embedded {role}: {vehicle.get('vehicle')}/{scene['id']}")
+                actual = _sha256_bytes(base64.b64decode(encoded.split(",", 1)[-1], validate=True))
+                expected = vehicle["candidate_sha256" if role == "candidate" else "reference_sha256"].get(filename)
+                if actual != expected:
+                    raise ValueError(f"embedded {role} SHA mismatch: {vehicle.get('vehicle')}/{scene['id']}")
     return manifest
 
 
