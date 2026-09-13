@@ -28,6 +28,37 @@ def controlled_ir(tmp_path, monkeypatch):
     return root
 
 
+def _make_parent_fixture(root: Path) -> Path:
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import (
+        canonical_json_bytes,
+        seal_payload,
+    )
+    directories = {
+        "hellcat": "s12-stage-ad-hellcat-closed-loop-v1",
+        "ferrari_458": "s12-stage-ad-ferrari-458-closed-loop-v1",
+        "lfa": "s12-stage-ad-lfa-closed-loop-v1",
+        "gtr_r35": "s12-stage-ad-gtr-r35-closed-loop-v1",
+    }
+    entries = []
+    refs = ("afterfire", "full_pull", "hot_idle", "steady_high", "steady_low", "steady_mid")
+    for vehicle, directory in directories.items():
+        web = root / directory / "web_audio"
+        web.mkdir(parents=True)
+        reference_sha = {}
+        for name in refs:
+            path = web / f"ref_{name}.wav"
+            path.write_bytes(b"fixture-reference-" + vehicle.encode() + name.encode())
+            reference_sha[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+        entries.append({"vehicle": vehicle, "directory": directory, "reference_sha256": reference_sha})
+    manifest = seal_payload(
+        {"schema": "fixture.manifest.v1", "vehicles": entries, "artifacts": []},
+        "fixture.manifest.v1",
+    )
+    path = root / "audition_manifest.json"
+    path.write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
+    return path
+
+
 def test_render_observer_captures_one_report_per_scene(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import fourcar_package
 
@@ -488,6 +519,12 @@ def test_server_collision_closes_unstarted_servers_without_shutdown(tmp_path, mo
 def test_failed_build_leaves_failure_receipt_in_staging(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import fourcar_package
 
+    parent_manifest = _make_parent_fixture(tmp_path / "parent")
+    monkeypatch.setattr(
+        fourcar_package,
+        "EXPECTED_PARENT_MANIFEST_SHA256",
+        hashlib.sha256(parent_manifest.read_bytes()).hexdigest(),
+    )
     monkeypatch.setattr(
         fourcar_package,
         "_source_receipt",
@@ -508,7 +545,7 @@ def test_failed_build_leaves_failure_receipt_in_staging(tmp_path, monkeypatch):
         fourcar_package.build_run(
             output_root=tmp_path,
             run_id="failure-test",
-            reference_root=fourcar_package.DEFAULT_REFERENCE_ROOT,
+            reference_root=parent_manifest.parent,
         )
     assert not (tmp_path / "failure-test").exists()
     failures = list((tmp_path / ".staging").glob("*/FAIL.json"))
@@ -518,6 +555,12 @@ def test_failed_build_leaves_failure_receipt_in_staging(tmp_path, monkeypatch):
 def test_fourcar_short_end_to_end_reaches_strict_preflight(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import fourcar_package
 
+    parent_manifest = _make_parent_fixture(tmp_path / "parent")
+    monkeypatch.setattr(
+        fourcar_package,
+        "EXPECTED_PARENT_MANIFEST_SHA256",
+        hashlib.sha256(parent_manifest.read_bytes()).hexdigest(),
+    )
     monkeypatch.setattr(
         fourcar_package,
         "_source_receipt",
@@ -575,7 +618,7 @@ def test_fourcar_short_end_to_end_reaches_strict_preflight(tmp_path, monkeypatch
     experiment = fourcar_package.build_run(
         output_root=tmp_path,
         run_id="short-e2e",
-        reference_root=fourcar_package.DEFAULT_REFERENCE_ROOT,
+        reference_root=parent_manifest.parent,
         port_c0=29080,
         port_realref=29180,
     )
