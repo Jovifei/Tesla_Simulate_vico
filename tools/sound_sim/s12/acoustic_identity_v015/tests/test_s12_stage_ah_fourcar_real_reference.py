@@ -95,6 +95,28 @@ def test_reference_target_sha_matches_profile_worktree_and_git_blob(profile_path
     assert worktree.count(b"\r\n") == 0
     assert worktree.count(b"\n") == blob.count(b"\n")
 
+
+@pytest.mark.parametrize(
+    "profile_path",
+    (
+        "targets/stage_k_candidates/hellcat_candidate_v7.json",
+        "targets/stage_k_candidates/lfa_candidate_v2.json",
+        "targets/stage_k_candidates/gtr_r35_candidate_v2.json",
+    ),
+)
+def test_stage_k_parent_sha_matches_profile_worktree_and_git_blob(profile_path: str) -> None:
+    profile = ROOT / profile_path
+    payload = json.loads(profile.read_text(encoding="utf-8"))
+    relative = profile.parents[2] / payload["parent_candidate_path"]
+    worktree = relative.read_bytes()
+    blob = subprocess.check_output(
+        ["git", "show", f"HEAD:{relative.relative_to(ROOT.parent.parent.parent.parent).as_posix()}"],
+        cwd=ROOT.parent.parent.parent.parent,
+    )
+    digest = hashlib.sha256(worktree).hexdigest()
+    assert payload["parent_candidate_sha256"].lower() == digest == hashlib.sha256(blob).hexdigest()
+    assert worktree.count(b"\r\n") == 0
+
 def test_dashboard_parameter_rows_match_the_original_template_contract() -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_package import _contract
 
