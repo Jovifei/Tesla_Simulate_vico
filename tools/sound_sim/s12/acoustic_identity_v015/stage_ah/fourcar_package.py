@@ -63,6 +63,24 @@ DEFAULT_PORT_C0 = 25380
 DEFAULT_PORT_REALREF = 25480
 EXPECTED_PARENT_MANIFEST_SHA256 = "3fecb566416d498bcedcb6c1a5267f6c7b36e82e9e9a87af7c2740705f599519"
 REFERENCE_GATE_STATUS = "NOT_EVALUATED_UNSYNCHRONIZED_R3"
+FOURCAR_DEPENDENCY_PATHS = (
+    Path(__file__),
+    Path(__file__).with_name("engine.py"),
+    Path(__file__).with_name("fourcar_pipeline.py"),
+    Path(__file__).with_name("source_policy.py"),
+    Path(__file__).with_name("output_guard.py"),
+    Path(__file__).resolve().parents[1] / "stage_ad" / "engine_sim_acoustics.py",
+    Path(__file__).resolve().parents[1] / "stage_ad" / "build_unified_dashboards.py",
+    Path(__file__).resolve().parents[1] / "stage_ad" / "audition_dashboard_template.html",
+    Path(__file__).resolve().parents[1] / "stage_ag" / "vehicle_identity_r1.py",
+    Path(__file__).resolve().parents[1] / "stage_ag" / "vehicle_identity.py",
+    Path(__file__).resolve().parents[1] / "stage_g" / "candidate_profiles.py",
+    Path(__file__).resolve().parents[1] / "stage_k" / "candidate_profiles.py",
+    Path(__file__).resolve().parents[1] / "stage_af" / "package_integrity.py",
+    FOURCAR_TARGET_PATH,
+    *REAL_REFERENCE_PROFILE_PATHS.values(),
+    *REAL_REFERENCE_BASE_PATHS.values(),
+)
 _LOCK = threading.RLock()
 
 
@@ -211,7 +229,12 @@ def _validate_parent_package(reference_root: Path) -> dict[str, Any]:
 
 
 def _source_receipt() -> dict[str, Any]:
-    receipt = dict(git_source_receipt(allow_dirty_dev=False))
+    receipt = dict(
+        git_source_receipt(
+            allow_dirty_dev=False,
+            additional_paths=FOURCAR_DEPENDENCY_PATHS,
+        )
+    )
     target_payload = json.loads(FOURCAR_TARGET_PATH.read_text(encoding="utf-8"))
     paths = [
         Path(__file__),
@@ -407,7 +430,10 @@ def _reference_gate(rows: list[Mapping[str, Any]], *, evidence_level: str) -> di
             "unknown_reason": "public recordings have no shared RPM/load/microphone synchronization",
         }
     regressions = sum(
-        1 for row in rows if str(row.get("guard_3pct", "")) == "REGRESSION_GT_3PCT"
+        1
+        for row in rows
+        if row.get("guard_3pct") == "REGRESSION_GT_3PCT"
+        or bool(row.get("regression_gt_3pct", False))
     )
     return {
         "status": "EVALUATED_RELATIVE_REFERENCE",
@@ -419,28 +445,159 @@ def _reference_gate(rows: list[Mapping[str, Any]], *, evidence_level: str) -> di
     }
 
 
+REQUIRED_RECORD_FIELDS = frozenset(
+    {
+        "vehicle", "scene_id", "trace_sha256", "sample_rate_hz", "sample_count",
+        "seed", "flags", "source_variant", "output_policy", "parent_peak",
+        "candidate_raw_peak", "final_peak", "final_rms", "candidate_pcm_sha256",
+        "wav_file_sha256", "peak_estimate_4x", "normalization",
+        "identity_layer_clip_count", "identity_layer_clip_error",
+        "identity_layer_clip_error_rms", "post_identity_clip_count", "post_identity_clip_error",
+        "post_identity_clip_error_rms", "ir_effective_sha256",
+        "fixed_branch_spectral_diagnostics",
+    }
+)
+REQUIRED_NORMALIZATION_FIELDS = frozenset(
+    {
+        "receipt_schema", "output_policy", "knee_linear", "ceiling_linear",
+        "stereo_link", "parent_denominator_policy", "frame_count",
+        "legacy_ceiling_input_exceedance_samples", "legacy_transfer_pre_guard_peak",
+        "pre_guard_exceedance_longest_run", "pre_guard_peak",
+        "soft_guard_active_frames", "soft_guard_active_frame_ratio",
+        "soft_guard_min_gain", "soft_guard_max_attenuation_db", "soft_guard_delta_peak",
+        "soft_guard_delta_rms", "post_guard_peak", "post_guard_ceiling_exceedance_samples",
+        "emergency_clip_count", "emergency_clip_error", "emergency_clip_error_rms",
+        "normalization_denominator", "pre_identity_pcm_sha256",
+    }
+)
+_COUNT_FIELDS = (
+    "frame_count", "legacy_ceiling_input_exceedance_samples", "soft_guard_active_frames",
+    "post_guard_ceiling_exceedance_samples", "emergency_clip_count",
+    "identity_layer_clip_count", "post_identity_clip_count",
+)
+_ERROR_FIELDS = (
+    "emergency_clip_error", "emergency_clip_error_rms", "identity_layer_clip_error",
+    "identity_layer_clip_error_rms", "post_identity_clip_error", "post_identity_clip_error_rms",
+)
+
+
 def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
     failures: list[str] = []
+    post_guard = emergency = post_identity = identity_layer = 0
     finite = True
-    post_guard = emergency = post_identity = 0
-    for record in records:
-        for key in ("final_peak", "final_rms", "parent_peak", "candidate_raw_peak"):
-            value = record.get(key)
-            if value is None or not np.isfinite(float(value)):
+    seen: set[tuple[str, str]] = set()
+    for index, record in enumerate(records):
+        label = f"record[{index}]"
+        missing = REQUIRED_RECORD_FIELDS - set(record)
+        if missing:
+            failures.append(f"{label}:missing:{','.join(sorted(missing))}")
+            continue
+        vehicle = str(record["vehicle"])
+        scene = str(record["scene_id"])
+        pair = (vehicle, scene)
+        if pair in seen:
+            failures.append(f"{label}:duplicate_scene:{vehicle}/{scene}")
+        seen.add(pair)
+        trace = str(record["trace_sha256"]).lower()
+        if len(trace) != 64 or any(char not in "0123456789abcdef" for char in trace):
+            failures.append(f"{label}:invalid_trace_sha")
+        for key in ("sample_rate_hz", "sample_count", "seed"):
+            value = record[key]
+            if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
+                failures.append(f"{label}:invalid_integer:{key}")
+            elif int(value) <= 0 or (key == "seed" and int(value) < 0):
+                failures.append(f"{label}:invalid_integer_value:{key}")
+        if not isinstance(record["flags"], list) or any(not isinstance(flag, str) for flag in record["flags"]):
+            failures.append(f"{label}:invalid_flags")
+        for key in ("candidate_pcm_sha256", "wav_file_sha256", "ir_effective_sha256"):
+            value = str(record[key]).lower()
+            if len(value) != 64 or any(char not in "0123456789abcdef" for char in value):
+                failures.append(f"{label}:invalid_sha:{key}")
+        for key in ("parent_peak", "candidate_raw_peak", "final_peak", "final_rms"):
+            value = record[key]
+            if not np.isfinite(float(value)):
                 finite = False
-                failures.append(f"{record.get('vehicle')}/{record.get('scene')}:nonfinite:{key}")
-        if record.get("final_peak") is not None and float(record["final_peak"]) > 0.94 + 1e-12:
-            failures.append(f"{record.get('vehicle')}/{record.get('scene')}:final_peak_over_ceiling")
-        normalization = record.get("normalization", {})
-        post_guard += int(normalization.get("post_guard_ceiling_exceedance_samples", 0))
-        emergency += int(normalization.get("emergency_clip_count", 0))
-        post_identity += int(record.get("post_identity_clip_count", 0))
+                failures.append(f"{label}:nonfinite:{key}")
+        if float(record["parent_peak"]) <= 0.0:
+            failures.append(f"{label}:nonpositive_parent_peak")
+        if float(record["final_peak"]) > 0.94 + 1e-12:
+            failures.append(f"{label}:final_peak_over_ceiling")
+        peak4x = record["peak_estimate_4x"]
+        if not isinstance(peak4x, Mapping) or "peak" not in peak4x:
+            failures.append(f"{label}:missing_peak_estimate_4x")
+        elif not np.isfinite(float(peak4x["peak"])) or float(peak4x["peak"]) > 0.94 + 1e-12:
+            failures.append(f"{label}:peak_estimate_4x_over_ceiling")
+        normalization = record["normalization"]
+        if not isinstance(normalization, Mapping):
+            failures.append(f"{label}:normalization_not_object")
+            continue
+        missing_norm = REQUIRED_NORMALIZATION_FIELDS - set(normalization)
+        if missing_norm:
+            failures.append(f"{label}:missing_normalization:{','.join(sorted(missing_norm))}")
+            continue
+        if not np.isclose(
+            float(normalization["normalization_denominator"]),
+            float(record["parent_peak"]),
+            rtol=0.0,
+            atol=1e-12,
+        ):
+            failures.append(f"{label}:parent_denominator_mismatch")
+        for key in _COUNT_FIELDS:
+            value = normalization[key] if key in normalization else record[key]
+            if key in ("identity_layer_clip_count", "post_identity_clip_count"):
+                value = record[key]
+            if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or int(value) < 0:
+                failures.append(f"{label}:invalid_count:{key}")
+            elif key == "frame_count" and int(value) == 0:
+                failures.append(f"{label}:empty_frame_count")
+        for key in _ERROR_FIELDS:
+            value = record[key] if key in record else normalization[key]
+            if not np.isfinite(float(value)) or float(value) < 0.0:
+                failures.append(f"{label}:invalid_error:{key}")
+        for key in (
+            "knee_linear", "ceiling_linear", "soft_guard_active_frame_ratio",
+            "soft_guard_min_gain", "soft_guard_max_attenuation_db", "soft_guard_delta_peak",
+            "soft_guard_delta_rms", "post_guard_peak", "normalization_denominator",
+            "pre_guard_peak", "legacy_transfer_pre_guard_peak",
+        ):
+            if not np.isfinite(float(normalization[key])):
+                finite = False
+                failures.append(f"{label}:nonfinite_normalization:{key}")
+        longest = normalization["pre_guard_exceedance_longest_run"]
+        if not isinstance(longest, Mapping) or "samples" not in longest:
+            failures.append(f"{label}:invalid_exceedance_run")
+        elif isinstance(longest["samples"], bool) or not isinstance(longest["samples"], (int, np.integer)) or int(longest["samples"]) < 0:
+            failures.append(f"{label}:invalid_exceedance_run_samples")
+        if int(normalization["emergency_clip_count"]) == 0 and float(normalization["emergency_clip_error"]) > 1e-12:
+            failures.append(f"{label}:emergency_error_without_count")
+        if int(record["identity_layer_clip_count"]) == 0 and float(record["identity_layer_clip_error"]) > 1e-12:
+            failures.append(f"{label}:identity_error_without_count")
+        if int(record["identity_layer_clip_count"]) == 0 and float(record["identity_layer_clip_error_rms"]) > 1e-12:
+            failures.append(f"{label}:identity_error_rms_without_count")
+        if int(record["post_identity_clip_count"]) == 0 and float(record["post_identity_clip_error"]) > 1e-12:
+            failures.append(f"{label}:post_identity_error_without_count")
+        if int(record["post_identity_clip_count"]) == 0 and float(record["post_identity_clip_error_rms"]) > 1e-12:
+            failures.append(f"{label}:post_identity_error_rms_without_count")
+        post_guard += int(normalization["post_guard_ceiling_exceedance_samples"])
+        emergency += int(normalization["emergency_clip_count"])
+        identity_layer += int(record["identity_layer_clip_count"])
+        post_identity += int(record["post_identity_clip_count"])
+    if len(records) != len(FOURCAR_VEHICLES) * 10:
+        failures.append(f"coverage_requires_40_records:{len(records)}")
+    if set(str(record.get("vehicle")) for record in records) != set(FOURCAR_VEHICLES):
+        failures.append("coverage_vehicle_set_mismatch")
+    for vehicle in FOURCAR_VEHICLES:
+        scenes = [str(record.get("scene_id")) for record in records if record.get("vehicle") == vehicle]
+        if len(scenes) != 10 or len(set(scenes)) != 10:
+            failures.append(f"coverage_scene_count:{vehicle}")
     if not finite:
         failures.append("nonfinite")
     if post_guard:
         failures.append("post_guard_ceiling_exceedance")
     if emergency:
         failures.append("emergency_clip")
+    if identity_layer:
+        failures.append("identity_layer_clip")
     if post_identity:
         failures.append("post_identity_clip")
     return {
@@ -448,6 +605,7 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
         "finite": finite,
         "post_guard_ceiling_exceedance_samples": post_guard,
         "emergency_clip_count": emergency,
+        "identity_layer_clip_count": identity_layer,
         "post_identity_clip_count": post_identity,
         "failures": failures,
     }
@@ -606,6 +764,10 @@ def _build_group(
                         ),
                     }
                 )
+                normalization = report.setdefault("normalization", {})
+                normalization.setdefault(
+                    "pre_identity_pcm_sha256", report.get("pre_identity_pcm_sha256")
+                )
                 runtime = getattr(engine, "base", engine)
                 if hasattr(runtime, "ir"):
                     report["ir_effective_sha256"] = _sha256_bytes(
@@ -757,7 +919,7 @@ def _build_group(
         report = {
             "schema": REPORT_SCHEMA,
             "group": group,
-            "package": str(group_root),
+            "package": group_root.relative_to(run_root).as_posix(),
             "package_manifest_sha256": sha256_file(manifest_path),
             "source_receipt": dict(source_receipt),
             "reference_sources": references_by_vehicle,
@@ -778,9 +940,9 @@ def _build_group(
         _write_json(report_path, seal_payload(report, REPORT_SCHEMA))
         return {
             "group": group,
-            "package": str(group_root),
+            "package": group_root.relative_to(run_root).as_posix(),
             "package_manifest_sha256": sha256_file(manifest_path),
-            "report": str(report_path),
+            "report": report_path.relative_to(run_root).as_posix(),
             "report_sha256": sha256_file(report_path),
             "records": flat_records,
             "parent_peaks": {
@@ -836,14 +998,81 @@ def _comparison(control: Mapping[str, Any], candidate: Mapping[str, Any]) -> dic
     }
 
 
-def _replace_paths(value: Any, old: str, new: str) -> Any:
-    if isinstance(value, str):
-        return value.replace(old, new)
-    if isinstance(value, list):
-        return [_replace_paths(item, old, new) for item in value]
-    if isinstance(value, dict):
-        return {key: _replace_paths(item, old, new) for key, item in value.items()}
-    return value
+def _attach_reference_diagnostics(
+    group: dict[str, Any],
+    *,
+    parent_root: Path,
+    run_root: Path,
+) -> dict[str, Any]:
+    """Attach the fixed 16-row relative diagnostic without changing its policy."""
+    from .run_experiment import reference_rows
+
+    package = (run_root / str(group["package"])).resolve()
+    manifest_path = package / "audition_manifest.json"
+    manifest = _read_sealed(manifest_path)
+    rows = reference_rows(parent_root, package, manifest)
+    relative_gate = _reference_gate(rows, evidence_level="R1_PARENT_RELATIVE_3PCT")
+    diagnostic_policy = {
+        "schema": "s12.stage_ah.reference_relative_diagnostic.v1",
+        "scenes": ["01_afterfire", "02_full_pull", "03_hot_idle", "09_steady_mid"],
+        "threshold": 0.03,
+        "distance_method": "stage_af.physical_closed_loop.fixed_reference_distance",
+        "excluded_scenes": {
+            "04_idle_return": "reuses hot_idle Reference alias",
+            "05_lift": "reuses afterfire Reference alias",
+            "06_shift": "no Reference asset in locked parent",
+            "07_steady_high": "no fixed same-name gate row in legacy policy",
+            "08_steady_low": "no fixed same-name gate row in legacy policy",
+            "10_tip_in": "no Reference asset in locked parent",
+        },
+        "evidence_boundary": "relative diagnostic only; no RPM/mic synchronization or OEM claim",
+    }
+    reference_count = sum(len(entry.get("reference_sha256", {})) for entry in manifest["vehicles"])
+    manifest.update(
+        {
+            "reference_integrity": {
+                "status": "REFERENCE_BYTES_VERIFIED",
+                "rows": reference_count,
+                "sha_verified": reference_count,
+            },
+            "reference_synchronization": {
+                "status": REFERENCE_GATE_STATUS,
+                "evidence_level": "R3_PUBLIC_RECORDINGS_UNSYNCED",
+                "evaluated_rows": 0,
+            },
+            "reference_gate": relative_gate,
+            "relative_reference_diagnostic": rows,
+            "relative_reference_diagnostic_policy": diagnostic_policy,
+        }
+    )
+    status = (
+        "READY_FOR_HUMAN_REVIEW_REFERENCE_DIAGNOSTIC"
+        if relative_gate["status"] == "EVALUATED_RELATIVE_REFERENCE"
+        and relative_gate["regressions"] == 0
+        else "FAILED_REFERENCE_GATE"
+    )
+    manifest["status"] = status
+    _write_json(manifest_path, seal_payload(manifest, PACKAGE_SCHEMA))
+    new_manifest_sha = sha256_file(manifest_path)
+
+    report_path = (run_root / str(group["report"])).resolve()
+    report = _read_sealed(report_path)
+    report.update(
+        {
+            "package_manifest_sha256": new_manifest_sha,
+            "reference_integrity": manifest["reference_integrity"],
+            "reference_synchronization": manifest["reference_synchronization"],
+            "reference_gate": relative_gate,
+            "relative_reference_diagnostic": rows,
+            "relative_reference_diagnostic_policy": diagnostic_policy,
+            "status": status,
+        }
+    )
+    _write_json(report_path, seal_payload(report, REPORT_SCHEMA))
+    group["package_manifest_sha256"] = new_manifest_sha
+    group["report_sha256"] = sha256_file(report_path)
+    group["status"] = status
+    return group
 
 
 def build_run(
@@ -899,6 +1128,12 @@ def build_run(
                 profile_metadata=profile_metadata,
                 parent_peaks=c0["parent_peaks"],
             )
+        c0 = _attach_reference_diagnostics(
+            c0, parent_root=reference_root.resolve(), run_root=staging_root
+        )
+        realref = _attach_reference_diagnostics(
+            realref, parent_root=reference_root.resolve(), run_root=staging_root
+        )
         experiment = seal_payload(
             {
                 "schema": RUN_SCHEMA,
@@ -906,7 +1141,7 @@ def build_run(
                 "run_id": run_id,
                 "source_receipt": source_receipt,
                 "reference_target": {
-                    "path": str((staging_root / FOURCAR_TARGET_PATH.name).resolve()),
+                    "path": FOURCAR_TARGET_PATH.name,
                     "sha256": sha256_file(staging_root / FOURCAR_TARGET_PATH.name),
                 },
                 "groups": [
@@ -928,23 +1163,8 @@ def build_run(
         experiment_path = staging_root / "experiment.json"
         _write_json(experiment_path, experiment)
         for group in experiment["groups"]:
-            _verify_group(group)
+            _verify_group(group, run_root=staging_root)
         staging_root.replace(final_root)
-        old = str(staging_root)
-        new = str(final_root)
-        for report_name in ("c0_report.json", "realref_report.json"):
-            report_path = final_root / report_name
-            report = _replace_paths(json.loads(report_path.read_text(encoding="utf-8")), old, new)
-            _write_json(report_path, seal_payload(report, REPORT_SCHEMA))
-        final_experiment = _replace_paths(
-            json.loads((final_root / "experiment.json").read_text(encoding="utf-8")), old, new
-        )
-        for group in final_experiment["groups"]:
-            report_path = Path(group["report"])
-            group["report_sha256"] = sha256_file(report_path)
-        _write_json(final_root / "experiment.json", seal_payload(final_experiment, RUN_SCHEMA))
-        for group in final_experiment["groups"]:
-            _verify_group(group)
         return final_root / "experiment.json"
     except Exception as exc:
         try:
@@ -962,8 +1182,12 @@ def build_run(
         raise
 
 
-def _verify_group(entry: Mapping[str, Any]) -> dict[str, Any]:
+def _verify_group(entry: Mapping[str, Any], *, run_root: Path | None = None) -> dict[str, Any]:
+    base = Path(run_root).resolve() if run_root is not None else Path.cwd()
     package = Path(entry["package"])
+    if not package.is_absolute():
+        package = base / package
+    package = package.resolve()
     manifest_path = package / "audition_manifest.json"
     manifest = _read_sealed(manifest_path)
     if manifest.get("schema") != PACKAGE_SCHEMA:
@@ -972,6 +1196,9 @@ def _verify_group(entry: Mapping[str, Any]) -> dict[str, Any]:
     if sha256_file(manifest_path) != entry["package_manifest_sha256"]:
         raise ValueError(f"package manifest drift: {package}")
     report_path = Path(entry["report"])
+    if not report_path.is_absolute():
+        report_path = base / report_path
+    report_path = report_path.resolve()
     if sha256_file(report_path) != entry.get("report_sha256"):
         raise ValueError(f"report drift: {report_path}")
     report = _read_sealed(report_path)
@@ -981,6 +1208,31 @@ def _verify_group(entry: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError(f"unsynchronised Reference cannot report PASS: {report_path}")
     if manifest.get("numeric_gate", {}).get("status") != "PASS":
         raise ValueError(f"numeric gate is not qualified: {package}")
+    recomputed_gate = _numeric_gate(report.get("records", []))
+    if recomputed_gate["status"] != manifest["numeric_gate"].get("status"):
+        raise ValueError(f"numeric gate receipt mismatch: {package}")
+    if recomputed_gate["status"] != "PASS":
+        raise ValueError(f"numeric gate recomputation failed: {package}")
+    integrity = manifest.get("reference_integrity", {})
+    if integrity.get("status") != "REFERENCE_BYTES_VERIFIED" or integrity.get("sha_verified") != 24:
+        raise ValueError(f"Reference byte integrity is incomplete: {package}")
+    relative_gate = report.get("reference_gate", {})
+    if (
+        relative_gate.get("status") != "EVALUATED_RELATIVE_REFERENCE"
+        or relative_gate.get("rows") != 16
+        or relative_gate.get("evaluated_rows") != 16
+        or isinstance(relative_gate.get("regressions"), bool)
+        or not isinstance(relative_gate.get("regressions"), int)
+    ):
+        raise ValueError(f"relative Reference diagnostic is incomplete: {report_path}")
+    if report.get("reference_synchronization", {}).get("status") != REFERENCE_GATE_STATUS:
+        raise ValueError(f"Reference synchronization status missing: {report_path}")
+    if relative_gate.get("regressions") != 0:
+        raise ValueError(f"relative Reference gate failed: {report_path}")
+    if manifest.get("reference_gate") != relative_gate:
+        raise ValueError(f"Reference gate manifest/report mismatch: {package}")
+    if len(report.get("relative_reference_diagnostic", [])) != 16:
+        raise ValueError(f"relative Reference row coverage mismatch: {report_path}")
     for vehicle in manifest.get("vehicles", []):
         root = package / str(vehicle["directory"])
         contract = _read_sealed(root / "dashboard_contract.json")
@@ -1028,12 +1280,14 @@ def serve_run(experiment_path: Path, group: str = "REALREF") -> None:
     selected = groups.get(group.upper())
     if selected is None:
         raise ValueError(f"unknown group: {group}")
-    manifest = _verify_group(selected)
+    manifest = _verify_group(selected, run_root=experiment_path.resolve().parent)
     servers = []
     started = []
     try:
         for vehicle in manifest["vehicles"]:
-            package = Path(selected["package"])
+            package = (experiment_path.resolve().parent / str(selected["package"])).resolve()
+            if Path(selected["package"]).is_absolute():
+                package = Path(selected["package"]).resolve()
             root = package / vehicle["directory"]
             handler = partial(NoCacheHandler, directory=str(root))
             server = ThreadingHTTPServer(("127.0.0.1", int(vehicle["port"])), handler)

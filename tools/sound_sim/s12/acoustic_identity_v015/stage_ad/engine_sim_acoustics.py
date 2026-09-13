@@ -269,6 +269,11 @@ class EngineAcoustics:
         left_raw = bank_signals[0] + 0.35 * bank_signals[1]
         right_raw = bank_signals[1] + 0.35 * bank_signals[0]
 
+        if policy is not None:
+            left_raw, right_raw = policy.combustion_input(
+                self, left_raw, right_raw, rpm_curve, throttle_curve
+            )
+
         # Shift ignition cut
         shift_mask = np.ones(N, dtype=np.float64)
         shift_pops = np.zeros(N, dtype=np.float64)
@@ -292,11 +297,6 @@ class EngineAcoustics:
 
         left_raw = left_raw * shift_mask + shift_pops
         right_raw = right_raw * shift_mask + shift_pops
-
-        if policy is not None:
-            left_raw, right_raw = policy.combustion_input(
-                self, left_raw, right_raw, rpm_curve, throttle_curve
-            )
 
         # Afterfire crackles and pops on overrun/lift
         afterfire_pops = np.zeros(N, dtype=np.float64)

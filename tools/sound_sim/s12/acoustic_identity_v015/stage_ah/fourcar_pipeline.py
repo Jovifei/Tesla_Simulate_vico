@@ -253,9 +253,9 @@ class RealReferenceSourcePolicy(SourcePolicy):
             1.0,
         )
         gain = 1.0 + (self.source_ratio - 1.0) * envelope
+        self.observe("combustion_high_rpm_before", np.column_stack([left, right]))
         if np.isclose(self.source_ratio, 1.0):
             return left, right
-        self.observe("combustion_high_rpm_before", np.column_stack([left, right]))
         adjusted_left = np.asarray(left, dtype=np.float64) * gain
         adjusted_right = np.asarray(right, dtype=np.float64) * gain
         self.observe("combustion_high_rpm_after", np.column_stack([adjusted_left, adjusted_right]))
@@ -637,6 +637,7 @@ class FourCarRealReferenceEngine:
             "identity_layer_preclip_peak": float(identity_receipt["identity_layer_preclip_peak"]),
             "identity_layer_clip_count": int(identity_receipt["identity_layer_clip_count"]),
             "identity_layer_clip_error": float(identity_receipt["identity_layer_clip_error"]),
+            "identity_layer_clip_error_rms": float(identity_receipt["identity_layer_clip_error_rms"]),
             "post_identity_mix_peak": float(np.max(np.abs(combined))),
             "post_identity_clip_count": int(np.count_nonzero(post_identity_mask)),
             "post_identity_clip_error": float(np.max(np.abs(identity_error))),

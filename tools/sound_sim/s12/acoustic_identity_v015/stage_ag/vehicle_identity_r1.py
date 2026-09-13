@@ -230,6 +230,7 @@ class VehicleIdentityR1Engine:
             "identity_layer_clip_error": 0.0,
             "identity_layer_clip_error_rms": 0.0,
         }
+        self.last_base_pcm = None
 
     @property
     def redline(self) -> float:
@@ -255,6 +256,7 @@ class VehicleIdentityR1Engine:
                 afterfire_events=afterfire_events,
                 bov_events=bov_events,
             )
+            self.last_base_pcm = np.array(base_pcm, dtype=np.int16, copy=True)
         finally:
             np.random.set_state(state)
 

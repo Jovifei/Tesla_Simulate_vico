@@ -131,6 +131,11 @@ class RemediationEngine(VehicleIdentityR1Engine):
             "flags": list(self.numerical_fixes),
             "parent_pcm_sha256": pcm_sha256(parent_pcm),
             "candidate_pcm_sha256": pcm_sha256(pcm),
+            "pre_identity_pcm_sha256": (
+                pcm_sha256(self.last_base_pcm)
+                if self.last_base_pcm is not None
+                else None
+            ),
             "signature": signature(self.vehicle_type, self.variant, self.output_policy),
             "normalization": policy.receipt,
             "parent_pre_saturation_peak": anchor.receipt["pre_saturation_peak"],

@@ -31,24 +31,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      - name: Record exact PR head
+        env:
+          EXPECTED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python -c "import os,subprocess; actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(); expected=os.environ['EXPECTED_PR_HEAD']; print('checked_out_head='+actual); print('expected_pr_head='+expected); assert actual==expected"
+
       - name: Install dependencies
         run: python -m pip install --upgrade pip numpy scipy pytest jsonschema matplotlib pyyaml pandas soundfile pyloudnorm mosqito==1.2.1
 
       - name: Compile S12 package
+        id: compile
         run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015
 
       - name: Stage AF / AG focused tests
+        id: focused
         run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_physical_closed_loop.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_numerical_fixes.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_af_r_integrity.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_vehicle_identity.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ag_tools.py
 
       - name: Preserve Stage AD closed-loop contracts
+        id: stage_ad
         run: python -m pytest -q --disable-warnings tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ad_closed_loop.py
 
       - name: Diff and cleanup policy
+        id: diff_cleanup
         shell: bash
         run: |
           git merge-base --is-ancestor "${STAGE_AF_BASE}" HEAD
@@ -64,4 +75,40 @@ jobs:
           test ! -e tasks/reports/runtime/S12_Acoustic_Realism_Phase_Review_2026-08-04.zip
 
       - name: Full S12 regression
+        id: full_s12
+        if: always()
         run: python -m pytest -q --disable-warnings tools/sound_sim/s12/tests tools/sound_sim/s12/acoustic_identity_v015/tests
+
+      - name: Write exact AF receipt
+        if: always()
+        env:
+          EXPECTED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          payload = {
+              "schema": "s12.stage_af.ci_receipt.v2",
+              "expected_pr_head": os.environ["EXPECTED_PR_HEAD"],
+              "checked_out_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+              "steps": {
+                  "compile": "${{ steps.compile.outcome }}",
+                  "focused": "${{ steps.focused.outcome }}",
+                  "stage_ad": "${{ steps.stage_ad.outcome }}",
+                  "diff_cleanup": "${{ steps.diff_cleanup.outcome }}",
+                  "full_s12": "${{ steps.full_s12.outcome }}",
+              },
+          }
+          payload["head_match"] = payload["checked_out_head"] == payload["expected_pr_head"]
+          out = Path("/tmp/s12-stage-af-ci-receipt.json")
+          out.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(payload, sort_keys=True))
+          PY
+
+      - name: Upload exact AF receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s12-stage-af-ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/s12-stage-af-ci-receipt.json
+          if-no-files-found: error

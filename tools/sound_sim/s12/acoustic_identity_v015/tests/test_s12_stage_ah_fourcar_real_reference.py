@@ -3,15 +3,35 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
+import subprocess
 from pathlib import Path
+from pathlib import PureWindowsPath
 
 import numpy as np
 import pytest
+from scipy.io import wavfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ROOT / "reference_database" / "fourcar_real_reference_targets_v1.json"
+
+
+@pytest.fixture(autouse=True)
+def controlled_ir(tmp_path, monkeypatch):
+    root = tmp_path / "controlled-ir"
+    root.mkdir()
+    t = np.arange(512) / 48_000.0
+    impulse = 0.9 * np.exp(-t / 0.006) * np.cos(2.0 * np.pi * 120.0 * t)
+    for name in (
+        "mild_exhaust_reverb",
+        "test_engine_16_eq_adjusted_16",
+        "test_engine_14_eq_adjusted_16",
+    ):
+        wavfile.write(root / f"{name}.wav", 48_000, (impulse * 32767.0).astype(np.int16))
+    monkeypatch.setenv("S12_ENGINE_SIM_IR_ROOT", str(root))
+    return root
 
 
 def test_real_reference_inventory_has_five_verified_wav_entries_per_vehicle() -> None:
@@ -25,7 +45,7 @@ def test_real_reference_inventory_has_five_verified_wav_entries_per_vehicle() ->
             assert len(source["wav_sha256"]) == 64
             assert source["evidence_level"] == "R3"
             assert source["synchronization"] == "RPM/load/gear/microphone/AGC missing"
-            assert Path(source["external_wav_path"]).is_absolute()
+            assert PureWindowsPath(source["external_wav_path"]).is_absolute()
 
 
 def test_local_reference_assets_are_checked_only_when_explicitly_requested() -> None:
@@ -36,7 +56,7 @@ def test_local_reference_assets_are_checked_only_when_explicitly_requested() -> 
     payload = json.loads(TARGETS.read_text(encoding="utf-8"))
     for vehicle, record in payload["vehicles"].items():
         for source in record["sources"]:
-            path = base / Path(source["external_wav_path"]).name
+            path = base / PureWindowsPath(source["external_wav_path"]).name
             assert path.is_file(), (vehicle, path)
             import hashlib
             assert hashlib.sha256(path.read_bytes()).hexdigest() == source["wav_sha256"]
@@ -46,11 +66,34 @@ def test_package_binds_the_accepted_r1_parent_manifest() -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_package import (
         EXPECTED_PARENT_MANIFEST_SHA256,
     )
-
     assert EXPECTED_PARENT_MANIFEST_SHA256 == (
         "3fecb566416d498bcedcb6c1a5267f6c7b36e82e9e9a87af7c2740705f599519"
     )
 
+
+@pytest.mark.parametrize(
+    "profile_path",
+    (
+        "targets/stage_k_candidates/hellcat_candidate_v7.json",
+        "targets/stage_g_candidates/Ferrari_candidate_v4.json",
+        "targets/stage_k_candidates/lfa_candidate_v2.json",
+        "targets/stage_k_candidates/gtr_r35_candidate_v2.json",
+    ),
+)
+def test_reference_target_sha_matches_profile_worktree_and_git_blob(profile_path: str) -> None:
+    profile = ROOT / profile_path
+    payload = json.loads(profile.read_text(encoding="utf-8"))
+    relative = profile.parents[2] / payload["reference_target"]["path"]
+    worktree = relative.read_bytes()
+    blob = subprocess.check_output(
+        ["git", "show", f"HEAD:{relative.relative_to(ROOT.parent.parent.parent.parent).as_posix()}"],
+        cwd=ROOT.parent.parent.parent.parent,
+    )
+    digest = hashlib.sha256(worktree).hexdigest()
+    blob_digest = hashlib.sha256(blob).hexdigest()
+    assert payload["reference_target"]["sha256"] == digest == blob_digest
+    assert worktree.count(b"\r\n") == 0
+    assert worktree.count(b"\n") == blob.count(b"\n")
 
 def test_dashboard_parameter_rows_match_the_original_template_contract() -> None:
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_package import _contract
