@@ -138,6 +138,13 @@ def _read_sealed(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _receipt_sha(payload: Mapping[str, Any]) -> str:
+    value = payload.get("manifest_sha256", payload.get("contract_sha256"))
+    if not isinstance(value, str) or len(value) != 64:
+        raise ValueError("sealed reference receipt checksum is missing")
+    return value
+
+
 def _to_float_mono(data: np.ndarray) -> np.ndarray:
     array = np.asarray(data)
     if array.ndim > 1:
@@ -517,7 +524,7 @@ def _build_contract(
             "candidate_pcm_sha256": dict(candidate_hashes),
             "reference_sha256": dict(reference_hashes),
             "source_receipt_sha256": receipt["source_receipt_sha256"],
-            "reference_clip_receipt_sha256": receipt["manifest_sha256"],
+            "reference_clip_receipt_sha256": _receipt_sha(receipt),
             "package_gain_db": 0.0,
             "gain_policy": "fixed_parent_peak_tanh_then_optional_linked_soft_ceiling",
             "source_status": "SOURCE_CLEAN",
@@ -727,7 +734,7 @@ def _build_group(
                 "human_status": "WAITING_FOR_JOVI_FEEDBACK",
                 "package_gain_db": 0.0,
                 "source_receipt_sha256": source_receipt["source_receipt_sha256"],
-                "reference_clip_receipt_sha256": source_receipt["manifest_sha256"],
+                "reference_clip_receipt_sha256": _receipt_sha(source_receipt),
                 "artifacts": artifacts,
                 "rules": [
                     "Only deterministic reference clips and metadata are copied; original videos/audio remain external.",
@@ -914,7 +921,7 @@ def build_run(
             "reference_evidence_level": REFERENCE_EVIDENCE_LEVEL,
             "promotable": False,
             "feedback_control": {vehicle: feedback.get(vehicle, []) for vehicle in REMAINING_VEHICLES},
-            "reference_clip_receipt_sha256": reference_receipt["manifest_sha256"],
+            "reference_clip_receipt_sha256": _receipt_sha(reference_receipt),
             "groups": [
                 {key: value for key, value in group.items() if key not in {"records", "parent_peaks", "candidate_hashes", "reference_hashes"}}
                 for group in (b0, c0)

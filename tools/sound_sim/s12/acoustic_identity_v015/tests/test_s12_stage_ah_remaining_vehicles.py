@@ -15,6 +15,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.remaining_vehicle_pipel
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.remaining_vehicle_package import (
     build_reference_bundle,
+    _receipt_sha,
 )
 
 
@@ -150,3 +151,9 @@ def test_reference_bundle_uses_six_external_sources_without_copying_raw_media(tm
     assert bundle["clip_count_total"] == 20
     assert len(list((tmp_path / "bundle").glob("**/ref_*.wav"))) == 20
     assert not list((tmp_path / "bundle").glob("**/*.mp4"))
+
+
+def test_reference_receipt_checksum_helper_accepts_contract_checksum():
+    assert _receipt_sha({"contract_sha256": "a" * 64}) == "a" * 64
+    with pytest.raises(ValueError, match="checksum"):
+        _receipt_sha({})
