@@ -117,6 +117,28 @@ def scene_trace_key(scene_id: str, trace_sha256: str) -> str:
     return f"{scene}|{trace}"
 
 
+def peak_estimate_4x(values: np.ndarray) -> dict[str, Any]:
+    """Fixed 4x interpolation peak diagnostic; this is not an ITU measurement."""
+    stereo = np.asarray(values, dtype=np.float64)
+    if stereo.ndim != 2 or stereo.shape[1] != 2 or not np.all(np.isfinite(stereo)):
+        raise ValueError("4x peak input must be finite stereo")
+    interpolated = signal.resample_poly(
+        stereo,
+        up=4,
+        down=1,
+        axis=0,
+        window=("kaiser", 5.0),
+        padtype="line",
+    )
+    return {
+        "peak": float(np.max(np.abs(interpolated))) if interpolated.size else 0.0,
+        "method": "scipy.signal.resample_poly_up4_down1",
+        "filter": "kaiser_beta_5.0",
+        "boundary": "line",
+        "standard": "DIAGNOSTIC_NOT_ITU_CERTIFIED",
+    }
+
+
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
@@ -193,6 +215,7 @@ def load_real_reference_profile(vehicle: str):
         "full_field_diff": full_field_diff,
         "active_source_parameter": recipe["parameter"],
         "active_source_stem": recipe["stem"],
+        "source_scope": recipe["scope"],
         "unused_source_fields": list(recipe["unused_fields"]),
         "target_metrics": record["target_metrics"],
         "evidence_level": record["quality_gate"],
@@ -590,6 +613,14 @@ class FourCarRealReferenceEngine:
             ),
             "candidate_source_diagnostics": _json_safe({"source_policy_receipt": source_receipt}),
             "candidate_stems": stem_reports,
+            "fixed_branch_spectral_diagnostics": {
+                "resonance": stem_reports.get("body_ring_after_left"),
+                "rpm_order": stem_reports.get(
+                    "combustion_high_rpm_after",
+                    stem_reports.get("combustion_input"),
+                ),
+                "ir": stem_reports.get("ir_wet_left"),
+            },
             "normalization": {
                 **guard,
                 "source_variant": REAL_REFERENCE_SOURCE_VARIANTS[self.vehicle_type],
@@ -612,6 +643,7 @@ class FourCarRealReferenceEngine:
             "post_identity_clip_error_rms": float(np.sqrt(np.mean(identity_error * identity_error))),
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
+            "peak_estimate_4x": peak_estimate_4x(final_float),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "candidate_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "R3 public recordings provide relative unsynchronised cues; source-only candidate, not OEM reproduction",
@@ -634,4 +666,5 @@ __all__ = (
     "load_real_reference_profile",
     "scene_trace_key",
     "source_adjustment_recipe",
+    "peak_estimate_4x",
 )

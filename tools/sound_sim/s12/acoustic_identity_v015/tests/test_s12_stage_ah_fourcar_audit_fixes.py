@@ -211,6 +211,16 @@ def test_reference_gate_is_truthful_for_unsynchronised_cues():
     assert gate["regressions"] is None
 
 
+def test_peak_estimate_4x_is_explicitly_diagnostic():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.fourcar_pipeline import peak_estimate_4x
+
+    result = peak_estimate_4x(np.zeros((64, 2), dtype=np.float64))
+    assert result["method"] == "scipy.signal.resample_poly_up4_down1"
+    assert result["filter"] == "kaiser_beta_5.0"
+    assert result["boundary"] == "line"
+    assert result["standard"] == "DIAGNOSTIC_NOT_ITU_CERTIFIED"
+
+
 def test_server_collision_closes_unstarted_servers_without_shutdown(tmp_path, monkeypatch):
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import fourcar_package
 

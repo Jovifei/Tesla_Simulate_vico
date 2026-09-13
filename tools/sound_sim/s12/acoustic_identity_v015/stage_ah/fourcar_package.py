@@ -42,6 +42,7 @@ from .fourcar_pipeline import (
     REAL_REFERENCE_PROFILE_PATHS,
     REAL_REFERENCE_SOURCE_VARIANTS,
     DEFAULT_SEED,
+    peak_estimate_4x,
     scene_trace_key,
     load_real_reference_profile,
 )
@@ -310,7 +311,7 @@ def _contract(
                     * 100.0
                 ),
                 "desc": "One fixed source-profile value applied only to the named engine stem.",
-                "scope": profile_metadata.get("active_source_stem", "UNSPECIFIED_SOURCE_STEM"),
+                "scope": profile_metadata.get("source_scope", "UNSPECIFIED_SOURCE_SCOPE"),
                 "unit": "profile-defined",
                 "basis": "five public recordings; primary-three median used for one bounded change",
             }
@@ -328,6 +329,18 @@ def _contract(
             REAL_REFERENCE_SOURCE_VARIANTS[vehicle]
             if profile_metadata
             else "r1_baseline"
+        ),
+        "source_recipe": (
+            {
+                "schema": "s12.stage_ah.fourcar.source_recipe.v2",
+                "active_parameter": profile_metadata.get("active_source_parameter"),
+                "active_stem": profile_metadata.get("active_source_stem"),
+                "scope": profile_metadata.get("source_scope"),
+                "unused_fields": list(profile_metadata.get("unused_source_fields", [])),
+                "full_field_diff": dict(profile_metadata.get("full_field_diff", {})),
+            }
+            if profile_metadata
+            else {"schema": "s12.stage_ah.fourcar.source_recipe.v2", "mode": "r1_baseline"}
         ),
         "output_policy": LINKED_SOFT_CEILING_V1,
         "output_policy_config": {
@@ -416,6 +429,8 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
             if value is None or not np.isfinite(float(value)):
                 finite = False
                 failures.append(f"{record.get('vehicle')}/{record.get('scene')}:nonfinite:{key}")
+        if record.get("final_peak") is not None and float(record["final_peak"]) > 0.94 + 1e-12:
+            failures.append(f"{record.get('vehicle')}/{record.get('scene')}:final_peak_over_ceiling")
         normalization = record.get("normalization", {})
         post_guard += int(normalization.get("post_guard_ceiling_exceedance_samples", 0))
         emergency += int(normalization.get("emergency_clip_count", 0))
@@ -435,6 +450,14 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
         "emergency_clip_count": emergency,
         "post_identity_clip_count": post_identity,
         "failures": failures,
+    }
+
+
+def _branch_diagnostics(stems: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "resonance": stems.get("body_ring_after_left"),
+        "rpm_order": stems.get("combustion_high_rpm_after", stems.get("combustion_input")),
+        "ir": stems.get("ir_wet_left"),
     }
 
 
@@ -575,6 +598,9 @@ def _build_group(
                         "final_rms": float(
                             np.sqrt(np.mean((np.asarray(payload["audio"], dtype=np.float64) / 32767.0) ** 2))
                         ),
+                        "peak_estimate_4x": peak_estimate_4x(
+                            np.asarray(payload["audio"], dtype=np.float64) / 32767.0
+                        ),
                         "wav_file_sha256": sha256_file(
                             cfg["dir"] / "web_audio" / f"{payload['scene_id']}.wav"
                         ),
@@ -585,6 +611,9 @@ def _build_group(
                     report["ir_effective_sha256"] = _sha256_bytes(
                         np.ascontiguousarray(runtime.ir, dtype="<f8").tobytes()
                     )
+                report["fixed_branch_spectral_diagnostics"] = _branch_diagnostics(
+                    report.get("candidate_stems", {})
+                )
                 records.append(report)
 
             cfg["_render_context_observer"] = before_render
@@ -905,6 +934,9 @@ def build_run(
         final_experiment = _replace_paths(
             json.loads((final_root / "experiment.json").read_text(encoding="utf-8")), old, new
         )
+        for group in final_experiment["groups"]:
+            report_path = Path(group["report"])
+            group["report_sha256"] = sha256_file(report_path)
         _write_json(final_root / "experiment.json", seal_payload(final_experiment, RUN_SCHEMA))
         for group in final_experiment["groups"]:
             _verify_group(group)
@@ -934,6 +966,14 @@ def _verify_group(entry: Mapping[str, Any]) -> dict[str, Any]:
     validate_artifacts(manifest["artifacts"], package)
     if sha256_file(manifest_path) != entry["package_manifest_sha256"]:
         raise ValueError(f"package manifest drift: {package}")
+    report_path = Path(entry["report"])
+    if sha256_file(report_path) != entry.get("report_sha256"):
+        raise ValueError(f"report drift: {report_path}")
+    report = _read_sealed(report_path)
+    if report.get("package_manifest_sha256") != entry["package_manifest_sha256"]:
+        raise ValueError(f"report/package binding drift: {package}")
+    if report.get("reference_gate", {}).get("status") == "PASS":
+        raise ValueError(f"unsynchronised Reference cannot report PASS: {report_path}")
     if manifest.get("numeric_gate", {}).get("status") != "PASS":
         raise ValueError(f"numeric gate is not qualified: {package}")
     for vehicle in manifest.get("vehicles", []):
