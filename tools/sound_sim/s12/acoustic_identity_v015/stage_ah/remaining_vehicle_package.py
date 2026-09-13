@@ -539,8 +539,9 @@ def _artifact_paths(package_root: Path, configs: Mapping[str, Mapping[str, Any]]
     paths: list[Path] = [package_root / "reference_clip_receipt.json", package_root / "source_receipt.json", package_root / "stage_ah_remaining_binding.json"]
     for vehicle, cfg in configs.items():
         root = Path(cfg["dir"])
-        paths.extend((root / f"{scene['id']}.wav", root / "web_audio" / f"{scene['id']}.wav") for scene in cfg["scenes"])
-        paths.extend((root / "web_audio" / f"ref_{scene['id']}.wav" for scene in cfg["scenes"]))
+        for scene in cfg["scenes"]:
+            paths.extend((root / f"{scene['id']}.wav", root / "web_audio" / f"{scene['id']}.wav"))
+            paths.append(root / "web_audio" / f"ref_{scene['id']}.wav")
         paths.extend((root / "index.html", root / "index_standalone.html", root / "dashboard_contract.json"))
     return list(dict.fromkeys(paths))
 

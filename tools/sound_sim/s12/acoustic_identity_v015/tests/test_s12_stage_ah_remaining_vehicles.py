@@ -14,6 +14,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.remaining_vehicle_pipel
     validate_source_pool,
 )
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.remaining_vehicle_package import (
+    _artifact_paths,
     build_reference_bundle,
     _receipt_sha,
 )
@@ -157,3 +158,10 @@ def test_reference_receipt_checksum_helper_accepts_contract_checksum():
     assert _receipt_sha({"contract_sha256": "a" * 64}) == "a" * 64
     with pytest.raises(ValueError, match="checksum"):
         _receipt_sha({})
+
+
+def test_artifact_path_inventory_is_flat_paths(tmp_path):
+    configs = {"rx7_fd": {"dir": tmp_path / "rx7", "scenes": [{"id": "01_afterfire"}]}}
+    paths = _artifact_paths(tmp_path, configs, {})
+    assert paths
+    assert all(hasattr(path, "is_file") for path in paths)
