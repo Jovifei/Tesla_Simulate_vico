@@ -189,6 +189,16 @@ class SourcePolicy:
         self.observe("afterfire_causal_right", right)
         return left, right
 
+    def combustion_input(self, engine, left, right, rpm, throttle):
+        """Optional named combustion-source hook; the default is byte-neutral."""
+        self.observe("combustion_input", np.column_stack([left, right]))
+        return left, right
+
+    def source_family(self, name, stereo, rpm, throttle):
+        """Optional named source-family hook; the default is byte-neutral."""
+        self.observe(f"{name}_input", stereo)
+        return stereo
+
     def channel_sources(self, body, wet, direct, air, throttle, sr):
         suffix = ("left", "right")[self._channel]
         self._channel += 1

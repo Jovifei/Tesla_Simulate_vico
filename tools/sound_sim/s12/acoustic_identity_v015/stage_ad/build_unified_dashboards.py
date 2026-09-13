@@ -15,6 +15,7 @@ Every dashboard follows the exact Ferrari-style side-by-side layout:
 import os
 import json
 import base64
+import copy
 from pathlib import Path
 import numpy as np
 import scipy.io.wavfile as wavfile
@@ -564,11 +565,37 @@ def render_vehicle_audio(v_key: str, cfg: dict):
     thr[m_post] = 1.0
     cases["10_tip_in"] = (rpm, thr, dur, None, None, None)
     
+    before_observer = cfg.get("_render_context_observer")
+    after_observer = cfg.get("_render_observer")
     for name, (r_curve, t_curve, d, s_ev, a_ev, b_ev) in cases.items():
         print(f"  Rendering {name}.wav ...")
+        if callable(before_observer):
+            before_observer(
+                scene_id=name,
+                engine=sim,
+                rpm=r_curve,
+                throttle=t_curve,
+                duration=d,
+                shift_events=s_ev,
+                afterfire_events=a_ev,
+                bov_events=b_ev,
+            )
         audio = sim.render_track(r_curve, t_curve, d, shift_events=s_ev, afterfire_events=a_ev, bov_events=b_ev)
         wavfile.write(str(web_dir / f"{name}.wav"), sr, audio)
         wavfile.write(str(cfg["dir"] / f"{name}.wav"), sr, audio)
+        if callable(after_observer):
+            after_observer(
+                scene_id=name,
+                engine=sim,
+                audio=audio,
+                rpm=r_curve,
+                throttle=t_curve,
+                duration=d,
+                shift_events=s_ev,
+                afterfire_events=a_ev,
+                bov_events=b_ev,
+                report=copy.deepcopy(getattr(sim, "last_report", {})),
+            )
         
     print(f"Done rendering all 10 tracks for {v_key}.")
 

@@ -293,6 +293,11 @@ class EngineAcoustics:
         left_raw = left_raw * shift_mask + shift_pops
         right_raw = right_raw * shift_mask + shift_pops
 
+        if policy is not None:
+            left_raw, right_raw = policy.combustion_input(
+                self, left_raw, right_raw, rpm_curve, throttle_curve
+            )
+
         # Afterfire crackles and pops on overrun/lift
         afterfire_pops = np.zeros(N, dtype=np.float64)
         if afterfire_events:
@@ -334,8 +339,18 @@ class EngineAcoustics:
                 0.15 * np.sin(11.8 * sc_phase + 2.1)
             ) * whine_gain
             whine_rasp = np.random.normal(0.0, 0.1, N) * whine_gain * np.sin(3.0 * sc_phase)
-            out_left += (sc_tone + whine_rasp)
-            out_right += (sc_tone + whine_rasp)
+            if policy is None:
+                out_left += (sc_tone + whine_rasp)
+                out_right += (sc_tone + whine_rasp)
+            else:
+                sc_stereo = policy.source_family(
+                    "supercharger",
+                    np.column_stack([sc_tone + whine_rasp, sc_tone + whine_rasp]),
+                    rpm_curve,
+                    throttle_curve,
+                )
+                out_left += sc_stereo[:, 0]
+                out_right += sc_stereo[:, 1]
 
         # Twin Turbo Whine & BOV (GT-R R35)
         if self.has_turbo:
@@ -350,12 +365,23 @@ class EngineAcoustics:
                 0.3 * np.sin(2.0 * turbo_phase) +
                 0.5 * np.random.normal(0, 0.3, N) * np.sin(turbo_phase)
             ) * turbo_gain
-            out_left += turbo_spool
-            out_right += (
+            turbo_right = (
                 causal_fractional_delay(turbo_spool, 10)
                 if "causal_delays" in self.numerical_fixes
                 else np.roll(turbo_spool, 10)
             )
+            if policy is None:
+                out_left += turbo_spool
+                out_right += turbo_right
+            else:
+                turbo_stereo = policy.source_family(
+                    "turbo",
+                    np.column_stack([turbo_spool, turbo_right]),
+                    rpm_curve,
+                    throttle_curve,
+                )
+                out_left += turbo_stereo[:, 0]
+                out_right += turbo_stereo[:, 1]
 
             # Blow-Off Valve (BOV) air release hiss
             if bov_events:
