@@ -89,6 +89,9 @@ jobs:
           from pathlib import Path
           payload = {
               "schema": "s12.stage_af.ci_receipt.v2",
+              "run_id": "${{ github.run_id }}",
+              "run_attempt": "${{ github.run_attempt }}",
+              "job_id": "${{ github.job }}",
               "expected_pr_head": os.environ["EXPECTED_PR_HEAD"],
               "checked_out_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
               "steps": {

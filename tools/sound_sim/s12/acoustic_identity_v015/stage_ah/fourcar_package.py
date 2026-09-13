@@ -513,10 +513,14 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
             value = record[key]
             if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
                 failures.append(f"{label}:invalid_integer:{key}")
-            elif int(value) <= 0 or (key == "seed" and int(value) < 0):
+            elif (key != "seed" and int(value) <= 0) or (key == "seed" and int(value) < 0):
                 failures.append(f"{label}:invalid_integer_value:{key}")
         if not isinstance(record["flags"], list) or any(not isinstance(flag, str) for flag in record["flags"]):
             failures.append(f"{label}:invalid_flags")
+        if not isinstance(record["source_variant"], str) or not record["source_variant"]:
+            failures.append(f"{label}:invalid_source_variant")
+        if record["output_policy"] != LINKED_SOFT_CEILING_V1:
+            failures.append(f"{label}:invalid_output_policy")
         for key in ("candidate_pcm_sha256", "wav_file_sha256", "ir_effective_sha256"):
             value = str(record[key]).lower()
             if len(value) != 64 or any(char not in "0123456789abcdef" for char in value):
@@ -535,6 +539,8 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
             failures.append(f"{label}:missing_peak_estimate_4x")
         elif not np.isfinite(float(peak4x["peak"])) or float(peak4x["peak"]) > 0.94 + 1e-12:
             failures.append(f"{label}:peak_estimate_4x_over_ceiling")
+        elif peak4x.get("standard") != "DIAGNOSTIC_NOT_ITU_CERTIFIED":
+            failures.append(f"{label}:invalid_peak_estimate_4x_policy")
         normalization = record["normalization"]
         if not isinstance(normalization, Mapping):
             failures.append(f"{label}:normalization_not_object")
@@ -550,6 +556,10 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
             atol=1e-12,
         ):
             failures.append(f"{label}:parent_denominator_mismatch")
+        if normalization["output_policy"] != LINKED_SOFT_CEILING_V1:
+            failures.append(f"{label}:normalization_output_policy_mismatch")
+        if int(normalization["frame_count"]) != int(record["sample_count"]):
+            failures.append(f"{label}:frame_count_mismatch")
         for key in _COUNT_FIELDS:
             value = normalization[key] if key in normalization else record[key]
             if key in ("identity_layer_clip_count", "post_identity_clip_count"):
@@ -571,6 +581,10 @@ def _numeric_gate(records: list[Mapping[str, Any]]) -> dict[str, Any]:
             if not np.isfinite(float(normalization[key])):
                 finite = False
                 failures.append(f"{label}:nonfinite_normalization:{key}")
+        if not 0.0 <= float(normalization["soft_guard_active_frame_ratio"]) <= 1.0:
+            failures.append(f"{label}:invalid_guard_ratio")
+        if not 0.0 < float(normalization["soft_guard_min_gain"]) <= 1.0 + 1e-12:
+            failures.append(f"{label}:invalid_guard_gain")
         longest = normalization["pre_guard_exceedance_longest_run"]
         if not isinstance(longest, Mapping) or "samples" not in longest:
             failures.append(f"{label}:invalid_exceedance_run")

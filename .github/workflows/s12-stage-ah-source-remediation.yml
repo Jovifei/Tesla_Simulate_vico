@@ -32,8 +32,11 @@ jobs:
       - name: Record exact checked-out source
         env:
           EXPECTED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          JOB_ID: ${{ github.job }}
         run: >-
-          python -c "import os,subprocess; actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(); expected=os.environ['EXPECTED_PR_HEAD']; print('checked_out_head='+actual); print('expected_pr_head='+expected); assert actual==expected"
+          python -c "import os,subprocess; actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(); expected=os.environ['EXPECTED_PR_HEAD']; print('run_id='+os.environ['RUN_ID']); print('run_attempt='+os.environ['RUN_ATTEMPT']); print('job_id='+os.environ['JOB_ID']); print('checked_out_head='+actual); print('expected_pr_head='+expected); assert actual==expected"
       - name: Install numeric test dependencies
         run: python -m pip install numpy scipy pytest
       - name: AH source and full package integration
