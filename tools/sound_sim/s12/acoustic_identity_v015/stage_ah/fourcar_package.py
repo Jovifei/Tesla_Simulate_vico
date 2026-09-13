@@ -6,6 +6,7 @@ import base64
 import copy
 import hashlib
 import json
+import platform
 import re
 import shutil
 import sys
@@ -18,6 +19,7 @@ from typing import Any, Mapping
 from uuid import uuid4
 
 import numpy as np
+import scipy
 from scipy.io import wavfile
 
 from ..stage_af.package_integrity import (
@@ -267,6 +269,12 @@ def _source_receipt() -> dict[str, Any]:
             "seed": DEFAULT_SEED,
             "flags": [],
             "source_recipe_schema": "s12.stage_ah.fourcar.source_recipe.v2",
+            "runtime": {
+                "python": platform.python_version(),
+                "numpy": np.__version__,
+                "scipy": scipy.__version__,
+                "platform": platform.platform(),
+            },
             "source_status": "SOURCE_CLEAN",
             "promotable": False,
             "promotion_status": "NOT_PROMOTABLE_R3_UNSYNCED_PUBLIC_RECORDINGS",
@@ -1089,9 +1097,10 @@ def build_run(
         raise FileExistsError(final_root)
     staging_root = output_root / ".staging" / f"{run_id}-{uuid4().hex}"
     staging_root.mkdir(parents=True)
-    source_receipt = _source_receipt()
+    source_receipt: dict[str, Any] = {}
     parent_manifest = reference_root.resolve() / "audition_manifest.json"
     try:
+        source_receipt = _source_receipt()
         if not parent_manifest.is_file():
             raise FileNotFoundError(f"accepted R1 parent manifest missing: {parent_manifest}")
         parent_manifest_sha256 = sha256_file(parent_manifest)
