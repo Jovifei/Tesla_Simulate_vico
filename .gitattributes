@@ -1,5 +1,6 @@
 tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json text eol=crlf
 tools/sound_sim/s12/acoustic_identity_v015/reference_database/*_reference_targets.json text eol=lf
+tools/sound_sim/s12/acoustic_identity_v015/targets/fourcar_real_reference/*.json text eol=lf
 tasks/reports/runtime/s12-stage-w/logs/*.log -text -diff -whitespace
 tasks/reports/runtime/s12-stage-y/**/logs/*.log -text -diff -whitespace
 tasks/reports/runtime/s12-stage-y/**/logs/*.json -text -diff -whitespace
