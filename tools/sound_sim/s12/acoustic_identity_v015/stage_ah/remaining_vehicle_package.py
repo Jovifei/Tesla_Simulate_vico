@@ -8,6 +8,7 @@ and publishes only deterministic clips plus provenance metadata.
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import re
