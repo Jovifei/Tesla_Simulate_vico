@@ -52,12 +52,45 @@ def test_c63_render_is_deterministic(fake_ir):
 
 def test_c63_uses_fixed_parent_denominator(fake_ir):
     rpm, throttle = _curves()
-    anchor = C63Engine(output_policy="legacy_clip_v1", ir=fake_ir)
+    anchor = C63Engine(output_policy="legacy_clip_v1", ir=fake_ir, scene_ids=("scene_a",))
     anchor.render_track(rpm, throttle, 1.0)
-    candidate = C63Engine(output_policy="linked_soft_ceiling_v1", parent_peaks=anchor.parent_peaks, ir=fake_ir)
+    candidate = C63Engine(output_policy="linked_soft_ceiling_v1", parent_peaks=anchor.parent_peaks, ir=fake_ir, scene_ids=("scene_a",))
     candidate.render_track(rpm, throttle, 1.0)
-    assert candidate.reports[-1]["normalization_denominator"] == anchor.parent_peaks[0]
+    assert candidate.reports[-1]["normalization_denominator"] == anchor.parent_peaks[anchor.reports[-1]["parent_peak_key"]]
     assert candidate.reports[-1]["parent_denominator_policy"] == "fixed_parent_peak"
+
+
+def test_c63_parent_peak_is_bound_to_scene_and_trace(fake_ir):
+    rpm, throttle = _curves()
+    engine = C63Engine(output_policy="legacy_clip_v1", ir=fake_ir, scene_ids=("scene_a",))
+    engine.render_track(rpm, throttle, 1.0)
+    record = engine.reports[-1]
+    key = f"scene_a|{record['trace_sha256']}"
+    assert record["parent_peak_key"] == key
+    assert set(engine.parent_peaks) == {key}
+
+
+def test_c63_rejects_parent_peak_for_different_scene(fake_ir):
+    rpm, throttle = _curves()
+    anchor = C63Engine(output_policy="legacy_clip_v1", ir=fake_ir, scene_ids=("scene_a",))
+    anchor.render_track(rpm, throttle, 1.0)
+    candidate = C63Engine(
+        output_policy="linked_soft_ceiling_v1",
+        parent_peaks=anchor.parent_peaks,
+        ir=fake_ir,
+        scene_ids=("scene_b",),
+    )
+    with pytest.raises(ValueError, match="parent denominator missing"):
+        candidate.render_track(rpm, throttle, 1.0)
+
+
+def test_c63_unverified_reference_is_not_promotable():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.c63_package import _promotion_metadata
+
+    assert _promotion_metadata("R2_UNVERIFIED_LOCAL_UNSYNCHRONIZED") == {
+        "promotable": False,
+        "promotion_status": "NOT_PROMOTABLE_R2_UNVERIFIED_REFERENCE",
+    }
 
 
 def test_c63_rejects_nonfinite_curves(fake_ir):

@@ -20,6 +20,7 @@ from ..stage_ad.engine_sim_acoustics import SOUND_LIB_DIR, load_impulse_response
 from ..stage_k.candidate_profiles import load_stage_k_candidate
 from ..stage_k.render_candidate import render_stage_k_candidate
 from .engine import spectrum_report
+from .fourcar_pipeline import scene_trace_key
 from .output_guard import (
     LEGACY_CLIP_V1,
     LINKED_SOFT_CEILING_V1,
@@ -121,10 +122,11 @@ class C63Engine:
         sr: int = 48_000,
         *,
         output_policy: str = LEGACY_CLIP_V1,
-        parent_peaks: Mapping[int, float] | None = None,
+        parent_peaks: Mapping[str, float] | None = None,
         ir: np.ndarray | None = None,
         candidate_path: str | Path = C63_CANDIDATE_PATH,
         seed: int = 20260908,
+        scene_ids: tuple[str, ...] | None = None,
     ) -> None:
         if vehicle_type != C63_VEHICLE:
             raise ValueError("C63Engine only supports c63_w204")
@@ -145,9 +147,13 @@ class C63Engine:
             if self.ir.size == 0 or not np.all(np.isfinite(self.ir)) or not np.any(self.ir):
                 raise ValueError("injected C63 IR must be finite and nonzero")
             self.ir_source_path = None
+        self._parent_peaks_supplied = parent_peaks is not None
         self.parent_peaks = dict(parent_peaks or {})
+        self.scene_ids = tuple(str(value) for value in (scene_ids or ()))
         self.reports: list[dict[str, object]] = []
         self.scene_index = 0
+        self.last_scene_id = "UNBOUND_SCENE"
+        self.last_parent_peak_key = ""
 
     @property
     def ir_source_sha256(self) -> str | None:
@@ -190,9 +196,21 @@ class C63Engine:
         actual_peak = float(np.max(np.abs(ptr_audio)))
         if actual_peak <= 0.0:
             raise ValueError("C63 pre-saturation output is silent")
-        if self.scene_index not in self.parent_peaks:
-            self.parent_peaks[self.scene_index] = actual_peak
-        denominator = float(self.parent_peaks[self.scene_index])
+        trace_sha = _trace_sha256(
+            rpm, throttle, duration, shift_events, afterfire_events, bov_events
+        )
+        if self.scene_ids:
+            if self.scene_index >= len(self.scene_ids):
+                raise ValueError("C63 scene_ids exhausted")
+            scene_id = self.scene_ids[self.scene_index]
+        else:
+            scene_id = "UNBOUND_SCENE"
+        parent_key = scene_trace_key(scene_id, trace_sha)
+        if parent_key not in self.parent_peaks and self._parent_peaks_supplied:
+            raise ValueError(f"C63 parent denominator missing for scene trace {parent_key}")
+        if parent_key not in self.parent_peaks:
+            self.parent_peaks[parent_key] = actual_peak
+        denominator = float(self.parent_peaks[parent_key])
         if not np.isfinite(denominator) or denominator <= 0.0:
             raise ValueError("C63 parent denominator must be finite and positive")
         normalized = ptr_audio / denominator
@@ -202,7 +220,7 @@ class C63Engine:
             source,
             actual_peak,
             denominator,
-            _trace_sha256(rpm, throttle, duration, shift_events, afterfire_events, bov_events),
+            trace_sha,
         )
 
     def render_track(
@@ -260,8 +278,16 @@ class C63Engine:
             name: _spectrum(np.asarray(values, dtype=np.float64), self.sr)
             for name, values in source.stems.items()
         }
+        self.last_scene_id = (
+            self.scene_ids[self.scene_index]
+            if self.scene_ids
+            else "UNBOUND_SCENE"
+        )
+        self.last_parent_peak_key = scene_trace_key(self.last_scene_id, trace_sha)
         report = {
             "vehicle": C63_VEHICLE,
+            "scene_id": self.last_scene_id,
+            "parent_peak_key": self.last_parent_peak_key,
             "source_variant": C63_SOURCE_VARIANT,
             "output_policy": self.output_policy,
             "output_policy_config": {

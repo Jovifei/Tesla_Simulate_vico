@@ -106,6 +106,15 @@ REFERENCE_CLIPS = {
 }
 
 
+def _promotion_metadata(reference_status: str) -> dict[str, Any]:
+    if reference_status != "R3_PUBLIC_RECORDINGS_UNVERIFIED_UNSYNCHRONIZED":
+        raise ValueError(f"unsupported Supra reference status: {reference_status}")
+    return {
+        "promotable": False,
+        "promotion_status": "NOT_PROMOTABLE_UNSYNCED_UNVERIFIED_REFERENCE",
+    }
+
+
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
@@ -380,7 +389,7 @@ def build_group(
     output_policy: str,
     source_receipt: Mapping[str, Any],
     reference_bundle: Path,
-    parent_peaks: Mapping[int, float] | None,
+    parent_peaks: Mapping[str, float] | None,
     port: int,
 ) -> dict[str, Any]:
     package_id = validate_identifier(f"ah-supra-realref-{run_root.name}-{group.lower()}", "package_id")
@@ -419,6 +428,7 @@ def build_group(
                 sr,
                 output_policy=output_policy,
                 parent_peaks=parent_peaks,
+                scene_ids=tuple(scene["id"] for scene in cfg["scenes"]),
             )
             holder["engine"] = engine
             return engine
@@ -608,6 +618,7 @@ def build_run(
     reference_bundle = run_root / "reference_bundle"
     reference_receipt = build_reference_bundle(reference_bundle, reference_root)
     source_receipt = dict(git_source_receipt(allow_dirty_dev=False))
+    reference_status = "R3_PUBLIC_RECORDINGS_UNVERIFIED_UNSYNCHRONIZED"
     source_receipt.update({
         "stage": "AH-SUPRA-REALREF",
         "source_variant": SUPRA_SOURCE_VARIANT,
@@ -617,7 +628,8 @@ def build_run(
         "reference_target_sha256": sha256_file(SUPRA_REFERENCE_TARGET_PATH),
         "reference_clip_receipt_sha256": sha256_file(reference_bundle / "reference_clip_receipt.json"),
         "multi_reference_target_sha256": sha256_file(SUPRA_MULTI_REFERENCE_PATH),
-        "reference_status": "R3_PUBLIC_RECORDINGS_UNVERIFIED_UNSYNCHRONIZED",
+        "reference_status": reference_status,
+        **_promotion_metadata(reference_status),
     })
     b0 = build_group(
         run_root=run_root,
