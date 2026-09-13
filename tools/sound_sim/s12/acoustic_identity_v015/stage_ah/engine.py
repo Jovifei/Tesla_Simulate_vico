@@ -79,6 +79,7 @@ class RemediationEngine(VehicleIdentityR1Engine):
         super().__init__(vehicle_type, sr, identity_mode=identity_mode,
                          numerical_fixes=numerical_fixes, seed=seed)
         self.variant, self.collect, self.output_policy = variant, collect, output_policy
+        self.numerical_fixes = tuple(numerical_fixes)
         self.last_report = {}
 
     def render_track(self, rpm_curve, throttle_curve, duration,
@@ -122,8 +123,19 @@ class RemediationEngine(VehicleIdentityR1Engine):
                                             float(np.max(rpm_curve)) / 60. * self.base.cylinders / 2.],
             "input_sha256": input_sha(rpm_curve, throttle_curve, duration,
                                       [shift_events, afterfire_events, bov_events]),
+            "trace_sha256": input_sha(rpm_curve, throttle_curve, duration,
+                                       [shift_events, afterfire_events, bov_events]),
+            "sample_rate_hz": self.sr,
+            "sample_count": int(len(parent_pcm)),
+            "seed": self.seed,
+            "flags": list(self.numerical_fixes),
             "parent_pcm_sha256": pcm_sha256(parent_pcm),
             "candidate_pcm_sha256": pcm_sha256(pcm),
+            "pre_identity_pcm_sha256": (
+                pcm_sha256(self.last_base_pcm)
+                if self.last_base_pcm is not None
+                else None
+            ),
             "signature": signature(self.vehicle_type, self.variant, self.output_policy),
             "normalization": policy.receipt,
             "parent_pre_saturation_peak": anchor.receipt["pre_saturation_peak"],

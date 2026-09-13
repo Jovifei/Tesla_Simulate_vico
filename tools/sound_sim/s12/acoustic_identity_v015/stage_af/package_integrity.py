@@ -222,7 +222,11 @@ def validate_fit_snapshot(snapshot: str | Path) -> dict[str, str]:
     }
 
 
-def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
+def git_source_receipt(
+    *,
+    allow_dirty_dev: bool = False,
+    additional_paths: Sequence[str | Path] = (),
+) -> dict[str, Any]:
     """Capture Git provenance and enforce clean tracked sources by default."""
     def git(*args: str) -> str:
         result = subprocess.run(
@@ -239,6 +243,20 @@ def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
         git_head = git("rev-parse", "HEAD")
         base_main = git("rev-parse", "origin/main")
         scopes = dependency_fingerprint()
+        additional = []
+        for path in additional_paths:
+            resolved = Path(path).resolve()
+            if not resolved.is_file():
+                raise FileNotFoundError(resolved)
+            additional.append(
+                {
+                    "path": resolved.relative_to(REPOSITORY_ROOT).as_posix(),
+                    "sha256": sha256_file(resolved),
+                }
+            )
+        scopes["additional_dependency_fingerprint"] = sorted(
+            additional, key=lambda item: item["path"]
+        )
         tracked_paths = sorted(
             {
                 entry["path"]
@@ -249,7 +267,7 @@ def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
         dirty_output = git(
             "status",
             "--porcelain",
-            "--untracked-files=no",
+            "--untracked-files=all",
             "--",
             *tracked_paths,
         )
@@ -285,6 +303,8 @@ def git_source_receipt(*, allow_dirty_dev: bool = False) -> dict[str, Any]:
         "source_status": "DEV_DIRTY_SOURCE" if dependency_dirty else "SOURCE_CLEAN",
         "promotable": not dependency_dirty,
         "promotion_status": "NOT_PROMOTABLE" if dependency_dirty else "PROMOTABLE",
+        "source_dependency_fingerprint": scopes,
+        "source_dependency_paths": tracked_paths,
     }
 
 

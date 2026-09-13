@@ -12,6 +12,7 @@ import json
 import os
 from collections.abc import Mapping
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from scipy import signal
@@ -26,7 +27,7 @@ from ..stage_ag.vehicle_identity_r1 import (
 from ..stage_ag.vehicle_identity import VEHICLE_IDENTITY_PROFILES
 from ..stage_g.candidate_profiles import load_stage_g_candidate
 from ..stage_k.candidate_profiles import load_stage_k_candidate
-from .engine import spectrum_report
+from .engine import input_sha, spectrum_report
 from .output_guard import (
     LEGACY_CLIP_V1,
     LINKED_SOFT_CEILING_V1,
@@ -38,6 +39,7 @@ from .source_policy import SourcePolicy, validate_events
 
 
 _SAMPLE_RATE_HZ = 48_000
+DEFAULT_SEED = 20260908
 _V015_ROOT = Path(__file__).resolve().parents[1]
 FOURCAR_VEHICLES = ("hellcat", "ferrari_458", "lfa", "gtr_r35")
 FOURCAR_TARGET_PATH = _V015_ROOT / "reference_database" / "fourcar_real_reference_targets_v1.json"
@@ -60,7 +62,7 @@ REAL_REFERENCE_CHANGED_PARAMETERS = {
     "gtr_r35": "turbo_whistle_mix",
 }
 REAL_REFERENCE_SOURCE_VARIANTS = {
-    vehicle: f"{vehicle}_real_reference_v1" for vehicle in FOURCAR_VEHICLES
+    vehicle: f"{vehicle}_real_reference_stem_scoped_v2" for vehicle in FOURCAR_VEHICLES
 }
 IR_NAMES = {
     "hellcat": "test_engine_16_eq_adjusted_16",
@@ -69,6 +71,72 @@ IR_NAMES = {
     "gtr_r35": "test_engine_14_eq_adjusted_16",
 }
 SOURCE_SHELF_CUTOFF_HZ = 1_000.0
+
+SOURCE_RECIPE = {
+    "hellcat": {
+        "parameter": "blower_gain_scale",
+        "stem": "supercharger",
+        "scope": "named_supercharger_stem_only",
+        "unused_fields": (),
+    },
+    "ferrari_458": {
+        "parameter": "high_rpm_growth_scale",
+        "stem": "combustion_high_rpm",
+        "scope": "combustion_order_envelope_above_65pct_redline",
+        "unused_fields": (),
+    },
+    "lfa": {
+        "parameter": "high_rpm_growth_scale",
+        "stem": "combustion_high_rpm",
+        "scope": "combustion_order_envelope_above_65pct_redline",
+        "unused_fields": ("intake_resonance_scale",),
+    },
+    "gtr_r35": {
+        "parameter": "turbo_whistle_mix",
+        "stem": "turbo",
+        "scope": "named_turbo_stem_only",
+        "unused_fields": (),
+    },
+}
+
+
+def source_adjustment_recipe(vehicle: str) -> dict[str, Any]:
+    """Return the fixed, explicit source scope for one four-car candidate."""
+    try:
+        recipe = SOURCE_RECIPE[vehicle]
+    except KeyError as exc:
+        raise ValueError(f"unsupported four-car vehicle: {vehicle}") from exc
+    return {**recipe, "vehicle": vehicle, "unused_fields": list(recipe["unused_fields"])}
+
+
+def scene_trace_key(scene_id: str, trace_sha256: str) -> str:
+    scene = str(scene_id).strip()
+    trace = str(trace_sha256).strip().lower()
+    if not scene or not trace:
+        raise ValueError("scene_id and trace_sha256 are required")
+    return f"{scene}|{trace}"
+
+
+def peak_estimate_4x(values: np.ndarray) -> dict[str, Any]:
+    """Fixed 4x interpolation peak diagnostic; this is not an ITU measurement."""
+    stereo = np.asarray(values, dtype=np.float64)
+    if stereo.ndim != 2 or stereo.shape[1] != 2 or not np.all(np.isfinite(stereo)):
+        raise ValueError("4x peak input must be finite stereo")
+    interpolated = signal.resample_poly(
+        stereo,
+        up=4,
+        down=1,
+        axis=0,
+        window=("kaiser", 5.0),
+        padtype="line",
+    )
+    return {
+        "peak": float(np.max(np.abs(interpolated))) if interpolated.size else 0.0,
+        "method": "scipy.signal.resample_poly_up4_down1",
+        "filter": "kaiser_beta_5.0",
+        "boundary": "line",
+        "standard": "DIAGNOSTIC_NOT_ITU_CERTIFIED",
+    }
 
 
 def _sha256_bytes(value: bytes) -> str:
@@ -126,16 +194,85 @@ def load_real_reference_profile(vehicle: str):
     candidate_value = float(profile.payload["source"][changed]["value"])
     if np.isclose(base_value, candidate_value):
         raise ValueError(f"real-reference profile did not change {vehicle}/{changed}")
+    full_field_diff = {
+        name: {
+            "base_value": float(base_payload["source"][name]["value"]),
+            "candidate_value": float(profile.payload["source"][name]["value"]),
+        }
+        for name in sorted(set(base_payload.get("source", {})) & set(profile.payload.get("source", {})))
+        if not np.isclose(
+            float(base_payload["source"][name]["value"]),
+            float(profile.payload["source"][name]["value"]),
+        )
+    }
+    recipe = source_adjustment_recipe(vehicle)
     metadata = {
         "source_ids": [str(source["id"]) for source in record["sources"]],
         "tuning_basis": "primary_three_median",
         "changed_source_parameter": changed,
         "base_value": base_value,
         "candidate_value": candidate_value,
+        "full_field_diff": full_field_diff,
+        "active_source_parameter": recipe["parameter"],
+        "active_source_stem": recipe["stem"],
+        "source_scope": recipe["scope"],
+        "unused_source_fields": list(recipe["unused_fields"]),
         "target_metrics": record["target_metrics"],
         "evidence_level": record["quality_gate"],
     }
     return profile, metadata
+
+
+class RealReferenceSourcePolicy(SourcePolicy):
+    """Apply the fixed profile ratio only at the named EngineAcoustics stem."""
+
+    def __init__(self, vehicle: str, *, seed: int, ratio: float, collect: bool,
+                 sample_rate: int, recipe: Mapping[str, Any]):
+        super().__init__(
+            vehicle,
+            "r1_baseline",
+            seed=seed,
+            collect=collect,
+            output_policy=LEGACY_CLIP_V1,
+            sample_rate=sample_rate,
+        )
+        if not np.isfinite(ratio) or ratio <= 0.0:
+            raise ValueError("source adjustment ratio must be finite and positive")
+        self.source_ratio = float(ratio)
+        self.recipe = dict(recipe)
+
+    def combustion_input(self, engine, left, right, rpm, throttle):
+        stem = self.recipe["stem"]
+        if stem != "combustion_high_rpm":
+            return super().combustion_input(engine, left, right, rpm, throttle)
+        rpm_array = np.asarray(rpm, dtype=np.float64)
+        envelope = np.clip(
+            (rpm_array - 0.65 * float(engine.redline)) /
+            (0.35 * float(engine.redline)),
+            0.0,
+            1.0,
+        )
+        gain = 1.0 + (self.source_ratio - 1.0) * envelope
+        self.observe("combustion_high_rpm_before", np.column_stack([left, right]))
+        if np.isclose(self.source_ratio, 1.0):
+            return left, right
+        adjusted_left = np.asarray(left, dtype=np.float64) * gain
+        adjusted_right = np.asarray(right, dtype=np.float64) * gain
+        self.observe("combustion_high_rpm_after", np.column_stack([adjusted_left, adjusted_right]))
+        return adjusted_left, adjusted_right
+
+    def source_family(self, name, stereo, rpm, throttle):
+        if name != self.recipe["stem"]:
+            return super().source_family(name, stereo, rpm, throttle)
+        values = np.asarray(stereo, dtype=np.float64)
+        if not np.all(np.isfinite(values)):
+            raise ValueError(f"non-finite {name} source stem")
+        self.observe(f"{name}_before", values)
+        if np.isclose(self.source_ratio, 1.0):
+            return values
+        adjusted = values * self.source_ratio
+        self.observe(f"{name}_after", adjusted)
+        return adjusted
 
 
 def _curve(values: np.ndarray, count: int, name: str) -> np.ndarray:
@@ -160,7 +297,7 @@ def _apply_profile_shelf(
     candidate_value: float,
     sample_rate_hz: int,
 ) -> np.ndarray:
-    """Apply one fixed source-profile ratio to the upper source band."""
+    """Legacy mixed-signal diagnostic retained only for historical packages."""
     x = np.asarray(values, dtype=np.float64)
     if x.ndim != 2 or x.shape[1] != 2 or not np.all(np.isfinite(x)):
         raise ValueError("pre-saturation source must be finite stereo")
@@ -188,10 +325,16 @@ def _render_pre_saturation(
     bov_events: list | None,
     *,
     seed: int,
+    numerical_fixes: tuple[str, ...] = (),
+    policy: SourcePolicy | None = None,
 ) -> tuple[np.ndarray, dict[str, np.ndarray], dict[str, Any]]:
     """Capture the current AH engine at its pre-tanh, pre-int16 boundary."""
-    engine = EngineAcoustics(vehicle_type=vehicle, sr=_SAMPLE_RATE_HZ)
-    policy = SourcePolicy(
+    engine = EngineAcoustics(
+        vehicle_type=vehicle,
+        sr=_SAMPLE_RATE_HZ,
+        numerical_fixes=tuple(numerical_fixes),
+    )
+    policy = policy or SourcePolicy(
         vehicle,
         "r1_baseline",
         seed=seed,
@@ -234,8 +377,10 @@ class FourCarRealReferenceEngine:
         *,
         sr: int = _SAMPLE_RATE_HZ,
         output_policy: str = LINKED_SOFT_CEILING_V1,
-        parent_peaks: Mapping[int, float] | None = None,
-        seed: int = 20260912,
+        parent_peaks: Mapping[str, float] | None = None,
+        seed: int = DEFAULT_SEED,
+        numerical_fixes: tuple[str, ...] = (),
+        source_adjustment_ratio: float | None = None,
     ) -> None:
         if vehicle_type not in FOURCAR_VEHICLES:
             raise ValueError(f"unsupported four-car vehicle: {vehicle_type}")
@@ -250,7 +395,12 @@ class FourCarRealReferenceEngine:
         self.sr = int(sr)
         self.output_policy = output_policy
         self.seed = int(seed)
-        self.base = EngineAcoustics(vehicle_type=vehicle_type, sr=self.sr)
+        self.numerical_fixes = tuple(numerical_fixes)
+        self.base = EngineAcoustics(
+            vehicle_type=vehicle_type,
+            sr=self.sr,
+            numerical_fixes=self.numerical_fixes,
+        )
         self.ir_name = IR_NAMES[vehicle_type]
         self.ir_source_path = _resolve_ir_path(self.ir_name)
         self.base_source_payload = json.loads(
@@ -263,9 +413,22 @@ class FourCarRealReferenceEngine:
         self.candidate_source_value = float(
             self.profile.payload["source"][self.changed_source_parameter]["value"]
         )
+        self.source_recipe = source_adjustment_recipe(vehicle_type)
+        ratio = self.candidate_source_value / self.base_source_value
+        self.source_adjustment_ratio = float(
+            ratio if source_adjustment_ratio is None else source_adjustment_ratio
+        )
+        if not np.isfinite(self.source_adjustment_ratio) or self.source_adjustment_ratio <= 0.0:
+            raise ValueError("source adjustment ratio must be finite and positive")
         self.parent_peaks = dict(parent_peaks or {})
-        self.scene_index = 0
+        self.scene_id: str | None = None
+        self.trace_sha256: str | None = None
         self.reports: list[dict[str, object]] = []
+        self.last_report: dict[str, object] = {}
+
+    def set_scene_context(self, scene_id: str, trace_sha256: str) -> None:
+        self.scene_id = str(scene_id)
+        self.trace_sha256 = str(trace_sha256).lower()
 
     def _guard(self, pre_guard: np.ndarray) -> tuple[np.ndarray, dict[str, object]]:
         metrics = ceiling_run_metrics(pre_guard, sample_rate=self.sr)
@@ -329,6 +492,18 @@ class FourCarRealReferenceEngine:
             acceleration_mps2=np.gradient(rpm / 60.0, time_s),
         ).validate()
 
+        trace_sha256 = input_sha(
+            rpm,
+            throttle,
+            duration,
+            [shift_events, afterfire_events, bov_events],
+        )
+        if self.trace_sha256 is not None and self.trace_sha256 != trace_sha256:
+            raise ValueError("scene trace context does not match rendered curves")
+        scene_id = self.scene_id or "UNBOUND_SCENE"
+        parent_key = scene_trace_key(scene_id, trace_sha256)
+        if parent_key not in self.parent_peaks:
+            raise ValueError(f"parent denominator missing for scene trace {parent_key}")
         pre_saturation, source_stems, source_receipt = _render_pre_saturation(
             self.vehicle_type,
             rpm,
@@ -338,19 +513,21 @@ class FourCarRealReferenceEngine:
             afterfire_events,
             bov_events,
             seed=self.seed,
+            numerical_fixes=self.numerical_fixes,
+            policy=RealReferenceSourcePolicy(
+                self.vehicle_type,
+                seed=self.seed,
+                ratio=self.source_adjustment_ratio,
+                collect=True,
+                sample_rate=self.sr,
+                recipe=self.source_recipe,
+            ),
         )
-        adjusted = _apply_profile_shelf(
-            pre_saturation,
-            vehicle=self.vehicle_type,
-            profile=self.profile,
-            base_value=self.base_source_value,
-            candidate_value=self.candidate_source_value,
-            sample_rate_hz=self.sr,
-        )
+        adjusted = pre_saturation
         candidate_raw_peak = float(np.max(np.abs(adjusted)))
         if not np.isfinite(candidate_raw_peak) or candidate_raw_peak <= 0.0:
             raise ValueError("candidate source is silent before normalization")
-        denominator = float(self.parent_peaks.get(self.scene_index, candidate_raw_peak))
+        denominator = float(self.parent_peaks[parent_key])
         if not np.isfinite(denominator) or denominator <= 0.0:
             raise ValueError("parent denominator must be finite and positive")
         normalized = adjusted / denominator
@@ -377,7 +554,10 @@ class FourCarRealReferenceEngine:
             0.0,
             0.25,
         )
-        combined = (1.0 - mix_curve[:, None]) * guarded + mix_curve[:, None] * identity
+        # Match the accepted C0 precision boundary: guard -> int16 -> identity.
+        guarded_pcm = (guarded * 32767.0).astype(np.int16)
+        guarded_quantized = guarded_pcm.astype(np.float64) / 32767.0
+        combined = (1.0 - mix_curve[:, None]) * guarded_quantized + mix_curve[:, None] * identity
         post_identity_mask = np.abs(combined) > 0.94 + 1e-12
         final_float = np.clip(combined, -0.94, 0.94)
         identity_error = combined - final_float
@@ -391,8 +571,8 @@ class FourCarRealReferenceEngine:
             "vehicle": self.vehicle_type,
             "source_variant": REAL_REFERENCE_SOURCE_VARIANTS[self.vehicle_type],
             "output_policy": self.output_policy,
-            "source_adjustment_domain": "ah_r1_pre_saturation_before_output_guard",
-            "candidate_render_path": "current_ah_engine_pre_saturation_overlay",
+            "source_adjustment_domain": "named_source_stem_before_output_guard",
+            "candidate_render_path": "current_ah_engine_named_source_recipe",
             "source_candidate_id": self.profile.candidate_id,
             "source_parameter_values": _json_safe(self.profile.payload.get("source", {})),
             "source_parameter_change": {
@@ -400,17 +580,23 @@ class FourCarRealReferenceEngine:
                 "base_value": self.base_source_value,
                 "candidate_value": self.candidate_source_value,
                 "ratio": self.candidate_source_value / self.base_source_value,
+                "applied_ratio": self.source_adjustment_ratio,
+                "active_stem": self.source_recipe["stem"],
+                "scope": self.source_recipe["scope"],
+                "unused_fields": list(self.source_recipe["unused_fields"]),
             },
             "source_adjustment": {
-                "method": "causal_butterworth_highpass",
-                "order": 2,
-                "cutoff_hz": SOURCE_SHELF_CUTOFF_HZ,
-                "gain_ratio": self.candidate_source_value / self.base_source_value,
-                "low_band_policy": "unchanged_by_design",
+                "method": "named_engine_source_stem_gain",
+                "stem": self.source_recipe["stem"],
+                "gain_ratio": self.source_adjustment_ratio,
+                "low_band_policy": "not_global_filter; source_scope_controls_effect",
             },
-            "trace_sha256": _sha256_bytes(
-                np.ascontiguousarray(np.column_stack([rpm, throttle]), dtype="<f8").tobytes()
-            ),
+            "scene_id": scene_id,
+            "trace_sha256": trace_sha256,
+            "sample_rate_hz": self.sr,
+            "sample_count": count,
+            "seed": self.seed,
+            "flags": list(self.numerical_fixes),
             "parent_peak": denominator,
             "candidate_raw_peak": candidate_raw_peak,
             "normalization_denominator": denominator,
@@ -422,8 +608,19 @@ class FourCarRealReferenceEngine:
                 if self.ir_source_path
                 else _sha256_bytes(np.ascontiguousarray(self.base.ir, dtype="<f8").tobytes())
             ),
+            "ir_effective_sha256": _sha256_bytes(
+                np.ascontiguousarray(self.base.ir, dtype="<f8").tobytes()
+            ),
             "candidate_source_diagnostics": _json_safe({"source_policy_receipt": source_receipt}),
             "candidate_stems": stem_reports,
+            "fixed_branch_spectral_diagnostics": {
+                "resonance": stem_reports.get("body_ring_after_left"),
+                "rpm_order": stem_reports.get(
+                    "combustion_high_rpm_after",
+                    stem_reports.get("combustion_input"),
+                ),
+                "ir": stem_reports.get("ir_wet_left"),
+            },
             "normalization": {
                 **guard,
                 "source_variant": REAL_REFERENCE_SOURCE_VARIANTS[self.vehicle_type],
@@ -433,31 +630,42 @@ class FourCarRealReferenceEngine:
                 "pre_guard_pcm_sha256": _sha256_bytes(
                     np.ascontiguousarray((pre_guard * 32767.0).astype("<i2")).tobytes()
                 ),
+                "pre_identity_pcm_sha256": _sha256_bytes(
+                    np.ascontiguousarray(guarded_pcm, dtype="<i2").tobytes()
+                ),
             },
             "identity_layer_preclip_peak": float(identity_receipt["identity_layer_preclip_peak"]),
             "identity_layer_clip_count": int(identity_receipt["identity_layer_clip_count"]),
             "identity_layer_clip_error": float(identity_receipt["identity_layer_clip_error"]),
+            "identity_layer_clip_error_rms": float(identity_receipt["identity_layer_clip_error_rms"]),
             "post_identity_mix_peak": float(np.max(np.abs(combined))),
             "post_identity_clip_count": int(np.count_nonzero(post_identity_mask)),
             "post_identity_clip_error": float(np.max(np.abs(identity_error))),
             "post_identity_clip_error_rms": float(np.sqrt(np.mean(identity_error * identity_error))),
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
+            "peak_estimate_4x": peak_estimate_4x(final_float),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
+            "candidate_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "R3 public recordings provide relative unsynchronised cues; source-only candidate, not OEM reproduction",
         }
         self.reports.append(report)
-        self.scene_index += 1
+        self.last_report = report
         return pcm
 
 
 __all__ = (
+    "DEFAULT_SEED",
     "FOURCAR_TARGET_PATH",
     "FOURCAR_VEHICLES",
     "FourCarRealReferenceEngine",
+    "RealReferenceSourcePolicy",
     "REAL_REFERENCE_BASE_PATHS",
     "REAL_REFERENCE_CHANGED_PARAMETERS",
     "REAL_REFERENCE_PROFILE_PATHS",
     "REAL_REFERENCE_SOURCE_VARIANTS",
     "load_real_reference_profile",
+    "scene_trace_key",
+    "source_adjustment_recipe",
+    "peak_estimate_4x",
 )
