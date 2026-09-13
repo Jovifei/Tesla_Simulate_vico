@@ -766,7 +766,12 @@ def _build_group(
             "human_status": "WAITING_FOR_JOVI_FEEDBACK",
             "numeric_gate": numeric_gate,
             "reference_gate": _reference_gate(
-                [], evidence_level="R3_PUBLIC_RECORDINGS_UNSYNCED"
+                [
+                    {"vehicle": vehicle, "reference_file": filename}
+                    for vehicle, refs in references_by_vehicle.items()
+                    for filename in refs
+                ],
+                evidence_level="R3_PUBLIC_RECORDINGS_UNSYNCED",
             ),
         }
         report_path = run_root / f"{group.lower()}_report.json"
