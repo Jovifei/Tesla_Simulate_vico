@@ -1,0 +1,39 @@
+name: S12 Reference Feedback
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/sound_sim/s12/acoustic_identity_v015/**'
+      - '.github/workflows/s12-reference-feedback.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  feedback:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact head
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python -c "import os,subprocess; actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(); print('checked_out_head='+actual); assert actual==os.environ['EXPECTED_HEAD']"
+      - name: Install numeric dependencies
+        run: python -m pip install numpy scipy pytest
+      - name: Reference loop and actual-engine adapter
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ah_reference_feedback.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ah_reference_feedback_adapter.py
+      - name: Compile new integration
+        run: python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ah
