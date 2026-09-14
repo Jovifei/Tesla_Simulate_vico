@@ -33,6 +33,17 @@ RUN_SCHEMA = "s12.stage_ah.reference_feedback_run.v1"
 ID = re.compile(r"[A-Za-z0-9_-]{1,128}\Z")
 
 
+class BaselineNumericGateError(ValueError):
+    """A vehicle baseline is unsafe; the other vehicle may still be audited."""
+
+    def __init__(self, vehicle: str, scene: str, record: Mapping[str, Any], captured_scenes=()):
+        self.vehicle = vehicle
+        self.scene = scene
+        self.record = copy.deepcopy(record)
+        self.captured_scenes = tuple(captured_scenes)
+        super().__init__(f"baseline numeric gate failed: {vehicle}/{scene}")
+
+
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -221,7 +232,7 @@ def _baseline(vehicle: str, directory: Path):
         scene = data["scene_id"]
         report = copy.deepcopy(engine.reports[-1])
         if not numeric_ok(report):
-            raise ValueError(f"baseline numeric gate failed: {scene}")
+            raise BaselineNumericGateError(vehicle, scene, report, sorted(records))
         contexts[scene] = {k: data[k] for k in ("rpm", "throttle", "duration", "shift_events", "afterfire_events", "bov_events")}
         contexts[scene]["trace_sha256"] = report["trace_sha256"]
         records[scene], hashes[scene] = report, audio_sha(data["audio"])
@@ -340,6 +351,17 @@ def verify_run(root: Path, expected_manifest_sha256: str | None = None) -> dict:
     if summary.get("schema") != RUN_SCHEMA or summary.get("promotable") is not False:
         raise ValueError("wrong run contract")
     for vehicle, result in summary["vehicles"].items():
+        if result.get("status") == "ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK":
+            relative = result.get("failure_receipt")
+            if not isinstance(relative, str):
+                raise ValueError("blocked vehicle is missing failure receipt")
+            receipt_path = (root / relative).resolve()
+            if not receipt_path.is_relative_to(root):
+                raise ValueError("blocked vehicle receipt escapes run")
+            receipt = _sealed(receipt_path)
+            if receipt.get("vehicle") != vehicle or receipt.get("status") != result["status"]:
+                raise ValueError("blocked vehicle receipt mismatch")
+            continue
         for group in ("baseline", "tuned"):
             folder = root / group / vehicle
             contract = _sealed(folder / "dashboard_contract.json")
@@ -373,7 +395,32 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
         results = {}
         for vehicle, selected in cases.items():
             base_dir, tuned_dir = staging / "baseline" / vehicle, staging / "tuned" / vehicle
-            engine, cfg, contexts, records, hashes = _baseline(vehicle, base_dir)
+            try:
+                engine, cfg, contexts, records, hashes = _baseline(vehicle, base_dir)
+            except BaselineNumericGateError as error:
+                relative = f"diagnostics/{vehicle}-baseline-numeric-failure.json"
+                (staging / "diagnostics").mkdir(parents=True, exist_ok=True)
+                receipt = seal_payload({
+                    "schema": "s12.stage_ah.reference_feedback.baseline_failure.v1",
+                    "run_id": output.name,
+                    "vehicle": error.vehicle,
+                    "scene": error.scene,
+                    "status": "ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK",
+                    "reason": "baseline numeric gate failed; vehicle held out",
+                    "record": error.record,
+                    "captured_scenes": list(error.captured_scenes),
+                    "runtime_commit": runtime["commit"],
+                }, "s12.stage_ah.reference_feedback.baseline_failure.v1")
+                _write(staging / relative, receipt)
+                results[vehicle] = {
+                    "status": "ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK",
+                    "promotable": False,
+                    "human_status": "NOT_EVALUATED",
+                    "failure_receipt": relative,
+                    "failure_scene": error.scene,
+                    "captured_scene_count": len(error.captured_scenes),
+                }
+                continue
             ir_source_hash = engine.ir_source_sha256
             renderer = RemainingFeedbackRenderer(vehicle, contexts, engine.parent_peaks, engine.ir)
             for scene in SCENE_IDS:
@@ -423,8 +470,12 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             "promotable": False, "human_status": "NOT_EVALUATED",
             "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY"}
         _write(staging / "summary.json", summary)
-        links = "".join('<p>' + v + ': <a href="baseline/' + v + '/index.html">基线 C0</a> / '
-                         + '<a href="tuned/' + v + '/index.html">优化 C0</a></p>' for v in results)
+        links = "".join(
+            ('<p>' + v + ': BLOCKED — <a href="' + row["failure_receipt"] + '">基线失败收据</a></p>'
+             if row.get("failure_receipt") else
+             '<p>' + v + ': <a href="baseline/' + v + '/index.html">基线 C0</a> / '
+             + '<a href="tuned/' + v + '/index.html">优化 C0</a></p>')
+            for v, row in results.items())
         (staging / "index.html").write_text('<!doctype html><meta charset="utf-8">'
             + '<title>S12 Reference Feedback</title><h1>真实录音驱动闭环实验</h1>' + links
             + '<p>此页仅导航。车型页保持原富交互 A/B；B为真实录音，不是基线合成音。'

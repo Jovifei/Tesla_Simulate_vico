@@ -126,3 +126,34 @@ def test_failure_during_workbench_build_is_atomic(governed_fixture, tmp_path, mo
     assert not out.exists()
     assert not (tmp_path / ".never-publish.lock").exists()
     assert not list(tmp_path.glob(".never-publish-*"))
+
+
+def test_baseline_numeric_block_isolated_and_other_vehicle_continues(governed_fixture, tmp_path, monkeypatch):
+    original = cli._baseline
+
+    def fail_rx7(vehicle, directory):
+        if vehicle == "rx7_fd":
+            raise cli.BaselineNumericGateError(
+                vehicle, "09_steady_mid",
+                {"peak_estimate_4x": {"peak": 1.0311131137519787}},
+                ("03_hot_idle", "07_steady_high"),
+            )
+        return original(vehicle, directory)
+
+    monkeypatch.setattr(cli, "_baseline", fail_rx7)
+    monkeypatch.setattr(cli, "_runtime_identity", lambda: {"commit": "test", "scope": "test",
+                                                             "inventory_sha256": "test", "source_files": {},
+                                                             "source_status": "SOURCE_CLEAN"})
+    out = tmp_path / "isolated-baseline-block"
+    result = cli.run_plan(governed_fixture, out, config=SearchConfig(max_trials=1))
+
+    blocked = result["vehicles"]["rx7_fd"]
+    assert blocked["status"] == "ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK"
+    assert blocked["failure_receipt"] == "diagnostics/rx7_fd-baseline-numeric-failure.json"
+    assert result["vehicles"]["aventador_lp700"]["status"] == "NO_IMPROVEMENT"
+    failure = cli._sealed(out / blocked["failure_receipt"])
+    assert failure["vehicle"] == "rx7_fd"
+    assert failure["scene"] == "09_steady_mid"
+    assert failure["record"]["peak_estimate_4x"]["peak"] > 1.0
+    manifest_sha = cli._sha(out / "ARTIFACTS.json")
+    cli.verify_run(out, manifest_sha)
