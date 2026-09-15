@@ -228,8 +228,10 @@ def build_page_html(template: str, key: str, title: str, subtitle: str,
     feedback_note = "" if roles.get("feedback", {}).get("available") else "（不可用） — " + str(roles.get("feedback", {}).get("reason", "无合格 B"))
     role_notice = ('<div id="triwayIdentityNotice" class="mb-3 rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2 text-xs text-slate-300">'
                    'A: 原始算法（未加负反馈） · B: 负反馈算法' + feedback_note + ' · C: 真车原声</div>')
-    html = html.replace("<!-- KEY METRICS BANNER: values come from the current package contract -->",
-                        switcher + role_notice + "<!-- KEY METRICS BANNER: values come from the current package contract -->", 1)
+    topbar = ('<div class="border-b border-slate-800 bg-[#0e1626]/90 px-4 lg:px-8 py-2">'
+              '<div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">'
+              + role_notice + '<div class="flex justify-end">' + switcher + '</div></div></div>')
+    html = html.replace("  </header>", "  </header>\n" + topbar, 1)
     html = html.replace("__SCENES_JSON__", json.dumps(list(scenes), ensure_ascii=False))
     html = html.replace("__PARAMS_JSON__", json.dumps(list(parameters), ensure_ascii=False))
     html = html.replace("__DASHBOARD_CONTRACT_JSON__", json.dumps(contract, ensure_ascii=False))
