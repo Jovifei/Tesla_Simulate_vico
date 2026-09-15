@@ -308,10 +308,11 @@ def _find_reference_file(root: Path, scene: Mapping[str, Any]) -> Path | None:
         return None
 
 
-def build_package(output: Path, run_id: str = "s12-stage-ah-three-way-20260915-v1") -> dict[str, Any]:
+def build_package(output: Path, run_id: str | None = None) -> dict[str, Any]:
     if output.exists():
         raise FileExistsError(output)
     output = output.resolve()
+    run_id = run_id or output.name
     output.parent.mkdir(parents=True, exist_ok=True)
     lock = output.parent / ("." + output.name + ".lock")
     lock.touch(exist_ok=False)
