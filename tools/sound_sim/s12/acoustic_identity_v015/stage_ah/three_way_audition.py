@@ -333,7 +333,7 @@ def build_package(output: Path, run_id: str = "s12-stage-ah-three-way-20260915-v
                 original = _asset(spec["original"], scene["candidate_file"])
                 a_name = f"A_{scene_id}.wav"
                 source_sha["original"][a_name] = _copy_wav(original, web / a_name)
-                encoded_a = "data:audio/wav;base64," + base64.b64encode((web / a_name).read_bytes()).decode()
+                encoded_a = "web_audio/" + a_name
                 audio_store[scene_id + "_candidate"] = encoded_a
                 audio_store[scene_id + "_original"] = encoded_a
                 scene["candidate_file"] = a_name
@@ -341,7 +341,7 @@ def build_package(output: Path, run_id: str = "s12-stage-ah-three-way-20260915-v
                     feedback = _asset(spec["feedback"], scene["candidate_file"].replace("A_", "", 1) if scene["candidate_file"].startswith("A_") else scene["candidate_file"])
                     b_name = f"B_{scene_id}.wav"
                     source_sha["feedback"][b_name] = _copy_wav(feedback, web / b_name)
-                    encoded_b = "data:audio/wav;base64," + base64.b64encode((web / b_name).read_bytes()).decode()
+                    encoded_b = "web_audio/" + b_name
                     audio_store[scene_id + "_ref"] = encoded_b
                     audio_store[scene_id + "_feedback"] = encoded_b
                     scene["feedback_file"] = b_name
@@ -351,7 +351,7 @@ def build_package(output: Path, run_id: str = "s12-stage-ah-three-way-20260915-v
                 if ref:
                     c_name = f"C_{scene_id}.wav"
                     source_sha["reference"][c_name] = _copy_wav(ref, web / c_name)
-                    audio_store[scene_id + "_reference"] = "data:audio/wav;base64," + base64.b64encode((web / c_name).read_bytes()).decode()
+                    audio_store[scene_id + "_reference"] = "web_audio/" + c_name
                     scene["reference_file"] = c_name
                 else:
                     scene["reference_file"] = ""
@@ -434,7 +434,13 @@ def verify_package(root: Path) -> dict[str, Any]:
             for role, filename in (("original", scene["candidate_file"]), ("feedback", scene.get("feedback_file", "")), ("reference", scene.get("reference_file", ""))):
                 if not filename:
                     continue
-                raw = base64.b64decode(store[scene["id"] + "_" + role].split(",", 1)[1], validate=True)
+                stored = store[scene["id"] + "_" + role]
+                if stored.startswith("data:"):
+                    raw = base64.b64decode(stored.split(",", 1)[1], validate=True)
+                elif stored.startswith("web_audio/"):
+                    raw = (folder / stored).read_bytes()
+                else:
+                    raise ValueError(f"unsupported audio store entry: {stored}")
                 if raw != (folder / "web_audio" / filename).read_bytes():
                     raise ValueError(f"embedded audio mismatch: {key}/{scene['id']}/{role}")
     return summary
