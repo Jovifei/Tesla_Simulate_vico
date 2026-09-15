@@ -379,9 +379,9 @@ def build_package(output: Path, run_id: str | None = None) -> dict[str, Any]:
             html = build_page_html(template, spec["key"], spec["title"], spec["subtitle"], scenes,
                                    {**contract, "references": {
                                        name: {"available": True, "sha256": digest}
-                                       for name, digest in source_sha["feedback"].items()
+                                       for name, digest in source_sha["reference"].items()
                                    }, "candidate_pcm_sha256": source_sha["original"],
-                                   "reference_sha256": source_sha["feedback"]}, audio_store, nav)
+                                   "reference_sha256": source_sha["reference"]}, audio_store, nav)
             for filename in ("index.html", "index_standalone.html"):
                 (vehicle_root / filename).write_text(html, encoding="utf-8")
             vehicles[spec["key"]] = {
