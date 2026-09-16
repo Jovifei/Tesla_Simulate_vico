@@ -1385,3 +1385,7 @@ Rules:
 - `review_packages/serve_dashboards.py` 的固定 8080 portal 与端口 collision 后继续运行行为，适合历史 Stage AF 诊断，不适合 Stage AG-R1 正式听审。AG-R1 必须只用 `stage_ag.serve_r1_review_strict`；它预绑定全部 8 个 127.0.0.1 端口并在任一 collision 时 fail-closed。
 - 路由纠错不是声音算法失败或成功：先确认 R1 页面具备 A/B、FFT/Waveform、分类、10 场景和反馈控件，且排除 `canonical S12 renderer`/`package-wide gain`；此后 Jovi 仍可给出 `HUMAN_ACOUSTIC_FAIL`，但不能先把旧页面的听感误归因给 R1 source。
 - Source/review/package 三者必须分别冻结：`local/stage-ag-vehicle-identity-20260908@717a5226...` 是 CODE AUTHORITY，`local/stage-ag-r1-strict-review-20260909@71bb9180...` 是 review record，`s12-stage-ag-r1-identity-20260908-v1` 是 AUDIO PACKAGE。任何 `rich-audition-workbench*` 实验分支都不得接入，避免重新制造 renderer/server 归因歧义。
+
+# 2026-09-16 Stage AI exclusion-receipt correction
+
+- 计划审查中的“安全但未纳入”样本不能复用“重采样超限”理由；每条 excluded source 必须携带实际触发原因（full-scale overshoot、原始 clipping 或独立 train/validation 分层不足）及观测数值。若在 fit 前发现证据描述错误，保留旧 run，只生成新计划/新 run，并重新计算 SHA。

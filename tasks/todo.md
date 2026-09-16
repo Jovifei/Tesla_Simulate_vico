@@ -4361,3 +4361,21 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Record Jovi feedback: four vehicle identities are distinguishable at approximately 80%; frequency/waveform mismatch remains an optimization item, not a perfect-fit or Human PASS claim.
 - [x] Freeze `CODE AUTHORITY`, `REVIEW RECORD`, and `AUDIO PACKAGE`; keep `rich-audition-workbench*` branches and historical routes as `DO NOT USE`.
 - [ ] Wait for a new explicit, scene/frequency-scoped acoustic optimization request; do not auto-tune or re-render the current R1 package.
+
+## 2026-09-16 Stage AI local reference execution
+
+- [x] 核实 origin/main、PR27 head 与独立 Stage AI worktree；保留旧包和主线。
+- [x] 读取 Stage AI ZIP 的交接、CI、来源清单与限制；锁定 C0 父包 manifest SHA。
+- [x] 审核四车参考计划；保留 v1 loader 失败收据，建立 v3 fail-closed 计划并区分重采样超限与分层不足。
+- [x] 用真实 IR/真实外部 WAV 完成 Ferrari 与 GT-R 的 renderer→实际 trial→独立 validation→Reference guard 闭环；Hellcat/LFA 真实阻塞不伪造 B。
+- [x] 生成并验证全新 fourcar run 与八车 A/B/C 包；A/C 字节保留，B 仅接入合格自动 fit。
+- [x] 完成本机专项、Track-P、compileall、diff-check、full S12；严格预检并在 29581 启动原富交互试听页。
+- [x] 写入本地验收文档，准备普通 push 到独立 validation 分支；不合并 main/PR27。
+
+### Review
+
+- fourcar plan v3 SHA `d032ffd682c5cf34ebd9cc5a66d4b419151d9f58a6fb3f1b257b73179eb34d90`；7 条可闭包 source cases，13 条排除收据。
+- run `s12-stage-ai-fourcar-loop-20260916-v2`：ARTIFACTS SHA `c8a156057edef5991b40e4996634e2eeb3bc719d106a4f162e7a421a0709c648`；Ferrari/GT-R 均 `RELATIVE_IMPROVEMENT_VALIDATED`。
+- ABC `s12-stage-ai-qualified-three-way-20260916-v2`：ARTIFACTS SHA `179f3ed31ebe93dab316ef9bef6bb238fda31931f29a51eb49009d04a1e6e3f5`；页面 29581，Ferrari 与 Aventador 已截取修正版截图。
+- 本机 full S12：`1697 passed, 3 skipped, 1 warning, 232 subtests`，exit 0；专项 59 passed。
+- 验收文档：`docs/08-reports/32-stage-ai-local-acceptance-20260916.md`。
