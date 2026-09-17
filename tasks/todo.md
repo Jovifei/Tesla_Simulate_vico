@@ -4361,3 +4361,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Record Jovi feedback: four vehicle identities are distinguishable at approximately 80%; frequency/waveform mismatch remains an optimization item, not a perfect-fit or Human PASS claim.
 - [x] Freeze `CODE AUTHORITY`, `REVIEW RECORD`, and `AUDIO PACKAGE`; keep `rich-audition-workbench*` branches and historical routes as `DO NOT USE`.
 - [ ] Wait for a new explicit, scene/frequency-scoped acoustic optimization request; do not auto-tune or re-render the current R1 package.
+
+## 2026-09-18 Stage AI-4A RX-7 true-peak diagnostics
+
+- [x] 读取 Stage AI-4A ZIP、README、NEXT prompt、remote status 与 SHA receipt。
+- [x] fetch origin，核实 `origin/feature/stage-ai-rx7-truepeak-diagnostics-20260917@aea382bb6b1c7f9d82b3d2186b398dd78af94d87`，创建独立 worktree。
+- [x] 运行 true-peak focused/evidence tests、compileall、diff-check。
+- [x] 从已 seal 的 AI qualified A/C 包读取 RX-7 十个 A WAV 的 expected SHA，完成 2x/4x/8x/16x 诊断。
+- [x] 记录 10 场景表、旧 4x blocker 复现、16x 收敛、最坏时间/声道/局部频谱与事件关联。
+- [x] 写入诊断报告；不改音频、DSP、阈值、输出保护或旧包；测试完成后提交并 push。
+
+### Review
+
+- 仅 `09_steady_mid` 为 `INTERSAMPLE_OVERSHOOT_BLOCKED`；4x `1.0310696445`、8x `1.0418431019`、16x `1.0418505943`。
+- 最坏点在 steady scene 起始 `0.000424479s` 左声道，建议 AI-4B 优先做 C 类插值/边界调查。
+- 报告：`docs/08-reports/33-stage-ai4a-rx7-truepeak-results-20260918.md`。
