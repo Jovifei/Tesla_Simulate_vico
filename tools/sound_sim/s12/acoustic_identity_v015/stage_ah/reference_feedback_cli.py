@@ -400,12 +400,13 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
         results = {}
         for vehicle, selected in cases.items():
             base_dir, tuned_dir = staging / "baseline" / vehicle, staging / "tuned" / vehicle
+            vehicle_boundary_policy = boundary_policy if vehicle == "rx7_fd" else None
             try:
-                if boundary_policy is None:
+                if vehicle_boundary_policy is None:
                     engine, cfg, contexts, records, hashes = _baseline(vehicle, base_dir)
                 else:
                     engine, cfg, contexts, records, hashes = _baseline(
-                        vehicle, base_dir, boundary_policy=boundary_policy
+                        vehicle, base_dir, boundary_policy=vehicle_boundary_policy
                     )
             except BaselineNumericGateError as error:
                 relative = f"diagnostics/{vehicle}-baseline-numeric-failure.json"
@@ -434,7 +435,7 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             ir_source_hash = engine.ir_source_sha256
             renderer = RemainingFeedbackRenderer(
                 vehicle, contexts, engine.parent_peaks, engine.ir,
-                boundary_policy=boundary_policy,
+                boundary_policy=vehicle_boundary_policy,
             )
             for scene in SCENE_IDS:
                 if audio_sha(renderer(renderer.baseline, scene).audio) != hashes[scene]:
