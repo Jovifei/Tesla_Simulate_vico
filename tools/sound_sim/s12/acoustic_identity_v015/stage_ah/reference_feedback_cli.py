@@ -191,10 +191,12 @@ def numeric_ok(record: Mapping[str, Any]) -> bool:
 
 class RemainingFeedbackRenderer:
     """Whitelisted values enter existing named sources, with no fake scores."""
-    def __init__(self, vehicle: str, contexts: Mapping, parents: Mapping, ir: np.ndarray):
+    def __init__(self, vehicle: str, contexts: Mapping, parents: Mapping, ir: np.ndarray,
+                 boundary_policy: str | None = None):
         from .remaining_vehicle_pipeline import FEEDBACK_BOUNDS, feedback_parameters
         self.vehicle, self.contexts = vehicle, dict(contexts)
         self.parents, self.ir = dict(parents), np.asarray(ir).copy()
+        self.boundary_policy = boundary_policy
         self.bounds = FEEDBACK_BOUNDS[vehicle]
         defaults = feedback_parameters(vehicle, ())["parameters"]
         self.baseline = {k: defaults[k] for k in self.bounds}
@@ -206,7 +208,8 @@ class RemainingFeedbackRenderer:
         params = validate_parameters(parameters, self.bounds)
         c = self.contexts[scene]
         engine = RemainingVehicleEngine(self.vehicle, SR, output_policy=LINKED_SOFT_CEILING_V1,
-                    parent_peaks=self.parents, ir=self.ir, seed=20260908, scene_ids=(scene,))
+                    parent_peaks=self.parents, ir=self.ir, seed=20260908, scene_ids=(scene,),
+                    boundary_policy=self.boundary_policy)
         engine.feedback["parameters"].update(params)
         engine.feedback.update(controller="reference_analysis_by_synthesis_v1", status="REFERENCE_TRIAL", adjustments=[])
         audio = engine.render_track(c["rpm"], c["throttle"], c["duration"],
@@ -220,13 +223,14 @@ class RemainingFeedbackRenderer:
         return Rendered(audio, numeric_ok(record), record)
 
 
-def _baseline(vehicle: str, directory: Path):
+def _baseline(vehicle: str, directory: Path, boundary_policy: str | None = None):
     from .remaining_vehicle_package import _config, _dashboards, SCENE_IDS
     from .remaining_vehicle_pipeline import RemainingVehicleEngine
     from .output_guard import LINKED_SOFT_CEILING_V1
     cfg = _config(vehicle, directory, 0, "C0")
     engine = RemainingVehicleEngine(vehicle, SR, output_policy=LINKED_SOFT_CEILING_V1,
-                                    seed=20260908, scene_ids=SCENE_IDS)
+                                    seed=20260908, scene_ids=SCENE_IDS,
+                                    boundary_policy=boundary_policy)
     contexts, records, hashes = {}, {}, {}
     def observe(**data):
         scene = data["scene_id"]
@@ -371,7 +375,8 @@ def verify_run(root: Path, expected_manifest_sha256: str | None = None) -> dict:
     return summary
 
 
-def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig()) -> dict:
+def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig(),
+             boundary_policy: str | None = None) -> dict:
     from .remaining_vehicle_package import REMAINING_VEHICLES, SCENE_IDS, _config
     from ..stage_af.package_integrity import seal_payload
     config.validate()
@@ -396,7 +401,12 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
         for vehicle, selected in cases.items():
             base_dir, tuned_dir = staging / "baseline" / vehicle, staging / "tuned" / vehicle
             try:
-                engine, cfg, contexts, records, hashes = _baseline(vehicle, base_dir)
+                if boundary_policy is None:
+                    engine, cfg, contexts, records, hashes = _baseline(vehicle, base_dir)
+                else:
+                    engine, cfg, contexts, records, hashes = _baseline(
+                        vehicle, base_dir, boundary_policy=boundary_policy
+                    )
             except BaselineNumericGateError as error:
                 relative = f"diagnostics/{vehicle}-baseline-numeric-failure.json"
                 (staging / "diagnostics").mkdir(parents=True, exist_ok=True)
@@ -422,7 +432,10 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
                 }
                 continue
             ir_source_hash = engine.ir_source_sha256
-            renderer = RemainingFeedbackRenderer(vehicle, contexts, engine.parent_peaks, engine.ir)
+            renderer = RemainingFeedbackRenderer(
+                vehicle, contexts, engine.parent_peaks, engine.ir,
+                boundary_policy=boundary_policy,
+            )
             for scene in SCENE_IDS:
                 if audio_sha(renderer(renderer.baseline, scene).audio) != hashes[scene]:
                     raise ValueError("feedback-disabled PCM differs from canonical baseline")
@@ -466,6 +479,7 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             raise ValueError("source changed during fitting")
         summary = {"schema": RUN_SCHEMA, "run_id": output.name, "runtime": runtime,
             "reference_evidence": evidence, "vehicles": results, "output_policy": "linked_soft_ceiling_v1",
+            "boundary_policy": boundary_policy,
             "knee": .90, "ceiling": .94, "comparison": "BASELINE_C0_VS_TUNED_C0_FIXED_BASELINE_DENOMINATORS",
             "promotable": False, "human_status": "NOT_EVALUATED",
             "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY"}
@@ -520,6 +534,7 @@ def main() -> None:
     fit.add_argument("--out", type=Path, required=True)
     fit.add_argument("--max-trials", type=int, default=25)
     fit.add_argument("--allow-r3-unsynchronized", action="store_true")
+    fit.add_argument("--boundary-policy", choices=("rx7_start_boundary_fade_v1",), default=None)
     serve = commands.add_parser("serve")
     serve.add_argument("--run", type=Path, required=True)
     serve.add_argument("--manifest-sha256", required=True)
@@ -531,7 +546,8 @@ def main() -> None:
     elif args.command == "run":
         if not args.allow_r3_unsynchronized:
             parser.error("explicit --allow-r3-unsynchronized required")
-        result = run_plan(args.plan, args.out, config=SearchConfig(max_trials=args.max_trials))
+        result = run_plan(args.plan, args.out, config=SearchConfig(max_trials=args.max_trials),
+                          boundary_policy=args.boundary_policy)
         print(json.dumps({v: r["status"] for v, r in result["vehicles"].items()}, ensure_ascii=False))
     else:
         if not 1024 <= args.port <= 65535:

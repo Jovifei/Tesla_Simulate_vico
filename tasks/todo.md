@@ -4376,3 +4376,17 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 仅 `09_steady_mid` 为 `INTERSAMPLE_OVERSHOOT_BLOCKED`；4x `1.0310696445`、8x `1.0418431019`、16x `1.0418505943`。
 - 最坏点在 steady scene 起始 `0.000424479s` 左声道，建议 AI-4B 优先做 C 类插值/边界调查。
 - 报告：`docs/08-reports/33-stage-ai4a-rx7-truepeak-results-20260918.md`。
+
+## 2026-09-18 Stage AI-4B RX-7 boundary repair
+
+- [ ] Add a RED regression for the measured RX-7 `09_steady_mid` startup-boundary intersample overshoot and for preserving non-RX7/default behavior.
+- [ ] Implement the smallest explicit RX-7 boundary-only repair after the existing source/render path and before final PCM quantization; keep K/C, threshold, source parameters, IR, seed and A/C immutable.
+- [ ] Add receipt fields proving boundary scope, changed frames, peak/RMS delta, 4x/8x/16x result and no hard clip; keep legacy output policy semantics unchanged by default.
+- [ ] Run focused AI-4B/AI-4A/evidence tests and full relevant S12 tests; run compileall and diff-check.
+- [ ] Re-render a fresh RX-7 repair candidate from the governed A baseline, compare all 10 scenes and WAV/PCM hashes, retain old packages, and document any remaining blocker.
+- [ ] Commit and ordinary-push the repair branch only after tests pass; do not merge main or overwrite PR28 history.
+
+### Review gate
+
+- Hypothesis: the only blocker is a 20-sample-to-near-0.93 startup step in `09_steady_mid`; a 24-frame local fade should remove the boundary interpolation overshoot while leaving frames after the repair window unchanged.
+- Acceptance: repaired RX-7 output has 4x/8x/16x peak <= 1.0 for all ten scenes, non-RX7/default path remains byte-equivalent, and the repair receipt reports nonzero waveform delta only within the declared boundary window.

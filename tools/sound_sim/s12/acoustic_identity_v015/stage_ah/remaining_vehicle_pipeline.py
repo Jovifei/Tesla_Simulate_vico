@@ -34,6 +34,10 @@ from .output_guard import (
     ceiling_run_metrics,
     linked_soft_ceiling,
 )
+from .rx7_boundary_repair import (
+    RX7_BOUNDARY_POLICY_V1,
+    apply_rx7_boundary_repair,
+)
 
 
 _SAMPLE_RATE_HZ = 48_000
@@ -231,6 +235,7 @@ class RemainingVehicleEngine:
         seed: int = 20260908,
         scene_ids: tuple[str, ...] | None = None,
         feedback_rows: Sequence[Mapping[str, Any]] = (),
+        boundary_policy: str | None = None,
     ) -> None:
         if vehicle_type not in REMAINING_VEHICLES:
             raise ValueError(f"unsupported remaining vehicle: {vehicle_type}")
@@ -238,9 +243,14 @@ class RemainingVehicleEngine:
             raise ValueError("remaining AH qualification requires 48 kHz")
         if output_policy not in (LEGACY_CLIP_V1, LINKED_SOFT_CEILING_V1):
             raise ValueError(f"unsupported output policy: {output_policy}")
+        if boundary_policy not in (None, RX7_BOUNDARY_POLICY_V1):
+            raise ValueError(f"unsupported boundary policy: {boundary_policy}")
+        if boundary_policy is not None and vehicle_type != "rx7_fd":
+            raise ValueError("RX-7 boundary policy is scoped to rx7_fd")
         self.vehicle_type = vehicle_type
         self.sr = int(sr)
         self.output_policy = output_policy
+        self.boundary_policy = boundary_policy
         self.seed = int(seed)
         self.feedback = feedback_parameters(vehicle_type, feedback_rows)
         self._parent_peaks_supplied = parent_peaks is not None
@@ -345,6 +355,9 @@ class RemainingVehicleEngine:
                 "emergency_clip_error": 0.0,
                 "emergency_clip_error_rms": 0.0,
             }
+        final_float, boundary_receipt = apply_rx7_boundary_repair(
+            final_float, policy=self.boundary_policy
+        )
         pcm = (np.asarray(final_float, dtype=np.float64) * 32767.0).astype(np.int16)
         source_stems = {name: spectrum_report(np.asarray(values, dtype=np.float64), self.sr) for name, values in source.stems.items()}
         self.last_scene_id = scene_id
@@ -355,6 +368,7 @@ class RemainingVehicleEngine:
             "parent_peak_key": parent_key,
             "source_variant": SOURCE_VARIANTS[self.vehicle_type],
             "output_policy": self.output_policy,
+            "boundary_policy": self.boundary_policy,
             "feedback_control": self.feedback,
             "reference_pool_source_count": 6,
             "reference_evidence_level": "R3_PUBLIC_RECORDING_UNVERIFIED",
@@ -381,6 +395,7 @@ class RemainingVehicleEngine:
                 "normalization_denominator": denominator,
                 "parent_denominator_policy": "fixed_parent_peak_scene_trace",
                 "pre_guard_pcm_sha256": hashlib.sha256(np.ascontiguousarray((pre_guard * 32767.0).astype("<i2")).tobytes()).hexdigest(),
+                "boundary_repair": boundary_receipt,
             },
             "identity_layer_clip_count": 0,
             "identity_layer_clip_error": 0.0,
@@ -390,6 +405,7 @@ class RemainingVehicleEngine:
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "final_pcm_sha256": hashlib.sha256(np.ascontiguousarray(pcm, dtype="<i2").tobytes()).hexdigest(),
             "peak_estimate_4x": peak_estimate_4x(final_float),
+            "boundary_repair": boundary_receipt,
             "note": "R3 real recordings provide relative cues only; source-local feedback candidate, not OEM reproduction",
         }
         self.reports.append(record)
