@@ -1385,3 +1385,7 @@ Rules:
 - `review_packages/serve_dashboards.py` 的固定 8080 portal 与端口 collision 后继续运行行为，适合历史 Stage AF 诊断，不适合 Stage AG-R1 正式听审。AG-R1 必须只用 `stage_ag.serve_r1_review_strict`；它预绑定全部 8 个 127.0.0.1 端口并在任一 collision 时 fail-closed。
 - 路由纠错不是声音算法失败或成功：先确认 R1 页面具备 A/B、FFT/Waveform、分类、10 场景和反馈控件，且排除 `canonical S12 renderer`/`package-wide gain`；此后 Jovi 仍可给出 `HUMAN_ACOUSTIC_FAIL`，但不能先把旧页面的听感误归因给 R1 source。
 - Source/review/package 三者必须分别冻结：`local/stage-ag-vehicle-identity-20260908@717a5226...` 是 CODE AUTHORITY，`local/stage-ag-r1-strict-review-20260909@71bb9180...` 是 review record，`s12-stage-ag-r1-identity-20260908-v1` 是 AUDIO PACKAGE。任何 `rich-audition-workbench*` 实验分支都不得接入，避免重新制造 renderer/server 归因歧义。
+
+# 2026-09-19 S12 Stage AI-4B execution lesson
+
+- 当诊断已给出单一、可测量且得到 Jovi 明确实施授权的修复方向时，应直接完成 RED/GREEN、真实素材复测、全量回归和 CI 覆盖闭环；不能再次停在“等待修复决策”。新增阶段测试必须进入实际 workflow，远端存在分支本身不等于 CI 已运行。

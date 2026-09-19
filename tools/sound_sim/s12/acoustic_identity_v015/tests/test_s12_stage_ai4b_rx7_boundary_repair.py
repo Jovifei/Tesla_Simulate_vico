@@ -1,6 +1,8 @@
 """AI-4B RED tests for the measured RX-7 startup-boundary overshoot."""
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 from scipy import signal
@@ -90,3 +92,10 @@ def test_remaining_engine_default_boundary_policy_is_legacy_compatible():
     from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.remaining_vehicle_pipeline import RemainingVehicleEngine
 
     assert signature(RemainingVehicleEngine).parameters["boundary_policy"].default is None
+
+
+def test_measured_feedback_workflow_runs_ai4b_boundary_regressions():
+    workflow = Path(".github/workflows/s12-stage-ai-measured-feedback.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "test_s12_stage_ai4b_rx7_boundary_repair.py" in workflow

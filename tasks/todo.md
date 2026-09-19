@@ -4397,3 +4397,16 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Fresh real run `s12-stage-ai4b-rx7-boundary-feedback-20260918-v1` is sealed and verified; RX-7/Aventador both `RELATIVE_IMPROVEMENT_VALIDATED`.
 - Full S12: `1715 passed, 3 skipped, 1 warning, 232 subtests`; exit `0`.
 - Repair report: `docs/08-reports/34-stage-ai4b-rx7-boundary-repair-20260918.md`.
+
+## 2026-09-19 Stage AI-4B verification and project audit
+
+- [ ] Re-verify the remote AI-4B HEAD, clean isolated worktree, focused boundary tests, and sealed real-run identity.
+- [ ] Recompute the RX-7 ten-scene sample/4x/8x/16x gates and confirm the repair only changes the declared 24-frame boundary window.
+- [ ] Run the complete S12 suite, Track-P guard, compileall, and `git diff --check` from the current AI-4B source.
+- [ ] Audit current-source failures, skipped tests, warnings, dependency/receipt integrity, and affected vehicle scopes; separate real defects from evidence limitations.
+- [ ] For each reproducible code defect found, use RED/GREEN tests and the smallest fix; do not change sound parameters without scene-specific evidence.
+- [ ] Record fresh results and remaining blockers; push only verified source/docs commits on the audit branch, without merging main.
+
+### Review
+
+- Pending fresh verification and audit evidence.
