@@ -27,6 +27,7 @@ from .reference_feedback import (
     METRIC, SR, ReferenceCase, Rendered, SearchConfig, audio_sha,
     optimize_reference_feedback, pcm_float, validate_parameters, _validate_cases,
 )
+from .reconstruction_peak import reconstructed_peak_ok
 
 PLAN_SCHEMA = "s12.stage_ah.reference_feedback_plan.v1"
 RUN_SCHEMA = "s12.stage_ah.reference_feedback_run.v1"
@@ -183,6 +184,7 @@ def numeric_ok(record: Mapping[str, Any]) -> bool:
         return bool(0 < record["final_rms"] <= record["final_peak"] <= .94 + 1e-10
                     and np.isfinite(record["peak_estimate_4x"]["peak"])
                     and 0 < record["peak_estimate_4x"]["peak"] <= 1.0
+                    and reconstructed_peak_ok(record["reconstruction_peak"])
                     and np.isfinite(record["normalization_denominator"])
                     and record["normalization_denominator"] > 0)
     except (KeyError, TypeError, ValueError):
