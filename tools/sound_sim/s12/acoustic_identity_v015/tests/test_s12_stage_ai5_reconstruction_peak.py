@@ -78,3 +78,44 @@ def test_qualification_fails_closed_on_missing_or_inconsistent_receipt(mutation)
 def test_invalid_audio_is_rejected(audio):
     with pytest.raises(ValueError):
         reconstructed_peak_receipt(audio)
+
+
+def _numeric_record(receipt):
+    return {
+        "normalization": {
+            "post_guard_ceiling_exceedance_samples": 0,
+            "emergency_clip_count": 0,
+            "emergency_clip_error": 0.0,
+        },
+        "identity_layer_clip_count": 0,
+        "post_identity_clip_count": 0,
+        "identity_layer_clip_error": 0.0,
+        "post_identity_clip_error": 0.0,
+        "final_rms": 0.2,
+        "final_peak": 0.9,
+        "peak_estimate_4x": {"peak": 0.995},
+        "reconstruction_peak": receipt,
+        "normalization_denominator": 0.8,
+    }
+
+
+def test_reference_feedback_numeric_gate_uses_multirate_receipt():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.reference_feedback_cli import numeric_ok
+
+    blind = reconstructed_peak_receipt(FOUR_X_BLIND_SPOT)
+    assert blind["factors"]["4"]["peak"] < 1.0
+    assert blind["factors"]["8"]["peak"] > 1.0
+    assert not numeric_ok(_numeric_record(blind))
+
+    safe = reconstructed_peak_receipt(FOUR_X_BLIND_SPOT * 0.8)
+    assert reconstructed_peak_ok(safe)
+    assert numeric_ok(_numeric_record(safe))
+
+
+def test_numeric_gate_fails_closed_when_multirate_receipt_is_missing():
+    from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.reference_feedback_cli import numeric_ok
+
+    safe = reconstructed_peak_receipt(FOUR_X_BLIND_SPOT * 0.8)
+    record = _numeric_record(safe)
+    record.pop("reconstruction_peak")
+    assert not numeric_ok(record)
