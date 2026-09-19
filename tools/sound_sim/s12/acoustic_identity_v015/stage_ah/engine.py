@@ -10,6 +10,7 @@ from scipy.signal import welch
 from ..stage_ag.vehicle_identity_r1 import VehicleIdentityR1Engine, IDENTITY_MODE_V1R1
 from .output_guard import LEGACY_CLIP_V1
 from .source_policy import SourcePolicy, VARIANTS, pcm_sha256, signature, validate_events
+from .reconstruction_peak import reconstructed_peak_receipt
 
 
 def spectrum_report(values: np.ndarray, sr: int = 48_000) -> dict:
@@ -109,6 +110,10 @@ class RemediationEngine(VehicleIdentityR1Engine):
                 pcm = super().render_track(*args)
         finally:
             self.base._source_policy = None
+        artifact_float = pcm.astype(np.float64) / 32767.0
+        reconstruction_peak = reconstructed_peak_receipt(
+            artifact_float, sample_rate=self.sr
+        )
         self.last_report = {
             "vehicle": self.vehicle_type,
             "variant": self.variant,
@@ -144,6 +149,7 @@ class RemediationEngine(VehicleIdentityR1Engine):
             "parent_output_policy": anchor.output_policy,
             "parent_spectrum": spectrum_report(parent_pcm.astype(float) / 32767.),
             "candidate_spectrum": spectrum_report(pcm.astype(float) / 32767.),
+            "reconstruction_peak": reconstruction_peak,
             "parent_stems": {name: spectrum_report(x) for name, x in anchor.stems.items()},
             "candidate_stems": {name: spectrum_report(x) for name, x in policy.stems.items()},
             "post_identity_mix_peak": self.last_identity_receipt.get("post_identity_mix_peak"),
