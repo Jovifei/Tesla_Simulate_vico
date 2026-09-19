@@ -38,8 +38,11 @@ jobs:
         run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ah_reference_feedback.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ah_reference_feedback_adapter.py tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ah_reference_feedback_package.py
       - name: RX-7 startup boundary true-peak repair
         run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ai4b_rx7_boundary_repair.py
+      - name: AI-5 multirate reconstructed-peak qualification
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ai5_reconstruction_peak.py
       - name: Compile and frozen-path checks
         run: |
-          python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ah
+          python -W error::SyntaxWarning -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ah
+          python -W error::SyntaxWarning -m py_compile tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_k_gtr_parallel_turbo_v3.py
           python tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py
           git diff --check

@@ -38,6 +38,7 @@ from .rx7_boundary_repair import (
     RX7_BOUNDARY_POLICY_V1,
     apply_rx7_boundary_repair,
 )
+from .reconstruction_peak import reconstructed_peak_receipt
 
 
 _SAMPLE_RATE_HZ = 48_000
@@ -359,6 +360,10 @@ class RemainingVehicleEngine:
             final_float, policy=self.boundary_policy
         )
         pcm = (np.asarray(final_float, dtype=np.float64) * 32767.0).astype(np.int16)
+        artifact_float = pcm.astype(np.float64) / 32767.0
+        reconstruction_peak = reconstructed_peak_receipt(
+            artifact_float, sample_rate=self.sr
+        )
         source_stems = {name: spectrum_report(np.asarray(values, dtype=np.float64), self.sr) for name, values in source.stems.items()}
         self.last_scene_id = scene_id
         self.last_parent_peak_key = parent_key
@@ -405,6 +410,7 @@ class RemainingVehicleEngine:
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "final_pcm_sha256": hashlib.sha256(np.ascontiguousarray(pcm, dtype="<i2").tobytes()).hexdigest(),
             "peak_estimate_4x": peak_estimate_4x(final_float),
+            "reconstruction_peak": reconstruction_peak,
             "boundary_repair": boundary_receipt,
             "note": "R3 real recordings provide relative cues only; source-local feedback candidate, not OEM reproduction",
         }
