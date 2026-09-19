@@ -164,7 +164,7 @@ def test_turbo_mix_is_an_absolute_ratio_and_unknown_or_invalid_keys_fail_closed(
     assert 0.0 < baseline.diagnostics["turbo_whistle_mix"] <= 0.24
     with pytest.raises(ValueError, match="unknown gtr v3 override"):
         module.render_gtr_r35_v3(_trace(), overrides={"secondary_gate": 1.0})
-    with pytest.raises(ValueError, match="turbo_whistle_mix must be in \[0, 1\]"):
+    with pytest.raises(ValueError, match=r"turbo_whistle_mix must be in \[0, 1\]"):
         module.render_gtr_r35_v3(_trace(), overrides={"turbo_whistle_mix": 1.5})
 
 

@@ -4361,3 +4361,58 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Record Jovi feedback: four vehicle identities are distinguishable at approximately 80%; frequency/waveform mismatch remains an optimization item, not a perfect-fit or Human PASS claim.
 - [x] Freeze `CODE AUTHORITY`, `REVIEW RECORD`, and `AUDIO PACKAGE`; keep `rich-audition-workbench*` branches and historical routes as `DO NOT USE`.
 - [ ] Wait for a new explicit, scene/frequency-scoped acoustic optimization request; do not auto-tune or re-render the current R1 package.
+
+## 2026-09-18 Stage AI-4A RX-7 true-peak diagnostics
+
+- [x] 读取 Stage AI-4A ZIP、README、NEXT prompt、remote status 与 SHA receipt。
+- [x] fetch origin，核实 `origin/feature/stage-ai-rx7-truepeak-diagnostics-20260917@aea382bb6b1c7f9d82b3d2186b398dd78af94d87`，创建独立 worktree。
+- [x] 运行 true-peak focused/evidence tests、compileall、diff-check。
+- [x] 从已 seal 的 AI qualified A/C 包读取 RX-7 十个 A WAV 的 expected SHA，完成 2x/4x/8x/16x 诊断。
+- [x] 记录 10 场景表、旧 4x blocker 复现、16x 收敛、最坏时间/声道/局部频谱与事件关联。
+- [x] 写入诊断报告；不改音频、DSP、阈值、输出保护或旧包；测试完成后提交并 push。
+
+### Review
+
+- 仅 `09_steady_mid` 为 `INTERSAMPLE_OVERSHOOT_BLOCKED`；4x `1.0310696445`、8x `1.0418431019`、16x `1.0418505943`。
+- 最坏点在 steady scene 起始 `0.000424479s` 左声道，建议 AI-4B 优先做 C 类插值/边界调查。
+- 报告：`docs/08-reports/33-stage-ai4a-rx7-truepeak-results-20260918.md`。
+
+## 2026-09-18 Stage AI-4B RX-7 boundary repair
+
+- [x] Add a RED regression for the measured RX-7 `09_steady_mid` startup-boundary intersample overshoot and for preserving non-RX7/default behavior.
+- [x] Implement the smallest explicit RX-7 boundary-only repair after the existing source/render path and before final PCM quantization; keep K/C, threshold, source parameters, IR, seed and A/C immutable.
+- [x] Add receipt fields proving boundary scope, changed frames, peak/RMS delta, 4x/8x/16x result and no hard clip; keep legacy output policy semantics unchanged by default.
+- [x] Run focused AI-4B/AI-4A/evidence tests and full relevant S12 tests; run compileall and diff-check.
+- [x] Re-render a fresh RX-7 repair candidate from the governed A baseline, compare all 10 scenes and WAV/PCM hashes, retain old packages, and document any remaining blocker.
+- [x] Commit and ordinary-push the repair branch only after tests pass; do not merge main or overwrite PR28 history.
+
+### Review gate
+
+- Hypothesis: the only blocker is a 20-sample-to-near-0.93 startup step in `09_steady_mid`; a 24-frame local fade should remove the boundary interpolation overshoot while leaving frames after the repair window unchanged.
+- Acceptance: repaired RX-7 output has 4x/8x/16x peak <= 1.0 for all ten scenes, non-RX7/default path remains byte-equivalent, and the repair receipt reports nonzero waveform delta only within the declared boundary window.
+
+### Review
+
+- Boundary helper and engine receipts are in commit `2fe82596a7acd4f2e9f835801f91a48d73bdd9fe`; RX-7-only routing in `fdabb4a937eb5b6d8351e5d5461db209c8f25a90`.
+- Fresh real run `s12-stage-ai4b-rx7-boundary-feedback-20260918-v1` is sealed and verified; RX-7/Aventador both `RELATIVE_IMPROVEMENT_VALIDATED`.
+- Full S12: `1715 passed, 3 skipped, 1 warning, 232 subtests`; exit `0`.
+- Repair report: `docs/08-reports/34-stage-ai4b-rx7-boundary-repair-20260918.md`.
+
+## 2026-09-19 Stage AI-4B verification and project audit
+
+- [x] Re-verify the remote AI-4B HEAD, clean isolated worktree, focused boundary tests, and sealed real-run identity.
+- [x] Recompute the RX-7 ten-scene sample/4x/8x/16x gates and confirm the repair only changes the declared 24-frame boundary window.
+- [x] Run the complete S12 suite, Track-P guard, compileall, and `git diff --check` from the current AI-4B source.
+- [x] Audit current-source failures, skipped tests, warnings, dependency/receipt integrity, and affected vehicle scopes; separate real defects from evidence limitations.
+- [x] For each reproducible code defect found, use RED/GREEN tests and the smallest fix; do not change sound parameters without scene-specific evidence.
+- [x] Record fresh results and remaining blockers; push only verified source/docs commits on the audit branch, without merging main.
+
+### Review
+
+- RED/GREEN: missing AI-4B workflow coverage fixed by an explicit workflow step and regression assertion.
+- RED/GREEN: GT-R test invalid escape warning fixed; strict `SyntaxWarning` compilation now passes.
+- Full S12: `1716 passed, 3 skipped, 232 subtests passed` in `3394.98s`; exit `0`.
+- Skip audit: real-material root absent for one test; two 3000-block acceptance tests require `S12_RUN_SLOW=1`.
+- Track-P: 180 files/2 symbols unchanged; guard and 32 tests pass. Compileall and diff-check pass.
+- Existing sealed AI-4B package and all old packages remain read-only and hash-verified.
+- New report: `docs/08-reports/35-stage-ai4b-project-audit-20260919.md`.

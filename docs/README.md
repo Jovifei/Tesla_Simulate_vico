@@ -16,14 +16,15 @@
 6. `08-reports/17-stage-ag-vehicle-identity-implementation-20260908.md` — Stage AG v1 车型身份层与 Reference 回退负证据。
 7. `08-reports/18-stage-ag-r1-reference-remediation-20260908.md` — R1 修正、双数值门禁、blind resume 边界。
 8. `08-reports/19-stage-ag-r1-strict-rich-review-routing-20260909.md` — **当前 Jovi 试听入口**：严格 package/PCM/Reference SHA 与富交互页面路由。
-9. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
-10. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
-11. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。
-12. `04-planning/05-s12-reference-closed-loop-optimization.md` — Stage AD 负反馈优化。
-13. `04-planning/02-project-master-roadmap.md` — 从现在到 App 的总路线。
-14. `06-testing/01-audio-and-runtime-validation-strategy.md` — 软件、声学、人耳、App 的测试层级。
-15. `10-learning/01-s12-reusable-engineering-playbook.md` — 可复用工程方法。
-16. `DOCUMENTATION_AUDIT_2026-09-05.md` — 本轮逐文件审计结果。
+9. `08-reports/34-stage-ai4b-rx7-boundary-repair-20260918.md` — Stage AI4B RX-7 真峰值边界修复、真实参考闭环和 WAV 身份证据。
+10. `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` — 项目长期记忆。
+11. `01-architecture/01-project-system-architecture.md` — 当前系统架构。
+12. `02-requirements/01-current-product-and-audio-requirements.md` — 当前产品/声音要求。
+13. `04-planning/05-s12-reference-closed-loop-optimization.md` — Stage AD 负反馈优化。
+14. `04-planning/02-project-master-roadmap.md` — 从现在到 App 的总路线。
+15. `06-testing/01-audio-and-runtime-validation-strategy.md` — 软件、声学、人耳、App 的测试层级。
+16. `10-learning/01-s12-reusable-engineering-playbook.md` — 可复用工程方法。
+17. `DOCUMENTATION_AUDIT_2026-09-05.md` — 本轮逐文件审计结果。
 
 ## 当前产品最终效果
 

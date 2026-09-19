@@ -1,0 +1,43 @@
+name: S12 Stage AI-4A True-Peak Diagnostics
+on:
+  pull_request:
+    paths:
+      - 'tools/sound_sim/s12/acoustic_identity_v015/stage_ah/true_peak_diagnostics.py'
+      - 'tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ai_true_peak_diagnostics.py'
+      - '.github/workflows/s12-stage-ai4a-truepeak-diagnostics.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact source
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python -c "import os,subprocess; h=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(); print('checked_out_head='+h); assert h==os.environ['EXPECTED_HEAD']"
+      - name: Install numeric test dependencies
+        run: python -m pip install numpy scipy pytest
+      - name: True-peak diagnostics
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ai_true_peak_diagnostics.py
+      - name: Preserve Stage AI measured feedback evidence
+        run: python -m pytest -q tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_stage_ai_evidence.py
+      - name: Compile and whitespace
+        run: |
+          python -m compileall -q tools/sound_sim/s12/acoustic_identity_v015/stage_ah
+          git diff --check

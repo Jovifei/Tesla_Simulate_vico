@@ -114,3 +114,11 @@ fit 阶段必须把车型、seed、数值旗标、renderer source SHA、IR 原�
 原 A/B 工作台采用自包含 HTML，把 WAV/Base64 嵌入单页后，文件可能达到几十 MB。此时“端口在 Listen”并不等于“可以刷新”：如果 `SimpleHTTPRequestHandler` 由单线程 `TCPServer` 承载，一个客户端慢慢读取响应会占住 handler，后续浏览器刷新只能等待或被拒绝。正确诊断顺序是查看监听端口、该端口的 `ESTABLISHED` 连接、实际进程命令行和 `127.0.0.1` 的 curl 结果；不要先删除试听包、改页面或终止其他端口。
 
 修复只改变服务并发模型，不改变声音链路或页面内容：`ThreadingMixIn + TCPServer`，配合 `daemon_threads=True` 与 `block_on_close=False`。回归测试要故意保留一个不读取的 socket，再发第二个 HTTP 请求，第二请求必须在固定超时内返回 200；同时检查 H0/H1/H2 或四车型端口。这个经验适用于所有自包含试听包，也适用于未来车型迁移；服务修复成功仍只证明页面可用，不证明声音真实或人耳通过。
+
+## 15. Stage AI4B：真实参考闭环与边界修复必须分层（2026-09-18）
+
+真实录音驱动的反馈闭环必须留下可复算的试探链：固定 Reference、IR、seed、flags 和 renderer SHA；每次试探记录参数、训练误差、独立 validation、接受/拒绝原因、输出 WAV 身份与数值门禁。`RELATIVE_IMPROVEMENT_VALIDATED` 只表示固定标尺下的相对诊断改善，不表示相似度百分比、Human PASS、OEM 或 Profile Freeze。R3 公开视频保持 `unsynchronized/unverified`，只能支持受控诊断与人耳试听，不能升级成 R1 标定证据。
+
+真峰值失败要先区分“输出契约”与“声源优化”。AI4A 的 RX-7 `09_steady_mid` 是起始静音后首帧阶跃导致的 4×/8×/16×重建超限；AI4B 使用显式、车型限定、默认关闭的 `rx7_start_boundary_fade_v1`，在既有 `linked_soft_ceiling_v1` 之后、int16 之前对左右声道使用同一 24 帧线性斜坡。K=`0.90`、C=`0.94`、声源参数、IR、seed、Reference 和全局增益保持不变。必须同时验证：旧 A 不被覆盖、修复后变化只发生在声明窗口、窗口外 PCM 字节一致、两处后置 clip 计数为零；不能用重算候选峰值、整体降音量或放宽上限代替修复。
+
+后续车型迁移沿用同一顺序：先交叉核对 source registry、Reference/IR provenance 和车型专属接线，再做最小 RED→GREEN 边界测试，随后运行完整真实素材闭环。默认路径必须保持旧 PCM 字节行为；只有明确授权的车型才允许 opt-in policy。软件通过后仍停在 `WAITING_FOR_JOVI_ACOUSTIC_REVIEW`，等待具名试听决定，不自动推广到其他车型。

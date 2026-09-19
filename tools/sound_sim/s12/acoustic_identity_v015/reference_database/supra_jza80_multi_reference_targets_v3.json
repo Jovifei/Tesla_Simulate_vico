@@ -1,0 +1,136 @@
+{
+  "aggregate": {
+    "adjustment_reason": "fixed source-only overlay selected from the bounded page-trajectory sensitivity sweep; no shared body, IR, PTR or ceiling change",
+    "band_shares_20_250_250_1000_1000_4000_4000_12000": [
+      0.8139308570390285,
+      0.18510913693941106,
+      0.007394298888695036,
+      0.0006684536702685447
+    ],
+    "centroid_median_hz": 208.56731284995905,
+    "method": "componentwise_median_of_three_selected_5s_acceleration_segments",
+    "page_trace_validation": {
+      "measured_bands_20_250_250_1000_1000_4000": [
+        0.8118448820438879,
+        0.18022233724154108,
+        0.0079250507085053
+      ],
+      "measured_centroid_hz": 199.01613189996945,
+      "trace": "build_unified_dashboards full_pull: 2500->7000 rpm, 7.0 s, throttle=1.0"
+    },
+    "source_adjustment": {
+      "edge_scale": 1.4,
+      "hiband_scale": 3.4
+    }
+  },
+  "boundary": "real recordings are vehicle-identity/supporting evidence only; RPM, microphone, exhaust configuration and rights are not independently verified",
+  "evidence_level": "R3_PUBLIC_RECORDINGS_RELATIVE_CUES",
+  "excluded_sanity_check": {
+    "audio_sha256": "029c95505a093971ce176adbe585a9bbe7d31f171ebb8d1dad4bf1f8e3dd287d",
+    "external_audio_path": "E:/Claude_allow/Download/s12-web-authorized-20260822/supra_jza80_chassis_dyno_cc0_hq.wav",
+    "id": "supra_cc0_chassis_dyno",
+    "license": "CC0",
+    "source_url": "https://freesound.org/people/editboy23/sounds/496171/",
+    "use": "independent sanity check only; high-band/dyno distortion outlier excluded from the three-recording median"
+  },
+  "recordings": [
+    {
+      "audio_header": {
+        "channels": 2,
+        "duration_s": 481.4889795918367,
+        "frames": 21233664,
+        "pcm_bits": 16,
+        "sample_rate_hz": 44100
+      },
+      "audio_sha256": "e8ef231c4f4c2c46dec96d4e0ecd47bab1f9c10cfc23a0efa910052ba5e850de",
+      "external_audio_path": "E:/Claude_allow/Download/s12-ytdlp-retry-20260823-v1/decoded_wav/supra_01.wav",
+      "features": {
+        "band_shares_20_250_250_1000_1000_4000_4000_12000": [
+          0.5999710274612103,
+          0.3039713607330391,
+          0.0827375347777332,
+          0.001176434715950206
+        ],
+        "centroid_hz": 327.646810736078
+      },
+      "id": "supra_01_bone_stock_dyno",
+      "identity_status": "VISUAL_IDENTITY_SUPPORT_ONLY",
+      "rights_status": "UNVERIFIED_YOUTUBE_RECORDING",
+      "scenario": "dyno_full_load_sweep",
+      "segment": {
+        "duration_s": 5.0,
+        "label": "full_pull_peak",
+        "start_s": 354.6249886621315
+      },
+      "source_page_url": "https://www.roadandtrack.com/news/a46772742/stock-1993-toyota-supra-dyno-mkiv/",
+      "source_url": "https://www.youtube.com/watch?v=0YuJlP-coTM",
+      "stock_exhaust_status": "NOT_CONFIRMED"
+    },
+    {
+      "audio_header": {
+        "channels": 2,
+        "duration_s": 1038.8375510204082,
+        "frames": 45812736,
+        "pcm_bits": 16,
+        "sample_rate_hz": 44100
+      },
+      "audio_sha256": "104182c07227f344c505b27d79b7501900ab5ce3b99312b64bc6492e89eb5122",
+      "external_audio_path": "E:/Claude_allow/Download/s12-ytdlp-retry-20260823-v1/decoded_wav/supra_02.wav",
+      "features": {
+        "band_shares_20_250_250_1000_1000_4000_4000_12000": [
+          0.8139308570390285,
+          0.18510913693941106,
+          0.0007524925411474033,
+          6.905310848306584e-05
+        ],
+        "centroid_hz": 208.56731284995905
+      },
+      "id": "supra_02_mostly_stock_road",
+      "identity_status": "VISUAL_IDENTITY_SUPPORT_ONLY",
+      "rights_status": "UNVERIFIED_YOUTUBE_RECORDING",
+      "scenario": "road_acceleration_shift",
+      "segment": {
+        "duration_s": 5.0,
+        "label": "acceleration_peak",
+        "start_s": 780.3750113378685
+      },
+      "source_page_url": "https://www.youtube.com/watch?v=sWlvny8YzbU",
+      "source_url": "https://www.youtube.com/watch?v=sWlvny8YzbU",
+      "stock_exhaust_status": "NOT_CONFIRMED"
+    },
+    {
+      "audio_header": {
+        "channels": 2,
+        "duration_s": 61.1149375,
+        "frames": 2933517,
+        "pcm_bits": 16,
+        "sample_rate_hz": 48000
+      },
+      "audio_sha256": "d645f2036644b2166891d797e0a72aeea4d5427af3d37504fae8c3123a272189",
+      "external_audio_path": "E:/Claude_allow/Download/s12-ytdlp-retry-20260823-v1/decoded_wav/supra_03.wav",
+      "features": {
+        "band_shares_20_250_250_1000_1000_4000_4000_12000": [
+          0.830569441446533,
+          0.15970158078420693,
+          0.007394298888695036,
+          0.0006684536702685447
+        ],
+        "centroid_hz": 184.43928694191214
+      },
+      "id": "supra_03_stock_start_acceleration",
+      "identity_status": "VISUAL_IDENTITY_SUPPORT_ONLY",
+      "rights_status": "UNVERIFIED_YOUTUBE_RECORDING",
+      "scenario": "startup_road_acceleration",
+      "segment": {
+        "duration_s": 5.0,
+        "label": "acceleration_peak",
+        "start_s": 20.625
+      },
+      "source_page_url": "https://www.youtube.com/watch?v=8Z6TBiNRVCc",
+      "source_url": "https://www.youtube.com/watch?v=8Z6TBiNRVCc",
+      "stock_exhaust_status": "NOT_CONFIRMED"
+    }
+  ],
+  "schema": "s12.stage_ah.supra.multi_reference_targets.v3",
+  "vehicle": "supra_jza80"
+}
