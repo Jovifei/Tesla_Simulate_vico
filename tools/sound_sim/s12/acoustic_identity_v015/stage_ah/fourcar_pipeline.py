@@ -28,6 +28,7 @@ from ..stage_ag.vehicle_identity import VEHICLE_IDENTITY_PROFILES
 from ..stage_g.candidate_profiles import load_stage_g_candidate
 from ..stage_k.candidate_profiles import load_stage_k_candidate
 from .engine import input_sha, spectrum_report
+from .reconstruction_peak import reconstructed_peak_receipt
 from .output_guard import (
     LEGACY_CLIP_V1,
     LINKED_SOFT_CEILING_V1,
@@ -562,6 +563,10 @@ class FourCarRealReferenceEngine:
         final_float = np.clip(combined, -0.94, 0.94)
         identity_error = combined - final_float
         pcm = (final_float * 32767.0).astype(np.int16)
+        artifact_float = pcm.astype(np.float64) / 32767.0
+        reconstruction_peak = reconstructed_peak_receipt(
+            artifact_float, sample_rate=self.sr
+        )
         stem_reports = {
             name: spectrum_report(np.asarray(values, dtype=np.float64), self.sr)
             for name, values in source_stems.items()
@@ -645,6 +650,7 @@ class FourCarRealReferenceEngine:
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
             "peak_estimate_4x": peak_estimate_4x(final_float),
+            "reconstruction_peak": reconstruction_peak,
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "candidate_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "R3 public recordings provide relative unsynchronised cues; source-only candidate, not OEM reproduction",
