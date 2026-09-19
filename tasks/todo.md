@@ -4400,13 +4400,19 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ## 2026-09-19 Stage AI-4B verification and project audit
 
-- [ ] Re-verify the remote AI-4B HEAD, clean isolated worktree, focused boundary tests, and sealed real-run identity.
-- [ ] Recompute the RX-7 ten-scene sample/4x/8x/16x gates and confirm the repair only changes the declared 24-frame boundary window.
-- [ ] Run the complete S12 suite, Track-P guard, compileall, and `git diff --check` from the current AI-4B source.
-- [ ] Audit current-source failures, skipped tests, warnings, dependency/receipt integrity, and affected vehicle scopes; separate real defects from evidence limitations.
-- [ ] For each reproducible code defect found, use RED/GREEN tests and the smallest fix; do not change sound parameters without scene-specific evidence.
-- [ ] Record fresh results and remaining blockers; push only verified source/docs commits on the audit branch, without merging main.
+- [x] Re-verify the remote AI-4B HEAD, clean isolated worktree, focused boundary tests, and sealed real-run identity.
+- [x] Recompute the RX-7 ten-scene sample/4x/8x/16x gates and confirm the repair only changes the declared 24-frame boundary window.
+- [x] Run the complete S12 suite, Track-P guard, compileall, and `git diff --check` from the current AI-4B source.
+- [x] Audit current-source failures, skipped tests, warnings, dependency/receipt integrity, and affected vehicle scopes; separate real defects from evidence limitations.
+- [x] For each reproducible code defect found, use RED/GREEN tests and the smallest fix; do not change sound parameters without scene-specific evidence.
+- [x] Record fresh results and remaining blockers; push only verified source/docs commits on the audit branch, without merging main.
 
 ### Review
 
-- Pending fresh verification and audit evidence.
+- RED/GREEN: missing AI-4B workflow coverage fixed by an explicit workflow step and regression assertion.
+- RED/GREEN: GT-R test invalid escape warning fixed; strict `SyntaxWarning` compilation now passes.
+- Full S12: `1716 passed, 3 skipped, 232 subtests passed` in `3394.98s`; exit `0`.
+- Skip audit: real-material root absent for one test; two 3000-block acceptance tests require `S12_RUN_SLOW=1`.
+- Track-P: 180 files/2 symbols unchanged; guard and 32 tests pass. Compileall and diff-check pass.
+- Existing sealed AI-4B package and all old packages remain read-only and hash-verified.
+- New report: `docs/08-reports/35-stage-ai4b-project-audit-20260919.md`.
