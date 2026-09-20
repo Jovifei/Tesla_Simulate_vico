@@ -1389,3 +1389,7 @@ Rules:
 # 2026-09-19 S12 Stage AI-4B execution lesson
 
 - 当诊断已给出单一、可测量且得到 Jovi 明确实施授权的修复方向时，应直接完成 RED/GREEN、真实素材复测、全量回归和 CI 覆盖闭环；不能再次停在“等待修复决策”。新增阶段测试必须进入实际 workflow，远端存在分支本身不等于 CI 已运行。
+
+# 2026-09-20 Stage AI-6 blocked-evidence publication lesson
+
+- fail-closed 资格失败不能等同于删除证据：事务发布必须封存 BLOCKED 资格收据、失败场景和诊断文件，再由公开 verify/serve 的 B-ready 门拒绝使用；生成路径不得在收据落盘前调用只接受 PASS 的验证器。
