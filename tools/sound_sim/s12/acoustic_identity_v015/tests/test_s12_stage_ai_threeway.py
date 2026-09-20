@@ -10,6 +10,7 @@ from scipy.io import wavfile
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import three_way_audition as ui
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import qualified_three_way as qualified
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.feedback_evidence import SCENES, sha_file
+from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import seal_payload
 
 
 @pytest.fixture
@@ -34,7 +35,57 @@ def old_package(tmp_path,monkeypatch):
     return out
 
 
+def _reseal_inventory(root):
+    files = {
+        path.relative_to(root).as_posix(): sha_file(path)
+        for path in root.rglob("*")
+        if path.is_file() and path != root / "ARTIFACTS.json"
+    }
+    manifest = root / "ARTIFACTS.json"
+    manifest.unlink()
+    qualified.write_json(
+        manifest,
+        seal_payload({"schema": qualified.SCHEMA, "files": files}, qualified.SCHEMA),
+    )
+
+
+def _replace_embedded(page, name, value):
+    text = page.read_text(encoding="utf-8")
+    current = ui._embedded(text, name)
+    old = "const " + name + " = " + json.dumps(current, ensure_ascii=False)
+    new = "const " + name + " = " + json.dumps(value, ensure_ascii=False)
+    assert old in text
+    page.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+
+def _valid_fit():
+    return {
+        "schema": "s12.stage_ah.reference_feedback.v1",
+        "status": "RELATIVE_IMPROVEMENT_VALIDATED",
+        "baseline_train_loss": 2.0,
+        "selected_train_loss": 1.0,
+        "baseline_parameters": {"gain": 1.0},
+        "selected_parameters": {"gain": 1.1},
+        "parameter_delta": {"gain": 0.1},
+        "trial_count": 2,
+        "history": [
+            {"trial": 0, "parameters": {"gain": 1.0}, "loss": 2.0,
+             "decision": "TRAIN_REJECTED", "reason": "BASELINE"},
+            {"trial": 1, "parameters": {"gain": 1.1}, "loss": 1.0,
+             "decision": "TRAIN_ACCEPTED", "reason": "LOWER_TRAIN_LOSS"},
+        ],
+        "validation_used_for_search": False,
+        "validation_baseline": {"validation-case": 1.0},
+        "validation_proposed": {"validation-case": 0.9},
+        "reference_cases": [
+            {"case_id": "train-case", "split": "train", "source_sha256": "a" * 64},
+            {"case_id": "validation-case", "split": "validation", "source_sha256": "b" * 64},
+        ],
+    }
+
+
 def test_all_eight_preserve_ac_but_fixed_recipes_cannot_be_b(old_package,tmp_path):
+    old_manifest_before = sha_file(old_package / "ARTIFACTS.json")
     out=tmp_path/'qualified-abc'
     result=qualified.build(old_package,sha_file(old_package/'ARTIFACTS.json'),out)
     qualified.verify(out,sha_file(out/'ARTIFACTS.json'))
@@ -51,9 +102,90 @@ def test_all_eight_preserve_ac_but_fixed_recipes_cannot_be_b(old_package,tmp_pat
         assert '实时动态声学分析仪' in text and 'vehicleSwitcher' in text
         assert all('../'+car+'/index.html' in text for car in qualified.VEHICLES)
         assert 'audioEl.removeAttribute' in text
+        receipt = json.loads((out / "evidence" / (v + "-qualification.json")).read_text(encoding="utf-8"))
+        assert receipt["schema"] == qualified.VEHICLE_QUALIFICATION_SCHEMA
+        assert set(receipt["roles"]) == {"original", "feedback", "reference"}
+    assert result["schema"] == qualified.SCHEMA
+    assert result["feedback_ready_vehicle_count"] == 0
+    assert result["package_status"] == "PARTIAL_B_AVAILABILITY"
+    assert sha_file(old_package / "ARTIFACTS.json") == old_manifest_before
     # Same-schema metadata corruption can no longer pass verification.
     path=out/'hellcat'/'index.html';path.write_text(path.read_text(encoding='utf-8')+'tampered',encoding='utf-8')
     with pytest.raises(ValueError):qualified.verify(out)
+
+
+def test_resealed_same_schema_embedded_contract_drift_is_rejected(old_package, tmp_path):
+    out = tmp_path / "same-schema-drift"
+    qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out)
+    page = out / "rx7_fd" / "index.html"
+    contract = ui._embedded(page.read_text(encoding="utf-8"), "DASHBOARD_CONTRACT")
+    contract["source_roles"]["original"]["label"] = "fabricated same-schema label"
+    _replace_embedded(page, "DASHBOARD_CONTRACT", contract)
+    _reseal_inventory(out)
+    with pytest.raises(ValueError, match="embedded contract"):
+        qualified.verify(out)
+
+
+def test_resealed_missing_c_audio_store_entry_is_rejected(old_package, tmp_path):
+    out = tmp_path / "missing-c-store"
+    qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out)
+    page = out / "hellcat" / "index.html"
+    store = ui._embedded(page.read_text(encoding="utf-8"), "AUDIO_STORE")
+    store.pop(SCENES[0] + "_reference")
+    _replace_embedded(page, "AUDIO_STORE", store)
+    _reseal_inventory(out)
+    with pytest.raises(ValueError, match="source mapping"):
+        qualified.verify(out)
+
+
+def test_fabricated_fit_pass_is_rejected():
+    fit = _valid_fit()
+    qualified._validate_fit_evidence(fit)
+    fit["status"] = "FABRICATED_PASS"
+    with pytest.raises(ValueError, match="measured/validated fit"):
+        qualified._validate_fit_evidence(fit)
+
+
+def test_missing_enabled_b_qualification_receipt_is_rejected(old_package, tmp_path):
+    out = tmp_path / "missing-b-receipt"
+    qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out)
+    receipt = out / "evidence" / "rx7_fd-qualification.json"
+    assert receipt.is_file()
+    receipt.unlink()
+    _reseal_inventory(out)
+    with pytest.raises(ValueError, match="qualification receipt"):
+        qualified.verify(out)
+
+
+def test_rx7_provenance_and_complete_fit_evidence_are_visible():
+    template = ui.TEMPLATE_PATH.read_text(encoding="utf-8")
+    fit = _valid_fit()
+    scenes = [{"id": SCENES[0], "title": "x", "desc": "x", "category": "idle",
+               "candidate_file": "A.wav", "feedback_file": "B.wav",
+               "reference_file": "", "ab_pcm_identical": True}]
+    contract = {
+        "source_roles": {
+            "original": {"available": True, "label": "A: AI-5 feedback-off baseline after rx7_start_boundary_fade_v1"},
+            "feedback": {"available": True, "label": "B: AI-5 tuned"},
+            "reference": {"available": False, "label": "C: governed reference"},
+        },
+        "feedback_evidence": {"kind": "AUTOMATIC_REFERENCE_CLOSED_LOOP"},
+        "a_provenance": {
+            "byte_identity_to_pre_ai4b_a": False,
+            "boundary_policy": "rx7_start_boundary_fade_v1",
+            "boundary_difference_frames": 24,
+            "old_a_sha256": "a" * 64,
+        },
+    }
+    page = qualified.rich_page(template, "rx7_fd", "RX-7", scenes, contract, {}, [],
+                               "../evidence/rx7-log.html", fit)
+    assert "rx7_start_boundary_fade_v1" in page
+    assert "24" in page and "pre-AI4B" in page
+    assert "gain" in page and "1.1" in page
+    assert "baseline_train_loss" in page and "validation_proposed" in page
+    assert "LOWER_TRAIN_LOSS" in page
+    assert "A/B相同场景" in page
+    assert "0 parameters" not in page and "NOT_MEASURED" not in page
 
 
 def test_unavailable_source_switch_stops_stale_audio(old_package,tmp_path):
