@@ -24,6 +24,7 @@ from .fourcar_reference_loop import verify_run as verify_fourcar
 from . import reference_feedback_cli as feedback_cli
 from .qualification import (
     QUALIFICATION_FILENAME,
+    QUALIFICATION_SCHEMA,
     build_qualification_receipt,
 )
 from .reference_feedback_cli import verify_run as verify_two, numeric_ok, _runtime_identity
@@ -70,6 +71,49 @@ def _decoded_pcm_sha(path: Path) -> tuple[int, str]:
     if sample_rate != 48_000 or pcm.dtype != np.int16 or pcm.ndim not in (1, 2):
         raise ValueError(f'role WAV must be 48 kHz int16 PCM: {path}')
     return int(sample_rate), hashlib.sha256(np.ascontiguousarray(pcm, dtype='<i2')).hexdigest()
+
+
+def _canonical_sha(value) -> str:
+    encoded=json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':'),
+                       allow_nan=False).encode('utf-8')
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _rx7_boundary_diff_receipt(old_path: Path, ai5_path: Path) -> dict:
+    old_rate,old_pcm=wavfile.read(old_path);new_rate,new_pcm=wavfile.read(ai5_path)
+    if (old_rate!=48_000 or new_rate!=48_000 or old_pcm.dtype!=np.int16
+            or new_pcm.dtype!=np.int16 or old_pcm.ndim!=2 or old_pcm.shape[1]!=2
+            or new_pcm.shape!=old_pcm.shape):
+        raise ValueError('RX-7 old A and AI-5 baseline require equal-shape 48 kHz stereo int16 PCM')
+    changed=np.flatnonzero(np.any(old_pcm!=new_pcm,axis=1))
+    if not len(changed) or np.any(changed>=24):
+        raise ValueError('RX-7 difference is not confined to the 24-frame repair window')
+    old_post=np.ascontiguousarray(old_pcm[24:],dtype='<i2').tobytes()
+    new_post=np.ascontiguousarray(new_pcm[24:],dtype='<i2').tobytes()
+    if old_post!=new_post:
+        raise ValueError('RX-7 PCM differs after the 24-frame repair window')
+    return {
+        'schema':'s12.stage_ai6.rx7_boundary_diff.v1',
+        'repair_window_frames':24,
+        'sample_rate_hz':48_000,
+        'pcm_shape':[int(value) for value in old_pcm.shape],
+        'changed_frame_count':int(len(changed)),
+        'changed_frame_indices':[int(value) for value in changed],
+        'first_changed_frame':int(changed[0]),
+        'last_changed_frame':int(changed[-1]),
+        'post_window_byte_identical':True,
+        'post_window_pcm_sha256':hashlib.sha256(old_post).hexdigest(),
+        'old_a':{'path':str(old_path.resolve()),'wav_sha256':sha_file(old_path),
+                 'decoded_pcm_sha256':_decoded_pcm_sha(old_path)[1]},
+        'ai5_baseline':{'path':str(ai5_path.resolve()),'wav_sha256':sha_file(ai5_path),
+                        'decoded_pcm_sha256':_decoded_pcm_sha(ai5_path)[1]},
+    }
+
+
+def _unavailable_reason(vehicle: str) -> str:
+    if vehicle=='c63_w204':return 'C63 本阶段没有独立合格的 sealed B 证据'
+    if vehicle=='supra_jza80':return 'Supra 本阶段没有独立合格的 sealed B 证据'
+    return '尚未完成独立自动闭环；固定recipe/overlay不算自动反馈'
 
 
 def _validate_fit_evidence(result):
@@ -147,11 +191,10 @@ def _vehicle_receipt(vehicle: str, roles: dict, scene_roles: dict, *, outcome: s
         'roles': roles,
         'scenes': scene_roles,
         'outcome': outcome,
+        'fit_evidence':copy.deepcopy(fit_info or {}),
         'human_status': 'NOT_EVALUATED',
         'promotable': False,
     }
-    if fit_info:
-        payload['fit_evidence'] = fit_info
     return seal_payload(payload, VEHICLE_QUALIFICATION_SCHEMA)
 
 
@@ -265,16 +308,17 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
     for v in VEHICLES:
         key='fourcar' if v in VEHICLES[:4] else 'two'
         if v=='c63_w204':
-            choices[v]=(None,None,None,None,'C63 本阶段没有独立合格的 sealed B 证据')
+            choices[v]=(None,None,None,None,None,_unavailable_reason(v))
         elif v=='supra_jza80':
-            choices[v]=(None,None,None,None,'Supra 本阶段没有独立合格的 sealed B 证据')
+            choices[v]=(None,None,None,None,None,_unavailable_reason(v))
         elif key not in inputs:
-            choices[v]=(None,None,None,None,'尚未完成独立自动闭环；固定recipe/overlay不算自动反馈')
+            choices[v]=(None,None,None,None,None,_unavailable_reason(v))
         else:
             root,summary,qualification,manifest_sha=inputs[key]
             result,reason=_qualified(root,summary,qualification,v,old_root,
                 require_old_a=v not in ('rx7_fd','aventador_lp700'))
-            choices[v]=(root,result,qualification,manifest_sha,reason)
+            if not result:reason=_unavailable_reason(v)
+            choices[v]=(root,result,summary,qualification,manifest_sha,reason)
     output=output.resolve()
     if not output.name.replace('-','').replace('_','').isalnum():
         raise ValueError('safe output identifier required')
@@ -293,7 +337,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         for v in VEHICLES:
             folder=staging/v; web=folder/'web_audio';web.mkdir(parents=True)
             scenes=ui._load_scenes(old_root/v/'index.html')
-            root,result,source_qualification,source_manifest_sha,reason=choices[v]
+            root,result,source_summary,source_qualification,source_manifest_sha,reason=choices[v]
             roles={
                 'original':{'label':'A: 原算法（本轮基线）','available':True,'status':'BASELINE'},
                 'feedback':{'label':'B: 自动负反馈算法','available':bool(result),
@@ -330,12 +374,14 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     scene_roles[scene]['reference']=_role_identity(c_source,web/c)
             roles['reference']['available']=bool(hashes['reference'])
             info={'kind':AUTO if result else 'NO_QUALIFIED_AUTOMATIC_B','available':bool(result)}
-            link=None;fit_info=None
+            link=None
             if result:
                 _validate_fit_evidence(result)
                 log_path=evidence/(v+'-fit.json');write_json(log_path,result)
                 task1_path=evidence/(v+'-task1-qualification.json')
                 write_json(task1_path,source_qualification)
+                source_summary_path=evidence/(v+'-source-summary.json')
+                write_json(source_summary_path,source_summary)
                 trials_path=evidence/(v+'-trials.jsonl')
                 with Journal(trials_path) as journal:
                     for row in result['history']:journal.append('MEASURED_TRIAL',row)
@@ -344,9 +390,11 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     trial_log='evidence/'+trials_path.name,trial_log_sha256=sha_file(trials_path),
                     task1_qualification_receipt='evidence/'+task1_path.name,
                     task1_qualification_receipt_sha256=sha_file(task1_path),
+                    source_summary='evidence/'+source_summary_path.name,
+                    source_summary_sha256=sha_file(source_summary_path),
+                    source_run_path=str(root.resolve()),
                     source_manifest_sha256=source_manifest_sha,
                     trial_count=result['trial_count'],parameter_delta=result['parameter_delta'])
-                fit_info=dict(info)
                 log_html=evidence/(v+'-log.html')
                 text='<html lang="zh-CN"><meta charset="utf-8"><title>负反馈试验日志</title><h1>'+v+'</h1>'
                 text+='<p>训练误差不是相似度；验证源不用于搜参；没有Human PASS。</p><pre>'+html.escape(json.dumps(
@@ -366,11 +414,15 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     'byte_identity_to_pre_ai4b_a':False,
                     'old_a_source_root':str((old_root/v/'web_audio').resolve()),
                     'old_a_sha256':{scene:sha_file(old_root/v/'web_audio'/('A_'+scene+'.wav')) for scene in SCENES},
+                    'scene_differences':{
+                        scene:_rx7_boundary_diff_receipt(
+                            old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                            root/'baseline'/v/'web_audio'/(scene+'.wav'))
+                        for scene in SCENES
+                    },
                 }
-            role_receipt={role:{'available':bool(data['available']),
-                               'status':data.get('status'),
-                               'reason':data.get('reason','')}
-                          for role,data in roles.items()}
+            fit_info=copy.deepcopy(info)
+            role_receipt=copy.deepcopy(roles)
             qualification_receipt=_vehicle_receipt(
                 v,role_receipt,scene_roles,
                 outcome='B_READY' if result else 'B_UNAVAILABLE',fit_info=fit_info)
@@ -395,7 +447,8 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                          'a_provenance':a_provenance,'scene_count':10}
         ready_count=sum(row['source_roles']['feedback']['available'] for row in vehicles.values())
         summary=seal_payload({'schema':SCHEMA,'run_id':output.name,'runtime':runtime,'vehicles':vehicles,
-            'old_threeway_manifest_sha256':old_sha,'fourcar_manifest_sha256':fourcar_sha,'two_car_manifest_sha256':two_sha,
+            'old_threeway_source_path':str(old_root),'old_threeway_manifest_sha256':old_sha,
+            'fourcar_manifest_sha256':fourcar_sha,'two_car_manifest_sha256':two_sha,
             'feedback_ready_vehicle_count':ready_count,'package_status':'PARTIAL_B_AVAILABILITY',
             'promotable':False,'human_status':'NOT_EVALUATED'},SCHEMA)
         write_json(staging/'summary.json',summary)
@@ -415,6 +468,25 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         lock.unlink(missing_ok=True)
 
 
+def _fit_binding(info: dict) -> dict:
+    return {key:copy.deepcopy(value) for key,value in info.items()
+            if key not in ('vehicle_qualification_receipt','vehicle_qualification_receipt_sha256')}
+
+
+def _verify_source_identity(identity: dict, expected: Path, packaged: Path) -> None:
+    expected=expected.resolve()
+    if identity.get('source_path')!=str(expected):
+        raise ValueError('role source path binding mismatch')
+    if not expected.is_file() or sha_file(expected)!=identity.get('source_sha256'):
+        raise ValueError('role source path/hash binding mismatch')
+    rate,pcm_sha=_decoded_pcm_sha(packaged)
+    if (sha_file(packaged)!=identity.get('wav_file_sha256')
+            or pcm_sha!=identity.get('decoded_pcm_sha256')
+            or rate!=identity.get('sample_rate_hz')
+            or sha_file(expected)!=sha_file(packaged)):
+        raise ValueError('role WAV/PCM/source identity mismatch')
+
+
 def verify(root:Path, expected_sha:str|None=None):
     root=root.resolve()
     if expected_sha and sha_file(root/'ARTIFACTS.json')!=expected_sha:raise ValueError('manifest SHA mismatch')
@@ -429,16 +501,23 @@ def verify(root:Path, expected_sha:str|None=None):
     if summary.get('schema')!=SCHEMA or summary.get('package_status')!='PARTIAL_B_AVAILABILITY':
         raise ValueError('wrong AI-6 summary contract')
     if set(summary['vehicles'])!=set(VEHICLES):raise ValueError('eight vehicles required')
+    old_root=Path(summary.get('old_threeway_source_path','')).resolve()
+    verify_legacy(old_root,summary.get('old_threeway_manifest_sha256',''))
     ready_count=sum(row['source_roles']['feedback']['available'] for row in summary['vehicles'].values())
     if summary.get('feedback_ready_vehicle_count')!=ready_count or ready_count==len(VEHICLES):
         raise ValueError('package-wide B availability is misleading')
+    task1_verified=set()
     for v in VEHICLES:
         folder=root/v;contract=_sealed(folder/'dashboard_contract.json')
         stored=json.loads((folder/'dashboard_contract.json').read_text(encoding='utf-8'))
-        if contract['source_roles']!=summary['vehicles'][v]['source_roles']:raise ValueError('ABC role identity mismatch')
-        if contract.get('a_provenance')!=summary['vehicles'][v].get('a_provenance'):
+        row=summary['vehicles'][v]
+        if (contract['source_roles']!=row['source_roles']
+                or contract['source_sha256']!=row['source_sha256']
+                or contract['feedback_evidence']!=row['feedback_evidence']):
+            raise ValueError('ABC role identity mismatch')
+        if contract.get('a_provenance')!=row.get('a_provenance'):
             raise ValueError('A provenance mismatch')
-        info=contract['feedback_evidence']
+        info=contract['feedback_evidence'];feedback=contract['source_roles']['feedback']['available']
         receipt_path=root/info.get('vehicle_qualification_receipt','')
         if (not receipt_path.is_file()
                 or sha_file(receipt_path)!=info.get('vehicle_qualification_receipt_sha256')):
@@ -446,74 +525,119 @@ def verify(root:Path, expected_sha:str|None=None):
         receipt=_sealed(receipt_path)
         if receipt.get('schema')!=VEHICLE_QUALIFICATION_SCHEMA or receipt.get('vehicle')!=v:
             raise ValueError('vehicle qualification receipt mismatch')
-        for role in ('original','feedback','reference'):
-            if receipt['roles'][role]['available']!=contract['source_roles'][role]['available']:
-                raise ValueError('vehicle qualification role mismatch')
-        if contract['source_roles']['feedback']['available']:
+        if receipt.get('outcome')!=('B_READY' if feedback else 'B_UNAVAILABLE'):
+            raise ValueError('vehicle qualification outcome mismatch')
+        if receipt.get('roles')!=contract['source_roles']:
+            raise ValueError('vehicle qualification full role status/reason mismatch')
+        if receipt.get('fit_evidence')!=_fit_binding(info):
+            raise ValueError('vehicle qualification fit evidence mismatch')
+        if not feedback and (info.get('kind')!='NO_QUALIFIED_AUTOMATIC_B'
+                             or info.get('available') is not False
+                             or contract['source_roles']['feedback'].get('reason')!=_unavailable_reason(v)):
+            raise ValueError('unavailable B reason/status mismatch')
+        if feedback:
+            if info.get('kind')!=AUTO or info.get('available') is not True:
+                raise ValueError('enabled B fit status mismatch')
             fit=root/info['fit_report']
-            if sha_file(fit)!=info['fit_report_sha256']:
-                raise ValueError('B fit evidence hash mismatch')
+            if sha_file(fit)!=info['fit_report_sha256']:raise ValueError('B fit evidence hash mismatch')
             result=json.loads(fit.read_text(encoding='utf-8'));_validate_fit_evidence(result)
-            task1=root/info.get('task1_qualification_receipt','')
-            if (not task1.is_file()
-                    or sha_file(task1)!=info.get('task1_qualification_receipt_sha256')):
-                raise ValueError('Task-1 qualification receipt missing or changed')
-            source_qualification=json.loads(task1.read_text(encoding='utf-8'))
-            source_vehicle=source_qualification.get('vehicles',{}).get(v)
-            if not source_vehicle or source_vehicle.get('status')!='PASS':
-                raise ValueError('Task-1 qualification did not enable B')
+            source_summary_path=root/info.get('source_summary','')
+            task1_path=root/info.get('task1_qualification_receipt','')
+            if (not source_summary_path.is_file() or sha_file(source_summary_path)!=info.get('source_summary_sha256')
+                    or not task1_path.is_file() or sha_file(task1_path)!=info.get('task1_qualification_receipt_sha256')):
+                raise ValueError('Task-1 source summary/qualification receipt missing or changed')
+            source_summary=json.loads(source_summary_path.read_text(encoding='utf-8'))
+            task1=json.loads(task1_path.read_text(encoding='utf-8'))
+            if (task1.get('schema')!=QUALIFICATION_SCHEMA or task1.get('status')!='PASS'
+                    or task1.get('summary_sha256')!=_canonical_sha(source_summary)
+                    or source_summary.get('vehicles',{}).get(v)!=result):
+                raise ValueError('Task-1 schema/status/summary binding mismatch')
+            if info.get('source_manifest_sha256') not in (
+                    summary.get('fourcar_manifest_sha256'),summary.get('two_car_manifest_sha256')):
+                raise ValueError('vehicle qualification fit evidence source manifest mismatch')
+            source_run=Path(info.get('source_run_path','')).resolve()
+            task1_key=(info['task1_qualification_receipt_sha256'],info['source_summary_sha256'])
+            if task1_key not in task1_verified:
+                with tempfile.TemporaryDirectory(prefix='ai6-requalify-') as temp:
+                    view=Path(temp)
+                    for source_vehicle,source_result in source_summary.get('vehicles',{}).items():
+                        if source_result.get('status')=='ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK':continue
+                        if source_vehicle not in VEHICLES:raise ValueError('Task-1 source vehicle not in AI-6')
+                        source_contract=_sealed(root/source_vehicle/'dashboard_contract.json')
+                        if not source_contract['source_roles']['feedback']['available']:
+                            raise ValueError('Task-1 source vehicle lacks enabled package B')
+                        source_info=source_contract['feedback_evidence']
+                        source_fit=json.loads((root/source_info['fit_report']).read_text(encoding='utf-8'))
+                        if source_fit!=source_result:raise ValueError('Task-1 complete source summary fit mismatch')
+                        for role,prefix in (('baseline','A_'),('tuned','B_')):
+                            destination=view/role/source_vehicle/'web_audio';destination.mkdir(parents=True)
+                            for scene in SCENES:
+                                shutil.copy2(root/source_vehicle/'web_audio'/(prefix+scene+'.wav'),
+                                             destination/(scene+'.wav'))
+                    fresh=build_qualification_receipt(view,source_summary)
+                if fresh!=task1:raise ValueError('Task-1 complete receipt recomputation mismatch')
+                task1_verified.add(task1_key)
         else:
-            result=None;source_vehicle=None
+            result=None;source_run=None
+        expected_hashes={role:{} for role in ('original','feedback','reference')}
         for page in ('index.html','index_standalone.html'):
             text=(folder/page).read_text(encoding='utf-8')
             if ui._embedded(text,'DASHBOARD_CONTRACT')!=stored:raise ValueError('embedded contract differs')
             scenes=ui._embedded(text,'SCENES');store=ui._embedded(text,'AUDIO_STORE')
-            if [s['id'] for s in scenes]!=list(SCENES):raise ValueError('ten scenes required')
-            for s in scenes:
-                for role,field in (('original','candidate_file'),('feedback','feedback_file'),('reference','reference_file')):
-                    name=s.get(field,'');key=s['id']+'_'+role
-                    if not name:
-                        if key in store:raise ValueError('disabled role retains audio')
-                        continue
-                    if (key not in store or store[key]!='web_audio/'+name
-                            or sha_file(folder/'web_audio'/name)!=contract['source_sha256'][role].get(name)):
-                        raise ValueError('A/B/C source mapping mismatch')
-                    identity=receipt['scenes'].get(s['id'],{}).get(role)
-                    sample_rate,pcm_sha=_decoded_pcm_sha(folder/'web_audio'/name)
-                    if (not identity or identity.get('source_sha256')!=sha_file(folder/'web_audio'/name)
-                            or identity.get('wav_file_sha256')!=sha_file(folder/'web_audio'/name)
-                            or identity.get('decoded_pcm_sha256')!=pcm_sha
-                            or identity.get('sample_rate_hz')!=sample_rate):
-                        raise ValueError('role WAV/PCM/source identity mismatch')
-                if s.get('feedback_file'):
-                    identical=(sha_file(folder/'web_audio'/s['candidate_file'])
-                               ==sha_file(folder/'web_audio'/s['feedback_file']))
-                    if s.get('ab_pcm_identical') is not identical:
+            if [scene['id'] for scene in scenes]!=list(SCENES):raise ValueError('ten scenes required')
+            if set(receipt.get('scenes',{}))!=set(SCENES):raise ValueError('vehicle receipt scene coverage mismatch')
+            for scene_row in scenes:
+                scene=scene_row['id'];a='A_'+scene+'.wav';b='B_'+scene+'.wav';c='C_'+scene+'.wav'
+                c_available=(old_root/v/'web_audio'/c).is_file()
+                expected_names={'original':a,'feedback':b if feedback else '',
+                                'reference':c if c_available else ''}
+                if (scene_row.get('candidate_file')!=a
+                        or scene_row.get('feedback_file','')!=expected_names['feedback']
+                        or scene_row.get('ref_file','')!=expected_names['feedback']
+                        or scene_row.get('reference_file','')!=expected_names['reference']):
+                    raise ValueError('source role coverage filename mismatch')
+                expected_store={scene+'_original':'web_audio/'+a,scene+'_candidate':'web_audio/'+a}
+                if feedback:expected_store.update({scene+'_feedback':'web_audio/'+b,scene+'_ref':'web_audio/'+b})
+                if c_available:expected_store[scene+'_reference']='web_audio/'+c
+                actual_store={key:value for key,value in store.items() if key.startswith(scene+'_')}
+                if actual_store!=expected_store:raise ValueError('source role coverage store alias mismatch')
+                expected_receipt_roles={'original'}|({'feedback'} if feedback else set())|({'reference'} if c_available else set())
+                if set(receipt['scenes'][scene])!=expected_receipt_roles:
+                    raise ValueError('source role coverage receipt mismatch')
+                for role,name in expected_names.items():
+                    if not name:continue
+                    packaged=folder/'web_audio'/name;expected_hashes[role][name]=sha_file(packaged)
+                    if role=='original':
+                        source=(source_run/'baseline'/v/'web_audio'/(scene+'.wav')
+                                if feedback and v in ('rx7_fd','aventador_lp700') else old_root/v/'web_audio'/a)
+                    elif role=='feedback':source=source_run/'tuned'/v/'web_audio'/(scene+'.wav')
+                    else:source=old_root/v/'web_audio'/c
+                    _verify_source_identity(receipt['scenes'][scene][role],source,packaged)
+                if feedback:
+                    identical=sha_file(folder/'web_audio'/a)==sha_file(folder/'web_audio'/b)
+                    if scene_row.get('ab_pcm_identical') is not identical:
                         raise ValueError('A/B identical-scene label mismatch')
             if result:
                 for marker in ('baseline_parameters','selected_parameters','baseline_train_loss',
                                'selected_train_loss','validation_baseline','validation_proposed','history'):
                     if marker not in text:raise ValueError('fit/trial evidence missing from UI')
-                if '0 parameters' in text or 'NOT_MEASURED' in text:
-                    raise ValueError('measured fit rendered as unavailable')
-        if result:
-            with tempfile.TemporaryDirectory(prefix='ai6-requalify-') as temp:
-                view=Path(temp)
-                for role,prefix in (('baseline','A_'),('tuned','B_')):
-                    destination=view/role/v/'web_audio';destination.mkdir(parents=True)
-                    for scene in SCENES:
-                        shutil.copy2(folder/'web_audio'/(prefix+scene+'.wav'),destination/(scene+'.wav'))
-                policy=result['baseline_records'][SCENES[0]]['output_policy']
-                fresh=build_qualification_receipt(
-                    view,{'vehicles':{v:result},'output_policy':policy})['vehicles'][v]
-            if fresh!=source_vehicle:
-                raise ValueError('requalified B media differs from Task-1 receipt')
+                if '0 parameters' in text or 'NOT_MEASURED' in text:raise ValueError('measured fit rendered as unavailable')
+        if contract['source_sha256']!=expected_hashes:
+            raise ValueError('source role coverage contract hashes mismatch')
+        if (contract['source_roles']['original']['available'] is not True
+                or contract['source_roles']['feedback']['available'] is not feedback
+                or contract['source_roles']['reference']['available'] is not bool(expected_hashes['reference'])):
+            raise ValueError('source role coverage availability mismatch')
         if v=='rx7_fd' and result:
             provenance=contract.get('a_provenance') or {}
+            expected_differences={scene:_rx7_boundary_diff_receipt(
+                old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                source_run/'baseline'/v/'web_audio'/(scene+'.wav')) for scene in SCENES}
             if (provenance.get('boundary_policy')!='rx7_start_boundary_fade_v1'
                     or provenance.get('boundary_difference_frames')!=24
-                    or provenance.get('byte_identity_to_pre_ai4b_a') is not False):
-                raise ValueError('RX-7 A provenance is incomplete')
+                    or provenance.get('byte_identity_to_pre_ai4b_a') is not False
+                    or provenance.get('scene_differences')!=expected_differences):
+                raise ValueError('RX-7 A 24-frame provenance is incomplete')
     return summary
 
 
