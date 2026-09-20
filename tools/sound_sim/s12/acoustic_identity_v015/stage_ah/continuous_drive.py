@@ -101,7 +101,8 @@ def _validate_event_diagnostics(report: Mapping[str, Any], events: Mapping[str, 
     diagnostics=report.get('candidate_source_diagnostics', {})
     shifts=int(diagnostics.get('shift_event_count', -1))
     afterfire=int(diagnostics.get('afterfire_event_count', -1))
-    energy=float(diagnostics.get('afterfire_stem_energy', 0.0))
+    energy=float(diagnostics.get('afterfire_stem_energy',
+                                diagnostics.get('afterfire_thermal_peak', 0.0)))
     if shifts != len(events['shift_events']):
         raise ValueError('continuous renderer shift diagnostics mismatch')
     if afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0:

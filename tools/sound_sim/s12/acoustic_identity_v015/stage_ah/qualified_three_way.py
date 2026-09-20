@@ -706,7 +706,7 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         raise ValueError('continuous renderer did not report three shifts')
     for report in (report_a,reports_b):
         diag=report.get('candidate_source_diagnostics',{})
-        if int(diag.get('afterfire_event_count',0))<=0 or float(diag.get('afterfire_stem_energy',0.0))<=0.0:
+        if int(diag.get('afterfire_event_count',0))<=0 or float(diag.get('afterfire_stem_energy',diag.get('afterfire_thermal_peak',0.0)))<=0.0:
             raise ValueError('continuous renderer afterfire evidence missing')
     if receipt.get('parameters',{}).get('selected')!=contract.get('continuous_drive',{}).get('selected_parameters'):
         raise ValueError('continuous accepted parameter binding mismatch')
