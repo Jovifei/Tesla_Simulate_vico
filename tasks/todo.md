@@ -4424,7 +4424,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Add governed 30-second continuous-drive A/B rendering for RX-7 and Aventador in the existing UI.
 - [ ] Add transactional publication, strict serve preflight, port-collision and tamper regressions.
 - [x] Commit source, generate and verify a fresh immutable AI-6 package, and preserve old package hashes.
-- [ ] Run focused/full/real-material/slow/compile/Track-P/diff/browser validation.
+- [x] Run focused/full/real-material/slow/compile/Track-P/diff/browser validation.
 - [ ] Update the formal report and confirmed Obsidian project record.
 - [ ] Push the isolated branch, create a Draft PR, and record exact-head Ubuntu/Windows CI; do not merge main.
 
