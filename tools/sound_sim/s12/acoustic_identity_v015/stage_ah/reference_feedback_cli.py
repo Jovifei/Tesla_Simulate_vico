@@ -27,7 +27,12 @@ from .reference_feedback import (
     METRIC, SR, ReferenceCase, Rendered, SearchConfig, audio_sha,
     optimize_reference_feedback, pcm_float, validate_parameters, _validate_cases,
 )
-from .reconstruction_peak import reconstructed_peak_ok
+from .qualification import (
+    QUALIFICATION_FILENAME,
+    build_qualification_receipt,
+    numeric_ok,
+    verify_qualification_receipt,
+)
 
 PLAN_SCHEMA = "s12.stage_ah.reference_feedback_plan.v1"
 RUN_SCHEMA = "s12.stage_ah.reference_feedback_run.v1"
@@ -167,28 +172,6 @@ def load_plan(plan_path: Path) -> tuple[dict[str, list[ReferenceCase]], dict]:
     return cases, {"plan_sha256": _sha(plan_path), "reference_files": files,
                    "reference_receipt_path": str(receipt_path),
                    "reference_receipt_sha256": _sha(receipt_path), "plan": payload}
-
-
-def numeric_ok(record: Mapping[str, Any]) -> bool:
-    """Missing data, hard clips and non-finite results fail closed."""
-    try:
-        n = record["normalization"]
-        for value in (n["post_guard_ceiling_exceedance_samples"], n["emergency_clip_count"],
-                      record["identity_layer_clip_count"], record["post_identity_clip_count"]):
-            if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value != 0:
-                return False
-        for value in (n["emergency_clip_error"], record["identity_layer_clip_error"],
-                      record["post_identity_clip_error"]):
-            if not np.isfinite(value) or value != 0:
-                return False
-        return bool(0 < record["final_rms"] <= record["final_peak"] <= .94 + 1e-10
-                    and np.isfinite(record["peak_estimate_4x"]["peak"])
-                    and 0 < record["peak_estimate_4x"]["peak"] <= 1.0
-                    and reconstructed_peak_ok(record["reconstruction_peak"])
-                    and np.isfinite(record["normalization_denominator"])
-                    and record["normalization_denominator"] > 0)
-    except (KeyError, TypeError, ValueError):
-        return False
 
 
 class RemainingFeedbackRenderer:
@@ -374,6 +357,10 @@ def verify_run(root: Path, expected_manifest_sha256: str | None = None) -> dict:
             for filename in ("index.html", "index_standalone.html"):
                 page = folder / filename
                 _verify_html(page, contract, _embedded(page.read_text(encoding="utf-8"), "SCENES"))
+    receipt_path = root / QUALIFICATION_FILENAME
+    if not receipt_path.is_file():
+        raise ValueError("independent qualification receipt missing")
+    verify_qualification_receipt(root, summary, _read(receipt_path))
     return summary
 
 
@@ -487,6 +474,9 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             "promotable": False, "human_status": "NOT_EVALUATED",
             "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY"}
         _write(staging / "summary.json", summary)
+        qualification = build_qualification_receipt(staging, summary)
+        verify_qualification_receipt(staging, summary, qualification)
+        _write(staging / QUALIFICATION_FILENAME, qualification)
         links = "".join(
             ('<p>' + v + ': BLOCKED — <a href="' + row["failure_receipt"] + '">基线失败收据</a></p>'
              if row.get("failure_receipt") else
