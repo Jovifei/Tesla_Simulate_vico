@@ -306,8 +306,9 @@ def build_qualification_receipt(root: Path, summary: Mapping[str, Any]) -> dict[
 
 
 def verify_qualification_receipt(root: Path, summary: Mapping[str, Any],
-                                 receipt: Mapping[str, Any] | None) -> dict[str, Any]:
-    """Require byte-canonical equality with fresh recomputation and current PASS."""
+                                 receipt: Mapping[str, Any] | None, *,
+                                 require_pass: bool = True) -> dict[str, Any]:
+    """Require fresh equality; B-ready callers additionally require current PASS."""
     if not isinstance(receipt, Mapping) or receipt.get("schema") != QUALIFICATION_SCHEMA:
         raise ValueError("independent qualification receipt missing or unsupported")
     fresh = build_qualification_receipt(root, summary)
@@ -317,7 +318,7 @@ def verify_qualification_receipt(root: Path, summary: Mapping[str, Any],
         raise ValueError("independent qualification receipt is malformed") from error
     if not matches:
         raise ValueError("independent qualification receipt does not match recomputed evidence")
-    if fresh["status"] != "PASS":
+    if require_pass and fresh["status"] != "PASS":
         raise ValueError("independent qualification is BLOCKED")
     return fresh
 

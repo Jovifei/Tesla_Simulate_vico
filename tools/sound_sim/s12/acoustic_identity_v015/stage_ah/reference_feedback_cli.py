@@ -320,7 +320,8 @@ def _verify_html(path, contract, scenes):
                     raise ValueError("embedded audio != on-disk governed WAV")
 
 
-def verify_run(root: Path, expected_manifest_sha256: str | None = None) -> dict:
+def verify_run(root: Path, expected_manifest_sha256: str | None = None, *,
+               require_qualified: bool = True) -> dict:
     root = root.resolve()
     path = root / "ARTIFACTS.json"
     if expected_manifest_sha256 is not None and _sha(path) != expected_manifest_sha256:
@@ -360,7 +361,9 @@ def verify_run(root: Path, expected_manifest_sha256: str | None = None) -> dict:
     receipt_path = root / QUALIFICATION_FILENAME
     if not receipt_path.is_file():
         raise ValueError("independent qualification receipt missing")
-    verify_qualification_receipt(root, summary, _read(receipt_path))
+    verify_qualification_receipt(
+        root, summary, _read(receipt_path), require_pass=require_qualified,
+    )
     return summary
 
 
@@ -475,7 +478,6 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             "self_contained_status": "AUDIO_SELF_CONTAINED / STYLE_NETWORK_DEPENDENCY"}
         _write(staging / "summary.json", summary)
         qualification = build_qualification_receipt(staging, summary)
-        verify_qualification_receipt(staging, summary, qualification)
         _write(staging / QUALIFICATION_FILENAME, qualification)
         links = "".join(
             ('<p>' + v + ': BLOCKED — <a href="' + row["failure_receipt"] + '">基线失败收据</a></p>'
@@ -489,7 +491,9 @@ def run_plan(plan_path: Path, output: Path, *, config: SearchConfig = SearchConf
             + '未宣称OEM或机器相似度。</p><a href="summary.json">完整历史</a>', encoding="utf-8")
         files = {p.relative_to(staging).as_posix(): _sha(p) for p in staging.rglob("*") if p.is_file()}
         _write(staging / "ARTIFACTS.json", seal_payload({"files": files}, "s12.stage_ah.reference_feedback.artifacts.v1"))
-        verify_run(staging)
+        # Publication preserves sealed BLOCKED diagnostics. Public verify/serve
+        # keep their default B-ready PASS requirement.
+        verify_run(staging, require_qualified=False)
         staging.rename(output)  # all final metadata was sealed before this operation
         staging = None
         return summary

@@ -157,3 +157,41 @@ def test_baseline_numeric_block_isolated_and_other_vehicle_continues(governed_fi
     assert failure["record"]["peak_estimate_4x"]["peak"] > 1.0
     manifest_sha = cli._sha(out / "ARTIFACTS.json")
     cli.verify_run(out, manifest_sha)
+
+
+def test_all_baselines_block_publish_diagnostics_but_refuse_b_ready_verify_and_serve(
+        governed_fixture, tmp_path, monkeypatch):
+    def fail_all(vehicle, directory, **kwargs):
+        raise cli.BaselineNumericGateError(
+            vehicle,
+            "09_steady_mid",
+            {"peak_estimate_4x": {"peak": 1.04}, "reason": "controlled all-blocked probe"},
+            ("03_hot_idle", "07_steady_high"),
+        )
+
+    runtime = {"commit": "test", "scope": "test", "inventory_sha256": "test",
+               "source_files": {}, "source_status": "SOURCE_CLEAN"}
+    monkeypatch.setattr(cli, "_baseline", fail_all)
+    monkeypatch.setattr(cli, "_runtime_identity", lambda: runtime)
+    out = tmp_path / "all-baselines-blocked"
+
+    result = cli.run_plan(governed_fixture, out, config=SearchConfig(max_trials=1))
+
+    assert out.is_dir()
+    assert set(result["vehicles"]) == {"rx7_fd", "aventador_lp700"}
+    assert all(row["status"] == "ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK"
+               for row in result["vehicles"].values())
+    qualification = cli._read(out / "qualification.json")
+    assert qualification["status"] == "BLOCKED"
+    assert qualification["qualified_vehicle_count"] == 0
+    assert all(row["status"] == "BLOCKED" for row in qualification["vehicles"].values())
+    for vehicle, row in result["vehicles"].items():
+        diagnostic = out / row["failure_receipt"]
+        assert cli._sealed(diagnostic)["vehicle"] == vehicle
+    manifest_sha = cli._sha(out / "ARTIFACTS.json")
+    manifest = cli._sealed(out / "ARTIFACTS.json")
+    assert "qualification.json" in manifest["files"]
+    with pytest.raises(ValueError, match="qualification is BLOCKED"):
+        cli.verify_run(out, manifest_sha)
+    with pytest.raises(ValueError, match="qualification is BLOCKED"):
+        cli.serve_run(out, 29380, manifest_sha, preflight_only=True)
