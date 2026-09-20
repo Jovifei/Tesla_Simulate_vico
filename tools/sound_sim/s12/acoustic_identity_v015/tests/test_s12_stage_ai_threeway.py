@@ -165,15 +165,28 @@ def enabled_b_package(old_package,tmp_path,monkeypatch):
     fit["baseline_records"]["09_steady_mid"]["boundary_repair"]={
         "policy_id":"rx7_start_boundary_fade_v1","fade_frames":24,
         "modified_frames":24,"scope":"rx7_start_boundary_only","stereo_link":"common_frame_ramp"}
+    other="aventador_lp700";no_improvement=_valid_fit()
+    no_improvement.update(status="NO_IMPROVEMENT",baseline_records={},selected_records={},
+                          selected_parameters={"gain":1.0},parameter_delta={"gain":0.0})
+    for scene in SCENES:
+        _,pcm=wavfile.read(old_package/other/"web_audio"/("A_"+scene+".wav"))
+        for role,field in (("baseline","baseline_records"),("tuned","selected_records")):
+            web=source/role/other/"web_audio";web.mkdir(parents=True,exist_ok=True)
+            wavfile.write(web/(scene+".wav"),48000,pcm)
+            no_improvement[field][scene]=_record(other,scene,pcm)
     summary={"schema":"s12.stage_ah.reference_feedback_run.v1",
-             "output_policy":"linked_soft_ceiling_v1","vehicles":{vehicle:fit}}
+             "output_policy":"linked_soft_ceiling_v1","vehicles":{vehicle:fit,other:no_improvement}}
+    (source/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+    source_files={path.relative_to(source).as_posix():sha_file(path) for path in source.rglob("*") if path.is_file()}
+    _overwrite_json(source/"ARTIFACTS.json",seal_payload({"files":source_files},"s12.test.source.manifest.v1"))
     task1=build_qualification_receipt(source,summary)
-    assert task1["status"]=="PASS"
-    monkeypatch.setattr(qualified,"_feedback_source",lambda *args:(source,summary,task1,"f"*64))
+    assert task1["status"]=="PASS" and task1["qualified_vehicle_count"]==2
+    source_sha=sha_file(source/"ARTIFACTS.json")
+    monkeypatch.setattr(qualified,"_feedback_source",lambda *args:(source,summary,task1,source_sha))
     monkeypatch.setattr(qualified,"_runtime_identity",lambda:{"fixture":"clean"})
     out=tmp_path/"enabled-b"
     qualified.build(old_package,sha_file(old_package/"ARTIFACTS.json"),out,
-                    two_run=source,two_sha="f"*64)
+                    two_run=source,two_sha=source_sha)
     return out
 
 
@@ -261,6 +274,12 @@ def test_resealed_task1_summary_binding_drift_is_rejected(enabled_b_package):
     _sync_vehicle_evidence(root,vehicle,info)
     with pytest.raises(ValueError,match="Task-1"):
         qualified.verify(root)
+
+
+def test_mixed_source_no_improvement_vehicle_stays_unavailable(enabled_b_package):
+    summary=qualified.verify(enabled_b_package)
+    assert summary["vehicles"]["rx7_fd"]["source_roles"]["feedback"]["available"] is True
+    assert summary["vehicles"]["aventador_lp700"]["source_roles"]["feedback"]["available"] is False
 
 
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):
