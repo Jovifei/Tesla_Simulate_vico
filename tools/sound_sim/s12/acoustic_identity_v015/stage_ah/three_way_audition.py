@@ -429,7 +429,8 @@ def verify_package(root: Path) -> dict[str, Any]:
         folder = root / key
         contract = _sealed(folder / "dashboard_contract.json")
         text = (folder / "index.html").read_text(encoding="utf-8")
-        if _embedded(text, "DASHBOARD_CONTRACT") != contract and _embedded(text, "DASHBOARD_CONTRACT").get("schema") != contract.get("schema"):
+        embedded = _embedded(text, "DASHBOARD_CONTRACT")
+        if any(embedded.get(field) != value for field, value in contract.items()):
             raise ValueError(f"embedded contract mismatch: {key}")
         scenes = _embedded(text, "SCENES")
         store = _embedded(text, "AUDIO_STORE")
