@@ -667,7 +667,10 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             or receipt.get('duration_s')!=30.0
             or receipt.get('sample_rate_hz')!=48_000):
         raise ValueError('continuous receipt identity mismatch')
-    if receipt.get('events',{}).get('shift_count')!=3 or receipt.get('events',{}).get('afterfire_event_count')!=1 or float(receipt.get('events',{}).get('afterfire_stem_energy',0.0))<=0.0:
+    if (receipt.get('events',{}).get('shift_count')!=3
+            or int(receipt.get('events',{}).get('afterfire_event_count',0))<=0
+            or len(receipt.get('events',{}).get('afterfire_events',()))!=1
+            or float(receipt.get('events',{}).get('afterfire_stem_energy',0.0))<=0.0):
         raise ValueError('continuous event evidence incomplete')
     if receipt.get('source_manifest_sha256')!=info.get('source_manifest_sha256'):
         raise ValueError('continuous source manifest binding mismatch')
