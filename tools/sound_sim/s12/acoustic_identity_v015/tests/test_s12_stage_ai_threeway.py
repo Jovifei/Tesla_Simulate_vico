@@ -146,6 +146,10 @@ def test_fabricated_fit_pass_is_rejected():
         qualified._validate_fit_evidence(fit)
 
 
+def test_historical_vehicle_row_without_display_name_uses_canonical_key():
+    assert qualified._vehicle_name({}, "rx7_fd") == "rx7_fd"
+
+
 def test_missing_enabled_b_qualification_receipt_is_rejected(old_package, tmp_path):
     out = tmp_path / "missing-b-receipt"
     qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out)

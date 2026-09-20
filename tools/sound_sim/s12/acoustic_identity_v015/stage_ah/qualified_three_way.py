@@ -38,6 +38,10 @@ def _sealed(path):
     return ui._sealed(path)
 
 
+def _vehicle_name(row, key):
+    return str(row.get('vehicle') or row.get('vehicle_name') or key)
+
+
 def verify_legacy(root: Path, expected_sha: str):
     if sha_file(root/'ARTIFACTS.json') != expected_sha:
         raise ValueError('old three-way manifest digest mismatch')
@@ -282,7 +286,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         if output.exists():raise FileExistsError(output)
         staging=Path(tempfile.mkdtemp(prefix='.'+output.name+'-',dir=output.parent))
         evidence=staging/'evidence';evidence.mkdir()
-        nav=[{'key':v,'name':old['vehicles'][v]['vehicle'],
+        nav=[{'key':v,'name':_vehicle_name(old['vehicles'][v],v),
               'status':'AUTO_B_READY' if choices[v][1] else 'B_UNAVAILABLE'} for v in VEHICLES]
         vehicles={}
         template=ui.TEMPLATE_PATH.read_text(encoding='utf-8')
@@ -385,7 +389,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 'human_status':'NOT_EVALUATED','promotable':False,'source_status':'SOURCE_CLEAN',
                 'scene_count':10,'sample_rate_hz':48000,'comparison':'A_BASELINE_B_VALIDATED_AUTO_C_REAL'},SCHEMA)
             write_json(folder/'dashboard_contract.json',contract)
-            page=rich_page(template,v,old['vehicles'][v]['vehicle'],scenes,contract,store,nav,link,result)
+            page=rich_page(template,v,_vehicle_name(old['vehicles'][v],v),scenes,contract,store,nav,link,result)
             for name in ('index.html','index_standalone.html'):(folder/name).write_text(page,encoding='utf-8')
             vehicles[v]={'source_roles':roles,'source_sha256':hashes,'feedback_evidence':info,
                          'a_provenance':a_provenance,'scene_count':10}
