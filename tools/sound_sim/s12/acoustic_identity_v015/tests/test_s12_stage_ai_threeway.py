@@ -282,6 +282,21 @@ def test_mixed_source_no_improvement_vehicle_stays_unavailable(enabled_b_package
     assert summary["vehicles"]["aventador_lp700"]["source_roles"]["feedback"]["available"] is False
 
 
+def test_resealed_fit_measurement_drift_is_rejected(enabled_b_package):
+    root = enabled_b_package
+    vehicle = "rx7_fd"
+    contract = json.loads((root / vehicle / "dashboard_contract.json").read_text(encoding="utf-8"))
+    contract["fit_baseline_distance"] = 99.0
+    contract = seal_payload(contract, qualified.SCHEMA)
+    for page_name in ("index.html", "index_standalone.html"):
+        page = root / vehicle / page_name
+        _replace_embedded(page, "DASHBOARD_CONTRACT", contract)
+    _overwrite_json(root / vehicle / "dashboard_contract.json", contract)
+    _reseal_inventory(root)
+    with pytest.raises(ValueError, match="fit|contract|evidence"):
+        qualified.verify(root)
+
+
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):
     _reseal_vehicle_receipt(enabled_b_package,"rx7_fd",
                             lambda value:value.__setitem__("outcome","B_UNAVAILABLE"))

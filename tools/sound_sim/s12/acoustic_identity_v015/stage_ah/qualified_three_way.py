@@ -19,7 +19,7 @@ import numpy as np
 from scipy.io import wavfile
 
 from . import three_way_audition as ui
-from .feedback_evidence import AUTO, SCENES, Journal, fit_eligibility, sha_file, write_json
+from .feedback_evidence import AUTO, SCENES, Journal, fit_eligibility, read_journal, sha_file, write_json
 from .fourcar_reference_loop import verify_run as verify_fourcar
 from . import reference_feedback_cli as feedback_cli
 from .qualification import (
@@ -284,6 +284,9 @@ def rich_page(template, vehicle, title, scenes, contract, store, nav, report_lin
             json.dumps(visible,ensure_ascii=False,indent=2,allow_nan=False))+'</pre></details>'
         page=page.replace('NOT_MEASURED','MEASURED_FROM_SEALED_EVIDENCE')
         page=page.replace('0 parameters','MEASURED_PARAMETERS')
+        payload=json.dumps(_fit_evidence_payload(fit_result),ensure_ascii=False,
+                           sort_keys=True,separators=(',',':'))
+        page=page.replace('</body>', '<script>const AI6_FIT_EVIDENCE = '+payload+';</script></body>', 1)
     panel+='<p>C 是保留的真车试听对照；训练与验证源、窗口见日志。误差不是机器相似度百分比。</p></section>'
     return page.replace('</header>','</header>'+panel,1)
 
@@ -400,7 +403,12 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 text+='<p>训练误差不是相似度；验证源不用于搜参；没有Human PASS。</p><pre>'+html.escape(json.dumps(
                     {k:result[k] for k in ('status','baseline_train_loss','selected_train_loss','parameter_delta',
                         'validation_baseline','validation_proposed','history','reference_cases')},ensure_ascii=False,indent=2))+'</pre></html>'
+                log_payload=json.dumps(_fit_evidence_payload(result),ensure_ascii=False,
+                                       sort_keys=True,separators=(',',':'))
+                text=text.replace('</html>', '<script>const AI6_FIT_EVIDENCE = '+log_payload+';</script></html>', 1)
                 log_html.write_text(text,encoding='utf-8');link='../evidence/'+log_html.name
+                info['fit_log']='evidence/'+log_html.name
+                info['fit_log_sha256']=sha_file(log_html)
             a_provenance=None
             if v=='rx7_fd' and result:
                 boundary=result['baseline_records']['09_steady_mid'].get('boundary_repair',{})
@@ -436,6 +444,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 'a_provenance':a_provenance,
                 'fit_baseline_distance':result['baseline_train_loss'] if result else None,
                 'fit_final_distance':result['selected_train_loss'] if result else None,
+                'fit_evidence_payload':_fit_evidence_payload(result) if result else None,
                 'fit_metric_status':'MEASURED_FROM_SEALED_EVIDENCE' if result else 'B_UNAVAILABLE',
                 'fit_status':result['status'] if result else 'B_UNAVAILABLE',
                 'human_status':'NOT_EVALUATED','promotable':False,'source_status':'SOURCE_CLEAN',
@@ -473,6 +482,50 @@ def _fit_binding(info: dict) -> dict:
             if key not in ('vehicle_qualification_receipt','vehicle_qualification_receipt_sha256')}
 
 
+def _fit_evidence_payload(result: dict) -> dict:
+    fields = (
+        'status', 'baseline_parameters', 'selected_parameters', 'parameter_delta',
+        'baseline_train_loss', 'selected_train_loss', 'validation_baseline',
+        'validation_proposed', 'validation_used_for_search', 'trial_count',
+        'history', 'reference_cases',
+    )
+    return {field: copy.deepcopy(result[field]) for field in fields}
+
+
+def _verify_trial_evidence(root: Path, info: dict, result: dict) -> None:
+    journal_path = root / info.get('trial_log', '')
+    if (not journal_path.is_file()
+            or sha_file(journal_path) != info.get('trial_log_sha256')):
+        raise ValueError('fit trial journal missing or changed')
+    rows = read_journal(journal_path, expected_sha256=info['trial_log_sha256'])
+    expected = result['history']
+    if len(rows) != len(expected) + 1:
+        raise ValueError('fit trial journal count mismatch')
+    for index, trial in enumerate(expected):
+        row = rows[index]
+        if row.get('event') != 'MEASURED_TRIAL' or row.get('payload') != trial:
+            raise ValueError('fit trial journal evidence mismatch')
+    selection = rows[-1]
+    if (selection.get('event') != 'SELECTION'
+            or selection.get('payload') != {
+                'status': result['status'],
+                'selected_parameters': result['selected_parameters'],
+            }):
+        raise ValueError('fit selection journal evidence mismatch')
+
+
+def _verify_fit_evidence_payload(page: str, contract: dict, result: dict) -> None:
+    expected = _fit_evidence_payload(result)
+    if contract.get('fit_evidence_payload') != expected:
+        raise ValueError('fit contract evidence mismatch')
+    try:
+        embedded = ui._embedded(page, 'AI6_FIT_EVIDENCE')
+    except ValueError as error:
+        raise ValueError('fit UI evidence missing') from error
+    if embedded != expected:
+        raise ValueError('fit UI evidence mismatch')
+
+
 def _verify_source_identity(identity: dict, expected: Path, packaged: Path) -> None:
     expected=expected.resolve()
     if identity.get('source_path')!=str(expected):
@@ -485,6 +538,27 @@ def _verify_source_identity(identity: dict, expected: Path, packaged: Path) -> N
             or rate!=identity.get('sample_rate_hz')
             or sha_file(expected)!=sha_file(packaged)):
         raise ValueError('role WAV/PCM/source identity mismatch')
+
+
+def _verify_bound_source_run(source_run: Path, expected_manifest_sha: str,
+                             source_summary: dict, task1: dict) -> None:
+    manifest_path=source_run/'ARTIFACTS.json'
+    if not manifest_path.is_file() or sha_file(manifest_path)!=expected_manifest_sha:
+        raise ValueError('Task-1 immutable source manifest identity mismatch')
+    manifest=_sealed(manifest_path);files=manifest.get('files')
+    actual={path.relative_to(source_run).as_posix() for path in source_run.rglob('*')
+            if path.is_file() and path!=manifest_path}
+    if not isinstance(files,dict) or set(files)!=actual:
+        raise ValueError('Task-1 immutable source manifest inventory mismatch')
+    for relative,digest in files.items():
+        path=source_run/relative
+        if path.is_symlink() or not path.resolve().is_relative_to(source_run) or sha_file(path)!=digest:
+            raise ValueError('Task-1 immutable source artifact drift')
+    external_summary=json.loads((source_run/'summary.json').read_text(encoding='utf-8'))
+    if external_summary!=source_summary:
+        raise ValueError('Task-1 persisted source summary differs from immutable source manifest')
+    if build_qualification_receipt(source_run,external_summary)!=task1:
+        raise ValueError('Task-1 persisted qualification differs from immutable source evidence')
 
 
 def verify(root:Path, expected_sha:str|None=None):
@@ -541,6 +615,22 @@ def verify(root:Path, expected_sha:str|None=None):
             fit=root/info['fit_report']
             if sha_file(fit)!=info['fit_report_sha256']:raise ValueError('B fit evidence hash mismatch')
             result=json.loads(fit.read_text(encoding='utf-8'));_validate_fit_evidence(result)
+            if (contract.get('fit_baseline_distance') != result['baseline_train_loss']
+                    or contract.get('fit_final_distance') != result['selected_train_loss']
+                    or contract.get('fit_status') != result['status']
+                    or contract.get('fit_evidence_payload') != _fit_evidence_payload(result)):
+                raise ValueError('fit contract evidence mismatch')
+            _verify_trial_evidence(root, info, result)
+            fit_log=root/info.get('fit_log','')
+            if (not fit_log.is_file() or sha_file(fit_log)!=info.get('fit_log_sha256')):
+                raise ValueError('fit log missing or changed')
+            try:
+                if ui._embedded(fit_log.read_text(encoding='utf-8'), 'AI6_FIT_EVIDENCE') != _fit_evidence_payload(result):
+                    raise ValueError('fit log evidence mismatch')
+            except ValueError as error:
+                if 'fit log evidence mismatch' in str(error):
+                    raise
+                raise ValueError('fit log evidence missing') from error
             source_summary_path=root/info.get('source_summary','')
             task1_path=root/info.get('task1_qualification_receipt','')
             if (not source_summary_path.is_file() or sha_file(source_summary_path)!=info.get('source_summary_sha256')
@@ -556,6 +646,7 @@ def verify(root:Path, expected_sha:str|None=None):
                     summary.get('fourcar_manifest_sha256'),summary.get('two_car_manifest_sha256')):
                 raise ValueError('vehicle qualification fit evidence source manifest mismatch')
             source_run=Path(info.get('source_run_path','')).resolve()
+            _verify_bound_source_run(source_run,info['source_manifest_sha256'],source_summary,task1)
             task1_key=(info['task1_qualification_receipt_sha256'],info['source_summary_sha256'])
             if task1_key not in task1_verified:
                 with tempfile.TemporaryDirectory(prefix='ai6-requalify-') as temp:
@@ -564,15 +655,17 @@ def verify(root:Path, expected_sha:str|None=None):
                         if source_result.get('status')=='ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK':continue
                         if source_vehicle not in VEHICLES:raise ValueError('Task-1 source vehicle not in AI-6')
                         source_contract=_sealed(root/source_vehicle/'dashboard_contract.json')
-                        if not source_contract['source_roles']['feedback']['available']:
-                            raise ValueError('Task-1 source vehicle lacks enabled package B')
-                        source_info=source_contract['feedback_evidence']
-                        source_fit=json.loads((root/source_info['fit_report']).read_text(encoding='utf-8'))
-                        if source_fit!=source_result:raise ValueError('Task-1 complete source summary fit mismatch')
+                        source_enabled=source_contract['source_roles']['feedback']['available']
+                        if source_enabled:
+                            source_info=source_contract['feedback_evidence']
+                            source_fit=json.loads((root/source_info['fit_report']).read_text(encoding='utf-8'))
+                            if source_fit!=source_result:raise ValueError('Task-1 complete source summary fit mismatch')
                         for role,prefix in (('baseline','A_'),('tuned','B_')):
                             destination=view/role/source_vehicle/'web_audio';destination.mkdir(parents=True)
                             for scene in SCENES:
-                                shutil.copy2(root/source_vehicle/'web_audio'/(prefix+scene+'.wav'),
+                                source_audio=(root/source_vehicle/'web_audio'/(prefix+scene+'.wav')
+                                              if source_enabled else source_run/role/source_vehicle/'web_audio'/(scene+'.wav'))
+                                shutil.copy2(source_audio,
                                              destination/(scene+'.wav'))
                     fresh=build_qualification_receipt(view,source_summary)
                 if fresh!=task1:raise ValueError('Task-1 complete receipt recomputation mismatch')
@@ -583,6 +676,8 @@ def verify(root:Path, expected_sha:str|None=None):
         for page in ('index.html','index_standalone.html'):
             text=(folder/page).read_text(encoding='utf-8')
             if ui._embedded(text,'DASHBOARD_CONTRACT')!=stored:raise ValueError('embedded contract differs')
+            if feedback:
+                _verify_fit_evidence_payload(text, contract, result)
             scenes=ui._embedded(text,'SCENES');store=ui._embedded(text,'AUDIO_STORE')
             if [scene['id'] for scene in scenes]!=list(SCENES):raise ValueError('ten scenes required')
             if set(receipt.get('scenes',{}))!=set(SCENES):raise ValueError('vehicle receipt scene coverage mismatch')
