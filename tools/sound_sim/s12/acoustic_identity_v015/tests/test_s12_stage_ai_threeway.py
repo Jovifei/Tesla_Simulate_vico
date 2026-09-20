@@ -18,6 +18,10 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.qualification import (
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.reconstruction_peak import (
     reconstructed_peak_receipt,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.continuous_drive import (
+    CONTINUOUS_SCHEMA,
+    CONTINUOUS_SCENE_ID,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import seal_payload
 
 
@@ -310,6 +314,36 @@ def test_resealed_visible_fit_evidence_drift_is_rejected(enabled_b_package):
     _reseal_inventory(root)
     with pytest.raises(ValueError, match="visible|fit UI|evidence"):
         qualified.verify(root)
+
+
+def test_continuous_scene_is_bound_to_rx7_and_disabled_for_other_vehicles(old_package, tmp_path, monkeypatch):
+    monkeypatch.setattr(qualified, "_runtime_identity", lambda: {"fixture": "clean"})
+    pcm = np.full((1_440_000, 2), 100, dtype=np.int16)
+    pair = {
+        "pcm_a": pcm,
+        "pcm_b": pcm.copy(),
+        "receipt": {
+            "schema": CONTINUOUS_SCHEMA, "vehicle": "rx7_fd",
+            "scene_id": CONTINUOUS_SCENE_ID, "duration_s": 30.0,
+            "sample_rate_hz": 48_000,
+            "shared": {"seed": 20260908, "trace_sha256": "a" * 64,
+                       "parent_peak_key": "continuous_drive|" + "a" * 64,
+                       "normalization_denominator": 0.4,
+                       "output_policy": "linked_soft_ceiling_v1"},
+            "events": {"shift_count": 3, "afterfire_event_count": 1},
+            "boundary": {"policy_id": "rx7_start_boundary_fade_v1", "fade_frames": 24},
+        },
+    }
+    out = tmp_path / "continuous-ui"
+    qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out,
+                    continuous_pairs={"rx7_fd": pair})
+    qualified.verify(out, sha_file(out / "ARTIFACTS.json"))
+    rx7_text = (out / "rx7_fd" / "index.html").read_text(encoding="utf-8")
+    hellcat_text = (out / "hellcat" / "index.html").read_text(encoding="utf-8")
+    assert CONTINUOUS_SCENE_ID in rx7_text
+    assert "continuous_drive_original" in rx7_text
+    assert 'role_availability' in hellcat_text
+    assert "连续驾驶未完成" in hellcat_text
 
 
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):

@@ -111,7 +111,8 @@ const triBaseRender = renderSceneCards;
 
 function triAvailable(role, scene) {
   const info = (DASHBOARD_CONTRACT.source_roles || {})[role] || {};
-  return Boolean(info.available && AUDIO_STORE[scene.id + '_' + role]);
+  const sceneInfo = (scene.role_availability || {})[role] || {};
+  return Boolean(info.available && sceneInfo.available !== false && AUDIO_STORE[scene.id + '_' + role]);
 }
 function triLabel(role) {
   const info = (DASHBOARD_CONTRACT.source_roles || {})[role] || {};
@@ -133,7 +134,7 @@ function triSetHeader(scene) {
       ? triClass(role, true)
       : triClass(role, false) + (available ? '' : ' opacity-40 cursor-not-allowed');
     button.textContent = available ? triLabel(role) : triLabel(role) + '（不可用）';
-    button.title = available ? '' : ((DASHBOARD_CONTRACT.source_roles || {})[role] || {}).reason || '当前场景没有受控音频';
+    button.title = available ? '' : ((scene.role_availability || {})[role] || {}).reason || ((DASHBOARD_CONTRACT.source_roles || {})[role] || {}).reason || '当前场景没有受控音频';
   });
   const badge = document.getElementById('activeBadgeSource');
   if (badge) badge.textContent = triLabel(triSource);
@@ -186,7 +187,8 @@ renderSceneCards = function() {
       const available = triAvailable(role, scene);
       const active = available && currentSceneIndex === index && triSource === role && isPlaying;
       const text = available ? triLabel(role) : triLabel(role) + '（不可用）';
-      return `<button ${available ? '' : 'disabled'} title="${available ? '' : ((DASHBOARD_CONTRACT.source_roles || {})[role] || {}).reason || '当前场景没有受控音频'}" onclick="playTriSource(${index}, '${role}')" class="${triClass(role, active)}${available ? '' : ' opacity-40 cursor-not-allowed'}"><span>${active ? '⏸' : '▶'}</span>${text}</button>`;
+      const reason = ((scene.role_availability || {})[role] || {}).reason || ((DASHBOARD_CONTRACT.source_roles || {})[role] || {}).reason || '当前场景没有受控音频';
+      return `<button ${available ? '' : 'disabled'} title="${available ? '' : reason}" onclick="playTriSource(${index}, '${role}')" class="${triClass(role, active)}${available ? '' : ' opacity-40 cursor-not-allowed'}"><span>${active ? '⏸' : '▶'}</span>${text}</button>`;
     }).join('');
     triSetHeader(SCENES[currentSceneIndex]);
   });

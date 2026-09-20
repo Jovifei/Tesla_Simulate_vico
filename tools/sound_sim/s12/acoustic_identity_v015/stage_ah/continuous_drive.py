@@ -216,6 +216,9 @@ def write_continuous_pair(root: Path, pair: Mapping[str, Any]) -> dict[str, Any]
     wavfile.write(audio / "A_continuous_drive.wav", SAMPLE_RATE_HZ, pair["pcm_a"])
     wavfile.write(audio / "B_continuous_drive.wav", SAMPLE_RATE_HZ, pair["pcm_b"])
     receipt = copy.deepcopy(pair["receipt"])
+    receipt.setdefault("wav", {})
+    receipt["wav"].setdefault("A", {})["decoded_pcm_sha256"] = _pcm_sha(pair["pcm_a"])
+    receipt["wav"].setdefault("B", {})["decoded_pcm_sha256"] = _pcm_sha(pair["pcm_b"])
     receipt["wav"]["A"]["wav_file_sha256"] = hashlib.sha256(
         (audio / "A_continuous_drive.wav").read_bytes()).hexdigest()
     receipt["wav"]["B"]["wav_file_sha256"] = hashlib.sha256(

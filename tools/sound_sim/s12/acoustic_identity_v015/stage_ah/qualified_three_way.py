@@ -28,6 +28,7 @@ from .qualification import (
     QUALIFICATION_SCHEMA,
     build_qualification_receipt,
 )
+from .continuous_drive import CONTINUOUS_SCENE_ID, CONTINUOUS_SCHEMA, write_continuous_pair
 from .reference_feedback_cli import verify_run as verify_two, numeric_ok, _runtime_identity
 from ..stage_af.package_integrity import seal_payload
 
@@ -291,9 +292,13 @@ def rich_page(template, vehicle, title, scenes, contract, store, nav, report_lin
 
 
 def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | None = None,
-          fourcar_sha: str | None = None, two_run: Path | None = None, two_sha: str | None = None):
+          fourcar_sha: str | None = None, two_run: Path | None = None, two_sha: str | None = None,
+          continuous_pairs: Mapping[str, Mapping[str, Any]] | None = None):
     old_root=old_root.resolve()
     old=verify_legacy(old_root,old_sha)
+    continuous_pairs=dict(continuous_pairs or {})
+    if any(vehicle not in ('rx7_fd', 'aventador_lp700') for vehicle in continuous_pairs):
+        raise ValueError('continuous drive is currently qualified only for RX-7 and Aventador')
     runtime=_runtime_identity()
     inputs={}
     if fourcar_run:
@@ -339,6 +344,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         for v in VEHICLES:
             folder=staging/v; web=folder/'web_audio';web.mkdir(parents=True)
             scenes=ui._load_scenes(old_root/v/'index.html')
+            base_scenes=copy.deepcopy(scenes)
             root,result,source_summary,source_qualification,source_manifest_sha,reason=choices[v]
             roles={
                 'original':{'label':'A: 原算法（本轮基线）','available':True,'status':'BASELINE'},
@@ -350,7 +356,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
             elif v=='aventador_lp700' and result:
                 roles['original']['label']='A: AI-5 feedback-off baseline'
             hashes={k:{} for k in roles};store={};scene_roles={}
-            for s in scenes:
+            for s in base_scenes:
                 scene=s['id']
                 a='A_'+scene+'.wav'
                 old_a=old_root/v/'web_audio'/a
@@ -374,6 +380,45 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     c_source=old_root/v/'web_audio'/c;shutil.copy2(c_source,web/c)
                     hashes['reference'][c]=sha_file(web/c);store[scene+'_reference']='web_audio/'+c
                     scene_roles[scene]['reference']=_role_identity(c_source,web/c)
+            continuous_pair=continuous_pairs.get(v)
+            continuous_info={
+                'schema': CONTINUOUS_SCHEMA,
+                'available': bool(continuous_pair),
+                'scene_id': CONTINUOUS_SCENE_ID,
+                'role_availability': {
+                    'original': {'available': bool(continuous_pair),
+                                 'reason': '' if continuous_pair else '连续驾驶未完成：该车型尚无完整30秒受控渲染'},
+                    'feedback': {'available': bool(continuous_pair),
+                                 'reason': '' if continuous_pair else '连续驾驶未完成：该车型尚无合格 A/B 对照'},
+                    'reference': {'available': False,
+                                  'reason': '没有可绑定的整段真实录音，C 保持不可用'},
+                },
+            }
+            continuous_scene={
+                'id': CONTINUOUS_SCENE_ID, 'index': len(base_scenes) + 1,
+                'category': 'dynamics', 'title': '连续驾驶（30秒）',
+                'desc': '完整怠速→加速→换挡→巡航→收油→回落状态渲染，不拼接分段 WAV',
+                'focus': '连续驾驶 A/B 对照', 'candidate_file': '',
+                'feedback_file': '', 'reference_file': '', 'ref_file': '',
+                'role_availability': copy.deepcopy(continuous_info['role_availability']),
+            }
+            if continuous_pair:
+                receipt=write_continuous_pair(folder, continuous_pair)
+                continuous_scene.update(candidate_file='A_continuous_drive.wav',
+                                        feedback_file='B_continuous_drive.wav',
+                                        ref_file='B_continuous_drive.wav')
+                store[CONTINUOUS_SCENE_ID+'_original']='web_audio/A_continuous_drive.wav'
+                store[CONTINUOUS_SCENE_ID+'_candidate']='web_audio/A_continuous_drive.wav'
+                store[CONTINUOUS_SCENE_ID+'_feedback']='web_audio/B_continuous_drive.wav'
+                store[CONTINUOUS_SCENE_ID+'_ref']='web_audio/B_continuous_drive.wav'
+                continuous_info.update({
+                    'receipt_sha256': sha_file(folder/'continuous_drive_receipt.json'),
+                    'wav_sha256': receipt['wav'],
+                    'shared': receipt.get('shared', {}),
+                    'events': receipt.get('events', {}),
+                    'boundary': receipt.get('boundary', {}),
+                })
+            scenes=base_scenes+[continuous_scene]
             roles['reference']['available']=bool(hashes['reference'])
             info={'kind':AUTO if result else 'NO_QUALIFIED_AUTOMATIC_B','available':bool(result)}
             link=None
@@ -437,6 +482,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
             info['vehicle_qualification_receipt_sha256']=sha_file(receipt_path)
             contract=seal_payload({'schema':SCHEMA,'package_id':output.name+'-'+v,'vehicle':v,
                 'source_roles':roles,'source_sha256':hashes,'feedback_evidence':info,
+                'continuous_drive':continuous_info,
                 'references':{k:{'available':True,'sha256':h} for k,h in hashes['reference'].items()},
                 'candidate_pcm_sha256':hashes['original'],'reference_sha256':hashes['reference'],
                 'a_provenance':a_provenance,
@@ -451,7 +497,8 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
             page=rich_page(template,v,_vehicle_name(old['vehicles'][v],v),scenes,contract,store,nav,link,result)
             for name in ('index.html','index_standalone.html'):(folder/name).write_text(page,encoding='utf-8')
             vehicles[v]={'source_roles':roles,'source_sha256':hashes,'feedback_evidence':info,
-                         'a_provenance':a_provenance,'scene_count':10}
+                         'a_provenance':a_provenance,'scene_count':10,
+                         'continuous_drive':continuous_info}
         ready_count=sum(row['source_roles']['feedback']['available'] for row in vehicles.values())
         summary=seal_payload({'schema':SCHEMA,'run_id':output.name,'runtime':runtime,'vehicles':vehicles,
             'old_threeway_source_path':str(old_root),'old_threeway_manifest_sha256':old_sha,
@@ -580,6 +627,53 @@ def _verify_bound_source_run(source_run: Path, expected_manifest_sha: str,
         raise ValueError('Task-1 persisted qualification differs from immutable source evidence')
 
 
+def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: dict) -> None:
+    info=contract.get('continuous_drive')
+    if not isinstance(info, dict) or info.get('schema')!=CONTINUOUS_SCHEMA:
+        raise ValueError('continuous drive contract missing')
+    available=bool(info.get('available'))
+    role_availability=scene.get('role_availability')
+    if role_availability != info.get('role_availability'):
+        raise ValueError('continuous role availability mismatch')
+    if not available:
+        if any(scene.get(field) or key in store for field,key in (
+                ('candidate_file', CONTINUOUS_SCENE_ID+'_original'),
+                ('feedback_file', CONTINUOUS_SCENE_ID+'_feedback'),
+                ('reference_file', CONTINUOUS_SCENE_ID+'_reference'))):
+            raise ValueError('unavailable continuous scene retains audio')
+        return
+    receipt_path=folder/'continuous_drive_receipt.json'
+    if (not receipt_path.is_file()
+            or sha_file(receipt_path)!=info.get('receipt_sha256')):
+        raise ValueError('continuous receipt missing or changed')
+    receipt=json.loads(receipt_path.read_text(encoding='utf-8'))
+    if (receipt.get('schema')!=CONTINUOUS_SCHEMA
+            or receipt.get('scene_id')!=CONTINUOUS_SCENE_ID
+            or receipt.get('duration_s')!=30.0
+            or receipt.get('sample_rate_hz')!=48_000):
+        raise ValueError('continuous receipt identity mismatch')
+    if receipt.get('events',{}).get('shift_count')!=3 or receipt.get('events',{}).get('afterfire_event_count')!=1:
+        raise ValueError('continuous event evidence incomplete')
+    for role,filename,store_key in (
+            ('A','A_continuous_drive.wav',CONTINUOUS_SCENE_ID+'_original'),
+            ('B','B_continuous_drive.wav',CONTINUOUS_SCENE_ID+'_feedback')):
+        path=folder/'web_audio'/filename
+        if not path.is_file() or store.get(store_key)!='web_audio/'+filename:
+            raise ValueError('continuous audio binding missing')
+        if sha_file(path)!=receipt.get('wav',{}).get(role,{}).get('wav_file_sha256'):
+            raise ValueError('continuous WAV identity mismatch')
+        rate,pcm=wavfile.read(path)
+        if int(rate)!=48_000 or pcm.dtype!=np.int16 or pcm.ndim!=2 or pcm.shape[1]!=2:
+            raise ValueError('continuous WAV format mismatch')
+        decoded=hashlib.sha256(np.ascontiguousarray(pcm,dtype='<i2').tobytes()).hexdigest()
+        if decoded!=receipt['wav'][role].get('decoded_pcm_sha256'):
+            raise ValueError('continuous PCM identity mismatch')
+    if scene.get('candidate_file')!='A_continuous_drive.wav' or scene.get('feedback_file')!='B_continuous_drive.wav':
+        raise ValueError('continuous scene filename mismatch')
+    if scene.get('reference_file') or scene.get('ref_file')!='B_continuous_drive.wav':
+        raise ValueError('continuous reference role must remain unavailable')
+
+
 def verify(root:Path, expected_sha:str|None=None):
     root=root.resolve()
     if expected_sha and sha_file(root/'ARTIFACTS.json')!=expected_sha:raise ValueError('manifest SHA mismatch')
@@ -606,7 +700,8 @@ def verify(root:Path, expected_sha:str|None=None):
         row=summary['vehicles'][v]
         if (contract['source_roles']!=row['source_roles']
                 or contract['source_sha256']!=row['source_sha256']
-                or contract['feedback_evidence']!=row['feedback_evidence']):
+                or contract['feedback_evidence']!=row['feedback_evidence']
+                or contract.get('continuous_drive')!=row.get('continuous_drive')):
             raise ValueError('ABC role identity mismatch')
         if contract.get('a_provenance')!=row.get('a_provenance'):
             raise ValueError('A provenance mismatch')
@@ -701,9 +796,12 @@ def verify(root:Path, expected_sha:str|None=None):
                 _verify_fit_evidence_payload(text, contract, result)
                 _verify_visible_fit_evidence(text, result, 'fit UI')
             scenes=ui._embedded(text,'SCENES');store=ui._embedded(text,'AUDIO_STORE')
-            if [scene['id'] for scene in scenes]!=list(SCENES):raise ValueError('ten scenes required')
+            scene_ids=[scene['id'] for scene in scenes]
+            if scene_ids not in (list(SCENES), list(SCENES)+[CONTINUOUS_SCENE_ID]):
+                raise ValueError('ten scenes plus optional continuous scene required')
             if set(receipt.get('scenes',{}))!=set(SCENES):raise ValueError('vehicle receipt scene coverage mismatch')
-            for scene_row in scenes:
+            base_scene_rows=[scene for scene in scenes if scene['id'] in SCENES]
+            for scene_row in base_scene_rows:
                 scene=scene_row['id'];a='A_'+scene+'.wav';b='B_'+scene+'.wav';c='C_'+scene+'.wav'
                 c_available=(old_root/v/'web_audio'/c).is_file()
                 expected_names={'original':a,'feedback':b if feedback else '',
@@ -734,6 +832,13 @@ def verify(root:Path, expected_sha:str|None=None):
                     identical=sha_file(folder/'web_audio'/a)==sha_file(folder/'web_audio'/b)
                     if scene_row.get('ab_pcm_identical') is not identical:
                         raise ValueError('A/B identical-scene label mismatch')
+            continuous_rows=[scene for scene in scenes if scene['id']==CONTINUOUS_SCENE_ID]
+            if len(continuous_rows)>1:
+                raise ValueError('duplicate continuous scene')
+            if continuous_rows:
+                _verify_continuous_scene(folder,contract,continuous_rows[0],store)
+            elif contract.get('continuous_drive',{}).get('available'):
+                raise ValueError('continuous contract has no scene')
             if result:
                 for marker in ('baseline_parameters','selected_parameters','baseline_train_loss',
                                'selected_train_loss','validation_baseline','validation_proposed','history'):
