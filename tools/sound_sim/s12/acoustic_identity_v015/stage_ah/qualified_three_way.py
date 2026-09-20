@@ -20,7 +20,7 @@ import numpy as np
 from scipy.io import wavfile
 
 from . import three_way_audition as ui
-from .feedback_evidence import AUTO, SCENES, Journal, fit_eligibility, read_journal, sha_file, write_json
+from .feedback_evidence import AUTO, SCENES, Journal, canonical, fit_eligibility, read_journal, sha_file, write_json
 from .fourcar_reference_loop import verify_run as verify_fourcar
 from . import reference_feedback_cli as feedback_cli
 from .qualification import (
