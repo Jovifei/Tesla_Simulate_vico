@@ -408,8 +408,10 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     raise ValueError(f'continuous B requires accepted feedback result: {v}')
                 packaged_pair=copy.deepcopy(continuous_pair)
                 packaged_receipt=packaged_pair.get('receipt', {})
+                selected_receipt=packaged_receipt.get('parameters',{}).get('selected',{})
                 if (packaged_receipt.get('vehicle')!=v
-                        or packaged_receipt.get('parameters',{}).get('selected')!=result.get('selected_parameters')):
+                        or any(selected_receipt.get(name)!=value
+                               for name,value in result.get('selected_parameters',{}).items())):
                     raise ValueError(f'continuous parameters are not the accepted AI-5 selection: {v}')
                 packaged_receipt['source_manifest_sha256']=source_manifest_sha
                 packaged_pair['receipt']=packaged_receipt
