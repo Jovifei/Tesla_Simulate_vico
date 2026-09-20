@@ -4422,12 +4422,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Add shared fail-closed record/WAV qualification and an independent receipt using RED -> GREEN tests.
 - [x] Rebuild the evidence-driven eight-vehicle A/B/C package with truthful per-role availability and trial history.
 - [x] Add governed 30-second continuous-drive A/B rendering for RX-7 and Aventador in the existing UI.
-- [ ] Add transactional publication, strict serve preflight, port-collision and tamper regressions.
+- [x] Add transactional publication, strict serve preflight, port-collision and tamper regressions.
 - [x] Commit source, generate and verify a fresh immutable AI-6 package, and preserve old package hashes.
 - [x] Run focused/full/real-material/slow/compile/Track-P/diff/browser validation.
-- [ ] Update the formal report and confirmed Obsidian project record.
+- [x] Update the formal report and confirmed Obsidian project record.
 - [ ] Push the isolated branch, create a Draft PR, and record exact-head Ubuntu/Windows CI; do not merge main.
 
 ### Review
 
-- Pending implementation and current-HEAD evidence.
+- Full exact-HEAD S12: `1322 passed, 118 subtests passed` in `3883.76s`; strict compile, Track-P and diff checks pass.
+- Fresh v2 package verified: manifest `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`.
+- Branch pushed through HEAD `98b0813cd2a42526a30d66d0a93d82ba55219b2d`; GitHub Actions query showed no run for the branch because no PR/authenticated trigger exists. Draft PR creation remains blocked by unavailable GitHub authentication; main was not changed.
