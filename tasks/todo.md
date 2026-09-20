@@ -4416,3 +4416,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Track-P: 180 files/2 symbols unchanged; guard and 32 tests pass. Compileall and diff-check pass.
 - Existing sealed AI-4B package and all old packages remain read-only and hash-verified.
 - New report: `docs/08-reports/35-stage-ai4b-project-audit-20260919.md`.
+## 2026-09-20 Stage AI-6 unified audition and continuous drive
+
+- [x] Reconfirm remote AI-5 head and create a clean isolated AI-6 worktree.
+- [x] Add shared fail-closed record/WAV qualification and an independent receipt using RED -> GREEN tests.
+- [x] Rebuild the evidence-driven eight-vehicle A/B/C package with truthful per-role availability and trial history.
+- [x] Add governed 30-second continuous-drive A/B rendering for RX-7 and Aventador in the existing UI.
+- [ ] Add transactional publication, strict serve preflight, port-collision and tamper regressions.
+- [x] Commit source, generate and verify a fresh immutable AI-6 package, and preserve old package hashes.
+- [ ] Run focused/full/real-material/slow/compile/Track-P/diff/browser validation.
+- [ ] Update the formal report and confirmed Obsidian project record.
+- [ ] Push the isolated branch, create a Draft PR, and record exact-head Ubuntu/Windows CI; do not merge main.
+
+### Review
+
+- Pending implementation and current-HEAD evidence.

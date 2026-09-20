@@ -240,4 +240,12 @@ Stage AG 解决的是 Hellcat、Ferrari 458、LFA、GT-R R35 之间的车型身�
 
 试听路由本身是证据边界：`stage_ag.serve_r1_review_strict` 先验证 manifest 自哈希与 exact SHA、4 车型目录、R1 mode、dashboard contract、candidate/Reference WAV SHA、rich HTML required marker，再原子性地绑定全部 8 个 loopback ports。它要求 23380–23383 是 legacy、23480–23483 是 R1；`8080/8088–8091` 与 `review_packages/serve_dashboards.py` 是历史路由，禁止用于 AG-R1，因为 collision 后可能继续暴露旧 package/旧 WAV。正确页面必须显示 A/B 瞬时比对、FFT/Waveform、分类、10 场景和反馈输入；若出现 `canonical S12 renderer` 或 `package-wide gain`，停止且不听音。
 
+## 19. Stage AI-6 unified audition and continuous drive (2026-09-20)
+
+AI-6 source branch is `feature/stage-ai6-unified-audition-20260920`, based on AI-5 `5029eb4cf38a28246ee9865a2f53cb9fadfe0e66`. The implementation adds a shared independent qualification receipt that decodes final WAVs, recomputes PCM identity and 4x/8x/16x reconstruction peaks, and fails closed on missing reports, context drift, clip errors, or source/receipt mismatch. Existing old packages remain immutable.
+
+The unified eight-vehicle workbench keeps A=feedback-off algorithm, B=accepted measured-feedback candidate, C=source-bound real recording. RX-7 A explicitly records the AI-4B startup boundary repair and measured per-scene difference; C63/Supra and other unqualified B roles remain disabled with reasons. Trial history, parameters, visible evidence and hash-linked journals are all rechecked.
+
+The new `continuous_drive` scene renders one 30-second stateful track at 48 kHz stereo int16: idle → acceleration with three shifts → pull → closed-throttle lift → coast → idle. RX-7 and Aventador share trace/events/seed/IR/parent denominator with their accepted AI-5 parameters; RX-7 has one 24-frame start boundary repair, Aventador has no boundary repair. Renderer diagnostics prove actual shift/afterfire events and post-lift stem energy; A/B/off-switch PCM identities are retained. The fresh v2 package is `s12-stage-ai6-unified-audition-20260920-v2`, manifest SHA `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary SHA `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`, and review service port is 29780. This remains engineering/audition evidence; no Human PASS, OEM sync or similarity percentage is claimed.
+
 本轮已通过 strict preflight、8 端口 HTTP 200、Ferrari R1 rich UI 浏览器截图与 HTML marker 检查。状态固定为 `STAGE_AG_R1_STRICT_RICH_REVIEW_READY / WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；下一动作仅是 Jovi 在 R1 页面实际试听，记录人耳反馈，不自动 fit/R2/profile freeze/Android/ESP32。
