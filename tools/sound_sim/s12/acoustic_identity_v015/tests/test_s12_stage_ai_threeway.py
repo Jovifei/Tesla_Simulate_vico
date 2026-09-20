@@ -227,7 +227,7 @@ def test_resealed_missing_c_audio_store_entry_is_rejected(old_package, tmp_path)
     store.pop(SCENES[0] + "_reference")
     _replace_embedded(page, "AUDIO_STORE", store)
     _reseal_inventory(out)
-    with pytest.raises(ValueError, match="source mapping"):
+    with pytest.raises(ValueError, match="source role coverage"):
         qualified.verify(out)
 
 
