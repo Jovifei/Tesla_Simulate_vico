@@ -11,6 +11,7 @@ import hashlib
 import html
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import tempfile
@@ -276,12 +277,10 @@ def rich_page(template, vehicle, title, scenes, contract, store, nav, report_lin
             str(provenance['boundary_policy']))+'；与 pre-AI4B A 不宣称字节一致。'
         panel+=' 边界差异仅限 '+str(provenance['boundary_difference_frames'])+' 帧。</p>'
     if fit_result:
-        visible={key:fit_result[key] for key in (
-            'baseline_parameters','selected_parameters','baseline_train_loss',
-            'selected_train_loss','validation_baseline','validation_proposed','history'
-        )}
-        panel+='<details open><summary>完整参数、训练/验证损失与逐次试验</summary><pre>'+html.escape(
-            json.dumps(visible,ensure_ascii=False,indent=2,allow_nan=False))+'</pre></details>'
+        visible=_fit_visible_payload(fit_result)
+        visible_json=json.dumps(visible,ensure_ascii=False,indent=2,allow_nan=False)
+        panel+='<details open><summary>完整参数、训练/验证损失与逐次试验</summary><pre id="ai6-fit-visible">'+html.escape(
+            visible_json)+'</pre></details>'
         page=page.replace('NOT_MEASURED','MEASURED_FROM_SEALED_EVIDENCE')
         page=page.replace('0 parameters','MEASURED_PARAMETERS')
         payload=json.dumps(_fit_evidence_payload(fit_result),ensure_ascii=False,
@@ -400,9 +399,8 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     trial_count=result['trial_count'],parameter_delta=result['parameter_delta'])
                 log_html=evidence/(v+'-log.html')
                 text='<html lang="zh-CN"><meta charset="utf-8"><title>负反馈试验日志</title><h1>'+v+'</h1>'
-                text+='<p>训练误差不是相似度；验证源不用于搜参；没有Human PASS。</p><pre>'+html.escape(json.dumps(
-                    {k:result[k] for k in ('status','baseline_train_loss','selected_train_loss','parameter_delta',
-                        'validation_baseline','validation_proposed','history','reference_cases')},ensure_ascii=False,indent=2))+'</pre></html>'
+                log_visible=json.dumps(_fit_visible_payload(result),ensure_ascii=False,indent=2,allow_nan=False)
+                text+='<p>训练误差不是相似度；验证源不用于搜参；没有Human PASS。</p><pre id="ai6-fit-visible">'+html.escape(log_visible)+'</pre></html>'
                 log_payload=json.dumps(_fit_evidence_payload(result),ensure_ascii=False,
                                        sort_keys=True,separators=(',',':'))
                 text=text.replace('</html>', '<script>const AI6_FIT_EVIDENCE = '+log_payload+';</script></html>', 1)
@@ -492,6 +490,15 @@ def _fit_evidence_payload(result: dict) -> dict:
     return {field: copy.deepcopy(result[field]) for field in fields}
 
 
+def _fit_visible_payload(result: dict) -> dict:
+    fields = (
+        'baseline_parameters', 'selected_parameters', 'baseline_train_loss',
+        'selected_train_loss', 'parameter_delta', 'validation_baseline',
+        'validation_proposed', 'history',
+    )
+    return {field: copy.deepcopy(result[field]) for field in fields}
+
+
 def _verify_trial_evidence(root: Path, info: dict, result: dict) -> None:
     journal_path = root / info.get('trial_log', '')
     if (not journal_path.is_file()
@@ -524,6 +531,18 @@ def _verify_fit_evidence_payload(page: str, contract: dict, result: dict) -> Non
         raise ValueError('fit UI evidence missing') from error
     if embedded != expected:
         raise ValueError('fit UI evidence mismatch')
+
+
+def _verify_visible_fit_evidence(document: str, result: dict, label: str) -> None:
+    match=re.search(r'<pre id="ai6-fit-visible">(.*?)</pre>', document, re.DOTALL)
+    if not match:
+        raise ValueError(label+' visible evidence missing')
+    try:
+        visible=json.loads(html.unescape(match.group(1)))
+    except (TypeError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError(label+' visible evidence malformed') from error
+    if visible != _fit_visible_payload(result):
+        raise ValueError(label+' visible evidence mismatch')
 
 
 def _verify_source_identity(identity: dict, expected: Path, packaged: Path) -> None:
@@ -625,10 +644,12 @@ def verify(root:Path, expected_sha:str|None=None):
             if (not fit_log.is_file() or sha_file(fit_log)!=info.get('fit_log_sha256')):
                 raise ValueError('fit log missing or changed')
             try:
-                if ui._embedded(fit_log.read_text(encoding='utf-8'), 'AI6_FIT_EVIDENCE') != _fit_evidence_payload(result):
+                fit_log_text=fit_log.read_text(encoding='utf-8')
+                if ui._embedded(fit_log_text, 'AI6_FIT_EVIDENCE') != _fit_evidence_payload(result):
                     raise ValueError('fit log evidence mismatch')
+                _verify_visible_fit_evidence(fit_log_text, result, 'fit log')
             except ValueError as error:
-                if 'fit log evidence mismatch' in str(error):
+                if 'fit log evidence mismatch' in str(error) or 'fit log visible evidence' in str(error):
                     raise
                 raise ValueError('fit log evidence missing') from error
             source_summary_path=root/info.get('source_summary','')
@@ -678,6 +699,7 @@ def verify(root:Path, expected_sha:str|None=None):
             if ui._embedded(text,'DASHBOARD_CONTRACT')!=stored:raise ValueError('embedded contract differs')
             if feedback:
                 _verify_fit_evidence_payload(text, contract, result)
+                _verify_visible_fit_evidence(text, result, 'fit UI')
             scenes=ui._embedded(text,'SCENES');store=ui._embedded(text,'AUDIO_STORE')
             if [scene['id'] for scene in scenes]!=list(SCENES):raise ValueError('ten scenes required')
             if set(receipt.get('scenes',{}))!=set(SCENES):raise ValueError('vehicle receipt scene coverage mismatch')

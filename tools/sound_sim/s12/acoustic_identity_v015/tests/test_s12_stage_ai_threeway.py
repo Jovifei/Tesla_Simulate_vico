@@ -297,6 +297,21 @@ def test_resealed_fit_measurement_drift_is_rejected(enabled_b_package):
         qualified.verify(root)
 
 
+def test_resealed_visible_fit_evidence_drift_is_rejected(enabled_b_package):
+    root = enabled_b_package
+    vehicle = "rx7_fd"
+    for page_name in ("index.html", "index_standalone.html"):
+        page = root / vehicle / page_name
+        text = page.read_text(encoding="utf-8")
+        assert '&quot;baseline_train_loss&quot;: 2.0' in text
+        page.write_text(text.replace('&quot;baseline_train_loss&quot;: 2.0',
+                                     '&quot;baseline_train_loss&quot;: 99.0', 1),
+                        encoding="utf-8")
+    _reseal_inventory(root)
+    with pytest.raises(ValueError, match="visible|fit UI|evidence"):
+        qualified.verify(root)
+
+
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):
     _reseal_vehicle_receipt(enabled_b_package,"rx7_fd",
                             lambda value:value.__setitem__("outcome","B_UNAVAILABLE"))
