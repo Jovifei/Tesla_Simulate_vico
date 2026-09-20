@@ -101,14 +101,17 @@ def _validate_event_diagnostics(report: Mapping[str, Any], events: Mapping[str, 
     diagnostics=report.get('candidate_source_diagnostics', {})
     shifts=int(diagnostics.get('shift_event_count', -1))
     afterfire=int(diagnostics.get('afterfire_event_count', -1))
-    energy=float(diagnostics.get('afterfire_stem_energy',
-                                diagnostics.get('afterfire_thermal_peak', 0.0)))
+    energy=float(diagnostics.get('afterfire_stem_energy_after_lift', 0.0))
+    onset_times=tuple(float(value) for value in diagnostics.get('afterfire_event_times_s', ()))
     if shifts != len(events['shift_events']):
         raise ValueError('continuous renderer shift diagnostics mismatch')
-    if afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0:
+    lift_time=float(events['afterfire_events'][0]['time_s'])
+    if (afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0
+            or not onset_times or min(onset_times) < lift_time):
         raise ValueError('continuous renderer afterfire diagnostics missing')
     return {'shift_count': shifts, 'afterfire_event_count': afterfire,
-            'afterfire_stem_energy': energy}
+            'afterfire_stem_energy_after_lift': energy,
+            'afterfire_event_times_s': list(onset_times)}
 
 
 def render_continuous_pair(
@@ -197,7 +200,8 @@ def render_continuous_pair(
             "shift_count": diagnostic_a["shift_count"],
             "shift_events": events["shift_events"],
             "afterfire_event_count": diagnostic_a["afterfire_event_count"],
-            "afterfire_stem_energy": diagnostic_a["afterfire_stem_energy"],
+            "afterfire_stem_energy_after_lift": diagnostic_a["afterfire_stem_energy_after_lift"],
+            "afterfire_event_times_s": diagnostic_a["afterfire_event_times_s"],
             "afterfire_events": events["afterfire_events"],
             "bov_events": events["bov_events"],
             "stateful_single_render_per_role": True,
@@ -212,6 +216,10 @@ def render_continuous_pair(
             "B": {"decoded_pcm_sha256": _pcm_sha(pcm_b), "frame_count": len(pcm_b)},
         },
         "reports": {"A": report_a, "B": report_b, "off_switch": report_off},
+        "feedback_off": {
+            "pcm_equal": bool(np.array_equal(pcm_a, pcm_off)),
+            "report": report_off,
+        },
         "feedback_off_pcm_equal": True,
         "human_status": "NOT_EVALUATED",
         "promotable": False,

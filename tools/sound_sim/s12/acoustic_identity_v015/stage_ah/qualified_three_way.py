@@ -642,7 +642,7 @@ def _verify_bound_source_run(source_run: Path, expected_manifest_sha: str,
 
 
 def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: dict,
-                             vehicle: str) -> None:
+                             vehicle: str, accepted_parameters: Mapping[str, Any] | None = None) -> None:
     info=contract.get('continuous_drive')
     if not isinstance(info, dict) or info.get('schema')!=CONTINUOUS_SCHEMA:
         raise ValueError('continuous drive contract missing')
@@ -670,7 +670,8 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
     if (receipt.get('events',{}).get('shift_count')!=3
             or int(receipt.get('events',{}).get('afterfire_event_count',0))<=0
             or len(receipt.get('events',{}).get('afterfire_events',()))!=1
-            or float(receipt.get('events',{}).get('afterfire_stem_energy',0.0))<=0.0):
+            or float(receipt.get('events',{}).get('afterfire_stem_energy_after_lift',0.0))<=0.0
+            or min(receipt.get('events',{}).get('afterfire_event_times_s',())) < 18.0):
         raise ValueError('continuous event evidence incomplete')
     if receipt.get('source_manifest_sha256')!=info.get('source_manifest_sha256'):
         raise ValueError('continuous source manifest binding mismatch')
@@ -703,7 +704,7 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         if canonical(recomputed)!=canonical(report.get('reconstruction_peak')):
             raise ValueError('continuous report reconstructed-peak mismatch')
         pcm_by_role[role]=pcm
-    report_a,reports_b=reports['A'],reports['B']
+    report_a,reports_b,report_off=reports['A'],reports['B'],reports['off_switch']
     for field in ('trace_sha256','seed','flags','parent_peak_key','normalization_denominator','output_policy','sample_rate_hz'):
         if report_a.get(field)!=reports_b.get(field):
             raise ValueError('continuous report shared context mismatch')
@@ -711,9 +712,49 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         raise ValueError('continuous renderer did not report three shifts')
     for report in (report_a,reports_b):
         diag=report.get('candidate_source_diagnostics',{})
-        if int(diag.get('afterfire_event_count',0))<=0 or float(diag.get('afterfire_stem_energy',diag.get('afterfire_thermal_peak',0.0)))<=0.0:
+        if (int(diag.get('afterfire_event_count',0))<=0
+                or float(diag.get('afterfire_stem_energy_after_lift',0.0))<=0.0
+                or min(diag.get('afterfire_event_times_s',())) < 18.0):
             raise ValueError('continuous renderer afterfire evidence missing')
-    if receipt.get('parameters',{}).get('selected')!=contract.get('continuous_drive',{}).get('selected_parameters'):
+    boundary=receipt.get('boundary',{})
+    expected_boundary=(('rx7_start_boundary_fade_v1',24) if vehicle=='rx7_fd' else (None,0))
+    if (boundary.get('policy_id'),boundary.get('fade_frames'))!=expected_boundary:
+        raise ValueError('continuous boundary scope mismatch')
+    for report in (report_a,reports_b,report_off):
+        if report.get('boundary_repair',{}).get('policy_id')!=boundary.get('policy_id'):
+            raise ValueError('continuous report boundary mismatch')
+    if vehicle=='rx7_fd' and (boundary.get('scope')!='rx7_start_boundary_only'
+                              or boundary.get('modified_frames')!=24):
+        raise ValueError('RX-7 continuous boundary is not exactly 24 start frames')
+    if vehicle=='aventador_lp700' and boundary.get('modified_frames')!=0:
+        raise ValueError('Aventador continuous boundary was modified')
+    shared=receipt.get('shared',{})
+    for field in ('seed','trace_sha256','parent_peak_key','normalization_denominator','output_policy'):
+        if report_a.get(field)!=shared.get(field) or reports_b.get(field)!=shared.get(field):
+            raise ValueError('continuous shared receipt context mismatch')
+    if (report_a.get('ir_name')!=reports_b.get('ir_name')
+            or report_a.get('ir_source_sha256')!=reports_b.get('ir_source_sha256')):
+        raise ValueError('continuous shared IR mismatch')
+    feedback_off=receipt.get('feedback_off',{})
+    if feedback_off.get('pcm_equal') is not True or feedback_off.get('report')!=report_off:
+        raise ValueError('continuous feedback-off evidence mismatch')
+    if (not numeric_ok(report_off)
+            or report_off.get('final_pcm_sha256')!=report_a.get('final_pcm_sha256')):
+        raise ValueError('continuous feedback-off numeric identity mismatch')
+    if any(report_off.get(field)!=report_a.get(field) for field in (
+            'trace_sha256','seed','flags','parent_peak_key','normalization_denominator','output_policy')):
+        raise ValueError('continuous feedback-off context mismatch')
+    params=receipt.get('parameters',{})
+    baseline=params.get('baseline',{});selected=params.get('selected',{})
+    if (report_a.get('candidate_source_diagnostics',{}).get('feedback_control',{}).get('parameters')!=baseline
+            or reports_b.get('candidate_source_diagnostics',{}).get('feedback_control',{}).get('parameters')!=selected):
+        raise ValueError('continuous renderer parameter receipt mismatch')
+    if accepted_parameters is not None:
+        if any(selected.get(name)!=value for name,value in accepted_parameters.items()):
+            raise ValueError('continuous accepted parameter binding mismatch')
+        if any(selected.get(name)!=baseline.get(name) for name in selected if name not in accepted_parameters):
+            raise ValueError('continuous non-accepted parameter drift')
+    if selected!=contract.get('continuous_drive',{}).get('selected_parameters'):
         raise ValueError('continuous accepted parameter binding mismatch')
     if scene.get('candidate_file')!='A_continuous_drive.wav' or scene.get('feedback_file')!='B_continuous_drive.wav':
         raise ValueError('continuous scene filename mismatch')
@@ -883,7 +924,10 @@ def verify(root:Path, expected_sha:str|None=None):
             if len(continuous_rows)>1:
                 raise ValueError('duplicate continuous scene')
             if continuous_rows:
-                _verify_continuous_scene(folder,contract,continuous_rows[0],store,v)
+                _verify_continuous_scene(
+                    folder, contract, continuous_rows[0], store, v,
+                    result.get('selected_parameters') if result else None,
+                )
             elif contract.get('continuous_drive',{}).get('available'):
                 raise ValueError('continuous contract has no scene')
             if result:

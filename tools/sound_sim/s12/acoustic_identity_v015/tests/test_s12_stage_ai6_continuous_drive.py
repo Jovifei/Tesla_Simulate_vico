@@ -97,7 +97,8 @@ class _FakeEngine:
             "candidate_source_diagnostics": {
                 "shift_event_count": len(shift_events or []),
                 "afterfire_event_count": len(afterfire_events or []),
-                "afterfire_stem_energy": 1.0,
+                "afterfire_stem_energy_after_lift": 1.0,
+                "afterfire_event_times_s": [18.0] if afterfire_events else [],
             },
         }
         self.reports.append(report)

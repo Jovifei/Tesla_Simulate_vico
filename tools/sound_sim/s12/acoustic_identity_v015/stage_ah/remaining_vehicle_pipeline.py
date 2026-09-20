@@ -311,6 +311,21 @@ class RemainingVehicleEngine:
         scene_id = self._scene_id()
         parent_key = scene_trace_key(scene_id, trace_sha)
         source = _feedback_source(self.vehicle_type, trace, self.feedback)
+        source_diagnostics = dict(source.diagnostics)
+        afterfire_stem = np.asarray(source.stems.get("afterfire", np.zeros(len(trace.time_s))), dtype=np.float64)
+        afterfire_times = tuple(
+            float(event.get("time_s")) for event in (afterfire_events or [])
+            if isinstance(event, Mapping) and np.isfinite(float(event.get("time_s", -1.0)))
+        )
+        if afterfire_times:
+            start = max(0, min(len(afterfire_stem), int(round(min(afterfire_times) * self.sr))))
+            source_diagnostics["afterfire_event_times_s"] = list(afterfire_times)
+            source_diagnostics["afterfire_stem_energy_after_lift"] = float(
+                np.sum(np.square(afterfire_stem[start:]))
+            )
+        else:
+            source_diagnostics["afterfire_event_times_s"] = []
+            source_diagnostics["afterfire_stem_energy_after_lift"] = 0.0
         pressure = np.asarray(source.pressure, dtype=np.float64)
         ir_scaled = self.ir * IR_VOLUMES[self.vehicle_type]
         convolved = np.column_stack([signal.fftconvolve(pressure[:, channel], ir_scaled, mode="same") for channel in range(2)])
@@ -391,7 +406,7 @@ class RemainingVehicleEngine:
             "ir_volume": IR_VOLUMES[self.vehicle_type],
             "ir_source_path": str(self.ir_source_path) if self.ir_source_path else "INJECTED_TEST_IR",
             "ir_source_sha256": self.ir_source_sha256,
-            "candidate_source_diagnostics": dict(source.diagnostics),
+            "candidate_source_diagnostics": source_diagnostics,
             "candidate_stems": source_stems,
             "normalization": {
                 **guard,
