@@ -733,7 +733,8 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         if report_a.get(field)!=shared.get(field) or reports_b.get(field)!=shared.get(field):
             raise ValueError('continuous shared receipt context mismatch')
     if (report_a.get('ir_name')!=reports_b.get('ir_name')
-            or report_a.get('ir_source_sha256')!=reports_b.get('ir_source_sha256')):
+            or report_a.get('ir_volume')!=reports_b.get('ir_volume')
+            or shared.get('ir_source_sha256') not in (None, report_a.get('ir_source_sha256'))):
         raise ValueError('continuous shared IR mismatch')
     feedback_off=receipt.get('feedback_off',{})
     if feedback_off.get('pcm_equal') is not True or feedback_off.get('report')!=report_off:
