@@ -1,5 +1,7 @@
 """Original rich A/B/C rendering, eight-car navigation and no fixed-recipe B."""
 from pathlib import Path
+import copy
+import hashlib
 import json
 import subprocess
 import shutil
@@ -10,6 +12,12 @@ from scipy.io import wavfile
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import three_way_audition as ui
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import qualified_three_way as qualified
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.feedback_evidence import SCENES, sha_file
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.qualification import (
+    build_qualification_receipt,
+)
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.reconstruction_peak import (
+    reconstructed_peak_receipt,
+)
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import seal_payload
 
 
@@ -21,8 +29,10 @@ def old_package(tmp_path,monkeypatch):
         scenes=[]
         for i,s in enumerate(SCENES):
             t=np.arange(4800)/48000.
-            wave=(7000*np.sin(2*np.pi*(200+vi*40+i)*t)).astype(np.int16)
-            ref=(8000*np.sin(2*np.pi*(350+vi*40+i)*t)).astype(np.int16)
+            mono=(7000*np.sin(2*np.pi*(200+vi*40+i)*t)).astype(np.int16)
+            wave=np.column_stack((mono,mono))
+            ref_mono=(8000*np.sin(2*np.pi*(350+vi*40+i)*t)).astype(np.int16)
+            ref=np.column_stack((ref_mono,ref_mono))
             wavfile.write(web/(s+'.wav'),48000,wave);wavfile.write(web/('ref_'+s+'.wav'),48000,ref)
             scenes.append({'id':s,'index':i+1,'title':s,'desc':'controlled fixture','focus':'test',
                            'category':'cruise','candidate_file':s+'.wav','ref_file':'ref_'+s+'.wav'})
@@ -58,6 +68,36 @@ def _replace_embedded(page, name, value):
     page.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
+def _overwrite_json(path, value):
+    path.write_text(json.dumps(value,ensure_ascii=False,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+
+
+def _sync_vehicle_evidence(root, vehicle, info):
+    folder=root/vehicle
+    contract=json.loads((folder/"dashboard_contract.json").read_text(encoding="utf-8"))
+    contract=seal_payload({**contract,"feedback_evidence":info},qualified.SCHEMA)
+    _overwrite_json(folder/"dashboard_contract.json",contract)
+    for name in ("index.html","index_standalone.html"):
+        page=folder/name
+        _replace_embedded(page,"DASHBOARD_CONTRACT",contract)
+    summary=json.loads((root/"summary.json").read_text(encoding="utf-8"))
+    summary["vehicles"][vehicle]["feedback_evidence"]=info
+    summary=seal_payload(summary,qualified.SCHEMA)
+    _overwrite_json(root/"summary.json",summary)
+    _reseal_inventory(root)
+
+
+def _reseal_vehicle_receipt(root,vehicle,mutate):
+    path=root/"evidence"/(vehicle+"-qualification.json")
+    receipt=json.loads(path.read_text(encoding="utf-8"));mutate(receipt)
+    receipt=seal_payload(receipt,qualified.VEHICLE_QUALIFICATION_SCHEMA)
+    _overwrite_json(path,receipt)
+    contract=json.loads((root/vehicle/"dashboard_contract.json").read_text(encoding="utf-8"))
+    info=copy.deepcopy(contract["feedback_evidence"])
+    info["vehicle_qualification_receipt_sha256"]=sha_file(path)
+    _sync_vehicle_evidence(root,vehicle,info)
+
+
 def _valid_fit():
     return {
         "schema": "s12.stage_ah.reference_feedback.v1",
@@ -82,6 +122,59 @@ def _valid_fit():
             {"case_id": "validation-case", "split": "validation", "source_sha256": "b" * 64},
         ],
     }
+
+
+def _record(vehicle, scene, pcm):
+    audio=pcm.astype(np.float64)/32767.0
+    peak=float(np.max(np.abs(audio)))
+    return {
+        "vehicle":vehicle,"scene_id":scene,
+        "trace_sha256":hashlib.sha256(scene.encode()).hexdigest(),
+        "sample_rate_hz":48000,"sample_count":len(pcm),"seed":20260908,
+        "flags":[],"parent_peak_key":"parent/"+scene,"parent_peak":0.8,
+        "candidate_raw_peak":0.7,"normalization_denominator":0.8,
+        "output_policy":"linked_soft_ceiling_v1",
+        "normalization":{"output_policy":"linked_soft_ceiling_v1",
+            "normalization_denominator":0.8,"legacy_ceiling_input_exceedance_samples":0,
+            "legacy_transfer_pre_guard_peak":0.7,"pre_guard_exceedance_longest_run":0,
+            "pre_guard_peak":0.7,"frame_count":len(pcm),"soft_guard_active_frames":0,
+            "soft_guard_delta_peak":0.0,"soft_guard_delta_rms":0.0,
+            "post_guard_peak":peak,"post_guard_ceiling_exceedance_samples":0,
+            "emergency_clip_count":0,"emergency_clip_error":0.0,
+            "emergency_clip_error_rms":0.0},
+        "identity_layer_clip_count":0,"identity_layer_clip_error":0.0,
+        "post_identity_clip_count":0,"post_identity_clip_error":0.0,
+        "final_peak":peak,"final_rms":float(np.sqrt(np.mean(audio*audio))),
+        "final_pcm_sha256":hashlib.sha256(np.ascontiguousarray(pcm,dtype="<i2").tobytes()).hexdigest(),
+        "peak_estimate_4x":{"peak":peak},"reconstruction_peak":reconstructed_peak_receipt(audio),
+    }
+
+
+@pytest.fixture
+def enabled_b_package(old_package,tmp_path,monkeypatch):
+    vehicle="rx7_fd";source=tmp_path/"ai5-source"
+    fit=_valid_fit();fit["baseline_records"]={};fit["selected_records"]={}
+    for scene in SCENES:
+        _,old_pcm=wavfile.read(old_package/vehicle/"web_audio"/("A_"+scene+".wav"))
+        baseline=old_pcm.copy();baseline[20:23]+=1
+        tuned=baseline.copy();tuned[100:103]+=1
+        for role,pcm,field in (("baseline",baseline,"baseline_records"),("tuned",tuned,"selected_records")):
+            web=source/role/vehicle/"web_audio";web.mkdir(parents=True,exist_ok=True)
+            wavfile.write(web/(scene+".wav"),48000,pcm)
+            fit[field][scene]=_record(vehicle,scene,pcm)
+    fit["baseline_records"]["09_steady_mid"]["boundary_repair"]={
+        "policy_id":"rx7_start_boundary_fade_v1","fade_frames":24,
+        "modified_frames":24,"scope":"rx7_start_boundary_only","stereo_link":"common_frame_ramp"}
+    summary={"schema":"s12.stage_ah.reference_feedback_run.v1",
+             "output_policy":"linked_soft_ceiling_v1","vehicles":{vehicle:fit}}
+    task1=build_qualification_receipt(source,summary)
+    assert task1["status"]=="PASS"
+    monkeypatch.setattr(qualified,"_feedback_source",lambda *args:(source,summary,task1,"f"*64))
+    monkeypatch.setattr(qualified,"_runtime_identity",lambda:{"fixture":"clean"})
+    out=tmp_path/"enabled-b"
+    qualified.build(old_package,sha_file(old_package/"ARTIFACTS.json"),out,
+                    two_run=source,two_sha="f"*64)
+    return out
 
 
 def test_all_eight_preserve_ac_but_fixed_recipes_cannot_be_b(old_package,tmp_path):
@@ -148,6 +241,92 @@ def test_fabricated_fit_pass_is_rejected():
 
 def test_historical_vehicle_row_without_display_name_uses_canonical_key():
     assert qualified._vehicle_name({}, "rx7_fd") == "rx7_fd"
+
+
+def test_resealed_task1_summary_binding_drift_is_rejected(enabled_b_package):
+    root=enabled_b_package;vehicle="rx7_fd"
+    task1=root/"evidence"/(vehicle+"-task1-qualification.json")
+    value=json.loads(task1.read_text(encoding="utf-8"))
+    value["summary_sha256"]="0"*64
+    _overwrite_json(task1,value)
+    receipt_path=root/"evidence"/(vehicle+"-qualification.json")
+    receipt=json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["fit_evidence"]["task1_qualification_receipt_sha256"]=sha_file(task1)
+    receipt=seal_payload(receipt,qualified.VEHICLE_QUALIFICATION_SCHEMA)
+    _overwrite_json(receipt_path,receipt)
+    contract=json.loads((root/vehicle/"dashboard_contract.json").read_text(encoding="utf-8"))
+    info=copy.deepcopy(contract["feedback_evidence"])
+    info["task1_qualification_receipt_sha256"]=sha_file(task1)
+    info["vehicle_qualification_receipt_sha256"]=sha_file(receipt_path)
+    _sync_vehicle_evidence(root,vehicle,info)
+    with pytest.raises(ValueError,match="Task-1"):
+        qualified.verify(root)
+
+
+def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):
+    _reseal_vehicle_receipt(enabled_b_package,"rx7_fd",
+                            lambda value:value.__setitem__("outcome","B_UNAVAILABLE"))
+    with pytest.raises(ValueError,match="outcome"):
+        qualified.verify(enabled_b_package)
+
+
+def test_resealed_vehicle_receipt_fit_binding_drift_is_rejected(enabled_b_package):
+    def mutate(value):
+        value["fit_evidence"]["source_manifest_sha256"]="0"*64
+    _reseal_vehicle_receipt(enabled_b_package,"rx7_fd",mutate)
+    with pytest.raises(ValueError,match="fit evidence"):
+        qualified.verify(enabled_b_package)
+
+
+def test_resealed_source_path_rebinding_is_rejected(enabled_b_package):
+    root=enabled_b_package
+    def mutate(value):
+        value["scenes"][SCENES[0]]["original"]["source_path"]=str(
+            (root/"rx7_fd"/"web_audio"/("A_"+SCENES[0]+".wav")).resolve())
+    _reseal_vehicle_receipt(root,"rx7_fd",mutate)
+    with pytest.raises(ValueError,match="source path"):
+        qualified.verify(root)
+
+
+def test_resealed_c_role_deletion_cannot_erase_build_time_availability(old_package,tmp_path):
+    out=tmp_path/"deleted-c";qualified.build(old_package,sha_file(old_package/"ARTIFACTS.json"),out)
+    vehicle="hellcat";scene=SCENES[0];folder=out/vehicle
+    c_name="C_"+scene+".wav";(folder/"web_audio"/c_name).unlink()
+    contract=json.loads((folder/"dashboard_contract.json").read_text(encoding="utf-8"))
+    contract["source_sha256"]["reference"].pop(c_name)
+    receipt_path=out/"evidence"/(vehicle+"-qualification.json")
+    receipt=json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["scenes"][scene].pop("reference")
+    receipt=seal_payload(receipt,qualified.VEHICLE_QUALIFICATION_SCHEMA)
+    _overwrite_json(receipt_path,receipt)
+    info=copy.deepcopy(contract["feedback_evidence"])
+    info["vehicle_qualification_receipt_sha256"]=sha_file(receipt_path)
+    contract["feedback_evidence"]=info
+    contract=seal_payload(contract,qualified.SCHEMA);_overwrite_json(folder/"dashboard_contract.json",contract)
+    for page_name in ("index.html","index_standalone.html"):
+        page=folder/page_name;text=page.read_text(encoding="utf-8")
+        scenes=ui._embedded(text,"SCENES");store=ui._embedded(text,"AUDIO_STORE")
+        scenes[0]["reference_file"]="";store.pop(scene+"_reference")
+        _replace_embedded(page,"SCENES",scenes);_replace_embedded(page,"AUDIO_STORE",store)
+        _replace_embedded(page,"DASHBOARD_CONTRACT",contract)
+    summary=json.loads((out/"summary.json").read_text(encoding="utf-8"))
+    summary["vehicles"][vehicle]["source_sha256"]["reference"].pop(c_name)
+    summary["vehicles"][vehicle]["feedback_evidence"]=info
+    summary=seal_payload(summary,qualified.SCHEMA);_overwrite_json(out/"summary.json",summary)
+    _reseal_inventory(out)
+    with pytest.raises(ValueError,match="build-time|source role coverage"):
+        qualified.verify(out)
+
+
+def test_rx7_boundary_diff_receipt_rejects_change_after_window(tmp_path):
+    old=tmp_path/"old.wav";new=tmp_path/"new.wav"
+    pcm=np.zeros((64,2),dtype=np.int16);changed=pcm.copy();changed[23]=1
+    wavfile.write(old,48000,pcm);wavfile.write(new,48000,changed)
+    receipt=qualified._rx7_boundary_diff_receipt(old,new)
+    assert receipt["changed_frame_indices"]==[23]
+    changed[24]=1;wavfile.write(new,48000,changed)
+    with pytest.raises(ValueError,match="24-frame"):
+        qualified._rx7_boundary_diff_receipt(old,new)
 
 
 def test_missing_enabled_b_qualification_receipt_is_rejected(old_package, tmp_path):
