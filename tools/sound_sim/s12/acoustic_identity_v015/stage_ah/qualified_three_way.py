@@ -688,7 +688,8 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         if sha_file(path)!=receipt.get('wav',{}).get(role,{}).get('wav_file_sha256'):
             raise ValueError('continuous WAV identity mismatch')
         rate,pcm=wavfile.read(path)
-        if int(rate)!=48_000 or pcm.dtype!=np.int16 or pcm.ndim!=2 or pcm.shape[1]!=2:
+        if (int(rate)!=48_000 or pcm.dtype!=np.int16 or pcm.ndim!=2
+                or pcm.shape[0]!=1_440_000 or pcm.shape[1]!=2):
             raise ValueError('continuous WAV format mismatch')
         decoded=hashlib.sha256(np.ascontiguousarray(pcm,dtype='<i2').tobytes()).hexdigest()
         if decoded!=receipt['wav'][role].get('decoded_pcm_sha256'):
