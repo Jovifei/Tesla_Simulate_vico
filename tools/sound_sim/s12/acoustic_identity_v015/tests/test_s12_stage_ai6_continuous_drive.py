@@ -95,6 +95,7 @@ class _FakeEngine:
                                 "fade_frames": 24 if self.boundary_policy else 0,
                                 "modified_frames": 24 if self.boundary_policy else 0},
             "candidate_source_diagnostics": {
+                "shift_event_count": len(shift_events or []),
                 "afterfire_event_count": len(afterfire_events or []),
                 "afterfire_stem_energy": 1.0,
             },
@@ -141,3 +142,28 @@ def test_continuous_pair_rejects_wrong_duration(monkeypatch):
     monkeypatch.setattr(cycle, "RemainingVehicleEngine", _FakeEngine)
     with pytest.raises(ValueError, match="30 seconds"):
         cycle.render_continuous_pair("rx7_fd", {}, duration_s=29.0)
+
+
+def test_renderer_diagnostics_are_required_for_shift_and_afterfire(monkeypatch):
+    class _BrokenEngine(_FakeEngine):
+        def render_track(self, *args, **kwargs):
+            pcm = super().render_track(*args, **kwargs)
+            self.reports[-1]["candidate_source_diagnostics"]["afterfire_event_count"] = 0
+            return pcm
+
+    monkeypatch.setattr(cycle, "RemainingVehicleEngine", _BrokenEngine)
+    monkeypatch.setattr(cycle, "reconstructed_peak_receipt", lambda audio, **_: _safe_peak_receipt())
+    with pytest.raises(ValueError, match="afterfire diagnostics"):
+        cycle.render_continuous_pair(
+            "rx7_fd", {"rotary_pulse_width_scale": 1.15},
+            boundary_policy="rx7_start_boundary_fade_v1",
+        )
+
+
+def test_writer_rejects_missing_full_report_evidence(tmp_path):
+    pcm = np.zeros((8, 2), dtype=np.int16)
+    with pytest.raises(ValueError, match="30-second stereo|report evidence"):
+        cycle.write_continuous_pair(tmp_path, {
+            "pcm_a": pcm, "pcm_b": pcm,
+            "receipt": {"schema": cycle.CONTINUOUS_SCHEMA, "vehicle": "rx7_fd"},
+        })

@@ -316,7 +316,7 @@ def test_resealed_visible_fit_evidence_drift_is_rejected(enabled_b_package):
         qualified.verify(root)
 
 
-def test_continuous_scene_is_bound_to_rx7_and_disabled_for_other_vehicles(old_package, tmp_path, monkeypatch):
+def test_continuous_scene_requires_accepted_feedback_source(old_package, tmp_path, monkeypatch):
     monkeypatch.setattr(qualified, "_runtime_identity", lambda: {"fixture": "clean"})
     pcm = np.full((1_440_000, 2), 100, dtype=np.int16)
     pair = {
@@ -335,15 +335,9 @@ def test_continuous_scene_is_bound_to_rx7_and_disabled_for_other_vehicles(old_pa
         },
     }
     out = tmp_path / "continuous-ui"
-    qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out,
-                    continuous_pairs={"rx7_fd": pair})
-    qualified.verify(out, sha_file(out / "ARTIFACTS.json"))
-    rx7_text = (out / "rx7_fd" / "index.html").read_text(encoding="utf-8")
-    hellcat_text = (out / "hellcat" / "index.html").read_text(encoding="utf-8")
-    assert CONTINUOUS_SCENE_ID in rx7_text
-    assert "continuous_drive_original" in rx7_text
-    assert 'role_availability' in hellcat_text
-    assert "连续驾驶未完成" in hellcat_text
+    with pytest.raises(ValueError, match="accepted feedback"):
+        qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out,
+                        continuous_pairs={"rx7_fd": pair})
 
 
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):

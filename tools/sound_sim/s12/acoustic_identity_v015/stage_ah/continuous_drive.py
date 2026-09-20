@@ -97,6 +97,19 @@ def _validate_report(report: Mapping[str, Any], pcm: np.ndarray) -> dict[str, An
     return recomputed
 
 
+def _validate_event_diagnostics(report: Mapping[str, Any], events: Mapping[str, Any]) -> dict[str, Any]:
+    diagnostics=report.get('candidate_source_diagnostics', {})
+    shifts=int(diagnostics.get('shift_event_count', -1))
+    afterfire=int(diagnostics.get('afterfire_event_count', -1))
+    energy=float(diagnostics.get('afterfire_stem_energy', 0.0))
+    if shifts != len(events['shift_events']):
+        raise ValueError('continuous renderer shift diagnostics mismatch')
+    if afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0:
+        raise ValueError('continuous renderer afterfire diagnostics missing')
+    return {'shift_count': shifts, 'afterfire_event_count': afterfire,
+            'afterfire_stem_energy': energy}
+
+
 def render_continuous_pair(
     vehicle: str,
     selected_parameters: Mapping[str, float],
@@ -124,6 +137,7 @@ def render_continuous_pair(
     )
     pcm_a = engine_a.render_track(rpm, throttle, DURATION_S, **events)
     report_a = copy.deepcopy(engine_a.reports[-1])
+    diagnostic_a = _validate_event_diagnostics(report_a, events)
     parent_peaks = copy.deepcopy(engine_a.parent_peaks)
     shared_ir = np.asarray(engine_a.ir, dtype=np.float64).copy()
 
@@ -135,6 +149,7 @@ def render_continuous_pair(
     engine_b.feedback["parameters"].update(selected)
     pcm_b = engine_b.render_track(rpm, throttle, DURATION_S, **events)
     report_b = copy.deepcopy(engine_b.reports[-1])
+    diagnostic_b = _validate_event_diagnostics(report_b, events)
 
     engine_off = RemainingVehicleEngine(
         vehicle, SAMPLE_RATE_HZ, output_policy=LINKED_SOFT_CEILING_V1,
@@ -143,6 +158,7 @@ def render_continuous_pair(
     )
     pcm_off = engine_off.render_track(rpm, throttle, DURATION_S, **events)
     report_off = copy.deepcopy(engine_off.reports[-1])
+    _validate_event_diagnostics(report_off, events)
     _validate_report(report_a, pcm_a)
     _validate_report(report_b, pcm_b)
     _validate_report(report_off, pcm_off)
@@ -152,6 +168,8 @@ def render_continuous_pair(
             raise ValueError(f"continuous A/B {field} mismatch")
     if not np.array_equal(pcm_a, pcm_off):
         raise ValueError("continuous feedback-off rerender changed A")
+    if diagnostic_a != diagnostic_b:
+        raise ValueError("continuous A/B event diagnostics mismatch")
     boundary = report_a.get("boundary_repair", {})
     if vehicle == "rx7_fd" and (boundary.get("policy_id") != RX7_BOUNDARY_POLICY_V1
                                  or boundary.get("fade_frames") != 24):
@@ -175,9 +193,10 @@ def render_continuous_pair(
             "ir_source_sha256": report_a.get("ir_source_sha256"),
         },
         "events": {
-            "shift_count": len(events["shift_events"]),
+            "shift_count": diagnostic_a["shift_count"],
             "shift_events": events["shift_events"],
-            "afterfire_event_count": len(events["afterfire_events"]),
+            "afterfire_event_count": diagnostic_a["afterfire_event_count"],
+            "afterfire_stem_energy": diagnostic_a["afterfire_stem_energy"],
             "afterfire_events": events["afterfire_events"],
             "bov_events": events["bov_events"],
             "stateful_single_render_per_role": True,
@@ -191,6 +210,7 @@ def render_continuous_pair(
             "A": {"decoded_pcm_sha256": _pcm_sha(pcm_a), "frame_count": len(pcm_a)},
             "B": {"decoded_pcm_sha256": _pcm_sha(pcm_b), "frame_count": len(pcm_b)},
         },
+        "reports": {"A": report_a, "B": report_b, "off_switch": report_off},
         "feedback_off_pcm_equal": True,
         "human_status": "NOT_EVALUATED",
         "promotable": False,
@@ -211,14 +231,30 @@ def render_continuous_pair(
 def write_continuous_pair(root: Path, pair: Mapping[str, Any]) -> dict[str, Any]:
     """Write governed A/B WAVs and receipt under an existing package staging root."""
     root = Path(root)
+    receipt = copy.deepcopy(pair.get("receipt", {}))
+    if receipt.get("schema") != CONTINUOUS_SCHEMA or not receipt.get("vehicle"):
+        raise ValueError("continuous receipt identity is required")
+    pcm_a=np.asarray(pair.get("pcm_a"));pcm_b=np.asarray(pair.get("pcm_b"))
+    if (pcm_a.dtype!=np.int16 or pcm_b.dtype!=np.int16
+            or pcm_a.shape!=(1_440_000,2) or pcm_b.shape!=(1_440_000,2)):
+        raise ValueError("continuous pair must be 30-second stereo int16")
+    reports=receipt.get('reports')
+    if not isinstance(reports, Mapping) or not all(role in reports for role in ('A','B','off_switch')):
+        raise ValueError("continuous report evidence is required")
+    for role,pcm in (('A',pcm_a),('B',pcm_b)):
+        report=reports[role]
+        if (report.get('vehicle')!=receipt.get('vehicle')
+                or report.get('scene_id')!=CONTINUOUS_SCENE_ID
+                or int(report.get('sample_count',-1))!=len(pcm)
+                or report.get('final_pcm_sha256')!=_pcm_sha(pcm)):
+            raise ValueError("continuous report/audio identity mismatch")
     audio = root / "web_audio"
     audio.mkdir(parents=True, exist_ok=True)
     wavfile.write(audio / "A_continuous_drive.wav", SAMPLE_RATE_HZ, pair["pcm_a"])
     wavfile.write(audio / "B_continuous_drive.wav", SAMPLE_RATE_HZ, pair["pcm_b"])
-    receipt = copy.deepcopy(pair["receipt"])
     receipt.setdefault("wav", {})
-    receipt["wav"].setdefault("A", {})["decoded_pcm_sha256"] = _pcm_sha(pair["pcm_a"])
-    receipt["wav"].setdefault("B", {})["decoded_pcm_sha256"] = _pcm_sha(pair["pcm_b"])
+    receipt["wav"].setdefault("A", {})["decoded_pcm_sha256"] = _pcm_sha(pcm_a)
+    receipt["wav"].setdefault("B", {})["decoded_pcm_sha256"] = _pcm_sha(pcm_b)
     receipt["wav"]["A"]["wav_file_sha256"] = hashlib.sha256(
         (audio / "A_continuous_drive.wav").read_bytes()).hexdigest()
     receipt["wav"]["B"]["wav_file_sha256"] = hashlib.sha256(

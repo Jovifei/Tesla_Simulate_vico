@@ -29,6 +29,7 @@ from .qualification import (
     build_qualification_receipt,
 )
 from .continuous_drive import CONTINUOUS_SCENE_ID, CONTINUOUS_SCHEMA, write_continuous_pair
+from .reconstruction_peak import reconstructed_peak_receipt
 from .reference_feedback_cli import verify_run as verify_two, numeric_ok, _runtime_identity
 from ..stage_af.package_integrity import seal_payload
 
@@ -403,7 +404,16 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 'role_availability': copy.deepcopy(continuous_info['role_availability']),
             }
             if continuous_pair:
-                receipt=write_continuous_pair(folder, continuous_pair)
+                if not result:
+                    raise ValueError(f'continuous B requires accepted feedback result: {v}')
+                packaged_pair=copy.deepcopy(continuous_pair)
+                packaged_receipt=packaged_pair.get('receipt', {})
+                if (packaged_receipt.get('vehicle')!=v
+                        or packaged_receipt.get('parameters',{}).get('selected')!=result.get('selected_parameters')):
+                    raise ValueError(f'continuous parameters are not the accepted AI-5 selection: {v}')
+                packaged_receipt['source_manifest_sha256']=source_manifest_sha
+                packaged_pair['receipt']=packaged_receipt
+                receipt=write_continuous_pair(folder, packaged_pair)
                 continuous_scene.update(candidate_file='A_continuous_drive.wav',
                                         feedback_file='B_continuous_drive.wav',
                                         ref_file='B_continuous_drive.wav')
@@ -417,6 +427,8 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                     'shared': receipt.get('shared', {}),
                     'events': receipt.get('events', {}),
                     'boundary': receipt.get('boundary', {}),
+                    'selected_parameters': receipt.get('parameters', {}).get('selected'),
+                    'source_manifest_sha256': source_manifest_sha,
                 })
             scenes=base_scenes+[continuous_scene]
             roles['reference']['available']=bool(hashes['reference'])
@@ -627,7 +639,8 @@ def _verify_bound_source_run(source_run: Path, expected_manifest_sha: str,
         raise ValueError('Task-1 persisted qualification differs from immutable source evidence')
 
 
-def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: dict) -> None:
+def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: dict,
+                             vehicle: str) -> None:
     info=contract.get('continuous_drive')
     if not isinstance(info, dict) or info.get('schema')!=CONTINUOUS_SCHEMA:
         raise ValueError('continuous drive contract missing')
@@ -647,13 +660,19 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             or sha_file(receipt_path)!=info.get('receipt_sha256')):
         raise ValueError('continuous receipt missing or changed')
     receipt=json.loads(receipt_path.read_text(encoding='utf-8'))
-    if (receipt.get('schema')!=CONTINUOUS_SCHEMA
+    if (receipt.get('schema')!=CONTINUOUS_SCHEMA or receipt.get('vehicle')!=vehicle
             or receipt.get('scene_id')!=CONTINUOUS_SCENE_ID
             or receipt.get('duration_s')!=30.0
             or receipt.get('sample_rate_hz')!=48_000):
         raise ValueError('continuous receipt identity mismatch')
-    if receipt.get('events',{}).get('shift_count')!=3 or receipt.get('events',{}).get('afterfire_event_count')!=1:
+    if receipt.get('events',{}).get('shift_count')!=3 or receipt.get('events',{}).get('afterfire_event_count')!=1 or float(receipt.get('events',{}).get('afterfire_stem_energy',0.0))<=0.0:
         raise ValueError('continuous event evidence incomplete')
+    if receipt.get('source_manifest_sha256')!=info.get('source_manifest_sha256'):
+        raise ValueError('continuous source manifest binding mismatch')
+    reports=receipt.get('reports')
+    if not isinstance(reports,dict) or not all(role in reports for role in ('A','B','off_switch')):
+        raise ValueError('continuous renderer reports missing')
+    pcm_by_role={}
     for role,filename,store_key in (
             ('A','A_continuous_drive.wav',CONTINUOUS_SCENE_ID+'_original'),
             ('B','B_continuous_drive.wav',CONTINUOUS_SCENE_ID+'_feedback')):
@@ -668,6 +687,29 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
         decoded=hashlib.sha256(np.ascontiguousarray(pcm,dtype='<i2').tobytes()).hexdigest()
         if decoded!=receipt['wav'][role].get('decoded_pcm_sha256'):
             raise ValueError('continuous PCM identity mismatch')
+        report=reports[role]
+        if (report.get('vehicle')!=vehicle or report.get('scene_id')!=CONTINUOUS_SCENE_ID
+                or int(report.get('sample_count',-1))!=1_440_000
+                or report.get('final_pcm_sha256')!=decoded
+                or not numeric_ok(report)):
+            raise ValueError('continuous report numeric identity mismatch')
+        recomputed=reconstructed_peak_receipt(pcm.astype(np.float64)/32767.0,
+                                              sample_rate=48_000)
+        if canonical(recomputed)!=canonical(report.get('reconstruction_peak')):
+            raise ValueError('continuous report reconstructed-peak mismatch')
+        pcm_by_role[role]=pcm
+    report_a,reports_b=reports['A'],reports['B']
+    for field in ('trace_sha256','seed','flags','parent_peak_key','normalization_denominator','output_policy','sample_rate_hz'):
+        if report_a.get(field)!=reports_b.get(field):
+            raise ValueError('continuous report shared context mismatch')
+    if report_a.get('candidate_source_diagnostics',{}).get('shift_event_count')!=3:
+        raise ValueError('continuous renderer did not report three shifts')
+    for report in (report_a,reports_b):
+        diag=report.get('candidate_source_diagnostics',{})
+        if int(diag.get('afterfire_event_count',0))<=0 or float(diag.get('afterfire_stem_energy',0.0))<=0.0:
+            raise ValueError('continuous renderer afterfire evidence missing')
+    if receipt.get('parameters',{}).get('selected')!=contract.get('continuous_drive',{}).get('selected_parameters'):
+        raise ValueError('continuous accepted parameter binding mismatch')
     if scene.get('candidate_file')!='A_continuous_drive.wav' or scene.get('feedback_file')!='B_continuous_drive.wav':
         raise ValueError('continuous scene filename mismatch')
     if scene.get('reference_file') or scene.get('ref_file')!='B_continuous_drive.wav':
@@ -836,7 +878,7 @@ def verify(root:Path, expected_sha:str|None=None):
             if len(continuous_rows)>1:
                 raise ValueError('duplicate continuous scene')
             if continuous_rows:
-                _verify_continuous_scene(folder,contract,continuous_rows[0],store)
+                _verify_continuous_scene(folder,contract,continuous_rows[0],store,v)
             elif contract.get('continuous_drive',{}).get('available'):
                 raise ValueError('continuous contract has no scene')
             if result:
