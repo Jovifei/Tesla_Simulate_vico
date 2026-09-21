@@ -54,7 +54,8 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 - 严格 Python 编译：`python -W error -m compileall -q tools/sound_sim/s12/acoustic_identity_v015`，退出码 `0`。
 - Track-P：`180` 个冻结文件、`2` 个冻结符号，冻结路径改动 `0`，退出码 `0`。
 - `git diff --check`：退出码 `0`。
-- 新包通过 `qualified_three_way.verify` 和 manifest 自校验；旧 AI-6 v2 包未覆盖。
+- 新包通过 `qualified_three_way.verify`、serve preflight 和 manifest 自校验；8/8 车型 HTTP/嵌入合同检查通过，RX-7/Aventador 真实浏览器抽查通过；旧 AI-6 v2 包未覆盖。
+- 最终文档 HEAD 为 `b41b49d`；完整 S12 测试绑定 `3dd9f77`，源码整改提交为 `adaf72d`，包源提交为 `adaf72d`，三者用途已分开记录。
 
 新包：`E:\Tesla_speed\review_packages\s12-stage-ai7-continuous-event-evidence-20260921-v3`
 
@@ -81,7 +82,6 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 
 当前没有已知的 AI-7 实现阻塞。仍然保持以下边界：
 
-1. 需要在最终 v3 上完成 serve preflight/真实浏览器抽查，并通过同一 C2C 记录交给远端复核。
-2. 远端 ChatGPT 需要复核本轮完整 diff、实际 AI-6 baseline SHA、v3 包和最终执行输出后给出 `DONE`、下一轮 `PLAN` 或 `BLOCKED`。
-3. 需要把分支正常 push，并在 GitHub 认证可用时创建 Draft PR；不得合并 main 或 force-push。
-4. Jovi 仍需对 RX-7/Aventador 的 A/B 连续驾驶包进行命名人耳试听；在明确反馈前不得把自动证据升级为 Human PASS。
+1. 通过同一 C2C 记录把 iteration 2 的完整 diff、实际 AI-6 baseline SHA、v3 包和最终执行输出交给远端复核，等待 `DONE` 或新的 bounded `PLAN`。
+2. 需要把分支正常 push，并在 GitHub 认证可用时创建 Draft PR；不得合并 main 或 force-push。
+3. Jovi 仍需对 RX-7/Aventador 的 A/B 连续驾驶包进行命名人耳试听；在明确反馈前不得把自动证据升级为 Human PASS。

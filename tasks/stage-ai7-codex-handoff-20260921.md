@@ -34,7 +34,7 @@
 
 ## 3. 现在卡在哪里
 
-本地 AI-7 证据合同整改已完成，最终全量回归、v3 浏览器复核、分支 push/PR/CI 仍待收口。当前仍是工程证据状态，不是产品放行状态：
+本地 AI-7 证据合同整改、最终全量回归和 v3 浏览器复核已完成；分支 push/PR/CI 和远端最终复核仍待收口。当前仍是工程证据状态，不是产品放行状态：
 
 - 远端独立审查正在等待 iteration 2 的完整执行记录；必须核对 `adaf72d` 及 v3，不能沿用 iteration 1 的 `CHANGES_REQUIRED` 结论。
 - 分支尚未完成本轮最终 push/Draft PR 交接。
@@ -64,7 +64,7 @@
 
 ## 5. 下一步
 
-1. 完成最终 v3 preflight 和真实浏览器检查；完整 S12 已在 exact HEAD `3dd9f77` 通过，skip 原因已记录。
+1. 最终 v3 preflight 和真实浏览器检查已通过；完整 S12 已在 exact HEAD `3dd9f77` 通过，skip 原因已记录。
 2. 提交本 worktree 的报告、交接文档、todo 和 workflow 改动；不修改主工作树。
 3. 把 iteration 2 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
 4. 正常 push `feature/stage-ai7-continuous-event-evidence-20260921`，不 force-push；若 GitHub 认证可用，再创建 Draft PR，否则记录外部认证阻塞。
