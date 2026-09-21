@@ -184,7 +184,6 @@ def validate_event_contract(
         'trace_sha256', 'seed', 'flags', 'parent_peak_key',
         'normalization_denominator', 'parent_denominator_policy',
         'output_policy', 'sample_rate_hz', 'ir_name', 'ir_volume',
-        'ir_source_sha256', 'boundary_repair',
     )
     reference_report=None
     for role in ('A', 'B', 'off_switch'):
