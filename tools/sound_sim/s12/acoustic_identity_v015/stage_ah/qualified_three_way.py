@@ -509,7 +509,8 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 prior_contract=_sealed(old_root/v/'dashboard_contract.json')
                 prior_provenance=prior_contract.get('a_provenance') or {}
                 provenance_root=Path(prior_provenance.get('old_a_source_root','')).resolve()
-                if not provenance_root.is_dir():
+                if (not provenance_root.is_dir()
+                        or not (provenance_root / ('A_'+SCENES[0]+'.wav')).is_file()):
                     provenance_root=(old_root/v/'web_audio').resolve()
                 a_provenance={
                     'source':'AI-5 feedback-off baseline',
@@ -998,7 +999,8 @@ def verify(root:Path, expected_sha:str|None=None):
         if v=='rx7_fd' and result:
             provenance=contract.get('a_provenance') or {}
             provenance_root=Path(provenance.get('old_a_source_root','')).resolve()
-            if not provenance_root.is_dir():
+            if (not provenance_root.is_dir()
+                    or not (provenance_root / ('A_'+SCENES[0]+'.wav')).is_file()):
                 provenance_root=(old_root/v/'web_audio').resolve()
             expected_differences={scene:_rx7_boundary_diff_receipt(
                 provenance_root/('A_'+scene+'.wav'),
