@@ -34,11 +34,11 @@
 
 ## 3. 现在卡在哪里
 
-本地 AI-7 证据合同整改、最终全量回归和 v3 浏览器复核已完成；分支 push/PR/CI 和远端最终复核仍待收口。当前仍是工程证据状态，不是产品放行状态：
+本地 AI-7 证据合同整改、最终全量回归、v3 verifier/browser 复核和分支 push 已完成；PR/CI 元数据与远端最终复核仍待收口。当前仍是工程证据状态，不是产品放行状态：
 
-- 远端独立审查正在等待 iteration 2 的完整执行记录；必须核对 `adaf72d` 及 v3，不能沿用 iteration 1 的 `CHANGES_REQUIRED` 结论。
-- 分支尚未完成本轮最终 push/Draft PR 交接。
-- 最终 exact HEAD `3dd9f77` 的完整 S12 已通过：`1332 passed, 3 skipped, 118 subtests passed`，退出码 `0`；1 项因缺少 `S12_LOCAL_ASSET_ROOT` 跳过，2 项因未启用 `S12_RUN_SLOW=1` 跳过。
+- 远端独立审查正在等待 iteration 3 的完整执行记录；必须核对 `cd61c58`、v3 和包级负测。
+- 分支已 push；`gh auth status` 未登录，因此 Draft PR/CI metadata 为 `NOT_VERIFIED/PENDING`，没有创建 PR。
+- 最终 exact HEAD `cd61c58` 的完整 S12：`1334 passed, 3 skipped, 118 subtests passed`，退出码 `0`；定向 real-material `1 passed`、slow `2 passed`，full-suite skip 原因保持如实记录。
 - Jovi 的命名人耳试听尚未完成；因此 `HUMAN_STATUS=NOT_EVALUATED`、`promotable=false` 保持不变。
 - 六个其他车型仍没有合格 B 源，必须保持 `B_UNAVAILABLE`，不能为了凑齐车型而降级证据标准。
 
@@ -64,8 +64,8 @@
 
 ## 5. 下一步
 
-1. 最终 v3 preflight 和真实浏览器检查已通过；完整 S12 已在 exact HEAD `3dd9f77` 通过，skip 原因已记录。
+1. 最终 v3 preflight 和真实浏览器检查已通过；完整 S12 已在 exact HEAD `cd61c58` 通过，slow/material 定向验收也已通过。
 2. 提交本 worktree 的报告、交接文档、todo 和 workflow 改动；不修改主工作树。
-3. 把 iteration 2 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
-4. 正常 push `feature/stage-ai7-continuous-event-evidence-20260921`，不 force-push；若 GitHub 认证可用，再创建 Draft PR，否则记录外部认证阻塞。
+3. 把 iteration 3 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
+4. 分支已正常 push；若 GitHub 认证恢复，再创建唯一 Draft PR 并核对 exact-head CI，否则保持外部元数据阻塞。
 5. 远端审查结束后，把 v3 包交给 Jovi 做 RX-7/Aventador 命名人耳试听；反馈前不做主线合并、参数推广或 Android 产品化。

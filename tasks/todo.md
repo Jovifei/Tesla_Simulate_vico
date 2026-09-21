@@ -4440,9 +4440,13 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Separate requested afterfire lift time from source-stem observed onset; bind frame, domain, energy, count and role identity.
 - [x] Add AI-7 RED/GREEN coverage and update AI-6 continuous/three-way regression contracts.
 - [x] Close the iteration-1 review findings: validate source onset/count/energy and role copies at generate/write/verify boundaries; reject valid-PCM event corruption before writing.
+- [x] Add role vehicle/scene/sample/context binding and a real re-sealed package `qualified.verify()` negative regression.
+- [x] Execute the existing local-material check (`1 passed`) and both `S12_RUN_SLOW=1` 3000-block checks (`2 passed`).
+- [x] Run final exact-head full S12 on `cd61c58`: `1334 passed, 3 skipped, 118 subtests passed`.
+- [x] Push `feature/stage-ai7-continuous-event-evidence-20260921` normally; main remains unchanged.
 - [x] Preserve AI-6 A/B decoded PCM bytes, legacy ten-scene identity, and RX-7 historical A provenance across package rollover.
 - [x] Add the AI-7 workflow gate and write the report/handoff documents.
-- [ ] Push the isolated branch and complete remote independent review; create Draft PR only if GitHub authentication is available. Do not merge main.
+- [ ] Complete remote iteration-3 independent review; create Draft PR/verify CI only if GitHub authentication becomes available. Do not merge main.
 - [ ] Wait for Jovi's named listening decision; keep `HUMAN_STATUS=NOT_EVALUATED` and `promotable=false` beforehand.
 
 ### Review
@@ -4455,4 +4459,6 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - RX-7 observed onset `18.043s/frame 866064`; Aventador observed onset `18.010s/frame 864480`; both use `SOURCE_STEM_PRE_IR` and A/B PCM remains equal to fixed AI-6 v2.
 - Final v3 browser/HTTP interaction is PASS; push and PR/CI metadata remain pending; full S12 exact-head evidence is recorded below.
 - Final exact-head full S12: `1332 passed, 3 skipped, 118 subtests passed` in `2487.96s`; one skip requires `S12_LOCAL_ASSET_ROOT`, two require `S12_RUN_SLOW=1`. No skip is treated as PASS.
+- Iteration-3 final verifier/full evidence: core focused `39 passed`; package-level re-sealed negative `1 passed`; local-material `1 passed`; slow `2 passed`; full S12 `1334 passed, 3 skipped, 118 subtests passed`.
+- Latest code HEAD `cd61c58`; branch push succeeded; `gh auth status` is unauthenticated, so PR/CI metadata remains `NOT_VERIFIED/PENDING`.
 - Product gate remains closed: no Human PASS, OEM/Profile Freeze, or Android promotion claim.

@@ -51,11 +51,13 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 - iteration 2 当前 focused AI-7/AI-6/three-way/remaining-vehicle/feedback-package/AI-5 回归：`92 passed`，退出码 `0`。
 - 最终 exact HEAD `3dd9f77` 的完整 S12：`1332 passed, 3 skipped, 118 subtests passed`，耗时 `2487.96s`，退出码 `0`。
 - skip 原因：1 项需要显式配置 `S12_LOCAL_ASSET_ROOT` 的本地真实素材；2 项 3000-block acceptance 需要 `S12_RUN_SLOW=1`。这些不是通过证据。
+- iteration 3 最新代码 HEAD `cd61c58` 的完整 S12：`1334 passed, 3 skipped, 118 subtests passed`，退出码 `0`；同一轮定向 real-material `1 passed`、slow `2 passed`，因此三项原 skip 均已单独执行，但 full-suite 默认输出仍如实保留 skip。
+- iteration 3 core focused（AI-7/AI-6/three-way）为 `39 passed`；包级重新封签负向测试 `1 passed`；当前 verifier 对不可变 v3 的 serve preflight：`PASS`。
 - 严格 Python 编译：`python -W error -m compileall -q tools/sound_sim/s12/acoustic_identity_v015`，退出码 `0`。
 - Track-P：`180` 个冻结文件、`2` 个冻结符号，冻结路径改动 `0`，退出码 `0`。
 - `git diff --check`：退出码 `0`。
 - 新包通过 `qualified_three_way.verify`、serve preflight 和 manifest 自校验；8/8 车型 HTTP/嵌入合同检查通过，RX-7/Aventador 真实浏览器抽查通过；旧 AI-6 v2 包未覆盖。
-- 最终文档 HEAD 为 `b41b49d`；完整 S12 测试绑定 `3dd9f77`，源码整改提交为 `adaf72d`，包源提交为 `adaf72d`，三者用途已分开记录。
+- 当前源码/verifier HEAD 为 `cd61c58`；最终文档提交将在本报告之后产生。完整 S12 测试绑定 `cd61c58`，包源提交为 `adaf72d`，三者用途已分开记录。
 
 新包：`E:\Tesla_speed\review_packages\s12-stage-ai7-continuous-event-evidence-20260921-v3`
 
@@ -82,6 +84,6 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 
 当前没有已知的 AI-7 实现阻塞。仍然保持以下边界：
 
-1. 通过同一 C2C 记录把 iteration 2 的完整 diff、实际 AI-6 baseline SHA、v3 包和最终执行输出交给远端复核，等待 `DONE` 或新的 bounded `PLAN`。
-2. 需要把分支正常 push，并在 GitHub 认证可用时创建 Draft PR；不得合并 main 或 force-push。
+1. 通过同一 C2C 记录把 iteration 3 的完整 diff、215 项 inventory、真实入口负测、slow/material、v3 preflight 和最终执行输出交给远端复核，等待 `DONE` 或新的 bounded `PLAN`。
+2. 分支已正常 push；当前 `gh` 未登录，Draft PR/CI 元数据保持 `NOT_VERIFIED/PENDING`，不得合并 main 或 force-push。
 3. Jovi 仍需对 RX-7/Aventador 的 A/B 连续驾驶包进行命名人耳试听；在明确反馈前不得把自动证据升级为 Human PASS。
