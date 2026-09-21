@@ -181,8 +181,22 @@ def _record(vehicle, scene, pcm):
 
 def _continuous_event_report(*, source_onset=18.043, observed_onset=18.043,
                              observed_frame=866064, count=1, energy=1.0):
-    return {
+    report = {
+        "vehicle": "rx7_fd",
+        "scene_id": CONTINUOUS_SCENE_ID,
         "sample_count": 1_440_000,
+        "sample_rate_hz": 48_000,
+        "trace_sha256": "a" * 64,
+        "seed": 20260908,
+        "flags": [],
+        "parent_peak_key": "continuous_drive|" + "a" * 64,
+        "normalization_denominator": 1.0,
+        "parent_denominator_policy": "fixed_parent_peak_scene_trace",
+        "output_policy": "linked_soft_ceiling_v1",
+        "ir_name": "mild_exhaust_reverb",
+        "ir_volume": 0.015,
+        "ir_source_sha256": None,
+        "boundary_repair": {"policy_id": "rx7_start_boundary_fade_v1"},
         "candidate_source_diagnostics": {
             "shift_event_count": 3,
             "afterfire_event_count": count,
@@ -194,6 +208,7 @@ def _continuous_event_report(*, source_onset=18.043, observed_onset=18.043,
             "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
         },
     }
+    return report
 
 
 def _continuous_event_receipt(reports):
