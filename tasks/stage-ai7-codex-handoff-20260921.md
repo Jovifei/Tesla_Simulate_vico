@@ -38,7 +38,7 @@
 
 - 远端独立审查正在等待 iteration 2 的完整执行记录；必须核对 `adaf72d` 及 v3，不能沿用 iteration 1 的 `CHANGES_REQUIRED` 结论。
 - 分支尚未完成本轮最终 push/Draft PR 交接。
-- 完整 S12 需要在 `adaf72d` 上重新运行；iteration 1 的 `1328 passed, 3 skipped, 118 subtests passed` 不能冒充整改后 exact-head 结果。
+- 最终 exact HEAD `3dd9f77` 的完整 S12 已通过：`1332 passed, 3 skipped, 118 subtests passed`，退出码 `0`；1 项因缺少 `S12_LOCAL_ASSET_ROOT` 跳过，2 项因未启用 `S12_RUN_SLOW=1` 跳过。
 - Jovi 的命名人耳试听尚未完成；因此 `HUMAN_STATUS=NOT_EVALUATED`、`promotable=false` 保持不变。
 - 六个其他车型仍没有合格 B 源，必须保持 `B_UNAVAILABLE`，不能为了凑齐车型而降级证据标准。
 
@@ -64,7 +64,7 @@
 
 ## 5. 下一步
 
-1. 在 `adaf72d` 上跑最终完整 S12、strict compile、Track-P、diff、v3 preflight 和真实浏览器检查，并记录 skip 原因。
+1. 完成最终 v3 preflight 和真实浏览器检查；完整 S12 已在 exact HEAD `3dd9f77` 通过，skip 原因已记录。
 2. 提交本 worktree 的报告、交接文档、todo 和 workflow 改动；不修改主工作树。
 3. 把 iteration 2 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
 4. 正常 push `feature/stage-ai7-continuous-event-evidence-20260921`，不 force-push；若 GitHub 认证可用，再创建 Draft PR，否则记录外部认证阻塞。

@@ -4453,5 +4453,6 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Package `s12-stage-ai7-continuous-event-evidence-20260921-v3` verified; manifest SHA `44d9449c056768f454533041fd27a880b01a6f83df16057fe40f0526fab53833`; summary SHA `ecb8154c84c3a63cb81c71914fdc39afc23e2b026d9d64cc4b1f7623dd963740`.
 - AI-6 fixed input inventory: 215/215 files match; actual manifest SHA `28ef0738097f7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`; old report/handoff value had a historical typo and was not used as the v3 binding.
 - RX-7 observed onset `18.043s/frame 866064`; Aventador observed onset `18.010s/frame 864480`; both use `SOURCE_STEM_PRE_IR` and A/B PCM remains equal to fixed AI-6 v2.
-- Full S12, final v3 browser/HTTP interaction, push and PR/CI metadata are still pending on the final `adaf72d` documentation closeout.
+- Final v3 browser/HTTP interaction, push and PR/CI metadata are still pending; full S12 exact-head evidence is now recorded below.
+- Final exact-head full S12: `1332 passed, 3 skipped, 118 subtests passed` in `2487.96s`; one skip requires `S12_LOCAL_ASSET_ROOT`, two require `S12_RUN_SLOW=1`. No skip is treated as PASS.
 - Product gate remains closed: no Human PASS, OEM/Profile Freeze, or Android promotion claim.

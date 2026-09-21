@@ -49,6 +49,8 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 
 - AI-7 contract RED/GREEN：`19 passed`；iteration 1 的 focused 回归：`88 passed`。
 - iteration 2 当前 focused AI-7/AI-6/three-way/remaining-vehicle/feedback-package/AI-5 回归：`92 passed`，退出码 `0`。
+- 最终 exact HEAD `3dd9f77` 的完整 S12：`1332 passed, 3 skipped, 118 subtests passed`，耗时 `2487.96s`，退出码 `0`。
+- skip 原因：1 项需要显式配置 `S12_LOCAL_ASSET_ROOT` 的本地真实素材；2 项 3000-block acceptance 需要 `S12_RUN_SLOW=1`。这些不是通过证据。
 - 严格 Python 编译：`python -W error -m compileall -q tools/sound_sim/s12/acoustic_identity_v015`，退出码 `0`。
 - Track-P：`180` 个冻结文件、`2` 个冻结符号，冻结路径改动 `0`，退出码 `0`。
 - `git diff --check`：退出码 `0`。
@@ -79,7 +81,7 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 
 当前没有已知的 AI-7 实现阻塞。仍然保持以下边界：
 
-1. 需要在最终 `adaf72d` 上重新执行完整 S12、严格编译、Track-P、diff 和 v3 浏览器/包预检，补齐 skip 原因。
-2. 远端 ChatGPT 需要复核本轮完整 diff、实际 AI-6 baseline SHA、v3 包和执行输出后给出 `DONE`、下一轮 `PLAN` 或 `BLOCKED`。
+1. 需要在最终 v3 上完成 serve preflight/真实浏览器抽查，并通过同一 C2C 记录交给远端复核。
+2. 远端 ChatGPT 需要复核本轮完整 diff、实际 AI-6 baseline SHA、v3 包和最终执行输出后给出 `DONE`、下一轮 `PLAN` 或 `BLOCKED`。
 3. 需要把分支正常 push，并在 GitHub 认证可用时创建 Draft PR；不得合并 main 或 force-push。
 4. Jovi 仍需对 RX-7/Aventador 的 A/B 连续驾驶包进行命名人耳试听；在明确反馈前不得把自动证据升级为 Human PASS。
