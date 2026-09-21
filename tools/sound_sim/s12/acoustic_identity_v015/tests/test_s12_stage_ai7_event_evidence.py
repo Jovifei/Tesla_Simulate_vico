@@ -14,15 +14,19 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.feedback_evidence impor
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender
 
 
-def _report(*, observed_onset_s=18.043, observed_frame=866064,
-            domain="SOURCE_STEM_PRE_IR"):
+def _report(*, observed_onset_s=18.043, source_onset_s=None,
+            observed_frame=866064, domain="SOURCE_STEM_PRE_IR",
+            afterfire_event_count=1, energy=1.0):
+    if source_onset_s is None:
+        source_onset_s = observed_onset_s
     return {
+        "sample_count": 1_440_000,
         "candidate_source_diagnostics": {
             "shift_event_count": 3,
-            "afterfire_event_count": 1,
-            "afterfire_stem_energy_after_lift": 1.0,
+            "afterfire_event_count": afterfire_event_count,
+            "afterfire_stem_energy_after_lift": energy,
             "afterfire_requested_event_times_s": [18.0],
-            "afterfire_onset_s": observed_onset_s,
+            "afterfire_onset_s": source_onset_s,
             "afterfire_observed_onset_s": observed_onset_s,
             "afterfire_observed_onset_frame": observed_frame,
             "afterfire_observation_domain": domain,
@@ -67,6 +71,41 @@ def test_observation_frame_must_match_onset_within_one_sample():
 
     with pytest.raises(ValueError, match="afterfire"):
         cycle._validate_event_diagnostics(report, cycle.continuous_events())
+
+
+def test_observation_must_match_source_layer_onset():
+    with pytest.raises(ValueError, match="afterfire"):
+        cycle._validate_event_diagnostics(
+            _report(source_onset_s=18.010, observed_onset_s=18.043),
+            cycle.continuous_events(),
+        )
+
+
+def test_event_contract_binds_all_roles_and_top_level_copy():
+    reports = {role: _report() for role in ("A", "B", "off_switch")}
+    events = cycle.continuous_events()
+    events["shift_count"] = 3
+    events["afterfire_event_count"] = 1
+    events["afterfire_stem_energy_after_lift"] = 1.0
+    events["afterfire_requested_event_times_s"] = [18.0]
+    events["afterfire_source_onset_s"] = 18.043
+    events["afterfire_observed_onset_s"] = 18.043
+    events["afterfire_observed_onset_frame"] = 866064
+    events["afterfire_observation_domain"] = "SOURCE_STEM_PRE_IR"
+    events["stateful_single_render_per_role"] = True
+    receipt = {
+        "schema": cycle.CONTINUOUS_SCHEMA,
+        "vehicle": "rx7_fd",
+        "duration_s": 30.0,
+        "sample_rate_hz": 48_000,
+        "events": events,
+        "reports": reports,
+    }
+
+    cycle.validate_event_contract(receipt)
+    reports["off_switch"]["candidate_source_diagnostics"]["afterfire_stem_energy_after_lift"] = 2.0
+    with pytest.raises(ValueError, match="event"):
+        cycle.validate_event_contract(receipt)
 
 
 def test_remaining_engine_records_source_stem_observation(monkeypatch):

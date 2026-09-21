@@ -155,6 +155,46 @@ def _record(vehicle, scene, pcm):
     }
 
 
+def _continuous_event_report(*, source_onset=18.043, observed_onset=18.043,
+                             observed_frame=866064, count=1, energy=1.0):
+    return {
+        "sample_count": 1_440_000,
+        "candidate_source_diagnostics": {
+            "shift_event_count": 3,
+            "afterfire_event_count": count,
+            "afterfire_stem_energy_after_lift": energy,
+            "afterfire_requested_event_times_s": [18.0],
+            "afterfire_onset_s": source_onset,
+            "afterfire_observed_onset_s": observed_onset,
+            "afterfire_observed_onset_frame": observed_frame,
+            "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+        },
+    }
+
+
+def _continuous_event_receipt(reports):
+    events = cycle.continuous_events()
+    events.update({
+        "shift_count": 3,
+        "afterfire_event_count": 1,
+        "afterfire_stem_energy_after_lift": 1.0,
+        "afterfire_requested_event_times_s": [18.0],
+        "afterfire_source_onset_s": 18.043,
+        "afterfire_observed_onset_s": 18.043,
+        "afterfire_observed_onset_frame": 866064,
+        "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+        "stateful_single_render_per_role": True,
+    })
+    return {
+        "schema": CONTINUOUS_SCHEMA,
+        "vehicle": "rx7_fd",
+        "duration_s": 30.0,
+        "sample_rate_hz": 48_000,
+        "events": events,
+        "reports": reports,
+    }
+
+
 @pytest.fixture
 def enabled_b_package(old_package,tmp_path,monkeypatch):
     vehicle="rx7_fd";source=tmp_path/"ai5-source"
@@ -338,9 +378,11 @@ def test_continuous_scene_requires_accepted_feedback_source(old_package, tmp_pat
                 "afterfire_events": cycle.continuous_events()["afterfire_events"],
                 "afterfire_requested_event_times_s": [18.0],
                 "afterfire_stem_energy_after_lift": 1.0,
+                "afterfire_source_onset_s": 18.0,
                 "afterfire_observed_onset_s": 18.0,
                 "afterfire_observed_onset_frame": 864000,
                 "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+                "stateful_single_render_per_role": True,
             },
             "boundary": {"policy_id": "rx7_start_boundary_fade_v1", "fade_frames": 24},
         },
@@ -349,6 +391,18 @@ def test_continuous_scene_requires_accepted_feedback_source(old_package, tmp_pat
     with pytest.raises(ValueError, match="accepted feedback"):
         qualified.build(old_package, sha_file(old_package / "ARTIFACTS.json"), out,
                         continuous_pairs={"rx7_fd": pair})
+
+
+def test_resealed_continuous_event_drift_is_rejected_semantically():
+    reports = {role: _continuous_event_report() for role in ("A", "B", "off_switch")}
+    receipt = _continuous_event_receipt(reports)
+    cycle.validate_event_contract(receipt)
+
+    receipt["events"]["afterfire_source_onset_s"] = 19.0
+    receipt["events"]["afterfire_observed_onset_s"] = 19.0
+    receipt["events"]["afterfire_observed_onset_frame"] = 912000
+    with pytest.raises(ValueError, match="event"):
+        cycle.validate_event_contract(receipt)
 
 
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):

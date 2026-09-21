@@ -175,3 +175,19 @@ def test_writer_rejects_missing_full_report_evidence(tmp_path):
             "pcm_a": pcm, "pcm_b": pcm,
             "receipt": {"schema": cycle.CONTINUOUS_SCHEMA, "vehicle": "rx7_fd"},
         })
+
+
+def test_writer_rejects_valid_pcm_with_missing_observed_event_before_writing(tmp_path, monkeypatch):
+    _FakeEngine.calls = []
+    monkeypatch.setattr(cycle, "RemainingVehicleEngine", _FakeEngine)
+    monkeypatch.setattr(cycle, "reconstructed_peak_receipt", lambda audio, **_: _safe_peak_receipt())
+    pair = cycle.render_continuous_pair(
+        "rx7_fd", {"rotary_pulse_width_scale": 1.15},
+        boundary_policy="rx7_start_boundary_fade_v1",
+    )
+    del pair["receipt"]["events"]["afterfire_observed_onset_s"]
+
+    with pytest.raises(ValueError, match="event"):
+        cycle.write_continuous_pair(tmp_path, pair)
+
+    assert not (tmp_path / "web_audio").exists()
