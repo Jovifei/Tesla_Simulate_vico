@@ -506,16 +506,21 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 if (boundary.get('policy_id')!='rx7_start_boundary_fade_v1'
                         or boundary.get('fade_frames')!=24 or boundary.get('modified_frames')!=24):
                     raise ValueError('RX-7 AI-5 A lacks 24-frame boundary-difference evidence')
+                prior_contract=_sealed(old_root/v/'dashboard_contract.json')
+                prior_provenance=prior_contract.get('a_provenance') or {}
+                provenance_root=Path(prior_provenance.get('old_a_source_root','')).resolve()
+                if not provenance_root.is_dir():
+                    provenance_root=(old_root/v/'web_audio').resolve()
                 a_provenance={
                     'source':'AI-5 feedback-off baseline',
                     'boundary_policy':'rx7_start_boundary_fade_v1',
                     'boundary_difference_frames':24,
                     'byte_identity_to_pre_ai4b_a':False,
-                    'old_a_source_root':str((old_root/v/'web_audio').resolve()),
-                    'old_a_sha256':{scene:sha_file(old_root/v/'web_audio'/('A_'+scene+'.wav')) for scene in SCENES},
+                    'old_a_source_root':str(provenance_root),
+                    'old_a_sha256':{scene:sha_file(provenance_root/('A_'+scene+'.wav')) for scene in SCENES},
                     'scene_differences':{
                         scene:_rx7_boundary_diff_receipt(
-                            old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                            provenance_root/('A_'+scene+'.wav'),
                             root/'baseline'/v/'web_audio'/(scene+'.wav'))
                         for scene in SCENES
                     },
