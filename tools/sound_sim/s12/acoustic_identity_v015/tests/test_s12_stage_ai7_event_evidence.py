@@ -6,6 +6,8 @@ import numpy as np
 import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import continuous_drive as cycle
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import remaining_vehicle_pipeline as pipeline
+from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender
 
 
 def _report(*, observed_onset_s=18.043, observed_frame=866064,
@@ -61,3 +63,38 @@ def test_observation_frame_must_match_onset_within_one_sample():
 
     with pytest.raises(ValueError, match="afterfire"):
         cycle._validate_event_diagnostics(report, cycle.continuous_events())
+
+
+def test_remaining_engine_records_source_stem_observation(monkeypatch):
+    sample_rate = 48_000
+    duration = 1.0
+    count = int(sample_rate * duration)
+    onset_frame = 10_000
+    stem = np.zeros((count, 2), dtype=np.float64)
+    stem[onset_frame:, 0] = 0.2
+    stem[onset_frame:, 1] = 0.1
+    source = SourceRender(
+        pressure=stem.copy(),
+        stems={"afterfire": stem.copy(), "base": np.zeros_like(stem)},
+        diagnostics={
+            "afterfire_event_count": 1,
+            "afterfire_onset_s": onset_frame / sample_rate,
+        },
+    ).validate()
+    monkeypatch.setattr(
+        pipeline, "_feedback_source", lambda vehicle, trace, feedback: source
+    )
+    engine = pipeline.RemainingVehicleEngine(
+        "rx7_fd", sample_rate, output_policy=pipeline.LINKED_SOFT_CEILING_V1,
+        ir=np.array([1.0]), scene_ids=("continuous_drive",),
+        boundary_policy=pipeline.RX7_BOUNDARY_POLICY_V1,
+    )
+    engine.render_track(
+        np.full(count, 2500.0), np.full(count, 0.5), duration,
+        afterfire_events=[{"time_s": 0.2}], shift_events=[], bov_events=[],
+    )
+    diagnostics = engine.reports[-1]["candidate_source_diagnostics"]
+    assert diagnostics["afterfire_requested_event_times_s"] == [0.2]
+    assert diagnostics["afterfire_observed_onset_frame"] == onset_frame
+    assert diagnostics["afterfire_observed_onset_s"] == pytest.approx(onset_frame / sample_rate)
+    assert diagnostics["afterfire_observation_domain"] == "SOURCE_STEM_PRE_IR"
