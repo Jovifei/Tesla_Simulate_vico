@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import numpy as np
 import pytest
 
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import continuous_drive as cycle
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import remaining_vehicle_pipeline as pipeline
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import qualified_three_way as qualified
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender
 
 
@@ -98,3 +101,19 @@ def test_remaining_engine_records_source_stem_observation(monkeypatch):
     assert diagnostics["afterfire_observed_onset_frame"] == onset_frame
     assert diagnostics["afterfire_observed_onset_s"] == pytest.approx(onset_frame / sample_rate)
     assert diagnostics["afterfire_observation_domain"] == "SOURCE_STEM_PRE_IR"
+
+
+def test_legacy_continuous_role_hash_uses_continuous_receipt(tmp_path):
+    folder = tmp_path / "rx7_fd"
+    audio = folder / "web_audio" / "A_continuous_drive.wav"
+    audio.parent.mkdir(parents=True)
+    audio.write_bytes(b"continuous-audio")
+    digest = hashlib.sha256(audio.read_bytes()).hexdigest()
+    (folder / "continuous_drive_receipt.json").write_text(
+        json.dumps({"wav": {"A": {"wav_file_sha256": digest}}}),
+        encoding="utf-8",
+    )
+    contract = {"source_sha256": {"original": {}}}
+    scene = {"id": "continuous_drive", "candidate_file": "A_continuous_drive.wav"}
+
+    assert qualified._legacy_role_sha(folder, contract, scene, "original") == digest

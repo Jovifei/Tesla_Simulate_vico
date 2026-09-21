@@ -51,6 +51,26 @@ def _vehicle_name(row, key):
     return str(row.get('vehicle') or row.get('vehicle_name') or key)
 
 
+def _legacy_role_sha(folder: Path, contract: dict, scene: dict, role: str) -> str | None:
+    """Resolve a legacy role hash, including AI-6 continuous receipt bindings."""
+    key = {'original': 'candidate_file', 'feedback': 'feedback_file',
+           'reference': 'reference_file'}[role]
+    name = scene.get(key)
+    if not name:
+        return None
+    expected = contract.get('source_sha256', {}).get(role, {}).get(name)
+    if expected is None and scene.get('id') == CONTINUOUS_SCENE_ID:
+        receipt = json.loads((folder / 'continuous_drive_receipt.json').read_text(encoding='utf-8'))
+        receipt_role = {'original': 'A', 'feedback': 'B', 'reference': 'C'}[role]
+        expected = receipt.get('wav', {}).get(receipt_role, {}).get('wav_file_sha256')
+    if expected is None:
+        raise ValueError('old role contract missing WAV hash')
+    actual = sha_file(folder / 'web_audio' / name)
+    if actual != expected:
+        raise ValueError('old A/B/C WAV differs from role contract')
+    return actual
+
+
 def verify_legacy(root: Path, expected_sha: str):
     if sha_file(root/'ARTIFACTS.json') != expected_sha:
         raise ValueError('old three-way manifest digest mismatch')
@@ -69,8 +89,8 @@ def verify_legacy(root: Path, expected_sha: str):
             for scene in ui._embedded(text,'SCENES'):
                 for role,key in (('original','candidate_file'),('feedback','feedback_file'),('reference','reference_file')):
                     name=scene.get(key)
-                    if name and sha_file(folder/'web_audio'/name)!=contract['source_sha256'][role].get(name):
-                        raise ValueError('old A/B/C WAV differs from role contract')
+                    if name:
+                        _legacy_role_sha(folder, contract, scene, role)
     return summary
 
 
