@@ -10,6 +10,7 @@ import pytest
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import continuous_drive as cycle
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import remaining_vehicle_pipeline as pipeline
 from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import qualified_three_way as qualified
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.feedback_evidence import SCENES
 from tools.sound_sim.s12.acoustic_identity_v015.contracts import SourceRender
 
 
@@ -117,3 +118,11 @@ def test_legacy_continuous_role_hash_uses_continuous_receipt(tmp_path):
     scene = {"id": "continuous_drive", "candidate_file": "A_continuous_drive.wav"}
 
     assert qualified._legacy_role_sha(folder, contract, scene, "original") == digest
+
+
+def test_legacy_scene_loader_filters_ai6_continuous_scene(tmp_path):
+    page = tmp_path / "index.html"
+    scenes = [{"id": scene} for scene in SCENES] + [{"id": "continuous_drive"}]
+    page.write_text("const SCENES=" + json.dumps(scenes) + ";", encoding="utf-8")
+
+    assert [row["id"] for row in qualified._load_legacy_scenes(page)] == list(SCENES)

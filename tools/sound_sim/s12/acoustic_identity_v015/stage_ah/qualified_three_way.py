@@ -71,6 +71,15 @@ def _legacy_role_sha(folder: Path, contract: dict, scene: dict, role: str) -> st
     return actual
 
 
+def _load_legacy_scenes(page: Path) -> list[dict[str, Any]]:
+    """Load the canonical ten scenes from an AI-6 package with its extra scene."""
+    scenes = ui._embedded(page.read_text(encoding='utf-8'), 'SCENES')
+    filtered = [row for row in scenes if row.get('id') in SCENES]
+    if [row.get('id') for row in filtered] != list(SCENES):
+        raise ValueError(f'canonical ten-scene order required: {page}')
+    return copy.deepcopy(filtered)
+
+
 def verify_legacy(root: Path, expected_sha: str):
     if sha_file(root/'ARTIFACTS.json') != expected_sha:
         raise ValueError('old three-way manifest digest mismatch')
@@ -369,7 +378,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         template=ui.TEMPLATE_PATH.read_text(encoding='utf-8')
         for v in VEHICLES:
             folder=staging/v; web=folder/'web_audio';web.mkdir(parents=True)
-            scenes=ui._load_scenes(old_root/v/'index.html')
+            scenes=_load_legacy_scenes(old_root/v/'index.html')
             base_scenes=copy.deepcopy(scenes)
             root,result,source_summary,source_qualification,source_manifest_sha,reason=choices[v]
             roles={
