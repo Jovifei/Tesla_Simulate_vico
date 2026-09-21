@@ -179,6 +179,27 @@ def validate_event_contract(
     reports=reports if reports is not None else receipt.get('reports')
     if not isinstance(reports, Mapping) or not all(role in reports for role in ('A', 'B', 'off_switch')):
         raise ValueError('continuous renderer reports missing')
+    expected_sample_count=int(SAMPLE_RATE_HZ * DURATION_S)
+    shared_fields=(
+        'trace_sha256', 'seed', 'flags', 'parent_peak_key',
+        'normalization_denominator', 'parent_denominator_policy',
+        'output_policy', 'sample_rate_hz', 'ir_name', 'ir_volume',
+        'ir_source_sha256', 'boundary_repair',
+    )
+    reference_report=None
+    for role in ('A', 'B', 'off_switch'):
+        report=reports[role]
+        if not isinstance(report, Mapping):
+            raise ValueError('continuous renderer report type mismatch')
+        if (report.get('vehicle') != receipt.get('vehicle')
+                or report.get('scene_id') != CONTINUOUS_SCENE_ID
+                or report.get('sample_rate_hz') != SAMPLE_RATE_HZ
+                or report.get('sample_count') != expected_sample_count):
+            raise ValueError('continuous renderer role identity mismatch')
+        if reference_report is None:
+            reference_report=report
+        elif any(report.get(field) != reference_report.get(field) for field in shared_fields):
+            raise ValueError('continuous renderer shared context mismatch')
     diagnostics={}
     for role in ('A', 'B', 'off_switch'):
         diagnostics[role]=_validate_event_diagnostics(reports[role], events)

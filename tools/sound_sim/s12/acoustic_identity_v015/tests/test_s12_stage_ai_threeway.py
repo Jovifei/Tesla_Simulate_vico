@@ -103,6 +103,30 @@ def _reseal_vehicle_receipt(root,vehicle,mutate):
     _sync_vehicle_evidence(root,vehicle,info)
 
 
+def _sync_continuous_contract(root, vehicle, events, *, receipt_events=None):
+    folder = root / vehicle
+    receipt_path = folder / "continuous_drive_receipt.json"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["events"] = copy.deepcopy(events if receipt_events is None else receipt_events)
+    _overwrite_json(receipt_path, receipt)
+    contract_path = folder / "dashboard_contract.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    info = copy.deepcopy(contract["continuous_drive"])
+    info["receipt_sha256"] = sha_file(receipt_path)
+    info["events"] = copy.deepcopy(events)
+    contract["continuous_drive"] = info
+    contract = seal_payload(contract, qualified.SCHEMA)
+    _overwrite_json(contract_path, contract)
+    for page_name in ("index.html", "index_standalone.html"):
+        _replace_embedded(folder / page_name, "DASHBOARD_CONTRACT", contract)
+    summary_path = root / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["vehicles"][vehicle]["continuous_drive"] = copy.deepcopy(info)
+    summary = seal_payload(summary, qualified.SCHEMA)
+    _overwrite_json(summary_path, summary)
+    _reseal_inventory(root)
+
+
 def _valid_fit():
     return {
         "schema": "s12.stage_ah.reference_feedback.v1",
@@ -195,8 +219,99 @@ def _continuous_event_receipt(reports):
     }
 
 
-@pytest.fixture
-def enabled_b_package(old_package,tmp_path,monkeypatch):
+def _package_continuous_pair():
+    pcm = np.full((1_440_000, 2), 100, dtype=np.int16)
+    trace_sha = "a" * 64
+    parent_key = "continuous_drive|" + trace_sha
+    baseline = {"gain": 1.0}
+    selected = {"gain": 1.1}
+    boundary = {
+        "policy_id": "rx7_start_boundary_fade_v1",
+        "fade_frames": 24,
+        "modified_frames": 24,
+        "scope": "rx7_start_boundary_only",
+    }
+
+    def report(parameters):
+        value = _record("rx7_fd", CONTINUOUS_SCENE_ID, pcm)
+        value.update({
+            "trace_sha256": trace_sha,
+            "parent_peak_key": parent_key,
+            "parent_denominator_policy": "fixed_parent_peak_scene_trace",
+            "ir_name": "mild_exhaust_reverb",
+            "ir_volume": 0.015,
+            "ir_source_sha256": None,
+            "boundary_repair": copy.deepcopy(boundary),
+        })
+        value["candidate_source_diagnostics"] = {
+            "shift_event_count": 3,
+            "afterfire_event_count": 1,
+            "afterfire_stem_energy_after_lift": 1.0,
+            "afterfire_requested_event_times_s": [18.0],
+            "afterfire_onset_s": 18.0,
+            "afterfire_observed_onset_s": 18.0,
+            "afterfire_observed_onset_frame": 864000,
+            "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+            "feedback_control": {"parameters": copy.deepcopy(parameters)},
+        }
+        return value
+
+    reports = {"A": report(baseline), "B": report(selected), "off_switch": report(baseline)}
+    events = cycle.continuous_events()
+    events.update({
+        "shift_count": 3,
+        "afterfire_event_count": 1,
+        "afterfire_stem_energy_after_lift": 1.0,
+        "afterfire_requested_event_times_s": [18.0],
+        "afterfire_source_onset_s": 18.0,
+        "afterfire_observed_onset_s": 18.0,
+        "afterfire_observed_onset_frame": 864000,
+        "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+        "stateful_single_render_per_role": True,
+    })
+    receipt = {
+        "schema": CONTINUOUS_SCHEMA,
+        "vehicle": "rx7_fd",
+        "duration_s": 30.0,
+        "sample_rate_hz": 48_000,
+        "scene_id": CONTINUOUS_SCENE_ID,
+        "shared": {
+            "seed": 20260908,
+            "trace_sha256": trace_sha,
+            "parent_peak_key": parent_key,
+            "normalization_denominator": 0.8,
+            "output_policy": "linked_soft_ceiling_v1",
+            "ir_array_sha256": "b" * 64,
+            "ir_source_path": "INJECTED_TEST_IR",
+            "ir_source_sha256": None,
+        },
+        "events": events,
+        "parameters": {"baseline": baseline, "selected": selected},
+        "boundary": boundary,
+        "wav": {
+            "A": {"decoded_pcm_sha256": sha_file_bytes(pcm), "frame_count": len(pcm)},
+            "B": {"decoded_pcm_sha256": sha_file_bytes(pcm), "frame_count": len(pcm)},
+        },
+        "reports": reports,
+        "feedback_off": {"pcm_equal": True, "report": reports["off_switch"]},
+        "feedback_off_pcm_equal": True,
+        "human_status": "NOT_EVALUATED",
+        "promotable": False,
+    }
+    cycle.validate_event_contract(receipt)
+    return {
+        "receipt": receipt,
+        "pcm_a": pcm,
+        "pcm_b": pcm.copy(),
+        "pcm_off_switch": pcm.copy(),
+    }
+
+
+def sha_file_bytes(value):
+    return hashlib.sha256(np.ascontiguousarray(value, dtype="<i2").tobytes()).hexdigest()
+
+
+def _make_enabled_b_source(old_package, tmp_path):
     vehicle="rx7_fd";source=tmp_path/"ai5-source"
     fit=_valid_fit();fit["baseline_records"]={};fit["selected_records"]={}
     for scene in SCENES:
@@ -227,6 +342,17 @@ def enabled_b_package(old_package,tmp_path,monkeypatch):
     task1=build_qualification_receipt(source,summary)
     assert task1["status"]=="PASS" and task1["qualified_vehicle_count"]==2
     source_sha=sha_file(source/"ARTIFACTS.json")
+    return source, summary, task1, source_sha
+
+
+@pytest.fixture
+def enabled_b_source(old_package, tmp_path):
+    return _make_enabled_b_source(old_package, tmp_path)
+
+
+@pytest.fixture
+def enabled_b_package(old_package,tmp_path,monkeypatch):
+    source, summary, task1, source_sha = _make_enabled_b_source(old_package, tmp_path)
     monkeypatch.setattr(qualified,"_feedback_source",lambda *args:(source,summary,task1,source_sha))
     monkeypatch.setattr(qualified,"_runtime_identity",lambda:{"fixture":"clean"})
     out=tmp_path/"enabled-b"
@@ -403,6 +529,55 @@ def test_resealed_continuous_event_drift_is_rejected_semantically():
     receipt["events"]["afterfire_observed_onset_frame"] = 912000
     with pytest.raises(ValueError, match="event"):
         cycle.validate_event_contract(receipt)
+
+
+def test_resealed_continuous_event_drift_is_rejected_by_qualified_verify(
+    old_package, enabled_b_source, tmp_path, monkeypatch
+):
+    source, source_summary, source_task1, source_sha = enabled_b_source
+    monkeypatch.setattr(qualified, "_runtime_identity", lambda: {"fixture": "clean"})
+    monkeypatch.setattr(
+        qualified,
+        "_feedback_source",
+        lambda *args: (source, source_summary, source_task1, source_sha),
+    )
+    out = tmp_path / "continuous-package"
+    qualified.build(
+        old_package,
+        sha_file(old_package / "ARTIFACTS.json"),
+        out,
+        two_run=source,
+        two_sha=source_sha,
+        continuous_pairs={"rx7_fd": _package_continuous_pair()},
+    )
+    qualified.verify(out, sha_file(out / "ARTIFACTS.json"))
+
+    mutations = {
+        "source_onset": lambda events: events.update(
+            afterfire_source_onset_s=19.0,
+            afterfire_observed_onset_s=19.0,
+            afterfire_observed_onset_frame=912000,
+        ),
+        "count": lambda events: events.update(afterfire_event_count=999),
+        "energy": lambda events: events.update(afterfire_stem_energy_after_lift=2.0),
+        "contract_copy": lambda events: events.update(afterfire_stem_energy_after_lift=2.0),
+    }
+    for name, mutate in mutations.items():
+        mutated = tmp_path / ("mutated-" + name)
+        shutil.copytree(out, mutated)
+        receipt_path = mutated / "rx7_fd" / "continuous_drive_receipt.json"
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        events = copy.deepcopy(receipt["events"])
+        mutate(events)
+        _sync_continuous_contract(mutated, "rx7_fd", events)
+        if name == "contract_copy":
+            receipt_events = copy.deepcopy(events)
+            receipt_events["afterfire_stem_energy_after_lift"] = 1.0
+            _sync_continuous_contract(
+                mutated, "rx7_fd", events, receipt_events=receipt_events
+            )
+        with pytest.raises(ValueError, match="event"):
+            qualified.verify(mutated, sha_file(mutated / "ARTIFACTS.json"))
 
 
 def test_resealed_vehicle_receipt_outcome_drift_is_rejected(enabled_b_package):

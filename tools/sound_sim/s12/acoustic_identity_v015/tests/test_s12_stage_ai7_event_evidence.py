@@ -83,6 +83,23 @@ def test_observation_must_match_source_layer_onset():
 
 def test_event_contract_binds_all_roles_and_top_level_copy():
     reports = {role: _report() for role in ("A", "B", "off_switch")}
+    for report in reports.values():
+        report.update({
+            "vehicle": "rx7_fd",
+            "scene_id": cycle.CONTINUOUS_SCENE_ID,
+            "sample_rate_hz": 48_000,
+            "trace_sha256": "a" * 64,
+            "seed": 20260908,
+            "flags": [],
+            "parent_peak_key": "continuous_drive|" + "a" * 64,
+            "normalization_denominator": 1.0,
+            "parent_denominator_policy": "fixed_parent_peak_scene_trace",
+            "output_policy": "linked_soft_ceiling_v1",
+            "ir_name": "mild_exhaust_reverb",
+            "ir_volume": 0.015,
+            "ir_source_sha256": None,
+            "boundary_repair": {"policy_id": "rx7_start_boundary_fade_v1"},
+        })
     events = cycle.continuous_events()
     events["shift_count"] = 3
     events["afterfire_event_count"] = 1
@@ -105,6 +122,48 @@ def test_event_contract_binds_all_roles_and_top_level_copy():
     cycle.validate_event_contract(receipt)
     reports["off_switch"]["candidate_source_diagnostics"]["afterfire_stem_energy_after_lift"] = 2.0
     with pytest.raises(ValueError, match="event"):
+        cycle.validate_event_contract(receipt)
+
+
+def test_event_contract_binds_off_switch_role_identity():
+    reports = {role: _report() for role in ("A", "B", "off_switch")}
+    for report in reports.values():
+        report.update({
+            "vehicle": "rx7_fd",
+            "scene_id": cycle.CONTINUOUS_SCENE_ID,
+            "sample_rate_hz": 48_000,
+            "sample_count": 1_440_000,
+            "trace_sha256": "a" * 64,
+            "seed": 20260908,
+            "flags": [],
+            "parent_peak_key": "continuous_drive|" + "a" * 64,
+            "normalization_denominator": 1.0,
+            "parent_denominator_policy": "fixed_parent_peak_scene_trace",
+            "output_policy": "linked_soft_ceiling_v1",
+            "ir_name": "mild_exhaust_reverb",
+            "ir_volume": 0.015,
+            "ir_source_sha256": None,
+            "boundary_repair": {"policy_id": "rx7_start_boundary_fade_v1"},
+        })
+    events = cycle.continuous_events()
+    events.update({
+        "shift_count": 3,
+        "afterfire_event_count": 1,
+        "afterfire_stem_energy_after_lift": 1.0,
+        "afterfire_requested_event_times_s": [18.0],
+        "afterfire_source_onset_s": 18.043,
+        "afterfire_observed_onset_s": 18.043,
+        "afterfire_observed_onset_frame": 866064,
+        "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+        "stateful_single_render_per_role": True,
+    })
+    receipt = {
+        "schema": cycle.CONTINUOUS_SCHEMA, "vehicle": "rx7_fd",
+        "duration_s": 30.0, "sample_rate_hz": 48_000,
+        "events": events, "reports": reports,
+    }
+    reports["off_switch"]["vehicle"] = "aventador_lp700"
+    with pytest.raises(ValueError, match="role identity"):
         cycle.validate_event_contract(receipt)
 
 
