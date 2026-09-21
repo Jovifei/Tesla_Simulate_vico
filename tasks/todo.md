@@ -4439,6 +4439,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] Receive and execute the remote AI-7 plan only after Jovi explicitly authorized source/test execution.
 - [x] Separate requested afterfire lift time from source-stem observed onset; bind frame, domain, energy, count and role identity.
 - [x] Add AI-7 RED/GREEN coverage and update AI-6 continuous/three-way regression contracts.
+- [x] Close the iteration-1 review findings: validate source onset/count/energy and role copies at generate/write/verify boundaries; reject valid-PCM event corruption before writing.
 - [x] Preserve AI-6 A/B decoded PCM bytes, legacy ten-scene identity, and RX-7 historical A provenance across package rollover.
 - [x] Add the AI-7 workflow gate and write the report/handoff documents.
 - [ ] Push the isolated branch and complete remote independent review; create Draft PR only if GitHub authentication is available. Do not merge main.
@@ -4446,9 +4447,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 ### Review
 
-- Source sequence before documentation closeout reaches `9222094b`; final package was regenerated in a new immutable v2 directory after that source fix.
-- Focused AI-7/AI-6/three-way/remaining-vehicle/feedback-package/AI-5 suite: `88 passed`.
+- Source sequence reaches `adaf72db254f28cc64616452d629c9a750db6616`; iteration-2 contract fix is isolated and does not modify DSP/audio parameters.
+- Iteration-2 contract RED/GREEN: `19 passed`; current AI-7/AI-6/three-way/remaining-vehicle/feedback-package/AI-5 focused suite: `92 passed`.
 - Strict compile, Track-P (`180` frozen files / `2` symbols / `0` frozen-path changes) and `git diff --check`: exit `0`.
-- Package `s12-stage-ai7-continuous-event-evidence-20260921-v2` verified; manifest SHA `a4d487722d4abdca42eeb8b6ef65407a241f9c40873f1014a8904fff8a93af0e`; summary SHA `f0b119856aeb073d614ed89733864d7de4a2f1adf35671077c70815e91b20285`.
+- Package `s12-stage-ai7-continuous-event-evidence-20260921-v3` verified; manifest SHA `44d9449c056768f454533041fd27a880b01a6f83df16057fe40f0526fab53833`; summary SHA `ecb8154c84c3a63cb81c71914fdc39afc23e2b026d9d64cc4b1f7623dd963740`.
+- AI-6 fixed input inventory: 215/215 files match; actual manifest SHA `28ef0738097f7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`; old report/handoff value had a historical typo and was not used as the v3 binding.
 - RX-7 observed onset `18.043s/frame 866064`; Aventador observed onset `18.010s/frame 864480`; both use `SOURCE_STEM_PRE_IR` and A/B PCM remains equal to fixed AI-6 v2.
+- Full S12, final v3 browser/HTTP interaction, push and PR/CI metadata are still pending on the final `adaf72d` documentation closeout.
 - Product gate remains closed: no Human PASS, OEM/Profile Freeze, or Android promotion claim.
