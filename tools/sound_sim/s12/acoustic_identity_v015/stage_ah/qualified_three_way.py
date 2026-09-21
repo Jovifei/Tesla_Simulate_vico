@@ -997,8 +997,11 @@ def verify(root:Path, expected_sha:str|None=None):
             raise ValueError('source role coverage availability mismatch')
         if v=='rx7_fd' and result:
             provenance=contract.get('a_provenance') or {}
+            provenance_root=Path(provenance.get('old_a_source_root','')).resolve()
+            if not provenance_root.is_dir():
+                provenance_root=(old_root/v/'web_audio').resolve()
             expected_differences={scene:_rx7_boundary_diff_receipt(
-                old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                provenance_root/('A_'+scene+'.wav'),
                 source_run/'baseline'/v/'web_audio'/(scene+'.wav')) for scene in SCENES}
             if (provenance.get('boundary_policy')!='rx7_start_boundary_fade_v1'
                     or provenance.get('boundary_difference_frames')!=24
