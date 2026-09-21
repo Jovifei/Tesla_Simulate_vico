@@ -22,6 +22,7 @@ from tools.sound_sim.s12.acoustic_identity_v015.stage_ah.continuous_drive import
     CONTINUOUS_SCHEMA,
     CONTINUOUS_SCENE_ID,
 )
+from tools.sound_sim.s12.acoustic_identity_v015.stage_ah import continuous_drive as cycle
 from tools.sound_sim.s12.acoustic_identity_v015.stage_af.package_integrity import seal_payload
 
 
@@ -330,7 +331,17 @@ def test_continuous_scene_requires_accepted_feedback_source(old_package, tmp_pat
                        "parent_peak_key": "continuous_drive|" + "a" * 64,
                        "normalization_denominator": 0.4,
                        "output_policy": "linked_soft_ceiling_v1"},
-            "events": {"shift_count": 3, "afterfire_event_count": 1},
+            "events": {
+                "shift_count": 3,
+                "shift_events": cycle.continuous_events()["shift_events"],
+                "afterfire_event_count": 1,
+                "afterfire_events": cycle.continuous_events()["afterfire_events"],
+                "afterfire_requested_event_times_s": [18.0],
+                "afterfire_stem_energy_after_lift": 1.0,
+                "afterfire_observed_onset_s": 18.0,
+                "afterfire_observed_onset_frame": 864000,
+                "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
+            },
             "boundary": {"policy_id": "rx7_start_boundary_fade_v1", "fade_frames": 24},
         },
     }

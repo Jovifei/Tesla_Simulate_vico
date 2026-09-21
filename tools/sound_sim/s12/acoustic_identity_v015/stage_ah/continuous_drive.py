@@ -19,6 +19,7 @@ from .feedback_evidence import SCENES, canonical
 from .qualification import numeric_ok
 from .reconstruction_peak import reconstructed_peak_receipt
 from .remaining_vehicle_pipeline import (
+    AFTERFIRE_OBSERVATION_DOMAIN,
     FEEDBACK_BOUNDS,
     LINKED_SOFT_CEILING_V1,
     REMAINING_VEHICLES,
@@ -30,7 +31,7 @@ from .remaining_vehicle_pipeline import (
 SAMPLE_RATE_HZ = 48_000
 DURATION_S = 30.0
 CONTINUOUS_SCENE_ID = "continuous_drive"
-CONTINUOUS_SCHEMA = "s12.stage_ai6.continuous_drive_pair.v1"
+CONTINUOUS_SCHEMA = "s12.stage_ai6.continuous_drive_pair.v2"
 
 
 def continuous_events() -> dict[str, list[dict[str, Any]]]:
@@ -102,16 +103,29 @@ def _validate_event_diagnostics(report: Mapping[str, Any], events: Mapping[str, 
     shifts=int(diagnostics.get('shift_event_count', -1))
     afterfire=int(diagnostics.get('afterfire_event_count', -1))
     energy=float(diagnostics.get('afterfire_stem_energy_after_lift', 0.0))
-    onset_times=tuple(float(value) for value in diagnostics.get('afterfire_event_times_s', ()))
+    requested_times=tuple(float(value) for value in diagnostics.get('afterfire_requested_event_times_s', ()))
+    observed=diagnostics.get('afterfire_observed_onset_s')
+    observed_frame=diagnostics.get('afterfire_observed_onset_frame')
+    domain=diagnostics.get('afterfire_observation_domain')
     if shifts != len(events['shift_events']):
         raise ValueError('continuous renderer shift diagnostics mismatch')
     lift_time=float(events['afterfire_events'][0]['time_s'])
     if (afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0
-            or not onset_times or min(onset_times) < lift_time):
-        raise ValueError('continuous renderer afterfire diagnostics missing')
+            or requested_times != (lift_time,)
+            or observed is None or not np.isfinite(float(observed))
+            or float(observed) < lift_time or float(observed) >= DURATION_S
+            or domain != AFTERFIRE_OBSERVATION_DOMAIN):
+        raise ValueError('continuous renderer afterfire observation missing')
+    expected_frame=int(round(float(observed) * SAMPLE_RATE_HZ))
+    if (isinstance(observed_frame, bool) or not isinstance(observed_frame, (int, np.integer))
+            or abs(int(observed_frame) - expected_frame) > 1):
+        raise ValueError('continuous renderer afterfire onset frame mismatch')
     return {'shift_count': shifts, 'afterfire_event_count': afterfire,
             'afterfire_stem_energy_after_lift': energy,
-            'afterfire_event_times_s': list(onset_times)}
+            'requested_event_times_s': list(requested_times),
+            'observed_onset_s': float(observed),
+            'observed_onset_frame': int(observed_frame),
+            'observation_domain': domain}
 
 
 def render_continuous_pair(
@@ -201,7 +215,10 @@ def render_continuous_pair(
             "shift_events": events["shift_events"],
             "afterfire_event_count": diagnostic_a["afterfire_event_count"],
             "afterfire_stem_energy_after_lift": diagnostic_a["afterfire_stem_energy_after_lift"],
-            "afterfire_event_times_s": diagnostic_a["afterfire_event_times_s"],
+            "afterfire_requested_event_times_s": diagnostic_a["requested_event_times_s"],
+            "afterfire_observed_onset_s": diagnostic_a["observed_onset_s"],
+            "afterfire_observed_onset_frame": diagnostic_a["observed_onset_frame"],
+            "afterfire_observation_domain": diagnostic_a["observation_domain"],
             "afterfire_events": events["afterfire_events"],
             "bov_events": events["bov_events"],
             "stateful_single_render_per_role": True,

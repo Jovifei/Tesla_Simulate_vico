@@ -28,7 +28,12 @@ from .qualification import (
     QUALIFICATION_SCHEMA,
     build_qualification_receipt,
 )
-from .continuous_drive import CONTINUOUS_SCENE_ID, CONTINUOUS_SCHEMA, write_continuous_pair
+from .continuous_drive import (
+    CONTINUOUS_SCENE_ID,
+    CONTINUOUS_SCHEMA,
+    _validate_event_diagnostics,
+    write_continuous_pair,
+)
 from .reconstruction_peak import reconstructed_peak_receipt
 from .reference_feedback_cli import verify_run as verify_two, numeric_ok, _runtime_identity
 from ..stage_af.package_integrity import seal_payload
@@ -667,11 +672,20 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             or receipt.get('duration_s')!=30.0
             or receipt.get('sample_rate_hz')!=48_000):
         raise ValueError('continuous receipt identity mismatch')
-    if (receipt.get('events',{}).get('shift_count')!=3
-            or int(receipt.get('events',{}).get('afterfire_event_count',0))<=0
-            or len(receipt.get('events',{}).get('afterfire_events',()))!=1
-            or float(receipt.get('events',{}).get('afterfire_stem_energy_after_lift',0.0))<=0.0
-            or min(receipt.get('events',{}).get('afterfire_event_times_s',())) < 18.0):
+    events = receipt.get('events', {})
+    observed_onset = events.get('afterfire_observed_onset_s')
+    observed_frame = events.get('afterfire_observed_onset_frame')
+    if (events.get('shift_count')!=3
+            or int(events.get('afterfire_event_count',0))<=0
+            or len(events.get('afterfire_events',()))!=1
+            or events.get('afterfire_requested_event_times_s') != [18.0]
+            or float(events.get('afterfire_stem_energy_after_lift',0.0))<=0.0
+            or observed_onset is None or not np.isfinite(float(observed_onset))
+            or float(observed_onset) < 18.0 or float(observed_onset) >= 30.0
+            or events.get('afterfire_observation_domain') != 'SOURCE_STEM_PRE_IR'
+            or isinstance(observed_frame, bool)
+            or not isinstance(observed_frame, int)
+            or abs(observed_frame - int(round(float(observed_onset) * 48_000))) > 1):
         raise ValueError('continuous event evidence incomplete')
     if receipt.get('source_manifest_sha256')!=info.get('source_manifest_sha256'):
         raise ValueError('continuous source manifest binding mismatch')
@@ -711,12 +725,16 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             raise ValueError('continuous report shared context mismatch')
     if report_a.get('candidate_source_diagnostics',{}).get('shift_event_count')!=3:
         raise ValueError('continuous renderer did not report three shifts')
-    for report in (report_a,reports_b):
-        diag=report.get('candidate_source_diagnostics',{})
-        if (int(diag.get('afterfire_event_count',0))<=0
-                or float(diag.get('afterfire_stem_energy_after_lift',0.0))<=0.0
-                or min(diag.get('afterfire_event_times_s',())) < 18.0):
-            raise ValueError('continuous renderer afterfire evidence missing')
+    for report in (report_a, reports_b, report_off):
+        observed = _validate_event_diagnostics(report, {
+            'shift_events': events.get('shift_events', ()),
+            'afterfire_events': events.get('afterfire_events', ()),
+        })
+        if (observed['requested_event_times_s'] != events.get('afterfire_requested_event_times_s')
+                or observed['observed_onset_s'] != events.get('afterfire_observed_onset_s')
+                or observed['observed_onset_frame'] != events.get('afterfire_observed_onset_frame')
+                or observed['observation_domain'] != events.get('afterfire_observation_domain')):
+            raise ValueError('continuous renderer afterfire observation mismatch')
     boundary=receipt.get('boundary',{})
     expected_boundary=(('rx7_start_boundary_fade_v1',24) if vehicle=='rx7_fd' else (None,0))
     if (boundary.get('policy_id'),boundary.get('fade_frames'))!=expected_boundary:

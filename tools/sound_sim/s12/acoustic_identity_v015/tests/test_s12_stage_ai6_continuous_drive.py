@@ -98,7 +98,11 @@ class _FakeEngine:
                 "shift_event_count": len(shift_events or []),
                 "afterfire_event_count": len(afterfire_events or []),
                 "afterfire_stem_energy_after_lift": 1.0,
-                "afterfire_event_times_s": [18.0] if afterfire_events else [],
+                "afterfire_requested_event_times_s": [18.0] if afterfire_events else [],
+                "afterfire_onset_s": 18.0 if afterfire_events else None,
+                "afterfire_observed_onset_s": 18.0 if afterfire_events else None,
+                "afterfire_observed_onset_frame": 864000 if afterfire_events else None,
+                "afterfire_observation_domain": "SOURCE_STEM_PRE_IR",
             },
         }
         self.reports.append(report)
@@ -127,6 +131,9 @@ def test_pair_uses_one_full_render_per_role_and_shared_context(monkeypatch):
     assert pair["pcm_a"].shape == pair["pcm_b"].shape == (1_440_000, 2)
     assert pair["receipt"]["events"]["shift_count"] == 3
     assert pair["receipt"]["events"]["afterfire_event_count"] == 1
+    assert pair["receipt"]["events"]["afterfire_requested_event_times_s"] == [18.0]
+    assert pair["receipt"]["events"]["afterfire_observed_onset_frame"] == 864000
+    assert pair["receipt"]["events"]["afterfire_observation_domain"] == "SOURCE_STEM_PRE_IR"
     assert pair["receipt"]["shared"]["seed"] == 20260908
     assert pair["receipt"]["shared"]["parent_peak_key"] == pair["report_a"]["parent_peak_key"]
     assert _FakeEngine.calls[1].parent_peaks == _FakeEngine.calls[0].parent_peaks
@@ -154,7 +161,7 @@ def test_renderer_diagnostics_are_required_for_shift_and_afterfire(monkeypatch):
 
     monkeypatch.setattr(cycle, "RemainingVehicleEngine", _BrokenEngine)
     monkeypatch.setattr(cycle, "reconstructed_peak_receipt", lambda audio, **_: _safe_peak_receipt())
-    with pytest.raises(ValueError, match="afterfire diagnostics"):
+    with pytest.raises(ValueError, match="afterfire observation"):
         cycle.render_continuous_pair(
             "rx7_fd", {"rotary_pulse_width_scale": 1.15},
             boundary_policy="rx7_start_boundary_fade_v1",

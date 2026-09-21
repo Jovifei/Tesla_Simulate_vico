@@ -48,6 +48,7 @@ RX7_CANDIDATE_PATH = (
 )
 IR_NAMES = {vehicle: "mild_exhaust_reverb" for vehicle in REMAINING_VEHICLES}
 IR_VOLUMES = {vehicle: 0.015 for vehicle in REMAINING_VEHICLES}
+AFTERFIRE_OBSERVATION_DOMAIN = "SOURCE_STEM_PRE_IR"
 SOURCE_VARIANTS = {
     "rx7_fd": "rx7_stage_g_feedback_v1",
     "aventador_lp700": "aventador_stage_c_feedback_v1",
@@ -190,6 +191,44 @@ def validate_source_pool(payload: Mapping[str, Any]) -> dict[str, int]:
     return counts
 
 
+def _afterfire_observation(
+    stem: np.ndarray,
+    sample_rate_hz: int,
+    requested_times_s: tuple[float, ...],
+    source_onset_s: Any,
+) -> dict[str, Any]:
+    """Bind requested lift timing to the onset observed in the source stem."""
+    if not requested_times_s:
+        return {
+            "afterfire_requested_event_times_s": [],
+            "afterfire_observed_onset_s": None,
+            "afterfire_observed_onset_frame": None,
+            "afterfire_observation_domain": AFTERFIRE_OBSERVATION_DOMAIN,
+        }
+    values = np.asarray(stem, dtype=np.float64)
+    if values.ndim == 2:
+        active = np.max(np.abs(values), axis=1) > 0.0
+    else:
+        active = np.abs(values.reshape(-1)) > 0.0
+    frames = np.flatnonzero(active)
+    if frames.size == 0:
+        raise ValueError("afterfire observation missing from source stem")
+    frame = int(frames[0])
+    observed = frame / float(sample_rate_hz)
+    requested = float(min(requested_times_s))
+    if observed < requested:
+        raise ValueError("afterfire observation precedes requested lift")
+    source_onset = float(source_onset_s) if source_onset_s is not None else float("nan")
+    if not np.isfinite(source_onset) or abs(source_onset - observed) > 1.0 / sample_rate_hz:
+        raise ValueError("afterfire source onset mismatch")
+    return {
+        "afterfire_requested_event_times_s": list(requested_times_s),
+        "afterfire_observed_onset_s": observed,
+        "afterfire_observed_onset_frame": frame,
+        "afterfire_observation_domain": AFTERFIRE_OBSERVATION_DOMAIN,
+    }
+
+
 def _resolve_ir_path(name: str) -> Path | None:
     root = Path(os.environ.get("S12_ENGINE_SIM_IR_ROOT", SOUND_LIB_DIR))
     for candidate in (root / "new" / f"{name}.wav", root / "archive" / f"{name}.wav", root / "smooth" / f"{name}.wav", root / f"{name}.wav"):
@@ -318,13 +357,22 @@ class RemainingVehicleEngine:
             if isinstance(event, Mapping) and np.isfinite(float(event.get("time_s", -1.0)))
         )
         if afterfire_times:
+            source_diagnostics.update(
+                _afterfire_observation(
+                    afterfire_stem,
+                    self.sr,
+                    afterfire_times,
+                    source_diagnostics.get("afterfire_onset_s"),
+                )
+            )
             start = max(0, min(len(afterfire_stem), int(round(min(afterfire_times) * self.sr))))
-            source_diagnostics["afterfire_event_times_s"] = list(afterfire_times)
             source_diagnostics["afterfire_stem_energy_after_lift"] = float(
                 np.sum(np.square(afterfire_stem[start:]))
             )
         else:
-            source_diagnostics["afterfire_event_times_s"] = []
+            source_diagnostics.update(
+                _afterfire_observation(afterfire_stem, self.sr, (), None)
+            )
             source_diagnostics["afterfire_stem_energy_after_lift"] = 0.0
         pressure = np.asarray(source.pressure, dtype=np.float64)
         ir_scaled = self.ir * IR_VOLUMES[self.vehicle_type]
