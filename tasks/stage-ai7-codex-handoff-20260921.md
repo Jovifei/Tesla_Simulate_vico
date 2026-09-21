@@ -69,3 +69,11 @@
 3. 把 iteration 3 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
 4. 分支已正常 push；若 GitHub 认证恢复，再创建唯一 Draft PR 并核对 exact-head CI，否则保持外部元数据阻塞。
 5. 远端审查结束后，把 v3 包交给 Jovi 做 RX-7/Aventador 命名人耳试听；反馈前不做主线合并、参数推广或 Android 产品化。
+
+## Iteration 3 最终收口附录
+
+- 最终分支 HEAD：`f9c5681b567248bbaee78140a4b0dabdcad3b7f9`；源码/verifier：`cd61c58`；包源：`adaf72d`；main：`29b50961`。
+- 最终 full S12：`1334 passed, 3 skipped, 118 subtests passed`；real-material `1 passed`；slow `2 passed`；core focused `39 passed`；真实包级 re-seal `qualified.verify()` 负测 `1 passed`。
+- AI-6 inventory 215/215 无漂移；v3 preflight、浏览器和 8 路由检查通过；分支已 push。
+- GitHub CLI 未认证，Draft PR/CI 为 `NOT_VERIFIED/PENDING`；远端 iteration 3 复核在一次重试后仍返回服务错误，未收到 `DONE/PLAN/BLOCKED`。
+- 本地执行已停在 `HUMAN_STATUS=NOT_EVALUATED`、`promotable=false`，下一步需要远端复核恢复后再确认接手，不开启新的工程阶段。

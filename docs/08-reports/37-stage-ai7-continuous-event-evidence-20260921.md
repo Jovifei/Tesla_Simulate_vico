@@ -87,3 +87,11 @@ AI-6 v2 目录的 215 个 manifest 文件均存在且无漂移，实际 `ARTIFAC
 1. 通过同一 C2C 记录把 iteration 3 的完整 diff、215 项 inventory、真实入口负测、slow/material、v3 preflight 和最终执行输出交给远端复核，等待 `DONE` 或新的 bounded `PLAN`。
 2. 分支已正常 push；当前 `gh` 未登录，Draft PR/CI 元数据保持 `NOT_VERIFIED/PENDING`，不得合并 main 或 force-push。
 3. Jovi 仍需对 RX-7/Aventador 的 A/B 连续驾驶包进行命名人耳试听；在明确反馈前不得把自动证据升级为 Human PASS。
+
+## Iteration 3 最终收口附录
+
+- 当前最终分支 HEAD：`f9c5681b567248bbaee78140a4b0dabdcad3b7f9`；源码/verifier HEAD：`cd61c580a1f3a745afc18cf5d7fd4fd2a3822aec`；包源 HEAD：`adaf72db254f28cc64616452d629c9a750db6616`；main：`29b50961d9628f835e7172b797380ccb36a7f38d`。
+- 最终 full S12（tested HEAD `cd61c58`）：`1334 passed, 3 skipped, 118 subtests passed`，exit `0`；定向 real-material `1 passed`、slow `2 passed`；core focused `39 passed`；包级 re-seal/`qualified.verify` 负测 `1 passed`。
+- 当前 verifier 对不可变 v3 serve preflight：`PASS`；v3 浏览器/8 路由/角色合同检查通过；v3 未重封、旧包未改。
+- 分支已正常 push，远端分支指向 `f9c5681`；`gh` 未认证，Draft PR/CI metadata 为 `NOT_VERIFIED/PENDING`，未创建 PR。
+- 远端 iteration 3 review 在一次重试后仍返回服务错误，未取得 `DONE/PLAN/BLOCKED` verdict；因此工程本地结果已完成，但 C2C 远端审查尚未闭合。
