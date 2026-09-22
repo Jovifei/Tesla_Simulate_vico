@@ -19,6 +19,7 @@ from .feedback_evidence import SCENES, canonical
 from .qualification import numeric_ok
 from .reconstruction_peak import reconstructed_peak_receipt
 from .remaining_vehicle_pipeline import (
+    AFTERFIRE_OBSERVATION_DOMAIN,
     FEEDBACK_BOUNDS,
     LINKED_SOFT_CEILING_V1,
     REMAINING_VEHICLES,
@@ -30,7 +31,7 @@ from .remaining_vehicle_pipeline import (
 SAMPLE_RATE_HZ = 48_000
 DURATION_S = 30.0
 CONTINUOUS_SCENE_ID = "continuous_drive"
-CONTINUOUS_SCHEMA = "s12.stage_ai6.continuous_drive_pair.v1"
+CONTINUOUS_SCHEMA = "s12.stage_ai6.continuous_drive_pair.v2"
 
 
 def continuous_events() -> dict[str, list[dict[str, Any]]]:
@@ -98,20 +99,143 @@ def _validate_report(report: Mapping[str, Any], pcm: np.ndarray) -> dict[str, An
 
 
 def _validate_event_diagnostics(report: Mapping[str, Any], events: Mapping[str, Any]) -> dict[str, Any]:
-    diagnostics=report.get('candidate_source_diagnostics', {})
-    shifts=int(diagnostics.get('shift_event_count', -1))
-    afterfire=int(diagnostics.get('afterfire_event_count', -1))
-    energy=float(diagnostics.get('afterfire_stem_energy_after_lift', 0.0))
-    onset_times=tuple(float(value) for value in diagnostics.get('afterfire_event_times_s', ()))
+    diagnostics=report.get('candidate_source_diagnostics')
+    if not isinstance(diagnostics, Mapping):
+        raise ValueError('continuous renderer afterfire observation missing')
+
+    shifts=_strict_event_int(diagnostics.get('shift_event_count'), 'shift count')
+    afterfire=_strict_event_int(diagnostics.get('afterfire_event_count'), 'afterfire count')
+    energy=_strict_event_number(diagnostics.get('afterfire_stem_energy_after_lift'), 'energy')
+    requested_raw=diagnostics.get('afterfire_requested_event_times_s')
+    requested_times=tuple(_strict_event_times(requested_raw, 'requested times'))
+    source_onset=_strict_event_number(diagnostics.get('afterfire_onset_s'), 'afterfire source onset')
+    observed=_strict_event_number(diagnostics.get('afterfire_observed_onset_s'), 'afterfire observed onset')
+    observed_frame=_strict_event_int(diagnostics.get('afterfire_observed_onset_frame'), 'afterfire observed frame')
+    domain=diagnostics.get('afterfire_observation_domain')
+    if not isinstance(events.get('shift_events'), (list, tuple)) or not isinstance(events.get('afterfire_events'), (list, tuple)):
+        raise ValueError('continuous event schedule type mismatch')
+    if len(events['afterfire_events']) != 1:
+        raise ValueError('continuous afterfire schedule mismatch')
+    lift_time=_strict_event_number(events['afterfire_events'][0].get('time_s'), 'lift time')
+    sample_count=_strict_event_int(report.get('sample_count'), 'sample count')
     if shifts != len(events['shift_events']):
         raise ValueError('continuous renderer shift diagnostics mismatch')
-    lift_time=float(events['afterfire_events'][0]['time_s'])
     if (afterfire <= 0 or not np.isfinite(energy) or energy <= 0.0
-            or not onset_times or min(onset_times) < lift_time):
-        raise ValueError('continuous renderer afterfire diagnostics missing')
+            or requested_times != (lift_time,)
+            or observed < lift_time or observed >= DURATION_S
+            or source_onset < lift_time or source_onset >= DURATION_S
+            or abs(source_onset - observed) > 1.0 / SAMPLE_RATE_HZ
+            or domain != AFTERFIRE_OBSERVATION_DOMAIN):
+        raise ValueError('continuous renderer afterfire observation missing')
+    expected_frame=int(round(observed * SAMPLE_RATE_HZ))
+    if observed_frame < 0 or observed_frame >= sample_count or abs(observed_frame - expected_frame) > 1:
+        raise ValueError('continuous renderer afterfire onset frame mismatch')
     return {'shift_count': shifts, 'afterfire_event_count': afterfire,
             'afterfire_stem_energy_after_lift': energy,
-            'afterfire_event_times_s': list(onset_times)}
+            'requested_event_times_s': list(requested_times),
+            'source_onset_s': source_onset,
+            'observed_onset_s': observed,
+            'observed_onset_frame': observed_frame,
+            'observation_domain': domain}
+
+
+def validate_event_contract(
+    receipt: Mapping[str, Any],
+    reports: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Validate event evidence at generation, write, and package boundaries."""
+    if not isinstance(receipt, Mapping):
+        raise ValueError('continuous event receipt is required')
+    events=receipt.get('events')
+    if not isinstance(events, Mapping):
+        raise ValueError('continuous event receipt is required')
+    expected=continuous_events()
+    if (events.get('shift_events') != expected['shift_events']
+            or events.get('afterfire_events') != expected['afterfire_events']
+            or events.get('bov_events') != expected['bov_events']
+            or events.get('stateful_single_render_per_role') is not True):
+        raise ValueError('continuous event schedule mismatch')
+    if receipt.get('schema') != CONTINUOUS_SCHEMA:
+        raise ValueError('continuous event schema mismatch')
+    if receipt.get('vehicle') not in REMAINING_VEHICLES:
+        raise ValueError('continuous event vehicle mismatch')
+    if receipt.get('duration_s') != DURATION_S or receipt.get('sample_rate_hz') != SAMPLE_RATE_HZ:
+        raise ValueError('continuous event render identity mismatch')
+    if _strict_event_int(events.get('shift_count'), 'shift count') != len(expected['shift_events']):
+        raise ValueError('continuous event shift count mismatch')
+    top_afterfire_count=_strict_event_int(events.get('afterfire_event_count'), 'afterfire count')
+    top_energy=_strict_event_number(events.get('afterfire_stem_energy_after_lift'), 'energy')
+    top_requested=_strict_event_times(events.get('afterfire_requested_event_times_s'), 'requested times')
+    top_source_onset=_strict_event_number(events.get('afterfire_source_onset_s'), 'source onset')
+    top_observed=_strict_event_number(events.get('afterfire_observed_onset_s'), 'observed onset')
+    top_frame=_strict_event_int(events.get('afterfire_observed_onset_frame'), 'observed frame')
+    if (top_requested != [18.0]
+            or top_source_onset < 18.0 or top_source_onset >= DURATION_S
+            or top_observed < 18.0 or top_observed >= DURATION_S
+            or abs(top_source_onset - top_observed) > 1.0 / SAMPLE_RATE_HZ
+            or top_frame < 0
+            or events.get('afterfire_observation_domain') != AFTERFIRE_OBSERVATION_DOMAIN):
+        raise ValueError('continuous event receipt evidence incomplete')
+    reports=reports if reports is not None else receipt.get('reports')
+    if not isinstance(reports, Mapping) or not all(role in reports for role in ('A', 'B', 'off_switch')):
+        raise ValueError('continuous renderer reports missing')
+    expected_sample_count=int(SAMPLE_RATE_HZ * DURATION_S)
+    shared_fields=(
+        'trace_sha256', 'seed', 'flags', 'parent_peak_key',
+        'normalization_denominator', 'parent_denominator_policy',
+        'output_policy', 'sample_rate_hz', 'ir_name', 'ir_volume',
+    )
+    reference_report=None
+    for role in ('A', 'B', 'off_switch'):
+        report=reports[role]
+        if not isinstance(report, Mapping):
+            raise ValueError('continuous renderer report type mismatch')
+        if (report.get('vehicle') != receipt.get('vehicle')
+                or report.get('scene_id') != CONTINUOUS_SCENE_ID
+                or report.get('sample_rate_hz') != SAMPLE_RATE_HZ
+                or report.get('sample_count') != expected_sample_count):
+            raise ValueError('continuous renderer role identity mismatch')
+        if reference_report is None:
+            reference_report=report
+        elif any(report.get(field) != reference_report.get(field) for field in shared_fields):
+            raise ValueError('continuous renderer shared context mismatch')
+    diagnostics={}
+    for role in ('A', 'B', 'off_switch'):
+        diagnostics[role]=_validate_event_diagnostics(reports[role], events)
+        observed=diagnostics[role]
+        if (observed['shift_count'] != len(expected['shift_events'])
+                or observed['afterfire_event_count'] != top_afterfire_count
+                or observed['afterfire_stem_energy_after_lift'] != top_energy
+                or observed['requested_event_times_s'] != top_requested
+                or observed['source_onset_s'] != top_source_onset
+                or observed['observed_onset_s'] != top_observed
+                or observed['observed_onset_frame'] != top_frame
+                or observed['observation_domain'] != events.get('afterfire_observation_domain')):
+            raise ValueError('continuous event role evidence mismatch')
+    if diagnostics['A'] != diagnostics['B'] or diagnostics['A'] != diagnostics['off_switch']:
+        raise ValueError('continuous event role evidence differs')
+    return {'events': dict(events), 'diagnostics': diagnostics}
+
+
+def _strict_event_number(value: Any, field: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float, np.integer, np.floating)):
+        raise ValueError(f'continuous event {field} type mismatch')
+    value=float(value)
+    if not np.isfinite(value):
+        raise ValueError(f'continuous event {field} must be finite')
+    return value
+
+
+def _strict_event_int(value: Any, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
+        raise ValueError(f'continuous event {field} type mismatch')
+    return int(value)
+
+
+def _strict_event_times(value: Any, field: str) -> list[float]:
+    if not isinstance(value, (list, tuple)):
+        raise ValueError(f'continuous event {field} type mismatch')
+    return [_strict_event_number(item, field) for item in value]
 
 
 def render_continuous_pair(
@@ -162,7 +286,7 @@ def render_continuous_pair(
     )
     pcm_off = engine_off.render_track(rpm, throttle, DURATION_S, **events)
     report_off = copy.deepcopy(engine_off.reports[-1])
-    _validate_event_diagnostics(report_off, events)
+    diagnostic_off = _validate_event_diagnostics(report_off, events)
     _validate_report(report_a, pcm_a)
     _validate_report(report_b, pcm_b)
     _validate_report(report_off, pcm_off)
@@ -172,8 +296,8 @@ def render_continuous_pair(
             raise ValueError(f"continuous A/B {field} mismatch")
     if not np.array_equal(pcm_a, pcm_off):
         raise ValueError("continuous feedback-off rerender changed A")
-    if diagnostic_a != diagnostic_b:
-        raise ValueError("continuous A/B event diagnostics mismatch")
+    if diagnostic_a != diagnostic_b or diagnostic_a != diagnostic_off:
+        raise ValueError("continuous role event diagnostics mismatch")
     boundary = report_a.get("boundary_repair", {})
     if vehicle == "rx7_fd" and (boundary.get("policy_id") != RX7_BOUNDARY_POLICY_V1
                                  or boundary.get("fade_frames") != 24):
@@ -201,7 +325,11 @@ def render_continuous_pair(
             "shift_events": events["shift_events"],
             "afterfire_event_count": diagnostic_a["afterfire_event_count"],
             "afterfire_stem_energy_after_lift": diagnostic_a["afterfire_stem_energy_after_lift"],
-            "afterfire_event_times_s": diagnostic_a["afterfire_event_times_s"],
+            "afterfire_requested_event_times_s": diagnostic_a["requested_event_times_s"],
+            "afterfire_source_onset_s": diagnostic_a["source_onset_s"],
+            "afterfire_observed_onset_s": diagnostic_a["observed_onset_s"],
+            "afterfire_observed_onset_frame": diagnostic_a["observed_onset_frame"],
+            "afterfire_observation_domain": diagnostic_a["observation_domain"],
             "afterfire_events": events["afterfire_events"],
             "bov_events": events["bov_events"],
             "stateful_single_render_per_role": True,
@@ -224,6 +352,7 @@ def render_continuous_pair(
         "human_status": "NOT_EVALUATED",
         "promotable": False,
     }
+    validate_event_contract(receipt)
     return {
         "receipt": receipt,
         "trace": trace,
@@ -250,6 +379,7 @@ def write_continuous_pair(root: Path, pair: Mapping[str, Any]) -> dict[str, Any]
     reports=receipt.get('reports')
     if not isinstance(reports, Mapping) or not all(role in reports for role in ('A','B','off_switch')):
         raise ValueError("continuous report evidence is required")
+    validate_event_contract(receipt, reports)
     for role,pcm in (('A',pcm_a),('B',pcm_b)):
         report=reports[role]
         if (report.get('vehicle')!=receipt.get('vehicle')
@@ -278,5 +408,6 @@ def write_continuous_pair(root: Path, pair: Mapping[str, Any]) -> dict[str, Any]
 __all__ = (
     "CONTINUOUS_SCENE_ID", "CONTINUOUS_SCHEMA", "DURATION_S", "SAMPLE_RATE_HZ",
     "build_continuous_trace", "continuous_events", "render_continuous_pair",
+    "validate_event_contract",
     "write_continuous_pair",
 )
