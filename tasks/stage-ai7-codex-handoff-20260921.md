@@ -34,10 +34,10 @@
 
 ## 3. 现在卡在哪里
 
-本地 AI-7 证据合同整改、最终全量回归、v3 verifier/browser 复核和分支 push 已完成；PR/CI 元数据与远端最终复核仍待收口。当前仍是工程证据状态，不是产品放行状态：
+本地 AI-7 证据合同整改、最终全量回归、v3 verifier/browser 复核、PR 创建和 iteration 4 证据收口已完成；当前仍是工程证据状态，不是产品放行状态：
 
-- 远端独立审查正在等待 iteration 3 的完整执行记录；必须核对 `cd61c58`、v3 和包级负测。
-- 分支已 push；`gh auth status` 未登录，因此 Draft PR/CI metadata 为 `NOT_VERIFIED/PENDING`，没有创建 PR。
+- 远端 iteration 3 已确认没有新的声音实现缺陷，要求 iteration 4 补齐 PR 身份、完整差异、可读测试输出、v3 只读复核和最终交接。
+- PR #31 已通过 GitHub API 独立核对：`open`、`draft=true`、base `main@29b50961`、head `feature/stage-ai7-continuous-event-evidence-20260921@3956c08`、`mergeable=true`、`mergeable_state=unstable`。
 - 最终 exact HEAD `cd61c58` 的完整 S12：`1334 passed, 3 skipped, 118 subtests passed`，退出码 `0`；定向 real-material `1 passed`、slow `2 passed`，full-suite skip 原因保持如实记录。
 - Jovi 的命名人耳试听尚未完成；因此 `HUMAN_STATUS=NOT_EVALUATED`、`promotable=false` 保持不变。
 - 六个其他车型仍没有合格 B 源，必须保持 `B_UNAVAILABLE`，不能为了凑齐车型而降级证据标准。
@@ -64,16 +64,27 @@
 
 ## 5. 下一步
 
-1. 最终 v3 preflight 和真实浏览器检查已通过；完整 S12 已在 exact HEAD `cd61c58` 通过，slow/material 定向验收也已通过。
-2. 提交本 worktree 的报告、交接文档、todo 和 workflow 改动；不修改主工作树。
-3. 把 iteration 3 执行记录发送给既有远端聊天，请远端通过 MCP 独立复核；若返回下一轮 `PLAN`，只按该计划继续；若返回 `DONE`，保持产品试听门禁不变。
-4. 分支已正常 push；若 GitHub 认证恢复，再创建唯一 Draft PR 并核对 exact-head CI，否则保持外部元数据阻塞。
-5. 远端审查结束后，把 v3 包交给 Jovi 做 RX-7/Aventador 命名人耳试听；反馈前不做主线合并、参数推广或 Android 产品化。
+1. iteration 4 已重新发布可读证据：C2C output ID `7–16`，并保存完整差异、PR API、refs、v3 只读验证和路由检查。
+2. 文档收口后在同一分支正常提交并 push，更新同一个 Draft PR #31；不修改主工作树、不 merge、不 force-push。
+3. 最终 pushed HEAD 以 iteration 4 `EXECUTED` 和 PR head 最后查询为准；文档不追逐自身 SHA。
+4. 远端确认 AI-7 工程阶段闭合后，把同一 v3 包交给 Jovi 做 RX-7/Aventador 命名人耳试听；反馈前不做主线合并、参数推广或 Android 产品化。
 
 ## Iteration 3 最终收口附录
 
 - 最终分支 HEAD：`f9c5681b567248bbaee78140a4b0dabdcad3b7f9`；源码/verifier：`cd61c58`；包源：`adaf72d`；main：`29b50961`。
 - 最终 full S12：`1334 passed, 3 skipped, 118 subtests passed`；real-material `1 passed`；slow `2 passed`；core focused `39 passed`；真实包级 re-seal `qualified.verify()` 负测 `1 passed`。
 - AI-6 inventory 215/215 无漂移；v3 preflight、浏览器和 8 路由检查通过；分支已 push。
-- GitHub CLI 未认证，Draft PR/CI 为 `NOT_VERIFIED/PENDING`；远端 iteration 3 复核在一次重试后仍返回服务错误，未收到 `DONE/PLAN/BLOCKED`。
-- 本地执行已停在 `HUMAN_STATUS=NOT_EVALUATED`、`promotable=false`，下一步需要远端复核恢复后再确认接手，不开启新的工程阶段。
+- iteration 3 远端复核结论为 `EVIDENCE_CLOSURE_REQUIRED`，`SOURCE_TEST_CHANGES_REQUESTED=NONE`；没有要求重新调音、重开模型或修改源码。
+- iteration 4 收据：`E:\Tesla_speed\review_packages\s12-stage-ai7-pr31-review-receipt-20260922-v1`；其中包含 PR API 200 响应、完整 patch、分段差异、C2C 可读输出和 v3/路由/PCM 只读验证。
+
+## Iteration 4 最终证据收口
+
+- 验证起点：分支 `feature/stage-ai7-continuous-event-evidence-20260921`，HEAD `3956c08be496f7d950ec3cf33fd16ab9fce9dc9f`，main `29b50961d9628f835e7172b797380ccb36a7f38d`。
+- C2C output：`7` full S12；`8` 包级负测；`9` focused；`10` real-material；`11` slow；`12` compile；`13` Track-P；`14` diff-check；`15` v3 preflight；`16` HTTP/embedded 路由。
+- 验证结果：full S12 `1334 passed, 3 skipped, 118 subtests passed`（tested head `cd61c58`）；负测 `1 passed`；focused `39 passed`；real-material `1 passed`；slow `2 passed`；v3 `qualified ABC preflight PASS`；9 路由 HTTP 200。
+- 固定 v3 manifest/summary SHA：`44d9449c056768f454533041fd27a880b01a6f83df16057fe40f0526fab53833` / `ecb8154c84c3a63cb81c71914fdc39afc23e2b026d9d64cc4b1f7623dd963740`；旧 AI-6 包未改，四项 A/B decoded PCM 对照一致。
+- 当前阻塞只剩产品门：`HUMAN_STATUS=NOT_EVALUATED`、`promotable=false`；六车型 B 和连续 C 的不可用边界保持不变。
+
+### NEXT_CODEX_PROMPT
+
+接收 `c2c_7d21 / iteration 4` 的 AI-7 证据收口。先核对最终交接中的 PR #31、最终 pushed HEAD、C2C output `7–16`、收据目录和 v3 SHA；不要 checkout/merge main，不重新搜参，不修改源码、测试、音频或 v3。确认 AI-7 工程阶段闭合后，停止工程扩展，等待 Jovi 对同一 v3 的 RX-7/Aventador 连续 A/B 具名试听；若试听反馈明确不接受，再另行授权新的窄范围技术阶段。
