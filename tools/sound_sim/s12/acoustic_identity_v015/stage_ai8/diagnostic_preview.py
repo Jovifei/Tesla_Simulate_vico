@@ -8,7 +8,11 @@ import argparse
 import copy
 import hashlib
 import html
+import io
 import json
+import subprocess
+import tarfile
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
@@ -62,6 +66,17 @@ _EVENT_CONTRACT = {
     "c63_supra": "continuous_event_mapping_native",
     "boundary": "SYNTHETIC_PREVIEW_ONLY_NOT_CALIBRATION",
 }
+_SOURCE_SCOPE = "tools/sound_sim/s12/acoustic_identity_v015"
+_RUNTIME_IDENTITY_FIELDS = frozenset({
+    "commit", "scope", "inventory_sha256", "source_files", "source_status",
+})
+_SUMMARY_FIELDS = frozenset({
+    "schema", "status", "runtime_identity", "synthetic_orchestration_stub",
+    "event_contract", "vehicles",
+})
+_VEHICLE_ROW_FIELDS = frozenset({"status", "report", "wav", "audio_available"})
+_VEHICLE_STATUSES = frozenset({"DIAGNOSTIC_BASELINE", "FAILED_NUMERIC_GATE", "RENDER_FAILED"})
+_FAILED_REPORT_FIELDS = frozenset({"schema", "status", "vehicle", "error_type", "error"})
 
 
 def _sha(path: Path) -> str:
@@ -70,6 +85,46 @@ def _sha(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+@lru_cache(maxsize=4)
+def _commit_source_files(commit: str) -> dict[str, str] | None:
+    repository = Path(__file__).resolve().parents[5]
+    try:
+        archive = subprocess.check_output([
+            "git", "-C", str(repository), "archive", "--format=tar", commit, _SOURCE_SCOPE,
+        ], stderr=subprocess.DEVNULL)
+        with tarfile.open(fileobj=io.BytesIO(archive), mode="r:") as source:
+            return {member.name: hashlib.sha256(source.extractfile(member).read()).hexdigest()
+                    for member in source.getmembers() if member.isfile()}
+    except (OSError, subprocess.CalledProcessError, tarfile.TarError):
+        return None
+
+
+def _runtime_identity_valid(identity: Any) -> bool:
+    if not isinstance(identity, dict) or set(identity) != _RUNTIME_IDENTITY_FIELDS:
+        return False
+    commit = identity["commit"]
+    if (not isinstance(commit, str) or len(commit) not in (40, 64)
+            or any(character.lower() not in "0123456789abcdef" for character in commit)):
+        return False
+    source_files = identity["source_files"]
+    if (identity["scope"] != _SOURCE_SCOPE or identity["source_status"] != "SOURCE_CLEAN"
+            or not isinstance(source_files, dict) or not source_files):
+        return False
+    for path, digest in source_files.items():
+        if (not isinstance(path, str) or not path.startswith(_SOURCE_SCOPE + "/")
+                or any(part in {"", ".", ".."} for part in path.split("/"))
+                or not isinstance(digest, str) or len(digest) != 64
+                or any(character.lower() not in "0123456789abcdef" for character in digest)):
+            return False
+    inventory = hashlib.sha256(
+        json.dumps(source_files, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    if identity["inventory_sha256"] != inventory:
+        return False
+    # Bind the map to its historical commit, without requiring it to equal HEAD.
+    return _commit_source_files(commit) == source_files
 
 
 def _write_json(path: Path, value: Mapping[str, Any]) -> None:
@@ -312,12 +367,29 @@ def verify_preview(output: Path | str, *, expected_manifest_sha256: str | None =
     if actual != set(files):
         raise ValueError("content drift: file inventory")
     summary = json.loads((root / "summary.json").read_text(encoding="utf-8"))
+    if (not isinstance(summary, dict) or set(summary) != _SUMMARY_FIELDS
+            or summary.get("schema") != SCHEMA or summary.get("status") != "DIAGNOSTIC_ONLY"
+            or not _runtime_identity_valid(summary.get("runtime_identity"))
+            or not isinstance(summary.get("synthetic_orchestration_stub"), bool)
+            or summary.get("event_contract") != _EVENT_CONTRACT):
+        raise ValueError("summary semantic mismatch")
     rows = summary.get("vehicles")
-    if (summary.get("schema") != SCHEMA or summary.get("status") != "DIAGNOSTIC_ONLY"
-            or summary.get("event_contract") != _EVENT_CONTRACT
-            or not isinstance(rows, dict) or not rows
+    if (not isinstance(rows, dict) or not rows
             or any(vehicle not in VEHICLES for vehicle in rows)):
         raise ValueError("summary semantic mismatch")
+    for vehicle, row in rows.items():
+        if not isinstance(row, dict) or not set(row).issubset(_VEHICLE_ROW_FIELDS):
+            raise ValueError(f"summary semantic mismatch: {vehicle}")
+        status = row.get("status")
+        if (not isinstance(status, str) or status not in _VEHICLE_STATUSES
+                or type(row.get("audio_available")) is not bool
+                or row["audio_available"] != (status == "DIAGNOSTIC_BASELINE")):
+            raise ValueError(f"summary semantic mismatch: {vehicle}")
+        required = {"status", "report", "audio_available"}
+        if status != "RENDER_FAILED":
+            required.add("wav")
+        if set(row) != required:
+            raise ValueError(f"summary semantic mismatch: {vehicle}")
     if (root / "index.html").read_text(encoding="utf-8") != _index(rows):
         raise ValueError("index semantic drift")
     for vehicle, row in rows.items():
@@ -328,11 +400,14 @@ def verify_preview(output: Path | str, *, expected_manifest_sha256: str | None =
         if row.get("report") != report_name or report_name not in files:
             raise ValueError(f"unsafe report binding: {vehicle}")
         report = json.loads((root / report_name).read_text(encoding="utf-8"))
-        if "wav" not in row:
-            if (row.get("status") != "RENDER_FAILED" or row.get("audio_available") is not False
-                    or wav_name in files or not isinstance(report.get("error"), str)
-                    or not report["error"] or report.get("status") != "RENDER_FAILED"):
-                raise ValueError(f"numeric gate drift: {vehicle}")
+        if row["status"] == "RENDER_FAILED":
+            if (wav_name in files or not isinstance(report, dict)
+                    or set(report) != _FAILED_REPORT_FIELDS
+                    or report.get("schema") != SCHEMA or report.get("vehicle") != vehicle
+                    or report.get("status") != "RENDER_FAILED"
+                    or not isinstance(report.get("error_type"), str) or not report["error_type"]
+                    or not isinstance(report.get("error"), str) or not report["error"]):
+                raise ValueError(f"failed report semantic mismatch: {vehicle}")
             continue
         if row.get("wav") != wav_name or wav_name not in files:
             raise ValueError(f"unsafe WAV binding: {vehicle}")
@@ -373,7 +448,7 @@ def verify_preview(output: Path | str, *, expected_manifest_sha256: str | None =
                 or report.get("vehicle") != vehicle or report.get("scene_id") != SCENE_ID
                 or report.get("output_policy") != LINKED_SOFT_CEILING_V1
                 or report.get("source_variant") != expected_variant
-                or bool(row.get("audio_available")) != expected):
+                or row["audio_available"] != expected):
             raise ValueError(f"numeric gate drift: {vehicle}")
     return {"schema": SCHEMA, "status": "VERIFIED", "file_count": len(files)}
 
