@@ -22,7 +22,7 @@
 - Six-car preview: `E:\Tesla_speed\review_packages\s12-ai8-six-vehicle-preview-20260923-v2`; manifest SHA-256 `d53352b5a96f1ca5c741a7c9ecc1f54893bbf6e7f14fa183c6555ae342ba58d7`; independent verify `VERIFIED`, all six `DIAGNOSTIC_BASELINE`, 30 s / 48 kHz / stereo int16, numeric gates pass. Human listening remains pending.
 - Ferrari/GT-R loop: `E:\Tesla_speed\review_packages\s12-ai8-fourcar-reference-loop-20260923-v1`; `ARTIFACTS.json` SHA-256 `8db412ec9a7e5a78138a5f461c166fb2eaf5906d724d9375fadcd167f00a5dbd`; independent verify passed; qualification receipt `PASS` for 2 vehicles. Both remain R3 relative-only with `promotable=false` and `human_status=NOT_EVALUATED`.
 - Rights/comparability blockers remain for Hellcat, LFA, C63 W204, and Supra JZA80; no optimizer run was attempted for them. No raw references or generated audio were added to Git. Remote ChatGPT was not used.
-- GitHub publish remains pending: live API confirms AI-7 PR #31 open/draft and no AI-8 remote branch/PR. `git push` failed connecting to `github.com:443` via the existing `127.0.0.1` path; GitHub CLI is unauthenticated. No VPN/proxy/DNS/network-process changes were made.
+- Initial pre-publish check (2026-09-23): GitHub API showed AI-7 PR #31 open/draft and no AI-8 remote branch/PR. Local `git push` failed connecting to `github.com:443` via the existing `127.0.0.1` path; no VPN/proxy/DNS/network-process changes were made. Recheck live status before any follow-up publication action.
 
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 
