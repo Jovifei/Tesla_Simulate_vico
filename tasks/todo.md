@@ -11,9 +11,17 @@
 - [x] 四车闭环接入独立数值验证；保留失败渲染诊断。
 - [x] C63/Supra 实际声源参数适配和 off-switch 回归。
 - [x] 六个 gpt-6-luna/max 车型只读审查；父 agent 审核并修复预览宣称泄漏、Supra 源 SHA 未绑定。
-- [ ] 六车参考预检与诊断连续试听输出。
-- [ ] 集成审核、受影响回归、真实 Ferrari/GTR 有界执行与核验。
-- [ ] 报告逐车结果并提交；人耳接受和参考缺口独立记录。
+- [x] 六车参考预检与诊断连续试听输出。
+- [x] 集成审核、受影响回归、真实 Ferrari/GTR 有界执行与核验。
+- [x] 报告逐车结果并提交；人耳接受和参考缺口独立记录。
+
+### Review (2026-09-23)
+
+- Commits: `531e097` AI-8 adapters/evidence; `db35e1d` four-car event contract adapter; `b9ab654` stable multi-vehicle index. Work remains on `feature/stage-ai8-six-vehicle-20260922`; main untouched.
+- Verification: exact final source suite `199 passed, 1 skipped`; preview suite `25 passed`; Track-P guard confirms 180 frozen files / 2 symbols unchanged. Four IR WAV reads emit a non-fatal SciPy `WavFileWarning` for non-data chunks.
+- Six-car preview: `E:\Tesla_speed\review_packages\s12-ai8-six-vehicle-preview-20260923-v2`; manifest SHA-256 `d53352b5a96f1ca5c741a7c9ecc1f54893bbf6e7f14fa183c6555ae342ba58d7`; independent verify `VERIFIED`, all six `DIAGNOSTIC_BASELINE`, 30 s / 48 kHz / stereo int16, numeric gates pass. Human listening remains pending.
+- Ferrari/GT-R loop: `E:\Tesla_speed\review_packages\s12-ai8-fourcar-reference-loop-20260923-v1`; `ARTIFACTS.json` SHA-256 `8db412ec9a7e5a78138a5f461c166fb2eaf5906d724d9375fadcd167f00a5dbd`; independent verify passed; qualification receipt `PASS` for 2 vehicles. Both remain R3 relative-only with `promotable=false` and `human_status=NOT_EVALUATED`.
+- Rights/comparability blockers remain for Hellcat, LFA, C63 W204, and Supra JZA80; no optimizer run was attempted for them. No raw references or generated audio were added to Git. Remote ChatGPT was not used.
 
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 

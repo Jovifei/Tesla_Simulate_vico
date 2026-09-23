@@ -8,11 +8,11 @@
 
 - [x] 核对六车已有声源、SHA 与可用 split：现有 SHA 绑定 v3 计划只覆盖 Ferrari (2 train/1 validation) 与 GT-R (3/1)；Hellcat/LFA 不具备合格 split，C63/Supra 缺显式评审计划。
 - [x] 复用 fourcar_reference_loop 和 reference_feedback 优化器；为 C63/Supra 补齐一个 source-local 参数的实际渲染适配及 feedback-off 回归。
-- [ ] 仅对 Ferrari/GT-R 运行一次有界 R3 相对诊断搜索；不根据验证集反复调搜索范围。
+- [x] 仅对 Ferrari/GT-R 运行一次有界 R3 相对诊断搜索；不根据验证集反复调搜索范围。
 - [x] 实现逐场景数值收据、失败回滚/候选保留和 fail-closed verifier；固定配方不得标为自动合格 B。
-- [ ] 运行六车 30 秒 baseline 诊断试听包和独立验证；保持 RX-7/Aventador 既有证据。
+- [x] 运行六车 30 秒 baseline 诊断试听包和独立验证；保持 RX-7/Aventador 既有证据。
 - [x] 完成六个 Luna/max 车型只读审查；父 agent 复核其证据并处理字段宣称和 Supra 源 SHA 两项风险。
-- [ ] 提交已验证源码和报告；原始音频、参考素材及生成包保留 Git 外。
+- [x] 提交已验证源码和报告；原始音频、参考素材及生成包保留 Git 外。
 
 不更改冻结 Track-P/PTR/Radiation，不放宽峰值与 Reference 门禁，不覆盖既有不可变包。缺少可比性评审或素材时，仍完成可实现的适配和软件验证，逐车明确真实运行阻塞，不伪造资格。人耳接受由 Jovi 给出。
 
