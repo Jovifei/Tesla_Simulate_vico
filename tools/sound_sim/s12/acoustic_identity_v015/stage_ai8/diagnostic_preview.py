@@ -30,7 +30,7 @@ FOURCAR = frozenset(VEHICLES[:4])
 SAMPLE_RATE_HZ = 48_000
 DURATION_S = 30.0
 SCENE_ID = "continuous_drive"
-SCHEMA = "s12.stage_ai8.diagnostic_preview.v1"
+SCHEMA = "s12.stage_ai8.diagnostic_preview.v2"
 _RENDERER_FIELDS = frozenset({
     "source_variant", "trace_sha256", "output_policy", "parent_peak",
     "candidate_raw_peak", "normalization_denominator", "normalization",
@@ -56,6 +56,12 @@ _POSITIVE_CLAIMS = {"accepted", "approved", "calibrated", "confirmed", "match", 
                     "pass", "passed", "promoted", "qualified", "ready", "true"}
 _NEGATIVE_CLAIMS = {"blocked", "failed", "fail", "false", "missing", "no", "not",
                     "pending", "rejected", "unverified"}
+_EVENT_CONTRACT = {
+    "schema": "s12.stage_ai8.preview_event_contract.v1",
+    "fourcar": {"shift_duration_s": 0.01, "afterfire_intensity": 0.2, "bov_duration_s": 0.16},
+    "c63_supra": "continuous_event_mapping_native",
+    "boundary": "SYNTHETIC_PREVIEW_ONLY_NOT_CALIBRATION",
+}
 
 
 def _sha(path: Path) -> str:
@@ -149,6 +155,7 @@ def _default_renderer(vehicle: str) -> tuple[np.ndarray, dict[str, Any]]:
     events = continuous_events()
     rpm, throttle = trace.rpm[:-1], trace.throttle[:-1]
     if vehicle in FOURCAR:
+        events = _fourcar_events(events)
         engine = RemediationEngine(vehicle, variant="r1_baseline", seed=20260908,
                                    output_policy=LINKED_SOFT_CEILING_V1)
         pcm = engine.render_track(rpm, throttle, DURATION_S, **events)
@@ -160,6 +167,19 @@ def _default_renderer(vehicle: str) -> tuple[np.ndarray, dict[str, Any]]:
         pcm = engine.render_track(rpm, throttle, DURATION_S, **events)
         report = copy.deepcopy(engine.reports[-1])
     return pcm, report
+
+
+def _fourcar_events(events: Mapping[str, Sequence[Mapping[str, Any]]]) -> dict[str, list[tuple[float, float]]]:
+    """Adapt typed AI-6 preview events to the legacy four-car tuple contract."""
+    # Reuse tested AH synthetic defaults; these are preview values, not fitted calibration.
+    return {
+        "shift_events": [(float(event["time_s"]), _EVENT_CONTRACT["fourcar"]["shift_duration_s"])
+                         for event in events["shift_events"]],
+        "afterfire_events": [(float(event["time_s"]), _EVENT_CONTRACT["fourcar"]["afterfire_intensity"])
+                             for event in events["afterfire_events"]],
+        "bov_events": [(float(event["time_s"]), _EVENT_CONTRACT["fourcar"]["bov_duration_s"])
+                       for event in events["bov_events"]],
+    }
 
 
 def _prepare_report(vehicle: str, pcm: np.ndarray, report: Mapping[str, Any]) -> dict[str, Any]:
@@ -247,7 +267,8 @@ def render_preview(output: Path | str, *, vehicles: Sequence[str] = VEHICLES,
             rows[vehicle] = {"status": "RENDER_FAILED", "report": report_path.name,
                              "audio_available": False}
     summary = {"schema": SCHEMA, "status": "DIAGNOSTIC_ONLY", "runtime_identity": identity,
-               "synthetic_orchestration_stub": renderer is not None, "vehicles": rows}
+               "synthetic_orchestration_stub": renderer is not None,
+               "event_contract": copy.deepcopy(_EVENT_CONTRACT), "vehicles": rows}
     _write_json(destination / "summary.json", summary)
     (destination / "index.html").write_text(_index(rows), encoding="utf-8")
     final_identity = dict(runtime_identity_fn())
@@ -290,6 +311,7 @@ def verify_preview(output: Path | str, *, expected_manifest_sha256: str | None =
     summary = json.loads((root / "summary.json").read_text(encoding="utf-8"))
     rows = summary.get("vehicles")
     if (summary.get("schema") != SCHEMA or summary.get("status") != "DIAGNOSTIC_ONLY"
+            or summary.get("event_contract") != _EVENT_CONTRACT
             or not isinstance(rows, dict) or not rows
             or any(vehicle not in VEHICLES for vehicle in rows)):
         raise ValueError("summary semantic mismatch")

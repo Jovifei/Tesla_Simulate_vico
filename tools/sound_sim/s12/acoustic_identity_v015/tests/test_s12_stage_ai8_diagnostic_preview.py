@@ -164,6 +164,7 @@ def test_qualified_output_is_int16_and_playable_diagnostic_only(tmp_path):
         output, vehicles=("supra_jza80",), renderer=_synthetic_renderer,
         runtime_identity_fn=_identity,
     )
+    assert summary["event_contract"] == diagnostic_preview._EVENT_CONTRACT
     row = summary["vehicles"]["supra_jza80"]
     assert row["status"] == "DIAGNOSTIC_BASELINE"
     rate, pcm = wavfile.read(output / row["wav"])
@@ -246,6 +247,13 @@ def test_short_stereo_waveform_cannot_pass_production_gate(tmp_path):
     summary = diagnostic_preview.render_preview(tmp_path / "preview", vehicles=("hellcat",),
                                                 renderer=short, runtime_identity_fn=_identity)
     assert summary["vehicles"]["hellcat"]["status"] == "RENDER_FAILED"
+
+
+@pytest.mark.parametrize("vehicle", ["hellcat", "ferrari_458", "lfa", "gtr_r35"])
+def test_real_fourcar_preview_renderer_uses_engine_event_contract(vehicle):
+    pcm, raw_report = diagnostic_preview._default_renderer(vehicle)
+    report = diagnostic_preview._prepare_report(vehicle, pcm, raw_report)
+    assert diagnostic_preview.numeric_ok(report)
 
 
 def test_runtime_identity_drift_aborts_without_manifest(tmp_path):
