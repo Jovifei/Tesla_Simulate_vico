@@ -24,6 +24,28 @@
 - Rights/comparability blockers remain for Hellcat, LFA, C63 W204, and Supra JZA80; no optimizer run was attempted for them. No raw references or generated audio were added to Git. Remote ChatGPT was not used.
 - Initial pre-publish check (2026-09-23): GitHub API showed AI-7 PR #31 open/draft and no AI-8 remote branch/PR. Local `git push` failed connecting to `github.com:443` via the existing `127.0.0.1` path; no VPN/proxy/DNS/network-process changes were made. Recheck live status before any follow-up publication action.
 
+### 2026-09-23 PR #32 verifier contract closure
+
+授权：Jovi 批准本地 Codex 按远端审查方案修复并提交；仅限 AI-8 原分支和现有 PR #32。
+
+- [x] 核对指定 `Tesla_speed` worktree、分支、干净状态及 GitHub PR #32 实时 base/head。
+- [x] 用重新封签的测试包先复现摘要源码身份缺失/错配、渲染失败报告错绑或资格字段、非布尔 `audio_available` 与未知状态绕过；独立复核追加 commit 与清单错配反例。
+- [x] 只加强 `diagnostic_preview.py` 的 summary/runtime identity/vehicle row/render-failed report 合同；通过历史 Git 源码归档绑定身份，不要求运行时 commit 等于 verifier HEAD；合法 RENDER_FAILED 包保持可验。
+- [x] 运行四项 AI-8 回归、受影响 AI-5/6/7 回归及 Track-P/diff 检查；只读验证现有六车预览和 Ferrari/GT-R run。
+- [x] 更新本节 Review、AI-8 接力与 Obsidian 记录，写入实际命令、结果、SHA 与未解除的人耳/权利门禁。
+- [x] 提交至 AI-8 原分支并快进更新 PR #32；核对发布树与 PR 身份，没有触碰 main、PR #31 或网络设置。
+
+#### Review (2026-09-23)
+
+- Local implementation commit: `a2634a8a22b11ad331922a82c62ae8d4da1a01be`.
+- RED/GREEN: the original 11 resealed tampering cases failed against the old verifier and passed after the fix. A separate commit-substitution case also reproduced the provenance gap; its replacement with the AI-7 base SHA is now rejected. A valid render-failure package remains `VERIFIED`.
+- Tests: preview verifier `38 passed`; four AI-8 files `75 passed`; AI-5/6/7 + Track-P `87 passed`; full `acoustic_identity_v015/tests` `1409 passed, 3 skipped, 118 subtests`. The preview renderer emits four existing non-fatal SciPy `WavFileWarning`s.
+- Fixed artifacts: six-car preview `VERIFIED` (manifest `d53352b5…`, 14 files); Ferrari/GT-R run `verified` (ARTIFACTS `8db412ec…`). No render/run/optimizer command was used.
+- Track-P direct guard: 180 frozen files and 2 symbols match; 0 frozen-path changes.
+- Published on the existing PR #32 branch as snapshot `b719b8f99c22ceae1e1e0a4713dd3cf5e0c63a97`; PR remains open/draft with unchanged AI-7 base `53a161d…`.
+- Post-implementation ChatGPT review was sent in the existing 音浪 chat but returned `STATE: BLOCKED`: `workspace_info` failed with account-connection 400. `c2c doctor --no-fix` reports `NAMED_TUNNEL_DOWN` / `namedRepair.needed=true`; independent remote code review is **NOT_PERFORMED**, not DONE.
+- Human listening, rights/synchronization, review splits, OEM, B-ready, and productization gates remain unchanged. A fresh Jovi authorization is required before the next Cloudflare login/recovery.
+
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 
 > 状态：本地完成，未 push；仅离线 synthetic 声浪层，未进入 MATLAB/MCP 或实时 DSP。
