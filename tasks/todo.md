@@ -2,6 +2,19 @@
 
 > 状态: 已完成，待归档
 
+## 2026-09-22 AI-8 六车型本地推进
+
+授权：Jovi 批准六车型开发；子 agent 按本轮明确要求使用 gpt-6-luna / max，主 agent 审核；本次不用远端 GPT。
+
+- [x] 建立 AI-7@53a161d 基线的独立分支；基线 focused 测试 17 passed。
+- [x] 核对参考计划：Ferrari/GTR 存在已评审 split；Hellcat/LFA 参考窗口不足；C63/Supra 未形成评审计划。
+- [x] 四车闭环接入独立数值验证；保留失败渲染诊断。
+- [x] C63/Supra 实际声源参数适配和 off-switch 回归。
+- [x] 六个 gpt-6-luna/max 车型只读审查；父 agent 审核并修复预览宣称泄漏、Supra 源 SHA 未绑定。
+- [ ] 六车参考预检与诊断连续试听输出。
+- [ ] 集成审核、受影响回归、真实 Ferrari/GTR 有界执行与核验。
+- [ ] 报告逐车结果并提交；人耳接受和参考缺口独立记录。
+
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 
 > 状态：本地完成，未 push；仅离线 synthetic 声浪层，未进入 MATLAB/MCP 或实时 DSP。

@@ -31,6 +31,9 @@ from .fourcar_pipeline import (FOURCAR_VEHICLES, FOURCAR_TARGET_PATH, REAL_REFER
 from .fourcar_package import _import_dashboards, _vehicle_directory, _read_sealed
 from .engine import RemediationEngine, input_sha
 from .output_guard import LINKED_SOFT_CEILING_V1
+from .qualification import (QUALIFICATION_FILENAME, build_qualification_receipt,
+                            verify_qualification_receipt)
+from .reconstruction_peak import reconstructed_peak_receipt
 from ..stage_af.package_integrity import seal_payload, validate_artifacts
 from ..stage_af.physical_closed_loop import fixed_reference_distance
 
@@ -47,6 +50,17 @@ RELATIVE_SCENES = {"01_afterfire": "ref_afterfire.wav", "02_full_pull": "ref_ful
 
 def read(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def _bind_qualification_record(report: dict, pcm: np.ndarray, scene: str, trace: str) -> None:
+    """Bind fields independently required to qualify the final decoded artifact."""
+    artifact = np.ascontiguousarray(pcm, dtype='<i2')
+    report.update(
+        parent_peak_key=scene_trace_key(scene, trace),
+        sample_rate_hz=48000,
+        sample_count=int(len(artifact)),
+        reconstruction_peak=reconstructed_peak_receipt(artifact.astype(np.float64)/32767.0),
+    )
 
 
 def _safe(root, relative):
@@ -192,6 +206,7 @@ def capture_baseline(vehicle: str, directory: Path, entry: Mapping, parent: Path
             final_rms=float(np.sqrt(np.mean((pcm.astype(float)/32767)**2))),
             peak_estimate_4x=peak_estimate_4x(pcm.astype(float)/32767),
             normalization_denominator=report['parent_peak'])
+        _bind_qualification_record(report, pcm, scene, trace)
         if not numeric_ok(report):
             raise ValueError(f"baseline numeric gate: {vehicle}/{scene}")
         contexts[scene] = {k: data[k] for k in ('rpm','throttle','duration','shift_events','afterfire_events','bov_events')}
@@ -248,6 +263,7 @@ class FourCarFeedbackRenderer:
             self.journal.append('RENDER_START', {'vehicle': self.vehicle, 'scene': scene, 'parameters': p})
         pcm = engine.render_track(c['rpm'], c['throttle'], c['duration'], c['shift_events'], c['afterfire_events'], c['bov_events'])
         report = copy.deepcopy(engine.last_report)
+        _bind_qualification_record(report, pcm, scene, c['trace_sha256'])
         if report['normalization_denominator'] != self.peaks[scene_trace_key(scene, c['trace_sha256'])]:
             raise ValueError("parent denominator drift")
         if report['ir_source_sha256'] != self.ir_sha:
@@ -335,12 +351,28 @@ def run(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig())
                     elif any(r['regression_gt_3pct'] for r in rel):
                         failure = 'AUDITION_REFERENCE_REGRESSION_ROLLED_BACK'
                     if failure:
+                        rejected_dir = vwork/'rejected'/'web_audio'
+                        rejected_dir.mkdir(parents=True)
+                        rejected_wav_sha256 = {}
+                        for scene, pcm in selected_audio.items():
+                            rejected_path = rejected_dir/(scene+'.wav')
+                            wavfile.write(rejected_path, 48000, pcm)
+                            rejected_wav_sha256[scene] = sha_file(rejected_path)
+                        rejected_records = copy.deepcopy(selected_records)
                         result['status'] = failure
                         result['selected_parameters'] = dict(renderer.baseline)
                         result['parameter_delta'] = {k:0. for k in renderer.baseline}
                         result['selected_train_loss'] = result['baseline_train_loss']
                         selected_audio = originals
                         selected_records = records
+                        failure_path = vwork/'failure.json'
+                        failure_payload = {'vehicle':vehicle, 'status':failure,
+                            'reason':failure, 'rejected_records':rejected_records,
+                            'rejected_wav_sha256':rejected_wav_sha256,
+                            'promotable':False, 'human_status':'NOT_EVALUATED'}
+                        write_json(failure_path, seal_payload(
+                            failure_payload, 's12.stage_ai.fourcar_vehicle_failure.v1'))
+                        result['failure_receipt'] = str(failure_path.relative_to(staging))
                     tuned_dir.mkdir(parents=True)
                     (tuned_dir/'web_audio').mkdir()
                     for scene, pcm in selected_audio.items():
@@ -359,9 +391,7 @@ def run(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig())
                 except (ValueError, FileNotFoundError, RuntimeError) as exc:
                     journal.append('VEHICLE_BLOCKED', {'reason':str(exc)})
                     blocked[vehicle] = {'status':'BLOCKED', 'reason':str(exc), 'promotable':False}
-                    write_json(vwork/'failure.json', blocked[vehicle])
-                    shutil.rmtree(base_dir, ignore_errors=True)
-                    shutil.rmtree(tuned_dir, ignore_errors=True)
+                    write_json(vwork/'execution_failure.json', blocked[vehicle])
         if sha_file(plan_path) != plan_sha or _runtime_identity() != runtime:
             raise ValueError('plan/source changed during run')
         verify_parent(parent, plan['parent_manifest_sha256'])
@@ -370,9 +400,11 @@ def run(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig())
         summary = {'schema':RUN_SCHEMA, 'run_id':output.name, 'runtime':runtime,
             'plan_sha256':plan_sha, 'source_evidence':evidence, 'parent_package':str(parent),
             'parent_manifest_sha256':plan['parent_manifest_sha256'], 'vehicles':results, 'blocked_vehicles':blocked,
-            'search_config':vars(config), 'promotable':False, 'human_status':'NOT_EVALUATED',
+            'search_config':vars(config), 'output_policy':LINKED_SOFT_CEILING_V1,
+            'promotable':False, 'human_status':'NOT_EVALUATED',
             'scope':'FOURCAR_SOURCE_PARAMETERS_ONLY; R3_RELATIVE_NOT_SIMILARITY_PERCENT'}
         write_json(staging/'summary.json', summary)
+        _write_qualification(staging, summary)
         files = {p.relative_to(staging).as_posix():sha_file(p) for p in staging.rglob('*') if p.is_file()}
         write_json(staging/'ARTIFACTS.json', seal_payload({'files':files},'s12.stage_ai.feedback_artifacts.v1'))
         verify_run(staging)
@@ -393,6 +425,12 @@ def run(plan_path: Path, output: Path, *, config: SearchConfig = SearchConfig())
         lock.unlink(missing_ok=True)
 
 
+def _write_qualification(root: Path, summary: Mapping) -> dict:
+    receipt = build_qualification_receipt(root, summary)
+    write_json(root/QUALIFICATION_FILENAME, receipt)
+    return receipt
+
+
 def verify_run(root: Path, expected_sha: str | None = None):
     root = root.resolve()
     if expected_sha and sha_file(root/'ARTIFACTS.json') != expected_sha:
@@ -410,10 +448,32 @@ def verify_run(root: Path, expected_sha: str | None = None):
     summary = read(root/'summary.json')
     if summary.get('schema') != RUN_SCHEMA or summary.get('promotable') is not False:
         raise ValueError('wrong summary contract')
+    qualification_path = root/QUALIFICATION_FILENAME
+    if qualification_path.is_file():
+        if summary.get('output_policy') != LINKED_SOFT_CEILING_V1:
+            raise ValueError('four-car run output policy mismatch')
+        verify_qualification_receipt(root, summary, read(qualification_path), require_pass=False)
+    else:
+        # Historical sealed runs predate persisted Task-1 qualification.  They
+        # remain readable only when the caller binds the exact artifact SHA,
+        # and must still pass a fresh independent recomputation.
+        if expected_sha is None or 'output_policy' in summary:
+            raise ValueError('independent qualification receipt missing')
+        legacy_summary = copy.deepcopy(summary)
+        legacy_summary['output_policy'] = LINKED_SOFT_CEILING_V1
+        legacy_receipt = build_qualification_receipt(root, legacy_summary)
+        verify_qualification_receipt(root, legacy_summary, legacy_receipt, require_pass=True)
     from .feedback_evidence import read_journal
     for v,r in summary['vehicles'].items():
         if fit_eligibility(r) != r['eligibility']:
             raise ValueError('feedback qualification drift')
+        if r.get('status') == 'ALL_SCENE_NUMERIC_REJECTED_ROLLED_BACK':
+            relative = r.get('failure_receipt')
+            if not isinstance(relative, str):
+                raise ValueError('numeric-rejected vehicle is missing failure receipt')
+            failure = _read_sealed(_safe(root, relative))
+            if failure.get('vehicle') != v or failure.get('status') != r['status']:
+                raise ValueError('numeric-rejected vehicle failure receipt mismatch')
         if set(r['baseline_records']) != set(SCENES) or set(r['selected_records']) != set(SCENES):
             raise ValueError('incomplete per-scene records')
         for group, field in (('baseline','baseline_wav_sha256'),('tuned','selected_wav_sha256')):

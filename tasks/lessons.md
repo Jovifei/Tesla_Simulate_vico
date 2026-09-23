@@ -1393,3 +1393,7 @@ Rules:
 # 2026-09-20 Stage AI-6 blocked-evidence publication lesson
 
 - fail-closed 资格失败不能等同于删除证据：事务发布必须封存 BLOCKED 资格收据、失败场景和诊断文件，再由公开 verify/serve 的 B-ready 门拒绝使用；生成路径不得在收据落盘前调用只接受 PASS 的验证器。
+
+# 2026-09-23 Delegation model correction
+
+- Jovi 指定子 agent 模型/推理档位时，按当前任务中的明确值派发；旧计划里的模型设置不能覆盖本轮要求。父 agent 仍负责集成、独立审查和最终验证。
