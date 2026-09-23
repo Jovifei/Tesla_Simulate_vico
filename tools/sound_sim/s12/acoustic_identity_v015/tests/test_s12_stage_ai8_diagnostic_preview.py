@@ -120,6 +120,15 @@ def test_manifest_verify_detects_content_drift(tmp_path):
         diagnostic_preview.verify_preview(output)
 
 
+def test_multi_vehicle_index_is_stable_after_canonical_json_key_sort(tmp_path):
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(
+        output, vehicles=("hellcat", "ferrari_458"), renderer=_synthetic_renderer,
+        runtime_identity_fn=_identity,
+    )
+    assert diagnostic_preview.verify_preview(output)["status"] == "VERIFIED"
+
+
 def test_verify_accepts_pinned_manifest_sha(tmp_path):
     output = tmp_path / "preview"
     diagnostic_preview.render_preview(output, vehicles=("gtr_r35",), renderer=_synthetic_renderer,

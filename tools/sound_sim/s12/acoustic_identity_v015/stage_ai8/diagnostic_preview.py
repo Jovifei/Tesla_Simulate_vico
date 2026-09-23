@@ -212,7 +212,10 @@ def _prepare_report(vehicle: str, pcm: np.ndarray, report: Mapping[str, Any]) ->
 
 def _index(rows: Mapping[str, Mapping[str, Any]]) -> str:
     cards = []
-    for vehicle, row in rows.items():
+    for vehicle in VEHICLES:
+        if vehicle not in rows:
+            continue
+        row = rows[vehicle]
         status = html.escape(str(row["status"]))
         if status == "DIAGNOSTIC_BASELINE":
             audio = f'<audio controls preload="none" src="{html.escape(str(row["wav"]))}"></audio>'
