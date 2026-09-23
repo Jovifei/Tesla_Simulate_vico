@@ -32,3 +32,12 @@ Stage AI-8 在独立 `feature/stage-ai8-six-vehicle-20260922` 分支补上四车
 ## GitHub 发布状态
 
 初始预发布检查（2026-09-23）：只读 GitHub API 显示 AI-7 PR #31 为 open/draft，AI-8 远端分支与 PR 尚不存在；本地 Git 传输到 `github.com:443` 经当前 `127.0.0.1` 路径失败。此为当时的时间戳状态快照，后续执行前应查询 live PR/branch 状态。没有更改 VPN、代理、DNS 或网络进程。本轮没有使用远端 ChatGPT 网页。
+
+## 2026-09-23 AI-8 预览 verifier follow-up
+
+- 本地 Codex 根据远端只读审查修复 summary、runtime source identity、车型行状态/布尔类型与 `RENDER_FAILED` 报告语义校验；runtime 身份源码清单现在须与记录 commit 的 Git 归档精确匹配，允许有效历史 commit，不要求等于当前 HEAD。
+- 本地实现提交：`a2634a8a22b11ad331922a82c62ae8d4da1a01be`。变更不涉及声学算法、车型参数、音频、IR、参考素材或预览重新生成。
+- 验证：preview `38 passed`；四项 AI-8 `75 passed`；AI-5/6/7 + Track-P `87 passed`；完整 `acoustic_identity_v015/tests` `1409 passed, 3 skipped, 118 subtests`。六车既有 manifest 验证 `VERIFIED`；Ferrari/GT-R 既有 run 验证 `verified`；Track-P 冻结 180 文件/2 符号无变化。
+- 源码/测试修复已发布到原 PR #32 分支（本地 fix commit `a2634a8a…`；GitHub snapshot `b719b8f…`，树 SHA 与本地一致）；PR 仍 open/draft，base 未变。
+- 实现后远端 ChatGPT 审查未执行：指定聊天收到 `STATE: BLOCKED`，原因是 `workspace_info` 账号连接 400；本地只读 doctor 显示 Tesla_speed 命名隧道掉线。待 Jovi 重新授权同域名 Cloudflare 登录后，在同一聊天恢复身份核验再续审。
+- Jovi 人耳验收和所有权/同步/评审 split 门禁仍未通过；不得标注 Human PASS、B-ready、OEM、Profile Freeze 或产品化。若本机 Git 对象库没有记录的历史 commit，runtime identity 验证会 fail-closed。

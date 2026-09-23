@@ -33,3 +33,25 @@
 2. Hellcat/LFA/C63/Supra 先取得 SHA 绑定的评审窗口、train/validation split 和 rights/use 范围，再启动对应闭环。
 3. 本文记录的初始预发布检查（2026-09-23）显示 PR #31 为 open/draft，AI-8 远端分支/PR 尚不存在；本地 `git push` 到 `github.com:443` 经现有 `127.0.0.1` 路径失败。此为带时间戳的状态快照，后续执行前应重新核对 GitHub live 状态；不改网络设置、不 merge main、不 force-push。
 4. 本阶段没有使用远端 ChatGPT 网页；没有改动 VPN、代理、DNS 或网络进程。只有 Jovi 指示后才发送远端 ChatGPT 审查请求。
+
+## 6. AI-8 预览验包复核与修复（2026-09-23）
+
+- 已在指定的音浪聊天核验 `workspace_info=Tesla_speed` 并取得 PR #32 审查方案。远端连接器只读；本地 Codex 按 Jovi 授权执行，未把远端的方案/报告冒充为代码变更或测试结果。
+- 根因：summary 的源码身份与字段未受完整语义校验；`RENDER_FAILED` 报告缺少 schema/车型/字段约束；车型行状态未完整枚举且 `audio_available` 使用隐式布尔转换。独立复核还发现 runtime commit 字段需要与其源码清单绑定。
+- 本地修复提交：`a2634a8a22b11ad331922a82c62ae8d4da1a01be`，文件限于 `stage_ai8/diagnostic_preview.py` 与 `test_s12_stage_ai8_diagnostic_preview.py`。Verifier 要求 summary/车型行白名单、真实 JSON 布尔、受限状态集合、失败报告与车型/schema 绑定；源码清单必须匹配其记录的历史 Git 源码归档，不要求等于当前 HEAD。
+- TDD：旧实现对 11 个重新封签的 summary/report 反例全部未拒绝；新增源码 commit 替换反例也曾被旧实现接受。修复后这些反例均被拒绝，合法渲染失败包和合法历史身份仍可验证。
+
+### 本次新鲜验证
+
+- 预览 verifier：`38 passed`；四个 AI-8 测试文件：`75 passed`；AI-5/6/7 与 Track-P 定向回归：`87 passed`。
+- 完整 `tools/sound_sim/s12/acoustic_identity_v015/tests`：`1409 passed, 3 skipped, 118 subtests`；4 条既有 SciPy `WavFileWarning`（非数据 chunk）为非致命。
+- 六车固定 preview：传入原 manifest SHA 后返回 `VERIFIED`，14 个文件；Ferrari/GT-R 固定 run：传入原 `ARTIFACTS.json` SHA 后返回 `verified`。
+- Track-P 独立守卫：180 个冻结文件、2 个符号摘要匹配，冻结路径改动 0。未运行 render、reference-loop run、optimizer 或调音；未改写、重封或再分发任何音频/IR/参考材料。
+- 本次验证的是软件结构、历史源码绑定和固定产物完整性，不证明来源授权、录音真实性、车型相似度、人耳接受、OEM 标定或产品化。
+
+## 7. 当前下一步
+
+1. 本地源码/测试提交 `a2634a8a22b11ad331922a82c62ae8d4da1a01be` 已发布到现有 PR #32，snapshot `b719b8f99c22ceae1e1e0a4713dd3cf5e0c63a97` 的 Git tree 与本地修复树 `95ae2e07ba5324c37ce5fe38d5df4ef0636fec1c` 一致。PR 保持 open/draft，AI-7 base `53a161d…` 未改变；后续交接/Obsidian 文档也在同一分支同步。
+2. 实现后远端审查请求留在指定音浪聊天，但 ChatGPT 两次 `workspace_info` 返回账号连接 400，远端回复 `STATE: BLOCKED / REVIEW_STATUS: NOT_PERFORMED_WORKSPACE_UNVERIFIED`；没有读取 PR diff，不能声称已独立审查。随后本地 `c2c doctor --no-fix` 显示 `NAMED_TUNNEL_DOWN` 与 `namedRepair.needed=true`。下一步需要 Jovi 对同一 Cloudflare 域名登录恢复给予新的明确授权；获批后在同一聊天先重新核验 `workspace_info=Tesla_speed`，再续做 PR 审查，不建新聊天/项目、不合并 main。
+3. 六车 preview 仍全为 `DIAGNOSTIC_BASELINE`；下一实质产品验收门是 Jovi 的具名人耳试听。Ferrari/GT-R 继续保持 R3 relative-only，四个 reference-blocked 车型不启动优化器。
+4. 历史 runtime commit 必须在执行 verifier 的仓库对象库中可解析；若 checkout 缺少该历史 commit，验证会 fail-closed，而不会把身份不明的 source map 当作有效证据。
