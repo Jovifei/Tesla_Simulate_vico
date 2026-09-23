@@ -1,5 +1,10 @@
 import copy
+import hashlib
+import io
 import json
+import subprocess
+import tarfile
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -72,8 +77,27 @@ def _synthetic_renderer(vehicle):
     return pcm, _good_report(vehicle, pcm)
 
 
+@lru_cache(maxsize=4)
+def _source_files_at(commit):
+    root = Path(__file__).resolve().parents[5]
+    scope = "tools/sound_sim/s12/acoustic_identity_v015"
+    archive = subprocess.check_output(
+        ["git", "-C", str(root), "archive", "--format=tar", commit, scope])
+    with tarfile.open(fileobj=io.BytesIO(archive), mode="r:") as source:
+        return {member.name: hashlib.sha256(source.extractfile(member).read()).hexdigest()
+                for member in source.getmembers() if member.isfile()}
+
+
 def _identity():
-    return {"commit": "a" * 40, "scope": "synthetic-test", "source_status": "SOURCE_CLEAN"}
+    root = Path(__file__).resolve().parents[5]
+    scope = "tools/sound_sim/s12/acoustic_identity_v015"
+    commit = subprocess.check_output(
+        ["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    source_files = _source_files_at(commit)
+    inventory = hashlib.sha256(json.dumps(source_files, sort_keys=True,
+                                          separators=(",", ":")).encode()).hexdigest()
+    return {"commit": commit, "scope": scope, "inventory_sha256": inventory,
+            "source_files": source_files, "source_status": "SOURCE_CLEAN"}
 
 
 def test_render_requires_fresh_output_directory(tmp_path):
@@ -299,4 +323,134 @@ def test_resealed_summary_cannot_redirect_report_or_unblock_index(tmp_path):
     manifest["files"][summary_path.name] = _file_sha(summary_path)
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="index semantic drift|unsafe report binding"):
+        diagnostic_preview.verify_preview(output)
+
+
+def _reseal(output, *paths):
+    manifest_path = output / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for path in paths:
+        manifest["files"][path.name] = _file_sha(path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+
+@pytest.mark.parametrize("mutation", ["missing_identity", "inventory_mismatch"])
+def test_verifier_rejects_resealed_summary_with_invalid_source_identity(tmp_path, mutation):
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=_synthetic_renderer,
+                                      runtime_identity_fn=_identity)
+    summary_path = output / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if mutation == "missing_identity":
+        summary.pop("runtime_identity")
+    else:
+        source_files = summary["runtime_identity"]["source_files"]
+        source_files[next(iter(source_files))] = "f" * 64
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    _reseal(output, summary_path)
+    with pytest.raises(ValueError, match="summary semantic mismatch"):
+        diagnostic_preview.verify_preview(output)
+
+
+def test_verifier_rejects_resealed_commit_not_bound_to_source_inventory(tmp_path):
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=_synthetic_renderer,
+                                      runtime_identity_fn=_identity)
+    summary_path = output / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["runtime_identity"]["commit"] = "53a161d573a8f33959b1e3ef7d510dbfcbb99b70"
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    _reseal(output, summary_path)
+    with pytest.raises(ValueError, match="summary semantic mismatch"):
+        diagnostic_preview.verify_preview(output)
+
+
+@pytest.mark.parametrize(
+    ("target", "field", "value"),
+    [("summary", "human_status", "HUMAN_PASS"),
+     ("vehicle", "validated_b", True),
+     ("summary", "synthetic_orchestration_stub", "false")],
+)
+def test_verifier_rejects_resealed_summary_claims_and_invalid_types(tmp_path, target, field, value):
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=_synthetic_renderer,
+                                      runtime_identity_fn=_identity)
+    summary_path = output / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if target == "summary":
+        summary[field] = value
+    else:
+        summary["vehicles"]["hellcat"][field] = value
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    _reseal(output, summary_path)
+    with pytest.raises(ValueError, match="summary semantic mismatch"):
+        diagnostic_preview.verify_preview(output)
+
+
+@pytest.mark.parametrize("field,value", [("schema", "wrong.schema"),
+                                          ("vehicle", "lfa"),
+                                          ("validated_b", True)])
+def test_verifier_rejects_resealed_failed_report_outside_contract(tmp_path, field, value):
+    def fail(_vehicle):
+        raise RuntimeError("synthetic renderer failure")
+
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=fail,
+                                      runtime_identity_fn=_identity)
+    report_path = output / "hellcat.report.json"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report[field] = value
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    _reseal(output, report_path)
+    with pytest.raises(ValueError, match="failed report semantic mismatch"):
+        diagnostic_preview.verify_preview(output)
+
+
+def test_verifier_accepts_valid_render_failed_package(tmp_path):
+    def fail(_vehicle):
+        raise RuntimeError("synthetic renderer failure")
+
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=fail,
+                                      runtime_identity_fn=_identity)
+    assert diagnostic_preview.verify_preview(output)["status"] == "VERIFIED"
+
+
+@pytest.mark.parametrize("value", ["true", 1])
+def test_verifier_rejects_resealed_non_boolean_audio_available(tmp_path, value):
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=_synthetic_renderer,
+                                      runtime_identity_fn=_identity)
+    summary_path = output / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["vehicles"]["hellcat"]["audio_available"] = value
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    _reseal(output, summary_path)
+    with pytest.raises(ValueError, match="summary semantic mismatch"):
+        diagnostic_preview.verify_preview(output)
+
+
+def test_verifier_rejects_resealed_unknown_numeric_failure_status(tmp_path):
+    def numeric_failure(vehicle):
+        pcm, report = _synthetic_renderer(vehicle)
+        report = copy.deepcopy(report)
+        report["normalization"]["emergency_clip_count"] = 1
+        return pcm, report
+
+    output = tmp_path / "preview"
+    diagnostic_preview.render_preview(output, vehicles=("hellcat",), renderer=numeric_failure,
+                                      runtime_identity_fn=_identity)
+    summary_path = output / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    row = summary["vehicles"]["hellcat"]
+    row["status"] = "UNRECOGNIZED_FAILURE"
+    report_path = output / row["report"]
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["status"] = row["status"]
+    report["diagnostic_status"] = row["status"]
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    (output / "index.html").write_text(diagnostic_preview._index(summary["vehicles"]), encoding="utf-8")
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    _reseal(output, report_path, output / "index.html", summary_path)
+    with pytest.raises(ValueError, match="summary semantic mismatch"):
         diagnostic_preview.verify_preview(output)
