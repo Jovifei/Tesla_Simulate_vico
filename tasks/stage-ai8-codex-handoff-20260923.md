@@ -31,4 +31,5 @@
 
 1. Jovi 从六车 preview `index.html` 试听并提供具名反馈；如需，可对照 Ferrari/GT-R 闭环目录中的 baseline 与 tuned 十场景 WAV。
 2. Hellcat/LFA/C63/Supra 先取得 SHA 绑定的评审窗口、train/validation split 和 rights/use 范围，再启动对应闭环。
-3. 本阶段没有使用远端 ChatGPT 网页；只有 Jovi 指示后才发送远端审查请求。
+3. 本地分支尚未推送，PR #32 尚未创建。GitHub REST 只读核对显示 PR #31 仍是 open/draft、AI-7 分支存在，而 AI-8 远端分支/PR 不存在；`git push` 连接 `github.com:443` 经现有 `127.0.0.1` 路径失败，GitHub CLI 也未认证。待既有连接恢复后，直接 push 该分支并以 AI-7 分支为 PR base；不 merge main、不 force-push。
+4. 本阶段没有使用远端 ChatGPT 网页；没有改动 VPN、代理、DNS 或网络进程。只有 Jovi 指示后才发送远端 ChatGPT 审查请求。

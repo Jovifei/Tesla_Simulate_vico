@@ -28,3 +28,7 @@ Stage AI-8 在独立 `feature/stage-ai8-six-vehicle-20260922` 分支补上四车
 ## 待办门禁
 
 等待 Jovi 具名试听/反馈；四个 reference-blocked 车型需要独立的 SHA 绑定评审窗口、split 和 rights/use 决定。在这些门禁到达前，不写入 Human PASS、B-ready、OEM、Profile Freeze 或校准完成。
+
+## GitHub 发布状态
+
+本地提交尚未推送，AI-8 Draft PR 尚未创建。只读 GitHub API 核对：AI-7 PR #31 仍 open/draft，AI-7 分支存在，AI-8 远端分支与 PR 不存在。Git `ls-remote`/`push` 连接 `github.com:443` 经当前 `127.0.0.1` 连接路径失败，GitHub CLI 未认证。没有更改 VPN、代理、DNS 或网络进程。后续连接恢复后，把本地 AI-8 分支直接 push，并以 AI-7 feature 分支为 PR base；不 merge main、不 force-push。本轮未使用远端 ChatGPT 网页。
