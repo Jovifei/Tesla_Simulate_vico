@@ -52,6 +52,6 @@
 ## 7. 当前下一步
 
 1. 本地源码/测试提交 `a2634a8a22b11ad331922a82c62ae8d4da1a01be` 已发布到现有 PR #32，snapshot `b719b8f99c22ceae1e1e0a4713dd3cf5e0c63a97` 的 Git tree 与本地修复树 `95ae2e07ba5324c37ce5fe38d5df4ef0636fec1c` 一致。PR 保持 open/draft，AI-7 base `53a161d…` 未改变；后续交接/Obsidian 文档也在同一分支同步。
-2. 实现后远端审查请求留在指定音浪聊天，但 ChatGPT 两次 `workspace_info` 返回账号连接 400，远端回复 `STATE: BLOCKED / REVIEW_STATUS: NOT_PERFORMED_WORKSPACE_UNVERIFIED`；没有读取 PR diff，不能声称已独立审查。Jovi 授权的 Cloudflare 恢复显示 `loggedIn=true`，但 doctor 隧道启动两次均因 `Named tunnel start timed out` 失败，日志记录 `cloudflared` 退出且未弹出登录窗口。**进一步隧道启动/网络进程重试需新的明确授权**；不改 VPN、FlClash、Clash Verge、DNS 或系统代理。隧道恢复后，仍在同一聊天先核验 `workspace_info=Tesla_speed`，再续做 PR 审查，不建新聊天/项目、不合并 main。
+2. 实现后远端审查请求留在指定音浪聊天，但 ChatGPT `workspace_info` 返回账号连接 400，远端回复 `STATE: BLOCKED / REVIEW_STATUS: NOT_PERFORMED_WORKSPACE_UNVERIFIED`；没有读取 PR diff，不能声称已独立审查。Jovi 授权的 Cloudflare 恢复显示 `loggedIn=true`，但后续多次 doctor 隧道启动（包括最近一次授权重试）均因 `Named tunnel start timed out` 失败，日志记录 `cloudflared` 退出且未弹出登录窗口。**进一步隧道启动/网络进程重试需新的明确授权**；不改 VPN、FlClash、Clash Verge、DNS 或系统代理。隧道恢复后，仍在同一聊天先核验 `workspace_info=Tesla_speed`，再续做 PR 审查，不建新聊天/项目、不合并 main。
 3. 六车 preview 仍全为 `DIAGNOSTIC_BASELINE`；下一实质产品验收门是 Jovi 的具名人耳试听。Ferrari/GT-R 继续保持 R3 relative-only，四个 reference-blocked 车型不启动优化器。
 4. 历史 runtime commit 必须在执行 verifier 的仓库对象库中可解析；若 checkout 缺少该历史 commit，验证会 fail-closed，而不会把身份不明的 source map 当作有效证据。
