@@ -17,7 +17,7 @@ from scipy import signal
 from ..contracts import SourceRender, VehicleStateTrace
 from ..render_identity_v02 import _apply_frozen_ptr, _edge_fade
 from ..stage_ad.engine_sim_acoustics import SOUND_LIB_DIR, load_impulse_response
-from ..stage_k.candidate_profiles import load_stage_k_candidate
+from ..stage_k.candidate_profiles import StageKCandidateProfile, load_stage_k_candidate
 from ..stage_k.render_candidate import render_stage_k_candidate
 from .engine import spectrum_report
 from .fourcar_pipeline import scene_trace_key
@@ -29,6 +29,8 @@ from .output_guard import (
     ceiling_run_metrics,
     linked_soft_ceiling,
 )
+from .reconstruction_peak import reconstructed_peak_receipt
+from .fourcar_pipeline import peak_estimate_4x
 
 
 C63_VEHICLE = "c63_w204"
@@ -125,6 +127,7 @@ class C63Engine:
         parent_peaks: Mapping[str, float] | None = None,
         ir: np.ndarray | None = None,
         candidate_path: str | Path = C63_CANDIDATE_PATH,
+        candidate: StageKCandidateProfile | None = None,
         seed: int = 20260908,
         scene_ids: tuple[str, ...] | None = None,
     ) -> None:
@@ -138,7 +141,9 @@ class C63Engine:
         self.sr = int(sr)
         self.output_policy = output_policy
         self.seed = int(seed)
-        self.candidate = load_stage_k_candidate(candidate_path)
+        self.candidate = candidate if candidate is not None else load_stage_k_candidate(candidate_path)
+        if self.candidate.vehicle_id != C63_VEHICLE:
+            raise ValueError("C63 candidate profile vehicle mismatch")
         if ir is None:
             self.ir = load_impulse_response(C63_IR_NAME, target_sr=self.sr, max_samples=12_000)
             self.ir_source_path = _resolve_ir_path(C63_IR_NAME)
@@ -274,6 +279,7 @@ class C63Engine:
                 "emergency_clip_error_rms": 0.0,
             }
         pcm = (np.asarray(final_float, dtype=np.float64) * 32767.0).astype(np.int16)
+        decoded = pcm.astype(np.float64) / 32767.0
         source_stems = {
             name: _spectrum(np.asarray(values, dtype=np.float64), self.sr)
             for name, values in source.stems.items()
@@ -325,6 +331,12 @@ class C63Engine:
             "post_identity_clip_error": 0.0,
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
+            "sample_rate_hz": self.sr,
+            "sample_count": int(len(pcm)),
+            "seed": self.seed,
+            "flags": [],
+            "peak_estimate_4x": peak_estimate_4x(decoded),
+            "reconstruction_peak": reconstructed_peak_receipt(decoded, sample_rate=self.sr),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "C63 Stage-K source; reference audio is local unverified R2 material",
         }

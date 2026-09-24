@@ -2,6 +2,64 @@
 
 > 状态: 已完成，待归档
 
+## 2026-09-22 AI-8 六车型本地推进
+
+授权：Jovi 批准六车型开发；子 agent 按本轮明确要求使用 gpt-6-luna / max，主 agent 审核；本次不用远端 GPT。
+
+- [x] 建立 AI-7@53a161d 基线的独立分支；基线 focused 测试 17 passed。
+- [x] 核对参考计划：Ferrari/GTR 存在已评审 split；Hellcat/LFA 参考窗口不足；C63/Supra 未形成评审计划。
+- [x] 四车闭环接入独立数值验证；保留失败渲染诊断。
+- [x] C63/Supra 实际声源参数适配和 off-switch 回归。
+- [x] 六个 gpt-6-luna/max 车型只读审查；父 agent 审核并修复预览宣称泄漏、Supra 源 SHA 未绑定。
+- [x] 六车参考预检与诊断连续试听输出。
+- [x] 集成审核、受影响回归、真实 Ferrari/GTR 有界执行与核验。
+- [x] 报告逐车结果并提交；人耳接受和参考缺口独立记录。
+
+### Review (2026-09-23)
+
+- Commits: `531e097` AI-8 adapters/evidence; `db35e1d` four-car event contract adapter; `b9ab654` stable multi-vehicle index. Work remains on `feature/stage-ai8-six-vehicle-20260922`; main untouched.
+- Verification: exact final source suite `199 passed, 1 skipped`; preview suite `25 passed`; Track-P guard confirms 180 frozen files / 2 symbols unchanged. Four IR WAV reads emit a non-fatal SciPy `WavFileWarning` for non-data chunks.
+- Six-car preview: `E:\Tesla_speed\review_packages\s12-ai8-six-vehicle-preview-20260923-v2`; manifest SHA-256 `d53352b5a96f1ca5c741a7c9ecc1f54893bbf6e7f14fa183c6555ae342ba58d7`; independent verify `VERIFIED`, all six `DIAGNOSTIC_BASELINE`, 30 s / 48 kHz / stereo int16, numeric gates pass. Human listening remains pending.
+- Ferrari/GT-R loop: `E:\Tesla_speed\review_packages\s12-ai8-fourcar-reference-loop-20260923-v1`; `ARTIFACTS.json` SHA-256 `8db412ec9a7e5a78138a5f461c166fb2eaf5906d724d9375fadcd167f00a5dbd`; independent verify passed; qualification receipt `PASS` for 2 vehicles. Both remain R3 relative-only with `promotable=false` and `human_status=NOT_EVALUATED`.
+- Rights/comparability blockers remain for Hellcat, LFA, C63 W204, and Supra JZA80; no optimizer run was attempted for them. No raw references or generated audio were added to Git. Remote ChatGPT was not used.
+- Initial pre-publish check (2026-09-23): GitHub API showed AI-7 PR #31 open/draft and no AI-8 remote branch/PR. Local `git push` failed connecting to `github.com:443` via the existing `127.0.0.1` path; no VPN/proxy/DNS/network-process changes were made. Recheck live status before any follow-up publication action.
+
+### 2026-09-23 PR #32 verifier contract closure
+
+授权：Jovi 批准本地 Codex 按远端审查方案修复并提交；仅限 AI-8 原分支和现有 PR #32。
+
+- [x] 核对指定 `Tesla_speed` worktree、分支、干净状态及 GitHub PR #32 实时 base/head。
+- [x] 用重新封签的测试包先复现摘要源码身份缺失/错配、渲染失败报告错绑或资格字段、非布尔 `audio_available` 与未知状态绕过；独立复核追加 commit 与清单错配反例。
+- [x] 只加强 `diagnostic_preview.py` 的 summary/runtime identity/vehicle row/render-failed report 合同；通过历史 Git 源码归档绑定身份，不要求运行时 commit 等于 verifier HEAD；合法 RENDER_FAILED 包保持可验。
+- [x] 运行四项 AI-8 回归、受影响 AI-5/6/7 回归及 Track-P/diff 检查；只读验证现有六车预览和 Ferrari/GT-R run。
+- [x] 更新本节 Review、AI-8 接力与 Obsidian 记录，写入实际命令、结果、SHA 与未解除的人耳/权利门禁。
+- [x] 提交至 AI-8 原分支并快进更新 PR #32；核对发布树与 PR 身份，没有触碰 main、PR #31 或网络设置。
+
+#### Review (2026-09-23)
+
+- Local implementation commit: `a2634a8a22b11ad331922a82c62ae8d4da1a01be`.
+- RED/GREEN: the original 11 resealed tampering cases failed against the old verifier and passed after the fix. A separate commit-substitution case also reproduced the provenance gap; its replacement with the AI-7 base SHA is now rejected. A valid render-failure package remains `VERIFIED`.
+- Tests: preview verifier `38 passed`; four AI-8 files `75 passed`; AI-5/6/7 + Track-P `87 passed`; full `acoustic_identity_v015/tests` `1409 passed, 3 skipped, 118 subtests`. The preview renderer emits four existing non-fatal SciPy `WavFileWarning`s.
+- Fixed artifacts: six-car preview `VERIFIED` (manifest `d53352b5…`, 14 files); Ferrari/GT-R run `verified` (ARTIFACTS `8db412ec…`). No render/run/optimizer command was used.
+- Track-P direct guard: 180 frozen files and 2 symbols match; 0 frozen-path changes.
+- Published on the existing PR #32 branch as snapshot `b719b8f99c22ceae1e1e0a4713dd3cf5e0c63a97`; PR remains open/draft with unchanged AI-7 base `53a161d…`.
+- Post-implementation ChatGPT review was sent in the existing 音浪 chat but returned `STATE: BLOCKED`: `workspace_info` failed with account-connection 400. `c2c doctor --no-fix` reports `NAMED_TUNNEL_DOWN` / `namedRepair.needed=true`; independent remote code review is **NOT_PERFORMED**, not DONE.
+- Human listening, rights/synchronization, review splits, OEM, B-ready, and productization gates remain unchanged. A fresh Jovi authorization is required before the next Cloudflare login/recovery.
+
+### 2026-09-24 PR #32 iteration 2 evidence closure
+
+- [x] Restore the Tesla_speed fixed connection and re-verify `workspace_info=Tesla_speed` in the existing 音浪 chat.
+- [x] Confirm live PR #32 state/base/head, remote branch, `refs/pull/32/head`, clean worktree, and local/published tree equivalence.
+- [x] Recover the original AI-8 RED/GREEN, `38/75/87`, full `1409 passed, 3 skipped, 4 warnings, 118 subtests`, and fixed-artifact outputs from the original Codex session without rerunning the full suite.
+- [x] Export complete release-range diffs/name-status and save the GitHub PR response, live refs, raw execution events, hashes, and current fixed-artifact verifier output under `E:\Tesla_speed\review_packages\s12-ai8-pr32-review-c2c_a714-v1`.
+- [ ] Commit and push this documentation-only closeout to the existing AI-8 branch, publish readable C2C iteration 2 evidence, and obtain remote `DONE` or an exact remaining blocker.
+
+#### Review boundary
+
+- Remote code review found no new verifier/source defect and requested no source/test changes.
+- This iteration does not modify or regenerate source, tests, workflows, dependencies, audio, IR, references, preview packages, or main.
+- Human listening, rights/synchronization, review splits, OEM, B-ready, Profile Freeze, and Android productization gates remain unchanged.
+
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 
 > 状态：本地完成，未 push；仅离线 synthetic 声浪层，未进入 MATLAB/MCP 或实时 DSP。

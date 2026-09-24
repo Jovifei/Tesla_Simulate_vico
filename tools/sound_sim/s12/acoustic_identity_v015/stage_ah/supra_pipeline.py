@@ -19,7 +19,10 @@ from ..acoustic_layers import (
     apply_pre_ptr_equalization,
     apply_shift_dynamics,
 )
-from ..sources.toyota_i6_turbo_source_v2 import render_supra_jza80_v2
+from ..sources.toyota_i6_turbo_source_v2 import (
+    SUPRA_V2_EDGE_SCALE,
+    render_supra_jza80_v2,
+)
 from ..stage_ad.engine_sim_acoustics import SOUND_LIB_DIR, load_impulse_response
 from .engine import spectrum_report
 from .fourcar_pipeline import scene_trace_key
@@ -30,6 +33,8 @@ from .output_guard import (
     ceiling_run_metrics,
     linked_soft_ceiling,
 )
+from .reconstruction_peak import reconstructed_peak_receipt
+from .fourcar_pipeline import peak_estimate_4x
 
 
 SUPRA_VEHICLE = "supra_jza80"
@@ -91,9 +96,13 @@ def _resolve_ir_path(name: str) -> Path | None:
     return None
 
 
-def _render_stateful(trace: VehicleStateTrace) -> SourceRender:
+def _render_stateful(
+    trace: VehicleStateTrace,
+    *,
+    edge_scale: float = SUPRA_V2_EDGE_SCALE,
+) -> SourceRender:
     """Apply the existing shared layers after the v2 source overlay."""
-    source = render_supra_jza80_v2(trace, _SAMPLE_RATE_HZ)
+    source = render_supra_jza80_v2(trace, _SAMPLE_RATE_HZ, edge_scale=edge_scale)
     idle = apply_idle_dynamics(source, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
     afterfire = apply_afterfire(idle, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
     body = apply_low_frequency_body(afterfire, SUPRA_VEHICLE, trace, _SAMPLE_RATE_HZ)
@@ -141,6 +150,7 @@ class SupraEngine:
         ir: np.ndarray | None = None,
         seed: int = 20260908,
         scene_ids: tuple[str, ...] | None = None,
+        edge_scale: float = SUPRA_V2_EDGE_SCALE,
     ) -> None:
         if vehicle_type != SUPRA_VEHICLE:
             raise ValueError("SupraEngine only supports supra_jza80")
@@ -152,6 +162,9 @@ class SupraEngine:
         self.sr = int(sr)
         self.output_policy = output_policy
         self.seed = int(seed)
+        if isinstance(edge_scale, bool) or not np.isfinite(float(edge_scale)) or float(edge_scale) <= 0.0:
+            raise ValueError("Supra edge_scale must be finite and positive")
+        self.edge_scale = float(edge_scale)
         if ir is None:
             self.ir = load_impulse_response(SUPRA_IR_NAME, target_sr=self.sr, max_samples=12_000)
             self.ir_source_path = _resolve_ir_path(SUPRA_IR_NAME)
@@ -198,7 +211,7 @@ class SupraEngine:
             throttle=throttle,
             acceleration_mps2=np.gradient(rpm / 60.0, time_s),
         ).validate()
-        source = _render_stateful(trace)
+        source = _render_stateful(trace, edge_scale=self.edge_scale)
         pressure = np.asarray(source.pressure, dtype=np.float64)
         ir_scaled = self.ir * SUPRA_IR_VOLUME
         convolved = np.column_stack(
@@ -278,6 +291,7 @@ class SupraEngine:
                 "emergency_clip_error_rms": 0.0,
             }
         pcm = (np.asarray(final_float, dtype=np.float64) * 32767.0).astype(np.int16)
+        decoded = pcm.astype(np.float64) / 32767.0
         source_stems = {
             name: spectrum_report(np.asarray(values, dtype=np.float64), self.sr)
             for name, values in source.stems.items()
@@ -329,6 +343,12 @@ class SupraEngine:
             "post_identity_clip_error": 0.0,
             "final_peak": float(np.max(np.abs(final_float))),
             "final_rms": float(np.sqrt(np.mean(final_float * final_float))),
+            "sample_rate_hz": self.sr,
+            "sample_count": int(len(pcm)),
+            "seed": self.seed,
+            "flags": [],
+            "peak_estimate_4x": peak_estimate_4x(decoded),
+            "reconstruction_peak": reconstructed_peak_receipt(decoded, sample_rate=self.sr),
             "final_pcm_sha256": _sha256_bytes(np.ascontiguousarray(pcm, dtype="<i2").tobytes()),
             "note": "Synthetic Supra JZA80 source; v3 uses relative cues from three real R3 recordings",
         }
