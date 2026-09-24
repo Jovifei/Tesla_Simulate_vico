@@ -55,3 +55,12 @@
 2. 实现后远端审查请求留在指定音浪聊天，但 ChatGPT `workspace_info` 返回账号连接 400，远端回复 `STATE: BLOCKED / REVIEW_STATUS: NOT_PERFORMED_WORKSPACE_UNVERIFIED`；没有读取 PR diff，不能声称已独立审查。Jovi 授权的 Cloudflare 恢复显示 `loggedIn=true`，但后续多次 doctor 隧道启动（包括最近一次授权重试）均因 `Named tunnel start timed out` 失败，日志记录 `cloudflared` 退出且未弹出登录窗口。**进一步隧道启动/网络进程重试需新的明确授权**；不改 VPN、FlClash、Clash Verge、DNS 或系统代理。隧道恢复后，仍在同一聊天先核验 `workspace_info=Tesla_speed`，再续做 PR 审查，不建新聊天/项目、不合并 main。
 3. 六车 preview 仍全为 `DIAGNOSTIC_BASELINE`；下一实质产品验收门是 Jovi 的具名人耳试听。Ferrari/GT-R 继续保持 R3 relative-only，四个 reference-blocked 车型不启动优化器。
 4. 历史 runtime commit 必须在执行 verifier 的仓库对象库中可解析；若 checkout 缺少该历史 commit，验证会 fail-closed，而不会把身份不明的 source map 当作有效证据。
+
+## 8. PR #32 证据收口（2026-09-24）
+
+- Tesla_speed 固定连接已恢复；同一音浪聊天重新调用 `workspace_info` 返回 `Tesla_speed`。远端复审确认当前 verifier/test 已补齐原缺口，没有要求新的源码或测试修改；本轮只收口发布身份、原始执行输出和文档。
+- 2026-09-24T00:34Z 查询确认 PR #32 为 open/draft、未合并；base 为 `feature/stage-ai7-continuous-event-evidence-20260921@53a161d573a8f33959b1e3ef7d510dbfcbb99b70`，head 分支为 `feature/stage-ai8-six-vehicle-20260922`，当时 `head_sha`、远端分支和 `refs/pull/32/head` 均为 `50ad3a45c006fd6d320e493f94781dec7e53a680`。
+- 本地 `1a228a966aff8d34aa747387b9c8460c3696e976` 与当时 PR head 的 tree 均为 `8609393b506f650d9d0814b48593775cf03766e8`；实现提交 `a2634a8a…` 与已发布代码快照 `b719b8f…` 的 tree 均为 `95ae2e07ba5324c37ce5fe38d5df4ef0636fec1c`。完整范围 diff、name-status、PR 响应和 live refs 已保存。
+- 9 月 23 日原始执行输出已从本地 Codex 会话记录恢复到 `E:\Tesla_speed\review_packages\s12-ai8-pr32-review-c2c_a714-v1\raw_execution_events.json`，SHA-256 `04074572c24ea4c9a2fb10294d0859528a6195bf4830a4301c2417b8c97cc412`。其中保留 RED/GREEN、`38/75/87`、固定产物验证和最终 `1409 passed, 3 skipped, 4 warnings, 118 subtests` 的完整命令、cwd、时间、退出码与 stdout/stderr；原始运行时间与本次发布时间分开记录。
+- 当前 HEAD 上只读复核原六车 preview 返回 `VERIFIED`，Ferrari/GT-R run 返回 `verified`；未调用 render、run 或 optimizer。完整收据目录：`E:\Tesla_speed\review_packages\s12-ai8-pr32-review-c2c_a714-v1`。
+- 本轮最终文档提交和发布 head 不写回自身文档；以收据中的 `git_pr_identity.final.json`、`RECEIPT.md` 以及 C2C iteration 2 `EXECUTED` 为准。下一步是同一音浪聊天的独立复审；通过后才进入 Jovi 具名试听。

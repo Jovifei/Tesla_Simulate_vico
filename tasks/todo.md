@@ -46,6 +46,20 @@
 - Post-implementation ChatGPT review was sent in the existing 音浪 chat but returned `STATE: BLOCKED`: `workspace_info` failed with account-connection 400. `c2c doctor --no-fix` reports `NAMED_TUNNEL_DOWN` / `namedRepair.needed=true`; independent remote code review is **NOT_PERFORMED**, not DONE.
 - Human listening, rights/synchronization, review splits, OEM, B-ready, and productization gates remain unchanged. A fresh Jovi authorization is required before the next Cloudflare login/recovery.
 
+### 2026-09-24 PR #32 iteration 2 evidence closure
+
+- [x] Restore the Tesla_speed fixed connection and re-verify `workspace_info=Tesla_speed` in the existing 音浪 chat.
+- [x] Confirm live PR #32 state/base/head, remote branch, `refs/pull/32/head`, clean worktree, and local/published tree equivalence.
+- [x] Recover the original AI-8 RED/GREEN, `38/75/87`, full `1409 passed, 3 skipped, 4 warnings, 118 subtests`, and fixed-artifact outputs from the original Codex session without rerunning the full suite.
+- [x] Export complete release-range diffs/name-status and save the GitHub PR response, live refs, raw execution events, hashes, and current fixed-artifact verifier output under `E:\Tesla_speed\review_packages\s12-ai8-pr32-review-c2c_a714-v1`.
+- [ ] Commit and push this documentation-only closeout to the existing AI-8 branch, publish readable C2C iteration 2 evidence, and obtain remote `DONE` or an exact remaining blocker.
+
+#### Review boundary
+
+- Remote code review found no new verifier/source defect and requested no source/test changes.
+- This iteration does not modify or regenerate source, tests, workflows, dependencies, audio, IR, references, preview packages, or main.
+- Human listening, rights/synchronization, review splits, OEM, B-ready, Profile Freeze, and Android productization gates remain unchanged.
+
 ## 2026-07-24 S12 Engine Sound Vertical Slice v0.3
 
 > 状态：本地完成，未 push；仅离线 synthetic 声浪层，未进入 MATLAB/MCP 或实时 DSP。
