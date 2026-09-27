@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joviluma.com/schemas/s12/motion-sample-v1.schema.json",
+  "title": "S12 Motion Sample v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source",
+    "sequence",
+    "clock_domain",
+    "measurement_time_ns",
+    "received_time_ns",
+    "speed_mps",
+    "longitudinal_acceleration_mps2",
+    "direction",
+    "valid",
+    "quality",
+    "data_age_ms"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12.motion-sample.v1"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 96},
+        "kind": {"enum": ["synthetic", "replay", "foreground_gnss_imu"]}
+      }
+    },
+    "sequence": {"type": "integer", "minimum": 0},
+    "clock_domain": {"const": "monotonic"},
+    "measurement_time_ns": {"type": "integer", "minimum": 0},
+    "received_time_ns": {"type": "integer", "minimum": 0},
+    "speed_mps": {"type": "number", "minimum": 0, "maximum": 100},
+    "longitudinal_acceleration_mps2": {"type": "number", "minimum": -20, "maximum": 20},
+    "direction": {"enum": ["forward", "reverse", "stationary", "unknown"]},
+    "valid": {"type": "boolean"},
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "uncertainty_mps"],
+      "properties": {
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "uncertainty_mps": {"type": "number", "minimum": 0, "maximum": 100}
+      }
+    },
+    "data_age_ms": {"type": "integer", "minimum": 0, "maximum": 10000}
+  }
+}

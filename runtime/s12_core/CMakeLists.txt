@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(s12_core LANGUAGES CXX)
+
+add_library(s12_core STATIC src/engine.cpp)
+target_include_directories(s12_core PUBLIC include)
+target_compile_features(s12_core PUBLIC cxx_std_17)
+target_compile_options(s12_core PRIVATE -fno-exceptions -fno-rtti -Wall -Wextra)
+set_target_properties(s12_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+option(S12_CORE_BUILD_TESTS "Build APP-1 host regression tests" OFF)
+if(S12_CORE_BUILD_TESTS)
+    enable_testing()
+    add_executable(s12_core_tests tests/runtime_tests.cpp)
+    target_link_libraries(s12_core_tests PRIVATE s12_core)
+    target_compile_features(s12_core_tests PRIVATE cxx_std_17)
+    target_compile_options(s12_core_tests PRIVATE -Wall -Wextra)
+    add_test(NAME s12_core_tests COMMAND s12_core_tests)
+endif()

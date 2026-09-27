@@ -4433,3 +4433,46 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full exact-HEAD S12: `1322 passed, 118 subtests passed` in `3883.76s`; strict compile, Track-P and diff checks pass.
 - Fresh v2 package verified: manifest `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`.
 - Branch pushed through HEAD `98b0813cd2a42526a30d66d0a93d82ba55219b2d`; GitHub Actions query showed no run for the branch because no PR/authenticated trigger exists. Draft PR creation remains blocked by unavailable GitHub authentication; main was not changed.
+# 2026-09-24 APP-1 Android realtime sound technical MVP
+
+## 2026-09-26 APP-2 in-car development planning
+
+- [x] Locate the older Android reference project and inspect its actual native integration.
+- [x] Compare the reference, PC controller and current standalone player.
+- [x] Write `tasks/plans/2026-09-26-app2-in-car.md` with reuse decision, sensor calibration, lifecycle, algorithm migration and physical-device gates.
+- [x] Implement axis-aware motion estimation, separate GNSS/IMU freshness, bounded speed prediction and JVM edge tests.
+- [x] Implement foreground drive audio service, focus handling, route-disconnect stop, Replay, profile selection and volume control.
+- [ ] Complete driving UI (RPM/gear/explicit calibration) and port qualified acoustic vehicle models.
+- [ ] Validate physical-device GNSS/IMU, Bluetooth route, playback and in-car behavior; then submit exact-source evidence for review.
+
+Review: implementation candidate is in the APP-1 feature worktree. `:app:assembleDebug`, `:player:testDebugUnitTest` (7/7), `:player:lintDebug` (0 errors, one OldTargetApi warning), and `:player:assembleDebug` pass. Python/C++ runtime validation passes 12/12; native volume-ramp test passes. Emulator audio stream/background service/stop PASS; physical devices, live GNSS, vehicle audio route and qualified model port remain NOT_RUN. Details and APK identity: `tasks/reports/runtime/stage-app2-20260927.md`.
+
+Remote plan received in existing 音浪 chat `c2c_7d2f`. Jovi authorized source changes on a new isolated branch on 2026-09-24; implementation remains limited to the APP-1 technical MVP and its evidence gates.
+
+- [x] Verify remote plan and open-source/license recommendations.
+- [x] Verify current main base and existing Android demo boundary.
+- [x] Create isolated worktree from `main@29b50961d9628f835e7172b797380ccb36a7f38d`.
+- [x] Write P0-P2 implementation and acceptance plan.
+- [x] Jovi authorized source/test/Gradle/C++/Android changes on the isolated branch.
+- [x] Reuse MateLink's existing JDK 17, Android SDK/build-tools/ADB, and nested Gradle wrapper; do not touch its dirty worktree.
+- [x] Install only native requirements: NDK `30.0.16248370`, CMake `3.22.1`, and portable Zig `0.16.0` in the approved user-space locations; no permanent PATH changes.
+- [x] Execute APP-1 P0 contracts and golden traces; five focused tests pass and two repeated 10-case exports are byte-identical.
+- [x] Execute APP-1 P1 portable C++ realtime subset and host equivalence.
+- [x] Execute APP-1 P2 native Android `:player` with local Replay and foreground GNSS/IMU adapters.
+- [x] Verify `:app` and `:player` builds, player JVM tests, native builds, and static/runtime evidence boundaries.
+- [ ] Validate on physical Android devices. No APK was installed; at least two device passes remain a human/device gate.
+
+Review boundary:
+- Worktree base: `29b50961d9628f835e7172b797380ccb36a7f38d`.
+- AI-8 PR #32 is separate and remains open/draft at `6b0a420…`.
+- P0 schemas, validators, synthetic Python oracle, and deterministic exporter are implemented and test-covered. Generated PCM/trace bundles were confined to test temporary directories.
+- The S12 subset is intentionally original/synthetic and omits PTR/Radiation and unqualified Stage-W/X architecture claims.
+- MateLink `android/` toolchain check: JDK 17, Android SDK, adb, build-tools, and Gradle wrapper PASS. Its parent is not the Gradle root; the dirty MateLink worktree was read-only and untouched.
+- Installed versions: NDK `30.0.16248370`; CMake `3.22.1`; Zig `0.16.0` from the official SHA-256 verified archive. `zig-smoke.exe` returned `0`. No permanent PATH changes.
+- P1 native tests pass, including zero render-path allocations, all planned block sizes, stale-input fallback, phase continuity, profile crossfade, and snapshot restore. Python↔C++ equivalence: 2 profiles / 10 cases / 2,000 state samples; zero event mismatches; max RPM error `9.1e-13`, max PCM sample error `1.87e-9`, RMS error `2.33e-12`.
+- Android NDK/CMake arm64 static core build PASS; `libs12_core.a` SHA-256 `2303094A37C9B36E07FC2012F6B873961D794E5319B3802D9F4F816A8A22715C`. The library is a synthetic technical subset only.
+- P2 `:player` uses Oboe `1.11.0` (Apache-2.0), a native SPSC command queue, float stereo output, deterministic Replay, optional foreground GNSS/IMU, profile selection/fades, and shareable diagnostics. The old `:app` PC WebSocket controller was not changed.
+- Offline Gradle 8.9 verification: `:app:assembleDebug`, `:player:testDebugUnitTest` (2/2), `:player:lintDebug`, and `:player:assembleDebug` PASS. Lint has one `OldTargetApi` warning because target SDK 35 is retained; NDK configuration reports an SDK XML v4 compatibility warning but builds all four ABIs.
+- APP-1 Debug APK at completion of its build: `android_vehicle_sound_demo/player/build/outputs/apk/debug/player-debug.apk`, package `com.jovi.s12player` v0.1.0, SHA-256 `C08AEA44E9F784F3452BAC73D222D4E078B1E2627FBABDBCC3C8BC3B5E5AE91F`. Later APP-2 builds replace this path; see the dated APP-2 report for its own APK hash. `verify_apk.ps1` reports signed/PASS but its `debuggable` flag is a false negative; direct `aapt2` and merged Manifest confirm `debuggable=true`.
+- Device evidence: one OnePlus 7 Pro (GM1910) is connected, but no APK was installed because device-install authorization was not given. Real audio/GNSS/IMU behavior and the second-device gate are `NOT_RUN`.
+- Output profiles remain experimental; no Human/OEM/product release gate is advanced.
