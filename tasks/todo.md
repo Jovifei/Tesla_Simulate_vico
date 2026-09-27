@@ -4488,3 +4488,14 @@ Review boundary:
 - [ ] Save full evidence, publish new APK identity, push PR #33 and request re-review in the existing 音浪 chat.
 
 Review: remote `c2c_7d2f` iteration 1 returned `CHANGES_REQUIRED` for F1–F3. Tested source `a2db8f4ecf6a27267690056182952d6a7054881c` is pushed on Draft PR #33; JVM 11/11, Python/C++ 12/12, NDK native/CMake, volume host, Gradle, lint and Track-P pass. API 35 emulator normal start/background/stop/restart passes for APK `B98C55B760A4DCFF5746459C83BD4B72F1D5A2C4BA1A6B7816FF4800D7B3CF75`. Forced error route, physical-device and full acoustic-profile gates remain separate. Scope and evidence: `tasks/plans/2026-09-27-app2-transition-review-fix.md` and `tasks/reports/runtime/stage-app2-20260927.md`.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 3
+
+- [x] Verify clean start `83d7152226beae493fa89bb81846ceb9c39ceb1d`, PR #33 draft base/head, and preserve iteration 2 APK and evidence.
+- [x] F3-A RED→GREEN using the production motion-command gate: pre-invalidation queued Motion cannot restore native validity across callbacks.
+- [x] F3-B RED→GREEN: immediate and pending profile changes during fallback retain idle/zero-load targets and no new shift event.
+- [x] Implement the native sequence boundary and fallback-preserving profile mapping within the five allowed source/test files.
+- [x] Run native gate/runtime, JVM 11/11 (including forced rerun), Python/C++ 12/12, Gradle/lint, Track-P and dedicated-emulator normal smoke; diff-check clean for tested source.
+- [ ] Save an iteration 3 receipt, publish new APK and PR #33 head, then request same-chat independent re-review.
+
+Review: remote `c2c_7d2f` iteration 2 accepted F1 normal path and F2 for valid input but returned `CHANGES_REQUIRED` for F3 native invalidation persistence. Tested source `6f8505375ded8bf60d2899bf5f6fb19d4efcc00a` fixes the two F3 paths with real Engine/production-gate tests; new APK `F9AA27BA34CCCE195E2790101FB4212D6CA43ECFAEA376B55BF70CEC663E17DE` is installed on dedicated emulator with matching hash. Iteration 2 artifacts are immutable under `review_packages/s12-app2-transition-c2c_7d2f-i2-v1`; current evidence is under `review_packages/s12-app2-transition-c2c_7d2f-i3-v1`. Full acoustic and physical gates remain NOT_RUN.
