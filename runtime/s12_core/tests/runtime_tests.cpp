@@ -355,6 +355,61 @@ void test_queued_switch_is_partition_independent() {
     CHECK(expected == observed);
 }
 
+void test_profile_switch_during_fallback_keeps_safe_targets() {
+    Engine engine(make_v8_profile(), 61);
+    CHECK(engine.update_motion(motion(0, 1'000'000'000, 20.0, 0.0), 1'003'000'000));
+    MotionSample invalid{};
+    CHECK(!engine.update_motion(invalid, 1'300'000'000));
+    const auto shifts = engine.state().shift_events;
+    CHECK(engine.switch_profile(make_rotary_profile(), 4800));
+    const auto state = engine.state();
+    CHECK(state.fallback);
+    CHECK(state.virtual_rpm == make_rotary_profile().idle_rpm);
+    CHECK(state.load == 0.0);
+    CHECK(state.shift_events == shifts);
+    CHECK(state.event == Event::kNone);
+    Engine restored(make_rotary_profile(), 0);
+    CHECK(restored.restore(engine.snapshot()));
+}
+
+void test_pending_profile_switch_during_fallback_is_safe_and_partition_independent() {
+    Engine full(make_v8_profile(), 67);
+    Engine split(make_v8_profile(), 67);
+    const auto input = motion(0, 1'000'000'000, 20.0, 0.0);
+    CHECK(full.update_motion(input, 1'003'000'000));
+    CHECK(split.update_motion(input, 1'003'000'000));
+    CHECK(full.switch_profile(make_rotary_profile(), 4800));
+    CHECK(split.switch_profile(make_rotary_profile(), 4800));
+    std::array<float, 1000 * 2> warmup{};
+    CHECK(full.render(warmup.data(), 1000));
+    CHECK(split.render(warmup.data(), 1000));
+    CHECK(full.switch_profile(make_v8_profile(), 4800));
+    CHECK(split.switch_profile(make_v8_profile(), 4800));
+    MotionSample invalid{};
+    CHECK(!full.update_motion(invalid, 1'300'000'000));
+    CHECK(!split.update_motion(invalid, 1'300'000'000));
+    const auto shifts = full.state().shift_events;
+    Engine restored(make_rotary_profile(), 0);
+    CHECK(restored.restore(split.snapshot()));
+    std::array<float, 3800 * 2> expected{};
+    std::array<float, 3800 * 2> observed{};
+    CHECK(full.render(expected.data(), 3800));
+    constexpr std::size_t blocks[]{96, 192, 240, 256, 480, 960};
+    for (std::size_t offset = 0, index = 0; offset < 3800; ++index) {
+        const auto frames = std::min(blocks[index % 6], 3800 - offset);
+        CHECK(split.render(observed.data() + offset * 2, frames));
+        offset += frames;
+    }
+    CHECK(expected == observed);
+    CHECK(full.state().fallback);
+    CHECK(full.state().virtual_rpm == make_v8_profile().idle_rpm);
+    CHECK(full.state().load == 0.0);
+    CHECK(full.state().shift_events == shifts);
+    std::array<float, 3800 * 2> restored_output{};
+    CHECK(restored.render(restored_output.data(), 3800));
+    CHECK(restored_output == observed);
+}
+
 void test_snapshot_restore_continues_identically() {
     auto profile = make_rotary_profile();
     Engine original(profile, 31);
@@ -405,6 +460,8 @@ int main() {
     test_interrupted_switch_queues_latest_without_changing_current_fade();
     test_crossfade_obeys_profile_peak_limit();
     test_queued_switch_is_partition_independent();
+    test_profile_switch_during_fallback_keeps_safe_targets();
+    test_pending_profile_switch_during_fallback_is_safe_and_partition_independent();
     test_snapshot_restore_continues_identically();
     if (failures != 0) {
         std::fprintf(stderr, "%d assertion(s) failed\n", failures);

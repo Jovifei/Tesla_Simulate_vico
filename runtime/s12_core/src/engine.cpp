@@ -314,6 +314,12 @@ void Engine::apply_profile(const Profile& profile, std::uint32_t fade_frames) no
         rpm_ = profile_.idle_rpm;
         target_load_ = profile_.idle_load;
         load_ = profile_.idle_load;
+    } else if (fallback_) {
+        gear_ = 0;
+        target_rpm_ = profile_.idle_rpm;
+        target_load_ = 0.0;
+        acceleration_mps2_ = 0.0;
+        last_event_ = Event::kNone;
     } else {
         gear_ = 0;
         map_targets();
@@ -362,7 +368,7 @@ bool Engine::snapshot_is_valid(const Snapshot& value) const noexcept {
     return value.version == 2 && std::strncmp(value.profile_id, profile_.profile_id, kProfileIdLength) == 0
         && finite_profile_state(value) && value.gear < profile_.gear_count
         && value.target_rpm >= profile_.idle_rpm && value.target_rpm <= profile_.max_rpm
-        && value.rpm >= profile_.idle_rpm && value.rpm <= profile_.max_rpm
+        && value.rpm >= 500.0 && value.rpm <= 12000.0
         && value.load >= 0.0 && value.load <= 1.0 && value.target_load >= 0.0 && value.target_load <= 1.0
         && value.shift_tail >= 0.0 && value.shift_tail <= 1.0 && value.envelope >= 0.0 && value.envelope <= 1.0
         && value.fade_remaining_frames <= value.fade_total_frames

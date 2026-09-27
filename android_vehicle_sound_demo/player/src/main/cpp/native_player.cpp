@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <oboe/Oboe.h>
+#include "motion_command_gate.hpp"
 #include "s12_core/engine.hpp"
 #include "volume_ramp.hpp"
 
@@ -16,13 +17,12 @@ namespace {
 
 using app1::s12::Direction;
 using app1::s12::Engine;
+using app1::s12::MotionCommandGate;
 using app1::s12::MotionSample;
 using app1::s12::Profile;
 
-constexpr std::uint32_t kQueueCapacity = 256;
 constexpr std::uint32_t kFadeFrames = 4800;
 constexpr std::uint32_t kStopFrames = 960;
-constexpr std::uint32_t kMaxCommandsPerCallback = 32;
 
 std::uint64_t elapsed_realtime_now_ns() noexcept {
     timespec value{};
@@ -30,45 +30,6 @@ std::uint64_t elapsed_realtime_now_ns() noexcept {
     return static_cast<std::uint64_t>(value.tv_sec) * 1'000'000'000ULL
         + static_cast<std::uint64_t>(value.tv_nsec);
 }
-
-struct Command {
-    enum class Kind : std::uint8_t { kMotion, kProfile, kVolume };
-    Kind kind{Kind::kMotion};
-    MotionSample motion{};
-    std::uint32_t profile_index{};
-    float volume{};
-};
-
-class CommandQueue final {
-public:
-    bool push(const Command& value) noexcept {
-        const auto write = write_.load(std::memory_order_relaxed);
-        const auto next = (write + 1U) % kQueueCapacity;
-        if (next == read_.load(std::memory_order_acquire)) {
-            dropped_.fetch_add(1, std::memory_order_relaxed);
-            return false;
-        }
-        commands_[write] = value;
-        write_.store(next, std::memory_order_release);
-        return true;
-    }
-
-    bool pop(Command& value) noexcept {
-        const auto read = read_.load(std::memory_order_relaxed);
-        if (read == write_.load(std::memory_order_acquire)) return false;
-        value = commands_[read];
-        read_.store((read + 1U) % kQueueCapacity, std::memory_order_release);
-        return true;
-    }
-
-    std::uint32_t dropped() const noexcept { return dropped_.load(std::memory_order_relaxed); }
-
-private:
-    std::array<Command, kQueueCapacity> commands_{};
-    alignas(64) std::atomic<std::uint32_t> write_{0};
-    alignas(64) std::atomic<std::uint32_t> read_{0};
-    std::atomic<std::uint32_t> dropped_{0};
-};
 
 class StreamError final : public oboe::AudioStreamErrorCallback {
 public:
@@ -121,51 +82,35 @@ public:
     }
 
     bool submit_motion(const MotionSample& sample) noexcept {
-        Command command{};
-        command.kind = Command::Kind::kMotion;
-        command.motion = sample;
-        return queue_.push(command);
+        if (!gate_.submit_motion(sample)) return false;
+        next_sequence_after_submit_ = sample.sequence + 1U;
+        return true;
     }
 
     bool select_profile(std::uint32_t index) noexcept {
         if (index >= profiles_.size()) return false;
-        Command command{};
-        command.kind = Command::Kind::kProfile;
-        command.profile_index = index;
-        return queue_.push(command);
+        return gate_.select_profile(index);
     }
 
     bool set_volume(float volume) noexcept {
         if (!std::isfinite(volume)) return false;
-        Command command{};
-        command.kind = Command::Kind::kVolume;
-        command.volume = volume;
-        return queue_.push(command);
+        return gate_.set_volume(volume);
     }
 
     void request_stop() noexcept { stop_requested_.store(true, std::memory_order_release); }
     bool stop_ready() const noexcept { return stop_complete_.load(std::memory_order_acquire); }
     bool stream_error() const noexcept { return error_callback_->occurred.load(std::memory_order_acquire); }
-    void invalidate_motion() noexcept { invalidate_motion_.store(true, std::memory_order_release); }
+    void invalidate_motion() noexcept { gate_.invalidate_before(next_sequence_after_submit_); }
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream*, void* audio_data, std::int32_t frames) override {
         const auto callback_start_ns = elapsed_realtime_now_ns();
-        if (invalidate_motion_.exchange(false, std::memory_order_acq_rel)) {
-            engine_.update_motion(MotionSample{}, callback_start_ns);
-        }
         if (!stop_requested_.load(std::memory_order_acquire)) {
-            Command command{};
-            for (std::uint32_t i = 0; i < kMaxCommandsPerCallback && queue_.pop(command); ++i) {
-                if (command.kind == Command::Kind::kMotion) {
-                    engine_.update_motion(command.motion, command.motion.received_time_ns);
-                } else if (command.kind == Command::Kind::kProfile) {
-                    if (command.profile_index < profiles_.size()) {
-                        engine_.switch_profile_prevalidated(profiles_[command.profile_index], kFadeFrames);
-                    }
-                } else {
-                    volume_.set_target(command.volume);
-                }
-            }
+            gate_.consume(engine_, callback_start_ns,
+                [this](std::uint32_t index) noexcept {
+                    if (index < profiles_.size())
+                        engine_.switch_profile_prevalidated(profiles_[index], kFadeFrames);
+                },
+                [this](float value) noexcept { volume_.set_target(value); });
         }
         if (stop_requested_.load(std::memory_order_acquire) && !stopping_) {
             stopping_ = true;
@@ -214,7 +159,7 @@ public:
             api, rate, channels, xruns,
             static_cast<unsigned long long>(callbacks_.load(std::memory_order_relaxed)),
             static_cast<unsigned long long>(rendered_frames_.load(std::memory_order_relaxed)),
-            max_callback_us_.load(std::memory_order_relaxed), queue_.dropped(),
+            max_callback_us_.load(std::memory_order_relaxed), gate_.dropped(),
             rpm_.load(std::memory_order_relaxed), gear_.load(std::memory_order_relaxed),
             fallback_.load(std::memory_order_relaxed) ? 1U : 0U,
             stream_error() ? 1U : 0U, stop_ready() ? 1U : 0U);
@@ -232,7 +177,8 @@ private:
     std::array<Profile, 2> profiles_{};
     Engine engine_;
     VolumeRamp volume_{};
-    CommandQueue queue_{};
+    MotionCommandGate gate_{};
+    std::uint64_t next_sequence_after_submit_{};
     std::shared_ptr<oboe::AudioStream> stream_{};
     std::shared_ptr<StreamError> error_callback_{};
     std::atomic<std::uint64_t> callbacks_{0};
@@ -244,7 +190,6 @@ private:
     std::atomic<bool> fallback_{true};
     std::atomic<bool> stop_requested_{false};
     std::atomic<bool> stop_complete_{false};
-    std::atomic<bool> invalidate_motion_{false};
     bool stopping_{};
     bool valid_{};
 };
