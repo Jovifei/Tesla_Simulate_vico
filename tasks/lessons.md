@@ -1,4 +1,13 @@
 ﻿# Lessons Learned
+## 2026-09-26: Android toolchain preflight must reuse the known-good Gradle root
+
+Pattern: APP-1 initially treated missing NDK/CMake/host compiler as a generally missing Android environment, although MateLink had already built with the shared JDK/SDK. Checking its repository parent also falsely reported a missing Gradle wrapper because the actual Gradle root is `android/`.
+
+Rules:
+1. Run the Android project detector and toolchain checker against the real Gradle root of a known-good Android project before proposing installation.
+2. Report JDK, Android SDK/build-tools/ADB/Gradle separately from native-only NDK/CMake/host compiler requirements; do not reinstall working components.
+3. Install only missing tools required by the current native build, at the authorized user-space locations, and do not change permanent PATH or network settings.
+
 ## 2026-08-01: 声学身份验收必须优先于参数和测试数量
 
 Pattern: 三个 profile 即使通过频谱质心、阶次能量和谐波比例门槛，只要仍共享 excitation generator、瞬态包络和全帧归一化，闭眼试听仍可能像同一个模板。

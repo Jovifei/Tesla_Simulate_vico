@@ -7,6 +7,7 @@ dependencies.lock
 .cache/
 
 # Build artifacts
+**/.cxx/
 *.elf
 *.bin
 *.hex
