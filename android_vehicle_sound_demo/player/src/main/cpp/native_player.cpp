@@ -21,6 +21,8 @@ using app1::s12::Profile;
 
 constexpr std::uint32_t kQueueCapacity = 256;
 constexpr std::uint32_t kFadeFrames = 4800;
+constexpr std::uint32_t kStopFrames = 960;
+constexpr std::uint32_t kMaxCommandsPerCallback = 32;
 
 std::uint64_t elapsed_realtime_now_ns() noexcept {
     timespec value{};
@@ -68,13 +70,25 @@ private:
     std::atomic<std::uint32_t> dropped_{0};
 };
 
-class PlayerAudio final : public oboe::AudioStreamDataCallback, public oboe::AudioStreamErrorCallback {
+class StreamError final : public oboe::AudioStreamErrorCallback {
 public:
-    explicit PlayerAudio(std::uint32_t profile_index) noexcept
+    void onErrorAfterClose(oboe::AudioStream*, oboe::Result) override {
+        occurred.store(true, std::memory_order_release);
+    }
+    std::atomic<bool> occurred{false};
+};
+
+class PlayerAudio final : public oboe::AudioStreamDataCallback {
+public:
+    PlayerAudio(std::uint32_t profile_index, float initial_volume)
         : profile_(load_profile(profile_index)), profiles_{load_profile(0), load_profile(1)},
           engine_(profile_, 20260924U),
-          valid_(engine_.valid() && app1::s12::profile_is_valid(profiles_[0])
-              && app1::s12::profile_is_valid(profiles_[1])) {}
+          error_callback_(std::make_shared<StreamError>()),
+          valid_(std::isfinite(initial_volume) && engine_.valid()
+              && app1::s12::profile_is_valid(profiles_[0])
+              && app1::s12::profile_is_valid(profiles_[1])) {
+        volume_.set_target(initial_volume, kStopFrames);
+    }
 
     bool valid() const noexcept { return valid_; }
 
@@ -87,7 +101,7 @@ public:
             ->setSampleRate(app1::s12::kOutputSampleRateHz)
             ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
             ->setDataCallback(this)
-            ->setErrorCallback(this);
+            ->setErrorCallback(error_callback_);
         if (builder.openStream(stream_) != oboe::Result::OK || !stream_) return false;
         const auto burst = stream_->getFramesPerBurst();
         if (burst > 0) stream_->setBufferSizeInFrames(burst * 2);
@@ -129,25 +143,33 @@ public:
         return queue_.push(command);
     }
 
-    void onErrorAfterClose(oboe::AudioStream*, oboe::Result) override {
-        stream_error_.store(true, std::memory_order_release);
-    }
-
-    bool stream_error() const noexcept { return stream_error_.load(std::memory_order_acquire); }
+    void request_stop() noexcept { stop_requested_.store(true, std::memory_order_release); }
+    bool stop_ready() const noexcept { return stop_complete_.load(std::memory_order_acquire); }
+    bool stream_error() const noexcept { return error_callback_->occurred.load(std::memory_order_acquire); }
+    void invalidate_motion() noexcept { invalidate_motion_.store(true, std::memory_order_release); }
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream*, void* audio_data, std::int32_t frames) override {
         const auto callback_start_ns = elapsed_realtime_now_ns();
-        Command command{};
-        while (queue_.pop(command)) {
-            if (command.kind == Command::Kind::kMotion) {
-                engine_.update_motion(command.motion, command.motion.received_time_ns);
-            } else if (command.kind == Command::Kind::kProfile) {
-                if (command.profile_index < profiles_.size()) {
-                    engine_.switch_profile_prevalidated(profiles_[command.profile_index], kFadeFrames);
+        if (invalidate_motion_.exchange(false, std::memory_order_acq_rel)) {
+            engine_.update_motion(MotionSample{}, callback_start_ns);
+        }
+        if (!stop_requested_.load(std::memory_order_acquire)) {
+            Command command{};
+            for (std::uint32_t i = 0; i < kMaxCommandsPerCallback && queue_.pop(command); ++i) {
+                if (command.kind == Command::Kind::kMotion) {
+                    engine_.update_motion(command.motion, command.motion.received_time_ns);
+                } else if (command.kind == Command::Kind::kProfile) {
+                    if (command.profile_index < profiles_.size()) {
+                        engine_.switch_profile_prevalidated(profiles_[command.profile_index], kFadeFrames);
+                    }
+                } else {
+                    volume_.set_target(command.volume);
                 }
-            } else {
-                volume_.set_target(command.volume);
             }
+        }
+        if (stop_requested_.load(std::memory_order_acquire) && !stopping_) {
+            stopping_ = true;
+            volume_.set_target(0.0F, kStopFrames);
         }
         engine_.check_input_freshness(elapsed_realtime_now_ns());
         if (audio_data != nullptr && frames > 0) {
@@ -159,6 +181,9 @@ public:
                 const float gain = volume_.next();
                 output[i * 2] *= gain;
                 output[i * 2 + 1] *= gain;
+            }
+            if (stopping_ && volume_.at_zero()) {
+                stop_complete_.store(true, std::memory_order_release);
             }
             const auto current = engine_.state();
             rpm_.store(static_cast<float>(current.virtual_rpm), std::memory_order_relaxed);
@@ -185,14 +210,14 @@ public:
         const auto rate = stream_ ? stream_->getSampleRate() : 0;
         const auto channels = stream_ ? stream_->getChannelCount() : 0;
         std::snprintf(buffer, capacity,
-            "api=%d rate=%d channels=%d xruns=%d callbacks=%llu frames=%llu max_callback_us=%u dropped=%u rpm=%.0f gear=%u fallback=%u stream_error=%u",
+            "api=%d rate=%d channels=%d xruns=%d callbacks=%llu frames=%llu max_callback_us=%u dropped=%u rpm=%.0f gear=%u fallback=%u stream_error=%u stop_ready=%u",
             api, rate, channels, xruns,
             static_cast<unsigned long long>(callbacks_.load(std::memory_order_relaxed)),
             static_cast<unsigned long long>(rendered_frames_.load(std::memory_order_relaxed)),
             max_callback_us_.load(std::memory_order_relaxed), queue_.dropped(),
             rpm_.load(std::memory_order_relaxed), gear_.load(std::memory_order_relaxed),
             fallback_.load(std::memory_order_relaxed) ? 1U : 0U,
-            stream_error() ? 1U : 0U);
+            stream_error() ? 1U : 0U, stop_ready() ? 1U : 0U);
         return buffer;
     }
 
@@ -209,6 +234,7 @@ private:
     VolumeRamp volume_{};
     CommandQueue queue_{};
     std::shared_ptr<oboe::AudioStream> stream_{};
+    std::shared_ptr<StreamError> error_callback_{};
     std::atomic<std::uint64_t> callbacks_{0};
     std::atomic<std::uint64_t> rendered_frames_{0};
     std::atomic<std::uint32_t> max_callback_us_{0};
@@ -216,20 +242,41 @@ private:
     std::atomic<float> load_{0.0F};
     std::atomic<std::uint32_t> gear_{0};
     std::atomic<bool> fallback_{true};
-    std::atomic<bool> stream_error_{false};
+    std::atomic<bool> stop_requested_{false};
+    std::atomic<bool> stop_complete_{false};
+    std::atomic<bool> invalidate_motion_{false};
+    bool stopping_{};
     bool valid_{};
 };
 
 }  // namespace
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_jovi_s12player_DriveAudioService_nativeStart(JNIEnv*, jclass, jint profile_index) {
-    auto* player = new (std::nothrow) PlayerAudio(static_cast<std::uint32_t>(profile_index));
+Java_com_jovi_s12player_DriveAudioService_nativeStart(JNIEnv*, jclass, jint profile_index, jfloat volume) {
+    auto* player = new (std::nothrow) PlayerAudio(static_cast<std::uint32_t>(profile_index), volume);
     if (player == nullptr || !player->valid() || !player->start()) {
         delete player;
         return 0;
     }
     return reinterpret_cast<jlong>(player);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_jovi_s12player_DriveAudioService_nativeRequestStop(JNIEnv*, jclass, jlong handle) {
+    auto* player = reinterpret_cast<PlayerAudio*>(handle);
+    if (player != nullptr) player->request_stop();
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_jovi_s12player_DriveAudioService_nativeStopReady(JNIEnv*, jclass, jlong handle) {
+    auto* player = reinterpret_cast<PlayerAudio*>(handle);
+    return player != nullptr && player->stop_ready() ? JNI_TRUE : JNI_FALSE;
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_jovi_s12player_DriveAudioService_nativeInvalidateMotion(JNIEnv*, jclass, jlong handle) {
+    auto* player = reinterpret_cast<PlayerAudio*>(handle);
+    if (player != nullptr) player->invalidate_motion();
 }
 
 extern "C" JNIEXPORT void JNICALL

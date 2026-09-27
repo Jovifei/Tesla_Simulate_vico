@@ -15,6 +15,8 @@
     <string name="status_bluetooth_disconnected">蓝牙输出已断开；会话已停止。</string>
     <string name="status_audio_focus_lost">音频焦点丢失；会话已停止。</string>
     <string name="status_audio_focus_unavailable">无法取得音频焦点。</string>
+    <string name="status_stopping">正在停止播放…</string>
+    <string name="status_stop_timeout">音频停止超时；已关闭输出。</string>
     <string name="status_motion_sensor_unavailable">线性加速度或重力传感器不可用。</string>
     <string name="status_drive_mode">驾驶模式 · 请固定手机</string>
     <string name="quality_drive_fresh">GNSS 速度 + 已校准方向的 IMU · 实验性估算</string>

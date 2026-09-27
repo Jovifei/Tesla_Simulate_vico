@@ -66,9 +66,10 @@ struct VirtualState {
 };
 
 struct Snapshot {
-    std::uint32_t version{1};
+    std::uint32_t version{2};
     char profile_id[kProfileIdLength]{};
     Profile fade_from{};
+    Profile pending_profile{};
     double phase{};
     double rpm{};
     double target_rpm{};
@@ -85,11 +86,13 @@ struct Snapshot {
     std::uint32_t gear{};
     std::uint32_t fade_total_frames{};
     std::uint32_t fade_remaining_frames{};
+    std::uint32_t pending_fade_frames{};
     Direction last_direction{Direction::kStationary};
     Event last_event{Event::kNone};
     bool has_previous_sample{};
     bool fallback{};
     bool fading{};
+    bool pending_switch{};
 };
 
 bool profile_is_valid(const Profile& profile) noexcept;
@@ -113,11 +116,13 @@ public:
 private:
     void set_safe_fallback() noexcept;
     void map_targets() noexcept;
+    void apply_profile(const Profile& profile, std::uint32_t fade_frames) noexcept;
     double render_profile(const Profile& profile) const noexcept;
     bool snapshot_is_valid(const Snapshot& snapshot) const noexcept;
 
     Profile profile_{};
     Profile fade_from_{};
+    Profile pending_profile_{};
     double phase_{};
     double rpm_{};
     double target_rpm_{};
@@ -134,11 +139,13 @@ private:
     std::uint32_t gear_{};
     std::uint32_t fade_total_frames_{};
     std::uint32_t fade_remaining_frames_{};
+    std::uint32_t pending_fade_frames_{};
     Direction last_direction_{Direction::kStationary};
     Event last_event_{Event::kNone};
     bool has_previous_sample_{};
     bool fallback_{};
     bool fading_{};
+    bool pending_switch_{};
     bool valid_{};
 };
 

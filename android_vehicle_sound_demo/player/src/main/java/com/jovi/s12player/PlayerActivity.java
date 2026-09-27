@@ -44,13 +44,14 @@ public final class PlayerActivity extends Activity {
     private final Runnable refresh = new Runnable() {
         @Override public void run() {
             if (service != null) {
-                status.setText(service.status());
-                double liveSpeed = service.speedKmh();
+                DriveAudioService.ViewState current = service.viewState();
+                status.setText(current.status);
+                double liveSpeed = current.speedKmh;
                 speed.setText(Double.isFinite(liveSpeed)
                         ? getString(R.string.speed_readout, liveSpeed)
                         : getString(R.string.speed_unavailable));
-                quality.setText(service.quality());
-                diagnostics.setText(service.diagnostics());
+                quality.setText(current.quality);
+                diagnostics.setText(current.diagnostics);
             }
             main.postDelayed(this, 500);
         }

@@ -32,7 +32,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 
 /** Owns the single JNI command producer and the live driving session. */
-public final class DriveAudioService extends Service implements SensorEventListener, LocationListener {
+public final class DriveAudioService extends Service {
     static final String REPLAY = "com.jovi.s12player.REPLAY";
     static final String DRIVE = "com.jovi.s12player.DRIVE";
     static final String STOP = "com.jovi.s12player.STOP";
@@ -43,8 +43,11 @@ public final class DriveAudioService extends Service implements SensorEventListe
     private static final String CHANNEL = "drive_audio";
 
     static { System.loadLibrary("player-native"); }
-    private static native long nativeStart(int profileIndex);
+    private static native long nativeStart(int profileIndex, float initialVolume);
     private static native void nativeStop(long handle);
+    private static native void nativeRequestStop(long handle);
+    private static native boolean nativeStopReady(long handle);
+    private static native void nativeInvalidateMotion(long handle);
     private static native boolean nativeSubmitMotion(long handle, long sequence, long measurementTimeNs,
             long receivedTimeNs, double speedMps, double accelerationMps2, int direction, boolean valid);
     private static native boolean nativeSelectProfile(long handle, int index);
@@ -65,24 +68,39 @@ public final class DriveAudioService extends Service implements SensorEventListe
     private AudioFocusRequest focusRequest;
     private Sensor linearSensor;
     private Sensor gravitySensor;
+    private SensorEventListener sensorListener;
+    private LocationListener locationListener;
     private MotionEstimator estimator;
+    private final DriveSessionState motionState = new DriveSessionState();
     private ReplayDriveCycle replay;
     private Runnable replayTask;
     private Runnable diagnosticsTask;
+    private Runnable freshnessTask;
+    private Runnable stopPollTask;
+    private Runnable pendingStart;
     private long handle;
     private long sequence;
     private volatile String status;
-    private volatile String quality;
+    private volatile String qualityIssue;
     private volatile String diagnostics = "audio=stopped";
-    private volatile double speedKmh;
     private volatile boolean running;
     private int profile;
+    private volatile int latestStartId;
+    private int sessionStartId;
+    private int stopStartId;
     private int focusEpoch;
+    private boolean normalStopPending;
+    private String normalStopReason;
+    private long stopDeadlineNs;
     private boolean bluetoothAvailableAtStart;
     private final BroadcastReceiver noisyReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                worker.post(() -> stopSession(getString(R.string.status_output_disconnected)));
+                long epoch = motionState.snapshot().epoch;
+                worker.post(() -> {
+                    if (motionState.isActive(epoch))
+                        stopSession(getString(R.string.status_output_disconnected));
+                });
             }
         }
     };
@@ -93,7 +111,11 @@ public final class DriveAudioService extends Service implements SensorEventListe
                 int type = device.getType();
                 if (type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP
                         || type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
-                    worker.post(() -> stopSession(getString(R.string.status_bluetooth_disconnected)));
+                    long epoch = motionState.snapshot().epoch;
+                    worker.post(() -> {
+                        if (motionState.isActive(epoch))
+                            stopSession(getString(R.string.status_bluetooth_disconnected));
+                    });
                     return;
                 }
             }
@@ -106,7 +128,6 @@ public final class DriveAudioService extends Service implements SensorEventListe
         locations = (LocationManager) getSystemService(LOCATION_SERVICE);
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
         status = getString(R.string.status_stopped);
-        quality = getString(R.string.quality_stopped);
         thread = new HandlerThread("s12-drive-control");
         thread.start();
         worker = new Handler(thread.getLooper());
@@ -125,9 +146,13 @@ public final class DriveAudioService extends Service implements SensorEventListe
     @Override public IBinder onBind(Intent intent) { return binder; }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        latestStartId = startId;
         String action = intent == null ? null : intent.getAction();
         if (STOP.equals(action)) {
-            worker.post(() -> stopSession(getString(R.string.status_stopped)));
+            worker.post(() -> {
+                pendingStart = null;
+                beginNormalStop(getString(R.string.status_stopped), startId);
+            });
             return START_NOT_STICKY;
         }
         if (!REPLAY.equals(action) && !DRIVE.equals(action)) return START_NOT_STICKY;
@@ -154,7 +179,7 @@ public final class DriveAudioService extends Service implements SensorEventListe
         int requestedProfile = Math.max(0, Math.min(1, intent.getIntExtra(PROFILE, 0)));
         int axis = Math.max(0, Math.min(3, intent.getIntExtra(AXIS, 0)));
         float volume = Math.max(0, Math.min(1, intent.getFloatExtra(VOLUME, 1)));
-        worker.post(() -> startSession(drive, requestedProfile, axis, volume));
+        worker.post(() -> startSession(drive, requestedProfile, axis, volume, startId));
         return START_NOT_STICKY;
     }
 
@@ -171,8 +196,16 @@ public final class DriveAudioService extends Service implements SensorEventListe
                         getString(R.string.button_stop), stopAction).build();
     }
 
-    private void startSession(boolean drive, int requestedProfile, int axis, float volume) {
+    private void startSession(boolean drive, int requestedProfile, int axis, float volume,
+            int requestId) {
+        if (handle != 0) {
+            pendingStart = () -> startSession(drive, requestedProfile, axis, volume, requestId);
+            beginNormalStop(getString(R.string.status_stopped), requestId);
+            return;
+        }
         stopAudioAndInputs();
+        sessionStartId = requestId;
+        diagnostics = "audio=starting";
         profile = requestedProfile;
         bluetoothAvailableAtStart = hasBluetoothOutput();
         int activeEpoch = ++focusEpoch;
@@ -192,9 +225,8 @@ public final class DriveAudioService extends Service implements SensorEventListe
             stopSession(getString(R.string.status_audio_focus_unavailable));
             return;
         }
-        handle = nativeStart(profile);
+        handle = nativeStart(profile, volume);
         if (handle == 0) { stopSession(getString(R.string.status_audio_open_failed)); return; }
-        nativeSetVolume(handle, volume);
         running = true;
         if (drive) startSensors(axis);
         else startReplay();
@@ -206,10 +238,6 @@ public final class DriveAudioService extends Service implements SensorEventListe
                     return;
                 }
                 diagnostics = nativeGetDiagnostics(handle);
-                if (estimator != null && !estimator.sample(sequence,
-                        SystemClock.elapsedRealtimeNanos()).valid) {
-                    quality = getString(R.string.quality_drive_invalid);
-                }
                 worker.postDelayed(this, 500);
             }
         };
@@ -217,17 +245,18 @@ public final class DriveAudioService extends Service implements SensorEventListe
     }
 
     private void startReplay() {
+        long epoch = motionState.begin(DriveSessionState.Source.REPLAY);
+        qualityIssue = null;
         replay = new ReplayDriveCycle();
         status = getString(R.string.status_replay_playing);
-        quality = getString(R.string.quality_replay);
         replayTask = new Runnable() {
             @Override public void run() {
-                if (handle == 0 || replay == null) return;
+                if (handle == 0 || replay == null || !motionState.isActive(epoch)) return;
                 MotionInput generated = replay.next(SystemClock.elapsedRealtimeNanos());
                 MotionInput sample = new MotionInput(sequence++, generated.measurementTimeNs,
                         generated.receivedTimeNs, generated.speedMps, generated.accelerationMps2,
                         generated.direction, generated.valid, generated.quality);
-                submit(sample);
+                submit(epoch, sample);
                 worker.postDelayed(this, 10);
             }
         };
@@ -235,6 +264,8 @@ public final class DriveAudioService extends Service implements SensorEventListe
     }
 
     private void startSensors(int axis) {
+        long epoch = motionState.begin(DriveSessionState.Source.DRIVE);
+        qualityIssue = null;
         linearSensor = sensors.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         gravitySensor = sensors.getDefaultSensor(Sensor.TYPE_GRAVITY);
         if (linearSensor == null || gravitySensor == null) {
@@ -242,77 +273,186 @@ public final class DriveAudioService extends Service implements SensorEventListe
             return;
         }
         estimator = new MotionEstimator(axis);
+        sensorListener = new SensorEventListener() {
+            @Override public void onSensorChanged(SensorEvent event) {
+                if (!motionState.isActive(epoch) || estimator == null || event.values.length < 3) return;
+                if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+                    estimator.gravity(event.values[0], event.values[1], event.values[2], event.timestamp);
+                } else if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+                    estimator.acceleration(event.values[0], event.values[1], event.values[2], event.timestamp);
+                    submit(epoch, estimator.sample(sequence++, SystemClock.elapsedRealtimeNanos()));
+                }
+            }
+
+            @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        };
+        locationListener = new LocationListener() {
+            @Override public void onLocationChanged(Location location) {
+                if (!motionState.isActive(epoch) || estimator == null) return;
+                double accuracy = location.hasSpeedAccuracy()
+                        ? location.getSpeedAccuracyMetersPerSecond() : Double.NaN;
+                estimator.gps(location.hasSpeed() ? location.getSpeed() : Double.NaN,
+                        accuracy, location.getElapsedRealtimeNanos());
+            }
+
+            @Override public void onProviderDisabled(String provider) {
+                if (motionState.isActive(epoch) && LocationManager.GPS_PROVIDER.equals(provider))
+                    stopSession(getString(R.string.status_gps_disabled));
+            }
+        };
         try {
             if (!locations.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 stopSession(getString(R.string.status_gps_disabled));
                 return;
             }
             locations.requestLocationUpdates(LocationManager.GPS_PROVIDER, 250L, 0,
-                    this, thread.getLooper());
-            if (!sensors.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_GAME, worker)
-                    || !sensors.registerListener(this, linearSensor, SensorManager.SENSOR_DELAY_GAME, worker)) {
+                    locationListener, thread.getLooper());
+            if (!sensors.registerListener(sensorListener, gravitySensor, SensorManager.SENSOR_DELAY_GAME, worker)
+                    || !sensors.registerListener(sensorListener, linearSensor, SensorManager.SENSOR_DELAY_GAME, worker)) {
                 stopSession(getString(R.string.status_sensor_registration_failed));
                 return;
             }
             status = getString(R.string.status_drive_mode);
-            quality = getString(R.string.quality_sensors_waiting);
+            freshnessTask = new Runnable() {
+                @Override public void run() {
+                    if (handle == 0 || !motionState.isActive(epoch)) return;
+                    if (motionState.tick(epoch, SystemClock.elapsedRealtimeNanos())
+                            == DriveSessionState.Effect.SUBMIT_INVALID) {
+                        qualityIssue = null;
+                        nativeInvalidateMotion(handle);
+                    }
+                    worker.postDelayed(this, 50);
+                }
+            };
+            worker.postDelayed(freshnessTask, 50);
         } catch (SecurityException | IllegalArgumentException error) {
             stopSession(getString(R.string.status_sensor_source_unavailable,
                     error.getClass().getSimpleName()));
         }
     }
 
-    private void submit(MotionInput sample) {
-        if (handle == 0) return;
-        if (!nativeSubmitMotion(handle, sample.sequence, sample.measurementTimeNs,
+    private void submit(long epoch, MotionInput sample) {
+        if (handle == 0 || !motionState.isActive(epoch)) return;
+        if (!sample.valid) {
+            if (motionState.observe(epoch, sample) == DriveSessionState.Effect.SUBMIT_INVALID)
+                nativeInvalidateMotion(handle);
+            return;
+        }
+        if (!motionState.canAccept(epoch, sample)) return;
+        if (nativeSubmitMotion(handle, sample.sequence, sample.measurementTimeNs,
                 sample.receivedTimeNs, sample.speedMps, sample.accelerationMps2,
-                sample.direction, sample.valid)) quality = getString(R.string.quality_command_queue_full);
-        else quality = estimator == null ? getString(R.string.quality_replay)
-                : getString(sample.valid ? R.string.quality_drive_fresh : R.string.quality_drive_invalid);
-        speedKmh = sample.valid ? sample.speedMps * 3.6 : Double.NaN;
+                sample.direction, true)) {
+            motionState.observe(epoch, sample);
+            qualityIssue = null;
+        } else {
+            motionState.observe(epoch, new MotionInput(sample.sequence, sample.measurementTimeNs,
+                    sample.receivedTimeNs, 0, 0, MotionInput.UNKNOWN, false, "queue full"));
+            nativeInvalidateMotion(handle);
+            qualityIssue = getString(R.string.quality_command_queue_full);
+        }
     }
 
     void selectProfile(int index) {
         worker.post(() -> {
             profile = Math.max(0, Math.min(1, index));
             if (handle != 0 && !nativeSelectProfile(handle, profile))
-                quality = getString(R.string.status_profile_queue_full);
+                qualityIssue = getString(R.string.status_profile_queue_full);
         });
     }
 
     void setVolume(float volume) {
         worker.post(() -> {
             if (handle != 0 && !nativeSetVolume(handle, volume))
-                quality = getString(R.string.quality_command_queue_full);
+                qualityIssue = getString(R.string.quality_command_queue_full);
         });
     }
 
-    void stop() { worker.post(() -> stopSession(getString(R.string.status_stopped))); }
+    void stop() {
+        int requestId = latestStartId;
+        worker.post(() -> {
+            pendingStart = null;
+            beginNormalStop(getString(R.string.status_stopped), requestId);
+        });
+    }
+
+    private void beginNormalStop(String reason, int requestId) {
+        if (normalStopPending) return;
+        stopInputsOnWorker();
+        running = false;
+        status = getString(R.string.status_stopping);
+        normalStopReason = reason;
+        stopStartId = requestId;
+        if (handle == 0) { finishNormalStop(true); return; }
+        normalStopPending = true;
+        stopDeadlineNs = SystemClock.elapsedRealtimeNanos() + 250_000_000L;
+        nativeRequestStop(handle);
+        stopPollTask = new Runnable() {
+            @Override public void run() {
+                if (handle == 0) return;
+                long now = SystemClock.elapsedRealtimeNanos();
+                if (nativeStopReady(handle)) finishNormalStop(true);
+                else if (nativeHasStreamError(handle) || now >= stopDeadlineNs)
+                    finishNormalStop(false);
+                else worker.postDelayed(this, 10);
+            }
+        };
+        worker.post(stopPollTask);
+    }
+
+    private void finishNormalStop(boolean faded) {
+        if (stopPollTask != null) worker.removeCallbacks(stopPollTask);
+        stopPollTask = null;
+        if (handle != 0) { nativeStop(handle); handle = 0; }
+        if (focusRequest != null) { audio.abandonAudioFocusRequest(focusRequest); focusRequest = null; }
+        normalStopPending = false;
+        diagnostics = faded ? "stop=NORMAL_FADE_STOP" : "stop=ERROR_HARD_STOP";
+        status = faded ? normalStopReason : getString(R.string.status_stop_timeout);
+        qualityIssue = null;
+        Runnable next = pendingStart;
+        pendingStart = null;
+        if (next != null) { next.run(); return; }
+        stopForeground(STOP_FOREGROUND_REMOVE);
+        stopSelfResult(stopStartId);
+    }
 
     private void stopSession(String reason) {
+        pendingStart = null;
         stopAudioAndInputs();
         status = reason;
-        quality = getString(R.string.quality_stopped);
-        diagnostics = "audio=stopped";
-        speedKmh = 0;
+        qualityIssue = null;
+        diagnostics = "stop=ERROR_HARD_STOP";
         running = false;
         stopForeground(STOP_FOREGROUND_REMOVE);
-        stopSelf();
+        stopSelfResult(sessionStartId);
     }
 
     private void stopAudioAndInputs() {
-        ++focusEpoch;
-        if (replayTask != null) worker.removeCallbacks(replayTask);
-        if (diagnosticsTask != null) worker.removeCallbacks(diagnosticsTask);
-        replayTask = null;
-        diagnosticsTask = null;
-        replay = null;
-        sensors.unregisterListener(this);
-        try { locations.removeUpdates(this); } catch (SecurityException ignored) {}
-        estimator = null;
+        stopInputsOnWorker();
+        if (stopPollTask != null) worker.removeCallbacks(stopPollTask);
+        stopPollTask = null;
+        normalStopPending = false;
         if (handle != 0) { nativeStop(handle); handle = 0; }
         if (focusRequest != null) { audio.abandonAudioFocusRequest(focusRequest); focusRequest = null; }
         bluetoothAvailableAtStart = false;
+    }
+
+    private void stopInputsOnWorker() {
+        ++focusEpoch;
+        motionState.stop();
+        if (replayTask != null) worker.removeCallbacks(replayTask);
+        if (diagnosticsTask != null) worker.removeCallbacks(diagnosticsTask);
+        if (freshnessTask != null) worker.removeCallbacks(freshnessTask);
+        replayTask = null;
+        diagnosticsTask = null;
+        freshnessTask = null;
+        replay = null;
+        if (sensorListener != null) sensors.unregisterListener(sensorListener);
+        if (locationListener != null) {
+            try { locations.removeUpdates(locationListener); } catch (SecurityException ignored) {}
+        }
+        sensorListener = null;
+        locationListener = null;
+        estimator = null;
     }
 
     private boolean hasBluetoothOutput() {
@@ -323,36 +463,42 @@ public final class DriveAudioService extends Service implements SensorEventListe
         return false;
     }
 
-    @Override public void onSensorChanged(SensorEvent event) {
-        if (estimator == null || event.values.length < 3) return;
-        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-            estimator.gravity(event.values[0], event.values[1], event.values[2], event.timestamp);
-        } else if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            estimator.acceleration(event.values[0], event.values[1], event.values[2], event.timestamp);
-            submit(estimator.sample(sequence++, SystemClock.elapsedRealtimeNanos()));
+    static final class ViewState {
+        final String status;
+        final String quality;
+        final String diagnostics;
+        final double speedKmh;
+
+        ViewState(String status, String quality, String diagnostics, double speedKmh) {
+            this.status = status;
+            this.quality = quality;
+            this.diagnostics = diagnostics;
+            this.speedKmh = speedKmh;
         }
     }
 
-    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-    @Override public void onLocationChanged(Location location) {
-        if (estimator == null) return;
-        double accuracy = location.hasSpeedAccuracy()
-                ? location.getSpeedAccuracyMetersPerSecond() : Double.NaN;
-        estimator.gps(location.hasSpeed() ? location.getSpeed() : Double.NaN,
-                accuracy, location.getElapsedRealtimeNanos());
+    ViewState viewState() {
+        DriveSessionState.Snapshot motion = motionState.snapshot();
+        String qualityText = qualityIssue;
+        if (qualityText == null) {
+            switch (motion.quality) {
+                case FRESH:
+                    qualityText = getString(motion.source == DriveSessionState.Source.REPLAY
+                            ? R.string.quality_replay : R.string.quality_drive_fresh);
+                    break;
+                case WAITING:
+                    qualityText = getString(motion.source == DriveSessionState.Source.REPLAY
+                            ? R.string.quality_replay : R.string.quality_sensors_waiting);
+                    break;
+                case STALE:
+                    qualityText = getString(R.string.quality_drive_invalid);
+                    break;
+                default:
+                    qualityText = getString(R.string.quality_stopped);
+            }
+        }
+        return new ViewState(status, qualityText, diagnostics, motion.speedKmh);
     }
-
-    @Override public void onProviderDisabled(String provider) {
-        if (LocationManager.GPS_PROVIDER.equals(provider))
-            worker.post(() -> stopSession(getString(R.string.status_gps_disabled)));
-    }
-
-    String status() { return status; }
-    String quality() { return quality; }
-    String diagnostics() { return diagnostics; }
-    double speedKmh() { return speedKmh; }
-    boolean running() { return running; }
 
     @Override public void onDestroy() {
         audio.unregisterAudioDeviceCallback(deviceCallback);

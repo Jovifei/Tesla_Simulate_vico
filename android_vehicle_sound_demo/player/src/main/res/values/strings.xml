@@ -15,6 +15,8 @@
     <string name="status_bluetooth_disconnected">Bluetooth output disconnected; session stopped.</string>
     <string name="status_audio_focus_lost">Audio focus lost; session stopped.</string>
     <string name="status_audio_focus_unavailable">Audio focus unavailable.</string>
+    <string name="status_stopping">Stopping playback…</string>
+    <string name="status_stop_timeout">Audio stop timed out; output closed.</string>
     <string name="status_motion_sensor_unavailable">Linear acceleration or gravity sensor unavailable.</string>
     <string name="status_drive_mode">Drive mode · fixed phone mount</string>
     <string name="quality_drive_fresh">GNSS speed + calibrated IMU · experimental estimate</string>

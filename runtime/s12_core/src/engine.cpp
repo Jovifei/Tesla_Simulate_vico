@@ -261,13 +261,18 @@ bool Engine::render(float* output, std::size_t frames) noexcept {
 
         double sample = render_profile(profile_);
         if (fading_) {
-            const double progress = static_cast<double>(fade_total_frames_ - fade_remaining_frames_)
+            const double progress = static_cast<double>(fade_total_frames_ - fade_remaining_frames_ + 1)
                 / static_cast<double>(fade_total_frames_);
-            const double fade_angle = 0.25 * kTau * progress;
-            const double old_gain = std::cos(fade_angle);
-            const double new_gain = std::sin(fade_angle);
-            sample = old_gain * render_profile(fade_from_) + new_gain * sample;
-            if (--fade_remaining_frames_ == 0) fading_ = false;
+            sample = (1.0 - progress) * render_profile(fade_from_) + progress * sample;
+            if (--fade_remaining_frames_ == 0) {
+                fading_ = false;
+                if (pending_switch_) {
+                    const auto next = pending_profile_;
+                    const auto next_frames = pending_fade_frames_;
+                    pending_switch_ = false;
+                    apply_profile(next, next_frames);
+                }
+            }
         }
         const float output_sample = static_cast<float>(sample);
         output[frame * 2] = output_sample;
@@ -284,6 +289,21 @@ bool Engine::switch_profile(const Profile& profile, std::uint32_t fade_frames) n
 
 bool Engine::switch_profile_prevalidated(const Profile& profile, std::uint32_t fade_frames) noexcept {
     if (!valid_) return false;
+    if (std::strncmp(profile_.profile_id, profile.profile_id, kProfileIdLength) == 0) {
+        pending_switch_ = false;
+        return true;
+    }
+    if (fading_) {
+        pending_profile_ = profile;
+        pending_fade_frames_ = fade_frames;
+        pending_switch_ = true;
+        return true;
+    }
+    apply_profile(profile, fade_frames);
+    return true;
+}
+
+void Engine::apply_profile(const Profile& profile, std::uint32_t fade_frames) noexcept {
     fade_from_ = profile_;
     profile_ = profile;
     fading_ = fade_frames > 0;
@@ -298,7 +318,6 @@ bool Engine::switch_profile_prevalidated(const Profile& profile, std::uint32_t f
         gear_ = 0;
         map_targets();
     }
-    return true;
 }
 
 VirtualState Engine::state() const noexcept {
@@ -309,9 +328,10 @@ VirtualState Engine::state() const noexcept {
 
 Snapshot Engine::snapshot() const noexcept {
     Snapshot value{};
-    value.version = 1;
+    value.version = 2;
     std::memcpy(value.profile_id, profile_.profile_id, sizeof(value.profile_id));
     value.fade_from = fade_from_;
+    value.pending_profile = pending_profile_;
     value.phase = phase_;
     value.rpm = rpm_;
     value.target_rpm = target_rpm_;
@@ -328,28 +348,33 @@ Snapshot Engine::snapshot() const noexcept {
     value.gear = gear_;
     value.fade_total_frames = fade_total_frames_;
     value.fade_remaining_frames = fade_remaining_frames_;
+    value.pending_fade_frames = pending_fade_frames_;
     value.last_direction = last_direction_;
     value.last_event = last_event_;
     value.has_previous_sample = has_previous_sample_;
     value.fallback = fallback_;
     value.fading = fading_;
+    value.pending_switch = pending_switch_;
     return value;
 }
 
 bool Engine::snapshot_is_valid(const Snapshot& value) const noexcept {
-    return value.version == 1 && std::strncmp(value.profile_id, profile_.profile_id, kProfileIdLength) == 0
+    return value.version == 2 && std::strncmp(value.profile_id, profile_.profile_id, kProfileIdLength) == 0
         && finite_profile_state(value) && value.gear < profile_.gear_count
         && value.target_rpm >= profile_.idle_rpm && value.target_rpm <= profile_.max_rpm
         && value.rpm >= profile_.idle_rpm && value.rpm <= profile_.max_rpm
         && value.load >= 0.0 && value.load <= 1.0 && value.target_load >= 0.0 && value.target_load <= 1.0
         && value.shift_tail >= 0.0 && value.shift_tail <= 1.0 && value.envelope >= 0.0 && value.envelope <= 1.0
         && value.fade_remaining_frames <= value.fade_total_frames
-        && (!value.fading || (value.fade_total_frames > 0 && profile_is_valid(value.fade_from)));
+        && (!value.fading || (value.fade_total_frames > 0 && profile_is_valid(value.fade_from)))
+        && (!value.pending_switch || (value.fading && profile_is_valid(value.pending_profile)
+            && std::strncmp(value.pending_profile.profile_id, profile_.profile_id, kProfileIdLength) != 0));
 }
 
 bool Engine::restore(const Snapshot& value) noexcept {
     if (!valid_ || !snapshot_is_valid(value)) return false;
     fade_from_ = value.fade_from;
+    pending_profile_ = value.pending_profile;
     phase_ = value.phase;
     rpm_ = value.rpm;
     target_rpm_ = value.target_rpm;
@@ -366,11 +391,13 @@ bool Engine::restore(const Snapshot& value) noexcept {
     gear_ = value.gear;
     fade_total_frames_ = value.fade_total_frames;
     fade_remaining_frames_ = value.fade_remaining_frames;
+    pending_fade_frames_ = value.pending_fade_frames;
     last_direction_ = value.last_direction;
     last_event_ = value.last_event;
     has_previous_sample_ = value.has_previous_sample;
     fallback_ = value.fallback;
     fading_ = value.fading;
+    pending_switch_ = value.pending_switch;
     return true;
 }
 

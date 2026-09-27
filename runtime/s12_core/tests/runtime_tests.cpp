@@ -1,5 +1,6 @@
 #include "s12_core/engine.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -254,6 +255,106 @@ void test_profile_switch_before_input_keeps_phase_and_rejects_bad_profiles() {
     CHECK(std::strncmp(engine.snapshot().profile_id, "experimental-rotary-synth", 25) == 0);
 }
 
+void test_reselecting_current_profile_is_exact_noop() {
+    Engine reference(make_v8_profile(), 77);
+    Engine actual(make_v8_profile(), 77);
+    const auto input = motion(0, 1'000'000'000, 30.0, 1.0);
+    CHECK(reference.update_motion(input, 1'003'000'000));
+    CHECK(actual.update_motion(input, 1'003'000'000));
+    std::array<float, 240 * 2> warmup{};
+    CHECK(reference.render(warmup.data(), 240));
+    CHECK(actual.render(warmup.data(), 240));
+    const auto before = actual.state();
+    CHECK(actual.switch_profile(make_v8_profile(), 4800));
+    CHECK(!actual.snapshot().fading);
+    CHECK(actual.state().gear == before.gear);
+    CHECK(actual.state().shift_events == before.shift_events);
+    std::array<float, 960 * 2> expected{};
+    std::array<float, 960 * 2> observed{};
+    CHECK(reference.render(expected.data(), 960));
+    CHECK(actual.render(observed.data(), 960));
+    CHECK(expected == observed);
+}
+
+void test_interrupted_switch_queues_latest_without_changing_current_fade() {
+    Engine reference(make_v8_profile(), 81);
+    Engine actual(make_v8_profile(), 81);
+    const auto input = motion(0, 1'000'000'000, 20.0, 0.5);
+    CHECK(reference.update_motion(input, 1'003'000'000));
+    CHECK(actual.update_motion(input, 1'003'000'000));
+    CHECK(reference.switch_profile(make_rotary_profile(), 4800));
+    CHECK(actual.switch_profile(make_rotary_profile(), 4800));
+    std::array<float, 1000 * 2> prefix{};
+    CHECK(reference.render(prefix.data(), 1000));
+    CHECK(actual.render(prefix.data(), 1000));
+    CHECK(actual.switch_profile(make_v8_profile(), 4800));
+    CHECK(actual.switch_profile(make_rotary_profile(), 4800));
+    CHECK(actual.switch_profile(make_v8_profile(), 4800));
+    Engine restored(make_rotary_profile(), 0);
+    CHECK(restored.restore(actual.snapshot()));
+    std::array<float, 3800 * 2> expected_tail{};
+    std::array<float, 3800 * 2> actual_tail{};
+    std::array<float, 3800 * 2> restored_tail{};
+    CHECK(reference.render(expected_tail.data(), 3800));
+    CHECK(actual.render(actual_tail.data(), 3800));
+    CHECK(restored.render(restored_tail.data(), 3800));
+    CHECK(expected_tail == actual_tail);
+    CHECK(restored_tail == actual_tail);
+    CHECK(reference.switch_profile(make_v8_profile(), 4800));
+    std::array<float, 4800 * 2> expected_return{};
+    std::array<float, 4800 * 2> actual_return{};
+    CHECK(reference.render(expected_return.data(), 4800));
+    CHECK(actual.render(actual_return.data(), 4800));
+    std::array<float, 4800 * 2> restored_return{};
+    CHECK(restored.render(restored_return.data(), 4800));
+    CHECK(expected_return == actual_return);
+    CHECK(restored_return == actual_return);
+}
+
+void test_crossfade_obeys_profile_peak_limit() {
+    auto first = make_v8_profile();
+    first.output_gain = 1.0;
+    first.order_count = 8;
+    for (auto& order : first.orders) order = Order{4.0, 1.0, 0.0};
+    auto second = first;
+    std::snprintf(second.profile_id, sizeof(second.profile_id), "%s", "experimental-loud-b");
+    CHECK(app1::s12::profile_is_valid(first));
+    CHECK(app1::s12::profile_is_valid(second));
+    Engine engine(first, 13);
+    CHECK(engine.update_motion(motion(0, 1'000'000'000, 20.0, 0.5), 1'003'000'000));
+    CHECK(engine.switch_profile(second, 4800));
+    std::array<float, 4800 * 2> output{};
+    CHECK(engine.render(output.data(), 4800));
+    float peak = 0.0F;
+    for (float sample : output) peak = std::max(peak, std::abs(sample));
+    CHECK(peak <= first.peak_limit + 1.0e-6);
+}
+
+void test_queued_switch_is_partition_independent() {
+    Engine full(make_v8_profile(), 39);
+    Engine partitioned(make_v8_profile(), 39);
+    const auto input = motion(0, 1'000'000'000, 18.0, 1.0);
+    CHECK(full.update_motion(input, 1'003'000'000));
+    CHECK(partitioned.update_motion(input, 1'003'000'000));
+    CHECK(full.switch_profile(make_rotary_profile(), 4800));
+    CHECK(partitioned.switch_profile(make_rotary_profile(), 4800));
+    std::array<float, 1000 * 2> warmup{};
+    CHECK(full.render(warmup.data(), 1000));
+    CHECK(partitioned.render(warmup.data(), 1000));
+    CHECK(full.switch_profile(make_v8_profile(), 4800));
+    CHECK(partitioned.switch_profile(make_v8_profile(), 4800));
+    std::array<float, 8600 * 2> expected{};
+    std::array<float, 8600 * 2> observed{};
+    CHECK(full.render(expected.data(), 8600));
+    constexpr std::size_t blocks[]{96, 192, 240, 256, 480, 960};
+    for (std::size_t offset = 0, index = 0; offset < 8600; ++index) {
+        const auto frames = std::min(blocks[index % 6], 8600 - offset);
+        CHECK(partitioned.render(observed.data() + offset * 2, frames));
+        offset += frames;
+    }
+    CHECK(expected == observed);
+}
+
 void test_snapshot_restore_continues_identically() {
     auto profile = make_rotary_profile();
     Engine original(profile, 31);
@@ -300,6 +401,10 @@ int main() {
     test_render_is_allocation_free_and_partition_invariant();
     test_profile_switch_crossfades_without_resetting_engine_state();
     test_profile_switch_before_input_keeps_phase_and_rejects_bad_profiles();
+    test_reselecting_current_profile_is_exact_noop();
+    test_interrupted_switch_queues_latest_without_changing_current_fade();
+    test_crossfade_obeys_profile_peak_limit();
+    test_queued_switch_is_partition_independent();
     test_snapshot_restore_continues_identically();
     if (failures != 0) {
         std::fprintf(stderr, "%d assertion(s) failed\n", failures);
