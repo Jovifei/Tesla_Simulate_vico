@@ -4499,3 +4499,14 @@ Review: remote `c2c_7d2f` iteration 1 returned `CHANGES_REQUIRED` for F1–F3. T
 - [ ] Save an iteration 3 receipt, publish new APK and PR #33 head, then request same-chat independent re-review.
 
 Review: remote `c2c_7d2f` iteration 2 accepted F1 normal path and F2 for valid input but returned `CHANGES_REQUIRED` for F3 native invalidation persistence. Tested source `6f8505375ded8bf60d2899bf5f6fb19d4efcc00a` fixes the two F3 paths with real Engine/production-gate tests; new APK `F9AA27BA34CCCE195E2790101FB4212D6CA43ECFAEA376B55BF70CEC663E17DE` is installed on dedicated emulator with matching hash. Iteration 2 artifacts are immutable under `review_packages/s12-app2-transition-c2c_7d2f-i2-v1`; current evidence is under `review_packages/s12-app2-transition-c2c_7d2f-i3-v1`. Full acoustic and physical gates remain NOT_RUN.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 4
+
+- [x] Verify clean start `d52a584ac60fc9f8b580a9de72ccdad4b75c209d`, PR #33 draft base/head, and preserve iteration 3 APK/evidence.
+- [x] RED→GREEN: no historical valid Motion + active fallback + immediate or pending profile switch leaves a nonzero target load.
+- [x] RED→GREEN production gate combination: old queued Motion discarded, then profile/volume processed while Engine has no historical valid sample.
+- [x] Reorder only `Engine::apply_profile` branches so fallback safety wins; preserve normal pre-input initialization.
+- [x] Run native gate/runtime, JVM 11/11 forced, Python/C++ 12/12, Gradle/lint, Track-P and dedicated-emulator normal smoke.
+- [ ] Save iteration 4 receipt and APK identity, push PR #33, and request same-chat re-review.
+
+Review: remote `c2c_7d2f` iteration 3 accepted F3-A and the earlier F1/F2 fixes, but returned `CHANGES_REQUIRED` for F3-B when `has_previous_sample=false` and `fallback=true` coincide. Tested source `2f6e03c5b3aea730938b974e20433da2b07cfe66` fixes the priority with only core branch order and focused native tests. APK `A43A948720DF8471B5627B9E4D52137EC86CBCF30187003BF4376A5BF5783597` installed-hash matched dedicated emulator; regression and normal smoke passed. Error-route, physical-device and full acoustic-profile gates remain NOT_RUN. Evidence directory: `review_packages/s12-app2-transition-c2c_7d2f-i4-v1`.
