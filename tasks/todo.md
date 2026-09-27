@@ -4476,3 +4476,15 @@ Review boundary:
 - APP-1 Debug APK at completion of its build: `android_vehicle_sound_demo/player/build/outputs/apk/debug/player-debug.apk`, package `com.jovi.s12player` v0.1.0, SHA-256 `C08AEA44E9F784F3452BAC73D222D4E078B1E2627FBABDBCC3C8BC3B5E5AE91F`. Later APP-2 builds replace this path; see the dated APP-2 report for its own APK hash. `verify_apk.ps1` reports signed/PASS but its `debuggable` flag is a false negative; direct `aapt2` and merged Manifest confirm `debuggable=true`.
 - Device evidence: one OnePlus 7 Pro (GM1910) is connected, but no APK was installed because device-install authorization was not given. Real audio/GNSS/IMU behavior and the second-device gate are `NOT_RUN`.
 - Output profiles remain experimental; no Human/OEM/product release gate is advanced.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 2
+
+- [x] Verify clean start head `a059ea4d…`, PR #33 live base/head and preserve original Debug APK and full baseline diff.
+- [x] F1 RED→GREEN: exact volume-zero start and bounded 960-frame normal-stop fade; error hard-stop fallback implemented.
+- [ ] Force and observe a real device audio-route/error hard stop; protected broadcast injection was denied by Android.
+- [x] F2 RED→GREEN: idempotent and queued profile switches, bounded mix and callback work.
+- [x] F3 RED→GREEN: stale-input UI/native agreement and stale-session callback isolation.
+- [x] Run focused/native/JVM/Python/Gradle/Track-P regression and dedicated-emulator normal-transition checks.
+- [ ] Save full evidence, publish new APK identity, push PR #33 and request re-review in the existing 音浪 chat.
+
+Review: remote `c2c_7d2f` iteration 1 returned `CHANGES_REQUIRED` for F1–F3. Tested source `a2db8f4ecf6a27267690056182952d6a7054881c` is pushed on Draft PR #33; JVM 11/11, Python/C++ 12/12, NDK native/CMake, volume host, Gradle, lint and Track-P pass. API 35 emulator normal start/background/stop/restart passes for APK `B98C55B760A4DCFF5746459C83BD4B72F1D5A2C4BA1A6B7816FF4800D7B3CF75`. Forced error route, physical-device and full acoustic-profile gates remain separate. Scope and evidence: `tasks/plans/2026-09-27-app2-transition-review-fix.md` and `tasks/reports/runtime/stage-app2-20260927.md`.
