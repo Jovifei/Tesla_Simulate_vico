@@ -94,6 +94,29 @@ void empty_queue_invalidation_does_not_block_first_new_sample() {
     assert(!engine.state().fallback);
 }
 
+void no_history_gate_profile_switch_stays_safe_until_fresh_motion() {
+    Engine engine(profile(0), 11);
+    MotionCommandGate gate;
+    assert(gate.submit_motion(motion(0, 1'000'000'000, 20.0)));
+    assert(gate.select_profile(1));
+    assert(gate.set_volume(0.5F));
+    gate.invalidate_before(1);
+    float selected_volume = -1.0F;
+    gate.consume(engine, 1'300'000'000,
+        [&](std::uint32_t index) { engine.switch_profile_prevalidated(profile(index), 4800); },
+        [&](float volume) { selected_volume = volume; });
+    assert(engine.state().fallback);
+    assert(!engine.snapshot().has_previous_sample);
+    assert(engine.state().virtual_rpm == profile(1).idle_rpm);
+    assert(engine.state().load == 0.0);
+    assert(engine.state().shift_events == 0);
+    assert(selected_volume == 0.5F);
+    assert(gate.submit_motion(motion(1, 1'310'000'000, 12.0)));
+    gate.consume(engine, 1'320'000'000,
+        [](std::uint32_t) {}, [](float) {});
+    assert(!engine.state().fallback);
+}
+
 }  // namespace
 
 int main() {
@@ -101,4 +124,5 @@ int main() {
     control_commands_do_not_reenable_old_motion();
     invalidation_is_not_blocked_by_a_full_queue();
     empty_queue_invalidation_does_not_block_first_new_sample();
+    no_history_gate_profile_switch_stays_safe_until_fresh_motion();
 }

@@ -248,6 +248,8 @@ void test_profile_switch_before_input_keeps_phase_and_rejects_bad_profiles() {
 
     CHECK(engine.switch_profile(make_rotary_profile(), 0));
     CHECK(engine.snapshot().phase == phase_before);
+    CHECK(!engine.state().fallback);
+    CHECK(engine.state().load == make_rotary_profile().idle_load);
 
     auto invalid = make_v8_profile();
     invalid.sample_rate_hz = 44100;
@@ -410,6 +412,59 @@ void test_pending_profile_switch_during_fallback_is_safe_and_partition_independe
     CHECK(restored_output == observed);
 }
 
+void test_first_sample_missing_fallback_precedes_immediate_profile_switch() {
+    Engine engine(make_v8_profile(), 71);
+    CHECK(!engine.check_input_freshness(1'000'000'000));
+    CHECK(engine.state().fallback);
+    CHECK(engine.switch_profile(make_rotary_profile(), 4800));
+    CHECK(engine.state().fallback);
+    CHECK(engine.state().virtual_rpm == make_rotary_profile().idle_rpm);
+    CHECK(engine.state().load == 0.0);
+    CHECK(engine.state().shift_events == 0);
+    CHECK(engine.state().event == Event::kNone);
+    Engine restored(make_rotary_profile(), 0);
+    CHECK(restored.restore(engine.snapshot()));
+}
+
+void test_first_sample_missing_pending_switch_stays_safe_across_blocks() {
+    Engine full(make_v8_profile(), 73);
+    Engine split(make_v8_profile(), 73);
+    CHECK(!full.check_input_freshness(1'000'000'000));
+    CHECK(!split.check_input_freshness(1'000'000'000));
+    CHECK(full.switch_profile(make_rotary_profile(), 4800));
+    CHECK(split.switch_profile(make_rotary_profile(), 4800));
+    CHECK(full.switch_profile(make_v8_profile(), 4800));
+    CHECK(split.switch_profile(make_v8_profile(), 4800));
+    std::array<float, 1000 * 2> warmup{};
+    CHECK(full.render(warmup.data(), 1000));
+    CHECK(split.render(warmup.data(), 1000));
+    Engine restored(make_rotary_profile(), 0);
+    CHECK(restored.restore(split.snapshot()));
+    CHECK(!full.check_input_freshness(1'000'000'000));
+    CHECK(!split.check_input_freshness(1'000'000'000));
+    CHECK(!restored.check_input_freshness(1'000'000'000));
+    std::array<float, 3801 * 2> expected{};
+    std::array<float, 3801 * 2> observed{};
+    std::array<float, 3801 * 2> restored_output{};
+    CHECK(full.render(expected.data(), 3801));
+    constexpr std::size_t blocks[]{96, 192, 240, 256, 480, 960};
+    for (std::size_t offset = 0, index = 0; offset < 3801; ++index) {
+        const auto frames = std::min(blocks[index % 6], 3801 - offset);
+        CHECK(split.render(observed.data() + offset * 2, frames));
+        offset += frames;
+    }
+    CHECK(restored.render(restored_output.data(), 3801));
+    CHECK(expected == observed);
+    CHECK(restored_output == observed);
+    CHECK(full.state().fallback);
+    CHECK(full.state().virtual_rpm == make_v8_profile().idle_rpm);
+    CHECK(full.state().load == 0.0);
+    CHECK(full.state().shift_events == 0);
+    CHECK(full.update_motion(motion(0, 1'100'000'000, 12.0, 1.0), 1'105'000'000));
+    CHECK(!full.state().fallback);
+    CHECK(full.state().virtual_rpm > make_v8_profile().idle_rpm);
+}
+
 void test_snapshot_restore_continues_identically() {
     auto profile = make_rotary_profile();
     Engine original(profile, 31);
@@ -462,6 +517,8 @@ int main() {
     test_queued_switch_is_partition_independent();
     test_profile_switch_during_fallback_keeps_safe_targets();
     test_pending_profile_switch_during_fallback_is_safe_and_partition_independent();
+    test_first_sample_missing_fallback_precedes_immediate_profile_switch();
+    test_first_sample_missing_pending_switch_stays_safe_across_blocks();
     test_snapshot_restore_continues_identically();
     if (failures != 0) {
         std::fprintf(stderr, "%d assertion(s) failed\n", failures);

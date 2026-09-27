@@ -309,17 +309,17 @@ void Engine::apply_profile(const Profile& profile, std::uint32_t fade_frames) no
     fading_ = fade_frames > 0;
     fade_total_frames_ = fade_frames;
     fade_remaining_frames_ = fade_frames;
-    if (!has_previous_sample_) {
-        target_rpm_ = profile_.idle_rpm;
-        rpm_ = profile_.idle_rpm;
-        target_load_ = profile_.idle_load;
-        load_ = profile_.idle_load;
-    } else if (fallback_) {
+    if (fallback_) {
         gear_ = 0;
         target_rpm_ = profile_.idle_rpm;
         target_load_ = 0.0;
         acceleration_mps2_ = 0.0;
         last_event_ = Event::kNone;
+    } else if (!has_previous_sample_) {
+        target_rpm_ = profile_.idle_rpm;
+        rpm_ = profile_.idle_rpm;
+        target_load_ = profile_.idle_load;
+        load_ = profile_.idle_load;
     } else {
         gear_ = 0;
         map_targets();
