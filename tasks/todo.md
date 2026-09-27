@@ -4445,7 +4445,7 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [ ] Complete driving UI (RPM/gear/explicit calibration) and port qualified acoustic vehicle models.
 - [ ] Validate physical-device GNSS/IMU, Bluetooth route, playback and in-car behavior; then submit exact-source evidence for review.
 
-Review: implementation candidate is in the APP-1 feature worktree. `:app:assembleDebug`, `:player:testDebugUnitTest` (7/7), `:player:lintDebug` (0 errors, one OldTargetApi warning), and `:player:assembleDebug` pass. Python/C++ runtime validation passes 12/12; native volume-ramp test passes. Emulator audio stream/background service/stop PASS; physical devices, live GNSS, vehicle audio route and qualified model port remain NOT_RUN. Details and APK identity: `tasks/reports/runtime/stage-app2-20260927.md`.
+Review: commit `bf7ffea633c41cd8f6d95a8b77f722dfcd861239`, pushed on the APP-1 feature branch; Draft PR #33 is open, not merged. `:app:assembleDebug`, `:player:testDebugUnitTest` (7/7), `:player:lintDebug` (0 errors, one OldTargetApi warning), and `:player:assembleDebug` pass. Python/C++ runtime validation passes 12/12; native volume-ramp test passes. Emulator audio stream/background service/stop PASS; physical devices, live GNSS, vehicle audio route and qualified model port remain NOT_RUN. Remote ChatGPT review BLOCKED pending authorization to restore its Tesla_speed-only connection. Details and APK identity: `tasks/reports/runtime/stage-app2-20260927.md`.
 
 Remote plan received in existing 音浪 chat `c2c_7d2f`. Jovi authorized source changes on a new isolated branch on 2026-09-24; implementation remains limited to the APP-1 technical MVP and its evidence gates.
 
