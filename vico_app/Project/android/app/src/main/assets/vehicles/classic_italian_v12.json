@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "经典意式 V12 高转",
+  "character": "sport",
+  "engine": {
+    "cylinders": 12, "stroke": 4,
+    "firingOrderDegrees": [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660],
+    "idleRpm": 800, "redlineRpm": 9000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.5, 0.3, 0.18, 0.1],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sine",
+    "combJitter": 0.01, "exhaustResonance": 0.93, "exhaustWindow": 0.45, "decayRad": 0.45
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "经典日系高转直列 4",
+  "character": "sport",
+  "engine": {
+    "cylinders": 4, "stroke": 4,
+    "firingOrderDegrees": [0, 180, 360, 540],
+    "idleRpm": 850, "redlineRpm": 9000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.6, 0.4, 0.25, 0.14],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.03, "exhaustResonance": 0.95, "exhaustWindow": 0.5, "decayRad": 0.55
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

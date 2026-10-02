@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "经典转子 (2 转子)",
+  "character": "scifi",
+  "engine": {
+    "cylinders": 2, "stroke": 2,
+    "firingOrderDegrees": [0, 180],
+    "idleRpm": 850, "redlineRpm": 9000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.45, 0.25, 0.12, 0.06],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sine",
+    "combJitter": 0.02, "exhaustResonance": 0.9, "exhaustWindow": 0.4, "decayRad": 0.4
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

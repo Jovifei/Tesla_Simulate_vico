@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "经典水平对置 6",
+  "character": "sport",
+  "engine": {
+    "cylinders": 6, "stroke": 4,
+    "firingOrderDegrees": [0, 120, 240, 360, 480, 600],
+    "idleRpm": 650, "redlineRpm": 8000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.58, 0.38, 0.24, 0.13],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.04, "exhaustResonance": 0.96, "exhaustWindow": 0.55, "decayRad": 0.65
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

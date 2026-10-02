@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "V6",
+  "character": "sport",
+  "engine": {
+    "cylinders": 6, "stroke": 4,
+    "firingOrderDegrees": [0, 120, 240, 360, 480, 600],
+    "idleRpm": 700, "redlineRpm": 7200
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.55, 0.33, 0.2, 0.1],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.03, "exhaustResonance": 0.96, "exhaustWindow": 0.5, "decayRad": 0.6
+  },
+  "layers": { "turbo": { "enabled": true, "freqMult": 9.0, "gain": 0.1, "thresholdRpm": 2800.0 } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

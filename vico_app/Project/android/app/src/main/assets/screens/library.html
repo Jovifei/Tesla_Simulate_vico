@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>声浪库 - VICO</title>
+<script src="file:///android_asset/vendor/tailwind.js"></script>
+<link rel="stylesheet" href="file:///android_asset/fonts/material-symbols.css">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "surface-container": "#eeeeee",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-surface-variant": "#414755",
+                      "tertiary-fixed-dim": "#c4c7ca",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface": "#f9f9f9",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#454748",
+                      "primary-fixed-dim": "#adc6ff",
+                      "surface-container-high": "#e8e8e8",
+                      "on-tertiary-container": "#fbfdff",
+                      "surface-dim": "#dadada",
+                      "on-secondary-container": "#626566",
+                      "on-primary-container": "#fefcff",
+                      "secondary-container": "#e1e3e4",
+                      "tertiary": "#585c5f",
+                      "tertiary-fixed": "#e0e3e6",
+                      "surface-variant": "#e2e2e2",
+                      "on-primary-fixed": "#001a41",
+                      "primary-container": "#0070eb",
+                      "surface-container-low": "#f3f3f3",
+                      "surface-container-highest": "#e2e2e2",
+                      "primary-fixed": "#d8e2ff",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#005bc1",
+                      "inverse-primary": "#adc6ff",
+                      "outline": "#717786",
+                      "secondary-fixed-dim": "#c5c7c8",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e1e3e4",
+                      "on-secondary-fixed": "#191c1d",
+                      "inverse-surface": "#303030",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1b1b1b",
+                      "primary": "#0058bc",
+                      "secondary": "#5c5f60",
+                      "outline-variant": "#c1c6d7",
+                      "tertiary-container": "#717578",
+                      "surface-bright": "#f9f9f9",
+                      "on-tertiary-fixed-variant": "#43474a",
+                      "on-tertiary-fixed": "#181c1e",
+                      "on-background": "#1b1b1b",
+                      "on-primary": "#ffffff",
+                      "background": "#f9f9f9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "md": "16px",
+                      "sm": "12px",
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "gutter": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter","sans-serif"],
+                      "body-lg": ["Inter","sans-serif"],
+                      "data-mono": ["Inter","sans-serif"],
+                      "headline-lg": ["Inter","sans-serif"],
+                      "headline-lg-mobile": ["Inter","sans-serif"],
+                      "body-md": ["Inter","sans-serif"],
+                      "label-md": ["Inter","sans-serif"]
+              },
+              "fontSize": {
+                      "headline-md": ["20px",{"lineHeight":"26px","fontWeight":"600"}],
+                      "body-lg": ["16px",{"lineHeight":"24px","fontWeight":"400"}],
+                      "data-mono": ["14px",{"lineHeight":"20px","letterSpacing":"-0.01em","fontWeight":"600"}],
+                      "headline-lg": ["28px",{"lineHeight":"34px","letterSpacing":"-0.02em","fontWeight":"600"}],
+                      "headline-lg-mobile": ["24px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"600"}],
+                      "body-md": ["14px",{"lineHeight":"20px","fontWeight":"400"}],
+                      "label-md": ["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .card-border { border: 1px solid #E9ECEF; }
+        .vehicle-card.active { border-color: #0058bc; background-color: rgba(219, 234, 254, 0.2); }
+        .badge-active { display: none; }
+        .vehicle-card.active .badge-active { display: inline-flex; }
+    </style>
+<style>
+    body { min-height: max(884px, 100dvh); }
+  </style>
+<script>document.documentElement.classList.add('vico-page-loading');</script>
+<style>html.vico-page-loading body { visibility: hidden; }</style>
+</head>
+<body class="font-body-md text-on-surface pb-24 lg:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface font-headline-md text-headline-md tracking-tighter text-primary dark:text-primary-fixed docked full-width top-0 border-b border-surface-variant dark:border-outline-variant flat no shadows flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full sticky z-50">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined cursor-pointer active:scale-95 transition-transform hover:opacity-80 transition-opacity">graphic_eq</span>
+<span class="">VICO 电车声浪模拟器</span>
+</div>
+<div class="flex items-center gap-md text-secondary">
+<span class="material-symbols-outlined text-sm">library_music</span>
+</div>
+</header>
+
+<main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">
+<!-- Page Title -->
+<section class="flex flex-col gap-base">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">声浪库</h1>
+<p class="font-body-md text-body-md text-secondary">选择车型声浪（20 款）</p>
+</section>
+
+<!-- 现代车型 -->
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">现代车型</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-sm" id="modern-vehicle-grid">
+
+<!-- C63 W204 V6.3 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="c63_w204_v6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #ECEFF1;"><span class="material-symbols-outlined text-sm" style="color: #263238;">sports_motorsports</span></div>
+<div class="font-body-md font-medium">W204 C63 AMG V6.3</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已选择</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">6.2L 自吸 V8 · 断续撕裂 · 金属回火</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>MATLAB 7G 前 3 挡 · 48 kHz mono float</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('c63_w204_v6'); setActive('c63_w204_v6');">选择</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('c63_w204_v6');">试听</button>
+</div>
+</div>
+
+<!-- Hellcat V6 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="hellcat_v6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFF0E6;"><span class="material-symbols-outlined text-sm" style="color: #B23C17;">speed</span></div>
+<div class="font-body-md font-medium">SRT Hellcat V6</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已选择</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">6.2L 机械增压 V8 · 低沉脉冲 · 厚重回火</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>MATLAB ZF 前 3 挡 · 48 kHz mono float</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('hellcat_v6'); setActive('hellcat_v6');">选择</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('hellcat_v6');">试听</button>
+</div>
+</div>
+
+<!-- 1. Crossplane V8 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="v8_crossplane">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFE6E6;"><span class="material-symbols-outlined text-sm" style="color: #ff3b3b;">directions_car</span></div>
+<div class="font-body-md font-medium">Crossplane V8</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">8 缸交叉曲轴，浑厚带涡轮</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>8缸·90°·涡轮</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('v8_crossplane'); setActive('v8_crossplane');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('v8_crossplane');">试听</button>
+</div>
+</div>
+
+<!-- 2. Flatplane V8 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="v8_flatplane">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFF1E6;"><span class="material-symbols-outlined text-sm" style="color: #ff8a3d;">directions_car</span></div>
+<div class="font-body-md font-medium">Flatplane V8</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">8 缸平面曲轴，高转尖叫</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>8缸·90°·高转</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('v8_flatplane'); setActive('v8_flatplane');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('v8_flatplane');">试听</button>
+</div>
+</div>
+
+<!-- 3. V10 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="v10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFE6EF;"><span class="material-symbols-outlined text-sm" style="color: #e63973;">sports_motorsports</span></div>
+<div class="font-body-md font-medium">V10</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">10 缸高亢赛车感</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>10缸·72°·涡轮</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('v10'); setActive('v10');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('v10');">试听</button>
+</div>
+</div>
+
+<!-- 4. V12 平顺 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="v12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #F0E6FF;"><span class="material-symbols-outlined text-sm" style="color: #7c4dff;">sports_motorsports</span></div>
+<div class="font-body-md font-medium">V12 平顺</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">12 缸丝滑线性</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>12缸·60°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('v12'); setActive('v12');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('v12');">试听</button>
+</div>
+</div>
+
+<!-- 5. V6 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="v6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E6F5FF;"><span class="material-symbols-outlined text-sm" style="color: #3d9dff;">directions_car</span></div>
+<div class="font-body-md font-medium">V6</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">6 缸 V 型均衡</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>6缸·120°·涡轮</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('v6'); setActive('v6');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('v6');">试听</button>
+</div>
+</div>
+
+<!-- 6. 直列 4 缸 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="inline4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #EAF1FF;"><span class="material-symbols-outlined text-sm" style="color: #6ea8ff;">two_wheeler</span></div>
+<div class="font-body-md font-medium">直列 4 缸</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">4 缸直接干脆</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>4缸·180°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('inline4'); setActive('inline4');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('inline4');">试听</button>
+</div>
+</div>
+
+<!-- 7. 直列 6 缸 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="inline6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E6FFF0;"><span class="material-symbols-outlined text-sm" style="color: #2ea36d;">directions_car</span></div>
+<div class="font-body-md font-medium">直列 6 缸</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">6 缸平顺线性</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>6缸·120°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('inline6'); setActive('inline6');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('inline6');">试听</button>
+</div>
+</div>
+
+<!-- 8. Boxer 4 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="boxer4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E6FFFC;"><span class="material-symbols-outlined text-sm" style="color: #14a89f;">two_wheeler</span></div>
+<div class="font-body-md font-medium">Boxer 4</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">4 缸水平对置低吼</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>4缸·180°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('boxer4'); setActive('boxer4');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('boxer4');">试听</button>
+</div>
+</div>
+
+<!-- 9. V-Twin -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="vtwin">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFF6E6;"><span class="material-symbols-outlined text-sm" style="color: #d9a300;">motorcycle</span></div>
+<div class="font-body-md font-medium">V-Twin</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">2 缸不均匀点火咕嘟</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>2缸·315/405°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('vtwin'); setActive('vtwin');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('vtwin');">试听</button>
+</div>
+</div>
+
+<!-- 10. 柴油直列 6 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="diesel_i6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #EDEDED;"><span class="material-symbols-outlined text-sm" style="color: #555555;">local_shipping</span></div>
+<div class="font-body-md font-medium">柴油直列 6</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">6 缸柴油敲击粗犷</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>6缸·120°·柴油</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('diesel_i6'); setActive('diesel_i6');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('diesel_i6');">试听</button>
+</div>
+</div>
+
+<!-- 11. EV 电机嗡鸣 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="ev_motor">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E6F7FF;"><span class="material-symbols-outlined text-sm" style="color: #0058bc;">electric_car</span></div>
+<div class="font-body-md font-medium">EV 电机嗡鸣</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">电机高频嗡鸣无燃烧</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>0缸·电机·正弦</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('ev_motor'); setActive('ev_motor');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('ev_motor');">试听</button>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- 经典声浪 -->
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">经典声浪</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-sm">
+
+<!-- 12. 经典美式肌肉 V8 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_muscle_v8">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFEEE6;"><span class="material-symbols-outlined text-sm" style="color: #d95a00;">directions_car</span></div>
+<div class="font-body-md font-medium">经典美式肌肉 V8</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">大凸轮轴怠速咕噜</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>8缸·90°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_muscle_v8'); setActive('classic_muscle_v8');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_muscle_v8');">试听</button>
+</div>
+</div>
+
+<!-- 13. 经典英式直列 6 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_british_i6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E6EEFF;"><span class="material-symbols-outlined text-sm" style="color: #5678d9;">directions_car</span></div>
+<div class="font-body-md font-medium">经典英式直列 6</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">三化油器丝滑</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>6缸·120°·自吸</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_british_i6'); setActive('classic_british_i6');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_british_i6');">试听</button>
+</div>
+</div>
+
+<!-- 14. 经典意式 V12 高转 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_italian_v12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFE6E6;"><span class="material-symbols-outlined text-sm" style="color: #d92626;">sports_motorsports</span></div>
+<div class="font-body-md font-medium">经典意式 V12 高转</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">高转尖叫</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>12缸·60°·9000转</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_italian_v12'); setActive('classic_italian_v12');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_italian_v12');">试听</button>
+</div>
+</div>
+
+<!-- 15. 经典水平对置 6 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_flat6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFF3E6;"><span class="material-symbols-outlined text-sm" style="color: #cc7a00;">two_wheeler</span></div>
+<div class="font-body-md font-medium">经典水平对置 6</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">机械质感吠叫</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>6缸·120°·水平对置</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_flat6'); setActive('classic_flat6');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_flat6');">试听</button>
+</div>
+</div>
+
+<!-- 16. 经典转子 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_rotary">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #F0F0F0;"><span class="material-symbols-outlined text-sm" style="color: #666666;">electric_car</span></div>
+<div class="font-body-md font-medium">经典转子</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">2 转子蜂鸣高转</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>2转子·2冲程·9000转</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_rotary'); setActive('classic_rotary');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_rotary');">试听</button>
+</div>
+</div>
+
+<!-- 17. 经典日系高转 I4 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_hirev_i4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #FFEBEB;"><span class="material-symbols-outlined text-sm" style="color: #cc3333;">two_wheeler</span></div>
+<div class="font-body-md font-medium">经典日系高转 I4</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">高转尖叫</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>4缸·180°·9000转</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_hirev_i4'); setActive('classic_hirev_i4');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_hirev_i4');">试听</button>
+</div>
+</div>
+
+<!-- 18. 经典美式皮卡 V8 -->
+<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="classic_truck_v8">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #E9E9E9;"><span class="material-symbols-outlined text-sm" style="color: #444444;">local_shipping</span></div>
+<div class="font-body-md font-medium">经典美式皮卡 V8</div>
+</div>
+<span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color: #E6F0FF; color: #0058bc;"><span class="material-symbols-outlined" style="font-size: 12px;">check_circle</span>已激活</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">低转大扭矩慵懒</p>
+<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>8缸·90°·5000转</span></div>
+<div class="flex gap-xs mt-base">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle('classic_truck_v8'); setActive('classic_truck_v8');">启用</button>
+<button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle('classic_truck_v8');">试听</button>
+</div>
+</div>
+
+</div>
+</section>
+
+</main>
+
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full z-50 border-t border-surface-variant dark:border-outline-variant flat no shadows flex justify-around items-center py-xs bg-surface dark:bg-surface md:hidden">
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT" data-vico-nav="dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">仪表盘</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT" data-vico-nav="library">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_music</span>
+<span class="font-label-md text-label-md">声音库</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT" data-vico-nav="settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">设置</span>
+</div>
+</nav>
+
+<script>
+    // Current product catalog: keep the UI in lockstep with the native six-vehicle gate.
+    (function installCurrentVehicleCatalog(){
+        var vehicles = [
+          {key:'hellcat_v6', name:'Dodge Challenger SRT Hellcat', spec:'6.2L 机械增压 V8 · 低频脉冲 · 厚重回火', detail:'S12 声库 · 48 kHz mono float'},
+          {key:'ferrari_458', name:'Ferrari 458 Italia', spec:'4.5L 平曲轴 V8 · 高转尖叫 · 金属回火', detail:'S12 声库 · 48 kHz mono float'},
+          {key:'lfa', name:'Lexus LFA', spec:'4.8L V10 · 5/10/15 阶次 · ASG 换挡', detail:'S12 声库 · 48 kHz mono float'},
+          {key:'gtr_r35', name:'Nissan GT-R R35', spec:'3.8L 双涡轮 V6 · 双涡轮啸叫 · BOV 回火', detail:'S12 声库 · 48 kHz mono float'},
+          {key:'c63_w204_v6', name:'Mercedes-Benz C63 W204', spec:'6.2L 自吸 V8 · 断续撕裂 · 金属回火', detail:'S12 声库 · 48 kHz mono float'},
+          {key:'supra_jza80', name:'Toyota Supra JZA80', spec:'2JZ-GTE 直六双涡轮 · 厚重进气 · 回火', detail:'S12 声库 · 48 kHz mono float'}
+        ];
+        var grid = document.getElementById('modern-vehicle-grid');
+        if (!grid) return;
+        grid.innerHTML = vehicles.map(function(v){
+          return '<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="'+v.key+'">' +
+            '<div class="flex items-center justify-between"><div class="flex items-center gap-xs"><div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color:#E6F0FF;"><span class="material-symbols-outlined text-sm" style="color:#0058bc;">sports_motorsports</span></div><div class="font-body-md font-medium">'+v.name+'</div></div><span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color:#E6F0FF;color:#0058bc;"><span class="material-symbols-outlined" style="font-size:12px;">check_circle</span>已选择</span></div>' +
+            '<p class="font-label-md text-label-md text-on-surface-variant">'+v.spec+'</p>' +
+            '<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>'+v.detail+'</span></div>' +
+            '<div class="flex gap-xs mt-base"><button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle(\''+v.key+'\'); setActive(\''+v.key+'\');">选择</button><button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle(\''+v.key+'\');">试听</button></div>' +
+          '</div>';
+        }).join('');
+        var title = document.querySelector('h1');
+        var subtitle = title && title.parentElement ? title.parentElement.querySelector('p') : null;
+        if (subtitle) subtitle.textContent = '选择车型声浪（6 款）';
+        document.querySelectorAll('h2').forEach(function(h){
+          if ((h.textContent || '').trim() === '经典声浪') {
+            var section = h.closest('section');
+            if (section) section.style.display = 'none';
+          } else if ((h.textContent || '').trim() === '现代车型') {
+            h.textContent = '当前车型';
+          }
+        });
+        window.__vicoCurrentVehicleKeys = vehicles.map(function(v){ return v.key; });
+    })();
+
+    let activeKey = '';
+    function setActive(key) {
+        activeKey = key;
+        document.querySelectorAll('.vehicle-card').forEach(function(card){
+            if (card.dataset.vehicleKey === key) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+    window.__vicoUpdate = function(state) {
+        if (state && state.selectedVehicleKey) setActive(state.selectedVehicleKey);
+        document.querySelectorAll('.vehicle-card').forEach(function(card){
+            var previewing = state && card.dataset.vehicleKey === state.previewVehicleKey;
+            card.classList.toggle('ring-2', !!previewing);
+            card.classList.toggle('ring-primary', !!previewing);
+        });
+    };
+</script>
+<script src="file:///android_asset/bridge.js"></script></body></html>

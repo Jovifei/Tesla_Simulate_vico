@@ -1,0 +1,25 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "V12 平顺",
+  "character": "soft",
+  "engine": {
+    "cylinders": 12,
+    "stroke": 4,
+    "firingOrderDegrees": [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660],
+    "idleRpm": 700,
+    "redlineRpm": 8000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.4, 0.2, 0.1, 0.05],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sine",
+    "combJitter": 0.015,
+    "exhaustResonance": 0.92,
+    "exhaustWindow": 0.45,
+    "decayRad": 0.5
+  },
+  "layers": {
+    "turbo": { "enabled": false }
+  },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

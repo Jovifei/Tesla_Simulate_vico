@@ -1,0 +1,228 @@
+{
+  "schema": "vico.s12.soundbank.v1",
+  "source": "E:/Tesla_speed/prj/tools/sound_sim/s12/acoustic_identity_v015",
+  "source_commit": "29b50961d9628f835e7172b797380ccb36a7f38d",
+  "source_scope": "synthetic; uncalibrated; not OEM reproduction",
+  "algorithm": "render_realism_v10: independent_source -> realism_layers -> frozen_ptr",
+  "vehicle_key": "gtr_r35",
+  "source_vehicle_id": "gtr_r35",
+  "sample_rate_hz": 48000,
+  "audio_contract": {
+    "sample_rate_hz": 48000,
+    "channels": 1,
+    "channel_layout": "mono",
+    "target_integrated_lufs": -16.0,
+    "peak_limit_dbfs": -1.5,
+    "downmix": "arithmetic_mean_left_right",
+    "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+  },
+  "fixed_vehicle_gain": 4.347546423246068,
+  "reference_loudness": {
+    "target_integrated_lufs": -16.0,
+    "peak_limit_dbfs": -1.5,
+    "integrated_lufs": -22.63602426921636,
+    "rms_dbfs": -22.510544761935872,
+    "peak_dbfs": -6.077706852746204,
+    "fixed_gain_db": 12.764884562210158,
+    "headroom_limited": true,
+    "all_bank_peak_dbfs": -1.5000000000000009
+  },
+  "common_input_trace": {
+    "schema": "vico.s12.common_input_trace.v1",
+    "file": "common_input_trace.json",
+    "duration_s": 30.0,
+    "sample_period_s": 0.02,
+    "fields": [
+      "time_s",
+      "rpm",
+      "load",
+      "throttle",
+      "acceleration_mps2"
+    ]
+  },
+  "layer_contract": {
+    "continuous": "final_s12_pressure_including_low_frequency_body_and_exhaust_rumble",
+    "low_frequency": [
+      "low_frequency_body",
+      "exhaust_rumble"
+    ],
+    "shift": [
+      "shift_impact",
+      "shift_recovery_boom"
+    ],
+    "afterfire": "afterfire"
+  },
+  "idle_rpm": 1000,
+  "redline_rpm": 7000,
+  "peak_limit_dbfs": -1.5,
+  "gear_ratios": [
+    3.827,
+    2.36,
+    1.685,
+    1.313
+  ],
+  "final_drive": 3.7,
+  "wheel_radius_m": 0.34,
+  "launch_rpm": 2400,
+  "shift_rpm": 6500,
+  "shift_speed_kmh": [
+    58.83871861609285,
+    95.41346446770652,
+    133.6354754562536
+  ],
+  "shift_attack_s": 0.018,
+  "shift_hold_s": 0.032,
+  "shift_recovery_s": 0.075,
+  "shift_settle_s": 0.055,
+  "shift_min_torque": 0.22,
+  "shift_reengage_gain": 1.08,
+  "minimum_shift_interval_s": 0.35,
+  "downshift_ratio": 0.68,
+  "speed_ceiling_kmh": 144.0,
+  "afterfire_minimum_rpm": 2600.0,
+  "loops": [
+    {
+      "rpm": 1000,
+      "load": 0.32,
+      "file": "rpm_1000_load_32.wav",
+      "samples": 17280,
+      "rms": 0.14430519938468933
+    },
+    {
+      "rpm": 1000,
+      "load": 0.92,
+      "file": "rpm_1000_load_92.wav",
+      "samples": 17280,
+      "rms": 0.21832770109176636
+    },
+    {
+      "rpm": 1450,
+      "load": 0.32,
+      "file": "rpm_1450_load_32.wav",
+      "samples": 17280,
+      "rms": 0.07797715067863464
+    },
+    {
+      "rpm": 1450,
+      "load": 0.92,
+      "file": "rpm_1450_load_92.wav",
+      "samples": 17280,
+      "rms": 0.12005399167537689
+    },
+    {
+      "rpm": 2200,
+      "load": 0.32,
+      "file": "rpm_2200_load_32.wav",
+      "samples": 17280,
+      "rms": 0.042567815631628036
+    },
+    {
+      "rpm": 2200,
+      "load": 0.92,
+      "file": "rpm_2200_load_92.wav",
+      "samples": 17280,
+      "rms": 0.06979742646217346
+    },
+    {
+      "rpm": 3200,
+      "load": 0.32,
+      "file": "rpm_3200_load_32.wav",
+      "samples": 17280,
+      "rms": 0.02365799807012081
+    },
+    {
+      "rpm": 3200,
+      "load": 0.92,
+      "file": "rpm_3200_load_92.wav",
+      "samples": 17280,
+      "rms": 0.048768382519483566
+    },
+    {
+      "rpm": 4300,
+      "load": 0.32,
+      "file": "rpm_4300_load_32.wav",
+      "samples": 17280,
+      "rms": 0.05313321202993393
+    },
+    {
+      "rpm": 4300,
+      "load": 0.92,
+      "file": "rpm_4300_load_92.wav",
+      "samples": 17280,
+      "rms": 0.0987117737531662
+    },
+    {
+      "rpm": 5200,
+      "load": 0.32,
+      "file": "rpm_5200_load_32.wav",
+      "samples": 17280,
+      "rms": 0.018790731206536293
+    },
+    {
+      "rpm": 5200,
+      "load": 0.92,
+      "file": "rpm_5200_load_92.wav",
+      "samples": 17280,
+      "rms": 0.0775584876537323
+    },
+    {
+      "rpm": 6200,
+      "load": 0.32,
+      "file": "rpm_6200_load_32.wav",
+      "samples": 17280,
+      "rms": 0.03158382326364517
+    },
+    {
+      "rpm": 6200,
+      "load": 0.92,
+      "file": "rpm_6200_load_92.wav",
+      "samples": 17280,
+      "rms": 0.09412642568349838
+    },
+    {
+      "rpm": 7000,
+      "load": 0.32,
+      "file": "rpm_7000_load_32.wav",
+      "samples": 17280,
+      "rms": 0.011571983806788921
+    },
+    {
+      "rpm": 7000,
+      "load": 0.92,
+      "file": "rpm_7000_load_92.wav",
+      "samples": 17280,
+      "rms": 0.08378222584724426
+    }
+  ],
+  "afterfire": {
+    "file": "afterfire_tipout_s12.wav",
+    "samples": 45750,
+    "rms": 0.05025828257203102
+  },
+  "shift_events": [
+    {
+      "file": "shift_event_01_s12.wav",
+      "samples": 12480,
+      "time_s": 6.102104166666667,
+      "rpm_before": 2096.655787037037,
+      "rpm_after": 1308.0,
+      "rms": 0.028705023229122162
+    },
+    {
+      "file": "shift_event_02_s12.wav",
+      "samples": 12480,
+      "time_s": 8.621166666666666,
+      "rpm_before": 3412.6557870370366,
+      "rpm_after": 2623.9999999999995,
+      "rms": 0.028705023229122162
+    },
+    {
+      "file": "shift_event_03_s12.wav",
+      "samples": 12480,
+      "time_s": 11.140062499999999,
+      "rpm_before": 4728.655787037036,
+      "rpm_after": 3939.999999999998,
+      "rms": 0.028705023229122162
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "Crossplane V8",
+  "character": "sport",
+  "engine": {
+    "cylinders": 8,
+    "stroke": 4,
+    "firingOrderDegrees": [0, 90, 180, 270, 360, 450, 540, 630],
+    "idleRpm": 650,
+    "redlineRpm": 6800
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.55, 0.32, 0.18, 0.09],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.03,
+    "exhaustResonance": 0.97,
+    "exhaustWindow": 0.5,
+    "decayRad": 0.6
+  },
+  "layers": {
+    "turbo": { "enabled": true, "freqMult": 10.0, "gain": 0.12, "thresholdRpm": 3000.0 }
+  },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

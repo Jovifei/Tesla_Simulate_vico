@@ -1,0 +1,122 @@
+{
+  "schema": "vico.s13.review_sidecar.v1",
+  "vehicle_key": "lfa",
+  "source_vehicle_id": "lfa",
+  "source_commit": "29b50961d9628f835e7172b797380ccb36a7f38d",
+  "exporter_sha256": "731f20949a0a033705493064e278c2ea7ac84204a0673f955785e875cbd146b2",
+  "source_scope": "synthetic; uncalibrated; not OEM reproduction",
+  "sample_rate_hz": 48000,
+  "channels": 1,
+  "duration_s": 30.0,
+  "total_frames": 1440000,
+  "control_interpolation": "linear_per_audio_frame",
+  "event_extraction": {
+    "shift": {
+      "detector": "detect_shift_events",
+      "pre_roll_frames": 1920,
+      "post_roll_frames": 10560,
+      "edge_fade_frames": 240
+    },
+    "afterfire": {
+      "source_stem": "post_ptr_afterfire",
+      "window_start_frame": 864000,
+      "window_end_frame": 1104000,
+      "threshold_relative_peak": 0.015,
+      "threshold_absolute_floor": 1e-06,
+      "pre_roll_frames": 1200,
+      "post_roll_frames": 14400
+    }
+  },
+  "gain_is_embedded_in_assets": true,
+  "fixed_vehicle_gain": 2.7967381237387476,
+  "trace": {
+    "asset_path": "s12_v10/lfa/common_input_trace.json",
+    "sha256": "6c3cd2b2cb84ccaa248883e4037b4afccfb83046e0d23b0a7bef8837f39bf91b",
+    "point_count": 1501,
+    "sample_period_s": 0.02,
+    "fields": [
+      "time_s",
+      "rpm",
+      "load",
+      "throttle",
+      "acceleration_mps2"
+    ]
+  },
+  "bank_manifest": {
+    "asset_path": "s12_v10/lfa/manifest.json",
+    "sha256": "48fdb7be307d1588e75d9a3df8658f8fc6f9b9fe41856ae7950f24b7b6bbb21a"
+  },
+  "bank_assets_sha256": {
+    "rpm_0900_load_32.wav": "1a852a2e897465f47ceed78128b991bd84218e5fc62d1e50a60adeead912143e",
+    "rpm_0900_load_92.wav": "d2b75109bcca4717d34f2e395c406fc063f82d7bc1be5559549977b90261326a",
+    "rpm_1600_load_32.wav": "41cfe63f5260e83d1f56178500c74edab96f7f5c8d9320bd02965106eb569eed",
+    "rpm_1600_load_92.wav": "03e9d7f0d0d20f25a48b78ea8bc1e5257ca404583036b4be349a45413db217bb",
+    "rpm_3000_load_32.wav": "fd061ad1efd683125df977a6ef476d465c589cc64adcf35d84bb2c3b6cd55c30",
+    "rpm_3000_load_92.wav": "7f4dc0c38cb6db49ad8dac3ec63005a274d36fd5224dc7e9cbb6869b67481460",
+    "rpm_4800_load_32.wav": "3f6bf974d275c2d4d13a0d52a55a8895e0d689046bf9ab953c135c7d0d2c1bc2",
+    "rpm_4800_load_92.wav": "7de7529341b2b10277e6fdd885bc6593c4f820d001e4285bab89862a07407063",
+    "rpm_6200_load_32.wav": "9ac48bd0fffad6fbff7fb4f3095eb7730c091deceb0f6ee1fd27789f2e37ec49",
+    "rpm_6200_load_92.wav": "356d8749a4fc0b69e82a22e5d154579116d2f9cfaae7005bda31095df2ef36b7",
+    "rpm_7600_load_32.wav": "87e8d6a2047e6818f885a1f0fa2ea249e7e6cff2e76538f32d356355f5427605",
+    "rpm_7600_load_92.wav": "68d43314c064aeb3ea16795ccc0f60af8e82d07e7be77041cc10ea88b8e858ca",
+    "rpm_8400_load_32.wav": "ce1001168d9e1a418f99c8817e18907f687ebfb8167922235a927855ecd3ec0d",
+    "rpm_8400_load_92.wav": "010c6af10a2b1744ca035fb79b88b2be69b0f20baf9fb149f1dd3059cfa82e2d",
+    "rpm_9000_load_32.wav": "ae8e1c8d5a26c1318c064eec00d629397a5054f881955a0cd4c7fadd5b66631d",
+    "rpm_9000_load_92.wav": "eda9391ae4ecf08606c06d994ee5f8c92f448df75b0c8bf2fb84c4ad5abe1672",
+    "afterfire_tipout_s12.wav": "3b5e61bb7857a26f3117fe0a2261cb642abac521c05c528582cd218d9d615624",
+    "shift_event_01_s12.wav": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71",
+    "shift_event_02_s12.wav": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71",
+    "shift_event_03_s12.wav": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71"
+  },
+  "audio_pcm_verification": "EXACT_FLOAT32_MATCH",
+  "events": [
+    {
+      "id": "afterfire_tipout",
+      "kind": "afterfire",
+      "source_domain": "POST_PTR_STEM_ONSET",
+      "source_time_s": 18.001791666666666,
+      "source_frame": 864086,
+      "crop_start_frame": 864000,
+      "trigger_offset_frames": 86,
+      "samples": 44952,
+      "asset_path": "s12_v10/lfa/afterfire_tipout_s12.wav",
+      "asset_sha256": "3b5e61bb7857a26f3117fe0a2261cb642abac521c05c528582cd218d9d615624"
+    },
+    {
+      "id": "shift_event_01",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 6.1035208333333335,
+      "source_frame": 292969,
+      "crop_start_frame": 291049,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/lfa/shift_event_01_s12.wav",
+      "asset_sha256": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71"
+    },
+    {
+      "id": "shift_event_02",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 8.620083333333334,
+      "source_frame": 413764,
+      "crop_start_frame": 411844,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/lfa/shift_event_02_s12.wav",
+      "asset_sha256": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71"
+    },
+    {
+      "id": "shift_event_03",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 11.158645833333333,
+      "source_frame": 535615,
+      "crop_start_frame": 533695,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/lfa/shift_event_03_s12.wav",
+      "asset_sha256": "4690e14f937380eb833634f6a4b705a26bcec2ecf11e0013c3567247ab33ba71"
+    }
+  ]
+}

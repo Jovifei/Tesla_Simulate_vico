@@ -1,0 +1,394 @@
+{
+  "project_name": "Tesla_speed / Vico Android 真实声浪",
+  "updated_at": "2026-10-02",
+  "current_phase": "P2",
+  "current_work_package": "S18/C63_HY1（c2c_930a iteration11）",
+  "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
+  "phases": [
+    {
+      "id": "P1",
+      "title": "工程基础与证据体系",
+      "weight": 10,
+      "dependencies": [],
+      "goal": "建立可追踪、可重复、可交接的工程基础",
+      "steps": [
+        "确认现有 App 与研究工作区边界，保留用户改动",
+        "建立唯一里程碑账本和生成器",
+        "交付绑定源码、测试、产物与验收证据"
+      ],
+      "deliverables": [
+        "路线图、账本、自动生成进度总览",
+        "源码及产物身份记录"
+      ],
+      "acceptance": [
+        "无证据不能标记 DONE",
+        "生成器检查通过，交付同步更新"
+      ],
+      "milestones": [
+        {
+          "id": "P1-M1",
+          "title": "已有基线工程与证据交接",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P1-M2",
+          "title": "统一账本与可重复进度生成",
+          "status": "DONE",
+          "evidence": ["review_packages/project-roadmap-20261002/verification.md"]
+        }
+      ],
+      "next_action": "验证本次文档体系并持续维护"
+    },
+    {
+      "id": "P2",
+      "title": "连续声浪核心",
+      "weight": 25,
+      "dependencies": [
+        "P1"
+      ],
+      "goal": "解决刺耳、缺少厚重脉动和回火失真；保留连续状态与低频层",
+      "steps": [
+        "保留 AH 基线，完成 C63 新源表示和有限回火模型",
+        "冻结候选与拟合预算，比较持续声、事件及低频保护",
+        "跑实际 Kotlin 四分支、同状态回火开关、630 数字回归与状态矩阵",
+        "失败候选保留证据并由远端制定下一工作包，不通过就不安装"
+      ],
+      "deliverables": [
+        "冻结配置与源码",
+        "声学、事件、数字与状态资格报告"
+      ],
+      "acceptance": [
+        "数字安全、确定性、连续状态均通过",
+        "持续声与回火达到预登记声学门槛，不损害低频层"
+      ],
+      "milestones": [
+        {
+          "id": "P2-M1",
+          "title": "AH 连续算法工程基线",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P2-M2",
+          "title": "新表示 C63 持续声及回火实现",
+          "status": "ACTIVE",
+          "evidence": []
+        },
+        {
+          "id": "P2-M3",
+          "title": "冻结候选完整离线声学与状态资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "完成 S18/HY1 实际 Kotlin 资格；校准已出现失败门，不允许直接交付"
+    },
+    {
+      "id": "P3",
+      "title": "Android实时运行与交互产品化",
+      "weight": 15,
+      "dependencies": [
+        "P2"
+      ],
+      "goal": "将合格算法真正接入现有 Vico App，统一电脑与手机数字输入输出",
+      "steps": [
+        "仅接入离线合格候选，初始默认关闭新模式",
+        "同 RPM/load 对比采样率、声道、响度和实际 PCM",
+        "优化启用、停止、车型、校准、输出路线与故障反馈",
+        "验证冷启动、长时运行、输入丢失、后台、停止恢复与路线切换"
+      ],
+      "deliverables": [
+        "签名及源码绑定 APK",
+        "同输入 PCM 对比和设备回执",
+        "交互与生命周期报告"
+      ],
+      "acceptance": [
+        "实际安装与实时运行通过，无丢帧/溢出",
+        "完整生命周期及故障回退通过，不能继承旧 APK 证据"
+      ],
+      "milestones": [
+        {
+          "id": "P3-M1",
+          "title": "已有 AH 特定 APK 冷启动及 DEMO 长时证据",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P3-M2",
+          "title": "新算法接入及电脑手机同输入一致性",
+          "status": "NOT_RUN",
+          "evidence": []
+        },
+        {
+          "id": "P3-M3",
+          "title": "交互、路线与生命周期完整验证",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "等待 P2 合格候选；设备连接后绑定新 APK 重测"
+    },
+    {
+      "id": "P4",
+      "title": "六车型连续声音扩展",
+      "weight": 15,
+      "dependencies": [
+        "P2",
+        "P3"
+      ],
+      "goal": "六车型有独立声音特征和资格，不复制 C63 参数冒充车型",
+      "steps": [
+        "完成每车参考来源和许可审计",
+        "独立配置气缸/点火/进排气/机械及事件特征",
+        "逐车测试数字、持续声与回火、手机播放和切换",
+        "保留每车资格矩阵，原声库不代表新算法完成"
+      ],
+      "deliverables": [
+        "六车型独立配置与来源清单",
+        "逐车测试及手机证据"
+      ],
+      "acceptance": [
+        "六车数字、声学、手机资格齐全",
+        "参考来源许可清晰，车型切换连续且安全"
+      ],
+      "milestones": [
+        {
+          "id": "P4-M1",
+          "title": "六车独立连续模型及事件配置",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P4-M2",
+          "title": "六车逐车声学与手机资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "先完成 C63 原型闭环，再扩展其他五车"
+    },
+    {
+      "id": "P5",
+      "title": "车辆输入与驾驶状态",
+      "weight": 10,
+      "dependencies": [
+        "P3"
+      ],
+      "goal": "手机速度与加速度可靠驱动虚拟 RPM/load；不能把 DEMO 当实车",
+      "steps": [
+        "盘点现有传感器和速度适配器，不重复建设",
+        "定义时间戳、有效性与速度/加速度到状态的映射",
+        "实现停车校准、平滑、换挡、输入丢失及安全降级",
+        "以同一轨迹验证回放与实时输入，保留原始证据"
+      ],
+      "deliverables": [
+        "输入合同与校准说明",
+        "回放/实时对比和失效报告"
+      ],
+      "acceptance": [
+        "轨迹与状态一致，校准可复现",
+        "定位/传感器丢失安全，输入生命周期通过"
+      ],
+      "milestones": [
+        {
+          "id": "P5-M1",
+          "title": "现有输入链路盘点及合同冻结",
+          "status": "PARTIAL",
+          "evidence": []
+        },
+        {
+          "id": "P5-M2",
+          "title": "校准、轨迹一致性与输入失效资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "核对现有实现，完成实输入而非仅模拟资格"
+    },
+    {
+      "id": "P6",
+      "title": "真实设备与驾驶验证",
+      "weight": 10,
+      "dependencies": [
+        "P3",
+        "P4",
+        "P5"
+      ],
+      "goal": "验证手机及车内输出链路与实际驾驶行为",
+      "steps": [
+        "先完成静止状态输出路线和物理录音对照",
+        "绑定车型、APK、手机、音量、蓝牙/扬声器及同输入材料",
+        "由安全驾驶与乘员记录方式执行路线测试",
+        "复核机械轰鸣、回火、延迟和断续，不用音量掩盖缺陷"
+      ],
+      "deliverables": [
+        "物理输出测量",
+        "实车路线与设备记录"
+      ],
+      "acceptance": [
+        "可重复设备与驾驶证据",
+        "路线、安全和实际输出问题闭环；不宣称 OEM 认证"
+      ],
+      "milestones": [
+        {
+          "id": "P6-M1",
+          "title": "手机/车内输出链路同材料测量",
+          "status": "NOT_RUN",
+          "evidence": []
+        },
+        {
+          "id": "P6-M2",
+          "title": "安全实车路线验证及问题闭环",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "离线和设备门通过后组织测试；当前无实车完成证据"
+    },
+    {
+      "id": "P7",
+      "title": "具名试听与产品体验验收",
+      "weight": 10,
+      "dependencies": [
+        "P4",
+        "P6"
+      ],
+      "goal": "Jovi 接受实际交付声音与操作体验，而非用代理分数代签",
+      "steps": [
+        "以版本绑定的同输入材料比较旧版、新版和许可参考",
+        "逐车记录持续声厚度、刺耳感、机械脉动及回火真实感",
+        "记录设备、输出路线、材料编号和拒绝原因",
+        "拒绝则回到所属阶段修复，重新出具验收"
+      ],
+      "deliverables": [
+        "六车具名试听记录",
+        "交互体验验收"
+      ],
+      "acceptance": [
+        "Jovi 明确接受交付版本的六车声音和体验",
+        "拒绝/待试听不能计 DONE；历史80%/40%不作本版分数"
+      ],
+      "milestones": [
+        {
+          "id": "P7-M1",
+          "title": "六车版本绑定试听接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        },
+        {
+          "id": "P7-M2",
+          "title": "实际启用/校准/车型切换体验接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        }
+      ],
+      "next_action": "合格新版安装后请 Jovi 验收，而不是要求验收未改善声音"
+    },
+    {
+      "id": "P8",
+      "title": "可发布交付",
+      "weight": 5,
+      "dependencies": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7"
+      ],
+      "goal": "完成可安装、可追踪、可回退且许可清晰的 Android 发布",
+      "steps": [
+        "核查全部主线退出门和未关闭缺陷",
+        "审计素材/模型许可与隐私权限",
+        "形成签名、版本、源码、配置、APK 身份及升级回退材料",
+        "同步 Git 提交/远端交接（有授权且仓库权限可用时）和使用文档"
+      ],
+      "deliverables": [
+        "发布 APK 与身份清单",
+        "使用/校准/回退说明和最终交接"
+      ],
+      "acceptance": [
+        "工程、声学、设备、实车、人耳及许可门全满足",
+        "提交与发布状态有实际回执，不把本地构建称已发布"
+      ],
+      "milestones": [
+        {
+          "id": "P8-M1",
+          "title": "许可/隐私/发布材料审计",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P8-M2",
+          "title": "最终 APK 与源码提交交付验收",
+          "status": "NOT_STARTED",
+          "evidence": []
+        }
+      ],
+      "next_action": "主线资格与人耳验收完成后执行发布"
+    }
+  ],
+  "blockers": [
+    "当前手机默认仍为原六车型声库；HY1 未接入/安装，声音目标 NOT_DONE。",
+    "HY1 单次拟合已冻结：事件校准改善8.1%未达20%；中频最大+1.468dB超过1dB保护门。不能直接安装或再次拟合救分。",
+    "完整实际 Kotlin 离线资格未结束；新 APK、真机生命周期、物理输出、实车及具名试听均待执行。",
+    "最近设备检查未连接 GM1910；App 现有脏工作区保留，无配置 Git remote。"
+  ],
+  "optional_tracks": [
+    "AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。",
+    "ESP32/硬件/Simulink：背景研究，不计 Android 主线分母。",
+    "iOS/小程序：后续平台，不计本次完成范围。"
+  ],
+  "vehicles": [
+    {
+      "name": "Hellcat",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "Ferrari 458",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "LFA",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "GT-R R35",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "C63 W204",
+      "continuous": "ACTIVE",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "Supra JZA80",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    }
+  ]
+}

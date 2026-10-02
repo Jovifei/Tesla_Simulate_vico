@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>设置 - VICO SIMULATOR</title>
+<script src="file:///android_asset/vendor/tailwind.js"></script>
+<link rel="stylesheet" href="file:///android_asset/fonts/inter.css">
+<link rel="stylesheet" href="file:///android_asset/fonts/material-symbols.css">
+<link rel="stylesheet" href="file:///android_asset/fonts/material-symbols.css">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#626566",
+                    "surface-variant": "#e2e2e2",
+                    "on-error": "#ffffff",
+                    "primary": "#0058bc",
+                    "tertiary-fixed": "#e0e3e6",
+                    "tertiary-container": "#717578",
+                    "on-tertiary-fixed": "#181c1e",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-surface": "#1b1b1b",
+                    "inverse-primary": "#adc6ff",
+                    "surface-tint": "#005bc1",
+                    "on-primary-fixed": "#001a41",
+                    "on-primary-container": "#fefcff",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#c5c7c8",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#c4c7ca",
+                    "on-secondary-fixed-variant": "#454748",
+                    "on-tertiary-fixed-variant": "#43474a",
+                    "secondary-container": "#e1e3e4",
+                    "primary-container": "#0070eb",
+                    "on-background": "#1b1b1b",
+                    "primary-fixed": "#d8e2ff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface": "#f9f9f9",
+                    "on-surface-variant": "#414755",
+                    "surface-container-low": "#f3f3f3",
+                    "secondary-fixed": "#e1e3e4",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-dim": "#dadada",
+                    "on-secondary-fixed": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#004493",
+                    "tertiary": "#585c5f",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-container": "#fbfdff",
+                    "background": "#f9f9f9",
+                    "outline": "#717786",
+                    "surface-container-high": "#e8e8e8",
+                    "secondary": "#5c5f60",
+                    "outline-variant": "#c1c6d7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "margin-desktop": "32px",
+                    "xl": "32px",
+                    "sm": "12px",
+                    "margin-mobile": "16px",
+                    "xs": "8px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "data-mono": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9;
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #0058bc;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #0058bc;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<script>document.documentElement.classList.add('vico-page-loading');</script>
+<style>html.vico-page-loading body { visibility: hidden; }</style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface border-b border-surface-variant dark:border-outline-variant docked full-width top-0 z-40 relative">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full">
+<button aria-label="Back" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="graphic_eq">graphic_eq</span>
+</button>
+<h1 class="font-headline-md text-headline-md tracking-tighter text-primary dark:text-primary-fixed">VICO EV SIMULATOR</h1>
+<button aria-label="Sensors" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-lg pb-24 md:pb-lg">
+<!-- Settings Container -->
+<div class="space-y-lg">
+<!-- Category: Audio & Hardware -->
+<section>
+<h2 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">音频与硬件</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden shadow-none">
+<!-- Item: Output Selection -->
+<div class="flex items-center justify-between p-md border-b border-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:bg-surface-variant" id="row-output">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="speaker">speaker</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">输出选择</p>
+<p class="font-body-md text-body-md text-on-surface-variant" id="out-val">内置扬声器</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Item: Bluetooth Latency -->
+<div class="flex items-center justify-between p-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="bluetooth">bluetooth</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">蓝牙延迟补偿</p>
+<p class="font-body-md text-body-md text-on-surface-variant">尽力补偿，蓝牙固有时延无法保证同步</p>
+</div>
+</div>
+<!-- Toggle -->
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant outline-none focus:outline-none transition-all duration-300 z-10 top-0 left-0" id="toggle-bt" name="toggle" style="border-color: rgb(0, 88, 188); left: 16px;" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-300" for="toggle-bt" style="background-color: rgb(0, 88, 188);"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: Units & Display -->
+<section>
+<h2 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">单位与显示</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden shadow-none">
+<!-- Item: Speed Units -->
+<div class="flex items-center justify-between p-md border-b border-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:bg-surface-variant" id="row-unit">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="speed">speed</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">速度单位</p>
+<p class="font-body-md text-body-md text-on-surface-variant" id="unit-val">km/h</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Item: Theme -->
+<div class="flex items-center justify-between p-md hover:bg-surface-container-low transition-colors cursor-pointer active:bg-surface-variant" id="row-theme">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="palette">palette</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">主题</p>
+<p class="font-body-md text-body-md text-on-surface-variant" id="theme-val">浅色</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Category: Advanced -->
+<section>
+<h2 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">高级</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden shadow-none">
+<!-- Item: Data Logging -->
+<div class="flex items-center justify-between p-md border-b border-surface-variant hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="analytics">analytics</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">遥测日志记录</p>
+<p class="font-body-md text-body-md text-on-surface-variant">将驾驶数据保存至本地</p>
+</div>
+</div>
+<!-- Toggle -->
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant outline-none focus:outline-none transition-all duration-300 z-10 top-0 left-0" id="toggle-log" name="toggle2" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-300" for="toggle-log"></label>
+</div>
+</div>
+<!-- Item: Reset Calibration -->
+<div class="flex items-center justify-between p-md hover:bg-surface-container-low transition-colors cursor-pointer active:bg-surface-variant" id="reset-calibration-btn">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="restart_alt">restart_alt</span>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface">重置校准</p>
+<p class="font-body-md text-body-md text-on-surface-variant">清除当前校准偏置</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Category: Sound Tuning (从仪表盘移入) -->
+<section>
+<h2 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">播放音量</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden shadow-none p-md space-y-md">
+<div>
+<label class="font-label-md text-label-md flex justify-between"><span>主音量</span><span class="font-data-mono" id="vol-val">100%</span></label>
+<input class="w-full accent-primary" id="master-vol" max="100" min="0" type="range" value="60"/>
+</div>
+<div>
+<label class="font-label-md text-label-md flex justify-between"><span>车型系数</span><span class="font-data-mono">已锁定</span></label>
+<p class="font-label-md text-label-md text-secondary">谐波、燃烧、换挡、回火和增压参数仅由所选车型提供。</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="font-body-md">低延迟模式</div>
+<div class="relative inline-block w-10 align-middle select-none">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant outline-none focus:outline-none transition-all duration-300 z-10 top-0 left-0" id="toggle-lat" name="toggle3" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-300" for="toggle-lat"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- S13 same-trace review: diagnostic-only, keeps bank assets unchanged. -->
+<section>
+<h2 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">当前车型合成回放 · S13</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg p-md space-y-sm">
+<p class="font-body-md text-on-surface-variant">按当前车型播放同一条 30 秒 / 48 kHz trace，固定使用声库内车辆增益；不读取传感器、不调大手机系统音量。数字 PCM 仅用于跨端对照，不是真车或扬声器回录。</p>
+<div class="flex gap-sm">
+<button class="flex-1 p-md rounded-lg bg-primary text-on-primary" id="s13-review-start" type="button">开始 30 秒基准回放</button>
+<button class="flex-1 p-md rounded-lg border border-surface-variant text-on-surface" id="s13-review-stop" type="button">停止并保存</button>
+</div>
+</div>
+</section>
+<section aria-labelledby="s14-title">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg p-md space-y-sm">
+<h2>C63_AH_V1 · 连续声源研究候选</h2>
+<p id="s15-mode" role="status">当前模式：原声库</p>
+<p>先停止播放，并在车型库选择 C63。后台准备完成后启用。固定安全余量使输出降低约 7.79 dB，不是音色改善或真车相似度证明；不会自动调高系统音量。不适请立即停止。默认关闭，重启 App 或切换车型恢复原声库。</p>
+<button type="button" onclick="window.AndroidBridge.setS15Prototype(true)">选择连续声源候选</button>
+<button type="button" onclick="window.AndroidBridge.setS15Prototype(false)">恢复原声库</button>
+<label for="s15-assessment">本次候选试听评价（不是原材料对照）</label>
+<select id="s15-assessment"><option value="rejected">仍刺耳／回火不真实，不接受</option><option value="unsure">暂不能判断／电平不足</option><option value="improved">有所改善，仍待进一步验收</option></select>
+<label for="s15-notes">意见或提前停止的原因</label>
+<textarea id="s15-notes" maxlength="2000" placeholder="例如：轰鸣厚度、机械脉动、回火自然度、输出设备"></textarea>
+<button type="button" onclick="window.AndroidBridge.submitS15Feedback(document.getElementById('s15-assessment').value,document.getElementById('s15-notes').value)">保存候选意见（中止也可）</button>
+</div>
+<h2 id="s14-title" class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-sm ml-sm">C63 原始声音对照 · S14</h2>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-lg p-md space-y-sm">
+<p>固定 C63 两份原始材料，每份 30 秒。保持同一输出和音量，提交反馈后揭示来源。</p>
+<p>此对照保留文件原始增益，声浪主音量滑块不参与。刺耳或不适请立即停止或降低系统音量。中止后仍可填写并保存意见，但不算完整同路对照。</p>
+<p id="s14-output" role="status">实际输出：等待回放确认</p>
+<p id="s14-status" aria-live="polite">准备开始第一组</p>
+<progress id="s14-progress" max="1440000" value="0" style="width:100%"></progress>
+<div class="flex gap-sm">
+<button class="flex-1 p-md rounded-lg bg-primary text-on-primary" id="s14-one" type="button">播放材料 1</button>
+<button class="flex-1 p-md rounded-lg bg-primary text-on-primary" id="s14-two" type="button" disabled>播放材料 2</button>
+<button class="p-md rounded-lg border border-surface-variant" id="s14-stop" type="button" disabled>立即停止</button>
+</div>
+<label for="s14-preference">Jovi 的听感</label>
+<select id="s14-preference"><option value="">请选择结果</option><option value="first">材料 1 更像</option><option value="second">材料 2 更像</option><option value="no_difference">无明显差异</option><option value="neither">两者都不接受</option><option value="unsure">无法判断</option></select>
+<label for="s14-notes">具体片段与观察</label>
+<textarea id="s14-notes" rows="3" maxlength="2000" placeholder="时间段、低频、持续声、换挡、回火等观察" style="width:100%"></textarea>
+<button id="s14-submit" type="button" class="p-md rounded-lg bg-primary text-on-primary" disabled>确认并保存反馈</button>
+<button id="s14-next" type="button" class="p-md rounded-lg border border-surface-variant" disabled>第二组 · 交换顺序</button>
+<button id="s14-retry" type="button" class="p-md rounded-lg border border-surface-variant">重新建立本组对照</button>
+<p id="s14-reveal"></p>
+<details><summary>明示诊断（来源已知，不计入受控反馈）</summary>
+<button type="button" onclick="window.AndroidBridge.startS14Reference('R')">桌面原始 R</button>
+<button type="button" onclick="window.AndroidBridge.startS14Reference('M')">手机原始 M</button></details>
+</div>
+</section>
+</div>
+</main>
+<div class="hidden fixed inset-0 z-[60] bg-black/20 items-end" id="output-sheet">
+<div class="w-full bg-white rounded-t-xl p-md shadow-lg">
+<div class="flex items-center justify-between mb-md">
+<h2 class="font-headline-md text-headline-md">选择输出设备</h2>
+<button class="text-2xl" id="close-output-sheet" aria-label="关闭">×</button>
+</div>
+<div class="flex flex-col gap-xs" id="output-options"></div>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-xs bg-surface dark:bg-surface border-t border-surface-variant dark:border-outline-variant z-50">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-2 rounded-lg w-full max-w-[80px]">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">仪表盘</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-2 rounded-lg w-full max-w-[80px]">
+<span class="material-symbols-outlined mb-1" data-icon="library_music">library_music</span>
+<span class="font-label-md text-label-md">声浪库</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-2 rounded-lg w-full max-w-[80px]">
+<span class="material-symbols-outlined mb-1" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">设置</span>
+</button>
+</nav>
+<script>
+        // Simple toggle switch logic for visual feedback if CSS fails
+        const checkboxes = document.querySelectorAll('.toggle-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                if(this.checked) {
+                    this.style.borderColor = '#0058bc';
+                    this.nextElementSibling.style.backgroundColor = '#0058bc';
+                    this.style.left = '16px';
+                } else {
+                    this.style.borderColor = '#e2e2e2';
+                    this.nextElementSibling.style.backgroundColor = '#e2e2e2';
+                    this.style.left = '0';
+                }
+            });
+            // Initial state check
+            if(cb.checked) {
+                cb.style.borderColor = '#0058bc';
+                cb.nextElementSibling.style.backgroundColor = '#0058bc';
+                cb.style.left = '16px';
+            }
+        });
+
+        // 主音量 -> setMasterVol
+        var mv = document.getElementById('master-vol');
+        var mvVal = document.getElementById('vol-val');
+        if (mv) mv.addEventListener('input', function(){
+            if (mvVal) mvVal.textContent = mv.value + '%';
+            try { window.AndroidBridge.setMasterVol(mv.value / 100); } catch(e){}
+        });
+        var s13Start = document.getElementById('s13-review-start');
+        var s14PairReady = false;
+        var s14Preference = document.getElementById('s14-preference');
+        var s14Submit = document.getElementById('s14-submit');
+        document.getElementById('s14-one').onclick = function(){ window.AndroidBridge.startS14Controlled(1); };
+        document.getElementById('s14-two').onclick = function(){ window.AndroidBridge.startS14Controlled(2); };
+        document.getElementById('s14-stop').onclick = function(){ window.AndroidBridge.stopAudio(); };
+        document.getElementById('s14-next').onclick = function(){ window.AndroidBridge.nextS14Pair(); };
+        document.getElementById('s14-retry').onclick = function(){ window.AndroidBridge.retryS14Pair(); };
+        s14Preference.onchange = function(){ s14Submit.disabled = !s14PairReady || !s14Preference.value; };
+        s14Submit.onclick = function(){
+            if (s14PairReady && s14Preference.value) window.AndroidBridge.submitS14Feedback(s14Preference.value, document.getElementById('s14-notes').value);
+        };
+        var s13Stop = document.getElementById('s13-review-stop');
+        if (s13Start) s13Start.addEventListener('click', function(){
+            try { window.AndroidBridge.startS13Review(); } catch(e){}
+        });
+        if (s13Stop) s13Stop.addEventListener('click', function(){
+            try { window.AndroidBridge.stopS13Review(); } catch(e){}
+        });
+        // 重置校准
+        var rcb = document.getElementById('reset-calibration-btn');
+        if (rcb) rcb.addEventListener('click', function(){
+            try { window.AndroidBridge.resetCalibration(); } catch(e){}
+        });
+
+        // 输出选择: 内置扬声器 / 蓝牙
+        var outVal = document.getElementById('out-val');
+        var outRow = document.getElementById('row-output');
+        var outMode = 'speaker';
+        try { outMode = localStorage.getItem('vico-output') || 'speaker'; } catch(e){}
+        if (outVal) outVal.textContent = outMode === 'bluetooth' ? '蓝牙' : '内置扬声器';
+        if (false && outRow) outRow.addEventListener('click', function(){
+            outMode = (outMode === 'speaker') ? 'bluetooth' : 'speaker';
+            try { localStorage.setItem('vico-output', outMode); } catch(e){}
+            if (outVal) outVal.textContent = outMode === 'bluetooth' ? '蓝牙' : '内置扬声器';
+            try { window.AndroidBridge.setOutputMode(outMode); } catch(e){}
+        });
+
+        // 速度单位: km/h / mph (dashboard 读取同一 localStorage)
+        var outputSheet = document.getElementById('output-sheet');
+        var outputOptions = document.getElementById('output-options');
+        var closeOutputSheet = document.getElementById('close-output-sheet');
+        function renderOutputOptions(devices){
+            if (!outputOptions) return;
+            outputOptions.innerHTML = '';
+            (devices || []).forEach(function(device){
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'flex items-center justify-between w-full p-md border border-surface-variant rounded-lg text-left';
+                button.disabled = !device.selectable;
+                button.innerHTML = '<span><strong>'+device.label+'</strong><small class="block text-secondary">'+(device.connected ? (device.routed ? '当前实际输出' : '可选择') : '未连接')+'</small></span><span>'+(device.routed ? '●' : '')+'</span>';
+                if (device.selectable) button.addEventListener('click', function(){
+                    window.AndroidBridge.selectOutputDevice(device.id);
+                    if (outputSheet) { outputSheet.classList.add('hidden'); outputSheet.classList.remove('flex'); }
+                });
+                outputOptions.appendChild(button);
+            });
+        }
+        if (outRow) outRow.addEventListener('click', function(){
+            try { renderOutputOptions(JSON.parse(window.AndroidBridge.getAudioOutputsJson())); } catch(e) { renderOutputOptions([]); }
+            if (outputSheet) { outputSheet.classList.remove('hidden'); outputSheet.classList.add('flex'); }
+        });
+        if (closeOutputSheet) closeOutputSheet.addEventListener('click', function(){
+            if (outputSheet) { outputSheet.classList.add('hidden'); outputSheet.classList.remove('flex'); }
+        });
+
+        var logToggle = document.getElementById('toggle-log');
+        if (logToggle) logToggle.addEventListener('change', function(){
+            try {
+                if (logToggle.checked) window.AndroidBridge.startRecording();
+                else window.AndroidBridge.stopRecording();
+            } catch(e){}
+        });
+
+        function hideUnsupportedControl(id){
+            var control = document.getElementById(id);
+            var row = control && control.parentElement && control.parentElement.parentElement;
+            if (row) row.style.display = 'none';
+        }
+        hideUnsupportedControl('toggle-bt');
+        hideUnsupportedControl('toggle-lat');
+
+        window.__vicoUpdate = function(state){
+            if (!state) return;
+            if (mv && typeof state.masterVolume === 'number') {
+                mv.value = Math.round(state.masterVolume * 100);
+                if (mvVal) mvVal.textContent = mv.value + '%';
+            }
+            if (logToggle && typeof state.recording === 'boolean') logToggle.checked = state.recording;
+            if (state.outputMode) {
+                outMode = state.outputMode;
+                if (outVal) outVal.textContent = state.outputLabel || (outMode === 'bluetooth' ? 'Bluetooth' : 'Speaker');
+            }
+            if (state.outputDevices) renderOutputOptions(state.outputDevices);
+            if (state.s14) {
+                var t = state.s14;
+                var names = {IDLE:'准备开始',LOADING:'正在校验材料',PLAYING:'正在播放',DRAINING:'等待播放位置到达末尾',EXPORTING:'正在保存',FINISHED:'回放证据已保存',ABORTED:'已取消',FAILED:'失败',INCOMPLETE:'不完整回放',PLAYBACK_UNCONFIRMED:'无法确认播放末尾，请重新对照',FEEDBACK_SAVE_FAILED:'反馈未保存，请重试',LISTENING_RECORDED:'Jovi 的反馈已保存'};
+                document.getElementById('s14-status').textContent = '第 ' + (t.pair_index + 1) + ' 组 · ' + (names[t.state] || '准备中') + (t.error ? '：' + t.error : '');
+                document.getElementById('s14-progress').value = t.frames;
+                document.getElementById('s14-one').disabled = !!t.busy || !!t.first_done;
+                document.getElementById('s14-two').disabled = !!t.busy || !t.first_done || !!t.second_done;
+                document.getElementById('s14-stop').disabled = !t.busy || t.state === 'EXPORTING';
+                document.getElementById('s14-next').disabled = !!t.busy || t.pair_index >= 1 || !t.revealed;
+                document.getElementById('s14-retry').disabled = !!t.busy || !!t.pair_matched || !!t.revealed;
+                document.getElementById('s15-mode').textContent = state.s15Preparing ? '正在后台准备，尚未启用；停止可取消' : state.s15Prototype ? '当前模式：C63_AH_V1（研究候选，尚待试听验收）' : '当前模式：原声库';
+                s14PairReady = !!t.feedback_available;
+                s14Submit.disabled = !!t.busy || !s14PairReady || !s14Preference.value || t.revealed;
+                document.getElementById('s14-reveal').textContent = t.revealed ? (t.pair_index === 0 ? '材料 1：桌面 R；材料 2：手机 M' : '材料 1：手机 M；材料 2：桌面 R') : '来源在反馈提交后显示';
+                var actual = (state.outputDevices || []).filter(function(d){return d.routed;})[0];
+                if (actual) document.getElementById('s14-output').textContent = '实际输出：' + actual.label;
+            }
+        };
+
+        var unitVal = document.getElementById('unit-val');
+        var unitRow = document.getElementById('row-unit');
+        var unit = 'kmh';
+        try { unit = localStorage.getItem('vico-unit') || 'kmh'; } catch(e){}
+        if (unitVal) unitVal.textContent = unit === 'mph' ? 'mph' : 'km/h';
+        if (unitRow) unitRow.addEventListener('click', function(){
+            unit = (unit === 'kmh') ? 'mph' : 'kmh';
+            try { localStorage.setItem('vico-unit', unit); } catch(e){}
+            if (unitVal) unitVal.textContent = unit === 'mph' ? 'mph' : 'km/h';
+        });
+
+        // 主题: 浅色 / 深色 (bridge.js 加载时按 localStorage 应用 dark 类)
+        var themeVal = document.getElementById('theme-val');
+        var themeRow = document.getElementById('row-theme');
+        var theme = 'light';
+        try { theme = localStorage.getItem('vico-theme') || 'light'; } catch(e){}
+        if (themeVal) themeVal.textContent = theme === 'dark' ? '深色' : '浅色';
+        if (themeRow) themeRow.addEventListener('click', function(){
+            theme = (theme === 'dark') ? 'light' : 'dark';
+            try { localStorage.setItem('vico-theme', theme); } catch(e){}
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+            if (themeVal) themeVal.textContent = theme === 'dark' ? '深色' : '浅色';
+        });
+    </script>
+<script src="file:///android_asset/bridge.js"></script></body></html>

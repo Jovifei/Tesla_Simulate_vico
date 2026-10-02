@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "Flatplane V8",
+  "character": "sport",
+  "engine": {
+    "cylinders": 8, "stroke": 4,
+    "firingOrderDegrees": [0, 90, 180, 270, 360, 450, 540, 630],
+    "idleRpm": 800, "redlineRpm": 9000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.5, 0.28, 0.15, 0.07],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sine",
+    "combJitter": 0.02, "exhaustResonance": 0.95, "exhaustWindow": 0.5, "decayRad": 0.55
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

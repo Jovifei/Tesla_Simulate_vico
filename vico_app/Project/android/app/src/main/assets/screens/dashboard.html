@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="zh" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tesla Vico App - 仪表盘</title>
+<script src="file:///android_asset/vendor/tailwind.js"></script>
+<link rel="stylesheet" href="file:///android_asset/fonts/material-symbols.css">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "surface-container": "#eeeeee",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-surface-variant": "#414755",
+                      "tertiary-fixed-dim": "#c4c7ca",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface": "#f9f9f9",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#454748",
+                      "primary-fixed-dim": "#adc6ff",
+                      "surface-container-high": "#e8e8e8",
+                      "on-tertiary-container": "#fbfdff",
+                      "surface-dim": "#dadada",
+                      "on-secondary-container": "#626566",
+                      "on-primary-container": "#fefcff",
+                      "secondary-container": "#e1e3e4",
+                      "tertiary": "#585c5f",
+                      "tertiary-fixed": "#e0e3e6",
+                      "surface-variant": "#e2e2e2",
+                      "on-primary-fixed": "#001a41",
+                      "primary-container": "#0070eb",
+                      "surface-container-low": "#f3f3f3",
+                      "surface-container-highest": "#e2e2e2",
+                      "primary-fixed": "#d8e2ff",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#005bc1",
+                      "inverse-primary": "#adc6ff",
+                      "outline": "#717786",
+                      "secondary-fixed-dim": "#c5c7c8",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e1e3e4",
+                      "on-secondary-fixed": "#191c1d",
+                      "inverse-surface": "#303030",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1b1b1b",
+                      "primary": "#0058bc",
+                      "secondary": "#5c5f60",
+                      "outline-variant": "#c1c6d7",
+                      "tertiary-container": "#717578",
+                      "surface-bright": "#f9f9f9",
+                      "on-tertiary-fixed-variant": "#43474a",
+                      "on-tertiary-fixed": "#181c1e",
+                      "on-background": "#1b1b1b",
+                      "on-primary": "#ffffff",
+                      "background": "#f9f9f9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "md": "16px",
+                      "sm": "12px",
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "gutter": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "body-lg": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "data-mono": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "headline-lg": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "body-md": [
+                              "Inter",
+                              "sans-serif"
+                      ],
+                      "label-md": [
+                              "Inter",
+                              "sans-serif"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "26px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .card-border { border: 1px solid #E9ECEF; }
+        .input-border { border-bottom: 1px solid #E9ECEF; transition: border-color 0.2s; }
+        .input-border:focus { border-color: #0070eb; outline: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<script>document.documentElement.classList.add('vico-page-loading');</script>
+<style>html.vico-page-loading body { visibility: hidden; }</style>
+</head>
+<body class="font-body-md text-on-surface pb-24 lg:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface font-headline-md text-headline-md tracking-tighter text-primary dark:text-primary-fixed docked full-width top-0 border-b border-surface-variant dark:border-outline-variant flat no shadows flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full sticky z-50">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined cursor-pointer active:scale-95 transition-transform hover:opacity-80 transition-opacity">graphic_eq</span>
+<span class="">VICO 电车声浪模拟器</span>
+</div>
+<div class="flex items-center gap-md text-secondary">
+<select class="bg-transparent border-none text-sm font-label-md outline-none cursor-pointer" id="language-select">
+<option value="zh">中文</option>
+<option value="en">English</option>
+</select>
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-sm text-green-500" id="gps-icon">satellite_alt</span>
+<span class="font-label-md text-label-md" id="gps-text">Good</span>
+</div>
+<span class="material-symbols-outlined text-sm cursor-pointer" id="sensor-status-btn">sensors</span>
+<span class="material-symbols-outlined text-sm cursor-pointer" id="header-mute-btn">volume_up</span>
+</div>
+</header>
+<div class="hidden bg-yellow-100 text-yellow-800 px-margin-mobile py-sm font-label-md text-label-md text-center" id="gps-warning">
+        GPS 信号丢失，当前使用加速度传感器数据。
+    </div>
+<main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-lg grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Main Column (Left on Desktop) -->
+<div class="md:col-span-8 flex flex-col gap-lg">
+<!-- Section 1: Live Driving Status -->
+<section class="bg-[#F8F9FA] rounded-DEFAULT card-border p-md flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-label-md text-label-md text-secondary mb-xs uppercase">实时状态</h2>
+<div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg flex items-baseline gap-xs">
+<span class="" id="live-speed">0</span>
+<span class="font-body-md text-body-md text-secondary" id="speed-unit">km/h</span>
+</div>
+</div>
+<div class="text-right">
+<h3 class="font-label-md text-label-md text-secondary mb-xs uppercase">当前车型</h3>
+<div class="font-body-lg text-body-lg text-primary font-medium" id="current-profile">运动</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md border-t border-[#E9ECEF] pt-md">
+<div>
+<div class="font-label-md text-label-md text-secondary">加速度</div>
+<div class="font-data-mono text-data-mono"><span class="" id="live-accel">0.0</span> m/s²</div>
+</div>
+<div>
+<div class="font-label-md text-label-md text-secondary">虚拟转速</div>
+<div class="font-data-mono text-data-mono" id="live-rpm">1000</div>
+</div>
+</div>
+<div class="flex gap-sm mt-sm">
+<button class="flex-1 bg-primary text-on-primary font-body-lg text-body-lg py-sm rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" id="start-stop-btn">启用声浪</button>
+<button class="px-md border border-[#E9ECEF] text-on-surface bg-white rounded-DEFAULT hover:bg-surface-container transition-colors font-body-md" id="calibrate-btn">校准</button>
+<button class="px-md border border-[#E9ECEF] text-on-surface bg-white rounded-DEFAULT hover:bg-surface-container transition-colors font-body-md" id="mute-btn">
+<span class="material-symbols-outlined">volume_off</span>
+</button>
+</div>
+</section>
+<!-- Section 3: Simulation Controls -->
+<section class="bg-white rounded-DEFAULT card-border p-md flex flex-col gap-md">
+<h2 class="font-headline-md text-headline-md">演示模式</h2>
+<div class="flex items-center justify-between">
+<div class="font-body-md">无传感器调试（模拟驾驶）</div>
+<button class="w-12 h-6 bg-surface-variant rounded-full relative transition-colors duration-200 focus:outline-none" id="demo-toggle">
+<span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200"></span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-xs" id="demo-scenarios">
+<button class="py-xs border border-[#E9ECEF] rounded-DEFAULT font-label-md hover:bg-surface-container" data-scenario="stop">停止</button>
+<button class="py-xs border border-[#E9ECEF] rounded-DEFAULT font-label-md hover:bg-surface-container" data-scenario="launch">起步</button>
+<button class="py-xs border border-[#E9ECEF] rounded-DEFAULT font-label-md hover:bg-surface-container" data-scenario="cruise">巡航</button>
+<button class="py-xs border border-[#E9ECEF] rounded-DEFAULT font-label-md hover:bg-surface-container" data-scenario="decel">减速</button>
+<button class="py-xs border border-[#E9ECEF] rounded-DEFAULT font-label-md hover:bg-surface-container" data-scenario="overspeed">极速</button>
+</div>
+<div class="font-label-md text-label-md text-secondary">关闭时使用真实 GPS 速度与加速度传感器。</div>
+</section>
+</div>
+<!-- Side Column (Right on Desktop) -->
+<div class="md:col-span-4 flex flex-col gap-lg">
+<!-- 高级调音已移至设置页 -->
+
+<!-- Section 5: Reset Functions -->
+<section class="flex gap-sm">
+<button class="flex-1 py-xs border border-error-container text-error rounded-DEFAULT text-xs font-label-md hover:bg-error-container/20" id="reset-all-btn">全部重置</button>
+</section>
+<!-- Section 6: Debug Panel -->
+<section class="bg-surface-container-low rounded-DEFAULT card-border p-md text-xs font-data-mono">
+<div class="flex justify-between items-center mb-sm border-b border-[#E9ECEF] pb-xs">
+<span class="font-label-md text-secondary">原始数据 (调试)</span>
+<button class="text-primary hover:underline" id="export-csv-btn">导出 CSV</button>
+</div>
+<div class="grid grid-cols-2 gap-x-sm gap-y-xs">
+<div class="text-secondary">speedKmh:</div><div class="" id="debug-speed">0.0</div>
+<div class="text-secondary">accelMps2:</div><div class="" id="debug-accel">0.00</div>
+<div class="text-secondary">vRpm:</div><div class="" id="debug-rpm">1000</div>
+<div class="text-secondary">calibrated:</div><div class="" id="debug-calibrated">false</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full z-50 border-t border-surface-variant dark:border-outline-variant flat no shadows flex justify-around items-center py-xs bg-surface dark:bg-surface md:hidden">
+<div class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">仪表盘</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT">
+<span class="material-symbols-outlined">library_music</span>
+<span class="font-label-md text-label-md">声音库</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-150 p-sm rounded-DEFAULT">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">设置</span>
+</div>
+</nav>
+<script>
+        // === 接收原生传感器/声浪状态推送 (VicoBridge 调用 window.__vicoUpdate) ===
+        window.__vicoUpdate = function(s){
+          try {
+            if(!window.__vn)window.__vn=0; if(++window.__vn%20===0)console.log('vdg',s.gx,s.gy,s.gz);
+            var liveSpeed=document.getElementById('live-speed');
+            var liveAccel=document.getElementById('live-accel');
+            var liveRpm=document.getElementById('live-rpm');
+            var cur=document.getElementById('current-profile');
+            var ds=document.getElementById('debug-speed');
+            var da=document.getElementById('debug-accel');
+            var dr=document.getElementById('debug-rpm');
+            var dc=document.getElementById('debug-calibrated');
+            var warn=document.getElementById('gps-warning');
+            var gpsIcon=document.getElementById('gps-icon');
+            var gpsText=document.getElementById('gps-text');
+            var unit = (function(){ try { return localStorage.getItem('vico-unit') || 'kmh'; } catch(e){ return 'kmh'; } })();
+            if(liveSpeed) liveSpeed.textContent = (unit === 'mph') ? Math.round((s.speed||0) * 0.621371) : (s.speed||0);
+            var su = document.getElementById('speed-unit'); if (su) su.textContent = (unit === 'mph') ? 'mph' : 'km/h';
+            if(liveAccel) liveAccel.textContent = s.accel;
+            if(liveRpm) liveRpm.textContent = s.rpm;
+            if(cur) cur.textContent = s.vehicle ? (s.vehicle + ' · ' + (s.gear||1) + ' 挡') : '';
+            if(ds) ds.textContent = s.speedKmh;
+            if(da) da.textContent = s.accel;
+            if(dr) dr.textContent = s.rpm;
+            if(dc) dc.textContent = s.calibrated;
+            if(warn) warn.classList.toggle('hidden', !!s.gpsOk);
+            if(gpsIcon){
+              gpsIcon.classList.remove('text-green-500','text-yellow-500','text-error');
+              gpsIcon.classList.add(s.gpsOk ? 'text-green-500' : 'text-error');
+              gpsIcon.textContent = 'satellite_alt';
+            }
+            if(gpsText) gpsText.textContent = s.gpsOk ? '良好' : '丢失';
+            if(typeof s.running === 'boolean') { isRunning = s.running; renderRunning(); }
+            if(typeof s.demo === 'boolean') { demoOn = s.demo; renderDemo(); }
+            if(typeof s.muted === 'boolean') { muted = s.muted; renderMute(); }
+            var languageSelect = document.getElementById('language-select');
+            if(languageSelect && s.language) languageSelect.value = s.language;
+          } catch(e){ console.log('vico update err', e); }
+        };
+
+        // === 启停 ===
+        var startBtn = document.getElementById('start-stop-btn');
+        var isRunning = false;
+        function renderRunning(){
+          if(!startBtn) return;
+          startBtn.textContent = isRunning ? '停止声浪' : '启用声浪';
+          startBtn.classList.toggle('bg-error', isRunning);
+          startBtn.classList.toggle('bg-primary', !isRunning);
+        }
+        if(startBtn) startBtn.addEventListener('click', function(){
+          if(isRunning){
+            startBtn.textContent='停止声浪';
+            startBtn.classList.replace('bg-primary','bg-error');
+            startBtn.classList.replace('text-on-primary','text-on-error');
+            window.AndroidBridge.stopAudio();
+          } else {
+            startBtn.textContent='启用声浪';
+            startBtn.classList.replace('bg-error','bg-primary');
+            startBtn.classList.replace('text-on-error','text-on-primary');
+            window.AndroidBridge.startAudio();
+          }
+        });
+        var calBtn=document.getElementById('calibrate-btn');
+        if(calBtn) calBtn.addEventListener('click', function(){ window.AndroidBridge.navigate('calibration'); });
+        var muted=false;
+        function renderMute(){
+          ['mute-btn','header-mute-btn'].forEach(function(id){
+            var el=document.getElementById(id);
+            if(!el) return;
+            var icon = muted ? 'volume_off' : 'volume_up';
+            if(id === 'header-mute-btn') el.textContent = icon;
+            else el.innerHTML='<span class="material-symbols-outlined">'+icon+'</span>';
+          });
+        }
+        var muteBtn=document.getElementById('mute-btn');
+        if(muteBtn) muteBtn.addEventListener('click', function(){ window.AndroidBridge.setMuted(!muted); });
+        var headerMuteBtn=document.getElementById('header-mute-btn');
+        if(headerMuteBtn) headerMuteBtn.addEventListener('click', function(){ window.AndroidBridge.setMuted(!muted); });
+        var sensorStatusBtn=document.getElementById('sensor-status-btn');
+        if(sensorStatusBtn) sensorStatusBtn.addEventListener('click', function(){ window.AndroidBridge.navigate('calibration'); });
+        var languageSelect=document.getElementById('language-select');
+        if(languageSelect) languageSelect.addEventListener('change', function(){ window.AndroidBridge.setLanguage(languageSelect.value); });
+
+        // === 重置 / 导出 ===
+        var ra=document.getElementById('reset-all-btn');
+        if(ra) ra.addEventListener('click', function(){ window.AndroidBridge.resetAll(); });
+        var ex=document.getElementById('export-csv-btn');
+        if(ex) ex.addEventListener('click', function(){ window.AndroidBridge.exportCsv(); });
+
+        // === 演示模式 ===
+        var demoToggle=document.getElementById('demo-toggle');
+        var demoOn=false;
+        function renderDemo(){
+          if(!demoToggle) return;
+          var knob=demoToggle.querySelector('span');
+          demoToggle.classList.toggle('bg-primary',demoOn);
+          demoToggle.classList.toggle('bg-surface-variant',!demoOn);
+          if(knob) knob.classList.toggle('translate-x-6',demoOn);
+        }
+        if(demoToggle) demoToggle.addEventListener('click', function(){
+          demoOn=!demoOn;
+          var knob=demoToggle.querySelector('span');
+          demoToggle.classList.toggle('bg-primary',demoOn);
+          demoToggle.classList.toggle('bg-surface-variant',!demoOn);
+          if(knob) knob.classList.toggle('translate-x-6',demoOn);
+          window.AndroidBridge.setDemoMode(demoOn);
+        });
+        document.querySelectorAll('#demo-scenarios button').forEach(function(b){
+          b.addEventListener('click', function(){
+            if(!demoOn){ demoToggle.click(); }
+            window.AndroidBridge.setDemoScenario(b.dataset.scenario);
+            document.querySelectorAll('#demo-scenarios button').forEach(function(x){
+              x.classList.toggle('border-primary', x===b);
+              x.classList.toggle('bg-blue-50/20', x===b);
+            });
+          });
+        });
+    </script>
+<script src="file:///android_asset/bridge.js"></script></body></html>

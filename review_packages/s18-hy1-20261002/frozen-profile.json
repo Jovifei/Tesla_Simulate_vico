@@ -1,0 +1,104 @@
+{
+  "schema": "c63.hy1.frozen_fit.v1",
+  "candidate": "C63_HY1",
+  "profile_sha256": "3891836e55069d64392d84bee268e8974ba89558fa31f9c23ec95c375c65f294",
+  "reference_constraints_sha256": "fdab7f11544beb2fa68a690cef0523fcc5cd4013a5d5afd78f3130e98a88dc07",
+  "continuous_evaluations": 55,
+  "event_evaluations": 32,
+  "persistent_parameters": [
+    28.185462450556056,
+    13.224504037303056,
+    1.9820162062797415,
+    -6.183212667091347,
+    -12.011468638112163,
+    -20.926527313381115,
+    -23.2887881523505,
+    -12.48198592320373,
+    0.04745768470030047
+  ],
+  "event_parameters": [
+    1.8967706857804671,
+    4.469133117018799,
+    12.400545777153454,
+    3.7553927049887363,
+    1.0231203805726352,
+    2.644578344511608,
+    -16.263993435316777,
+    -21.925547574708943,
+    45.0,
+    32.5,
+    0.2
+  ],
+  "source_scale_calibrated_once": 9.334207231291773,
+  "event_scale_calibrated_once": 18.203902004318525,
+  "noise_weights": [
+    0.9754211148734345,
+    0.1849118076429546,
+    0.06765197172579158,
+    0.09891654449531581
+  ],
+  "baseline_distance": 3.6892436190119353,
+  "calibration_result": {
+    "score": 4.766945253295415,
+    "distance": 1.9723511065838117,
+    "groups": {
+      "ref_full_pull.wav": 2.4690290532022274,
+      "ref_steady_high.wav": 2.250600645341387,
+      "ref_steady_low.wav": 1.811631740888364,
+      "ref_steady_mid.wav": 2.7427780320667994
+    },
+    "low_median_db": 0.036340937126416284,
+    "low_p90_db": 0.8719124295404381,
+    "mid_max_rise_db": 1.4681816863283494,
+    "source_representative_change_db": -0.8826295979535747
+  },
+  "baseline_event_distance": 2.0227496668988802,
+  "calibration_event_result": {
+    "score": 3.4738623680326826,
+    "distance": 1.8583056934179967,
+    "categories": {
+      "attack": 0.29296715938633844,
+      "tail": 1.760457970110175,
+      "interval": 0.9365429928409906,
+      "amplitude": 3.1226663930551513
+    },
+    "energy_change_db": 0.8722866729027274,
+    "matched": 27,
+    "false_peaks": 2,
+    "censored": 9
+  },
+  "gain": 3.7075542301539652,
+  "headroom": 0.40803954754257843,
+  "fixture_identities": {
+    "steady_700.0_0.32": "1e7e7dec0da4a82e323b95a1a3704db63111872be8f2961f72a8399ad26f8c8d",
+    "steady_700.0_0.92": "bc04dc7c4d6d5d8b2c6b77458517679db2c0154c00e0c4a540061fba962da990",
+    "steady_1400.0_0.32": "98faa77ee2bc3b5b29c0e1720bf70ef267f8507e399f5b8dc1e914362ce8436f",
+    "steady_1400.0_0.92": "0d90277ccc35168af604983768ca3b274315e2c2f067af7a0526433549ae1012",
+    "steady_2200.0_0.32": "195be7922b52531bc2ec9d30e4c05b158bcef4c21d77794169ef832f45a043d8",
+    "steady_2200.0_0.92": "c577619c16519c89963dc484ac48ebc4579d8d196ef12fb2a015207d35f831f6",
+    "steady_3200.0_0.32": "dfd94403daf1bca1db757ff76778b1f354e89c82dc20415896bd91d5b3996634",
+    "steady_3200.0_0.92": "32f7c7aae77549b569da6834f9af53f4e3175c89510ae3e372f8b074b26b8877",
+    "steady_4300.0_0.32": "e0a6ce828e75a68fcbd94af336dd52cf7eb9db0f5edb88047c0c270e475c5349",
+    "steady_4300.0_0.92": "f414668b14bf474c0dfb9298fd0f96c311e89a141c72a1612dcc3298f1da8341",
+    "steady_5500.0_0.32": "71509092a620d6d2610b976801b9015746bca03cc3fb90b1e8cdffd7c661fcf9",
+    "steady_5500.0_0.92": "55505b84c8d32d92da06884d3f95896bffdcafddcd116e56e474a0e6bf5d34fc",
+    "steady_6800.0_0.32": "57db3db39766c513c955f65713cf941a1407f3a486639d7a6b18c9366a83a6ce",
+    "steady_6800.0_0.92": "d1775a1b5afcef910ee57623dc98339df73379b8122954f56391426a262752ec",
+    "steady_7200.0_0.32": "4f2233a99cfefc3471cb0cd2d595fe0f7f65ff524e73f6085567755d1d8162d0",
+    "steady_7200.0_0.92": "f230f6655cb0f29db0f143cb2e3357c5a7d00ed353316ed601282a17ed189ce0",
+    "driven_ramp": "0489642b4b87083df9f3cdeb319e70338463dddafeee960e3a0e8dbf92987960",
+    "event_background": "05dbe947a062ccb6e72efc93f1d3b9b909a99af14709eca8cd847b719457455e"
+  },
+  "status": "FROZEN_PENDING_ACTUAL_KOTLIN_QUALIFICATION",
+  "reference_scope": "Unverified local unsynchronized transient/statistical constraints; not OEM",
+  "phase_contract": "Minimum-phase spectral design then causal finite zeroDC projection; not stable inversion",
+  "reference_event_spectral_windows": 6,
+  "event_interval_scope": "Within known synthetic closure episodes;reference adjacent intervals<=1s;not measured RPM rate",
+  "tool_identities": {
+    "fit_c63_hybrid.py": "feecaf100d2d6076892d37b125b6d2211b14adb8be5faf2b2957b8f1866a329a",
+    "build_c63_hybrid_targets.py": "aa83fcb56933674a4512a08633e16fdbf6be90edeee64c70f1af1016c00ad8f0",
+    "c63_hybrid_event_kernel.py": "d6a814d4352599f83a2ac7c8dd4b23f2a54346de3b03843dc26f42bb5d2f1c32",
+    "fit_c63_bark_modes.py": "20695ba265acd85543c082826d51d358abe50969122d0c2a875388991a9aeef8",
+    "extract_c63_ar2_events.py": "5cfdaa064efa26b090f024194e52fa130b237a0ccbfd387e93403bce1fba36e0"
+  }
+}

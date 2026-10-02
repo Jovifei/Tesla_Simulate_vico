@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "EV 电机嗡鸣",
+  "character": "scifi",
+  "engine": {
+    "cylinders": 0, "stroke": 4,
+    "motorFreqMult": 6.0,
+    "idleRpm": 0, "redlineRpm": 12000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.35, 0.12, 0.05, 0.02],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sine",
+    "combJitter": 0.0, "exhaustResonance": 0.0, "exhaustWindow": 0.0, "decayRad": 0.5
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

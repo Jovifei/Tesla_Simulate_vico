@@ -1,0 +1,70 @@
+{
+  "schema": "vico.vehicle.v2",
+  "name": "Mercedes-Benz W204 C63 AMG V6.3",
+  "character": "sport",
+  "engine": {
+    "cylinders": 8,
+    "stroke": 4,
+    "firingOrderDegrees": [0, 90, 180, 270, 360, 450, 540, 630],
+    "idleRpm": 700,
+    "redlineRpm": 7200
+  },
+  "driveline": {
+    "gearRatios": [4.38, 2.86, 1.92],
+    "finalDrive": 2.85,
+    "wheelRadiusM": 0.335,
+    "launchRpm": 2300,
+    "shiftRpm": 7000,
+    "shiftDurationS": 0.14,
+    "shiftMinGain": 0.22
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.58, 0.34, 0.20, 0.10],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.018,
+    "exhaustResonance": 0.95,
+    "exhaustWindow": 0.48,
+    "decayRad": 0.55,
+    "exhaustGain": 0.82,
+    "harmonicGain": 0.18,
+    "raspGain": 0.045,
+    "softClipDrive": 1.85
+  },
+  "combustionVariation": {
+    "startRpm": 1400,
+    "fullRpm": 5200,
+    "depth": 0.25,
+    "correlation": 0.32,
+    "notchProbability": 0.09,
+    "notchDepth": 0.55,
+    "minimumGain": 0.35,
+    "maximumGain": 1.42,
+    "cylinderGain": [1.03, 0.96, 1.01, 0.94, 1.04, 0.97, 1.00, 0.95]
+  },
+  "filters": {
+    "bodyModes": [
+      {"frequencyHz": 88, "q": 1.4, "gain": 0.12},
+      {"frequencyHz": 178, "q": 2.1, "gain": 0.16}
+    ]
+  },
+  "afterfire": {
+    "enabled": true,
+    "minimumRpm": 2600,
+    "throttleDrop": 0.22,
+    "clusterSize": 8,
+    "intervalS": 0.029,
+    "bodyHz": [92, 146, 178],
+    "metalHz": [425, 524, 624, 724, 882],
+    "bodyGain": 0.58,
+    "metalGain": 0.82,
+    "crackGain": 1.35,
+    "bodyDecayS": 0.060,
+    "metalDecayS": 0.018,
+    "crackDecayS": 0.003
+  },
+  "layers": {
+    "mechanical": {"orders": [32, 56, 88], "gains": [0.014, 0.007, 0.0035]}
+  },
+  "mapping": {"overspeedMuteKmh": 148.0}
+}

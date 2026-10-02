@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "Boxer 4",
+  "character": "sport",
+  "engine": {
+    "cylinders": 4, "stroke": 4,
+    "firingOrderDegrees": [0, 180, 360, 540],
+    "idleRpm": 700, "redlineRpm": 6500
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.62, 0.42, 0.27, 0.14],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.055, "exhaustResonance": 0.97, "exhaustWindow": 0.55, "decayRad": 0.7
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

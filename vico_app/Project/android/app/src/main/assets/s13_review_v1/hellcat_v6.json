@@ -1,0 +1,122 @@
+{
+  "schema": "vico.s13.review_sidecar.v1",
+  "vehicle_key": "hellcat_v6",
+  "source_vehicle_id": "hellcat",
+  "source_commit": "29b50961d9628f835e7172b797380ccb36a7f38d",
+  "exporter_sha256": "731f20949a0a033705493064e278c2ea7ac84204a0673f955785e875cbd146b2",
+  "source_scope": "synthetic; uncalibrated; not OEM reproduction",
+  "sample_rate_hz": 48000,
+  "channels": 1,
+  "duration_s": 30.0,
+  "total_frames": 1440000,
+  "control_interpolation": "linear_per_audio_frame",
+  "event_extraction": {
+    "shift": {
+      "detector": "detect_shift_events",
+      "pre_roll_frames": 1920,
+      "post_roll_frames": 10560,
+      "edge_fade_frames": 240
+    },
+    "afterfire": {
+      "source_stem": "post_ptr_afterfire",
+      "window_start_frame": 864000,
+      "window_end_frame": 1104000,
+      "threshold_relative_peak": 0.015,
+      "threshold_absolute_floor": 1e-06,
+      "pre_roll_frames": 1200,
+      "post_roll_frames": 14400
+    }
+  },
+  "gain_is_embedded_in_assets": true,
+  "fixed_vehicle_gain": 0.8584358224822988,
+  "trace": {
+    "asset_path": "s12_v10/hellcat_v6/common_input_trace.json",
+    "sha256": "4acc2d7f258b113ebf6c998fcffb430dfe777ff3dacfb69ff2bea07dcedbad53",
+    "point_count": 1501,
+    "sample_period_s": 0.02,
+    "fields": [
+      "time_s",
+      "rpm",
+      "load",
+      "throttle",
+      "acceleration_mps2"
+    ]
+  },
+  "bank_manifest": {
+    "asset_path": "s12_v10/hellcat_v6/manifest.json",
+    "sha256": "0f23c6ba72f5a631b36fb9964b3bea1aed4ae1a5b4585047aefb5b5a7ec6b1d6"
+  },
+  "bank_assets_sha256": {
+    "rpm_0750_load_32.wav": "186ca2f1455afecec3d1f27a828a0200cc3a1ab70de211152c830b13acc291c4",
+    "rpm_0750_load_92.wav": "2728bcd4cb338df198ea8027756b9bac5a150914bba181edc923471ad51695eb",
+    "rpm_1300_load_32.wav": "c35abd57d27ff1c1967e7af921f7d70fa3462141b26c1581e616d19130c5ee85",
+    "rpm_1300_load_92.wav": "c9a2fbddf8a5ec4d330ea6a7fc93b6c6a5e38cea1c985951c7dbc3966da3e746",
+    "rpm_2100_load_32.wav": "2c6bfcd1fd20fbd5e9564424dd7c57c691a721fc9b55aa04e70d886ad1042057",
+    "rpm_2100_load_92.wav": "9eb433d59b8d19b4f5dce51a996ebe16961c9a2ed04e2f02de27f0938a3afbf2",
+    "rpm_3000_load_32.wav": "d2ebbfc5a6392def62a809b99a55f1a99c9d22ac2bd806f842042a87ecef0a16",
+    "rpm_3000_load_92.wav": "9d523ca9209a03546b116f983f856e1514153b4bf131180f1f3086afb02d72ed",
+    "rpm_3900_load_32.wav": "32c1cdf9c6f1341510cc1917825cac7a14e12a3195b4fb43cf4e6950bec85691",
+    "rpm_3900_load_92.wav": "e2279984f45c847bbb5dd140c57c07bd7d1619c67206e25065061178cc3a742e",
+    "rpm_4900_load_32.wav": "76f784d19a3b3a50d1a7bebd3227e49dc05138afba27d92109b181c1870fcbe0",
+    "rpm_4900_load_92.wav": "5d98f7a06ad98c526514949d498e4e8635fbf4418637c079a50467cf59906860",
+    "rpm_5800_load_32.wav": "095bb5820e8950d901791fb1ba99dbeed55cf4d62471a9d7378cd875cb8acb82",
+    "rpm_5800_load_92.wav": "e749660b727e33ef57cf7d82da6728c8ba5eb32f3feb9b685c98fff8f5c72d5c",
+    "rpm_6200_load_32.wav": "2612ce8013f5e4dc91fa1bc82356adf07b386ca8cc9fdf431ef750d300ec835e",
+    "rpm_6200_load_92.wav": "3d2429a5bf18729d04480b69e23f34047076c2e6432e609c28d80be6317085fe",
+    "afterfire_tipout_s12.wav": "925d8736ee599093532448ca89bfa6c0f82ea909baef0bbe58188c41d70da263",
+    "shift_event_01_s12.wav": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4",
+    "shift_event_02_s12.wav": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4",
+    "shift_event_03_s12.wav": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4"
+  },
+  "audio_pcm_verification": "EXACT_FLOAT32_MATCH",
+  "events": [
+    {
+      "id": "afterfire_tipout",
+      "kind": "afterfire",
+      "source_domain": "POST_PTR_STEM_ONSET",
+      "source_time_s": 18.02872916666667,
+      "source_frame": 865379,
+      "crop_start_frame": 864179,
+      "trigger_offset_frames": 1200,
+      "samples": 44128,
+      "asset_path": "s12_v10/hellcat_v6/afterfire_tipout_s12.wav",
+      "asset_sha256": "925d8736ee599093532448ca89bfa6c0f82ea909baef0bbe58188c41d70da263"
+    },
+    {
+      "id": "shift_event_01",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 6.1004375,
+      "source_frame": 292821,
+      "crop_start_frame": 290901,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/hellcat_v6/shift_event_01_s12.wav",
+      "asset_sha256": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4"
+    },
+    {
+      "id": "shift_event_02",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 8.621645833333334,
+      "source_frame": 413839,
+      "crop_start_frame": 411919,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/hellcat_v6/shift_event_02_s12.wav",
+      "asset_sha256": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4"
+    },
+    {
+      "id": "shift_event_03",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 11.143583333333334,
+      "source_frame": 534892,
+      "crop_start_frame": 532972,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/hellcat_v6/shift_event_03_s12.wav",
+      "asset_sha256": "ccce06f1ec502133c4673e1bcc5cd6c2af8edd195b5892c342cae080f953bcd4"
+    }
+  ]
+}

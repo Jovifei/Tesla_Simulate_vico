@@ -1,0 +1,162 @@
+{
+  "schema": "vico.s12.android.bank_export.v1",
+  "source_commit": "29b50961d9628f835e7172b797380ccb36a7f38d",
+  "vehicles": {
+    "hellcat_v6": {
+      "source_vehicle_id": "hellcat",
+      "loop_count": 16,
+      "fixed_gain": 0.8584358224822988,
+      "afterfire_samples": 44128,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -27.18711461140575,
+        "rms_dbfs": -26.68741478196564,
+        "peak_dbfs": -7.372982134148915,
+        "fixed_gain_db": -1.325843351555551,
+        "headroom_limited": true,
+        "all_bank_peak_dbfs": -1.5000000000000009
+      }
+    },
+    "ferrari_458": {
+      "source_vehicle_id": "ferrari_458",
+      "loop_count": 16,
+      "fixed_gain": 0.615619268810834,
+      "afterfire_samples": 44816,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -18.239502331988735,
+        "rms_dbfs": -21.18089321809403,
+        "peak_dbfs": -1.5000006354510111,
+        "fixed_gain_db": -4.213755905230521,
+        "headroom_limited": true,
+        "all_bank_peak_dbfs": -1.4999999999999996
+      }
+    },
+    "lfa": {
+      "source_vehicle_id": "lfa",
+      "loop_count": 16,
+      "fixed_gain": 2.7967381237387476,
+      "afterfire_samples": 44952,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -15.99999992558305,
+        "rms_dbfs": -16.316444619850163,
+        "peak_dbfs": -2.3601835356647065,
+        "fixed_gain_db": 8.933036050778899,
+        "headroom_limited": false,
+        "all_bank_peak_dbfs": -2.360183585837265
+      }
+    },
+    "gtr_r35": {
+      "source_vehicle_id": "gtr_r35",
+      "loop_count": 16,
+      "fixed_gain": 4.347546423246068,
+      "afterfire_samples": 45750,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -22.63602426921636,
+        "rms_dbfs": -22.510544761935872,
+        "peak_dbfs": -6.077706852746204,
+        "fixed_gain_db": 12.764884562210158,
+        "headroom_limited": true,
+        "all_bank_peak_dbfs": -1.5000000000000009
+      }
+    },
+    "c63_w204_v6": {
+      "source_vehicle_id": "c63_w204",
+      "loop_count": 16,
+      "fixed_gain": 3.7075542301539652,
+      "afterfire_samples": 44517,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -20.44149485816547,
+        "rms_dbfs": -20.41686558905138,
+        "peak_dbfs": -1.500000020140368,
+        "fixed_gain_db": 11.381750242878917,
+        "headroom_limited": true,
+        "all_bank_peak_dbfs": -1.5000000000000009
+      }
+    },
+    "supra_jza80": {
+      "source_vehicle_id": "supra_jza80",
+      "loop_count": 16,
+      "fixed_gain": 4.051976616535181,
+      "afterfire_samples": 45596,
+      "shift_event_count": 3,
+      "audio_contract": {
+        "sample_rate_hz": 48000,
+        "channels": 1,
+        "channel_layout": "mono",
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "downmix": "arithmetic_mean_left_right",
+        "gain_policy": "one_fixed_vehicle_gain_from_common_drive_cycle"
+      },
+      "reference_loudness": {
+        "target_integrated_lufs": -16.0,
+        "peak_limit_dbfs": -1.5,
+        "integrated_lufs": -25.265773825666354,
+        "rms_dbfs": -25.054927720511905,
+        "peak_dbfs": -6.158287802948635,
+        "fixed_gain_db": 12.153338608695552,
+        "headroom_limited": true,
+        "all_bank_peak_dbfs": -1.5000000000000018
+      }
+    }
+  }
+}

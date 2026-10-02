@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "V10",
+  "character": "sport",
+  "engine": {
+    "cylinders": 10, "stroke": 4,
+    "firingOrderDegrees": [0, 72, 144, 216, 288, 360, 432, 504, 576, 648],
+    "idleRpm": 750, "redlineRpm": 8500
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.5, 0.3, 0.18, 0.1],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.025, "exhaustResonance": 0.96, "exhaustWindow": 0.5, "decayRad": 0.58
+  },
+  "layers": { "turbo": { "enabled": true, "freqMult": 12.0, "gain": 0.1, "thresholdRpm": 3500.0 } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}

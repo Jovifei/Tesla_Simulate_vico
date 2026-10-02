@@ -1,0 +1,78 @@
+{
+  "schema": "vico.vehicle.v2",
+  "name": "Dodge Challenger SRT Hellcat V6",
+  "character": "sport",
+  "engine": {
+    "cylinders": 8,
+    "stroke": 4,
+    "firingOrderDegrees": [0, 90, 180, 270, 360, 450, 540, 630],
+    "idleRpm": 750,
+    "redlineRpm": 6200
+  },
+  "driveline": {
+    "gearRatios": [4.714, 3.143, 2.106],
+    "finalDrive": 2.62,
+    "wheelRadiusM": 0.347,
+    "launchRpm": 2100,
+    "shiftRpm": 6100,
+    "shiftDurationS": 0.17,
+    "shiftMinGain": 0.10
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.68, 0.42, 0.25, 0.13],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.024,
+    "exhaustResonance": 0.97,
+    "exhaustWindow": 0.54,
+    "decayRad": 0.72,
+    "exhaustGain": 0.88,
+    "harmonicGain": 0.12,
+    "raspGain": 0.018,
+    "softClipDrive": 1.75
+  },
+  "combustionVariation": {
+    "startRpm": 1200,
+    "fullRpm": 4500,
+    "depth": 0.16,
+    "correlation": 0.40,
+    "notchProbability": 0.045,
+    "notchDepth": 0.35,
+    "minimumGain": 0.50,
+    "maximumGain": 1.35,
+    "cylinderGain": [1.04, 0.95, 1.00, 0.94, 1.03, 0.97, 1.01, 0.96]
+  },
+  "filters": {
+    "bodyModes": [
+      {"frequencyHz": 62, "q": 1.1, "gain": 0.32},
+      {"frequencyHz": 76, "q": 1.4, "gain": 0.26},
+      {"frequencyHz": 145, "q": 1.9, "gain": 0.08}
+    ]
+  },
+  "afterfire": {
+    "enabled": true,
+    "minimumRpm": 2400,
+    "throttleDrop": 0.22,
+    "clusterSize": 5,
+    "intervalS": 0.080,
+    "bodyHz": [72, 145, 246],
+    "metalHz": [246, 340, 434, 545],
+    "bodyGain": 1.10,
+    "metalGain": 0.38,
+    "crackGain": 0.62,
+    "bodyDecayS": 0.120,
+    "metalDecayS": 0.045,
+    "crackDecayS": 0.006
+  },
+  "layers": {
+    "induction": {
+      "enabled": true,
+      "speedRatio": 2.36,
+      "startRpm": 1500,
+      "orders": [3, 6, 9, 12],
+      "gains": [0.165, 0.330, 0.242, 0.132]
+    },
+    "mechanical": {"orders": [24, 40, 64], "gains": [0.013, 0.0065, 0.0032]}
+  },
+  "mapping": {"overspeedMuteKmh": 148.0}
+}

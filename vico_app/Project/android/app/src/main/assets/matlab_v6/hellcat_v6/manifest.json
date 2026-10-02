@@ -1,0 +1,152 @@
+{
+  "schema": "vico.matlab.soundbank.v1",
+  "source": "MATLAB v6_synthesize_engine_sound",
+  "vehicle_key": "hellcat_v6",
+  "display_name": "Dodge Challenger SRT Hellcat 6.2 Supercharged V8",
+  "sample_rate_hz": 96000,
+  "idle_rpm": 750,
+  "redline_rpm": 6200,
+  "peak_limit": 0.89,
+  "gear_ratios": [
+    4.714,
+    3.143,
+    2.106
+  ],
+  "final_drive": 2.62,
+  "wheel_radius_m": 0.347,
+  "launch_rpm": 2100,
+  "shift_rpm": 6100,
+  "shift_speed_kmh": [
+    64.609972923144454,
+    96.904680992587657
+  ],
+  "shift_attack_s": 0.025,
+  "shift_hold_s": 0.045,
+  "shift_recovery_s": 0.09,
+  "shift_settle_s": 0.06,
+  "shift_min_torque": 0.1,
+  "shift_reengage_gain": 1.1,
+  "minimum_shift_interval_s": 0.35,
+  "downshift_ratio": 0.68,
+  "speed_ceiling_kmh": 144,
+  "afterfire_minimum_rpm": 2400,
+  "loops": [
+    {
+      "rpm": 750,
+      "load": 0.32,
+      "file": "rpm_0750_load_32.wav",
+      "samples": 30720,
+      "rms": 0.044861784758051845
+    },
+    {
+      "rpm": 750,
+      "load": 0.92,
+      "file": "rpm_0750_load_92.wav",
+      "samples": 30720,
+      "rms": 0.11982074088109536
+    },
+    {
+      "rpm": 1300,
+      "load": 0.32,
+      "file": "rpm_1300_load_32.wav",
+      "samples": 35446,
+      "rms": 0.1858672581225515
+    },
+    {
+      "rpm": 1300,
+      "load": 0.92,
+      "file": "rpm_1300_load_92.wav",
+      "samples": 35446,
+      "rms": 0.43077054534905151
+    },
+    {
+      "rpm": 2100,
+      "load": 0.32,
+      "file": "rpm_2100_load_32.wav",
+      "samples": 32914,
+      "rms": 0.18929742035131622
+    },
+    {
+      "rpm": 2100,
+      "load": 0.92,
+      "file": "rpm_2100_load_92.wav",
+      "samples": 32914,
+      "rms": 0.43864290131766243
+    },
+    {
+      "rpm": 3000,
+      "load": 0.32,
+      "file": "rpm_3000_load_32.wav",
+      "samples": 34560,
+      "rms": 0.22382415773799594
+    },
+    {
+      "rpm": 3000,
+      "load": 0.92,
+      "file": "rpm_3000_load_92.wav",
+      "samples": 34560,
+      "rms": 0.511826274714636
+    },
+    {
+      "rpm": 3900,
+      "load": 0.32,
+      "file": "rpm_3900_load_32.wav",
+      "samples": 35446,
+      "rms": 0.28429326523116427
+    },
+    {
+      "rpm": 3900,
+      "load": 0.92,
+      "file": "rpm_3900_load_92.wav",
+      "samples": 35446,
+      "rms": 0.62472323360676585
+    },
+    {
+      "rpm": 4900,
+      "load": 0.32,
+      "file": "rpm_4900_load_32.wav",
+      "samples": 35265,
+      "rms": 0.17847584889663781
+    },
+    {
+      "rpm": 4900,
+      "load": 0.92,
+      "file": "rpm_4900_load_92.wav",
+      "samples": 35265,
+      "rms": 0.53219226791946961
+    },
+    {
+      "rpm": 5800,
+      "load": 0.32,
+      "file": "rpm_5800_load_32.wav",
+      "samples": 33766,
+      "rms": 0.10733032822541985
+    },
+    {
+      "rpm": 5800,
+      "load": 0.92,
+      "file": "rpm_5800_load_92.wav",
+      "samples": 33766,
+      "rms": 0.39852616252587592
+    },
+    {
+      "rpm": 6200,
+      "load": 0.32,
+      "file": "rpm_6200_load_32.wav",
+      "samples": 35303,
+      "rms": 0.082255531035877127
+    },
+    {
+      "rpm": 6200,
+      "load": 0.92,
+      "file": "rpm_6200_load_92.wav",
+      "samples": 35303,
+      "rms": 0.35829551491525136
+    }
+  ],
+  "afterfire": {
+    "file": "afterfire_tipout_5500.wav",
+    "samples": 127991,
+    "rms": 0.10460061808794299
+  }
+}

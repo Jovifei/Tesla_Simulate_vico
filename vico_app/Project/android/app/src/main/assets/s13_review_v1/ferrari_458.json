@@ -1,0 +1,122 @@
+{
+  "schema": "vico.s13.review_sidecar.v1",
+  "vehicle_key": "ferrari_458",
+  "source_vehicle_id": "ferrari_458",
+  "source_commit": "29b50961d9628f835e7172b797380ccb36a7f38d",
+  "exporter_sha256": "731f20949a0a033705493064e278c2ea7ac84204a0673f955785e875cbd146b2",
+  "source_scope": "synthetic; uncalibrated; not OEM reproduction",
+  "sample_rate_hz": 48000,
+  "channels": 1,
+  "duration_s": 30.0,
+  "total_frames": 1440000,
+  "control_interpolation": "linear_per_audio_frame",
+  "event_extraction": {
+    "shift": {
+      "detector": "detect_shift_events",
+      "pre_roll_frames": 1920,
+      "post_roll_frames": 10560,
+      "edge_fade_frames": 240
+    },
+    "afterfire": {
+      "source_stem": "post_ptr_afterfire",
+      "window_start_frame": 864000,
+      "window_end_frame": 1104000,
+      "threshold_relative_peak": 0.015,
+      "threshold_absolute_floor": 1e-06,
+      "pre_roll_frames": 1200,
+      "post_roll_frames": 14400
+    }
+  },
+  "gain_is_embedded_in_assets": true,
+  "fixed_vehicle_gain": 0.615619268810834,
+  "trace": {
+    "asset_path": "s12_v10/ferrari_458/common_input_trace.json",
+    "sha256": "d55e93322993f59cdc853f9c013049508723878b758fa4d41363396222bbc839",
+    "point_count": 1501,
+    "sample_period_s": 0.02,
+    "fields": [
+      "time_s",
+      "rpm",
+      "load",
+      "throttle",
+      "acceleration_mps2"
+    ]
+  },
+  "bank_manifest": {
+    "asset_path": "s12_v10/ferrari_458/manifest.json",
+    "sha256": "686cf1b9b1995d44dd8a5958cd847ad24766085c248ca03b2f4bcba606a4b795"
+  },
+  "bank_assets_sha256": {
+    "rpm_1050_load_32.wav": "ea6280d6bf32bf8b9a7f544600c46086d4bc190a8577ded32dd19f6a0f077f9e",
+    "rpm_1050_load_92.wav": "74c662531febeed266e0be36d6294f568b8b210c21af876c0bb697ff1b9311b4",
+    "rpm_1800_load_32.wav": "9e38c5eb65c96469f92d58e325616a23a5452ace7666039e659e54e4698abf80",
+    "rpm_1800_load_92.wav": "53a0819e3ae0eb7e4199544ca3a212f2bd462cfcabc8d0ee286825219666a01c",
+    "rpm_3200_load_32.wav": "fc939c8f3458f2eb6ddc3a668d04591e3b02a0aaf1a6e097aeb092748d7edd93",
+    "rpm_3200_load_92.wav": "6d6731586bececafa00e5ddd6f13e75f809bf12ac67972b9057b4f5eac48dc1d",
+    "rpm_4800_load_32.wav": "7b373a4e13b9bbfe74ef4e634120e4f19a60e9d904a10084381047c1d9b37212",
+    "rpm_4800_load_92.wav": "af43e69aea3a628fa118e74a22d1d505d15a0a64276fbd48d31f057d9cc51a8d",
+    "rpm_6200_load_32.wav": "2d9c10b40c92d1269853c2af159514f00cdca57885d5b9b4d52ef9a82deaf257",
+    "rpm_6200_load_92.wav": "2f2cf4a8108fa73e5bc35004611dd3a6129302e4e651a882bbcca2bf601d11d4",
+    "rpm_7400_load_32.wav": "34ea7af48ce6445a4f79425c7a3f8be6d90f74dd4f28ef962d4307d080d7b88e",
+    "rpm_7400_load_92.wav": "b4df44e116118d8d55170d55d0a4e73c22128b0c3ae459e502c316e04befdb33",
+    "rpm_8400_load_32.wav": "36b75326dd51bd469b824e0f8ea600f51fe7a6a8fce01c6c4bc9bb8cf15011e6",
+    "rpm_8400_load_92.wav": "c6dfafcb6e000af731c5d279859da71d9651e03b16b2a3f58acb2f95b0e60d81",
+    "rpm_9000_load_32.wav": "308a99d1b651f3d800a39ca5d739c014e37d6730db1df2a36b87ce4a0de563b7",
+    "rpm_9000_load_92.wav": "7134cc20aa2b1c838144f2dc2aa1c99727c7127e78703db15db6412530f5be6d",
+    "afterfire_tipout_s12.wav": "52ac8e6ddb080d00e7c30fa3fc3b69168909a2b84ecee5538319e7571be9d1f7",
+    "shift_event_01_s12.wav": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17",
+    "shift_event_02_s12.wav": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17",
+    "shift_event_03_s12.wav": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17"
+  },
+  "audio_pcm_verification": "EXACT_FLOAT32_MATCH",
+  "events": [
+    {
+      "id": "afterfire_tipout",
+      "kind": "afterfire",
+      "source_domain": "POST_PTR_STEM_ONSET",
+      "source_time_s": 18.0155,
+      "source_frame": 864744,
+      "crop_start_frame": 864000,
+      "trigger_offset_frames": 744,
+      "samples": 44816,
+      "asset_path": "s12_v10/ferrari_458/afterfire_tipout_s12.wav",
+      "asset_sha256": "52ac8e6ddb080d00e7c30fa3fc3b69168909a2b84ecee5538319e7571be9d1f7"
+    },
+    {
+      "id": "shift_event_01",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 6.100104166666666,
+      "source_frame": 292805,
+      "crop_start_frame": 290885,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/ferrari_458/shift_event_01_s12.wav",
+      "asset_sha256": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17"
+    },
+    {
+      "id": "shift_event_02",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 8.620354166666667,
+      "source_frame": 413777,
+      "crop_start_frame": 411857,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/ferrari_458/shift_event_02_s12.wav",
+      "asset_sha256": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17"
+    },
+    {
+      "id": "shift_event_03",
+      "kind": "shift",
+      "source_domain": "TRACE_EVENT",
+      "source_time_s": 11.142833333333334,
+      "source_frame": 534856,
+      "crop_start_frame": 532936,
+      "trigger_offset_frames": 1920,
+      "samples": 12480,
+      "asset_path": "s12_v10/ferrari_458/shift_event_03_s12.wav",
+      "asset_sha256": "32e0e952df9c496f2e270931c25eafb72620948948f97a70d626b0c05e166e17"
+    }
+  ]
+}

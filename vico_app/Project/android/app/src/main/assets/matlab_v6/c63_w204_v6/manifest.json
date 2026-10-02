@@ -1,0 +1,152 @@
+{
+  "schema": "vico.matlab.soundbank.v1",
+  "source": "MATLAB v6_synthesize_engine_sound",
+  "vehicle_key": "c63_w204_v6",
+  "display_name": "Mercedes-Benz W204 C63 AMG M156 V8",
+  "sample_rate_hz": 96000,
+  "idle_rpm": 700,
+  "redline_rpm": 7200,
+  "peak_limit": 0.89,
+  "gear_ratios": [
+    4.38,
+    2.86,
+    1.92
+  ],
+  "final_drive": 2.85,
+  "wheel_radius_m": 0.335,
+  "launch_rpm": 2300,
+  "shift_rpm": 7000,
+  "shift_speed_kmh": [
+    70.819848811997744,
+    108.45836985893361
+  ],
+  "shift_attack_s": 0.018,
+  "shift_hold_s": 0.032,
+  "shift_recovery_s": 0.075,
+  "shift_settle_s": 0.055,
+  "shift_min_torque": 0.22,
+  "shift_reengage_gain": 1.08,
+  "minimum_shift_interval_s": 0.35,
+  "downshift_ratio": 0.68,
+  "speed_ceiling_kmh": 144,
+  "afterfire_minimum_rpm": 2600,
+  "loops": [
+    {
+      "rpm": 700,
+      "load": 0.32,
+      "file": "rpm_0700_load_32.wav",
+      "samples": 32914,
+      "rms": 0.015103534200130093
+    },
+    {
+      "rpm": 700,
+      "load": 0.92,
+      "file": "rpm_0700_load_92.wav",
+      "samples": 32914,
+      "rms": 0.0415537140837854
+    },
+    {
+      "rpm": 1400,
+      "load": 0.32,
+      "file": "rpm_1400_load_32.wav",
+      "samples": 32914,
+      "rms": 0.052008273274252587
+    },
+    {
+      "rpm": 1400,
+      "load": 0.92,
+      "file": "rpm_1400_load_92.wav",
+      "samples": 32914,
+      "rms": 0.13964877722047608
+    },
+    {
+      "rpm": 2200,
+      "load": 0.32,
+      "file": "rpm_2200_load_32.wav",
+      "samples": 36655,
+      "rms": 0.081644700865151312
+    },
+    {
+      "rpm": 2200,
+      "load": 0.92,
+      "file": "rpm_2200_load_92.wav",
+      "samples": 36655,
+      "rms": 0.21991302087865497
+    },
+    {
+      "rpm": 3200,
+      "load": 0.32,
+      "file": "rpm_3200_load_32.wav",
+      "samples": 36000,
+      "rms": 0.14648096669011598
+    },
+    {
+      "rpm": 3200,
+      "load": 0.92,
+      "file": "rpm_3200_load_92.wav",
+      "samples": 36000,
+      "rms": 0.377716659620779
+    },
+    {
+      "rpm": 4300,
+      "load": 0.32,
+      "file": "rpm_4300_load_32.wav",
+      "samples": 34828,
+      "rms": 0.23791507852252772
+    },
+    {
+      "rpm": 4300,
+      "load": 0.92,
+      "file": "rpm_4300_load_92.wav",
+      "samples": 34828,
+      "rms": 0.59158677415366279
+    },
+    {
+      "rpm": 5500,
+      "load": 0.32,
+      "file": "rpm_5500_load_32.wav",
+      "samples": 33513,
+      "rms": 0.1440992258299546
+    },
+    {
+      "rpm": 5500,
+      "load": 0.92,
+      "file": "rpm_5500_load_92.wav",
+      "samples": 33513,
+      "rms": 0.46832395744027994
+    },
+    {
+      "rpm": 6800,
+      "load": 0.32,
+      "file": "rpm_6800_load_32.wav",
+      "samples": 33882,
+      "rms": 0.083117160754950029
+    },
+    {
+      "rpm": 6800,
+      "load": 0.92,
+      "file": "rpm_6800_load_92.wav",
+      "samples": 33882,
+      "rms": 0.41800234415565735
+    },
+    {
+      "rpm": 7200,
+      "load": 0.32,
+      "file": "rpm_7200_load_32.wav",
+      "samples": 35200,
+      "rms": 0.044833052907745211
+    },
+    {
+      "rpm": 7200,
+      "load": 0.92,
+      "file": "rpm_7200_load_92.wav",
+      "samples": 35200,
+      "rms": 0.30666048260725953
+    }
+  ],
+  "afterfire": {
+    "file": "afterfire_tipout_5500.wav",
+    "samples": 161609,
+    "rms": 0.081287462507070668
+  }
+}

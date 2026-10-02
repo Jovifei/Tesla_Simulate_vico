@@ -1,0 +1,18 @@
+{
+  "schema": "vico.vehicle.v1",
+  "name": "V-Twin (不均匀点火)",
+  "character": "sport",
+  "engine": {
+    "cylinders": 2, "stroke": 4,
+    "firingOrderDegrees": [0, 315],
+    "idleRpm": 950, "redlineRpm": 6000
+  },
+  "synthesis": {
+    "harmonics": [1.0, 0.7, 0.45, 0.3, 0.18],
+    "harmMult": [1, 2, 3, 4, 5],
+    "waveform": "sawtooth",
+    "combJitter": 0.08, "exhaustResonance": 0.98, "exhaustWindow": 0.6, "decayRad": 0.9
+  },
+  "layers": { "turbo": { "enabled": false } },
+  "mapping": { "overspeedMuteKmh": 150.0 }
+}
