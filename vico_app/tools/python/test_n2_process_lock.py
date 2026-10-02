@@ -1,9 +1,13 @@
 """Windows adapter contracts run with a fake CRT; real process tests run on the host OS.
 
-Passing these mocks is not a claim that Windows locking or Windows crash durability was tested.
+Mock contracts alone are not Windows execution evidence. NativeProcessLockTest
+uses the real host OS backend and independent child processes, without mocks.
+No test here claims power-loss/crash durability.
 """
 import errno
 import os
+import json
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -118,6 +122,63 @@ class WindowsLockContractTest(unittest.TestCase):
                 gate.atomic_json(path, {"uncommitted": True})
         self.assertEqual(b'{"original":true}', path.read_bytes())
         self.assertFalse(list(self.root.glob("*.tmp")))
+
+
+class NativeProcessLockTest(unittest.TestCase):
+    """Probe the real kernel/CRT lock from another process, not a thread or mock."""
+    PROBE = r"""
+import errno, json, sys
+from pathlib import Path
+with Path(sys.argv[1]).open("a+b", buffering=0) as lock:
+    if sys.platform == "win32":
+        import msvcrt
+        backend = "msvcrt"
+        acquire = lambda: msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+        release = lambda: msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+        contention = (errno.EACCES,)
+    else:
+        import fcntl
+        backend = "fcntl"
+        acquire = lambda: fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        release = lambda: fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        contention = (errno.EACCES, errno.EAGAIN)
+    try:
+        acquire()
+    except OSError as error:
+        if error.errno not in contention:
+            raise
+        state = "blocked"
+    else:
+        state = "acquired"
+        release()
+    print(json.dumps({"backend": backend, "state": state}))
+"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.ledger = Path(self.temp.name) / "native-budget.json"
+
+    def assert_probe(self, expected):
+        process = subprocess.run([sys.executable, "-c", self.PROBE, str(self.ledger) + ".lock"],
+                                 capture_output=True, text=True, timeout=15)
+        self.assertEqual(0, process.returncode, process.stderr)
+        self.assertEqual({"backend": "msvcrt" if sys.platform == "win32" else "fcntl",
+                          "state": expected}, json.loads(process.stdout))
+
+    def test_native_backend_excludes_other_process_and_releases(self):
+        with gate._ledger_lock(self.ledger):
+            self.assert_probe("blocked")
+        self.assert_probe("acquired")
+        # Locking beyond EOF must not require mutating a byte in the sidecar.
+        self.assertEqual(b"", Path(str(self.ledger) + ".lock").read_bytes())
+
+    def test_native_backend_releases_after_body_exception(self):
+        with self.assertRaisesRegex(RuntimeError, "body failure"):
+            with gate._ledger_lock(self.ledger):
+                self.assert_probe("blocked")
+                raise RuntimeError("body failure")
+        self.assert_probe("acquired")
 
 
 if __name__ == "__main__":

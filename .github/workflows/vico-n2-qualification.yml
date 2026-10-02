@@ -1,0 +1,101 @@
+name: Vico N2 Qualification Tools
+
+on:
+  # No base-branch restriction: PR37 targets an audit branch rather than main.
+  pull_request:
+    paths:
+      - '.github/workflows/vico-n2-qualification.yml'
+      - '.gitattributes'
+      - 'docs/.gitattributes'
+      - 'docs/vico*n2*.md'
+      - 'vico_app/tools/python/**'
+      - 'vico_app/tools/jvm/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
+  push:
+    branches:
+      - main
+      - 'p2-n2-*'
+      - 'codex-remote-p2-p3-*'
+    paths:
+      - '.github/workflows/vico-n2-qualification.yml'
+      - '.gitattributes'
+      - 'docs/.gitattributes'
+      - 'docs/vico*n2*.md'
+      - 'vico_app/tools/python/**'
+      - 'vico_app/tools/jvm/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vico-n2-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: '1'
+  PYTHONUNBUFFERED: '1'
+  EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  linux-synthetic-export:
+    name: Linux JVM exports and Python metrics
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned binary numeric test dependencies
+        run: >-
+          python -m pip install --disable-pip-version-check --index-url https://pypi.org/simple
+          --only-binary=:all: --require-hashes --force-reinstall
+          -r vico_app/tools/python/requirements-n2-ci-linux.txt
+      - name: Compile real Kotlin, export both partitions, and test actual PCM metrics
+        run: >-
+          python vico_app/tools/python/run_n2_ci.py
+          --platform linux --download-deps
+          --output "${{ runner.temp }}/vico-n2-linux"
+      - name: Compile Python and check whitespace
+        run: |
+          python -m compileall -q vico_app/tools/python
+          git diff --check
+
+  windows-native-locks:
+    name: Windows native msvcrt locks and gate CLI
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      # The gate suite creates its frozen binary fixture with this JDK. No Kotlin,
+      # Android, pip packages, private clips, secrets, or deployment are used here.
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Run real Windows process contention, budgets, sealing, and both CLIs
+        run: >-
+          python vico_app/tools/python/run_n2_ci.py
+          --platform windows
+          --output "${{ runner.temp }}/vico-n2-windows"
+      - name: Compile gate tools and check whitespace
+        run: |
+          python -m py_compile vico_app/tools/python/n2_artifact_gate.py vico_app/tools/python/n2_hard_gate.py vico_app/tools/python/run_n2_ci.py
+          git diff --check
