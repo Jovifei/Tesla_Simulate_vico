@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             Thread({
                 val prepared=runCatching {com.vico.simulator.sound.s15.C63RuntimePreparation.warmup()}
                 handler.post {
-                if(prepared.isFailure){s15SmokeInProgress=false;toast("诊断准备失败，未播放");return@post}
+                if(prepared.isFailure){android.util.Log.e("VicoS15Smoke","Preparation failed",prepared.exceptionOrNull());s15SmokeInProgress=false;toast("诊断准备失败，未播放");return@post}
                 if(audioRunning || s14.busy || reviewExportInProgress){s15SmokeInProgress=false;return@post}
                 s15SmokeInProgress=true
                 val oldDemo=sensorProvider.isDemoMode();val oldScenario=demoScenario
