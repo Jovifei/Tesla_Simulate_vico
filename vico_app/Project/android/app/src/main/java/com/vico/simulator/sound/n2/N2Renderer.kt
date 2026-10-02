@@ -86,6 +86,12 @@ internal class N2Renderer(
     )
 
     fun restore(saved: Snapshot) {
+        val probe = N2Renderer(baselineProfile, profile, mode, qualificationOnly, eventsAudible)
+        probe.applySnapshot(saved)
+        applySnapshot(saved)
+    }
+
+    private fun applySnapshot(saved: Snapshot) {
         require(saved.scalars.size == 6) { "N2 renderer snapshot scalar mismatch" }
         val initializedStateValid =
             if (saved.frames == 0L) {

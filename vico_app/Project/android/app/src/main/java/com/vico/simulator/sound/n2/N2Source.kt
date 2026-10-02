@@ -111,6 +111,12 @@ internal class N2Source(
     )
 
     fun restore(saved: Snapshot) {
+        val probe = N2Source(baselineProfile, profile, mode, eventsAudible)
+        probe.applySnapshot(saved)
+        applySnapshot(saved)
+    }
+
+    private fun applySnapshot(saved: Snapshot) {
         val baselineIdentity = baseline.snapshot().key
         val responseIdentities = responses.map { it.snapshot().identity }
         val eventIdentity = eventProcess?.snapshot()?.key
