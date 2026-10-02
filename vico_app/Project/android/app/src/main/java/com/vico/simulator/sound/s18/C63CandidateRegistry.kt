@@ -7,14 +7,15 @@ internal data class C63CandidateRecord(
     val id: String,
     val qualification: QualificationResult,
 ) {
-    val enabled: Boolean get() = qualification.eligibleForRuntime && id != "C63_HY1"
+    val enabled: Boolean get() = id == qualification.candidateId && qualification.eligibleForRuntime &&
+        id != "C63_HY1" && !id.startsWith("C63_HY1_")
 }
 
 internal class C63CandidateRegistry {
     private val records = linkedMapOf<String, C63CandidateRecord>()
 
     fun register(record: C63CandidateRecord) {
-        require(record.id.isNotBlank())
+        require(record.id.isNotBlank() && record.id == record.qualification.candidateId)
         records[record.id] = record
     }
 
