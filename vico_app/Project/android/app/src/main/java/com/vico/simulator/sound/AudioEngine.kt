@@ -20,6 +20,10 @@ class AudioEngine(context: Context) {
     private var sampleRate: Int = 48000
     private val blockSize: Int get() = sampleRate / 50
     private val model = MatlabV6SoundBankEngine(context.assets)
+    private val qualificationRoute = C63QualificationRoute()
+
+    internal fun setQualificationProvider(provider: C63QualificationPcmProvider?): Boolean =
+        debuggable && !running && qualificationRoute.prepare(provider)
 
     @Volatile private var current: SoundState? = null
     @Volatile private var masterVol: Float = 1.0f
@@ -224,6 +228,7 @@ class AudioEngine(context: Context) {
     }
 
     fun stop(reason: String = "USER_STOP") {
+        qualificationRoute.clear()
         if (referenceSession != null) referenceCancelReason = reason
         running = false
         // playLoop 自行淡出后停 track
@@ -297,6 +302,7 @@ class AudioEngine(context: Context) {
 
     @Synchronized
     fun setVehicle(vehicleKey: String): Boolean {
+        qualificationRoute.clear()
         if (digitalCapture?.isFinished == false) {
             lastAudioError = "Finish or cancel digital capture before changing vehicle"
             return false
@@ -428,11 +434,14 @@ class AudioEngine(context: Context) {
                     continue
                 }
                 val state = current
-                val sourceAvailable = state != null && state.amplitude > 0.0
+                val sourceAvailable = state != null && state.amplitude > 0.0 && C63QualificationRoute.validInput(state)
+                if (!sourceAvailable) qualificationRoute.clear()
                 val runGain = runEnvelope.step(running)
                 val contentGain = contentEnvelope.step(running && sourceAvailable && !muted && state?.muted != true)
                 val pcm: FloatArray = if (sourceAvailable) {
-                    model.renderState(if(model.prototypeEnabled) state!! else state!!.copy(muted = false), blockSize)
+                    val renderState = if(model.prototypeEnabled) state!! else state!!.copy(muted = false)
+                    val legacy = model.renderState(renderState, blockSize)
+                    if (model.prototypeEnabled) legacy else qualificationRoute.render(renderState, blockSize, sampleRate) ?: legacy
                 } else {
                     FloatArray(blockSize)
                 }
@@ -458,6 +467,7 @@ class AudioEngine(context: Context) {
             lastAudioError = "${error.javaClass.simpleName}: ${error.message}"
             capture?.markFailed()
         } finally {
+            qualificationRoute.clear()
             if (reference != null && reference.isComplete && running && lastAudioError == null) {
                 ticket?.let { onS14Progress?.invoke(it, reference.framesRendered, "DRAINING") }
                 val deadline = android.os.SystemClock.elapsedRealtime() + 2000L
