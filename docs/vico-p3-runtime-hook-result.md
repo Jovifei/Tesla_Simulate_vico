@@ -10,7 +10,7 @@
 - provider PCM复制后再交给AudioEngine混音，防止原buffer被音量处理覆盖。报告hash为声明的产物引用，不声称签名认证或真实声学证明。
 - adapter prepare拒绝时清除先前artifact，并拒绝未知hash格式。
 
-验证：gradlew.bat :app:testDebugUnitTest :app:assembleDebug --offline --console=plain，BUILD SUCCESSFUL。220 tests，0 failures/errors，25 skipped；包括真实四模式event-on/off的合成PCM一致性、provider异常/无资格/撤销/输入错误/越界/清理、artifact身份与先前候选清理。git diff --check PASS。
+验证：gradlew.bat :app:testDebugUnitTest :app:assembleDebug --offline --console=plain，BUILD SUCCESSFUL。220 tests，0 failures/errors，25 skipped；包括真实四模式event-on/off的合成PCM一致性、provider异常/无资格/撤销/输入错误/越界/清理、artifact身份与先前候选清理。源码git diff --check PASS；重新生成patch后，patch自身的空白context行产生尾空白提示，这是标准diff上下文，不删除。git apply --reverse --check通过。
 
 Debug APK SHA256：595e212486b11c9a7df0923ec4428771a598848be5e7ab98a1af4e78b655379d。
 
