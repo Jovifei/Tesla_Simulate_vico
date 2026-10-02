@@ -86,6 +86,7 @@ internal class N2Renderer(
     )
 
     fun restore(saved: Snapshot) {
+        require(saved.scalars.size == 6) { "N2 renderer snapshot scalar mismatch" }
         val initializedStateValid =
             if (saved.frames == 0L) {
                 saved.scalars[0].isNaN() && saved.scalars[1].isNaN() && saved.scalars[2].isNaN()
@@ -114,7 +115,6 @@ internal class N2Renderer(
                 saved.output.index in 0 until 20
         require(
             saved.key == snapshotKey &&
-                saved.scalars.size == 6 &&
                 initializedStateValid &&
                 (saved.scalars[3].isFinite() || saved.scalars[3].isNaN()) &&
                 saved.scalars[4].isFinite() && saved.scalars[4] >= 0.0 &&
