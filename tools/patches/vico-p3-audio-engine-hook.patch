@@ -1,79 +1,39 @@
 diff --git a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
+index BASELINE9721dcc0..UPDATED9721dcc0 100644
 --- a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
 +++ b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
-@@
- class AudioEngine(context: Context) {
- 
-     private var sampleRate: Int = 48000
+@@ -20,6 +20,8 @@ class AudioEngine(context: Context) {
      private val blockSize: Int get() = sampleRate / 50
      private val model = MatlabV6SoundBankEngine(context.assets)
 +    @Volatile private var qualificationProvider: C63QualificationPcmProvider? = null
-@@
++
+@@ -300,6 +302,13 @@ class AudioEngine(context: Context) {
      fun pushState(state: SoundState) {
          current = state
      }
 +
-+    fun setQualificationProvider(provider: C63QualificationPcmProvider?) {
-+        qualificationProvider = provider
++    internal fun setQualificationProvider(provider: C63QualificationPcmProvider?) {
++        qualificationProvider = provider?.takeIf { it.isAllowed() }
 +    }
 +
-+    fun clearQualificationProvider() {
++    internal fun clearQualificationProvider() {
 +        qualificationProvider = null
 +    }
-@@
--                val pcm: FloatArray = if (sourceAvailable) {
+@@ -390,7 +399,15 @@ class AudioEngine(context: Context) {
 -                    model.renderState(if(model.prototypeEnabled) state!! else state!!.copy(muted = false), blockSize)
-+                val pcm: FloatArray = if (sourceAvailable) {
-+                    val candidate = qualificationProvider
-+                        ?.render(state!!, blockSize)
-+                        ?.takeIf { it.size == blockSize && it.all { sample -> sample.isFinite() } }
-+                    candidate ?: model.renderState(if(model.prototypeEnabled) state!! else state!!.copy(muted = false), blockSize)
++                    val safeState = if(model.prototypeEnabled) state!! else state!!.copy(muted = false)
++                    runCatching {
++                        qualificationProvider?.render(safeState, blockSize)
++                            ?.takeIf { output -> output.size == blockSize && output.all { sample -> sample.isFinite() } }
++                            ?: model.renderState(safeState, blockSize)
++                    }.getOrElse {
++                        model.renderState(safeState, blockSize)
++                    }
                  } else {
                      FloatArray(blockSize)
                  }
-@@
+@@ -470,6 +487,7 @@ class AudioEngine(context: Context) {
          } finally {
 +            qualificationProvider = null
              running = false
-*** Add File: vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt
-+package com.vico.simulator.sound
-+
-+internal interface C63QualificationPcmProvider {
-+    val candidateId: String
-+    val eligible: Boolean
-+    fun render(state: SoundState, frames: Int): FloatArray?
-+}
-+
-+internal class SafeC63QualificationProvider(
-+    override val candidateId: String,
-+    override val eligible: Boolean,
-+    private val renderer: (SoundState, Int) -> FloatArray?,
-+) : C63QualificationPcmProvider {
-+    override fun render(state: SoundState, frames: Int): FloatArray? {
-+        if (!eligible) return null
-+        if (candidateId == "C63_HY1" || candidateId.startsWith("C63_HY1_")) return null
-+        return runCatching { renderer(state, frames) }
-+            .getOrNull()
-+            ?.takeIf { it.size == frames && it.all { sample -> sample.isFinite() } }
-+    }
-+}
-*** Add File: vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63QualificationProviderHookTest.kt
-+package com.vico.simulator.sound
-+
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertNotNull
-+import org.junit.Test
-+
-+class C63QualificationProviderHookTest {
-+    @Test
-+    fun invalidCandidateCannotProvidePcm() {
-+        val provider = SafeC63QualificationProvider("C63_HY1_SE", true) { _, frames -> FloatArray(frames) }
-+        assertNull(provider.render(SoundState(0.0, 0.0, 0.0, 0.0, 0.0, floatArrayOf(), false, 0.0, 0.0), 480))
-+    }
-+
-+    @Test
-+    fun validCandidateCanProvideOnlyFiniteCorrectLengthPcm() {
-+        val provider = SafeC63QualificationProvider("C63_CANDIDATE_V2", true) { _, frames -> FloatArray(frames) }
-+        assertNotNull(provider.render(SoundState(0.0, 0.0, 0.0, 0.0, 0.0, floatArrayOf(), false, 0.0, 0.0), 480))
-+    }
-+}
+         }
