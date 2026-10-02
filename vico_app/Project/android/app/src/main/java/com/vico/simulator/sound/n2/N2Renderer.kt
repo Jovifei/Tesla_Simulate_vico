@@ -1,6 +1,7 @@
 package com.vico.simulator.sound.n2
 
 import com.vico.simulator.sound.SoundState
+import com.vico.simulator.sound.n2.diagnostic.N2QualificationTapBuffer
 import com.vico.simulator.sound.s15.C63HeadroomProfile
 import com.vico.simulator.sound.s15.C63IdleRuntime
 import com.vico.simulator.sound.s15.C63ShiftRuntime
@@ -149,7 +150,12 @@ internal class N2Renderer(
         saved.shiftDelay.copyInto(shiftDelay)
     }
 
-    fun render(state: SoundState, count: Int, validInput: Boolean = true): FloatArray {
+    fun render(
+        state: SoundState,
+        count: Int,
+        validInput: Boolean = true,
+        tap: N2QualificationTapBuffer? = null,
+    ): FloatArray {
         require(count > 0 && count <= 4800)
         require(
             state.timeS.isFinite() &&
@@ -157,6 +163,7 @@ internal class N2Renderer(
                 state.load.isFinite() && state.load in 0.0..1.0 &&
                 state.throttle.isFinite() && state.throttle in 0.0..1.0
         )
+        tap?.requireCapacity(count)
 
         val result = if (count == 960) audioBuffer else FloatArray(count)
         if (!rpm.isFinite()) {
@@ -179,6 +186,8 @@ internal class N2Renderer(
             val delayedBody = bodyDelay[delayIndex]
             val delayedShift = shiftDelay[delayIndex]
             bodyDelay[delayIndex] = source.sample(r, l, t, validInput).toDouble()
+            // Source-time, pre-delay/pre-idle/pre-shift/pre-output observations. Never mixed PCM.
+            tap?.append(source.lastStems, source.lastCombustionImpulse, source.lastAfterfireImpulse)
             shiftDelay[delayIndex] = shiftEvent && n == 0
             delayIndex = (delayIndex + 1) % bodyDelay.size
 

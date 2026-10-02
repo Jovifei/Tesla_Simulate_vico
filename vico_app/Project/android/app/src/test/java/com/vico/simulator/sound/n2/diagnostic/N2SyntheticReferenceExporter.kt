@@ -1,64 +1,36 @@
 package com.vico.simulator.sound.n2.diagnostic
 
-import com.vico.simulator.sound.HybridTestProfiles
 import com.vico.simulator.sound.SoundState
-import com.vico.simulator.sound.n2.N2Mode
-import com.vico.simulator.sound.n2.N2Profile
-import com.vico.simulator.sound.n2.N2Renderer
+import com.vico.simulator.sound.n2.N2QualificationExport
+import com.vico.simulator.sound.n2.N2QualificationFixture
+import com.vico.simulator.sound.n2.N2TrajectorySegment
 import java.io.File
-import java.security.MessageDigest
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
-/**
- * Opt-in synthetic diagnostic export only.
- *
- * Writes only generated PCM/stems/hashes. It does not read references, credentials,
- * network data, or modify existing output files.
- */
+/** Opt-in synthetic diagnostic export. Both profiles must be imported files, never regenerated. */
 internal object N2SyntheticReferenceExporter {
-    private val modes = listOf(
-        N2Mode.T to true,
-        N2Mode.S to true,
-        N2Mode.E to true,
-        N2Mode.E to false,
-        N2Mode.SE to true,
-        N2Mode.SE to false,
-    )
-
-    fun export(output: File) {
-        require(!output.exists()) { "diagnostic output must be new" }
-        output.mkdirs()
-        val profile = N2Profile.calibrated()
-        val states = steadyFixture()
-        val baseline = HybridTestProfiles.create()
-        val manifest = StringBuilder()
-        modes.forEach { (mode, events) ->
-            val renderer = N2Renderer(baseline, profile, mode, true, events)
-            val pcm = states.flatMap { renderer.render(it, 960).asList() }.toFloatArray()
-            val file = File(output, "${mode}_event_${events}.pcm.f32le")
-            file.writeBytes(ByteBuffer.allocate(pcm.size * 4).order(ByteOrder.LITTLE_ENDIAN).apply {
-                pcm.forEach(::putFloat)
-            }.array())
-            manifest.append(file.name).append('\t').append(sha(file)).append('\n')
-        }
-        File(output, "manifest.tsv").writeText(manifest.toString())
-    }
-
-    private fun steadyFixture(): List<SoundState> = List(150) { n ->
-        SoundState(
-            n * .02,
-            4500.0,
-            0.0,
-            .7,
-            .7,
-            floatArrayOf(),
-            false,
-            .7,
-            .7,
+    fun fixture(): N2QualificationFixture {
+        fun state(n: Int, closed: Boolean) = SoundState(
+            timeS = n * .02, rpm = if (closed) 4000.0 else 5000.0,
+            frequencyHz = 0.0, amplitude = if (closed) .05 else .9,
+            brightness = .9, harmonics = floatArrayOf(), muted = false,
+            throttle = if (closed) .05 else .9, load = if (closed) .05 else .9,
+            shiftTrigger = n == 90,
         )
+        val trajectory = (0 until 130).map { n -> N2TrajectorySegment(state(n, n >= 100), 960) } +
+            N2TrajectorySegment(state(130, true).copy(rpm = 0.0, throttle = 0.0, load = 0.0),
+                15360, validInput = false)
+        return N2QualificationFixture("synthetic-hot-lift-shift-tail-v1", trajectory)
     }
 
-    private fun sha(file: File): String = MessageDigest.getInstance("SHA-256")
-        .digest(file.readBytes()).joinToString("") { "%02x".format(it) }
+    fun export(output: File, baselineArtifact: ByteArray, profileArtifact: ByteArray,
+        partitions: IntArray = intArrayOf(960)): String =
+        N2QualificationExport.write(output, fixture(), baselineArtifact, profileArtifact, partitions)
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        require(args.size in 3..4) { "usage: baseline.bin profile.bin NEW_OUTPUT_DIR [960|333,297]" }
+        val partitions = if (args.size == 4) args[3].split(',').map(String::toInt).toIntArray() else intArrayOf(960)
+        val digest = export(File(args[2]), File(args[0]).readBytes(), File(args[1]).readBytes(), partitions)
+        println("RENDERED_ONLY_NOT_ACOUSTIC_QUALIFICATION manifest_sha256=$digest")
+    }
 }

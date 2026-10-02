@@ -14,11 +14,16 @@ internal class N2QualificationTapBuffer(
         require(capacity > 0)
     }
 
-    private val frames = Array(capacity) { DoubleArray(STEM_COUNT) }
+    private val frames = Array(capacity) { DoubleArray(CHANNEL_COUNT) }
     private var size = 0
 
     fun reset() {
         size = 0
+    }
+
+    /** A renderer reserves its whole block before advancing any DSP state. */
+    fun requireCapacity(count: Int) {
+        require(count >= 0 && count <= capacity - size) { "N2 qualification tap capacity exceeded" }
     }
 
     fun append(
@@ -27,12 +32,11 @@ internal class N2QualificationTapBuffer(
         afterfireImpulse: Double,
     ) {
         require(sourceStems.size == STEM_COUNT)
-        if (size >= capacity) {
-            return
-        }
+        requireCapacity(1)
+        require(sourceStems.all { it.isFinite() } && combustionImpulse.isFinite() && afterfireImpulse.isFinite())
         sourceStems.copyInto(frames[size])
-        frames[size][5] = combustionImpulse
-        frames[size][6] = afterfireImpulse
+        frames[size][COMBUSTION_IMPULSE] = combustionImpulse
+        frames[size][AFTERFIRE_IMPULSE] = afterfireImpulse
         size++
     }
 
@@ -44,5 +48,12 @@ internal class N2QualificationTapBuffer(
 
     companion object {
         const val STEM_COUNT = 7
+        const val COMBUSTION_IMPULSE = 7
+        const val AFTERFIRE_IMPULSE = 8
+        const val CHANNEL_COUNT = 9
+        val CHANNEL_NAMES: List<String> get() = listOf(
+            "exhaust", "bark", "intake", "mechanical", "afterfire", "body", "rumble",
+            "combustion_impulse", "afterfire_impulse",
+        )
     }
 }
