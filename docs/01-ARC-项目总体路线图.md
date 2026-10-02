@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-02 · 主线：P2 · 工作包：S18/C63_HY1（c2c_930a iteration11）
+更新：2026-10-02 · 主线：P2 · 工作包：P2/P3 GitHub接力：默认关闭的真实PCM接入准备（PR #35）
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 
@@ -101,8 +101,8 @@
 当前里程碑：
 
 - P3-M1 已有 AH 特定 APK 冷启动及 DEMO 长时证据：DONE；证据：[review_packages/s15-ah-20261002/final-handoff.md](../review_packages/s15-ah-20261002/final-handoff.md)
-- P3-M2 新算法接入及电脑手机同输入一致性：NOT_RUN
-- P3-M3 交互、路线与生命周期完整验证：NOT_RUN
+- P3-M2 新算法接入及电脑手机同输入一致性：ACTIVE；证据：[docs/vico-p3-runtime-hook-result.md](../docs/vico-p3-runtime-hook-result.md)
+- P3-M3 交互、路线与生命周期完整验证：ACTIVE；证据：[docs/vico-p3-runtime-hook-result.md](../docs/vico-p3-runtime-hook-result.md)
 
 下一步：等待 P2 合格候选；设备连接后绑定新 APK 重测
 
