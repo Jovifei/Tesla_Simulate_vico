@@ -35,8 +35,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 def _write_atomic(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
-    text = json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "
-"
+    text = json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n"
     tmp.write_text(text, encoding="utf-8")
     os.replace(tmp, path)
 

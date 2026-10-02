@@ -13,7 +13,7 @@ import kotlin.math.sqrt
  * identical occurrence and response streams.
  */
 internal class N2EventProcess(private val profile: N2Profile) {
-    private val key = "C63_N2_EVENT_V1|undefined"
+    private val key = "C63_N2_EVENT_V1|" + profile.identity
     private val occurrence = C63AR2AfterfireRuntime(profile.occurrenceSeed, 0.0)
     private var responseRng = profile.responseSeed
     private val response = C63FiniteResponseSource(
