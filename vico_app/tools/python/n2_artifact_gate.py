@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import errno
 import hashlib
 import json
 import math
@@ -16,6 +17,7 @@ import re
 import struct
 import sys
 import tempfile
+import time
 import uuid
 
 CANDIDATE = "C63_N2_CONTINUOUS_V1"
@@ -94,7 +96,7 @@ def _digest(value):
 
 
 def atomic_json(path: Path, value: dict):
-    """Durable unique-temp replacement. Callers must hold the ledger's separate stable lock."""
+    """Flush file data and replace atomically under the stable lock; sync directories on POSIX."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     data = json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n"
@@ -105,31 +107,67 @@ def atomic_json(path: Path, value: dict):
             out.flush()
             os.fsync(out.fileno())
         os.replace(name, path)
-        directory = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory)
-        finally:
-            os.close(directory)
+        # Windows does not support opening/fsyncing a directory via this stdlib path.
+        # The temporary file is flushed above; power-loss directory durability is not claimed.
+        if sys.platform != "win32":
+            directory = os.open(path.parent, os.O_RDONLY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
     finally:
         if os.path.exists(name):
             os.unlink(name)
 
 
 @contextmanager
-def _ledger_lock(path):
-    # Fail closed on platforms without an OS process lock. A threading.Lock is insufficient.
+def _windows_process_lock(lock):
+    """Lock byte zero on a stable sidecar, including when the file is empty.
+
+    msvcrt.LK_LOCK gives up after ten retries. Use nonblocking locking with our own
+    contention-only wait instead, preserving flock's wait-until-acquired semantics.
+    """
     try:
-        import fcntl
+        import msvcrt
     except ImportError as exc:
-        raise ValueError("process_lock_requires_posix") from exc
+        raise ValueError("windows_process_lock_unavailable") from exc
+    while True:
+        lock.seek(0)
+        try:
+            msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+            break
+        except OSError as exc:
+            # The CRT documents EACCES for an already locked byte. All other errors
+            # fail closed; do not loop on a bad descriptor or unsupported filesystem.
+            if exc.errno != errno.EACCES:
+                raise
+            time.sleep(.05)
+    try:
+        yield
+    finally:
+        lock.seek(0)
+        msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+
+
+@contextmanager
+def _ledger_lock(path):
+    # A threading.Lock is insufficient. All writers must use this same stable sidecar.
     path = Path(path).resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.with_name(path.name + ".lock").open("a+b") as lock:
-        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
-        try:
-            yield path
-        finally:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+    with path.with_name(path.name + ".lock").open("a+b", buffering=0) as lock:
+        if sys.platform == "win32":
+            with _windows_process_lock(lock):
+                yield path
+        else:
+            try:
+                import fcntl
+            except ImportError as exc:
+                raise ValueError("process_lock_unavailable") from exc
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            try:
+                yield path
+            finally:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
 
 
 def _binary_identity(data):

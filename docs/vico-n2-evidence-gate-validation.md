@@ -1,6 +1,6 @@
 # N2 artifact-bound evidence gate
 
-Status: CLOUD_SOFTWARE_GATE_TESTED / ACOUSTIC_AND_DEVICE_QUALIFICATION_NOT_RUN
+Status: CLOUD_POSIX_GATE_TESTED / WINDOWS_API_CONTRACT_TESTED / WINDOWS_RUNTIME_NOT_RUN / ACOUSTIC_AND_DEVICE_QUALIFICATION_NOT_RUN
 
 Baseline: PR37 `538258543961d4a6c045c0ef0eab786e1015bda0` on
 `p2-n2-source-implementation-20261002`. This patch does not incorporate PR35.
@@ -31,7 +31,9 @@ Baseline: PR37 `538258543961d4a6c045c0ef0eab786e1015bda0` on
 
 ## Supported invocation
 
-Runtime: Python standard library on POSIX (fcntl process locks). No Android SDK is needed.
+Runtime: Python standard library with POSIX `fcntl.flock` or Windows `msvcrt.locking`.
+No Android SDK is needed. Windows adapter logic is covered with mocks; actual Windows execution
+and process-lock behavior remain NOT_RUN and must pass the same suite before real evaluation.
 Tests additionally use the installed JDK 21 to create a temporary test-only binary fixture whose
 unit-profile hash must equal the already frozen calibration identity. Production gates only
 read imported binary bytes; they never invoke this generator.
@@ -121,7 +123,8 @@ python -m vico_app.tools.python.n2_artifact_gate --help
 git diff --check
 ```
 
-Result: 34 tests passed. This includes both direct-script and module CLIs, package APIs, pass and
+Result: 43 tests passed (34 existing executable gate/helper tests plus nine mocked Windows
+locking/replacement contract tests). This includes both direct-script and module CLIs, package APIs, pass and
 nonzero rejection fixtures, tampered/malformed/nonfinite input, both budget ceilings under 85
 competing subprocess reservations, 16 competing duplicate reservations, and two competing result
 payloads for one reservation. The temporary golden-format fixture is generated only for the
@@ -132,3 +135,49 @@ real reference/held-out comparisons, device installation/playback, physical acou
 human listening. Earlier 246-test local receipts are historical; they are not this patch's test
 count. HY1, calibrated constants, renderer/source Kotlin and default AudioEngine routing are
 unchanged. PR37 remains draft and qualification-only.
+
+## Windows handoff compatibility follow-up
+
+The Windows adapter uses a byte-zero lock on the same stable sidecar as the POSIX adapter.
+It opens the sidecar unbuffered, seeks to byte zero before every lock/unlock, and may lock the
+byte beyond EOF without modifying the file. It retries `LK_NBLCK` only for the documented
+`EACCES` contention error. Unlike `LK_LOCK`, this does not abandon a legitimate waiter after
+10 attempts. Other errors fail closed; interruption before acquisition never unlocks an
+unacquired range. Context exit releases an acquired range even when validation raises.
+
+Official API contracts: [Python msvcrt](https://docs.python.org/3/library/msvcrt.html) and
+[Microsoft CRT _locking](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/locking?view=msvc-170).
+
+Windows still flushes/fsyncs the unique temporary ledger file before replacement. It does not
+attempt the unsupported POSIX directory-open/fsync step. Windows power-loss directory durability
+is not established by these tests. A replacement/sharing failure propagates as rejection and
+cleans up the unused temporary file. Use one protected ledger on a local filesystem; network
+filesystem semantics have not been verified.
+
+`docs/.gitattributes` fixes the preregistration file to LF line endings. This preserves its
+registered byte hash when Git's Windows checkout policy would otherwise use CRLF; the gate does
+not normalize or silently accept altered preregistration bytes. Adding the attribute does not rewrite an existing CRLF worktree copy. First inspect its bytes:
+
+```powershell
+Get-FileHash -Algorithm SHA256 docs/vico-p2-n2-implementation-preregistration.md
+```
+
+Expected: `16c22a5e313e49d10a8986312f6b63512bbdbc6fbf44f05276c4117f90e92b1f`.
+Check this before using an authoritative ledger. If it differs, preserve any local edits;
+if the content changed beyond line endings, stop for contract review. For a line-ending-only
+difference, a safe alternative to replacing the tracked file is to
+materialize the accepted Git blob into a **new** run-local file, then pass that file as
+`--preregistration`. The following command refuses to overwrite an existing file and avoids
+PowerShell's text-redirection encoding/line-ending conversions:
+
+```sh
+python -c "import pathlib,subprocess; data=subprocess.check_output(['git','show','240a861c705ce7c14fcf7e92c0564a4e8b8150b5:docs/vico-p2-n2-implementation-preregistration.md']); pathlib.Path('n2-preregistration.git.md').open('xb').write(data)"
+```
+
+This copies preregistration bytes only; it does not restore, discard or modify worktree edits.
+
+Executed here: real POSIX process-contention tests, mocked Windows seek/range/retry/error/unlock
+and file-replacement contracts, and Git's `eol=lf` attribute check. Not executed here: Windows
+Python/JVM fixture generation, real Windows competing processes, Windows antivirus/sharing-lock
+interactions, or Windows crash recovery. These distinctions are deliberate; passing mocks is
+not Windows qualification.
