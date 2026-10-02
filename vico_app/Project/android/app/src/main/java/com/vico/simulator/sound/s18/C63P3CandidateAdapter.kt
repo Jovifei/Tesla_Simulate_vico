@@ -21,6 +21,10 @@ internal class C63P3CandidateAdapter {
     private var active: C63CandidateArtifact? = null
 
     fun prepare(artifact: C63CandidateArtifact, qualification: QualificationResult): C63RuntimeCandidateReport {
+        active = null
+        if (!listOf(artifact.profileHash, artifact.sourceHash, artifact.reportHash).all { it.matches(Regex("[0-9a-f]{64}")) }) {
+            return C63RuntimeCandidateReport(artifact, false, "invalid_artifact_hash")
+        }
         if (artifact.candidateId != qualification.candidateId) {
             return C63RuntimeCandidateReport(artifact, false, "candidate_identity_mismatch")
         }

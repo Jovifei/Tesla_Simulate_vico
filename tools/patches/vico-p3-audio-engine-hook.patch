@@ -1,39 +1,244 @@
 diff --git a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
-index BASELINE9721dcc0..UPDATED9721dcc0 100644
+index 70d13e7..092c2df 100644
 --- a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
 +++ b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt
-@@ -20,6 +20,8 @@ class AudioEngine(context: Context) {
+@@ -20,6 +20,10 @@ class AudioEngine(context: Context) {
+     private var sampleRate: Int = 48000
      private val blockSize: Int get() = sampleRate / 50
      private val model = MatlabV6SoundBankEngine(context.assets)
-+    @Volatile private var qualificationProvider: C63QualificationPcmProvider? = null
++    private val qualificationRoute = C63QualificationRoute()
 +
-@@ -300,6 +302,13 @@ class AudioEngine(context: Context) {
-     fun pushState(state: SoundState) {
-         current = state
++    internal fun setQualificationProvider(provider: C63QualificationPcmProvider?): Boolean =
++        debuggable && !running && qualificationRoute.prepare(provider)
+ 
+     @Volatile private var current: SoundState? = null
+     @Volatile private var masterVol: Float = 1.0f
+@@ -224,6 +228,7 @@ class AudioEngine(context: Context) {
      }
-+
-+    internal fun setQualificationProvider(provider: C63QualificationPcmProvider?) {
-+        qualificationProvider = provider?.takeIf { it.isAllowed() }
-+    }
-+
-+    internal fun clearQualificationProvider() {
-+        qualificationProvider = null
-+    }
-@@ -390,7 +399,15 @@ class AudioEngine(context: Context) {
+ 
+     fun stop(reason: String = "USER_STOP") {
++        qualificationRoute.clear()
+         if (referenceSession != null) referenceCancelReason = reason
+         running = false
+         // playLoop 自行淡出后停 track
+@@ -297,6 +302,7 @@ class AudioEngine(context: Context) {
+ 
+     @Synchronized
+     fun setVehicle(vehicleKey: String): Boolean {
++        qualificationRoute.clear()
+         if (digitalCapture?.isFinished == false) {
+             lastAudioError = "Finish or cancel digital capture before changing vehicle"
+             return false
+@@ -428,11 +434,14 @@ class AudioEngine(context: Context) {
+                     continue
+                 }
+                 val state = current
+-                val sourceAvailable = state != null && state.amplitude > 0.0
++                val sourceAvailable = state != null && state.amplitude > 0.0 && C63QualificationRoute.validInput(state)
++                if (!sourceAvailable) qualificationRoute.clear()
+                 val runGain = runEnvelope.step(running)
+                 val contentGain = contentEnvelope.step(running && sourceAvailable && !muted && state?.muted != true)
+                 val pcm: FloatArray = if (sourceAvailable) {
 -                    model.renderState(if(model.prototypeEnabled) state!! else state!!.copy(muted = false), blockSize)
-+                    val safeState = if(model.prototypeEnabled) state!! else state!!.copy(muted = false)
-+                    runCatching {
-+                        qualificationProvider?.render(safeState, blockSize)
-+                            ?.takeIf { output -> output.size == blockSize && output.all { sample -> sample.isFinite() } }
-+                            ?: model.renderState(safeState, blockSize)
-+                    }.getOrElse {
-+                        model.renderState(safeState, blockSize)
-+                    }
++                    val renderState = if(model.prototypeEnabled) state!! else state!!.copy(muted = false)
++                    val legacy = model.renderState(renderState, blockSize)
++                    if (model.prototypeEnabled) legacy else qualificationRoute.render(renderState, blockSize, sampleRate) ?: legacy
                  } else {
                      FloatArray(blockSize)
                  }
-@@ -470,6 +487,7 @@ class AudioEngine(context: Context) {
+@@ -458,6 +467,7 @@ class AudioEngine(context: Context) {
+             lastAudioError = "${error.javaClass.simpleName}: ${error.message}"
+             capture?.markFailed()
          } finally {
-+            qualificationProvider = null
-             running = false
++            qualificationRoute.clear()
+             if (reference != null && reference.isComplete && running && lastAudioError == null) {
+                 ticket?.let { onS14Progress?.invoke(it, reference.framesRendered, "DRAINING") }
+                 val deadline = android.os.SystemClock.elapsedRealtime() + 2000L
+diff --git a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt
+index 6fb7730..70272bc 100644
+--- a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt
++++ b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt
+@@ -8,6 +8,9 @@ package com.vico.simulator.sound
+ internal interface C63QualificationPcmProvider {
+     fun render(state: SoundState, frames: Int): FloatArray
+     fun candidateId(): String
++    fun qualification(): com.vico.simulator.sound.s18.C63QualificationReport? = null
++    fun profileHash(): String? = null
++    fun sourceHash(): String? = null
+ }
+ 
+ internal class C63QualificationSelector {
+@@ -23,3 +26,40 @@ internal class C63QualificationSelector {
+         return provider
+     }
+ }
++
++/** Default off; failed input/output clears the provider until explicitly prepared again. */
++internal class C63QualificationRoute {
++    @Volatile private var provider: C63QualificationPcmProvider? = null
++
++    @Synchronized fun prepare(value: C63QualificationPcmProvider?): Boolean {
++        clear()
++        if (value == null) return false
++        val valid = eligible(value)
++        if (valid) provider = value
++        return valid
++    }
++
++    private fun eligible(value: C63QualificationPcmProvider): Boolean = runCatching {
++            val report = value.qualification() ?: return@runCatching false
++            report.isRuntimeEligible() && report.candidateId == value.candidateId() &&
++                report.profileHash == value.profileHash() && report.sourceHash == value.sourceHash()
++    }.getOrDefault(false)
++
++    @Synchronized fun clear() { provider = null }
++
++    @Synchronized fun render(state: SoundState, frames: Int, sampleRate: Int): FloatArray? {
++        val selected = provider ?: return null
++        if (!eligible(selected) || sampleRate != 48000 || !validInput(state)) { clear(); return null }
++        val output = runCatching { selected.render(state, frames) }.getOrNull()
++        if (output == null || output.size != frames || output.any { !it.isFinite() || kotlin.math.abs(it) > 1f }) {
++            clear(); return null
++        }
++        return output.copyOf()
++    }
++
++    companion object {
++        fun validInput(state: SoundState): Boolean = state.timeS.isFinite() && state.rpm.isFinite() &&
++            state.rpm >= 0 && state.load.isFinite() && state.load in 0.0..1.0 &&
++            state.throttle.isFinite() && state.throttle in 0.0..1.0
++    }
++}
+diff --git a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63P3CandidateAdapter.kt b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63P3CandidateAdapter.kt
+index 436304f..037a35d 100644
+--- a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63P3CandidateAdapter.kt
++++ b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63P3CandidateAdapter.kt
+@@ -21,6 +21,10 @@ internal class C63P3CandidateAdapter {
+     private var active: C63CandidateArtifact? = null
+ 
+     fun prepare(artifact: C63CandidateArtifact, qualification: QualificationResult): C63RuntimeCandidateReport {
++        active = null
++        if (!listOf(artifact.profileHash, artifact.sourceHash, artifact.reportHash).all { it.matches(Regex("[0-9a-f]{64}")) }) {
++            return C63RuntimeCandidateReport(artifact, false, "invalid_artifact_hash")
++        }
+         if (artifact.candidateId != qualification.candidateId) {
+             return C63RuntimeCandidateReport(artifact, false, "candidate_identity_mismatch")
          }
+diff --git a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63QualificationReport.kt b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63QualificationReport.kt
+index 919c1b5..6db151d 100644
+--- a/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63QualificationReport.kt
++++ b/vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63QualificationReport.kt
+@@ -10,6 +10,10 @@ internal data class C63QualificationReport(
+ ) {
+     fun isRuntimeEligible(): Boolean =
+         candidateId.isNotBlank() &&
++            candidateId != "C63_HY1" && !candidateId.startsWith("C63_HY1_") &&
++            listOf(profileHash, sourceHash, reportHash).all { it.matches(Regex("[0-9a-f]{64}")) } &&
++            diagnostics["finite"] == true &&
++            (diagnostics["frames"] as? Number)?.toLong()?.let { it > 0 } == true &&
+             gates.values.size == QualificationGate.entries.size &&
+             gates.values.all { it }
+ }
+diff --git a/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63QualificationRouteTest.kt b/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63QualificationRouteTest.kt
+new file mode 100644
+index 0000000..fd9a14b
+--- /dev/null
++++ b/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63QualificationRouteTest.kt
+@@ -0,0 +1,75 @@
++package com.vico.simulator.sound
++
++import com.vico.simulator.sound.s18.C63QualificationReport
++import com.vico.simulator.sound.s18.QualificationGate
++import org.junit.Assert.*
++import org.junit.Test
++
++class C63QualificationRouteTest {
++    private val hash = "a".repeat(64)
++    private val state = SoundState(0.0, 700.0, 0.0, .5, .5, floatArrayOf(), false, .5, .5)
++    private inner class Provider(
++        val id: String = "C63_TEST",
++        val output: () -> FloatArray = { FloatArray(960) { .25f } },
++    ) : C63QualificationPcmProvider {
++        var report = C63QualificationReport(id, hash, hash, hash,
++            QualificationGate.values().associateWith { true }, mapOf("finite" to true, "frames" to 960))
++        override fun candidateId() = id
++        override fun qualification() = report
++        override fun profileHash() = hash
++        override fun sourceHash() = hash
++        override fun render(state: SoundState, frames: Int) = output()
++    }
++
++    @Test fun defaultAndUnqualifiedUseLegacyFallback() {
++        val route = C63QualificationRoute()
++        assertNull(route.render(state, 960, 48000))
++        assertFalse(route.prepare(Provider("C63_HY1_SE")))
++        val provider = Provider()
++        provider.report = provider.report.copy(profileHash = "unknown")
++        assertFalse(route.prepare(provider))
++        assertNull(route.render(state, 960, 48000))
++    }
++
++    @Test fun candidateOutputIsDetachedAndClearedByLifecycle() {
++        val buffer = FloatArray(960) { .25f }
++        val route = C63QualificationRoute()
++        assertTrue(route.prepare(Provider(output = { buffer })))
++        val pcm = route.render(state, 960, 48000)!!
++        buffer.fill(.5f)
++        assertEquals(.25f, pcm[0], 0f)
++        route.clear()
++        assertNull(route.render(state, 960, 48000))
++    }
++
++    @Test fun invalidPcmOrExceptionClearsCandidate() {
++        for (output in listOf<() -> FloatArray>(
++            { FloatArray(1) }, { FloatArray(960) { Float.NaN } },
++            { FloatArray(960) { 1.1f } }, { error("renderer failed") },
++        )) {
++            val route = C63QualificationRoute()
++            assertTrue(route.prepare(Provider(output = output)))
++            assertNull(route.render(state, 960, 48000))
++            assertNull(route.render(state, 960, 48000))
++        }
++    }
++
++    @Test fun qualificationRevocationAndInvalidInputUseFallback() {
++        val route = C63QualificationRoute()
++        val provider = Provider()
++        assertTrue(route.prepare(provider))
++        provider.report = provider.report.copy(gates = emptyMap())
++        assertNull(route.render(state, 960, 48000))
++        assertTrue(route.prepare(Provider()))
++        assertNull(route.render(state.copy(rpm = Double.NaN), 960, 48000))
++        assertTrue(route.prepare(Provider()))
++        assertNull(route.render(state, 960, 44100))
++    }
++
++    @Test fun preparingRejectedCandidateClearsPreviousSelection() {
++        val route = C63QualificationRoute()
++        assertTrue(route.prepare(Provider()))
++        assertFalse(route.prepare(Provider("C63_HY1")))
++        assertNull(route.render(state, 960, 48000))
++    }
++}
+diff --git a/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/s18/C63P3CandidateAdapterTest.kt b/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/s18/C63P3CandidateAdapterTest.kt
+index bf0e74f..fac3ea4 100644
+--- a/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/s18/C63P3CandidateAdapterTest.kt
++++ b/vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/s18/C63P3CandidateAdapterTest.kt
+@@ -5,6 +5,17 @@ import org.junit.Assert.assertTrue
+ import org.junit.Test
+ 
+ class C63P3CandidateAdapterTest {
++    @Test
++    fun rejectedPreparationClearsPreviousArtifact() {
++        val adapter = C63P3CandidateAdapter()
++        val hash = "a".repeat(64)
++        val artifact = C63CandidateArtifact("candidate", hash, hash, hash)
++        val qualification = QualificationResult("candidate", QualificationGate.entries.toSet(), emptySet(), emptyList())
++        assertTrue(adapter.prepare(artifact, qualification).eligible)
++        assertFalse(adapter.prepare(artifact.copy(profileHash = "unknown"), qualification).eligible)
++        assertTrue(adapter.selectedArtifact() == null)
++    }
++
+     @Test
+     fun identityMismatchCannotPrepareRuntimeCandidate() {
+         val adapter = C63P3CandidateAdapter()

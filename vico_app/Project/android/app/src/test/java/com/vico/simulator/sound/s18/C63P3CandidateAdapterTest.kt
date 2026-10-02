@@ -6,6 +6,17 @@ import org.junit.Test
 
 class C63P3CandidateAdapterTest {
     @Test
+    fun rejectedPreparationClearsPreviousArtifact() {
+        val adapter = C63P3CandidateAdapter()
+        val hash = "a".repeat(64)
+        val artifact = C63CandidateArtifact("candidate", hash, hash, hash)
+        val qualification = QualificationResult("candidate", QualificationGate.entries.toSet(), emptySet(), emptyList())
+        assertTrue(adapter.prepare(artifact, qualification).eligible)
+        assertFalse(adapter.prepare(artifact.copy(profileHash = "unknown"), qualification).eligible)
+        assertTrue(adapter.selectedArtifact() == null)
+    }
+
+    @Test
     fun identityMismatchCannotPrepareRuntimeCandidate() {
         val adapter = C63P3CandidateAdapter()
         val artifact = C63CandidateArtifact("candidate-a", "p", "s", "r")
