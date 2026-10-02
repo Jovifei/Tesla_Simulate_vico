@@ -31,6 +31,17 @@ class C63QualificationRouteTest {
         assertNull(route.render(state, 960, 48000))
     }
 
+    @Test fun deviceValidationPrecedesHumanAcceptanceWithoutEnablingProduction() {
+        val provider = Provider()
+        provider.report = provider.report.copy(gates = provider.report.gates + mapOf(
+            QualificationGate.DEVICE to false, QualificationGate.HUMAN to false))
+        assertTrue(provider.report.isDeviceValidationEligible())
+        assertFalse(provider.report.isRuntimeEligible())
+        assertTrue(C63QualificationRoute().prepare(provider))
+        provider.report = provider.report.copy(gates = provider.report.gates + (QualificationGate.ACOUSTIC to false))
+        assertFalse(C63QualificationRoute().prepare(provider))
+    }
+
     @Test fun candidateOutputIsDetachedAndClearedByLifecycle() {
         val buffer = FloatArray(960) { .25f }
         val route = C63QualificationRoute()
