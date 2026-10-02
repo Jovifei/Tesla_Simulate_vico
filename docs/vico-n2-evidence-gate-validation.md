@@ -181,3 +181,12 @@ and file-replacement contracts, and Git's `eol=lf` attribute check. Not executed
 Python/JVM fixture generation, real Windows competing processes, Windows antivirus/sharing-lock
 interactions, or Windows crash recovery. These distinctions are deliberate; passing mocks is
 not Windows qualification.
+
+## Later actual-export diagnostics (2026-10-02)
+
+The Python manifest-only producer limitation recorded above is partially superseded by
+[actual-export measurement diagnostics](vico-n2-render-metrics-validation.md). The new CLI reads
+and validates real render_receipt.v1 PCM/tap files and reports measured diagnostics. Its
+render_metrics.v1 output is not acceptance evidence; the unchanged reference_result.v2 schema,
+reservation, budget, source/reference bindings and remaining trusted-producer requirements
+still apply. No candidate objective evaluation or budget reservation occurred in that stage.

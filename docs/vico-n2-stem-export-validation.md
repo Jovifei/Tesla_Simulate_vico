@@ -146,3 +146,11 @@ metrics, held-out comparison, physical capture and human listening remain unrun.
 reference driver is still a separate unfinished producer task; this patch does not issue its
 reference_result.v2 acceptance evidence or bypass its reservation/budget/hard-gate contract.
 PR37 remains draft. Default playback, phone installation, deployment and main merge are unchanged.
+
+## Later Python measurement stage (2026-10-02)
+
+The manifest-only Python reader limitation above is now superseded for diagnostic measurement by
+[vico-n2-render-metrics-validation.md](vico-n2-render-metrics-validation.md). It consumes the actual
+export files, validates their complete byte identities, measures all PCM/tap channels and the
+explicit-window protected-band/bark-RMS changes, and compares realized partition schedules.
+It does not emit reference_result.v2 or claim reference/event, 630-case, device or human acceptance.
