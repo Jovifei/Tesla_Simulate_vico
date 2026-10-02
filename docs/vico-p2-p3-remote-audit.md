@@ -1,45 +1,58 @@
-# Vico P2/P3 Remote Audit
+# Vico P2/P3 Remote Audit Update
 
 Branch: `codex-remote-p2-p3-audit-20261002`
 
-## Added isolated implementation
+## Implemented isolated P2 qualification work
 
-Added qualification-only modules:
+Completed without changing production routing:
 
 - `C63CandidateQualification`
-  - candidate gate state
-  - digital/state/continuity/acoustic/device/human separation
-  - no production routing changes
+  - fail-closed gate handling
+  - DIGITAL/STATE/CONTINUITY/ACOUSTIC/DEVICE/HUMAN separation
+  - NOT_RUN state cannot become runtime eligible
 
 - `C63QualificationDiagnostics`
-  - frame/finite/peak diagnostic export model
+  - bounded retained samples
+  - whole-run aggregate count
+  - whole-run finite result
+  - whole-run maximum peak
+  - empty input reports NOT_RUN
 
 - `C63EventModeExport`
-  - same candidate metadata for events-on and event-off comparison
-  - 48 kHz mono contract
+  - consumes one SoundState trajectory
+  - renders separate event-on and event-off paths
+  - returns real PCM buffers
+  - calculates finite and peak from rendered samples
 
-## Existing verified integration points
+- `C63CandidateRegistry`
+  - qualification-only registry
+  - never changes AudioEngine routing
+  - HY1 remains disabled
 
-`C63HybridRenderer`:
-- `snapshot()/restore()`
-- `qualificationTaps()`
-- `render(state,count,validInput)`
+## Tests added
 
-`C63HybridSource`:
-- `sample(...)`
-- `eventObservation()`
+Added Kotlin tests for:
 
-The new code does not alter frozen HY1 parameters and does not enable a production candidate.
+- empty qualification cannot enable runtime
+- markNotRun removes previous pass state
+- HY1 cannot be enabled by registry
 
-## Remaining implementation boundary
+Tests are committed but not executed remotely.
 
-S18 candidate routing into AudioEngine remains a separate controlled step. Existing production path stays default.
-
-## Validation
+## Validation status
 
 Kotlin compile: NOT_RUN
 Unit tests: NOT_RUN
 APK: NOT_RUN
 Device: NOT_RUN
+PCM comparison: NOT_RUN
 Acoustic: NOT_RUN
 Human listening: PENDING_HUMAN
+
+## Boundary
+
+Stage remains PARTIAL.
+
+Continuous sound source completion and production Android integration are not complete.
+Existing production old sound path remains default.
+Frozen HY1 parameters remain unchanged.
