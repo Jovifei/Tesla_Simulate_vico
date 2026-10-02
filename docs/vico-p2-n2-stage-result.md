@@ -63,3 +63,15 @@ Stop and return evidence to PR37 on any:
 - protected low/mid/source-energy violation;
 - per-provenance regression beyond the registered bound;
 - event distance failing D_new <= 0.8 * D_baseline.
+
+## Cloud evidence-gate repair (2026-10-02)
+
+The later cloud patch replaces the Python echo/hash-only gate paths with artifact-bound,
+process-locked reservations and fail-closed checks. It adds result-digest sealing, persistent
+identity-failure stop rules and real function/CLI/concurrency tests. See
+[vico-n2-evidence-gate-validation.md](vico-n2-evidence-gate-validation.md) for schemas, invocation,
+executed checks and the trusted-producer boundary.
+
+34 focused Python/JVM-fixture tests passed in the cloud. This supersedes NOT_RUN only for those
+specific software gate/helper tests; it does not supersede the unrun acoustic, full Android,
+reference, device or human qualification gates above.
