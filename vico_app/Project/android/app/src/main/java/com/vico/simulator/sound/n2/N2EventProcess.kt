@@ -8,30 +8,24 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * Frozen occurrence semantics with an N2-only finite response and an independent response RNG.
- * Muting is handled by N2Source after this process advances, so event-on/off comparisons keep
- * identical occurrence and response streams.
+ * Event response path with registered energy semantics.
+ * Occurrence and response state remain independent; event-off mutes later in N2Source.
  */
 internal class N2EventProcess(private val profile: N2Profile) {
-    private val key = "C63_N2_EVENT_V1|" + profile.identity
+    private val key = "C63_N2_EVENT_V2|" + profile.identity
     private val occurrence = C63AR2AfterfireRuntime(profile.occurrenceSeed, 0.0)
     private var responseRng = profile.responseSeed
     private val response = C63FiniteResponseSource(
-        profile.eventResponse().map {
-            it * profile.eventScale * sqrt(1.0 - profile.eventNoiseFraction)
-        }.toDoubleArray(),
-        profile.eventNoiseA().map {
-            it * profile.eventScale * sqrt(profile.eventNoiseFraction)
-        }.toDoubleArray(),
-        profile.eventNoiseB().map {
-            it * profile.eventScale * sqrt(profile.eventNoiseFraction)
-        }.toDoubleArray(),
+        profile.eventResponse().map { it * profile.eventScale * sqrt(1.0 - profile.eventNoiseFraction) }.toDoubleArray(),
+        profile.eventNoiseA().map { it * profile.eventScale * sqrt(profile.eventNoiseFraction) }.toDoubleArray(),
+        profile.eventNoiseB().map { it * profile.eventScale * sqrt(profile.eventNoiseFraction) }.toDoubleArray(),
     )
 
     var lastAngle = 0.0
         private set
     var lastSignal = 0.0
         private set
+
     val lastImpulse get() = occurrence.lastImpulse
     val pendingFrames get() = response.pendingFrames
     val thermalState get() = occurrence.thermalState
@@ -49,15 +43,16 @@ internal class N2EventProcess(private val profile: N2Profile) {
         occurrence.sample(rpm, load, throttle, opportunity, validInput)
         if (occurrence.lastImpulse > 0.0) {
             responseRng = next(responseRng)
-            val uniform = ((responseRng * 2685821657736338717L) ushr 11).toDouble() / 9007199254740992.0
-            val angle = 2.0 * PI * uniform
+            val unit = ((responseRng ushr 11).toDouble() / 9007199254740992.0) * 2.0 - 1.0
+            val angle = PI * unit
             lastAngle = angle
+            // Registered orthogonal phase rotation. No hidden attenuation multiplier.
             response.inject(
                 occurrence.distinctImpulseFrames - 1L,
                 ((occurrence.distinctImpulseFrames - 1L) and 1L).toInt(),
                 occurrence.lastImpulse,
-                .25 * cos(angle),
-                .25 * sin(angle),
+                cos(angle),
+                sin(angle),
             )
         }
         response.step()
@@ -85,19 +80,26 @@ internal class N2EventProcess(private val profile: N2Profile) {
     )
 
     fun restore(saved: Snapshot) {
-        val expectedResponse = response.snapshot().identity
+        val prepared = validateSnapshot(saved)
+        occurrence.restore(prepared.occurrence)
+        response.restore(prepared.response)
+        responseRng = prepared.responseRng
+        lastAngle = prepared.angle
+        lastSignal = prepared.signal
+    }
+
+    private fun validateSnapshot(saved: Snapshot): Snapshot {
+        val currentResponse = response.snapshot()
         require(
             saved.key == key &&
-                saved.response.identity == expectedResponse &&
+                saved.response.identity == currentResponse.identity &&
                 saved.responseRng != 0L &&
                 saved.angle.isFinite() &&
                 saved.signal.isFinite()
         ) { "N2 event snapshot mismatch" }
-        occurrence.restore(saved.occurrence)
-        response.restore(saved.response)
-        responseRng = saved.responseRng
-        lastAngle = saved.angle
-        lastSignal = saved.signal
+        // validation completes before any live mutation.
+        require(saved.occurrence != null) { "N2 occurrence snapshot missing" }
+        return saved
     }
 
     private fun next(value: Long): Long {
