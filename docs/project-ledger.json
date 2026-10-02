@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-02",
   "current_phase": "P2",
-  "current_work_package": "S18/C63_HY1（c2c_930a iteration11）",
+  "current_work_package": "P2/P3 GitHub接力：默认关闭的真实PCM接入准备（PR #35）",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -37,7 +37,9 @@
           "id": "P1-M2",
           "title": "统一账本与可重复进度生成",
           "status": "DONE",
-          "evidence": ["review_packages/project-roadmap-20261002/verification.md"]
+          "evidence": [
+            "review_packages/project-roadmap-20261002/verification.md"
+          ]
         }
       ],
       "next_action": "验证本次文档体系并持续维护"
@@ -123,14 +125,18 @@
         {
           "id": "P3-M2",
           "title": "新算法接入及电脑手机同输入一致性",
-          "status": "NOT_RUN",
-          "evidence": []
+          "status": "ACTIVE",
+          "evidence": [
+            "docs/vico-p3-runtime-hook-result.md"
+          ]
         },
         {
           "id": "P3-M3",
           "title": "交互、路线与生命周期完整验证",
-          "status": "NOT_RUN",
-          "evidence": []
+          "status": "ACTIVE",
+          "evidence": [
+            "docs/vico-p3-runtime-hook-result.md"
+          ]
         }
       ],
       "next_action": "等待 P2 合格候选；设备连接后绑定新 APK 重测"
@@ -340,7 +346,9 @@
     "当前手机默认仍为原六车型声库；HY1 未接入/安装，声音目标 NOT_DONE。",
     "HY1 单次拟合已冻结：事件校准改善8.1%未达20%；中频最大+1.468dB超过1dB保护门。不能直接安装或再次拟合救分。",
     "完整实际 Kotlin 离线资格未结束；新 APK、真机生命周期、物理输出、实车及具名试听均待执行。",
-    "最近设备检查未连接 GM1910；App 现有脏工作区保留，无配置 Git remote。"
+    "本轮adb devices无手机；安装、设备生命周期、实车与具名试听未执行。",
+    "Cloud整阶段任务提交仍被账户MFA拦截；已改用音浪新聊天GitHub读写执行接力，未改安全设置。",
+    "PR #35已落实默认关闭的真实AudioEngine PCM调用点，本地220 tests、0失败、25跳过、APK构建通过并远端回审；持续声新源和实际声学仍未完成。"
   ],
   "optional_tracks": [
     "AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。",
@@ -390,5 +398,15 @@
       "device": "NOT_RUN",
       "human": "PENDING_HUMAN"
     }
-  ]
+  ],
+  "reception_evidence": {
+    "date": "2026-10-02",
+    "remote_base": "83d6267a71e05117026836b8720dfbca2621c8f0",
+    "local_fix": "05ad70d55e9eb9605a94eaa1e201e20dd6b699fa",
+    "status": "PARTIAL",
+    "report": "docs/vico-p3-runtime-hook-result.md",
+    "local_hook": "a768edc1e6cf848b71e5b624713702c53b8791e0",
+    "latest": "c937c3ad1e8ca3f59a52fdc6356186417560a9a2",
+    "review": "Remote source review received; product qualification not accepted"
+  }
 }
