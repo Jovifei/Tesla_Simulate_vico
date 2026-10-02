@@ -1,18 +1,14 @@
-# N2 stage result
+# N2 V2 repair result
 
-Implementation: C63_N2_CONTINUOUS_V1
+PR37 initial stub rejected during review.
 
-Delivered:
-- independent N2 profile/source/renderer package
-- independent deterministic event stream
-- PCM measurement helpers
-- HY1 and existing sound bank untouched
+Implemented direction:
+- stateful RPM/load/throttle source
+- cross-block phase persistence
+- FIR-like event response path
+- snapshot/restore state contract
+- controlled T/S/E/SE renderer branches
+- hard-feasibility measurement contract
 
-Remote execution: NOT_RUN
-Local Codex gates:
-- build
-- numeric/state tests
-- PCM measurements
-- device verification
-
-Acceptance remains gated by preregistered feasibility limits.
+HY1 and default old sound bank remain frozen.
+Remote tests remain NOT_RUN.
