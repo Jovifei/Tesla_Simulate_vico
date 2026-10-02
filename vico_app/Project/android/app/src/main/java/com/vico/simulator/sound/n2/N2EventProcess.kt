@@ -15,7 +15,8 @@ internal class N2EventProcess(private val profile: N2Profile) {
     private val key = "C63_N2_EVENT_V2|" + profile.identity
     private val occurrence = C63AR2AfterfireRuntime(profile.occurrenceSeed, 0.0)
     private var responseRng = profile.responseSeed
-    private val response = C63FiniteResponseSource(
+    private val response = createResponse()
+    private fun createResponse() = C63FiniteResponseSource(
         profile.eventResponse().map { it * profile.eventScale * sqrt(1.0 - profile.eventNoiseFraction) }.toDoubleArray(),
         profile.eventNoiseA().map { it * profile.eventScale * sqrt(profile.eventNoiseFraction) }.toDoubleArray(),
         profile.eventNoiseB().map { it * profile.eventScale * sqrt(profile.eventNoiseFraction) }.toDoubleArray(),
@@ -97,8 +98,9 @@ internal class N2EventProcess(private val profile: N2Profile) {
                 saved.angle.isFinite() &&
                 saved.signal.isFinite()
         ) { "N2 event snapshot mismatch" }
-        // validation completes before any live mutation.
-        require(saved.occurrence != null) { "N2 occurrence snapshot missing" }
+        // Child restore checks run on disposable objects, not the live thermal/queue state.
+        C63AR2AfterfireRuntime(profile.occurrenceSeed, 0.0).restore(saved.occurrence)
+        createResponse().restore(saved.response)
         return saved
     }
 
