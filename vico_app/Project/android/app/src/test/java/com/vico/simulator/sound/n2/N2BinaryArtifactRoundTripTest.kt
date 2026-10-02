@@ -15,6 +15,13 @@ class N2BinaryArtifactRoundTripTest {
         repeat(N2Profile.BASIS_COUNT) { assertArrayEquals(original.basis(it), loaded.basis(it), 0.0) }
         assertArrayEquals(original.coefficients(), loaded.coefficients(), 0.0)
         assertArrayEquals(original.eventResponse(), loaded.eventResponse(), 0.0)
+        assertArrayEquals(original.eventNoiseA(), loaded.eventNoiseA(), 0.0)
+        assertArrayEquals(original.eventNoiseB(), loaded.eventNoiseB(), 0.0)
+        assertEquals(original.sourceSeed, loaded.sourceSeed)
+        assertEquals(original.occurrenceSeed, loaded.occurrenceSeed)
+        assertEquals(original.responseSeed, loaded.responseSeed)
+        assertEquals(original.randomFraction, loaded.randomFraction, 0.0)
+        assertEquals(original.eventNoiseFraction, loaded.eventNoiseFraction, 0.0)
     }
 
     @Test fun tamperedAndTruncatedArtifactsReject() {
@@ -26,6 +33,9 @@ class N2BinaryArtifactRoundTripTest {
         bad[12] = (bad[12].toInt() xor 0x7f).toByte()
         assertThrows(IllegalArgumentException::class.java) {
             N2ProfileArtifactLoader.import(bad)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            N2ProfileArtifactLoader.import(bytes + byteArrayOf(0))
         }
     }
 }

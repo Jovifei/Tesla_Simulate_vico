@@ -7,6 +7,21 @@ import org.junit.Test
 import kotlin.math.abs
 
 class N2ProfileTest {
+    @Test fun everySeedAndRandomFractionBindsIdentity() {
+        val original = N2Profile.preregistered()
+        fun changed(sourceSeed: Long = original.sourceSeed, responseSeed: Long = original.responseSeed,
+                    occurrenceSeed: Long = original.occurrenceSeed, randomFraction: Double = original.randomFraction,
+                    eventFraction: Double = original.eventNoiseFraction) = N2Profile(
+            Array(8) { original.basis(it) }, original.coefficients(), original.eventResponse(),
+            original.eventNoiseA(), original.eventNoiseB(), original.sourceScale, randomFraction,
+            original.eventScale, eventFraction, sourceSeed, occurrenceSeed, responseSeed)
+        for (profile in listOf(changed(sourceSeed = original.sourceSeed + 1),
+            changed(responseSeed = original.responseSeed + 1), changed(occurrenceSeed = original.occurrenceSeed + 1),
+            changed(randomFraction = .1), changed(eventFraction = .3))) {
+            assertNotEquals(original.identity, profile.identity)
+        }
+    }
+
     @Test
     fun preregisteredProfileContainsEightRealFiniteResponses() {
         val profile = N2Profile.preregistered()

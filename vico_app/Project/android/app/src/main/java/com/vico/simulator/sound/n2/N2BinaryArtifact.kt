@@ -12,6 +12,7 @@ internal object N2BinaryArtifact {
     private const val MAGIC = 0x4e324250
     private const val VERSION = 2
     private const val MAX_ARRAY = 20000
+    private const val BYTES = 20 + 66 + 32 + 24 + 12 * 4 + (8 + 8 * 4096 + 3 * 12288) * 8
 
     internal data class Loaded(
         val profile: N2Profile,
@@ -42,7 +43,20 @@ internal object N2BinaryArtifact {
     }
 
     fun read(input: InputStream): Loaded {
-        val bytes = input.readBytes()
+        val bytes = ByteArray(BYTES)
+        var offset = 0
+        while (offset < bytes.size) {
+            val count = input.read(bytes, offset, bytes.size - offset)
+            require(count > 0) { "N2 artifact truncated" }
+            offset += count
+        }
+        require(input.read() == -1) { "N2 artifact trailing bytes" }
+        return try { decode(bytes) } catch (error: java.io.IOException) {
+            throw IllegalArgumentException("Malformed N2 binary artifact", error)
+        }
+    }
+
+    private fun decode(bytes: ByteArray): Loaded {
         val data = DataInputStream(bytes.inputStream())
         val magic = data.readInt()
         require(magic == MAGIC)
@@ -51,6 +65,7 @@ internal object N2BinaryArtifact {
         require(data.readInt() == N2Profile.BASIS_LENGTH)
         require(data.readInt() == N2Profile.EVENT_LENGTH)
         val storedIdentity = data.readUTF()
+        require(storedIdentity.matches(Regex("[0-9a-f]{64}"))) { "N2 artifact identity format" }
         val sourceScale = data.readDouble()
         val randomFraction = data.readDouble()
         val eventScale = data.readDouble()
