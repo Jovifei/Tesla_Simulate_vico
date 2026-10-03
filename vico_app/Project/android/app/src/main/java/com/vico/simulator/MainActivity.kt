@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         restoreState()
         refreshOutputDevices()
 
-        startMs = System.currentTimeMillis()
+        startMs = android.os.SystemClock.elapsedRealtime()
         webView.loadUrl("file:///android_asset/screens/dashboard.html")
         handleS13ReviewIntent(intent)
 
@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity() {
             pushUiState()
             return
         }
-        val now = System.currentTimeMillis()
+        val now = android.os.SystemClock.elapsedRealtime()
         val timeS = (now - startMs) / 1000.0
         val throttle = (forwardAccel / 3.0).coerceIn(0.0, 1.0)
         val brake = forwardAccel < -1.2
@@ -371,7 +371,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         activeVehicleKey = key
-        val timeS = (System.currentTimeMillis() - startMs) / 1000.0
+        val timeS = (android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0
         val throttle = (lastAccelMps2 / 3.0).coerceIn(0.0, 1.0)
         val initialState = audioEngine.mapPoint(
             DrivePoint(timeS, lastSpeedKmh, throttle, lastAccelMps2, lastAccelMps2 < -1.2)
@@ -874,11 +874,11 @@ class MainActivity : AppCompatActivity() {
             }
             audioRunning = true
         }
-        previewUntilMs = System.currentTimeMillis() + 2500
+        previewUntilMs = android.os.SystemClock.elapsedRealtime() + 2500
         pushUiState()
         previewRestore = Runnable {
             if (!playbackEpoch.owns(previewOwner) || activityDestroyed) return@Runnable
-            if (System.currentTimeMillis() >= previewUntilMs) {
+            if (android.os.SystemClock.elapsedRealtime() >= previewUntilMs) {
                 previewVehicleKey = null
                 audioEngine.setVehicle(originalKey)
                 activeVehicleKey = originalKey

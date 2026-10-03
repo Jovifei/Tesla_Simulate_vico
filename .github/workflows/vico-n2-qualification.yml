@@ -10,6 +10,9 @@ on:
       - 'docs/vico*n2*.md'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   push:
@@ -24,6 +27,9 @@ on:
       - 'docs/vico*n2*.md'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   workflow_dispatch:
@@ -67,6 +73,10 @@ jobs:
           python vico_app/tools/python/run_n2_ci.py
           --platform linux --download-deps
           --output "${{ runner.temp }}/vico-n2-linux"
+      - name: Test sensor freshness, ordering, and Android source wiring
+        run: |
+          python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"
+          python -m unittest discover -s vico_app/tools/python -p 'test_sensor_input_wiring.py' -v
       - name: Compile Python and check whitespace
         run: |
           python -m compileall -q vico_app/tools/python
@@ -99,3 +109,74 @@ jobs:
         run: |
           python -m py_compile vico_app/tools/python/n2_artifact_gate.py vico_app/tools/python/n2_hard_gate.py vico_app/tools/python/run_n2_ci.py
           git diff --check
+
+  android-input-build:
+    name: Android input compile, unit tests, lint and APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify exact checkout and preinstalled Android SDK only
+        id: sdk
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          : "${ANDROID_HOME:?Hosted runner must provide an existing Android SDK}"
+          for path in platforms/android-34/android.jar build-tools/34.0.0/aapt build-tools/34.0.0/aapt2 build-tools/34.0.0/zipalign licenses/android-sdk-license; do
+            test -s "$ANDROID_HOME/$path" || { echo "Required preinstalled SDK file missing: $path; no SDK download or license acceptance is permitted"; exit 1; }
+          done
+          echo "checked_out_head=$EXPECTED_HEAD"
+          cat "$ANDROID_HOME/platforms/android-34/source.properties"
+          cat "$ANDROID_HOME/build-tools/34.0.0/source.properties"
+          git ls-files -z vico_app/Project/android | xargs -0 sha256sum
+      - name: Compile Android adapters and run input gates
+        id: build
+        working-directory: vico_app/Project/android
+        run: >-
+          bash gradlew --no-daemon --continue -Pandroid.builder.sdkDownload=false
+          :app:compileDebugKotlin :app:compileDebugUnitTestKotlin
+          :app:testDebugUnitTest --tests 'com.vico.simulator.sensor.*'
+          :app:lintDebug :app:assembleDebug
+      - name: Record test scope and generated APK identity
+        if: ${{ always() && steps.sdk.outcome == 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path('vico_app/Project/android/app/build')
+          reports = sorted((root / 'test-results/testDebugUnitTest').glob('TEST-com.vico.simulator.sensor.*.xml'))
+          totals = {key: 0 for key in ('tests', 'failures', 'errors', 'skipped')}
+          for report in reports:
+              suite = ET.parse(report).getroot()
+              for key in totals:
+                  totals[key] += int(suite.get(key, 0))
+          print(json.dumps({'scope': 'Android JVM sensor tests, not device/GNSS acceptance', 'reports': len(reports), **totals}))
+          lint = root / 'reports/lint-results-debug.xml'
+          if not lint.is_file():
+              raise SystemExit('Android lint XML report missing: NOT_RUN_OR_UNAVAILABLE')
+          issues = ET.parse(lint).getroot().findall('issue')
+          lint_errors = [issue for issue in issues if issue.get('severity') in ('Fatal', 'Error')]
+          print(json.dumps({'lint_issues': len(issues), 'lint_errors': len(lint_errors), 'lint_warnings': sum(issue.get('severity') == 'Warning' for issue in issues)}))
+          for issue in issues:
+              print('LINT', issue.get('severity'), issue.get('id'), issue.get('message'))
+          if lint_errors:
+              raise SystemExit('Android lint reported errors')
+          if not reports or totals['tests'] < 21 or any(totals[key] for key in ('failures', 'errors', 'skipped')):
+              raise SystemExit('Sensor gate incomplete, failed, or skipped')
+          PY
+          APK=vico_app/Project/android/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          sha256sum "$APK"
+          stat --format='apk_bytes=%s' "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$APK"
+          echo "DEVICE_GNSS_ACCURACY_AND_HUMAN_ACCEPTANCE=NOT_RUN"
