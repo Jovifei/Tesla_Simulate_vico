@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vico.simulator.csv.CsvExporter
 import com.vico.simulator.audio.AudioOutputCategory
 import com.vico.simulator.audio.AudioOutputDevice
+import com.vico.simulator.sensor.CalibrationSession
 import com.vico.simulator.sensor.SensorProvider
 import com.vico.simulator.sound.AudioEngine
 import com.vico.simulator.sound.DrivePoint
@@ -87,6 +88,10 @@ class MainActivity : AppCompatActivity() {
     private var lastGear = 1
     private var lastGpsOk = false
     private var lastRawAccel = FloatArray(3)
+    @Volatile var calibrationPageEpoch = 0L
+        private set
+    private var calibrationPageActive = false
+    private var calibrationResumed = false
     private var lastGravity = FloatArray(3)
     private var startMs: Long = 0L
     private val prefs by lazy { getSharedPreferences("vico_state", MODE_PRIVATE) }
@@ -156,6 +161,13 @@ class MainActivity : AppCompatActivity() {
         csvExporter = CsvExporter()
         sensorProvider = SensorProvider(this) { speed, accel, gpsOk, raw, grav ->
             onSensorSample(speed, accel, gpsOk, raw, grav)
+        }
+        webView.webViewClient = object : android.webkit.WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                calibrationPageEpoch++
+                calibrationPageActive = url == "file:///android_asset/screens/calibration.html"
+                sensorProvider.cancelCalibration()
+            }
         }
         webView.addJavascriptInterface(VicoBridge(this, webView), "AndroidBridge")
         restoreState()
@@ -246,6 +258,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        calibrationResumed = true
         sensorProvider.start()
         if (audioRunning && !s13ReviewActive && !audioEngine.start()) {
             audioRunning = false
@@ -255,7 +268,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        calibrationResumed = false
+        calibrationPageEpoch++
         sensorProvider.stop()
+        pushUiState()
         cancelPreviewCallbacks()
         audioEngine.stop("ACTIVITY_PAUSE")
         if (s14.state == S14TrialCoordinator.State.LOADING) stopAudio("ACTIVITY_PAUSE")
@@ -264,6 +280,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         s15PreparationEpoch++
         activityDestroyed = true
+        calibrationResumed = false
+        calibrationPageEpoch++
+        sensorProvider.cancelCalibration()
         cancelPreviewCallbacks()
         getSystemService(android.media.AudioManager::class.java)
             .unregisterAudioDeviceCallback(audioDeviceCallback)
@@ -332,7 +351,7 @@ class MainActivity : AppCompatActivity() {
             append("\"muted\":").append(muted || state.muted).append(',')
             append("\"language\":\"").append(language).append("\",")
             append("\"demoScenario\":\"").append(demoScenario).append("\",")
-            append("\"calibrated\":").append(sensorProvider.isCalibrated).append(',')
+            append(calibrationStateJson()).append(',')
             append("\"demo\":").append(sensorProvider.isDemoMode()).append(',')
             append("\"recording\":").append(recording).append(',')
             append("\"sampleCount\":").append(csvExporter.sampleCount).append(',')
@@ -942,18 +961,37 @@ class MainActivity : AppCompatActivity() {
         pushUiState()
     }
 
-    fun beginCalibration() = sensorProvider.beginCalibration()
+    fun acceptsCalibrationCommand(epoch: Long): Boolean =
+        !activityDestroyed && calibrationResumed && calibrationPageActive && epoch == calibrationPageEpoch
 
-    fun calibrateZero() {
-        sensorProvider.calibrateZero()
+    fun beginCalibration(session: String) {
+        sensorProvider.beginCalibration(session)
         pushUiState()
-        toast("已归零")
     }
 
-    fun finishCalibration() {
-        sensorProvider.finishCalibration()
+    fun finishCalibration(session: String) {
+        val complete = sensorProvider.finishCalibration(session)
         pushUiState()
-        toast(if (sensorProvider.isCalibrated) "校准完成" else "校准未完成")
+        if (complete) toast("校准完成")
+    }
+
+    fun cancelCalibration(session: String? = null) {
+        sensorProvider.cancelCalibration(session)
+        pushUiState()
+    }
+
+    fun invalidateCalibrationPage() {
+        calibrationPageEpoch++
+        calibrationPageActive = false
+        cancelCalibration()
+    }
+
+    private fun calibrationStateJson(): String {
+        val status = sensorProvider.calibrationStatus
+        return "\"calibrated\":" + (status.status == CalibrationSession.Status.COMPLETE) +
+            ",\"calibration\":" + JSONObject().put("session", status.session).put("status", status.status.name)
+            .put("samples", status.samples).put("required", status.required)
+            .put("revision", status.revision).toString()
     }
 
     fun resetCalibration() {
@@ -1011,7 +1049,7 @@ class MainActivity : AppCompatActivity() {
         append("\"profileKey\":\"").append(character.name.lowercase()).append("\",")
         append("\"running\":").append(audioRunning).append(',')
         append("\"muted\":").append(muted).append(',')
-        append("\"calibrated\":").append(sensorProvider.isCalibrated).append(',')
+        append(calibrationStateJson()).append(',')
         append("\"demo\":").append(sensorProvider.isDemoMode()).append(',')
         append("\"demoScenario\":\"").append(demoScenario).append("\",")
         append("\"recording\":").append(recording).append(',')
@@ -1086,6 +1124,7 @@ class MainActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        invalidateCalibrationPage()
         if (webView.canGoBack()) webView.goBack() else super.onBackPressed()
     }
 

@@ -10,6 +10,9 @@ on:
       - 'docs/vico*n2*.md'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/tools/js/**'
+      - 'vico_app/Project/android/app/src/main/assets/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/web/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
@@ -27,6 +30,9 @@ on:
       - 'docs/vico*n2*.md'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/tools/js/**'
+      - 'vico_app/Project/android/app/src/main/assets/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/web/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
@@ -73,6 +79,8 @@ jobs:
           python vico_app/tools/python/run_n2_ci.py
           --platform linux --download-deps
           --output "${{ runner.temp }}/vico-n2-linux"
+      - name: Test calibration UI acknowledgement and lifecycle
+        run: node --test vico_app/tools/js/test_calibration_ui.cjs
       - name: Test sensor freshness, ordering, and Android source wiring
         run: |
           python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"

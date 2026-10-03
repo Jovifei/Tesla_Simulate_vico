@@ -58,6 +58,24 @@ class SensorInputWiringTest(unittest.TestCase):
     def test_invalid_acceleration_is_not_bias_corrected_into_phantom_motion(self):
         self.assertIn("if (linearAcceleration.valid) calibration.correct(linearAcceleration.sample()) else FloatArray(3)", self.provider)
 
+    def test_calibration_lifecycle_and_epoch_are_wired_to_real_adapters(self):
+        bridge = (SOURCE / "web/VicoBridge.kt").read_text()
+        self.assertIn("calibration.add(linearAcceleration.sample(), event.timestamp)", self.provider)
+        self.assertIn("available = started", self.provider)
+        stop = self.provider.split("fun stop()", 1)[1].split("fun setDemoMode", 1)[0]
+        self.assertIn("calibration.cancel()", stop)
+        self.assertIn("fun resetCalibration() = calibration.reset()", self.provider)
+        self.assertIn("val epoch = activity.calibrationPageEpoch", bridge)
+        self.assertIn("if (activity.acceptsCalibrationCommand(epoch)) action()", bridge)
+        self.assertIn("activity.invalidateCalibrationPage()", bridge)
+        self.assertIn("!activityDestroyed && calibrationResumed && calibrationPageActive && epoch == calibrationPageEpoch", self.activity)
+        for name, end in [("onPause", "onDestroy"), ("onDestroy", "onRequestPermissionsResult")]:
+            lifecycle = self.activity.split("override fun " + name, 1)[1].split("override fun " + end, 1)[0]
+            self.assertIn("calibrationPageEpoch++", lifecycle)
+            self.assertIn("calibrationResumed = false", lifecycle)
+        self.assertEqual(self.activity.count('append(calibrationStateJson())'), 2)
+
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -45,10 +45,9 @@ class SensorProvider(
     private val sourceState = SensorSourceState()
 
     // 校准
-    private val calibration = CalibrationAccumulator()
-    @Volatile private var calibrating: Boolean = false
-    @Volatile var isCalibrated: Boolean = false
-        private set
+    private val calibration = CalibrationSession()
+    val isCalibrated: Boolean get() = calibration.isCalibrated
+    val calibrationStatus: CalibrationSession.Snapshot get() = calibration.snapshot
 
     // 演示模式
     @Volatile private var demoMode: Boolean = false
@@ -65,8 +64,8 @@ class SensorProvider(
         override fun onSensorChanged(event: SensorEvent) {
             if (!started || event.timestamp < sessionStartedNanos) return
             if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
-                if (linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos()) && calibrating) {
-                    calibration.add(linearAcceleration.sample())
+                if (linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos())) {
+                    calibration.add(linearAcceleration.sample(), event.timestamp)
                 }
             } else if (event.sensor.type == Sensor.TYPE_GRAVITY || (useAccelAsGravity && event.sensor.type == Sensor.TYPE_ACCELEROMETER)) {
                 if (event.values.size < 3 || (0..2).any { !event.values[it].isFinite() }) return
@@ -156,6 +155,7 @@ class SensorProvider(
     }
 
     fun stop() {
+        calibration.cancel()
         started = false
         handler.removeCallbacks(tickRunnable)
         sensorManager.unregisterListener(sensorListener)
@@ -191,24 +191,14 @@ class SensorProvider(
         }
     }
 
-    fun beginCalibration() {
-        calibrating = true
-        calibration.reset()
-    }
+    fun beginCalibration(session: String) =
+        calibration.begin(session, SystemClock.elapsedRealtimeNanos(), available = started)
 
-    fun calibrateZero() {
-        calibrating = false
-    }
+    fun finishCalibration(session: String): Boolean = calibration.finish(session)
 
-    fun finishCalibration(): Boolean {
-        isCalibrated = calibration.isReady
-        return isCalibrated
-    }
+    fun cancelCalibration(session: String? = null) = calibration.cancel(session)
 
-    fun resetCalibration() {
-        isCalibrated = false
-        calibration.reset()
-    }
+    fun resetCalibration() = calibration.reset()
 
     /** 给校准页推送实时三轴的当前值 (供 UI 显示)。 */
     fun snapshotRawAccel(): FloatArray {
