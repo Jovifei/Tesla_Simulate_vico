@@ -24,3 +24,6 @@ vico_app/Project/android/app/src/main/assets/s12_v10/c63_w204_v6/common_input_tr
 
 # Retain hashed raw receipts verbatim, including empty TSV fields and CLI log endings.
 docs/06-testing/n2-cloud-historical-state-20261003/* -text -whitespace
+
+# Preserve exact state-comparison evidence bytes and trailing TSV/log fields.
+docs/06-testing/n2-cloud-historical-continuity-20261003/* -text -whitespace

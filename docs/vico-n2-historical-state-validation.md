@@ -165,3 +165,11 @@ java -Xmx2g -cp "$CLASSPATH" \
 The `all-available` option selects all 338 reconstructible cases, never all 630. Selecting the
 option alone is not evidence of success. A complete qualification still needs the exact missing
 phone/holdout inputs, approved artifacts and unchanged reference/acceptance gates.
+
+## Later available-matrix state coverage
+
+The subsequent [partition/frozen-T verification](vico-n2-historical-continuity-validation.md)
+executes the two stated output schedules and a separate frozen-T comparison across all 338
+available cases. It supersedes the selected-case-only limits for those exact checks and test
+artifacts. Full event-observation arrays, arbitrary partitions, snapshot-wide, full 630 and
+acoustic/device qualification remain outside that extension.
