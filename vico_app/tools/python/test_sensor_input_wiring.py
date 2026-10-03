@@ -13,12 +13,12 @@ class SensorInputWiringTest(unittest.TestCase):
         self.activity = (SOURCE / "MainActivity.kt").read_text()
 
     def test_sensor_uses_event_timestamp_and_explicit_zero_batch_latency(self):
-        self.assertIn("linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos())", self.provider)
+        self.assertIn("linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos(), receivedNanos)", self.provider)
         self.assertIn("SensorManager.SENSOR_DELAY_GAME, 0)", self.provider)
         self.assertIn("!started || event.timestamp < sessionStartedNanos", self.provider)
 
     def test_location_batch_keeps_latest_timestamp_and_coalesces_publish(self):
-        self.assertIn("locationSpeed.updateLatest(samples, SystemClock.elapsedRealtimeNanos())", self.provider)
+        self.assertIn("locationSpeed.updateLatest(samples, SystemClock.elapsedRealtimeNanos(), receivedNanos)", self.provider)
         callback = self.provider.split("private fun acceptLocations", 1)[1].split("private val tickRunnable", 1)[0]
         self.assertIn("if (!started) return", callback)
         self.assertIn("locations.filter { it.elapsedRealtimeNanos >= locationStartedNanos }", callback)
@@ -30,10 +30,10 @@ class SensorInputWiringTest(unittest.TestCase):
     def test_real_input_expires_during_demo_and_before_switching_back(self):
         tick = self.provider.split("private val tickRunnable", 1)[1].split("@Volatile private var started", 1)[0]
         self.assertIn("if (!started) return", tick)
-        self.assertIn("if (demoMode) sourceState.updateDemo(stepDemo())\n            expireRealInput()", tick)
+        self.assertIn("if (demoMode) sourceState.updateDemo(stepDemo())\n            val publishNanos = expireRealInput()", tick)
         switch = self.provider.split("fun setDemoMode", 1)[1].split("fun isDemoMode", 1)[0]
-        self.assertLess(switch.index("expireRealInput()"), switch.index("sourceState.updateReal(realFrame())"))
-        self.assertLess(switch.index("sourceState.updateReal(realFrame())"), switch.index("emit(sourceState.setDemoMode(on))"))
+        self.assertLess(switch.index("expireRealInput()"), switch.index("sourceState.updateReal(realFrame(publishNanos))"))
+        self.assertLess(switch.index("sourceState.updateReal(realFrame(publishNanos))"), switch.index("emit(sourceState.setDemoMode(on))"))
 
     def test_stop_start_clear_measured_input_and_inactive_callbacks_are_ignored(self):
         stop = self.provider.split("fun stop()", 1)[1].split("fun setDemoMode", 1)[0]

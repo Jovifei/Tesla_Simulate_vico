@@ -32,6 +32,7 @@ def main():
     main_root = src / "main/java/com/vico/simulator/sensor"
     test_root = src / "test/java/com/vico/simulator/sensor"
     sources = [p for p in sorted(main_root.glob("*.kt")) if p.name != "SensorProvider.kt"]
+    sources.append(src / "main/java/com/vico/simulator/csv/CsvTraceFormat.kt")
     tests = sorted(test_root.glob("*Test.kt"))
     sources += tests
     # The source receipt binds the exact code compiled, not just the checkout's nominal HEAD.
