@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vico.simulator.csv.CsvExporter
 import com.vico.simulator.audio.AudioOutputCategory
 import com.vico.simulator.audio.AudioOutputDevice
+import com.vico.simulator.sensor.InputDiagnostics
+import com.vico.simulator.sensor.SensorInputSnapshot
+import com.vico.simulator.sensor.CalibrationSession
 import com.vico.simulator.sensor.SensorProvider
 import com.vico.simulator.sound.AudioEngine
 import com.vico.simulator.sound.DrivePoint
@@ -85,9 +88,11 @@ class MainActivity : AppCompatActivity() {
     private var lastSpeedKmh = 0.0
     private var lastAccelMps2 = 0.0
     private var lastGear = 1
-    private var lastGpsOk = false
-    private var lastRawAccel = FloatArray(3)
-    private var lastGravity = FloatArray(3)
+    @Volatile var calibrationPageEpoch = 0L
+        private set
+    private var calibrationPageActive = false
+    private var calibrationResumed = false
+    @Volatile private var lastInputSnapshot = SensorInputSnapshot()
     private var startMs: Long = 0L
     private val prefs by lazy { getSharedPreferences("vico_state", MODE_PRIVATE) }
     private val audioDeviceCallback = object : AudioDeviceCallback() {
@@ -154,14 +159,21 @@ class MainActivity : AppCompatActivity() {
         getSystemService(android.media.AudioManager::class.java)
             .registerAudioDeviceCallback(audioDeviceCallback, handler)
         csvExporter = CsvExporter()
-        sensorProvider = SensorProvider(this) { speed, accel, gpsOk, raw, grav ->
-            onSensorSample(speed, accel, gpsOk, raw, grav)
+        sensorProvider = SensorProvider(this) { speed, accel, gpsOk, raw, grav, diagnostics ->
+            onSensorSample(speed, accel, gpsOk, raw, grav, diagnostics)
+        }
+        webView.webViewClient = object : android.webkit.WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                calibrationPageEpoch++
+                calibrationPageActive = url == "file:///android_asset/screens/calibration.html"
+                sensorProvider.cancelCalibration()
+            }
         }
         webView.addJavascriptInterface(VicoBridge(this, webView), "AndroidBridge")
         restoreState()
         refreshOutputDevices()
 
-        startMs = System.currentTimeMillis()
+        startMs = android.os.SystemClock.elapsedRealtime()
         webView.loadUrl("file:///android_asset/screens/dashboard.html")
         handleS13ReviewIntent(intent)
 
@@ -246,6 +258,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        calibrationResumed = true
         sensorProvider.start()
         if (audioRunning && !s13ReviewActive && !audioEngine.start()) {
             audioRunning = false
@@ -255,7 +268,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        calibrationResumed = false
+        calibrationPageEpoch++
         sensorProvider.stop()
+        val previousDiagnostics = lastInputSnapshot.diagnostics
+        lastInputSnapshot = SensorInputSnapshot(diagnostics = InputDiagnostics(inputSession = previousDiagnostics.inputSession,
+            sourceMode = previousDiagnostics.sourceMode, driveInputMode = previousDiagnostics.driveInputMode))
+        pushUiState()
         cancelPreviewCallbacks()
         audioEngine.stop("ACTIVITY_PAUSE")
         if (s14.state == S14TrialCoordinator.State.LOADING) stopAudio("ACTIVITY_PAUSE")
@@ -264,6 +283,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         s15PreparationEpoch++
         activityDestroyed = true
+        calibrationResumed = false
+        calibrationPageEpoch++
+        sensorProvider.cancelCalibration()
         cancelPreviewCallbacks()
         getSystemService(android.media.AudioManager::class.java)
             .unregisterAudioDeviceCallback(audioDeviceCallback)
@@ -284,17 +306,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun onSensorSample(
         speedKmh: Double, forwardAccel: Double, gpsOk: Boolean, rawAccel: FloatArray, gravity: FloatArray,
+        inputDiagnostics: InputDiagnostics,
     ) {
+        val consumedNanos = android.os.SystemClock.elapsedRealtimeNanos()
         lastSpeedKmh = speedKmh
         lastAccelMps2 = forwardAccel
-        lastGpsOk = gpsOk
-        lastRawAccel = rawAccel.copyOf()
-        lastGravity = gravity.copyOf()
+        val now = android.os.SystemClock.elapsedRealtime()
+        val diagnostics = inputDiagnostics.copy(consumeElapsedNanos = consumedNanos,
+            driveInputMode = when {
+                s13ReviewActive -> InputDiagnostics.DriveInputMode.REFERENCE_BYPASS
+                now < previewUntilMs -> InputDiagnostics.DriveInputMode.PREVIEW
+                else -> InputDiagnostics.DriveInputMode.LIVE
+            })
+        lastInputSnapshot = SensorInputSnapshot.capture(speedKmh, forwardAccel, gpsOk, rawAccel, gravity, diagnostics)
         if (s13ReviewActive) {
             pushUiState()
             return
         }
-        val now = System.currentTimeMillis()
         val timeS = (now - startMs) / 1000.0
         val throttle = (forwardAccel / 3.0).coerceIn(0.0, 1.0)
         val brake = forwardAccel < -1.2
@@ -309,7 +337,7 @@ class MainActivity : AppCompatActivity() {
 
         if (audioRunning) audioEngine.pushState(state)
         if (recording) {
-            csvExporter.append(timeS, speedKmh, forwardAccel, state.rpm, state.frequencyHz, "$selectedVehicleName/${character.label}")
+            csvExporter.append(timeS, speedKmh, forwardAccel, state.rpm, state.frequencyHz, "$selectedVehicleName/${character.label}", diagnostics)
         }
 
         val json = buildString {
@@ -332,8 +360,9 @@ class MainActivity : AppCompatActivity() {
             append("\"muted\":").append(muted || state.muted).append(',')
             append("\"language\":\"").append(language).append("\",")
             append("\"demoScenario\":\"").append(demoScenario).append("\",")
-            append("\"calibrated\":").append(sensorProvider.isCalibrated).append(',')
-            append("\"demo\":").append(sensorProvider.isDemoMode()).append(',')
+            append(calibrationStateJson()).append(',')
+            append("\"inputDiagnostics\":").append(diagnostics.toJson()).append(',')
+            append("\"demo\":").append(diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
             append("\"recording\":").append(recording).append(',')
             append("\"sampleCount\":").append(csvExporter.sampleCount).append(',')
             append("\"ax\":").append(rawAccel[0]).append(',')
@@ -371,7 +400,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         activeVehicleKey = key
-        val timeS = (System.currentTimeMillis() - startMs) / 1000.0
+        val timeS = (android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0
         val throttle = (lastAccelMps2 / 3.0).coerceIn(0.0, 1.0)
         val initialState = audioEngine.mapPoint(
             DrivePoint(timeS, lastSpeedKmh, throttle, lastAccelMps2, lastAccelMps2 < -1.2)
@@ -874,11 +903,11 @@ class MainActivity : AppCompatActivity() {
             }
             audioRunning = true
         }
-        previewUntilMs = System.currentTimeMillis() + 2500
+        previewUntilMs = android.os.SystemClock.elapsedRealtime() + 2500
         pushUiState()
         previewRestore = Runnable {
             if (!playbackEpoch.owns(previewOwner) || activityDestroyed) return@Runnable
-            if (System.currentTimeMillis() >= previewUntilMs) {
+            if (android.os.SystemClock.elapsedRealtime() >= previewUntilMs) {
                 previewVehicleKey = null
                 audioEngine.setVehicle(originalKey)
                 activeVehicleKey = originalKey
@@ -942,18 +971,37 @@ class MainActivity : AppCompatActivity() {
         pushUiState()
     }
 
-    fun beginCalibration() = sensorProvider.beginCalibration()
+    fun acceptsCalibrationCommand(epoch: Long): Boolean =
+        !activityDestroyed && calibrationResumed && calibrationPageActive && epoch == calibrationPageEpoch
 
-    fun calibrateZero() {
-        sensorProvider.calibrateZero()
+    fun beginCalibration(session: String) {
+        sensorProvider.beginCalibration(session)
         pushUiState()
-        toast("已归零")
     }
 
-    fun finishCalibration() {
-        sensorProvider.finishCalibration()
+    fun finishCalibration(session: String) {
+        val complete = sensorProvider.finishCalibration(session)
         pushUiState()
-        toast(if (sensorProvider.isCalibrated) "校准完成" else "校准未完成")
+        if (complete) toast("校准完成")
+    }
+
+    fun cancelCalibration(session: String? = null) {
+        sensorProvider.cancelCalibration(session)
+        pushUiState()
+    }
+
+    fun invalidateCalibrationPage() {
+        calibrationPageEpoch++
+        calibrationPageActive = false
+        cancelCalibration()
+    }
+
+    private fun calibrationStateJson(): String {
+        val status = sensorProvider.calibrationStatus
+        return "\"calibrated\":" + (status.status == CalibrationSession.Status.COMPLETE) +
+            ",\"calibration\":" + JSONObject().put("session", status.session).put("status", status.status.name)
+            .put("samples", status.samples).put("required", status.required)
+            .put("revision", status.revision).toString()
     }
 
     fun resetCalibration() {
@@ -995,14 +1043,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun buildStateJson(): String = buildString {
+        val input = lastInputSnapshot
         append('{')
-        append("\"speed\":").append(lastSpeedKmh.toInt()).append(',')
-        append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", lastSpeedKmh)).append("\",")
-        append("\"accel\":\"").append(String.format(Locale.US, "%.2f", lastAccelMps2)).append("\",")
+        append("\"speed\":").append(input.speedKmh.toInt()).append(',')
+        append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", input.speedKmh)).append("\",")
+        append("\"accel\":\"").append(String.format(Locale.US, "%.2f", input.accelMps2)).append("\",")
         append("\"rpm\":0,")
         append("\"gear\":").append(lastGear).append(',')
         append("\"freq\":\"0.0\",")
-        append("\"gpsOk\":").append(lastGpsOk).append(',')
+        append("\"gpsOk\":").append(input.gpsOk).append(',')
         append("\"vehicle\":\"").append(selectedVehicleName).append("\",")
         append("\"selectedVehicleKey\":\"").append(vehicleState.selectedKey).append("\",")
         append("\"playingVehicleKey\":\"").append(vehicleState.playingKey ?: "").append("\",")
@@ -1011,8 +1060,9 @@ class MainActivity : AppCompatActivity() {
         append("\"profileKey\":\"").append(character.name.lowercase()).append("\",")
         append("\"running\":").append(audioRunning).append(',')
         append("\"muted\":").append(muted).append(',')
-        append("\"calibrated\":").append(sensorProvider.isCalibrated).append(',')
-        append("\"demo\":").append(sensorProvider.isDemoMode()).append(',')
+        append(calibrationStateJson()).append(',')
+        append("\"inputDiagnostics\":").append(input.diagnostics.toJson()).append(',')
+        append("\"demo\":").append(input.diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
         append("\"demoScenario\":\"").append(demoScenario).append("\",")
         append("\"recording\":").append(recording).append(',')
         append("\"language\":\"").append(language).append("\",")
@@ -1024,12 +1074,12 @@ class MainActivity : AppCompatActivity() {
         append("\"outputDevices\":").append(buildOutputDevicesJson()).append(',')
         append("\"s14\":").append(s14StateJson).append(',')
         append("\"sampleCount\":").append(csvExporter.sampleCount).append(',')
-        append("\"ax\":").append(lastRawAccel.getOrElse(0) { 0f }).append(',')
-        append("\"ay\":").append(lastRawAccel.getOrElse(1) { 0f }).append(',')
-        append("\"az\":").append(lastRawAccel.getOrElse(2) { 0f }).append(',')
-        append("\"gx\":").append(lastGravity.getOrElse(0) { 0f }).append(',')
-        append("\"gy\":").append(lastGravity.getOrElse(1) { 0f }).append(',')
-        append("\"gz\":").append(lastGravity.getOrElse(2) { 0f })
+        append("\"ax\":").append(input.ax).append(',')
+        append("\"ay\":").append(input.ay).append(',')
+        append("\"az\":").append(input.az).append(',')
+        append("\"gx\":").append(input.gx).append(',')
+        append("\"gy\":").append(input.gy).append(',')
+        append("\"gz\":").append(input.gz)
         append('}')
     }
 
@@ -1086,6 +1136,7 @@ class MainActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        invalidateCalibrationPage()
         if (webView.canGoBack()) webView.goBack() else super.onBackPressed()
     }
 

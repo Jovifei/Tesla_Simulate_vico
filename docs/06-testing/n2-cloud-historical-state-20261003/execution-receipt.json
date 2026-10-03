@@ -1,0 +1,97 @@
+{
+  "all_available_cli": {
+    "branches_per_case": 6,
+    "cases": 338,
+    "digital_failures": 0,
+    "digital_passes": 2028,
+    "elapsed_seconds": 186.87615111201012,
+    "exit_code": 0,
+    "frames_per_branch": 74697600,
+    "maximum_pcm_peak": 0.750049889087677,
+    "maximum_peak_case": "Q2_820.0_6",
+    "maximum_peak_mode": "T",
+    "partition_schedule": [
+      960
+    ],
+    "result_inventory_and_receipt_crosscheck": "PASS",
+    "selection": "all-available",
+    "total_rendered_frames": 448185600
+  },
+  "artifact_generator": "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/n2/diagnostic/N2SyntheticArtifactFixture.kt",
+  "artifact_generator_sha256": "3be94029b3dbfb29106f61a740073e1c15ea13c97972e915bf7fd943f5993f27",
+  "artifact_provenance": "Existing N2SyntheticArtifactFixture generated test-only baseline/profile inputs; not approved private reference artifacts",
+  "checkout_base_sha": "6bb1d44f5960cadfc3072a3c754e2ae4b06e9814",
+  "compiled_tests_jar_sha256": "7d595dcf349b9b65a6c77f5056fd85759356052ab3a85ea7aff1ee44e77c2c8a",
+  "evaluation_budget_reservations": 0,
+  "event_distance_acceptance": "NOT_RUN",
+  "evidence_files": {
+    "available-cli.log": "8b94fc4019fe71fb6ab85f09324365464daea5e3fb6510fde8c1fadf95ea3137",
+    "available-digital-results.tsv": "21f5c0afac59d5764ed760e45b16013204b88fa325d5241f6b0dec7947b3f53b",
+    "available-receipt.tsv": "ad43320d4d3e3b473995aea9f5c4d2e0f5d9e8069cac2280cf00dccd623aa102",
+    "catalog.tsv": "32ca93bb3284f95bc4a6a383d5bd12053fd7d95eeb02cfd5a12451f985b0b60a",
+    "junit.log": "6fb248dad36a3a5dc75a6f147365283ae68b29e663a8324adae8d5f32b033035",
+    "linux-ci-receipt.json": "d8e4f729832e89eb9577228464eb65f51e82a539382d2aa7e2951105e990a42d",
+    "module-root-junit.log": "c0c53555f0961ac392f3d4c5c4047012af55e2cc0427ceb00bba570c76fa9c2c",
+    "representative-cli.log": "e0ad14c745979bd66053c456437464461d084981e8550fa14285802e5d402f76",
+    "representative-digital-results.tsv": "f6d496dbea75c31ff7249d3d02b6ef62e9b3c635d43d8efa53e96bbbff133681",
+    "representative-receipt.tsv": "44a48f82c835987680474872142cedba23570e4fb62f1c3d9f63b2210acf323b",
+    "runtime.txt": "bf61371a588e139353579c26bedbc9693004380fe8e053aa012cb6f7d2c43f20",
+    "source-sha256.json": "f49de0ba29b270f91652559dc998c967fde8fe30de235207af07a2277594c1bc"
+  },
+  "executed_date_utc": "2026-10-03",
+  "full_630_case_qualification": "NOT_RUN_MISSING_INPUTS_AND_REFERENCE_GATES",
+  "historical_inventory": {
+    "all_cases": 630,
+    "available_cases": 338,
+    "available_holdout_cases": 7,
+    "available_qualification_cases": 331,
+    "holdout_cases": 297,
+    "missing_holdout_rpm_cases": 290,
+    "missing_phone_cases": 2,
+    "qualification_cases": 333
+  },
+  "jvm_tests": {
+    "assumption_skipped": 2,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 41,
+    "run": 43
+  },
+  "linux_ci_rehearsal": {
+    "jvm_assumption_skipped": 2,
+    "jvm_passed": 41,
+    "metrics_sha256": "3efce9b55c181e02c60f42454e7c4e9d524cae4b825d50755557b3523871cbfb",
+    "python_passed": 81,
+    "python_skipped": 0
+  },
+  "module_root_junit_tests": {
+    "assumption_skipped": 0,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 7,
+    "run": 7
+  },
+  "prior_reviewed_hash_matches": {
+    "available-digital-results.tsv": "21f5c0afac59d5764ed760e45b16013204b88fa325d5241f6b0dec7947b3f53b",
+    "catalog.tsv": "32ca93bb3284f95bc4a6a383d5bd12053fd7d95eeb02cfd5a12451f985b0b60a",
+    "representative-digital-results.tsv": "f6d496dbea75c31ff7249d3d02b6ef62e9b3c635d43d8efa53e96bbbff133681",
+    "source-sha256.json": "f49de0ba29b270f91652559dc998c967fde8fe30de235207af07a2277594c1bc"
+  },
+  "protected_band_acceptance": "NOT_RUN",
+  "representative_cli": {
+    "branches_per_case": 6,
+    "cases": 9,
+    "digital_failures": 0,
+    "digital_passes": 54,
+    "elapsed_seconds": 10.744824053996126,
+    "exit_code": 0,
+    "frames_per_branch": 3772800,
+    "partition_schedule": [
+      960
+    ],
+    "selection": "representative"
+  },
+  "schema": "c63.n2.historical_execution_receipt.v1",
+  "source_receipt_sha256": "f49de0ba29b270f91652559dc998c967fde8fe30de235207af07a2277594c1bc",
+  "status": "SYNTHETIC_ARTIFACT_HISTORICAL_INPUT_DIGITAL_MEASUREMENT_NOT_ACOUSTIC_QUALIFICATION"
+}

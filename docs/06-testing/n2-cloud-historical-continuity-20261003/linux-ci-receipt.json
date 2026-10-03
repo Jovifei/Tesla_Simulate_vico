@@ -1,0 +1,43 @@
+{
+  "head": "03421b667f95e448773c64545fb5466f40596bfb",
+  "java": "openjdk version \"21.0.12.1\" 2026-08-18\nOpenJDK Runtime Environment (build 21.0.12.1+1-1-deb13u1-Debian)\nOpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-deb13u1-Debian, mixed mode, sharing)",
+  "jvm": {
+    "assumption_skipped": 2,
+    "failed": 0,
+    "ignored": 0,
+    "opt_in_not_run": [
+      "exportSixControlledBranchesForLocalReferenceComputation(com.vico.simulator.sound.n2.N2PcmFixtureTest)",
+      "measureInitialUnitSourceBeforeObjectiveEvaluation(com.vico.simulator.sound.n2.N2UnitCalibrationTest)"
+    ],
+    "passed": 46,
+    "run": 48,
+    "runtime_ms": 10082
+  },
+  "lock_backend": "fcntl",
+  "not_run": [
+    "all-c63 legacy external-fixture suite",
+    "full Android/Gradle build",
+    "private references",
+    "full qualification matrix",
+    "device",
+    "human acceptance"
+  ],
+  "platform": "linux",
+  "python": "3.12.14",
+  "python_tests": {
+    "failed": 0,
+    "passed": 81,
+    "run": 81,
+    "skipped": 0
+  },
+  "render_metrics_sha256": "3efce9b55c181e02c60f42454e7c4e9d524cae4b825d50755557b3523871cbfb",
+  "scope": "SYNTHETIC_SOFTWARE_CHECKS_NOT_ACOUSTIC_QUALIFICATION",
+  "synthetic_export": {
+    "manifests": {
+      "block960": "e93adc1353172093e505cb534ed0388fb9b8a9cd8b62672e670c9f09befa3589",
+      "split333_297": "d9ff7bf0b0cbba6b2c6ea470b3a4b806b7fc9f9c47256edbfe2c05d820376a9b"
+    },
+    "source_receipt_sha256": "c316efbc4bcf705bbebef2192675dc1e23ca6678a12889c00e8817812dee9e79",
+    "status": "SYNTHETIC_RENDER_ONLY_NOT_ACOUSTIC_QUALIFICATION"
+  }
+}

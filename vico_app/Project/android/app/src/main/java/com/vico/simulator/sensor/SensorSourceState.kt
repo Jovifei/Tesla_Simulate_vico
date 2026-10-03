@@ -5,6 +5,7 @@ data class SensorFrame(
     val forwardAccelMps2: Double,
     val gpsOk: Boolean,
     val correctedAccel: FloatArray,
+    val diagnostics: InputDiagnostics = InputDiagnostics(),
 )
 
 class SensorSourceState {
@@ -30,6 +31,10 @@ class SensorSourceState {
 
     fun current(): SensorFrame {
         val frame = if (isDemoMode) demo else real
-        return frame.copy(correctedAccel = frame.correctedAccel.copyOf())
+        return frame.copy(
+            correctedAccel = frame.correctedAccel.copyOf(),
+            diagnostics = real.diagnostics.copy(sourceMode = if (isDemoMode)
+                InputDiagnostics.SourceMode.DEMO else InputDiagnostics.SourceMode.REAL),
+        )
     }
 }

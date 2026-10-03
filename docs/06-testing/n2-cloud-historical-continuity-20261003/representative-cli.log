@@ -1,0 +1,38 @@
+State-checked Q0_steady_700.0_0.0: 144000 frames, six partition comparisons, frozen T
+State-checked Q0_transition_7200.0_700.0: 192000 frames, six partition comparisons, frozen T
+State-checked Q1_original: 1440000 frames, six partition comparisons, frozen T
+State-checked Q2_540.0_2: 144000 frames, six partition comparisons, frozen T
+State-checked Q3_hot_events: 576000 frames, six partition comparisons, frozen T
+State-checked Q3_restart_0: 240000 frames, six partition comparisons, frozen T
+State-checked Q4_1849.0_0.32_0.35_true: 240000 frames, six partition comparisons, frozen T
+State-checked H2_0.12_true: 364800 frames, six partition comparisons, frozen T
+State-checked H3_events: 432000 frames, six partition comparisons, frozen T
+schema	c63.n2.historical_state_receipt.v1
+status	REFERENCE_FREE_STATE_DIAGNOSTICS_NOT_ACOUSTIC_QUALIFICATION
+catalog_sha256	32ca93bb3284f95bc4a6a383d5bd12053fd7d95eeb02cfd5a12451f985b0b60a
+baseline_artifact_sha256	edc163411548958f27186b5f2a144baa166caf813719da4f61574feace55759c
+n2_artifact_sha256	dfa032013ab6552175346758833669d8b6405f6f09ab0504f6f3b47fe1ae0889
+baseline_identity	edc163411548958f27186b5f2a144baa166caf813719da4f61574feace55759c
+profile_identity	b4d5269ef63f9b06b15caa580b6fa0e2aa4ff31f444cfc79db001078aa85e074
+input_inventory_cases	630
+available_cases	338
+missing_input_cases	292
+selected_cases	9
+branches_per_case	6
+frames_per_branch	3772800
+block_partitions	960
+split_partitions	333,297
+partition_exact_passes	54
+partition_exact_failures	0
+digital_passes	108
+digital_failures	0
+digital_ceiling	0.8413951416451951
+frozen_T_partitions	17,333,71,960,5,241
+frozen_T_equal_cases	9
+frozen_T_equal_frames	3772800
+partition_results_sha256	a37f871596ad5ad2c8ddcf7f692c2be64d8bcacbdc4d577b7bdbd374425b1b84
+frozen_T_results_sha256	cc5ed7949a0113624ea7f789d220d140d19fc8c76612e4ebfd574deafe4e0d4a
+snapshot_scope	NOT_RUN_BY_THIS_CLI
+arbitrary_partition_scope	NOT_PROVEN
+full_630_case_qualification	NOT_RUN_MISSING_INPUTS_AND_REFERENCE_GATES
+

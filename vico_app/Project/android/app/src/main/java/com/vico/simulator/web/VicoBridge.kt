@@ -22,6 +22,7 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
                 "calibration" -> "screens/calibration.html"
                 else -> return@runOnUiThread
             }
+            activity.invalidateCalibrationPage()
             webView.loadUrl("file:///android_asset/$file")
         }
     }
@@ -113,14 +114,21 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
     fun setDemoScenario(key: String) = activity.runOnUiThread { activity.setDemoScenario(key) }
 
     // ---- 校准 ----
-    @JavascriptInterface
-    fun beginCalibration() = activity.runOnUiThread { activity.beginCalibration() }
+    private fun calibrationCommand(action: () -> Unit) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread {
+            if (activity.acceptsCalibrationCommand(epoch)) action()
+        }
+    }
 
     @JavascriptInterface
-    fun calibrateZero() = activity.runOnUiThread { activity.calibrateZero() }
+    fun beginCalibration(session: String) = calibrationCommand { activity.beginCalibration(session) }
 
     @JavascriptInterface
-    fun finishCalibration() = activity.runOnUiThread { activity.finishCalibration() }
+    fun finishCalibration(session: String) = calibrationCommand { activity.finishCalibration(session) }
+
+    @JavascriptInterface
+    fun cancelCalibration(session: String) = calibrationCommand { activity.cancelCalibration(session) }
 
     @JavascriptInterface
     fun resetCalibration() = activity.runOnUiThread { activity.resetCalibration() }
