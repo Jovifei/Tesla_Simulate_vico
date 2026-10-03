@@ -75,3 +75,20 @@ executed checks and the trusted-producer boundary.
 34 focused Python/JVM-fixture tests passed in the cloud. This supersedes NOT_RUN only for those
 specific software gate/helper tests; it does not supersede the unrun acoustic, full Android,
 reference, device or human qualification gates above.
+
+## Cloud historical-state diagnostics (2026-10-03)
+
+The later test-only stage reconstructs the exact 630-entry historical inventory, retaining
+292 missing-input entries without substituting trajectories. On the 338 available cases,
+actual rendering of six controlled branches with explicit generated test-only artifacts
+completed 2,028 digital checks with zero failures. All limits and production DSP remain frozen.
+
+Fresh local Linux rehearsal passed 81 Python tests and 41 JVM tests, with two named opt-in
+JVM skips; the seven historical tests also passed from the app-module working directory.
+Independent reconstruction verified every available historical fixture/input hash.
+See [historical-state validation](vico-n2-historical-state-validation.md) for exact receipts,
+synthetic-artifact provenance and separately bounded partition, frozen-T and snapshot checks.
+
+This supersedes NOT_RUN only for the stated software/digital checks. The absent two phone
+cases and 290 holdout RPM cases, full 630-case qualification, acoustic/reference gates,
+Android/device execution and human acceptance remain unresolved. No installation is authorized.

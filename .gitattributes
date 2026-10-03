@@ -18,3 +18,9 @@ tasks/reports/runtime/s12-stage-x/*.json -text -diff -whitespace
 tasks/reports/runtime/s12-stage-x/x7_package_summary.json -text -diff -whitespace
 tools/sound_sim/s12/acoustic_identity_v015/stage_x/drivers/*.py -text -diff -whitespace
 tools/sound_sim/s12/acoustic_identity_v015/stage_x/structural_redesign.py -text -diff -whitespace
+
+# Historical Q1 catalog binds the exact existing CRLF bytes on every platform.
+vico_app/Project/android/app/src/main/assets/s12_v10/c63_w204_v6/common_input_trace.json -text
+
+# Retain hashed raw receipts verbatim, including empty TSV fields and CLI log endings.
+docs/06-testing/n2-cloud-historical-state-20261003/* -text -whitespace
