@@ -408,5 +408,14 @@
     "local_hook": "a768edc1e6cf848b71e5b624713702c53b8791e0",
     "latest": "c937c3ad1e8ca3f59a52fdc6356186417560a9a2",
     "review": "Remote source review received; product qualification not accepted"
+  },
+  "integration_reception": {
+    "date": "2026-10-03",
+    "scope": "VICO_N2_ONLY",
+    "remote_tip": "b4e1ea1a",
+    "status": "PARTIAL",
+    "tests": "Android285/0fail/29skip; Python120/0fail/4skip; WindowsN2 44/0fail/0skip",
+    "device": "INSTALL_AND_STARTUP_PASS; ACOUSTIC_NOT_RUN; HUMAN_NOT_RUN",
+    "report": "docs/vico-main-integration-20261003.md"
   }
 }

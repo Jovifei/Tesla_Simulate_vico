@@ -164,7 +164,12 @@ class ReferenceDriverTest(unittest.TestCase):
     def test_cli_dangling_output_symlink_is_not_overwritten(self):
         output = self.root / "output.json"
         target = self.root / "absent.json"
-        output.symlink_to(target)
+        try:
+            output.symlink_to(target)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest("Windows symbolic-link privilege unavailable")
+            raise
         with contextlib.redirect_stdout(io.StringIO()):
             code = main(["--export", str(self.export), "--out", str(output)])
         self.assertEqual(2, code)

@@ -131,7 +131,12 @@ class ReferenceExportTest(unittest.TestCase):
     def test_symlink_payload_and_output_root_rejected(self):
         path = self.root / "s_event_on.pcm.f32le"
         path.unlink()
-        path.symlink_to(self.source / path.name)
+        try:
+            path.symlink_to(self.source / path.name)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest("Windows symbolic-link privilege unavailable")
+            raise
         with self.assertRaisesRegex(ValueError, "non-regular"):
             read_export(self.root)
         link = Path(self.tmp.name) / "link"
