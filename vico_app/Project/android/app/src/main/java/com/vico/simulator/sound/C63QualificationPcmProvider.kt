@@ -1,9 +1,9 @@
 package com.vico.simulator.sound
 
 /**
- * Qualification-only PCM seam. This is intentionally not wired into the
- * production AudioEngine path yet. A caller must opt in explicitly and provide
- * a validated candidate. Legacy MatlabV6SoundBankEngine remains the default.
+ * Qualification-only PCM seam for the default-off, internal Debug AudioEngine hook.
+ * Offline-qualified candidates can collect device/human evidence without claiming
+ * production acceptance. Legacy MatlabV6SoundBankEngine remains the default.
  */
 internal interface C63QualificationPcmProvider {
     fun render(state: SoundState, frames: Int): FloatArray
@@ -41,7 +41,7 @@ internal class C63QualificationRoute {
 
     private fun eligible(value: C63QualificationPcmProvider): Boolean = runCatching {
             val report = value.qualification() ?: return@runCatching false
-            report.isRuntimeEligible() && report.candidateId == value.candidateId() &&
+            report.isDeviceValidationEligible() && report.candidateId == value.candidateId() &&
                 report.profileHash == value.profileHash() && report.sourceHash == value.sourceHash()
     }.getOrDefault(false)
 
