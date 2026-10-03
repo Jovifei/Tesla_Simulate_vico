@@ -34,23 +34,30 @@ def main():
     sources = [p for p in sorted(main_root.glob("*.kt")) if p.name != "SensorProvider.kt"]
     sources.append(src / "main/java/com/vico/simulator/csv/CsvTraceFormat.kt")
     tests = sorted(test_root.glob("*Test.kt"))
-    sources += tests
     # The source receipt binds the exact code compiled, not just the checkout's nominal HEAD.
-    hashes = {str(p.relative_to(repo)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources + [jvm / "QualificationTestRunner.java"]}
+    hashes = {str(p.relative_to(repo)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources + tests + [jvm / "QualificationTestRunner.java", Path(__file__).resolve()]}
     (build / "source-sha256.json").write_text(json.dumps(hashes, indent=2, sort_keys=True) + "\n")
     (build / "runtime.txt").write_text(subprocess.run(["java", "-version"], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True).stdout)
     (build / "dependencies.json").write_text(json.dumps(dependencies, indent=2) + "\n")
     cp = os.pathsep.join(jars)
+    main_jar = build / "main.jar"
     compiled = build / "tests.jar"
-    subprocess.run(["java", "-cp", cp, "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler", "-no-stdlib", "-no-reflect",
-                    "-jvm-target", "1.8", "-classpath", cp, "-d", str(compiled), *map(str, sources)], check=True)
+    compiler = ["java", "-cp", cp, "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler", "-no-stdlib", "-no-reflect", "-jvm-target", "1.8"]
+    # Android compiles production and test code as separate modules. A combined compile can hide
+    # cross-module nullable smart-cast failures, so keep the same boundary in this SDK-free gate.
+    subprocess.run([*compiler, "-module-name", "sensor_main", "-classpath", cp,
+                    "-d", str(main_jar), *map(str, sources)], check=True)
+    test_cp = os.pathsep.join([str(main_jar), cp])
+    subprocess.run([*compiler, "-module-name", "sensor_tests", "-classpath", test_cp,
+                    "-d", str(compiled), *map(str, tests)], check=True)
+    (build / "compilation-mode.txt").write_text("Separate production/test Kotlin modules; Android adapters are not compiled here.\n")
     subprocess.run(["java", "com.sun.tools.javac.Main", "-proc:none", "-cp", cp, "-d", str(build), str(jvm / "QualificationTestRunner.java")], check=True)
     classes = []
     for path in tests:
         text = path.read_text()
         package = re.search(r"^package ([\w.]+)", text, re.MULTILINE).group(1)
         classes += [package + "." + name for name in re.findall(r"^class (\w+Test)\b", text, re.MULTILINE)]
-    runtime = os.pathsep.join([str(compiled), str(build), cp])
+    runtime = os.pathsep.join([str(compiled), str(main_jar), str(build), cp])
     # Run from the Android project, matching the test fixtures' relative-path contracts.
     result = subprocess.run(["java", "-Xmx2g", "-cp", runtime, "QualificationTestRunner", *classes],
                             cwd=repo / "vico_app/Project/android", text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

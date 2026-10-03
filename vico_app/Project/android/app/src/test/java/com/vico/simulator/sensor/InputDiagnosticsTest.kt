@@ -31,8 +31,10 @@ class InputDiagnosticsTest {
             consumeElapsedNanos = ms(1223), gpsTiming = timing, gpsValid = true)
         assertEquals(220.0, d.gpsAgeMs!!, 0.0)
         assertEquals(ms(180), timing.receivedElapsedNanos - timing.sourceElapsedNanos)
-        assertEquals(ms(40), d.publishElapsedNanos!! - timing.receivedElapsedNanos)
-        assertEquals(ms(3), d.consumeElapsedNanos!! - d.publishElapsedNanos)
+        val published = requireNotNull(d.publishElapsedNanos)
+        val consumed = requireNotNull(d.consumeElapsedNanos)
+        assertEquals(ms(40), published - timing.receivedElapsedNanos)
+        assertEquals(ms(3), consumed - published)
     }
     @Test fun gpsExpiryPreservesObservationalIdentityButExplicitClearDoesNot() {
         val gps = LocationSpeedState(); gps.update(5.0, true, ms(1000), ms(1000))

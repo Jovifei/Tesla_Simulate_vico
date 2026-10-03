@@ -4,7 +4,7 @@
 
 This is an observational diagnostics change on the existing PR37 branch, based on `6e795571a2e8619142ba419efff2e314e5a081f4`. It does not alter source selection, freshness thresholds, GPS requests, smoothing, calibration thresholds, audio, or permissions. Recording still starts only through the existing user action; export still writes the existing local CSV. No coordinates, altitude, bearing, device identifiers, network telemetry, or automatic recording were added.
 
-The source/code/test/workflow patch SHA-256 is `29b241dded3058007dbdae82e01564dd6ed754910cf51bab00fd97005192547f`. Reports/receipts are outside that patch hash.
+The source/code/test/workflow patch SHA-256 is `a886f330440cee1e7be735840635757ac779b9a1dd970d1e83b68b879d13e009`. Reports/receipts are outside that patch hash.
 
 The independent compatibility chain is deliberately separate:
 
@@ -59,12 +59,14 @@ Tests were written before the new APIs/formatter: the new Kotlin tests first fai
 
 The final patch passed on both isolated chains:
 
-- 52 pure JVM tests, all passed; no failures, ignored or assumption-skipped tests
+- 52 pure JVM tests compiled in separate production/test modules, all passed; no failures, ignored or assumption-skipped tests
 - 9 executable calibration UI tests, all passed
 - 10 source-wiring checks, all passed
 
 Coverage includes repeated versus same-valued fresh samples, delayed batch selection, source/receive/publish/consume lag decomposition, exact unchanged 3,000 ms GPS and 250 ms IMU expiry, unavailable versus genuine zero uncertainty, invalid samples, lifecycle and mode transitions, integer precision, Locale-independent 22-column CSV compatibility, immutable array copies, and concurrent publication.
 
-Android adapter compilation, Android unit tests, lint and APK generation are NOT_RUN at publication and must be established by hosted CI for the exact new commit. No APK installation, coordinates collection, road latency/GNSS accuracy trial, or human acoustic acceptance occurred. Prior device receipts remain bound to their original commits; neither this patch nor the main compatibility replay upgrades them.
+The first diagnostics commit `857f52799b735687278ca33e2ba8749b936a188a` passed Linux/Windows gates and Android production compilation, with lint 0 errors/8 warnings, but Android unit-test compilation failed because a test relied on a nullable public-property smart cast across modules. No Android test pass is claimed for that commit. The identical failure was reproduced locally after splitting the SDK-free compiler into separate production/test modules; explicit non-null local timestamps fixed it. Follow-up test/runner patch SHA-256: `1a153b38d0df3fd1f16a72da65c47a16a0de7889c5ef042e1fa17d6ab18babb2`. The cumulative patch and both source chains were rerun successfully with that module boundary. This follow-up changes no production code.
+
+Android unit tests and a complete successful compile/lint/APK gate for the corrected commit still require its own hosted exact-head CI; the earlier run is not reused as that evidence. No APK installation, coordinates collection, road latency/GNSS accuracy trial, or human acoustic acceptance occurred. Prior device receipts remain bound to their original commits; neither this patch nor the main compatibility replay upgrades them.
 
 Platform references: [Location speed uncertainty](https://developer.android.com/reference/android/location/Location#getSpeedAccuracyMetersPerSecond()), [sensor timestamp clock](https://developer.android.com/reference/android/hardware/SensorEvent#timestamp), [elapsed real time](https://developer.android.com/reference/android/os/SystemClock#elapsedRealtimeNanos()).

@@ -2,7 +2,7 @@
   "baseline": "6e795571a2e8619142ba419efff2e314e5a081f4",
   "scope": "Focused exact-source replay, not integrated-main Android or device acceptance",
   "prerequisite_patch_sha256": null,
-  "diagnostics_patch_sha256": "29b241dded3058007dbdae82e01564dd6ed754910cf51bab00fd97005192547f",
+  "diagnostics_patch_sha256": "a886f330440cee1e7be735840635757ac779b9a1dd970d1e83b68b879d13e009",
   "before_diagnostics_sha256": {
     ".github/workflows/vico-n2-qualification.yml": "2e1f19e68639240499dc5fd8d45e6772e12374bff0afcb3825e995b37a3d8da3",
     "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt": "e45c210fa0a0b9f9db2deab49891d7bda097f83cc492012c16290d003841e61b",
@@ -32,8 +32,8 @@
     "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorProvider.kt": "7b02b360322fc72bbf97da8648c44c407c237812b875ea2423659f07698974c5",
     "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorSourceState.kt": "b7c1702ec090fb4102b4e8571c51d37bb1b952495c1cf577c2092974a084568d",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CsvTraceFormatTest.kt": "b4e93715cf3b67fdfb401c8860d4d6283795cfd97fe920dbd1a09eab3109aed4",
-    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "f53cdc938d69ab40f84122675124c8a15796586f1f62921f5551eb05b2e32146",
-    "vico_app/tools/python/run_sensor_jvm_tests.py": "92a3e78e7132cf2b830eed7a13b4a58bd015e0a127ae45943858467819aa0581",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "8d0da0624c36f377266277cae93b638cf481c951910106c4b2ca60381bbb851b",
+    "vico_app/tools/python/run_sensor_jvm_tests.py": "070e0a844e8fe6a433faf7dfc179ab9a0f45edaee598d95635b87538ee4cb691",
     "vico_app/tools/python/test_input_diagnostics_wiring.py": "14f2688a9f5f8105164a70ae8dac0e540e1c85fe31903a7c87f5938c95918cd8",
     "vico_app/tools/python/test_sensor_input_wiring.py": "f0cf0e98d4f70251b60a265164846cf68e94a7c690b1f50dbc4ed8d06e24d685"
   },
@@ -45,8 +45,9 @@
       "failed": 0,
       "assumption_skipped": 0,
       "ignored": 0,
-      "runtime_ms": 78
+      "runtime_ms": 64
     },
+    "jvm_compilation": "Separate production/test modules",
     "js": {
       "tests": 9,
       "passed": 9,
@@ -56,7 +57,7 @@
       "tests": 10,
       "passed": 10
     },
-    "android": "NOT_RUN_AT_PUBLICATION; exact new-head CI required",
+    "android": "Initial 857f527 production compile passed; unit-test compilation failed on cross-module smart cast. Reviewed fix requires new exact-head CI.",
     "device_road_acoustic_acceptance": "NOT_RUN"
   },
   "jvm_source_sha256": {
@@ -73,11 +74,12 @@
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CalibrationSessionTest.kt": "72218f1b05bcee5936fa0c701e23df3ed95d04ea2ad20767a4f60cfb1134b79e",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CsvTraceFormatTest.kt": "b4e93715cf3b67fdfb401c8860d4d6283795cfd97fe920dbd1a09eab3109aed4",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/DemoMotionControllerTest.kt": "5cf678a9f65c193534e475986f500c54c67fa0b6dc1b42e8b4c22b948bcee504",
-    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "f53cdc938d69ab40f84122675124c8a15796586f1f62921f5551eb05b2e32146",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "8d0da0624c36f377266277cae93b638cf481c951910106c4b2ca60381bbb851b",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/LinearAccelerationStateTest.kt": "ca98478f81ad7c41b48918d28ebf646900c1da431c69276c61cb87e5842c281f",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/LocationSpeedStateTest.kt": "da6051fa7938604201d5896187ddbb2fe78d00fbc65ae425204035ee668c1895",
     "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/SensorSourceStateTest.kt": "fedd070f41f96a1bfed8b111b29211a418c8eee4ab6d7b95cfad7489ed71856d",
-    "vico_app/tools/jvm/QualificationTestRunner.java": "a1d27ace5a40dbfe470a52504afffc476f4b308f1326d6b3382abfe61fcde21b"
+    "vico_app/tools/jvm/QualificationTestRunner.java": "a1d27ace5a40dbfe470a52504afffc476f4b308f1326d6b3382abfe61fcde21b",
+    "vico_app/tools/python/run_sensor_jvm_tests.py": "070e0a844e8fe6a433faf7dfc179ab9a0f45edaee598d95635b87538ee4cb691"
   },
   "dependency_sha256": [
     {
@@ -127,8 +129,10 @@
     }
   ],
   "log_sha256": {
-    "pr37-jvm-frozen.log": "bfa50cfa591c449cca4fc17aee7231358b3fed0a4552ca7e7297cc895ea1875d",
-    "pr37-js-frozen.log": "a1a3c5f8e331e7202240a255f5eb101fb14ff409ed5a4d433e390a6eb3f6d632",
-    "pr37-wiring-frozen.log": "a8cc56ee866358a742d20490728e337b8883d2a39897d1b822638197a87ce483"
-  }
+    "pr37-jvm-module.log": "28b85f24ae1cc8dbcdec1948b9c588b7c18bff740d4ba7ca43965b32f718eb88",
+    "pr37-js-module.log": "1bfa9634ab6c5b71d0331655715b16db52f6b0b02a4ca011d2bb3069969c29ff",
+    "pr37-wiring-module.log": "a8cc56ee866358a742d20490728e337b8883d2a39897d1b822638197a87ce483"
+  },
+  "initial_diagnostics_commit": "857f52799b735687278ca33e2ba8749b936a188a",
+  "module_boundary_fix_sha256": "1a153b38d0df3fd1f16a72da65c47a16a0de7889c5ef042e1fa17d6ab18babb2"
 }
