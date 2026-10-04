@@ -51,6 +51,60 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
     private var lastThrottle = 0.0
     private var afterfireArmed = false
 
+    private var measuredEpoch: Long? = null
+    private var measuredUsable = false
+    private var measuredRecoveryUntilS = Double.NEGATIVE_INFINITY
+    private var measuredEventsRearmed = false
+
+    /** Live measurements only. Unknown is never interpreted as zero-speed parking. */
+    fun updateMeasured(timeS: Double, speedKmh: Double, accelerationMps2: Double, throttle: Double,
+                       control: DriveInputControl): MatlabPowertrainState {
+        require(control.source == DriveInputSource.REAL)
+        val finite = timeS.isFinite() && speedKmh.isFinite() && accelerationMps2.isFinite() && throttle.isFinite()
+        if (!control.usable || !finite) {
+            measuredUsable = false
+            measuredEventsRearmed = false
+            measuredEpoch = control.epoch
+            clearTransientHistory()
+            return MatlabPowertrainState(rpm, 0.0, gear, 1.0, false, false)
+        }
+        val discontinuity = !measuredUsable || measuredEpoch != control.epoch ||
+            lastTimeS.isFinite() && timeS < lastTimeS
+        measuredUsable = true
+        measuredEpoch = control.epoch
+        if (discontinuity) {
+            clearTransientHistory()
+            val speed = speedKmh.coerceIn(0.0, spec.speedCeilingKmh)
+            // Re-anchor within existing hysteresis, not a fabricated sequence of shifts.
+            while (gear < spec.gearRatios.size && speed >= spec.upshiftSpeedKmh[gear - 1]) gear++
+            while (gear > 1 && speed <= spec.downshiftRatio * spec.upshiftSpeedKmh[gear - 2]) gear--
+            val wheelRpm = speed / 3.6 / (2.0 * PI * spec.wheelRadiusM) * 60.0
+            rpm = (wheelRpm * spec.finalDrive * spec.gearRatios[gear - 1]).coerceIn(spec.idleRpm, spec.redlineRpm)
+            lastTimeS = timeS
+            lastShiftTimeS = timeS
+            measuredRecoveryUntilS = timeS + spec.minimumShiftIntervalS
+            measuredEventsRearmed = false
+            lastThrottle = throttle.coerceIn(0.0, 1.0)
+            return MatlabPowertrainState(rpm, lastThrottle, gear, 1.0, false, false)
+        }
+        val state = update(timeS, speedKmh, accelerationMps2, throttle)
+        if (timeS < measuredRecoveryUntilS) {
+            // Refresh baselines, but do not defer a release from the uncertain interval.
+            afterfireArmed = false
+            measuredEventsRearmed = false
+            return state.copy(afterfireTrigger = false, shiftTrigger = false)
+        }
+        val wasRearmed = measuredEventsRearmed
+        if (state.rpm >= spec.afterfireMinimumRpm && throttle >= 0.25) measuredEventsRearmed = true
+        return if (!wasRearmed && !state.shiftTrigger) state.copy(afterfireTrigger = false) else state
+    }
+
+    private fun clearTransientHistory() {
+        shiftStartTimeS = Double.NEGATIVE_INFINITY
+        afterfireArmed = false
+        lastThrottle = 0.0
+    }
+
     fun update(timeS: Double, speedKmh: Double, accelerationMps2: Double, throttle: Double): MatlabPowertrainState {
         val speed = speedKmh.coerceIn(0.0, spec.speedCeilingKmh)
         val dt = if (lastTimeS.isFinite()) (timeS - lastTimeS).coerceIn(0.001, 0.2) else 0.05

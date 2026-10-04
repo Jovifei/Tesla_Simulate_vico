@@ -33,7 +33,12 @@ def main():
     test_root = src / "test/java/com/vico/simulator/sensor"
     sources = [p for p in sorted(main_root.glob("*.kt")) if p.name != "SensorProvider.kt"]
     sources.append(src / "main/java/com/vico/simulator/csv/CsvTraceFormat.kt")
+    # Actual live powertrain entry is compiled alongside its input-contract regressions.
+    sound_root = src / "main/java/com/vico/simulator/sound"
+    sources += [sound_root / name for name in ("SoundModel.kt", "SoundProfile.kt", "MatlabPowertrainController.kt", "AudioInputGate.kt")]
     tests = sorted(test_root.glob("*Test.kt"))
+    sound_test_root = src / "test/java/com/vico/simulator/sound"
+    tests += [sound_test_root / name for name in ("AudioInputGateTest.kt", "MatlabPowertrainControllerTest.kt")]
     # The source receipt binds the exact code compiled, not just the checkout's nominal HEAD.
     hashes = {str(p.relative_to(repo)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources + tests + [jvm / "QualificationTestRunner.java", Path(__file__).resolve()]}
     (build / "source-sha256.json").write_text(json.dumps(hashes, indent=2, sort_keys=True) + "\n")

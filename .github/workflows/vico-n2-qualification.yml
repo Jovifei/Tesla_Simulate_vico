@@ -82,12 +82,13 @@ jobs:
           --platform linux --download-deps
           --output "${{ runner.temp }}/vico-n2-linux"
       - name: Test calibration UI acknowledgement and lifecycle
-        run: node --test vico_app/tools/js/test_calibration_ui.cjs
+        run: node --test vico_app/tools/js/test_calibration_ui.cjs vico_app/tools/js/test_input_quality_ui.cjs
       - name: Test sensor freshness, ordering, and Android source wiring
         run: |
           python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"
           python -m unittest discover -s vico_app/tools/python -p 'test_sensor_input_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_input_diagnostics_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_input_quality_wiring.py' -v
       - name: Compile Python and check whitespace
         run: |
           python -m compileall -q vico_app/tools/python
@@ -155,6 +156,9 @@ jobs:
           bash gradlew --no-daemon --continue -Pandroid.builder.sdkDownload=false
           :app:compileDebugKotlin :app:compileDebugUnitTestKotlin
           :app:testDebugUnitTest --tests 'com.vico.simulator.sensor.*'
+          --tests 'com.vico.simulator.sound.AudioInputGateTest'
+          --tests 'com.vico.simulator.sound.MatlabTransientClearTest'
+          --tests 'com.vico.simulator.sound.MatlabPowertrainControllerTest'
           :app:lintDebug :app:assembleDebug
       - name: Record test scope and generated APK identity
         if: ${{ always() && steps.sdk.outcome == 'success' }}
@@ -165,13 +169,13 @@ jobs:
           from pathlib import Path
           import xml.etree.ElementTree as ET
           root = Path('vico_app/Project/android/app/build')
-          reports = sorted((root / 'test-results/testDebugUnitTest').glob('TEST-com.vico.simulator.sensor.*.xml'))
+          reports = sorted((root / 'test-results/testDebugUnitTest').glob('TEST-com.vico.simulator.*.xml'))
           totals = {key: 0 for key in ('tests', 'failures', 'errors', 'skipped')}
           for report in reports:
               suite = ET.parse(report).getroot()
               for key in totals:
                   totals[key] += int(suite.get(key, 0))
-          print(json.dumps({'scope': 'Android JVM sensor tests, not device/GNSS acceptance', 'reports': len(reports), **totals}))
+          print(json.dumps({'scope': 'Android JVM input and live powertrain/audio gates, not device/GNSS acceptance', 'reports': len(reports), **totals}))
           lint = root / 'reports/lint-results-debug.xml'
           if not lint.is_file():
               raise SystemExit('Android lint XML report missing: NOT_RUN_OR_UNAVAILABLE')

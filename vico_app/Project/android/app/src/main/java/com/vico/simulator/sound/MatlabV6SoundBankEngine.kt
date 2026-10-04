@@ -7,10 +7,12 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     private val cache = mutableMapOf<String, MatlabSoundBank>()
     private var bank: MatlabSoundBank? = null
     private var controller: MatlabPowertrainController? = null
+    private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
     private var renderer: MatlabStatefulBankRenderer? = null
     @Volatile var prototypeEnabled: Boolean = false
         private set
     private var prototype = com.vico.simulator.sound.s15.C63RuntimeRenderer(fixedHeadroom=true)
+    private val prototypeInputGuard = PrototypeInputGuard()
     private val renderTimes=LongArray(4096)
     private val completedAttempts=BooleanArray(4096)
     private val renderInputs=DoubleArray(4096*6)
@@ -48,6 +50,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         if(enabled && bank?.vehicleKey != "c63_w204_v6") return false
         prototypeEnabled=enabled
         prototype=com.vico.simulator.sound.s15.C63RuntimeRenderer(fixedHeadroom=true)
+        prototypeInputGuard.resetForExplicitPreparation()
         renderTimes.fill(0);renderCount=0;inputCount=0;sessionTiming.clear()
         return true
     }
@@ -62,19 +65,40 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             prototypeEnabled=false
             bank = loaded
             controller = MatlabPowertrainController(loaded.powertrain)
+            syntheticControllers.clear()
             renderer = MatlabStatefulBankRenderer(loaded)
         }
         return true
     }
 
-    fun mapPoint(point: DrivePoint): SoundState {
+    fun mapMeasuredPoint(point: DrivePoint, control: DriveInputControl): SoundState {
+        require(control.source == DriveInputSource.REAL)
         requireNotNull(bank) { "MATLAB sound bank is not selected" }
-        val state = requireNotNull(controller).update(
-            point.timeS,
-            point.speedKmh,
-            point.accelMps2,
-            point.throttle.coerceIn(0.0, 1.0),
+        val checkedControl = control.validatedFor(point)
+        val state = requireNotNull(controller).updateMeasured(
+            point.timeS, point.speedKmh, point.accelMps2,
+            point.throttle.coerceIn(0.0, 1.0), checkedControl,
         )
+        return toSoundState(point, state, checkedControl)
+    }
+
+    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource): SoundState {
+        require(source in setOf(DriveInputSource.DEMO, DriveInputSource.PREVIEW, DriveInputSource.QUALIFICATION))
+        return mapSyntheticState(point, DriveInputControl(source, 0L, Long.MAX_VALUE, true, true))
+    }
+
+    private fun mapSyntheticState(point: DrivePoint, control: DriveInputControl): SoundState {
+        requireNotNull(bank) { "MATLAB sound bank is not selected" }
+        val synthetic = syntheticControllers.getOrPut(control.source) {
+            MatlabPowertrainController(requireNotNull(bank).powertrain)
+        }
+        val state = synthetic.update(
+            point.timeS, point.speedKmh, point.accelMps2, point.throttle.coerceIn(0.0, 1.0),
+        )
+        return toSoundState(point, state, control)
+    }
+
+    private fun toSoundState(point: DrivePoint, state: MatlabPowertrainState, control: DriveInputControl?): SoundState {
         return SoundState(
             timeS = point.timeS,
             rpm = state.rpm,
@@ -90,7 +114,17 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             shiftGain = state.torqueGain,
             afterfireTrigger = state.afterfireTrigger,
             shiftTrigger = state.shiftTrigger,
+            inputControl = control,
         )
+    }
+
+    /** The experimental route accepts only explicit qualification and requires re-preparation after rejection. */
+    fun acceptsPlaybackInput(control: DriveInputControl?, renderInputValid: Boolean): Boolean =
+        !prototypeEnabled || prototypeInputGuard.accept(control, renderInputValid)
+
+    /** Call only from the AudioEngine writer, before accepting a changed input epoch. */
+    fun clearTransientEvents() {
+        renderer?.clearTransientEvents()
     }
 
     fun renderState(state: SoundState, frameCount: Int): FloatArray {

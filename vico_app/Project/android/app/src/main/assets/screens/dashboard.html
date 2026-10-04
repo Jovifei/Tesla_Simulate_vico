@@ -193,15 +193,15 @@
 <option value="en">English</option>
 </select>
 <div class="flex items-center gap-base">
-<span class="material-symbols-outlined text-sm text-green-500" id="gps-icon">satellite_alt</span>
-<span class="font-label-md text-label-md" id="gps-text">Good</span>
+<span class="material-symbols-outlined text-sm text-yellow-500" id="gps-icon">satellite_alt</span>
+<span class="font-label-md text-label-md" id="gps-text">等待有效定位</span>
 </div>
 <span class="material-symbols-outlined text-sm cursor-pointer" id="sensor-status-btn">sensors</span>
 <span class="material-symbols-outlined text-sm cursor-pointer" id="header-mute-btn">volume_up</span>
 </div>
 </header>
 <div class="hidden bg-yellow-100 text-yellow-800 px-margin-mobile py-sm font-label-md text-label-md text-center" id="gps-warning">
-        GPS 信号丢失，当前使用加速度传感器数据。
+        等待有效速度和已确认的安装方向。
     </div>
 <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-lg grid grid-cols-1 md:grid-cols-12 gap-lg">
 <!-- Main Column (Left on Desktop) -->
@@ -212,8 +212,8 @@
 <div>
 <h2 class="font-label-md text-label-md text-secondary mb-xs uppercase">实时状态</h2>
 <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg flex items-baseline gap-xs">
-<span class="" id="live-speed">0</span>
-<span class="font-body-md text-body-md text-secondary" id="speed-unit">km/h</span>
+<span class="" id="live-speed">—</span>
+<span class="font-body-md text-body-md text-secondary" id="speed-unit" style="font-size: 20px; font-weight: 700; color: #0058bc">km/h</span>
 </div>
 </div>
 <div class="text-right">
@@ -224,7 +224,7 @@
 <div class="grid grid-cols-2 gap-md border-t border-[#E9ECEF] pt-md">
 <div>
 <div class="font-label-md text-label-md text-secondary">加速度</div>
-<div class="font-data-mono text-data-mono"><span class="" id="live-accel">0.0</span> m/s²</div>
+<div class="font-data-mono text-data-mono"><span class="" id="live-accel">—</span> m/s²</div>
 </div>
 <div>
 <div class="font-label-md text-label-md text-secondary">虚拟转速</div>
@@ -273,8 +273,11 @@
 <button class="text-primary hover:underline" id="export-csv-btn">导出 CSV</button>
 </div>
 <div class="grid grid-cols-2 gap-x-sm gap-y-xs">
-<div class="text-secondary">speedKmh:</div><div class="" id="debug-speed">0.0</div>
-<div class="text-secondary">accelMps2:</div><div class="" id="debug-accel">0.00</div>
+<div class="text-secondary">原始管线速度（标准单位）:</div><div class="" id="debug-speed">0.0</div>
+<div class="text-secondary">设备 Y 轴（非车辆前向）:</div><div class="" id="debug-accel">0.00</div>
+<div class="text-secondary">输入质量:</div><div id="debug-quality">—</div>
+<div class="text-secondary">GPS 样本年龄:</div><div id="debug-age">—</div>
+<div class="text-secondary">展示读数:</div><div id="debug-display">—</div>
 <div class="text-secondary">vRpm:</div><div class="" id="debug-rpm">1000</div>
 <div class="text-secondary">calibrated:</div><div class="" id="debug-calibrated">false</div>
 </div>
@@ -296,6 +299,7 @@
 <span class="font-label-md text-label-md">设置</span>
 </div>
 </nav>
+<script src="file:///android_asset/input-quality-ui.js"></script>
 <script>
         // === 接收原生传感器/声浪状态推送 (VicoBridge 调用 window.__vicoUpdate) ===
         window.__vicoUpdate = function(s){
@@ -313,22 +317,26 @@
             var gpsIcon=document.getElementById('gps-icon');
             var gpsText=document.getElementById('gps-text');
             var unit = (function(){ try { return localStorage.getItem('vico-unit') || 'kmh'; } catch(e){ return 'kmh'; } })();
-            if(liveSpeed) liveSpeed.textContent = (unit === 'mph') ? Math.round((s.speed||0) * 0.621371) : (s.speed||0);
-            var su = document.getElementById('speed-unit'); if (su) su.textContent = (unit === 'mph') ? 'mph' : 'km/h';
-            if(liveAccel) liveAccel.textContent = s.accel;
+            var display = window.VicoInputDisplay.format(s,unit);
+            if(liveSpeed) liveSpeed.textContent = display.speed;
+            var su = document.getElementById('speed-unit'); if (su) su.textContent = display.unit;
+            if(liveAccel) liveAccel.textContent = display.accel;
             if(liveRpm) liveRpm.textContent = s.rpm;
             if(cur) cur.textContent = s.vehicle ? (s.vehicle + ' · ' + (s.gear||1) + ' 挡') : '';
-            if(ds) ds.textContent = s.speedKmh;
+            if(ds) ds.textContent = display.standardSpeed;
+            var dq=document.getElementById('debug-quality'); if(dq)dq.textContent=display.quality;
+            var age=document.getElementById('debug-age'); if(age)age.textContent=display.age;
+            var shown=document.getElementById('debug-display'); if(shown)shown.textContent=display.speed+' '+display.unit;
             if(da) da.textContent = s.accel;
             if(dr) dr.textContent = s.rpm;
             if(dc) dc.textContent = s.calibrated;
-            if(warn) warn.classList.toggle('hidden', !!s.gpsOk);
+            if(warn) {warn.textContent=display.warning;warn.classList.toggle('hidden', !display.warning);}
             if(gpsIcon){
               gpsIcon.classList.remove('text-green-500','text-yellow-500','text-error');
-              gpsIcon.classList.add(s.gpsOk ? 'text-green-500' : 'text-error');
+              gpsIcon.classList.add(display.good ? 'text-green-500' : 'text-yellow-500');
               gpsIcon.textContent = 'satellite_alt';
             }
-            if(gpsText) gpsText.textContent = s.gpsOk ? '良好' : '丢失';
+            if(gpsText) gpsText.textContent = display.gpsLabel;
             if(typeof s.running === 'boolean') { isRunning = s.running; renderRunning(); }
             if(typeof s.demo === 'boolean') { demoOn = s.demo; renderDemo(); }
             if(typeof s.muted === 'boolean') { muted = s.muted; renderMute(); }

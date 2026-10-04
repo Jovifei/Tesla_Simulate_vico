@@ -15,11 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vico.simulator.csv.CsvExporter
 import com.vico.simulator.audio.AudioOutputCategory
 import com.vico.simulator.audio.AudioOutputDevice
+import com.vico.simulator.sensor.InputQualityPolicy
+import com.vico.simulator.sensor.InputContinuityTracker
 import com.vico.simulator.sensor.InputDiagnostics
 import com.vico.simulator.sensor.SensorInputSnapshot
 import com.vico.simulator.sensor.CalibrationSession
 import com.vico.simulator.sensor.SensorProvider
 import com.vico.simulator.sound.AudioEngine
+import com.vico.simulator.sound.DriveInputControl
+import com.vico.simulator.sound.DriveInputSource
+import com.vico.simulator.sound.SoundState
 import com.vico.simulator.sound.DrivePoint
 import com.vico.simulator.sound.SoundProfile
 import com.vico.simulator.sound.S14ReferenceSession
@@ -93,6 +98,11 @@ class MainActivity : AppCompatActivity() {
     private var calibrationPageActive = false
     private var calibrationResumed = false
     @Volatile private var lastInputSnapshot = SensorInputSnapshot()
+    private val inputQualityPolicy = InputQualityPolicy()
+    private val inputContinuity = InputContinuityTracker()
+    // Safety candidate: static calibration does not establish a vehicle coordinate frame.
+    // A fixed-mount confirmation contract must explicitly enable this in the next step.
+    private val mountingFrameConfirmed = false
     private var startMs: Long = 0L
     private val prefs by lazy { getSharedPreferences("vico_state", MODE_PRIVATE) }
     private val audioDeviceCallback = object : AudioDeviceCallback() {
@@ -207,7 +217,7 @@ class MainActivity : AppCompatActivity() {
                 if(!audioEngine.setVehicle("c63_w204_v6") || !audioEngine.setS15Prototype(true)) {s15SmokeInProgress=false;return@post}
                 sensorProvider.setDemoMode(true);setDemoScenario("launch")
                 audioEngine.armDigitalCapture()
-                audioEngine.pushState(audioEngine.mapPoint(DrivePoint(0.0,0.0,.8,2.4,false)))
+                audioEngine.pushState(audioEngine.mapSyntheticPoint(DrivePoint(0.0,0.0,.8,2.4,false), DriveInputSource.QUALIFICATION))
                 audioRunning=audioEngine.start();vehicleState.startEngine();pushUiState()
                 val owner=audioEngine.playbackIdentity()
                 handler.postDelayed({if(owner==audioEngine.playbackIdentity() && audioRunning)setDemoScenario("decel")},12000L)
@@ -329,9 +339,10 @@ class MainActivity : AppCompatActivity() {
         val realPoint = DrivePoint(timeS, speedKmh, throttle, forwardAccel, brake)
 
         val state = if (now < previewUntilMs) {
-            audioEngine.mapPoint(DrivePoint(timeS, 50.0, 0.4, 0.5, false))
+            inputContinuity.advance("PREVIEW", true, Long.MAX_VALUE, consumedNanos)
+            audioEngine.mapSyntheticPoint(DrivePoint(timeS, 50.0, 0.4, 0.5, false), DriveInputSource.PREVIEW)
         } else {
-            audioEngine.mapPoint(realPoint)
+            mapCurrentInput(realPoint, diagnostics, consumedNanos)
         }
         lastGear = state.gear
 
@@ -362,6 +373,7 @@ class MainActivity : AppCompatActivity() {
             append("\"demoScenario\":\"").append(demoScenario).append("\",")
             append(calibrationStateJson()).append(',')
             append("\"inputDiagnostics\":").append(diagnostics.toJson()).append(',')
+            append("\"inputQuality\":").append(inputQualityPolicy.assess(diagnostics, consumedNanos, mountingFrameConfirmed).toJson()).append(',')
             append("\"demo\":").append(diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
             append("\"recording\":").append(recording).append(',')
             append("\"sampleCount\":").append(csvExporter.sampleCount).append(',')
@@ -377,6 +389,19 @@ class MainActivity : AppCompatActivity() {
             append('}')
         }
         webView.evaluateJavascript("window.__vicoUpdate&&window.__vicoUpdate($json)", null)
+    }
+
+    private fun mapCurrentInput(point: DrivePoint, diagnostics: InputDiagnostics, nowNanos: Long): SoundState {
+        if (diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO) {
+            inputContinuity.advance("DEMO/${diagnostics.inputSession}", true, Long.MAX_VALUE, nowNanos)
+            val source = if (s15SmokeInProgress) DriveInputSource.QUALIFICATION else DriveInputSource.DEMO
+            return audioEngine.mapSyntheticPoint(point, source)
+        }
+        val quality = inputQualityPolicy.assess(diagnostics, nowNanos, mountingFrameConfirmed)
+        val epoch = inputContinuity.advance("REAL/${diagnostics.inputSession}", quality.controlUsable,
+            quality.validUntilElapsedNanos, nowNanos)
+        return audioEngine.mapMeasuredPoint(point, DriveInputControl(DriveInputSource.REAL, epoch,
+            quality.validUntilElapsedNanos, quality.speedUsable, quality.accelerationUsable))
     }
 
     // ---- bridge handlers (UI thread) ----
@@ -400,10 +425,13 @@ class MainActivity : AppCompatActivity() {
             return
         }
         activeVehicleKey = key
+        val nowNanos = android.os.SystemClock.elapsedRealtimeNanos()
         val timeS = (android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0
-        val throttle = (lastAccelMps2 / 3.0).coerceIn(0.0, 1.0)
-        val initialState = audioEngine.mapPoint(
-            DrivePoint(timeS, lastSpeedKmh, throttle, lastAccelMps2, lastAccelMps2 < -1.2)
+        val input = lastInputSnapshot
+        val throttle = (input.accelMps2 / 3.0).coerceIn(0.0, 1.0)
+        val initialState = mapCurrentInput(
+            DrivePoint(timeS, input.speedKmh, throttle, input.accelMps2, input.accelMps2 < -1.2),
+            input.diagnostics, nowNanos,
         )
         lastGear = initialState.gear
         audioEngine.pushState(initialState)
@@ -1062,6 +1090,8 @@ class MainActivity : AppCompatActivity() {
         append("\"muted\":").append(muted).append(',')
         append(calibrationStateJson()).append(',')
         append("\"inputDiagnostics\":").append(input.diagnostics.toJson()).append(',')
+        append("\"inputQuality\":").append(inputQualityPolicy.assess(input.diagnostics,
+            android.os.SystemClock.elapsedRealtimeNanos(), mountingFrameConfirmed).toJson()).append(',')
         append("\"demo\":").append(input.diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
         append("\"demoScenario\":\"").append(demoScenario).append("\",")
         append("\"recording\":").append(recording).append(',')

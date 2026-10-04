@@ -20,6 +20,23 @@ data class DrivePoint(
     val brake: Boolean = false,
 )
 
+enum class DriveInputSource { UNSPECIFIED, REAL, DEMO, PREVIEW, QUALIFICATION }
+
+/** Explicit live control contract. Nullable only on old standalone reference fixtures. */
+data class DriveInputControl(
+    val source: DriveInputSource,
+    val epoch: Long,
+    val validUntilElapsedNanos: Long,
+    val speedUsable: Boolean,
+    val accelerationUsable: Boolean,
+) {
+    val usable: Boolean get() = speedUsable && accelerationUsable
+    fun validatedFor(point: DrivePoint): DriveInputControl =
+        if (point.timeS.isFinite() && point.speedKmh.isFinite() && point.speedKmh >= 0.0 &&
+            point.throttle.isFinite() && point.accelMps2.isFinite()) this
+        else copy(speedUsable = false, accelerationUsable = false)
+}
+
 data class SoundState(
     val timeS: Double,
     val rpm: Double,
@@ -35,6 +52,7 @@ data class SoundState(
     val shiftGain: Double = 1.0,
     val afterfireTrigger: Boolean = false,
     val shiftTrigger: Boolean = false,
+    val inputControl: DriveInputControl? = null,
 ) {
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)

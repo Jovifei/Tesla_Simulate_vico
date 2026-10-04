@@ -288,8 +288,12 @@ class AudioEngine(context: Context) {
         return if (applied) device!!.productName.toString() else ""
     }
 
-    /** 传感器 -> 当前 S12/历史 MATLAB bank 的实时状态。 */
-    fun mapPoint(point: DrivePoint): SoundState = model.mapPoint(point)
+    /** Explicit measured or synthetic controls for the current S12 / historical MATLAB bank. */
+    fun mapMeasuredPoint(point: DrivePoint, control: DriveInputControl): SoundState =
+        model.mapMeasuredPoint(point, control)
+
+    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource): SoundState =
+        model.mapSyntheticPoint(point, source)
 
     @Synchronized
     fun setS15Prototype(enabled:Boolean):Boolean {
@@ -383,6 +387,8 @@ class AudioEngine(context: Context) {
         var playbackPositionComplete: Boolean? = null
         var candidateStartConditions:S14OutputConditions?=null
         val reviewCore = reviewCoreCapture
+        val inputGate = AudioInputGate()
+        var lastContinuousState: SoundState? = null
         if (t == null) {
             capture?.markFailed()
             capture?.finish()
@@ -433,16 +439,43 @@ class AudioEngine(context: Context) {
                     }
                     continue
                 }
-                val state = current
-                val sourceAvailable = state != null && state.amplitude > 0.0 && C63QualificationRoute.validInput(state)
+                // Read publication before the stop flag: stop writes running=false before a
+                // restored REAL publication. Observing that publication must observe the stop.
+                val published = current
+                val writerRunning = running
+                if (!writerRunning && lastContinuousState == null) break
+                val state = selectAudioWriterSnapshot(writerRunning, published, lastContinuousState)
+                val renderInputValid = state != null && state.amplitude > 0.0 && C63QualificationRoute.validInput(state)
+                check(model.acceptsPlaybackInput(state?.inputControl, renderInputValid)) {
+                    "Experimental renderer accepts only explicit qualification input; prepare it again before retrying"
+                }
+                val control = state?.inputControl?.let {
+                    if (renderInputValid) it else it.copy(speedUsable = false, accelerationUsable = false)
+                }
+                val gate = inputGate.evaluate(control, state?.timeS ?: Double.NaN,
+                    android.os.SystemClock.elapsedRealtimeNanos(), writerRunning)
+                if (gate.clearTransients) {
+                    model.clearTransientEvents()
+                    // An explicitly prepared qualification provider is not a live-input epoch.
+                    if (state?.inputControl?.source != DriveInputSource.QUALIFICATION) qualificationRoute.clear()
+                }
+                val sourceAvailable = gate.usable && renderInputValid
                 if (!sourceAvailable) qualificationRoute.clear()
                 val runGain = runEnvelope.step(running)
                 val contentGain = contentEnvelope.step(running && sourceAvailable && !muted && state?.muted != true)
                 val pcm: FloatArray = if (sourceAvailable) {
-                    val renderState = if(model.prototypeEnabled) state!! else state!!.copy(muted = false)
+                    val eventState = if (gate.allowEvents) state!! else state!!.copy(
+                        afterfireTrigger = false, shiftTrigger = false)
+                    val renderState = if(model.prototypeEnabled) eventState else eventState.copy(muted = false)
+                    // The bounded fade tail must never carry shift/afterfire or a torque-cut envelope.
+                    lastContinuousState = renderState.copy(afterfireTrigger = false, shiftTrigger = false, shiftGain = 1.0)
                     val legacy = model.renderState(renderState, blockSize)
                     if (model.prototypeEnabled) legacy else qualificationRoute.render(renderState, blockSize, sampleRate) ?: legacy
+                } else if (contentGain > 0f && lastContinuousState != null && !model.prototypeEnabled) {
+                    // Existing GainEnvelope reaches exact zero in bounded blocks; never replay stale input indefinitely.
+                    model.renderState(lastContinuousState!!, blockSize)
                 } else {
+                    lastContinuousState = null
                     FloatArray(blockSize)
                 }
                 val scale = (masterVol * runGain * contentGain).coerceIn(0f, 1f)
