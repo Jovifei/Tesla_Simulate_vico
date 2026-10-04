@@ -424,6 +424,8 @@ class MainActivity : AppCompatActivity() {
         val json = buildString {
             append('{')
             append("\"controlFrameId\":\"").append(frameId).append("\",")
+            append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
+            append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
             append("\"speed\":").append(speedKmh.toInt()).append(',')
             append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", speedKmh)).append("\",")
             append("\"accel\":\"").append(String.format(Locale.US, "%.2f", vehicleAccel)).append("\",")
@@ -1215,7 +1217,8 @@ class MainActivity : AppCompatActivity() {
         val anchor = android.os.SystemClock.elapsedRealtimeNanos()
         val wall = System.currentTimeMillis()
         val config = currentLogConfig()
-        val profile = activeVehicleKey
+        val profile = if (audioEngine.s15PrototypeEnabled) "$activeVehicleKey:s15_qualification"
+            else "$activeVehicleKey:${audioEngine.normalBankIdentity()}"
         val baseApk = applicationInfo.sourceDir
         val splits = applicationInfo.splitSourceDirs?.copyOf()
         val device = android.os.Build.MODEL.replace(Regex("[^A-Za-z0-9_.:-]"), "_").take(96).ifBlank { "UNKNOWN" }
@@ -1412,6 +1415,8 @@ class MainActivity : AppCompatActivity() {
     private fun buildStateJson(input: SensorInputSnapshot = lastInputSnapshot): String = buildString {
         append('{')
         append("\"controlFrameId\":\"").append(input.controlFrameId).append("\",")
+        append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
+        append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
         append("\"speed\":").append(input.speedKmh.toInt()).append(',')
         append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", input.speedKmh)).append("\",")
         append("\"accel\":\"").append(String.format(Locale.US, "%.2f", input.accelMps2)).append("\",")

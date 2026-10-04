@@ -363,7 +363,7 @@
             var su = document.getElementById('speed-unit'); if (su) su.textContent = display.unit;
             if(liveAccel) liveAccel.textContent = display.accel;
             if(liveRpm) liveRpm.textContent = s.rpm;
-            if(cur) cur.textContent = s.vehicle ? (s.vehicle + ' · ' + (s.gear||1) + ' 挡') : '';
+            if(cur) cur.textContent = s.vehicle ? (s.vehicle + ' · ' + (s.gear||1) + ' 挡' + (s.normalBankVariantActive && s.normalBankVariant==='c63_low_rpm_preroll_v1' ? ' · C63低转候选' : '')) : '';
             if(ds) ds.textContent = display.standardSpeed;
             var dq=document.getElementById('debug-quality'); if(dq)dq.textContent=display.quality;
             var age=document.getElementById('debug-age'); if(age)age.textContent=display.age;

@@ -1,0 +1,64 @@
+{
+  "schema": "vico.low_rpm_loop_candidate.evidence.v1",
+  "baseline_commit": "7bf34080c358cc8b2eb4407266f008773c3efb6a",
+  "variant_id": "c63_low_rpm_preroll_v1",
+  "scope": {
+    "vehicle": "c63_w204_v6",
+    "patched_rpm_levels": [
+      700,
+      1400
+    ],
+    "loads": [
+      0.32,
+      0.92
+    ],
+    "new_loop_count": 4,
+    "unchanged_upper_loop_count": 12,
+    "unchanged_event_asset_count": 4,
+    "other_vehicles": "unchanged"
+  },
+  "status": "UNPUBLISHED_NOT_INSTALLED_ENGINEERING_CANDIDATE",
+  "reference_policy": "original s12_v10 and S13 review assets remain unchanged",
+  "narrow_ab": {
+    "cases": 55,
+    "frames": 14040000,
+    "event_windows": 8,
+    "rms_change_db_range": [
+      0.0,
+      0.11840328235062478
+    ],
+    "overall_rms_failures": [],
+    "overall_interference_failures": [],
+    "minimum_valley_failures": [],
+    "strict_same_window_valley_failures": [],
+    "max_same_window_valley_regression_db": 0.14922689741598738,
+    "max_abs_same_window_interference_change_db": 0.12049419450172805,
+    "max_event_window_peak_increase_db": 0.0,
+    "drive_same_window_cautions_above_0_5_db": [],
+    "all_event_assets_unchanged": true,
+    "event_windows_with_any_bit_difference": [],
+    "max_candidate_preclip_peak": 0.6676287651062012,
+    "high_source_frames_tested": 6175386,
+    "high_source_frame_cases_with_any_bit_difference": [],
+    "drive_12_to_20_hold_cases_with_any_bit_difference": [],
+    "old_6919rpm_counterexample_cases_with_any_bit_difference": [],
+    "hard_clip_frames": 0,
+    "above_contract_frames": 0,
+    "nonfinite_frames": 0
+  },
+  "source_reports": {
+    "narrow_report_sha256": "51cd8e3a04de716a01988649446a8873930cc3e2c8dd000647d6d02ad0a5af86",
+    "rejected_full_band_report_sha256": "4401f096ce402dd90e7189f8b7a0d8f36ee9e647c0832e42f2dc07e31d78d293",
+    "six_vehicle_periodic_report_sha256": "2bc4880349209b44ec69e60e0615d6d7273a80a142dfc1c20dab2fb1758a71c9"
+  },
+  "failed_attempts": {
+    "trim_or_cycle_aligned": "reduces edges but changes mixture phase/RMS and spectral ordering",
+    "full_band_preroll": "local 7000 RPM low-load same-window valley regression .7433 dB; 70kmh trajectory local output RMS -1.0109 dB",
+    "supra_preroll": "fixed original gain peak .8448973894 exceeds .8413951416; original bank retained"
+  },
+  "limits": [
+    "No device or human listening pass is established by these numerical measurements",
+    "High-RPM amplitude/source resonance and other-model click complaints are not resolved",
+    "Engineering .5dB guards were frozen after exploratory C63 screening, not called predeclared original-C63 acceptance"
+  ]
+}

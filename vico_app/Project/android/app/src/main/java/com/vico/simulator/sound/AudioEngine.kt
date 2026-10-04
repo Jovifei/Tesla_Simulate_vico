@@ -96,6 +96,10 @@ class AudioEngine(context: Context) {
         if (running) return true
         if (thread?.isAlive == true) return false
         lastAudioError = null
+        if (reviewSession == null && referenceSession == null && !model.prototypeEnabled && !model.normalPlaybackReady()) {
+            lastAudioError = "Verified normal sound bank is unavailable"
+            return false
+        }
         lastMixStats = null
         val capture = digitalCapture?.takeUnless { it.isFinished }
         if (capture != null && sampleRate != S13ReviewContract.SAMPLE_RATE) {
@@ -144,16 +148,16 @@ class AudioEngine(context: Context) {
             lastAudioError = "Export or finish the previous review capture first"
             return false
         }
-        if (!setVehicle(vehicleKey)) {
-            lastAudioError = "Unable to load vehicle bank: $vehicleKey"
-            return false
-        }
+        // Review binds original S12 directly, never the normal live overlay or its readiness.
+        qualificationRoute.clear()
         val session = try {
             model.newS13ReviewSession(vehicleKey)
         } catch (error: Exception) {
             lastAudioError = "S13 review rejected: ${error.message}"
             return false
         }
+        if (track != null && sampleRate != S13ReviewContract.SAMPLE_RATE) disposeTrack()
+        sampleRate = S13ReviewContract.SAMPLE_RATE
         reviewSession = session
         digitalCapture = BoundedPcmCapture(binding = session.captureBinding)
         reviewCoreCapture = BoundedPcmCapture(
@@ -315,6 +319,7 @@ class AudioEngine(context: Context) {
         if(running || thread?.isAlive==true || referenceSession!=null || reviewSession!=null || digitalCapture?.isFinished==false) return false
         return model.setPrototype(enabled)
     }
+    fun normalBankIdentity(): String = model.normalBankIdentity()
     val s15PrototypeEnabled get()=model.prototypeEnabled
     fun s15TimingJson()=model.prototypeTimingJson()
     fun s15InputsJson()=model.prototypeInputsJson()

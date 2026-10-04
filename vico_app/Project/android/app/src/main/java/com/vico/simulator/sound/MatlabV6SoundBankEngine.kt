@@ -5,7 +5,12 @@ import kotlin.math.max
 
 class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     private val cache = mutableMapOf<String, MatlabSoundBank>()
-    private var bank: MatlabSoundBank? = null
+    private val normalCache = mutableMapOf<String, NormalLiveBank>()
+    @Volatile private var normalBankId = LiveLoopVariantManifest.LEGACY_ID
+    @Volatile private var normalVehicleKey: String? = null
+    fun normalBankIdentity(): String = if (normalPlaybackReady()) normalBankId else if (normalBankId == "unavailable") "unavailable" else "not_prepared"
+    fun normalPlaybackReady(): Boolean = renderer != null && normalVehicleKey == referenceBank?.vehicleKey
+    private var referenceBank: MatlabSoundBank? = null
     private var controller: MatlabPowertrainController? = null
     private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
     private var renderer: MatlabStatefulBankRenderer? = null
@@ -47,7 +52,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
 
     fun setPrototype(enabled: Boolean): Boolean {
-        if(enabled && bank?.vehicleKey != "c63_w204_v6") return false
+        if(enabled && referenceBank?.vehicleKey != "c63_w204_v6") return false
         prototypeEnabled=enabled
         prototype=com.vico.simulator.sound.s15.C63RuntimeRenderer(fixedHeadroom=true)
         prototypeInputGuard.resetForExplicitPreparation()
@@ -61,19 +66,32 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         } catch (_: Exception) {
             return false
         }
-        if (bank?.vehicleKey != vehicleKey) {
+        val normal = try {
+            normalCache.getOrPut(vehicleKey) { LiveLoopBankVariantLoader.loadForNormalPlayback(assets, loaded) }
+        } catch (_: Exception) {
+            if (referenceBank == null) {
+                // Keep input/reference inspection safe at cold start, but no unverified normal PCM.
+                referenceBank = loaded
+                controller = MatlabPowertrainController(loaded.powertrain)
+                normalBankId = "unavailable"
+            }
+            return false // Never silently fall back to a different claimed live bank version.
+        }
+        if (referenceBank?.vehicleKey != vehicleKey || normalVehicleKey != vehicleKey || renderer == null) {
             prototypeEnabled=false
-            bank = loaded
+            referenceBank = loaded
+            normalBankId = normal.identity
+            normalVehicleKey = vehicleKey
             controller = MatlabPowertrainController(loaded.powertrain)
             syntheticControllers.clear()
-            renderer = MatlabStatefulBankRenderer(loaded)
+            renderer = MatlabStatefulBankRenderer(normal.bank)
         }
         return true
     }
 
     fun mapMeasuredPoint(point: DrivePoint, control: DriveInputControl): SoundState {
         require(control.source == DriveInputSource.REAL)
-        requireNotNull(bank) { "MATLAB sound bank is not selected" }
+        requireNotNull(referenceBank) { "MATLAB reference bank is not selected" }
         val checkedControl = control.validatedFor(point)
         val state = requireNotNull(controller).updateMeasured(
             point.timeS, point.speedKmh, point.accelMps2,
@@ -89,9 +107,9 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
 
     private fun mapSyntheticState(point: DrivePoint, control: DriveInputControl): SoundState {
-        requireNotNull(bank) { "MATLAB sound bank is not selected" }
+        requireNotNull(referenceBank) { "MATLAB reference bank is not selected" }
         val synthetic = syntheticControllers.getOrPut(control.source) {
-            MatlabPowertrainController(requireNotNull(bank).powertrain)
+            MatlabPowertrainController(requireNotNull(referenceBank).powertrain)
         }
         val state = synthetic.update(
             point.timeS, point.speedKmh, point.accelMps2, point.throttle.coerceIn(0.0, 1.0),
@@ -133,7 +151,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
 
     fun renderState(state: SoundState, frameCount: Int): FloatArray {
-        if (prototypeEnabled && bank?.vehicleKey == "c63_w204_v6") {
+        if (prototypeEnabled && referenceBank?.vehicleKey == "c63_w204_v6") {
             val start=System.nanoTime()
             val idx=(inputCount%4096)*6
             renderInputs[idx]=state.timeS;renderInputs[idx+1]=state.rpm;renderInputs[idx+2]=state.load
@@ -146,16 +164,21 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         return renderer?.render(state,frameCount) ?: FloatArray(frameCount)
     }
 
-    fun sampleRateHz(): Int = bank?.sampleRateHz ?: 48000
+    fun sampleRateHz(): Int = referenceBank?.sampleRateHz ?: 48000
 
     fun renderStats(): S13MixSnapshot? = renderer?.mixStats()
 
     fun newS13ReviewSession(vehicleKey: String): S13ReviewSession {
-        require(bank?.vehicleKey == vehicleKey || setVehicle(vehicleKey)) {
-            "Unable to load S13 bank for $vehicleKey"
-        }
-        val selectedBank = requireNotNull(bank)
+        // Frozen review always opens the original S12 assets, independent of live overlay validity.
+        val selectedBank = cache.getOrPut(vehicleKey) { MatlabSoundBankLoader.load(assets, vehicleKey) }
+        require(selectedBank.sampleRateHz == S13ReviewContract.SAMPLE_RATE)
         val reviewPackage = S13ReviewPackageLoader.load(assets, vehicleKey)
-        return S13ReviewSession(selectedBank, reviewPackage)
+        val session = S13ReviewSession(selectedBank, reviewPackage)
+        if (referenceBank?.vehicleKey != vehicleKey) {
+            referenceBank = selectedBank
+            controller = MatlabPowertrainController(selectedBank.powertrain)
+            syntheticControllers.clear()
+        }
+        return session
     }
 }

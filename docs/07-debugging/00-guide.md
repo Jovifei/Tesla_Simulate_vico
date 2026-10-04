@@ -4,6 +4,8 @@
 
 当前入口：
 
+- `03-vico-input-and-loop-click-lessons-20261004.md` — mph/新鲜度/轴向/事件、main组合、自动日志与循环接缝；含失败候选和剩余边界。
+
 - `01-known-failures-and-do-not-repeat.md`
 - `02-s12-review-server-refresh.md` — 大体积自包含 A/B HTML 的并发服务根因与验证。
 - `../knowledge/obsidian/S12/Engine-Audio-Ecosystem/Decision-History-And-Negative-Knowledge.md`
