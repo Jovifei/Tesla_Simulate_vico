@@ -480,7 +480,10 @@ class MainActivity : AppCompatActivity() {
             quality.validUntilElapsedNanos, quality.speedUsable, quality.accelerationUsable,
             imuSampleElapsedNanos = diagnostics.imuTiming?.sourceElapsedNanos,
             gpsSampleElapsedNanos = diagnostics.gpsTiming?.sourceElapsedNanos,
-            controlTimeElapsedNanos = nowNanos, controlFrameId = frameId))
+            controlTimeElapsedNanos = nowNanos, controlFrameId = frameId,
+            reportedSpeedUncertaintyMps = diagnostics.gpsAccuracy?.takeIf {
+                it.status == com.vico.simulator.sensor.SpeedAccuracy.Status.AVAILABLE
+            }?.metersPerSecond))
     }
 
     // ---- bridge handlers (UI thread) ----
@@ -1218,7 +1221,7 @@ class MainActivity : AppCompatActivity() {
         val wall = System.currentTimeMillis()
         val config = currentLogConfig()
         val profile = if (audioEngine.s15PrototypeEnabled) "$activeVehicleKey:s15_qualification"
-            else "$activeVehicleKey:${audioEngine.normalBankIdentity()}"
+            else "$activeVehicleKey:${audioEngine.normalBankIdentity()}:${com.vico.simulator.sound.VirtualDriveDemand.POLICY_ID}"
         val baseApk = applicationInfo.sourceDir
         val splits = applicationInfo.splitSourceDirs?.copyOf()
         val device = android.os.Build.MODEL.replace(Regex("[^A-Za-z0-9_.:-]"), "_").take(96).ifBlank { "UNKNOWN" }

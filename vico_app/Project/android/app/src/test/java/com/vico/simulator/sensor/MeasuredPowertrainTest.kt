@@ -8,12 +8,12 @@ class MeasuredPowertrainTest {
     private var sourceSequence = 0L
     private fun control(epoch:Long=1,ok:Boolean=true,sourceTimeS:Double?=null):DriveInputControl {
         val source = 1_000_000_000_000L + (sourceTimeS?.let { (it*1e9).toLong() } ?: (++sourceSequence*50_000_000L))
-        return DriveInputControl(DriveInputSource.REAL,epoch,Long.MAX_VALUE,ok,ok,imuSampleElapsedNanos=source,gpsSampleElapsedNanos=source,controlTimeElapsedNanos=source)
+        return DriveInputControl(DriveInputSource.REAL,epoch,Long.MAX_VALUE,ok,ok,imuSampleElapsedNanos=source,gpsSampleElapsedNanos=source,controlTimeElapsedNanos=source,reportedSpeedUncertaintyMps=0.0)
     }
     @Test fun lossAndRecoveryPreserveGearAndDoNotPlayFakeShiftOrAfterfire() {
         val c=MatlabPowertrainController(spec())
-        c.updateMeasured(0.0,0.0,1.2,.5,control())
-        var s=c.updateMeasured(1.0,80.0,1.2,.5,control())
+        c.updateMeasured(0.0,70.0,1.2,.5,control())
+        var s=c.updateMeasured(1.0,70.0,1.2,.5,control())
         assertEquals(2,s.gear)
         s=c.updateMeasured(1.05,0.0,-2.0,0.0,control(2,false))
         assertEquals(2,s.gear);assertFalse(s.shiftTrigger);assertFalse(s.afterfireTrigger)
@@ -47,10 +47,11 @@ class MeasuredPowertrainTest {
         assertFalse(c.updateMeasured(.05,80.0,0.0,0.0,control()).afterfireTrigger)
         c.updateMeasured(.10,80.0,2.4,.8,control())
         assertFalse(c.updateMeasured(.15,80.0,0.0,0.0,control()).afterfireTrigger)
-        // A valid release now needs fresh source samples and both qualification dwells.
-        for(i in 0..5) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
-        assertFalse(c.updateMeasured(.80,80.0,0.0,0.0,control(sourceTimeS=.80)).afterfireTrigger)
-        assertTrue(c.updateMeasured(.90,80.0,0.0,0.0,control(sourceTimeS=.90)).afterfireTrigger)
+        // New REAL contract: rearm on fresh inputs; flat cruise is not a negative-acceleration release.
+        for(i in 0..20) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
+        var releases=0
+        for(i in 0..20) { val t=1.55+i*.05; val state=c.updateMeasured(t,80.0,-1.5,0.0,control(sourceTimeS=t)); if(state.afterfireCauseCode==1)releases++ }
+        assertEquals(1,releases)
     }
     @Test fun releaseInsideRecoveryIsNotDelayedUntilWindowEnds() {
         val c=MatlabPowertrainController(spec())
@@ -58,10 +59,11 @@ class MeasuredPowertrainTest {
         c.updateMeasured(.34,80.0,2.4,.8,control())
         assertFalse(c.updateMeasured(.36,80.0,0.0,0.0,control()).afterfireTrigger)
         assertFalse(c.updateMeasured(.40,80.0,0.0,0.0,control()).afterfireTrigger)
-        // A valid release now needs fresh source samples and both qualification dwells.
-        for(i in 0..5) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
-        assertFalse(c.updateMeasured(.80,80.0,0.0,0.0,control(sourceTimeS=.80)).afterfireTrigger)
-        assertTrue(c.updateMeasured(.90,80.0,0.0,0.0,control(sourceTimeS=.90)).afterfireTrigger)
+        // New REAL contract: rearm on fresh inputs; flat cruise is not a negative-acceleration release.
+        for(i in 0..20) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
+        var releases=0
+        for(i in 0..20) { val t=1.55+i*.05; val state=c.updateMeasured(t,80.0,-1.5,0.0,control(sourceTimeS=t)); if(state.afterfireCauseCode==1)releases++ }
+        assertEquals(1,releases)
     }
     @Test fun nonFiniteMeasuredPointInvalidatesThePublishedControlContract() {
         val valid=DrivePoint(1.0,70.0,.5,1.5,false)

@@ -32,6 +32,10 @@ data class AfterfireEpisodeInput(
     val shiftEventId: Long? = null,
     /** Monotonic control observation time for this actual shift, independent of IMU sample time. */
     val shiftTimeS: Double? = null,
+    /** REAL demand callers require an independently qualified negative-acceleration episode. */
+    val releaseEligible: Boolean = true,
+    /** Pending negative-acceleration qualification; false means the low episode must be consumed. */
+    val releaseIntentObserved: Boolean = true,
 )
 
 enum class AfterfireCause { QUALIFIED_RELEASE, QUALIFIED_SHIFT }
@@ -128,11 +132,17 @@ class QualifiedAfterfirePolicy(private val config: AfterfireEpisodeConfig) {
                 }
             }
             Phase.ARMED -> {
+                if (!input.releaseIntentObserved && input.demand < config.armDemand) {
+                    phase = Phase.UNARMED; armPeak = 0.0; return null
+                }
                 armPeak = maxOf(armPeak, input.demand)
-                if (qualifiedLow(input.demand)) { phase = Phase.RELEASING; phaseStartS = input.sourceTimeS }
+                if (input.releaseEligible && qualifiedLow(input.demand)) { phase = Phase.RELEASING; phaseStartS = input.sourceTimeS }
             }
             Phase.RELEASING -> {
-                if (!qualifiedLow(input.demand)) { phase = Phase.ARMED; armPeak = maxOf(armPeak, input.demand) }
+                if (!input.releaseIntentObserved && input.demand < config.armDemand) {
+                    phase = Phase.UNARMED; armPeak = 0.0; return null
+                }
+                if (!input.releaseEligible || !qualifiedLow(input.demand)) { phase = Phase.ARMED; armPeak = maxOf(armPeak, input.demand) }
                 else if (elapsed(input.sourceTimeS, phaseStartS, config.releaseDwellS))
                     return emit(input, AfterfireCause.QUALIFIED_RELEASE)
             }

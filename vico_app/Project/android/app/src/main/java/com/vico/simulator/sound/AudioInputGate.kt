@@ -6,6 +6,7 @@ class AudioInputGate {
     private var initialized = false
     private var previousSource: DriveInputSource? = null
     private var previousEpoch: Long? = null
+    private var previousModelRevision: Long? = null
     private var previousUsable = false
     private var previouslyRunning = true
     private var suppressedRealTimeS = Double.NaN
@@ -13,17 +14,19 @@ class AudioInputGate {
     fun evaluate(control: DriveInputControl?, stateTimeS: Double, nowElapsedNanos: Long, running: Boolean = true): Decision {
         val source = control?.source
         val usable = stateTimeS.isFinite() && when (source) {
-            DriveInputSource.REAL -> control.usable && control.validUntilElapsedNanos > 0L &&
+            DriveInputSource.REAL -> control.usable && control.modelContinuityRevision >= 0L && control.validUntilElapsedNanos > 0L &&
                 nowElapsedNanos >= 0L && nowElapsedNanos <= control.validUntilElapsedNanos
             DriveInputSource.DEMO, DriveInputSource.PREVIEW, DriveInputSource.QUALIFICATION -> control.usable
             DriveInputSource.UNSPECIFIED, null -> false
         }
-        val identityChanged = previousSource != source || previousEpoch != control?.epoch
+        val identityChanged = previousSource != source || previousEpoch != control?.epoch ||
+            previousModelRevision != control?.modelContinuityRevision
         val transition = !initialized || identityChanged || previousUsable != usable || previouslyRunning && !running
         if (transition && source == DriveInputSource.REAL) suppressedRealTimeS = stateTimeS
         initialized = true
         previousSource = source
         previousEpoch = control?.epoch
+        previousModelRevision = control?.modelContinuityRevision
         previousUsable = usable
         previouslyRunning = running
         // Suppress the complete first resumed snapshot, including repeated audio reads of it.

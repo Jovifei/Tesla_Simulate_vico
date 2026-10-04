@@ -33,11 +33,16 @@ data class DriveInputControl(
     val gpsSampleElapsedNanos: Long? = null,
     val controlFrameId: Long? = null,
     val controlTimeElapsedNanos: Long? = null,
+    /** REAL model segment identity, separate from upstream measurement/source epoch. */
+    val modelContinuityRevision: Long = 0L,
+    /** Provider reported speed uncertainty at the GPS sample; null remains unverified. */
+    val reportedSpeedUncertaintyMps: Double? = null,
 ) {
     val usable: Boolean get() = speedUsable && accelerationUsable
     fun validatedFor(point: DrivePoint): DriveInputControl =
         if (point.timeS.isFinite() && point.speedKmh.isFinite() && point.speedKmh >= 0.0 &&
-            point.throttle.isFinite() && point.accelMps2.isFinite()) this
+            point.throttle.isFinite() && point.accelMps2.isFinite() &&
+            reportedSpeedUncertaintyMps?.let { it.isFinite() && it >= 0.0 } != false) this
         else copy(speedUsable = false, accelerationUsable = false)
 }
 

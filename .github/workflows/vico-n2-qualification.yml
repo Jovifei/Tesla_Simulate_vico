@@ -8,6 +8,8 @@ on:
       - '.gitattributes'
       - 'docs/.gitattributes'
       - 'docs/vico*n2*.md'
+      - 'docs/vico-real-drive-policy-20261004.md'
+      - 'review_packages/vico-real-drive-20261004/**'
       - 'tools/sound_sim/s12/acoustic_identity_v015/**'
       - 'tools/sound_sim/s12/acoustic_demo/**'
       - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
@@ -34,6 +36,8 @@ on:
       - '.gitattributes'
       - 'docs/.gitattributes'
       - 'docs/vico*n2*.md'
+      - 'docs/vico-real-drive-policy-20261004.md'
+      - 'review_packages/vico-real-drive-20261004/**'
       - 'tools/sound_sim/s12/acoustic_identity_v015/**'
       - 'tools/sound_sim/s12/acoustic_demo/**'
       - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
@@ -101,10 +105,19 @@ jobs:
           python -m unittest discover -s vico_app/tools/python -p 'test_input_quality_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_session_start_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_live_loop_variant_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_virtual_drive_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_loop_preroll.py' -v
           python vico_app/tools/python/generate_c63_live_loop_variant.py --repo . --output-dir "${{ runner.temp }}/vico-low-rpm-reproduced"
           diff -qr "${{ runner.temp }}/vico-low-rpm-reproduced" vico_app/Project/android/app/src/main/assets/live_loop_variants/c63_low_rpm_preroll_v1
           python -m unittest discover -s vico_app/tools/python -p 'test_summarize_session.py' -v
+      - name: Replay REAL policy through unchanged banks and audio continuity gates
+        run: |
+          python review_packages/vico-real-drive-20261004/replay/run_replay.py --repo . --deps "${{ runner.temp }}/vico-n2-linux/deps" --output-dir "${{ runner.temp }}/vico-policy-lifecycle" --variant candidate --scene lifecycle
+          for profile in c63_w204_v6 hellcat_v6 ferrari_458 gtr_r35 lfa supra_jza80; do
+            for uncertainty in 0 2; do
+              python review_packages/vico-real-drive-20261004/replay/run_replay.py --repo . --deps "${{ runner.temp }}/vico-n2-linux/deps" --output-dir "${{ runner.temp }}/vico-policy-$profile-$uncertainty" --variant candidate --profile "$profile" --reported-uncertainty "$uncertainty"
+            done
+          done
       - name: Compile Python and check whitespace
         run: |
           python -m compileall -q vico_app/tools/python
@@ -178,6 +191,11 @@ jobs:
           --tests 'com.vico.simulator.sound.MatlabPowertrainControllerTest'
           --tests 'com.vico.simulator.sound.QualifiedAfterfirePolicyTest'
           --tests 'com.vico.simulator.sound.MeasuredAfterfireWiringTest'
+          --tests 'com.vico.simulator.sound.VirtualDriveDemandTest'
+          --tests 'com.vico.simulator.sound.VirtualCruiseGearTest'
+          --tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'
+          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'
+          --tests 'com.vico.simulator.sound.GpsUncertaintyGearTest'
           --tests 'com.vico.simulator.sound.LiveLoopVariantTest'
           --tests 'com.vico.simulator.sound.LiveLoopReferenceIsolationTest'
           :app:lintDebug :app:assembleDebug

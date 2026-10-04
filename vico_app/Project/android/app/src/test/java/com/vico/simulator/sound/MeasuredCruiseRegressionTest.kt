@@ -1,0 +1,12 @@
+package com.vico.simulator.sound
+import org.junit.Test
+import org.junit.Assert.*
+class MeasuredCruiseRegressionTest {
+ private fun update(c:MatlabPowertrainController,t:Double,speed:Double,accel:Double):MatlabPowertrainState {val n=(t*1e9).toLong();return c.updateMeasured(t,speed,accel,(accel/3).coerceIn(0.0,1.0),DriveInputControl(DriveInputSource.REAL,1,n+250000000,true,true,n,n,controlTimeElapsedNanos=n))}
+ @Test fun actualMeasured70CruiseIsNotFirstGearOrZeroAssetLoad(){val c=MatlabPowertrainController(virtualDriveC63Spec());var s=update(c,1.0,70.0,0.0);for(i in 1..300)s=update(c,1+i*.05,70.0,0.0);assertTrue("gear=${s.gear}",s.gear>1);assertTrue("asset load=${s.load}",s.load>.32)}
+ @Test fun accelerationToFlatCruiseDoesNotPretendDecelerationRelease(){val c=MatlabPowertrainController(virtualDriveC63Spec());var releases=0;for(i in 0..200){val s=update(c,1+i*.05,40.0,if(i<100)1.5 else 0.0);if(i>=100&&s.afterfireCauseCode==1)releases++};assertEquals(0,releases)}
+ @Test fun longCruiseCannotReleaseOldAccelerationEpisode(){val c=MatlabPowertrainController(virtualDriveC63Spec());var releases=0;for(i in 0..220){val t=1+i*.05;val a=when{t<4->.9;t<9->0.0;else->-.3};val s=update(c,t,75.0,a);if(t>=9&&s.afterfireCauseCode==1)releases++};assertEquals(0,releases)}
+ @Test fun genuineSustainedNegativeEpisodeCanReleaseOnce(){val c=MatlabPowertrainController(virtualDriveC63Spec());var releases=0;for(i in 0..200){val t=1+i*.05;val a=if(t<4)1.5 else -1.5;val s=update(c,t,75.0,a);if(t>=4&&s.afterfireCauseCode==1)releases++};assertEquals(1,releases)}
+ @Test fun reorderedSourceThenValidFrameReanchorsCurrentAcceleration(){val c=MatlabPowertrainController(virtualDriveC63Spec());for(i in 0..20)update(c,1+i*.05,70.0,2.0);val old=update(c,1.5,70.0,-1.0);assertFalse(old.measuredInputUsable);val fresh=update(c,2.05,70.0,0.0);assertTrue(fresh.measuredInputUsable);assertEquals((.13+.00028*(70.0/3.6)*(70.0/3.6))/3,fresh.virtualDemand!!,1e-12);assertFalse(fresh.afterfireTrigger);assertFalse(fresh.shiftTrigger)}
+ @Test fun restartingRelativePlaybackClockReanchorsDemand(){val c=MatlabPowertrainController(virtualDriveC63Spec());for(i in 0..20)update(c,1+i*.05,70.0,2.0);val n=3_000_000_000L;val s=c.updateMeasured(0.0,70.0,0.0,0.0,DriveInputControl(DriveInputSource.REAL,1,n+250000000,true,true,n,n,controlTimeElapsedNanos=n));assertEquals((.13+.00028*(70.0/3.6)*(70.0/3.6))/3,s.virtualDemand!!,1e-12);assertFalse(s.afterfireTrigger);assertFalse(s.shiftTrigger)}
+}

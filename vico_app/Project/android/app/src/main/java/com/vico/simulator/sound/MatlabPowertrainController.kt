@@ -42,6 +42,9 @@ data class MatlabPowertrainState(
     val shiftTrigger: Boolean,
     val afterfireCauseCode: Int = 0,
     val afterfireSourceId: Long? = null,
+    val virtualDemand: Double? = null,
+    val measuredInputUsable: Boolean = false,
+    val modelContinuityRevision: Long = 0L,
 )
 
 class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
@@ -58,54 +61,91 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
     private var measuredRecoveryUntilS = Double.NEGATIVE_INFINITY
     private val measuredAfterfire = QualifiedAfterfirePolicy(AfterfireEpisodeConfig(minimumRpm = spec.afterfireMinimumRpm))
     private var measuredShiftEventId = 0L
+    private var measuredModelRevision = 0L
+    private val driveDemand = VirtualDriveDemand()
+    private val cruiseGear by lazy { VirtualCruiseGear(spec) }
 
     /** Live measurements only. Unknown is never interpreted as zero-speed parking. */
     fun updateMeasured(timeS: Double, speedKmh: Double, accelerationMps2: Double, throttle: Double,
                        control: DriveInputControl): MatlabPowertrainState {
         require(control.source == DriveInputSource.REAL)
-        val finite = timeS.isFinite() && speedKmh.isFinite() && accelerationMps2.isFinite() && throttle.isFinite()
+        val finite = timeS.isFinite() && speedKmh.isFinite() && accelerationMps2.isFinite() && throttle.isFinite() &&
+            control.reportedSpeedUncertaintyMps?.let { it.isFinite() && it >= 0.0 } != false
         if (!control.usable || !finite) {
             measuredUsable = false
+            driveDemand.invalidate()
+            cruiseGear.invalidate()
             measuredAfterfire.invalidate()
             measuredEpoch = control.epoch
             clearTransientHistory()
-            return MatlabPowertrainState(rpm, 0.0, gear, 1.0, false, false)
+            return MatlabPowertrainState(rpm, 0.0, gear, 1.0, false, false, measuredInputUsable = false, modelContinuityRevision = measuredModelRevision)
         }
-        val discontinuity = !measuredUsable || measuredEpoch != control.epoch ||
+        if (lastTimeS.isFinite() && timeS < lastTimeS) {
+            driveDemand.invalidate()
+            cruiseGear.invalidate()
+        }
+        val demandState = driveDemand.update(VirtualDemandInput(control.epoch, control.usable,
+            control.gpsSampleElapsedNanos ?: 0L, control.imuSampleElapsedNanos ?: 0L,
+            speedKmh / 3.6, accelerationMps2, control.reportedSpeedUncertaintyMps))
+        if (demandState == null) {
+            driveDemand.invalidate()
+            measuredUsable = false
+            measuredAfterfire.invalidate()
+            cruiseGear.invalidate()
+            clearTransientHistory()
+            return MatlabPowertrainState(rpm, 0.0, gear, 1.0, false, false, measuredInputUsable = false, modelContinuityRevision = measuredModelRevision)
+        }
+        val discontinuity = demandState.resumed || !measuredUsable || measuredEpoch != control.epoch ||
             lastTimeS.isFinite() && timeS < lastTimeS
         measuredUsable = true
         measuredEpoch = control.epoch
+        if (discontinuity) measuredModelRevision++
+        val speed = speedKmh.coerceIn(0.0, spec.speedCeilingKmh)
+        val sourceTimeS = requireNotNull(control.imuSampleElapsedNanos) / 1_000_000_000.0
+        val gearState = cruiseGear.update(sourceTimeS, speed, demandState.demand,
+            demandState.freshImu, discontinuity || timeS < measuredRecoveryUntilS, demandState.parked, control.reportedSpeedUncertaintyMps)
+        gear = gearState.gear
+        val dt = if (lastTimeS.isFinite()) (timeS-lastTimeS).coerceIn(0.001,0.2) else .05
         if (discontinuity) {
             clearTransientHistory()
-            val speed = speedKmh.coerceIn(0.0, spec.speedCeilingKmh)
-            // Re-anchor within existing hysteresis, not a fabricated sequence of shifts.
-            while (gear < spec.gearRatios.size && speed >= spec.upshiftSpeedKmh[gear - 1]) gear++
-            while (gear > 1 && speed <= spec.downshiftRatio * spec.upshiftSpeedKmh[gear - 2]) gear--
-            val wheelRpm = speed / 3.6 / (2.0 * PI * spec.wheelRadiusM) * 60.0
-            rpm = (wheelRpm * spec.finalDrive * spec.gearRatios[gear - 1]).coerceIn(spec.idleRpm, spec.redlineRpm)
-            lastTimeS = timeS
             lastShiftTimeS = timeS
             measuredRecoveryUntilS = timeS + spec.minimumShiftIntervalS
             measuredAfterfire.invalidate()
-            lastThrottle = throttle.coerceIn(0.0, 1.0)
-            return MatlabPowertrainState(rpm, lastThrottle, gear, 1.0, false, false)
+        } else if (gearState.changed) {
+            lastShiftTimeS = timeS
+            shiftStartTimeS = timeS
         }
-        val state = update(timeS, speedKmh, accelerationMps2, throttle)
-        if (timeS < measuredRecoveryUntilS) {
-            // Refresh baselines, but do not defer a release from the uncertain interval.
-            afterfireArmed = false
+        val elapsed = timeS-shiftStartTimeS
+        val (torqueGain,coupling) = shiftState(elapsed)
+        val wheelRpm = speed/3.6/(2.0*PI*spec.wheelRadiusM)*60.0
+        val targetRpm = max(spec.idleRpm,wheelRpm*spec.finalDrive*spec.gearRatios[gear-1])
+        rpm = if(!discontinuity && elapsed in 0.0..spec.totalShiftTimeS) {
+            val adjusted=1.0-(1.0-coupling).pow(max(1.0,dt*1000.0))
+            rpm+adjusted*(targetRpm-rpm)
+        } else targetRpm
+        val launchBlend=min(1.0,speed/3.6/4.0)
+        val launchSlip=spec.idleRpm+demandState.demand*(spec.launchRpm-spec.idleRpm)*(1.0-launchBlend)
+        rpm=min(spec.redlineRpm,max(rpm,launchSlip))
+        lastTimeS=timeS
+        lastThrottle=demandState.demand
+        val state=MatlabPowertrainState(rpm,demandState.bankLoad,gear,torqueGain,false,
+            gearState.changed,virtualDemand=demandState.demand, measuredInputUsable=true, modelContinuityRevision=measuredModelRevision)
+        if(discontinuity || timeS < measuredRecoveryUntilS) {
+            afterfireArmed=false
             measuredAfterfire.invalidate()
-            return state.copy(afterfireTrigger = false, shiftTrigger = false)
+            return state.copy(afterfireTrigger=false,shiftTrigger=false)
         }
         if (state.shiftTrigger) measuredShiftEventId++
-        val sourceNs = control.imuSampleElapsedNanos
+        val sourceNs = requireNotNull(control.imuSampleElapsedNanos)
         val event = measuredAfterfire.update(AfterfireEpisodeInput(
-            sourceTimeS = (sourceNs ?: 0L) / 1_000_000_000.0,
-            sourceSequence = sourceNs ?: 0L,
+            sourceTimeS = sourceNs / 1_000_000_000.0,
+            sourceSequence = sourceNs,
             epoch = control.epoch,
-            trusted = control.usable && sourceNs != null && sourceNs > 0L &&
+            trusted = control.usable && sourceNs > 0L &&
                 control.gpsSampleElapsedNanos?.let { it > 0L } == true,
-            rpm = state.rpm, demand = throttle.coerceIn(0.0, 1.0),
+            rpm = state.rpm, demand = demandState.demand,
+            releaseEligible = demandState.sustainedDeceleration,
+            releaseIntentObserved = demandState.negativeAccelerationObserved,
             shiftEventId = measuredShiftEventId.takeIf { state.shiftTrigger },
             shiftTimeS = if (state.shiftTrigger) control.controlTimeElapsedNanos?.div(1_000_000_000.0) else null,
         ))

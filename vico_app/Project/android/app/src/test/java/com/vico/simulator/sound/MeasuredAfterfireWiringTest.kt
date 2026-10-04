@@ -11,7 +11,7 @@ class MeasuredAfterfireWiringTest {
         val gpsNs=1_000_000_000_000L+(t*1e9).toLong()
         val imuNs=1_000_000_000_000L+(imuT*1e9).toLong()
         return DriveInputControl(DriveInputSource.REAL,epoch,gpsNs+250_000_000L,usable,usable,
-            imuSampleElapsedNanos=imuNs,gpsSampleElapsedNanos=gpsNs,controlFrameId=frame,controlTimeElapsedNanos=gpsNs)
+            imuSampleElapsedNanos=imuNs,gpsSampleElapsedNanos=gpsNs,controlFrameId=frame,controlTimeElapsedNanos=gpsNs,reportedSpeedUncertaintyMps=0.0)
     }
     @Test fun realMeasuredNoiseProducesZeroAfterfireWithoutAnyAdapter() {
         val c=MatlabPowertrainController(spec());var events=0;var shifts=0
@@ -20,19 +20,20 @@ class MeasuredAfterfireWiringTest {
             if(s.afterfireTrigger)events++;if(s.shiftTrigger)shifts++}
         assertEquals(0,events);assertEquals(0,shifts)
     }
-    @Test fun stableLoadReleaseProducesExactlyOneEvent() {
+    @Test fun qualifiedNegativeEpisodeProducesExactlyOneRelease() {
         val c=MatlabPowertrainController(spec());val eventTimes=mutableListOf<Double>()
         for(i in 0..160){val t=i*.05;val demand=if(t<3).6 else .0
-            if(c.updateMeasured(t,40.0,demand*3,demand,control(t,i.toLong())).afterfireTrigger)eventTimes+=t}
+            val accel=if(t<3)1.8 else -1.8
+            if(c.updateMeasured(t,75.0,accel,demand,control(t,i.toLong())).afterfireCauseCode==1)eventTimes+=t}
         assertEquals(1,eventTimes.size)
-        assertTrue(eventTimes.single()>=3.08-1e-9)
+        assertTrue(eventTimes.single()>=3.23-1e-9)
     }
-    @Test fun smoothRampPreservesOneActualShiftAndOneQualifiedRelease() {
+    @Test fun smoothRampAllowsTwoCruiseShiftsButNoFlatCruiseRelease() {
         val c=MatlabPowertrainController(spec());var events=0;var shifts=0
         for(i in 0..600){val t=i*.05;val v=if(t<25)t*3 else 75.0;val a=if(t<25)3.0/3.6 else .0
             val s=c.updateMeasured(t,v,a,a/3,control(t,i.toLong()))
             if(s.afterfireTrigger)events++;if(s.shiftTrigger)shifts++}
-        assertEquals(1,shifts);assertEquals(2,events)
+        assertEquals(2,shifts);assertEquals(shifts,events)
     }
     @Test fun missingSourceCannotQualifyRealEvents() {
         val c=MatlabPowertrainController(spec());var events=0
@@ -68,18 +69,16 @@ class MeasuredAfterfireWiringTest {
         }
     }
 
-    @Test fun actualShiftOnRepeatedImuEmitsInThatFrameAndIsNotDeferred() {
+    @Test fun duplicateImuDoesNotAdvanceShiftDwellAndActualFreshShiftIsNotDeferred() {
         val c=MatlabPowertrainController(spec())
         for(i in 0..20){val t=i*.05;c.updateMeasured(t,40.0,1.0,1.0/3,control(t,i.toLong()))}
-        val shiftControl=control(1.05,21,imuT=1.0)
-        val shift=c.updateMeasured(1.05,71.0,1.0,1.0/3,shiftControl)
-        assertTrue(shift.shiftTrigger)
-        assertTrue(shift.afterfireTrigger)
-        assertEquals(2,shift.afterfireCauseCode)
-        assertEquals(shiftControl.gpsSampleElapsedNanos,shift.afterfireSourceId)
-        val fresh=c.updateMeasured(1.10,71.2,1.0,1.0/3,control(1.10,22))
-        assertFalse(fresh.shiftTrigger)
-        assertFalse(fresh.afterfireTrigger)
+        val duplicate=c.updateMeasured(1.05,71.0,1.0,1.0/3,control(1.05,21,imuT=1.0))
+        assertFalse(duplicate.shiftTrigger);assertFalse(duplicate.afterfireTrigger)
+        var shifts=0
+        for(i in 22..40){val t=i*.05;val ctl=control(t,i.toLong());val s=c.updateMeasured(t,71.0,1.0,1.0/3,ctl)
+            if(s.shiftTrigger){shifts++;assertTrue(s.afterfireTrigger);assertEquals(2,s.afterfireCauseCode);assertEquals(ctl.gpsSampleElapsedNanos,s.afterfireSourceId)}
+            else assertFalse(s.afterfireTrigger)
+        }
+        assertEquals(1,shifts)
     }
-
 }

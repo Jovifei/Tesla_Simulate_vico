@@ -117,29 +117,8 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         return toSoundState(point, state, control)
     }
 
-    private fun toSoundState(point: DrivePoint, state: MatlabPowertrainState, control: DriveInputControl?): SoundState {
-        return SoundState(
-            timeS = point.timeS,
-            rpm = state.rpm,
-            frequencyHz = state.rpm / 60.0 * 4.0,
-            amplitude = max(0.08, state.load),
-            brightness = state.load,
-            harmonics = floatArrayOf(),
-            muted = point.speedKmh >= 148.0,
-            throttle = point.throttle,
-            load = state.load,
-            braking = point.brake,
-            gear = state.gear,
-            shiftGain = state.torqueGain,
-            afterfireTrigger = state.afterfireTrigger,
-            shiftTrigger = state.shiftTrigger,
-            inputControl = control,
-            afterfireCauseCode = state.afterfireCauseCode,
-            afterfireSourceId = state.afterfireSourceId,
-            modelSpeedKmh = point.speedKmh.takeIf { control?.usable == true },
-            modelAccelerationMps2 = point.accelMps2.takeIf { control?.usable == true },
-        )
-    }
+    private fun toSoundState(point: DrivePoint, state: MatlabPowertrainState, control: DriveInputControl?): SoundState =
+        state.toMappedSoundState(point, control)
 
     /** The experimental route accepts only explicit qualification and requires re-preparation after rejection. */
     fun acceptsPlaybackInput(control: DriveInputControl?, renderInputValid: Boolean): Boolean =

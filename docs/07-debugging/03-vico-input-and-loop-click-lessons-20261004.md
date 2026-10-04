@@ -98,6 +98,19 @@ python -m unittest discover -s vico_app/tools/python -p 'test_summarize_session.
 
 本节记录可复用的项目操作边界和实际结果，不存凭据，不把权限错误伪报为技术构建失败。现有[调试入口](00-guide.md)与[项目文档入口](../README.md)已索引本文。
 
-## 八 尚未关闭
+## 八 REAL需求与巡航策略后续候选
+
+基于c778的后续诊断确认：GPS1Hz时首次到75恰逢加速度回0，旧加速度符号门会错过升挡；“匀速load=0”也不是实测无负载。新候选将虚拟需求、bank坐标和shiftGain分开，只替换REAL策略，旧reference/DEMO保持。具体合同、可复现命令和风险见[REAL策略说明](../vico-real-drive-policy-20261004.md)。这批尚未安装，不算道路或听感通过。
+
+本轮必须保留的失败与修法：
+- 先前27,216组需求噪声扫描不能代表GPS噪声。22↔36km/h、约29真值的1Hz fixture产生29次猎挡；加入reported uncertainty的判定缓冲，缺失仅用明确2m/s假设，不能把UNVERIFIED写成已验证精度
+- 平巡后几秒的轻微负向曾借旧armPeak触发；现在消费不合资格的低需求episode，而不是只延后释放
+- 101点采样guard漏过noise=.105/h=.8027临界值；改为分段函数的精确边界检查
+- 模型内部拒绝后恢复可能被latest-state邮箱吞掉invalid；新增独立持续modelContinuityRevision，保留外部epoch，实际mapper/gate/renderer验证旧afterfire与shift队列在恢复前清理
+- 新策略未改变raw速度/加速度；同gain70巡航RMS约+9.96dB是音量/听感风险，不是更真实评分。u2也可延迟满需求升挡并出现虚拟红线钳位，不用临时forced-up绕过误差缓冲
+
+六个现有bank的资产/固定gain与Python S12权威保留。72条动态轨迹原峰预算通过只是指定合成输入的数值证据；低估误差的GPS、实际安装方向、真实动力需求和人耳结论仍需单独验证。
+
+## 九 尚未关闭
 
 SESSION_START设备复验；安装方向实际确认与道路输入；虚拟需求/巡航策略；窄接缝候选全轨迹与新旧层边界、产品路由/手机/试听；Supra峰预算；高转source共振与RPM相消；其他车型同等级验收；正式参考及人耳结论。

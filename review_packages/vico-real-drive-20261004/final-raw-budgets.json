@@ -1,0 +1,1374 @@
+{
+  "scope": "72 synthetic 40-second trajectories; 1Hz zero-noise GPS sample-and-hold, declared uncertainty0 or2; actual unchanged Kotlin renderer/bank; not road or listening acceptance",
+  "frames": 138240000,
+  "profiles": [
+    {
+      "profile": "c63_w204_v6",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38902926445007324,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1976.8469200160494,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "0a7e4d6a8a11a171fb509d086b698b3b98eef34d1eaf4ace54075c3d0a2101f8"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4188535213470459,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2581.6357037652515,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "387abf7cc78fd9db7b8e24fdcc5d6adecb0ea35b7879aba26eedf6f765984761"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5244335532188416,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3032.9706170109243,
+          "first_shift_speed_kmh": 58.333333333333336,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "d9c68ff44915c1423251273d85d69af070b1275191f131acf331648208713b78"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5318478941917419,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3249.6113753688473,
+          "first_shift_speed_kmh": 62.5,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "f2c507239479544bd0b79135bd6ff65ac266f2128cdf1d41848461712d5cc6fa"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.6149359345436096,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 4332.815167158465,
+          "first_shift_speed_kmh": 66.66666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "2c6d39aadfdd10abf1846906b057c825fb7eea69767355876eb494cee9cead84"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.6551859378814697,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 6239.253840708189,
+          "first_shift_speed_kmh": 72.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "b60a46e52d56c37327a7ac35283327445a0f2048c6d2640f8351bfc46252c2b7"
+        }
+      ]
+    },
+    {
+      "profile": "c63_w204_v6",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38902926445007324,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1976.8469200160494,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "0a7e4d6a8a11a171fb509d086b698b3b98eef34d1eaf4ace54075c3d0a2101f8"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4188535213470459,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 3953.6938400320987,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "372e95541229f70ee558b78bcdc53efa4201e1e200dd6861d1d08485629a3064"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5244335532188416,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3032.9706170109243,
+          "first_shift_speed_kmh": 64.16666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "37fbb1664bbadde646ad8c75e9997a2330cad7618bc6ead6fb5657e6805f11a9"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5318478941917419,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3249.6113753688473,
+          "first_shift_speed_kmh": 68.75,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "0f4b5a5a15f0927774dba2ed57d8fa488b7f549715609ae1210c24c412fbefd2"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5971111059188843,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 4332.815167158465,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "8c8810250c37fabb42983e807a0fb9591fa7217612e9de4ae573e769a3ba7279"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.7786818742752075,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 6239.253840708189,
+          "first_shift_speed_kmh": 84.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "edcf166ab770a482a2f48a148c477c41704c37d330673898393af729f7d9b4e4"
+        }
+      ]
+    },
+    {
+      "profile": "ferrari_458",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.0929587185382843,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 2145.8143219493754,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "c96c632b53a351710b4d344e72b112a451a1e9a27accbbc2476a7246c3c72c8b"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2512769401073456,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2817.6042160551074,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "ccda6e858e0aab87cd4e0619f175bbed2d4bfd8c77856fc29e8d0ce2fbb065dc"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2887960970401764,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3675.277721636696,
+          "first_shift_speed_kmh": 64.16666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "e9103e31dc52ddab3dc2cdeabb6d63f859279c5e8b30986da293141f63168de3"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.29599466919898987,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3937.79755889646,
+          "first_shift_speed_kmh": 68.75,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "9d82d51a8cb8ef55b130c2f8ea642fb34b66cc59fdefe9028067009301d5f799"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.33198967576026917,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 4174.228468229788,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "b05c7c86311a61245cc2853e96de2072f54cece78e6c760a241cb8ead14e9408"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.43104425072669983,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 6010.888994250894,
+          "first_shift_speed_kmh": 84.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "f74f074bfb70c0e9aa0628cfa4223b3869f4a9cfa1e004412b74e35e2d744881"
+        }
+      ]
+    },
+    {
+      "profile": "ferrari_458",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.0929587185382843,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 2145.8143219493754,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "c96c632b53a351710b4d344e72b112a451a1e9a27accbbc2476a7246c3c72c8b"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2512769401073456,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 4291.628643898751,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "8418223c1298a217da560647390a65767adc9148e50a86e6806e1db9afc1bba8"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2887960970401764,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3675.277721636696,
+          "first_shift_speed_kmh": 70.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "dae6956c8ba515e2551ad8b5b69f7e3396e890827dd1ae383af5bec90caa3f9f"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.29599466919898987,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3937.79755889646,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "f3d730d0212f73b0d0e083e5a79fb307a181b2476b126ef9bf8855e1b68ac0cf"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3816505968570709,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 4174.228468229788,
+          "first_shift_speed_kmh": 83.33333333333333,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "13c5f025d85b006c7ec6e250e2c7897a4e1459b798d3a77c9075cf18aa9bf94e"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.43104425072669983,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 6010.888994250894,
+          "first_shift_speed_kmh": 96.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "8b95cee1328fd69141dfbf120509d764dfad477875b992856959b530b8aa3bdc"
+        }
+      ]
+    },
+    {
+      "profile": "gtr_r35",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 2209.4294889087537,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "f282941eaca3eee6c5b645e93944fb8783957977fd09e3e51dd7903e5a0cc29e"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.55962073802948,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2724.982280545941,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "c5c4b057df7c099497133d8e63dbafc902cfa4d5d3f003141a8234d7b72cf5cf"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3404.7845337965437,
+          "first_shift_speed_kmh": 52.5,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "95fde8e3bb04a7ae3c0c90673b83a3f3b0d46769b3fe01592ff5e2e9655bfddd"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 2842.612606745355,
+          "first_shift_speed_kmh": 50.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "3e9bb3b0b513d988bde34fcb5a59f749ceb8d3c6d25cb056c7910ac623a9a83d"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595969557762146,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3790.15014232714,
+          "first_shift_speed_kmh": 58.333333333333336,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "91a5a0a1f46a74e297db79279e5138b749996edc8d325b98b48525a30ac36523"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 5457.816204951083,
+          "first_shift_speed_kmh": 60.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "5d97c61ee9822dd9f3bf6c8a84bb5682a0aba532637bac4f1438b1791adfe221"
+        }
+      ]
+    },
+    {
+      "profile": "gtr_r35",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 2209.4294889087537,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "f282941eaca3eee6c5b645e93944fb8783957977fd09e3e51dd7903e5a0cc29e"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2724.982280545941,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "84cb249b8052e88c983cd7d8a32366c16348e6c7904170320e4708034efabb4d"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3404.7845337965437,
+          "first_shift_speed_kmh": 58.333333333333336,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "2300fc92175cc5002ea1d6980f44df2306fe11b86a477095e04e8ededa9d3de6"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.559644877910614,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3647.983429067726,
+          "first_shift_speed_kmh": 56.25,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "bfccdd973ea685e82801aa5ae14286317e432099e87bc8969d257403642b98c7"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3790.15014232714,
+          "first_shift_speed_kmh": 66.66666666666667,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "75ca71f68964099d53a7b39d0b687d7f0d4dc6f069b69b0b2d9fb08caaf8dea0"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 5457.816204951083,
+          "first_shift_speed_kmh": 72.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "5c9fa6f77b045a460228098d61e6dd8115f29d9dbf4eac5ed0cea56d116220c0"
+        }
+      ]
+    },
+    {
+      "profile": "hellcat_v6",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.30523526668548584,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1888.2533838100003,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "fa09df1d8374e768ddbc6f28ac61d80bc568f7c2012cab639d3af3bc3b57642a"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2884361147880554,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2517.9382203287355,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "440fb60a7c18dc4251c3869128a5c740367855ce67ff9a6d9b92334b879b7633"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3129696846008301,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 2952.5489376460564,
+          "first_shift_speed_kmh": 52.5,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "5f936cf4fccac527dd51aaf7a3020a87bd0776926ba3af519ac64bafd63f361b"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.32183247804641724,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3163.4452903350607,
+          "first_shift_speed_kmh": 56.25,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "82577b5ef2fbbd6693c53e8bab6b464ffd0f9c02483b6702318717f03f9a8236"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3194696605205536,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 4217.92705378008,
+          "first_shift_speed_kmh": 66.66666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "df9fcf18eb67c243870ca21555181ff7cead5a4f0b7bb914c1ca7fa0cb5f9b6a"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4077104330062866,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 6073.814957443316,
+          "first_shift_speed_kmh": 72.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "c1651a98433125c71542ec8f405691d7bc34adc571ca814fbda7f76c44db6c5c"
+        }
+      ]
+    },
+    {
+      "profile": "hellcat_v6",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.30523526668548584,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1888.2533838100003,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "fa09df1d8374e768ddbc6f28ac61d80bc568f7c2012cab639d3af3bc3b57642a"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2884361147880554,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2517.9382203287355,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "445f1ee4adf78329737203551280e70847882aa19128ab694876dbb4ff66e994"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3129696846008301,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 2952.5489376460564,
+          "first_shift_speed_kmh": 64.16666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "e38f2cb1fd76cd62803fd89890d1b1c6e0c8eeec99c81526663ffb2067c917ca"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.32183247804641724,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3163.4452903350607,
+          "first_shift_speed_kmh": 62.5,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "39eea1372ede5ce7b532085c6eef4e7d072d38780ca486578140ea038da5c4a6"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3194696605205536,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 4217.92705378008,
+          "first_shift_speed_kmh": 66.66666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "220894c80bf0574d8103d5a0e86e4d61bac1c8ef335345c6bdec11a0d06824a4"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4077104330062866,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 6073.814957443316,
+          "first_shift_speed_kmh": 72.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "c1651a98433125c71542ec8f405691d7bc34adc571ca814fbda7f76c44db6c5c"
+        }
+      ]
+    },
+    {
+      "profile": "lfa",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4685181677341461,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1860.9553436799613,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "1e70912fd6d86f6240b3db397c2228d94e9fd7a0a4e759d881b535df22e165cc"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4678761065006256,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 3721.9106873599226,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "a9aa780bab3d58fe52338ddf79023b809f4e413f0e84ad634dc5499f60cd02b8"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4691445529460907,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 3790.2508553481703,
+          "first_shift_speed_kmh": 70.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "be82d9d9f92058b5ccb4b16b73696be51ffa83d2b5c82fbcad6263e60c9bde49"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.47269290685653687,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 4060.9830593016104,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "fa89146f158688132818f0d85369742e29ffba5cd0a355a8994c1125c1fbbd8b"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4681270122528076,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3732.424559358115,
+          "first_shift_speed_kmh": 91.66666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "01950161a92c1ca329d0ff23444df9f89376dea234054038677913c54e4ea02d"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4681633710861206,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3898.543736929547,
+          "first_shift_speed_kmh": 96.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "1cfb7abbd86d0a74cdf15dd6778c4c7fb39c4435a7045597056c567b35e4a48b"
+        }
+      ]
+    },
+    {
+      "profile": "lfa",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4685181677341461,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1860.9553436799613,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "1e70912fd6d86f6240b3db397c2228d94e9fd7a0a4e759d881b535df22e165cc"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4678761065006256,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 3721.9106873599226,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "a9aa780bab3d58fe52338ddf79023b809f4e413f0e84ad634dc5499f60cd02b8"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4733564853668213,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 3790.2508553481703,
+          "first_shift_speed_kmh": 70.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "5c5981dfa16933e7ef3c88975e6be0edba50c4f3709f407fdb21603d58027432"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5161360502243042,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 4060.9830593016104,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "907067be165f30277e5291bf06f1ff0bf5b78711b082a83a9fef00dce28ea443"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5294702649116516,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3732.424559358115,
+          "first_shift_speed_kmh": 100.0,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "5051ef4d622857c6eee1320ba9fd33e4a704186bf2a75e1fc1a017dd0b78c830"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.46890753507614136,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3898.543736929547,
+          "first_shift_speed_kmh": 108.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "6f18b65e8166de53cb091d44770bc8dc4c373fd276fbb28c137161ca6359aa34"
+        }
+      ]
+    },
+    {
+      "profile": "supra_jza80",
+      "reported_uncertainty_mps": 0.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38763633370399475,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1950.269381290808,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "b22cffb46b8d2e7f747a7664d43856d1795da7e3f33f09e48674334b7c73867d"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876173794269562,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            2
+          ],
+          "cruise_rpm": 2405.349223854877,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "8cdf895e93bff8485285763715f0befe6e021761bfa2cf1a9c4cdc59746be6b6"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38762032985687256,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3005.4125101025706,
+          "first_shift_speed_kmh": 58.333333333333336,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "1325663a15893f05ab2289873cbc3c012dff4ff7e1ff378d19d950e36cb637f0"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4119687080383301,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3220.0848322527545,
+          "first_shift_speed_kmh": 56.25,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "cf1f9d2494c10f233445a494220b7a672998cf71567e443fc0957cc22d6c74d2"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876400589942932,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3343.0277348491504,
+          "first_shift_speed_kmh": 66.66666666666667,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "c67afb488139c919fb3b2b9899b39c232fb8b4fab5e7c7d16cce2ed4563491f6"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876173794269562,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 4813.9599381827775,
+          "first_shift_speed_kmh": 72.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "de81d6bfddee91dc2a1bc456bb37df160c2c6957d23a7c995b3412a1a902160d"
+        }
+      ]
+    },
+    {
+      "profile": "supra_jza80",
+      "reported_uncertainty_mps": 2.0,
+      "cases": [
+        {
+          "peak_kmh": 20,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38763633370399475,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 1950.269381290808,
+          "first_shift_speed_kmh": null,
+          "shift_count": 0,
+          "release_count": 0,
+          "pcm_sha256": "b22cffb46b8d2e7f747a7664d43856d1795da7e3f33f09e48674334b7c73867d"
+        },
+        {
+          "peak_kmh": 40,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.41285547614097595,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            1
+          ],
+          "cruise_rpm": 3900.538762581616,
+          "first_shift_speed_kmh": 40.0,
+          "shift_count": 2,
+          "release_count": 0,
+          "pcm_sha256": "b19ec01f5bff357d1cd293a24f1b273e66ec16fbd5a09ce98db80bc1c71932f7"
+        },
+        {
+          "peak_kmh": 70,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876173794269562,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3005.4125101025706,
+          "first_shift_speed_kmh": 64.16666666666667,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "9d9ba1a190ae2ab036ba2ae956bd8e59125eb4fae8489bdc932c93c00291f6b0"
+        },
+        {
+          "peak_kmh": 75,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38763588666915894,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            3
+          ],
+          "cruise_rpm": 3220.0848322527545,
+          "first_shift_speed_kmh": 62.5,
+          "shift_count": 4,
+          "release_count": 0,
+          "pcm_sha256": "09ca9ef8dae6d66f1df37d9d08a3b203bba7ba07f58a1b66628213b23b0e5ec3"
+        },
+        {
+          "peak_kmh": 100,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38762545585632324,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 3343.0277348491504,
+          "first_shift_speed_kmh": 75.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "a7b24142b727cb815c7eba8b3e167f33128eccc1c7a21d9ab6b8c5641f21371a"
+        },
+        {
+          "peak_kmh": 144,
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876325488090515,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0,
+          "cruise_gears": [
+            4
+          ],
+          "cruise_rpm": 4813.9599381827775,
+          "first_shift_speed_kmh": 84.0,
+          "shift_count": 6,
+          "release_count": 0,
+          "pcm_sha256": "8f7d77f5c8b8cadadc6d3d07aa49514fa3670ea61e1ba15ecf3793a8ee61aeb3"
+        }
+      ]
+    }
+  ]
+}
