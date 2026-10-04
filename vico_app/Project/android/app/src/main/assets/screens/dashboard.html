@@ -239,6 +239,38 @@
 </button>
 </div>
 </section>
+<!-- Fixed mount setup: parked-only, natural device sensor axes. -->
+<details id="mounting-panel" class="bg-white rounded-DEFAULT card-border p-md">
+<summary id="mount-summary" class="font-headline-md text-headline-md cursor-pointer">安装方向 · 待确认</summary>
+<div class="flex flex-col gap-sm mt-sm">
+<p id="mount-status" role="status" class="text-sm text-secondary">请先停车并完成静止校准</p>
+<p class="text-sm">仅在车辆停稳后操作。把选中的手机方向真正沿车头固定；斜放或支架松动不适用。本功能不自动识别朝向。</p>
+<svg viewBox="0 0 300 160" role="img" aria-label="自然竖屏手机正面示意：顶部Y正向、右边X正向、屏幕朝外Z正向。屏幕旋转不会改变物理传感器轴。" style="width:100%;max-width:300px;align-self:center">
+<rect x="112" y="28" width="76" height="114" rx="9" fill="#f3f3f3" stroke="#0058bc" stroke-width="2"/>
+<rect x="123" y="42" width="54" height="76" fill="#d8e2ff"/><text x="150" y="82" text-anchor="middle" font-size="13">屏幕 +Z</text>
+<path d="M150 28 V8 M145 14 L150 8 L155 14 M188 84 H236 M230 79 L236 84 L230 89" fill="none" stroke="#0058bc" stroke-width="2"/>
+<text x="161" y="17" font-size="12">顶部 +Y</text><text x="242" y="88" font-size="12">右 +X</text>
+<text x="150" y="155" text-anchor="middle" font-size="11">背面 −Z · 底部 −Y · 左边 −X</text>
+</svg>
+<p class="text-xs text-secondary">以上按手机自然竖屏方向识别左右；横竖屏切换不重定义传感器轴。车辆前进加速应为正，制动应为负，需停车设置后再安全验证。</p>
+<label for="mount-axis" class="text-sm">哪一边或哪一面朝向车头？</label>
+<select id="mount-axis" class="border rounded p-sm bg-white">
+<option value="">请选择，不会自动猜测</option><option value="TOP">手机顶部朝车头（+Y）</option><option value="BOTTOM">手机底部朝车头（−Y）</option>
+<option value="RIGHT">手机右边朝车头（+X，自然竖屏）</option><option value="LEFT">手机左边朝车头（−X，自然竖屏）</option>
+<option value="SCREEN">屏幕正面朝车头（+Z）</option><option value="BACK">手机背面朝车头（−Z）</option>
+</select>
+<label class="text-sm"><input type="checkbox" id="mount-parked"/> 车辆已停稳，手机已固定，所选方向确实沿车头</label>
+<button id="mount-confirm" class="bg-primary text-on-primary rounded py-sm disabled:opacity-50" disabled>确认当前安装</button>
+<button id="mount-moved" class="border rounded py-sm">手机已移动，立即停止使用此前方向</button>
+<p class="text-xs text-secondary">选项会保存，但退出到后台后会暂停信任；停车确认即可，无需每次重校准。只切换本 App 页面不会取消确认。水平转动等变化无法自动判断，移动手机后务必点上方按钮。</p>
+</div></details>
+<section class="bg-white rounded-DEFAULT card-border p-md flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md">自动测试日志</h2>
+<p id="test-log-status" role="status" class="text-sm">启用声浪时自动记录，停止后保存</p>
+<p id="test-log-counts" class="text-xs text-secondary"></p>
+<button id="export-test-log" class="border rounded py-sm disabled:opacity-50" disabled>导出最近已保存日志</button>
+<p class="text-xs text-secondary">仅本机记录速度、传感器和声音控制数据，不录麦克风、经纬度或账户，不自动上传。后台会停止声浪和采集；日志满会暂停记录，不自动删除旧文件。</p>
+</section>
 <!-- Section 3: Simulation Controls -->
 <section class="bg-white rounded-DEFAULT card-border p-md flex flex-col gap-md">
 <h2 class="font-headline-md text-headline-md">演示模式</h2>
@@ -300,6 +332,7 @@
 </div>
 </nav>
 <script src="file:///android_asset/input-quality-ui.js"></script>
+<script src="file:///android_asset/mounting-ui.js"></script>
 <script>
         // === 接收原生传感器/声浪状态推送 (VicoBridge 调用 window.__vicoUpdate) ===
         window.__vicoUpdate = function(s){
@@ -318,6 +351,14 @@
             var gpsText=document.getElementById('gps-text');
             var unit = (function(){ try { return localStorage.getItem('vico-unit') || 'kmh'; } catch(e){ return 'kmh'; } })();
             var display = window.VicoInputDisplay.format(s,unit);
+            if(window.VicoMounting)window.VicoMounting.update(s);
+            if(s.testLog){
+              var log=s.testLog, status=document.getElementById('test-log-status'),counts=document.getElementById('test-log-counts'),exportLog=document.getElementById('export-test-log');
+              var logLabels={IDLE:'启用声浪时自动记录',STARTING:'正在准备日志，准备期缺口会标记',RECORDING:'正在记录测试日志',SAVING:'正在保存，请稍候',COMPLETE:'日志已保存',CAPACITY:'日志容量达到上限，已暂停记录；声浪不受影响',FAILED:'日志记录失败，现有文件可能不完整',CLOSED:'记录已结束'};
+              if(status)status.textContent=log.phase==='COMPLETE'&&!log.latestIsCurrent?'本次未生成日志，可导出之前保存的文件':(logLabels[log.phase]||'日志状态未知');
+              if(counts)counts.textContent='已写 '+(log.written||0)+' 行 · '+((log.bytes||0)/1024).toFixed(1)+' KB · 队列丢弃 '+(log.queueDropped||0)+' · 准备缺口 '+(log.startupGap||0)+' · 配置缺口 '+(log.configGap||0)+' · 音频环丢弃 '+(log.audioRingDropped||0);
+              if(exportLog){exportLog.disabled=!log.exportAvailable||log.exporting;exportLog.textContent=log.exporting?'正在导出…':(log.latestIsCurrent?'导出本次已保存日志':'导出最近已保存日志');}
+            }
             if(liveSpeed) liveSpeed.textContent = display.speed;
             var su = document.getElementById('speed-unit'); if (su) su.textContent = display.unit;
             if(liveAccel) liveAccel.textContent = display.accel;
@@ -327,7 +368,7 @@
             var dq=document.getElementById('debug-quality'); if(dq)dq.textContent=display.quality;
             var age=document.getElementById('debug-age'); if(age)age.textContent=display.age;
             var shown=document.getElementById('debug-display'); if(shown)shown.textContent=display.speed+' '+display.unit;
-            if(da) da.textContent = s.accel;
+            if(da) da.textContent = typeof s.ay === "number" ? s.ay.toFixed(2) : "—";
             if(dr) dr.textContent = s.rpm;
             if(dc) dc.textContent = s.calibrated;
             if(warn) {warn.textContent=display.warning;warn.classList.toggle('hidden', !display.warning);}
@@ -388,6 +429,8 @@
         var languageSelect=document.getElementById('language-select');
         if(languageSelect) languageSelect.addEventListener('change', function(){ window.AndroidBridge.setLanguage(languageSelect.value); });
 
+        var exportTestLog=document.getElementById('export-test-log');
+        if(exportTestLog)exportTestLog.addEventListener('click',function(){if(!exportTestLog.disabled)window.AndroidBridge.exportTestLog();});
         // === 重置 / 导出 ===
         var ra=document.getElementById('reset-all-btn');
         if(ra) ra.addEventListener('click', function(){ window.AndroidBridge.resetAll(); });
@@ -423,4 +466,5 @@
           });
         });
     </script>
+<script src="file:///android_asset/telemetry-ui.js"></script>
 <script src="file:///android_asset/bridge.js"></script></body></html>

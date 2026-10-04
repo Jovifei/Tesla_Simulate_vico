@@ -16,6 +16,8 @@ on:
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/logging/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
@@ -37,6 +39,8 @@ on:
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/logging/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
@@ -82,13 +86,14 @@ jobs:
           --platform linux --download-deps
           --output "${{ runner.temp }}/vico-n2-linux"
       - name: Test calibration UI acknowledgement and lifecycle
-        run: node --test vico_app/tools/js/test_calibration_ui.cjs vico_app/tools/js/test_input_quality_ui.cjs
+        run: node --test vico_app/tools/js/test_calibration_ui.cjs vico_app/tools/js/test_input_quality_ui.cjs vico_app/tools/js/test_mounting_ui.cjs vico_app/tools/js/test_telemetry_ui.cjs
       - name: Test sensor freshness, ordering, and Android source wiring
         run: |
           python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"
           python -m unittest discover -s vico_app/tools/python -p 'test_sensor_input_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_input_diagnostics_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_input_quality_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_summarize_session.py' -v
       - name: Compile Python and check whitespace
         run: |
           python -m compileall -q vico_app/tools/python
@@ -156,9 +161,12 @@ jobs:
           bash gradlew --no-daemon --continue -Pandroid.builder.sdkDownload=false
           :app:compileDebugKotlin :app:compileDebugUnitTestKotlin
           :app:testDebugUnitTest --tests 'com.vico.simulator.sensor.*'
+          --tests 'com.vico.simulator.logging.*'
           --tests 'com.vico.simulator.sound.AudioInputGateTest'
           --tests 'com.vico.simulator.sound.MatlabTransientClearTest'
           --tests 'com.vico.simulator.sound.MatlabPowertrainControllerTest'
+          --tests 'com.vico.simulator.sound.QualifiedAfterfirePolicyTest'
+          --tests 'com.vico.simulator.sound.MeasuredAfterfireWiringTest'
           :app:lintDebug :app:assembleDebug
       - name: Record test scope and generated APK identity
         if: ${{ always() && steps.sdk.outcome == 'success' }}

@@ -40,6 +40,8 @@ data class MatlabPowertrainState(
     val torqueGain: Double,
     val afterfireTrigger: Boolean,
     val shiftTrigger: Boolean,
+    val afterfireCauseCode: Int = 0,
+    val afterfireSourceId: Long? = null,
 )
 
 class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
@@ -54,7 +56,8 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
     private var measuredEpoch: Long? = null
     private var measuredUsable = false
     private var measuredRecoveryUntilS = Double.NEGATIVE_INFINITY
-    private var measuredEventsRearmed = false
+    private val measuredAfterfire = QualifiedAfterfirePolicy(AfterfireEpisodeConfig(minimumRpm = spec.afterfireMinimumRpm))
+    private var measuredShiftEventId = 0L
 
     /** Live measurements only. Unknown is never interpreted as zero-speed parking. */
     fun updateMeasured(timeS: Double, speedKmh: Double, accelerationMps2: Double, throttle: Double,
@@ -63,7 +66,7 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
         val finite = timeS.isFinite() && speedKmh.isFinite() && accelerationMps2.isFinite() && throttle.isFinite()
         if (!control.usable || !finite) {
             measuredUsable = false
-            measuredEventsRearmed = false
+            measuredAfterfire.invalidate()
             measuredEpoch = control.epoch
             clearTransientHistory()
             return MatlabPowertrainState(rpm, 0.0, gear, 1.0, false, false)
@@ -83,7 +86,7 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
             lastTimeS = timeS
             lastShiftTimeS = timeS
             measuredRecoveryUntilS = timeS + spec.minimumShiftIntervalS
-            measuredEventsRearmed = false
+            measuredAfterfire.invalidate()
             lastThrottle = throttle.coerceIn(0.0, 1.0)
             return MatlabPowertrainState(rpm, lastThrottle, gear, 1.0, false, false)
         }
@@ -91,12 +94,30 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
         if (timeS < measuredRecoveryUntilS) {
             // Refresh baselines, but do not defer a release from the uncertain interval.
             afterfireArmed = false
-            measuredEventsRearmed = false
+            measuredAfterfire.invalidate()
             return state.copy(afterfireTrigger = false, shiftTrigger = false)
         }
-        val wasRearmed = measuredEventsRearmed
-        if (state.rpm >= spec.afterfireMinimumRpm && throttle >= 0.25) measuredEventsRearmed = true
-        return if (!wasRearmed && !state.shiftTrigger) state.copy(afterfireTrigger = false) else state
+        if (state.shiftTrigger) measuredShiftEventId++
+        val sourceNs = control.imuSampleElapsedNanos
+        val event = measuredAfterfire.update(AfterfireEpisodeInput(
+            sourceTimeS = (sourceNs ?: 0L) / 1_000_000_000.0,
+            sourceSequence = sourceNs ?: 0L,
+            epoch = control.epoch,
+            trusted = control.usable && sourceNs != null && sourceNs > 0L &&
+                control.gpsSampleElapsedNanos?.let { it > 0L } == true,
+            rpm = state.rpm, demand = throttle.coerceIn(0.0, 1.0),
+            shiftEventId = measuredShiftEventId.takeIf { state.shiftTrigger },
+            shiftTimeS = if (state.shiftTrigger) control.controlTimeElapsedNanos?.div(1_000_000_000.0) else null,
+        ))
+        // Never OR the old sample-to-sample trigger back into the qualified measured policy.
+        val cause = when (event?.cause) {
+            AfterfireCause.QUALIFIED_RELEASE -> 1
+            AfterfireCause.QUALIFIED_SHIFT -> 2
+            null -> 0
+        }
+        return state.copy(afterfireTrigger = event != null, afterfireCauseCode = cause,
+            afterfireSourceId = if (event?.cause == AfterfireCause.QUALIFIED_SHIFT) control.gpsSampleElapsedNanos
+                else event?.sourceSequence)
     }
 
     private fun clearTransientHistory() {

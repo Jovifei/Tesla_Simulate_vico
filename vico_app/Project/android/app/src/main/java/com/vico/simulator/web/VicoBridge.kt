@@ -134,5 +134,32 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
     fun resetCalibration() = activity.runOnUiThread { activity.resetCalibration() }
 
     @JavascriptInterface
+    fun confirmMounting(axis: String, parked: Boolean) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { if (activity.acceptsMountingCommand(epoch)) activity.confirmMounting(axis, parked) }
+    }
+
+    @JavascriptInterface
+    fun invalidateMounting() {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { if (activity.acceptsMountingCommand(epoch)) activity.invalidateMounting() }
+    }
+
+    @JavascriptInterface
+    fun reportDisplayUnit(unit: String) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { activity.reportDisplayUnit(unit, epoch) }
+    }
+
+    @JavascriptInterface
+    fun reportDisplayFrame(dispatchId: String, frameId: String, shown: String, unit: String) {
+        val receivedNanos = android.os.SystemClock.elapsedRealtimeNanos()
+        activity.runOnUiThread { activity.reportDisplayFrame(dispatchId, frameId, shown, unit, receivedNanos) }
+    }
+
+    @JavascriptInterface
+    fun exportTestLog() = activity.runOnUiThread { activity.exportTestLog() }
+
+    @JavascriptInterface
     fun getStateJson(): String = activity.getStateJson()
 }

@@ -29,6 +29,10 @@ data class DriveInputControl(
     val validUntilElapsedNanos: Long,
     val speedUsable: Boolean,
     val accelerationUsable: Boolean,
+    val imuSampleElapsedNanos: Long? = null,
+    val gpsSampleElapsedNanos: Long? = null,
+    val controlFrameId: Long? = null,
+    val controlTimeElapsedNanos: Long? = null,
 ) {
     val usable: Boolean get() = speedUsable && accelerationUsable
     fun validatedFor(point: DrivePoint): DriveInputControl =
@@ -53,6 +57,10 @@ data class SoundState(
     val afterfireTrigger: Boolean = false,
     val shiftTrigger: Boolean = false,
     val inputControl: DriveInputControl? = null,
+    val afterfireCauseCode: Int = 0,
+    val afterfireSourceId: Long? = null,
+    val modelSpeedKmh: Double? = null,
+    val modelAccelerationMps2: Double? = null,
 ) {
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)

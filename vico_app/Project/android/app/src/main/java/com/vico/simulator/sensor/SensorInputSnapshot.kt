@@ -8,14 +8,15 @@ data class SensorInputSnapshot(
     val ax: Float = 0f, val ay: Float = 0f, val az: Float = 0f,
     val gx: Float = 0f, val gy: Float = 0f, val gz: Float = 0f,
     val diagnostics: InputDiagnostics = InputDiagnostics(),
+    val controlFrameId: Long = 0L,
 ) {
     companion object {
         fun capture(speedKmh: Double, accelMps2: Double, gpsOk: Boolean,
-                    raw: FloatArray, gravity: FloatArray, diagnostics: InputDiagnostics) = SensorInputSnapshot(
+                    raw: FloatArray, gravity: FloatArray, diagnostics: InputDiagnostics, controlFrameId: Long = 0L) = SensorInputSnapshot(
             speedKmh, accelMps2, gpsOk,
             raw.getOrElse(0) { 0f }, raw.getOrElse(1) { 0f }, raw.getOrElse(2) { 0f },
             gravity.getOrElse(0) { 0f }, gravity.getOrElse(1) { 0f }, gravity.getOrElse(2) { 0f },
-            diagnostics,
+            diagnostics, controlFrameId,
         )
     }
 }

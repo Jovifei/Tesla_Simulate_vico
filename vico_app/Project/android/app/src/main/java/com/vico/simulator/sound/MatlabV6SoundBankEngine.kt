@@ -82,9 +82,10 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         return toSoundState(point, state, checkedControl)
     }
 
-    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource): SoundState {
+    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource, frameId: Long = 0L, controlTimeNanos: Long? = null): SoundState {
         require(source in setOf(DriveInputSource.DEMO, DriveInputSource.PREVIEW, DriveInputSource.QUALIFICATION))
-        return mapSyntheticState(point, DriveInputControl(source, 0L, Long.MAX_VALUE, true, true))
+        return mapSyntheticState(point, DriveInputControl(source, 0L, Long.MAX_VALUE, true, true,
+            controlFrameId = frameId.takeIf { it > 0L }, controlTimeElapsedNanos = controlTimeNanos))
     }
 
     private fun mapSyntheticState(point: DrivePoint, control: DriveInputControl): SoundState {
@@ -115,6 +116,10 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             afterfireTrigger = state.afterfireTrigger,
             shiftTrigger = state.shiftTrigger,
             inputControl = control,
+            afterfireCauseCode = state.afterfireCauseCode,
+            afterfireSourceId = state.afterfireSourceId,
+            modelSpeedKmh = point.speedKmh.takeIf { control?.usable == true },
+            modelAccelerationMps2 = point.accelMps2.takeIf { control?.usable == true },
         )
     }
 

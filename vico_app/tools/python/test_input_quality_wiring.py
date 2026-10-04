@@ -7,14 +7,15 @@ class InputQualityWiringTest(unittest.TestCase):
     def test_real_entrypoints_are_explicit_and_reassess_cached_start(self):
         activity=(SRC/'MainActivity.kt').read_text()
         self.assertNotIn('audioEngine.mapPoint(',activity)
-        self.assertIn('mapCurrentInput(realPoint, diagnostics, consumedNanos)',activity)
+        self.assertIn('mapCurrentInput(realPoint, diagnostics, consumedNanos, frameId)',activity)
         start=activity.split('fun startAudio()',1)[1].split('fun stopAudio',1)[0]
         self.assertIn('val nowNanos = android.os.SystemClock.elapsedRealtimeNanos()',start)
-        self.assertIn('input.diagnostics, nowNanos',start)
+        self.assertIn('input.diagnostics, nowNanos, frameId',start)
         self.assertEqual(activity.count('append("\\\"inputQuality\\\":")'),2)
     def test_direction_cannot_be_inferred_from_successful_static_calibration(self):
         activity=(SRC/'MainActivity.kt').read_text()
-        self.assertIn('private val mountingFrameConfirmed = false',activity)
+        self.assertIn('private val mountingFrameConfirmed: Boolean get() = mounting.trusted',activity)
+        self.assertIn('mounting.project(rawAccel, inputDiagnostics.inputSession, sensorProvider.calibrationStatus)',activity)
         self.assertNotIn('mountingFrameConfirmed = sensorProvider.isCalibrated',activity)
     def test_audio_uses_deadline_and_no_unqualified_public_mapping(self):
         audio=(SRC/'sound/AudioEngine.kt').read_text()

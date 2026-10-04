@@ -35,6 +35,8 @@ class SensorProvider(
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private val tickMs = 50L
+    var rawInputObserver: RawInputObserver? = null
+    fun calibrationBias(): FloatArray = calibration.offsets()
 
     private val locationSpeed = LocationSpeedState()
     private val linearAcceleration = LinearAccelerationState()
@@ -67,9 +69,10 @@ class SensorProvider(
             val receivedNanos = SystemClock.elapsedRealtimeNanos()
             if (!started || event.timestamp < sessionStartedNanos) return
             if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
-                if (linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos(), receivedNanos)) {
-                    calibration.add(linearAcceleration.sample(), event.timestamp)
-                }
+                val accepted = linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos(), receivedNanos)
+                if (accepted) calibration.add(linearAcceleration.sample(), event.timestamp)
+                rawInputObserver?.imu(event.timestamp, receivedNanos,
+                    event.values.copyOf(minOf(3, event.values.size)), calibration.offsets(), accepted)
             } else if (event.sensor.type == Sensor.TYPE_GRAVITY || (useAccelAsGravity && event.sensor.type == Sensor.TYPE_ACCELEROMETER)) {
                 if (event.values.size < 3 || (0..2).any { !event.values[it].isFinite() }) return
                 gravity = floatArrayOf(event.values[0], event.values[1], event.values[2])
@@ -102,6 +105,21 @@ class SensorProvider(
             LocationSpeedSample(it.speed.toDouble(), it.hasSpeed(), it.elapsedRealtimeNanos, accuracy)
         }
         val accepted = locationSpeed.updateLatest(samples, SystemClock.elapsedRealtimeNanos(), receivedNanos)
+        rawInputObserver?.let { observer ->
+            var chosen = if (accepted) locationSpeed.lastAcceptedTiming?.sourceElapsedNanos else null
+            for (location in locations) {
+                val hasSpeed = location.hasSpeed()
+                val speed = location.speed.toDouble().takeIf { hasSpeed && it.isFinite() }
+                val selected = chosen == location.elapsedRealtimeNanos && speed != null && speed >= 0.0 &&
+                    speed * 3.6 == locationSpeed.speedKmh
+                if (selected) chosen = null
+                val accuracy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val reported = location.hasSpeedAccuracy()
+                    SpeedAccuracy.fromPlatform(true, reported, if (reported) location.speedAccuracyMetersPerSecond.toDouble() else null)
+                } else SpeedAccuracy.fromPlatform(false, false, null)
+                observer.gps(location.elapsedRealtimeNanos, receivedNanos, speed, accuracy, selected, hasSpeed)
+            }
+        }
         if (accepted && !demoMode) {
             // Publish the newest usable fix next turn, without an extra 50 ms wait.
             // Coalesce a burst so it cannot create a render/UI backlog.

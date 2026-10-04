@@ -30,9 +30,9 @@ class InputDiagnosticsWiringTest(unittest.TestCase):
         activity = (SRC / 'MainActivity.kt').read_text()
         self.assertIn('diagnostics: InputDiagnostics', provider)
         self.assertIn('inputSession += 1', provider)
-        self.assertIn('lastInputSnapshot = SensorInputSnapshot.capture(speedKmh, forwardAccel, gpsOk, rawAccel, gravity, diagnostics)', activity)
-        state = activity.split('private fun buildStateJson()', 1)[1].split('private fun refreshOutputDevices', 1)[0]
-        self.assertIn('val input = lastInputSnapshot', state)
+        self.assertIn('lastInputSnapshot = SensorInputSnapshot.capture(speedKmh, vehicleAccel, gpsOk, rawAccel, gravity, diagnostics, frameId)', activity)
+        state = activity.split('private fun buildStateJson(', 1)[1].split('private fun refreshOutputDevices', 1)[0]
+        self.assertIn('input: SensorInputSnapshot = lastInputSnapshot', state)
         self.assertIn('input.speedKmh', state)
         self.assertIn('input.diagnostics.toJson()', state)
         self.assertNotIn('lastSpeedKmh', state)

@@ -15,6 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vico.simulator.csv.CsvExporter
 import com.vico.simulator.audio.AudioOutputCategory
 import com.vico.simulator.audio.AudioOutputDevice
+import com.vico.simulator.logging.*
+import com.vico.simulator.sensor.RawInputObserver
+import com.vico.simulator.sensor.SpeedAccuracy
+import com.vico.simulator.sensor.VehicleMountAxis
+import com.vico.simulator.sensor.VehicleMountingSession
+import com.vico.simulator.sensor.ImuQuality
+import com.vico.simulator.sensor.hasPortraitNaturalOrientation
 import com.vico.simulator.sensor.InputQualityPolicy
 import com.vico.simulator.sensor.InputContinuityTracker
 import com.vico.simulator.sensor.InputDiagnostics
@@ -96,13 +103,38 @@ class MainActivity : AppCompatActivity() {
     @Volatile var calibrationPageEpoch = 0L
         private set
     private var calibrationPageActive = false
+    @Volatile private var dashboardPageActive = false
     private var calibrationResumed = false
     @Volatile private var lastInputSnapshot = SensorInputSnapshot()
     private val inputQualityPolicy = InputQualityPolicy()
     private val inputContinuity = InputContinuityTracker()
-    // Safety candidate: static calibration does not establish a vehicle coordinate frame.
-    // A fixed-mount confirmation contract must explicitly enable this in the next step.
-    private val mountingFrameConfirmed = false
+    private var controlFrameSequence = 0L
+    private val uiFrames = UiFrameLedger()
+    private lateinit var testLogOwner: SessionRecordingCoordinator
+    private lateinit var testLog: SessionLogAdapter
+    private val testLogRoot by lazy { File(filesDir, "test-sessions") }
+    private val logIo = java.util.concurrent.Executors.newSingleThreadExecutor { task -> Thread(task, "vico-log-files").apply { isDaemon = true } }
+    @Volatile private var cachedApkIdentity: String? = null
+    @Volatile private var displayUnitCode = 0
+    private var testLogGeneration = 0L
+    private var testLogPlaybackId = 0L
+    private var testLogFirstFrameId = 0L
+    @Volatile private var stoppingTestLog = false
+    private var testLogWaitsForAudio = false
+    private var testLogFailure = false
+    private var testLogStopCause = 5
+    private var audioDiagnosticDropped = 0L
+    private var testLogExporting = false
+    private var pendingTestLogExport: File? = null
+    private var recoveredTestLog: File? = null
+    private var lastLogPhase: SessionRecordingCoordinator.Phase? = null
+    @Volatile private var lastQueuedLogStatus: SessionRecordingCoordinator.Snapshot? = null
+    private val TEST_LOG_EXPORT_REQUEST = 6104
+    @Volatile private var mounting = VehicleMountingSession()
+    private val mountingFrameConfirmed: Boolean get() = mounting.trusted
+    @Volatile private var naturalMountDiagramSupported = false
+    @Volatile private var mountingRequestRevision = 0L
+    @Volatile private var mountingRequestResult = "IDLE"
     private var startMs: Long = 0L
     private val prefs by lazy { getSharedPreferences("vico_state", MODE_PRIVATE) }
     private val audioDeviceCallback = object : AudioDeviceCallback() {
@@ -169,6 +201,26 @@ class MainActivity : AppCompatActivity() {
         getSystemService(android.media.AudioManager::class.java)
             .registerAudioDeviceCallback(audioDeviceCallback, handler)
         csvExporter = CsvExporter()
+        testLogOwner = SessionRecordingCoordinator(testLogRoot, onStatus = status@ { update ->
+            val previous = lastQueuedLogStatus
+            if(previous?.generation==update.generation && previous.phase==update.phase)return@status
+            lastQueuedLogStatus=update
+            handler.post {
+            if (!activityDestroyed && this::testLogOwner.isInitialized && testLogOwner.snapshot().generation == update.generation) {
+                finishTestLogWhenReady()
+                if (lastLogPhase != update.phase) { lastLogPhase=update.phase;pushUiState() }
+            }
+        } })
+        testLog = SessionLogAdapter(testLogOwner)
+        logIo.execute { val found=AndroidSessionLogFiles.latest(testLogRoot);runOnUiThread { if(!activityDestroyed){recoveredTestLog=found;pushUiState()} } }
+        audioEngine.onPlaybackFinished = { owner -> handler.post {
+            if (!activityDestroyed && owner == testLogPlaybackId) {
+                testLogWaitsForAudio=false
+                if(audioEngine.lastAudioError!=null){testLogFailure=true;testLogStopCause=7}
+                if (!stoppingTestLog) requestStopTestLog(7,false,audioEngine.lastAudioError!=null)
+                finishTestLogWhenReady()
+            }
+        } }
         sensorProvider = SensorProvider(this) { speed, accel, gpsOk, raw, grav, diagnostics ->
             onSensorSample(speed, accel, gpsOk, raw, grav, diagnostics)
         }
@@ -176,6 +228,7 @@ class MainActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                 calibrationPageEpoch++
                 calibrationPageActive = url == "file:///android_asset/screens/calibration.html"
+                dashboardPageActive = url == "file:///android_asset/screens/dashboard.html"
                 sensorProvider.cancelCalibration()
             }
         }
@@ -217,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                 if(!audioEngine.setVehicle("c63_w204_v6") || !audioEngine.setS15Prototype(true)) {s15SmokeInProgress=false;return@post}
                 sensorProvider.setDemoMode(true);setDemoScenario("launch")
                 audioEngine.armDigitalCapture()
-                audioEngine.pushState(audioEngine.mapSyntheticPoint(DrivePoint(0.0,0.0,.8,2.4,false), DriveInputSource.QUALIFICATION))
+                audioEngine.pushState(audioEngine.mapSyntheticPoint(DrivePoint(0.0,0.0,.8,2.4,false), DriveInputSource.QUALIFICATION, ++controlFrameSequence, android.os.SystemClock.elapsedRealtimeNanos()))
                 audioRunning=audioEngine.start();vehicleState.startEngine();pushUiState()
                 val owner=audioEngine.playbackIdentity()
                 handler.postDelayed({if(owner==audioEngine.playbackIdentity() && audioRunning)setDemoScenario("decel")},12000L)
@@ -269,6 +322,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         calibrationResumed = true
+        @Suppress("DEPRECATION")
+        val displayRotation = windowManager.defaultDisplay.rotation
+        naturalMountDiagramSupported = resources.configuration.orientation != android.content.res.Configuration.ORIENTATION_UNDEFINED &&
+            hasPortraitNaturalOrientation(displayRotation, resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT)
         sensorProvider.start()
         if (audioRunning && !s13ReviewActive && !audioEngine.start()) {
             audioRunning = false
@@ -280,6 +337,8 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         calibrationResumed = false
         calibrationPageEpoch++
+        mounting.invalidate("APP_BACKGROUND")
+        requestStopTestLog(6, true)
         sensorProvider.stop()
         val previousDiagnostics = lastInputSnapshot.diagnostics
         lastInputSnapshot = SensorInputSnapshot(diagnostics = InputDiagnostics(inputSession = previousDiagnostics.inputSession,
@@ -287,6 +346,7 @@ class MainActivity : AppCompatActivity() {
         pushUiState()
         cancelPreviewCallbacks()
         audioEngine.stop("ACTIVITY_PAUSE")
+        if (!s13ReviewActive) { audioRunning=false;vehicleState.stopEngine() }
         if (s14.state == S14TrialCoordinator.State.LOADING) stopAudio("ACTIVITY_PAUSE")
     }
 
@@ -301,6 +361,10 @@ class MainActivity : AppCompatActivity() {
             .unregisterAudioDeviceCallback(audioDeviceCallback)
         super.onDestroy()
         audioEngine.release()
+        sensorProvider.rawInputObserver = null
+        if(this::testLogOwner.isInitialized)testLogOwner.close()
+        handler.removeCallbacks(audioLogCollector)
+        logIo.shutdown()
     }
 
     override fun onRequestPermissionsResult(
@@ -319,8 +383,11 @@ class MainActivity : AppCompatActivity() {
         inputDiagnostics: InputDiagnostics,
     ) {
         val consumedNanos = android.os.SystemClock.elapsedRealtimeNanos()
+        val frameId = ++controlFrameSequence
+        val vehicleAccel = if (inputDiagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO) forwardAccel
+            else mounting.project(rawAccel, inputDiagnostics.inputSession, sensorProvider.calibrationStatus) ?: 0.0
         lastSpeedKmh = speedKmh
-        lastAccelMps2 = forwardAccel
+        lastAccelMps2 = vehicleAccel
         val now = android.os.SystemClock.elapsedRealtime()
         val diagnostics = inputDiagnostics.copy(consumeElapsedNanos = consumedNanos,
             driveInputMode = when {
@@ -328,34 +395,37 @@ class MainActivity : AppCompatActivity() {
                 now < previewUntilMs -> InputDiagnostics.DriveInputMode.PREVIEW
                 else -> InputDiagnostics.DriveInputMode.LIVE
             })
-        lastInputSnapshot = SensorInputSnapshot.capture(speedKmh, forwardAccel, gpsOk, rawAccel, gravity, diagnostics)
+        lastInputSnapshot = SensorInputSnapshot.capture(speedKmh, vehicleAccel, gpsOk, rawAccel, gravity, diagnostics, frameId)
         if (s13ReviewActive) {
             pushUiState()
             return
         }
         val timeS = (now - startMs) / 1000.0
-        val throttle = (forwardAccel / 3.0).coerceIn(0.0, 1.0)
-        val brake = forwardAccel < -1.2
-        val realPoint = DrivePoint(timeS, speedKmh, throttle, forwardAccel, brake)
+        val throttle = (vehicleAccel / 3.0).coerceIn(0.0, 1.0)
+        val brake = vehicleAccel < -1.2
+        val realPoint = DrivePoint(timeS, speedKmh, throttle, vehicleAccel, brake)
 
         val state = if (now < previewUntilMs) {
             inputContinuity.advance("PREVIEW", true, Long.MAX_VALUE, consumedNanos)
-            audioEngine.mapSyntheticPoint(DrivePoint(timeS, 50.0, 0.4, 0.5, false), DriveInputSource.PREVIEW)
+            audioEngine.mapSyntheticPoint(DrivePoint(timeS, 50.0, 0.4, 0.5, false), DriveInputSource.PREVIEW, frameId, consumedNanos)
         } else {
-            mapCurrentInput(realPoint, diagnostics, consumedNanos)
+            mapCurrentInput(realPoint, diagnostics, consumedNanos, frameId)
         }
         lastGear = state.gear
 
         if (audioRunning) audioEngine.pushState(state)
+        if (testLog.requested && !stoppingTestLog) testLog.recordFrame(lastInputSnapshot, state,
+            inputQualityPolicy.assess(diagnostics, consumedNanos, mountingFrameConfirmed), currentLogConfig(), consumedNanos)
         if (recording) {
-            csvExporter.append(timeS, speedKmh, forwardAccel, state.rpm, state.frequencyHz, "$selectedVehicleName/${character.label}", diagnostics)
+            csvExporter.append(timeS, speedKmh, vehicleAccel, state.rpm, state.frequencyHz, "$selectedVehicleName/${character.label}", diagnostics)
         }
 
         val json = buildString {
             append('{')
+            append("\"controlFrameId\":\"").append(frameId).append("\",")
             append("\"speed\":").append(speedKmh.toInt()).append(',')
             append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", speedKmh)).append("\",")
-            append("\"accel\":\"").append(String.format(Locale.US, "%.2f", forwardAccel)).append("\",")
+            append("\"accel\":\"").append(String.format(Locale.US, "%.2f", vehicleAccel)).append("\",")
             append("\"rpm\":").append(state.rpm.toInt()).append(',')
             append("\"gear\":").append(state.gear).append(',')
             append("\"shiftGain\":").append(String.format(Locale.US, "%.3f", state.shiftGain)).append(',')
@@ -374,6 +444,8 @@ class MainActivity : AppCompatActivity() {
             append(calibrationStateJson()).append(',')
             append("\"inputDiagnostics\":").append(diagnostics.toJson()).append(',')
             append("\"inputQuality\":").append(inputQualityPolicy.assess(diagnostics, consumedNanos, mountingFrameConfirmed).toJson()).append(',')
+            append("\"mounting\":").append(mountingStateJson()).append(',')
+            append("\"testLog\":").append(testLogStateJson()).append(',')
             append("\"demo\":").append(diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
             append("\"recording\":").append(recording).append(',')
             append("\"sampleCount\":").append(csvExporter.sampleCount).append(',')
@@ -388,24 +460,29 @@ class MainActivity : AppCompatActivity() {
             append("\"masterVolume\":").append(masterVol)
             append('}')
         }
-        webView.evaluateJavascript("window.__vicoUpdate&&window.__vicoUpdate($json)", null)
+        val deliveredJson = withUiDispatch(json, lastInputSnapshot)
+        webView.evaluateJavascript("window.__vicoUpdate&&window.__vicoUpdate($deliveredJson)", null)
     }
 
-    private fun mapCurrentInput(point: DrivePoint, diagnostics: InputDiagnostics, nowNanos: Long): SoundState {
+    private fun mapCurrentInput(point: DrivePoint, diagnostics: InputDiagnostics, nowNanos: Long, frameId: Long): SoundState {
         if (diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO) {
             inputContinuity.advance("DEMO/${diagnostics.inputSession}", true, Long.MAX_VALUE, nowNanos)
             val source = if (s15SmokeInProgress) DriveInputSource.QUALIFICATION else DriveInputSource.DEMO
-            return audioEngine.mapSyntheticPoint(point, source)
+            return audioEngine.mapSyntheticPoint(point, source, frameId, nowNanos)
         }
         val quality = inputQualityPolicy.assess(diagnostics, nowNanos, mountingFrameConfirmed)
         val epoch = inputContinuity.advance("REAL/${diagnostics.inputSession}", quality.controlUsable,
             quality.validUntilElapsedNanos, nowNanos)
         return audioEngine.mapMeasuredPoint(point, DriveInputControl(DriveInputSource.REAL, epoch,
-            quality.validUntilElapsedNanos, quality.speedUsable, quality.accelerationUsable))
+            quality.validUntilElapsedNanos, quality.speedUsable, quality.accelerationUsable,
+            imuSampleElapsedNanos = diagnostics.imuTiming?.sourceElapsedNanos,
+            gpsSampleElapsedNanos = diagnostics.gpsTiming?.sourceElapsedNanos,
+            controlTimeElapsedNanos = nowNanos, controlFrameId = frameId))
     }
 
     // ---- bridge handlers (UI thread) ----
     fun startAudio() {
+        if(activityDestroyed || !calibrationResumed)return
         if(s15Preparing){toast("候选尚在准备；完成后再启用声浪");return}
         if(audioRunning)return
         if(audioEngine.s15PrototypeEnabled){s15LastRun=null;s15StopReason="NOT_RECORDED"}
@@ -429,19 +506,24 @@ class MainActivity : AppCompatActivity() {
         val timeS = (android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0
         val input = lastInputSnapshot
         val throttle = (input.accelMps2 / 3.0).coerceIn(0.0, 1.0)
+        val frameId = ++controlFrameSequence
+        lastInputSnapshot = input.copy(controlFrameId = frameId)
         val initialState = mapCurrentInput(
             DrivePoint(timeS, input.speedKmh, throttle, input.accelMps2, input.accelMps2 < -1.2),
-            input.diagnostics, nowNanos,
+            input.diagnostics, nowNanos, frameId,
         )
         lastGear = initialState.gear
         audioEngine.pushState(initialState)
+        startTestLog(frameId)
         if (!audioEngine.start()) {
+            requestStopTestLog(7, false, true)
             audioRunning = false
             pushUiState()
             toast("声浪启动失败，请检查音频输出设备")
             return
         }
         audioRunning = true
+        testLogPlaybackId = audioEngine.playbackIdentity()
         vehicleState.startEngine()
         pushUiState()
         toast("声浪已启动 · $vehicleName / ${character.label}")
@@ -465,6 +547,7 @@ class MainActivity : AppCompatActivity() {
             toast("正在停止并保存基准回放证据")
             return
         }
+        requestStopTestLog(5, true)
         audioEngine.stop(); audioRunning = false
         vehicleState.stopEngine()
         previewVehicleKey = null
@@ -911,6 +994,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
         cancelPreviewCallbacks()
+        val resumeTestLogging = testLog.requested
+        if(resumeTestLogging){
+            collectAudioLogRows();testLog.lifecycle(6,5,android.os.SystemClock.elapsedRealtimeNanos(),currentLogConfig())
+            audioEngine.diagnosticLoggingEnabled=false;requestStopTestLog(5,false)
+        }
         val previewOwner = playbackEpoch.next()
         val originalKey = activeVehicleKey
         val originalCharacter = character
@@ -941,6 +1029,7 @@ class MainActivity : AppCompatActivity() {
                 activeVehicleKey = originalKey
                 audioEngine.setCharacter(originalCharacter)
                 if (!wasRunning) { audioEngine.stop(); audioRunning = false }
+                else if(resumeTestLogging){startTestLog(controlFrameSequence+1);testLogPlaybackId=audioEngine.playbackIdentity()}
                 pushUiState()
             }
         }
@@ -959,6 +1048,7 @@ class MainActivity : AppCompatActivity() {
     fun resetAll() {
         if (s14.busy) { toast("请先结束原始声音对照"); return }
         cancelPreviewCallbacks()
+        requestStopTestLog(5,true)
         audioEngine.stop(); audioRunning = false; recording = false
         vehicleState.stopEngine()
         character = SoundProfile.DEFAULT; audioEngine.setCharacter(character)
@@ -969,6 +1059,7 @@ class MainActivity : AppCompatActivity() {
         vehicleName = selectedVehicleName
         language = "zh"
         prefs.edit().clear().apply()
+        mounting = VehicleMountingSession()
         csvExporter.clear()
         sensorProvider.resetCalibration()
         pushUiState()
@@ -1003,6 +1094,7 @@ class MainActivity : AppCompatActivity() {
         !activityDestroyed && calibrationResumed && calibrationPageActive && epoch == calibrationPageEpoch
 
     fun beginCalibration(session: String) {
+        mounting.invalidate("CALIBRATION_CHANGED")
         sensorProvider.beginCalibration(session)
         pushUiState()
     }
@@ -1033,14 +1125,250 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun resetCalibration() {
+        mounting.invalidate("CALIBRATION_CHANGED")
         sensorProvider.resetCalibration()
         pushUiState()
         toast("校准已重置")
     }
 
-    fun getStateJson(): String = buildStateJson()
+    fun acceptsMountingCommand(epoch: Long): Boolean =
+        !activityDestroyed && calibrationResumed && dashboardPageActive && epoch == calibrationPageEpoch
+
+    private fun mountingStateJson(): String {
+        val input = lastInputSnapshot
+        val quality = inputQualityPolicy.assess(input.diagnostics, android.os.SystemClock.elapsedRealtimeNanos(), false)
+        val real = input.diagnostics.sourceMode == InputDiagnostics.SourceMode.REAL
+        val moving = real && quality.speedUsable && input.speedKmh > 3.0
+        val bound = mounting.snapshot
+        return JSONObject().put("selected", bound.selected?.name ?: "").put("trusted", bound.trusted)
+            .put("reason", bound.reason).put("requestRevision", mountingRequestRevision).put("result", mountingRequestResult)
+            .put("naturalPortrait", naturalMountDiagramSupported)
+            .put("canConfirm", real && !moving && !audioRunning && naturalMountDiagramSupported &&
+                sensorProvider.isCalibrated && quality.imu == ImuQuality.UNCONFIRMED_FRAME && input.diagnostics.inputSession > 0)
+            .put("calibrated", sensorProvider.isCalibrated).put("moving", moving)
+            .put("inputSession", bound.inputSession).put("calibrationSession", bound.calibrationSession)
+            .put("calibrationRevision", bound.calibrationRevision).toString()
+    }
+
+    fun confirmMounting(axisKey: String, parkedAcknowledged: Boolean) {
+        val axis = runCatching { VehicleMountAxis.valueOf(axisKey) }.getOrNull()
+        val input = lastInputSnapshot
+        val q = inputQualityPolicy.assess(input.diagnostics, android.os.SystemClock.elapsedRealtimeNanos(), false)
+        val real = input.diagnostics.sourceMode == InputDiagnostics.SourceMode.REAL
+        val accepted = axis != null && real && !audioRunning && naturalMountDiagramSupported && mounting.confirm(
+            axis, parkedAcknowledged, input.diagnostics.inputSession, sensorProvider.calibrationStatus,
+            q.imu == ImuQuality.UNCONFIRMED_FRAME, if (q.speedUsable) input.speedKmh else null)
+        if (accepted) prefs.edit().putString("mount_axis", axis!!.name).apply()
+        mountingRequestRevision++
+        mountingRequestResult = if (accepted) "CONFIRMED" else "REJECTED_CHECK_PARKING_CALIBRATION_IMU"
+        refreshMountedSnapshot()
+        pushUiState()
+    }
+
+    fun invalidateMounting() {
+        mounting.invalidate("PHONE_MOVED")
+        refreshMountedSnapshot()
+        pushUiState()
+    }
+
+    private fun refreshMountedSnapshot() {
+        val input = lastInputSnapshot
+        if (input.diagnostics.sourceMode != InputDiagnostics.SourceMode.REAL) return
+        val projected = mounting.project(floatArrayOf(input.ax, input.ay, input.az),
+            input.diagnostics.inputSession, sensorProvider.calibrationStatus) ?: 0.0
+        val frameId = ++controlFrameSequence
+        lastInputSnapshot = input.copy(accelMps2 = projected, controlFrameId = frameId)
+        if (audioRunning) {
+            val now = android.os.SystemClock.elapsedRealtimeNanos()
+            val point = DrivePoint((android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0,
+                input.speedKmh, (projected / 3.0).coerceIn(0.0, 1.0), projected, projected < -1.2)
+            val state = mapCurrentInput(point, input.diagnostics, now, frameId)
+            audioEngine.pushState(state)
+            if(testLog.requested && !stoppingTestLog)testLog.recordFrame(lastInputSnapshot,state,
+                inputQualityPolicy.assess(input.diagnostics,now,mountingFrameConfirmed),currentLogConfig(),now)
+        }
+    }
+
+    private fun currentLogConfig(): SessionLogAdapter.Config {
+        val bias = sensorProvider.calibrationBias()
+        val axis = when (mounting.selected) {
+            VehicleMountAxis.RIGHT -> 1; VehicleMountAxis.TOP -> 2; VehicleMountAxis.SCREEN -> 3
+            VehicleMountAxis.LEFT -> 4; VehicleMountAxis.BOTTOM -> 5; VehicleMountAxis.BACK -> 6; null -> 0
+        }
+        return SessionLogAdapter.Config(displayUnitCode, axis, mounting.trusted, sensorProvider.calibrationStatus.revision,
+            bias[0].toDouble(), bias[1].toDouble(), bias[2].toDouble(), inputQualityPolicy.gpsFreshMs,
+            inputQualityPolicy.imuFreshMs, inputQualityPolicy.speedUncertaintyLimitMps)
+    }
+
+    private fun startTestLog(firstFrameId: Long) {
+        if (activityDestroyed) return
+        handler.removeCallbacks(audioLogCollector)
+        audioEngine.drainDiagnosticAudio()
+        stoppingTestLog = false
+        testLogWaitsForAudio = true
+        testLogFailure = false
+        testLogPlaybackId = 0L
+        testLogFirstFrameId = firstFrameId
+        testLogStopCause = 5
+        val anchor = android.os.SystemClock.elapsedRealtimeNanos()
+        val wall = System.currentTimeMillis()
+        val config = currentLogConfig()
+        val profile = activeVehicleKey
+        val baseApk = applicationInfo.sourceDir
+        val splits = applicationInfo.splitSourceDirs?.copyOf()
+        val device = android.os.Build.MODEL.replace(Regex("[^A-Za-z0-9_.:-]"), "_").take(96).ifBlank { "UNKNOWN" }
+        testLog.start(profile, config) {
+            val build = cachedApkIdentity ?: AndroidSessionLogFiles.apkIdentity(baseApk, splits).also { cachedApkIdentity = it }
+            SessionRecorder.Metadata(anchor, wall, build, profile, config.hash(), android.os.Build.VERSION.SDK_INT, device)
+        }
+        testLogGeneration = testLogOwner.snapshot().generation
+        sensorProvider.rawInputObserver = rawLogObserver
+        audioEngine.diagnosticLoggingEnabled = true
+        handler.post(audioLogCollector)
+    }
+
+    private fun requestStopTestLog(cause: Int, waitForAudio: Boolean, failure: Boolean = false) {
+        if (!this::testLog.isInitialized || !testLog.requested) return
+        stoppingTestLog = true
+        testLogStopCause = cause
+        testLogFailure = failure
+        testLogWaitsForAudio = waitForAudio
+        sensorProvider.rawInputObserver = null
+        if (!waitForAudio) finishTestLogWhenReady()
+    }
+
+    private fun finishTestLogWhenReady() {
+        if (!stoppingTestLog || testLogWaitsForAudio || !testLog.requested) return
+        val phase = testLogOwner.snapshot().phase
+        if (phase == SessionRecordingCoordinator.Phase.STARTING) return
+        collectAudioLogRows()
+        val now = android.os.SystemClock.elapsedRealtimeNanos()
+        if (testLogFailure) testLog.lifecycle(10, 7, now, currentLogConfig())
+        testLog.lifecycle(2, testLogStopCause, now, currentLogConfig())
+        testLog.stop()
+        stoppingTestLog = false
+        audioEngine.diagnosticLoggingEnabled = false
+        handler.removeCallbacks(audioLogCollector)
+        pushUiState()
+    }
+
+    private val rawLogObserver = object : RawInputObserver {
+        override fun gps(sourceNanos: Long, receivedNanos: Long, speedMps: Double?, accuracy: SpeedAccuracy, accepted: Boolean, hasSpeed: Boolean) {
+            if (testLog.requested && !stoppingTestLog) testLog.recordGps(sourceNanos, receivedNanos, speedMps, accuracy, accepted, hasSpeed, currentLogConfig())
+        }
+        override fun imu(sourceNanos: Long, receivedNanos: Long, values: FloatArray, bias: FloatArray, accepted: Boolean) {
+            if (!testLog.requested || stoppingTestLog) return
+            val selected = mounting.snapshot
+            val axis = selected.selected
+            val projected = if (selected.trusted && axis != null && values.size >= 3)
+                ((values[axis.component] - bias[axis.component]) * axis.sign).takeIf { it.isFinite() } else null
+            testLog.recordImu(sourceNanos, receivedNanos, values, bias, projected, accepted, currentLogConfig())
+        }
+    }
+
+    private val audioLogCollector = object : Runnable {
+        override fun run() {
+            if (activityDestroyed || !testLog.requested) return
+            collectAudioLogRows()
+            handler.postDelayed(this, 100L)
+        }
+    }
+    private fun collectAudioLogRows() {
+        if (!this::testLog.isInitialized || !testLog.requested) return
+        val batch = audioEngine.drainDiagnosticAudio()
+        audioDiagnosticDropped += batch.dropped
+        for (row in batch.records) {
+            if (row.frameId >= testLogFirstFrameId) testLog.recordAudio(row, currentLogConfig())
+            else testLogOwner.observeConfigGap(1)
+        }
+    }
+
+    fun reportDisplayUnit(unit: String, pageEpoch: Long) {
+        if(activityDestroyed || pageEpoch != calibrationPageEpoch)return
+        displayUnitCode = when (unit) { "kmh", "km/h" -> 1; "mph" -> 2; else -> 0 }
+    }
+    fun reportDisplayFrame(dispatchId: String, frameId: String, shown: String, unit: String, receivedNs: Long) {
+        if(activityDestroyed)return
+        val delivery = dispatchId.toLongOrNull() ?: return
+        val frame = frameId.toLongOrNull() ?: return
+        val known = uiFrames.acknowledge(delivery, frame, calibrationPageEpoch, receivedNs,
+            if(testLog.requested) testLogFirstFrameId else Long.MAX_VALUE) ?: return
+        val code = when (unit) { "km/h" -> 1; "mph" -> 2; else -> 0 }
+        val value = shown.toDoubleOrNull()?.takeIf { it.isFinite() && it >= 0.0 }
+        testLog.recordUi(known, receivedNs, code, value)
+    }
+    private fun withUiDispatch(json: String, input: SensorInputSnapshot): String {
+        val delivery = uiFrames.register(input.controlFrameId, calibrationPageEpoch,
+            input.diagnostics.publishElapsedNanos, input.diagnostics.consumeElapsedNanos, android.os.SystemClock.elapsedRealtimeNanos())
+        return json.dropLast(1) + ",\"uiDispatchId\":\"${delivery.id}\"}"
+    }
+
+    private fun testLogStateJson(): String {
+        if (!this::testLogOwner.isInitialized) return "{\"phase\":\"IDLE\"}"
+        val state = testLogOwner.snapshot()
+        val stats = state.activeStatus ?: state.lastCompleted?.status
+        val phase = when {
+            stoppingTestLog -> "SAVING"
+            state.phase == SessionRecordingCoordinator.Phase.COMPLETE && state.lastCompleted?.generation == testLogGeneration && stats?.state == SessionRecorder.State.IO_FAILED -> "FAILED"
+            state.phase == SessionRecordingCoordinator.Phase.COMPLETE && state.lastCompleted?.generation == testLogGeneration && stats?.state == SessionRecorder.State.CAPACITY -> "CAPACITY"
+            else -> state.phase.name
+        }
+        return JSONObject().put("phase", phase).put("bytes", stats?.bytes ?: 0)
+            .put("written", stats?.written ?: 0).put("queueDropped", stats?.queueDropped ?: 0)
+            .put("rejected", stats?.rejected ?: 0).put("unwritten", stats?.unwritten ?: 0)
+            .put("coordinatorDropped", state.coordinatorContentionDrops)
+            .put("startupGap", state.startupGapRows).put("configGap", state.configGapRows)
+            .put("audioRingDropped", audioDiagnosticDropped).put("uiAckDiscarded", uiFrames.discarded)
+            .put("failure", state.failure ?: "").put("exporting", testLogExporting)
+            .put("exportAvailable", !testLog.requested && phase != "SAVING" &&
+                (state.lastCompleted != null || recoveredTestLog != null))
+            .put("latestIsCurrent", state.lastCompleted?.generation == testLogGeneration).toString()
+    }
+
+    fun exportTestLog() {
+        if(activityDestroyed || !calibrationResumed)return
+        if (testLogExporting || testLog.requested || stoppingTestLog) { toast("请先停止声浪并等待日志保存"); return }
+        val completed = testLogOwner.snapshot().lastCompleted?.directory
+        val recovered = recoveredTestLog
+        testLogExporting = true; pushUiState()
+        logIo.execute {
+            val source = completed?.let(AndroidSessionLogFiles::recordFile) ?: recovered
+            if (source == null) { runOnUiThread { testLogExporting=false;pushUiState();toast("本次未产生可导出的日志") }; return@execute }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                val success = runCatching { AndroidSessionLogFiles.exportDownloads(this, testLogRoot, source) }.getOrDefault(false)
+                runOnUiThread { if(!activityDestroyed){testLogExporting=false;pushUiState();toast(if(success)"测试日志已导出到 Downloads/VicoTests" else "导出失败，应用内日志仍保留")} }
+            } else runOnUiThread {
+                if(activityDestroyed)return@runOnUiThread
+                pendingTestLogExport = source
+                val intent = android.content.Intent(android.content.Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(android.content.Intent.CATEGORY_OPENABLE);type="text/tab-separated-values"
+                    putExtra(android.content.Intent.EXTRA_TITLE,AndroidSessionLogFiles.exportName(source))
+                }
+                @Suppress("DEPRECATION")
+                try { startActivityForResult(intent, TEST_LOG_EXPORT_REQUEST) }
+                catch (_:android.content.ActivityNotFoundException) { pendingTestLogExport=null;testLogExporting=false;pushUiState();toast("此设备没有文件保存界面，应用内日志仍保留") }
+            }
+        }
+    }
+
+    @Deprecated("Legacy picker used only for Android 7–9 compatibility")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        super.onActivityResult(requestCode,resultCode,data)
+        if(requestCode!=TEST_LOG_EXPORT_REQUEST)return
+        val source=pendingTestLogExport;pendingTestLogExport=null
+        val destination=data?.data
+        if(resultCode!=RESULT_OK||source==null||destination==null){testLogExporting=false;pushUiState();return}
+        logIo.execute {
+            val success=runCatching { contentResolver.openOutputStream(destination)?.use { AndroidSessionLogFiles.copyOwned(testLogRoot,source,it) } ?: error("No export stream") }.isSuccess
+            runOnUiThread { if(!activityDestroyed){testLogExporting=false;pushUiState();toast(if(success)"测试日志已导出" else "导出失败，应用内日志仍保留")} }
+        }
+    }
+
+    fun getStateJson(): String { val input=lastInputSnapshot;return withUiDispatch(buildStateJson(input),input) }
 
     private fun restoreState() {
+        val savedAxis = prefs.getString("mount_axis", null)?.let { runCatching { VehicleMountAxis.valueOf(it) }.getOrNull() }
+        mounting = VehicleMountingSession(savedAxis)
         language = prefs.getString("language", "zh") ?: "zh"
         masterVol = prefs.getFloat("master_volume", 1.0f)
         audioEngine.setMasterVol(masterVol)
@@ -1065,14 +1393,15 @@ class MainActivity : AppCompatActivity() {
                 .put("pair_matched", pairMatched()).put("revealed", s14Revealed)
                 .put("feedback_available", s14Trials.isNotEmpty())
                 .put("error", s14.error ?: JSONObject.NULL).toString()
-            val json = buildStateJson()
+            val input = lastInputSnapshot
+            val json = withUiDispatch(buildStateJson(input), input)
             webView.evaluateJavascript("window.__vicoUpdate&&window.__vicoUpdate($json)", null)
         }
     }
 
-    private fun buildStateJson(): String = buildString {
-        val input = lastInputSnapshot
+    private fun buildStateJson(input: SensorInputSnapshot = lastInputSnapshot): String = buildString {
         append('{')
+        append("\"controlFrameId\":\"").append(input.controlFrameId).append("\",")
         append("\"speed\":").append(input.speedKmh.toInt()).append(',')
         append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", input.speedKmh)).append("\",")
         append("\"accel\":\"").append(String.format(Locale.US, "%.2f", input.accelMps2)).append("\",")
@@ -1092,6 +1421,8 @@ class MainActivity : AppCompatActivity() {
         append("\"inputDiagnostics\":").append(input.diagnostics.toJson()).append(',')
         append("\"inputQuality\":").append(inputQualityPolicy.assess(input.diagnostics,
             android.os.SystemClock.elapsedRealtimeNanos(), mountingFrameConfirmed).toJson()).append(',')
+        append("\"mounting\":").append(mountingStateJson()).append(',')
+        append("\"testLog\":").append(testLogStateJson()).append(',')
         append("\"demo\":").append(input.diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO).append(',')
         append("\"demoScenario\":\"").append(demoScenario).append("\",")
         append("\"recording\":").append(recording).append(',')

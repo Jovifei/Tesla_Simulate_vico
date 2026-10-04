@@ -5,7 +5,11 @@ import org.junit.Test
 
 class MeasuredPowertrainTest {
     private fun spec()=MatlabPowertrainSpec(700.0,7200.0,doubleArrayOf(4.38,2.86,1.92),2.85,.335,2300.0,7000.0,.018,.032,.075,.055,.22,1.08,.35,.68,144.0)
-    private fun control(epoch:Long=1,ok:Boolean=true)=DriveInputControl(DriveInputSource.REAL,epoch,Long.MAX_VALUE,ok,ok)
+    private var sourceSequence = 0L
+    private fun control(epoch:Long=1,ok:Boolean=true,sourceTimeS:Double?=null):DriveInputControl {
+        val source = 1_000_000_000_000L + (sourceTimeS?.let { (it*1e9).toLong() } ?: (++sourceSequence*50_000_000L))
+        return DriveInputControl(DriveInputSource.REAL,epoch,Long.MAX_VALUE,ok,ok,imuSampleElapsedNanos=source,gpsSampleElapsedNanos=source,controlTimeElapsedNanos=source)
+    }
     @Test fun lossAndRecoveryPreserveGearAndDoNotPlayFakeShiftOrAfterfire() {
         val c=MatlabPowertrainController(spec())
         c.updateMeasured(0.0,0.0,1.2,.5,control())
@@ -43,8 +47,10 @@ class MeasuredPowertrainTest {
         assertFalse(c.updateMeasured(.05,80.0,0.0,0.0,control()).afterfireTrigger)
         c.updateMeasured(.10,80.0,2.4,.8,control())
         assertFalse(c.updateMeasured(.15,80.0,0.0,0.0,control()).afterfireTrigger)
-        c.updateMeasured(.50,80.0,2.4,.8,control())
-        assertTrue(c.updateMeasured(.55,80.0,0.0,0.0,control()).afterfireTrigger)
+        // A valid release now needs fresh source samples and both qualification dwells.
+        for(i in 0..5) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
+        assertFalse(c.updateMeasured(.80,80.0,0.0,0.0,control(sourceTimeS=.80)).afterfireTrigger)
+        assertTrue(c.updateMeasured(.90,80.0,0.0,0.0,control(sourceTimeS=.90)).afterfireTrigger)
     }
     @Test fun releaseInsideRecoveryIsNotDelayedUntilWindowEnds() {
         val c=MatlabPowertrainController(spec())
@@ -52,8 +58,10 @@ class MeasuredPowertrainTest {
         c.updateMeasured(.34,80.0,2.4,.8,control())
         assertFalse(c.updateMeasured(.36,80.0,0.0,0.0,control()).afterfireTrigger)
         assertFalse(c.updateMeasured(.40,80.0,0.0,0.0,control()).afterfireTrigger)
-        c.updateMeasured(.50,80.0,2.4,.8,control())
-        assertTrue(c.updateMeasured(.55,80.0,0.0,0.0,control()).afterfireTrigger)
+        // A valid release now needs fresh source samples and both qualification dwells.
+        for(i in 0..5) { val t=.50+i*.05; c.updateMeasured(t,80.0,2.4,.8,control(sourceTimeS=t)) }
+        assertFalse(c.updateMeasured(.80,80.0,0.0,0.0,control(sourceTimeS=.80)).afterfireTrigger)
+        assertTrue(c.updateMeasured(.90,80.0,0.0,0.0,control(sourceTimeS=.90)).afterfireTrigger)
     }
     @Test fun nonFiniteMeasuredPointInvalidatesThePublishedControlContract() {
         val valid=DrivePoint(1.0,70.0,.5,1.5,false)

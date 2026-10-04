@@ -28,6 +28,9 @@ class InputQualityPolicy(
         require(freshGpsNanos > 0 && freshImuNanos > 0)
         require(maximumSpeedUncertaintyMps.isFinite() && maximumSpeedUncertaintyMps >= 0)
     }
+    val gpsFreshMs: Double get() = freshGpsNanos / 1e6
+    val imuFreshMs: Double get() = freshImuNanos / 1e6
+    val speedUncertaintyLimitMps: Double get() = maximumSpeedUncertaintyMps
     fun assess(input: InputDiagnostics, nowElapsedNanos: Long, frameConfirmed: Boolean): InputQualitySnapshot {
         if (input.sourceMode == InputDiagnostics.SourceMode.DEMO) return InputQualitySnapshot(
             GpsQuality.SYNTHETIC, ImuQuality.SYNTHETIC, null, null, Long.MAX_VALUE)

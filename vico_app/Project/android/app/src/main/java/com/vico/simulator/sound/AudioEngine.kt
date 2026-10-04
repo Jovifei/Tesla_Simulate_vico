@@ -6,6 +6,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
+import com.vico.simulator.logging.AudioDiagnosticRing
 import com.vico.simulator.audio.AudioOutputCatalog
 import com.vico.simulator.audio.AudioOutputCategory
 import com.vico.simulator.audio.AudioOutputDevice
@@ -47,6 +48,20 @@ class AudioEngine(context: Context) {
         private set
     @Volatile var onReviewFinished: ((Boolean, String?) -> Unit)? = null
     @Volatile var onAudioFailure: ((Long,String) -> Unit)? = null
+    @Volatile var onPlaybackFinished: ((Long) -> Unit)? = null
+    @Volatile var diagnosticLoggingEnabled = false
+    private val diagnosticRing = AudioDiagnosticRing()
+    @Volatile private var diagnosticRouteCode = 0
+    /** Non-audio collector samples platform routing; the writer reads only the cached integer. */
+    fun drainDiagnosticAudio(): AudioDiagnosticRing.Batch {
+        val type = runCatching { track?.routedDevice?.type }.getOrNull()
+        diagnosticRouteCode = when(type?.let(AudioOutputCatalog::categoryFor)) {
+            AudioOutputCategory.BUILTIN -> 1; AudioOutputCategory.BLUETOOTH -> 3
+            AudioOutputCategory.WIRED -> if(type==11||type==12||type==22||type==23)4 else 2
+            AudioOutputCategory.OTHER -> 5; null -> 0
+        }
+        return diagnosticRing.drain()
+    }
     @Volatile var onS15Finished: ((Long,String) -> Unit)? = null
     @Volatile private var playbackId=0L
     fun playbackIdentity()=playbackId
@@ -66,7 +81,7 @@ class AudioEngine(context: Context) {
     private val runEnvelope = GainEnvelope()
     private val contentEnvelope = GainEnvelope()
 
-    private var track: AudioTrack? = null
+    @Volatile private var track: AudioTrack? = null
     private var thread: Thread? = null
     private var preferredDevice: AudioDeviceInfo? = null
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -292,8 +307,8 @@ class AudioEngine(context: Context) {
     fun mapMeasuredPoint(point: DrivePoint, control: DriveInputControl): SoundState =
         model.mapMeasuredPoint(point, control)
 
-    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource): SoundState =
-        model.mapSyntheticPoint(point, source)
+    fun mapSyntheticPoint(point: DrivePoint, source: DriveInputSource, frameId: Long = 0L, controlTimeNanos: Long? = null): SoundState =
+        model.mapSyntheticPoint(point, source, frameId, controlTimeNanos)
 
     @Synchronized
     fun setS15Prototype(enabled:Boolean):Boolean {
@@ -388,6 +403,13 @@ class AudioEngine(context: Context) {
         var candidateStartConditions:S14OutputConditions?=null
         val reviewCore = reviewCoreCapture
         val inputGate = AudioInputGate()
+        val diagnosticBufferFrames = t?.bufferSizeInFrames ?: 0
+        var diagnosticBlock = 0L
+        var windowBlocks = 0L; var windowWritten = 0L; var windowClips = 0L
+        var windowRender = 0L; var windowWrite = 0L; var windowPeak = 0.0
+        var lastDiagnosticShift = Double.NaN; var lastDiagnosticAfterfire = Double.NaN
+        var previousDiagnosticUsable = false
+        var previousDiagnosticSource: DriveInputSource? = null
         var lastContinuousState: SoundState? = null
         if (t == null) {
             capture?.markFailed()
@@ -441,6 +463,7 @@ class AudioEngine(context: Context) {
                 }
                 // Read publication before the stop flag: stop writes running=false before a
                 // restored REAL publication. Observing that publication must observe the stop.
+                val diagnosticStarted = android.os.SystemClock.elapsedRealtimeNanos()
                 val published = current
                 val writerRunning = running
                 if (!writerRunning && lastContinuousState == null) break
@@ -455,6 +478,7 @@ class AudioEngine(context: Context) {
                 val gate = inputGate.evaluate(control, state?.timeS ?: Double.NaN,
                     android.os.SystemClock.elapsedRealtimeNanos(), writerRunning)
                 if (gate.clearTransients) {
+                    lastDiagnosticShift = Double.NaN; lastDiagnosticAfterfire = Double.NaN
                     model.clearTransientEvents()
                     // An explicitly prepared qualification provider is not a live-input epoch.
                     if (state?.inputControl?.source != DriveInputSource.QUALIFICATION) qualificationRoute.clear()
@@ -463,6 +487,7 @@ class AudioEngine(context: Context) {
                 if (!sourceAvailable) qualificationRoute.clear()
                 val runGain = runEnvelope.step(running)
                 val contentGain = contentEnvelope.step(running && sourceAvailable && !muted && state?.muted != true)
+                val diagnosticConsumedNs = android.os.SystemClock.elapsedRealtimeNanos()
                 val pcm: FloatArray = if (sourceAvailable) {
                     val eventState = if (gate.allowEvents) state!! else state!!.copy(
                         afterfireTrigger = false, shiftTrigger = false)
@@ -489,10 +514,41 @@ class AudioEngine(context: Context) {
                     if(s15RouteId==null)s15RouteId=route
                     else check(route==s15RouteId){"C63 candidate output route changed"}
                 }
-                writeAllPcm(pcm, capture) { data, offset, count ->
-                    val start=System.nanoTime()
-                    try {t.write(data, offset, count, AudioTrack.WRITE_BLOCKING).also {written->if(model.prototypeEnabled && written>0)s15AcceptedFrames+=written}}
-                    finally {if(model.prototypeEnabled)s15WriteTiming.record(System.nanoTime()-start)}
+                val diagnosticRenderNs = android.os.SystemClock.elapsedRealtimeNanos() - diagnosticStarted
+                var eventMask = 0
+                if (sourceAvailable && gate.allowEvents && state != null) {
+                    if (state.shiftTrigger && state.timeS != lastDiagnosticShift) {eventMask = eventMask or 1;lastDiagnosticShift = state.timeS}
+                    if (state.afterfireTrigger && state.timeS != lastDiagnosticAfterfire) {eventMask = eventMask or 2;lastDiagnosticAfterfire = state.timeS}
+                }
+                if (previousDiagnosticUsable && previousDiagnosticSource == DriveInputSource.REAL && !gate.usable && control?.source == DriveInputSource.REAL)
+                    eventMask = eventMask or (if (android.os.SystemClock.elapsedRealtimeNanos() > control.validUntilElapsedNanos) 4 else 8)
+                previousDiagnosticUsable = gate.usable
+                previousDiagnosticSource = control?.source
+                var submittedFrames = 0L
+                val diagnosticWriteStart = android.os.SystemClock.elapsedRealtimeNanos()
+                try {
+                    writeAllPcm(pcm, capture) { data, offset, count ->
+                        val start=System.nanoTime()
+                        try {t.write(data, offset, count, AudioTrack.WRITE_BLOCKING).also {written ->
+                            if(written>0){submittedFrames+=written;if(model.prototypeEnabled)s15AcceptedFrames+=written}
+                        }} finally {if(model.prototypeEnabled)s15WriteTiming.record(System.nanoTime()-start)}
+                    }
+                } finally {
+                    diagnosticBlock++
+                    if(diagnosticLoggingEnabled) {
+                        windowBlocks++;windowWritten+=submittedFrames
+                        windowRender=maxOf(windowRender,diagnosticRenderNs)
+                        windowWrite=maxOf(windowWrite,android.os.SystemClock.elapsedRealtimeNanos()-diagnosticWriteStart)
+                        for(value in pcm){val magnitude=kotlin.math.abs(value.toDouble());if(magnitude.isFinite())windowPeak=maxOf(windowPeak,magnitude);if(magnitude>1.0)windowClips++}
+                        if(windowBlocks>=5 || eventMask!=0 || !running) {
+                            val route = diagnosticRouteCode
+                            diagnosticRing.publish(diagnosticBlock,control?.controlFrameId ?: 0L,control?.epoch ?: 0L,
+                                diagnosticConsumedNs,sampleRate,diagnosticBufferFrames,t.underrunCount,
+                                windowRender,windowWrite,windowWritten,windowClips,windowPeak,route,eventMask,
+                                state?.afterfireCauseCode ?: 0,state?.afterfireSourceId ?: control?.gpsSampleElapsedNanos ?: 0L,windowBlocks)
+                            windowBlocks=0;windowWritten=0;windowClips=0;windowRender=0;windowWrite=0;windowPeak=0.0
+                        }
+                    } else {windowBlocks=0;windowWritten=0;windowClips=0;windowRender=0;windowWrite=0;windowPeak=0.0}
                 }
                 if (!running && runEnvelope.value <= 0f) break
             }
@@ -547,6 +603,7 @@ class AudioEngine(context: Context) {
                     lastAudioError ?: referenceCancelReason)
                 onS14Finished?.invoke(S14CompletedCapture(result, reviewCore, capture))
             }
+            if (review == null && reference == null) onPlaybackFinished?.invoke(owner)
         }
     }
 

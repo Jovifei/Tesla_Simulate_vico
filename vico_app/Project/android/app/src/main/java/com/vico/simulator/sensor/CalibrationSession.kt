@@ -56,5 +56,7 @@ class CalibrationSession {
         snapshot = Snapshot(revision = snapshot.revision + 1)
     }
 
+    fun offsets(): FloatArray = accumulator.offsets()
+
     fun correct(sample: FloatArray): FloatArray = accumulator.correct(sample)
 }
