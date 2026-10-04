@@ -12,6 +12,45 @@ class SessionLogAdapterTest {
         while(owner.snapshot().phase!=phase&&System.nanoTime()<end)Thread.sleep(1)
         assertEquals(phase,owner.snapshot().phase)
     }
+    private fun lifecycleAccepted(owner: SessionRecordingCoordinator, adapter: SessionLogAdapter, code: Int, ns: Long) {
+        val before = owner.snapshot().activeStatus!!.accepted
+        val end = System.nanoTime() + 2_000_000_000L
+        while (owner.snapshot().activeStatus!!.accepted == before) {
+            adapter.lifecycle(code, if(code==10)7 else 5, ns, config())
+            if (System.nanoTime() > end) fail("Lifecycle test setup could not enqueue")
+            Thread.sleep(1)
+        }
+    }
+    @Test fun readySessionHasConfigThenOneStartThenRealStopAndFailureDoesNotInventStart() {
+        val root=Files.createTempDirectory("vico-start-chain-").toFile()
+        val owner=SessionRecordingCoordinator(root); val adapter=SessionLogAdapter(owner)
+        try {
+            adapter.start("c63",config()){SessionRecorder.Metadata(100,1,"test","c63",config().hash())}
+            await(owner,SessionRecordingCoordinator.Phase.RECORDING)
+            val id=owner.snapshot().generation
+            val end=System.nanoTime()+2_000_000_000L
+            while(!owner.requestSessionStart(id,200)){if(System.nanoTime()>end)fail("start enqueue");Thread.sleep(1)}
+            while(owner.snapshot().activeStatus!!.written<2){if(System.nanoTime()>end)fail("start retry");Thread.sleep(1)}
+            repeat(5){owner.requestSessionStart(id,201)}
+            lifecycleAccepted(owner,adapter,2,300);adapter.stop();await(owner,SessionRecordingCoordinator.Phase.COMPLETE)
+            val rows=java.io.File(owner.snapshot().lastCompleted!!.directory,"records.tsv").readLines().filter{!it.startsWith("#")}.map{it.split('\t')}
+            assertEquals(listOf("CONFIG","EVENT","EVENT"),rows.map{it[0]})
+            assertEquals(listOf("1","2"),rows.filter{it[0]=="EVENT"}.map{it[4]})
+            assertEquals(listOf("0","1"),rows.filter{it[0]=="EVENT"}.map{it[6]})
+
+            val entered=java.util.concurrent.CountDownLatch(1);val release=java.util.concurrent.CountDownLatch(1)
+            adapter.start("failed",config()){entered.countDown();release.await(5,java.util.concurrent.TimeUnit.SECONDS);SessionRecorder.Metadata(400,1,"test","failed",config().hash())}
+            assertTrue(entered.await(2,java.util.concurrent.TimeUnit.SECONDS))
+            val failedId=owner.snapshot().generation;owner.observeUnreadyRows(3);owner.cancelSessionStart(failedId)
+            release.countDown();await(owner,SessionRecordingCoordinator.Phase.RECORDING)
+            assertFalse(owner.requestSessionStart(failedId,500))
+            lifecycleAccepted(owner,adapter,10,600);lifecycleAccepted(owner,adapter,2,700)
+            adapter.stop();await(owner,SessionRecordingCoordinator.Phase.COMPLETE)
+            val failed=owner.snapshot().lastCompleted!!
+            val events=java.io.File(failed.directory,"records.tsv").readLines().filter{it.startsWith("EVENT\t")}.map{it.split('\t')[4]}
+            assertEquals(listOf("10","2"),events);assertEquals(3L,failed.status.preReadyDropped)
+        } finally {owner.close();root.deleteRecursively()}
+    }
     @Test fun realRecorderAcceptsAllAdapterShapesAndExactFrameSources(){
         val root=Files.createTempDirectory("vico-adapter-").toFile();val owner=SessionRecordingCoordinator(root)
         val adapter=SessionLogAdapter(owner);val config=config();val base=9_007_199_254_740_993L

@@ -24,7 +24,8 @@ class SessionRecordingCoordinator(
                         val configGapRows: Long = 0)
     private data class Request(val generation: Long, val profile: String, val hash: String,
                                val config: Array<out Number?>, val factory: () -> SessionRecorder.Metadata)
-    private data class Owned(val generation: Long, val recorder: SessionRecorder)
+    private data class Owned(val generation: Long, val recorder: SessionRecorder, val initialConfigRevision: Long? = null,
+                             var startRequestedNs: Long? = null, var startRecorded: Boolean = false)
     private val lock = ReentrantLock()
     private val executor = ScheduledThreadPoolExecutor(1) { task -> Thread(task, "vico-session-control").apply { isDaemon = true } }
     private var generation = 0L
@@ -40,6 +41,7 @@ class SessionRecordingCoordinator(
     private val configGapRows = AtomicLong()
     private var lastCompleted: Completed? = null
     private var failure: String? = null
+    private var cancelledStartGeneration = -1L
 
     /** Copies numeric config now; Metadata factory must capture only immutable request context.
      * build hash/clock/platform lookup happens in factory. Returned profile/hash are overridden by frozen args.
@@ -76,10 +78,51 @@ class SessionRecordingCoordinator(
         if (!lock.tryLock()) { contentionDrops.incrementAndGet(); return false }
         val recorder: SessionRecorder?
         try {
-            recorder = active?.recorder
+            val owned = active
+            if (owned?.startRequestedNs != null && !owned.startRecorded) {
+                offerSessionStartLocked(owned)
+                if (!owned.startRecorded) { idleRows++; return false }
+            }
+            recorder = owned?.recorder
             if (recorder == null) { if (phase == Phase.STARTING) gap++ else idleRows++ }
         } finally { lock.unlock() }
         return recorder?.offer(kind, elapsedNs, frameId, inputEpoch, values) ?: false
+    }
+    /** SESSION_START means a successful sound-test request observed with recording READY, not audible output.
+     * Idempotent for this exact generation; a background pump retries transient recorder contention/fullness.
+     * False means not queued: the main collector may retry while the same request is still valid.
+     */
+    fun requestSessionStart(expectedGeneration: Long, elapsedNs: Long): Boolean {
+        if (elapsedNs < 0 || !lock.tryLock()) return false
+        try {
+            val owned = active ?: return false
+            if (closed || phase != Phase.RECORDING || generation != expectedGeneration ||
+                owned.generation != expectedGeneration || cancelledStartGeneration == expectedGeneration) return false
+            if (!owned.startRecorded && owned.startRequestedNs == null) owned.startRequestedNs = elapsedNs
+            return true
+        } finally { lock.unlock() }
+    }
+    /** No IO or waiting for worker completion; same short state lock as stop/snapshot. */
+    fun cancelSessionStart(expectedGeneration: Long) {
+        lock.withLock {
+            if (generation != expectedGeneration) return
+            val owned = active
+            // Once READY was confirmed, that historical start remains true even if stop arrives
+            // before disk enqueue. Only cancel an unconfirmed/future late READY callback.
+            if (owned?.startRequestedNs == null && owned?.startRecorded != true)
+                cancelledStartGeneration = expectedGeneration
+        }
+    }
+    private fun offerSessionStartLocked(owned: Owned) {
+        val ns = owned.startRequestedNs ?: return
+        if (owned.startRecorded || cancelledStartGeneration == owned.generation) return
+        // Event id zero is reserved for this one coordinator-owned lifecycle marker;
+        // ordinary adapter events start at one. Initial CONFIG revision identifies session startup.
+        if (owned.recorder.offer(SessionRecorder.Kind.EVENT, ns, 0, 0,
+                arrayOf<Number?>(1, 0, 0L, null, 0L, null, null, null, null, ns, null, owned.initialConfigRevision))) {
+            owned.startRecorded = true
+            owned.startRequestedNs = null
+        }
     }
     /** Count rows skipped after an unready observation without ever enqueuing a placeholder.
      * If READY won the race, count as no-session/skipped rows, not as a real event.
@@ -106,7 +149,10 @@ class SessionRecordingCoordinator(
     }
     private fun notifyStatus() { try { onStatus(snapshot()) } catch (_: Exception) { /* UI observer cannot break recording. */ } }
     private fun retireActiveLocked() {
-        active?.let { it.recorder.stop(); retiring.add(it) }; active = null
+        active?.let {
+            if (it.startRequestedNs == null || it.startRecorded) it.recorder.stop()
+            retiring.add(it)
+        }; active = null
     }
     private fun scheduleLocked() {
         if (!scheduled && !executor.isShutdown) { scheduled = true; executor.execute { pump() } }
@@ -132,7 +178,7 @@ class SessionRecordingCoordinator(
             lock.withLock {
                 if (request.generation == generation && !closed && configured && initialized.status().state == SessionRecorder.State.RECORDING) {
                     initialized.notePreReadyDropped(gap)
-                    active = Owned(request.generation, initialized); phase = Phase.RECORDING
+                    active = Owned(request.generation, initialized, request.config[0]?.toLong()); phase = Phase.RECORDING
                     recorder = null
                 } else if (request.generation == generation && !closed) {
                     phase = Phase.FAILED; failure = "INITIAL_CONFIG_REJECTED"
@@ -152,12 +198,17 @@ class SessionRecordingCoordinator(
                 when (owned.recorder.status().state) {
                     SessionRecorder.State.CAPACITY -> { phase = Phase.CAPACITY; retireActiveLocked() }
                     SessionRecorder.State.IO_FAILED -> { phase = Phase.FAILED; failure = "SESSION_IO_FAILED"; retireActiveLocked() }
+                    SessionRecorder.State.RECORDING -> offerSessionStartLocked(owned)
                     else -> Unit
                 }
             }
             val iterator = retiring.iterator()
             while (iterator.hasNext()) {
                 val owned = iterator.next()
+                if (owned.startRequestedNs != null && !owned.startRecorded) {
+                    if (owned.recorder.status().state == SessionRecorder.State.RECORDING) offerSessionStartLocked(owned)
+                    if (owned.startRecorded || owned.recorder.status().state != SessionRecorder.State.RECORDING) owned.recorder.stop()
+                }
                 if (owned.recorder.awaitClosed(0)) {
                     val result = Completed(owned.recorder.directory, owned.generation, owned.recorder.status())
                     if ((lastCompleted?.generation ?: -1) <= owned.generation) lastCompleted = result

@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity() {
             lastQueuedLogStatus=update
             handler.post {
             if (!activityDestroyed && this::testLogOwner.isInitialized && testLogOwner.snapshot().generation == update.generation) {
+                requestTestLogStartWhenReady()
                 finishTestLogWhenReady()
                 if (lastLogPhase != update.phase) { lastLogPhase=update.phase;pushUiState() }
             }
@@ -524,6 +525,7 @@ class MainActivity : AppCompatActivity() {
         }
         audioRunning = true
         testLogPlaybackId = audioEngine.playbackIdentity()
+        requestTestLogStartWhenReady()
         vehicleState.startEngine()
         pushUiState()
         toast("声浪已启动 · $vehicleName / ${character.label}")
@@ -1227,8 +1229,15 @@ class MainActivity : AppCompatActivity() {
         handler.post(audioLogCollector)
     }
 
+    private fun requestTestLogStartWhenReady() {
+        if (activityDestroyed || !this::testLog.isInitialized || !testLog.requested ||
+            stoppingTestLog || !audioRunning) return
+        testLogOwner.requestSessionStart(testLogGeneration, android.os.SystemClock.elapsedRealtimeNanos())
+    }
+
     private fun requestStopTestLog(cause: Int, waitForAudio: Boolean, failure: Boolean = false) {
         if (!this::testLog.isInitialized || !testLog.requested) return
+        testLogOwner.cancelSessionStart(testLogGeneration)
         stoppingTestLog = true
         testLogStopCause = cause
         testLogFailure = failure
@@ -1269,6 +1278,7 @@ class MainActivity : AppCompatActivity() {
     private val audioLogCollector = object : Runnable {
         override fun run() {
             if (activityDestroyed || !testLog.requested) return
+            requestTestLogStartWhenReady()
             collectAudioLogRows()
             handler.postDelayed(this, 100L)
         }

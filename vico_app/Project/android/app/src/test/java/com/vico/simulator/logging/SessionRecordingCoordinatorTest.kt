@@ -77,6 +77,117 @@ class SessionRecordingCoordinatorTest {
         assertFalse(c.offerActive(SessionRecorder.Kind.GPS, 1, 1, 0, gps()))
         c.close()
     }
+    private fun recorderOf(c: SessionRecordingCoordinator): SessionRecorder {
+        val activeField = SessionRecordingCoordinator::class.java.getDeclaredField("active").apply { isAccessible = true }
+        val owned = activeField.get(c) ?: throw AssertionError("Not ready")
+        val recorderField = owned.javaClass.getDeclaredField("recorder").apply { isAccessible = true }
+        return recorderField.get(owned) as SessionRecorder
+    }
+    private fun dataRows(done: SessionRecordingCoordinator.Snapshot): List<List<String>> =
+        File(done.lastCompleted!!.directory, "records.tsv").readLines().filter { !it.startsWith('#') && it.isNotBlank() }.map { it.split('\t') }
+    @Test fun sessionStartRetriesFirstRecorderContentionAndIsExactlyOnceAfterConfig() {
+        val c = SessionRecordingCoordinator(root())
+        val id = c.start("RX7", "hash", config()) { meta() }
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        val recorder = recorderOf(c)
+        val field = SessionRecorder::class.java.getDeclaredField("lock").apply { isAccessible = true }
+        val held = field.get(recorder) as java.util.concurrent.locks.ReentrantLock
+        held.lock()
+        try {
+            val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2)
+            while (!c.requestSessionStart(id, 200)) { if (System.nanoTime() > deadline) fail("request blocked"); Thread.sleep(1) }
+            waitFor(c) { recorder.status().queueDropped > 0 }
+            assertEquals(1L, recorder.status().accepted) // only CONFIG; first real start offer failed
+        } finally { held.unlock() }
+        waitFor(c) { recorder.status().written >= 2 }
+        repeat(50) { c.requestSessionStart(id, 999) }
+        Thread.sleep(60)
+        c.stop(); val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        val rows = dataRows(done)
+        assertEquals(listOf("CONFIG", "EVENT"), rows.map { it[0] })
+        val event = rows.single { it[0] == "EVENT" }
+        assertEquals("1", event[4]); assertEquals("0", event[6]); assertEquals("200", event[1])
+        assertEquals("200", event[13]); assertEquals("1", event[15]); c.close()
+    }
+    @Test fun confirmedReadyStartSurvivesImmediateStopAndPrecedesLaterRows() {
+        val c = SessionRecordingCoordinator(root())
+        val id = c.start("RX7", "hash", config()) { meta() }
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(2)
+        while (!c.requestSessionStart(id, 200)) { if (System.nanoTime() > end) fail("start request"); Thread.sleep(1) }
+        c.cancelSessionStart(id) // user stop must not erase a confirmed READY fact
+        val stop = arrayOf<Number?>(2, 5, 1L, null, 0L, null, null, null, null, 300L, null, 1L)
+        while (!c.offerActive(SessionRecorder.Kind.EVENT, 300, 0, 0, stop)) { if (System.nanoTime() > end) fail("stop enqueue"); Thread.sleep(1) }
+        c.stop()
+        val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        val rows = dataRows(done)
+        assertEquals(listOf("CONFIG", "EVENT", "EVENT"), rows.map { it[0] })
+        assertEquals(listOf("1", "2"), rows.filter { it[0] == "EVENT" }.map { it[4] }); c.close()
+    }
+    @Test fun stopWhileStartQueueContendedDrainsConfirmedMarkerInBackground() {
+        val c = SessionRecordingCoordinator(root())
+        val id = c.start("RX7", "hash", config()) { meta() }
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        val recorder = recorderOf(c)
+        val field = SessionRecorder::class.java.getDeclaredField("lock").apply { isAccessible = true }
+        val held = field.get(recorder) as java.util.concurrent.locks.ReentrantLock
+        held.lock()
+        try {
+            val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(2)
+            while (!c.requestSessionStart(id, 200)) { if (System.nanoTime() > end) fail("start request"); Thread.sleep(1) }
+            waitFor(c) { recorder.status().queueDropped > 0 }
+            c.cancelSessionStart(id); c.stop()
+            assertEquals(SessionRecordingCoordinator.Phase.SAVING, c.snapshot().phase)
+            assertEquals(1L, recorder.status().accepted)
+        } finally { held.unlock() }
+        val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        val rows = dataRows(done)
+        assertEquals(listOf("CONFIG", "EVENT"), rows.map { it[0] })
+        assertEquals("1", rows.last()[4]); assertTrue(done.lastCompleted!!.status.queueDropped > 0); c.close()
+    }
+    @Test fun acceptedStartPrecedesConcurrentConfigurationRevision() {
+        val c = SessionRecordingCoordinator(root())
+        val id = c.start("RX7", "hash", config()) { meta() }
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(2)
+        while (!c.requestSessionStart(id, 200)) { if (System.nanoTime() > end) fail("start request"); Thread.sleep(1) }
+        val updated = config(); updated[0] = 2L
+        while (!c.offerConfig(250, 1, 0, updated)) { if (System.nanoTime() > end) fail("config enqueue"); Thread.sleep(1) }
+        c.stop(); val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        val rows = dataRows(done)
+        assertEquals(listOf("CONFIG", "EVENT", "CONFIG"), rows.map { it[0] })
+        assertEquals("1", rows[1][15]); assertEquals("2", rows[2][4]); c.close()
+    }
+    @Test fun pendingInitializationCancellationNeverInventsSessionStart() {
+        val entered = CountDownLatch(1); val release = CountDownLatch(1)
+        val c = SessionRecordingCoordinator(root())
+        val id = c.start("RX7", "hash", config()) { entered.countDown(); release.await(5, TimeUnit.SECONDS); meta() }
+        assertTrue(entered.await(2, TimeUnit.SECONDS))
+        c.observeUnreadyRows(4)
+        assertFalse(c.requestSessionStart(id, 101))
+        c.cancelSessionStart(id); release.countDown()
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        assertFalse(c.requestSessionStart(id, 201)) // a late READY callback remains cancelled
+        c.stop(); val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        assertEquals(listOf("CONFIG"), dataRows(done).map { it[0] })
+        assertEquals(4L, done.lastCompleted!!.status.preReadyDropped); c.close()
+    }
+    @Test fun oldReadyRequestAndCancellationCannotInjectIntoNewSession() {
+        val entered = CountDownLatch(1); val release = CountDownLatch(1)
+        val c = SessionRecordingCoordinator(root())
+        val old = c.start("old", "hash", config()) { entered.countDown(); release.await(5, TimeUnit.SECONDS); meta() }
+        assertTrue(entered.await(2, TimeUnit.SECONDS))
+        val newest = c.start("new", "hash", config()) { meta() }; release.countDown()
+        waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.RECORDING }
+        assertFalse(c.requestSessionStart(old, 101)); c.cancelSessionStart(old)
+        val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2)
+        while (!c.requestSessionStart(newest, 222)) { if (System.nanoTime() > deadline) fail("request blocked"); Thread.sleep(1) }
+        waitFor(c) { (it.activeStatus?.written ?: 0) >= 2 }
+        assertFalse(c.requestSessionStart(old, 333))
+        c.stop(); val done = waitFor(c) { it.phase == SessionRecordingCoordinator.Phase.COMPLETE && it.lastCompleted != null }
+        val starts = dataRows(done).filter { it[0] == "EVENT" && it[4] == "1" }
+        assertEquals(1, starts.size); assertEquals("222", starts.single()[1]); c.close()
+    }
     @Test fun staleUnreadyObservationCannotWritePlaceholderAfterReadyRace() {
         val entered = CountDownLatch(1); val release = CountDownLatch(1)
         val c = SessionRecordingCoordinator(root())
