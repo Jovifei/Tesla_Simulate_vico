@@ -1,0 +1,17 @@
+{
+  "phase": {
+    "scope": "operator full assembled wrapper",
+    "raw_outputs_matched": 161,
+    "gate_numbers_identical": true
+  },
+  "guards": {
+    "scope": "independent reviewer full assembled wrapper",
+    "candidate_wavs_matched": 4,
+    "source_controls_matched": 36,
+    "renderer_pcm_matched": 72,
+    "csv_and_gate_json_byte_identical": true
+  },
+  "chronology": "Operator reports thresholds set before each heldout run; no archived pre-result contract hash or independent time anchor proves chronology. Do not claim formal preregistration.",
+  "controller_dynamics": "NOT_EXERCISED; direct steady SoundState feeds actual renderer",
+  "original_receipts": "Retained unchanged; inherited baseline=c778 is not experiment source commit; input pins identify955"
+}

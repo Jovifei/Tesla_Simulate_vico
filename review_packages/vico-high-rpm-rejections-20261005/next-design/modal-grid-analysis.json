@@ -1,0 +1,116 @@
+[
+  {
+    "mode_hz": 1100,
+    "decay_s": 0.034,
+    "firing_harmonic": 3,
+    "resonant_rpm": 5500.0,
+    "half_power_halfwidth_rpm_approx": 23.405138689984607,
+    "illustrative_phase_grid": [
+      {
+        "rpm_step": 5,
+        "center_on_node_max_adjacent_phase_degrees": 12.0512950731405,
+        "center_straddling_pair_rpm": [
+          5497.5,
+          5502.5
+        ],
+        "center_straddling_phase_degrees": 12.186322474628705
+      },
+      {
+        "rpm_step": 10,
+        "center_on_node_max_adjacent_phase_degrees": 23.120028383668195,
+        "center_straddling_pair_rpm": [
+          5495.0,
+          5505.0
+        ],
+        "center_straddling_phase_degrees": 24.102590095921137
+      },
+      {
+        "rpm_step": 25,
+        "center_on_node_max_adjacent_phase_degrees": 46.84989062366637,
+        "center_straddling_pair_rpm": [
+          5487.5,
+          5512.5
+        ],
+        "center_straddling_phase_degrees": 56.17352327226687
+      },
+      {
+        "rpm_step": 50,
+        "center_on_node_max_adjacent_phase_degrees": 64.84114000285881,
+        "center_straddling_pair_rpm": [
+          5475.0,
+          5525.0
+        ],
+        "center_straddling_phase_degrees": 93.69977998797093
+      },
+      {
+        "rpm_step": 100,
+        "center_on_node_max_adjacent_phase_degrees": 76.67810051783013,
+        "center_straddling_pair_rpm": [
+          5450.0,
+          5550.0
+        ],
+        "center_straddling_phase_degrees": 129.6822749681452
+      }
+    ],
+    "sampled_grid_origin_rpm": 5300.0,
+    "sampled_grid_end_rpm": 5700.0,
+    "phase_scope": "finite grid whose resonance is a node; not maximum over arbitrary grid offset"
+  },
+  {
+    "mode_hz": 820,
+    "decay_s": 0.038,
+    "firing_harmonic": 2,
+    "resonant_rpm": 6150.0,
+    "half_power_halfwidth_rpm_approx": 31.412159820768817,
+    "illustrative_phase_grid": [
+      {
+        "rpm_step": 5,
+        "center_on_node_max_adjacent_phase_degrees": 9.039187496750076,
+        "center_straddling_pair_rpm": [
+          6147.5,
+          6152.5
+        ],
+        "center_straddling_phase_degrees": 9.09587714700089
+      },
+      {
+        "rpm_step": 10,
+        "center_on_node_max_adjacent_phase_degrees": 17.64889284905185,
+        "center_straddling_pair_rpm": [
+          6145.0,
+          6155.0
+        ],
+        "center_straddling_phase_degrees": 18.078374945298513
+      },
+      {
+        "rpm_step": 25,
+        "center_on_node_max_adjacent_phase_degrees": 38.490534914831755,
+        "center_straddling_pair_rpm": [
+          6137.5,
+          6162.5
+        ],
+        "center_straddling_phase_degrees": 43.373987658614965
+      },
+      {
+        "rpm_step": 50,
+        "center_on_node_max_adjacent_phase_degrees": 57.811788907689035,
+        "center_straddling_pair_rpm": [
+          6125.0,
+          6175.0
+        ],
+        "center_straddling_phase_degrees": 76.98106862088994
+      },
+      {
+        "rpm_step": 100,
+        "center_on_node_max_adjacent_phase_degrees": 72.46257834702641,
+        "center_straddling_pair_rpm": [
+          6100.0,
+          6200.0
+        ],
+        "center_straddling_phase_degrees": 115.62357297976885
+      }
+    ],
+    "sampled_grid_origin_rpm": 5950.0,
+    "sampled_grid_end_rpm": 6350.0,
+    "phase_scope": "finite grid whose resonance is a node; not maximum over arbitrary grid offset"
+  }
+]

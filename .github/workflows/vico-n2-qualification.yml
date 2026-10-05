@@ -10,6 +10,8 @@ on:
       - 'docs/vico*n2*.md'
       - 'docs/vico-real-drive-policy-20261004.md'
       - 'review_packages/vico-real-drive-20261004/**'
+      - 'review_packages/vico-high-rpm-rejections-20261005/**'
+      - 'docs/07-debugging/04-vico-high-rpm-rejections-20261005.md'
       - 'tools/sound_sim/s12/acoustic_identity_v015/**'
       - 'tools/sound_sim/s12/acoustic_demo/**'
       - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
@@ -38,6 +40,8 @@ on:
       - 'docs/vico*n2*.md'
       - 'docs/vico-real-drive-policy-20261004.md'
       - 'review_packages/vico-real-drive-20261004/**'
+      - 'review_packages/vico-high-rpm-rejections-20261005/**'
+      - 'docs/07-debugging/04-vico-high-rpm-rejections-20261005.md'
       - 'tools/sound_sim/s12/acoustic_identity_v015/**'
       - 'tools/sound_sim/s12/acoustic_demo/**'
       - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
@@ -120,7 +124,7 @@ jobs:
           done
       - name: Compile Python and check whitespace
         run: |
-          python -m compileall -q vico_app/tools/python
+          python -m compileall -q vico_app/tools/python review_packages/vico-high-rpm-rejections-20261005
           git diff --check
 
   windows-native-locks:

@@ -1,0 +1,57 @@
+{
+  "schema": "vico.offline.high_phase_candidate.v1",
+  "baseline_commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+  "scope": "offline only; source drop and original seam remain; no runtime route",
+  "fixed_gain": 3.7075542301539652,
+  "source_origin_contract": "first whole four-stroke cycle after original384-sample crossfade",
+  "rows": [
+    {
+      "file": "rpm_6800_load_32.wav",
+      "rpm": 6800,
+      "load": 0.32,
+      "offset": 789,
+      "baseline_sha256": "c572d10ea895a03fbb1ea97c247730d90dc9ce554363ac923c7ef0286efe45a0",
+      "candidate_sha256": "558e5ef4438d0f290ffec08fb6f59162365ee03c89cf67f7a47ba18974ea838b",
+      "max_fft_magnitude_error": 2.842170943040401e-14,
+      "samples": 17280,
+      "rms": 0.029699415523442057,
+      "peak": 0.06402895599603653
+    },
+    {
+      "file": "rpm_6800_load_92.wav",
+      "rpm": 6800,
+      "load": 0.92,
+      "offset": 789,
+      "baseline_sha256": "ac30d2ed356df54b42f137e97758b57f656705aacb8e84f2976e23f0c00ed563",
+      "candidate_sha256": "aef4394f47d7f14ef4667c933e9aa0e01c9ec9b8a051e8b49ae23e2788bc4267",
+      "max_fft_magnitude_error": 2.842170943040401e-14,
+      "samples": 17280,
+      "rms": 0.05775940449025695,
+      "peak": 0.13665831089019775
+    },
+    {
+      "file": "rpm_7200_load_32.wav",
+      "rpm": 7200,
+      "load": 0.32,
+      "offset": 1118,
+      "baseline_sha256": "25969778d4d09e29b7cd696728fc32cbe54ddaafe06747e415df2232894dea39",
+      "candidate_sha256": "a9e19f277c3278bbc00e4d0cb08735f20c868c61005eb0193e206758c5f77b54",
+      "max_fft_magnitude_error": 5.684341886080802e-14,
+      "samples": 17280,
+      "rms": 0.04912471534122804,
+      "peak": 0.10327102988958359
+    },
+    {
+      "file": "rpm_7200_load_92.wav",
+      "rpm": 7200,
+      "load": 0.92,
+      "offset": 1118,
+      "baseline_sha256": "936205e0847f0ba48106ef1e9d96847577c33d4498e82f2fa3337a67ec6c5960",
+      "candidate_sha256": "97745dd6f6c6cf5deb7247d2cb67ad5dd7b406654235adbb4612514913c502a8",
+      "max_fft_magnitude_error": 3.410605131648481e-13,
+      "samples": 17280,
+      "rms": 0.0973239230541669,
+      "peak": 0.22597092390060425
+    }
+  ]
+}
