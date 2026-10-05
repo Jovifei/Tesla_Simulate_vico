@@ -1,0 +1,3 @@
+ASSUMPTION_SKIPPED exportSixControlledBranchesForLocalReferenceComputation(com.vico.simulator.sound.n2.N2PcmFixtureTest)
+ASSUMPTION_SKIPPED measureInitialUnitSourceBeforeObjectiveEvaluation(com.vico.simulator.sound.n2.N2UnitCalibrationTest)
+{"run":36,"passed":34,"failed":0,"assumption_skipped":2,"ignored":0,"runtime_ms":2036}

@@ -1,0 +1,75 @@
+{
+  "acoustic_and_device_qualification": "NOT_RUN",
+  "all_available_cli": {
+    "cases": 338,
+    "digital_passes": 4056,
+    "elapsed_seconds": 402.61581631599984,
+    "exit_code": 0,
+    "frozen_T_equal_frames": 74697600,
+    "partition_matches": 2028,
+    "selection": "all-available"
+  },
+  "arbitrary_partition_scope": "NOT_PROVEN",
+  "artifact_provenance": "N2SyntheticArtifactFixture generated test-only artifacts from the local CI run; no approved private reference artifacts",
+  "baseline_artifact_sha256": "edc163411548958f27186b5f2a144baa166caf813719da4f61574feace55759c",
+  "checkout_base_sha": "03421b667f95e448773c64545fb5466f40596bfb",
+  "compiled_tests_jar_sha256": "4db172ef7accf678343e0948972ca2ca7520d93080c3ea3aace8b48717b48ff4",
+  "evidence_files": {
+    "available-cli.log": "49226c051fadc8657e627f47649a30670b27f83ad2e3df1cfec660213c097386",
+    "available-frozen-t-results.tsv": "8920db2db16d2e600b373a76c717fadc0564cd78ec665f3a4a99f30dd7a08396",
+    "available-partition-results.tsv": "d79d48a500161136c14f691bf28429a645a46b58fe7cade948987580932eaeb5",
+    "available-receipt.tsv": "9b8539627d38952b2f5d34bbd8bf397ec14a4c87ee1dca259cf1c41837bbe25b",
+    "catalog.tsv": "32ca93bb3284f95bc4a6a383d5bd12053fd7d95eeb02cfd5a12451f985b0b60a",
+    "junit.log": "725f4e58cbf0102406b18eff041502dee41cdc46d4ddc3f09dd54d5d740fcabf",
+    "linux-ci-receipt.json": "11786ffe866a4f3d309610679f2f8bbfc43f697fd8eb8e4aa17682d1a6e38737",
+    "module-root-junit.log": "85702de926992905b3ea66113622192b193ba83374c0e6b26e3bb3988de50aa0",
+    "representative-cli.log": "555acf754f2806f349d064763f5220d25e7003a19edaa8db4000b1b0df4823fc",
+    "representative-frozen-t-results.tsv": "cc5ed7949a0113624ea7f789d220d140d19fc8c76612e4ebfd574deafe4e0d4a",
+    "representative-partition-results.tsv": "a37f871596ad5ad2c8ddcf7f692c2be64d8bcacbdc4d577b7bdbd374425b1b84",
+    "representative-receipt.tsv": "fd017f9fcf79624c5ca82552e0dabb906063dd4c5f2a5256d2bc46bc1603f30a",
+    "runtime.txt": "bf61371a588e139353579c26bedbc9693004380fe8e053aa012cb6f7d2c43f20",
+    "source-sha256.json": "c316efbc4bcf705bbebef2192675dc1e23ca6678a12889c00e8817812dee9e79"
+  },
+  "executed_date_utc": "2026-10-03",
+  "full_630_case_qualification": "NOT_RUN_MISSING_INPUTS_AND_REFERENCE_GATES",
+  "full_event_observation_arrays": "NOT_COMPARED",
+  "jvm": {
+    "assumption_skipped": 2,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 46
+  },
+  "missing_input_cases": 292,
+  "module_root_jvm": {
+    "failed": 0,
+    "passed": 12,
+    "skipped": 0
+  },
+  "n2_artifact_sha256": "dfa032013ab6552175346758833669d8b6405f6f09ab0504f6f3b47fe1ae0889",
+  "objective_reservations": 0,
+  "previous_published_output_crosscheck": {
+    "commit": "03421b667f95e448773c64545fb5466f40596bfb",
+    "matched_fixture_identities_and_frames": 2028,
+    "matched_pcm_and_tap_pairs": 2028,
+    "matched_peaks": 2028,
+    "results_sha256": "21f5c0afac59d5764ed760e45b16013204b88fa325d5241f6b0dec7947b3f53b"
+  },
+  "python": {
+    "failed": 0,
+    "passed": 81,
+    "skipped": 0
+  },
+  "representative_cli": {
+    "cases": 9,
+    "digital_passes": 108,
+    "elapsed_seconds": 22.39296992099844,
+    "exit_code": 0,
+    "frozen_T_equal_frames": 3772800,
+    "partition_matches": 54,
+    "selection": "representative"
+  },
+  "schema": "c63.n2.historical_state_execution_receipt.v1",
+  "snapshot_scope": "NOT_RUN_BY_THIS_CLI",
+  "source_receipt_sha256": "c316efbc4bcf705bbebef2192675dc1e23ca6678a12889c00e8817812dee9e79",
+  "status": "SYNTHETIC_ARTIFACT_REFERENCE_FREE_STATE_DIAGNOSTICS_NOT_ACOUSTIC_QUALIFICATION"
+}

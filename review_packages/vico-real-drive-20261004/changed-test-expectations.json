@@ -1,0 +1,30 @@
+{
+  "baseline": "c7789afe8dd287980e7a8fba052b133ca3cc35ac",
+  "initial_prior_suite": {
+    "tests": 54,
+    "failures": 6
+  },
+  "changes": [
+    {
+      "test": "smoothRampPreservesOneActualShiftAndOneQualifiedRelease",
+      "reason": "paired cruise strategy has two actual gear changes by75; flat acceleration0 must not count as release; assert cause-specific events"
+    },
+    {
+      "test": "stableLoadReleaseProducesExactlyOneEvent",
+      "reason": "old total-event count could pass by mistaking a new shift for a release; now negative acceleration and cause1 are explicit"
+    },
+    {
+      "test": "actualShiftOnRepeatedImuEmitsInThatFrameAndIsNotDeferred",
+      "reason": "new gearbox uses original IMU dwell; duplicate sample cannot initiate shift, subsequent actual fresh shift stays same-frame exact-once"
+    },
+    {
+      "test": "lossAndRecoveryPreserveGearAndDoNotPlayFakeShiftOrAfterfire",
+      "reason": "old fixture jumped0to80 with only50ms source progress; use an already established70kmh holding gear and preserve through invalid/recovery"
+    },
+    {
+      "test": "changingSecondRecoveryFrameCannotEmitAResumeAfterfire / releaseInsideRecoveryIsNotDelayedUntilWindowEnds",
+      "reason": "flat0 is no longer a qualified release; retain recovery guards and add freshly rearmed sustained negative episode assertion"
+    }
+  ],
+  "reference_update_helpers_sha256": "3d68baf5eeeb1103093f9019f9aeedec610f83d6eca540fafd507677237fea49"
+}

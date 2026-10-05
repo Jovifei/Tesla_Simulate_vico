@@ -1,0 +1,407 @@
+{
+  "scope": "synthetic zero-noise sample-and-hold GPS; candidate REAL policy; actual unchanged renderer/bank; not human acceptance",
+  "profiles": [
+    {
+      "profile": "c63_w204_v6",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.6149359345436096,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.6551859378814697,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38902926445007324,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4188535213470459,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5244335532188416,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5318478941917419,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.6551859378814697,
+      "frames": 11520000
+    },
+    {
+      "profile": "ferrari_458",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.33198967576026917,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.43104425072669983,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.0929587185382843,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2512769401073456,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2887960970401764,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.29599466919898987,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.43104425072669983,
+      "frames": 11520000
+    },
+    {
+      "profile": "gtr_r35",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595969557762146,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.55962073802948,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.5595729947090149,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.55962073802948,
+      "frames": 11520000
+    },
+    {
+      "profile": "hellcat_v6",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3194696605205536,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4077104330062866,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.30523526668548584,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.2884361147880554,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3129696846008301,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.32183247804641724,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.4077104330062866,
+      "frames": 11520000
+    },
+    {
+      "profile": "lfa",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4681270122528076,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4681633710861206,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4685181677341461,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4678761065006256,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4691445529460907,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.47269290685653687,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.47269290685653687,
+      "frames": 11520000
+    },
+    {
+      "profile": "supra_jza80",
+      "cases": [
+        {
+          "case": "drive_100",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876400589942932,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_144",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876173794269562,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_20",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38763633370399475,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_40",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.3876173794269562,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_70",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.38762032985687256,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        },
+        {
+          "case": "drive_75",
+          "evaluatedFrames": 1920000,
+          "preClipPeak": 0.4119687080383301,
+          "aboveContractFrames": 0,
+          "hardClipFrames": 0,
+          "nonFiniteFrames": 0,
+          "loadOutOfBankFrames": 0,
+          "rpmOutOfBankFrames": 0
+        }
+      ],
+      "max_preclip": 0.4119687080383301,
+      "frames": 11520000
+    }
+  ]
+}

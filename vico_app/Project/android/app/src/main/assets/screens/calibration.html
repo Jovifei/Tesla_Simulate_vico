@@ -164,7 +164,7 @@
 <!-- Step 3 -->
 <div class="flex flex-col items-center gap-xs z-10">
 <div class="w-8 h-8 rounded-full bg-surface-container-highest border border-surface-variant flex items-center justify-center text-on-surface-variant text-[12px] font-bold" id="step-3-circle">3</div>
-<span class="text-label-md font-medium text-on-surface-variant" id="step-3-label">点击归零</span>
+<span class="text-label-md font-medium text-on-surface-variant" id="step-3-label" aria-live="polite">点击归零</span>
 </div>
 </div>
 </div>
@@ -219,72 +219,6 @@
             </button>
 </div>
 </main>
-<script>
-        // === 接收原生重力/加速度 (VicoBridge.__vicoUpdate) ===
-        var bubble = document.getElementById('calibration-bubble');
-        var dataX = document.getElementById('data-x');
-        var dataY = document.getElementById('data-y');
-        var dataZ = document.getElementById('data-z');
-        var btnZero = document.getElementById('btn-zero');
-        var step3Circle = document.getElementById('step-3-circle');
-        var step3Label = document.getElementById('step-3-label');
-        var isCalibrated = false;
-        var G = 9.80665;
-        var refGx = 0, refGy = 0, refGz = 0;        // 归零参考, 归零后偏置以此为基础
-        var lastGx = 0, lastGy = 0, lastGz = 0;
-
-        function fmt(v){ return (v>=0?'+':'') + v.toFixed(3) + ' g'; }
-        function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
-
-        window.__vicoUpdate = function(s){
-          try {
-            lastGx = s.gx||0; lastGy = s.gy||0; lastGz = s.gz||0; if(!window.__cn)window.__cn=0; if(++window.__cn%10===0)console.log('vcg',s.gx,s.gy,s.gz);
-            // 显示相对归零参考的偏置 (归零后 = 0.000 g)
-            if(dataX) dataX.textContent = fmt((lastGx - refGx) / G);
-            if(dataY) dataY.textContent = fmt((lastGy - refGy) / G);
-            if(dataZ) dataZ.textContent = fmt((lastGz - refGz) / G);
-            if(bubble){
-              var bx = clamp((lastGx - refGx) * 30, -110, 110);
-              var by = clamp((lastGy - refGy) * 30, -110, 110);
-              bubble.style.transform = 'translate(' + bx + 'px, ' + by + 'px)';
-            }
-            if(s.calibrated && !isCalibrated){
-              isCalibrated = true;
-              if(btnZero) btnZero.classList.remove('animate-pulse-soft');
-            }
-          } catch(e){ console.log('calib update err', e); }
-        };
-
-        // 归零: 记录当前重力为参考 (X/Y/Z 偏置归 0, 气泡居中) + 采样线性偏置 + 完成校准
-        if(btnZero) btnZero.addEventListener('click', function(){
-          var orig = btnZero.innerHTML;
-          btnZero.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">progress_activity</span> 采样中…';
-          console.log('vcz-click',lastGx,lastGy,lastGz); try { window.AndroidBridge.beginCalibration(); } catch(e){}
-          setTimeout(function(){
-            refGx = lastGx; refGy = lastGy; refGz = lastGz;   // 三轴偏置归零
-            try { window.AndroidBridge.calibrateZero(); window.AndroidBridge.finishCalibration(); } catch(e){}
-            isCalibrated = true;
-            btnZero.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span> 校准完成';
-            btnZero.classList.add('bg-green-600');
-            btnZero.classList.remove('bg-primary','animate-pulse-soft');
-            if(step3Circle){
-              step3Circle.classList.remove('bg-surface-container-highest','text-on-surface-variant');
-              step3Circle.classList.add('bg-primary','text-on-primary');
-            }
-            if(step3Label){
-              step3Label.classList.remove('text-on-surface-variant');
-              step3Label.classList.add('text-on-surface');
-              step3Label.textContent = '校准完成';
-            }
-            setTimeout(function(){
-              btnZero.innerHTML = orig;
-              btnZero.classList.add('bg-primary');
-              btnZero.classList.remove('bg-green-600');
-            }, 2000);
-          }, 800);
-        });
-
-        // 左上角 graphic_eq 返回仪表盘
-        var backBtn = document.querySelector('header .material-symbols-outlined');
-        if(backBtn) backBtn.addEventListener('click', function(){ try { window.AndroidBridge.navigate('dashboard'); } catch(e){} });</script>
+<script src="file:///android_asset/calibration.js"></script>
+<script src="file:///android_asset/telemetry-ui.js"></script>
 <script src="file:///android_asset/bridge.js"></script></body></html>

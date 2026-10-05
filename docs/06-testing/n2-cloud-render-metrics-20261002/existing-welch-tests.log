@@ -1,0 +1,14 @@
+test_build_rejects_clip_sha_mismatch (test_build_c63_hybrid_targets.HybridTargetsTest.test_build_rejects_clip_sha_mismatch) ... ok
+test_build_reuses_source_range_overlap_validation (test_build_c63_hybrid_targets.HybridTargetsTest.test_build_reuses_source_range_overlap_validation) ... ok
+test_cli_refuses_to_overwrite_existing_output (test_build_c63_hybrid_targets.HybridTargetsTest.test_cli_refuses_to_overwrite_existing_output) ... ok
+test_features_reject_silent_short_and_nonfinite_pcm (test_build_c63_hybrid_targets.HybridTargetsTest.test_features_reject_silent_short_and_nonfinite_pcm) ... ok
+test_flat_controls_meet_fixed_final_kernel_stopbands (test_build_c63_hybrid_targets.HybridTargetsTest.test_flat_controls_meet_fixed_final_kernel_stopbands) ... ok
+test_gain_changes_absolute_power_but_not_shape_or_modulation (test_build_c63_hybrid_targets.HybridTargetsTest.test_gain_changes_absolute_power_but_not_shape_or_modulation) ... ok
+test_minimum_phase_kernel_contract_and_truncated_shape (test_build_c63_hybrid_targets.HybridTargetsTest.test_minimum_phase_kernel_contract_and_truncated_shape) ... ok
+test_minimum_phase_kernel_rejects_malformed_controls (test_build_c63_hybrid_targets.HybridTargetsTest.test_minimum_phase_kernel_rejects_malformed_controls) ... ok
+test_sustained_distributions_exclude_event_references (test_build_c63_hybrid_targets.HybridTargetsTest.test_sustained_distributions_exclude_event_references) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.167s
+
+OK
