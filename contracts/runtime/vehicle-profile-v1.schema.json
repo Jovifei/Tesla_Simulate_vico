@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joviluma.com/schemas/s12/vehicle-profile-v1.schema.json",
+  "title": "S12 Experimental Vehicle Profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "display_name",
+    "version",
+    "engine_topology",
+    "state_mapping",
+    "orders",
+    "transient",
+    "output_policy",
+    "supported_features",
+    "provenance",
+    "qualification",
+    "hashes"
+  ],
+  "properties": {
+    "schema_version": {"const": "s12.vehicle-profile.v1"},
+    "profile_id": {"type": "string", "pattern": "^experimental-[a-z0-9-]+$"},
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 80},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "engine_topology": {"enum": ["synthetic_v8", "synthetic_rotary"]},
+    "state_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idle_rpm",
+        "max_rpm",
+        "rpm_per_mps_by_gear",
+        "acceleration_rpm_per_mps2",
+        "upshift_rpm",
+        "downshift_rpm",
+        "shift_rpm_drop",
+        "idle_load",
+        "positive_acceleration_load_per_mps2",
+        "negative_acceleration_load_per_mps2"
+      ],
+      "properties": {
+        "idle_rpm": {"type": "number", "minimum": 500, "maximum": 2000},
+        "max_rpm": {"type": "number", "minimum": 2000, "maximum": 12000},
+        "rpm_per_mps_by_gear": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000}
+        },
+        "acceleration_rpm_per_mps2": {"type": "number", "minimum": 0, "maximum": 500},
+        "upshift_rpm": {"type": "number", "minimum": 1500, "maximum": 12000},
+        "downshift_rpm": {"type": "number", "minimum": 500, "maximum": 8000},
+        "shift_rpm_drop": {"type": "number", "exclusiveMinimum": 0.1, "maximum": 1},
+        "idle_load": {"type": "number", "minimum": 0, "maximum": 0.5},
+        "positive_acceleration_load_per_mps2": {"type": "number", "minimum": 0, "maximum": 0.5},
+        "negative_acceleration_load_per_mps2": {"type": "number", "minimum": 0, "maximum": 0.5}
+      }
+    },
+    "orders": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["order", "amplitude", "phase_rad"],
+        "properties": {
+          "order": {"type": "number", "exclusiveMinimum": 0, "maximum": 64},
+          "amplitude": {"type": "number", "minimum": 0, "maximum": 1},
+          "phase_rad": {"type": "number", "minimum": -6.28318530718, "maximum": 6.28318530718}
+        }
+      }
+    },
+    "transient": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gain", "acceleration_reference_mps2", "attack_s", "release_s", "shift_impulse", "carrier_order"],
+      "properties": {
+        "gain": {"type": "number", "minimum": 0, "maximum": 1},
+        "acceleration_reference_mps2": {"type": "number", "exclusiveMinimum": 0, "maximum": 20},
+        "attack_s": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "release_s": {"type": "number", "exclusiveMinimum": 0, "maximum": 2},
+        "shift_impulse": {"type": "number", "minimum": 0, "maximum": 1},
+        "carrier_order": {"type": "number", "exclusiveMinimum": 0, "maximum": 64}
+      }
+    },
+    "output_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sample_rate_hz", "channels", "format", "gain", "peak_limit"],
+      "properties": {
+        "sample_rate_hz": {"const": 48000},
+        "channels": {"const": 2},
+        "format": {"const": "float32le"},
+        "gain": {"type": "number", "minimum": 0, "maximum": 1},
+        "peak_limit": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "supported_features": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "speed_acceleration_mapping",
+          "virtual_gear_shift",
+          "phase_continuous_orders",
+          "acceleration_transient",
+          "soft_limiter"
+        ]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "source_id", "rights"],
+      "properties": {
+        "kind": {"const": "synthetic"},
+        "source_id": {"const": "app1-original-synth-v1"},
+        "rights": {"const": "original_synthetic"}
+      }
+    },
+    "qualification": {"const": "EXPERIMENTAL_NOT_QUALIFIED"},
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_sha256", "source_sha256"],
+      "properties": {
+        "profile_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  }
+}

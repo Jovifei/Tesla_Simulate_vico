@@ -1,0 +1,57 @@
+<resources>
+    <string name="mounting_instruction">Mount phone securely. Choose the phone edge pointing toward the car front. Passenger should configure before driving; restart the session after changing direction.</string>
+    <string name="axis_plus_x">Phone right edge → car front (+X)</string>
+    <string name="axis_plus_y">Phone top edge → car front (+Y)</string>
+    <string name="axis_minus_x">Phone left edge → car front (−X)</string>
+    <string name="axis_minus_y">Phone bottom edge → car front (−Y)</string>
+    <string name="speed_initial">0 km/h</string>
+    <string name="speed_readout">%1$.0f km/h</string>
+    <string name="speed_unavailable">-- km/h · speed unavailable</string>
+    <string name="notification_channel">Driving sound</string>
+    <string name="notification_active">Sound session active · tap to open</string>
+    <string name="status_service_failed">Unable to start driving service: %1$s</string>
+    <string name="volume_label">Output volume</string>
+    <string name="status_output_disconnected">Audio output disconnected; session stopped.</string>
+    <string name="status_bluetooth_disconnected">Bluetooth output disconnected; session stopped.</string>
+    <string name="status_audio_focus_lost">Audio focus lost; session stopped.</string>
+    <string name="status_audio_focus_unavailable">Audio focus unavailable.</string>
+    <string name="status_stopping">Stopping playback…</string>
+    <string name="status_stop_timeout">Audio stop timed out; output closed.</string>
+    <string name="status_motion_sensor_unavailable">Linear acceleration or gravity sensor unavailable.</string>
+    <string name="status_drive_mode">Drive mode · fixed phone mount</string>
+    <string name="quality_drive_fresh">GNSS speed + calibrated IMU · experimental estimate</string>
+    <string name="quality_drive_invalid">GNSS/IMU stale, inaccurate or mounting axis unsuitable · safe fallback</string>
+    <string name="quality_command_queue_full">Audio command queue full.</string>
+    <string name="app_name">S12 Engine Sound Player</string>
+    <string name="player_title">S12 Engine Sound · Technical MVP</string>
+    <string name="experimental_boundary">Experimental synthetic profiles · not vehicle-calibrated or product-approved</string>
+    <string name="profile_v8">Experimental V8 Synth</string>
+    <string name="profile_rotary">Experimental Rotary Synth</string>
+    <string name="button_start_replay">Start Replay</string>
+    <string name="button_sensors">Use GNSS + IMU</string>
+    <string name="button_stop">Stop</string>
+    <string name="button_licenses">Third-party licenses</string>
+    <string name="button_share_diagnostics">Share diagnostics</string>
+    <string name="status_stopped_initial">Stopped · no sensor access requested</string>
+    <string name="quality_start_hint">Start replay or a GNSS + IMU drive session; the ongoing notification stops it.</string>
+    <string name="audio_waiting">48 kHz stereo · waiting for audio stream</string>
+    <string name="status_profile_queue_full">Profile switch queue full; retry after stopping input.</string>
+    <string name="quality_replay">Replay · 100 Hz input · original synthetic data</string>
+    <string name="status_replay_playing">Playing synthetic replay.</string>
+    <string name="status_gps_disabled">GPS is disabled. Enable device location, then retry.</string>
+    <string name="status_sensor_registration_failed">Unable to register the foreground linear acceleration sensor.</string>
+    <string name="quality_sensors_waiting">Waiting for fresh GPS speed and linear acceleration.</string>
+    <string name="status_sensor_source_unavailable">Foreground sensor source unavailable: %1$s</string>
+    <string name="status_audio_open_failed">Unable to open low-latency audio stream.</string>
+    <string name="status_stopped">Stopped.</string>
+    <string name="quality_stopped">Stopped; no sensor updates are being read.</string>
+    <string name="share_report">S12 APP-2 technical candidate
+Profile: %1$s
+Input: %2$s
+Quality: %3$s
+%4$s</string>
+    <string name="share_chooser">Share diagnostic summary</string>
+    <string name="license_title">Oboe · Apache-2.0</string>
+    <string name="license_unavailable">License text unavailable</string>
+    <string name="status_permission_denied">Location permission denied; use synthetic replay instead.</string>
+</resources>

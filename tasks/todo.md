@@ -4433,3 +4433,80 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full exact-HEAD S12: `1322 passed, 118 subtests passed` in `3883.76s`; strict compile, Track-P and diff checks pass.
 - Fresh v2 package verified: manifest `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`.
 - Branch pushed through HEAD `98b0813cd2a42526a30d66d0a93d82ba55219b2d`; GitHub Actions query showed no run for the branch because no PR/authenticated trigger exists. Draft PR creation remains blocked by unavailable GitHub authentication; main was not changed.
+# 2026-09-24 APP-1 Android realtime sound technical MVP
+
+## 2026-09-26 APP-2 in-car development planning
+
+- [x] Locate the older Android reference project and inspect its actual native integration.
+- [x] Compare the reference, PC controller and current standalone player.
+- [x] Write `tasks/plans/2026-09-26-app2-in-car.md` with reuse decision, sensor calibration, lifecycle, algorithm migration and physical-device gates.
+- [x] Implement axis-aware motion estimation, separate GNSS/IMU freshness, bounded speed prediction and JVM edge tests.
+- [x] Implement foreground drive audio service, focus handling, route-disconnect stop, Replay, profile selection and volume control.
+- [ ] Complete driving UI (RPM/gear/explicit calibration) and port qualified acoustic vehicle models.
+- [ ] Validate physical-device GNSS/IMU, Bluetooth route, playback and in-car behavior; then submit exact-source evidence for review.
+
+Review: commits `bf7ffea633c41cd8f6d95a8b77f722dfcd861239` (implementation) and `e0a6ee9` (handoff), pushed on the APP-1 feature branch; Draft PR #33 is open, not merged. `:app:assembleDebug`, `:player:testDebugUnitTest` (7/7), `:player:lintDebug` (0 errors, one OldTargetApi warning), and `:player:assembleDebug` pass. Python/C++ runtime validation passes 12/12; native volume-ramp test passes. Emulator audio stream/background service/stop PASS; physical devices, live GNSS, vehicle audio route and qualified model port remain NOT_RUN. C2C doctor and workspace_info now pass, but remote ChatGPT review remains BLOCKED by local in-app browser control initialization (`kernel assets` path missing); no VPN/network settings were changed. Details and APK identity: `tasks/reports/runtime/stage-app2-20260927.md`.
+
+Remote plan received in existing 音浪 chat `c2c_7d2f`. Jovi authorized source changes on a new isolated branch on 2026-09-24; implementation remains limited to the APP-1 technical MVP and its evidence gates.
+
+- [x] Verify remote plan and open-source/license recommendations.
+- [x] Verify current main base and existing Android demo boundary.
+- [x] Create isolated worktree from `main@29b50961d9628f835e7172b797380ccb36a7f38d`.
+- [x] Write P0-P2 implementation and acceptance plan.
+- [x] Jovi authorized source/test/Gradle/C++/Android changes on the isolated branch.
+- [x] Reuse MateLink's existing JDK 17, Android SDK/build-tools/ADB, and nested Gradle wrapper; do not touch its dirty worktree.
+- [x] Install only native requirements: NDK `30.0.16248370`, CMake `3.22.1`, and portable Zig `0.16.0` in the approved user-space locations; no permanent PATH changes.
+- [x] Execute APP-1 P0 contracts and golden traces; five focused tests pass and two repeated 10-case exports are byte-identical.
+- [x] Execute APP-1 P1 portable C++ realtime subset and host equivalence.
+- [x] Execute APP-1 P2 native Android `:player` with local Replay and foreground GNSS/IMU adapters.
+- [x] Verify `:app` and `:player` builds, player JVM tests, native builds, and static/runtime evidence boundaries.
+- [ ] Validate on physical Android devices. No APK was installed; at least two device passes remain a human/device gate.
+
+Review boundary:
+- Worktree base: `29b50961d9628f835e7172b797380ccb36a7f38d`.
+- AI-8 PR #32 is separate and remains open/draft at `6b0a420…`.
+- P0 schemas, validators, synthetic Python oracle, and deterministic exporter are implemented and test-covered. Generated PCM/trace bundles were confined to test temporary directories.
+- The S12 subset is intentionally original/synthetic and omits PTR/Radiation and unqualified Stage-W/X architecture claims.
+- MateLink `android/` toolchain check: JDK 17, Android SDK, adb, build-tools, and Gradle wrapper PASS. Its parent is not the Gradle root; the dirty MateLink worktree was read-only and untouched.
+- Installed versions: NDK `30.0.16248370`; CMake `3.22.1`; Zig `0.16.0` from the official SHA-256 verified archive. `zig-smoke.exe` returned `0`. No permanent PATH changes.
+- P1 native tests pass, including zero render-path allocations, all planned block sizes, stale-input fallback, phase continuity, profile crossfade, and snapshot restore. Python↔C++ equivalence: 2 profiles / 10 cases / 2,000 state samples; zero event mismatches; max RPM error `9.1e-13`, max PCM sample error `1.87e-9`, RMS error `2.33e-12`.
+- Android NDK/CMake arm64 static core build PASS; `libs12_core.a` SHA-256 `2303094A37C9B36E07FC2012F6B873961D794E5319B3802D9F4F816A8A22715C`. The library is a synthetic technical subset only.
+- P2 `:player` uses Oboe `1.11.0` (Apache-2.0), a native SPSC command queue, float stereo output, deterministic Replay, optional foreground GNSS/IMU, profile selection/fades, and shareable diagnostics. The old `:app` PC WebSocket controller was not changed.
+- Offline Gradle 8.9 verification: `:app:assembleDebug`, `:player:testDebugUnitTest` (2/2), `:player:lintDebug`, and `:player:assembleDebug` PASS. Lint has one `OldTargetApi` warning because target SDK 35 is retained; NDK configuration reports an SDK XML v4 compatibility warning but builds all four ABIs.
+- APP-1 Debug APK at completion of its build: `android_vehicle_sound_demo/player/build/outputs/apk/debug/player-debug.apk`, package `com.jovi.s12player` v0.1.0, SHA-256 `C08AEA44E9F784F3452BAC73D222D4E078B1E2627FBABDBCC3C8BC3B5E5AE91F`. Later APP-2 builds replace this path; see the dated APP-2 report for its own APK hash. `verify_apk.ps1` reports signed/PASS but its `debuggable` flag is a false negative; direct `aapt2` and merged Manifest confirm `debuggable=true`.
+- Device evidence: one OnePlus 7 Pro (GM1910) is connected, but no APK was installed because device-install authorization was not given. Real audio/GNSS/IMU behavior and the second-device gate are `NOT_RUN`.
+- Output profiles remain experimental; no Human/OEM/product release gate is advanced.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 2
+
+- [x] Verify clean start head `a059ea4d…`, PR #33 live base/head and preserve original Debug APK and full baseline diff.
+- [x] F1 RED→GREEN: exact volume-zero start and bounded 960-frame normal-stop fade; error hard-stop fallback implemented.
+- [ ] Force and observe a real device audio-route/error hard stop; protected broadcast injection was denied by Android.
+- [x] F2 RED→GREEN: idempotent and queued profile switches, bounded mix and callback work.
+- [x] F3 RED→GREEN: stale-input UI/native agreement and stale-session callback isolation.
+- [x] Run focused/native/JVM/Python/Gradle/Track-P regression and dedicated-emulator normal-transition checks.
+- [ ] Save full evidence, publish new APK identity, push PR #33 and request re-review in the existing 音浪 chat.
+
+Review: remote `c2c_7d2f` iteration 1 returned `CHANGES_REQUIRED` for F1–F3. Tested source `a2db8f4ecf6a27267690056182952d6a7054881c` is pushed on Draft PR #33; JVM 11/11, Python/C++ 12/12, NDK native/CMake, volume host, Gradle, lint and Track-P pass. API 35 emulator normal start/background/stop/restart passes for APK `B98C55B760A4DCFF5746459C83BD4B72F1D5A2C4BA1A6B7816FF4800D7B3CF75`. Forced error route, physical-device and full acoustic-profile gates remain separate. Scope and evidence: `tasks/plans/2026-09-27-app2-transition-review-fix.md` and `tasks/reports/runtime/stage-app2-20260927.md`.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 3
+
+- [x] Verify clean start `83d7152226beae493fa89bb81846ceb9c39ceb1d`, PR #33 draft base/head, and preserve iteration 2 APK and evidence.
+- [x] F3-A RED→GREEN using the production motion-command gate: pre-invalidation queued Motion cannot restore native validity across callbacks.
+- [x] F3-B RED→GREEN: immediate and pending profile changes during fallback retain idle/zero-load targets and no new shift event.
+- [x] Implement the native sequence boundary and fallback-preserving profile mapping within the five allowed source/test files.
+- [x] Run native gate/runtime, JVM 11/11 (including forced rerun), Python/C++ 12/12, Gradle/lint, Track-P and dedicated-emulator normal smoke; diff-check clean for tested source.
+- [ ] Save an iteration 3 receipt, publish new APK and PR #33 head, then request same-chat independent re-review.
+
+Review: remote `c2c_7d2f` iteration 2 accepted F1 normal path and F2 for valid input but returned `CHANGES_REQUIRED` for F3 native invalidation persistence. Tested source `6f8505375ded8bf60d2899bf5f6fb19d4efcc00a` fixes the two F3 paths with real Engine/production-gate tests; new APK `F9AA27BA34CCCE195E2790101FB4212D6CA43ECFAEA376B55BF70CEC663E17DE` is installed on dedicated emulator with matching hash. Iteration 2 artifacts are immutable under `review_packages/s12-app2-transition-c2c_7d2f-i2-v1`; current evidence is under `review_packages/s12-app2-transition-c2c_7d2f-i3-v1`. Full acoustic and physical gates remain NOT_RUN.
+
+## 2026-09-27 APP-2 PR #33 remote review iteration 4
+
+- [x] Verify clean start `d52a584ac60fc9f8b580a9de72ccdad4b75c209d`, PR #33 draft base/head, and preserve iteration 3 APK/evidence.
+- [x] RED→GREEN: no historical valid Motion + active fallback + immediate or pending profile switch leaves a nonzero target load.
+- [x] RED→GREEN production gate combination: old queued Motion discarded, then profile/volume processed while Engine has no historical valid sample.
+- [x] Reorder only `Engine::apply_profile` branches so fallback safety wins; preserve normal pre-input initialization.
+- [x] Run native gate/runtime, JVM 11/11 forced, Python/C++ 12/12, Gradle/lint, Track-P and dedicated-emulator normal smoke.
+- [ ] Save iteration 4 receipt and APK identity, push PR #33, and request same-chat re-review.
+
+Review: remote `c2c_7d2f` iteration 3 accepted F3-A and the earlier F1/F2 fixes, but returned `CHANGES_REQUIRED` for F3-B when `has_previous_sample=false` and `fallback=true` coincide. Tested source `2f6e03c5b3aea730938b974e20433da2b07cfe66` fixes the priority with only core branch order and focused native tests. APK `A43A948720DF8471B5627B9E4D52137EC86CBCF30187003BF4376A5BF5783597` installed-hash matched dedicated emulator; regression and normal smoke passed. Error-route, physical-device and full acoustic-profile gates remain NOT_RUN. Evidence directory: `review_packages/s12-app2-transition-c2c_7d2f-i4-v1`.
