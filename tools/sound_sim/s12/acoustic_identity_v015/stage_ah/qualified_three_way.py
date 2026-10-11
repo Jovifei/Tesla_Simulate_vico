@@ -28,7 +28,12 @@ from .qualification import (
     QUALIFICATION_SCHEMA,
     build_qualification_receipt,
 )
-from .continuous_drive import CONTINUOUS_SCENE_ID, CONTINUOUS_SCHEMA, write_continuous_pair
+from .continuous_drive import (
+    CONTINUOUS_SCENE_ID,
+    CONTINUOUS_SCHEMA,
+    validate_event_contract,
+    write_continuous_pair,
+)
 from .reconstruction_peak import reconstructed_peak_receipt
 from .reference_feedback_cli import verify_run as verify_two, numeric_ok, _runtime_identity
 from ..stage_af.package_integrity import seal_payload
@@ -44,6 +49,35 @@ def _sealed(path):
 
 def _vehicle_name(row, key):
     return str(row.get('vehicle') or row.get('vehicle_name') or key)
+
+
+def _legacy_role_sha(folder: Path, contract: dict, scene: dict, role: str) -> str | None:
+    """Resolve a legacy role hash, including AI-6 continuous receipt bindings."""
+    key = {'original': 'candidate_file', 'feedback': 'feedback_file',
+           'reference': 'reference_file'}[role]
+    name = scene.get(key)
+    if not name:
+        return None
+    expected = contract.get('source_sha256', {}).get(role, {}).get(name)
+    if expected is None and scene.get('id') == CONTINUOUS_SCENE_ID:
+        receipt = json.loads((folder / 'continuous_drive_receipt.json').read_text(encoding='utf-8'))
+        receipt_role = {'original': 'A', 'feedback': 'B', 'reference': 'C'}[role]
+        expected = receipt.get('wav', {}).get(receipt_role, {}).get('wav_file_sha256')
+    if expected is None:
+        raise ValueError('old role contract missing WAV hash')
+    actual = sha_file(folder / 'web_audio' / name)
+    if actual != expected:
+        raise ValueError('old A/B/C WAV differs from role contract')
+    return actual
+
+
+def _load_legacy_scenes(page: Path) -> list[dict[str, Any]]:
+    """Load the canonical ten scenes from an AI-6 package with its extra scene."""
+    scenes = ui._embedded(page.read_text(encoding='utf-8'), 'SCENES')
+    filtered = [row for row in scenes if row.get('id') in SCENES]
+    if [row.get('id') for row in filtered] != list(SCENES):
+        raise ValueError(f'canonical ten-scene order required: {page}')
+    return copy.deepcopy(filtered)
 
 
 def verify_legacy(root: Path, expected_sha: str):
@@ -64,8 +98,8 @@ def verify_legacy(root: Path, expected_sha: str):
             for scene in ui._embedded(text,'SCENES'):
                 for role,key in (('original','candidate_file'),('feedback','feedback_file'),('reference','reference_file')):
                     name=scene.get(key)
-                    if name and sha_file(folder/'web_audio'/name)!=contract['source_sha256'][role].get(name):
-                        raise ValueError('old A/B/C WAV differs from role contract')
+                    if name:
+                        _legacy_role_sha(folder, contract, scene, role)
     return summary
 
 
@@ -344,7 +378,7 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
         template=ui.TEMPLATE_PATH.read_text(encoding='utf-8')
         for v in VEHICLES:
             folder=staging/v; web=folder/'web_audio';web.mkdir(parents=True)
-            scenes=ui._load_scenes(old_root/v/'index.html')
+            scenes=_load_legacy_scenes(old_root/v/'index.html')
             base_scenes=copy.deepcopy(scenes)
             root,result,source_summary,source_qualification,source_manifest_sha,reason=choices[v]
             roles={
@@ -472,16 +506,22 @@ def build(old_root: Path, old_sha: str, output: Path, *, fourcar_run: Path | Non
                 if (boundary.get('policy_id')!='rx7_start_boundary_fade_v1'
                         or boundary.get('fade_frames')!=24 or boundary.get('modified_frames')!=24):
                     raise ValueError('RX-7 AI-5 A lacks 24-frame boundary-difference evidence')
+                prior_contract=_sealed(old_root/v/'dashboard_contract.json')
+                prior_provenance=prior_contract.get('a_provenance') or {}
+                provenance_root=Path(prior_provenance.get('old_a_source_root','')).resolve()
+                if (not provenance_root.is_dir()
+                        or not (provenance_root / ('A_'+SCENES[0]+'.wav')).is_file()):
+                    provenance_root=(old_root/v/'web_audio').resolve()
                 a_provenance={
                     'source':'AI-5 feedback-off baseline',
                     'boundary_policy':'rx7_start_boundary_fade_v1',
                     'boundary_difference_frames':24,
                     'byte_identity_to_pre_ai4b_a':False,
-                    'old_a_source_root':str((old_root/v/'web_audio').resolve()),
-                    'old_a_sha256':{scene:sha_file(old_root/v/'web_audio'/('A_'+scene+'.wav')) for scene in SCENES},
+                    'old_a_source_root':str(provenance_root),
+                    'old_a_sha256':{scene:sha_file(provenance_root/('A_'+scene+'.wav')) for scene in SCENES},
                     'scene_differences':{
                         scene:_rx7_boundary_diff_receipt(
-                            old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                            provenance_root/('A_'+scene+'.wav'),
                             root/'baseline'/v/'web_audio'/(scene+'.wav'))
                         for scene in SCENES
                     },
@@ -667,17 +707,13 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             or receipt.get('duration_s')!=30.0
             or receipt.get('sample_rate_hz')!=48_000):
         raise ValueError('continuous receipt identity mismatch')
-    if (receipt.get('events',{}).get('shift_count')!=3
-            or int(receipt.get('events',{}).get('afterfire_event_count',0))<=0
-            or len(receipt.get('events',{}).get('afterfire_events',()))!=1
-            or float(receipt.get('events',{}).get('afterfire_stem_energy_after_lift',0.0))<=0.0
-            or min(receipt.get('events',{}).get('afterfire_event_times_s',())) < 18.0):
-        raise ValueError('continuous event evidence incomplete')
+    events = receipt.get('events', {})
+    reports = receipt.get('reports')
+    validate_event_contract(receipt, reports)
+    if info.get('events') != events:
+        raise ValueError('continuous contract event copy mismatch')
     if receipt.get('source_manifest_sha256')!=info.get('source_manifest_sha256'):
         raise ValueError('continuous source manifest binding mismatch')
-    reports=receipt.get('reports')
-    if not isinstance(reports,dict) or not all(role in reports for role in ('A','B','off_switch')):
-        raise ValueError('continuous renderer reports missing')
     pcm_by_role={}
     for role,filename,store_key in (
             ('A','A_continuous_drive.wav',CONTINUOUS_SCENE_ID+'_original'),
@@ -711,12 +747,6 @@ def _verify_continuous_scene(folder: Path, contract: dict, scene: dict, store: d
             raise ValueError('continuous report shared context mismatch')
     if report_a.get('candidate_source_diagnostics',{}).get('shift_event_count')!=3:
         raise ValueError('continuous renderer did not report three shifts')
-    for report in (report_a,reports_b):
-        diag=report.get('candidate_source_diagnostics',{})
-        if (int(diag.get('afterfire_event_count',0))<=0
-                or float(diag.get('afterfire_stem_energy_after_lift',0.0))<=0.0
-                or min(diag.get('afterfire_event_times_s',())) < 18.0):
-            raise ValueError('continuous renderer afterfire evidence missing')
     boundary=receipt.get('boundary',{})
     expected_boundary=(('rx7_start_boundary_fade_v1',24) if vehicle=='rx7_fd' else (None,0))
     if (boundary.get('policy_id'),boundary.get('fade_frames'))!=expected_boundary:
@@ -945,8 +975,12 @@ def verify(root:Path, expected_sha:str|None=None):
             raise ValueError('source role coverage availability mismatch')
         if v=='rx7_fd' and result:
             provenance=contract.get('a_provenance') or {}
+            provenance_root=Path(provenance.get('old_a_source_root','')).resolve()
+            if (not provenance_root.is_dir()
+                    or not (provenance_root / ('A_'+SCENES[0]+'.wav')).is_file()):
+                provenance_root=(old_root/v/'web_audio').resolve()
             expected_differences={scene:_rx7_boundary_diff_receipt(
-                old_root/v/'web_audio'/('A_'+scene+'.wav'),
+                provenance_root/('A_'+scene+'.wav'),
                 source_run/'baseline'/v/'web_audio'/(scene+'.wav')) for scene in SCENES}
             if (provenance.get('boundary_policy')!='rx7_start_boundary_fade_v1'
                     or provenance.get('boundary_difference_frames')!=24

@@ -4433,3 +4433,51 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full exact-HEAD S12: `1322 passed, 118 subtests passed` in `3883.76s`; strict compile, Track-P and diff checks pass.
 - Fresh v2 package verified: manifest `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`.
 - Branch pushed through HEAD `98b0813cd2a42526a30d66d0a93d82ba55219b2d`; GitHub Actions query showed no run for the branch because no PR/authenticated trigger exists. Draft PR creation remains blocked by unavailable GitHub authentication; main was not changed.
+
+## 2026-09-22 Stage AI-7 continuous event-evidence closure
+
+- [x] Receive and execute the remote AI-7 plan only after Jovi explicitly authorized source/test execution.
+- [x] Separate requested afterfire lift time from source-stem observed onset; bind frame, domain, energy, count and role identity.
+- [x] Add AI-7 RED/GREEN coverage and update AI-6 continuous/three-way regression contracts.
+- [x] Close the iteration-1 review findings: validate source onset/count/energy and role copies at generate/write/verify boundaries; reject valid-PCM event corruption before writing.
+- [x] Add role vehicle/scene/sample/context binding and a real re-sealed package `qualified.verify()` negative regression.
+- [x] Execute the existing local-material check (`1 passed`) and both `S12_RUN_SLOW=1` 3000-block checks (`2 passed`).
+- [x] Run final exact-head full S12 on `cd61c58`: `1334 passed, 3 skipped, 118 subtests passed`.
+- [x] Push `feature/stage-ai7-continuous-event-evidence-20260921` normally; main remains unchanged.
+- [x] Preserve AI-6 A/B decoded PCM bytes, legacy ten-scene identity, and RX-7 historical A provenance across package rollover.
+- [x] Add the AI-7 workflow gate and write the report/handoff documents.
+- [ ] Complete remote iteration-3 independent review; create Draft PR/verify CI only if GitHub authentication becomes available. Do not merge main.
+- [ ] Wait for Jovi's named listening decision; keep `HUMAN_STATUS=NOT_EVALUATED` and `promotable=false` beforehand.
+
+### Review
+
+- Source sequence reaches `adaf72db254f28cc64616452d629c9a750db6616`; iteration-2 contract fix is isolated and does not modify DSP/audio parameters.
+- Iteration-2 contract RED/GREEN: `19 passed`; current AI-7/AI-6/three-way/remaining-vehicle/feedback-package/AI-5 focused suite: `92 passed`.
+- Strict compile, Track-P (`180` frozen files / `2` symbols / `0` frozen-path changes) and `git diff --check`: exit `0`.
+- Package `s12-stage-ai7-continuous-event-evidence-20260921-v3` verified; manifest SHA `44d9449c056768f454533041fd27a880b01a6f83df16057fe40f0526fab53833`; summary SHA `ecb8154c84c3a63cb81c71914fdc39afc23e2b026d9d64cc4b1f7623dd963740`.
+- AI-6 fixed input inventory: 215/215 files match; actual manifest SHA `28ef0738097f7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`; old report/handoff value had a historical typo and was not used as the v3 binding.
+- RX-7 observed onset `18.043s/frame 866064`; Aventador observed onset `18.010s/frame 864480`; both use `SOURCE_STEM_PRE_IR` and A/B PCM remains equal to fixed AI-6 v2.
+- Final v3 browser/HTTP interaction is PASS; iteration 4 receipt and C2C-readable evidence are recorded below.
+- Final exact-head full S12: `1332 passed, 3 skipped, 118 subtests passed` in `2487.96s`; one skip requires `S12_LOCAL_ASSET_ROOT`, two require `S12_RUN_SLOW=1`. No skip is treated as PASS.
+- Iteration-3 final verifier/full evidence: core focused `39 passed`; package-level re-sealed negative `1 passed`; local-material `1 passed`; slow `2 passed`; full S12 `1334 passed, 3 skipped, 118 subtests passed`.
+- Verification start HEAD `3956c08`; PR #31 is open/draft with base `main@29b50961`, head `feature/stage-ai7-continuous-event-evidence-20260921@3956c08`, `mergeable=true`, `mergeable_state=unstable`.
+- Remote iteration 3 returned `EVIDENCE_CLOSURE_REQUIRED` with `SOURCE_TEST_CHANGES_REQUESTED=NONE`; iteration 4 evidence closure was executed without source/test/audio/v3 changes.
+- Local engineering outcome and evidence closure are complete; Human listening remains the next product gate.
+- Product gate remains closed: no Human PASS, OEM/Profile Freeze, or Android promotion claim.
+
+## 2026-09-22 Stage AI-7 iteration 4 evidence closure
+
+- [x] Independently query PR #31 via GitHub API and live refs; record base/head SHA, draft/state, mergeability, and query response.
+- [x] Save complete base-to-final diff, `cd61c58..3956c08` diff, `adaf72d..cd61c58` diff, name-status/stat, status and commit list.
+- [x] Re-publish readable C2C outputs `7–16` for full S12, package negative, focused, material/slow, compile, Track-P, diff-check, v3 preflight and route checks.
+- [x] Read-only verify the immutable v3 hashes, `qualified ABC preflight PASS`, source-stem event fields, fixed AI-6 A/B PCM identity and `HUMAN_STATUS=NOT_EVALUATED` boundary.
+- [x] Re-run the existing v3 service on isolated port `29791`; all 9 index routes returned HTTP 200 and RX-7/Aventador embedded contracts exposed continuous evidence markers; stop only the owned server session.
+- [x] Write the review receipt index and update the report/handoff/todo with current PR #31 and evidence paths.
+- [x] Prepare one documentation-only closeout commit for the same AI-7 branch and existing Draft PR #31; the push itself is verified immediately after commit, with no merge or force-push.
+- [ ] Send iteration 4 `EXECUTED` once final HEAD is known, then wait for remote `DONE`; keep Human listening as the only next product gate.
+
+### Iteration 4 review evidence
+
+- Receipt: `E:\Tesla_speed\review_packages\s12-stage-ai7-pr31-review-receipt-20260922-v1\RECEIPT.md`.
+- Fixed v3: `ARTIFACTS.json=44d9449c056768f454533041fd27a880b01a6f83df16057fe40f0526fab53833`; `summary.json=ecb8154c84c3a63cb81c71914fdc39afc23e2b026d9d64cc4b1f7623dd963740`.
+- No source/test/audio/package changes are allowed in this iteration; final pushed HEAD will be reported by the C2C `EXECUTED` message instead of being repeated inside its own documentation commit.
