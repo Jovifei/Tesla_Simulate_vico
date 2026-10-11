@@ -1,56 +1,6 @@
 {
   "schema": "vico.n3.consumer_patch.v1",
-  "description": "Materialize exact reviewed consumer edits locally before applying large-file replacements.",
-  "edits": [
-    {
-      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabV6SoundBankEngine.kt",
-      "expected_blob_sha": "1bbdd55fc668e55b89a199b4f551c17e31dac559",
-      "old": "setVehicle-anchor-from-consumer-source-anchors.json",
-      "new": """    fun setVehicle(vehicleKey: String): Boolean {
-        val loaded = try {
-            cache.getOrPut(vehicleKey) { MatlabSoundBankLoader.load(assets, vehicleKey) }
-        } catch (_: Exception) {
-            return false
-        }
-        val profile = try {
-            MatlabVehicleSoundProfileAdapter.fromLoadedBank(assets, loaded)
-        } catch (_: Exception) {
-            return false
-        }
-        profile.validate().getOrThrow()
-        val normal = try {
-            normalCache.getOrPut(vehicleKey) { LiveLoopBankVariantLoader.loadForNormalPlayback(assets, loaded) }
-        } catch (_: Exception) {
-            if (referenceBank == null) {
-                referenceBank = loaded
-                controller = MatlabPowertrainController(loaded.powertrain)
-                normalBankId = \"unavailable\"
-            }
-            return false
-        }
-        if (referenceBank?.vehicleKey != vehicleKey || normalVehicleKey != vehicleKey || renderer == null) {
-            prototypeEnabled=false
-            referenceBank = loaded
-            normalBankId = normal.identity
-            normalVehicleKey = vehicleKey
-            controller = MatlabPowertrainController(loaded.powertrain)
-            syntheticControllers.clear()
-            renderer = MatlabStatefulBankRenderer(normal.bank)
-        }
-        return true
-    }
-"""
-    },
-    {
-      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt",
-      "expected_blob_sha": "6be5b423567db22bd00a6eaf5317bf43b755b512",
-      "old": "exportDigitalCapture-anchor-from-consumer-source-anchors.json",
-      "new": """    fun exportDigitalCapture(output: OutputStream): S13PcmCaptureReport {
-        val capture = checkNotNull(digitalCapture) { \"No digital capture was armed\" }
-        check(capture.isFinished) { \"PCM capture is still active\" }
-        return capture.exportF32le(output)
-    }
-"""
-    }
-  ]
+  "status": "requires_rematerialization",
+  "description": "Previous patch payload was rejected because it was not JSON and contained unresolved anchor placeholders. This file intentionally does not claim consumer application.",
+  "edits": []
 }
