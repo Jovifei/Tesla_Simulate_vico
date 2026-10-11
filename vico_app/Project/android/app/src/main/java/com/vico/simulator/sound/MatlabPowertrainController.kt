@@ -65,6 +65,24 @@ class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {
     private val driveDemand = VirtualDriveDemand()
     private val cruiseGear by lazy { VirtualCruiseGear(spec) }
 
+    @Synchronized
+    fun resetSession(): Boolean {
+        gear = 1
+        rpm = spec.idleRpm
+        lastTimeS = Double.NaN
+        lastShiftTimeS = Double.NEGATIVE_INFINITY
+        shiftStartTimeS = Double.NEGATIVE_INFINITY
+        lastThrottle = 0.0
+        afterfireArmed = false
+        measuredEpoch = null
+        measuredUsable = false
+        measuredRecoveryUntilS = Double.NEGATIVE_INFINITY
+        measuredAfterfire.invalidate()
+        driveDemand.invalidate()
+        cruiseGear.resetSession()
+        return true
+    }
+
     /** Live measurements only. Unknown is never interpreted as zero-speed parking. */
     fun updateMeasured(timeS: Double, speedKmh: Double, accelerationMps2: Double, throttle: Double,
                        control: DriveInputControl): MatlabPowertrainState {

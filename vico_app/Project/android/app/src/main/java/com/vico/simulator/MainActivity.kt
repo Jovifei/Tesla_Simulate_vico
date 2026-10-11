@@ -508,6 +508,10 @@ class MainActivity : AppCompatActivity() {
             return
         }
         activeVehicleKey = key
+        if (!audioEngine.prepareControllerSession()) {
+            toast("音频会话准备失败，请停止当前播放后重试")
+            return
+        }
         val nowNanos = android.os.SystemClock.elapsedRealtimeNanos()
         val timeS = (android.os.SystemClock.elapsedRealtime() - startMs) / 1000.0
         val input = lastInputSnapshot

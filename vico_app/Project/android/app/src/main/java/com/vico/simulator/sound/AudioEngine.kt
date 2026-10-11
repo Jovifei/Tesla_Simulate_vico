@@ -92,6 +92,12 @@ class AudioEngine(context: Context) {
     }
 
     @Synchronized
+    fun prepareControllerSession(): Boolean {
+        if (running || thread?.isAlive == true) return false
+        return model.prepareControllerSession()
+    }
+
+    @Synchronized
     fun start(): Boolean {
         if (running) return true
         if (thread?.isAlive == true) return false

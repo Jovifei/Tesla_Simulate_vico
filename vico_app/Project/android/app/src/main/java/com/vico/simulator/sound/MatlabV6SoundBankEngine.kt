@@ -13,6 +13,13 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     private var referenceBank: MatlabSoundBank? = null
     private var controller: MatlabPowertrainController? = null
     private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
+
+    @Synchronized
+    fun prepareControllerSession(): Boolean {
+        controller?.resetSession()
+        syntheticControllers.values.forEach { it.resetSession() }
+        return true
+    }
     private var renderer: MatlabStatefulBankRenderer? = null
     @Volatile var prototypeEnabled: Boolean = false
         private set

@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-02",
+  "updated_at": "2026-10-11",
   "current_phase": "P2",
-  "current_work_package": "P2/P3 GitHub接力：默认关闭的真实PCM接入准备（PR #35）",
+  "current_work_package": "PR38 controller session reception; N3 foundation pending",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -417,5 +417,15 @@
     "tests": "Android285/0fail/29skip; Python120/0fail/4skip; WindowsN2 44/0fail/0skip",
     "device": "INSTALL_AND_STARTUP_PASS; ACOUSTIC_NOT_RUN; HUMAN_NOT_RUN",
     "report": "docs/vico-main-integration-20261003.md"
+  },
+  "controller_session_reception_20261011": {
+    "status": "PARTIAL",
+    "remote_proposal": "5e4daeea27ccf20c2cde6da56ccd672e446fa841",
+    "report": "docs/vico-controller-session-reception-20261011.md",
+    "tests": "Android454/0fail/0error/29skip; Python157/0fail/0error/4skip; lifecycle mutation RED then GREEN",
+    "device": "NOT_RUN",
+    "acoustic": "NOT_RUN",
+    "human": "PENDING_HUMAN",
+    "remaining": "Review other playback entry points; diagnostics; N3 profile/extractor; final-head CI"
   }
 }

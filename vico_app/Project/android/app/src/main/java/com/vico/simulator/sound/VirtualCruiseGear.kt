@@ -31,6 +31,7 @@ class VirtualCruiseGear(private val spec:MatlabPowertrainSpec,private val config
   return 0
  }
  fun invalidate(){initialized=false;direction=0;since=Double.NaN}
+ fun resetSession(){gear=1;initialized=false;lastTime=Double.NaN;lastShift=Double.NEGATIVE_INFINITY;direction=0;since=Double.NaN}
  fun update(timeS:Double,speedKmh:Double,demand:Double,freshImu:Boolean,resumed:Boolean,parked:Boolean,reportedSpeedUncertaintyMps:Double?=null):VirtualGearState {
   require(timeS.isFinite()&&timeS>=0&&speedKmh.isFinite()&&speedKmh>=0&&demand.isFinite()&&demand in 0.0..1.0)
   require(reportedSpeedUncertaintyMps?.let{it.isFinite()&&it>=0.0}!=false)

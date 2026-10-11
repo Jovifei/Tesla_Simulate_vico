@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-02 · 主线：P2 · 工作包：P2/P3 GitHub接力：默认关闭的真实PCM接入准备（PR #35）
+更新：2026-10-11 · 主线：P2 · 工作包：PR38 controller session reception; N3 foundation pending
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

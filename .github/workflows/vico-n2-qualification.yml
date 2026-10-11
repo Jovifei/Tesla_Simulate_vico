@@ -198,6 +198,7 @@ jobs:
           --tests 'com.vico.simulator.sound.VirtualDriveDemandTest'
           --tests 'com.vico.simulator.sound.VirtualCruiseGearTest'
           --tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'
+          --tests 'com.vico.simulator.sound.ControllerSessionLifecycleRegressionTest'
           --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'
           --tests 'com.vico.simulator.sound.GpsUncertaintyGearTest'
           --tests 'com.vico.simulator.sound.LiveLoopVariantTest'
