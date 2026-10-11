@@ -2,6 +2,8 @@ package com.vico.simulator.sound
 
 import android.content.res.AssetManager
 import org.json.JSONObject
+import java.security.MessageDigest
+import java.util.Collections
 
 data class MatlabLoop(
     val rpm: Double,
@@ -21,6 +23,7 @@ data class MatlabSoundBank(
     val loops: List<MatlabLoop>,
     val afterfire: FloatArray,
     val shiftEvents: List<MatlabTransient> = emptyList(),
+    val artifactHashes: Map<String, String> = emptyMap(),
 ) {
     val rpmLevels: DoubleArray = loops.map { it.rpm }.distinct().sorted().toDoubleArray()
     val loadLevels: DoubleArray = loops.map { it.load }.distinct().sorted().toDoubleArray()
@@ -32,8 +35,10 @@ data class MatlabSoundBank(
 
 object MatlabSoundBankLoader {
     fun load(assets: AssetManager, vehicleKey: String): MatlabSoundBank {
-        val root = findRoot(assets, vehicleKey)
-        val manifest = JSONObject(assets.open("$root/manifest.json").bufferedReader().use { it.readText() })
+        val reader = BankArtifactReader { path -> assets.open(path).use { it.readBytes() } }
+        val (root, manifestBytes) = findRoot(reader, vehicleKey)
+        val manifest = JSONObject(manifestBytes.toString(Charsets.UTF_8))
+        require(manifest.getString("vehicle_key") == vehicleKey) { "Manifest vehicle mismatch" }
         require(manifest.getString("schema") in setOf("vico.matlab.soundbank.v1", "vico.s12.soundbank.v1"))
         val sampleRate = manifest.getInt("sample_rate_hz")
         require(sampleRate == 48000 || sampleRate == 96000)
@@ -61,13 +66,13 @@ object MatlabSoundBankLoader {
         val loopsJson = manifest.getJSONArray("loops")
         val loops = List(loopsJson.length()) { index ->
             val entry = loopsJson.getJSONObject(index)
-            val decoded = FloatWavDecoder.decode(assets.open("$root/${entry.getString("file")}").use { it.readBytes() })
+            val decoded = FloatWavDecoder.decode(reader.read("$root/${entry.getString("file")}"))
             require(decoded.sampleRateHz == sampleRate)
             MatlabLoop(entry.getDouble("rpm"), entry.getDouble("load"), decoded.samples)
         }
         val afterfireJson = manifest.getJSONObject("afterfire")
         val afterfire = FloatWavDecoder.decode(
-            assets.open("$root/${afterfireJson.getString("file")}").use { it.readBytes() }
+            reader.read("$root/${afterfireJson.getString("file")}")
         )
         require(afterfire.sampleRateHz == sampleRate)
         val shiftEvents = if (manifest.has("shift_events")) {
@@ -75,7 +80,7 @@ object MatlabSoundBankLoader {
             List(entries.length()) { index ->
                 val entry = entries.getJSONObject(index)
                 val decoded = FloatWavDecoder.decode(
-                    assets.open("$root/${entry.getString("file")}").use { it.readBytes() }
+                    reader.read("$root/${entry.getString("file")}")
                 )
                 require(decoded.sampleRateHz == sampleRate)
                 MatlabTransient(entry.getString("file"), decoded.samples)
@@ -90,13 +95,33 @@ object MatlabSoundBankLoader {
             require(contract.getString("channel_layout") == "mono")
             require(shiftEvents.isNotEmpty())
         }
-        return MatlabSoundBank(vehicleKey, sampleRate, spec, loops, afterfire.samples, shiftEvents)
+        return MatlabSoundBank(vehicleKey, sampleRate, spec, loops, afterfire.samples, shiftEvents, reader.hashes())
     }
 
-    private fun findRoot(assets: AssetManager, vehicleKey: String): String {
+    private fun findRoot(reader: BankArtifactReader, vehicleKey: String): Pair<String, ByteArray> {
         val roots = listOf("s12_v10/$vehicleKey", "matlab_v6/$vehicleKey")
-        return roots.firstOrNull { root ->
-            runCatching { assets.open("$root/manifest.json").close() }.isSuccess
+        return roots.firstNotNullOfOrNull { root ->
+            runCatching { root to reader.read("$root/manifest.json") }.getOrNull()
         } ?: error("No sound bank for $vehicleKey")
     }
+}
+
+/** Records the digest of the exact bytes passed to manifest parsing / WAV decoding. */
+internal class BankArtifactReader(private val readAsset: (String) -> ByteArray) {
+    private val artifactHashes = linkedMapOf<String, String>()
+
+    fun read(path: String): ByteArray {
+        require(!path.startsWith('/') && '\\' !in path &&
+            path.split('/').none { it.isEmpty() || it == "." || it == ".." }) {
+            "Invalid bank asset path"
+        }
+        val bytes = readAsset(path)
+        val hash = MessageDigest.getInstance("SHA-256").digest(bytes)
+            .joinToString("") { "%02x".format(it.toInt() and 0xff) }
+        val previous = artifactHashes.put(path, hash)
+        require(previous == null || previous == hash) { "Bank asset changed during loading" }
+        return bytes
+    }
+
+    fun hashes(): Map<String, String> = Collections.unmodifiableMap(LinkedHashMap(artifactHashes))
 }

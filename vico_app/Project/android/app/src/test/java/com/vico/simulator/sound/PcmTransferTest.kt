@@ -37,6 +37,7 @@ class PcmTransferTest {
         assertEquals(11L, report.requestedFrames)
         assertEquals(11L, report.acceptedFrames)
         assertFalse(report.fullWindow)
+        assertNull(report.acousticFeatures)
         assertTrue(report.toJson().contains("\"input_binding\":\"UNBOUND\""))
     }
 
@@ -48,6 +49,35 @@ class PcmTransferTest {
         val short = S13PcmCaptureReport(11, 11, 11, 11, false, false, "sha")
         assertTrue(complete.fullWindow)
         assertFalse(short.fullWindow)
+    }
+
+    @Test
+    fun complete_export_binds_diagnostics_to_the_actual_accepted_pcm_and_trace() {
+        val binding = S13CaptureBinding("c63_w204_v6", "a".repeat(40),
+            "b".repeat(64), "c".repeat(64), "d".repeat(64))
+        val capture = BoundedPcmCapture(binding = binding)
+        val pcm = FloatArray(S13ReviewContract.TOTAL_FRAMES) { 0.25f }
+        writeAllPcm(pcm, capture) { _, _, count -> count }
+        assertThrows(IllegalStateException::class.java) {
+            capture.exportF32le(ByteArrayOutputStream())
+        }
+        capture.finish()
+        var bytes = 0L
+        val output = object : java.io.OutputStream() {
+            override fun write(value: Int) { bytes++ }
+            override fun write(data: ByteArray, offset: Int, count: Int) { bytes += count }
+        }
+        val report = capture.exportF32le(output)
+        assertEquals(pcm.size.toLong() * 4, bytes)
+        assertTrue(report.fullWindow)
+        val features = requireNotNull(report.acousticFeatures)
+        assertEquals(report.sha256, features.sha256)
+        assertEquals(0.25, features.rms, 1e-10)
+        assertTrue(features.referenceState.startsWith("NOT_EVALUATED"))
+        val json = report.toJson()
+        assertTrue(json.contains("\"acoustic_features\":{"))
+        assertTrue(json.contains(binding.traceSha256))
+        assertTrue(json.contains(report.sha256))
     }
 
     @Test

@@ -4,6 +4,7 @@ import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.security.MessageDigest
+import com.vico.simulator.audio.AcousticFeatureExtractor
 
 data class S13CaptureBinding(
     val vehicleKey: String,
@@ -23,6 +24,7 @@ data class S13PcmCaptureReport(
     val sha256: String,
     val binding: S13CaptureBinding? = null,
     val captureDomain: String = "POST_ENVELOPES_PRE_AUDIOTRACK_ACCEPTED",
+    val acousticFeatures: AcousticFeatureExtractor.Result? = null,
 ) {
     val fullWindow: Boolean
         get() = requestedFrames == S13ReviewContract.TOTAL_FRAMES.toLong() &&
@@ -43,7 +45,8 @@ data class S13PcmCaptureReport(
         "target_frames":1440000,"requested_frames":$requestedFrames,
         "accepted_frames":$acceptedFrames,"captured_frames":$capturedFrames,
         "capacity_frames":$capacityFrames,"overflow":$overflow,"failed":$failed,
-        "full_window":$fullWindow,"sha256":"$sha256"}
+        "full_window":$fullWindow,"sha256":"$sha256",
+        "acoustic_features":${acousticFeatures?.toJson() ?: "null"}}
     """.trimIndent()
 }
 
@@ -105,7 +108,7 @@ internal class BoundedPcmCapture(
         }
         output.flush()
         val hash = digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
-        return S13PcmCaptureReport(
+        val report = S13PcmCaptureReport(
             requestedFrames = requested,
             acceptedFrames = accepted,
             capturedFrames = captured,
@@ -116,6 +119,10 @@ internal class BoundedPcmCapture(
             binding = binding,
             captureDomain = captureDomain,
         )
+        // Analyze only a finished full-window export; retain its actual core/accepted domain.
+        return if (report.fullWindow) {
+            report.copy(acousticFeatures = AcousticFeatureExtractor().extract(samples.copyOf(captured), report))
+        } else report
     }
 }
 

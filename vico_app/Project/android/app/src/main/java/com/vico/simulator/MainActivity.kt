@@ -34,6 +34,7 @@ import com.vico.simulator.sound.DriveInputSource
 import com.vico.simulator.sound.SoundState
 import com.vico.simulator.sound.DrivePoint
 import com.vico.simulator.sound.SoundProfile
+import com.vico.simulator.sound.startPreviewPlayback
 import com.vico.simulator.sound.S14ReferenceSession
 import com.vico.simulator.sound.S14TrialCoordinator
 import com.vico.simulator.sound.S14CallbackEpoch
@@ -1022,14 +1023,20 @@ class MainActivity : AppCompatActivity() {
         activeVehicleKey = key
         audioEngine.setCharacter(SoundProfile.DEFAULT)
         val wasRunning = audioRunning
-        if (!wasRunning) {
-            if (!audioEngine.start()) {
+        val started = startPreviewPlayback(wasRunning,
+            audioEngine::prepareControllerSession, audioEngine::start,
+            {
+                audioEngine.setVehicle(originalKey)
+                activeVehicleKey = originalKey
+                audioEngine.setCharacter(originalCharacter)
                 previewVehicleKey = null
-                toast("试听启动失败，请检查音频输出设备")
-                return
-            }
-            audioRunning = true
+                previewUntilMs = 0
+            })
+        if (!started) {
+            toast("试听启动失败，请停止当前播放后检查音频输出设备")
+            return
         }
+        audioRunning = true
         previewUntilMs = android.os.SystemClock.elapsedRealtime() + 2500
         pushUiState()
         previewRestore = Runnable {

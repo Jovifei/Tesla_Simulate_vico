@@ -84,12 +84,17 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             }
             return false // Never silently fall back to a different claimed live bank version.
         }
+        val profile = try {
+            VehicleSoundProfileLoader.fromLoadedBank(loaded, normal.identity, normal.variantArtifactHashes)
+        } catch (_: IllegalArgumentException) {
+            return false
+        }
         if (referenceBank?.vehicleKey != vehicleKey || normalVehicleKey != vehicleKey || renderer == null) {
             prototypeEnabled=false
             referenceBank = loaded
             normalBankId = normal.identity
             normalVehicleKey = vehicleKey
-            controller = MatlabPowertrainController(loaded.powertrain)
+            controller = MatlabPowertrainController(profile.powertrain)
             syntheticControllers.clear()
             renderer = MatlabStatefulBankRenderer(normal.bank)
         }
