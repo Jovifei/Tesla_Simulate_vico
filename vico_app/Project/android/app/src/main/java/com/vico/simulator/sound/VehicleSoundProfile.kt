@@ -1,9 +1,6 @@
 package com.vico.simulator.sound
 
-/**
- * Versioned vehicle-to-sound contract. This is a compatibility boundary, not a
- * replacement for the existing powertrain or frozen sound assets.
- */
+/** Versioned vehicle-to-sound compatibility contract. */
 data class VehicleSoundProfile(
     val version: Int,
     val vehicleKey: String,
@@ -13,28 +10,41 @@ data class VehicleSoundProfile(
     val channels: Int,
     val artifactHashes: Map<String, String>,
     val qualificationState: String,
+    val idleRpm: Double,
+    val redlineRpm: Double,
+    val gearRatios: List<Double>,
+    val finalDrive: Double,
+    val wheelRadiusM: Double,
 ) {
     fun validate(): Result<Unit> = runCatching {
-        require(version == 1) { "unsupported profile version" }
-        require(vehicleKey.isNotBlank()) { "vehicle key missing" }
-        require(engineFamily.isNotBlank()) { "engine family missing" }
-        require(bankIdentity.isNotBlank()) { "bank identity missing" }
-        require(sampleRateHz > 0) { "invalid sample rate" }
-        require(channels > 0) { "invalid channel count" }
-        require(artifactHashes.values.none { it.isBlank() }) { "invalid artifact hash" }
+        require(version == 1)
+        require(vehicleKey in SupportedVehicleProfiles.keys)
+        require(engineFamily in SupportedVehicleProfiles.engineFamilies)
+        require(bankIdentity.isNotBlank())
+        require(sampleRateHz == 48000)
+        require(channels == 1)
+        require(artifactHashes.isNotEmpty())
+        require(artifactHashes.values.all { it.matches(Regex("[0-9a-fA-F]{16,}")) })
+        require(idleRpm.isFinite() && redlineRpm.isFinite() && redlineRpm > idleRpm)
+        require(finalDrive.isFinite() && finalDrive > 0)
+        require(wheelRadiusM.isFinite() && wheelRadiusM > 0)
+        require(gearRatios.isNotEmpty() && gearRatios.zipWithNext().all { it.first > it.second })
     }
 
     companion object {
         fun legacy(vehicleKey: String, bankIdentity: String): VehicleSoundProfile =
-            VehicleSoundProfile(
-                version = 1,
-                vehicleKey = vehicleKey,
-                engineFamily = "legacy-compatible",
-                bankIdentity = bankIdentity,
-                sampleRateHz = 48000,
-                channels = 1,
-                artifactHashes = emptyMap(),
-                qualificationState = "FROZEN_COMPATIBILITY_ONLY",
-            )
+            SupportedVehicleProfiles.requireLegacy(vehicleKey, bankIdentity)
+    }
+}
+
+object SupportedVehicleProfiles {
+    val keys = setOf("c63_w204_v6", "hellcat_v6", "ferrari_458", "gtr_r35", "lfa", "supra_jza80")
+    val engineFamilies = setOf("v6", "v8", "v10", "flat6", "i6")
+
+    fun requireLegacy(vehicleKey: String, bankIdentity: String): VehicleSoundProfile {
+        require(vehicleKey in keys)
+        return VehicleSoundProfile(1, vehicleKey, "legacy-compatible", bankIdentity, 48000, 1,
+            mapOf("bank" to "legacy-bound"), "FROZEN_COMPATIBILITY_ONLY",
+            700.0, 7000.0, listOf(3.0, 2.0, 1.4, 1.0), 3.5, 0.33)
     }
 }
