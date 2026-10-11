@@ -1,10 +1,7 @@
 {
-  "schema": "vico.controller-session.patch.v3",
-  "purpose": "Auditable minimal replacements for lifecycle integration. Apply only after SHA and unique-match verification.",
-  "base": {
-    "branch": "codex-remote-stage-20261011-integration",
-    "preserve": ["renderer phase state", "renderer transient policy", "provenance watermarks", "frozen WAV/gain boundaries", "candidate_count=0"]
-  },
+  "schema": "vico.controller-session.patch.v4",
+  "purpose": "Exact anchored lifecycle patch. Apply only after SHA and unique old-match verification.",
+  "preserve": ["renderer phase state", "renderer transient policy", "provenance sequence ids", "frozen WAV/gain boundaries", "candidate_count=0"],
   "edits": [
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabV6SoundBankEngine.kt",
@@ -13,34 +10,34 @@
       "new": "private var controller: MatlabPowertrainController? = null\n    private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()\n\n    @Synchronized\n    fun prepareControllerSession(): Boolean {\n        controller?.resetSession()\n        syntheticControllers.values.forEach { it.resetSession() }\n        return true\n    }"
     },
     {
-      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabPowertrainController.kt",
-      "expected_blob_sha": "7aced24a9d837c92a4b2d2bd9d14fdf2f23a28c4",
-      "old": "class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {\n    private var gear = 1",
-      "new": "class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {\n    private var gear = 1\n\n    @Synchronized\n    fun resetSession(): Boolean {\n        gear = 1\n        rpm = spec.idleRpm\n        lastTimeS = Double.NaN\n        lastShiftTimeS = Double.NEGATIVE_INFINITY\n        shiftStartTimeS = Double.NEGATIVE_INFINITY\n        lastThrottle = 0.0\n        afterfireArmed = false\n        measuredEpoch = null\n        measuredUsable = false\n        measuredRecoveryUntilS = Double.NEGATIVE_INFINITY\n        measuredAfterfire.invalidate()\n        driveDemand.invalidate()\n        cruiseGear.resetSession()\n        return true\n    }"
+      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/VirtualCruiseGear.kt",
+      "expected_blob_sha": "41f34e9b37f84d9772dd6300b750f36491d214ff",
+      "old": " fun invalidate(){initialized=false;direction=0;since=Double.NaN}",
+      "new": " fun invalidate(){initialized=false;direction=0;since=Double.NaN}\n fun resetSession(){gear=1;initialized=false;lastTime=Double.NaN;lastShift=Double.NEGATIVE_INFINITY;direction=0;since=Double.NaN}"
     },
     {
-      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/VirtualCruiseGear.kt",
-      "expected_blob_sha": "TBD_REQUIRE_FETCH",
-      "old": "private var gear = 1",
-      "new": "private var gear = 1\n\n    fun resetSession() {\n        gear = 1\n        // Keep source sequence/provenance monotonic; only reset session hysteresis state.\n    }"
+      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabPowertrainController.kt",
+      "expected_blob_sha": "7aced24a9d837c92a4b2d2bd9d14fdf2f23a28c4",
+      "old": "cruiseGear.invalidate()",
+      "new": "cruiseGear.resetSession()"
     },
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt",
       "expected_blob_sha": "22ec7d6bc9a4ba94b59b396080ec4e712591e373",
-      "old": "check(model.resetControllerSession())\n        running = true",
-      "new": "// Session preparation moves to the owner boundary before first mailbox publication.\n        running = true"
+      "old": "if (running) return true\n        if (thread?.isAlive == true) return false",
+      "new": "if (running) return true\n        if (thread?.isAlive == true) return false\n        check(model.prepareControllerSession())"
     },
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt",
-      "expected_blob_sha": "REQUIRES_FETCH",
-      "old": "INITIAL_STATE_MAP_BEFORE_AUDIO_OWNER",
-      "new": "audioEngine.prepareControllerSession() before first mapPoint/pushState mailbox publication"
+      "expected_blob_sha": "13547ce9344ebdfa4ac17e3c9318ac7199d7028d",
+      "old": "activeVehicleKey = key\n        val nowNanos = android.os.SystemClock.elapsedRealtimeNanos()",
+      "new": "activeVehicleKey = key\n        check(audioEngine.prepareControllerSession())\n        val nowNanos = android.os.SystemClock.elapsedRealtimeNanos()"
     },
     {
       "path": ".github/workflows/vico-n2-qualification.yml",
       "expected_blob_sha": "2a815d6f7e424d3b9d32b7ab0a4fa7b68ee5bd4b",
-      "old": "--tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'\n          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'",
-      "new": "--tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'\n          --tests 'com.vico.simulator.sound.ControllerSessionLifecycleRegressionTest'\n          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'"
+      "old": "          --tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'\n          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'",
+      "new": "          --tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'\n          --tests 'com.vico.simulator.sound.ControllerSessionLifecycleRegressionTest'\n          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'"
     }
   ]
 }
