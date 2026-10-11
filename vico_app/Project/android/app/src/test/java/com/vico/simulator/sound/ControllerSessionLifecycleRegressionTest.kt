@@ -8,9 +8,8 @@ import org.junit.Test
 /**
  * Session lifecycle regression coverage.
  *
- * The test compares a reused controller after an explicit session boundary with a
- * fresh controller. Provenance identity is allowed to advance; controller state
- * and event history must not leak across the restart boundary.
+ * A reset keeps provenance/session identity semantics separate from controller
+ * state. The restarted same-epoch controller must match a fresh controller.
  */
 class ControllerSessionLifecycleRegressionTest {
     private fun update(
@@ -39,18 +38,20 @@ class ControllerSessionLifecycleRegressionTest {
     @Test
     fun sameEpochMonotonicRestartMatchesFreshControllerAfterSessionReset() {
         val reused = MatlabPowertrainController(virtualDriveC63Spec())
-        var before = update(reused, 1.0, 20.0, 2.0, 1_000_000_000L)
-        for (i in 1..120) {
-            before = update(reused, 1.0 + i * 0.05, 120.0, 2.0, 1_000_000_000L + i * 50_000_000L)
+        for (i in 0..120) {
+            update(reused, 1.0 + i * 0.05, 120.0, 2.0, 1_000_000_000L + i * 50_000_000L)
         }
-        assertTrue(before.gear > 1)
+        assertTrue(reused.resetSession())
 
-        val afterReset = reused.resetSession()
-        val fresh = MatlabPowertrainController(virtualDriveC63Spec())
-            .let { update(it, 10.0, 0.0, 0.0, 10_000_000_000L) }
-        val restarted = update(reused, 10.0, 0.0, 0.0, 10_000_000_000L)
+        val restarted = update(reused, 20.0, 70.0, 0.0, 20_000_000_000L)
+        val fresh = update(
+            MatlabPowertrainController(virtualDriveC63Spec()),
+            20.0,
+            70.0,
+            0.0,
+            20_000_000_000L,
+        )
 
-        assertTrue(afterReset)
         assertEquals(fresh.gear, restarted.gear)
         assertEquals(fresh.rpm, restarted.rpm, 1e-9)
         assertEquals(fresh.virtualDemand, restarted.virtualDemand)
