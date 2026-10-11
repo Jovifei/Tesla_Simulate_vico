@@ -1,13 +1,13 @@
 package com.vico.simulator.sound
 
-import org.junit.Assert.assertFailsWith
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class VehicleSoundProfileLoaderCompatibilityTest {
     @Test
     fun rejectsLegacySyntheticProfileData() {
-        assertFailsWith<IllegalArgumentException> {
+        assertThrows(IllegalStateException::class.java) {
             VehicleSoundProfile.legacy("c63_w204_v6", "legacy")
         }
     }
