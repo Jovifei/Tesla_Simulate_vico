@@ -3,38 +3,47 @@ package com.vico.simulator.audio
 import kotlin.math.sqrt
 
 /**
- * Deterministic PCM feature extraction foundation.
- * It reports measurements only; it does not tune gain, DSP, or declare acoustic
- * qualification without an independent reference.
+ * Bounded PCM feature extraction. Measurements only; never tunes DSP/gain or
+ * claims independent acoustic qualification without a reference artifact.
  */
 class AcousticFeatureExtractor(
     private val sampleRateHz: Int = 48000,
-    private val algorithmVersion: String = "n3-rms-v1",
+    private val algorithmVersion: String = "n3-rms-v2",
+    private val maxSamples: Int = 48000 * 30,
 ) {
+    data class ArtifactIdentity(
+        val source: String,
+        val sha256: String,
+        val sampleRateHz: Int,
+        val channels: Int,
+    )
+
     data class Result(
         val algorithm: String,
         val samples: Int,
         val rms: Double,
         val finite: Boolean,
         val evaluation: String,
+        val referenceState: String,
     )
 
-    fun extract(pcm: FloatArray): Result {
-        require(sampleRateHz > 0) { "invalid sample rate" }
-        require(pcm.isNotEmpty()) { "empty pcm" }
-        val finite = pcm.all { it.isFinite() }
-        if (!finite) {
-            return Result(algorithmVersion, pcm.size, Double.NaN, false, "REJECT_NONFINITE")
+    fun extract(pcm: FloatArray, artifact: ArtifactIdentity, reference: ArtifactIdentity? = null): Result {
+        require(algorithmVersion == "n3-rms-v2") { "unsupported algorithm" }
+        require(sampleRateHz == artifact.sampleRateHz) { "artifact sample rate mismatch" }
+        require(artifact.channels == 1) { "only mono artifacts supported" }
+        require(artifact.sha256.isNotBlank()) { "artifact identity missing" }
+        require(pcm.isNotEmpty() && pcm.size <= maxSamples) { "pcm outside bounded window" }
+        if (pcm.any { !it.isFinite() }) {
+            return Result(algorithmVersion, pcm.size, 0.0, false, "REJECT_NONFINITE", "NOT_EVALUATED")
         }
-        val meanSquare = pcm.fold(0.0) { acc, value ->
-            acc + value.toDouble() * value.toDouble()
-        } / pcm.size
+        val rms = sqrt(pcm.fold(0.0) { a, v -> a + v.toDouble() * v.toDouble() } / pcm.size)
         return Result(
-            algorithm = algorithmVersion,
-            samples = pcm.size,
-            rms = sqrt(meanSquare),
-            finite = true,
-            evaluation = "MEASURED_FEATURE_ONLY",
+            algorithmVersion,
+            pcm.size,
+            rms,
+            true,
+            "MEASURED_FEATURE_ONLY",
+            if (reference?.sha256?.isNotBlank() == true) "REFERENCE_BOUND" else "NOT_EVALUATED",
         )
     }
 }
