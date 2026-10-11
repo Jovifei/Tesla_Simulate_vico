@@ -1,0 +1,258 @@
+{
+  "schema_version": 2,
+  "envelope": [
+    "kind",
+    "elapsed_ns",
+    "frame_id",
+    "input_epoch"
+  ],
+  "payload_indices": {
+    "CONFIG": {
+      "config_revision_id": 0,
+      "unit_code": 1,
+      "mount_axis_code": 2,
+      "mount_confirmed": 3,
+      "calibration_revision_id": 4,
+      "bias_x_mps2": 5,
+      "bias_y_mps2": 6,
+      "bias_z_mps2": 7,
+      "gps_fresh_ms": 8,
+      "imu_fresh_ms": 9,
+      "gps_uncertainty_threshold_mps": 10,
+      "display_unit_code": 11
+    },
+    "CONTROL": {
+      "input_session_id": 0,
+      "control_frame_id": 1,
+      "publish_ns": 2,
+      "valid_until_ns": 3,
+      "gps_sample_ns": 4,
+      "imu_sample_ns": 5,
+      "raw_speed_mps": 6,
+      "selected_speed_mps": 7,
+      "selected_accel_mps2": 8,
+      "source_mode": 9,
+      "drive_mode": 10,
+      "gps_quality": 11,
+      "imu_quality": 12,
+      "speed_usable": 13,
+      "acceleration_usable": 14,
+      "config_revision_id": 15
+    },
+    "GPS": {
+      "source_ns": 0,
+      "receive_ns": 1,
+      "raw_speed_mps": 2,
+      "accuracy_mps": 3,
+      "accuracy_status": 4,
+      "valid": 5,
+      "provider_code": 6,
+      "age_ms": 7,
+      "has_speed": 8
+    },
+    "IMU": {
+      "source_ns": 0,
+      "receive_ns": 1,
+      "raw_x_mps2": 2,
+      "raw_y_mps2": 3,
+      "raw_z_mps2": 4,
+      "bias_x_mps2": 5,
+      "bias_y_mps2": 6,
+      "bias_z_mps2": 7,
+      "longitudinal_mps2": 8,
+      "filtered_mps2": 9,
+      "mapping_code": 10,
+      "valid": 11,
+      "age_ms": 12,
+      "config_revision_id": 13
+    },
+    "MODEL": {
+      "input_session_id": 0,
+      "control_frame_id": 1,
+      "publish_ns": 2,
+      "consume_ns": 3,
+      "valid_until_ns": 4,
+      "raw_speed_mps": 5,
+      "selected_speed_mps": 6,
+      "model_speed_mps": 7,
+      "ui_speed_kmh": 8,
+      "accel_mps2": 9,
+      "rpm": 10,
+      "gear": 11,
+      "load": 12,
+      "throttle": 13,
+      "source_mode": 14,
+      "drive_mode": 15,
+      "gps_quality": 16,
+      "imu_quality": 17,
+      "speed_usable": 18,
+      "acceleration_usable": 19,
+      "afterfire_cause": 20,
+      "afterfire_source_id": 21,
+      "config_revision_id": 22
+    },
+    "UI_ACK": {
+      "publish_ns": 0,
+      "consume_ns": 1,
+      "dispatch_ns": 2,
+      "received_render_ack_ns": 3,
+      "display_speed_kmh": 4,
+      "display_unit_code": 5,
+      "display_value": 6
+    },
+    "EVENT": {
+      "event_code": 0,
+      "cause_code": 1,
+      "event_id": 2,
+      "source_id": 3,
+      "control_frame_id": 4,
+      "rpm": 5,
+      "gear": 6,
+      "throttle": 7,
+      "load": 8,
+      "requested_ns": 9,
+      "consumed_ns": 10,
+      "config_revision_id": 11
+    },
+    "AUDIO": {
+      "audio_block_id": 0,
+      "sample_rate_hz": 1,
+      "buffer_frames": 2,
+      "underrun_count": 3,
+      "render_duration_ns": 4,
+      "write_duration_ns": 5,
+      "write_result_frames": 6,
+      "clip_count": 7,
+      "peak": 8,
+      "output_route_code": 9,
+      "blocks_in_window": 10
+    }
+  },
+  "enum_maps": {
+    "display_unit_code": {
+      "0": "UNKNOWN",
+      "1": "KMH",
+      "2": "MPH"
+    },
+    "unit_code": {
+      "1": "SI_MPS_MPS2_WITH_EXPLICIT_KMH_FIELDS"
+    },
+    "mount_axis_code": {
+      "0": "UNKNOWN",
+      "1": "POS_X",
+      "2": "POS_Y",
+      "3": "POS_Z",
+      "4": "NEG_X",
+      "5": "NEG_Y",
+      "6": "NEG_Z"
+    },
+    "source_mode": {
+      "0": "UNSPECIFIED",
+      "1": "REAL",
+      "2": "DEMO",
+      "3": "PREVIEW",
+      "4": "QUALIFICATION"
+    },
+    "drive_mode": {
+      "0": "UNKNOWN",
+      "1": "LIVE",
+      "2": "PREVIEW",
+      "3": "REFERENCE_BYPASS"
+    },
+    "gps_quality": {
+      "0": "UNKNOWN",
+      "1": "FRESH",
+      "2": "UNVERIFIED",
+      "3": "STALE",
+      "4": "LOW_QUALITY",
+      "5": "UNAVAILABLE",
+      "6": "SYNTHETIC"
+    },
+    "imu_quality": {
+      "0": "UNKNOWN",
+      "1": "FRESH",
+      "2": "UNCONFIRMED_FRAME",
+      "3": "UNAVAILABLE",
+      "4": "SYNTHETIC"
+    },
+    "accuracy_status": {
+      "0": "UNKNOWN",
+      "1": "AVAILABLE",
+      "2": "NOT_REPORTED",
+      "3": "UNSUPPORTED_API",
+      "4": "INVALID"
+    },
+    "provider_code": {
+      "0": "UNKNOWN",
+      "1": "GPS",
+      "2": "NETWORK",
+      "3": "FUSED",
+      "4": "PASSIVE",
+      "5": "SYNTHETIC",
+      "6": "OTHER"
+    },
+    "event_code": {
+      "0": "UNKNOWN",
+      "1": "SESSION_START",
+      "2": "SESSION_STOP",
+      "3": "SHIFT",
+      "4": "AFTERFIRE",
+      "5": "WATCHDOG_TIMEOUT",
+      "6": "PROFILE_CHANGE",
+      "7": "MODE_CHANGE",
+      "8": "CALIBRATION_CHANGE",
+      "9": "AUDIO_ROUTE_CHANGE",
+      "10": "START_FAILURE"
+    },
+    "cause_code": {
+      "0": "NONE",
+      "1": "RELEASE",
+      "2": "SHIFT",
+      "3": "INPUT_EXPIRED",
+      "4": "INPUT_INVALID",
+      "5": "USER_ACTION",
+      "6": "LIFECYCLE",
+      "7": "ERROR"
+    },
+    "afterfire_cause": {
+      "0": "NONE",
+      "1": "RELEASE",
+      "2": "SHIFT"
+    },
+    "output_route_code": {
+      "0": "UNKNOWN",
+      "1": "SPEAKER",
+      "2": "WIRED",
+      "3": "BLUETOOTH",
+      "4": "USB",
+      "5": "OTHER"
+    },
+    "mapping_code": {
+      "0": "UNKNOWN",
+      "1": "POS_X",
+      "2": "POS_Y",
+      "3": "POS_Z",
+      "4": "NEG_X",
+      "5": "NEG_Y",
+      "6": "NEG_Z"
+    }
+  },
+  "optional_header_metadata": [
+    "android_api",
+    "device_model"
+  ],
+  "footer_extra_counters": [
+    "pre_ready_dropped",
+    "config_gap_rows"
+  ],
+  "audio_window_semantics": {
+    "audio_block_id": "last block in window",
+    "blocks_in_window": "integer block count",
+    "render_duration_ns": "window maximum",
+    "write_duration_ns": "window maximum",
+    "write_result_frames": "window sum",
+    "clip_count": "window sum",
+    "peak": "window maximum",
+    "underrun_count": "cumulative platform counter"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "vico.offline.rpm_guard_candidate.v1",
+  "commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+  "fixed_gain": 3.7075542301539652,
+  "rows": [
+    {
+      "rpm": 5400,
+      "load": 0.32,
+      "file": "rpm_5400_load_32.wav",
+      "sha256": "accce9152ff368e65552e58e11a03f74af298ecb41ed63f66919777b627b0de3",
+      "baseline_loop_rms": 0.04694537368628886,
+      "preroll_loop_rms": 0.04697582970431442,
+      "preroll_peak": 0.1085866391658783,
+      "finite": true,
+      "peak_budget_pass": true,
+      "candidate_sha256": "accce9152ff368e65552e58e11a03f74af298ecb41ed63f66919777b627b0de3"
+    },
+    {
+      "rpm": 5400,
+      "load": 0.92,
+      "file": "rpm_5400_load_92.wav",
+      "sha256": "43e6d1680dbf27de7749f2594fd7281d610def50e4c1bee9112242eb90133471",
+      "baseline_loop_rms": 0.09107573137268875,
+      "preroll_loop_rms": 0.09107573684951702,
+      "preroll_peak": 0.22855150699615479,
+      "finite": true,
+      "peak_budget_pass": true,
+      "candidate_sha256": "43e6d1680dbf27de7749f2594fd7281d610def50e4c1bee9112242eb90133471"
+    },
+    {
+      "rpm": 5600,
+      "load": 0.32,
+      "file": "rpm_5600_load_32.wav",
+      "sha256": "6f2fb936c922027bc3bd8ee85e98f8d531de29b4b99ad24221eee2dcd16186e0",
+      "baseline_loop_rms": 0.06886955526871329,
+      "preroll_loop_rms": 0.06892876731885425,
+      "preroll_peak": 0.1718372255563736,
+      "finite": true,
+      "peak_budget_pass": true,
+      "candidate_sha256": "6f2fb936c922027bc3bd8ee85e98f8d531de29b4b99ad24221eee2dcd16186e0"
+    },
+    {
+      "rpm": 5600,
+      "load": 0.92,
+      "file": "rpm_5600_load_92.wav",
+      "sha256": "9df90df0eac7b03afcdb106eb447fff34ba2f935eda4a64816ed815597d54cc6",
+      "baseline_loop_rms": 0.13171646289998504,
+      "preroll_loop_rms": 0.13199832385109148,
+      "preroll_peak": 0.36429500579833984,
+      "finite": true,
+      "peak_budget_pass": true,
+      "candidate_sha256": "9df90df0eac7b03afcdb106eb447fff34ba2f935eda4a64816ed815597d54cc6"
+    }
+  ],
+  "scope": "add5400/5600 only, preserve original16 loops plus normal low4 override and all events; unapproved offline"
+}

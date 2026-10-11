@@ -96,6 +96,15 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         rpmBlendCapture = capture
     }
 
+    /** Audio-renderer thread only. Preserve oscillator phase, smoothing and diagnostic counters. */
+    fun clearTransientEvents() {
+        afterfireIndex = -1
+        activeShift = null
+        activeShiftIndex = -1
+        consumedAfterfireTimeS = Double.NaN
+        consumedShiftTimeS = Double.NaN
+    }
+
     fun reset() {
         evaluatedFrames = 0L
         preClipPeak = 0.0

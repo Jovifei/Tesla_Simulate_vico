@@ -11,6 +11,7 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,13 +31,16 @@ import androidx.core.content.ContextCompat
  */
 class SensorProvider(
     private val context: Context,
-    private val onSample: (speedKmh: Double, forwardAccelMps2: Double, gpsOk: Boolean, rawAccel: FloatArray, gravity: FloatArray) -> Unit,
+    private val onSample: (speedKmh: Double, forwardAccelMps2: Double, gpsOk: Boolean, rawAccel: FloatArray, gravity: FloatArray, diagnostics: InputDiagnostics) -> Unit,
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private val tickMs = 50L
+    var rawInputObserver: RawInputObserver? = null
+    fun calibrationBias(): FloatArray = calibration.offsets()
 
     private val locationSpeed = LocationSpeedState()
     private val linearAcceleration = LinearAccelerationState()
+    private var inputSession = 0L
     private var sessionStartedNanos = 0L
     private var locationStartedNanos = 0L
     @Volatile private var gravity: FloatArray = FloatArray(3)
@@ -45,10 +49,9 @@ class SensorProvider(
     private val sourceState = SensorSourceState()
 
     // 校准
-    private val calibration = CalibrationAccumulator()
-    @Volatile private var calibrating: Boolean = false
-    @Volatile var isCalibrated: Boolean = false
-        private set
+    private val calibration = CalibrationSession()
+    val isCalibrated: Boolean get() = calibration.isCalibrated
+    val calibrationStatus: CalibrationSession.Snapshot get() = calibration.snapshot
 
     // 演示模式
     @Volatile private var demoMode: Boolean = false
@@ -63,11 +66,13 @@ class SensorProvider(
 
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
+            val receivedNanos = SystemClock.elapsedRealtimeNanos()
             if (!started || event.timestamp < sessionStartedNanos) return
             if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
-                if (linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos()) && calibrating) {
-                    calibration.add(linearAcceleration.sample())
-                }
+                val accepted = linearAcceleration.update(event.values, event.timestamp, SystemClock.elapsedRealtimeNanos(), receivedNanos)
+                if (accepted) calibration.add(linearAcceleration.sample(), event.timestamp)
+                rawInputObserver?.imu(event.timestamp, receivedNanos,
+                    event.values.copyOf(minOf(3, event.values.size)), calibration.offsets(), accepted)
             } else if (event.sensor.type == Sensor.TYPE_GRAVITY || (useAccelAsGravity && event.sensor.type == Sensor.TYPE_ACCELEROMETER)) {
                 if (event.values.size < 3 || (0..2).any { !event.values[it].isFinite() }) return
                 gravity = floatArrayOf(event.values[0], event.values[1], event.values[2])
@@ -91,10 +96,30 @@ class SensorProvider(
 
     private fun acceptLocations(locations: List<Location>) {
         if (!started) return
+        val receivedNanos = SystemClock.elapsedRealtimeNanos()
         val samples = locations.filter { it.elapsedRealtimeNanos >= locationStartedNanos }.map {
-            LocationSpeedSample(it.speed.toDouble(), it.hasSpeed(), it.elapsedRealtimeNanos)
+            val accuracy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val reported = it.hasSpeedAccuracy()
+                SpeedAccuracy.fromPlatform(true, reported, if (reported) it.speedAccuracyMetersPerSecond.toDouble() else null)
+            } else SpeedAccuracy.fromPlatform(false, false, null)
+            LocationSpeedSample(it.speed.toDouble(), it.hasSpeed(), it.elapsedRealtimeNanos, accuracy)
         }
-        val accepted = locationSpeed.updateLatest(samples, SystemClock.elapsedRealtimeNanos())
+        val accepted = locationSpeed.updateLatest(samples, SystemClock.elapsedRealtimeNanos(), receivedNanos)
+        rawInputObserver?.let { observer ->
+            var chosen = if (accepted) locationSpeed.lastAcceptedTiming?.sourceElapsedNanos else null
+            for (location in locations) {
+                val hasSpeed = location.hasSpeed()
+                val speed = location.speed.toDouble().takeIf { hasSpeed && it.isFinite() }
+                val selected = chosen == location.elapsedRealtimeNanos && speed != null && speed >= 0.0 &&
+                    speed * 3.6 == locationSpeed.speedKmh
+                if (selected) chosen = null
+                val accuracy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val reported = location.hasSpeedAccuracy()
+                    SpeedAccuracy.fromPlatform(true, reported, if (reported) location.speedAccuracyMetersPerSecond.toDouble() else null)
+                } else SpeedAccuracy.fromPlatform(false, false, null)
+                observer.gps(location.elapsedRealtimeNanos, receivedNanos, speed, accuracy, selected, hasSpeed)
+            }
+        }
         if (accepted && !demoMode) {
             // Publish the newest usable fix next turn, without an extra 50 ms wait.
             // Coalesce a burst so it cannot create a render/UI backlog.
@@ -107,8 +132,8 @@ class SensorProvider(
         override fun run() {
             if (!started) return
             if (demoMode) sourceState.updateDemo(stepDemo())
-            expireRealInput()
-            sourceState.updateReal(realFrame())
+            val publishNanos = expireRealInput()
+            sourceState.updateReal(realFrame(publishNanos))
             emit(sourceState.current())
             handler.postDelayed(this, tickMs)
         }
@@ -119,6 +144,7 @@ class SensorProvider(
     fun start() {
         if (started) return
         clearRealInput()
+        inputSession += 1
         sessionStartedNanos = SystemClock.elapsedRealtimeNanos()
         started = true
         demoLastMs = SystemClock.elapsedRealtime()
@@ -156,6 +182,7 @@ class SensorProvider(
     }
 
     fun stop() {
+        calibration.cancel()
         started = false
         handler.removeCallbacks(tickRunnable)
         sensorManager.unregisterListener(sensorListener)
@@ -169,8 +196,8 @@ class SensorProvider(
             demoLastMs = SystemClock.elapsedRealtime()
             sourceState.updateDemo(SensorFrame(0.0, 0.0, true, FloatArray(3)))
         }
-        expireRealInput()
-        sourceState.updateReal(realFrame())
+        val publishNanos = expireRealInput()
+        sourceState.updateReal(realFrame(publishNanos))
         demoMode = on
         emit(sourceState.setDemoMode(on))
     }
@@ -191,24 +218,14 @@ class SensorProvider(
         }
     }
 
-    fun beginCalibration() {
-        calibrating = true
-        calibration.reset()
-    }
+    fun beginCalibration(session: String) =
+        calibration.begin(session, SystemClock.elapsedRealtimeNanos(), available = started)
 
-    fun calibrateZero() {
-        calibrating = false
-    }
+    fun finishCalibration(session: String): Boolean = calibration.finish(session)
 
-    fun finishCalibration(): Boolean {
-        isCalibrated = calibration.isReady
-        return isCalibrated
-    }
+    fun cancelCalibration(session: String? = null) = calibration.cancel(session)
 
-    fun resetCalibration() {
-        isCalibrated = false
-        calibration.reset()
-    }
+    fun resetCalibration() = calibration.reset()
 
     /** 给校准页推送实时三轴的当前值 (供 UI 显示)。 */
     fun snapshotRawAccel(): FloatArray {
@@ -232,10 +249,11 @@ class SensorProvider(
         )
     }
 
-    private fun expireRealInput() {
+    private fun expireRealInput(): Long {
         val now = SystemClock.elapsedRealtimeNanos()
         locationSpeed.expire(now)
         linearAcceleration.expire(now)
+        return now
     }
 
     private fun clearRealInput() {
@@ -248,9 +266,13 @@ class SensorProvider(
     private fun correctedAcceleration(): FloatArray =
         if (linearAcceleration.valid) calibration.correct(linearAcceleration.sample()) else FloatArray(3)
 
-    private fun realFrame(): SensorFrame {
+    private fun realFrame(publishNanos: Long = SystemClock.elapsedRealtimeNanos()): SensorFrame {
         val corrected = correctedAcceleration()
-        return SensorFrame(locationSpeed.speedKmh, corrected[1].toDouble(), locationSpeed.gpsOk, corrected)
+        return SensorFrame(locationSpeed.speedKmh, corrected[1].toDouble(), locationSpeed.gpsOk, corrected,
+            InputDiagnostics(inputSession = inputSession, publishElapsedNanos = publishNanos,
+                gpsTiming = locationSpeed.lastAcceptedTiming, gpsValid = locationSpeed.gpsOk,
+                gpsAccuracy = locationSpeed.speedAccuracy,
+                imuTiming = linearAcceleration.lastAcceptedTiming, imuValid = linearAcceleration.valid))
     }
 
     private fun emit(frame: SensorFrame) {
@@ -260,6 +282,7 @@ class SensorProvider(
             frame.gpsOk,
             frame.correctedAccel,
             gravity,
+            frame.diagnostics,
         )
     }
 

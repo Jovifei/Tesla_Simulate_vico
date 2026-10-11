@@ -122,3 +122,7 @@ fit 阶段必须把车型、seed、数值旗标、renderer source SHA、IR 原�
 真峰值失败要先区分“输出契约”与“声源优化”。AI4A 的 RX-7 `09_steady_mid` 是起始静音后首帧阶跃导致的 4×/8×/16×重建超限；AI4B 使用显式、车型限定、默认关闭的 `rx7_start_boundary_fade_v1`，在既有 `linked_soft_ceiling_v1` 之后、int16 之前对左右声道使用同一 24 帧线性斜坡。K=`0.90`、C=`0.94`、声源参数、IR、seed、Reference 和全局增益保持不变。必须同时验证：旧 A 不被覆盖、修复后变化只发生在声明窗口、窗口外 PCM 字节一致、两处后置 clip 计数为零；不能用重算候选峰值、整体降音量或放宽上限代替修复。
 
 后续车型迁移沿用同一顺序：先交叉核对 source registry、Reference/IR provenance 和车型专属接线，再做最小 RED→GREEN 边界测试，随后运行完整真实素材闭环。默认路径必须保持旧 PCM 字节行为；只有明确授权的车型才允许 opt-in policy。软件通过后仍停在 `WAITING_FOR_JOVI_ACOUSTIC_REVIEW`，等待具名试听决定，不自动推广到其他车型。
+
+## 2026年10月4日 输入到实际PCM的根因复用
+
+见[输入与循环点击问题经验](../07-debugging/03-vico-input-and-loop-click-lessons-20261004.md)。新增教训：先确认实际runtime和单位；unknown不能变停车；源时间和质量贯通到音频线程；去重episode与renderer队列分开；原source掉幅、RPM相消和loop接缝分层归因。局部修复必须看逐同窗退化与新拼接点，并保护原reference。CI、静态手机、道路与人耳是不同证据层，禁止互相代替。
