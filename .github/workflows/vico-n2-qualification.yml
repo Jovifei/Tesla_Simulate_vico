@@ -27,6 +27,8 @@ on:
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/audio/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/audio/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   push:
     branches:
@@ -57,6 +59,8 @@ on:
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/audio/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/audio/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   workflow_dispatch:
 
