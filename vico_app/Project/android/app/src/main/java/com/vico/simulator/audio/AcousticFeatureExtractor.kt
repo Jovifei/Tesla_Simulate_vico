@@ -14,6 +14,7 @@ class AcousticFeatureExtractor(
         val sampleRateHz: Int,
         val channels: Int,
         val captureDomain: String,
+        val independentlyAligned: Boolean = false,
     )
 
     data class Result(
@@ -24,18 +25,16 @@ class AcousticFeatureExtractor(
         val referenceState: String,
     )
 
-    fun extract(
-        pcm: FloatArray,
-        capture: S13PcmCaptureReport,
-        reference: ArtifactIdentity? = null,
-    ): Result {
-        require(capture.captureDomain == "POST_ENVELOPES_PRE_AUDIOTRACK_ACCEPTED") { "unsupported capture domain" }
+    fun extract(pcm: FloatArray, capture: S13PcmCaptureReport, reference: ArtifactIdentity? = null): Result {
+        require(sampleRateHz == 48000 || sampleRateHz == 96000) { "unsupported sample rate" }
+        require(algorithmVersion == "n3-rms-v4") { "unsupported algorithm" }
         PcmArtifactHashValidator.validate(capture, pcm).getOrThrow()
         require(pcm.size <= maxSamples) { "pcm exceeds bounded extraction window" }
         val rms = sqrt(pcm.fold(0.0) { acc, value -> acc + value.toDouble() * value.toDouble() } / pcm.size)
         val referenceState = when {
             reference == null -> "NOT_EVALUATED/missing_reference"
-            reference.sha256 == capture.sha256 -> "NOT_EVALUATED/non_independent_reference"
+            !reference.independentlyAligned -> "NOT_EVALUATED/reference_not_independently_aligned"
+            reference.sampleRateHz != sampleRateHz || reference.channels != 1 -> "NOT_EVALUATED/reference_format_mismatch"
             else -> "REFERENCE_BOUND"
         }
         return Result(algorithmVersion, pcm.size, rms, "MEASURED_FEATURE_ONLY", referenceState)
