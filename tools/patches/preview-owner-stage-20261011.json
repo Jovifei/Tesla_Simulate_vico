@@ -1,0 +1,17 @@
+{
+  "schema": "vico.preview-owner.patch.v1",
+  "purpose": "Auditable exact replacement for idle PREVIEW owner lifecycle. Apply only after SHA and unique old-match verification.",
+  "base": {
+    "branch": "codex-remote-stage-20261011-integration",
+    "source_ref": "0e74b22ffa55488708ecffed5dd872ecbe1b0216",
+    "preserve": ["running REAL preview behavior", "renderer phase", "transient policy", "frozen WAV/gain boundaries", "candidate_count=0"]
+  },
+  "edits": [
+    {
+      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt",
+      "expected_blob_sha": "3e6e6449f95bd044b1d196c61133a13bced8da96",
+      "old": "        val wasRunning = audioRunning\n        if (!wasRunning) {\n            if (!audioEngine.start()) {\n                previewVehicleKey = null\n                toast(\"试听启动失败，请检查音频输出设备\")\n                return\n            }\n            audioRunning = true\n        }",
+      "new": "        val wasRunning = audioRunning\n        if (!wasRunning) {\n            if (!audioEngine.prepareControllerSession()) {\n                audioEngine.setVehicle(originalKey)\n                activeVehicleKey = originalKey\n                audioEngine.setCharacter(originalCharacter)\n                previewVehicleKey = null\n                toast(\"试听会话准备失败，请停止当前播放后重试\")\n                return\n            }\n            if (!audioEngine.start()) {\n                audioEngine.setVehicle(originalKey)\n                activeVehicleKey = originalKey\n                audioEngine.setCharacter(originalCharacter)\n                previewVehicleKey = null\n                toast(\"试听启动失败，请检查音频输出设备\")\n                return\n            }\n            audioRunning = true\n        }"
+    }
+  ]
+}
