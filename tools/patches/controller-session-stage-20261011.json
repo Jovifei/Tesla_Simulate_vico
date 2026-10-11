@@ -1,33 +1,40 @@
 {
-  "schema": "vico.controller-session.patch.v2",
+  "schema": "vico.controller-session.patch.v3",
   "purpose": "Auditable minimal replacements for lifecycle integration. Apply only after SHA and unique-match verification.",
   "base": {
     "branch": "codex-remote-stage-20261011-integration",
-    "preserve": [
-      "renderer phase state",
-      "renderer transient policy",
-      "frozen WAV/gain boundaries",
-      "candidate_count=0"
-    ]
+    "preserve": ["renderer phase state", "renderer transient policy", "provenance watermarks", "frozen WAV/gain boundaries", "candidate_count=0"]
   },
   "edits": [
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabV6SoundBankEngine.kt",
       "expected_blob_sha": "026bd75e8386a075e6586750ca5ce2aa2429a19e",
       "old": "private var controller: MatlabPowertrainController? = null\n    private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()",
-      "new": "private var controller: MatlabPowertrainController? = null\n    private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()\n\n    @Synchronized\n    fun resetControllerSession(): Boolean {\n        controller?.resetSession()\n        syntheticControllers.values.forEach { it.resetSession() }\n        return true\n    }"
+      "new": "private var controller: MatlabPowertrainController? = null\n    private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()\n\n    @Synchronized\n    fun prepareControllerSession(): Boolean {\n        controller?.resetSession()\n        syntheticControllers.values.forEach { it.resetSession() }\n        return true\n    }"
     },
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabPowertrainController.kt",
       "expected_blob_sha": "7aced24a9d837c92a4b2d2bd9d14fdf2f23a28c4",
       "old": "class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {\n    private var gear = 1",
-      "new": "class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {\n    private var gear = 1\n\n    @Synchronized\n    fun resetSession(): Boolean {\n        gear = 1\n        rpm = spec.idleRpm\n        lastTimeS = Double.NaN\n        lastShiftTimeS = Double.NEGATIVE_INFINITY\n        shiftStartTimeS = Double.NEGATIVE_INFINITY\n        lastThrottle = 0.0\n        afterfireArmed = false\n        measuredEpoch = null\n        measuredUsable = false\n        measuredRecoveryUntilS = Double.NEGATIVE_INFINITY\n        measuredAfterfire.invalidate()\n        driveDemand.invalidate()\n        cruiseGear.invalidate()\n        return true\n    }"
+      "new": "class MatlabPowertrainController(private val spec: MatlabPowertrainSpec) {\n    private var gear = 1\n\n    @Synchronized\n    fun resetSession(): Boolean {\n        gear = 1\n        rpm = spec.idleRpm\n        lastTimeS = Double.NaN\n        lastShiftTimeS = Double.NEGATIVE_INFINITY\n        shiftStartTimeS = Double.NEGATIVE_INFINITY\n        lastThrottle = 0.0\n        afterfireArmed = false\n        measuredEpoch = null\n        measuredUsable = false\n        measuredRecoveryUntilS = Double.NEGATIVE_INFINITY\n        measuredAfterfire.invalidate()\n        driveDemand.invalidate()\n        cruiseGear.resetSession()\n        return true\n    }"
+    },
+    {
+      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/VirtualCruiseGear.kt",
+      "expected_blob_sha": "TBD_REQUIRE_FETCH",
+      "old": "private var gear = 1",
+      "new": "private var gear = 1\n\n    fun resetSession() {\n        gear = 1\n        // Keep source sequence/provenance monotonic; only reset session hysteresis state.\n    }"
     },
     {
       "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt",
       "expected_blob_sha": "22ec7d6bc9a4ba94b59b396080ec4e712591e373",
-      "old": "running = true\n        val owner=++playbackId",
-      "new": "check(model.resetControllerSession())\n        running = true\n        val owner=++playbackId"
+      "old": "check(model.resetControllerSession())\n        running = true",
+      "new": "// Session preparation moves to the owner boundary before first mailbox publication.\n        running = true"
+    },
+    {
+      "path": "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt",
+      "expected_blob_sha": "REQUIRES_FETCH",
+      "old": "INITIAL_STATE_MAP_BEFORE_AUDIO_OWNER",
+      "new": "audioEngine.prepareControllerSession() before first mapPoint/pushState mailbox publication"
     },
     {
       "path": ".github/workflows/vico-n2-qualification.yml",
