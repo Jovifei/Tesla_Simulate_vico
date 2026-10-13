@@ -108,6 +108,7 @@ jobs:
       - name: Test sensor freshness, ordering, and Android source wiring
         run: |
           python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"
+          python vico_app/tools/python/run_preview_activity_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-preview-activity"
           python -m unittest discover -s vico_app/tools/python -p 'test_sensor_input_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_input_diagnostics_wiring.py' -v
           python -m unittest discover -s vico_app/tools/python -p 'test_input_quality_wiring.py' -v

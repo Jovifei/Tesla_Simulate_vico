@@ -831,6 +831,7 @@ class MainActivity : AppCompatActivity() {
             toast(audioEngine.lastAudioError ?: "基准回放校验失败")
             return
         }
+        cancelPreviewCallbacks()
         activeVehicleKey = key
         vehicleName = CurrentVehicleCatalog.displayName(key)
         selectedVehicleName = vehicleName
@@ -999,6 +1000,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun previewVehicle(key: String) {
+        if (previewRestore != null) {
+            toast("上一车型试听正在恢复，请稍候再试听")
+            return
+        }
         if (audioEngine.isPlaybackBusy()) {
             toast("请先停止播放，待音频停止后再试听车型")
             return

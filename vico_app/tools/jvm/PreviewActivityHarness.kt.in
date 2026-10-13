@@ -1,0 +1,109 @@
+package com.vico.simulator.sound
+
+import com.vico.simulator.state.VehicleSelectionState
+import com.vico.simulator.vehicle.CurrentVehicleCatalog
+
+/** Headless collaborators only. Method bodies below are injected verbatim from MainActivity. */
+class HeadlessMainActivity {
+    val events = mutableListOf<String>()
+    val handler = ControlledHandler(events)
+    val audioEngine = ControlledAudioEngine(events)
+    val playbackEpoch = S14CallbackEpoch()
+    val vehicleState = VehicleSelectionState(CurrentVehicleCatalog.defaultKey)
+    val testLog = ControlledTestLog(events)
+    val s14 = ControlledS14()
+    var activityDestroyed = false
+    var audioRunning = false
+    var s13ReviewActive = false
+    var s13ReviewVehicleKey: String? = null
+    var reviewExportInProgress = false
+    var s15SmokeInProgress = false
+    var previewRestore: Runnable? = null
+    var previewVehicleKey: String? = null
+    var previewUntilMs = 0L
+    var activeVehicleKey = CurrentVehicleCatalog.defaultKey
+    var character = SoundProfile.SOFT
+    var selectedVehicleName = CurrentVehicleCatalog.displayName(activeVehicleKey)
+    var vehicleName = selectedVehicleName
+    val toasts = mutableListOf<String>()
+    val ui = mutableListOf<UiSnapshot>()
+
+    init { bindAudioFailure() }
+    fun beginS13(key: String) = startS13Review(key)
+    fun runOnUiThread(action: () -> Unit) = action()
+    fun toast(message: String) { toasts.add(message) }
+    fun pushUiState() {
+        ui.add(UiSnapshot(audioRunning, s13ReviewActive, previewRestore, activeVehicleKey))
+        events.add("ui")
+    }
+    fun collectAudioLogRows() { events.add("log.collect") }
+    fun currentLogConfig() = Unit
+    fun requestStopTestLog(cause: Int, waits: Boolean) {
+        events.add("log.stop:$cause:$waits"); testLog.requested = false
+    }
+
+    // PRODUCTION_METHODS
+
+    private fun bindAudioFailure() {
+        val engine = audioEngine
+        // PRODUCTION_AUDIO_FAILURE
+    }
+}
+
+data class UiSnapshot(val audioRunning: Boolean, val s13Active: Boolean,
+                      val pendingRestore: Runnable?, val activeKey: String)
+
+class ControlledHandler(private val events: MutableList<String>) {
+    data class Pending(val task: Runnable, val delay: Long)
+    val pending = mutableListOf<Pending>()
+    fun postDelayed(task: Runnable, delay: Long): Boolean {
+        pending.add(Pending(task, delay)); return true
+    }
+    fun removeCallbacks(task: Runnable) {
+        events.add("handler.remove"); pending.removeAll { it.task === task }
+    }
+    fun run(task: Runnable) {
+        pending.removeAll { it.task === task }; task.run()
+    }
+}
+
+class ControlledAudioEngine(private val events: MutableList<String>) {
+    var writerAlive = false
+    var reviewStartSucceeds = true
+    var beforeReviewStart: (() -> Unit)? = null
+    var lastAudioError: String? = null
+    var diagnosticLoggingEnabled = true
+    var vehicle = CurrentVehicleCatalog.defaultKey
+    var profile = SoundProfile.SOFT
+    var owner = 0L
+    var stops = 0
+    var onAudioFailure: ((Long, String) -> Unit)? = null
+    fun playbackIdentity() = owner
+    fun isPlaybackBusy(): Boolean = writerAlive
+    fun setVehicle(key: String): Boolean {
+        check(!writerAlive) { "Live writer must not change sound bank" }
+        events.add("engine.vehicle:$key"); vehicle = key; return true
+    }
+    fun setCharacter(value: SoundProfile) { events.add("engine.character"); profile = value }
+    fun prepareControllerSession(): Boolean { events.add("engine.prepare"); return true }
+    fun start(): Boolean {
+        events.add("engine.start"); owner++; writerAlive = true; return true
+    }
+    fun startS13Review(key: String): Boolean {
+        events.add("engine.review.start:$key"); beforeReviewStart?.invoke()
+        if (!reviewStartSucceeds || writerAlive) return false
+        owner++; vehicle = key; writerAlive = true; events.add("engine.review.accepted"); return true
+    }
+    fun stop(reason: String) { events.add("engine.stop:$reason"); stops++; writerAlive = false }
+    fun setS15Prototype(enabled: Boolean): Boolean { events.add("engine.prototype:$enabled"); return true }
+    fun failAudio() { lastAudioError = "controlled writer failure"; onAudioFailure!!(owner, lastAudioError!!) }
+}
+
+class ControlledTestLog(private val events: MutableList<String>) {
+    var requested = false
+    @Suppress("UNUSED_PARAMETER")
+    fun lifecycle(event: Int, cause: Int, now: Long, config: Unit) {
+        events.add("log.lifecycle:$event:$cause")
+    }
+}
+class ControlledS14 { var busy = false }

@@ -451,7 +451,7 @@
   },
   "pr38_closeout_20261013": {
     "date": "2026-10-13",
-    "status": "LOCAL_SOFTWARE_PASS_HOSTED_AUDIT_PENDING",
+    "status": "LOCAL_QA_PASS_NEW_FIXED_COMMIT_REVIEW_PENDING",
     "source_parent": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
     "report": "docs/vico-pr38-closeout-20261013.md",
     "tests": {
@@ -461,7 +461,8 @@
       "android": "498_TESTS_0_FAILURES_0_ERRORS_29_SKIPPED",
       "lint_assembleDebug": "PASS",
       "full_s12": "1794_PASS_6_SKIP_232_SUBTESTS_AT_4b44f018",
-      "vico_python": "157_PASS_4_SKIP"
+      "vico_python": "157_TESTS_0_FAILURES_4_SKIPPED",
+      "activity_entry_jvm": "19_PASS_JDK21_SOURCE_EXTRACTED_CONTROLLED_PORTS_RED_3_EXPECTED_FAILURES"
     },
     "candidate_count": 0,
     "candidate_budget": 0,
@@ -471,8 +472,11 @@
       "human": "IMPROVED_OPTIMIZATION_PENDING"
     },
     "audition_feedback": "Jovi: 有改善，但需要继续优化; existing APK installed 2026-10-11",
-    "preview_ownership": "ACTUAL_TARGET_INDEPENDENT_REVIEW_PASS",
-    "apk_sha256": "7e1822720f0c37eb9d9d68799ff7bd54bc798974dea31c91caacfc46831a57d3",
-    "new_apk_device": "NOT_INSTALLED"
+    "preview_ownership": "TWO_P2_ENTRY_FIXES_LOCAL_19_PASS_INDEPENDENT_REVIEW_APPROVED",
+    "apk_sha256": "8d81a7e44c519ea425279135d42c6c5eedb7b83d4fb6e54f4ab6234c8c062cf8",
+    "new_apk_device": "NOT_INSTALLED",
+    "baseline_hosted_ci": "ALL_FIVE_PASS_AT_89264b3531f679d6949a8c2c663711a466600042",
+    "remote_review": "TWO_P2_FIXED_NEW_SHA_REVIEW_PENDING",
+    "remaining": "New fixed SHA hosted CI and ChatGPT read-only review; exact APK phone confirmation; device/road/acoustic/human gates open"
   }
 }

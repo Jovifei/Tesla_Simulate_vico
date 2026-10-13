@@ -27,4 +27,12 @@ Full S12 was actually executed at4b44f01844964ca9cf447890bf523657780778fe:1794 p
 
 New APK SHA2567e1822720f0c37eb9d9d68799ff7bd54bc798974dea31c91caacfc46831a57d3; Debug certificate9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774. This APK has not been installed. Existing10-11 phone version and data were untouched. Acoustic/road/human gates remain open; improved prior-phone feedback is not acceptance of this build.
 
-Hosted Y/AF final outcome is still pending confirmation; status reads encountered transport/time-out errors. No main merge or source qualification promotion.
+Hosted N2, Y, AF, Reference Feedback and Stage AI all passed at89264b3531f679d6949a8c2c663711a466600042. Y/AF complete S12 steps passed. No main merge or source qualification promotion.
+
+## Preview/S13 entry ownership follow-up
+
+ChatGPT actual-source read-only review found two reproducible P2 regressions after premature Preview audio failure: an old completion could stop a newly accepted S13 owner; a second Preview could cancel the original bank restoration and retain the wrong baseline. MainActivity adds only five lines: invalidate Preview immediately after successful S13 start; reject a new Preview while original restoration is pending. Failed S13 preserves that restoration.
+
+The harness extracts exact production Activity methods and the audio-failure callback, compiling real PreviewPlayback/epoch/catalog/profile/state with controlled Android and writer collaborators. RED:19 tests,3 expected assertion failures. GREEN on JDK21:19 passed, including14 existing helper tests. These are JVM source-call-chain regressions, not Android device/writer timing or acoustic evidence. N2 CI invokes the same harness with existing pinned cached dependencies. Independent read-only actual-target review:APPROVED.
+
+Actual same-tree local Android498 tests,0 failures,0 errors,29 skips; lint/assembleDebug PASS. Vico Python157 tests,0 failures,4 skips. Track-P180 files/2 symbols and12 V4 files preserved. S12, attributes and frozen banks unchanged; prior fullS12 scope evidence remains inherited. New APK SHA2568d81a7e44c519ea425279135d42c6c5eedb7b83d4fb6e54f4ab6234c8c062cf8; same Debug certificate9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774. New fixed-commit CI and final ChatGPT review pending. No phone installation, main merge, MATLAB, candidate or gain change.
