@@ -53,7 +53,10 @@ class SensorInputWiringTest(unittest.TestCase):
         self.assertIn("val now = android.os.SystemClock.elapsedRealtime()", sample)
         self.assertNotIn("System.currentTimeMillis()", sample)
         self.assertIn("previewUntilMs = android.os.SystemClock.elapsedRealtime() + 2500", self.activity)
-        self.assertIn("if (android.os.SystemClock.elapsedRealtime() >= previewUntilMs)", self.activity)
+        self.assertIn("now < previewUntilMs", sample)
+        preview = self.activity.split("fun previewVehicle", 1)[1].split("fun exportCsv", 1)[0]
+        self.assertNotIn("System.currentTimeMillis()", preview)
+        self.assertIn("handler.postDelayed(completion, 2600)", preview)
 
     def test_invalid_acceleration_is_not_bias_corrected_into_phantom_motion(self):
         self.assertIn("if (linearAcceleration.valid) calibration.correct(linearAcceleration.sample()) else FloatArray(3)", self.provider)

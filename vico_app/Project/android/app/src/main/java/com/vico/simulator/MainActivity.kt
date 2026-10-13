@@ -35,6 +35,7 @@ import com.vico.simulator.sound.SoundState
 import com.vico.simulator.sound.DrivePoint
 import com.vico.simulator.sound.SoundProfile
 import com.vico.simulator.sound.startPreviewPlayback
+import com.vico.simulator.sound.restorePreviewWhenIdle
 import com.vico.simulator.sound.S14ReferenceSession
 import com.vico.simulator.sound.S14TrialCoordinator
 import com.vico.simulator.sound.S14CallbackEpoch
@@ -490,8 +491,9 @@ class MainActivity : AppCompatActivity() {
     // ---- bridge handlers (UI thread) ----
     fun startAudio() {
         if(activityDestroyed || !calibrationResumed)return
-        if(s15Preparing){toast("候选尚在准备；完成后再启用声浪");return}
         if(audioRunning)return
+        if(audioEngine.isPlaybackBusy()){toast("音频仍在停止，请稍候再启用声浪");return}
+        if(s15Preparing){toast("候选尚在准备；完成后再启用声浪");return}
         if(audioEngine.s15PrototypeEnabled){s15LastRun=null;s15StopReason="NOT_RECORDED"}
         cancelPreviewCallbacks()
         if (s13ReviewActive) {
@@ -997,6 +999,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun previewVehicle(key: String) {
+        if (audioEngine.isPlaybackBusy()) {
+            toast("请先停止播放，待音频停止后再试听车型")
+            return
+        }
         if (s13ReviewActive) {
             toast("请先停止基准回放再试听其他车型")
             return
@@ -1006,32 +1012,52 @@ class MainActivity : AppCompatActivity() {
             return
         }
         cancelPreviewCallbacks()
-        val resumeTestLogging = testLog.requested
-        if(resumeTestLogging){
+        if(testLog.requested){
             collectAudioLogRows();testLog.lifecycle(6,5,android.os.SystemClock.elapsedRealtimeNanos(),currentLogConfig())
             audioEngine.diagnosticLoggingEnabled=false;requestStopTestLog(5,false)
         }
         val previewOwner = playbackEpoch.next()
         val originalKey = activeVehicleKey
         val originalCharacter = character
+        val completion = restorePreviewWhenIdle(
+            owns = { playbackEpoch.owns(previewOwner) && !activityDestroyed },
+            isBusy = audioEngine::isPlaybackBusy,
+            stop = {
+                audioEngine.stop("PREVIEW_FINISHED")
+                audioRunning = false
+                previewVehicleKey = null
+                previewUntilMs = 0L
+                pushUiState()
+            },
+            restore = {
+                previewRestore = null
+                if (audioEngine.setVehicle(originalKey)) {
+                    activeVehicleKey = originalKey
+                    audioEngine.setCharacter(originalCharacter)
+                } else {
+                    toast("试听已停止，但原车型声库恢复失败，请重新选择车型")
+                }
+                pushUiState()
+            },
+            retry = { handler.postDelayed(it, 20) },
+            onTimeout = {
+                previewRestore = null
+                toast("音频尚未停止，原车型声库未恢复，请稍候重试")
+                pushUiState()
+            },
+        )
+        previewRestore = completion
         previewVehicleKey = key
         if (!audioEngine.setVehicle(key)) {
-            previewVehicleKey = null
+            completion.run()
             toast("该车型 S12 声库未导入")
             return
         }
         activeVehicleKey = key
         audioEngine.setCharacter(SoundProfile.DEFAULT)
-        val wasRunning = audioRunning
-        val started = startPreviewPlayback(wasRunning,
+        val started = startPreviewPlayback(false,
             audioEngine::prepareControllerSession, audioEngine::start,
-            {
-                audioEngine.setVehicle(originalKey)
-                activeVehicleKey = originalKey
-                audioEngine.setCharacter(originalCharacter)
-                previewVehicleKey = null
-                previewUntilMs = 0
-            })
+            { completion.run() })
         if (!started) {
             toast("试听启动失败，请停止当前播放后检查音频输出设备")
             return
@@ -1039,19 +1065,7 @@ class MainActivity : AppCompatActivity() {
         audioRunning = true
         previewUntilMs = android.os.SystemClock.elapsedRealtime() + 2500
         pushUiState()
-        previewRestore = Runnable {
-            if (!playbackEpoch.owns(previewOwner) || activityDestroyed) return@Runnable
-            if (android.os.SystemClock.elapsedRealtime() >= previewUntilMs) {
-                previewVehicleKey = null
-                audioEngine.setVehicle(originalKey)
-                activeVehicleKey = originalKey
-                audioEngine.setCharacter(originalCharacter)
-                if (!wasRunning) { audioEngine.stop(); audioRunning = false }
-                else if(resumeTestLogging){startTestLog(controlFrameSequence+1);testLogPlaybackId=audioEngine.playbackIdentity()}
-                pushUiState()
-            }
-        }
-        handler.postDelayed(previewRestore!!, 2600)
+        handler.postDelayed(completion, 2600)
     }
 
     fun exportCsv() {

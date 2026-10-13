@@ -92,8 +92,11 @@ class AudioEngine(context: Context) {
     }
 
     @Synchronized
+    fun isPlaybackBusy(): Boolean = running || thread?.isAlive == true
+
+    @Synchronized
     fun prepareControllerSession(): Boolean {
-        if (running || thread?.isAlive == true) return false
+        if (isPlaybackBusy()) return false
         return model.prepareControllerSession()
     }
 
@@ -111,7 +114,11 @@ class AudioEngine(context: Context) {
         if (capture != null && sampleRate != S13ReviewContract.SAMPLE_RATE) {
             return failCaptureStart(capture, "S13 digital capture requires 48 kHz mono")
         }
-        ensureTrack()
+        try {
+            ensureTrack()
+        } catch (error: Exception) {
+            return failCaptureStart(capture, "AudioTrack creation failed: ${error.message}")
+        }
         val t = track ?: return failCaptureStart(capture, "AudioTrack was not created")
         if (t.state != AudioTrack.STATE_INITIALIZED) {
             return failCaptureStart(capture, "AudioTrack is not initialized")
@@ -332,6 +339,7 @@ class AudioEngine(context: Context) {
 
     @Synchronized
     fun setVehicle(vehicleKey: String): Boolean {
+        if (isPlaybackBusy()) return false
         qualificationRoute.clear()
         if (digitalCapture?.isFinished == false) {
             lastAudioError = "Finish or cancel digital capture before changing vehicle"
