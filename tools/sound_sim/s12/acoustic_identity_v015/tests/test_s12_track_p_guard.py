@@ -15,6 +15,7 @@ Track-P 断言随之失效且无诊断信息。重建为 Baseline v2 时，断�
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,6 +39,29 @@ def _load_guard():
 guard = _load_guard()
 
 
+@pytest.fixture
+def android_matlab_v6_git_repo(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
+    repo = tmp_path / "repository"
+    repo.mkdir()
+    def run_git(*args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["git", *args], cwd=repo, capture_output=True, text=True, check=True
+        )
+
+    run_git("init", "-q")
+    run_git("config", "user.name", "Guard Fixture")
+    run_git("config", "user.email", "guard-fixture@example.invalid")
+    (repo / ".gitignore").write_text("*.bin\n", encoding="utf-8")
+    asset_root = repo / guard.ANDROID_MATLAB_V6_COMPAT_ROOT.rstrip("/")
+    asset_root.mkdir(parents=True)
+    asset = asset_root / "manifest.json"
+    asset.write_text("{}\n", encoding="utf-8")
+    run_git("add", ".")
+    run_git("commit", "-m", "fixture baseline")
+    monkeypatch.setattr(guard, "REPO", repo)
+    return repo, asset
+
+
 # --------------------------------------------------------------------------
 # 冻结路径分类
 # --------------------------------------------------------------------------
@@ -49,10 +73,136 @@ guard = _load_guard()
         "tools/sound_sim/s12/validation/radiation_impedance/s12_radiation_case_definition.m",
         "tools/sound_sim/s12/tests/test_s12_fanno_fvm_contract.m",
         "tools/sound_sim/matlab/anything.m",
+        "vico_app/Project/android/app/src/main/assets/matlab_v6_extra/manifest.json",
     ],
 )
 def test_frozen_paths_are_classified_frozen(path: str) -> None:
     assert guard._is_frozen(path) is True
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "vico_app/Project/android/app/src/main/assets/matlab_v6/c63_w204_v6/manifest.json",
+        "vico_app/Project/android/app/src/main/assets/matlab_v6/c63_w204_v6/rpm_0700_load_32.wav",
+    ],
+)
+def test_android_matlab_v6_assets_use_separate_lock(path: str) -> None:
+    assert guard._is_android_matlab_v6_compat_asset(path) is True
+    assert guard._is_frozen(path) is False
+    assert guard._is_guarded_status_path(path, " M") is True
+    assert guard._is_guarded_status_path(path, "??") is True
+
+
+def test_android_matlab_v6_lookalikes_remain_frozen() -> None:
+    paths = [
+        "vico_app/Project/android/app/src/main/assets/matlab_v6_extra/manifest.json",
+        "tools/sound_sim/matlab_v6/anything.m",
+    ]
+    for path in paths:
+        assert guard._is_android_matlab_v6_compat_asset(path) is False
+        assert guard._is_frozen(path) is True
+
+
+def test_android_matlab_v6_manifest_matches_independent_lock() -> None:
+    entries, digest = guard._android_matlab_v6_compat_manifest("HEAD")
+    assert len(entries) == guard.ANDROID_MATLAB_V6_COMPAT_COUNT == 36
+    assert digest == guard.ANDROID_MATLAB_V6_COMPAT_SHA256
+
+
+def test_committed_unicode_android_asset_is_included_in_lock(android_matlab_v6_git_repo) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    before, before_digest = guard._android_matlab_v6_compat_manifest("HEAD")
+    added = asset.parent / "中文.json"
+    added.write_text("{}\n", encoding="utf-8")
+    subprocess.run(["git", "add", "."], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", "commit", "-m", "unicode addition"], cwd=repo,
+                   check=True, capture_output=True)
+    after, after_digest = guard._android_matlab_v6_compat_manifest("HEAD")
+    assert len(after) == len(before) + 1
+    assert any(added.relative_to(repo).as_posix() in entry for entry in after)
+    assert after_digest != before_digest
+
+
+@pytest.mark.parametrize("mutation", ["replace", "delete"])
+def test_committed_android_mutation_changes_lock(android_matlab_v6_git_repo, mutation: str) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    before, before_digest = guard._android_matlab_v6_compat_manifest("HEAD")
+    if mutation == "replace":
+        asset.write_text('{"changed":true}\n', encoding="utf-8")
+    else:
+        asset.unlink()
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", "commit", "-m", mutation], cwd=repo,
+                   check=True, capture_output=True)
+    after, after_digest = guard._android_matlab_v6_compat_manifest("HEAD")
+    assert len(after) == len(before) - (mutation == "delete")
+    assert after_digest != before_digest
+
+
+def test_status_guard_flags_modified_matlab_v6_asset(android_matlab_v6_git_repo) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    asset.write_text('{"changed": true}\n', encoding="utf-8")
+
+    _, dirty_matlab_v6 = guard._status_guarded_paths()
+
+    rel = asset.relative_to(repo).as_posix()
+    assert f" M {rel}" in dirty_matlab_v6
+
+
+def test_status_guard_flags_deleted_matlab_v6_asset(android_matlab_v6_git_repo) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    asset.unlink()
+
+    _, dirty_matlab_v6 = guard._status_guarded_paths()
+
+    rel = asset.relative_to(repo).as_posix()
+    assert f" D {rel}" in dirty_matlab_v6
+
+
+def test_status_guard_flags_staged_matlab_v6_rename(android_matlab_v6_git_repo) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    rel = asset.relative_to(repo).as_posix()
+    destination = repo / "renamed-outside-matlab-v6.json"
+    subprocess.run(
+        ["git", "mv", rel, destination.name],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    _, dirty_matlab_v6 = guard._status_guarded_paths()
+
+    assert any(item.endswith(f" {rel}") for item in dirty_matlab_v6)
+
+
+@pytest.mark.parametrize("filename", ["foo.bin", "中文.bin", "with space.bin"])
+def test_status_guard_flags_ignored_asset_only_inside_matlab_v6(
+    android_matlab_v6_git_repo, filename: str,
+) -> None:
+    repo, asset = android_matlab_v6_git_repo
+    rel_root = asset.parent.relative_to(repo).as_posix()
+    ignored_asset = asset.parent / filename
+    ignored_outside = repo / "outside.bin"
+    ignored_asset.write_bytes(b"ignored synthetic fixture")
+    ignored_outside.write_bytes(b"ignored outside fixture")
+
+    assert subprocess.run(
+        ["git", "check-ignore", "--quiet", ignored_asset.relative_to(repo).as_posix()],
+        cwd=repo,
+        check=False,
+    ).returncode == 0
+    assert subprocess.run(
+        ["git", "check-ignore", "--quiet", ignored_outside.name],
+        cwd=repo,
+        check=False,
+    ).returncode == 0
+
+    _, dirty_matlab_v6 = guard._status_guarded_paths()
+
+    assert f"!! {rel_root}/{filename}" in dirty_matlab_v6
+    assert all("outside.bin" not in item for item in dirty_matlab_v6)
 
 
 @pytest.mark.parametrize(

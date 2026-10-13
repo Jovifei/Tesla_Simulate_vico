@@ -119,4 +119,3 @@ def test_support_gate_requires_5500_share_both_intervals_and_both_neighbor_trans
 
     failed = module.evaluate_resonance_gate(share_windows[:10], source, transfer)
     assert failed["status"] == "NOT_SUPPORTED"
-

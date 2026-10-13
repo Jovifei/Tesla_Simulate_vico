@@ -46,3 +46,12 @@ receipt 属于 Track-S 分析与证据，不属于 Track-P。由于路径守卫�
 Stage-Q/R 的 `real_reference/run_r2_matlab_psychoacoustic_audit.m` 同样只读取
 仓库外 R2 音频并写入外部收据，不修改 Track-P 物理模型；该精确路径因此加入
 同一 allowlist。它仍然不能把 R2 输入升级为 R1，也不能开启阶次资格或自动调参。
+
+## Android 兼容资产独立锁（2026-10-13）
+
+精确目录 `vico_app/Project/android/app/src/main/assets/matlab_v6/` 是 Android
+兼容声库，独立锁定，不并入原 180 项 Track-P 物理模型清单。源提交
+`52df7a7b2152f41120ceefd834e94068eb9a35f8` 包含 36 项，Git 清单 SHA-256 为
+`870af466c846db1c30d0a1f85566efd62e1950f41462161510200446b7cfa436`。
+原冻结清单及 2 个符号摘要不变；工作树、索引、重命名与忽略的新增文件均受守卫检查，
+`matlab_v6_extra` 等近似目录仍由原保守规则冻结。此分类修复不授权修改 WAV 或 gain。

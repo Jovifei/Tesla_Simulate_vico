@@ -170,5 +170,3 @@ internal class C63HybridSource(private val profile:C63HybridProfile,private val 
         return output.toFloat()
     }
 }
-
-
