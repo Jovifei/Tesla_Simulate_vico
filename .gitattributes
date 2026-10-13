@@ -1,6 +1,10 @@
 * whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Stored unified-diff context lines require their single-space prefix.
 tools/patches/vico-p3-audio-engine-hook.patch whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Keep generated roadmap views stable when written on Windows.
+docs/project-ledger.json text eol=lf
+docs/01-ARC-项目总体路线图.md text eol=lf
+docs/02-RPT-项目进度总览.md text eol=lf
 tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json text eol=crlf
 tools/sound_sim/s12/acoustic_identity_v015/reference_database/*_reference_targets.json text eol=lf
 tools/sound_sim/s12/acoustic_identity_v015/targets/fourcar_real_reference/*.json text eol=lf
