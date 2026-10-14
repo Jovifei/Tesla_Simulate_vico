@@ -2,6 +2,7 @@
 
 <html lang="zh" style=""><head>
 <meta charset="utf-8"/>
+<script src="file:///android_asset/display-unit.js"></script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Tesla Vico App - 仪表盘</title>
 <script src="file:///android_asset/vendor/tailwind.js"></script>
@@ -349,7 +350,7 @@
             var warn=document.getElementById('gps-warning');
             var gpsIcon=document.getElementById('gps-icon');
             var gpsText=document.getElementById('gps-text');
-            var unit = (function(){ try { return localStorage.getItem('vico-unit') || 'kmh'; } catch(e){ return 'kmh'; } })();
+            var unit = window.VicoDisplayUnit.get();
             var display = window.VicoInputDisplay.format(s,unit);
             if(window.VicoMounting)window.VicoMounting.update(s);
             if(s.testLog){

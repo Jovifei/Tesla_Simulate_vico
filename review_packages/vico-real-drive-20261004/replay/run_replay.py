@@ -17,7 +17,7 @@ def main():
  out.mkdir(parents=True);src=out/'source';src.mkdir();assets=out/'assets';assets.mkdir()
  root='vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/'
  baseline=json.load(open(here/'baseline-source-sha256.json'));names=list(baseline)
- if a.variant=='candidate':names+=['VirtualDriveDemand.kt','VirtualCruiseGear.kt','MatlabSoundStateMapping.kt']
+ if a.variant=='candidate':names+=['VirtualDriveDemand.kt','VirtualCruiseGear.kt','MatlabSoundStateMapping.kt','NormalLoopTraversal.kt']
  sources=[];identities={}
  for n in names:
   b=(repo/root/n).read_bytes()
@@ -55,7 +55,7 @@ def main():
   jars.append(str(f))
  cp=os.pathsep.join(jars);jar=out/'replay.jar'
  subprocess.run(['java','-cp',cp,'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-no-stdlib','-no-reflect','-jvm-target','1.8','-classpath',cp,'-d',str(jar),*map(str,sources)],check=True)
- receipt={'baseline':BASE,'variant':a.variant,'scene':a.scene,'profile':a.profile,'reported_speed_uncertainty_mps':uncertainty,'scope':'actual Kotlin core; exact bank DTO extraction; Android adapters/device/human NOT_RUN','source_sha256':identities,'compiled_sha256':{f.name:sha(f.read_bytes()) for f in sources},'bank_sha256':expected}
+ receipt={'baseline':BASE,'variant':a.variant,'scene':a.scene,'profile':a.profile,'reported_speed_uncertainty_mps':uncertainty,'scope':'actual Kotlin controller core and LEGACY_LOCKED renderer; exact bank DTO extraction; normal traversal/Android adapters/device/human NOT_RUN','source_sha256':identities,'compiled_sha256':{f.name:sha(f.read_bytes()) for f in sources},'bank_sha256':expected}
  (out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
  subprocess.run(['java','-Xmx1g','-cp',str(jar)+os.pathsep+cp,'com.vico.simulator.sound.'+harness[:-3]+'Kt',str(assets),str(out/'output')],check=True)
 if __name__=='__main__':main()

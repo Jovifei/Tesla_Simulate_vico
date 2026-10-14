@@ -12,8 +12,8 @@ test('actual dashboard update paints measured value unit and invalid status',()=
  const html=fs.readFileSync(path.join(root,'screens/dashboard.html'),'utf8'),code=html.match(/window\.__vicoUpdate = function\(s\)\{[\s\S]*?\n\s*\};/)[0];
  const ids=['live-speed','speed-unit','live-accel','debug-speed','gps-text','gps-warning','debug-quality','debug-age','debug-display'];
  const els={};ids.forEach(id=>els[id]={textContent:'',classList:{toggle(){},remove(){},add(){}}});
- const c={window:{},document:{getElementById(id){return els[id]||null}},localStorage:{getItem(){return 'mph'}},console};
- vm.createContext(c);vm.runInContext(fs.readFileSync(path.join(root,'input-quality-ui.js'),'utf8'),c);vm.runInContext(code,c);
+ const c={window:{},document:{getElementById(id){return els[id]||null}},localStorage:{getItem(key){return key==='vico-display-unit'?'mph':null}},console};
+ vm.createContext(c);vm.runInContext(fs.readFileSync(path.join(root,'display-unit.js'),'utf8'),c);vm.runInContext(fs.readFileSync(path.join(root,'input-quality-ui.js'),'utf8'),c);vm.runInContext(code,c);
  c.window.__vicoUpdate({speed:70,speedKmh:'70.0',accel:'2.00',inputQuality:fresh});
  assert.equal(els['live-speed'].textContent,'43');assert.equal(els['speed-unit'].textContent,'mph');assert.equal(els['debug-speed'].textContent,'70.0 km/h');
  c.window.__vicoUpdate({speed:0,speedKmh:'0.0',accel:'0.00',inputQuality:{...fresh,gps:'UNAVAILABLE',speedUsable:false,controlUsable:false}});

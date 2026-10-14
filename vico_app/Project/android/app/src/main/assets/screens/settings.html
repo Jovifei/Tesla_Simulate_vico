@@ -2,6 +2,7 @@
 
 <html class="light" lang="zh"><head>
 <meta charset="utf-8"/>
+<script src="file:///android_asset/display-unit.js"></script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>设置 - VICO SIMULATOR</title>
 <script src="file:///android_asset/vendor/tailwind.js"></script>
@@ -473,12 +474,10 @@
 
         var unitVal = document.getElementById('unit-val');
         var unitRow = document.getElementById('row-unit');
-        var unit = 'kmh';
-        try { unit = localStorage.getItem('vico-unit') || 'kmh'; } catch(e){}
+        var unit = window.VicoDisplayUnit.get();
         if (unitVal) unitVal.textContent = unit === 'mph' ? 'mph' : 'km/h';
         if (unitRow) unitRow.addEventListener('click', function(){
-            unit = (unit === 'kmh') ? 'mph' : 'kmh';
-            try { localStorage.setItem('vico-unit', unit); } catch(e){}
+            unit = window.VicoDisplayUnit.set(unit === 'kmh' ? 'mph' : 'kmh');
             if (unitVal) unitVal.textContent = unit === 'mph' ? 'mph' : 'km/h';
         });
 

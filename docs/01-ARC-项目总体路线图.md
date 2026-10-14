@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-13 · 主线：P2 · 工作包：PR38/N3 foundation: chat review and locally verified production consumers
+更新：2026-10-15 · 主线：P2 · 工作包：PR38 normal seam-only + km/h: local QA passed, remote review/device audition pending
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

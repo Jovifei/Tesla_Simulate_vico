@@ -10,6 +10,8 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     @Volatile private var normalVehicleKey: String? = null
     fun normalBankIdentity(): String = if (normalPlaybackReady()) normalBankId else if (normalBankId == "unavailable") "unavailable" else "not_prepared"
     fun normalPlaybackReady(): Boolean = renderer != null && normalVehicleKey == referenceBank?.vehicleKey
+    fun rendererAlgorithmIdentity(): String = renderer?.rendererAlgorithmIdentity() ?: "not_prepared"
+    fun traversalStats(): LoopTraversalSnapshot? = renderer?.traversalStats()
     private var referenceBank: MatlabSoundBank? = null
     private var controller: MatlabPowertrainController? = null
     private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
@@ -18,6 +20,8 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     fun prepareControllerSession(): Boolean {
         controller?.resetSession()
         syntheticControllers.values.forEach { it.resetSession() }
+        // AudioEngine's synchronized preparation gate has already excluded the active writer.
+        if (renderer?.rendererAlgorithmIdentity() == LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1.name) renderer?.reset()
         return true
     }
     private var renderer: MatlabStatefulBankRenderer? = null
@@ -96,7 +100,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             normalVehicleKey = vehicleKey
             controller = MatlabPowertrainController(profile.powertrain)
             syntheticControllers.clear()
-            renderer = MatlabStatefulBankRenderer(normal.bank)
+            renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1, normal.identity)
         }
         return true
     }

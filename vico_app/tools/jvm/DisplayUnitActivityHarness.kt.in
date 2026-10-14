@@ -1,0 +1,61 @@
+package com.vico.simulator
+
+import org.junit.Assert.*
+import org.junit.Test
+
+// Controlled SharedPreferences collaborator. apply() immediately updates the in-memory map,
+// as Android guarantees; this does not simulate disk durability or a real WebView.
+class UnitPreferences(val values: MutableMap<String, Any> = mutableMapOf()) {
+    fun getString(key: String, fallback: String): String? = (values[key] ?: fallback) as String
+    fun edit() = Editor()
+    inner class Editor {
+        private val pending = mutableMapOf<String, String>()
+        fun putString(key: String, value: String): Editor { pending[key] = value; return this }
+        fun apply() { values.putAll(pending) }
+    }
+}
+
+class UnitActivity(val prefs: UnitPreferences) {
+    // PRODUCTION_METHODS
+}
+
+class DisplayUnitActivityTest {
+    @Test fun upgradeIgnoresLegacyMphAndPreservesOtherPreferences() {
+        val values = mutableMapOf<String, Any>("vico-unit" to "mph", "master_volume" to "0.63", "mount_axis" to "Y", "selected_vehicle" to "c63_w204_v6")
+        val before = values.toMap()
+        assertEquals("kmh", UnitActivity(UnitPreferences(values)).getDisplayUnit())
+        assertEquals(before, values)
+    }
+
+    @Test fun explicitChoiceIsImmediatelyVisibleAndSurvivesActivityRecreation() {
+        val prefs = UnitPreferences(mutableMapOf("language" to "en", "output_mode" to "speaker"))
+        val activity = UnitActivity(prefs)
+        activity.setDisplayUnit("mph")
+        assertEquals("mph", activity.getDisplayUnit())
+        assertEquals("mph", UnitActivity(prefs).getDisplayUnit())
+        activity.setDisplayUnit("kmh")
+        assertEquals("kmh", UnitActivity(prefs).getDisplayUnit())
+        assertEquals(mapOf("language" to "en", "output_mode" to "speaker", "display_unit" to "kmh"), prefs.values)
+    }
+
+    @Test fun invalidValuesDefaultToKmhAndInvalidWritesPreserveExplicitChoice() {
+        for (bad in listOf("", "MPH", "km/h", "unknown")) {
+            val prefs = UnitPreferences(mutableMapOf("display_unit" to bad))
+            assertEquals("kmh", UnitActivity(prefs).getDisplayUnit())
+            assertEquals(bad, prefs.values["display_unit"])
+        }
+        val activity = UnitActivity(UnitPreferences())
+        activity.setDisplayUnit("mph")
+        for (bad in listOf("", "MPH", "km/h", "unknown")) activity.setDisplayUnit(bad)
+        assertEquals("mph", activity.getDisplayUnit())
+    }
+
+    @Test fun incorrectlyTypedNativePreferenceDefaultsToKmhWithoutErasingData() {
+        for (bad in listOf(2, true)) {
+            val prefs = UnitPreferences(mutableMapOf("display_unit" to bad, "language" to "en"))
+            assertEquals("kmh", UnitActivity(prefs).getDisplayUnit())
+            assertEquals(bad, prefs.values["display_unit"])
+            assertEquals("en", prefs.values["language"])
+        }
+    }
+}

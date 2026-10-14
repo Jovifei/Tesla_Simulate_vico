@@ -62,7 +62,16 @@ internal class S13RpmBlendCapture(capacity: Int) {
 }
 
 /** Renders S12 bank loops without resetting phase between sensor blocks. */
-class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
+class MatlabStatefulBankRenderer @JvmOverloads constructor(
+    private val bank: MatlabSoundBank,
+    private val traversalMode: LoopTraversalMode = LoopTraversalMode.LEGACY_LOCKED,
+    normalBankIdentity: String = bank.vehicleKey,
+) {
+    private val normalTraversal = if (traversalMode == LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1)
+        NormalLoopTraversal(bank, normalBankIdentity) else null
+
+    fun rendererAlgorithmIdentity(): String = traversalMode.name
+    fun traversalStats(): LoopTraversalSnapshot? = normalTraversal?.stats()
     private var evaluatedFrames = 0L
     private var preClipPeak = 0.0
     private var aboveContractFrames = 0L
@@ -124,6 +133,7 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         consumedAfterfireTimeS = Double.NaN
         consumedShiftTimeS = Double.NaN
         rpmBlendCapture?.reset()
+        normalTraversal?.reset()
     }
 
     fun render(state: SoundState, frameCount: Int): FloatArray {
@@ -277,6 +287,7 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         start + (end - start) * progress
 
     private fun sample(loop: MatlabLoop): Float {
+        normalTraversal?.let { return it.sample(loop, engineCycles) }
         val cycles = loop.samples.size.toDouble() / bank.sampleRateHz * loop.rpm / 120.0
         if (cycles <= 0.0 || loop.samples.isEmpty()) return 0f
         val normalized = (engineCycles % cycles) / cycles

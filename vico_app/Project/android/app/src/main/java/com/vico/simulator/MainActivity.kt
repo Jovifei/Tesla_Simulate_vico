@@ -427,6 +427,7 @@ class MainActivity : AppCompatActivity() {
             append('{')
             append("\"controlFrameId\":\"").append(frameId).append("\",")
             append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
+            append("\"normalRendererAlgorithm\":\"").append(audioEngine.normalRendererAlgorithm()).append("\",")
             append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
             append("\"speed\":").append(speedKmh.toInt()).append(',')
             append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", speedKmh)).append("\",")
@@ -1251,7 +1252,7 @@ class MainActivity : AppCompatActivity() {
         val wall = System.currentTimeMillis()
         val config = currentLogConfig()
         val profile = if (audioEngine.s15PrototypeEnabled) "$activeVehicleKey:s15_qualification"
-            else "$activeVehicleKey:${audioEngine.normalBankIdentity()}:${com.vico.simulator.sound.VirtualDriveDemand.POLICY_ID}"
+            else "$activeVehicleKey:${audioEngine.normalBankIdentity()}:${com.vico.simulator.sound.VirtualDriveDemand.POLICY_ID}:${audioEngine.normalRendererAlgorithm()}"
         val baseApk = applicationInfo.sourceDir
         val splits = applicationInfo.splitSourceDirs?.copyOf()
         val device = android.os.Build.MODEL.replace(Regex("[^A-Za-z0-9_.:-]"), "_").take(96).ifBlank { "UNKNOWN" }
@@ -1327,6 +1328,18 @@ class MainActivity : AppCompatActivity() {
             if (row.frameId >= testLogFirstFrameId) testLog.recordAudio(row, currentLogConfig())
             else testLogOwner.observeConfigGap(1)
         }
+    }
+
+    fun getDisplayUnit(): String {
+        // New key intentionally starts old WebView mph installations in km/h once.
+        val unit = try { prefs.getString("display_unit", "kmh") } catch (_: ClassCastException) { null }
+        return if (unit == "mph") "mph" else "kmh"
+    }
+
+    fun setDisplayUnit(unit: String) {
+        if (unit != "kmh" && unit != "mph") return
+        // apply() updates the in-memory preferences synchronously, before JS can navigate.
+        prefs.edit().putString("display_unit", unit).apply()
     }
 
     fun reportDisplayUnit(unit: String, pageEpoch: Long) {
@@ -1449,6 +1462,7 @@ class MainActivity : AppCompatActivity() {
         append('{')
         append("\"controlFrameId\":\"").append(input.controlFrameId).append("\",")
         append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
+        append("\"normalRendererAlgorithm\":\"").append(audioEngine.normalRendererAlgorithm()).append("\",")
         append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
         append("\"speed\":").append(input.speedKmh.toInt()).append(',')
         append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", input.speedKmh)).append("\",")

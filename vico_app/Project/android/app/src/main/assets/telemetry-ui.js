@@ -2,7 +2,7 @@
   'use strict';
   var original=window.__vicoUpdate,pending=null,scheduled=false,lastUnit=null;
   function reportUnit(){
-    var value='unknown';try{value=localStorage.getItem('vico-unit')||'kmh';}catch(e){}
+    var value=window.VicoDisplayUnit.get();
     if(value!==lastUnit&&window.AndroidBridge&&window.AndroidBridge.reportDisplayUnit){lastUnit=value;window.AndroidBridge.reportDisplayUnit(value);}
   }
   reportUnit();

@@ -6,7 +6,8 @@ import com.vico.simulator.MainActivity
 
 /**
  * JS <-> Kotlin 桥。HTML 侧 (bridge.js) 调用 window.AndroidBridge.*。
- * 所有方法在 WebKit JS 线程触发, 统一 marshal 到 UI 线程执行。
+ * 方法在 WebKit JS 线程触发；UI 操作 marshal 到 UI 线程。
+ * 显示单位仅操作线程安全的 SharedPreferences，同步返回以避免页面切换竞态。
  */
 class VicoBridge(private val activity: MainActivity, private val webView: WebView) {
 
@@ -144,6 +145,12 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
         val epoch = activity.calibrationPageEpoch
         activity.runOnUiThread { if (activity.acceptsMountingCommand(epoch)) activity.invalidateMounting() }
     }
+
+    @JavascriptInterface
+    fun getDisplayUnit(): String = activity.getDisplayUnit()
+
+    @JavascriptInterface
+    fun setDisplayUnit(unit: String) = activity.setDisplayUnit(unit)
 
     @JavascriptInterface
     fun reportDisplayUnit(unit: String) {

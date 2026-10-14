@@ -333,6 +333,7 @@ class AudioEngine(context: Context) {
         return model.setPrototype(enabled)
     }
     fun normalBankIdentity(): String = model.normalBankIdentity()
+    fun normalRendererAlgorithm(): String = model.rendererAlgorithmIdentity()
     val s15PrototypeEnabled get()=model.prototypeEnabled
     fun s15TimingJson()=model.prototypeTimingJson()
     fun s15InputsJson()=model.prototypeInputsJson()
