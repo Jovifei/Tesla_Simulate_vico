@@ -11,12 +11,14 @@ function update(e){
   $('algorithm').disabled=transitioning||['loading','running','stopping'].includes(e.stage);
   if(e.detail){$('message').textContent=e.detail;$('message').classList.toggle('error',e.stage==='error');}
   if(e.stats)$('diagnostics').textContent=JSON.stringify(e.stats,null,2);
-  if(e.stage!=='running'){resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');}
+  if(e.stage!=='running'){
+    resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');
+    $('signal').textContent={idle:'声音已停止',loading:'声库校验中',stopping:'正在停止声音',error:'声音已停止 · 异常'}[e.stage]||'尚未运行';
+  }
   if(e.stats&&e.stage==='running'&&!transitioning){const s=e.stats;$('speed').textContent=s.inputUsable?String(Math.round(s.speedKmh)).padStart(3,'0'):'—';$('rpm').textContent=Math.round(s.rpm).toLocaleString('en-US');$('gear').textContent=s.gear;$('load').textContent=Math.round(s.load*100);
     $('rpm-arc').setAttribute('stroke-dashoffset',String(100-Math.min(100,s.rpm/(selected?.redlineRpm||9000)*100)));
     $('signal').textContent=s.inputUsable?'音频线程运行 · 输入有效':'输入无效或失效 · 内容静音';$('sample-rate').textContent=`${s.contextSampleRate} Hz`;$('diagnostics').textContent=JSON.stringify(s,null,2);
   }
-  if(e.stage==='idle'){resetDigits();$('signal').textContent='声音已停止';$('rpm-arc').setAttribute('stroke-dashoffset','100');}
 }
 function chooseInput(next){if(next.source==='gps'&&next.valid)next.receivedAt=performance.now();input=next;session.setInput(input);$('mode-tag').textContent=next.source==='gps'?'WEB GPS · 实验估算':next.source==='manual'?'MANUAL · 虚拟速度':'DEMO · 非真实车辆数据';}
 function stopGps(){gpsGeneration++;if(input.source==='gps'){input={source:'gps',valid:false};session.setInput(input);}if(gpsWatch!==null)navigator.geolocation.clearWatch(gpsWatch);gpsWatch=null;}

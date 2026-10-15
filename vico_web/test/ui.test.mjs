@@ -18,6 +18,10 @@ test('garage owns navigation, stop clears readouts, pedal stays demo-only, late 
  get('vehicles').children[0].handlers.click();await events.hashchange();
  assert.equal(get('redline-rpm').textContent,'8,000');assert.equal(get('garage').hidden,true);assert.equal(get('drive').hidden,false);
  get('start').handlers.click();listener({stage:'running',stats:{inputUsable:true,speedKmh:80,rpm:3000,gear:3,load:.5}});
+ assert.equal(get('signal').textContent,'音频线程运行 · 输入有效');
+ listener({stage:'error',detail:'处理器失败',stats:{inputUsable:true,speedKmh:80,rpm:3000,gear:3,load:.5}});
+ assert.match(get('signal').textContent,/异常|已停止/,'error must not retain a running-input signal');
+ assert.equal(get('speed').textContent,'000');
  get('stop').handlers.click();assert.equal(get('speed').textContent,'000');assert.equal(get('rpm').textContent,'0');
  get('pedal').handlers.pointerdown({preventDefault(){},pointerId:1});assert.equal(inputs.at(-1).source,'demo');assert.equal(inputs.at(-1).scenario,'overspeed');
  await get('mode-manual').handlers.click();get('pedal').handlers.pointerup({pointerId:1});assert.equal(inputs.at(-1).source,'manual');
