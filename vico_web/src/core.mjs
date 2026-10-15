@@ -152,9 +152,9 @@ export class Powertrain {
     let gain=1,coupling=1,p;
     const blend=(a,b,u)=>a+(b-a)*(.5-.5*Math.cos(Math.PI*clamp(u,0,1)));
     if (t>=0 && t<s.shift_attack_s) { p=t/s.shift_attack_s; gain=blend(1,s.shift_min_torque,p); coupling=.08+.18*p; }
-    else if (t<s.shift_attack_s+s.shift_hold_s) { gain=s.shift_min_torque; coupling=.22; }
-    else if (t<s.shift_attack_s+s.shift_hold_s+s.shift_recovery_s) { p=(t-s.shift_attack_s-s.shift_hold_s)/s.shift_recovery_s; gain=blend(s.shift_min_torque,s.shift_reengage_gain,p); coupling=.24+.56*p; }
-    else if (t<total) { p=(t-s.shift_attack_s-s.shift_hold_s-s.shift_recovery_s)/s.shift_settle_s; gain=blend(s.shift_reengage_gain,1,p); coupling=.8+.2*p; }
+    else if (t>=0 && t<s.shift_attack_s+s.shift_hold_s) { gain=s.shift_min_torque; coupling=.22; }
+    else if (t>=0 && t<s.shift_attack_s+s.shift_hold_s+s.shift_recovery_s) { p=(t-s.shift_attack_s-s.shift_hold_s)/s.shift_recovery_s; gain=blend(s.shift_min_torque,s.shift_reengage_gain,p); coupling=.24+.56*p; }
+    else if (t>=0 && t<total) { p=(t-s.shift_attack_s-s.shift_hold_s-s.shift_recovery_s)/s.shift_settle_s; gain=blend(s.shift_reengage_gain,1,p); coupling=.8+.2*p; }
     const mps=speed/3.6, target=Math.max(s.idle_rpm,mps/(2*Math.PI*s.wheel_radius_m)*60*s.final_drive*s.gear_ratios[this.gear-1]);
     this.rpm=t>=0&&t<=total?this.rpm+(1-Math.pow(1-coupling,Math.max(1,dt*1000)))*(target-this.rpm):target;
     this.rpm=Math.min(s.redline_rpm,Math.max(this.rpm,s.idle_rpm+throttle*(s.launch_rpm-s.idle_rpm)*(1-Math.min(1,mps/4))));
