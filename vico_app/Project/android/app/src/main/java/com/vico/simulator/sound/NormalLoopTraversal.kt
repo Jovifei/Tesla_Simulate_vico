@@ -6,7 +6,7 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 
-enum class LoopTraversalMode { LEGACY_LOCKED, NORMAL_CANONICAL_SEAM_V1 }
+enum class LoopTraversalMode { LEGACY_LOCKED, NORMAL_CANONICAL_SEAM_V1, NORMAL_SEAM_ENVELOPE_V1 }
 
 data class LoopTraversalSnapshot(
     val correctedReads: Long = 0, val skippedShortLoopReads: Long = 0, val maxAbsCorrection: Double = 0.0,

@@ -9,10 +9,11 @@ class LiveLoopVariantWiring(unittest.TestCase):
   self.assertIn('referenceBank = loaded',s)
   self.assertIn('VehicleSoundProfileLoader.fromLoadedBank(loaded, normal.identity, normal.variantArtifactHashes)',s)
   self.assertIn('controller = MatlabPowertrainController(profile.powertrain)',s)
-  self.assertIn('renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1, normal.identity)',s)
+  self.assertIn('renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1, normal.identity)',s)
   review=(MAIN/'java/com/vico/simulator/sound/S13ReviewSession.kt').read_text()
   self.assertIn('MatlabStatefulBankRenderer(bank)',review)
   self.assertNotIn('NORMAL_CYCLE_FADE',review)
+  self.assertNotIn('NORMAL_SEAM_ENVELOPE',review)
   body=s.split('fun newS13ReviewSession(',1)[1]
   self.assertIn('cache.getOrPut(vehicleKey) { MatlabSoundBankLoader.load(assets, vehicleKey) }',body)
   self.assertNotIn('normalCache',body);self.assertNotIn('setVehicle(',body);self.assertNotIn('loadForNormalPlayback',body)

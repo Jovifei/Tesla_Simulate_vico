@@ -17,7 +17,7 @@ def main():
  out.mkdir(parents=True);src=out/'source';src.mkdir();assets=out/'assets';assets.mkdir()
  root='vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/'
  baseline=json.load(open(here/'baseline-source-sha256.json'));names=list(baseline)
- if a.variant=='candidate':names+=['VirtualDriveDemand.kt','VirtualCruiseGear.kt','MatlabSoundStateMapping.kt','NormalLoopTraversal.kt']
+ if a.variant=='candidate':names+=['VirtualDriveDemand.kt','VirtualCruiseGear.kt','MatlabSoundStateMapping.kt','NormalLoopTraversal.kt','NormalEnvelopeDamper.kt']
  sources=[];identities={}
  for n in names:
   b=(repo/root/n).read_bytes()

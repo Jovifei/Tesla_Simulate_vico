@@ -67,11 +67,15 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
     private val traversalMode: LoopTraversalMode = LoopTraversalMode.LEGACY_LOCKED,
     normalBankIdentity: String = bank.vehicleKey,
 ) {
-    private val normalTraversal = if (traversalMode == LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1)
+    private val normalTraversal = if (traversalMode != LoopTraversalMode.LEGACY_LOCKED)
         NormalLoopTraversal(bank, normalBankIdentity) else null
+    private val normalEnvelope = if (traversalMode == LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1)
+        NormalEnvelopeDamper(bank.sampleRateHz) else null
 
     fun rendererAlgorithmIdentity(): String = traversalMode.name
     fun traversalStats(): LoopTraversalSnapshot? = normalTraversal?.stats()
+    /** Read on the renderer-owning thread, or after rendering stops. */
+    fun normalEnvelopeStats(): NormalEnvelopeSnapshot? = normalEnvelope?.snapshot()
     private var evaluatedFrames = 0L
     private var preClipPeak = 0.0
     private var aboveContractFrames = 0L
@@ -134,6 +138,7 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
         consumedShiftTimeS = Double.NaN
         rpmBlendCapture?.reset()
         normalTraversal?.reset()
+        normalEnvelope?.reset()
     }
 
     fun render(state: SoundState, frameCount: Int): FloatArray {
@@ -241,7 +246,8 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
             val low = lerp(sample(lowLow), sample(lowHigh), loadBlend)
             val high = lerp(sample(highLow), sample(highHigh), loadBlend)
             val shiftGain = mix(startState.shiftGain, endState.shiftGain, progress).toFloat()
-            var value = lerp(low, high, rpmBlend) * shiftGain
+            val dry = lerp(low, high, rpmBlend)
+            var value = (normalEnvelope?.process(dry) ?: dry) * shiftGain
             var eventContribution = 0f
             if (afterfireIndex in bank.afterfire.indices) {
                 val contribution = bank.afterfire[afterfireIndex++]

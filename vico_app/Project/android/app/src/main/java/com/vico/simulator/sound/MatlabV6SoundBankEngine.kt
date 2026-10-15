@@ -21,7 +21,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
         controller?.resetSession()
         syntheticControllers.values.forEach { it.resetSession() }
         // AudioEngine's synchronized preparation gate has already excluded the active writer.
-        if (renderer?.rendererAlgorithmIdentity() == LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1.name) renderer?.reset()
+        if (renderer?.rendererAlgorithmIdentity() != LoopTraversalMode.LEGACY_LOCKED.name) renderer?.reset()
         return true
     }
     private var renderer: MatlabStatefulBankRenderer? = null
@@ -100,7 +100,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             normalVehicleKey = vehicleKey
             controller = MatlabPowertrainController(profile.powertrain)
             syntheticControllers.clear()
-            renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_CANONICAL_SEAM_V1, normal.identity)
+            renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1, normal.identity)
         }
         return true
     }

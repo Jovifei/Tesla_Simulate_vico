@@ -214,6 +214,8 @@ jobs:
           --tests 'com.vico.simulator.sound.LiveLoopVariantTest'
           --tests 'com.vico.simulator.sound.LiveLoopReferenceIsolationTest'
           --tests 'com.vico.simulator.sound.NormalLoopTraversalTest'
+          --tests 'com.vico.simulator.sound.NormalEnvelopeDamperTest'
+          --tests 'com.vico.simulator.sound.NormalEnvelopeIntegrationTest'
           :app:lintDebug :app:assembleDebug
       - name: Record test scope and generated APK identity
         if: ${{ always() && steps.sdk.outcome == 'success' }}
