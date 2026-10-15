@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101418">
+  <meta name="description" content="Vico Web Lab — Jovi 的六车型声浪实验室，使用自有算法与声库。">
+  <title>Vico · 声浪实验室</title><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#"><span class="brand-mark">V</span> VICO <span class="muted">/ WEB LAB</span></a><nav><a href="#garage">声浪车库</a><a href="#drive">驾驶台</a><a href="#about">实验说明</a></nav><span class="chip">OWN ENGINE. OWN SOUND.</span></header>
+<main>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> JOVI ENGINEERING · WEB PREVIEW</div><h1>不止安静。<br>让每一次加速，<em>都有回响。</em></h1><p>六种性格，同一套自己的算法。<br>在浏览器里，感受从怠速到高转的变化。</p><a class="hero-link" href="#drive">进入声音驾驶台 <span>↗</span></a><div class="hero-note"><strong>06</strong><span>原有车型<br>按需加载 · 本地合成</span></div></section>
+<section id="garage" class="garage"><div class="section-heading"><div><div class="eyebrow">01 / THE GARAGE</div><h2>选择今天的性格</h2></div><p>使用你的原声库，不使用第三方车型录音。</p></div><div id="vehicles" class="vehicle-grid" aria-label="选择车型"><p>正在读取车型清单…</p></div></section>
+<section id="drive" class="drive"><div class="section-heading"><div><div class="eyebrow">02 / SOUND IN MOTION</div><h2>声音驾驶台</h2></div><span id="mode-tag" class="chip">DEMO · 非真实车辆数据</span></div>
+<div class="console"><div class="instrument"><div class="instrument-head"><div><span class="eyebrow">CURRENT VEHICLE</span><h3 id="vehicle-name">等待选择车型</h3></div><span id="play-status" class="status">尚未启动</span></div>
+<div class="dial"><svg viewBox="0 0 420 270" aria-hidden="true"><path class="arc-bg" d="M55 235 A180 180 0 1 1 365 235" pathLength="100"/><path id="rpm-arc" class="arc-live" d="M55 235 A180 180 0 1 1 365 235" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/><text x="45" y="264">0</text><text x="338" y="264">RPM</text></svg><div class="speed"><strong id="speed">000</strong><span>km/h</span></div></div>
+<div class="readouts"><div><small>ENGINE SPEED</small><strong><span id="rpm">0</span><span class="unit"> rpm</span></strong></div><div><small>VIRTUAL GEAR</small><strong id="gear">N</strong></div><div><small>VIRTUAL LOAD</small><strong><span id="load">0</span><span class="unit"> %</span></strong></div></div>
+<div class="signal-row"><span class="signal-light"></span><span id="signal">音频只会在点击后启动</span><span id="sample-rate">— Hz</span></div></div>
+<aside class="controls"><div class="eyebrow">YOUR DRIVE</div><h3>从一次轻踩开始</h3><label class="field">渲染算法<select id="algorithm"><option value="NORMAL_SEAM_ENVELOPE_V1">当前 normal · 接缝 + 有限包络</option><option value="NORMAL_CANONICAL_SEAM_V1">接缝修复 · 对照</option><option value="LEGACY_LOCKED">旧算法 · 数字对照</option></select></label>
+<div class="scenario-grid" aria-label="演示场景"><button data-scenario="launch">↗ 起步</button><button data-scenario="cruise">→ 巡航 80</button><button data-scenario="overspeed">↗ 高速 144</button><button data-scenario="decel">↘ 减速</button></div>
+<label class="field" for="target">手动车速目标 <output id="target-value">0 km/h</output></label><input id="target" type="range" min="0" max="144" value="0" step="1" aria-label="手动车速目标">
+<button id="pedal" class="pedal">按住加速 / 松开减速 <span>HOLD TO REV</span></button>
+<label class="field" for="volume">播放音量 <output id="volume-value">20%</output></label><input id="volume" type="range" min="0" max="70" value="20" step="1" aria-label="播放音量">
+<button id="start" class="primary" disabled>开始声浪 <span>▶</span></button><button id="stop" class="danger">立即停止 <span>ESC</span></button><p class="control-footnote">首次请使用低音量。此处为虚拟速度，不是车辆真实极速。</p></aside></div>
+<div class="message" id="message" role="status" aria-live="polite">正在载入网页清单。</div>
+<div class="secondary-panels"><details><summary>实验 GPS 输入 <span>需主动授权</span></summary><p>仅读取设备报告的速度，不存储或上传坐标。此输入不等价于 Android REAL/IMU；事件音效关闭，速度未知或陈旧会暂停内容。</p><button id="gps">启用 GPS（仅停车或乘客操作）</button><button id="demo">返回演示</button><p id="gps-status">未请求定位权限</p></details><details><summary>运行诊断 <span>仅本地下载</span></summary><pre id="diagnostics">尚无音频统计</pre><button id="export">导出诊断 JSON</button></details></div>
+</section>
+<section id="about" class="about"><div class="eyebrow">03 / BUILT WITH YOUR ALGORITHM</div><h2>不是套一段音频，<br>而是运行你的声音引擎。</h2><div class="about-grid"><div><b>01</b><h3>保持同一来源</h3><p>从固定提交构建六车型资源；原 WAV 不重写，加载时核对 SHA-256。</p></div><div><b>02</b><h3>声音有自己的时钟</h3><p>AudioWorklet 推进发动机相位。页面刷新不重启纹理，停止与失效有明确边界。</p></div><div><b>03</b><h3>不夸大已经完成的事</h3><p>网页移植不代表手机、道路或人耳验收。已有慢重复纹理限制继续保留。</p></div></div></section>
+</main><footer><span>VICO / JOVI · 独立声音工程</span><span id="build-id">正在读取构建身份</span><span>仅停车调试 · 驾驶员勿操作</span></footer>
+<script type="module" src="./src/app.mjs"></script>
+</body></html>
