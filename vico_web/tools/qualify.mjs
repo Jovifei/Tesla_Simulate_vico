@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';
+import {comparePcm} from './parity_metrics.mjs';
 import {diskBank,renderConstant,f32Bytes} from './render.mjs';import {SOURCE_SHA,PEAK_CONTRACT} from '../src/core.mjs';
 const a=process.argv.slice(2),get=k=>a[a.indexOf(k)+1];if(a.includes('--help')){console.log('node qualify.mjs --dist DIST --reference KOTLIN_OUT --out NEW_DIR');process.exit(0);}for(const k of ['--dist','--reference','--out'])if(!a.includes(k))throw new Error(`${k} required`);
 const dist=path.resolve(get('--dist')),reference=path.resolve(get('--reference')),out=path.resolve(get('--out')),ref=JSON.parse(await fs.readFile(path.join(reference,'receipt.json')));
@@ -14,8 +15,9 @@ for(const c of ref.cases){
  for(let i=0;i<pcm.length;i++){const x=old.readFloatLE(i*4),y=pcm[i];if(!Number.isFinite(x)||!Number.isFinite(y))throw new Error('Nonfinite comparison');const e=x-y;maxError=Math.max(maxError,Math.abs(e));sumError+=e*e;windowOld+=x*x;windowNew+=y*y;
   if((i+1)%Math.round(loaded.bank.sampleRate*.1)===0){const delta=windowOld===0?(windowNew===0?0:Infinity):10*Math.log10(windowNew/windowOld);windows++;if(Math.abs(delta)>.5)failedWindows++;maxDb=Math.max(maxDb,Math.abs(delta));windowOld=0;windowNew=0;}
  }
- const pass=maxError<=2e-6&&failedWindows===0&&stats.aboveContract===0&&stats.hardClips===0&&stats.nonfinite===0;
- await fs.writeFile(path.join(out,c.file),bytes,{flag:'wx'});results.push({id:c.id,pass,frames:pcm.length,byteEqual:old.equals(bytes),maxAbsError:maxError,rmsError:Math.sqrt(sumError/pcm.length),windows,failedWindows,max100msAbsDb:maxDb,referenceSha256:sha(old),webSha256:sha(bytes),stats});
+ const referencePcm=Float32Array.from({length:pcm.length},(_,i)=>old.readFloatLE(i*4));const rolling=comparePcm(referencePcm,pcm,loaded.bank.sampleRate);
+ const pass=rolling.failedRollingWindows===0&&maxError<=2e-6&&failedWindows===0&&stats.aboveContract===0&&stats.hardClips===0&&stats.nonfinite===0;
+ await fs.writeFile(path.join(out,c.file),bytes,{flag:'wx'});results.push({id:c.id,pass,...rolling,frames:pcm.length,byteEqual:old.equals(bytes),maxAbsError:maxError,rmsError:Math.sqrt(sumError/pcm.length),windows,failedWindows,max100msAbsDb:maxDb,referenceSha256:sha(old),webSha256:sha(bytes),stats});
  console.log(c.id,pass?'PASS':'FAIL',maxError,maxDb);
 }
 const report={schema:'vico.web.parity.v1',sourceCommit:SOURCE_SHA,mode:ref.mode,thresholds:{maxAbsError:2e-6,windowDb:.5,peak:PEAK_CONTRACT},caseCount:results.length,passed:results.filter(r=>r.pass).length,scope:'STATIC_KOTLIN_JS_DIGITAL_NOT_BROWSER_DEVICE_ACOUSTIC',results};await fs.writeFile(path.join(out,'qualification.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});if(report.passed!==48)process.exitCode=1;
