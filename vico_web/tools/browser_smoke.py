@@ -4,16 +4,24 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 def status(p,v):p.wait_for_function('(v)=>document.getElementById("play-status").textContent===v',arg=v,timeout=30000)
-def stats(p):
- p.wait_for_function("()=>document.getElementById('diagnostics').textContent.trim().startsWith('{')");p.wait_for_timeout(650)
- return json.loads(p.locator('#diagnostics').text_content())
-def start(p):p.locator('#start').click();status(p,'正在播放')
+def stats(p,expected=None):
+ if expected is None:
+  expected=p.evaluate("async()=>{const c=await(await fetch('catalog.json')).json();return c.vehicles.find(v=>location.hash.endsWith('/'+v.id)).bankSha256}")
+ baseline=p.evaluate('testNodes.at(-1)?.seen||0')
+ p.wait_for_function("""({expected,baseline})=>{const n=testNodes.at(-1);if(!n||n.ctx!==testContexts.at(-1)||n.ctx.state!=='running'||n.seen<=baseline)return false;try{const d=JSON.parse(document.getElementById('diagnostics').textContent),s=d.stats||d;return ((window.testAllowLegacyDiagnostics&&!d.stats)||(d.scope==='CURRENT_RUN'&&d.runId===window.testExpectedRunId&&d.runId!=null&&location.hash.endsWith('/'+d.vehicle)))&&s.bankIdentity?.bankSha256===expected&&s.frames===n.stats.frames&&s.frames>0}catch{return false}}""",arg={'expected':expected,'baseline':baseline},timeout=15000)
+ diagnostic=json.loads(p.locator('#diagnostics').text_content())
+ return diagnostic.get('stats',diagnostic)
+def start(p):
+ before=p.evaluate("()=>{try{return JSON.parse(document.getElementById('diagnostics').textContent).runId||null}catch{return null}}")
+ p.locator('#start').click();status(p,'正在播放')
+ p.evaluate("before=>{const d=JSON.parse(document.getElementById('diagnostics').textContent);if(!window.testAllowLegacyDiagnostics&&(!d.runId||d.runId===before))throw new Error('Start did not create a new diagnostic runId');window.testExpectedRunId=d.runId}",before)
 def stop(p):p.locator('#stop').click();status(p,'尚未启动')
 def mode(p,name):p.locator(f'#mode-{name}').click();status(p,'尚未启动')
 def garage(p):p.locator('#back-garage').click();p.locator('#garage').wait_for(state='visible')
 def choose(p,i=0):p.locator('.vehicle-card').nth(i).click();p.locator('#drive').wait_for(state='visible');status(p,'尚未启动')
 def instrument(p,rate=None):
  p.add_init_script("""(()=>{window.testContexts=[];window.geo={calls:0};const Native=AudioContext;window.AudioContext=class extends Native{constructor(o){super(RATE===null?o:{...o,sampleRate:RATE});testContexts.push(this)}};Object.defineProperty(navigator,'geolocation',{value:{watchPosition(ok,fail){geo.calls++;geo.ok=ok;geo.fail=fail;return geo.calls},clearWatch(){}}});})();""".replace('RATE',json.dumps(rate)))
+ p.add_init_script("""(()=>{window.testNodes=[];const Native=AudioWorkletNode;window.AudioWorkletNode=class extends Native{constructor(ctx,...rest){super(ctx,...rest);const record={ctx,seen:0,stats:null,node:this};testNodes.push(record);this.port.addEventListener('message',e=>{if(e.data.type==='stats'){record.seen++;record.stats=e.data.stats}});this.port.start()}}})();""")
 def capture(p,out,name,w,h,drive=True):
  p.set_viewport_size({'width':w,'height':h});p.wait_for_timeout(150);p.screenshot(path=str(out/f'{name}-{w}x{h}.png'),full_page=False)
  selectors=['#vehicle-name','#speed','.speed > span','#rpm','#gear','#redline-rpm','#start','#stop','#mode-demo','#mode-manual','#mode-gps'] if drive else ['.vehicle-card']
@@ -36,9 +44,9 @@ def main():
    catalog=p.evaluate("async()=>await (await fetch('catalog.json')).json()")
    for i in range(6):
     if i:garage(p);choose(p,i)
-    p.locator('[data-scenario="launch"]').click();start(p);s=stats(p);assert s['frames']>0 and s['preClipPeak']>0 and s['nonfinite']==0
+    p.locator('[data-scenario="launch"]').click();start(p);s=stats(p,catalog['vehicles'][i]['bankSha256']);assert s['frames']>0 and s['preClipPeak']>0 and s['nonfinite']==0
     name=p.locator('#vehicle-name').text_content();redline=p.locator('#redline-rpm').text_content();assert name==catalog['vehicles'][i]['name'];assert str(catalog['vehicles'][i]['redlineRpm']) in redline.replace(',','')
-    events.append({'test':'actual six-car worklet','vehicle':name,'redline':redline,'stats':s})
+    events.append({'test':'actual six-car worklet','vehicle':name,'redline':redline,'stats':s,'diagnostic':json.loads(p.locator('#diagnostics').text_content())})
     if i==0:events.append(capture(p,a.out,'drive-demo',1280,720))
     stop(p);assert p.evaluate("testContexts.every(c=>c.state==='closed')")
    mode(p,'manual');p.locator('#target').fill('80');p.locator('#target').dispatch_event('input');start(p);stats(p);events.append(capture(p,a.out,'drive-manual',1280,600));stop(p)

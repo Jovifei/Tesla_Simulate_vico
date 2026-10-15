@@ -9,10 +9,11 @@ test('garage owns navigation, stop clears readouts, pedal stays demo-only, late 
  const get=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
  let listener,stopResolve,deferStop=false;const events={};const location={hash:"#/garage"};const inputs=[];
  class AudioSession{constructor(base,cb){listener=cb;this.stage='idle';}setInput(x){inputs.push(x);}setVolume(){}start(){this.stage='running';listener({stage:'running'});}stop(){this.stage='idle';if(!deferStop)return Promise.resolve();deferStop=false;return new Promise(r=>{stopResolve=r;});}}
- const entry={id:'car',name:'Test car',kind:'V8',idleRpm:800,redlineRpm:8000};
+ const entry={id:'car',name:'Test car',kind:'V8',idleRpm:800,redlineRpm:8000,bankSha256:'bank-car'};
+ const other={id:'other',name:'Other car',kind:'V6',idleRpm:900,redlineRpm:7000,bankSha256:'bank-other'};
  const document={getElementById:get,createElement:()=>new Element(),querySelectorAll:()=>[],addEventListener(){},hidden:false};
  const source=(await readFile(new URL('../src/app.mjs',import.meta.url),'utf8')).replace(/^import .*;$/mg,'').replace('import.meta.url',"'https://example.test/src/app.mjs'");
- const context=vm.createContext({document,window:{addEventListener(k,f){events[k]=f;}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry],sourceCommit:'abc'}),GpsSpeedInput:class{},URL,performance:{now:()=>0},setInterval,clearInterval,setTimeout,Blob,console,isSecureContext:true});
+ const context=vm.createContext({document,window:{addEventListener(k,f){events[k]=f;}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry,other],sourceCommit:'abc'}),GpsSpeedInput:class{},URL,performance:{now:()=>0},setInterval,clearInterval,setTimeout,Blob,console,isSecureContext:true});
  await vm.runInContext(`(async()=>{${source}})()`,context);
  assert.equal(get('drive').hidden,true,'initial view must be garage');
  get('vehicles').children[0].handlers.click();await events.hashchange();
@@ -31,4 +32,11 @@ test('garage owns navigation, stop clears readouts, pedal stays demo-only, late 
  location.hash='#/drive/unknown';await events.hashchange();assert.equal(get('garage').hidden,false);assert.match(get('garage-error').textContent,/未知/);
  location.hash='#/drive/car';await events.hashchange();assert.equal(get('drive').hidden,false);assert.equal(get('speed').textContent,'000');
  deferStop=true;const modeChange=get('mode-gps').handlers.click();assert.equal(get('start').disabled,true,'Start stays locked until AudioContext closes');stopResolve();await modeChange;assert.equal(get('start').disabled,false);assert.equal(get('speed').textContent,'—','GPS unknown must never look like measured zero');assert.equal(inputs.at(-1).source,'gps');assert.equal(inputs.at(-1).valid,false);
+ get('start').handlers.click();listener({stage:'running',stats:{inputUsable:true,speedKmh:72,rpm:3000,gear:3,load:.5,bankIdentity:{bankSha256:'bank-car'}}});
+ let diagnostic=JSON.parse(get('diagnostics').textContent);assert.equal(diagnostic.vehicle,'car');assert.equal(diagnostic.scope,'CURRENT_RUN');
+ location.hash='#/garage';await events.hashchange();location.hash='#/drive/other';await events.hashchange();
+ diagnostic=JSON.parse(get('diagnostics').textContent);assert.equal(diagnostic.vehicle,'car');assert.equal(diagnostic.scope,'HISTORICAL_RUN','prior car stats retain their true owner');
+ get('start').handlers.click();diagnostic=JSON.parse(get('diagnostics').textContent);assert.equal(diagnostic.vehicle,'other');assert.equal(diagnostic.scope,'NO_CURRENT_STATS','new loading cannot show prior car stats');
+ get('gps-status').textContent='实验速度 72.0 km/h';listener({stage:'running',stats:{inputUsable:false,speedKmh:72,rpm:3000,gear:3,load:.5,bankIdentity:{bankSha256:'bank-other'}}});
+ assert.match(get('gps-status').textContent,/过期|失效/);get('stop').handlers.click();assert.doesNotMatch(get('gps-status').textContent,/实验速度 72/);
 });
