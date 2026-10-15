@@ -49,11 +49,11 @@ export class Owner {
   cancel(){this.abort?.abort();this.id++;}
 }
 export class AudioSession {
-  constructor(base,onChange=()=>{}) { this.base=base; this.onChange=onChange;this.owner=new Owner();this.ctx=null;this.node=null;this.stage='idle';this.last=null;this.timer=null;this.volume=.2; }
+  constructor(base,onChange=()=>{}) { this.base=base; this.onChange=onChange;this.owner=new Owner();this.ctx=null;this.node=null;this.stage='idle';this.last=null;this.timer=null;this.volume=.2;this.pendingInput={source:'demo',scenario:'stop'}; }
   report(stage,detail=''){this.stage=stage;this.onChange({stage,detail,stats:this.last});}
   async start(entry,mode,input){
     if(!MODES.includes(mode))throw new Error('Unknown audio mode');
-    const token=this.owner.next(); this.release(); this.last=null;
+    const token=this.owner.next(); this.release(); this.last=null;this.pendingInput=input;
     let ctx;
     try {
       if(!globalThis.isSecureContext)throw new Error('请使用 HTTPS 或 localhost；不支持 file://');
@@ -82,14 +82,14 @@ export class AudioSession {
       node.port.postMessage({type:'init',owner:token.id,bank,mode},transfers);
       try{await ready;}finally{clearTimeout(timeout);}
       if(!this.owner.owns(token.id)){await ctx.close();return;}
-      node.port.postMessage({...this.freshInput(input),type:'input',owner:token.id});node.port.postMessage({type:'heartbeat',owner:token.id});
+      node.port.postMessage({...this.freshInput(this.pendingInput),type:'input',owner:token.id});node.port.postMessage({type:'heartbeat',owner:token.id});
       this.timer=setInterval(()=>{if(this.owner.owns(token.id))node.port.postMessage({type:'heartbeat',owner:token.id});},250);
       ctx.onstatechange=()=>{if(this.owner.owns(token.id)&&this.stage==='running'&&ctx.state!=='running')fail('浏览器暂停了音频；请重新点击开始');};
       this.report('running',`${entry.name} · 声库已校验`);
     }catch(e){if(this.owner.owns(token.id)){this.owner.cancel();this.release();this.report('error',e.message);}else if(ctx&&ctx.state!=='closed')await ctx.close();}
   }
   freshInput(input){if(input.source!=='gps'||input.valid!==true)return input;if(!Number.isFinite(input.receivedAt))return {source:'gps',valid:false};return {...input,ageMs:input.ageMs+Math.max(0,performance.now()-input.receivedAt)};}
-  setInput(input){if(this.node&&this.stage==='running')this.node.port.postMessage({...this.freshInput(input),type:'input',owner:this.owner.id});}
+  setInput(input){this.pendingInput=input;if(this.node&&this.stage==='running')this.node.port.postMessage({...this.freshInput(input),type:'input',owner:this.owner.id});}
   setVolume(value){this.volume=Math.max(0,Math.min(.7,Number(value)||0));if(this.ctx&&this.volumeNode)this.volumeNode.gain.setTargetAtTime(this.volume,this.ctx.currentTime,.02);}
   async stop(immediate=false){
     this.owner.cancel();const id=this.owner.id,ctx=this.ctx,node=this.node;
