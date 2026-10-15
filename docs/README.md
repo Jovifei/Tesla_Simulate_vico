@@ -1,10 +1,14 @@
 # Tesla Simulate Vico Documentation
 
-更新：2026-09-09
+更新：2026-10-04
 
 > 当前主线：**S12 声音真实性 / Stage AD 参考闭环 → Jovi 人耳反馈 → Engineering Profiles → Android App realtime sound**。
 >
 > 当前产品不是 ESP32。ESP32 = `DEFERRED_FUTURE_OPTION`。
+
+## 2026年10月4日 App 输入与周期杂声经验
+
+最新已安装软件、未发布候选和失败方案分开记录：[输入与循环点击问题经验](07-debugging/03-vico-input-and-loop-click-lessons-20261004.md)。这是工程诊断入口，不提升为道路准确、Human PASS或OEM标定。
 
 ## 先读这些
 

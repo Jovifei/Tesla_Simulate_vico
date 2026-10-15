@@ -8,12 +8,27 @@ on:
       - '.gitattributes'
       - 'docs/.gitattributes'
       - 'docs/vico*n2*.md'
+      - 'docs/vico-real-drive-policy-20261004.md'
+      - 'review_packages/vico-real-drive-20261004/**'
+      - 'review_packages/vico-high-rpm-rejections-20261005/**'
+      - 'docs/07-debugging/04-vico-high-rpm-rejections-20261005.md'
+      - 'tools/sound_sim/s12/acoustic_identity_v015/**'
+      - 'tools/sound_sim/s12/acoustic_demo/**'
+      - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/tools/js/**'
+      - 'vico_app/Project/android/app/src/main/assets/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/web/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/logging/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/audio/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/audio/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   push:
     branches:
@@ -25,12 +40,27 @@ on:
       - '.gitattributes'
       - 'docs/.gitattributes'
       - 'docs/vico*n2*.md'
+      - 'docs/vico-real-drive-policy-20261004.md'
+      - 'review_packages/vico-real-drive-20261004/**'
+      - 'review_packages/vico-high-rpm-rejections-20261005/**'
+      - 'docs/07-debugging/04-vico-high-rpm-rejections-20261005.md'
+      - 'tools/sound_sim/s12/acoustic_identity_v015/**'
+      - 'tools/sound_sim/s12/acoustic_demo/**'
+      - 'tools/sound_sim/s12/benchmark/baselines/sprint-4d-b/radiation-boundary-package.json'
       - 'vico_app/tools/python/**'
       - 'vico_app/tools/jvm/**'
+      - 'vico_app/tools/js/**'
+      - 'vico_app/Project/android/app/src/main/assets/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/web/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/logging/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/logging/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/**'
       - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/**'
+      - 'vico_app/Project/android/app/src/main/java/com/vico/simulator/audio/**'
+      - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/audio/**'
       - 'vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/**'
   workflow_dispatch:
 
@@ -73,13 +103,34 @@ jobs:
           python vico_app/tools/python/run_n2_ci.py
           --platform linux --download-deps
           --output "${{ runner.temp }}/vico-n2-linux"
+      - name: Test calibration UI acknowledgement and lifecycle
+        run: node --test vico_app/tools/js/test_calibration_ui.cjs vico_app/tools/js/test_input_quality_ui.cjs vico_app/tools/js/test_mounting_ui.cjs vico_app/tools/js/test_telemetry_ui.cjs vico_app/tools/js/test_display_unit.cjs
       - name: Test sensor freshness, ordering, and Android source wiring
         run: |
           python vico_app/tools/python/run_sensor_jvm_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-sensor-jvm"
+          python vico_app/tools/python/run_preview_activity_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-preview-activity"
+          python vico_app/tools/python/run_display_unit_activity_tests.py --deps "${{ runner.temp }}/vico-n2-linux/deps" --build-dir "${{ runner.temp }}/vico-display-unit-activity"
           python -m unittest discover -s vico_app/tools/python -p 'test_sensor_input_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_input_diagnostics_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_input_quality_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_session_start_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_live_loop_variant_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_virtual_drive_wiring.py' -v
+          python -m unittest discover -s vico_app/tools/python -p 'test_loop_preroll.py' -v
+          python vico_app/tools/python/generate_c63_live_loop_variant.py --repo . --output-dir "${{ runner.temp }}/vico-low-rpm-reproduced"
+          diff -qr "${{ runner.temp }}/vico-low-rpm-reproduced" vico_app/Project/android/app/src/main/assets/live_loop_variants/c63_low_rpm_preroll_v1
+          python -m unittest discover -s vico_app/tools/python -p 'test_summarize_session.py' -v
+      - name: Replay REAL policy through unchanged banks and audio continuity gates
+        run: |
+          python review_packages/vico-real-drive-20261004/replay/run_replay.py --repo . --deps "${{ runner.temp }}/vico-n2-linux/deps" --output-dir "${{ runner.temp }}/vico-policy-lifecycle" --variant candidate --scene lifecycle
+          for profile in c63_w204_v6 hellcat_v6 ferrari_458 gtr_r35 lfa supra_jza80; do
+            for uncertainty in 0 2; do
+              python review_packages/vico-real-drive-20261004/replay/run_replay.py --repo . --deps "${{ runner.temp }}/vico-n2-linux/deps" --output-dir "${{ runner.temp }}/vico-policy-$profile-$uncertainty" --variant candidate --profile "$profile" --reported-uncertainty "$uncertainty"
+            done
+          done
       - name: Compile Python and check whitespace
         run: |
-          python -m compileall -q vico_app/tools/python
+          python -m compileall -q vico_app/tools/python review_packages/vico-high-rpm-rejections-20261005
           git diff --check
 
   windows-native-locks:
@@ -144,6 +195,27 @@ jobs:
           bash gradlew --no-daemon --continue -Pandroid.builder.sdkDownload=false
           :app:compileDebugKotlin :app:compileDebugUnitTestKotlin
           :app:testDebugUnitTest --tests 'com.vico.simulator.sensor.*'
+          --tests 'com.vico.simulator.logging.*'
+          --tests 'com.vico.simulator.sound.AudioInputGateTest'
+          --tests 'com.vico.simulator.sound.MatlabTransientClearTest'
+          --tests 'com.vico.simulator.sound.MatlabPowertrainControllerTest'
+          --tests 'com.vico.simulator.sound.QualifiedAfterfirePolicyTest'
+          --tests 'com.vico.simulator.sound.MeasuredAfterfireWiringTest'
+          --tests 'com.vico.simulator.sound.VirtualDriveDemandTest'
+          --tests 'com.vico.simulator.sound.VirtualCruiseGearTest'
+          --tests 'com.vico.simulator.sound.MeasuredCruiseRegressionTest'
+          --tests 'com.vico.simulator.sound.ControllerSessionLifecycleRegressionTest'
+          --tests 'com.vico.simulator.sound.VehicleSoundProfile*'
+          --tests 'com.vico.simulator.sound.PreviewPlaybackTest'
+          --tests 'com.vico.simulator.sound.PcmTransferTest'
+          --tests 'com.vico.simulator.audio.*'
+          --tests 'com.vico.simulator.sound.ModelContinuityMappingTest'
+          --tests 'com.vico.simulator.sound.GpsUncertaintyGearTest'
+          --tests 'com.vico.simulator.sound.LiveLoopVariantTest'
+          --tests 'com.vico.simulator.sound.LiveLoopReferenceIsolationTest'
+          --tests 'com.vico.simulator.sound.NormalLoopTraversalTest'
+          --tests 'com.vico.simulator.sound.NormalEnvelopeDamperTest'
+          --tests 'com.vico.simulator.sound.NormalEnvelopeIntegrationTest'
           :app:lintDebug :app:assembleDebug
       - name: Record test scope and generated APK identity
         if: ${{ always() && steps.sdk.outcome == 'success' }}
@@ -154,13 +226,13 @@ jobs:
           from pathlib import Path
           import xml.etree.ElementTree as ET
           root = Path('vico_app/Project/android/app/build')
-          reports = sorted((root / 'test-results/testDebugUnitTest').glob('TEST-com.vico.simulator.sensor.*.xml'))
+          reports = sorted((root / 'test-results/testDebugUnitTest').glob('TEST-com.vico.simulator.*.xml'))
           totals = {key: 0 for key in ('tests', 'failures', 'errors', 'skipped')}
           for report in reports:
               suite = ET.parse(report).getroot()
               for key in totals:
                   totals[key] += int(suite.get(key, 0))
-          print(json.dumps({'scope': 'Android JVM sensor tests, not device/GNSS acceptance', 'reports': len(reports), **totals}))
+          print(json.dumps({'scope': 'Android JVM input and live powertrain/audio gates, not device/GNSS acceptance', 'reports': len(reports), **totals}))
           lint = root / 'reports/lint-results-debug.xml'
           if not lint.is_file():
               raise SystemExit('Android lint XML report missing: NOT_RUN_OR_UNAVAILABLE')

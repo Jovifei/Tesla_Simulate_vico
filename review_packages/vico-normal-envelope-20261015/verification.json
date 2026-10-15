@@ -1,0 +1,138 @@
+{
+  "date": "2026-10-15",
+  "scope": "LIMITED_NORMAL_SLOW_AM_DEPTH_IMPROVEMENT_PLUS_KMH_NOT_FULL_RECURRENCE_REPAIR",
+  "algorithm": "NORMAL_SEAM_ENVELOPE_V1",
+  "source_parent": "84963463169a1533cc1fa8d93605b1e2589ca220",
+  "source_files_sha256": {
+    "vico_app\\Project\\android\\app\\src\\main\\java\\com\\vico\\simulator\\sound\\NormalEnvelopeDamper.kt": "9875cf3cbcd7902b9410c75d38f20e4b1b1d1b60cc6528cf459fb5579cf2a9b0",
+    "vico_app\\Project\\android\\app\\src\\main\\java\\com\\vico\\simulator\\sound\\NormalLoopTraversal.kt": "629e06f7175e39eab1938f523099c8981b8c6c7c3209a591ed4f3fcf00b83bd5",
+    "vico_app\\Project\\android\\app\\src\\main\\java\\com\\vico\\simulator\\sound\\MatlabStatefulBankRenderer.kt": "a29a5f9b158a92de67396a1b0757e17200be85db3589f618459fb379f9cfc904",
+    "vico_app\\Project\\android\\app\\src\\main\\java\\com\\vico\\simulator\\sound\\MatlabV6SoundBankEngine.kt": "8c3234364d8311e342f3d4f57d9e132673fc1e5d674f54432e7f74e3d1b05b14"
+  },
+  "DSP": {
+    "fast_ms": 50,
+    "slow_ms": 600,
+    "gain_smoothing_ms": 5,
+    "warmup_ms": 250,
+    "strength": 0.3,
+    "minimum_effective_multiplier": 0.97,
+    "maximum_effective_multiplier": 1.03,
+    "domain": "normal RPM/load drymix BEFORE original shiftGain and independent events",
+    "source_fixed_gain": "UNCHANGED",
+    "effective_amplitude": "INTENTIONALLY_SHAPED_WITHIN_PLUS_MINUS_3_PERCENT"
+  },
+  "qualification": {
+    "local_code_review": "LIMITED_AM_DEPTH_AUDITION",
+    "static48": "PASS",
+    "REAL12": "PASS",
+    "DEMO6": "PASS",
+    "S13_original_30s": "6/6 BIT_EXACT",
+    "full_recurrence_removal": "CHANGES_REQUIRED_EXACT_PERIOD_REMAINS",
+    "phone": "NOT_INSTALLED",
+    "human": "PENDING",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED"
+  },
+  "C63_910_target_power_ratios": [
+    {
+      "10": {
+        "whole": 0.6372532419061671,
+        "post_2s": 0.6372923530823911
+      },
+      "20": {
+        "whole": 0.6329644299195151,
+        "post_2s": 0.632997417891088
+      }
+    },
+    {
+      "10": {
+        "whole": 0.6362937235635707,
+        "post_2s": 0.6363176920480283
+      },
+      "20": {
+        "whole": 0.6278990695774163,
+        "post_2s": 0.6279138437925124
+      }
+    }
+  ],
+  "C63_910_normalized_ACF": [
+    {
+      "load": 0.32,
+      "old": [
+        0.38936631441428576,
+        0.9972285105709007
+      ],
+      "new": [
+        0.48323666271852644,
+        0.9947680698317156
+      ]
+    },
+    {
+      "load": 0.92,
+      "old": [
+        0.11971228066055906,
+        0.9966764978102999
+      ],
+      "new": [
+        0.2700236485790055,
+        0.993333420636875
+      ]
+    }
+  ],
+  "static_RMS_db_range": [
+    -0.27127905646518724,
+    0.2629616178242953
+  ],
+  "dynamic_RMS_db_range": [
+    -0.2717025748074137,
+    0.27165913689720167
+  ],
+  "static_all_stride_windows": 27417648,
+  "dynamic_all_stride_windows": 45993618,
+  "all_stride_failed_windows": 0,
+  "V4_preserved": "12/12",
+  "candidate_count": 0,
+  "candidate_budget": 0,
+  "MATLAB": false,
+  "main_merge": false,
+  "android": {
+    "tests": 527,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 29,
+    "passed": 498,
+    "lint": {
+      "errors": 0,
+      "warnings": 6
+    },
+    "assembleDebug": "PASS"
+  },
+  "python": {
+    "total": 157,
+    "passed": 155,
+    "skipped": 2,
+    "skip_reason": "Windows symlink permission; both opt-in actual JVM export tests executed"
+  },
+  "JS": {
+    "passed": 31,
+    "failed": 0
+  },
+  "N2": {
+    "JVM": {
+      "total": 48,
+      "passed": 46,
+      "assumption_skipped": 2
+    },
+    "actual_partition_exports": 2,
+    "qualification": "SYNTHETIC_NOT_ACOUSTIC"
+  },
+  "APK": {
+    "sha256": "e07d5a7f6f9a716dd44cdfbbb1f57405c2e4acc8521a838d7f9efcb1bd862b28",
+    "bytes": 20129411,
+    "package": "com.vico.simulator",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "debuggable": true,
+    "certificate_sha256": "9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774"
+  }
+}

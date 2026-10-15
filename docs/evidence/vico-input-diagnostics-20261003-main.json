@@ -1,0 +1,191 @@
+{
+  "baseline": "6e4cf1437972caf383baab3f987de0ebf2db373d",
+  "scope": "Focused exact-source replay, not integrated-main Android or device acceptance",
+  "prerequisite_patch_sha256": "dfeea1d0521def6ca12a0926f0a01a5284af5d24d17fc50afeb1f5320a8000e0",
+  "diagnostics_patch_sha256": "a886f330440cee1e7be735840635757ac779b9a1dd970d1e83b68b879d13e009",
+  "before_diagnostics_sha256": {
+    ".github/workflows/vico-n2-qualification.yml": "2e1f19e68639240499dc5fd8d45e6772e12374bff0afcb3825e995b37a3d8da3",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt": "e45c210fa0a0b9f9db2deab49891d7bda097f83cc492012c16290d003841e61b",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/CsvExporter.kt": "9c030e563f4e5d3bd8c878bf6009f647b950afe5b6f2a02d1e144548aa044778",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/CsvTraceFormat.kt": null,
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/InputDiagnostics.kt": null,
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LinearAccelerationState.kt": "db1386e23a2bbb7d8ca36fa023b6f990b0185f0447e750a360822b532f0b6a77",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LocationSpeedState.kt": "f3221d918167736bb3465a7bc76190333945c91bf8fcd48297efa0c2004832da",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorInputSnapshot.kt": null,
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorProvider.kt": "835f21f0f90013211e7e52bc6ce0b18511e2e4c4d8ce6da0f89519cb4dffd77b",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorSourceState.kt": "9131b758896907161b0da280e00fc11fb93a6183de47e094c9a07ac0716895a4",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CsvTraceFormatTest.kt": null,
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": null,
+    "vico_app/tools/python/run_sensor_jvm_tests.py": "3b717118f2dac7dbeeacf0c73a313147e1bf52545821dba0f396cbfa830fb1d5",
+    "vico_app/tools/python/test_input_diagnostics_wiring.py": null,
+    "vico_app/tools/python/test_sensor_input_wiring.py": "73e2cb5dd00e20b140ce960c53cf70e8f28ef4357fc3eefba384a1e33dfd6431"
+  },
+  "after_diagnostics_sha256": {
+    ".github/workflows/vico-n2-qualification.yml": "c37330fe8e55340ba36d0884bf7b40207c46feb0a399b5927f3b7c492bd35733",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt": "6180fcef9d122d2aa6a7428b4bdef847dd8a7f0bb768f470d1e52d4c8699251f",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/CsvExporter.kt": "274388fa24cd4e5442c146f24bf76ba734f09b4237190699f869759e11a94b00",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/CsvTraceFormat.kt": "cdbba5a4a59b93a6f643e2a4c1eb22fb3a1b52133c50dd7e14b32f310069d3e9",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/InputDiagnostics.kt": "256a15b6e8e207b74528185c26ead69399a5f7de14f3f178cbbf3540c11a8424",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LinearAccelerationState.kt": "1196126051e6a46367a45ef36ac59717e351ae50e8cc02a2176054677ebe5657",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LocationSpeedState.kt": "a2a0182ff81dc9dc351fb6e5ea863eaf0e67b9bc5bac16f87cedcbfb2d4801ea",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorInputSnapshot.kt": "f731b8c39bf1a45a98e2c9eae0f135cdaabaa25d5136a4a8192cf106499ba148",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorProvider.kt": "7b02b360322fc72bbf97da8648c44c407c237812b875ea2423659f07698974c5",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorSourceState.kt": "b7c1702ec090fb4102b4e8571c51d37bb1b952495c1cf577c2092974a084568d",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CsvTraceFormatTest.kt": "b4e93715cf3b67fdfb401c8860d4d6283795cfd97fe920dbd1a09eab3109aed4",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "8d0da0624c36f377266277cae93b638cf481c951910106c4b2ca60381bbb851b",
+    "vico_app/tools/python/run_sensor_jvm_tests.py": "070e0a844e8fe6a433faf7dfc179ab9a0f45edaee598d95635b87538ee4cb691",
+    "vico_app/tools/python/test_input_diagnostics_wiring.py": "14f2688a9f5f8105164a70ae8dac0e540e1c85fe31903a7c87f5938c95918cd8",
+    "vico_app/tools/python/test_sensor_input_wiring.py": "f0cf0e98d4f70251b60a265164846cf68e94a7c690b1f50dbc4ed8d06e24d685"
+  },
+  "untouched_main_integration_files": {
+    "docs/project-ledger.json": {
+      "git_blob": "d7ba897bf366a8e2dc184cf143a473554b767a4a",
+      "sha256": "9d2befc30af99d206d941bc7a869c2c9929926155b1bd0cc6c012f786c6fa26c"
+    },
+    "docs/vico-cloud-stage-result.md": {
+      "git_blob": "29e0890c0a84f080c8d9ac94498aa132db09b5ef",
+      "sha256": "ed2adfc07f8103ad1054b8a78a5f4d900bc5017326bcae8d9e60e94cecb60bce"
+    },
+    "docs/vico-device-gate-order-fix.md": {
+      "git_blob": "e7d70d061fa2b637637a85f75717b7796e1dbeae",
+      "sha256": "3a0c81800be2e8b401bc9accc2ebbfe08cfdd0c79d6dda408f55289dd1c7de79"
+    },
+    "docs/vico-frozen-hy1-actual-kotlin-result.md": {
+      "git_blob": "6aa4384d438c9c9d034a32f600177813990c6c82",
+      "sha256": "399380c3f6f2976f00a991797d65f3c923abf3cd312a2de6646e3415385237f1"
+    },
+    "docs/vico-main-integration-20261003.md": {
+      "git_blob": "bfdc98f773c00bc5d7b6241ace5f40672e218590",
+      "sha256": "ed554224b967853afe7494080a57462b96b84771ccf2c82f544b9d052e648799"
+    },
+    "docs/vico-p2-n2-source-design-preregistration.md": {
+      "git_blob": "41b51976f0b45fc3e4c11b8e19b736b100b457f6",
+      "sha256": "adfaaa9cdf517f669254c92af60f96464bfd5bad8d0ddeeda157c5ed3f23690b"
+    },
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/C63QualificationPcmProvider.kt": {
+      "git_blob": "76ef24b73a49591a1d125c22833a8655ffae2aca",
+      "sha256": "61c58add5f68481f7360fb224bdf4ee1f1487f327bf7dec43f1f480f39f5700c"
+    },
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/s18/C63QualificationReport.kt": {
+      "git_blob": "b7b54a0730448dccbd0be17c48fa83c46157db2a",
+      "sha256": "178098e84dbd65eda5aa1cb6ce3fb257a81b94dc11e5ba44b2ce493d392bf073"
+    },
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63FrozenHybridValidationTest.kt": {
+      "git_blob": "03c84fb7cccb589834d487ba7d18e56263473eb0",
+      "sha256": "46fd2ae88994832bcf19c5d0ce4c296f8cf03d4b1422152313f766bbc94c73a3"
+    },
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/C63QualificationRouteTest.kt": {
+      "git_blob": "6b863d7587ac3a740a6547280f39d61f4ef4dbe1",
+      "sha256": "77e50cc9462ade676ce81b39f70fad393877ac7876f46a9371b36c460a938737"
+    },
+    "vico_app/tools/python/test_measure_c63_event_morphology.py": {
+      "git_blob": "0b6a80352e584f8c91a41576737c2a773ef0fd9b",
+      "sha256": "5c5ab0472f9a30c0994baccf943dba0e8fc41f89429976e4bcbe5cc513b21086"
+    },
+    "vico_app/tools/python/test_n2_reference_driver.py": {
+      "git_blob": "96859286b0d96e5124549691ab3077f5c8bf7731",
+      "sha256": "20c1b78b7ced0af22a73705d3f1c365f758a6e38b04a7be6510c2b4514cfff60"
+    },
+    "vico_app/tools/python/test_n2_reference_export.py": {
+      "git_blob": "33268a568da78c6adaba149a4bdc4c26cdd48152",
+      "sha256": "f17053e1c702b9fa8235502ef185ecb681ce59d3159a3cff65089bd56c0e21b2"
+    }
+  },
+  "checks": {
+    "jvm": {
+      "run": 52,
+      "passed": 52,
+      "failed": 0,
+      "assumption_skipped": 0,
+      "ignored": 0,
+      "runtime_ms": 68
+    },
+    "jvm_compilation": "Separate production/test modules",
+    "js": {
+      "tests": 9,
+      "passed": 9,
+      "skipped": 0
+    },
+    "wiring": {
+      "tests": 10,
+      "passed": 10
+    },
+    "android": "Initial 857f527 production compile passed; unit-test compilation failed on cross-module smart cast. Reviewed fix requires new exact-head CI.",
+    "device_road_acoustic_acceptance": "NOT_RUN"
+  },
+  "jvm_source_sha256": {
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/csv/CsvTraceFormat.kt": "cdbba5a4a59b93a6f643e2a4c1eb22fb3a1b52133c50dd7e14b32f310069d3e9",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/CalibrationAccumulator.kt": "98d7fd5960a683297e020c0edef43bc74543e236be62c9f2b1fa207762a2939f",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/CalibrationSession.kt": "74fc27ea6b81e58a34936b14280e690d48581e032d260324513eb1370a6fa2cf",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/DemoMotionController.kt": "514610d72b865deefdbdb3e84e680c24892b5dcd45a160191cf14f6c55ff85d9",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/InputDiagnostics.kt": "256a15b6e8e207b74528185c26ead69399a5f7de14f3f178cbbf3540c11a8424",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LinearAccelerationState.kt": "1196126051e6a46367a45ef36ac59717e351ae50e8cc02a2176054677ebe5657",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/LocationSpeedState.kt": "a2a0182ff81dc9dc351fb6e5ea863eaf0e67b9bc5bac16f87cedcbfb2d4801ea",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorInputSnapshot.kt": "f731b8c39bf1a45a98e2c9eae0f135cdaabaa25d5136a4a8192cf106499ba148",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sensor/SensorSourceState.kt": "b7c1702ec090fb4102b4e8571c51d37bb1b952495c1cf577c2092974a084568d",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CalibrationAccumulatorTest.kt": "3fc7443df2fa90d667ab10c3e3dc1f7a7558ece50adb07f64f837649ad3963f8",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CalibrationSessionTest.kt": "72218f1b05bcee5936fa0c701e23df3ed95d04ea2ad20767a4f60cfb1134b79e",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/CsvTraceFormatTest.kt": "b4e93715cf3b67fdfb401c8860d4d6283795cfd97fe920dbd1a09eab3109aed4",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/DemoMotionControllerTest.kt": "5cf678a9f65c193534e475986f500c54c67fa0b6dc1b42e8b4c22b948bcee504",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/InputDiagnosticsTest.kt": "8d0da0624c36f377266277cae93b638cf481c951910106c4b2ca60381bbb851b",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/LinearAccelerationStateTest.kt": "ca98478f81ad7c41b48918d28ebf646900c1da431c69276c61cb87e5842c281f",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/LocationSpeedStateTest.kt": "da6051fa7938604201d5896187ddbb2fe78d00fbc65ae425204035ee668c1895",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sensor/SensorSourceStateTest.kt": "fedd070f41f96a1bfed8b111b29211a418c8eee4ab6d7b95cfad7489ed71856d",
+    "vico_app/tools/jvm/QualificationTestRunner.java": "a1d27ace5a40dbfe470a52504afffc476f4b308f1326d6b3382abfe61fcde21b",
+    "vico_app/tools/python/run_sensor_jvm_tests.py": "070e0a844e8fe6a433faf7dfc179ab9a0f45edaee598d95635b87538ee4cb691"
+  },
+  "dependency_sha256": [
+    {
+      "file": "annotations-13.0.jar",
+      "sha256": "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.jar"
+    },
+    {
+      "file": "hamcrest-core-1.3.jar",
+      "sha256": "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
+      "url": "https://repo.maven.apache.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
+    },
+    {
+      "file": "junit-4.13.2.jar",
+      "sha256": "8e495b634469d64fb8acfa3495a065cbacc8a0fff55ce1e31007be4c16dc57d3",
+      "url": "https://repo.maven.apache.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar"
+    },
+    {
+      "file": "kotlin-compiler-embeddable-1.9.24.jar",
+      "sha256": "e71ff19e6b141ab85a9328fd010941531a302543026bd4244c95adc208d501f6",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/1.9.24/kotlin-compiler-embeddable-1.9.24.jar"
+    },
+    {
+      "file": "kotlin-reflect-1.6.10.jar",
+      "sha256": "3277ac102ae17aad10a55abec75ff5696c8d109790396434b496e75087854203",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/1.6.10/kotlin-reflect-1.6.10.jar"
+    },
+    {
+      "file": "kotlin-script-runtime-1.9.24.jar",
+      "sha256": "314c7d308fe750654365bac6144780613c9169cf3d9e1dafbab91cf80bdc357c",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-script-runtime/1.9.24/kotlin-script-runtime-1.9.24.jar"
+    },
+    {
+      "file": "kotlin-stdlib-1.9.24.jar",
+      "sha256": "858b902696da9cf585ab9d98ffc1c2712269828354dfe9107e3711b084a36468",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.24/kotlin-stdlib-1.9.24.jar"
+    },
+    {
+      "file": "kotlin-test-1.9.24.jar",
+      "sha256": "eb08065a423f478291e9859319bdbb02846134acf2c2558cb5d203c573cdd0cb",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-test/1.9.24/kotlin-test-1.9.24.jar"
+    },
+    {
+      "file": "trove4j-1.0.20200330.jar",
+      "sha256": "c5fd725bffab51846bf3c77db1383c60aaaebfe1b7fe2f00d23fe1b7df0a439d",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/intellij/deps/trove4j/1.0.20200330/trove4j-1.0.20200330.jar"
+    }
+  ],
+  "log_sha256": {
+    "main-jvm-module.log": "b0bd110905d24d2353f44f93af7f33665ef5ccb61520d159bed633074867a6bb",
+    "main-js-module.log": "69c9e203a791f41646e5ee663e59e36487a9383cd3ba28552953815ad4d21f96",
+    "main-wiring-module.log": "a8cc56ee866358a742d20490728e337b8883d2a39897d1b822638197a87ce483"
+  },
+  "initial_diagnostics_commit": "857f52799b735687278ca33e2ba8749b936a188a",
+  "module_boundary_fix_sha256": "1a153b38d0df3fd1f16a72da65c47a16a0de7889c5ef042e1fa17d6ab18babb2"
+}

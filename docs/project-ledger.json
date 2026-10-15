@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-02",
+  "updated_at": "2026-10-15",
   "current_phase": "P2",
-  "current_work_package": "P2/P3 GitHub接力：默认关闭的真实PCM接入准备（PR #35）",
+  "current_work_package": "PR38 normal seam-only + km/h: local QA passed, remote review/device audition pending",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -417,5 +417,83 @@
     "tests": "Android285/0fail/29skip; Python120/0fail/4skip; WindowsN2 44/0fail/0skip",
     "device": "INSTALL_AND_STARTUP_PASS; ACOUSTIC_NOT_RUN; HUMAN_NOT_RUN",
     "report": "docs/vico-main-integration-20261003.md"
+  },
+  "controller_session_reception_20261011": {
+    "status": "PARTIAL",
+    "remote_proposal": "5e4daeea27ccf20c2cde6da56ccd672e446fa841",
+    "report": "docs/vico-controller-session-reception-20261011.md",
+    "tests": "Android454/0fail/0error/29skip; Python157/0fail/0error/4skip; lifecycle mutation RED then GREEN",
+    "device": "NOT_RUN",
+    "acoustic": "NOT_RUN",
+    "human": "PENDING_HUMAN",
+    "remaining": "Review other playback entry points; diagnostics; N3 profile/extractor; final-head CI"
+  },
+  "n3_foundation_work_package": {
+    "date": "2026-10-11",
+    "status": "PARTIAL",
+    "execution_mode": "CHAT_PLAN_REVIEW_LOCAL_EXECUTION",
+    "software": "IMPLEMENTED_AND_VERIFIED",
+    "report": "docs/vico-n3-foundation-local-20261011.md",
+    "tests": "Android482/0fail/0error/29skip; VicoPython157/0fail/4skip; legacyPython84/0fail; lint/APK PASS",
+    "remote_review": "APPROVED",
+    "candidate_count": 0,
+    "device": "NOT_RUN",
+    "real_road": "NOT_RUN",
+    "independent_acoustic": "NOT_EVALUATED",
+    "human": "PENDING_HUMAN",
+    "remaining": [
+      "Final commit CI receipt",
+      "Device AudioTrack/route verification",
+      "Independent reference/real-road/human gates",
+      "Time-aligned harmonic/order comparison",
+      "Later Web/OBD/microphone stages"
+    ]
+  },
+  "pr38_closeout_20261013": {
+    "date": "2026-10-13",
+    "status": "LOCAL_QA_PASS_NEW_FIXED_COMMIT_REVIEW_PENDING",
+    "source_parent": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "report": "docs/vico-pr38-closeout-20261013.md",
+    "tests": {
+      "trackp_stagew": "96_PASS",
+      "final_guard_and_whitespace": "54_PASS",
+      "trackp_independent_review": "46_PASS",
+      "android": "498_TESTS_0_FAILURES_0_ERRORS_29_SKIPPED",
+      "lint_assembleDebug": "PASS",
+      "full_s12": "1794_PASS_6_SKIP_232_SUBTESTS_AT_4b44f018",
+      "vico_python": "157_TESTS_0_FAILURES_4_SKIPPED",
+      "activity_entry_jvm": "19_PASS_JDK21_SOURCE_EXTRACTED_CONTROLLED_PORTS_RED_3_EXPECTED_FAILURES"
+    },
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "qualification": {
+      "road": "NOT_RUN",
+      "acoustic": "NOT_EVALUATED",
+      "human": "IMPROVED_OPTIMIZATION_PENDING"
+    },
+    "audition_feedback": "Jovi: 有改善，但需要继续优化; existing APK installed 2026-10-11",
+    "preview_ownership": "TWO_P2_ENTRY_FIXES_LOCAL_19_PASS_INDEPENDENT_REVIEW_APPROVED",
+    "apk_sha256": "8d81a7e44c519ea425279135d42c6c5eedb7b83d4fb6e54f4ab6234c8c062cf8",
+    "new_apk_device": "NOT_INSTALLED",
+    "baseline_hosted_ci": "ALL_FIVE_PASS_AT_89264b3531f679d6949a8c2c663711a466600042",
+    "remote_review": "TWO_P2_FIXED_NEW_SHA_REVIEW_PENDING",
+    "remaining": "New fixed SHA hosted CI and ChatGPT read-only review; exact APK phone confirmation; device/road/acoustic/human gates open"
+  },
+  "audition_periodicity_20261014": {
+    "date": "2026-10-15",
+    "source_parent": "cd1bab58cd14b3c99520e6a2d5af6370c5327e55",
+    "status": "SEAM_ONLY_LOCAL_QA_PASS_REMOTE_REVIEW_PENDING",
+    "current": "Canonical H8 boundary slope softening and nativekmh upgrade implemented/tested/built; full.55period target remainsCHANGES_REQUIRED",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "human": "PENDING_NEW_APK_AUDITION",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED",
+    "periodicity": "CHANGES_REQUIRED_910RPM_SLOW_TEXTURE",
+    "APK_SHA256": "b620ef8a38b23724396de32cf5a433cb24f3e12cfc5d40a3c1c25222bf707d36",
+    "evidence": "review_packages/vico-normal-seam-kmh-20261015/verification.json",
+    "remote_plan": "review_packages/periodicity-repair-20261015/remote-v3-seam-plan.txt",
+    "full_technical_report": "review_packages/periodicity-repair-20261015/evengine-full-technical-report.md",
+    "next": "Remote code/evidence review, fixedPR38SHA/localAPK handoff; freshGM1910preflight andexactAPKconfirm beforeinstall; continue slow-texture diagnosis without mislabeling seamqualification"
   }
 }

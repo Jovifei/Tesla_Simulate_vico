@@ -75,5 +75,3 @@ class C63AR2QualificationTest {
         println("Locked qualification emitted ${rows.size-1} cases; inspect every numerical and protection gate before installing")
     }
 }
-
-

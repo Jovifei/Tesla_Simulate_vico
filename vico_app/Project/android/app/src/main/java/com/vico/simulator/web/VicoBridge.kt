@@ -6,7 +6,8 @@ import com.vico.simulator.MainActivity
 
 /**
  * JS <-> Kotlin 桥。HTML 侧 (bridge.js) 调用 window.AndroidBridge.*。
- * 所有方法在 WebKit JS 线程触发, 统一 marshal 到 UI 线程执行。
+ * 方法在 WebKit JS 线程触发；UI 操作 marshal 到 UI 线程。
+ * 显示单位仅操作线程安全的 SharedPreferences，同步返回以避免页面切换竞态。
  */
 class VicoBridge(private val activity: MainActivity, private val webView: WebView) {
 
@@ -22,6 +23,7 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
                 "calibration" -> "screens/calibration.html"
                 else -> return@runOnUiThread
             }
+            activity.invalidateCalibrationPage()
             webView.loadUrl("file:///android_asset/$file")
         }
     }
@@ -113,17 +115,57 @@ class VicoBridge(private val activity: MainActivity, private val webView: WebVie
     fun setDemoScenario(key: String) = activity.runOnUiThread { activity.setDemoScenario(key) }
 
     // ---- 校准 ----
-    @JavascriptInterface
-    fun beginCalibration() = activity.runOnUiThread { activity.beginCalibration() }
+    private fun calibrationCommand(action: () -> Unit) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread {
+            if (activity.acceptsCalibrationCommand(epoch)) action()
+        }
+    }
 
     @JavascriptInterface
-    fun calibrateZero() = activity.runOnUiThread { activity.calibrateZero() }
+    fun beginCalibration(session: String) = calibrationCommand { activity.beginCalibration(session) }
 
     @JavascriptInterface
-    fun finishCalibration() = activity.runOnUiThread { activity.finishCalibration() }
+    fun finishCalibration(session: String) = calibrationCommand { activity.finishCalibration(session) }
+
+    @JavascriptInterface
+    fun cancelCalibration(session: String) = calibrationCommand { activity.cancelCalibration(session) }
 
     @JavascriptInterface
     fun resetCalibration() = activity.runOnUiThread { activity.resetCalibration() }
+
+    @JavascriptInterface
+    fun confirmMounting(axis: String, parked: Boolean) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { if (activity.acceptsMountingCommand(epoch)) activity.confirmMounting(axis, parked) }
+    }
+
+    @JavascriptInterface
+    fun invalidateMounting() {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { if (activity.acceptsMountingCommand(epoch)) activity.invalidateMounting() }
+    }
+
+    @JavascriptInterface
+    fun getDisplayUnit(): String = activity.getDisplayUnit()
+
+    @JavascriptInterface
+    fun setDisplayUnit(unit: String) = activity.setDisplayUnit(unit)
+
+    @JavascriptInterface
+    fun reportDisplayUnit(unit: String) {
+        val epoch = activity.calibrationPageEpoch
+        activity.runOnUiThread { activity.reportDisplayUnit(unit, epoch) }
+    }
+
+    @JavascriptInterface
+    fun reportDisplayFrame(dispatchId: String, frameId: String, shown: String, unit: String) {
+        val receivedNanos = android.os.SystemClock.elapsedRealtimeNanos()
+        activity.runOnUiThread { activity.reportDisplayFrame(dispatchId, frameId, shown, unit, receivedNanos) }
+    }
+
+    @JavascriptInterface
+    fun exportTestLog() = activity.runOnUiThread { activity.exportTestLog() }
 
     @JavascriptInterface
     fun getStateJson(): String = activity.getStateJson()

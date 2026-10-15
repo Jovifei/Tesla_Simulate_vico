@@ -1,0 +1,183 @@
+{
+  "status": "probe only; candidate selection not made",
+  "commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+  "gain": 3.7075542301539652,
+  "rows": [
+    {
+      "rpm": 5400,
+      "load": 0.32,
+      "file": "rpm_5400_load_32.wav",
+      "sha256": "accce9152ff368e65552e58e11a03f74af298ecb41ed63f66919777b627b0de3",
+      "baseline_loop_rms": 0.04694537368628886,
+      "preroll_loop_rms": 0.04697582970431442,
+      "preroll_peak": 0.1085866391658783,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5400,
+      "load": 0.92,
+      "file": "rpm_5400_load_92.wav",
+      "sha256": "43e6d1680dbf27de7749f2594fd7281d610def50e4c1bee9112242eb90133471",
+      "baseline_loop_rms": 0.09107573137268875,
+      "preroll_loop_rms": 0.09107573684951702,
+      "preroll_peak": 0.22855150699615479,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5450,
+      "load": 0.32,
+      "file": "rpm_5450_load_32.wav",
+      "sha256": "436086ce5eaf028c2eb87464187985b222ddf35953fa6ecdc059dfd9e9904ccb",
+      "baseline_loop_rms": 0.07868346471993809,
+      "preroll_loop_rms": 0.07866343882458843,
+      "preroll_peak": 0.16632527112960815,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5450,
+      "load": 0.92,
+      "file": "rpm_5450_load_92.wav",
+      "sha256": "5ebfbb860fc15a5c2e49eda0f6593da6d19b9c3034c3874cd9c530cd12cc519b",
+      "baseline_loop_rms": 0.15624202401117437,
+      "preroll_loop_rms": 0.15619725131487608,
+      "preroll_peak": 0.3488864302635193,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5500,
+      "load": 0.32,
+      "file": "rpm_5500_load_32.wav",
+      "sha256": "00ddf0214c7661934f61b75b0eb6797f269bbb8933a0cb2fc59e621b4d487687",
+      "baseline_loop_rms": 0.17761712392830956,
+      "preroll_loop_rms": 0.17801930508257188,
+      "preroll_peak": 0.3210892677307129,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5500,
+      "load": 0.92,
+      "file": "rpm_5500_load_92.wav",
+      "sha256": "9bb30da169e721300b108ff91ea1b205b9b07a8d47a84231f533b6b08e3c15b6",
+      "baseline_loop_rms": 0.35863098861590414,
+      "preroll_loop_rms": 0.3594675959548308,
+      "preroll_peak": 0.6623293161392212,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5550,
+      "load": 0.32,
+      "file": "rpm_5550_load_32.wav",
+      "sha256": "e7b913411da75e189ed01bc9b89b0d8f36168d10e551bb4070a3d05a031cadb8",
+      "baseline_loop_rms": 0.08897863083351554,
+      "preroll_loop_rms": 0.08906227261195374,
+      "preroll_peak": 0.19635888934135437,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5550,
+      "load": 0.92,
+      "file": "rpm_5550_load_92.wav",
+      "sha256": "003d1d207c31d195286ec84a66aed2c3d65b579f9c2e9f50c14a04c6c7b04798",
+      "baseline_loop_rms": 0.17546650032386496,
+      "preroll_loop_rms": 0.1755720468870756,
+      "preroll_peak": 0.4030669927597046,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5600,
+      "load": 0.32,
+      "file": "rpm_5600_load_32.wav",
+      "sha256": "6f2fb936c922027bc3bd8ee85e98f8d531de29b4b99ad24221eee2dcd16186e0",
+      "baseline_loop_rms": 0.06886955526871329,
+      "preroll_loop_rms": 0.06892876731885425,
+      "preroll_peak": 0.1718372255563736,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 5600,
+      "load": 0.92,
+      "file": "rpm_5600_load_92.wav",
+      "sha256": "9df90df0eac7b03afcdb106eb447fff34ba2f935eda4a64816ed815597d54cc6",
+      "baseline_loop_rms": 0.13171646289998504,
+      "preroll_loop_rms": 0.13199832385109148,
+      "preroll_peak": 0.36429500579833984,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6100,
+      "load": 0.32,
+      "file": "rpm_6100_load_32.wav",
+      "sha256": "0eb1ac8db423fe747127d7a0b18d56e59b1bd0819782dff446a505e0b9b1941a",
+      "baseline_loop_rms": 0.09715816588355217,
+      "preroll_loop_rms": 0.09731536631161158,
+      "preroll_peak": 0.18443648517131805,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6100,
+      "load": 0.92,
+      "file": "rpm_6100_load_92.wav",
+      "sha256": "163098984ff259a142787c031f5cacc57efdc913fc1b88d21dcff0d219e90d5f",
+      "baseline_loop_rms": 0.19607690901288946,
+      "preroll_loop_rms": 0.19635391943155675,
+      "preroll_peak": 0.38164496421813965,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6150,
+      "load": 0.32,
+      "file": "rpm_6150_load_32.wav",
+      "sha256": "40486aaa8001a704184f91ef24ea3b3d282ccd14d3b3a2b129783be293381d8e",
+      "baseline_loop_rms": 0.17555306281219016,
+      "preroll_loop_rms": 0.17623504612765495,
+      "preroll_peak": 0.30362001061439514,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6150,
+      "load": 0.92,
+      "file": "rpm_6150_load_92.wav",
+      "sha256": "53d88a50202020e9755d93cbff923f8e4437da0462566d504a19a6ef6c146aff",
+      "baseline_loop_rms": 0.35599110662466427,
+      "preroll_loop_rms": 0.3573747582311141,
+      "preroll_peak": 0.6027089357376099,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6200,
+      "load": 0.32,
+      "file": "rpm_6200_load_32.wav",
+      "sha256": "ca59b3768df6fb6708fa4e590a9c3af13c989ea99c84e5e9ca3aa0f366d8bef1",
+      "baseline_loop_rms": 0.09530465869403773,
+      "preroll_loop_rms": 0.09482831055620676,
+      "preroll_peak": 0.17583796381950378,
+      "finite": true,
+      "peak_budget_pass": true
+    },
+    {
+      "rpm": 6200,
+      "load": 0.92,
+      "file": "rpm_6200_load_92.wav",
+      "sha256": "a9361baedec439d7337bdaa7ec5e86cfec8485873a442b469dd32653859f479c",
+      "baseline_loop_rms": 0.19291082914249513,
+      "preroll_loop_rms": 0.19198051483839532,
+      "preroll_peak": 0.3422870635986328,
+      "finite": true,
+      "peak_budget_pass": true
+    }
+  ]
+}

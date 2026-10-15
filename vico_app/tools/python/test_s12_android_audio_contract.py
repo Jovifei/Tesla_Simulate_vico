@@ -65,4 +65,3 @@ def test_each_vehicle_wav_matches_contract_without_clipping():
             assert samples.shape[1] == exporter.APP_CHANNELS
             assert np.all(np.isfinite(samples))
             assert float(np.max(np.abs(samples))) <= peak_limit + 1e-5
-

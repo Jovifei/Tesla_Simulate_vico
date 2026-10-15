@@ -182,4 +182,3 @@ def test_support_gate_requires_twenty_windows_two_intervals_and_all_registered_b
     assert insufficient["status"] == "INSUFFICIENT_MIXED_RPM_WINDOWS"
     assert single_interval["status"] == "INSUFFICIENT_MIXED_RPM_WINDOWS"
     assert lower_band_regression["status"] == "RPM_COHERENT_CROSS_TERM_NOT_SUPPORTED"
-

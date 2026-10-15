@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import java.util.Locale
+import com.vico.simulator.sensor.InputDiagnostics
 
 /**
  * 调试轨迹 CSV 缓冲 + 导出至 Downloads/Vico（PRD FR-07 / AC-05）。
@@ -29,13 +29,10 @@ class CsvExporter {
         rpm: Double,
         freqHz: Double,
         profileLabel: String,
+        diagnostics: InputDiagnostics,
     ) {
         synchronized(rows) {
-            rows.add(String.format(
-                Locale.US,
-                "%.3f,%.1f,%.2f,%.0f,%.1f,%s",
-                timeS, speedKmh, accelMps2, rpm, freqHz, profileLabel,
-            ))
+            rows.add(CsvTraceFormat.row(timeS, speedKmh, accelMps2, rpm, freqHz, profileLabel, diagnostics))
         }
     }
 
@@ -50,7 +47,7 @@ class CsvExporter {
             snapshot = ArrayList(rows)
         }
         val sb = StringBuilder()
-        sb.append("time_s,speed_kmh,accel_mps2,rpm,freq_hz,profile\n")
+        sb.append(CsvTraceFormat.HEADER).append('\n')
         for (r in snapshot) sb.append(r).append('\n')
         val data = sb.toString().toByteArray(Charsets.UTF_8)
         val name = "vico-trace-${System.currentTimeMillis()}.csv"

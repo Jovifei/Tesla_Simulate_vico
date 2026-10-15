@@ -1,0 +1,197 @@
+{
+  "scope": "actual controller+renderer, original bank data class extracted; Android adapters not run; same reviewed normal bank both branches",
+  "rows": [
+    {
+      "peak_kmh": 20,
+      "baseline": {
+        "hold_gears": [
+          1
+        ],
+        "hold_rpm": 1976.8469200160494,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -26.436321480187143,
+        "shift_count": 0,
+        "release_count": 0,
+        "shift_afterfire_count": 0,
+        "pcm_sha256": "353c7a1c94fddce522166361f0df2d07f8b565a515f0f5022df54f271c50e8a3",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.339168906211853, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1920000, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.06639007329342204 peak=0.339168906211853 shifts=0 afterfires=0\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          1
+        ],
+        "hold_rpm": 1976.8469200160494,
+        "hold_proxy": 0.046213991769547325,
+        "hold_bank_load": 0.3477283950617284,
+        "hold_rms_dbfs": -26.15306935008078,
+        "shift_count": 0,
+        "release_count": 0,
+        "shift_afterfire_count": 0,
+        "pcm_sha256": "0a7e4d6a8a11a171fb509d086b698b3b98eef34d1eaf4ace54075c3d0a2101f8",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.38902926445007324, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.07042436847830524 peak=0.38902926445007324 shifts=0 afterfires=0\n"
+      },
+      "hold_rms_delta_db": 0.2832521301063622
+    },
+    {
+      "peak_kmh": 40,
+      "baseline": {
+        "hold_gears": [
+          1
+        ],
+        "hold_rpm": 3953.6938400320987,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -27.25304855023447,
+        "shift_count": 0,
+        "release_count": 1,
+        "shift_afterfire_count": 0,
+        "pcm_sha256": "ef8016b9b73725da9fb2348eebd3b0de82c9a26ba2322a0459ef5f322a7f049e",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.337811142206192, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1920000, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.05865542227543812 peak=0.337811142206192 shifts=0 afterfires=1\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          2
+        ],
+        "hold_rpm": 2581.6357037652515,
+        "hold_proxy": 0.0548559670781893,
+        "hold_bank_load": 0.3529135802469136,
+        "hold_rms_dbfs": -27.49623445329628,
+        "shift_count": 2,
+        "release_count": 0,
+        "shift_afterfire_count": 1,
+        "pcm_sha256": "387abf7cc78fd9db7b8e24fdcc5d6adecb0ea35b7879aba26eedf6f765984761",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.4188535213470459, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.06692732311673191 peak=0.4188535213470459 shifts=2 afterfires=1\n"
+      },
+      "hold_rms_delta_db": -0.24318590306181065
+    },
+    {
+      "peak_kmh": 70,
+      "baseline": {
+        "hold_gears": [
+          1
+        ],
+        "hold_rpm": 6918.964220056172,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -35.98203571983365,
+        "shift_count": 0,
+        "release_count": 1,
+        "shift_afterfire_count": 0,
+        "pcm_sha256": "c52d56a13f0a2c0af61409e3ddaf7f3ba783a26cac48bb1dbd5a38a906f7880b",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.44973814487457275, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1344000, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.07691235701465454 peak=0.44973814487457275 shifts=0 afterfires=1\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          3
+        ],
+        "hold_rpm": 3032.9706170109243,
+        "hold_proxy": 0.07862139917695472,
+        "hold_bank_load": 0.36717283950617285,
+        "hold_rms_dbfs": -26.02011967343636,
+        "shift_count": 4,
+        "release_count": 0,
+        "shift_afterfire_count": 2,
+        "pcm_sha256": "d9c68ff44915c1423251273d85d69af070b1275191f131acf331648208713b78",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.5244335532188416, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.08070769018955841 peak=0.5244335532188416 shifts=4 afterfires=2\n"
+      },
+      "hold_rms_delta_db": 9.961916046397288
+    },
+    {
+      "peak_kmh": 75,
+      "baseline": {
+        "hold_gears": [
+          1
+        ],
+        "hold_rpm": 7200.0,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -26.174127567384275,
+        "shift_count": 0,
+        "release_count": 1,
+        "shift_afterfire_count": 0,
+        "pcm_sha256": "f043ffd5242cbca509d976f1f3485492ad54ff9f229134e0095052216fd8dcf6",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.4735877215862274, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1344000, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.0839418730283217 peak=0.4735877215862274 shifts=0 afterfires=1\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          3
+        ],
+        "hold_rpm": 3249.6113753688473,
+        "hold_proxy": 0.0838425925925926,
+        "hold_bank_load": 0.37030555555555555,
+        "hold_rms_dbfs": -25.081568428825477,
+        "shift_count": 4,
+        "release_count": 0,
+        "shift_afterfire_count": 2,
+        "pcm_sha256": "f2c507239479544bd0b79135bd6ff65ac266f2128cdf1d41848461712d5cc6fa",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.5318478941917419, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.08821864764668867 peak=0.5318478941917419 shifts=4 afterfires=2\n"
+      },
+      "hold_rms_delta_db": 1.0925591385587978
+    },
+    {
+      "peak_kmh": 100,
+      "baseline": {
+        "hold_gears": [
+          2
+        ],
+        "hold_rpm": 6454.089259413129,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -25.71024921531782,
+        "shift_count": 2,
+        "release_count": 1,
+        "shift_afterfire_count": 2,
+        "pcm_sha256": "7c074c950e0f52ab1c60e30dcacd0dc0a6ab1c3be1bcff72183f9b95cecdc0ef",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.5632411241531372, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1346880, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.1043940264770534 peak=0.5632411241531372 shifts=2 afterfires=3\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          3
+        ],
+        "hold_rpm": 4332.815167158465,
+        "hold_proxy": 0.11534979423868312,
+        "hold_bank_load": 0.3892098765432099,
+        "hold_rms_dbfs": -23.981273030247984,
+        "shift_count": 4,
+        "release_count": 0,
+        "shift_afterfire_count": 2,
+        "pcm_sha256": "2c6d39aadfdd10abf1846906b057c825fb7eea69767355876eb494cee9cead84",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.6149359345436096, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.10670665299596487 peak=0.6149359345436096 shifts=4 afterfires=2\n"
+      },
+      "hold_rms_delta_db": 1.7289761850698362
+    },
+    {
+      "peak_kmh": 144,
+      "baseline": {
+        "hold_gears": [
+          3
+        ],
+        "hold_rpm": 6239.253840708189,
+        "hold_proxy": 0.0,
+        "hold_bank_load": 0.0,
+        "hold_rms_dbfs": -22.12983907683303,
+        "shift_count": 4,
+        "release_count": 1,
+        "shift_afterfire_count": 4,
+        "pcm_sha256": "df468a79d4fde08f632049829069d0b21d83a2fb58d103bf42c66c8a84175f2a",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.6581369042396545, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=1916160, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.12453182861128555 peak=0.6581369042396545 shifts=4 afterfires=5\n"
+      },
+      "candidate": {
+        "hold_gears": [
+          3
+        ],
+        "hold_rpm": 6239.253840708189,
+        "hold_proxy": 0.19266666666666665,
+        "hold_bank_load": 0.4356,
+        "hold_rms_dbfs": -20.604361495411915,
+        "shift_count": 4,
+        "release_count": 0,
+        "shift_afterfire_count": 2,
+        "pcm_sha256": "b60a46e52d56c37327a7ac35283327445a0f2048c6d2640f8351bfc46252c2b7",
+        "raw_stats": "S13MixSnapshot(evaluatedFrames=1920000, preClipPeak=0.6551859378814697, aboveContractFrames=0, hardClipFrames=0, nonFiniteFrames=0, loadOutOfBankFrames=0, rpmOutOfBankFrames=0, rejectedInputBlocks=0)\nrms=0.12494139729606933 peak=0.6551859378814697 shifts=4 afterfires=2\n"
+      },
+      "hold_rms_delta_db": 1.5254775814211143
+    }
+  ]
+}

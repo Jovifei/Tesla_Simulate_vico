@@ -62,7 +62,20 @@ internal class S13RpmBlendCapture(capacity: Int) {
 }
 
 /** Renders S12 bank loops without resetting phase between sensor blocks. */
-class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
+class MatlabStatefulBankRenderer @JvmOverloads constructor(
+    private val bank: MatlabSoundBank,
+    private val traversalMode: LoopTraversalMode = LoopTraversalMode.LEGACY_LOCKED,
+    normalBankIdentity: String = bank.vehicleKey,
+) {
+    private val normalTraversal = if (traversalMode != LoopTraversalMode.LEGACY_LOCKED)
+        NormalLoopTraversal(bank, normalBankIdentity) else null
+    private val normalEnvelope = if (traversalMode == LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1)
+        NormalEnvelopeDamper(bank.sampleRateHz) else null
+
+    fun rendererAlgorithmIdentity(): String = traversalMode.name
+    fun traversalStats(): LoopTraversalSnapshot? = normalTraversal?.stats()
+    /** Read on the renderer-owning thread, or after rendering stops. */
+    fun normalEnvelopeStats(): NormalEnvelopeSnapshot? = normalEnvelope?.snapshot()
     private var evaluatedFrames = 0L
     private var preClipPeak = 0.0
     private var aboveContractFrames = 0L
@@ -96,6 +109,15 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         rpmBlendCapture = capture
     }
 
+    /** Audio-renderer thread only. Preserve oscillator phase, smoothing and diagnostic counters. */
+    fun clearTransientEvents() {
+        afterfireIndex = -1
+        activeShift = null
+        activeShiftIndex = -1
+        consumedAfterfireTimeS = Double.NaN
+        consumedShiftTimeS = Double.NaN
+    }
+
     fun reset() {
         evaluatedFrames = 0L
         preClipPeak = 0.0
@@ -115,6 +137,8 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         consumedAfterfireTimeS = Double.NaN
         consumedShiftTimeS = Double.NaN
         rpmBlendCapture?.reset()
+        normalTraversal?.reset()
+        normalEnvelope?.reset()
     }
 
     fun render(state: SoundState, frameCount: Int): FloatArray {
@@ -222,7 +246,8 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
             val low = lerp(sample(lowLow), sample(lowHigh), loadBlend)
             val high = lerp(sample(highLow), sample(highHigh), loadBlend)
             val shiftGain = mix(startState.shiftGain, endState.shiftGain, progress).toFloat()
-            var value = lerp(low, high, rpmBlend) * shiftGain
+            val dry = lerp(low, high, rpmBlend)
+            var value = (normalEnvelope?.process(dry) ?: dry) * shiftGain
             var eventContribution = 0f
             if (afterfireIndex in bank.afterfire.indices) {
                 val contribution = bank.afterfire[afterfireIndex++]
@@ -268,6 +293,7 @@ class MatlabStatefulBankRenderer(private val bank: MatlabSoundBank) {
         start + (end - start) * progress
 
     private fun sample(loop: MatlabLoop): Float {
+        normalTraversal?.let { return it.sample(loop, engineCycles) }
         val cycles = loop.samples.size.toDouble() / bank.sampleRateHz * loop.rpm / 120.0
         if (cycles <= 0.0 || loop.samples.isEmpty()) return 0f
         val normalized = (engineCycles % cycles) / cycles

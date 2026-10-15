@@ -88,6 +88,11 @@ TRACK_S_ALLOWLIST = frozenset({
 FROZEN_MANIFEST_SHA256 = "94281467e14a66780232fb6ae04bd01917a58a3332721967a80c41f4d6217a8a"
 FROZEN_MANIFEST_COUNT = 180
 
+# Android matlab_v6 兼容资产不属于 Track-P 冻结集；单独按精确目录与内容摘要锁定。
+ANDROID_MATLAB_V6_COMPAT_ROOT = "vico_app/Project/android/app/src/main/assets/matlab_v6/"
+ANDROID_MATLAB_V6_COMPAT_COUNT = 36
+ANDROID_MATLAB_V6_COMPAT_SHA256 = "870af466c846db1c30d0a1f85566efd62e1950f41462161510200446b7cfa436"
+
 # 符号级冻结守卫：(相对仓库根的路径, 符号名, 模式)
 #   模式 "signature" 仅冻结签名（参数 + 返回标注）；
 #   模式 "body" 冻结整个函数（AST 规范化文本）。
@@ -139,12 +144,18 @@ REPO = _repo_root()
 def _git(args: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(
         ["git", *args], cwd=str(REPO), capture_output=True, text=True,
+        encoding="utf-8", errors="surrogateescape",
     )
 
 
+def _is_android_matlab_v6_compat_asset(path: str) -> bool:
+    """仅识别 Android matlab_v6 兼容资产的精确目录前缀。"""
+    return path.startswith(ANDROID_MATLAB_V6_COMPAT_ROOT)
+
+
 def _is_frozen(path: str) -> bool:
-    """已跟踪路径的冻结判定：整路径子串匹配（保守），扣除 Track-S 豁免。"""
-    if path in TRACK_S_ALLOWLIST:
+    """已跟踪路径按子串保守冻结；仅豁免单独锁定的 Android matlab_v6 根目录。"""
+    if path in TRACK_S_ALLOWLIST or _is_android_matlab_v6_compat_asset(path):
         return False
     return any(tok in path for tok in FROZEN_SUBSTRINGS)
 
@@ -162,6 +173,50 @@ def _is_frozen_untracked(path: str) -> bool:
     return any(tok.strip("/") in seg for seg in segments for tok in FROZEN_SUBSTRINGS)
 
 
+def _is_guarded_status_path(path: str, code: str) -> bool:
+    """状态守卫仍保护单独锁定的 matlab_v6 资产及所有原冻结路径。"""
+    if _is_android_matlab_v6_compat_asset(path):
+        return True
+    predicate = _is_frozen_untracked if code == "??" else _is_frozen
+    return predicate(path)
+
+
+def _status_guarded_paths() -> tuple[list[str], list[str]]:
+    """检查工作树/索引改动，并枚举精确 matlab_v6 根内被 ignore 的新增文件。"""
+    status = _git(["status", "--porcelain", "-z", "--untracked-files=all"])
+    if status.returncode != 0:
+        raise RuntimeError(f"git status 执行失败: {status.stderr.strip()}")
+
+    dirty_frozen = []
+    dirty_matlab_v6 = []
+    records = iter(status.stdout.split("\0"))
+    for line in records:
+        if len(line) < 4:
+            continue
+        code, path = line[:2], line[3:]
+        # -z 重命名记录为目标路径、NUL、原路径，不解析文件名内的箭头。
+        paths = [path]
+        if "R" in code or "C" in code:
+            paths.append(next(records))
+        for part in paths:
+            if _is_android_matlab_v6_compat_asset(part):
+                dirty_matlab_v6.append(f"{code} {part}")
+            elif _is_guarded_status_path(part, code):
+                dirty_frozen.append(f"{code} {part}")
+
+    ignored = _git([
+        "ls-files", "-z", "--others", "--ignored", "--exclude-standard", "--",
+        ANDROID_MATLAB_V6_COMPAT_ROOT,
+    ])
+    if ignored.returncode != 0:
+        raise RuntimeError(f"git ls-files ignored 执行失败: {ignored.stderr.strip()}")
+    for path in ignored.stdout.split("\0"):
+        if _is_android_matlab_v6_compat_asset(path):
+            dirty_matlab_v6.append(f"!! {path}")
+
+    return dirty_frozen, dirty_matlab_v6
+
+
 def _sha256_lines(lines: list[str]) -> str:
     payload = "\n".join(lines) + "\n"
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -177,17 +232,32 @@ def _frozen_manifest(ref: str) -> tuple[list[str], str]:
     条目取自 `git ls-tree -r <ref>`，形如 "100644 blob <sha>\t<path>"。
     blob sha 是内容寻址的，且已按 index 归一化（不受工作树 CRLF/LF 影响）。
     """
-    res = _git(["ls-tree", "-r", ref])
+    res = _git(["ls-tree", "-r", "-z", ref])
     if res.returncode != 0:
         raise RuntimeError(f"git ls-tree {ref} 失败: {res.stderr.strip()}")
     entries = []
-    for line in res.stdout.splitlines():
-        line = line.rstrip("\r")
+    for line in res.stdout.split("\0"):
         if not line:
             continue
         # path 在 TAB 之后
         path = line.split("\t", 1)[1] if "\t" in line else line
         if _is_frozen(path):
+            entries.append(line)
+    entries.sort()
+    return entries, _sha256_lines(entries)
+
+
+def _android_matlab_v6_compat_manifest(ref: str) -> tuple[list[str], str]:
+    """返回精确 Android matlab_v6 兼容资产清单及其内容摘要。"""
+    res = _git(["ls-tree", "-r", "-z", ref])
+    if res.returncode != 0:
+        raise RuntimeError(f"git ls-tree {ref} 失败: {res.stderr.strip()}")
+    entries = []
+    for line in res.stdout.split("\0"):
+        if not line:
+            continue
+        path = line.split("\t", 1)[1] if "\t" in line else line
+        if _is_android_matlab_v6_compat_asset(path):
             entries.append(line)
     entries.sort()
     return entries, _sha256_lines(entries)
@@ -256,11 +326,11 @@ def main() -> int:
     changed: list[str] = []
     if base_ok:
         # 1) 仅已提交改动（忽略未跟踪/未暂存文件）
-        diff = _git(["diff", "--name-only", BASE])
+        diff = _git(["diff", "--name-only", "-z", BASE])
         if diff.returncode != 0:
             failures.append(f"git diff --name-only 执行失败: {diff.stderr.strip()}")
         else:
-            changed = [p.strip() for p in diff.stdout.splitlines() if p.strip()]
+            changed = [p for p in diff.stdout.split("\0") if p]
             frozen_hits = [p for p in changed if _is_frozen(p)]
             if frozen_hits:
                 failures.append(
@@ -280,26 +350,21 @@ def main() -> int:
                 failures.append("冻结文件 diff --check 发现空白错误：\n"
                                 + (check.stdout or check.stderr))
 
-    # 3) 工作树/索引侧的冻结守卫（v1 完全没覆盖：未提交的冻结改动会漏网）
-    status = _git(["status", "--porcelain"])
-    if status.returncode != 0:
-        failures.append(f"git status 执行失败: {status.stderr.strip()}")
-    else:
-        dirty_frozen = []
-        for line in status.stdout.splitlines():
-            if len(line) < 4:
-                continue
-            code, path = line[:2], line[3:].strip().strip('"')
-            predicate = _is_frozen_untracked if code == "??" else _is_frozen
-            # 处理重命名 "old -> new"
-            for part in path.split(" -> "):
-                if predicate(part):
-                    dirty_frozen.append(f"{code} {part}")
+    # 3) 工作树/索引侧的冻结守卫，包括精确 matlab_v6 根内被 ignore 的新增文件。
+    try:
+        dirty_frozen, dirty_matlab_v6 = _status_guarded_paths()
         if dirty_frozen:
             failures.append(
                 "检测到 Track P 冻结路径在工作树/索引中被改动：\n"
                 + "\n".join(f"    - {p}" for p in dirty_frozen)
             )
+        if dirty_matlab_v6:
+            failures.append(
+                "检测到 Android matlab_v6 兼容资产在工作树/索引中被改动：\n"
+                + "\n".join(f"    - {p}" for p in dirty_matlab_v6)
+            )
+    except RuntimeError as exc:
+        failures.append(str(exc))
 
     # 4) 冻结文件清单摘要（内容寻址，BASE 丢失也能校验）
     try:
@@ -318,6 +383,23 @@ def main() -> int:
     except RuntimeError as exc:
         failures.append(str(exc))
         entries = []
+
+    # 4b) Android matlab_v6 兼容资产独立锁；不并入原 180 项 Track-P 清单。
+    try:
+        compat_entries, compat_sha = _android_matlab_v6_compat_manifest("HEAD")
+        if len(compat_entries) != ANDROID_MATLAB_V6_COMPAT_COUNT:
+            failures.append(
+                f"Android matlab_v6 兼容资产数量变化：期望 "
+                f"{ANDROID_MATLAB_V6_COMPAT_COUNT}，实际 {len(compat_entries)}"
+            )
+        if compat_sha != ANDROID_MATLAB_V6_COMPAT_SHA256:
+            failures.append(
+                "Android matlab_v6 兼容资产摘要不匹配：\n"
+                f"    期望 {ANDROID_MATLAB_V6_COMPAT_SHA256}\n"
+                f"    实际 {compat_sha}"
+            )
+    except RuntimeError as exc:
+        failures.append(f"Android matlab_v6 兼容资产校验失败: {exc}")
 
     # 5) 符号级冻结守卫
     try:

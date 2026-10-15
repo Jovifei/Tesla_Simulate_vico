@@ -73,5 +73,3 @@ internal class C63HybridRenderer(private val profile:C63HybridProfile,private va
         return result
     }
 }
-
-

@@ -1,0 +1,6 @@
+{
+  "schema": "vico.n3.consumer_patch.v1",
+  "status": "requires_rematerialization",
+  "description": "Previous patch payload was rejected because it was not JSON and contained unresolved anchor placeholders. This file intentionally does not claim consumer application.",
+  "edits": []
+}

@@ -37,6 +37,3 @@ class C63AR2KnownRegressionTest {
         println("Holdout cases=${rows.size-1}; inspect pass flags, no parameter change permitted")
     }
 }
-
-
-
