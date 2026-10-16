@@ -51,7 +51,7 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
     const bytes=Buffer.from(JSON.stringify(d,null,2)+'\n'),bankFile=`banks/${id}/bank.json`;await write(bankFile,bytes);
     catalog.vehicles.push({id,name,kind,bankFile,bankSha256:sha(bytes),normalIdentity,idleRpm:spec.idle_rpm,redlineRpm:spec.redline_rpm});
   }
-  for(const name of ['index.html','style.css'])await write(name,await fs.readFile(path.join(web,name)));
+  for(const name of ['index.html','style.css','favicon.svg'])await write(name,await fs.readFile(path.join(web,name)));
   await fs.cp(path.join(web,'src'),path.join(out,'src'),{recursive:true,errorOnExist:true,force:false});
   await write('catalog.json',Buffer.from(JSON.stringify(catalog,null,2)+'\n'));
   const hashes={};async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())await walk(p);else hashes[path.relative(out,p).split(path.sep).join('/')]=sha(await fs.readFile(p));}}await walk(out);
