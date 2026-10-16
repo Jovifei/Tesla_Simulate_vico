@@ -1,0 +1,20 @@
+# New, separately approved virtual host only. Never overwrite an existing server config.
+# Supply VICO_DOMAIN and VICO_ROOT in the existing Caddy service environment.
+{$VICO_DOMAIN} {
+    root * {$VICO_ROOT}
+    encode zstd gzip
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+        Content-Security-Policy "default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+        Cache-Control "no-cache"
+    }
+    @modules path *.mjs
+    header @modules Content-Type "text/javascript; charset=utf-8"
+    @blocked path /.git/* /.env /source/* /tools/* /test/*
+    respond @blocked 404
+    file_server {
+        hide .git .env
+    }
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "vico.web.remote-stage.v1",
+  "date": "2026-10-15",
+  "source_parent": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+  "branch": "codex-web-vico-lab-20261015",
+  "scope": "Web implementation; original assets/gains not modified. Explicitly synthetic test fixtures, not new acoustic qualification.",
+  "runtime": {
+    "node": "v22.16.0",
+    "python": "3.13.5",
+    "platform": "Linux remote scratch container"
+  },
+  "node_tests": {
+    "command": "node --test vico_web/test/*.test.mjs",
+    "tests": 31,
+    "pass": 31,
+    "fail": 0,
+    "skip": 0,
+    "exit": 0,
+    "log": "node-tests.tap",
+    "log_sha256": "5c25f926298c28a9e3ac7ad072b773b9e978fbfe486db2a97c00ba4f3af9a9a2",
+    "scope": "pure core + synthetic fixture build + actual processor entry with Node host shim; NOT actual browser"
+  },
+  "checks": {
+    "node_syntax": "PASS",
+    "python_scripts_syntax": "PASS",
+    "workflow_yaml_parse": "PASS",
+    "synthetic_six_bank_packaging": "PASS_TEST_ONLY",
+    "actual_six_bank_build": "NOT_RUN_REMOTE_ORIGINAL_WAV_NOT_MOUNTED",
+    "actual_kotlin_reference": "NOT_RUN_REMOTE_PINNED_JVM_DEPS_NOT_MOUNTED",
+    "browser_smoke": "BLOCKED_BY_SANDBOX_POLICY_ERR_BLOCKED_BY_ADMINISTRATOR",
+    "visual_review": "NOT_RUN",
+    "server_deployment": "NOT_RUN_NO_DOMAIN_OR_TARGET",
+    "phone": "NOT_RUN",
+    "road": "NOT_RUN",
+    "human": "NOT_EVALUATED"
+  },
+  "connector": {
+    "tesla_workspace_info": "FAILED_400_ACCOUNT_CONNECTION; attempted twice; not worked around",
+    "github": "READ_WRITE_SUCCESS_NEW_BRANCH_ONLY"
+  },
+  "preserved_contracts": [
+    "No Android source/tests changed",
+    "No original WAV/manifest/fixed gain/reference edits",
+    "No main/PR38 ref updates",
+    "No MATLAB/source fitting",
+    "No credentials or actual private logs in repository",
+    "No live server/DNS/device changes"
+  ],
+  "source_files_sha256": {
+    "vico_web/.gitignore": "670308d9fe1c00c0d6da31e88155bb0b0c242bbba1642361f9bb2222574d0a9e",
+    "vico_web/LOCAL_CODEX_PROMPT.md": "a229f7ceb3ded12126f9782a09eb85edf2fc085fa0933b6792ae7005eb20d600",
+    "vico_web/deploy/Caddyfile": "b0d475dc5f36f1c5e8ada97634ae1609ecf2dd0d578222f5f770c2f89a80902b",
+    "vico_web/deploy/README.md": "8a138ac106cdb862621510d4c8a27733cf3def3f45fa86059fee11ad89005175",
+    "vico_web/index.html": "84a84a634337872d444af6c3d6f8f88127f8b11c35976831055837a37b7305cb",
+    "vico_web/package.json": "1269d83bf7ab3954e392c5d8b1d38c55a8599510d704327606e51a7f0a894ad6",
+    "vico_web/src/app.mjs": "6f09ad72a059b726fef245a533c5af846b11e4b73bf11ed367d26fe78f5dc2e6",
+    "vico_web/src/core.mjs": "fd61fc96ebf2d4ee7593868ab9dc8403a6f51c4788c74879d028ff4901aefa24",
+    "vico_web/src/session.mjs": "1a3eacdc9de81bb9516ddfb522893f114b1d45093464d6c8097e9778ce08d301",
+    "vico_web/src/worklet.mjs": "5dabcea6e9d0786e457e5f8b8c83e16b263c12fe2162697a706cb374bebd19a9",
+    "vico_web/style.css": "78ccf2a3a28847230a7617913faacd87e5a19d8306de15ca1e8ffa041ff15631",
+    "vico_web/test/core.test.mjs": "5909f4dab8ab3ffde5880da334d41d08e962ca3d2ae61f40617627b67cd4e698",
+    "vico_web/test/fixtures.mjs": "b7c0ba142d78b0a9bfcd49394cac93c77db6bbd7965527925c9c980bada823b1",
+    "vico_web/test/io.test.mjs": "526f52ed412d41b75e7d39662488c24026ac440ec93b1e3d335d298bac3864cf",
+    "vico_web/test/session.test.mjs": "1f43d7a1251ac168b0c284c6230ca24f91986a6389209666441b9c4765f59d81",
+    "vico_web/test/worklet.test.mjs": "f211b2385990c65c8d5c2aa0752c73800074c766bbe52c29a7e46f10f8f874aa",
+    "vico_web/tools/browser_smoke.py": "7bdbe24a16ff58948d563d1eb4b902efb34c09f2657c3ce9852c8a9994d400b7",
+    "vico_web/tools/build.mjs": "7da97ea4924b52b567e7010f7aec51a74082b47c4044a2cf8b243d0cce44e7bf",
+    "vico_web/tools/kotlin_reference.py": "ad7f35f0204b40a9e9b0285d671af242c40bbff2c20b3281fcb9d1ab67832705",
+    "vico_web/tools/qualify.mjs": "c500cba24ca6dd41056e9d676bb420237c7ff0e64e8099977eb1ebe0fdee586b",
+    "vico_web/tools/render.mjs": "0029369b2cc506861d68df82af08c725ba767b85df315c4810f79f8fa2bfc125",
+    "vico_web/tools/serve.mjs": "c653e227c8fe43a97103c043ea222e9411ae3fb6692012eb0d04c15002cb97f5"
+  },
+  "notes": [
+    "Do not infer physical or acoustic PASS from Node tests.",
+    "Kotlin/static parity and actual browser smoke are runnable local reception tools, not completed validations.",
+    "The pipeline ports current NORMAL_SEAM_ENVELOPE_V1, not an independently improved sound source.",
+    "New-source URLs/lineage and branch final SHA are provided in the final handoff; this file cannot self-reference its creating commit."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "vico-web-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent web port of Jovi's fixed six-vehicle Vico bank engine",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/core.test.mjs test/io.test.mjs test/session.test.mjs test/worklet.test.mjs"
+  }
+}
