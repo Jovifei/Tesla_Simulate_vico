@@ -4,9 +4,19 @@ Uses the already-installed Playwright/browser; never installs or weakens policy.
 """
 import argparse
 import json
+import re
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_smoke import choose, instrument, start, stats, stop, mode
+
+
+def contrast_ratio(color_a, color_b):
+    def luminance(color):
+        channels = [int(value) / 255 for value in re.findall(r'\d+', color)[:3]]
+        linear = [value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4 for value in channels]
+        return sum(weight * value for weight, value in zip((0.2126, 0.7152, 0.0722), linear))
+    light, dark = sorted((luminance(color_a), luminance(color_b)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
 
 
 def main():
@@ -43,6 +53,10 @@ def main():
                 page.locator(f'[data-appearance-choice="{theme}"]').click()
                 for layout in ('touring', 'digital'):
                     page.locator(f'[data-cluster-choice="{layout}"]').click()
+                    for selector in (f'[data-appearance-choice="{theme}"]', f'[data-cluster-choice="{layout}"]'):
+                        page.locator(selector).hover()
+                        colors = page.locator(selector).evaluate("e => ({text: getComputedStyle(e).color, background: getComputedStyle(e).backgroundColor})")
+                        assert contrast_ratio(colors['text'], colors['background']) >= 4.5, (selector, colors)
                     fresh = stats(page)
                     now = page.evaluate("()=>({run:JSON.parse(document.getElementById('diagnostics').textContent).runId,contexts:testContexts.length,nodes:testNodes.length,volume:document.getElementById('volume').value})")
                     assert now == identity and fresh['frames'] > baseline['frames']
@@ -60,7 +74,7 @@ def main():
                         report['screenshots'].append({'file': image, **rect})
                     page.set_viewport_size({'width': 1440, 'height': 900})
             report['checks'].append({'case': '2 themes x 2 layouts x 4 viewports; unchanged live owner', 'pass': True})
-            page.evaluate("document.documentElement.requestFullscreen=()=>Promise.reject(new DOMException('Test rejection','NotAllowedError'))")
+            page.evaluate("() => { document.documentElement.requestFullscreen = () => Promise.reject(new DOMException('Test rejection', 'NotAllowedError')); }")
             if page.locator('#fullscreen').is_visible():
                 page.locator('#fullscreen').click()
                 page.wait_for_function("()=>document.getElementById('message').textContent.includes('不允许全屏')")
@@ -100,6 +114,8 @@ def main():
         browser.close()
     if report['failure']:
         raise AssertionError(report['failure'])
+    if any(check.get('pass') is False for check in report['checks']):
+        raise AssertionError('Cockpit browser acceptance contains a failed or unsupported check; inspect receipt.json')
     print('Cockpit browser acceptance completed; inspect unsupported checks; physical listening NOT_RUN')
 
 
