@@ -28,7 +28,7 @@ function update(e){
     $('signal').textContent={idle:'声音已停止',loading:'声库校验中',stopping:'正在停止声音',error:'声音已停止 · 异常'}[e.stage]||'尚未运行';
   }
   if(e.stats&&e.stage==='running'&&!transitioning){const s=e.stats;$('speed').textContent=s.inputUsable?String(Math.round(s.speedKmh)).padStart(3,'0'):'—';$('rpm').textContent=s.inputUsable?Math.round(s.rpm).toLocaleString('en-US'):'—';$('gear').textContent=s.inputUsable?s.gear:'—';$('load').textContent=s.inputUsable?Math.round(s.load*100):'—';
-    $('rpm-arc').setAttribute('stroke-dashoffset',String(s.inputUsable?100-Math.min(100,s.rpm/(selected?.redlineRpm||9000)*100):100));
+    // Dial geometry and redline normalization are owned by VicoCockpit.update above.
     $('signal').textContent=s.inputUsable?'音频线程运行 · 输入有效':'输入无效或失效 · 内容静音';$('sample-rate').textContent=`${s.contextSampleRate} Hz`;
     if(mode==='gps'&&!s.inputUsable)$('gps-status').textContent='定位已过期或失效；内容静音';
   }
