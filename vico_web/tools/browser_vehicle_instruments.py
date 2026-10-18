@@ -44,7 +44,7 @@ def main():
                 screenshots = []
                 for theme in ('cyber', 'minimal'):
                     page.locator(f'[data-appearance-choice="{theme}"]').click()
-                    for width, height in ((1440, 900), (1280, 720), (1024, 600), (390, 844)):
+                    for width, height in ((1440, 900), (1280, 720), (1280, 600), (1024, 600), (390, 844)):
                         page.set_viewport_size({'width': width, 'height': height})
                         page.wait_for_timeout(80)
                         layout = page.evaluate("""()=>{const panel=document.querySelector('.instrument').getBoundingClientRect();const b=document.getElementById('stop'),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,panel:{height:panel.height,width:panel.width},stopVisible:r.y>=0&&r.bottom<=innerHeight&&r.width>=144&&r.height>=56&&(hit===b||b.contains(hit)),dials:[...document.querySelectorAll('.dial')].map(d=>{const r=d.getBoundingClientRect();return {width:r.width,height:r.height}})}}""")
@@ -53,6 +53,11 @@ def main():
                         if width > height:
                             assert layout['scrollHeight'] <= height + 1, layout
                         assert all(d['height'] > 40 for d in layout['dials']), layout
+                        clipped = page.evaluate("""()=>{const panel=document.querySelector('.instrument').getBoundingClientRect();return [...document.querySelectorAll('#speed,#rpm,#gear,#load,#redline-rpm,.gauge-foot,.gauge-label,.gauge-value>span,.load-info,.center-cluster')].filter(e=>e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect();return {id:e.id||e.className,x:r.x,y:r.y,right:r.right,bottom:r.bottom}}).filter(r=>r.x<panel.x-1||r.y<panel.y-1||r.right>panel.right+1||r.bottom>panel.bottom+1)}""")
+                        assert not clipped, {'vehicle': profile, 'viewport': [width, height], 'clipped': clipped}
+                        if width > height and profile in ('classic', 'heritage'):
+                            main_dial = '.speed-gauge .dial' if profile == 'classic' else '.rpm-gauge .dial'
+                            assert page.evaluate("""s=>{const r=document.querySelector(s).getBoundingClientRect(),p=document.querySelector('.center-cluster').getBoundingClientRect();return Math.max(p.width,p.height)<=Math.min(r.width,r.height)+1}""", main_dial), 'Auxiliary pod overtook the main instrument'
                         name = f'{profile}-{theme}-{width}x{height}.png'
                         page.screenshot(path=str(a.out / name))
                         screenshots.append({'file': name, 'layout': layout})
@@ -81,7 +86,7 @@ def main():
         browser.close()
     if report['failure']:
         raise AssertionError(report['failure'])
-    print('6 vehicles x 2 themes x 4 viewports; real Worklet continuity PASS')
+    print('6 vehicles x 2 themes x 5 viewports; clipping bounds, hierarchy and real Worklet continuity PASS')
 
 
 if __name__ == '__main__':

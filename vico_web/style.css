@@ -90,3 +90,10 @@
 @media(max-height:740px) and (min-width:701px){:root[data-instrument=classic][data-cluster=touring] .center-cluster{padding:14px 8px}:root[data-instrument=classic] .input-state{font-size:8px}}
 @media(max-width:700px){:root[data-instrument=classic][data-cluster=touring] .instrument{grid-template-columns:64px minmax(0,1.25fr) minmax(0,1fr)}:root[data-instrument=classic][data-cluster=touring] .center-cluster{padding:12px 3px}:root[data-instrument=technical][data-cluster=touring] .instrument{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) 64px}:root[data-instrument=precision][data-cluster=touring] .center-cluster>#gear{left:49%;top:46%;font-size:36px}}
 @media(max-height:740px) and (min-width:701px){:root[data-instrument=maranello][data-cluster=touring] .speed-gauge .gauge-value{top:20%}}
+/* Bound auxiliary round pods by available low-height space, not column width. */
+@media(max-height:740px) and (min-width:701px){
+ :root[data-instrument=classic][data-cluster=touring] .center-cluster,
+ :root[data-instrument=heritage][data-cluster=touring] .center-cluster{width:min(100%,220px,calc(100vh - 440px));height:auto;min-height:0;justify-self:center;padding:8px;aspect-ratio:1}
+ :root[data-instrument=classic][data-cluster=touring] .center-cluster>#gear,
+ :root[data-instrument=heritage][data-cluster=touring] .center-cluster>#gear{font-size:44px}
+}
