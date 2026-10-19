@@ -24,6 +24,11 @@ def geometry(page,width,height):
         values,stop:{x:s.x,y:s.y,width:s.width,height:s.height,visible:s.y>=0&&s.bottom<=innerHeight&&s.width>=144&&s.height>=56&&(hit===stop||stop.contains(hit))},
         appearance:document.documentElement.dataset.appearance,style:document.documentElement.dataset.instrument,
         unique:ids.every(id=>document.querySelectorAll('#'+id).length===1),
+        labelPlateCollisions:[...document.querySelectorAll('#r4-svg .r4-tick-label')].flatMap(label=>{
+          const a=label.getBoundingClientRect();return [...document.querySelectorAll('#r4-svg .r4-value-plate')].filter(plate=>{
+            const b=plate.getBoundingClientRect();return a.left<b.right-.2&&a.right>b.left+.2&&a.top<b.bottom-.2&&a.bottom>b.top+.2;
+          }).map(()=>label.textContent);
+        }),
         source:document.getElementById('speed-label').textContent};
     }""")
 
@@ -47,6 +52,7 @@ def main():
             if w>h:assert z['scrollHeight']<=h+1,z
             assert z['style']==vehicle if preset=='auto' else z['style']==preset,(z['style'],vehicle,preset)
             assert z['appearance']==theme,z
+            assert not z['labelPlateCollisions'], ('Scale labels collide with value readouts', z['labelPlateCollisions'], vehicle, preset, w, h)
             assert all(z['stage']['x']-1<=v['x']<=v['right']<=z['stage']['right']+1 and z['stage']['y']-1<=v['y']<=v['bottom']<=z['stage']['bottom']+1 for v in z['values']),z
             if w==1280 and h==600:
                 assert next(v['height'] for v in z['values'] if v['id']=='speed')>=64,z
