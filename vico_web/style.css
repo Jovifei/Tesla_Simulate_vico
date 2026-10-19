@@ -217,3 +217,10 @@
   .cockpit main{align-items:flex-start}
   .cockpit .drive{margin-top:16px}
 }
+
+/* The SVG owns the instrument surface; legacy model backgrounds must not tint metadata. */
+:root[data-instrument] .r4-shell.instrument{background:transparent}
+:root[data-instrument=maranello] .r4-field:has(#rpm) .r4-number,
+:root[data-instrument=maranello] .r4-field:has(#rpm) .r4-micro{fill:#141618}
+:root[data-instrument=maranello] .r4-rpm .r4-tick-major,
+:root[data-instrument=maranello] .r4-rpm .r4-tick-minor{stroke:#141618}
