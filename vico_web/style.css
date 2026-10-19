@@ -212,3 +212,8 @@
   .r4-stage{height:min(100%,31vw,355px)}
 }
 .r4-honda-step.red{fill:#5d282c}.r4-honda-step.red.lit{fill:#ff626a}
+/* Tall desktop: keep the compact panel below the header rather than floating in mid-window. */
+@media(min-height:1010px) and (min-width:701px){
+  .cockpit main{align-items:flex-start}
+  .cockpit .drive{margin-top:16px}
+}
