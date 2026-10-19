@@ -99,7 +99,12 @@ def main():
             assert stats(page)['inputUsable'] is False
             for id_ in ('speed', 'rpm', 'gear', 'load'):
                 assert page.locator('#' + id_).text_content() == '—'
-            assert page.locator('#speed-arc').get_attribute('stroke-dashoffset') == '100'
+            assert page.locator('#input-state').text_content() == '输入失效 · 已静音'
+            assert page.locator('#r4-hud-fill').get_attribute('d') == 'M110 80 H110'
+            page.locator('[data-cluster-choice="touring"]').click()
+            assert page.locator('#speed-needle').get_attribute('visibility') == 'hidden'
+            assert page.locator('#rpm-needle').get_attribute('visibility') == 'hidden'
+            assert page.locator('#load-bar').get_attribute('width') == '0'
             report['checks'].append({'case': 'injected GPS invalidates all current instruments', 'pass': True})
             stop(page)
             assert page.evaluate("testContexts.every(c=>c.state==='closed')")

@@ -5,7 +5,7 @@ import vm from 'node:vm';
 const src=readFileSync(new URL('../src/factory-display.js',import.meta.url),'utf8');
 function boot(saved=null,denied=false){
   const elements=new Map(),listeners={},storage=new Map(saved?[['vico-web-display-style-v1',saved]]:[]);
-  function element(){return {innerHTML:'',textContent:'',attrs:{},value:'auto',dataset:{},style:{},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]},querySelectorAll(){return []}};}
+  function element(){return {innerHTML:'',textContent:'',attrs:{},classList:{toggle(){}},value:'auto',dataset:{},style:{},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]},querySelectorAll(){return []}};}
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
   const context=vm.createContext({window:{},document:{documentElement:{dataset:{cluster:'touring'}},getElementById:get,addEventListener(type,fn){listeners[type]=fn}},localStorage:{getItem(k){if(denied)throw Error('storage denied');return storage.get(k)},setItem(k,v){if(denied)throw Error('storage denied');storage.set(k,v)}},console});
   vm.runInContext(src,context);
@@ -25,8 +25,8 @@ test('style selection persists, but invalid and denied storage never crash',()=>
 });
 test('one SVG stage owns all four real readout IDs and no duplicate players',()=>{
  const b=boot();b.api.prepare({id:'c63_w204_v6',redlineRpm:7200});let h=b.get('r4-stage').innerHTML;
- for(const id of ['speed','rpm','gear','load','redline-rpm','input-state','speed-label','rpm-arc'])assert.equal((h.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
- assert.match(h,/r4-tick-major/);assert.match(h,/144|142/);assert.doesNotMatch(h,/id=".*soundbank|AudioContext/);
+ for(const id of ['speed','rpm','gear','load','redline-rpm','rpm-arc'])assert.equal((h.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
+ assert.match(h,/r4-tick-major/);assert.match(h,/viewBox="0 0 1200 340"/);assert.doesNotMatch(h,/id=".*soundbank|AudioContext/);
 });
 test('physical ticks and exact redline are drawn from selected sound bank',()=>{
  const b=boot();b.api.prepare({id:'c63_w204_v6',redlineRpm:7200});const old=b.get('r4-stage').innerHTML;
@@ -52,4 +52,12 @@ test('invalid telemetry never paints stale live speed or false load',()=>{
 test('factory display cannot own audio, network, GPS or navigation',()=>{
  assert.doesNotMatch(src,/\b(fetch|XMLHttpRequest|AudioContext|AudioWorklet|watchPosition|pushState|replaceState|setInterval)\s*\(/);
  assert.doesNotMatch(src,/location\s*\.|import\s/);
+});
+
+test('GPS without an authorization retains unknown readings through appearance changes',async()=>{
+ const b=boot();b.get('mode-gps').attrs['aria-pressed']='true';b.api.update(null,false);
+ b.listeners.change({target:{id:'display-style',value:'honda'}});
+ for(const id of ['speed','rpm','gear','load'])assert.equal(b.get(id).textContent,'—');
+ b.document.documentElement.dataset.cluster='digital';b.listeners.click({target:{closest:()=>true}});await Promise.resolve();
+ assert.equal(b.get('speed').textContent,'—');assert.equal(b.get('speed-label').textContent,'GPS 实验估算 · 虚拟');
 });

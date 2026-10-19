@@ -17,10 +17,11 @@ def geometry(page,width,height):
     return page.evaluate("""()=>{
       const ids=['speed','rpm','gear','load','speed-label','input-state'];
       const stage=document.getElementById('r4-stage').getBoundingClientRect();
+      const shell=document.querySelector('.r4-shell').getBoundingClientRect();
       const stop=document.getElementById('stop'),s=stop.getBoundingClientRect(),hit=document.elementFromPoint(s.x+s.width/2,s.y+s.height/2);
       const values=ids.map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect();return {id,text:e.textContent.trim(),x:r.x,y:r.y,right:r.right,bottom:r.bottom,height:r.height}});
       return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,
-        scrollHeight:document.documentElement.scrollHeight,stage:{x:stage.x,y:stage.y,right:stage.right,bottom:stage.bottom,width:stage.width,height:stage.height},
+        scrollHeight:document.documentElement.scrollHeight,stage:{x:stage.x,y:stage.y,right:stage.right,bottom:stage.bottom,width:stage.width,height:stage.height},shell:{x:shell.x,y:shell.y,right:shell.right,bottom:shell.bottom},
         values,stop:{x:s.x,y:s.y,width:s.width,height:s.height,visible:s.y>=0&&s.bottom<=innerHeight&&s.width>=144&&s.height>=56&&(hit===stop||stop.contains(hit))},
         appearance:document.documentElement.dataset.appearance,style:document.documentElement.dataset.instrument,
         unique:ids.every(id=>document.querySelectorAll('#'+id).length===1),
@@ -47,7 +48,8 @@ def main():
             if w>h:assert z['scrollHeight']<=h+1,z
             assert z['style']==vehicle if preset=='auto' else z['style']==preset,(z['style'],vehicle,preset)
             assert z['appearance']==theme,z
-            assert all(z['stage']['x']-1<=v['x']<=v['right']<=z['stage']['right']+1 and z['stage']['y']-1<=v['y']<=v['bottom']<=z['stage']['bottom']+1 for v in z['values']),z
+            assert all(z['stage']['x']-1<=v['x']<=v['right']<=z['stage']['right']+1 and z['stage']['y']-1<=v['y']<=v['bottom']<=z['stage']['bottom']+1 for v in z['values'] if v['id'] not in ('speed-label','input-state')),z
+            assert all(z['shell']['x']-1<=v['x']<=v['right']<=z['shell']['right']+1 and z['shell']['y']-1<=v['y']<=v['bottom']<=z['shell']['bottom']+1 for v in z['values'] if v['id'] in ('speed-label','input-state')),z
             if w==1280 and h==600:
                 assert next(v['height'] for v in z['values'] if v['id']=='speed')>=64,z
                 assert next(v['height'] for v in z['values'] if v['id']=='gear')>=44,z

@@ -132,7 +132,7 @@
 .r4-hud-fill{fill:none;stroke:#79eddd;stroke-width:8;stroke-linecap:round}
 .r4-honda-step{fill:#2b4258}.r4-honda-step.lit{fill:#7ce7dc}
 .r4-svg{--r4-highlight:#79eddd}
-.r4-svg:has(.r4-dial) .r4-field .r4-number{filter:drop-shadow(0 2px 5px #0008)}
+
 :root[data-instrument=mercedes] .r4-chassis{fill:#12171d;stroke:#767a81}
 :root[data-instrument=mercedes] .r4-bezel{fill:#1b1d22;stroke:#b4bdc7;stroke-width:6}
 :root[data-instrument=bmw] .r4-chassis{fill:#0c1016;stroke:#4c555d}
@@ -178,7 +178,7 @@
   .r4-style-control label{display:none}
 }
 @media(min-height:1010px) and (min-width:701px){
- .cockpit main{display:flex;justify-content:center;align-items:center}
+ .cockpit main{display:flex;justify-content:center;align-items:flex-start;padding-top:20px}
  .cockpit .drive{height:min(930px,calc(100dvh - 75px));width:100%;max-height:930px}
  .r4-stage{height:min(100%,31vw,395px)}
 }
@@ -200,7 +200,9 @@
  .cluster-switch{grid-column:1/-1;grid-row:3;margin:0;justify-self:start}
  .toolbar .mode-tabs{grid-column:1/-1;grid-row:1}
 }
-.r4-stage-top{display:none}
+.r4-stage-top{flex-shrink:0}
+.r4-stage-top #input-state.invalid{color:#f37482;font-weight:700}
+:root[data-instrument=precision] .r4-hub,:root[data-instrument=vw] .r4-hub{display:none}
 .r4-value-plate{fill:#101a26;fill-opacity:.96;stroke:#5d6b77;stroke-width:1.2}
 :root[data-appearance=minimal] .r4-value-plate{fill:#e0edf2;stroke:#9db2bc}
 .r4-micro{font-size:17px;fill:#bccbd8}
