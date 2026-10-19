@@ -55,6 +55,7 @@
     n.setAttribute('y2', String(180 + 130 * Math.sin(a)));
   }
   function prepare(entry) {
+    if (window.VicoFactory) return window.VicoFactory.prepare(entry);
     redline = Number.isFinite(entry.redlineRpm) && entry.redlineRpm > 0 ? entry.redlineRpm : 9000;
     dialMax = (Math.floor(redline / 1000) + 1) * 1000;
     var profile = Object.hasOwn(profiles, entry.id) ? profiles[entry.id] : profiles.c63_w204_v6;
@@ -74,6 +75,7 @@
     update(null, false);
   }
   function update(stats, active) {
+    if (window.VicoFactory) return window.VicoFactory.update(stats, active);
     var valid = active && stats && stats.inputUsable && Number.isFinite(stats.speedKmh) && Number.isFinite(stats.rpm) && Number.isFinite(stats.load);
     var rp = valid ? Math.max(0, Math.min(1, stats.rpm / dialMax)) : 0;
     var sp = valid ? Math.max(0, Math.min(1, stats.speedKmh / speedMax)) : 0;
