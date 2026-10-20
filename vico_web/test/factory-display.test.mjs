@@ -1,63 +1,19 @@
-import {test} from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
-const src=readFileSync(new URL('../src/factory-display.js',import.meta.url),'utf8');
-function boot(saved=null,denied=false){
-  const elements=new Map(),listeners={},storage=new Map(saved?[['vico-web-display-style-v1',saved]]:[]);
-  function element(){return {innerHTML:'',textContent:'',attrs:{},classList:{toggle(){}},value:'auto',dataset:{},style:{},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]},querySelectorAll(){return []}};}
-  const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
-  const context=vm.createContext({window:{},document:{documentElement:{dataset:{cluster:'touring'}},getElementById:get,addEventListener(type,fn){listeners[type]=fn}},localStorage:{getItem(k){if(denied)throw Error('storage denied');return storage.get(k)},setItem(k,v){if(denied)throw Error('storage denied');storage.set(k,v)}},console});
-  vm.runInContext(src,context);
-  return {api:context.window.VicoFactory,document:context.document,get,storage,listeners};
-}
-test('R4 presets are soundbank-independent with six distinct auto profiles',()=>{
- const b=boot(),ids=['c63_w204_v6','hellcat_v6','ferrari_458','lfa','gtr_r35','supra_jza80'];
- assert.deepEqual(ids.map(id=>b.api.resolve(id)),['mercedes','muscle','maranello','precision','technical','heritage']);
- for(const style of ['mercedes','bmw','audi','vw','honda'])assert.equal(b.api.resolve('lfa',style),style);
- assert.equal(b.api.resolve('BMW_NON_BANK'),'mercedes');
-});
-test('style selection persists, but invalid and denied storage never crash',()=>{
- const b=boot();assert.equal(b.api.style(),'auto');b.listeners.change({target:{id:'display-style',value:'honda'}});
- assert.equal(b.storage.get('vico-web-display-style-v1'),'honda');assert.equal(b.api.style(),'honda');
- const n=boot('data:bad');assert.equal(n.api.style(),'auto');
- const d=boot('auto',true);d.listeners.change({target:{id:'display-style',value:'audi'}});assert.equal(d.api.style(),'audi');
-});
-test('one SVG stage owns all four real readout IDs and no duplicate players',()=>{
- const b=boot();b.api.prepare({id:'c63_w204_v6',redlineRpm:7200});let h=b.get('r4-stage').innerHTML;
- for(const id of ['speed','rpm','gear','load','redline-rpm','rpm-arc'])assert.equal((h.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
- assert.match(h,/r4-tick-major/);assert.match(h,/viewBox="0 0 1200 340"/);assert.doesNotMatch(h,/id=".*soundbank|AudioContext/);
-});
-test('physical ticks and exact redline are drawn from selected sound bank',()=>{
- const b=boot();b.api.prepare({id:'c63_w204_v6',redlineRpm:7200});const old=b.get('r4-stage').innerHTML;
- assert.match(old,/r4-red/);assert.match(old,/7200/);
- b.api.prepare({id:'c63_w204_v6',redlineRpm:6200});assert.notEqual(b.get('r4-stage').innerHTML,old);
- b.api.prepare({id:'lfa',redlineRpm:9000});assert.equal(b.api.resolve('lfa'),'precision');
-});
-test('digital and selected presets render one coordinated view and keep source untouched',()=>{
- const b=boot();b.api.prepare({id:'gtr_r35',redlineRpm:7000});
- const s=Object.freeze({inputUsable:true,source:'WEB_GPS_ESTIMATED',speedKmh:250,rpm:5000,gear:4,load:.7});
- b.api.update(s,true);assert.equal(b.get('speed-label').textContent,'GPS 实验估算 · 虚拟');
- assert.equal(b.get('speed').textContent,'250');assert.equal(b.get('gear').textContent,'4');
- b.document.documentElement.dataset.cluster='digital';b.api.prepare({id:'gtr_r35',redlineRpm:7000});assert.match(b.get('r4-stage').innerHTML,/r4-hud-fill/);
-});
-test('invalid telemetry never paints stale live speed or false load',()=>{
- const b=boot();b.api.prepare({id:'ferrari_458',redlineRpm:9000});
- b.api.update({inputUsable:true,source:'DEMO',speedKmh:100,rpm:5000,gear:2,load:.8},true);
- b.api.update({inputUsable:false,source:'DEMO',speedKmh:100,rpm:5000,gear:2,load:.8},true);
- assert.equal(b.get('speed').textContent,'—');assert.equal(b.get('rpm').textContent,'—');assert.equal(b.get('gear').textContent,'—');assert.equal(b.get('load').textContent,'—');
- assert.equal(b.get('input-state').textContent,'输入失效 · 已静音');
- b.api.update(null,false);assert.equal(b.get('speed').textContent,'000');
-});
-test('factory display cannot own audio, network, GPS or navigation',()=>{
- assert.doesNotMatch(src,/\b(fetch|XMLHttpRequest|AudioContext|AudioWorklet|watchPosition|pushState|replaceState|setInterval)\s*\(/);
- assert.doesNotMatch(src,/location\s*\.|import\s/);
-});
+import {bootDisplay,factorySource,productionHtml} from './display-fixture.mjs';
+const car={id:'c63_w204_v6',redlineRpm:7200};
+const sample=Object.freeze({inputUsable:true,speedKmh:144,rpm:7200,gear:8,load:1,source:'DEMO'});
 
-test('GPS without an authorization retains unknown readings through appearance changes',async()=>{
- const b=boot();b.get('mode-gps').attrs['aria-pressed']='true';b.api.update(null,false);
- b.listeners.change({target:{id:'display-style',value:'honda'}});
- for(const id of ['speed','rpm','gear','load'])assert.equal(b.get(id).textContent,'—');
- b.document.documentElement.dataset.cluster='digital';b.listeners.click({target:{closest:()=>true}});await Promise.resolve();
- assert.equal(b.get('speed').textContent,'—');assert.equal(b.get('speed-label').textContent,'GPS 实验估算 · 虚拟');
-});
+test('six automatic structures and five independent presets resolve safely',()=>{const b=bootDisplay();assert.deepEqual(['c63_w204_v6','hellcat_v6','ferrari_458','lfa','gtr_r35','supra_jza80'].map(id=>b.factory.resolve(id)),['mercedes','muscle','maranello','precision','technical','heritage']);for(const p of ['mercedes','bmw','audi','vw','honda'])assert.equal(b.factory.resolve('lfa',p),p);assert.equal(b.factory.resolve('__proto__'),'mercedes');});
+test('style preference saves in production namespace and denial is usable',()=>{const b=bootDisplay();b.changeStyle('honda');assert.equal(b.storage.get('vico-web-display-style-v1'),'honda');assert.equal(bootDisplay({style:'honda'}).factory.style(),'honda');assert.equal(bootDisplay({style:'bad'}).factory.style(),'auto');const d=bootDisplay({style:'honda',denied:true});assert.equal(d.factory.style(),'auto');d.changeStyle('audi');assert.equal(d.factory.style(),'audi');});
+test('independent display preset retains selected sound redline',()=>{const b=bootDisplay();for(const p of ['mercedes','bmw','audi','vw','honda']){b.changeStyle(p);b.api.prepare({id:'lfa',redlineRpm:9000});assert.equal(b.document.documentElement.dataset.instrument,p);assert.equal(b.get('redline-rpm').textContent,'9000');}});
+test('one generated SVG owns every required live readout exactly once',()=>{const b=bootDisplay();b.api.prepare(car);const h=b.get('r4-stage').innerHTML;for(const id of ['speed','rpm','gear','load','redline-rpm','rpm-arc','load-bar'])assert.equal((h.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);assert.equal(b.get('r4-svg').getAttribute('viewBox'),'0 0 1200 360');});
+test('physical tick intervals, complete major labels and fractional redline remain exact',()=>{const b=bootDisplay();b.api.prepare(car);const d=b.get('r4-svg').querySelectorAll('[data-dial]'),rpm=d.find(n=>n.dataset.dial==='rpm'),speed=d.find(n=>n.dataset.dial==='speed');assert.equal(rpm.dataset.range,'8000');assert.equal(rpm.querySelectorAll('[data-tick]').length,81);assert.equal(rpm.querySelectorAll('[data-scale]').map(n=>n.dataset.scale).join(','),'0,1000,2000,3000,4000,5000,6000,7000,8000');assert.equal(speed.querySelectorAll('[data-scale]').map(n=>n.dataset.scale).join(','),'0,40,80,120,160,200,240,280,320');assert.equal(rpm.querySelectorAll('[data-redline]')[0].dataset.redStart,'370');});
+test('over-range telemetry saturates only graphics and preserves numeric readings',()=>{const b=bootDisplay();b.api.prepare(car);const s=Object.freeze({...sample,speedKmh:400,rpm:10000});b.api.update(s,true);assert.equal(b.get('speed').textContent,'400');assert.equal(b.get('rpm').textContent,'10,000');assert.equal(b.get('speed-needle').getAttribute('transform'),'rotate(360 600 140)');assert.equal(b.get('rpm-needle').getAttribute('transform'),'rotate(395 982 142)');assert.equal(s.speedKmh,400);});
+test('invalid and nonfinite inputs never retain live values or moving needles',()=>{const b=bootDisplay();b.api.prepare(car);for(const patch of [{inputUsable:false},{rpm:NaN},{speedKmh:Infinity},{load:NaN}]){b.api.update(sample,true);b.api.update({...sample,...patch},true);for(const id of ['speed','rpm','gear','load'])assert.equal(b.get(id).textContent,'—');for(const id of ['rpm-needle','speed-needle']){assert.equal(b.get(id).getAttribute('visibility'),'hidden');assert.doesNotMatch(b.get(id).getAttribute('transform'),/NaN|Infinity/);}assert.equal(b.get('load-bar').getAttribute('width'),'0');assert.equal(b.get('input-state').textContent,'输入失效 · 已静音');}});
+test('unapproved stopped GPS stays unknown through style/layout/mobile redraw',async()=>{const b=bootDisplay();b.get('mode-gps').setAttribute('aria-pressed','true');b.api.update(null,false);b.changeStyle('honda');b.choose('digital');await Promise.resolve();b.resize(390);b.flushFrames();for(const id of ['speed','rpm','gear','load'])assert.equal(b.get(id).textContent,'—');assert.match(b.get('speed-label').textContent,/GPS 实验/);});
+test('non-GPS stop resets readings and clears load',()=>{const b=bootDisplay();b.api.prepare(car);b.api.update(sample,true);b.api.update(null,false);assert.equal(b.get('speed').textContent,'000');assert.equal(b.get('gear').textContent,'N');assert.equal(b.get('rpm').textContent,'0');assert.equal(b.get('load-bar').getAttribute('width'),'0');assert.equal(b.get('input-state').textContent,'等待启动');});
+test('integer and invalid redlines have finite scale headroom and preserved threshold',()=>{const b=bootDisplay();for(const redlineRpm of [9000,NaN]){b.api.prepare({id:'lfa',redlineRpm});assert.equal(b.get('redline-rpm').textContent,'9000');const rpm=b.get('r4-svg').querySelectorAll('[data-dial]')[0];assert.equal(rpm.dataset.range,'10000');assert.equal(rpm.querySelectorAll('[data-redline]')[0].dataset.redStart,'370');assert.doesNotMatch(b.get('r4-stage').innerHTML,/NaN|Infinity/);}});
+test('GPS source remains explicitly experimental while manual is model data',()=>{const b=bootDisplay();b.api.update({...sample,source:'WEB_GPS_ESTIMATED'},true);assert.match(b.get('speed-label').textContent,/GPS 实验/);b.api.update({...sample,source:'MANUAL'},true);assert.match(b.get('speed-label').textContent,/模型速度/);});
+test('display cannot own audio, GPS, network, inputs or navigation',()=>{assert.doesNotMatch(factorySource,/\b(fetch|XMLHttpRequest|AudioContext|AudioWorklet|watchPosition|setInput|pushState|replaceState|setInterval)\s*\(/);assert.doesNotMatch(factorySource,/location\s*[.=]|^\s*import\s/m);});
+test('production HTML excludes preview runtime and keeps original app script',()=>{assert.doesNotMatch(productionHtml,/preview-adapter|preview-catalog|VicoPreview|data-preview-only|预览动画|排版示例|预览不输出声音|设计预览|UI PREVIEW/);assert.match(productionHtml,/<script type="module" src="\.\/src\/app\.mjs"><\/script>/);for(const id of ['start','stop','mode-gps','target','pedal','diagnostics','export'])assert.equal((productionHtml.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);});

@@ -1,134 +1,101 @@
-/* R4 factory-inspired display, independent of the selected sound bank and AudioSession.
- * Original SVG geometry: no OEM logos, photos, sound synthesis or vehicle telemetry added.
- */
+/* VICO ATELIER — display only. Original vectors, no audio/GPS/network/control ownership. */
 (function () {
-  'use strict';
-  const KEY = 'vico-web-display-style-v1';
-  const OPTIONS = Object.freeze(['auto','mercedes','bmw','audi','vw','honda']);
-  const AUTO = Object.freeze({c63_w204_v6:'mercedes',hellcat_v6:'muscle',ferrari_458:'maranello',lfa:'precision',gtr_r35:'technical',supra_jza80:'heritage'});
-  const LABELS = Object.freeze({mercedes:'经典三筒 · W204 灵感',bmw:'M 风格 · 机械双环',audi:'虚拟座舱 · 双弧',vw:'GTI 风格 · 中央转速',honda:'S2000 风格 · 横向转速',muscle:'美式双环 · 肌肉风格',maranello:'中央转速 · 竞速风格',precision:'精密单环 · 高转速',technical:'偏置双仪表 · 性能风格',heritage:'复古三联 · 机械风格'});
-  const MAX_RPM = Object.freeze({mercedes:8000,bmw:9000,audi:9000,vw:8000,honda:10000,muscle:8000,maranello:10000,precision:10000,technical:8000,heritage:8000});
-  const SPEED_RANGE = Object.freeze({mercedes:320,bmw:320,audi:300,vw:280,honda:260,muscle:320,maranello:320,precision:320,technical:340,heritage:280});
-  let preference='auto', entry={id:'c63_w204_v6',redlineRpm:7200}, activeStyle='mercedes', rpmMax=8000, speedMax=320, lastStats=null, lastActive=false;
-  try { const saved=localStorage.getItem(KEY); if(OPTIONS.includes(saved)) preference=saved; } catch (_) {}
-  const $=id=>document.getElementById(id);
-  const clamp=(x,lo,hi)=>Number.isFinite(x)?Math.max(lo,Math.min(hi,x)):lo;
-  const point=(x,y,r,degree)=>[+(x+Math.cos(degree*Math.PI/180)*r).toFixed(3),+(y+Math.sin(degree*Math.PI/180)*r).toFixed(3)];
-  const path=(cx,cy,r,a=135,b=405)=>{const p=point(cx,cy,r,a),q=point(cx,cy,r,b);return `M${p[0]} ${p[1]} A${r} ${r} 0 ${b-a>180?1:0} 1 ${q[0]} ${q[1]}`;};
-  const text=(x,y,v,size=16,cls='',anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}" font-size="${size}">${v}</text>`;
-  const field=(id,x,y,size,subtitle,init)=>`<g class="r4-field">${text(x,y,init,size,'r4-number')}${text(x,y+Math.max(30,size*.24+24),subtitle,17,'r4-micro')}</g>`.replace('class="r4-number"',`id="${id}" class="r4-number"`);
-  const needle=(id,cx,cy,r)=>`<line id="${id}" class="r4-needle" x1="${cx}" y1="${cy}" x2="${point(cx,cy,r,135)[0]}" y2="${point(cx,cy,r,135)[1]}"/><circle class="r4-hub" cx="${cx}" cy="${cy}" r="7"/>`;
-  function dial(kind,cx,cy,r,range,redline=0,flags={}){
-    const isRpm=kind==='rpm',steps=Math.round(range/(isRpm?500:20));
-    let lines='',labels='';
-    for(let i=0;i<=steps;i++){
-      const val=i*(isRpm?500:20),angle=135+270*val/range;
-      const major=isRpm?val%1000===0:val%40===0;
-      const p=point(cx,cy,r-(major?15:9),angle),q=point(cx,cy,r-3,angle);
-      lines+=`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" class="${major?'r4-tick-major':'r4-tick-minor'}"/>`;
-      if(major){const n=point(cx,cy,r-((isRpm&&['precision','vw'].includes(activeStyle))?18:34),angle);labels+=text(n[0],n[1]+5,isRpm?val/1000:val,15,'r4-tick-label');}
-    }
-    const begin=135+270*clamp(redline/range,0,1),red=isRpm&&redline<range?`<path d="${path(cx,cy,r-1,begin,405)}" class="r4-red"/>`:'';
-    return `<g class="r4-dial r4-${kind}"><circle cx="${cx}" cy="${cy}" r="${r+9}" class="r4-bezel"/><circle cx="${cx}" cy="${cy}" r="${r-2}" class="r4-face"/><path d="${path(cx,cy,r-1)}" class="r4-track"/>${red}${lines}${labels}${needle(kind==='rpm'?'rpm-needle':'speed-needle',cx,cy,r-24)}</g>`;
+ 'use strict';
+ const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+ const OPTIONS=Object.freeze(['auto','mercedes','bmw','audi','vw','honda']);
+ const AUTO=Object.freeze({c63_w204_v6:'mercedes',hellcat_v6:'muscle',ferrari_458:'maranello',lfa:'precision',gtr_r35:'technical',supra_jza80:'heritage'});
+ const LABELS=Object.freeze({mercedes:'CLASSIC 204 · 三筒仪表',muscle:'AMERICAN V8 · 双筒仪表',maranello:'ITALIA · 中央转速',precision:'V10 PRECISION · 单环仪表',technical:'R PERFORMANCE · 偏置仪表',heritage:'HERITAGE 80 · 复古三联',bmw:'M CLASSIC · 双圆仪表',audi:'VIRTUAL · 数字双弧',vw:'GTI SPORT · 中央转速',honda:'S ROADSTER · 数字转速条'});
+ const SPEED_MAX=Object.freeze({mercedes:320,muscle:320,maranello:320,precision:320,technical:340,heritage:280,bmw:320,audi:300,vw:280,honda:260});
+ const KEY='vico-web-display-style-v1';
+ let preference='auto',entry={id:'c63_w204_v6',redlineRpm:7200},activeStyle='mercedes',rpmMax=8000,speedMax=320,lastStats=null,lastActive=false,mobile=innerWidth<=700,descriptors=[],resizePending=false;
+ try{const p=localStorage.getItem(KEY);if(OPTIONS.includes(p))preference=p;}catch(_){}
+ const clamp=(n,a,b)=>Number.isFinite(n)?Math.max(a,Math.min(b,n)):a;
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const pt=(cx,cy,r,a)=>[cx+Math.cos(a*Math.PI/180)*r,cy+Math.sin(a*Math.PI/180)*r];
+ const fmt=n=>Number(n.toFixed(3));
+ const arc=(cx,cy,r,a,b)=>{const p=pt(cx,cy,r,a),q=pt(cx,cy,r,b);return `M${fmt(p[0])} ${fmt(p[1])} A${r} ${r} 0 ${b-a>180?1:0} 1 ${fmt(q[0])} ${fmt(q[1])}`;};
+ const txt=(x,y,value,size=17,cls='r5-caption',anchor='middle',extra='')=>`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" class="${cls}" ${extra}>${esc(value)}</text>`;
+ const value=(id,x,y,size,unit,unitY,extra='')=>`<g class="r5-field" data-field="${id}">${txt(x,y,id==='gear'?'N':id==='speed'?'000':'0',size,'r5-value','middle',`id="${id}" ${extra}`)}${unit?txt(x,unitY,unit,17,'r5-unit'):''}</g>`;
+ function section(x,y,w,h){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(30,w/8)}" class="r5-panel"/>`;}
+ function dial(kind,cx,cy,r,{start=145,sweep=250,yellow=false,perimeter=false,half=false}={}){
+  const max=kind==='rpm'?rpmMax:speedMax,minor=kind==='rpm'?100:10,major=kind==='rpm'?1000:40;
+  const end=start+sweep,group=`r5-dial ${yellow?'r5-yellow':''}`;
+  const shape=half?`<path d="M${cx-r-12} ${cy+8} V${cy} A${r+12} ${r+12} 0 0 1 ${cx+r+12} ${cy} V${cy+8}" class="r5-face"/>`:`<circle cx="${cx}" cy="${cy}" r="${r+10}" class="r5-face"/><circle cx="${cx}" cy="${cy}" r="${r+9}" class="r5-bezel"/>`;
+  let out=`<g class="${group}" data-dial="${kind}" data-range="${max}" data-cx="${cx}" data-cy="${cy}">${shape}<path d="${arc(cx,cy,r,start,end)}" class="r5-track"/>`;
+  if(kind==='rpm'&&entry.redlineRpm<max)out+=`<path data-redline="${entry.redlineRpm}" data-red-start="${start+sweep*entry.redlineRpm/max}" d="${arc(cx,cy,r-1,start+sweep*entry.redlineRpm/max,end)}" class="r5-red"/>`;
+  for(let n=0;n<=max;n+=minor){
+   const a=start+sweep*n/max,big=n%major===0,mid=!big&&kind==='rpm'&&n%500===0;
+   const p=pt(cx,cy,r-(big?15:mid?10:6),a),q=pt(cx,cy,r-2,a);
+   out+=`<line x1="${fmt(p[0])}" y1="${fmt(p[1])}" x2="${fmt(q[0])}" y2="${fmt(q[1])}" class="${big?'r5-major':mid?'r5-medium':'r5-minor'}" data-tick="${n}"/>`;
+   if(big){const z=pt(cx,cy,r-30,a);out+=txt(fmt(z[0]),fmt(z[1]+6),kind==='rpm'?n/1000:n,17,'r5-scale','middle',`data-scale="${n}"`);}
   }
-  const panel=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" class="r4-tile"/>`;
-  function gauges(style){
-    switch(style){
-      case 'mercedes':return `${dial('speed',568,173,142,speedMax)}${dial('rpm',962,174,119,rpmMax,entry.redlineRpm)}${panel(58,64,218,222)}`;
-      case 'muscle':return `${dial('speed',310,173,140,speedMax)}${dial('rpm',902,173,140,rpmMax,entry.redlineRpm)}${panel(486,60,230,266)}`;
-      case 'maranello':return `${panel(55,75,230,202)}${dial('rpm',612,173,147,rpmMax,entry.redlineRpm)}${panel(927,75,218,202)}`;
-      case 'precision':return `${dial('rpm',603,172,148,rpmMax,entry.redlineRpm)}${panel(62,80,218,190)}${panel(922,80,218,190)}`;
-      case 'technical':return `${dial('speed',243,175,116,speedMax)}${dial('rpm',708,174,146,rpmMax,entry.redlineRpm)}${panel(964,70,192,216)}`;
-      case 'heritage':return `${dial('speed',284,174,122,speedMax)}${dial('rpm',681,173,147,rpmMax,entry.redlineRpm)}${panel(961,60,227,266)}`;
-      case 'bmw':return `${dial('speed',317,172,139,speedMax)}${dial('rpm',874,172,139,rpmMax,entry.redlineRpm)}${panel(486,60,230,266)}`;
-      case 'audi':return `<path d="${path(294,174,130)}" class="r4-track r4-digital-arc"/><path d="${path(911,174,130)}" class="r4-track r4-digital-arc"/>${dial('rpm',294,174,104,rpmMax,entry.redlineRpm)}${dial('speed',911,174,104,speedMax)}${panel(465,60,275,265)}`;
-      case 'vw':return `${panel(54,68,220,218)}${dial('rpm',597,175,144,rpmMax,entry.redlineRpm)}${panel(930,68,216,218)}`;
-      case 'honda':{
-        let bars='';const n=Math.round(rpmMax/100),pitch=1000/n;for(let i=0;i<n;i++){const x=104+i*pitch;bars+=`<rect data-rpm-step="${i+1}" x="${x.toFixed(2)}" y="${101-(i%10===0?5:0)}" width="${(pitch*.66).toFixed(2)}" height="${i%10===0?49:43}" rx="1" class="r4-honda-step${(i+1)*100>entry.redlineRpm?' red':''}"/>`;}
-        let numbers='';for(let k=0;k<=10;k++)numbers+=text(103+k*99.9,88,String(k),15,'r4-tick-label');
-        return `${panel(72,70,1056,208)}${bars}${numbers}${text(600,63,'ENGINE SPEED · ×1000 RPM',14,'r4-micro')}`;
-      }
-    }
-    return '';
+  const id=kind==='rpm'?'rpm-needle':'speed-needle';
+  out+=`<g id="${id}" class="r5-hand" data-zero="${start}" data-sweep="${sweep}" data-max="${max}">`;
+  if(perimeter){out+=`<line class="r5-needle" x1="${cx+r-20}" y1="${cy}" x2="${cx+r-2}" y2="${cy}"/>`;}
+  else{out+=`<line class="r5-tail" x1="${cx-13}" y1="${cy}" x2="${cx}" y2="${cy}"/><line class="r5-needle" x1="${cx}" y1="${cy}" x2="${cx+r-28}" y2="${cy}"/>`;}
+  out+='</g>';
+  if(!perimeter)out+=`<circle cx="${cx}" cy="${cy}" r="6" class="r5-hub" data-hub="true"/>`;
+  descriptors.push({id,kind,cx,cy,start,sweep,max});return out+'</g>';
+ }
+ function bar(x,y,width,height,curved=false){
+  let out='<g class="r5-rpm-bar" data-range="'+rpmMax+'">';const count=rpmMax/100,dx=width/count;
+  for(let i=0;i<count;i++){
+   const t=i/count,yy=y-(curved?30*Math.sin(t*Math.PI):0);
+   out+=`<rect x="${fmt(x+t*width)}" y="${fmt(yy)}" width="${fmt(dx*.68)}" height="${height}" rx="1" data-rpm-step="${(i+1)*100}" class="r5-segment ${(i+1)*100>entry.redlineRpm?'red':''}"/>`;
   }
-  function indicators(style){
-    const secondaryRpm=(x,y,s=46)=>field('rpm',x,y,s,'RPM','0');
-    const speed=(x,y,s=105)=>field('speed',x,y,s,'km/h','000');
-    const gear=(x,y,s=74)=>field('gear',x,y,s,'挡位','N');
-    switch(style){
-      case 'mercedes':return `${speed(167,215,112)}${gear(568,275,66)}${secondaryRpm(962,285,44)}`;
-      case 'muscle':case 'bmw':return `${speed(601,150,108)}${gear(601,278,66)}${secondaryRpm(style==='muscle'?902:874,285,44)}`;
-      case 'maranello':return `${speed(172,227,104)}${secondaryRpm(612,285,44)}${gear(1038,219,78)}`;
-      case 'precision':return `${gear(168,215,66)}${speed(603,205,118)}${secondaryRpm(1030,217,55)}`;
-      case 'technical':return `${speed(1060,160,101)}${secondaryRpm(708,285,44)}${gear(1060,290,66)}`;
-      case 'heritage':return `${speed(1071,160,101)}${secondaryRpm(681,285,44)}${gear(1071,290,66)}`;
-      case 'audi':return `${secondaryRpm(295,273,36)}${speed(600,150,101)}${gear(602,290,70)}`;
-      case 'vw':return `${gear(167,218,74)}${speed(597,205,113)}${secondaryRpm(1038,222,63)}`;
-      case 'honda':return `${speed(574,275,128)}${gear(1010,270,68)}${secondaryRpm(182,267,47)}`;
-    }
-    return '';
+  for(let n=0;n<=rpmMax;n+=1000){const t=n/rpmMax;out+=txt(fmt(x+t*width),fmt(y-12-(curved?30*Math.sin(t*Math.PI):0)),n/1000,mobile?12:18,'r5-scale','middle',`data-scale="${n}"`);}
+  return out+'</g>';
+ }
+ function load(x,y,width=180){return `<g class="r5-load"><rect x="${x}" y="${y}" width="${width}" height="4" rx="2" class="r5-load-base"/><rect id="load-bar" x="${x}" y="${y}" width="0" height="4" rx="2" class="r5-load-fill" data-width="${width}"/>${txt(x,y+28,'虚拟负载',mobile?12:16,'r5-meta','start')}${txt(x+width-17,y+28,'0',mobile?13:17,'r5-meta','end','id="load"')}${txt(x+width,y+28,'%',mobile?12:16,'r5-meta','end')}</g>`;}
+ function redline(x,y){return `<g class="r5-redline">${txt(x,y,'REDLINE',mobile?10:14,'r5-meta','end')}${txt(x+12,y,entry.redlineRpm,mobile?12:17,'r5-meta','start','id="redline-rpm"')}${txt(x+(mobile?58:79),y,'rpm',mobile?10:14,'r5-meta','start')}</g>`;}
+ function footerLabel(x,y,s){return txt(x,y,s,16,'r5-caption');}
+ function original(style){
+  switch(style){
+   case 'mercedes':return `${section(70,51,250,272)}${section(405,10,390,340)}${dial('speed',600,140,118,{start:180,sweep:180,half:true})}${dial('rpm',982,142,113)}${value('speed',600,280,138,'km/h',340)}${value('gear',195,204,100,'虚拟挡位',253)}${value('rpm',982,297,46,'RPM',335)}${load(105,276,180)}${redline(1020,357)}`;
+   case 'muscle':case 'bmw':return `${dial('speed',266,147,127,{start:145,sweep:250})}${dial('rpm',934,147,127,{start:145,sweep:250})}<path d="M470 38 H730 V324 H470 Z" class="r5-line"/>${value('speed',600,157,136,'km/h',209)}${value('gear',600,301,90,'虚拟挡位',347)}${value('rpm',934,303,43,'RPM',340)}${load(157,292,220)}${footerLabel(266,45,style==='bmw'?'M / PRECISION':'V8 / PERFORMANCE')}${redline(1010,353)}`;
+   case 'maranello':return `${dial('rpm',600,151,132,{yellow:true})}${section(61,66,288,241)}${section(885,66,254,241)}${value('speed',205,228,144,'km/h',285)}<g class="r5-yellow-readout">${value('rpm',600,247,38,'RPM',273)}</g>${value('gear',1012,214,106,'虚拟挡位',266)}${load(89,318,232)}${redline(985,348)}`;
+   case 'precision':return `${dial('rpm',600,155,135,{perimeter:true})}${value('speed',209,231,148,'km/h',290)}${value('gear',600,200,106,'虚拟挡位',254)}${value('rpm',1000,205,61,'RPM',251)}${load(906,282,202)}${redline(992,349)}${footerLabel(205,65,'V10 / DIGITAL')}`;
+   case 'technical':return `${dial('speed',185,143,93)}${dial('rpm',530,151,135)}${section(719,37,424,286)}${value('speed',950,185,138,'km/h',242)}${value('gear',766,276,90,'虚拟挡位',320)}${value('rpm',530,303,44,'RPM',340)}${load(876,281,216)}${redline(180,340)}${footerLabel(940,60,'R / PERFORMANCE')}`;
+   case 'heritage':return `${dial('speed',235,125,100,{start:180,sweep:180,half:true})}${dial('rpm',639,151,134)}${section(920,47,215,274)}${value('speed',235,278,138,'km/h',337)}${value('rpm',639,303,44,'RPM',340)}${value('gear',1028,198,102,'虚拟挡位',249)}${load(938,275,178)}${redline(1010,352)}`;
+   case 'audi':return `<path d="M62 312 V133 L157 30 H1043 L1138 133 V312" class="r5-bezel"/>${dial('rpm',265,142,99,{start:180,sweep:180,half:true})}${dial('speed',944,142,99,{start:180,sweep:180,half:true})}${value('speed',600,245,154,'km/h',304)}${value('rpm',265,262,56,'RPM',310)}${value('gear',944,269,96,'虚拟挡位',318)}${load(460,324,280)}${redline(255,350)}`;
+   case 'vw':return `${dial('rpm',600,151,132,{perimeter:true})}${value('speed',212,234,145,'km/h',292)}${value('gear',600,202,100,'虚拟挡位',254)}${value('rpm',990,206,60,'RPM',252)}${load(899,282,204)}${redline(990,349)}<path d="M468 15 H732" stroke="var(--red)" stroke-width="4"/>${footerLabel(210,60,'GTI / SPORT VIEW')}`;
+   case 'honda':return `${bar(110,99,980,30,true)}${value('speed',584,275,147,'km/h',338)}${value('rpm',213,256,54,'RPM',302)}${value('gear',1016,260,106,'虚拟挡位',311)}${load(72,320,232)}${redline(1018,351)}${footerLabel(595,23,'S / ROADSTER · ×1000 RPM')}`;
   }
-  function digital(){return `${panel(53,63,1094,214)}<path class="r4-hud-track" d="M110 80 H1090"/><path id="r4-hud-fill" class="r4-hud-fill" d="M110 80 H110"/>${field('speed',590,230,154,'速度 / km/h','000')}${field('gear',1005,235,87,'GEAR / 虚拟挡位','N')}${field('rpm',185,230,59,'RPM / 模型转速','0')}`;}
-  function compose(){
-    const digitalMode=document.documentElement.dataset.cluster==='digital',style=activeStyle;
-    return `<svg id="r4-svg" class="r4-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" preserveAspectRatio="xMidYMid meet" role="img" aria-label="模型驱动的虚拟仪表，不是原厂仪表或真实车辆数据">
-      <rect x="2" y="2" width="1196" height="336" rx="24" class="r4-chassis"/><path id="rpm-arc" visibility="hidden" d=""/>
-      ${digitalMode?digital():gauges(style)+indicators(style)}
-      <g class="r4-footer">${text(55,330,'REDLINE / 虚拟红线',17,'r4-micro','start')}<text id="redline-rpm" x="233" y="330" class="r4-footer-value" text-anchor="start">${entry.redlineRpm}</text>${text(303,330,'rpm',17,'r4-micro','start')}
-      </g>
-      <rect id="load-bar" x="350" y="305" width="0" height="5" rx="2" class="r4-load-fill"/>
-      <text x="350" y="330" class="r4-micro" text-anchor="start">负载</text>
-      <text id="load" x="442" y="330" class="r4-micro" font-size="19">0</text>${text(487,330,'%',17,'r4-micro')}
-    </svg>`;
-  }
-  function resolve(id,desired=preference){return desired==='auto'?(Object.hasOwn(AUTO,id)?AUTO[id]:'mercedes'):(OPTIONS.includes(desired)?desired:'mercedes');}
-  function render(){
-    activeStyle=resolve(entry.id); rpmMax=Math.max(MAX_RPM[activeStyle]||9000,(Math.floor(entry.redlineRpm/1000)+1)*1000); speedMax=SPEED_RANGE[activeStyle]||320;
-    const stage=$('r4-stage'); if(!stage)return;
-    stage.innerHTML=compose();
-    document.documentElement.dataset.instrument=activeStyle;
-    document.documentElement.dataset.factoryStyle=preference;
-    if($('instrument-style'))$('instrument-style').textContent=LABELS[activeStyle];
-    if($('display-style'))$('display-style').value=preference;
-    update(lastStats,lastActive);
-  }
-  function prepare(next){
-    if(next && typeof next.id==='string')entry={id:next.id,redlineRpm:Number.isFinite(next.redlineRpm)&&next.redlineRpm>0?next.redlineRpm:9000};
-    const s=resolve(entry.id);rpmMax=Math.max(MAX_RPM[s]||9000,(Math.floor(entry.redlineRpm/1000)+1)*1000);speedMax=SPEED_RANGE[s]||320;
-    lastStats=null;lastActive=false;render();
-  }
-  function rotateNeedle(id,cx,cy,r,val,max){const n=$(id);if(!n)return;const p=point(cx,cy,r-24,135+270*clamp(val/max,0,1));const perimeter=id==='rpm-needle'&&['precision','vw'].includes(activeStyle);const start=perimeter?point(cx,cy,r-12,135+270*clamp(val/max,0,1)):[cx,cy];n.setAttribute('x1',String(start[0]));n.setAttribute('y1',String(start[1]));n.setAttribute('x2',String(p[0]));n.setAttribute('y2',String(p[1]));}
-  const GAUGES=Object.freeze({mercedes:{speed:[568,173,142],rpm:[962,174,119]},muscle:{speed:[310,173,140],rpm:[902,173,140]},maranello:{rpm:[612,173,147]},precision:{rpm:[603,172,148]},technical:{speed:[243,175,116],rpm:[708,174,146]},heritage:{speed:[284,174,122],rpm:[681,173,147]},bmw:{speed:[317,172,139],rpm:[874,172,139]},audi:{rpm:[294,174,104],speed:[911,174,104]},vw:{rpm:[597,175,144]}});
-  function update(stats,active){
-    lastStats=stats||null;lastActive=Boolean(active);
-    const valid=active && stats && stats.inputUsable && Number.isFinite(stats.speedKmh)&&Number.isFinite(stats.rpm)&&Number.isFinite(stats.load);
-    const s=valid?stats:null;
-    const gpsMode=$('mode-gps')?.getAttribute('aria-pressed')==='true';
-    const unknown=active||gpsMode;
-    const put=(id,value)=>{const node=$(id);if(node)node.textContent=String(value);};
-    put('speed',s?String(Math.round(s.speedKmh)).padStart(3,'0'):(unknown?'—':'000'));
-    put('rpm',s?Math.round(s.rpm).toLocaleString('en-US'):(unknown?'—':'0'));
-    put('gear',s?s.gear:(unknown?'—':'N'));
-    put('load',s?Math.round(s.load*100):(unknown?'—':'0'));
-    put('redline-rpm',entry.redlineRpm);
-    const gps=gpsMode||s?.source==='WEB_GPS_ESTIMATED';put('speed-label',gps?'GPS 实验估算 · 虚拟': '虚拟速度 · 非实际车速');
-    put('input-state',!active?'等待启动':s?'模型输入有效':'输入失效 · 已静音');
-    const status=$('input-state');if(status)status.classList.toggle('invalid',Boolean(active&&!valid));
-    for(const id of ['rpm-needle','speed-needle']){const n=$(id);if(n)n.setAttribute('visibility',unknown&&!valid?'hidden':'visible');}
-    const bar=$('load-bar');if(bar)bar.setAttribute('width',String(s?clamp(s.load,0,1)*150:0));
-    if(document.documentElement.dataset.cluster==='digital'){
-      const hud=$('r4-hud-fill');if(hud)hud.setAttribute('d',`M110 80 H${110+980*clamp(s?s.rpm/rpmMax:0,0,1)}`);
-    }else{
-      const map=GAUGES[activeStyle]||{};
-      if(map.rpm)rotateNeedle('rpm-needle',...map.rpm,s?s.rpm:0,rpmMax);
-      if(map.speed)rotateNeedle('speed-needle',...map.speed,s?s.speedKmh:0,speedMax);
-      const steps=$('r4-svg')?.querySelectorAll('[data-rpm-step]');if(steps)steps.forEach((node,i)=>node.classList.toggle('lit',Boolean(s)&&i<Math.floor(clamp(s.rpm/rpmMax,0,1)*steps.length)));
-    }
-  }
-  function switchStyle(next){if(!OPTIONS.includes(next))return false;preference=next;try{localStorage.setItem(KEY,next);}catch(_){}render();return true;}
-  document.addEventListener('change',e=>{if(e.target?.id==='display-style')switchStyle(e.target.value);});
-  document.addEventListener('click',e=>{if(e.target?.closest?.('[data-cluster-choice]')){Promise.resolve().then(render);}});
-  window.VicoFactory=Object.freeze({prepare,update,resolve,options:OPTIONS,style:()=>preference});
-  // Populate the one set of live-readout IDs before app.mjs starts and calls resetDigits().
-  prepare(entry);
+  return '';
+ }
+ function digital(){return `${bar(80,49,1040,17)}${value('speed',600,246,174,'km/h',316)}${value('gear',1020,228,109,'虚拟挡位',285)}${value('rpm',200,226,66,'RPM',277)}${load(72,317,235)}${redline(990,348)}<path d="M386 105 V297 M812 105 V297" class="r5-line"/>`;}
+ function compact(){return `${bar(29,48,342,14)}${value('speed',200,193,111,'km/h',243)}${value('gear',91,310,66,'虚拟挡位',348)}${value('rpm',285,303,40,'RPM',339)}${load(23,365,150)}${redline(262,389)}`;}
+ function resolve(id,desired=preference){return desired==='auto'?(Object.hasOwn(AUTO,id)?AUTO[id]:'mercedes'):(OPTIONS.includes(desired)?desired:'mercedes');}
+ function render(){
+  activeStyle=resolve(entry.id);rpmMax=Math.max(activeStyle==='honda'?10000:0,Math.floor(entry.redlineRpm/1000)*1000+1000);speedMax=SPEED_MAX[activeStyle]||320;descriptors=[];
+  const stage=$('r4-stage');if(!stage)return;
+  const vw=mobile?400:1200,vh=mobile?400:360;
+  stage.style.aspectRatio=mobile?'1 / 1':'';
+  stage.innerHTML=`<svg id="r4-svg" class="r4-svg" viewBox="0 0 ${vw} ${vh}" xmlns="${NS}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="原创虚拟汽车仪表；数值来自当前模型，不是真实车辆仪表"><defs><linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--metal)" stop-opacity=".35"/><stop offset="1" stop-color="var(--metal)" stop-opacity=".03"/></linearGradient></defs><rect x="1" y="1" width="${vw-2}" height="${vh-2}" rx="${mobile?12:28}" class="r5-shell"/><path id="rpm-arc" visibility="hidden" d=""/>${mobile?compact():document.documentElement.dataset.cluster==='digital'?digital():original(activeStyle)}</svg>`;
+  document.documentElement.dataset.instrument=activeStyle;document.documentElement.dataset.factoryStyle=preference;
+  if($('display-style'))$('display-style').value=preference;
+  if($('instrument-style'))$('instrument-style').textContent=(mobile?'COMPACT · ': '')+LABELS[activeStyle];
+  update(lastStats,lastActive);
+ }
+ function prepare(next){if(next&&typeof next.id==='string')entry={id:next.id,redlineRpm:Number.isFinite(next.redlineRpm)&&next.redlineRpm>0?next.redlineRpm:9000};lastStats=null;lastActive=false;render();}
+ function update(stats,active){
+  lastStats=stats||null;lastActive=Boolean(active);
+  const valid=Boolean(active&&stats&&stats.inputUsable&&Number.isFinite(stats.speedKmh)&&Number.isFinite(stats.rpm)&&Number.isFinite(stats.load));
+  const s=valid?stats:null,gps=$('mode-gps')?.getAttribute('aria-pressed')==='true'||stats?.source==='WEB_GPS_ESTIMATED';
+  const unknown=Boolean(active)||gps,put=(id,v)=>{const e=$(id);if(e)e.textContent=String(v);};
+  put('speed',s?String(Math.round(Math.max(0,s.speedKmh))).padStart(3,'0'):(unknown?'—':'000'));
+  put('rpm',s?Math.round(Math.max(0,s.rpm)).toLocaleString('en-US'):(unknown?'—':'0'));
+  put('gear',s&&(s.gear==='N'||Number.isFinite(s.gear))?s.gear:(unknown?'—':'N'));put('load',s?Math.round(clamp(s.load,0,1)*100):(unknown?'—':'0'));put('redline-rpm',entry.redlineRpm);
+  put('speed-label',gps?'GPS 实验 · 非真实车辆仪表':'模型速度 · 非真实车辆仪表');put('input-state',active?(valid?'输入有效':'输入失效 · 已静音'):'等待启动');
+  $('input-state')?.classList.toggle('invalid',Boolean(active&&!valid));
+  for(const d of descriptors){const e=$(d.id);if(!e)continue;const v=s?(d.kind==='rpm'?s.rpm:s.speedKmh):0;e.setAttribute('transform',`rotate(${d.start+d.sweep*clamp(v/d.max,0,1)} ${d.cx} ${d.cy})`);e.setAttribute('visibility',unknown&&!valid?'hidden':'visible');}
+  const lb=$('load-bar');if(lb)lb.setAttribute('width',String(s?Number(lb.dataset.width)*clamp(s.load,0,1):0));
+  $('r4-svg')?.querySelectorAll('[data-rpm-step]').forEach(e=>e.classList.toggle('lit',Boolean(s)&&Number(e.dataset.rpmStep)<=s.rpm));
+ }
+ function switchStyle(v){if(!OPTIONS.includes(v))return false;preference=v;try{localStorage.setItem(KEY,v);}catch(_){}render();return true;}
+ document.addEventListener('change',e=>{if(e.target?.id==='display-style')switchStyle(e.target.value);});
+ document.addEventListener('click',e=>{if(e.target?.closest?.('[data-cluster-choice]'))Promise.resolve().then(render);});
+ window.addEventListener('resize',()=>{if(resizePending)return;resizePending=true;requestAnimationFrame(()=>{resizePending=false;const n=innerWidth<=700;if(n!==mobile){mobile=n;render();}});});
+ window.VicoFactory=Object.freeze({prepare,update,resolve,options:OPTIONS,style:()=>preference});
+ prepare(entry);
 })();

@@ -108,3 +108,7 @@ Kotlin参考、浏览器smoke与数字导出见脚本 `--help` 和本地 prompt�
 - Caddy静态站点与HTTPS: https://caddyserver.com/docs/quick-starts/static-files
 
 本文件定义执行方向；实际运行结果写入 `verification/`，不得把计划中的验收项写成已通过。
+
+## Instrument Atelier 显示接回（2026-10-20）
+
+本地接回的正式显示层、冻结范围和真实浏览器检查见 [ATELIER_RECEPTION_20261020.md](docs/ATELIER_RECEPTION_20261020.md)。单文件设计预览不进入正式运行链路；播放仍由原AudioSession/AudioWorklet驱动。

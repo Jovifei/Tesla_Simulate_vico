@@ -1,54 +1,34 @@
 <!doctype html>
-<html lang="zh-CN" data-appearance="cyber" data-cluster="touring">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#080e18">
-  <meta name="description" content="Vico 六车型声音驾驶台。自己的声库，自己的引擎，浏览器内运行。">
-  <title>VICO · 声音驾驶台</title>
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <script src="./src/appearance.js"></script>
-  <script src="./src/cockpit.js" defer></script>
-  <script src="./src/factory-display.js" defer></script>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-<header class="topbar">
-  <a class="brand" href="#/garage" aria-label="返回 Vico 车库"><span class="brand-mark">V</span>VICO<span class="brand-caption">SOUND / MOTION</span></a>
-  <span class="top-caption">独立声音工程 <span class="status-dot"></span></span>
-  <div class="top-tools">
-    <div class="appearance-switch" role="group" aria-label="界面风格"><button type="button" data-appearance-choice="cyber" aria-pressed="true">赛博</button><button type="button" data-appearance-choice="minimal" aria-pressed="false">简约</button></div>
-    <button id="fullscreen" type="button" hidden aria-label="切换全屏">全屏</button>
-  </div>
+<html lang="zh-CN" data-appearance="cyber" data-cluster="touring"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0e11"><title>VICO · Instrument Atelier</title><link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><script src="./src/appearance.js"></script><script src="./src/cockpit.js" defer></script><script src="./src/factory-display.js" defer></script></head><body><header class="topbar">
+<a aria-label="返回 VICO 车库" class="brand" href="#/garage"><span class="brand-mark">V</span>VICO<small>INSTRUMENT ATELIER</small></a>
+<span class="preview-tag"><i></i><span>虚拟声音驾驶台 · 停车调试</span></span>
+<div class="top-tools"><div aria-label="明暗主题" class="appearance-switch" role="group"><button aria-pressed="true" class="theme-button" data-appearance-choice="cyber" type="button"><span class="swatch">◐</span>深色</button><button aria-pressed="false" class="theme-button" data-appearance-choice="minimal" type="button"><span class="swatch">◑</span>浅色</button></div><button aria-label="切换全屏" hidden="" id="fullscreen" type="button">⛶ 全屏</button></div>
 </header>
 <main>
-  <section id="garage" class="garage">
-    <div class="garage-intro"><div><div class="eyebrow">SIX ENGINES. YOUR CHOICE.</div><h1>给安静，<em>一个性格。</em></h1><p>选择车型，进入驾驶台。<br class="mobile-break"> 先用演示试听，再主动开启实验 GPS。</p></div><span class="garage-count">06 <small>声音档案</small></span></div>
-    <div class="garage-guide"><span>01 选择车型</span><span>02 选择输入</span><span>03 点击开始</span><span class="garage-safety">仅停车或乘客操作</span></div>
-    <p id="garage-error" class="error" role="status"></p>
-    <div id="vehicles" class="vehicle-grid" aria-label="选择车型"><p>正在读取六车型清单…</p></div>
-    <div class="garage-footer"><span><i class="status-dot"></i>原有六车声库 · 本地合成 · 不自动播放</span><span>非原厂仪表 / 非声音质量认证</span></div>
-  </section>
-  <section id="drive" class="drive" hidden>
-    <div class="drive-heading"><button id="back-garage" type="button" class="back">← 换车</button><div class="vehicle-heading"><span class="eyebrow">CURRENT SOUND</span><h1 id="vehicle-name">等待选择车型</h1></div><span id="play-status" class="status" role="status">尚未启动</span><button id="settings-toggle" aria-expanded="false" aria-controls="settings">设置 / 诊断</button></div>
-    <div class="toolbar"><div class="mode-tabs" role="group" aria-label="输入模式"><button id="mode-demo" data-mode="demo" aria-pressed="true">演示</button><button id="mode-manual" data-mode="manual" aria-pressed="false">手动</button><button id="mode-gps" data-mode="gps" aria-pressed="false">GPS 实验</button></div><span id="mode-tag" class="chip">DEMO · 非真实车辆数据</span><div class="r4-style-control"><label for="display-style">仪表风格</label><select id="display-style" aria-label="独立于车型和声浪的仪表风格"><option value="auto">跟随六车型（自动）</option><option value="mercedes">Mercedes C-Class · 三筒</option><option value="bmw">BMW M · 双环</option><option value="audi">Audi · 虚拟座舱</option><option value="vw">VW GTI · 中央转速</option><option value="honda">Honda S2000 · 数字条</option></select></div><div class="cluster-switch" role="group" aria-label="仪表布局"><button data-cluster-choice="touring" type="button" aria-pressed="true">车型仪表</button><button data-cluster-choice="digital" type="button" aria-pressed="false">数字</button></div></div>
-    <div class="instrument r4-shell" aria-label="虚拟仪表，不是原厂或真实车辆数据">
-      <div class="r4-stage-top"><span id="instrument-style">六车型仪表</span><span id="speed-label">虚拟速度 · 非实际车速</span><span id="input-state">等待启动</span></div>
-      <div id="r4-stage" class="r4-stage" aria-live="off"><span class="r4-loading">正在准备原创仪表...</span></div>
-    </div>
-    <div class="signal-row"><span class="status-dot"></span><span id="signal">点击开始后才启动音频</span><span id="sample-rate">— Hz</span></div>
-    <div class="control-deck">
-      <div id="demo-controls"><div class="scenario-grid" role="group" aria-label="演示场景"><button data-scenario="launch">起步 <small>0 → 60</small></button><button data-scenario="cruise">巡航 <small>80 km/h</small></button><button data-scenario="overspeed">高速 <small>144 km/h</small></button><button data-scenario="decel">减速 <small>→ 0</small></button></div></div>
-      <div id="manual-controls" hidden><label class="field" for="target">目标速度 <output id="target-value">0 km/h</output></label><input id="target" type="range" min="0" max="144" value="0" step="1" aria-label="手动车速目标"><small>仪表显示模型当前速度；拖动不自动开声。</small></div>
-      <div id="gps-controls" hidden><button id="gps">授权定位</button><div><p id="gps-status">未请求定位权限</p><small>仅设备报告速度，不上传坐标；非 Android REAL，GPS 事件音效关闭。</small></div></div>
-      <button id="pedal" class="pedal" aria-pressed="false">按住加速 <span>松开减速 / HOLD</span></button>
-    </div>
-    <div class="message" id="message" role="status" aria-live="polite">正在载入网页清单。</div>
-    <div class="actions"><div class="volume-control"><label for="volume">音量 <output id="volume-value">20%</output></label><input id="volume" type="range" min="0" max="70" value="20" step="1" aria-label="播放音量"></div><span class="action-note">停车调试<br>驾驶员勿操作</span><button id="start" class="primary" disabled>开始声浪 <span>▶</span></button><button id="stop" class="danger">立即停止 <span>ESC</span></button></div>
-    <aside id="settings" hidden aria-label="设置与诊断"><h2>声音设置</h2><p class="input-note">外观和仪表布局只改变显示，不重新启动声浪。</p><label class="field">算法对照<select id="algorithm"><option value="NORMAL_SEAM_ENVELOPE_V1">当前 normal · 接缝 + 有限包络</option><option value="NORMAL_CANONICAL_SEAM_V1">接缝修复 · 对照</option><option value="LEGACY_LOCKED">旧算法 · 数字对照</option></select></label><p class="input-note">仅停止后可切换。三种模式是既有算法，不是“更真实”预设。原慢重复纹理限制仍保留。</p><p id="visual-message" role="status"></p><div id="diagnostic-panel" hidden><details><summary>运行诊断 / 本地导出</summary><pre id="diagnostics">尚无音频统计</pre><button id="export">导出诊断 JSON</button></details></div></aside>
-  </section>
+<section class="garage" id="garage">
+<div class="garage-intro"><div><div class="eyebrow">THE SOUND COLLECTION / 01—06</div><h1>每一程，<em>都有性格。</em></h1><p>六种引擎，六种仪表语言。选择声音车型，进入你的驾驶台。</p></div><div class="garage-index"><strong>06</strong><span>声音车型<br/>独立仪表风格</span></div></div>
+<div class="garage-guide"><span>01 选择车型</span><span>02 选择输入</span><span>03 主动开始</span><span>停车调试 / 乘客操作</span></div>
+<p id="garage-error" role="status"></p>
+<div aria-label="六声音车型" class="vehicle-grid" id="vehicles"><p>正在准备车型…</p></div>
+<div class="garage-footer"><span>原六车声库 · 浏览器内合成 · 不自动播放</span><span>原创仪表，非原厂复刻。显示风格不改变声音车型。</span></div>
+</section>
+<section class="drive" hidden="" id="drive">
+<div class="drive-heading"><button class="back" id="back-garage" type="button">← 车库</button><div class="vehicle-heading"><div class="eyebrow">SOUND PROFILE / 声音车型</div><h1 id="vehicle-name">等待选择车型</h1></div><span class="status" id="play-status" role="status">未开始</span><button aria-controls="settings" aria-expanded="false" id="settings-toggle" type="button">设置 / 诊断</button></div>
+<div class="toolbar"><div aria-label="输入模式" class="mode-tabs" role="group"><button aria-pressed="true" data-mode="demo" id="mode-demo">演示</button><button aria-pressed="false" data-mode="manual" id="mode-manual">手动</button><button aria-pressed="false" data-mode="gps" id="mode-gps">GPS 实验</button></div><span class="chip" id="mode-tag">DEMO · 非真实车辆数据</span><div class="r4-style-control"><label for="display-style">仪表</label><select aria-label="显示预设，不改变声库" id="display-style"><option value="auto">跟随声音车型</option><option value="mercedes">Mercedes · W204</option><option value="bmw">BMW M · 经典双圆</option><option value="audi">Audi · 虚拟座舱</option><option value="vw">VW GTI · 运动</option><option value="honda">Honda S2000 · 数字条</option></select></div><div aria-label="仪表布局" class="cluster-switch" role="group"><button aria-pressed="true" data-cluster-choice="touring" type="button">车型仪表</button><button aria-pressed="false" data-cluster-choice="digital" type="button">大数字</button></div></div>
+<div aria-label="原创虚拟仪表，模型数值不是真实车辆数据" class="instrument r4-shell"><div class="r4-stage-top"><span id="instrument-style">车型仪表</span><span id="speed-label">模型速度 · 非真实车辆仪表</span><span id="input-state">等待开始</span></div><div aria-live="off" class="r4-stage" id="r4-stage"></div></div>
+<div class="signal-row"><i class="status-dot"></i><span id="signal">点击开始后才启动音频</span><span id="sample-rate">— Hz</span></div>
+<div class="control-deck"><div id="demo-controls"><div aria-label="演示场景" class="scenario-grid" role="group"><button data-scenario="launch" type="button"><span>起步</span><small>60 km/h</small></button><button data-scenario="cruise" type="button"><span>巡航</span><small>80 km/h</small></button><button data-scenario="overspeed" type="button"><span>高速</span><small>144 km/h</small></button><button data-scenario="decel" type="button"><span>减速</span><small>→ 0</small></button></div></div>
+<div hidden="" id="manual-controls"><label class="field" for="target">目标速度 <output id="target-value">0 km/h</output></label><input aria-label="手动目标速度" id="target" max="144" min="0" step="1" type="range" value="0"/><small class="manual-foot">目标与当前值分开；拖动不会启动播放。</small></div>
+<div hidden="" id="gps-controls"><button id="gps" type="button">授权定位</button><div><p id="gps-status">未请求定位</p><small>使用设备报告速度；不上传坐标。GPS 实验，非 Android REAL。</small></div></div>
+<button aria-pressed="false" class="pedal" id="pedal" type="button">按住加速 <span>松开减速 / HOLD</span></button></div>
+<div aria-live="polite" class="message" id="message" role="status">正在读取真实六车型声库清单。</div>
+<div class="actions"><div class="volume-control"><label for="volume">声浪音量 <output id="volume-value">20%</output></label><input aria-label="声浪音量" id="volume" max="70" min="0" step="1" type="range" value="20"/></div><span class="action-note">停车或乘客操作</span><button class="primary" disabled="" id="start" type="button"><b>开始声浪</b><span>▶</span></button><button class="danger" id="stop" type="button">立即停止 <span>ESC</span></button></div>
+<aside aria-label="设置与诊断" hidden="" id="settings"><h2>声音与显示</h2><p class="input-note">仪表风格只改变显示，不切换声音车型，也不重建音频会话。</p><label class="field" for="algorithm">算法对照<select id="algorithm"><option value="NORMAL_SEAM_ENVELOPE_V1">当前 normal · 接缝 + 有限包络</option><option value="NORMAL_CANONICAL_SEAM_V1">接缝修复 · 对照</option><option value="LEGACY_LOCKED">旧算法 · 数字对照</option></select></label><p class="input-note">三种既有算法仅在停止后切换。不是声音质量认证或新增声库。</p>
+<h3>传感器</h3><div class="sensor-note"><span>GPS / 加速度 IMU</span><b>IMU 未接入</b></div><p class="input-note">GPS 按现有授权流程使用。加速度 / IMU 未接入：本次没有新增传感器处理或数据。</p>
+
+<p id="visual-message" role="status"></p><div hidden="" id="diagnostic-panel"><details><summary>诊断与本地导出</summary><pre id="diagnostics">尚无运行统计</pre><button id="export" type="button">导出诊断 JSON</button></details></div>
+</aside>
+</section>
 </main>
-<footer><span>VICO / JOVI</span><button id="demo" hidden>返回演示</button><span id="build-id">正在读取构建身份</span><span>网页软件通过 ≠ 设备或人耳验收</span></footer>
-<script type="module" src="./src/app.mjs"></script>
-</body>
-</html>
+<footer><span>VICO / JOVI · INSTRUMENT ATELIER</span><button hidden="" id="demo">返回演示</button><span id="build-id">正在读取构建身份</span><span>网页软件通过 ≠ 实体设备或人耳验收</span></footer>
+<script type="module" src="./src/app.mjs"></script></body></html>

@@ -100,7 +100,8 @@ def main():
             for id_ in ('speed', 'rpm', 'gear', 'load'):
                 assert page.locator('#' + id_).text_content() == '—'
             assert page.locator('#input-state').text_content() == '输入失效 · 已静音'
-            assert page.locator('#r4-hud-fill').get_attribute('d') == 'M110 80 H110'
+            assert page.locator('.r5-segment').count() > 0
+            assert page.locator('.r5-segment.lit').count() == 0
             page.locator('[data-cluster-choice="touring"]').click()
             assert page.locator('#speed-needle').get_attribute('visibility') == 'hidden'
             assert page.locator('#rpm-needle').get_attribute('visibility') == 'hidden'
