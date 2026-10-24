@@ -28,7 +28,7 @@ export function createMotionMonitor({win, doc, now = () => win.performance.now()
   const stopButton = el('motion-stop');
   if (!startButton || !stopButton) return null;
   let epoch = 0, phase = 'idle', listening = false, intervalId = null;
-  let lastValidAt = null, startedAt = null, lastPaintAt = -Infinity;
+  let lastValidAt = null, missingSince = null, lastPaintAt = -Infinity;
 
   function status(value) { el('motion-status').textContent = value; }
   function unknown() {
@@ -46,18 +46,22 @@ export function createMotionMonitor({win, doc, now = () => win.performance.now()
   function stop(reason = '已停止读取') {
     epoch++;
     removeListener();
-    phase = 'idle'; startedAt = null; lastValidAt = null; lastPaintAt = -Infinity;
+    phase = 'idle'; missingSince = null; lastValidAt = null; lastPaintAt = -Infinity;
     unknown(); status(reason); controls();
   }
   function onMotion(event) {
     if (phase !== 'listening' || doc.hidden) return;
     const sample = readMotionSample(event), timestamp = now();
     if (!sample) {
+      // Start a fresh missing-data window after a long valid run. Repeated
+      // invalid packets cannot extend that deadline indefinitely.
+      if (missingSince === null) missingSince = timestamp;
       lastValidAt = null; unknown(); status('设备未提供有效的三轴数据');
       return;
     }
     const firstValid = lastValidAt === null;
     lastValidAt = timestamp;
+    missingSince = null;
     if (!firstValid && timestamp - lastPaintAt < 200) return;
     for (const axis of AXES) el('motion-' + axis).textContent = motionAxisText(sample[axis]);
     el('motion-kind').textContent = sample.includesGravity
@@ -69,11 +73,16 @@ export function createMotionMonitor({win, doc, now = () => win.performance.now()
   function checkFreshness() {
     if (phase !== 'listening') return;
     const t = now();
-    if (lastValidAt === null) {
-      if (t - startedAt > MOTION_FIRST_SAMPLE_LIMIT_MS) stop('未收到有效传感器数据 · 此设备可能不支持');
-    } else if (t - lastValidAt > MOTION_MAX_AGE_MS) {
+    if (lastValidAt !== null && t - lastValidAt > MOTION_MAX_AGE_MS) {
+      // Data went stale after the last valid sample, not after the original
+      // subscription started. Preserve that instant for the hard timeout.
+      missingSince = lastValidAt;
       lastValidAt = null;
       unknown(); status('传感器数据已过期 · 等待更新');
+    }
+    if (lastValidAt === null && missingSince !== null &&
+        t - missingSince > MOTION_FIRST_SAMPLE_LIMIT_MS) {
+      stop('未收到有效传感器数据 · 此设备可能不支持');
     }
   }
   async function start() {
@@ -95,9 +104,10 @@ export function createMotionMonitor({win, doc, now = () => win.performance.now()
     }
     try {
       const result = await permission;
-      if (owner !== epoch || doc.hidden) return;
+      if (owner !== epoch) return;
+      if (doc.hidden) { stop('页面隐藏，已停止读取'); return; }
       if (result !== 'granted') { stop('设备运动权限未获得'); return; }
-      startedAt = now(); lastValidAt = null;
+      missingSince = now(); lastValidAt = null;
       phase = 'listening'; listening = true;
       win.addEventListener('devicemotion', onMotion);
       intervalId = win.setInterval(checkFreshness, 500);
@@ -115,6 +125,11 @@ export function createMotionMonitor({win, doc, now = () => win.performance.now()
       if (phase !== 'idle') stop('切换页面或输入，已停止读取');
     });
   }
+  // app.mjs closes settings through its own Escape handler, which does not
+  // dispatch a settings-toggle click. Observe Escape independently.
+  doc.addEventListener('keydown', event => {
+    if (event?.key === 'Escape' && phase !== 'idle') stop('Esc 已停止读取');
+  });
   doc.addEventListener('visibilitychange', () => {
     if (doc.hidden && phase !== 'idle') stop('页面隐藏，已停止读取');
   });
