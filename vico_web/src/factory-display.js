@@ -30,7 +30,7 @@
    const a=start+sweep*n/max,big=n%major===0,mid=!big&&kind==='rpm'&&n%500===0;
    const p=pt(cx,cy,r-(big?15:mid?10:6),a),q=pt(cx,cy,r-2,a);
    out+=`<line x1="${fmt(p[0])}" y1="${fmt(p[1])}" x2="${fmt(q[0])}" y2="${fmt(q[1])}" class="${big?'r5-major':mid?'r5-medium':'r5-minor'}" data-tick="${n}"/>`;
-   if(big){const z=pt(cx,cy,r-(labelInset??(kind==='speed'?18:30)),a);out+=txt(fmt(z[0]),fmt(z[1]+6),kind==='rpm'?n/1000:n,17,'r5-scale','middle',`data-scale="${n}"`);}
+   if(big){const numeralRadius=activeStyle==='vw'&&kind==='rpm'&&(n===0||n===max)?r+30:r-(labelInset??(kind==='speed'?18:30));const z=pt(cx,cy,numeralRadius,a);out+=txt(fmt(z[0]),fmt(z[1]+6),kind==='rpm'?n/1000:n,17,'r5-scale','middle',`data-scale="${n}"`);}
   }
   const id=kind==='rpm'?'rpm-needle':'speed-needle';
   out+=`<g id="${id}" class="r5-hand" data-zero="${start}" data-sweep="${sweep}" data-max="${max}">`;
@@ -64,19 +64,19 @@
  function footerLabel(x,y,s){return txt(x,y,s,16,'r5-caption');}
  function original(style){
   switch(style){
-   case 'mercedes':return `${pod('gear',205,170,92)}${dial('speed',600,170,133,{start:180,sweep:180,pod:true})}${dial('rpm',986,170,116,{pod:true})}${readout(480,204,240,122)}${value('speed',600,284,118,'km/h',319)}${value('gear',205,203,86,'虚拟挡位',249)}${readout(913,221,146,67)}${value('rpm',986,248,44,'RPM',282)}${load(105,287,190)}${redline(1005,326)}`;
-   case 'muscle':case 'bmw':return `${dial('speed',266,147,127,{start:145,sweep:250})}${dial('rpm',934,147,127,{start:145,sweep:250})}${section(470,66,260,265)}${value('speed',600,163,129,'km/h',207)}${value('gear',600,294,85,'虚拟挡位',330)}${readout(866,216,136,73)}${value('rpm',934,258,42,'RPM',282)}${load(157,292,220)}${redline(1010,326)}`;
-   case 'maranello':return `${dial('rpm',600,151,132,{yellow:true})}${section(61,58,288,268)}${section(885,66,254,257)}${value('speed',205,217,136,'km/h',267)}<g class="r5-yellow-readout">${value('rpm',600,247,38,'RPM',273)}</g>${value('gear',1012,210,98,'虚拟挡位',261)}${load(89,281,232)}${redline(990,325)}`;
-   case 'precision':return `${section(66,68,275,250)}${dial('rpm',600,160,145,{perimeter:true})}${section(916,78,215,242)}${value('speed',206,226,118,'km/h',271)}${value('gear',600,199,108,'虚拟挡位',256)}${value('rpm',1022,217,57,'RPM',263)}${load(931,277,181)}${redline(997,324)}${footerLabel(205,87,'V10 / DIGITAL')}`;
-   case 'technical':return `${dial('speed',185,143,93)}${dial('rpm',530,151,135)}${section(759,49,378,273)}${value('speed',960,177,118,'km/h',226)}${value('gear',1075,277,74,'虚拟挡位',310)}${value('rpm',530,280,44,'RPM',316)}${load(791,270,191)}${redline(183,327)}`;
-   case 'heritage':return `${dial('speed',235,125,100,{start:180,sweep:180,half:true})}${dial('rpm',639,151,134)}${section(920,47,215,272)}${value('speed',235,290,117,'km/h',328)}${value('rpm',639,282,44,'RPM',319)}${value('gear',1028,193,94,'虚拟挡位',244)}${load(937,269,178)}${redline(1010,326)}`;
-   case 'audi':return `${dial('rpm',265,164,119)}${dial('speed',935,164,119)}${section(445,59,310,288)}${value('speed',600,167,123,'km/h',218)}${value('gear',600,304,84,'虚拟挡位',339)}${readout(203,210,124,74)}${value('rpm',265,253,43,'RPM',279)}${load(830,298,198)}${redline(260,330)}`;
-   case 'vw':return `${dial('rpm',600,163,132,{start:205,sweep:130,perimeter:true,labelInset:18,majorStep:2000})}${readout(479,135,242,150)}${value('speed',600,226,122,'km/h',281)}${value('gear',1000,212,91,'虚拟挡位',259)}${value('rpm',203,218,58,'RPM',260)}${load(102,291,212)}${redline(1005,328)}<path d="M468 22 H732" stroke="var(--red)" stroke-width="4"/>${footerLabel(205,66,'GTI / SPORT VIEW')}`;
-   case 'honda':return `${semicircleRpm(600,318,291)}${readout(451,174,298,137)}${value('speed',600,248,143,'km/h',301)}${value('rpm',208,246,55,'RPM',274)}${value('gear',999,249,93,'虚拟挡位',292)}${load(77,302,202)}${redline(996,326)}${footerLabel(600,118,'S / ROADSTER · ×1000 RPM')}`;
+   case 'mercedes':return `${pod('gear',205,170,92)}${dial('speed',600,147,118,{start:180,sweep:180,pod:true})}${dial('rpm',986,170,116,{pod:true})}${readout(480,202,240,138)}${value('speed',600,274,130,'km/h',332)}${value('gear',205,203,90,'虚拟挡位',251)}${readout(913,221,146,67)}${value('rpm',986,248,44,'RPM',282)}${load(105,287,190)}${redline(1005,326)}`;
+   case 'muscle':case 'bmw':return `${dial('speed',266,147,127,{start:145,sweep:250})}${dial('rpm',934,147,127,{start:145,sweep:250})}${section(470,66,260,265)}${value('speed',600,163,129,'km/h',207)}${value('gear',600,294,92,'虚拟挡位',330)}${readout(866,216,136,73)}${value('rpm',934,258,42,'RPM',282)}${load(157,292,220)}${redline(1010,326)}`;
+   case 'maranello':return `${dial('rpm',600,151,132,{yellow:true})}${section(61,58,288,268)}${section(885,66,254,257)}${value('speed',205,217,136,'km/h',267)}<g class="r5-yellow-readout">${value('rpm',600,247,38,'RPM',273)}</g>${value('gear',1012,210,98,'虚拟挡位',261)}${load(89,281,232)}${redline(990,307)}`;
+   case 'precision':return `${section(66,68,275,250)}${dial('rpm',600,160,145,{perimeter:true})}${section(916,78,215,242)}${value('speed',206,219,132,'km/h',281)}${value('gear',600,199,108,'虚拟挡位',256)}${value('rpm',1022,217,57,'RPM',263)}${load(931,277,181)}${redline(205,312)}${footerLabel(205,87,'V10 / DIGITAL')}`;
+   case 'technical':return `${dial('speed',185,143,93)}${dial('rpm',530,151,135)}${section(759,42,378,280)}${value('speed',960,162,129,'km/h',226)}${value('gear',1075,278,92,'虚拟挡位',313)}${value('rpm',530,280,44,'RPM',316)}${load(791,270,191)}${redline(183,327)}`;
+   case 'heritage':return `${dial('speed',235,125,100,{start:180,sweep:180,half:true})}${dial('rpm',639,151,134)}${section(920,47,215,272)}${value('speed',235,272,133,'km/h',328)}${value('rpm',639,282,44,'RPM',319)}${value('gear',1028,185,94,'虚拟挡位',229)}${load(937,251,178)}${redline(1010,311)}`;
+   case 'audi':return `${dial('rpm',265,164,119)}${dial('speed',935,164,119)}${section(445,44,310,304)}${value('speed',600,164,135,'km/h',213)}${value('gear',600,301,92,'虚拟挡位',339)}${readout(203,210,124,74)}${value('rpm',265,253,43,'RPM',279)}${load(830,298,198)}${redline(260,330)}`;
+   case 'vw':return `${dial('rpm',600,138,118,{start:205,sweep:130,perimeter:true,labelInset:18,majorStep:2000})}${readout(475,132,250,156)}${value('speed',600,222,136,'km/h',285)}${value('gear',1000,212,91,'虚拟挡位',259)}${value('rpm',203,218,58,'RPM',260)}${load(102,291,212)}${redline(1005,328)}<path d="M468 22 H732" stroke="var(--red)" stroke-width="4"/>${footerLabel(205,66,'GTI / SPORT VIEW')}`;
+   case 'honda':return `${semicircleRpm(600,318,291)}${readout(451,174,298,137)}${value('speed',600,248,143,'km/h',301)}${value('rpm',208,246,55,'RPM',274)}${value('gear',999,249,93,'虚拟挡位',292)}${load(77,302,202)}${redline(996,326)}${footerLabel(190,75,'S / ROADSTER · ×1000 RPM')}`;
   }
   return '';
  }
- function digital(){return `${bar(80,49,1040,17)}${value('speed',600,246,174,'km/h',316)}${value('gear',1020,228,109,'虚拟挡位',285)}${value('rpm',200,226,66,'RPM',277)}${load(72,317,235)}${redline(990,348)}<path d="M386 105 V297 M812 105 V297" class="r5-line"/>`;}
+ function digital(){return `${bar(80,49,1040,17)}${value('speed',600,246,174,'km/h',316)}${value('gear',1020,228,109,'虚拟挡位',285)}${value('rpm',200,226,66,'RPM',277)}${load(72,299,235)}${redline(990,348)}<path d="M386 105 V297 M812 105 V297" class="r5-line"/>`;}
  function compact(){return `${bar(29,48,342,14)}${value('speed',200,193,111,'km/h',243)}${value('gear',91,310,66,'虚拟挡位',348)}${value('rpm',285,303,40,'RPM',339)}${load(23,365,150)}${redline(262,389)}`;}
  function resolve(id,desired=preference){return desired==='auto'?(Object.hasOwn(AUTO,id)?AUTO[id]:'mercedes'):(OPTIONS.includes(desired)?desired:'mercedes');}
  function render(){
