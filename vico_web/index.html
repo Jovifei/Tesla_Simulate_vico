@@ -23,10 +23,10 @@
 <button aria-pressed="false" class="pedal" id="pedal" type="button">按住加速 <span>松开减速 / HOLD</span></button></div>
 <div aria-live="polite" class="message" id="message" role="status">正在读取真实六车型声库清单。</div>
 <div class="actions"><div class="volume-control"><label for="volume">声浪音量 <output id="volume-value">20%</output></label><input aria-label="声浪音量" id="volume" max="70" min="0" step="1" type="range" value="20"/></div><span class="action-note">停车或乘客操作</span><button class="primary" disabled="" id="start" type="button"><b>开始声浪</b><span>▶</span></button><button class="danger" id="stop" type="button">立即停止 <span>ESC</span></button></div>
-<aside aria-label="设置与诊断" hidden="" id="settings"><h2>声音与显示</h2><p class="input-note">仪表风格只改变显示，不切换声音车型，也不重建音频会话。</p><label class="field" for="algorithm">算法对照<select id="algorithm"><option value="NORMAL_SEAM_ENVELOPE_V1">当前 normal · 接缝 + 有限包络</option><option value="NORMAL_CANONICAL_SEAM_V1">接缝修复 · 对照</option><option value="LEGACY_LOCKED">旧算法 · 数字对照</option></select></label><p class="input-note">三种既有算法仅在停止后切换。不是声音质量认证或新增声库。</p>
+<aside aria-label="设置与诊断" hidden="" id="settings"><h2>声音与显示</h2>
 <h3>设备传感器 · 实验观察</h3>
 <div class="sensor-note"><span>GPS 速度</span><b>仅在 GPS 输入模式主动授权</b></div>
-<p class="input-note">浏览器设备加速度只用于本页查看；不推算汽车纵向/横向加速度，不驱动声浪、速度、换挡或事件。部分 Tesla/电脑浏览器可能没有该传感器。</p>
+<p class="input-note">浏览器三轴仅供查看，不能当作汽车加速度；不驱动声浪或GPS。Tesla／电脑可能不支持。</p>
 <section id="motion-panel" class="motion-panel" aria-label="设备三轴加速度实验监测">
  <div class="motion-head"><strong>设备加速度</strong><span id="motion-status" role="status" aria-live="polite">未开启</span></div>
  <div class="motion-readings">
@@ -37,7 +37,8 @@
  <p id="motion-kind" class="motion-kind">无有效设备轴向数据 · m/s²</p>
  <div class="motion-actions"><button id="motion-start" type="button">主动授权并读取</button><button id="motion-stop" type="button" disabled>停止读取</button></div>
  <p class="motion-foot">仅内存显示、不保存或上传。关闭设置、切模式、停止或页面隐藏会解除监听；缺失/过期数据展示“—”。</p>
-</section>
+</section><p class="input-note">仪表风格只改变显示，不切换声音车型，也不重建音频会话。</p><label class="field" for="algorithm">算法对照<select id="algorithm"><option value="NORMAL_SEAM_ENVELOPE_V1">当前 normal · 接缝 + 有限包络</option><option value="NORMAL_CANONICAL_SEAM_V1">接缝修复 · 对照</option><option value="LEGACY_LOCKED">旧算法 · 数字对照</option></select></label><p class="input-note">三种既有算法仅在停止后切换。不是声音质量认证或新增声库。</p>
+
 
 <p id="visual-message" role="status"></p><div hidden="" id="diagnostic-panel"><details><summary>诊断与本地导出</summary><pre id="diagnostics">尚无运行统计</pre><button id="export" type="button">导出诊断 JSON</button></details></div>
 </aside>
