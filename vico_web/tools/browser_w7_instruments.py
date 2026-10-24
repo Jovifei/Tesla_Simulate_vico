@@ -74,7 +74,8 @@ def main():
       assert z['scroll'][0]<=width+1,z
       if width>height:assert z['scroll'][1]<=height+1,z
       assert not z['offstage'],z
-      if expected in REFINED:assert not z['belowHood'],z
+      # Narrow-screen compact faces have their own 400×400 housing margins.
+      if expected in REFINED and width>700:assert not z['belowHood'],z
       if (width,height)==(1280,600):
        assert z['glyphs'][0]['height']>=64 and z['glyphs'][1]['height']>=44,z
       file=f'{i:02d}-{expected}-{theme}-{width}x{height}.png'
