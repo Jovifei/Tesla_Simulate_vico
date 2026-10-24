@@ -1,3 +1,5 @@
+import {IgnitionSequence} from './ignition.mjs';
+
 /** Vico Kotlin algorithm port. Original assets/gains remain authoritative.
  * Based on PR38 477913e7: NOT an OEM model or a new acoustic qualification.
  */
@@ -180,18 +182,24 @@ export class GpsSpeedInput {
 
 /** Sample-clocked normal playback. No wall-clock prediction and no future REAL plan. */
 export class LiveEngine {
-  constructor(bank, mode) {
+  constructor(bank, mode, ownerId=1) {
+    if(!Number.isSafeInteger(ownerId)||ownerId<=0)throw new Error('Invalid playback owner');
     this.renderer=new BankRenderer(bank,mode); this.power=new Powertrain(bank.spec); this.motion=new DemoMotion(); this.rate=bank.sampleRate; this.controlFrames=this.rate/50;
+    const start=mode==='NORMAL_SEAM_ENVELOPE_V1'?bank.startup:null;
+    this.ownerId=ownerId;this.ignition=new IgnitionSequence(start,this.rate);this.starting=this.ignition.start(ownerId);this.startupFrame=0;
+    this.outputPeak=0;this.outputExcess=0;this.outputNonfinite=0;
+    this.startupTotal=start?.samples.length||0;this.startupFade=Math.max(1,Math.round(this.rate*(start?.fadeInMs??5)/1000));this.startupHandoff=Math.max(1,Math.round(this.rate*(start?.handoffMs??150)/1000));
     this.frame=0; this.running=true; this.runGain=0; this.contentGain=0; this.source='demo'; this.scenario='stop'; this.target=0;
     this.heartbeatFrame=0; this.gpsUntil=-1; this.gpsSpeed=0; this.gpsAccel=0; this.speed=0; this.state=null; this.usable=false; this.wasUsable=false;
   }
   command(m) {
     if (m.type==='heartbeat') this.heartbeatFrame=this.frame;
-    else if (m.type==='stop') this.running=false;
+    else if (m.type==='stop') {this.running=false;this.cancelStartup();}
     else if (m.type==='input') {
       if (!['demo','manual','gps'].includes(m.source)) throw new Error('Invalid source');
       if (this.source!==m.source) { this.renderer.clearEvents(); this.power.reset(); this.gpsUntil=-1; }
       this.source=m.source;
+      if(m.source==='gps'||m.source==='manual'&&m.speedKmh>0)this.cancelStartup();
       if (m.source==='demo') { if (!['launch','cruise','overspeed','decel','stop'].includes(m.scenario)) throw new Error('Invalid scenario'); this.scenario=m.scenario; }
       if (m.source==='manual') this.target=clamp(finite(m.speedKmh,'target speed'),0,144);
       if (m.source==='gps') {
@@ -203,7 +211,9 @@ export class LiveEngine {
   }
   tick() {
     this.usable=this.running && this.frame-this.heartbeatFrame<=this.rate*.75 && (this.source!=='gps'||this.frame<this.gpsUntil);
-    if (this.source!=='gps') { this.motion.step(.02,this.source==='manual'?'manual':this.scenario,this.target); this.speed=this.motion.speed; }
+    if(!this.usable)this.cancelStartup();
+    if(this.starting){this.speed=0;this.motion.speed=0;this.motion.accel=0;}
+    else if (this.source!=='gps') { this.motion.step(.02,this.source==='manual'?'manual':this.scenario,this.target); this.speed=this.motion.speed; }
     else this.speed=this.gpsSpeed;
     const accel=this.source==='gps'?this.gpsAccel:this.motion.accel;
     this.state=this.power.update(this.frame/this.rate,this.speed,accel,clamp(accel/3,0,1));
@@ -216,9 +226,28 @@ export class LiveEngine {
     if (!this.usable&&this.contentGain<.001) this.contentGain=0;
     this.renderer.setState(this.state);
   }
-  next() { if (this.frame%this.controlFrames===0) this.tick(); const sample=this.renderer.next(); this.frame++; return f(sample*f(this.runGain*this.contentGain)); }
+  cancelStartup(){this.ignition.cancel(this.ownerId);this.starting=false;}
+  next() {
+    if (this.frame%this.controlFrames===0) this.tick();
+    let sample=this.renderer.next();
+    if(this.starting){
+      const start=this.ignition.next(this.ownerId);
+      if(start===null)this.starting=false;
+      else{
+        const weight=Math.min(1,(this.startupTotal-this.startupFrame)/this.startupHandoff);
+        const fade=Math.min(1,(this.startupFrame+1)/this.startupFade);
+        sample=f(start*fade*weight+sample*(1-weight));
+        if(++this.startupFrame>=this.startupTotal)this.starting=false;
+      }
+    }
+    this.frame++;
+    const output=f(sample*f(this.runGain*this.contentGain));
+    if(!Number.isFinite(output)){this.outputNonfinite++;throw new Error('Non-finite live output');}
+    this.outputPeak=Math.max(this.outputPeak,Math.abs(output));if(Math.abs(output)>PEAK_CONTRACT)this.outputExcess++;
+    return output;
+  }
   get stopped() { return !this.running && this.runGain===0; }
-  snapshot() { return {...this.renderer.stats(),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear||1,load:this.state?.load||0,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate}; }
+  snapshot() { return {...this.renderer.stats(),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear||1,load:this.state?.load||0,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate,startup:this.ignition.snapshot(),outputPreClipPeak:this.outputPeak,outputAboveContractFrames:this.outputExcess,outputNonfinite:this.outputNonfinite,outputDomain:'LIVE_START_AND_CONTINUOUS_POST_GATE_PRE_RESAMPLER_PRE_MASTER'}; }
 }
 
 export class StreamingResampler {

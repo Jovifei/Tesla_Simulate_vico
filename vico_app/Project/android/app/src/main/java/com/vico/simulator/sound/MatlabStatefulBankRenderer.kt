@@ -219,7 +219,7 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
             if (rawLoad < bank.loadLevels.first() || rawLoad > bank.loadLevels.last()) {
                 loadOutOfBankFrames++
             }
-            for (event in reviewEventsByOffset[index].orEmpty()) {
+            if (scheduledEvents != null || normalTraversal == null) for (event in reviewEventsByOffset[index].orEmpty()) {
                 when (event.binding.kind) {
                     "afterfire" -> afterfireIndex = 0
                     "shift" -> {

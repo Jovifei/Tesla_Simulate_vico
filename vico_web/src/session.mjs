@@ -1,4 +1,4 @@
-import {decodeF32Wav, MODES} from './core.mjs';
+import {decodeF32Wav, MODES, PEAK_CONTRACT} from './core.mjs';
 
 export async function digest(bytes) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -27,18 +27,23 @@ export async function loadBank(entry,base,signal) {
   if(!/^banks\/[a-z0-9_]+\/bank\.json$/.test(entry.bankFile)) throw new Error('Invalid bank path');
   const bankURL=new URL(entry.bankFile,base), d=decodeJSON(await checkedFetch(bankURL,entry.bankSha256,{signal,maxBytes:65536}));
   if(d.schema!=='vico.web.bank.v1'||d.vehicleKey!==entry.id||d.loops.length>64||d.shifts.length>16) throw new Error('Bank identity mismatch');
-  const rows=[...d.loops,d.afterfire,...d.shifts];
+  const start=d.startup??null;
+  if(start&&(!Number.isSafeInteger(start.frames)||start.frames<1||start.frames>d.sampleRate*10||start.sampleRate!==d.sampleRate||!Number.isFinite(start.fadeInMs)||start.fadeInMs<0||start.fadeInMs>50||!Number.isFinite(start.handoffMs)||start.handoffMs<10||start.handoffMs>500||!start.source?.author?.trim()||!start.source?.url?.startsWith('https://')||start.source.license!=='CC BY-SA 4.0'||start.source.licenseUrl!=='https://creativecommons.org/licenses/by-sa/4.0/'||!/^[0-9a-f]{64}$/.test(start.source.originalSHA256)||start.qualification?.OEMQualification!==false))throw new Error('Invalid startup source contract');
+  const rows=[...d.loops,d.afterfire,...d.shifts,...(start?[start]:[])];
   if(rows.some(r=>!/^asset-[0-9a-f]{64}\.wav$/.test(r.file)||!Number.isSafeInteger(r.bytes)||r.bytes<44||r.bytes>8*1024*1024)) throw new Error('Invalid asset descriptor');
   const decoded=new Array(rows.length); let next=0;
   await Promise.all(Array.from({length:Math.min(4,rows.length)},async()=>{
     while(next<rows.length) { const i=next++, row=rows[i], bytes=await checkedFetch(new URL(row.file,bankURL),row.sha256,{signal,maxBytes:row.bytes});
       if(bytes.length!==row.bytes)throw new Error('Asset length mismatch');
-      const wav=decodeF32Wav(bytes.buffer); if(wav.sampleRate!==d.sampleRate) throw new Error('Bank sample rate mismatch'); decoded[i]=wav.samples;
+      const wav=decodeF32Wav(bytes.buffer); if(wav.sampleRate!==d.sampleRate) throw new Error('Bank sample rate mismatch');
+      if(start&&i===rows.length-1&&(wav.samples.length!==start.frames||wav.samples.some(v=>Math.abs(v)>PEAK_CONTRACT)))throw new Error('Startup PCM contract');
+      decoded[i]=wav.samples;
     }
   }));
   return {vehicleKey:d.vehicleKey,sampleRate:d.sampleRate,spec:d.spec,normalIdentity:d.normalIdentity,sourceCommit:d.sourceCommit,
-    loops:d.loops.map((r,i)=>({rpm:r.rpm,load:r.load,samples:decoded[i]})),afterfire:decoded[d.loops.length],shifts:decoded.slice(d.loops.length+1),
-    identity:{bankSha256:entry.bankSha256,referenceManifestSha256:d.referenceManifestSha256,normalIdentity:d.normalIdentity,sourceCommit:d.sourceCommit}};
+    loops:d.loops.map((r,i)=>({rpm:r.rpm,load:r.load,samples:decoded[i]})),afterfire:decoded[d.loops.length],shifts:decoded.slice(d.loops.length+1,d.loops.length+1+d.shifts.length),
+    startup:start?{samples:decoded.at(-1),sampleRate:start.sampleRate,sha256:start.sha256,fadeInMs:start.fadeInMs,handoffMs:start.handoffMs}:null,
+    identity:{bankSha256:entry.bankSha256,referenceManifestSha256:d.referenceManifestSha256,normalIdentity:d.normalIdentity,sourceCommit:d.sourceCommit,startupSHA256:start?.sha256??null,startupSource:start?.source??null}};
 }
 
 /** Latest-owner-wins. A stopped/obsolete load can never resurrect playback. */
@@ -78,8 +83,8 @@ export class AudioSession {
         if(data.type==='error'){readyReject(new Error(data.message));fail(data.message);}
         if(data.type==='stats'){this.last={...data.stats,contextSampleRate:ctx.sampleRate,bankIdentity:bank.identity,qualification:'WEB_PORT_NOT_DEVICE_OR_ACOUSTIC_APPROVAL'};this.onChange({stage:this.stage,stats:this.last});}
       };
-      const transfers=[...bank.loops.map(l=>l.samples.buffer),bank.afterfire.buffer,...bank.shifts.map(x=>x.buffer)];
-      node.port.postMessage({type:'init',owner:token.id,bank,mode},transfers);
+      const transfers=[...bank.loops.map(l=>l.samples.buffer),bank.afterfire.buffer,...bank.shifts.map(x=>x.buffer),...(bank.startup?[bank.startup.samples.buffer]:[])];
+      node.port.postMessage({type:'init',owner:token.id,bank,mode,input:this.freshInput(this.pendingInput)},transfers);
       try{await ready;}finally{clearTimeout(timeout);}
       if(!this.owner.owns(token.id)){await ctx.close();return;}
       node.port.postMessage({...this.freshInput(this.pendingInput),type:'input',owner:token.id});node.port.postMessage({type:'heartbeat',owner:token.id});

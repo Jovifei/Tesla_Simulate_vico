@@ -15,9 +15,13 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     private var referenceBank: MatlabSoundBank? = null
     private var controller: MatlabPowertrainController? = null
     private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
+    private var startup = StartupSoundPlayer.unavailable("not_prepared")
+    fun startupStats(): StartupSoundPlayer.Snapshot = startup.snapshot()
+    fun cancelStartup() = startup.cancel()
 
     @Synchronized
-    fun prepareControllerSession(): Boolean {
+    fun prepareControllerSession(allowDemoStartup: Boolean = false): Boolean {
+        startup.resetSession(allowDemoStartup && !prototypeEnabled && referenceBank?.vehicleKey == "hellcat_v6")
         controller?.resetSession()
         syntheticControllers.values.forEach { it.resetSession() }
         // AudioEngine's synchronized preparation gate has already excluded the active writer.
@@ -63,6 +67,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
 
     fun setPrototype(enabled: Boolean): Boolean {
+        startup.cancel()
         if(enabled && referenceBank?.vehicleKey != "c63_w204_v6") return false
         prototypeEnabled=enabled
         prototype=com.vico.simulator.sound.s15.C63RuntimeRenderer(fixedHeadroom=true)
@@ -72,6 +77,7 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
 
     fun setVehicle(vehicleKey: String): Boolean {
+        startup.cancel()
         val loaded = try {
             cache.getOrPut(vehicleKey) { MatlabSoundBankLoader.load(assets, vehicleKey) }
         } catch (_: Exception) {
@@ -101,6 +107,15 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             controller = MatlabPowertrainController(profile.powertrain)
             syntheticControllers.clear()
             renderer = MatlabStatefulBankRenderer(normal.bank, LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1, normal.identity)
+            startup = if (vehicleKey == "hellcat_v6" && loaded.sampleRateHz == 48000) {
+                try {
+                    val root = "startup/hellcat"
+                    StartupSoundPlayer.fromValidatedAsset(
+                        assets.open("$root/hellcat-startup.wav").use { it.readBytes() },
+                        assets.open("$root/manifest.json").use { it.readBytes() },
+                        assets.open("$root/ATTRIBUTION.txt").use { it.readBytes() }, loaded.sampleRateHz)
+                } catch (_: Exception) { StartupSoundPlayer.unavailable("validated_startup_pack_load_failed") }
+            } else StartupSoundPlayer.unavailable("no_startup_for_selected_bank")
         }
         return true
     }
@@ -142,11 +157,13 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
 
     /** Call only from the AudioEngine writer, before accepting a changed input epoch. */
     fun clearTransientEvents() {
+        startup.cancelActive()
         renderer?.clearTransientEvents()
     }
 
-    fun renderState(state: SoundState, frameCount: Int): FloatArray {
+    fun renderState(state: SoundState, frameCount: Int, allowStartup: Boolean = false): FloatArray {
         if (prototypeEnabled && referenceBank?.vehicleKey == "c63_w204_v6") {
+            startup.cancel()
             val start=System.nanoTime()
             val idx=(inputCount%4096)*6
             renderInputs[idx]=state.timeS;renderInputs[idx+1]=state.rpm;renderInputs[idx+2]=state.load
@@ -156,14 +173,18 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
             try {val result=prototype.render(state,frameCount);complete=true;return result}
             finally {val slot=renderCount%renderTimes.size;val elapsed=System.nanoTime()-start;renderTimes[slot]=elapsed;sessionTiming.record(elapsed);completedAttempts[slot]=complete;renderCount++}
         }
-        return renderer?.render(state,frameCount) ?: FloatArray(frameCount)
+        val output = renderer?.render(state,frameCount) ?: FloatArray(frameCount)
+        startup.mixInto(output, state, allowStartup, normalVehicleKey)
+        return output
     }
 
     fun sampleRateHz(): Int = referenceBank?.sampleRateHz ?: 48000
 
+    /** Underlying continuous-bank statistics only; startupStats has a separate mixed-output domain. */
     fun renderStats(): S13MixSnapshot? = renderer?.mixStats()
 
     fun newS13ReviewSession(vehicleKey: String): S13ReviewSession {
+        startup.cancel()
         // Frozen review always opens the original S12 assets, independent of live overlay validity.
         val selectedBank = cache.getOrPut(vehicleKey) { MatlabSoundBankLoader.load(assets, vehicleKey) }
         require(selectedBank.sampleRateHz == S13ReviewContract.SAMPLE_RATE)

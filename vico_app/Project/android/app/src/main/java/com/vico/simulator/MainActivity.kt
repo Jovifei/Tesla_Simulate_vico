@@ -428,6 +428,7 @@ class MainActivity : AppCompatActivity() {
             append("\"controlFrameId\":\"").append(frameId).append("\",")
             append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
             append("\"normalRendererAlgorithm\":\"").append(audioEngine.normalRendererAlgorithm()).append("\",")
+            append("\"startup\":").append(audioEngine.startupDiagnosticsJson()).append(',')
             append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
             append("\"speed\":").append(speedKmh.toInt()).append(',')
             append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", speedKmh)).append("\",")
@@ -512,7 +513,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         activeVehicleKey = key
-        if (!audioEngine.prepareControllerSession()) {
+        if (!audioEngine.prepareControllerSession(allowDemoStartup = sensorProvider.isDemoMode())) {
             toast("音频会话准备失败，请停止当前播放后重试")
             return
         }
@@ -1062,7 +1063,7 @@ class MainActivity : AppCompatActivity() {
         activeVehicleKey = key
         audioEngine.setCharacter(SoundProfile.DEFAULT)
         val started = startPreviewPlayback(false,
-            audioEngine::prepareControllerSession, audioEngine::start,
+            { audioEngine.prepareControllerSession() }, audioEngine::start,
             { completion.run() })
         if (!started) {
             toast("试听启动失败，请停止当前播放后检查音频输出设备")
@@ -1463,6 +1464,7 @@ class MainActivity : AppCompatActivity() {
         append("\"controlFrameId\":\"").append(input.controlFrameId).append("\",")
         append("\"normalBankVariant\":\"").append(audioEngine.normalBankIdentity()).append("\",")
         append("\"normalRendererAlgorithm\":\"").append(audioEngine.normalRendererAlgorithm()).append("\",")
+        append("\"startup\":").append(audioEngine.startupDiagnosticsJson()).append(',')
         append("\"normalBankVariantActive\":").append(!s13ReviewActive && s14ReferenceLabel == null && !audioEngine.s15PrototypeEnabled).append(',')
         append("\"speed\":").append(input.speedKmh.toInt()).append(',')
         append("\"speedKmh\":\"").append(String.format(Locale.US, "%.1f", input.speedKmh)).append("\",")

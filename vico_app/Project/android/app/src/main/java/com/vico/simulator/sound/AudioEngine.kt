@@ -95,9 +95,9 @@ class AudioEngine(context: Context) {
     fun isPlaybackBusy(): Boolean = running || thread?.isAlive == true
 
     @Synchronized
-    fun prepareControllerSession(): Boolean {
+    fun prepareControllerSession(allowDemoStartup: Boolean = false): Boolean {
         if (isPlaybackBusy()) return false
-        return model.prepareControllerSession()
+        return model.prepareControllerSession(allowDemoStartup)
     }
 
     @Synchronized
@@ -334,6 +334,15 @@ class AudioEngine(context: Context) {
     }
     fun normalBankIdentity(): String = model.normalBankIdentity()
     fun normalRendererAlgorithm(): String = model.rendererAlgorithmIdentity()
+    fun startupDiagnosticsJson(): String = model.startupStats().let { value ->
+        org.json.JSONObject().put("available", value.available).put("stage", value.stage)
+            .put("rendered_frames", value.renderedFrames).put("peak_absolute", value.peakAbsolute)
+            .put("domain", value.domain).put("qualification", value.qualification)
+            .put("asset_sha256", value.assetSha256 ?: org.json.JSONObject.NULL)
+            .put("manifest_sha256", if (value.available) StartupSoundPlayer.MANIFEST_SHA256 else org.json.JSONObject.NULL)
+            .put("attribution_sha256", if (value.available) StartupSoundPlayer.ATTRIBUTION_SHA256 else org.json.JSONObject.NULL)
+            .put("reason", value.reason ?: org.json.JSONObject.NULL).toString()
+    }
     val s15PrototypeEnabled get()=model.prototypeEnabled
     fun s15TimingJson()=model.prototypeTimingJson()
     fun s15InputsJson()=model.prototypeInputsJson()
@@ -495,6 +504,8 @@ class AudioEngine(context: Context) {
                 val control = state?.inputControl?.let {
                     if (renderInputValid) it else it.copy(speedUsable = false, accelerationUsable = false)
                 }
+                if ((control != null && control.source != DriveInputSource.DEMO) ||
+                    !writerRunning || muted || state?.muted == true) model.cancelStartup()
                 val gate = inputGate.evaluate(control, state?.timeS ?: Double.NaN,
                     android.os.SystemClock.elapsedRealtimeNanos(), writerRunning)
                 if (gate.clearTransients) {
@@ -514,7 +525,8 @@ class AudioEngine(context: Context) {
                     val renderState = if(model.prototypeEnabled) eventState else eventState.copy(muted = false)
                     // The bounded fade tail must never carry shift/afterfire or a torque-cut envelope.
                     lastContinuousState = renderState.copy(afterfireTrigger = false, shiftTrigger = false, shiftGain = 1.0)
-                    val legacy = model.renderState(renderState, blockSize)
+                    val legacy = model.renderState(renderState, blockSize,
+                        allowStartup = writerRunning && running && !muted && !eventState.muted)
                     if (model.prototypeEnabled) legacy else qualificationRoute.render(renderState, blockSize, sampleRate) ?: legacy
                 } else if (contentGain > 0f && lastContinuousState != null && !model.prototypeEnabled) {
                     // Existing GainEnvelope reaches exact zero in bounded blocks; never replay stale input indefinitely.

@@ -14,7 +14,24 @@ const SPEC=['idle_rpm','redline_rpm','gear_ratios','final_drive','wheel_radius_m
 export const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const leaf=name=>{if(typeof name!=='string'||!/^[A-Za-z0-9_.-]+$/.test(name)||name==='.'||name==='..')throw new Error('Invalid source asset filename');return name;};
 function git(repo,args){const r=spawnSync('git',['--no-replace-objects','-C',repo,...args],{maxBuffer:16*1024*1024});if(r.status!==0)throw new Error(`Git source unavailable: ${args.slice(0,2).join(' ')}\n${r.stderr}`);return r.stdout;}
-export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',testOnly=false}){
+function validateStartupPack(pack){
+  if(!pack)return;
+  const m=pack.manifest,s=m?.source,q=m?.qualification;
+  if(m?.schema!=='vico.startup.pack.v1'||m.vehicleKey!=='hellcat_v6'||m.sampleRate!==48000||!Number.isSafeInteger(m.frames)||m.frames<1||m.frames>480000)throw new Error('Invalid startup pack');
+  if(s?.license!=='CC BY-SA 4.0'||s.licenseUrl!=='https://creativecommons.org/licenses/by-sa/4.0/'||!s.author?.trim()||!s.url?.startsWith('https://')||!/^[0-9a-f]{64}$/.test(s.originalSHA256)||q?.OEMQualification!==false||q?.automaticTuningEligible!==false||q?.role!=='ONE_SHOT_STARTUP')throw new Error('Invalid startup provenance');
+  if(!pack.attribution?.includes(s.author)||!pack.attribution.includes(s.url)||!pack.attribution.includes(s.licenseUrl))throw new Error('Missing startup attribution');
+  if(!Buffer.isBuffer(pack.pcm)||pack.pcm.length!==m.bytes||sha(pack.pcm)!==m.sha256)throw new Error('Startup SHA-256/length mismatch');
+  const wav=decodeF32Wav(pack.pcm.buffer.slice(pack.pcm.byteOffset,pack.pcm.byteOffset+pack.pcm.byteLength));
+  if(wav.sampleRate!==m.sampleRate||wav.samples.length!==m.frames||wav.samples.some(x=>Math.abs(x)>PEAK_CONTRACT))throw new Error('Startup PCM contract');
+}
+export async function readStartupPack(web=WEB){
+  const root=path.join(web,'assets/startup/hellcat');
+  const manifest=JSON.parse(await fs.readFile(path.join(root,'manifest.json'),'utf8'));
+  const pack={manifest,pcm:await fs.readFile(path.join(root,leaf(manifest.file))),attribution:await fs.readFile(path.join(root,'ATTRIBUTION.txt'),'utf8')};
+  validateStartupPack(pack);return pack;
+}
+export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',testOnly=false,startupPack=null}){
+  validateStartupPack(startupPack);
   out=path.resolve(out);await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out); // exclusive, never overwrite
   const catalog={schema:'vico.web.catalog.v1',sourceCommit:SOURCE_SHA,webCommit,testOnly,algorithm:'NORMAL_SEAM_ENVELOPE_V1',qualification:'PORT_REQUIRES_KOTLIN_BROWSER_DEVICE_VALIDATION',vehicles:[]};
   const write=async(relative,bytes)=>{const full=path.join(out,relative);await fs.mkdir(path.dirname(full),{recursive:true});await fs.writeFile(full,bytes,{flag:'wx'});};
@@ -48,11 +65,17 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
     const loops=[];for(const row of m.loops)loops.push({rpm:row.rpm,load:row.load,...await asset(row)});
     const afterfire=await asset(m.afterfire),shifts=[];for(const row of m.shift_events)shifts.push(await asset(row));
     const d={schema:'vico.web.bank.v1',vehicleKey:id,name,sampleRate:m.sample_rate_hz,sourceCommit:SOURCE_SHA,normalIdentity,referenceManifestSha256:sha(manifestBytes),variantManifestSha256,fixedVehicleGain:m.fixed_vehicle_gain,gainPolicy:'already baked in original WAV; never applied again',spec,loops,afterfire,shifts};
+    if(startupPack&&id==='hellcat_v6'){
+      const s=startupPack.manifest,file=`asset-${s.sha256}.wav`;
+      await write(`banks/${id}/${file}`,startupPack.pcm);
+      d.startup={file,sha256:s.sha256,bytes:s.bytes,frames:s.frames,sampleRate:s.sampleRate,fadeInMs:s.fadeInMs,handoffMs:s.handoffMs,source:s.source,qualification:s.qualification,processing:s.processing,sourceCommit:webCommit};
+    }
     const bytes=Buffer.from(JSON.stringify(d,null,2)+'\n'),bankFile=`banks/${id}/bank.json`;await write(bankFile,bytes);
-    catalog.vehicles.push({id,name,kind,bankFile,bankSha256:sha(bytes),normalIdentity,idleRpm:spec.idle_rpm,redlineRpm:spec.redline_rpm});
+    catalog.vehicles.push({id,name,kind,bankFile,bankSha256:sha(bytes),normalIdentity,idleRpm:spec.idle_rpm,redlineRpm:spec.redline_rpm,startupAvailable:!!d.startup});
   }
   for(const name of ['index.html','style.css','favicon.svg'])await write(name,await fs.readFile(path.join(web,name)));
   await fs.cp(path.join(web,'src'),path.join(out,'src'),{recursive:true,errorOnExist:true,force:false});
+  await write('audio-credits.txt',Buffer.from(startupPack?.attribution||'Vico original synthetic bank engine. No third-party startup recording is enabled in this build.\n'));
   await write('catalog.json',Buffer.from(JSON.stringify(catalog,null,2)+'\n'));
   const hashes={};async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())await walk(p);else hashes[path.relative(out,p).split(path.sep).join('/')]=sha(await fs.readFile(p));}}await walk(out);
   await write('build-manifest.json',Buffer.from(JSON.stringify({schema:'vico.web.build.v1',sourceCommit:SOURCE_SHA,webCommit,testOnly,files:hashes},null,2)+'\n'));
@@ -66,6 +89,6 @@ async function main(){
   for(const protectedDir of [repoReal,path.join(repoReal,'vico_app'),path.join(repoReal,'.git')])if(realOut===protectedDir||protectedDir!==repoReal&&realOut.startsWith(protectedDir+path.sep))throw new Error('Protected output path');
   const webCommit=git(repo,['rev-parse','HEAD']).toString().trim();
   git(repo,['cat-file','-e',`${SOURCE_SHA}^{commit}`]);
-  const result=await buildSite({out:realOut,webCommit,readBlob:async p=>git(repo,['show',`${SOURCE_SHA}:${p}`])});console.log(JSON.stringify(result));
+  const result=await buildSite({out:realOut,webCommit,startupPack:await readStartupPack(WEB),readBlob:async p=>git(repo,['show',`${SOURCE_SHA}:${p}`])});console.log(JSON.stringify(result));
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e.message);process.exitCode=1;});

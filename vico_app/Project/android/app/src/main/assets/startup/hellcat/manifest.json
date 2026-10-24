@@ -1,0 +1,43 @@
+{
+  "schema": "vico.startup.pack.v1",
+  "vehicleKey": "hellcat_v6",
+  "file": "hellcat-startup.wav",
+  "sha256": "1b119ab18364e33b64f91459942433817065034366de9b32f4a70283479edb77",
+  "bytes": 1257304,
+  "frames": 314306,
+  "sampleRate": 48000,
+  "source": {
+    "title": "Launching sound Challenger",
+    "description": "Son du demarrage de la Challenger Hellcat",
+    "author": "Axepas12",
+    "url": "https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg",
+    "mediaUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Launching_sound_Challenger.ogg",
+    "originalSHA256": "762e3b294362e3d1e37be0b737d6ad4518fd61a6bdbce392be1c850300d0676a",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "date": "2019-02-10"
+  },
+  "processing": {
+    "decoder": "libsndfile via soundfile",
+    "resampler": "scipy.signal.resample_poly 160/147",
+    "fixedGain": 0.75,
+    "normalization": "NONE",
+    "sampleFormat": "mono48kIEEEFloat32",
+    "durationSeconds": 6.548041666666666,
+    "peak": 0.7687110900878906,
+    "changes": "Ogg decoded and resampled44.1to48k; one fixed .75 playback gain; no EQ,AGC,loop,fit or per-window loudness matching"
+  },
+  "qualification": {
+    "level": "R2_RELATIVE_PUBLIC_REFERENCE",
+    "role": "ONE_SHOT_STARTUP",
+    "stockIdentity": "UNVERIFIED",
+    "warmColdState": "UNKNOWN",
+    "microphonePosition": "UNKNOWN",
+    "synchronizedRPM": "MISSING",
+    "automaticTuningEligible": false,
+    "OEMQualification": false,
+    "humanAudition": "PENDING"
+  },
+  "handoffMs": 150,
+  "fadeInMs": 5
+}
