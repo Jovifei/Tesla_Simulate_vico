@@ -98,10 +98,11 @@ test('late consent grant after stop cannot resurrect listener',async()=>{
 });
 
 test('mode, stop, settings, hash, visibility and pagehide close sensor without touching sound',async()=>{
- for(const trigger of ['mode-gps','mode-manual','mode-demo','stop','back-garage','settings-toggle','hashchange','visibilitychange','pagehide']){
+ for(const trigger of ['mode-gps','mode-manual','mode-demo','stop','back-garage','settings-toggle','hashchange','visibilitychange','pagehide','escape']){
   const f=fixture();await f.el('motion-start').click();
   await f.emit('devicemotion',{acceleration:{x:1,y:2,z:3}});
-  if(trigger==='visibilitychange'){f.doc.hidden=true;await f.emit(trigger)}
+  if(trigger==='escape')await f.emit('keydown',{key:'Escape'});
+  else if(trigger==='visibilitychange'){f.doc.hidden=true;await f.emit(trigger)}
   else if(['pagehide','hashchange'].includes(trigger))await f.emit(trigger);
   else await f.el(trigger).click();
   assert.equal(f.subscriptions(),0,trigger);
@@ -115,4 +116,36 @@ test('appearance, cluster and display-style controls do not change observer owne
  for(const id of ['appearance-cyber','appearance-minimal','cluster-touring','cluster-digital','display-style'])await f.el(id).click();
  assert.equal(f.subscriptions(),1);
  assert.equal(f.el('motion-stop').disabled,false);
+});
+
+test('a valid stream followed by invalid frames receives a NEW missing-data budget',async()=>{
+ const f=fixture();await f.el('motion-start').click();
+ for(let i=0;i<8;i++){
+  await f.emit('devicemotion',{acceleration:{x:i,y:2,z:3}});
+  f.advance(1000);
+  assert.equal(f.subscriptions(),1,'valid stream should remain live');
+ }
+ await f.emit('devicemotion',{acceleration:{x:null,y:null,z:null}});
+ assert.equal(f.el('motion-x').textContent,'—');
+ f.advance(3000);
+ assert.equal(f.subscriptions(),1,'a late bad frame must not inherit startup timeout');
+ await f.emit('devicemotion',{acceleration:{x:6,y:0,z:0}});
+ assert.equal(f.el('motion-x').textContent,'6.00');
+ f.advance(MOTION_MAX_AGE_MS+1);
+ assert.equal(f.subscriptions(),1,'stale window must first show unknown');
+ assert.equal(f.el('motion-x').textContent,'—');
+ f.advance(MOTION_FIRST_SAMPLE_LIMIT_MS);
+ assert.equal(f.subscriptions(),0,'eventually stop after extended loss of valid data');
+});
+
+test('Escape cancels pending consent and a late grant never resurrects monitoring',async()=>{
+ let grant;
+ const f=fixture({pendingPermission:new Promise(resolve=>{grant=resolve;})});
+ const pending=f.el('motion-start').click();
+ await f.emit('keydown',{key:'Escape'});
+ assert.equal(f.el('motion-start').disabled,false);
+ grant('granted');await pending;
+ assert.equal(f.subscriptions(),0);assert.equal(f.pendingTimers(),0);
+ assert.equal(f.el('motion-x').textContent,'—');
+ assert.equal(f.getCalls().audioCalls,0);
 });
