@@ -30,6 +30,9 @@ def inspect(page,width,height,style):
     .filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')
     .map(e=>({label:e.id||e.textContent,...rect(e)}));
   const metadataCollisions=meta.flatMap((m,i)=>meta.slice(i+1).filter(n=>overlap(m,n)).map(n=>[m.label,n.label]));
+  const loadPct=svg.querySelector('.r5-load .r5-meta:last-child');
+  const redlineCaption=svg.querySelector('.r5-redline .r5-meta:first-child');
+  const lowerCaptionGap=loadPct&&redlineCaption?rect(redlineCaption).x-rect(loadPct).right:null;
   const stop=document.getElementById('stop'),s=rect(stop);
   const hit=document.elementFromPoint(s.x+s.width/2,s.y+s.height/2);
   return {viewport:[innerWidth,innerHeight],scroll:[document.documentElement.scrollWidth,document.documentElement.scrollHeight],
@@ -37,7 +40,7 @@ def inspect(page,width,height,style):
    stage,housing,readoutCount:reads.length,
    offstage:reads.filter(e=>outside(e,stage)),
    belowHood:reads.filter(e=>e.bottom>housing.bottom+1),
-   metadataCollisions,
+   metadataCollisions,lowerCaptionGap,
    stop:{height:s.height,width:s.width,inView:s.y>=0&&s.bottom<=innerHeight,hit:hit===stop||stop.contains(hit)},
    ids:['speed','rpm','gear','load','redline-rpm'].every(id=>document.querySelectorAll('#'+id).length===1),
    numeric:['speed','gear'].map(id=>({id,text:document.getElementById(id).textContent,rect:rect(document.getElementById(id))})),
@@ -85,6 +88,8 @@ def main():
       # The 400×400 compact SVG is still a physical binnacle: its load, unit
       # and redline text must remain inside the hood, on phones as well.
       assert not z['belowHood'],z
+      if (width,height)==(390,844):
+       assert z['lowerCaptionGap'] is not None and z['lowerCaptionGap']>=8,z
       if (width,height)==(1280,600):
        assert z['glyphs'][0]['height']>=64 and z['glyphs'][1]['height']>=44,z
       file=f'{i:02d}-{expected}-{theme}-{width}x{height}.png'
