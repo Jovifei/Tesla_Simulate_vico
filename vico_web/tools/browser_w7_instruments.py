@@ -23,6 +23,13 @@ def inspect(page,width,height,style):
     .filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')
     .map(e=>({kind:e.getAttribute('class'),value:e.textContent,...rect(e)}));
   const outside=(p,b)=>p.x<b.x-1||p.right>b.right+1||p.y<b.y-1||p.bottom>b.bottom+1;
+  // Audit load/redline captions, units, numerals, and complete scale labels
+  // together, including previous lower-margin failures.
+  const overlap=(p,q)=>Math.min(p.right,q.right)-Math.max(p.x,q.x)>1&&Math.min(p.bottom,q.bottom)-Math.max(p.y,q.y)>1;
+  const meta=[...svg.querySelectorAll('.r5-meta,.r5-unit,.r5-caption,.r5-value,.r5-scale')]
+    .filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')
+    .map(e=>({label:e.id||e.textContent,...rect(e)}));
+  const metadataCollisions=meta.flatMap((m,i)=>meta.slice(i+1).filter(n=>overlap(m,n)).map(n=>[m.label,n.label]));
   const stop=document.getElementById('stop'),s=rect(stop);
   const hit=document.elementFromPoint(s.x+s.width/2,s.y+s.height/2);
   return {viewport:[innerWidth,innerHeight],scroll:[document.documentElement.scrollWidth,document.documentElement.scrollHeight],
@@ -30,6 +37,7 @@ def inspect(page,width,height,style):
    stage,housing,readoutCount:reads.length,
    offstage:reads.filter(e=>outside(e,stage)),
    belowHood:reads.filter(e=>e.bottom>housing.bottom+1),
+   metadataCollisions,
    stop:{height:s.height,width:s.width,inView:s.y>=0&&s.bottom<=innerHeight,hit:hit===stop||stop.contains(hit)},
    ids:['speed','rpm','gear','load','redline-rpm'].every(id=>document.querySelectorAll('#'+id).length===1),
    numeric:['speed','gear'].map(id=>({id,text:document.getElementById(id).textContent,rect:rect(document.getElementById(id))})),
@@ -73,9 +81,9 @@ def main():
       assert z['stop']['height']>=56 and z['stop']['width']>=144,z
       assert z['scroll'][0]<=width+1,z
       if width>height:assert z['scroll'][1]<=height+1,z
-      assert not z['offstage'],z
-      # Narrow-screen compact faces have their own 400×400 housing margins.
-      if expected in REFINED and width>700:assert not z['belowHood'],z
+      assert not z['offstage'] and not z['metadataCollisions'],z
+      # Compact 400×400 faces retain their independent mobile housing margins.
+      if width>700:assert not z['belowHood'],z
       if (width,height)==(1280,600):
        assert z['glyphs'][0]['height']>=64 and z['glyphs'][1]['height']>=44,z
       file=f'{i:02d}-{expected}-{theme}-{width}x{height}.png'
@@ -98,7 +106,7 @@ def main():
     for theme in ('cyber','minimal'):
      page.locator(f'[data-appearance-choice="{theme}"]').click()
      z=inspect(page,1280,600,preset)
-     assert z['ids'] and z['stop']['hit'] and not z['offstage']
+     assert z['ids'] and z['stop']['hit'] and not z['offstage'] and not z['metadataCollisions'] and not z['belowHood']
      assert z['style']==preset and z['glyphs'][0]['height']>=64
      file=f'preset-{preset}-{theme}-1280x600.png'
      page.screenshot(path=str(a.out/file))

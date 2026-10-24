@@ -12,9 +12,30 @@ INIT = """(()=>{
  class FakeMotion {}
  FakeMotion.requestPermission=()=>{motionProbe.consents++;return Promise.resolve(motionProbe.grant)};
  Object.defineProperty(window,'DeviceMotionEvent',{value:FakeMotion,configurable:true});
- window.addEventListener=(type,cb,...args)=>{if(type==='devicemotion')motionProbe.subscriptions++;return add(type,cb,...args)};
- window.removeEventListener=(type,cb,...args)=>{if(type==='devicemotion')motionProbe.subscriptions--;return remove(type,cb,...args)};
- window.motionProbe.emit=(accel,includingGravity=null)=>{const e=new Event('devicemotion');Object.defineProperty(e,'acceleration',{value:accel});Object.defineProperty(e,'accelerationIncludingGravity',{value:includingGravity});window.dispatchEvent(e)};
+ // Native Chromium may emit real, empty motion packets concurrently with the
+ // injected packet. Only injected packets reach the production listener in this
+ // test; the production listener and its removal/ownership remain unchanged.
+ const motionWrappers=new Map();
+ window.addEventListener=(type,cb,...args)=>{
+   if(type!=='devicemotion')return add(type,cb,...args);
+   if(motionWrappers.has(cb))return;
+   const proxy=event=>{if(event.__vicoInjectedMotion===true)cb.call(window,event)};
+   motionWrappers.set(cb,proxy);motionProbe.subscriptions++;
+   return add(type,proxy,...args);
+ };
+ window.removeEventListener=(type,cb,...args)=>{
+   if(type!=='devicemotion')return remove(type,cb,...args);
+   const proxy=motionWrappers.get(cb);if(!proxy)return;
+   motionWrappers.delete(cb);motionProbe.subscriptions--;
+   return remove(type,proxy,...args);
+ };
+ window.motionProbe.emit=(accel,includingGravity=null)=>{
+   const e=new Event('devicemotion');
+   Object.defineProperty(e,'__vicoInjectedMotion',{value:true});
+   Object.defineProperty(e,'acceleration',{value:accel});
+   Object.defineProperty(e,'accelerationIncludingGravity',{value:includingGravity});
+   window.dispatchEvent(e);
+ };
 })();"""
 
 def main():
@@ -52,6 +73,12 @@ def main():
    page.evaluate('motionProbe.emit({x:-1.25,y:2.5,z:0})')
    assert page.locator('#motion-x').text_content()=='-1.25'
    assert page.locator('#motion-y').text_content()=='2.50'
+   # A deliberately invalid sample MUST blank the reading; a subsequent fresh
+   # injected packet must restore it before any asynchronous Worklet assertions.
+   page.evaluate('motionProbe.emit({x:null,y:null,z:null})')
+   assert page.locator('#motion-x').text_content()=='—'
+   page.evaluate('motionProbe.emit({x:-1.25,y:2.5,z:0})')
+   assert page.locator('#motion-x').text_content()=='-1.25'
    report['checks'].append({'case':'explicit consent, three axes and no audio/GPS side effects','pass':True})
    # Settings drawer overlays toolbar: dispatch ordinary element events while the drawer is open.
    page.evaluate("""()=>{
@@ -66,6 +93,16 @@ def main():
    assert page.evaluate('motionProbe.subscriptions===0')
    assert page.locator('#motion-x').text_content()=='—'
    report['checks'].append({'case':'closing settings clears readings and removes listener','pass':True})
+   # Real Escape keyboard path closes the drawer from app.mjs rather than by
+   # clicking settings-toggle. It must also release the motion observer.
+   page.locator('#settings-toggle').click()
+   page.locator('#motion-start').click()
+   page.wait_for_function('motionProbe.subscriptions===1')
+   page.keyboard.press('Escape')
+   assert page.locator('#settings').is_hidden()
+   assert page.evaluate('motionProbe.subscriptions===0')
+   assert page.locator('#motion-x').text_content()=='—'
+   report['checks'].append({'case':'Escape drawer close releases injected motion listener','pass':True})
    page.locator('[data-scenario="cruise"]').click()
    start(page)
    first=stats(page)
