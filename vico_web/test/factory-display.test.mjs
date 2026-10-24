@@ -21,3 +21,28 @@ test('integer and invalid redlines have finite scale headroom and preserved thre
 test('GPS source remains explicitly experimental while manual is model data',()=>{const b=bootDisplay();b.api.update({...sample,source:'WEB_GPS_ESTIMATED'},true);assert.match(b.get('speed-label').textContent,/GPS 实验/);b.api.update({...sample,source:'MANUAL'},true);assert.match(b.get('speed-label').textContent,/模型速度/);});
 test('display cannot own audio, GPS, network, inputs or navigation',()=>{assert.doesNotMatch(factorySource,/\b(fetch|XMLHttpRequest|AudioContext|AudioWorklet|watchPosition|setInput|pushState|replaceState|setInterval)\s*\(/);assert.doesNotMatch(factorySource,/location\s*[.=]|^\s*import\s/m);});
 test('production HTML excludes preview runtime and keeps original app script',()=>{assert.doesNotMatch(productionHtml,/preview-adapter|preview-catalog|VicoPreview|data-preview-only|预览动画|排版示例|预览不输出声音|设计预览|UI PREVIEW/);assert.match(productionHtml,/<script type="module" src="\.\/src\/app\.mjs"><\/script>/);for(const id of ['start','stop','mode-gps','target','pedal','diagnostics','export'])assert.equal((productionHtml.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);});
+
+
+test('W7 refined originals retain legible figures and keep units above lower shell edge',()=>{
+ const b=bootDisplay();
+ const originals=[
+  ['c63_w204_v6',7200,'mercedes',284],
+  ['ferrari_458',9000,'maranello',217],
+  ['lfa',9000,'precision',226],
+  ['gtr_r35',7000,'technical',177],
+  ['supra_jza80',7200,'heritage',290]
+ ];
+ for(const [id,redline,style,speedY] of originals){
+  b.api.prepare({id,redlineRpm:redline});
+  assert.equal(b.document.documentElement.dataset.instrument,style);
+  assert.equal(Number(b.get('speed').getAttribute('y')),speedY,id);
+  assert.ok(Number(b.get('speed').getAttribute('font-size'))>=110,id+' speed font');
+  assert.ok(Number(b.get('gear').getAttribute('font-size'))>=70,id+' gear font');
+  const svg=b.get('r4-stage').innerHTML;
+  const unitYs=[...svg.matchAll(/<text x="[\d.]+" y="([\d.]+)"[^>]+class="r5-unit"/g)].map(m=>Number(m[1]));
+  assert.ok(unitYs.length>=3,id+' numeric units');
+  assert.ok(unitYs.every(y=>y<=329),id+' unit outside lower hood: '+unitYs);
+  assert.equal(b.get('redline-rpm').textContent,String(redline));
+  assert.match(svg,/data-cluster-shell="true"/);
+ }
+});
