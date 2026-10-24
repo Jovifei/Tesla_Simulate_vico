@@ -18,9 +18,9 @@ Native and Web diagnostics separately identify startup frames, output domain and
 
 ## Local verification
 
-Parent Web source: `0822de4869b61444f647cb5227886f8b0f89be29`. The previously qualified a95 native empty-map allocation guard is carried forward without changing its PCM arithmetic.
+Sound implementation parent: `0822de4869b61444f647cb5227886f8b0f89be29`. Before publication, the newer W7 instrument and opt-in motion-observer branch at `122438be1da5336c257c22438aa4e94b6d543c05` was integrated. The settings-page conflict preserves both its consent/monitor controls and the new startup attribution. Motion observation remains independent of audio. The previously qualified a95 native empty-map allocation guard is carried forward without changing its PCM arithmetic.
 
-- Node: 96 passed, 0 failed/skipped, including actual Worklet, owner, invalid initial GPS, rate, loader, source-integrity and handoff cases. The package test command now includes all `*.test.mjs` files.
+- Node after W7 integration: 111 passed, 0 failed/skipped, including Worklet, owner, invalid initial GPS, rate, loader, source-integrity, handoff, instrument and motion-observer cases. The package test command now includes all `*.test.mjs` files. These are software tests, not physical sensor or acoustic acceptance.
 - Android `testDebugUnitTest lintDebug assembleDebug`: PASS, 544 tests = 515 passed + 29 opt-in skipped, 0 failures/errors; lint 0 errors, 6 existing warnings. Final current-tree Gradle verification reused valid incremental outputs; the new native ownership regression was separately executed RED→GREEN, 9/9.
 - Independent native review found a pending-arm invalid-REAL→DEMO edge case; the explicit preparation intent and pre-availability cancellation close it. Review outcome: APPROVED_WITH_BOUNDARIES. No phone or road test was performed by that reviewer.
 - Local Debug APK SHA256: `fe395115dace6224026579165f3b11b504f2e0dd99810a5fc67e48147adcb00e`, package `com.vico.simulator`, version 1 / 1.0; certificate SHA256 `9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774`. Not installed by this stage.

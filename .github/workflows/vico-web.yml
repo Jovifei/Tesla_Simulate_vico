@@ -26,6 +26,12 @@ jobs:
           node-version: '22.16.0'
       - name: Run meaningful unit and actual processor-entry tests
         run: node --test vico_web/test/*.test.mjs
+      - name: Compile optional browser regression scripts (syntax only, browsers NOT_RUN)
+        run: |
+          python3 -m py_compile vico_web/tools/browser_w7_instruments.py
+          python3 -m py_compile vico_web/tools/browser_motion_review.py
+          python3 -m py_compile vico_web/tools/browser_atelier_review.py
+          python3 -m py_compile vico_web/tools/browser_factory_review.py
       - name: Build six real banks from exact parent Git objects
         run: node vico_web/tools/build.mjs --out "${{ runner.temp }}/vico-web-dist"
       - name: Record real build scope
