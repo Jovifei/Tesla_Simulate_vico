@@ -82,8 +82,9 @@ def main():
       assert z['scroll'][0]<=width+1,z
       if width>height:assert z['scroll'][1]<=height+1,z
       assert not z['offstage'] and not z['metadataCollisions'],z
-      # Compact 400×400 faces retain their independent mobile housing margins.
-      if width>700:assert not z['belowHood'],z
+      # The 400×400 compact SVG is still a physical binnacle: its load, unit
+      # and redline text must remain inside the hood, on phones as well.
+      assert not z['belowHood'],z
       if (width,height)==(1280,600):
        assert z['glyphs'][0]['height']>=64 and z['glyphs'][1]['height']>=44,z
       file=f'{i:02d}-{expected}-{theme}-{width}x{height}.png'
