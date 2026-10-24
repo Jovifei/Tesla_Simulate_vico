@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: WAV decodes original f32 sample bits without AudioContext resampling
+ok 1 - WAV decodes original f32 sample bits without AudioContext resampling
+  ---
+  duration_ms: 1.617195
+  type: 'test'
+  ...
+# Subtest: WAV rejects incorrect length, PCM integer format, stereo and nonfinite
+ok 2 - WAV rejects incorrect length, PCM integer format, stereo and nonfinite
+  ---
+  duration_ms: 0.931082
+  type: 'test'
+  ...
+# Subtest: constant signal is unchanged in legacy/seam; envelope startup follows the pinned bounded EMA
+ok 3 - constant signal is unchanged in legacy/seam; envelope startup follows the pinned bounded EMA
+  ---
+  duration_ms: 138.674607
+  type: 'test'
+  ...
+# Subtest: legacy independent fractional arithmetic and default mapping
+ok 4 - legacy independent fractional arithmetic and default mapping
+  ---
+  duration_ms: 41.911473
+  type: 'test'
+  ...
+# Subtest: canonical seam has zero modifications outside support; no random origin
+ok 5 - canonical seam has zero modifications outside support; no random origin
+  ---
+  duration_ms: 24.613966
+  type: 'test'
+  ...
+# Subtest: prepared correction reduces both synthetic boundary slope gaps
+ok 6 - prepared correction reduces both synthetic boundary slope gaps
+  ---
+  duration_ms: 0.603058
+  type: 'test'
+  ...
+# Subtest: renderer partitions preserve sample bits across 1/333/960/997
+ok 7 - renderer partitions preserve sample bits across 1/333/960/997
+  ---
+  duration_ms: 59.703115
+  type: 'test'
+  ...
+# Subtest: event is exact-once for same timestamp and clearEvents does not reset phase
+ok 8 - event is exact-once for same timestamp and clearEvents does not reset phase
+  ---
+  duration_ms: 16.678196
+  type: 'test'
+  ...
+# Subtest: invalid state never silently becomes a valid sound
+ok 9 - invalid state never silently becomes a valid sound
+  ---
+  duration_ms: 43.53617
+  type: 'test'
+  ...
+# Subtest: normal finite envelope stays 0.97..1.03; reset is reproducible
+ok 10 - normal finite envelope stays 0.97..1.03; reset is reproducible
+  ---
+  duration_ms: 44.541253
+  type: 'test'
+  ...
+# Subtest: DEMO follows actual 144 target deadband, not physical top speed
+ok 11 - DEMO follows actual 144 target deadband, not physical top speed
+  ---
+  duration_ms: 1.462022
+  type: 'test'
+  ...
+# Subtest: powertrain consumes all actual ratios and stops recurring events at steady speed
+ok 12 - powertrain consumes all actual ratios and stops recurring events at steady speed
+  ---
+  duration_ms: 4.936313
+  type: 'test'
+  ...
+# Subtest: GPS null/old speed is invalid; coordinates never leave adapter
+ok 13 - GPS null/old speed is invalid; coordinates never leave adapter
+  ---
+  duration_ms: 0.344199
+  type: 'test'
+  ...
+# Subtest: lost UI heartbeat fades to zero instead of stale indefinite playback
+ok 14 - lost UI heartbeat fades to zero instead of stale indefinite playback
+  ---
+  duration_ms: 52.216532
+  type: 'test'
+  ...
+# Subtest: GPS uses sample TTL and never creates events
+ok 15 - GPS uses sample TTL and never creates events
+  ---
+  duration_ms: 16.722052
+  type: 'test'
+  ...
+# Subtest: stop gives finite fade, restart new engine has fresh session
+ok 16 - stop gives finite fade, restart new engine has fresh session
+  ---
+  duration_ms: 34.158258
+  type: 'test'
+  ...
+# Subtest: streaming output 44.1/48/96k is finite, bounded, partition-independent
+ok 17 - streaming output 44.1/48/96k is finite, bounded, partition-independent
+  ---
+  duration_ms: 10.143254
+  type: 'test'
+  ...
+# Subtest: finite change of normal envelope cannot mutate input bank bytes
+ok 18 - finite change of normal envelope cannot mutate input bank bytes
+  ---
+  duration_ms: 23.183762
+  type: 'test'
+  ...
+# Subtest: synthetic powertrain backward time does not invent a torque-cut phase
+ok 19 - synthetic powertrain backward time does not invent a torque-cut phase
+  ---
+  duration_ms: 0.217858
+  type: 'test'
+  ...
+# Subtest: build generates six own-bank catalogs with exact PCM hashes, strips source paths
+ok 20 - build generates six own-bank catalogs with exact PCM hashes, strips source paths
+  ---
+  duration_ms: 273.606917
+  type: 'test'
+  ...
+# Subtest: build rejects modified C63 overlay instead of silently switching bank
+ok 21 - build rejects modified C63 overlay instead of silently switching bank
+  ---
+  duration_ms: 92.137017
+  type: 'test'
+  ...
+# Subtest: build rejects escaping manifest paths
+ok 22 - build rejects escaping manifest paths
+  ---
+  duration_ms: 100.5836
+  type: 'test'
+  ...
+# Subtest: latest owner invalidates in-flight loading, old completion cannot own new run
+ok 23 - latest owner invalidates in-flight loading, old completion cannot own new run
+  ---
+  duration_ms: 0.886685
+  type: 'test'
+  ...
+# Subtest: SHA validator reads actual body; fake a*64 cannot pass
+ok 24 - SHA validator reads actual body; fake a*64 cannot pass
+  ---
+  duration_ms: 32.138777
+  type: 'test'
+  ...
+# Subtest: bounded response and network failure cannot be a ready asset
+ok 25 - bounded response and network failure cannot be a ready asset
+  ---
+  duration_ms: 1.030131
+  type: 'test'
+  ...
+# Subtest: GPS packet age includes download/preparation time, no cached fix resurrection
+ok 26 - GPS packet age includes download/preparation time, no cached fix resurrection
+  ---
+  duration_ms: 0.388005
+  type: 'test'
+  ...
+# Subtest: volume is bounded and cancelling idle session is safe
+ok 27 - volume is bounded and cancelling idle session is safe
+  ---
+  duration_ms: 0.337808
+  type: 'test'
+  ...
+# Subtest: input changes during asset preparation are retained for the winning playback owner
+ok 28 - input changes during asset preparation are retained for the winning playback owner
+  ---
+  duration_ms: 0.2522
+  type: 'test'
+  ...
+# Subtest: actual worklet process entry generates PCM and diagnostics at arbitrary quantum lengths
+ok 29 - actual worklet process entry generates PCM and diagnostics at arbitrary quantum lengths
+  ---
+  duration_ms: 125.806389
+  type: 'test'
+  ...
+# Subtest: worklet ignores obsolete control owners and stops on explicit stop
+ok 30 - worklet ignores obsolete control owners and stops on explicit stop
+  ---
+  duration_ms: 17.869359
+  type: 'test'
+  ...
+# Subtest: worklet protocol error is visible and output silences, not false PASS
+ok 31 - worklet protocol error is visible and output silences, not false PASS
+  ---
+  duration_ms: 13.463235
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 592.966688

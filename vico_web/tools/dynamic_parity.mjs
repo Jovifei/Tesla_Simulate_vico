@@ -1,0 +1,18 @@
+import fs from 'node:fs/promises';import path from 'node:path';
+import {DemoMotion,Powertrain,BankRenderer,MODES,PEAK_CONTRACT} from '../src/core.mjs';
+import {diskBank,f32Bytes} from './render.mjs';import {comparePcm} from './parity_metrics.mjs';
+import {validateDynamicReference,sha} from './dynamic_identity.mjs';
+const [action,dist,out,reference,resultOut]=process.argv.slice(2);
+const ids=['c63_w204_v6','hellcat_v6','ferrari_458','lfa','gtr_r35','supra_jza80'];
+if(action==='prepare'){
+ await fs.mkdir(out);for(const scenario of ['demo','cruise80']){const m=new DemoMotion(),rows=[];for(let tick=0;tick<3000;tick++){const phase=scenario==='cruise80'?'cruise':tick<1700?'overspeed':tick<2600?'decel':'stop';m.step(.02,phase);rows.push([tick*.02,m.speed,m.accel,Math.max(0,Math.min(1,m.accel/3))]);}await fs.writeFile(path.join(out,scenario+'.csv'),rows.map(r=>r.join(',')).join('\n')+'\n');}console.log('Shared trajectories: 3000 ticks each, 20ms audio clock, 60s');
+}else if(action==='compare'){
+ const identity=await validateDynamicReference(reference,out);if(!resultOut)throw Error('Fresh result output required');await fs.mkdir(resultOut);
+ const results=[];for(const id of ids){const {bank,testOnly,identity:bankIdentity}=await diskBank(dist,id);if(testOnly)throw Error('fixture');for(const name of ['referenceManifestSha256','variantManifestSha256'])if(bankIdentity[name]!==identity.banks[id]?.[name])throw Error('Dynamic bank identity mismatch');if(bankIdentity.sourceCommit!==identity.sourceCommit)throw Error('Dynamic bank source identity mismatch');for(const mode of MODES)for(const scenario of ['demo','cruise80']){
+ const expectedKey=id+'-'+mode+'-'+scenario;if(!identity.artifacts[expectedKey+'.f32le']||!identity.artifacts[expectedKey+'.csv'])throw Error('Missing dynamic case identity');
+ const key=id+'-'+mode+'-'+scenario,rows=(await fs.readFile(path.join(out,scenario+'.csv'),'utf8')).trim().split('\n').map(s=>s.split(',').map(Number)),states=(await fs.readFile(path.join(reference,key+'.csv'),'utf8')).trim().split('\n').map(s=>s.split(',').map(Number));const p=new Powertrain(bank.spec),r=new BankRenderer(bank,mode),pcm=new Float32Array(rows.length*bank.sampleRate/50);let stateError=0,eventMismatches=0;let at=0;
+ rows.forEach((row,i)=>{const s=p.update(...row),actual=[s.rpm,s.gear,s.load,s.shiftGain,+s.shiftTrigger,+s.afterfireTrigger];actual.forEach((v,j)=>{if(j>=4){if(v!==states[i][j])eventMismatches++;}else stateError=Math.max(stateError,Math.abs(v-states[i][j]));});const block=r.render(s,bank.sampleRate/50);pcm.set(block,at);at+=block.length;});
+ const bytes=await fs.readFile(path.join(reference,key+'.f32le')),old=Float32Array.from({length:bytes.length/4},(_,i)=>bytes.readFloatLE(i*4)),metrics=comparePcm(old,pcm,bank.sampleRate),stats=r.stats(),pass=stateError<=1e-9&&eventMismatches===0&&metrics.maxAbsError<=2e-6&&metrics.failedRollingWindows===0&&stats.preClipPeak<=PEAK_CONTRACT&&stats.aboveContract===0&&stats.hardClips===0&&stats.nonfinite===0;
+ results.push({key,pass,stateError,eventMismatches,...metrics,stats});await fs.writeFile(path.join(resultOut,key+'-web.f32le'),f32Bytes(pcm),{flag:'wx'});console.log(key,pass?'PASS':'FAIL',stateError,metrics.maxAbsError);
+ }}await fs.writeFile(path.join(resultOut,'qualification.json'),JSON.stringify({sourceCommit:identity.sourceCommit,referenceReceiptSha256:sha(await fs.readFile(path.join(reference,'receipt.json'))),scope:'ACTUAL_KOTLIN_SYNTHETIC_POWERTRAIN_AND_RENDERER_SHARED_20MS_AUDIO_CLOCK',results},null,2));if(results.some(r=>!r.pass))process.exitCode=1;
+}else throw Error('prepare|compare DIST TRAJECTORY_DIR [REFERENCE_DIR]');
