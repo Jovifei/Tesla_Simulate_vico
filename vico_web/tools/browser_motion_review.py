@@ -40,6 +40,12 @@ def main():
    choose(page)
    assert page.evaluate('testContexts.length===0&&geo.calls===0&&motionProbe.consents===0&&motionProbe.subscriptions===0')
    page.locator('#settings-toggle').click()
+   for width,height in ((1280,600),(390,844)):
+    page.set_viewport_size({'width':width,'height':height})
+    bounds=page.evaluate("""()=>{const s=document.getElementById('settings').getBoundingClientRect(),a=document.getElementById('motion-start').getBoundingClientRect(),b=document.getElementById('motion-stop').getBoundingClientRect(),stop=document.getElementById('stop'),r=stop.getBoundingClientRect();return {startFullyVisible:a.y>=s.y-1&&a.bottom<=s.bottom+1&&a.x>=s.x-1&&a.right<=s.right+1,stopFullyVisible:b.y>=s.y-1&&b.bottom<=s.bottom+1,stopAccessible:r.y>=0&&r.bottom<=innerHeight&&r.width>=144&&r.height>=56&&(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===stop)}}""")
+    assert all(bounds.values()),(width,height,bounds)
+   page.set_viewport_size({'width':1280,'height':600})
+   report['checks'].append({'case':'motion consent controls visible at landscape and portrait; emergency stop uncovered','pass':True})
    page.locator('#motion-start').click()
    page.wait_for_function('motionProbe.subscriptions===1')
    assert page.evaluate('motionProbe.consents===1&&geo.calls===0&&testContexts.length===0')
