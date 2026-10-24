@@ -34,3 +34,7 @@ docs/06-testing/n2-cloud-historical-state-20261003/* -text -whitespace
 
 # Preserve exact state-comparison evidence bytes and trailing TSV/log fields.
 docs/06-testing/n2-cloud-historical-continuity-20261003/* -text -whitespace
+
+# Startup playback binds exact media, provenance and attribution byte hashes.
+vico_app/Project/android/app/src/main/assets/startup/hellcat/* -text
+vico_web/assets/startup/hellcat/* -text

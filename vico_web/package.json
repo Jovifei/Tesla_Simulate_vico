@@ -8,6 +8,6 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test test/core.test.mjs test/io.test.mjs test/session.test.mjs test/worklet.test.mjs"
+    "test": "node --test test/*.test.mjs"
   }
 }

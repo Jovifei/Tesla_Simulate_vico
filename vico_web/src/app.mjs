@@ -16,7 +16,7 @@ function update(e){
   if(view!=='drive')return;
   window.VicoCockpit?.update(e.stats, e.stage==='running'&&!transitioning);
   currentStage=e.stage;
-  $('play-status').textContent=names[e.stage]||e.stage;
+  $('play-status').textContent=e.stage==='running'&&e.stats?.startup?.stage==='playing'?'发动机启动中':names[e.stage]||e.stage;
   $('start').disabled=transitioning||!selected||['loading','running','stopping'].includes(e.stage);
   $('algorithm').disabled=transitioning||['loading','running','stopping'].includes(e.stage);
   if(e.detail){$('message').textContent=e.detail;$('message').classList.toggle('error',e.stage==='error');}
@@ -29,7 +29,7 @@ function update(e){
   }
   if(e.stats&&e.stage==='running'&&!transitioning){const s=e.stats;$('speed').textContent=s.inputUsable?String(Math.round(s.speedKmh)).padStart(3,'0'):'—';$('rpm').textContent=s.inputUsable?Math.round(s.rpm).toLocaleString('en-US'):'—';$('gear').textContent=s.inputUsable?s.gear:'—';$('load').textContent=s.inputUsable?Math.round(s.load*100):'—';
     // Dial geometry and redline normalization are owned by VicoCockpit.update above.
-    $('signal').textContent=s.inputUsable?'音频线程运行 · 输入有效':'输入无效或失效 · 内容静音';$('sample-rate').textContent=`${s.contextSampleRate} Hz`;
+    $('signal').textContent=!s.inputUsable?'输入无效或失效 · 内容静音':s.startup?.stage==='playing'?'发动机启动中 · 随后进入怠速':'音频线程运行 · 输入有效';$('sample-rate').textContent=`${s.contextSampleRate} Hz`;
     if(mode==='gps'&&!s.inputUsable)$('gps-status').textContent='定位已过期或失效；内容静音';
   }
   if(e.stage==='error'&&mode==='gps')stopGps();

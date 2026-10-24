@@ -4,7 +4,9 @@ class VicoProcessor extends AudioWorkletProcessor {
     try{
       if(m.type==='init'){
         if(this.engine)throw new Error('Audio processor already initialized');
-        this.owner=m.owner;this.engine=new LiveEngine(m.bank,m.mode);this.resampler=new StreamingResampler(this.engine,sampleRate);this.port.postMessage({type:'ready'});
+        this.owner=m.owner;this.engine=new LiveEngine(m.bank,m.mode,m.owner);
+        if(m.input)this.engine.command({...m.input,type:'input'});
+        this.resampler=new StreamingResampler(this.engine,sampleRate);this.port.postMessage({type:'ready'});
       }else if(m.type==='stop'){this.engine?.command(m);}
       else if(m.owner===this.owner)this.engine?.command(m);
     }catch(e){this.failed=true;this.port.postMessage({type:'error',message:e.message});}

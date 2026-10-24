@@ -3,7 +3,7 @@ package com.vico.simulator.audio
 import com.vico.simulator.sound.S13CaptureBinding
 import com.vico.simulator.sound.S13PcmCaptureReport
 
-/** Offline capture-bound features. No reference PCM comparison or acoustic qualification is implemented. */
+/** Offline capture-bound features. Explicit PCM comparison never grants acoustic qualification. */
 class AcousticFeatureExtractor(
     private val sampleRateHz: Int = PcmArtifactHashValidator.SAMPLE_RATE_HZ,
     private val algorithmVersion: String = N3FeatureWindowAnalyzer.ALGORITHM_VERSION,
@@ -99,5 +99,21 @@ class AcousticFeatureExtractor(
         return Result(algorithmVersion, pcm.size, features.rms, "MEASURED_FEATURE_ONLY", referenceState,
             capture.sha256.lowercase(), sampleRateHz, PcmArtifactHashValidator.CHANNELS,
             PcmArtifactHashValidator.FORMAT, capture.captureDomain, capture.binding, features)
+    }
+
+    /** Separate offline entry: identity-only extract keeps its original NOT_EVALUATED contract. */
+    fun compareWithReference(
+        pcm: FloatArray,
+        capture: S13PcmCaptureReport,
+        referencePcm: FloatArray?,
+        reference: AcousticReferenceComparator.PcmIdentity?,
+        alignment: AcousticReferenceComparator.Alignment?,
+    ): AcousticReferenceComparator.Comparison {
+        require(pcm.size <= maxSamples) { "pcm exceeds bounded extraction window" }
+        PcmArtifactHashValidator.validate(capture, pcm).getOrThrow()
+        val identity = AcousticReferenceComparator.PcmIdentity(capture.sha256, sampleRateHz,
+            PcmArtifactHashValidator.CHANNELS, PcmArtifactHashValidator.FORMAT,
+            capture.captureDomain, capture.binding?.vehicleKey.orEmpty())
+        return AcousticReferenceComparator(maxSamples).compare(pcm, identity, referencePcm, reference, alignment)
     }
 }

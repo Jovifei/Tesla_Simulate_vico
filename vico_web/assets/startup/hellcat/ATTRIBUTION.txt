@@ -1,0 +1,7 @@
+Hellcat engine startup: "Launching sound Challenger" by Axepas12 (2019-02-10).
+Source: https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg
+License: Creative Commons Attribution-ShareAlike 4.0 International.
+https://creativecommons.org/licenses/by-sa/4.0/
+Changes by Vico: decoded, resampled44.1to48k mono IEEEFloat32 and fixed0.75 playback gain. No EQ, AGC, looping or reference-driven automatic fit.
+The adapted sound is distributed under CC BY-SA4.0. Attribution does not imply endorsement.
+Exact stock configuration, hot/cold state and microphone position remain unverified.
