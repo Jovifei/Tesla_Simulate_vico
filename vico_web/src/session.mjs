@@ -87,7 +87,7 @@ export class AudioSession {
           throw new Error('Coordinated source requires explicit Hellcat normal mode');
         await verifyCoordinatedCandidate(recordedCandidate);
         if(!this.owner.owns(token.id)){await ctx.close();return;}
-        experimental={...recordedCandidate,samples:a.slice()};
+        experimental={...recordedCandidate,samples:recordedCandidate.samples.slice()};
       }
       const node=new AudioWorkletNode(ctx,'vico-bank',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
       const volume=ctx.createGain();volume.gain.value=this.volume;node.connect(volume).connect(ctx.destination);this.node=node;this.volumeNode=volume;
