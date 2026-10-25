@@ -129,7 +129,9 @@ test('input owner source switch, GPS invalidation and stop cannot restart record
  stream(e,4000);
  assert.equal(e.snapshot().coordinatedVoice.renderedFrames,was);
  e.command({type:'stop'});
- for(let i=0;i<10000;i++){if(i%9600===0)e.command({type:'heartbeat'});e.next();}
+ // Existing stop envelope updates once per 20ms; ~0.21s is insufficient.
+ // Preserve original engine's fade, then require a bounded completed stop.
+ for(let i=0;i<48000;i++){if(i%9600===0)e.command({type:'heartbeat'});e.next();}
  assert.equal(e.stopped,true);
  assert.equal(e.snapshot().outputNonfinite,0);
 });
