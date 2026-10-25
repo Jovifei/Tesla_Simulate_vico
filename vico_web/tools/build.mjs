@@ -44,6 +44,19 @@ export const RECORDED_REFERENCE_CATALOG=[
       license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'}),
     identity:Object.freeze({vehicle:'Dodge Challenger SRT (version unconfirmed)',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
     automaticLoop:false})
+  ,...[
+    ['candidate-idle-low-35-55','Candidate idle / low-speed 35-55s','candidate-idle-low-35-55.wav',480000],
+    ['candidate-accel-63-69','Candidate acceleration 63-69s','candidate-accel-63-69.wav',144000],
+    ['candidate-accel-108-114','Candidate acceleration 108-114s','candidate-accel-108-114.wav',144000],
+    ['candidate-accel-153-159','Candidate acceleration 153-159s','candidate-accel-153-159.wav',144000],
+    ['candidate-offload-160-170','Candidate off-load 160-170s','candidate-offload-160-170.wav',240000],
+    ['candidate-sustained-185-195','Candidate sustained 185-195s','candidate-sustained-185-195.wav',240000]
+  ].map(([id,title,file,frames])=>Object.freeze({schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id,title,file,
+    sampleRate:24000,channels:2,frames,
+    source:Object.freeze({author:'JorisDJN',title:'Dodge Challenger SRT',url:'https://freesound.org/people/JorisDJN/sounds/760645/',
+      license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'}),
+    identity:Object.freeze({vehicle:'Dodge Challenger SRT (version unconfirmed)',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
+    automaticLoop:false}))
 ];
 export async function readRecordedReferences(web=WEB){
   const out=[];

@@ -19,7 +19,9 @@ test('build ships verified REFERENCE_ONLY sources with hashes and no product cla
   assert.equal(manifest.scope, 'REFERENCE_ONLY');
   assert.equal(manifest.automaticLoop, false);
   assert.equal(manifest.qualification, 'SOURCE_TIMBRE_DIRECTION_ONLY_NOT_PRODUCT_OR_OEM');
-  assert.deepEqual(manifest.references.map(x => x.id), ['hellcat-startup-public', 'srt-version-unconfirmed']);
+  assert.deepEqual(manifest.references.map(x => x.id), ['hellcat-startup-public', 'srt-version-unconfirmed',
+    'candidate-idle-low-35-55', 'candidate-accel-63-69', 'candidate-accel-108-114',
+    'candidate-accel-153-159', 'candidate-offload-160-170', 'candidate-sustained-185-195']);
   assert(manifest.references.every(x => x.identity.OEMQualification === false && x.identity.synchronizedRpmLoad === false));
   for (const reference of manifest.references) {
     const bytes = await readFile(path.join(out, 'assets', 'recorded-references', path.basename(reference.file)));
