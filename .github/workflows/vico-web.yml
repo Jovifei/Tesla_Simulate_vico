@@ -34,6 +34,17 @@ jobs:
           python3 -m py_compile vico_web/tools/browser_factory_review.py
       - name: Build six real banks from exact parent Git objects
         run: node vico_web/tools/build.mjs --out "${{ runner.temp }}/vico-web-dist"
+      - name: Run preregistered four-scenario actual Hellcat bank / synthetic take PCM trial
+        run: |
+          node vico_web/tools/coordinated-longtake-trial.mjs --dist "${{ runner.temp }}/vico-web-dist" --out "${{ runner.temp }}/hc-c1-synthetic-evidence"
+          node --input-type=module -e '
+          import fs from "node:fs";
+          const r=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/hc-c1-synthetic-evidence/receipt.json","utf8"));
+          if(r.gate!=="NUMERIC_ONLY" || r.productPromotion!==false || r.referenceAlignment!=="NOT_EVALUATED" ||
+             r.trials.length!==4 || r.failures.length!==0 || r.skipped.length!==0 ||
+             r.trials.some(x=>x.frames!==192000 || x.actualBank.stats.nonfinite || x.syntheticOptIn.stats.hardClips))
+            throw Error("HC-C1 real bank / synthetic trial incomplete");
+          console.log(JSON.stringify({trial:r.schema,scenarios:r.trials.length,source:r.recordedSource,acoustic:"NOT_EVALUATED"}));'
       - name: Record real build scope
         run: |
           node --input-type=module -e '
