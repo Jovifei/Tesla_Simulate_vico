@@ -26,6 +26,20 @@ class AudioEngine(context: Context) {
     internal fun setQualificationProvider(provider: C63QualificationPcmProvider?): Boolean =
         debuggable && !running && qualificationRoute.prepare(provider)
 
+    /** HC-C1 native playback-chain entry. Only debug builds, before audio start.
+     *  Source PCM is verified off the writer; no unauthorized GDC media shipped.
+     */
+    @Synchronized
+    internal fun prepareCoordinatedLongTakeForReview(
+        candidate: CoordinatedLongTakeVoice.Take,
+    ): Boolean {
+        if (!debuggable || isPlaybackBusy() || reviewSession != null ||
+            referenceSession != null || model.prototypeEnabled) return false
+        val ready = runCatching { CoordinatedLongTakeVoice.prepare(candidate) }.getOrNull()
+            ?: return false
+        return model.installCoordinatedVoiceForReview(ready)
+    }
+
     @Volatile private var current: SoundState? = null
     @Volatile private var masterVol: Float = 1.0f
     @Volatile private var running: Boolean = false
@@ -260,6 +274,7 @@ class AudioEngine(context: Context) {
     }
 
     fun stop(reason: String = "USER_STOP") {
+        model.requestCoordinatedVoiceCancellation()
         qualificationRoute.clear()
         if (referenceSession != null) referenceCancelReason = reason
         running = false
@@ -271,6 +286,7 @@ class AudioEngine(context: Context) {
     }
 
     fun setMuted(on: Boolean) {
+        if (on) model.requestCoordinatedVoiceCancellation()
         muted = on
     }
 
@@ -373,6 +389,7 @@ class AudioEngine(context: Context) {
     }
 
     fun release() {
+        model.requestCoordinatedVoiceCancellation()
         if (referenceSession != null) referenceCancelReason = "ACTIVITY_DESTROY"
         running = false
         try { track?.pause(); track?.stop() } catch (_: Exception) {}
@@ -514,10 +531,17 @@ class AudioEngine(context: Context) {
                     // An explicitly prepared qualification provider is not a live-input epoch.
                     if (state?.inputControl?.source != DriveInputSource.QUALIFICATION) qualificationRoute.clear()
                 }
-                val sourceAvailable = gate.usable && renderInputValid
+                val inputAvailable = gate.usable && renderInputValid
+                // An invalidated opt-in voice may finish only its verified continuous tail.
+                // Keep this rejection sticky so recovered input cannot raise the fade again.
+                val sourceAvailable = model.acceptsCoordinatedVoiceInput(
+                    control, inputAvailable, writerRunning, muted || state?.muted == true,
+                    gate.clearTransients,
+                ) && inputAvailable
                 if (!sourceAvailable) qualificationRoute.clear()
                 val runGain = runEnvelope.step(running)
                 val contentGain = contentEnvelope.step(running && sourceAvailable && !muted && state?.muted != true)
+                if (!sourceAvailable && (contentGain <= 0f || runGain <= 0f)) model.cancelCoordinatedVoice()
                 val diagnosticConsumedNs = android.os.SystemClock.elapsedRealtimeNanos()
                 val pcm: FloatArray = if (sourceAvailable) {
                     val eventState = if (gate.allowEvents) state!! else state!!.copy(
@@ -589,6 +613,7 @@ class AudioEngine(context: Context) {
             capture?.markFailed()
         } finally {
             qualificationRoute.clear()
+            model.cancelCoordinatedVoice()
             if (reference != null && reference.isComplete && running && lastAudioError == null) {
                 ticket?.let { onS14Progress?.invoke(it, reference.framesRendered, "DRAINING") }
                 val deadline = android.os.SystemClock.elapsedRealtime() + 2000L

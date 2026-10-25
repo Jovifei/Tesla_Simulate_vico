@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-15",
+  "updated_at": "2026-10-25",
   "current_phase": "P2",
-  "current_work_package": "PR38 normal seam-only + km/h: local QA passed, remote review/device audition pending",
+  "current_work_package": "HC-C1 A playback fixes verified; B real engine-sim study completed with mixed AM results and rejected default DSP; acoustic/device gates open",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -495,5 +495,73 @@
     "remote_plan": "review_packages/periodicity-repair-20261015/remote-v3-seam-plan.txt",
     "full_technical_report": "review_packages/periodicity-repair-20261015/evengine-full-technical-report.md",
     "next": "Remote code/evidence review, fixedPR38SHA/localAPK handoff; freshGM1910preflight andexactAPKconfirm beforeinstall; continue slow-texture diagnosis without mislabeling seamqualification"
+  },
+  "hc_c1_local_AB_20261025": {
+    "status": "A_SOFTWARE_VERIFIED_B_DESCRIPTIVE_MIXED_RESULT",
+    "base": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+    "PR": "https://github.com/Jovifei/Tesla_Simulate_vico/pull/41",
+    "authority": "Jovi direct approval after pasted AB review; no remote wait",
+    "android": {
+      "total": 558,
+      "pass": 529,
+      "skip": 29,
+      "fail": 0,
+      "error": 0,
+      "lint_errors": 0,
+      "lint_warnings": 6,
+      "assembleDebug": "PASS"
+    },
+    "web": {
+      "node_pass": 133,
+      "fail": 0,
+      "native_ui_js_pass": 31,
+      "six_car_build_files": 130,
+      "longtake_trial": "4cases_NUMERIC_ONLY"
+    },
+    "python_jvm": {
+      "windows_n2_pass": 44,
+      "session_start_wiring_pass": 3,
+      "REAL_policy_lifecycle": "PASS"
+    },
+    "apk": {
+      "sha256": "8911314e08fd28dd13c1210d4cf14c3a4aec68227f352b8e3419da99fe98e55f",
+      "signing": "existing_debug_v2",
+      "installed": false
+    },
+    "B": {
+      "status": "MECHANISM_EVIDENCE_ONLY_NOT_PRODUCT_OR_HELLCAT",
+      "B1": "INVALID_REVERSE_DYNO_PRESERVED",
+      "B2_seconds": 180,
+      "physics_frames": 1800000,
+      "audio_frames": 7938000,
+      "V0_frames": 8640000,
+      "analysis_routes": 14,
+      "analysis_unit_tests": 11,
+      "analysis_source": "tools/engine_sim_offline",
+      "captured_engine": "generic_crossplane_LS_NOT_HELLCAT",
+      "default_DSP_clips": [
+        15955,
+        8806,
+        7016,
+        15932
+      ],
+      "default_DSP_gate": "FAIL_CLIPPING",
+      "ten_ms_relative_slow_power_E0_vs_E2": {
+        "low": 1.0621172484964443,
+        "high": 0.37904444866650067
+      },
+      "twenty_ms_relative_slow_power_change_percent": {
+        "low": 11.96,
+        "high": -21.18
+      },
+      "reconstruction_smoke": "bit_exact_pressure_audio_state_dyno_validity",
+      "new_product_voice_promoted": false,
+      "owner_scope_C": "SEPARATE_REVIEW"
+    },
+    "C": "SEPARATE_REVIEW_NOT_IMPLEMENTED",
+    "acoustic_periodicity": "NOT_RESOLVED_BY_A",
+    "original_WAV_gain_main_data": "UNCHANGED",
+    "device_road_human": "NOT_EVALUATED",
+    "A_CI": "4SUCCESS_exact_f6018a6"
   }
 }

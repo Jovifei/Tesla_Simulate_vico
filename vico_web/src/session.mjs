@@ -1,7 +1,27 @@
 import {decodeF32Wav, MODES, PEAK_CONTRACT} from './core.mjs';
+import {validateLongTake} from './coordinated-longtake.mjs';
 
 export async function digest(bytes) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+/** Main-thread complete F32LE source SHA, before any real-time transfer.
+ *  GDC restricted media is never downloaded or staged by this helper.
+ */
+export async function verifyCoordinatedCandidate(candidate) {
+  validateLongTake(candidate);
+  const a=candidate.samples;
+  const bytes=new Uint8Array(a.buffer,a.byteOffset,a.byteLength);
+  if(await digest(bytes)!==candidate.pcmSha256)throw new Error('Recorded PCM identity mismatch');
+  return true;
+}
+/** Clone first, verify the exact bytes actually transferred, and keep source
+ * approval metadata separate from the audio-thread object. Never mutate input. */
+export async function stageCoordinatedCandidate(candidate) {
+  validateLongTake(candidate);
+  const staged={...candidate,samples:candidate.samples.slice(),
+    regions:candidate.regions.map(r=>({...r})),evidence:{...candidate.evidence}};
+  await verifyCoordinatedCandidate(staged);
+  return staged;
 }
 export async function checkedFetch(url, expected, {signal, maxBytes=8*1024*1024}={}) {
   url=new URL(url,globalThis.location?.href || 'http://localhost');
@@ -56,7 +76,7 @@ export class Owner {
 export class AudioSession {
   constructor(base,onChange=()=>{}) { this.base=base; this.onChange=onChange;this.owner=new Owner();this.ctx=null;this.node=null;this.stage='idle';this.last=null;this.timer=null;this.volume=.2;this.pendingInput={source:'demo',scenario:'stop'}; }
   report(stage,detail=''){this.stage=stage;this.onChange({stage,detail,stats:this.last});}
-  async start(entry,mode,input){
+  async start(entry,mode,input,{recordedCandidate=null}={}){
     if(!MODES.includes(mode))throw new Error('Unknown audio mode');
     const token=this.owner.next(); this.release(); this.last=null;this.pendingInput=input;
     let ctx;
@@ -70,6 +90,15 @@ export class AudioSession {
       await ctx.resume(); if(!ctx.audioWorklet)throw new Error('浏览器不支持 AudioWorklet');
       const [bank]=await Promise.all([loadBank(entry,this.base,token.signal),ctx.audioWorklet.addModule(new URL('src/worklet.mjs',this.base))]);
       if(!this.owner.owns(token.id)){await ctx.close();return;}
+      let experimental=null;
+      if(recordedCandidate){
+        if(mode!=='NORMAL_SEAM_ENVELOPE_V1'||entry.id!=='hellcat_v6')
+          throw new Error('Coordinated source requires explicit Hellcat normal mode');
+        if(bank.sampleRate!==recordedCandidate.sampleRate)
+          throw new Error('Coordinated source sample rate must match the internal renderer');
+        experimental=await stageCoordinatedCandidate(recordedCandidate);
+        if(!this.owner.owns(token.id)){await ctx.close();return;}
+      }
       const node=new AudioWorkletNode(ctx,'vico-bank',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
       const volume=ctx.createGain();volume.gain.value=this.volume;node.connect(volume).connect(ctx.destination);this.node=node;this.volumeNode=volume;
       let readyResolve,readyReject;
@@ -84,7 +113,9 @@ export class AudioSession {
         if(data.type==='stats'){this.last={...data.stats,contextSampleRate:ctx.sampleRate,bankIdentity:bank.identity,qualification:'WEB_PORT_NOT_DEVICE_OR_ACOUSTIC_APPROVAL'};this.onChange({stage:this.stage,stats:this.last});}
       };
       const transfers=[...bank.loops.map(l=>l.samples.buffer),bank.afterfire.buffer,...bank.shifts.map(x=>x.buffer),...(bank.startup?[bank.startup.samples.buffer]:[])];
-      node.port.postMessage({type:'init',owner:token.id,bank,mode,input:this.freshInput(this.pendingInput)},transfers);
+      if(experimental)transfers.push(experimental.samples.buffer);
+      node.port.postMessage({type:'init',owner:token.id,bank,mode,input:this.freshInput(this.pendingInput),
+        recordedCandidate:experimental,recordedVerified:Boolean(experimental)},transfers);
       try{await ready;}finally{clearTimeout(timeout);}
       if(!this.owner.owns(token.id)){await ctx.close();return;}
       node.port.postMessage({...this.freshInput(this.pendingInput),type:'input',owner:token.id});node.port.postMessage({type:'heartbeat',owner:token.id});

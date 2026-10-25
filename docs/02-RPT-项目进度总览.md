@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-15 · 主线：P2 · 工作包：PR38 normal seam-only + km/h: local QA passed, remote review/device audition pending
+更新：2026-10-25 · 主线：P2 · 工作包：HC-C1 A playback fixes verified; B real engine-sim study completed with mixed AM results and rejected default DSP; acoustic/device gates open
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

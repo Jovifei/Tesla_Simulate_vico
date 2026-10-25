@@ -1,0 +1,20 @@
+{
+  "head": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+  "branch": "local/hc-c1-reception-20261025",
+  "cwd": "E:\\Tesla_speed\\worktrees\\vico-web-0cb610e8",
+  "files": {
+    ".github/workflows/vico-n2-qualification.yml": "0ae9f14586da933a47039041aeb563f68a0045c84adb429d2ce3793f9581db14",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt": "6a4115c028b1c9d5e3635f8ea118e783043cc060ce2d65de9273ed9bfc9398ad",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabStatefulBankRenderer.kt": "567030323cae80f805ecfb1a22847a4d966fa2c724a2272dd6d5b03eeb699672",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/MatlabV6SoundBankEngine.kt": "4cba5561f52b7625054b9fe4a0e1b269160f9b31377cbadae6afb97e633ad0e8",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/CoordinatedLongTakeVoiceTest.kt": "f201febab9971e3977dd08ef34b05d154993c6ba01d43c470302367b13299f94",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/CoordinatedVoiceLifecycleRegressionTest.kt": "00881d2818860753ed9b7883c65aec53d80f6994edb2d61c4cf5db72e92ab275",
+    "vico_web/src/core.mjs": "82fae1e42568b514d82a26df0dd931a663c50393ba00c280d8791e6315e1694c",
+    "vico_web/src/session.mjs": "9c8e28c2b06f191b055d9cc425f98344e43def5f4ba2673cfd65cbb4414d6676",
+    "vico_web/test/coordinated-audio-session-integration.test.mjs": "b3643bdf6dec8349067bb7a346115c70244c67e7f36155f31ca8b7d0d04d9885",
+    "vico_web/test/coordinated-longtake.test.mjs": "205e15ce38471e52ee4b5ba8262b7afbc4e4207e877dbb0b8325c8f073bbff77",
+    "vico_web/test/coordinated-worklet.test.mjs": "7f7958bd9662201decf51e145ffa44e4a1859e696db2dc2430f802f2ded48c40"
+  },
+  "state": "UNCOMMITTED_A_FIXES_NOT_A_NEW_SHA",
+  "unchanged_during_validation": true
+}

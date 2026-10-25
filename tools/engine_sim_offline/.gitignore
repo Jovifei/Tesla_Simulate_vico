@@ -1,0 +1,8 @@
+/build/
+/upstream/
+/solver/
+/captures/
+/runs/
+*.f32le
+*.wav
+__pycache__/

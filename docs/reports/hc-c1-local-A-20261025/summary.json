@@ -1,0 +1,75 @@
+{
+  "stage": "A_ENGINEERING_VERIFIED",
+  "head_parent": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+  "dirty_source_identity": "source-after.json",
+  "full_node": {
+    "pass": 133,
+    "fail": 0,
+    "skip": 0
+  },
+  "native_ui_js": {
+    "pass": 31,
+    "fail": 0,
+    "skip": 0
+  },
+  "native_focused": {
+    "pass": 29,
+    "fail": 0,
+    "red_expected_failures": 1
+  },
+  "python_windows_n2": {
+    "pass": 44,
+    "skip": 0,
+    "fail": 0
+  },
+  "python_wiring": {
+    "pass": 3,
+    "fail": 0
+  },
+  "policy_lifecycle_exit": 0,
+  "android": {
+    "total": 558,
+    "pass": 529,
+    "fail": 0,
+    "error": 0,
+    "skip": 29,
+    "fresh_xml": 122
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 6
+  },
+  "gradle_exit": 0,
+  "source_unchanged_during_tests": true,
+  "apk": {
+    "sha256": "8911314e08fd28dd13c1210d4cf14c3a4aec68227f352b8e3419da99fe98e55f",
+    "certificate_sha256": "9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774",
+    "signature_scheme_v2": true,
+    "package": "com.vico.simulator",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "compileSdk": 34,
+    "minSdk": 24,
+    "targetSdk": 34,
+    "debuggable": true,
+    "artifact": "app-debug.apk",
+    "scope": "LOCAL_SOFTWARE_ONLY_NOT_INSTALLED",
+    "helper_note": "verify_apk.ps1 incorrectly reported debuggable=false; raw aapt2 34 manifest and badging both explicitly prove debuggable=true. Helper result preserved separately; no shared skill change."
+  },
+  "review": "REVIEW.md",
+  "outstanding": [
+    "B_ENGINE_SIM_COMPARISON",
+    "0.6_SECOND_TEXTURE",
+    "REAL_ALIGNED_REFERENCE",
+    "PHYSICAL_DEVICE",
+    "ROAD",
+    "HUMAN_LISTENING"
+  ],
+  "not_done": [
+    "commit",
+    "push",
+    "merge",
+    "install",
+    "public_deploy"
+  ]
+}
