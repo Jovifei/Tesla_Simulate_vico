@@ -11,7 +11,7 @@ async function boot() {
   class AudioSession{constructor(base,cb){callback=cb;session=this;this.stage='idle';this.starts=0;}setInput(v){inputs.push(v)}setVolume(){}start(){this.starts++;this.stage='running';callback({stage:'running'})}stop(){this.stage='idle';return Promise.resolve()}}
   const entry={id:'c63_w204_v6',name:'C63',kind:'V8',idleRpm:700,redlineRpm:7200,bankSha256:'c63'};
   const location={hash:'#/drive/c63_w204_v6'};
-  const context=vm.createContext({document:{documentElement:{requestFullscreen:async()=>{throw Error('Denied')}},getElementById:get,createElement:()=>new Element(),querySelectorAll:()=>[],addEventListener(k,f){documentEvents[k]=f},hidden:false},window:{addEventListener(k,f){windowEvents[k]=f}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry],sourceCommit:'base'}),GpsSpeedInput:class{},performance:{now:()=>0},URL,Blob,setTimeout,clearTimeout,setInterval,clearInterval,console,isSecureContext:true});
+  const context=vm.createContext({document:{documentElement:{requestFullscreen:async()=>{throw Error('Denied')}},getElementById:get,createElement:()=>new Element(),querySelectorAll:()=>[],addEventListener(k,f){documentEvents[k]=f},hidden:false},window:{addEventListener(k,f){windowEvents[k]=f}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry],sourceCommit:'base'}),loadRecordedReferenceCatalog:async()=>({references:[]}),GpsSpeedInput:class{},performance:{now:()=>0},URL,Blob,setTimeout,clearTimeout,setInterval,clearInterval,console,isSecureContext:true});
   await vm.runInContext(`(async()=>{${source}})()`,context);
   return {get,inputs,callback,session,context,windowEvents};
 }

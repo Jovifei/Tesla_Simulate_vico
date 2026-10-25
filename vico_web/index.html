@@ -11,6 +11,12 @@
 <p id="garage-error" role="status"></p>
 <div aria-label="六声音车型" class="vehicle-grid" id="vehicles"><p>正在准备车型…</p></div>
 <div class="garage-footer"><span>原六车声库 · 浏览器内合成 · 不自动播放</span><span>原创仪表，非原厂复刻。显示风格不改变声音车型。</span></div>
+<button class="primary reference-entry" id="reference-link" type="button"><b>实录参考试听</b><span>REFERENCE_ONLY</span></button>
+</section>
+<section class="reference" hidden="" id="reference">
+  <div class="garage-intro"><div><div class="eyebrow">RECORDED REFERENCES / REFERENCE_ONLY</div><h1>真实录音，先选对声音方向。</h1><p>这里只播放真实 PCM 片段，不循环、不推断 RPM/load、不作为产品声库。</p></div></div>
+  <button class="back" id="back-from-reference" type="button">← 车库</button>
+  <div class="reference-grid" id="reference-list"></div>
 </section>
 <section class="drive" hidden="" id="drive">
 <div class="drive-heading"><button class="back" id="back-garage" type="button">← 车库</button><div class="vehicle-heading"><div class="eyebrow">SOUND PROFILE / 声音车型</div><h1 id="vehicle-name">等待选择车型</h1></div><span class="status" id="play-status" role="status">未开始</span><button aria-controls="settings" aria-expanded="false" id="settings-toggle" type="button">设置 / 诊断</button></div>

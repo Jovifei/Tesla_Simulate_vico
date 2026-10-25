@@ -4,6 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {SOURCE_SHA,decodeF32Wav,validateSpec,PEAK_CONTRACT} from '../src/core.mjs';
+import {validateRecordedReference} from '../src/recorded-reference.mjs';
 export const WEB=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 export const VEHICLES=Object.freeze([
   ['c63_w204_v6','Mercedes-Benz C63 W204','V8'],['hellcat_v6','Dodge Challenger SRT Hellcat','V8'],
@@ -30,11 +31,40 @@ export async function readStartupPack(web=WEB){
   const pack={manifest,pcm:await fs.readFile(path.join(root,leaf(manifest.file))),attribution:await fs.readFile(path.join(root,'ATTRIBUTION.txt'),'utf8')};
   validateStartupPack(pack);return pack;
 }
-export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',testOnly=false,startupPack=null}){
+export const RECORDED_REFERENCE_CATALOG=[
+  Object.freeze({schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id:'hellcat-startup-public',
+    title:'Hellcat startup public recording',file:'hellcat-startup-original.wav',sampleRate:48000,channels:1,frames:314306,
+    source:Object.freeze({author:'Axepas12',title:'Launching sound Challenger',url:'https://commons.wikimedia.org/wiki/File:Launching_sound_Challenger.ogg',
+      license:'CC BY-SA 4.0',licenseUrl:'https://creativecommons.org/licenses/by-sa/4.0/'}),
+    identity:Object.freeze({vehicle:'Dodge Challenger Hellcat',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
+    automaticLoop:false}),
+  Object.freeze({schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id:'srt-version-unconfirmed',
+    title:'Challenger SRT version unconfirmed',file:'srt-version-unconfirmed.wav',sampleRate:24000,channels:2,frames:5352000,
+    source:Object.freeze({author:'JorisDJN',title:'Dodge Challenger SRT',url:'https://freesound.org/people/JorisDJN/sounds/760645/',
+      license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'}),
+    identity:Object.freeze({vehicle:'Dodge Challenger SRT (version unconfirmed)',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
+    automaticLoop:false})
+];
+export async function readRecordedReferences(web=WEB){
+  const out=[];
+  for(const reference of RECORDED_REFERENCE_CATALOG){
+    const bytes=await fs.readFile(path.join(web,'assets/recorded-references',reference.file));
+    out.push({reference,pcm:bytes});
+  }
+  return out;
+}
+export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',testOnly=false,startupPack=null,recordedReferences=null}){
   validateStartupPack(startupPack);
   out=path.resolve(out);await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out); // exclusive, never overwrite
   const catalog={schema:'vico.web.catalog.v1',sourceCommit:SOURCE_SHA,webCommit,testOnly,algorithm:'NORMAL_SEAM_ENVELOPE_V1',qualification:'PORT_REQUIRES_KOTLIN_BROWSER_DEVICE_VALIDATION',vehicles:[]};
   const write=async(relative,bytes)=>{const full=path.join(out,relative);await fs.mkdir(path.dirname(full),{recursive:true});await fs.writeFile(full,bytes,{flag:'wx'});};
+  const references=recordedReferences??await readRecordedReferences(web);
+  for(const item of references){
+    const identity=validateRecordedReference(item.reference);
+    if(!Buffer.isBuffer(item.pcm)||!item.pcm.length)throw new Error('Missing recorded reference PCM');
+    item.sha256=sha(item.pcm);item.bytes=item.pcm.length;
+    if(identity.id!==item.reference.id)throw new Error('Recorded reference identity mismatch');
+  }
   for(const [id,name,kind] of VEHICLES){
     const root=`${ASSETS}/s12_v10/${id}`, manifestBytes=await readBlob(`${root}/manifest.json`), m=JSON.parse(manifestBytes.toString('utf8'));
     if(m.vehicle_key!==id||!['vico.s12.soundbank.v1','vico.matlab.soundbank.v1'].includes(m.schema)||![48000,96000].includes(m.sample_rate_hz)||!Array.isArray(m.loops)||m.loops.length<1||m.loops.length>64||!Array.isArray(m.shift_events)||m.shift_events.length>16)throw new Error(`Invalid source bank: ${id}`);
@@ -75,6 +105,11 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
   }
   for(const name of ['index.html','style.css','favicon.svg'])await write(name,await fs.readFile(path.join(web,name)));
   await fs.cp(path.join(web,'src'),path.join(out,'src'),{recursive:true,errorOnExist:true,force:false});
+  const referenceCatalog={schema:'vico.recorded.reference.catalog.v1',scope:'REFERENCE_ONLY',automaticLoop:false,
+    qualification:'SOURCE_TIMBRE_DIRECTION_ONLY_NOT_PRODUCT_OR_OEM',
+    references:references.map(({reference,sha256,bytes})=>({...reference,file:`assets/recorded-references/${path.basename(reference.file)}`,sha256,bytes}))};
+  for(const {reference,pcm} of references)await write(`assets/recorded-references/${reference.file}`,pcm);
+  await write('recorded-references.json',Buffer.from(JSON.stringify(referenceCatalog,null,2)+'\n'));
   await write('audio-credits.txt',Buffer.from(startupPack?.attribution||'Vico original synthetic bank engine. No third-party startup recording is enabled in this build.\n'));
   await write('catalog.json',Buffer.from(JSON.stringify(catalog,null,2)+'\n'));
   const hashes={};async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())await walk(p);else hashes[path.relative(out,p).split(path.sep).join('/')]=sha(await fs.readFile(p));}}await walk(out);

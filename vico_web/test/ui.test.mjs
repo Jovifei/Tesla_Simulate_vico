@@ -13,7 +13,7 @@ test('garage owns navigation, stop clears readouts, pedal stays demo-only, late 
  const other={id:'other',name:'Other car',kind:'V6',idleRpm:900,redlineRpm:7000,bankSha256:'bank-other'};
  const document={getElementById:get,createElement:()=>new Element(),querySelectorAll:()=>[],addEventListener(){},hidden:false};
  const source=(await readFile(new URL('../src/app.mjs',import.meta.url),'utf8')).replace(/^import .*;$/mg,'').replace('import.meta.url',"'https://example.test/src/app.mjs'");
- const context=vm.createContext({document,window:{addEventListener(k,f){events[k]=f;}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry,other],sourceCommit:'abc'}),GpsSpeedInput:class{},URL,performance:{now:()=>0},setInterval,clearInterval,setTimeout,Blob,console,isSecureContext:true});
+ const context=vm.createContext({document,window:{addEventListener(k,f){events[k]=f;}},location,navigator:{},AudioSession,loadCatalog:async()=>({vehicles:[entry,other],sourceCommit:'abc'}),loadRecordedReferenceCatalog:async()=>({references:[]}),GpsSpeedInput:class{},URL,performance:{now:()=>0},setInterval,clearInterval,setTimeout,Blob,console,isSecureContext:true});
  await vm.runInContext(`(async()=>{${source}})()`,context);
  assert.equal(get('drive').hidden,true,'initial view must be garage');
  get('vehicles').children[0].handlers.click();await events.hashchange();

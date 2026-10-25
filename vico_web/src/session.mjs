@@ -43,6 +43,19 @@ export async function loadCatalog(base,signal) {
   if(c.schema!=='vico.web.catalog.v1'||!Array.isArray(c.vehicles)||c.vehicles.length!==6) throw new Error('Invalid six-vehicle catalog');
   return c;
 }
+export async function loadRecordedReferenceCatalog(base,signal) {
+  const bytes=await checkedFetch(new URL('recorded-references.json',base),null,{signal,maxBytes:65536});
+  const d=decodeJSON(bytes);
+  if(d.schema!=='vico.recorded.reference.catalog.v1'||d.scope!=='REFERENCE_ONLY'||d.automaticLoop!==false||!Array.isArray(d.references))
+    throw new Error('Invalid recorded reference catalog');
+  for(const reference of d.references){
+    if(!reference || typeof reference.file!=='string' || !/^[a-z0-9][a-z0-9/.-]+\.wav$/.test(reference.file) ||
+        reference.file.includes('..') || !/^[0-9a-f]{64}$/.test(reference.sha256||'') ||
+        reference.scope!=='REFERENCE_ONLY' || reference.automaticLoop!==false)
+      throw new Error('Invalid recorded reference entry');
+  }
+  return d;
+}
 export async function loadBank(entry,base,signal) {
   if(!/^banks\/[a-z0-9_]+\/bank\.json$/.test(entry.bankFile)) throw new Error('Invalid bank path');
   const bankURL=new URL(entry.bankFile,base), d=decodeJSON(await checkedFetch(bankURL,entry.bankSha256,{signal,maxBytes:65536}));
