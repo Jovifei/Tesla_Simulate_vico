@@ -4,6 +4,16 @@ import {validateLongTake} from './coordinated-longtake.mjs';
 export async function digest(bytes) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
+/** Main-thread complete F32LE source SHA, before any real-time transfer.
+ *  GDC restricted media is never downloaded or staged by this helper.
+ */
+export async function verifyCoordinatedCandidate(candidate) {
+  validateLongTake(candidate);
+  const a=candidate.samples;
+  const bytes=new Uint8Array(a.buffer,a.byteOffset,a.byteLength);
+  if(await digest(bytes)!==candidate.pcmSha256)throw new Error('Recorded PCM identity mismatch');
+  return true;
+}
 export async function checkedFetch(url, expected, {signal, maxBytes=8*1024*1024}={}) {
   url=new URL(url,globalThis.location?.href || 'http://localhost');
   if (globalThis.location && url.origin!==location.origin) throw new Error('Cross-origin asset refused');
@@ -75,12 +85,7 @@ export class AudioSession {
       if(recordedCandidate){
         if(mode!=='NORMAL_SEAM_ENVELOPE_V1'||entry.id!=='hellcat_v6')
           throw new Error('Coordinated source requires explicit Hellcat normal mode');
-        validateLongTake(recordedCandidate);
-        // The feature never fetches private media. The explicit caller's PCM
-        // must first pass SHA-256 verification on the main thread.
-        const a=recordedCandidate.samples,bytes=new Uint8Array(a.buffer,a.byteOffset,a.byteLength);
-        if(await digest(bytes)!==recordedCandidate.pcmSha256)
-          throw new Error('Recorded PCM identity mismatch');
+        await verifyCoordinatedCandidate(recordedCandidate);
         if(!this.owner.owns(token.id)){await ctx.close();return;}
         experimental={...recordedCandidate,samples:a.slice()};
       }
