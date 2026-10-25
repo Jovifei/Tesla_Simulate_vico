@@ -91,6 +91,19 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
         nonFiniteFrames, loadOutOfBankFrames, rpmOutOfBankFrames, rejectedInputBlocks,
     )
 
+    // Optional HC-C1 source is prepared before writer starts. No source files
+    // or SHA hashing occur on the realtime renderer.
+    private var coordinatedVoice: CoordinatedLongTakeVoice? = null
+    fun installCoordinatedVoiceForReview(candidate: CoordinatedLongTakeVoice) {
+        require(bank.vehicleKey == "hellcat_v6" &&
+            traversalMode == LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1 &&
+            evaluatedFrames == 0L && coordinatedVoice == null) {
+            "Coordinated voice requires pre-start Hellcat normal session"
+        }
+        coordinatedVoice = candidate
+    }
+    fun coordinatedVoiceSnapshot(): CoordinatedLongTakeVoice.Snapshot? = coordinatedVoice?.snapshot()
+
     private var engineCycles = 0.0
     private var smoothedRpm = Double.NaN
     private var smoothedLoad = Double.NaN
@@ -119,6 +132,8 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
     }
 
     fun reset() {
+        coordinatedVoice?.cancel()
+        coordinatedVoice = null
         evaluatedFrames = 0L
         preClipPeak = 0.0
         aboveContractFrames = 0L
@@ -173,6 +188,7 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
         }
 
         if (scheduledEvents == null && startState.muted) {
+            coordinatedVoice?.cancel()
             if (startState.load < bank.loadLevels.first() || startState.load > bank.loadLevels.last()) {
                 loadOutOfBankFrames += frameCount.toLong()
             }
@@ -207,6 +223,13 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
         if (!smoothedRpm.isFinite()) smoothedRpm = firstRpm
         if (!smoothedLoad.isFinite()) smoothedLoad = firstLoad
         val output = FloatArray(frameCount)
+        val activeVoice = coordinatedVoice
+        if (activeVoice != null) {
+            val control = startState.inputControl
+            if (scheduledEvents != null || control?.source != DriveInputSource.DEMO ||
+                !control.usable || startState.muted) activeVoice.cancel()
+            else activeVoice.setControl(startState.rpm, startState.load)
+        }
         val diagnosticCapture = rpmBlendCapture
         val smoothingAlpha = 1.0 - exp(-1.0 / (bank.sampleRateHz * STATE_SMOOTHING_SECONDS))
         repeat(frameCount) { index ->
@@ -247,7 +270,12 @@ class MatlabStatefulBankRenderer @JvmOverloads constructor(
             val high = lerp(sample(highLow), sample(highHigh), loadBlend)
             val shiftGain = mix(startState.shiftGain, endState.shiftGain, progress).toFloat()
             val dry = lerp(low, high, rpmBlend)
-            var value = (normalEnvelope?.process(dry) ?: dry) * shiftGain
+            // The experimental voice replaces only dry sustained PCM.
+            // Shift/afterfire, stats, fixed gain and clipping stay in this
+            // original renderer path. Cancelled voice cannot silently rearm.
+            val continuous = if (activeVoice != null) activeVoice.next()
+                else (normalEnvelope?.process(dry) ?: dry)
+            var value = continuous * shiftGain
             var eventContribution = 0f
             if (afterfireIndex in bank.afterfire.indices) {
                 val contribution = bank.afterfire[afterfireIndex++]
