@@ -17,6 +17,21 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     private val syntheticControllers = mutableMapOf<DriveInputSource, MatlabPowertrainController>()
     private var startup = StartupSoundPlayer.unavailable("not_prepared")
     fun startupStats(): StartupSoundPlayer.Snapshot = startup.snapshot()
+
+    /**
+     * Engineering-only opt-in; requires selected Hellcat and prior off-writer
+     * validated F32LE candidate. No existing product action calls this path.
+     */
+    fun installCoordinatedVoiceForReview(candidate: CoordinatedLongTakeVoice): Boolean {
+        if (prototypeEnabled || normalVehicleKey != "hellcat_v6") return false
+        val active = renderer ?: return false
+        return try {
+            active.installCoordinatedVoiceForReview(candidate)
+            true
+        } catch (_: IllegalArgumentException) { false }
+    }
+    fun coordinatedVoiceSnapshot(): CoordinatedLongTakeVoice.Snapshot? =
+        renderer?.coordinatedVoiceSnapshot()
     fun cancelStartup() = startup.cancel()
 
     @Synchronized
