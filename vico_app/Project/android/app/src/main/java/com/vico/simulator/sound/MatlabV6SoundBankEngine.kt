@@ -32,6 +32,14 @@ class MatlabV6SoundBankEngine(private val assets: AssetManager) {
     }
     fun coordinatedVoiceSnapshot(): CoordinatedLongTakeVoice.Snapshot? =
         renderer?.coordinatedVoiceSnapshot()
+    fun requestCoordinatedVoiceCancellation() = renderer?.requestCoordinatedVoiceCancellation()
+    fun acceptsCoordinatedVoiceInput(
+        control: DriveInputControl?, sourceAvailable: Boolean,
+        running: Boolean, muted: Boolean, inputTransition: Boolean,
+    ): Boolean = renderer?.acceptsCoordinatedVoiceInput(
+        control, sourceAvailable, running, muted, inputTransition,
+    ) ?: true
+    fun cancelCoordinatedVoice() = renderer?.cancelCoordinatedVoice()
     fun cancelStartup() = startup.cancel()
 
     @Synchronized

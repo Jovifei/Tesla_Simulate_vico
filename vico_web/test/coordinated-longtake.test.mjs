@@ -24,6 +24,14 @@ function stream(engine,n,events=[]){
  }
  return out;
 }
+
+test('coordinated source rejects a mismatched internal bank rate without restricting legacy banks',()=>{
+ const candidate=coordinatedSyntheticFixture();
+ const bank={...fixtureBank({constant:true}),vehicleKey:'hellcat_v6',sampleRate:96000};
+ assert.throws(()=>new LiveEngine(bank,'NORMAL_SEAM_ENVELOPE_V1',13,
+  {recordedCandidate:candidate,recordedVerified:true}),/sample rate/i);
+ assert.doesNotThrow(()=>new LiveEngine(bank,'NORMAL_SEAM_ENVELOPE_V1',13));
+});
 test('finite phase-complete single-take windows and explicit licence/state/phase gate',()=>{
  const c=coordinatedSyntheticFixture();
  assert.equal(validateLongTake(c).regionCount,2);

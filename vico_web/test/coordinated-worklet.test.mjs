@@ -87,3 +87,16 @@ test('legacy sample path remains untouched when no candidate is provided',()=>{
  assert.equal(p.engine.recorded,null);
  assert.equal(p.engine.snapshot().coordinatedVoice,undefined);
 });
+
+test('device output rate conversion preserves the 48k coordinated model clock',()=>{
+ try{
+  for(const rate of [44100,96000]){
+   globalThis.sampleRate=rate;
+   const p=init(),output=frames(p,0,Math.round(rate*.1));
+   assert(!p.failed);
+   assert(output.every(v=>Number.isFinite(v)&&Math.abs(v)<.84139515));
+   const rendered=p.engine.snapshot().coordinatedVoice.renderedFrames;
+   assert(Math.abs(rendered/48000-.1)<=3/48000,`device ${rate}: ${rendered} internal frames`);
+  }
+ }finally{globalThis.sampleRate=48000;}
+});

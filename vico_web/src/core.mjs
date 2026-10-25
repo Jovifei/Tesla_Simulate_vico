@@ -194,6 +194,8 @@ export class LiveEngine {
     // F32LE SHA on the main thread; missing evidence rejects, not legacy fallback.
     if(recordedCandidate && (mode!=='NORMAL_SEAM_ENVELOPE_V1'||bank.vehicleKey!=='hellcat_v6'))
       throw new Error('Coordinated voice only permits explicit Hellcat normal mode');
+    if(recordedCandidate && bank.sampleRate!==recordedCandidate.sampleRate)
+      throw new Error('Coordinated source sample rate must match the internal renderer');
     this.recorded=recordedCandidate?new CoordinatedLongTakeVoice(recordedCandidate,{alreadyVerified:recordedVerified}):null;
     this.renderer=new BankRenderer(bank,mode); this.power=new Powertrain(bank.spec); this.motion=new DemoMotion(); this.rate=bank.sampleRate; this.controlFrames=this.rate/50;
     const start=mode==='NORMAL_SEAM_ENVELOPE_V1'?bank.startup:null;

@@ -94,6 +94,8 @@ export class AudioSession {
       if(recordedCandidate){
         if(mode!=='NORMAL_SEAM_ENVELOPE_V1'||entry.id!=='hellcat_v6')
           throw new Error('Coordinated source requires explicit Hellcat normal mode');
+        if(bank.sampleRate!==recordedCandidate.sampleRate)
+          throw new Error('Coordinated source sample rate must match the internal renderer');
         experimental=await stageCoordinatedCandidate(recordedCandidate);
         if(!this.owner.owns(token.id)){await ctx.close();return;}
       }

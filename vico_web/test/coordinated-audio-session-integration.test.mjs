@@ -6,10 +6,10 @@ import {fixtureBank,wav} from './fixtures.mjs';
 import {coordinatedSyntheticFixture} from './coordinated-fixture.mjs';
 
 const sha=x=>createHash('sha256').update(x).digest('hex');
-function server(){
+function server({bankRate=48000}={}){
  const bank=fixtureBank({constant:true,count:256}),files=new Map();
  const asset=samples=>{
-  const bytes=wav(samples),hash=sha(bytes);
+  const bytes=wav(samples,bankRate),hash=sha(bytes);
   files.set('/banks/hellcat_v6/asset-'+hash+'.wav',bytes);
   return {file:'asset-'+hash+'.wav',sha256:hash,bytes:bytes.length};
  };
@@ -17,18 +17,18 @@ function server(){
  const afterfire=asset(bank.afterfire);
  const shifts=bank.shifts.map(asset);
  const descriptor={schema:'vico.web.bank.v1',vehicleKey:'hellcat_v6',
-  sampleRate:48000,spec:bank.spec,sourceCommit:'test-only',
+  sampleRate:bankRate,spec:bank.spec,sourceCommit:'test-only',
   normalIdentity:'legacy_unmodified',referenceManifestSha256:'a'.repeat(64),
   loops,afterfire,shifts};
  const json=Buffer.from(JSON.stringify(descriptor));
  files.set('/banks/hellcat_v6/bank.json',json);
  return {files,entry:{id:'hellcat_v6',name:'Test Hellcat',bankFile:'banks/hellcat_v6/bank.json',bankSha256:sha(json)}};
 }
-function globals(){
+function globals({deviceRate=48000}={}){
  const backup=new Map(),set=(key,value)=>{backup.set(key,{own:Object.hasOwn(globalThis,key),value:globalThis[key]});Object.defineProperty(globalThis,key,{configurable:true,writable:true,value});};
  const contexts=[],nodes=[];
  class Ctx{
-  constructor(){this.state='suspended';this.sampleRate=48000;this.currentTime=0;this.destination={};this.audioWorklet={addModule:async()=>{}};contexts.push(this);}
+  constructor(){this.state='suspended';this.sampleRate=deviceRate;this.currentTime=0;this.destination={};this.audioWorklet={addModule:async()=>{}};contexts.push(this);}
   async resume(){this.state='running';}
   createGain(){return {gain:{value:0,setTargetAtTime(){}},connect(){return this}};}
   async close(){this.state='closed';}
@@ -92,4 +92,38 @@ test('invalid full source SHA fails closed before Worklet init',async()=>{
   assert.equal(env.nodes.length,0);
   assert(env.contexts.every(x=>x.state==='closed'));
  }finally{env.restore();globalThis.fetch=oldFetch;}
+});
+
+test('session rejects source and internal renderer rate mismatch before Worklet creation',async()=>{
+ const {files,entry}=server({bankRate:96000}),env=globals(),oldFetch=globalThis.fetch;
+ globalThis.fetch=async input=>{
+  const bytes=files.get(new URL(input.toString()).pathname);
+  return bytes?new Response(bytes):new Response('missing',{status:404});
+ };
+ const s=new AudioSession(new URL('https://example.invalid/'));
+ try{
+  await s.start(entry,'NORMAL_SEAM_ENVELOPE_V1',{source:'demo',scenario:'stop'},
+   {recordedCandidate:coordinatedSyntheticFixture()});
+  assert.equal(s.stage,'error');
+  assert.equal(env.nodes.length,0);
+  assert(env.contexts.every(x=>x.state==='closed'));
+ }finally{await s.stop(true);env.restore();globalThis.fetch=oldFetch;}
+});
+
+test('48k source and renderer remain usable with 44.1k and 96k output contexts',async()=>{
+ for(const deviceRate of [44100,96000]){
+  const {files,entry}=server(),env=globals({deviceRate}),oldFetch=globalThis.fetch;
+  globalThis.fetch=async input=>{
+   const bytes=files.get(new URL(input.toString()).pathname);
+   return bytes?new Response(bytes):new Response('missing',{status:404});
+  };
+  const s=new AudioSession(new URL('https://example.invalid/'));
+  try{
+   await s.start(entry,'NORMAL_SEAM_ENVELOPE_V1',{source:'demo',scenario:'stop'},
+    {recordedCandidate:coordinatedSyntheticFixture()});
+   assert.equal(s.stage,'running');
+   assert.equal(env.contexts[0].sampleRate,deviceRate);
+   assert.equal(env.nodes[0].sent.find(x=>x.m.type==='init').m.bank.sampleRate,48000);
+  }finally{await s.stop(true);env.restore();globalThis.fetch=oldFetch;}
+ }
 });

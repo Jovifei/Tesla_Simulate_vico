@@ -54,8 +54,8 @@ class CoordinatedLongTakeVoiceTest {
         brightness = .3, harmonics = floatArrayOf(), muted = false, load = load,
         inputControl = DriveInputControl(DriveInputSource.DEMO, 7L, Long.MAX_VALUE, true, true),
     )
-    private fun bank(quiet: Boolean = true) = MatlabSoundBank(
-        vehicleKey = "hellcat_v6", sampleRateHz = 48000,
+    private fun bank(quiet: Boolean = true, sampleRate: Int = 48000) = MatlabSoundBank(
+        vehicleKey = "hellcat_v6", sampleRateHz = sampleRate,
         powertrain = MatlabPowertrainSpec(
             idleRpm = 960.0, redlineRpm = 7000.0,
             gearRatios = doubleArrayOf(3.0, 2.0), finalDrive = 3.0,
@@ -171,6 +171,24 @@ class CoordinatedLongTakeVoiceTest {
         assertThrows(IllegalArgumentException::class.java) {
             r.installCoordinatedVoiceForReview(v)
         }
+    }
+
+    @Test fun candidateRequiresMatchingInternalRendererRateWithoutRestrictingOrdinaryBanks() {
+        val mismatched = MatlabStatefulBankRenderer(
+            bank(sampleRate = 96000), LoopTraversalMode.NORMAL_SEAM_ENVELOPE_V1,
+            "hellcat_original_bank_unchanged",
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            mismatched.installCoordinatedVoiceForReview(voice())
+        }
+        assertEquals(null, mismatched.coordinatedVoiceSnapshot())
+        assertTrue(mismatched.render(state(), 960).all { it.isFinite() })
+        val matched = normal()
+        val candidate = voice()
+        matched.installCoordinatedVoiceForReview(candidate)
+        matched.render(state(), 4800)
+        assertEquals(4800L, candidate.snapshot().renderedFrames)
+        assertEquals(0.8, candidate.snapshot().phaseCycles720, 1e-10)
     }
 
     @Test fun muteWrongInputAndResetCancelUntilNewPreparedSession() {
