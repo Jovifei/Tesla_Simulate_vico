@@ -45,6 +45,13 @@ jobs:
              r.trials.some(x=>x.frames!==192000 || x.actualBank.stats.nonfinite || x.syntheticOptIn.stats.hardClips))
             throw Error("HC-C1 real bank / synthetic trial incomplete");
           console.log(JSON.stringify({trial:r.schema,scenarios:r.trials.length,source:r.recordedSource,acoustic:"NOT_EVALUATED"}));'
+      - name: Upload synthetic HC-C1 numeric receipt only (no PCM or restricted references)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: vico-hc-c1-numeric-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/hc-c1-synthetic-evidence/receipt.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Record real build scope
         run: |
           node --input-type=module -e '
