@@ -26,6 +26,20 @@ class AudioEngine(context: Context) {
     internal fun setQualificationProvider(provider: C63QualificationPcmProvider?): Boolean =
         debuggable && !running && qualificationRoute.prepare(provider)
 
+    /** HC-C1 native playback-chain entry. Only debug builds, before audio start.
+     *  Source PCM is verified off the writer; no unauthorized GDC media shipped.
+     */
+    @Synchronized
+    internal fun prepareCoordinatedLongTakeForReview(
+        candidate: CoordinatedLongTakeVoice.Take,
+    ): Boolean {
+        if (!debuggable || isPlaybackBusy() || reviewSession != null ||
+            referenceSession != null || model.prototypeEnabled) return false
+        val ready = runCatching { CoordinatedLongTakeVoice.prepare(candidate) }.getOrNull()
+            ?: return false
+        return model.installCoordinatedVoiceForReview(ready)
+    }
+
     @Volatile private var current: SoundState? = null
     @Volatile private var masterVol: Float = 1.0f
     @Volatile private var running: Boolean = false
