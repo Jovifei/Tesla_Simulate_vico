@@ -1,0 +1,59 @@
+{
+  "A_source_commit": "f6018a6cd7ef9afc1c5c54e3e6ae05a2ac7efea3",
+  "engine_source": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+  "source_base": "generic LS physical example NOT_HELLCAT",
+  "capture": {
+    "seconds": 180,
+    "physics_frames": 1800000,
+    "audio_frames": 7938000,
+    "V0_frames_at48000": 8640000,
+    "corrected_startup": "originalstarter0.5s within fixed5s warmup",
+    "all_stream_validation": "PASS",
+    "coarse_physics": "direction/active-lit/MAP sanity only",
+    "default_DSP_clip_count": 47709,
+    "default_DSP_gate": "FAIL_CLIPPING"
+  },
+  "analysis": {
+    "cases": 14,
+    "dynamic_E2": "NOT_DEFINED",
+    "unit_tests": 11,
+    "packaged_unit_tests": 11,
+    "execution_exit": 0,
+    "automatic_acoustic_pass": false,
+    "source_preserved": true,
+    "normalized_V0_E1_versus_internal_E0_E2_absolute_powers": "NOT_CROSS_COMPARABLE",
+    "subsecond_period_fix": "NOT_QUALIFIED",
+    "final_script_sha256": "8d9b02ef3affef9117f9e163aeb0cbfeb529358606ba53c9f670b2587bea33f9",
+    "final_caption_correction": "4kHz sample rate,2kHz Nyquist;all measured signals and summary CSV bit-identical"
+  },
+  "reconstruction": {
+    "pressure-input.f32le": true,
+    "audio-taps.f32le": true,
+    "state.csv": true,
+    "dyno.csv": true,
+    "physical-validity.json": true
+  },
+  "source_files_sha256": {
+    ".gitignore": "7edc0d6cc741e8243fd25384ff9ff24d91c9431433215043667179caf1478c6a",
+    "analyze_captures.py": "8d9b02ef3affef9117f9e163aeb0cbfeb529358606ba53c9f670b2587bea33f9",
+    "CMakeLists.txt": "fa7f612360cc8d50d486b3f24842e3be0ff01b490ccded5f5364e69502aef066",
+    "LICENSE-engine-sim.txt": "857039f9282782e3e8d05932898933dc55e1b1c0c27026f3e096554e17801ef9",
+    "LICENSE-solver.txt": "869efbb246a10cc6d13699a4377cf81c7df535c6f0d48ae223b5bf68bfa5ed94",
+    "model_builder.cpp": "062235d9fcf8473192c28f3fc81fb29be08f1e0e7b9af2f4f896ce8f55d261ba",
+    "model_builder.h": "0c3511488443b419f7f09b2628bed0f3e534f414e05a75617e747fb7f17840e2",
+    "offline_main.cpp": "515189ab31ed8ea0aff2555e9305270854d7dc6eede8452074e6eb9ea396258e",
+    "offline_taps.h": "ec99c228625259a335bfa9075181fc5aa5ce9e489e23a9b43adec8b514f65f65",
+    "prepare_capture.py": "d13413357541384196eda4ae8f1787d0d30a469713e2aeb22b1a1f4b6cbfb773",
+    "prepare_workspace.py": "5ffe18dfe446fb15971b755849fbe9ed4e23b42a4bf65bc79654af48be570025",
+    "README.md": "dd6b6bf4623ef9f5ef4a9add3cb18c4c8dbb919868ca6ec411f2052746627720",
+    "render_vico_trace.mjs": "f43f2ca57e1e5138c7bc326984d9efb217c47a98a95775fec01310ae7e7d40bd",
+    "run_captures.py": "7bd6cb747493b642f78c784e5eb7ba4d2dfe8a81697497120b4eb60863fa3077",
+    "tested-environment.json": "7dabdd1908fe1c342569c79afa6b2a37a6c973f6c1cfec26a31e8cca0362b227",
+    "test_analysis.py": "0cbada67c18cba93b6d471d576b86c338bca6a479260eaeea9368b07980bede7",
+    "verify_capture.py": "6453a694c91f11db06dd3d9006d512bdb4b36c5622efe390bfe343ee12727745"
+  },
+  "local_evidence": "E:/Tesla_speed/reports/ab-execution-20261025",
+  "phone_road_human": "NOT_EVALUATED",
+  "C_core_integration": "NOT_IMPLEMENTED",
+  "A_CI": "4SUCCESS_exact_f6018a6"
+}

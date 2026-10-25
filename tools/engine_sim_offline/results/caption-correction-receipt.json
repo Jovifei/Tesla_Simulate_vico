@@ -1,0 +1,102 @@
+{
+  "status": "CAPTION_ONLY_CORRECTION_VERIFIED",
+  "before_script_sha256": "b482658351d921c08ef872465c2bf0474df07d3de15ff0e06bf5743f9ae6c896",
+  "after_script_sha256": "8d9b02ef3affef9117f9e163aeb0cbfeb529358606ba53c9f670b2587bea33f9",
+  "old_caption": "Waveform ACF (4 kHz bandwidth); carrier repeats are expected",
+  "new_caption": "Waveform ACF (4 kHz sample rate / 2 kHz Nyquist); carrier repeats expected",
+  "reverse_caption_edit_reproduces_before_script_hash": true,
+  "summary_csv_byte_identical": true,
+  "per_scene_metrics_json_byte_identical": true,
+  "all_route_pcm_byte_identical": [
+    {
+      "file": "main/E0.f32le",
+      "sha256": "a53ea72ce844e077b6d35233dd75ea48007ba3b71d7c0884a0c17c734976a83a"
+    },
+    {
+      "file": "main/E1.f32le",
+      "sha256": "85088aeb316c58b510f264b20cf59e5f291b255e62c310df3049e96a7a578b4a"
+    },
+    {
+      "file": "main/V0.f32le",
+      "sha256": "f78c5156a4ff40158c2938a341fcbf787b71f44176eb42aafbb2bbe3efc6cdae"
+    },
+    {
+      "file": "low/E0.f32le",
+      "sha256": "6ec9570a2e50b6e7ac6c136232526ff7aac8fca252c0d7998b7fa2459528addc"
+    },
+    {
+      "file": "low/E1.f32le",
+      "sha256": "87d11bc61ba1f123b51392be4061a243b919388f8371db4267ab38c9ec22942e"
+    },
+    {
+      "file": "low/E2.f32le",
+      "sha256": "c04f7f16d0cadaba2d6cd5126188738d85472ba6d1467bc21c502e0e3fe9eda7"
+    },
+    {
+      "file": "low/V0.f32le",
+      "sha256": "8cad988f10e1185e713508f0e03b82704d1e4f0b26c1e6df073373c9093017d8"
+    },
+    {
+      "file": "high/E0.f32le",
+      "sha256": "9102b7635e793ae529bdebaff4895a63a2592d318ef9fb925a81583cc045cfc1"
+    },
+    {
+      "file": "high/E1.f32le",
+      "sha256": "c00caf60c6697fe1846f236bbc1ced1aeceb60bbd1d538821a96426d5f4ba65b"
+    },
+    {
+      "file": "high/E2.f32le",
+      "sha256": "65834fa486830e818f85ad145071fa8f68def63b58af0ac8c3a1fc848983b067"
+    },
+    {
+      "file": "high/V0.f32le",
+      "sha256": "33d0626166e0e2e0d485947d32c951c9079c4039c1d0bc2ba14902e7546b9a9b"
+    },
+    {
+      "file": "holdout/E0.f32le",
+      "sha256": "4367af1cc5c4eee3b3f5861fe5d2914704bc00c4c08f31d72e9f25cd92f80250"
+    },
+    {
+      "file": "holdout/E1.f32le",
+      "sha256": "f8b8f7080bdcb71162870b076f1776b0c78b921c910f8627d53550fcd92d9ab4"
+    },
+    {
+      "file": "holdout/V0.f32le",
+      "sha256": "36dc901de122e193e9dad0c6e5e8b2385fdf2d8b77daf75f18e2256cc507f104"
+    }
+  ],
+  "all_listening_wavs_byte_identical_and_safe": true,
+  "physics_rerun": false,
+  "v0_rerender": false,
+  "test_exit_code": 0,
+  "test_count": 11,
+  "analysis_exit_code": 0,
+  "analysis_wall_s": 12.741689500049688,
+  "test_script_sha256": "0cbada67c18cba93b6d471d576b86c338bca6a479260eaeea9368b07980bede7",
+  "v0_render_script_sha256": "f43f2ca57e1e5138c7bc326984d9efb217c47a98a95775fec01310ae7e7d40bd",
+  "actual_argv_including_python_bytecode_flag": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-B",
+    "E:\\Tesla_speed\\experiments\\engine-sim-ab-20261025\\analyze_captures.py",
+    "--capture",
+    "main=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-captures\\main",
+    "--capture",
+    "low=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-captures\\low",
+    "--capture",
+    "high=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-captures\\high",
+    "--capture",
+    "holdout=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-captures\\holdout",
+    "--v0",
+    "main=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-v0\\main",
+    "--v0",
+    "low=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-v0\\low",
+    "--v0",
+    "high=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-v0\\high",
+    "--v0",
+    "holdout=E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-v0\\holdout",
+    "--prereg",
+    "E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-preregistration.json",
+    "--out",
+    "E:\\Tesla_speed\\reports\\ab-execution-20261025\\B2-analysis-final"
+  ]
+}

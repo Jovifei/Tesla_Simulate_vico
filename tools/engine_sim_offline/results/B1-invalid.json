@@ -1,0 +1,8 @@
+{
+  "status": "INVALID_PHYSICAL_MODEL",
+  "captures_preserved": "B-captures",
+  "reason": "Immediate hold dyno from zero speed selects v_theta>=0 branch and drives positive rotation; intended LS cam/ignition assumes CW negative. Measured cycle-angle decreases, MAP up to8.48MPa, negative dyno torque.",
+  "correction": "Original starter for first0.5s of unchanged5s warmup; engage hold dyno only after verified negative rotation. No model/DSP/seed/profile tuning.",
+  "source_archive": "E:\\Tesla_speed\\reports\\ab-execution-20261025\\B-invalid-reverse-dyno-source",
+  "date_utc": "2026-10-25T07:43:50.648004+00:00"
+}

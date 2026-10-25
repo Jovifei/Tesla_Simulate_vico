@@ -1,0 +1,10 @@
+{
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-B",
+    "E:\\Tesla_speed\\experiments\\engine-sim-ab-20261025\\test_analysis.py"
+  ],
+  "exit_code": 0,
+  "tool_wall_s": 2.0255806,
+  "scope": "11 synthetic/unit/syntax checks after only caption correction; no new physics or V0 render"
+}
