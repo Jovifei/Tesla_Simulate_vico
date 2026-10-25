@@ -1,4 +1,5 @@
 import {IgnitionSequence} from './ignition.mjs';
+import {CoordinatedLongTakeVoice} from './coordinated-longtake.mjs';
 
 /** Vico Kotlin algorithm port. Original assets/gains remain authoritative.
  * Based on PR38 477913e7: NOT an OEM model or a new acoustic qualification.
@@ -97,7 +98,7 @@ export class BankRenderer {
     this.corrections++; return f(legacy + correction);
   }
   soften(distance, delta) { const u = Math.abs(distance); return u >= 8 ? 0 : -delta / 2 * u * (1 + Math.cos(Math.PI * u / 8)) / 2; }
-  next() {
+  next(continuousOverride=undefined) {
     const s = this.state; if (!s) throw new Error('Missing renderer state');
     if (s.muted) { this.frames++; return 0; }
     const r = clamp(s.rpm,this.rpms[0],this.rpms.at(-1)), l = clamp(s.load,this.loads[0],this.loads.at(-1));
@@ -109,7 +110,12 @@ export class BankRenderer {
     const width = this.loads.length;
     const low = lerp(this.sample(this.grid[ri*width+li]),this.sample(this.grid[ri*width+lj]),lw);
     const high = lerp(this.sample(this.grid[rj*width+li]),this.sample(this.grid[rj*width+lj]),lw);
-    let dry = lerp(low,high,rw); if (this.mode === 'NORMAL_SEAM_ENVELOPE_V1') dry = this.envelope.process(dry);
+    // HC-C1 replaces ONLY sustained dry sound. Original time, shift, afterfire,
+    // output peak counters and sample-clock progression are still authoritative.
+    let dry = lerp(low,high,rw);
+    if (continuousOverride !== undefined) {
+      dry = f(finite(continuousOverride,'recorded continuous sample'));
+    } else if (this.mode === 'NORMAL_SEAM_ENVELOPE_V1') dry = this.envelope.process(dry);
     let value = f(dry * f(s.shiftGain));
     if (this.afterAt >= 0 && this.afterAt < this.bank.afterfire.length) value = f(value + this.bank.afterfire[this.afterAt++]);
     if (this.shift && this.shiftAt >= 0 && this.shiftAt < this.shift.length) { value = f(value + this.shift[this.shiftAt++]); if (this.shiftAt === this.shift.length) { this.shift = null; this.shiftAt = -1; } }
@@ -182,8 +188,13 @@ export class GpsSpeedInput {
 
 /** Sample-clocked normal playback. No wall-clock prediction and no future REAL plan. */
 export class LiveEngine {
-  constructor(bank, mode, ownerId=1) {
+  constructor(bank, mode, ownerId=1, {recordedCandidate=null, recordedVerified=false}={}) {
     if(!Number.isSafeInteger(ownerId)||ownerId<=0)throw new Error('Invalid playback owner');
+    // This gate is never enabled from the released UI. Caller must first prove
+    // F32LE SHA on the main thread; missing evidence rejects, not legacy fallback.
+    if(recordedCandidate && (mode!=='NORMAL_SEAM_ENVELOPE_V1'||bank.vehicleKey!=='hellcat_v6'))
+      throw new Error('Coordinated voice only permits explicit Hellcat normal mode');
+    this.recorded=recordedCandidate?new CoordinatedLongTakeVoice(recordedCandidate,{alreadyVerified:recordedVerified}):null;
     this.renderer=new BankRenderer(bank,mode); this.power=new Powertrain(bank.spec); this.motion=new DemoMotion(); this.rate=bank.sampleRate; this.controlFrames=this.rate/50;
     const start=mode==='NORMAL_SEAM_ENVELOPE_V1'?bank.startup:null;
     this.ownerId=ownerId;this.ignition=new IgnitionSequence(start,this.rate);this.starting=this.ignition.start(ownerId);this.startupFrame=0;
@@ -194,10 +205,10 @@ export class LiveEngine {
   }
   command(m) {
     if (m.type==='heartbeat') this.heartbeatFrame=this.frame;
-    else if (m.type==='stop') {this.running=false;this.cancelStartup();}
+    else if (m.type==='stop') {this.running=false;this.cancelStartup();this.renderer.clearEvents();}
     else if (m.type==='input') {
       if (!['demo','manual','gps'].includes(m.source)) throw new Error('Invalid source');
-      if (this.source!==m.source) { this.renderer.clearEvents(); this.power.reset(); this.gpsUntil=-1; }
+      if (this.source!==m.source) { this.renderer.clearEvents(); this.power.reset(); this.gpsUntil=-1; this.recorded?.cancel(); }
       this.source=m.source;
       if(m.source==='gps'||m.source==='manual'&&m.speedKmh>0)this.cancelStartup();
       if (m.source==='demo') { if (!['launch','cruise','overspeed','decel','stop'].includes(m.scenario)) throw new Error('Invalid scenario'); this.scenario=m.scenario; }
@@ -225,11 +236,18 @@ export class LiveEngine {
     if (!this.running&&this.runGain<.001) this.runGain=0;
     if (!this.usable&&this.contentGain<.001) this.contentGain=0;
     this.renderer.setState(this.state);
+    if(this.recorded && this.usable && this.source==='demo')
+      this.recorded.setControl(this.state.rpm,this.state.load);
   }
   cancelStartup(){this.ignition.cancel(this.ownerId);this.starting=false;}
   next() {
     if (this.frame%this.controlFrames===0) this.tick();
-    let sample=this.renderer.next();
+    // Invalid/GPS inputs cannot activate an experimental recorded segment.
+    // Content gain and existing owner's stop fade remain in charge.
+    let override;
+    if(this.recorded && !this.recorded.cancelled && this.recorded.active>=0 &&
+       this.source==='demo')override=this.recorded.next();
+    let sample=this.renderer.next(override);
     if(this.starting){
       const start=this.ignition.next(this.ownerId);
       if(start===null)this.starting=false;
@@ -247,7 +265,7 @@ export class LiveEngine {
     return output;
   }
   get stopped() { return !this.running && this.runGain===0; }
-  snapshot() { return {...this.renderer.stats(),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear||1,load:this.state?.load||0,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate,startup:this.ignition.snapshot(),outputPreClipPeak:this.outputPeak,outputAboveContractFrames:this.outputExcess,outputNonfinite:this.outputNonfinite,outputDomain:'LIVE_START_AND_CONTINUOUS_POST_GATE_PRE_RESAMPLER_PRE_MASTER'}; }
+  snapshot() { return {...this.renderer.stats(),...(this.recorded?{coordinatedVoice:this.recorded.stats()}:{}),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear||1,load:this.state?.load||0,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate,startup:this.ignition.snapshot(),outputPreClipPeak:this.outputPeak,outputAboveContractFrames:this.outputExcess,outputNonfinite:this.outputNonfinite,outputDomain:'LIVE_START_AND_CONTINUOUS_POST_GATE_PRE_RESAMPLER_PRE_MASTER'}; }
 }
 
 export class StreamingResampler {
