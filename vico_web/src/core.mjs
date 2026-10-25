@@ -205,7 +205,7 @@ export class LiveEngine {
   }
   command(m) {
     if (m.type==='heartbeat') this.heartbeatFrame=this.frame;
-    else if (m.type==='stop') {this.running=false;this.cancelStartup();this.renderer.clearEvents();}
+    else if (m.type==='stop') {this.running=false;this.cancelStartup();if(this.recorded)this.renderer.clearEvents();}
     else if (m.type==='input') {
       if (!['demo','manual','gps'].includes(m.source)) throw new Error('Invalid source');
       if (this.source!==m.source) { this.renderer.clearEvents(); this.power.reset(); this.gpsUntil=-1; this.recorded?.cancel(); }
