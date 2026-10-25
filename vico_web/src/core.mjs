@@ -245,8 +245,12 @@ export class LiveEngine {
     // Invalid/GPS inputs cannot activate an experimental recorded segment.
     // Content gain and existing owner's stop fade remain in charge.
     let override;
-    if(this.recorded && !this.recorded.cancelled && this.recorded.active>=0 &&
-       this.source==='demo')override=this.recorded.next();
+    if(this.recorded){
+      // Never fall back to an unqualified synthetic bank when a prepared
+      // recorded-source owner becomes invalid/cancelled in this session.
+      override = this.recorded.cancelled || this.source!=='demo' ? 0
+        : this.recorded.active>=0 ? this.recorded.next() : 0;
+    }
     let sample=this.renderer.next(override);
     if(this.starting){
       const start=this.ignition.next(this.ownerId);
