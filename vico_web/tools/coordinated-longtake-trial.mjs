@@ -43,6 +43,17 @@ function sampleBank(bank,spec,recorded){
     voiceStats.preMixPeak>.55))throw new Error('Experimental source safety rejection');
  return {pcm:out,stats,voiceStats};
 }
+function firstDifferencePeak(pcm){
+ let peak=0;
+ for(let i=1;i<pcm.length;i++)peak=Math.max(peak,Math.abs(pcm[i]-pcm[i-1]));
+ return peak;
+}
+function lagCorrelation(pcm,lag){
+ if(!Number.isSafeInteger(lag)||lag<=0||lag>=pcm.length)return null;
+ let dot=0,left=0,right=0;
+ for(let i=0;i<pcm.length-lag;i++){const a=pcm[i],b=pcm[i+lag];dot+=a*b;left+=a*a;right+=b*b;}
+ return left>0&&right>0?dot/Math.sqrt(left*right):null;
+}
 function envelopeDb(pcm,window=4800){
  const result=[];
  for(let start=0;start+window<=pcm.length;start+=window){
@@ -68,15 +79,27 @@ export async function runCoordinatedSyntheticTrial({dist,output}){
   const originalBytes=f32Bytes(baseline.pcm),synthBytes=f32Bytes(candidate.pcm);
   await fs.writeFile(path.join(root,s.id+'-actual-bank.f32le'),originalBytes,{flag:'wx'});
   await fs.writeFile(path.join(root,s.id+'-optin-synthetic.f32le'),synthBytes,{flag:'wx'});
+  // Re-run the same requested control path before trusting the numeric receipt.
+  // This is a deterministic engineering guard, NOT a Hellcat timbre judgement.
+  const repeat=sampleBank(bank,s,true),repeatBytes=f32Bytes(repeat.pcm);
+  if(hash(repeatBytes)!==hash(synthBytes)||repeat.stats.frames!==candidate.stats.frames)
+    throw new Error('HC-C1 controlled synthetic output was not deterministic');
   const oldDb=envelopeDb(baseline.pcm),newDb=envelopeDb(candidate.pcm);
   receipt.trials.push({id:s.id,frames:baseline.pcm.length,rate:bank.sampleRate,
     input:{rpm:s.rpm,load:s.load},actualBank:{sha256:hash(originalBytes),stats:baseline.stats},
     syntheticOptIn:{sha256:hash(synthBytes),stats:candidate.stats,voice:candidate.voiceStats},
     relative100msDb:{minimum:Math.min(...newDb.map((v,i)=>v-oldDb[i])),
       maximum:Math.max(...newDb.map((v,i)=>v-oldDb[i]))},
+    controlledReplay:{sameInputSha256:hash(repeatBytes),deterministic:hash(repeatBytes)===hash(synthBytes)},
+    boundedContinuity:{actualMaxAdjacentJump:firstDifferencePeak(baseline.pcm),
+      syntheticMaxAdjacentJump:firstDifferencePeak(candidate.pcm),
+      original553846msCorrelation:lagCorrelation(baseline.pcm,Math.round(.553846*bank.sampleRate)),
+      experimental553846msCorrelation:lagCorrelation(candidate.pcm,Math.round(.553846*bank.sampleRate))},
     acousticQualification:'NOT_EVALUATED_DIFFERENT_SYNTHETIC_VOICE'});
  }
- if(receipt.trials.length!==4||receipt.trials.some(x=>x.frames!==192000))
+ if(receipt.trials.length!==4||receipt.trials.some(x=>x.frames!==192000||!x.controlledReplay.deterministic||
+    !Number.isFinite(x.boundedContinuity.actualMaxAdjacentJump)||
+    !Number.isFinite(x.boundedContinuity.syntheticMaxAdjacentJump)))
   throw new Error('Incomplete preregistered trial');
  const json=JSON.stringify(receipt,null,2)+'\n';
  await fs.writeFile(path.join(root,'receipt.json'),json,{flag:'wx'});
