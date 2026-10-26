@@ -30,6 +30,17 @@ test('build ships verified REFERENCE_ONLY sources with hashes and no product cla
     assert.equal(sha(bytes), reference.sha256);
     assert.equal(bytes.length, reference.bytes);
   }
+  const credits=await readFile(path.join(out,'audio-credits.txt'),'utf8');
+  for(const reference of manifest.references){
+    for(const text of [reference.id,reference.source.author,reference.source.url,
+      reference.source.licenseUrl,reference.sha256])assert(credits.includes(text),`Missing reference credit: ${text}`);
+    if(reference.sourceSegment){
+      const {startSeconds,endSeconds,parentSha256}=reference.sourceSegment;
+      assert(credits.includes(`${startSeconds}-${endSeconds} s`));assert(credits.includes(parentSha256));
+    }
+  }
+  assert.match(credits,/not manufacturer.*OEM/i);
+  assert.match(credits,/ShareAlike|CC BY-SA/);
 });
 
 test('build rejects changed accepted PCM and SRT relabeling before publication',async()=>{

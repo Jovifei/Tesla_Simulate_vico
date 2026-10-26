@@ -134,7 +134,19 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
     references:references.map(({reference,sha256,bytes})=>({...reference,file:`assets/recorded-references/${path.basename(reference.file)}`,sha256,bytes}))};
   for(const {reference,pcm} of references)await write(`assets/recorded-references/${reference.file}`,pcm);
   await write('recorded-references.json',Buffer.from(JSON.stringify(referenceCatalog,null,2)+'\n'));
-  await write('audio-credits.txt',Buffer.from(startupPack?.attribution||'Vico original synthetic bank engine. No third-party startup recording is enabled in this build.\n'));
+  const referenceCredits=referenceCatalog.references.map(r=>{
+    const s=r.source,segment=r.sourceSegment;
+    return [r.id,`"${s.title}" by ${s.author}.`, `Source: ${s.url}`,`License: ${s.license} ${s.licenseUrl}`,
+      `PCM SHA-256: ${r.sha256}`,
+      segment?`Changes: source-time crop ${segment.startSeconds}-${segment.endSeconds} s; parent SHA-256 ${segment.parentSha256}.`
+        :'Changes: decoded PCM listening derivative; not the compressed/original upload.',
+      'Playback: original speed, one shot, output volume and 8 ms boundary fades; source bytes unchanged.',
+      'Vehicle state/RPM/load unverified; not manufacturer or OEM media/qualification.',
+      s.license==='CC BY-SA 4.0'?'This adapted recording is provided under CC BY-SA 4.0; attribution does not imply endorsement.':''
+    ].filter(Boolean).join('\n');
+  }).join('\n\n');
+  await write('audio-credits.txt',Buffer.from((startupPack?.attribution||'Vico original synthetic bank engine. No third-party startup recording is enabled in this build.\n')
+    +'\nRECORDED REFERENCES / REFERENCE_ONLY\n\n'+referenceCredits+'\n'));
   await write('catalog.json',Buffer.from(JSON.stringify(catalog,null,2)+'\n'));
   const hashes={};async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())await walk(p);else hashes[path.relative(out,p).split(path.sep).join('/')]=sha(await fs.readFile(p));}}await walk(out);
   await write('build-manifest.json',Buffer.from(JSON.stringify({schema:'vico.web.build.v1',sourceCommit:SOURCE_SHA,webCommit,testOnly,files:hashes},null,2)+'\n'));
