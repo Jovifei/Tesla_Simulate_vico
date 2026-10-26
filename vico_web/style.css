@@ -75,3 +75,7 @@ main{max-width:1480px;width:100%;margin:0 auto;padding:0 28px}.garage{padding:30
 .r5-housing{stroke-linejoin:round}
 .r5-hub{stroke-width:2;fill:#152028}
 @media(prefers-reduced-motion:reduce){.r5-hand,.r5-segment,.r5-segment-stroke{transition:none!important;animation:none!important}}
+.reference-range{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
+.reference-range label{display:grid;gap:.3rem;min-width:0}
+.reference-range input{width:9rem;max-width:100%;padding:.5rem;color:inherit;background:var(--panel,#152028);border:1px solid #47636b;border-radius:.3rem}
+.reference .actions{flex-wrap:wrap}

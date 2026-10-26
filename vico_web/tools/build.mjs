@@ -45,19 +45,28 @@ export const RECORDED_REFERENCE_CATALOG=[
     identity:Object.freeze({vehicle:'Dodge Challenger SRT (version unconfirmed)',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
     automaticLoop:false})
   ,...[
-    ['candidate-idle-low-35-55','Candidate idle / low-speed 35-55s','candidate-idle-low-35-55.wav',480000],
-    ['candidate-accel-63-69','Candidate acceleration 63-69s','candidate-accel-63-69.wav',144000],
-    ['candidate-accel-108-114','Candidate acceleration 108-114s','candidate-accel-108-114.wav',144000],
-    ['candidate-accel-153-159','Candidate acceleration 153-159s','candidate-accel-153-159.wav',144000],
-    ['candidate-offload-160-170','Candidate off-load 160-170s','candidate-offload-160-170.wav',240000],
-    ['candidate-sustained-185-195','Candidate sustained 185-195s','candidate-sustained-185-195.wav',240000]
-  ].map(([id,title,file,frames])=>Object.freeze({schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id,title,file,
-    sampleRate:24000,channels:2,frames,
+    ['candidate-idle-low-35-55',35,55],['candidate-accel-63-69',63,69],
+    ['candidate-accel-108-114',108,114],['candidate-accel-153-159',153,159],
+    ['candidate-offload-160-170',160,170],['candidate-sustained-185-195',185,195]
+  ].map(([id,start,end])=>Object.freeze({schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id,
+    title:`原录音 ${start}–${end} 秒`,file:`${id}.wav`,sampleRate:24000,channels:2,frames:(end-start)*24000,
+    sourceSegment:Object.freeze({startSeconds:start,endSeconds:end,
+      parentSha256:'a7fd478c1508308d0dce953763609dc5852819bf2f29a8d4c1972ca0d11450bd',stateConfidence:'UNVERIFIED'}),
     source:Object.freeze({author:'JorisDJN',title:'Dodge Challenger SRT',url:'https://freesound.org/people/JorisDJN/sounds/760645/',
       license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'}),
     identity:Object.freeze({vehicle:'Dodge Challenger SRT (version unconfirmed)',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}),
     automaticLoop:false}))
 ];
+const ACCEPTED_REFERENCE_HASHES=Object.freeze({
+  'hellcat-startup-public':'2f25e56439294e8f847904282a31b36dc96f6a1fdeb4264e6f9a8b90aa9760f8',
+  'srt-version-unconfirmed':'a7fd478c1508308d0dce953763609dc5852819bf2f29a8d4c1972ca0d11450bd',
+  'candidate-idle-low-35-55':'2556075079affe33a7544c80a6fb866dc7771ee729c785752a43fe14fc00c2fb',
+  'candidate-accel-63-69':'7391a4d02988753c2ec66f7f7bc73c4e3b970accd24c46501a01d8ee407699d1',
+  'candidate-accel-108-114':'d24f31603df867aace829d9587f1e1fe6a712d12bb9da881416d98fe654ce28a',
+  'candidate-accel-153-159':'d3de94681c96aac4db511028488bb11107d239ae29d2c597eca4d4edcfa60ce9',
+  'candidate-offload-160-170':'e546e5899b89f3cc73f6fe3567ed15bf8b10b9f339b4406a4e75ed6dda8981ac',
+  'candidate-sustained-185-195':'974a1200663dbc4aca89b9d95ec38eca69299c1d32f63f43f232ee8144c18bb3'
+});
 export async function readRecordedReferences(web=WEB){
   const out=[];
   for(const reference of RECORDED_REFERENCE_CATALOG){
@@ -76,7 +85,9 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
     const identity=validateRecordedReference(item.reference);
     if(!Buffer.isBuffer(item.pcm)||!item.pcm.length)throw new Error('Missing recorded reference PCM');
     item.sha256=sha(item.pcm);item.bytes=item.pcm.length;
-    if(identity.id!==item.reference.id)throw new Error('Recorded reference identity mismatch');
+    const accepted=RECORDED_REFERENCE_CATALOG.find(row=>row.id===identity.id);
+    if(!accepted||JSON.stringify(accepted)!==JSON.stringify(item.reference))throw new Error('Recorded reference identity mismatch');
+    if(item.sha256!==ACCEPTED_REFERENCE_HASHES[identity.id])throw new Error('Recorded reference SHA-256 differs from accepted source');
   }
   for(const [id,name,kind] of VEHICLES){
     const root=`${ASSETS}/s12_v10/${id}`, manifestBytes=await readBlob(`${root}/manifest.json`), m=JSON.parse(manifestBytes.toString('utf8'));

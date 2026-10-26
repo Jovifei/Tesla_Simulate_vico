@@ -24,3 +24,8 @@ test('verified reference playback only becomes available after SHA verification'
   assert.equal(playable.loop,false);
   assert.equal(Buffer.from(playable.bytes).toString(),bytes.toString());
 });
+
+test('native browser fetch retains its global receiver',async()=>{
+  const nativeLike=function(){assert.equal(this,globalThis);return Promise.resolve(new Response(bytes));};
+  await new RecordedReferencePlayer(reference,nativeLike,new URL('http://localhost/')).play();
+});

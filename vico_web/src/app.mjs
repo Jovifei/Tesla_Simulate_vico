@@ -1,9 +1,18 @@
 import {AudioSession,loadCatalog,loadRecordedReferenceCatalog} from './session.mjs';
 import {GpsSpeedInput} from './core.mjs';
-import {RecordedReferencePlayer} from './recorded-reference.mjs';
+import {ReferenceAuditionSession} from './recorded-reference.mjs';
 const $=id=>document.getElementById(id),base=new URL('../',import.meta.url);
 let catalog,selected,input={source:'demo',scenario:'stop'},gpsWatch=null,gpsGeneration=0,selectionGeneration=0,view='garage',mode='demo',pedalHeld=false,pedalPointer=null,transitioning=false,stopDrain=Promise.resolve();
 let referenceCatalog;
+let referenceSession,referenceVolume=.2;
+const referenceStatuses=new Map();
+function referenceUpdate(event){
+  const status=referenceStatuses.get(event.id);
+  const message={loading:'正在校验 SHA-256…',playing:'SHA-256 已校验 · 正在播放真实 PCM，播完即停',
+    stopped:'已停止',ended:'已播放完毕',error:`播放失败：${event.detail}`}[event.stage];
+  if(status){status.textContent=message;status.dataset.stage=event.stage;}
+  $('reference-session-status').textContent=message;
+}
 let runSequence=0,currentRun=null,diagnosticRun=null,currentStage='idle';
 const session=new AudioSession(base,update);
 const names={idle:'尚未启动',loading:'资源校验中',running:'正在播放',stopping:'正在停止',error:'已停止 / 异常'};
@@ -41,7 +50,7 @@ function stopGps(){gpsGeneration++;const wasGps=input.source==='gps'||mode==='gp
 function scenario(key){if(mode!=='demo'||view!=='drive')return;stopGps();chooseInput({source:'demo',scenario:key});document.querySelectorAll('[data-scenario]').forEach(b=>b.classList.toggle('active',b.dataset.scenario===key));}
 function resetDigits(){$('speed').textContent=mode==='gps'?'—':'000';$('rpm').textContent='0';$('gear').textContent='N';$('load').textContent='0';}
 function showView(next){view=next;document.body?.classList.toggle('cockpit',next==='drive');$('garage').hidden=next!=='garage';$('drive').hidden=next!=='drive';$('reference').hidden=next!=='reference';}
-function stopAll(){const generation=++selectionGeneration;transitioning=true;currentRun=null;const pointer=pedalPointer;pedalHeld=false;pedalPointer=null;$('pedal').setAttribute('aria-pressed','false');if(typeof pointer==='number'&&$('pedal').hasPointerCapture?.(pointer))$('pedal').releasePointerCapture(pointer);stopGps();resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');update({stage:'stopping',detail:'正在停止旧会话…'});const closing=session.stop(true);stopDrain=Promise.all([stopDrain,closing]).then(()=>{if(generation===selectionGeneration){transitioning=false;update({stage:'idle',detail:'声音已停止，请点击开始'});}});return stopDrain;}
+function stopAll(){referenceSession?.stop();const generation=++selectionGeneration;transitioning=true;currentRun=null;const pointer=pedalPointer;pedalHeld=false;pedalPointer=null;$('pedal').setAttribute('aria-pressed','false');if(typeof pointer==='number'&&$('pedal').hasPointerCapture?.(pointer))$('pedal').releasePointerCapture(pointer);stopGps();resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');update({stage:'stopping',detail:'正在停止旧会话…'});const closing=session.stop(true);stopDrain=Promise.all([stopDrain,closing]).then(()=>{if(generation===selectionGeneration){transitioning=false;update({stage:'idle',detail:'声音已停止，请点击开始'});}});return stopDrain;}
 async function select(entry){const stopped=stopAll(),generation=selectionGeneration;await stopped;if(generation!==selectionGeneration)return;selected=entry;showView('drive');window.VicoCockpit?.prepare(entry);$('settings').hidden=true;$('diagnostic-panel').hidden=true;$('settings-toggle').setAttribute('aria-expanded','false');$('vehicle-name').textContent=entry.name;$('redline-rpm').textContent=entry.redlineRpm.toLocaleString('en-US');document.querySelectorAll('.vehicle-card').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===entry.id)));update({stage:'idle',detail:`已选择 ${entry.name}，点击开始校验声库并播放`});}
 function navigate(hash){if(location.hash===hash)return route();location.hash=hash;}
 function renderReferenceList(){
@@ -50,25 +59,26 @@ function renderReferenceList(){
     const card=document.createElement('article');card.className='reference-card';card.dataset.id=reference.id;
     const title=document.createElement('h2');title.textContent=reference.title;
     const meta=document.createElement('p');meta.textContent=`${reference.identity.vehicle} · ${reference.source.license} · 状态未知 / 无同步 RPM/load`;
-    const note=document.createElement('p');note.textContent='REFERENCE_ONLY：一次播放，不循环，不作为产品声库或 OEM 认证。';
+    const note=document.createElement('p');note.textContent='REFERENCE_ONLY：原速实录，不循环；片段工况未核实，不作为完整驾驶声图。';
+    const range=document.createElement('div');range.className='reference-range';
+    const duration=reference.frames/reference.sampleRate;
+    const start=document.createElement('input'),end=document.createElement('input');
+    for(const [field,label,value] of [[start,'开始秒',0],[end,'结束秒',duration]]){
+      field.type='number';field.min='0';field.max=String(duration);field.step='any';field.value=String(value);
+      const name=document.createElement('label');name.textContent=label;name.append(field);range.append(name);
+    }
     const button=document.createElement('button');button.type='button';button.textContent='校验并播放';
     const status=document.createElement('p');status.textContent='未校验';
+    status.setAttribute('role','status');referenceStatuses.set(reference.id,status);
     button.addEventListener('click',async()=>{
-      button.disabled=true;status.textContent='正在校验 SHA-256…';
+      if(view!=='reference')return;stopAll();
       try{
-        const player=new RecordedReferencePlayer(reference,url=>fetch(url),base,document);
-        const playable=await player.play();
-        const AudioContext=window.AudioContext||window.webkitAudioContext;
-        const context=new AudioContext();await context.resume();
-        const decoded=await context.decodeAudioData(playable.bytes.slice(0));
-        const source=context.createBufferSource();source.buffer=decoded;source.loop=false;
-        source.connect(context.destination);source.start();
-        source.onended=()=>context.close();
-        status.textContent='SHA-256 已校验 · 正在播放真实 PCM，播完即停';
-      }catch(e){status.textContent=`校验失败：${e.message}`;}
-      finally{button.disabled=false;}
+        referenceSession??=new ReferenceAuditionSession({base,onChange:referenceUpdate});
+        referenceSession.setVolume(referenceVolume);
+        await referenceSession.play(reference,{startSeconds:Number(start.value),endSeconds:Number(end.value)});
+      }catch(e){status.textContent=`播放失败：${e.message}`;status.dataset.stage='error';}
     });
-    card.append(title,meta,note,button,status);$('reference-list').append(card);
+    card.append(title,meta,note,range,button,status);$('reference-list').append(card);
   }
 }
 function route(){
@@ -82,6 +92,12 @@ $('start').addEventListener('click',()=>{if(view==='drive'&&selected&&!transitio
 $('stop').addEventListener('click',stopAll);
 $('back-garage').addEventListener('click',()=>{stopAll();showView('garage');navigate('#/garage');});
 $('back-from-reference').addEventListener('click',()=>{stopAll();showView('garage');navigate('#/garage');});
+$('reference-stop').addEventListener('click',stopAll);
+$('reference-volume').addEventListener('input',()=>{
+  const value=Number($('reference-volume').value);if(!Number.isFinite(value))return;
+  referenceVolume=Math.max(0,Math.min(.7,value/100));referenceSession?.setVolume(referenceVolume);
+  $('reference-volume-value').textContent=`${Math.round(referenceVolume*100)}%`;
+});
 for(const next of ['demo','manual','gps'])$('mode-'+next).addEventListener('click',()=>switchMode(next));
 $('settings-toggle').addEventListener('click',()=>{const open=$('settings').hidden;$('settings').hidden=!open;$('diagnostic-panel').hidden=!open;$('settings-toggle').setAttribute('aria-expanded',String(open));});
 if(document.documentElement?.requestFullscreen){

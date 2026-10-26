@@ -16,6 +16,7 @@
 <section class="reference" hidden="" id="reference">
   <div class="garage-intro"><div><div class="eyebrow">RECORDED REFERENCES / REFERENCE_ONLY</div><h1>真实录音，先选对声音方向。</h1><p>这里只播放真实 PCM 片段，不循环、不推断 RPM/load、不作为产品声库。</p></div></div>
   <button class="back" id="back-from-reference" type="button">← 车库</button>
+  <div class="actions"><div class="volume-control"><label for="reference-volume">实录音量 <output id="reference-volume-value">20%</output></label><input aria-label="实录音量" id="reference-volume" max="70" min="0" step="1" type="range" value="20"/></div><button class="danger" id="reference-stop" type="button">立即停止 · ESC</button><span id="reference-session-status" role="status">尚未播放</span></div>
   <div class="reference-grid" id="reference-list"></div>
 </section>
 <section class="drive" hidden="" id="drive">
