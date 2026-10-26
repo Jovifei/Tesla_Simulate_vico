@@ -140,7 +140,8 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
       `PCM SHA-256: ${r.sha256}`,
       segment?`Changes: source-time crop ${segment.startSeconds}-${segment.endSeconds} s; parent SHA-256 ${segment.parentSha256}.`
         :'Changes: decoded PCM listening derivative; not the compressed/original upload.',
-      'Playback: original speed, one shot, output volume and 8 ms boundary fades; source bytes unchanged.',
+      'Playback: original speed, one shot by default, output volume and 8 ms boundary fades; source bytes unchanged.',
+      'Hellcat startup optional sustain audition: source 2 s to end, 120 ms complementary crossfade, 60 s output limit; playback derivative only, no RPM/load mapping. SRT references remain one-shot.',
       'Vehicle state/RPM/load unverified; not manufacturer or OEM media/qualification.',
       s.license==='CC BY-SA 4.0'?'This adapted recording is provided under CC BY-SA 4.0; attribution does not imply endorsement.':''
     ].filter(Boolean).join('\n');

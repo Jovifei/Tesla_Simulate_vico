@@ -8,7 +8,9 @@ let referenceSession,referenceVolume=.2;
 const referenceStatuses=new Map();
 function referenceUpdate(event){
   const status=referenceStatuses.get(event.id);
-  const message={loading:'正在校验 SHA-256…',playing:'SHA-256 已校验 · 正在播放真实 PCM，播完即停',
+  const message={loading:'正在校验 SHA-256…',playing:event.sustain&&event.stage==='playing'?
+    `实录持续试听 · 60秒自动停止 · 长循环 ${event.periodSeconds.toFixed(3)}秒 · 无RPM标定`:
+    'SHA-256 已校验 · 正在播放真实 PCM，播完即停',
     stopped:'已停止',ended:'已播放完毕',error:`播放失败：${event.detail}`}[event.stage];
   if(status){status.textContent=message;status.dataset.stage=event.stage;}
   $('reference-session-status').textContent=message;
@@ -59,7 +61,9 @@ function renderReferenceList(){
     const card=document.createElement('article');card.className='reference-card';card.dataset.id=reference.id;
     const title=document.createElement('h2');title.textContent=reference.title;
     const meta=document.createElement('p');meta.textContent=`${reference.identity.vehicle} · ${reference.source.license} · 状态未知 / 无同步 RPM/load`;
-    const note=document.createElement('p');note.textContent='REFERENCE_ONLY：原速实录，不循环；片段工况未核实，不作为完整驾驶声图。';
+    const note=document.createElement('p');note.textContent=reference.id==='hellcat-startup-public'?
+      'REFERENCE_ONLY：持续试听使用原录音2秒至结尾，120ms交叉淡变，60秒停止。工况未标定，不作为完整驾驶声图。':
+      'REFERENCE_ONLY：原速实录，播完即停。片段工况未标定，不作为完整驾驶声图。';
     const range=document.createElement('div');range.className='reference-range';
     const duration=reference.frames/reference.sampleRate;
     const start=document.createElement('input'),end=document.createElement('input');
@@ -70,15 +74,22 @@ function renderReferenceList(){
     const button=document.createElement('button');button.type='button';button.textContent='校验并播放';
     const status=document.createElement('p');status.textContent='未校验';
     status.setAttribute('role','status');referenceStatuses.set(reference.id,status);
-    button.addEventListener('click',async()=>{
+    const play=async(options)=>{
       if(view!=='reference')return;stopAll();
       try{
         referenceSession??=new ReferenceAuditionSession({base,onChange:referenceUpdate});
         referenceSession.setVolume(referenceVolume);
-        await referenceSession.play(reference,{startSeconds:Number(start.value),endSeconds:Number(end.value)});
+        await referenceSession.play(reference,options);
       }catch(e){status.textContent=`播放失败：${e.message}`;status.dataset.stage='error';}
-    });
-    card.append(title,meta,note,range,button,status);$('reference-list').append(card);
+    };
+    button.addEventListener('click',()=>play({startSeconds:Number(start.value),endSeconds:Number(end.value)}));
+    card.append(title,meta,note,range,button);
+    if(reference.id==='hellcat-startup-public'){
+      const sustain=document.createElement('button');sustain.type='button';sustain.dataset.action='sustain';
+      sustain.textContent='实录持续试听60秒 · 原录音2秒起';
+      sustain.addEventListener('click',()=>play({startSeconds:2,endSeconds:duration,sustain:true}));card.append(sustain);
+    }
+    card.append(status);$('reference-list').append(card);
   }
 }
 function route(){

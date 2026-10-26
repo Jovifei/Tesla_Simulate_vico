@@ -1,3 +1,5 @@
+import {createRecordedCycle} from './recorded-loop.mjs';
+
 export const RECORDED_REFERENCE_SCHEMA = 'vico.recorded.reference.v1';
 const LICENSES = new Map([
   ['CC BY-SA 4.0', 'https://creativecommons.org/licenses/by-sa/4.0/'],
@@ -94,7 +96,8 @@ export class ReferenceAuditionSession {
     this.volume=.2;this.run=null;
   }
   report(run,stage,detail=''){
-    if(this.run===run)this.onChange({id:run.id,stage,detail,startSeconds:run.start,endSeconds:run.end});
+    if(this.run===run)this.onChange({id:run.id,stage,detail,startSeconds:run.start,endSeconds:run.end,
+      sustain:run.sustain,durationSeconds:run.sustain?60:run.end-run.start,periodSeconds:run.periodSeconds});
   }
   release(run){
     if(!run||run.closed)return;run.closed=true;run.abort.abort();
@@ -111,11 +114,14 @@ export class ReferenceAuditionSession {
     this.volume=Math.min(.7,Math.max(0,value));
     if(this.run?.level)this.run.level.gain.value=this.volume;
   }
-  async play(reference,{startSeconds=0,endSeconds=reference.frames/reference.sampleRate}={}){
+  async play(reference,{startSeconds=0,endSeconds=reference.frames/reference.sampleRate,sustain=false}={}){
     this.stop();
     const range=segmentFrames(reference,startSeconds,endSeconds);
+    if(typeof sustain!=='boolean')throw new Error('Invalid sustain mode');
+    const seconds=(range.endFrame-range.startFrame)/reference.sampleRate;
+    if(sustain&&(seconds<3||seconds>30))throw new Error('Sustain region must span 3 to 30 seconds');
     const run={id:reference.id,start:range.startFrame/reference.sampleRate,end:range.endFrame/reference.sampleRate,
-      abort:new AbortController(),closed:false};
+      sustain,abort:new AbortController(),closed:false};
     this.run=run;
     try{
       run.context=this.createContext();this.report(run,'loading');
@@ -127,14 +133,22 @@ export class ReferenceAuditionSession {
       const duration=reference.frames/reference.sampleRate;
       if(buffer.numberOfChannels!==reference.channels||Math.abs(buffer.duration-duration)>2/buffer.sampleRate)
         throw new Error('Decoded reference format/duration mismatch');
-      const source=run.context.createBufferSource();run.source=source;source.buffer=buffer;source.loop=false;
+      let playback=buffer;
+      if(sustain){
+        const cycle=createRecordedCycle(Array.from({length:buffer.numberOfChannels},(_,i)=>buffer.getChannelData(i)),buffer.sampleRate,
+          {startFrame:Math.round(run.start*buffer.sampleRate),endFrame:Math.min(buffer.length,Math.round(run.end*buffer.sampleRate))});
+        playback=run.context.createBuffer(cycle.channels.length,cycle.periodFrames,cycle.sampleRate);
+        cycle.channels.forEach((channel,i)=>playback.copyToChannel(channel,i));run.periodSeconds=cycle.periodSeconds;
+      }
+      const source=run.context.createBufferSource();run.source=source;source.buffer=playback;source.loop=sustain;
+      if(sustain){source.loopStart=0;source.loopEnd=playback.duration;}
       const envelope=run.context.createGain(),level=run.context.createGain();run.envelope=envelope;run.level=level;
       level.gain.value=this.volume;source.connect(envelope);envelope.connect(level);level.connect(run.context.destination);
-      const now=run.context.currentTime,length=run.end-run.start,fade=Math.min(.008,length/2);
+      const now=run.context.currentTime,length=sustain?60:run.end-run.start,fade=Math.min(.008,length/2);
       envelope.gain.setValueAtTime(0,now);envelope.gain.linearRampToValueAtTime(1,now+fade);
       envelope.gain.setValueAtTime(1,now+length-fade);envelope.gain.linearRampToValueAtTime(0,now+length);
       source.onended=()=>{if(this.run!==run)return;this.report(run,'ended');this.run=null;this.release(run);};
-      source.start(now,run.start,length);this.report(run,'playing');return true;
+      source.start(now,sustain?0:run.start,length);this.report(run,'playing');return true;
     }catch(error){
       if(this.run!==run)return false;
       this.report(run,'error',error.message);this.run=null;this.release(run);throw error;

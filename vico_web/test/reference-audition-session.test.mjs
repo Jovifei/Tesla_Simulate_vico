@@ -10,12 +10,18 @@ const reference={schema:'vico.recorded.reference.v1',scope:'REFERENCE_ONLY',id:'
   source:{author:'Recorder',license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'},
   identity:{vehicle:'SRT version unknown',state:'UNKNOWN',synchronizedRpmLoad:false,OEMQualification:false}};
 const deferred=()=>{let resolve;return {promise:new Promise(r=>resolve=r),resolve};};
+function pcmBuffer(rate=48000){
+  const channels=[new Float32Array(rate*10).fill(.2),new Float32Array(rate*10).fill(-.1)];
+  return {duration:10,length:rate*10,sampleRate:rate,numberOfChannels:2,getChannelData:i=>channels[i]};
+}
 function setup({fetchImpl=async()=>new Response(bytes),decode=null,resume=null}={}){
   const contexts=[],events=[];
   class Context{
     constructor(){this.currentTime=0;this.sampleRate=48000;this.closed=0;this.sources=[];this.destination={};this.gains=[];contexts.push(this);}
     resume(){return resume?.promise??Promise.resolve();}
-    decodeAudioData(){if(decode?.error)throw decode.error;return decode?.promise??Promise.resolve({duration:10,length:480000,sampleRate:48000,numberOfChannels:2});}
+    decodeAudioData(){if(decode?.error)throw decode.error;return decode?.promise??Promise.resolve(pcmBuffer());}
+    createBuffer(channels,length,sampleRate){const data=Array.from({length:channels},()=>new Float32Array(length));
+      return {length,sampleRate,numberOfChannels:channels,duration:length/sampleRate,getChannelData:i=>data[i],copyToChannel:(values,i)=>data[i].set(values)};}
     createGain(){const calls=[],gain={value:1,setValueAtTime(...a){calls.push(['set',...a]);},linearRampToValueAtTime(...a){calls.push(['ramp',...a]);},cancelScheduledValues(){}};
       const node={gain,calls,connect(){return this;},disconnect(){}};this.gains.push(node);return node;}
     createBufferSource(){const source={loop:true,starts:[],stops:0,connect(){return this;},disconnect(){},start(...args){this.starts.push(args);},stop(){this.stops++;}};this.sources.push(source);return source;}
@@ -107,4 +113,48 @@ test('resume rejection reports error and releases context',async()=>{
   b.session.createContext=()=>{const ctx=make();ctx.resume=()=>Promise.reject(new Error('resume denied'));return ctx;};
   await assert.rejects(b.session.play(reference),/resume denied/);
   assert.equal(b.contexts[0].closed,1);assert.equal(b.events.at(-1).stage,'error');
+});
+
+test('explicit sustain is a natural-rate stereo long cycle bounded to sixty seconds and one owner',async()=>{
+  const {session,contexts,events}=setup();
+  await session.play(reference,{startSeconds:2,endSeconds:5,sustain:true});
+  const ctx=contexts[0],source=ctx.sources[0];
+  assert.equal(source.loop,true);assert.deepEqual(source.starts,[[0,0,60]]);
+  assert.equal(source.buffer.numberOfChannels,2);assert.equal(source.buffer.sampleRate,48000);
+  assert.equal(source.buffer.length,Math.round(2.88*48000));
+  assert.equal(source.loopStart,0);assert.equal(source.loopEnd,source.buffer.duration);
+  assert.equal(source.buffer.getChannelData(0)[12000],Math.fround(.2));
+  assert.equal(source.buffer.getChannelData(1)[12000],Math.fround(-.1));
+  assert.equal(events.at(-1).sustain,true);assert.equal(events.at(-1).durationSeconds,60);
+  assert.equal(events.at(-1).periodSeconds,2.88);
+  assert(ctx.gains[0].calls.some(x=>x[0]==='ramp'&&x[1]===0&&x[2]===60));
+  source.onended();assert.equal(ctx.closed,1);assert.equal(events.at(-1).stage,'ended');
+});
+
+test('sustain rejects short selections, excessive spans or non-boolean activation before audio starts',async()=>{
+  for(const options of [{startSeconds:0,endSeconds:2,sustain:true},{sustain:'true'}]){
+    const b=setup();await assert.rejects(b.session.play(reference,options),/sustain|3.*30|region/i);
+    assert.equal(b.contexts.length,0);
+  }
+});
+
+test('sustain uses decoded device sample rate and stops during download without resurrection',async()=>{
+  for(const rate of [44100,96000]){
+    const b=setup({decode:{promise:Promise.resolve(pcmBuffer(rate))}});
+    await b.session.play(reference,{startSeconds:2,endSeconds:5,sustain:true});
+    const s=b.contexts[0].sources[0];assert.equal(s.buffer.sampleRate,rate);assert.equal(s.buffer.duration,2.88);
+    b.session.setVolume(0);assert.equal(b.contexts[0].gains[1].gain.value,0);
+    b.session.stop();assert.equal(s.stops,1);assert.equal(b.contexts[0].closed,1);
+  }
+  const held=deferred(),b=setup({fetchImpl:()=>held.promise});
+  const pending=b.session.play(reference,{sustain:true});await Promise.resolve();b.session.stop();
+  held.resolve(new Response(bytes));assert.equal(await pending,false);assert.equal(b.contexts[0].sources.length,0);
+});
+
+test('clipped recording cannot enter sustain and failure cleans ownership',async()=>{
+  const buffer=pcmBuffer();buffer.getChannelData(0)[200000]=1;
+  const b=setup({decode:{promise:Promise.resolve(buffer)}});
+  await assert.rejects(b.session.play(reference,{sustain:true}),/clipped/);
+  assert.equal(b.contexts[0].closed,1);assert.equal(b.contexts[0].sources.length,0);
+  assert.equal(b.events.at(-1).stage,'error');
 });
