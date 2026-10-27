@@ -49,3 +49,5 @@
 - 公开录音仍没有同步 RPM/load/gear/720-degree phase；
 - 下一步应在隔离 harness 中把 `RECORDED_PRIMARY`、`LEGACY_BANK` 和 `GENERIC_PHYSICS` 做同轨迹对照，再由 Jovi盲听；
 - 不能因为连续性指标改善就宣称车型真实性完成。
+
+原始 PCM 保留在受控下载/运行目录，不随 Git 交付；仓库只保留研究收据、指标和复现脚本。
