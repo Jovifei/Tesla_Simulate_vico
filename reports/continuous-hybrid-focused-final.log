@@ -1,0 +1,15 @@
+✔ research comparison emits bounded PCM with source identity and no product claim (17.5142ms)
+✔ research comparison handles a multi-second PCM without spreading samples onto the call stack (27.2366ms)
+✔ texture reader preserves one phase clock across arbitrary output block sizes (5.9642ms)
+✔ texture reader never seeks when RPM/load state changes (1.9443ms)
+✔ hybrid envelope is smoothed and output remains bounded (3.2295ms)
+✔ events use bounded attack and release envelopes without a hard reset (1.3358ms)
+✔ missing texture is an explicit zero-weight layer, not an invented waveform (0.1346ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 110.6331

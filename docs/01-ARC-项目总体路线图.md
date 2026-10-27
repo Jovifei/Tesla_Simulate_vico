@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-27 · 主线：P2 · 工作包：HC-C1 A playback fixes; B rejected reconstruction; 方案A contract/harness complete; public real-engine pool acquired; six-vehicle alignment research active
+更新：2026-10-28 · 主线：P2 · 工作包：方案A连续混合研究内核完成；公开真实纹理A/B完成；默认声库与产品接入保持关闭
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

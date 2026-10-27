@@ -1,0 +1,16 @@
+{
+  "schema": "vico.continuous-hybrid.research-receipt.v1",
+  "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
+  "sourceKind": "PUBLIC_REAL_TEXTURE_UNKNOWN_STATE",
+  "frames": 480000,
+  "sampleRate": 48000,
+  "pcmSha256": "7852692934cba984db92372967642237bb082792718d23932b7ff0b379b8ec94",
+  "textureFrames": 6579489,
+  "textureSha256": "969ddc5a8f8c9129529a014503808ff1c10d34e99bacba5c4ea9d7c4f54b18a0",
+  "preClipPeak": 0.2837267518043518,
+  "maxSampleJump": 0.029200419783592224,
+  "envelopeMin": 0.00007030334552124097,
+  "envelopeMax": 0.663999999999787,
+  "productCandidate": false,
+  "stateQualification": "INSUFFICIENT_EVIDENCE"
+}

@@ -1,0 +1,14 @@
+✔ research comparison emits bounded PCM with source identity and no product claim (18.4703ms)
+✔ texture reader preserves one phase clock across arbitrary output block sizes (5.9022ms)
+✔ texture reader never seeks when RPM/load state changes (1.5113ms)
+✔ hybrid envelope is smoothed and output remains bounded (3.2159ms)
+✔ events use bounded attack and release envelopes without a hard reset (1.4992ms)
+✔ missing texture is an explicit zero-weight layer, not an invented waveform (0.1436ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77.0563

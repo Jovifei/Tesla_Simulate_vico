@@ -1,0 +1,13 @@
+✔ texture reader preserves one phase clock across arbitrary output block sizes (6.0719ms)
+✔ texture reader never seeks when RPM/load state changes (1.4834ms)
+✔ hybrid envelope is smoothed and output remains bounded (2.8862ms)
+✔ events use bounded attack and release envelopes without a hard reset (1.2784ms)
+✔ missing texture is an explicit zero-weight layer, not an invented waveform (0.1238ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65.7921

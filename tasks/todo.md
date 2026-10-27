@@ -4464,3 +4464,33 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 阶段计划：`reports/real-engine-source-pool-20261027/SIX_VEHICLE_ALIGNMENT_PLAN.md`。
 - 分析脚本/结果：`reports/real-engine-source-pool-20261027/analyze_real_engine_pool.py`、`analysis.json`、`ANALYSIS.md`；5/5 文件可解码，所有状态合同字段仍为 `UNKNOWN`。
 - 当前仍缺六车型同步 RPM/load/gear/720-degree phase 和独立 holdout；目标是尽可能接近真实，不把研究素材冒充 OEM 声图。
+
+## 2026-10-28 连续混合渲染器（方案 A-连续混合渲染器）
+
+> 状态：执行中；Jovi 已授权。隔离工作树：`worktrees/hellcat-state-contract-20261027`。默认声库、Android 路由、APK、MATLAB、设备和公网保持不变。
+
+- [ ] 写连续混合渲染器 RED 测试：持相跨块、输入平滑、纹理读头不重置、动态包络、事件攻击/衰减、峰值安全。
+- [ ] 写真实纹理残差读取器 RED 测试：不改变源 PCM、不补 RPM/load、不超出授权范围。
+- [ ] 实现最小连续混合渲染器和纹理层。
+- [ ] 用合成 fixture 与公开真实录音研究输入做离线 A/B，不接入产品默认路径。
+- [ ] 运行新测试和完整 Web 回归，生成 PCM/指标报告；失败则保留拒绝证据。
+- [ ] 更新账本和路线图，提交隔离分支；不推送、不合并。
+
+### Review
+
+- 待完成：RED/GREEN、A/B 指标、完整回归和代码审查。
+
+## 2026-10-28 方案 A-连续混合渲染器
+
+- [x] 写 RED：跨块持相、纹理不 seek、动态包络、事件攻击/释放、峰值安全。
+- [x] 实现隔离 `ContinuousTextureReader` 和 `ContinuousHybridRenderer`。
+- [x] 实现研究 harness 和公开纹理 A/B 收据；不接入默认产品。
+- [x] 修复长 PCM `Math.max(...samples)` 调用栈问题，并增加 10 秒回归。
+- [x] 聚焦测试 7/7；研究 Honda F20C 10 秒输出成功，`INSUFFICIENT_EVIDENCE`。
+- [ ] 完整 Web 最终回归和隔离提交收口。
+
+### Review
+
+- 设计：`docs/superpowers/specs/2026-10-28-continuous-hybrid-renderer-design.md`。
+- 结果：`reports/continuous-hybrid-research-20261028/RESULTS.md`。
+- 当前仍不声称任何目标车型 OEM 对齐；下一门是三路同轨迹离线对照和 Jovi 盲听。

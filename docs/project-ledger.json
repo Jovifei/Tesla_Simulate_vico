@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-27",
+  "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "HC-C1 A playback fixes; B rejected reconstruction; 方案A contract/harness complete; public real-engine pool acquired; six-vehicle alignment research active",
+  "current_work_package": "方案A连续混合研究内核完成；公开真实纹理A/B完成；默认声库与产品接入保持关闭",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -618,5 +618,26 @@
     "product_integrated": false,
     "next": "read-only feature analysis then six-vehicle source registry",
     "blocker": "REFERENCE_TARGET_MISSING"
+  },
+  "continuous_hybrid_renderer_20261028": {
+    "status": "RESEARCH_KERNEL_COMPLETE_NOT_PRODUCT_INTEGRATED",
+    "branch": "local/hellcat-state-contract-20261027",
+    "commit": "PENDING",
+    "scope": [
+      "continuous texture reader",
+      "smooth envelope",
+      "bounded event envelope",
+      "research harness"
+    ],
+    "focused_tests": "7/7",
+    "web_tests": "178/178",
+    "research_input": "Honda F20C public CC BY 3.0",
+    "research_output": "10s F32LE; peak 0.2837267518; max jump 0.0292004198",
+    "product_candidate": false,
+    "state_qualification": "INSUFFICIENT_EVIDENCE",
+    "default_voice_changed": false,
+    "android_changed": false,
+    "next": "three-way same-trajectory offline comparison then blind audition",
+    "blocker": "No synchronized RPM/load/gear/phase or holdout"
   }
 }

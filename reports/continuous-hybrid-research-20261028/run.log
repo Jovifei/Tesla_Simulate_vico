@@ -1,0 +1,9 @@
+file:///E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/vico_web/tools/continuous-hybrid-study.mjs:31
+    preClipPeak: Math.max(...output.map(Math.abs)), maxSampleJump: maxJump,
+                      ^
+
+RangeError: Maximum call stack size exceeded
+    at Module.renderResearchComparison (file:///E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/vico_web/tools/continuous-hybrid-study.mjs:31:23)
+    at async [eval]:1:293
+
+Node.js v24.18.0
