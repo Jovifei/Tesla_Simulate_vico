@@ -1,0 +1,400 @@
+{
+  "schema": "vico.real-engine-pool.analysis.v1",
+  "method": "ffmpeg mono 48 kHz; 1 s spectral windows; 100 ms energy envelope; no gain or time manipulation",
+  "rows": [
+    {
+      "file": "bmw-m57.ogg",
+      "sourceSha256": "7e5a5812bcfc436248da8841549ebfbf1d1f013c490ad84c5284f1a8f46ea680",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vorbis",
+            "sample_rate": "44100",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "19.574422",
+          "size": "420295"
+        }
+      },
+      "analysisDecode": {
+        "sampleRate": 48000,
+        "channels": 1,
+        "frames": 938458,
+        "durationS": 19.551208333333335
+      },
+      "global": {
+        "rms": 0.05947915125011579,
+        "peak": 0.9473614692687988
+      },
+      "oneSecondWindows": {
+        "count": 19,
+        "rmsMin": 0.01024714801765382,
+        "rmsMedian": 0.011826321867278436,
+        "rmsMax": 0.19421682199700094,
+        "spectralCentroidMedianHz": 2781.396442141128,
+        "spectralCentroidP10Hz": 2533.2448551184225,
+        "spectralCentroidP90Hz": 2998.4375639244327
+      },
+      "envelope100ms": {
+        "count": 195,
+        "rmsMin": 0.003180993246679818,
+        "rmsMedian": 0.01209661045171584,
+        "rmsMax": 0.3278394462017119,
+        "modulation": {
+          "peakHz": 0.6153846153846154,
+          "peakMagnitude": 0.9929356289536035,
+          "bandHz": [
+            0.5,
+            5.0
+          ]
+        },
+        "autocorrelationCandidates": [
+          {
+            "lagS": 2.9000000000000004,
+            "correlation": 0.2725657143533177
+          },
+          {
+            "lagS": 3.1,
+            "correlation": 0.2586627153590698
+          },
+          {
+            "lagS": 9.5,
+            "correlation": -0.042421755567816015
+          },
+          {
+            "lagS": 6.2,
+            "correlation": -0.2037539686245372
+          },
+          {
+            "lagS": 5.800000000000001,
+            "correlation": -0.22098765248692884
+          }
+        ]
+      },
+      "qualification": {
+        "rpm": "UNKNOWN",
+        "load": "UNKNOWN",
+        "gear": "UNKNOWN",
+        "phase720": "UNKNOWN",
+        "holdout": "NOT_AVAILABLE",
+        "status": "RESEARCH_ONLY"
+      }
+    },
+    {
+      "file": "ferrari-250-gto.ogg",
+      "sourceSha256": "8cf1408366105aa2a563b3b7e871d1d0ebcd91415c9696bf0e0488aab0030683",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vorbis",
+            "sample_rate": "44100",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "59.882812",
+          "size": "564723"
+        }
+      },
+      "analysisDecode": {
+        "sampleRate": 48000,
+        "channels": 1,
+        "frames": 2874375,
+        "durationS": 59.8828125
+      },
+      "global": {
+        "rms": 0.18115144003058883,
+        "peak": 0.9494589567184448
+      },
+      "oneSecondWindows": {
+        "count": 59,
+        "rmsMin": 0.03736955937545489,
+        "rmsMedian": 0.16825456862563132,
+        "rmsMax": 0.28528885063676196,
+        "spectralCentroidMedianHz": 1722.7766054937965,
+        "spectralCentroidP10Hz": 1519.7597629913741,
+        "spectralCentroidP90Hz": 1922.2627196750984
+      },
+      "envelope100ms": {
+        "count": 598,
+        "rmsMin": 0.005719728500840411,
+        "rmsMedian": 0.1606825307473076,
+        "rmsMax": 0.35199289535053435,
+        "modulation": {
+          "peakHz": 0.5016722408026756,
+          "peakMagnitude": 2.661001981147985,
+          "bandHz": [
+            0.5,
+            5.0
+          ]
+        },
+        "autocorrelationCandidates": [
+          {
+            "lagS": 2.7,
+            "correlation": 0.28517179741447385
+          },
+          {
+            "lagS": 2.3000000000000003,
+            "correlation": 0.28369508366951174
+          },
+          {
+            "lagS": 3.7,
+            "correlation": 0.27613491860027267
+          },
+          {
+            "lagS": 3.0,
+            "correlation": 0.2750520864744337
+          },
+          {
+            "lagS": 6.800000000000001,
+            "correlation": 0.22287484673687835
+          }
+        ]
+      },
+      "qualification": {
+        "rpm": "UNKNOWN",
+        "load": "UNKNOWN",
+        "gear": "UNKNOWN",
+        "phase720": "UNKNOWN",
+        "holdout": "NOT_AVAILABLE",
+        "status": "RESEARCH_ONLY"
+      }
+    },
+    {
+      "file": "honda-f20c.ogg",
+      "sourceSha256": "aed190fa3717cdc922809da0b4a2b4d0eb11c505e3457bd0cc9b5d175025f7c2",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vorbis",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "137.072688",
+          "size": "4197938"
+        }
+      },
+      "analysisDecode": {
+        "sampleRate": 48000,
+        "channels": 1,
+        "frames": 6579489,
+        "durationS": 137.0726875
+      },
+      "global": {
+        "rms": 0.1075754454589228,
+        "peak": 1.3626126050949097
+      },
+      "oneSecondWindows": {
+        "count": 137,
+        "rmsMin": 0.0,
+        "rmsMedian": 0.08284471367888223,
+        "rmsMax": 0.2158648065954969,
+        "spectralCentroidMedianHz": 961.4987650213367,
+        "spectralCentroidP10Hz": 598.4433229595405,
+        "spectralCentroidP90Hz": 1239.1412618418997
+      },
+      "envelope100ms": {
+        "count": 1370,
+        "rmsMin": 0.0,
+        "rmsMedian": 0.07677070607333598,
+        "rmsMax": 0.32635202909178174,
+        "modulation": {
+          "peakHz": 0.5036496350364963,
+          "peakMagnitude": 2.2119160752201883,
+          "bandHz": [
+            0.5,
+            5.0
+          ]
+        },
+        "autocorrelationCandidates": [
+          {
+            "lagS": 7.9,
+            "correlation": 0.1031692017588475
+          }
+        ]
+      },
+      "qualification": {
+        "rpm": "UNKNOWN",
+        "load": "UNKNOWN",
+        "gear": "UNKNOWN",
+        "phase720": "UNKNOWN",
+        "holdout": "NOT_AVAILABLE",
+        "status": "RESEARCH_ONLY"
+      }
+    },
+    {
+      "file": "triumph-i6.ogg",
+      "sourceSha256": "c79706d9c9e3981ad6ab4c02b39158fcfd1e03cbd3736a2e1ad090fd3d44b22b",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vorbis",
+            "sample_rate": "11024",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "duration": "11.443578",
+          "size": "56259"
+        }
+      },
+      "analysisDecode": {
+        "sampleRate": 48000,
+        "channels": 1,
+        "frames": 549292,
+        "durationS": 11.443583333333333
+      },
+      "global": {
+        "rms": 0.19826756763961179,
+        "peak": 0.9816980957984924
+      },
+      "oneSecondWindows": {
+        "count": 11,
+        "rmsMin": 0.1563306349302038,
+        "rmsMedian": 0.20003048219025787,
+        "rmsMax": 0.22587545159789454,
+        "spectralCentroidMedianHz": 1706.2234501756916,
+        "spectralCentroidP10Hz": 1598.6181368432576,
+        "spectralCentroidP90Hz": 1912.1420822221094
+      },
+      "envelope100ms": {
+        "count": 114,
+        "rmsMin": 0.09602636554137918,
+        "rmsMedian": 0.19992901613439995,
+        "rmsMax": 0.26084458441494834,
+        "modulation": {
+          "peakHz": 0.6140350877192982,
+          "peakMagnitude": 0.2550324579950051,
+          "bandHz": [
+            0.5,
+            5.0
+          ]
+        },
+        "autocorrelationCandidates": [
+          {
+            "lagS": 8.9,
+            "correlation": 0.15028880600441
+          },
+          {
+            "lagS": 6.4,
+            "correlation": 0.11634746380855193
+          },
+          {
+            "lagS": 3.3000000000000003,
+            "correlation": 0.03133822085695169
+          },
+          {
+            "lagS": 5.5,
+            "correlation": 0.012537429660411308
+          },
+          {
+            "lagS": 2.6,
+            "correlation": -0.01707424687718928
+          }
+        ]
+      },
+      "qualification": {
+        "rpm": "UNKNOWN",
+        "load": "UNKNOWN",
+        "gear": "UNKNOWN",
+        "phase720": "UNKNOWN",
+        "holdout": "NOT_AVAILABLE",
+        "status": "RESEARCH_ONLY"
+      }
+    },
+    {
+      "file": "volvo-850-t5.ogg",
+      "sourceSha256": "f8e01b386f394f1ed3550d92d9f44793aeae329891bbf18d84b1acd4c900e651",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vorbis",
+            "sample_rate": "96000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "duration": "32.600406",
+          "size": "952695"
+        }
+      },
+      "analysisDecode": {
+        "sampleRate": 48000,
+        "channels": 1,
+        "frames": 1564820,
+        "durationS": 32.60041666666667
+      },
+      "global": {
+        "rms": 0.12729554143794297,
+        "peak": 1.0451717376708984
+      },
+      "oneSecondWindows": {
+        "count": 32,
+        "rmsMin": 0.005428678150925771,
+        "rmsMedian": 0.11962995252996075,
+        "rmsMax": 0.21362043700087632,
+        "spectralCentroidMedianHz": 995.4183966417959,
+        "spectralCentroidP10Hz": 756.1710901523729,
+        "spectralCentroidP90Hz": 1867.2817678984065
+      },
+      "envelope100ms": {
+        "count": 326,
+        "rmsMin": 0.0012635527433270655,
+        "rmsMedian": 0.09698499259692658,
+        "rmsMax": 0.31846902022609186,
+        "modulation": {
+          "peakHz": 0.6748466257668712,
+          "peakMagnitude": 1.6224543432414595,
+          "bandHz": [
+            0.5,
+            5.0
+          ]
+        },
+        "autocorrelationCandidates": [
+          {
+            "lagS": 6.4,
+            "correlation": 0.37444701676457354
+          },
+          {
+            "lagS": 9.8,
+            "correlation": 0.004026584968878453
+          },
+          {
+            "lagS": 8.8,
+            "correlation": -0.05003617253015339
+          },
+          {
+            "lagS": 4.3,
+            "correlation": -0.23014538677697827
+          },
+          {
+            "lagS": 2.8000000000000003,
+            "correlation": -0.25004618466624884
+          }
+        ]
+      },
+      "qualification": {
+        "rpm": "UNKNOWN",
+        "load": "UNKNOWN",
+        "gear": "UNKNOWN",
+        "phase720": "UNKNOWN",
+        "holdout": "NOT_AVAILABLE",
+        "status": "RESEARCH_ONLY"
+      }
+    }
+  ]
+}

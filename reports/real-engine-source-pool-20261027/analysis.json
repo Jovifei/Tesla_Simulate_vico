@@ -1,0 +1,542 @@
+{
+  "schema": "vico.real-engine-pool.analysis.v1",
+  "method": "ffmpeg mono 48 kHz F32LE; 1 s windows; no gain/time manipulation; decimated autocorrelation candidates",
+  "sourceDirectory": "E:\\Claude_allow\\Download\\vico-real-engine-source-pool-20261027",
+  "rows": [
+    {
+      "id": "bmw-m57",
+      "file": "bmw-m57.ogg",
+      "sourceSha256": "7e5a5812bcfc436248da8841549ebfbf1d1f013c490ad84c5284f1a8f46ea680",
+      "sourceRate": 44100,
+      "sourceChannels": 2,
+      "declaredDurationS": 19.574421768707484,
+      "license": "CC BY-SA 4.0",
+      "author": "Jojhnjoy",
+      "decodedRate": 48000,
+      "decodedChannels": 1,
+      "frames": 938458,
+      "durationS": 19.551208333333335,
+      "finite": true,
+      "rms": 0.05947915125011579,
+      "peak": 0.9473614692687988,
+      "windowRmsMin": 0.01024714801765382,
+      "windowRmsMax": 0.19421682199700094,
+      "windowRmsCv": 1.3270740218127237,
+      "zeroCrossingRate": 0.0547675599414784,
+      "spectralCentroidMedianHz": 2712.3043086090242,
+      "spectralCentroidP10Hz": 2491.006550327681,
+      "spectralCentroidP90Hz": 3012.856248173534,
+      "candidateAutocorrelation": [
+        {
+          "lagS": 0.25,
+          "correlation": -0.010569115169346333
+        },
+        {
+          "lagS": 0.5,
+          "correlation": 0.018061509355902672
+        },
+        {
+          "lagS": 0.75,
+          "correlation": -0.009342877194285393
+        },
+        {
+          "lagS": 1.0,
+          "correlation": 0.00669374642893672
+        },
+        {
+          "lagS": 1.25,
+          "correlation": 0.007831820286810398
+        },
+        {
+          "lagS": 1.5,
+          "correlation": -0.001104923547245562
+        },
+        {
+          "lagS": 1.75,
+          "correlation": 0.004403545055538416
+        },
+        {
+          "lagS": 2.0,
+          "correlation": 0.0011901232646778226
+        },
+        {
+          "lagS": 2.25,
+          "correlation": -0.007391911931335926
+        },
+        {
+          "lagS": 2.5,
+          "correlation": -0.00585787370800972
+        },
+        {
+          "lagS": 2.75,
+          "correlation": 0.03868914768099785
+        },
+        {
+          "lagS": 3.0,
+          "correlation": 0.005087598226964474
+        },
+        {
+          "lagS": 3.25,
+          "correlation": 0.02494026906788349
+        },
+        {
+          "lagS": 3.5,
+          "correlation": -0.01491242740303278
+        },
+        {
+          "lagS": 3.75,
+          "correlation": 0.013089604675769806
+        },
+        {
+          "lagS": 4.0,
+          "correlation": -0.006397790275514126
+        },
+        {
+          "lagS": 4.25,
+          "correlation": 0.009570220485329628
+        },
+        {
+          "lagS": 4.5,
+          "correlation": 0.006288446485996246
+        },
+        {
+          "lagS": 4.75,
+          "correlation": -0.0034608813002705574
+        }
+      ],
+      "bestCandidate": {
+        "lagS": 2.75,
+        "correlation": 0.03868914768099785
+      },
+      "state": "UNKNOWN"
+    },
+    {
+      "id": "ferrari-250-gto",
+      "file": "ferrari-250-gto.ogg",
+      "sourceSha256": "8cf1408366105aa2a563b3b7e871d1d0ebcd91415c9696bf0e0488aab0030683",
+      "sourceRate": 44100,
+      "sourceChannels": 2,
+      "declaredDurationS": 59.88281179138322,
+      "license": "CC BY 4.0",
+      "author": "Provo rossi",
+      "decodedRate": 48000,
+      "decodedChannels": 1,
+      "frames": 2874375,
+      "durationS": 59.8828125,
+      "finite": true,
+      "rms": 0.18115144003058883,
+      "peak": 0.9494589567184448,
+      "windowRmsMin": 0.03736955937545489,
+      "windowRmsMax": 0.28528885063676196,
+      "windowRmsCv": 0.37246079022826356,
+      "zeroCrossingRate": 0.0379352165027933,
+      "spectralCentroidMedianHz": 1852.8156682116096,
+      "spectralCentroidP10Hz": 1583.9327060093633,
+      "spectralCentroidP90Hz": 2054.66609344886,
+      "candidateAutocorrelation": [
+        {
+          "lagS": 0.25,
+          "correlation": -0.000152293432620354
+        },
+        {
+          "lagS": 0.5,
+          "correlation": -0.003827393753454089
+        },
+        {
+          "lagS": 0.75,
+          "correlation": -0.006428189110010862
+        },
+        {
+          "lagS": 1.0,
+          "correlation": 0.003655497683212161
+        },
+        {
+          "lagS": 1.25,
+          "correlation": -0.0012890310026705265
+        },
+        {
+          "lagS": 1.5,
+          "correlation": -0.0013628232991322875
+        },
+        {
+          "lagS": 1.75,
+          "correlation": -0.005810703616589308
+        },
+        {
+          "lagS": 2.0,
+          "correlation": 0.006166455335915089
+        },
+        {
+          "lagS": 2.25,
+          "correlation": -0.0006351622287184
+        },
+        {
+          "lagS": 2.5,
+          "correlation": -9.97454408206977e-05
+        },
+        {
+          "lagS": 2.75,
+          "correlation": 0.0031823732424527407
+        },
+        {
+          "lagS": 3.0,
+          "correlation": -0.0011047915322706103
+        },
+        {
+          "lagS": 3.25,
+          "correlation": -0.001914478838443756
+        },
+        {
+          "lagS": 3.5,
+          "correlation": 0.001686547533608973
+        },
+        {
+          "lagS": 3.75,
+          "correlation": 0.006718011572957039
+        },
+        {
+          "lagS": 4.0,
+          "correlation": -0.007193044293671846
+        },
+        {
+          "lagS": 4.25,
+          "correlation": -0.0005926068406552076
+        },
+        {
+          "lagS": 4.5,
+          "correlation": -0.0016403266927227378
+        },
+        {
+          "lagS": 4.75,
+          "correlation": -0.002057379577308893
+        }
+      ],
+      "bestCandidate": {
+        "lagS": 3.75,
+        "correlation": 0.006718011572957039
+      },
+      "state": "UNKNOWN"
+    },
+    {
+      "id": "honda-f20c",
+      "file": "honda-f20c.ogg",
+      "sourceSha256": "aed190fa3717cdc922809da0b4a2b4d0eb11c505e3457bd0cc9b5d175025f7c2",
+      "sourceRate": 48000,
+      "sourceChannels": 2,
+      "declaredDurationS": 137.0726875,
+      "license": "CC BY 3.0",
+      "author": "Tyler Riddle",
+      "decodedRate": 48000,
+      "decodedChannels": 1,
+      "frames": 6579489,
+      "durationS": 137.0726875,
+      "finite": true,
+      "rms": 0.1075754454589228,
+      "peak": 1.3626126050949097,
+      "windowRmsMin": 0.0,
+      "windowRmsMax": 0.2158648065954969,
+      "windowRmsCv": 0.6406427552911005,
+      "zeroCrossingRate": 0.007802734802464873,
+      "spectralCentroidMedianHz": 946.9078453640291,
+      "spectralCentroidP10Hz": 784.6918010655029,
+      "spectralCentroidP90Hz": 1070.2344009416881,
+      "candidateAutocorrelation": [
+        {
+          "lagS": 0.25,
+          "correlation": 0.006875420454889536
+        },
+        {
+          "lagS": 0.5,
+          "correlation": -0.005804316606372595
+        },
+        {
+          "lagS": 0.75,
+          "correlation": 0.0073504578322172165
+        },
+        {
+          "lagS": 1.0,
+          "correlation": -0.008564976043999195
+        },
+        {
+          "lagS": 1.25,
+          "correlation": 0.001248783664777875
+        },
+        {
+          "lagS": 1.5,
+          "correlation": 0.0004908001283183694
+        },
+        {
+          "lagS": 1.75,
+          "correlation": 0.006893299054354429
+        },
+        {
+          "lagS": 2.0,
+          "correlation": 0.006187253165990114
+        },
+        {
+          "lagS": 2.25,
+          "correlation": -0.007385724224150181
+        },
+        {
+          "lagS": 2.5,
+          "correlation": -0.004671746864914894
+        },
+        {
+          "lagS": 2.75,
+          "correlation": 0.0017060464015230536
+        },
+        {
+          "lagS": 3.0,
+          "correlation": 0.002381355967372656
+        },
+        {
+          "lagS": 3.25,
+          "correlation": -0.0016179828671738505
+        },
+        {
+          "lagS": 3.5,
+          "correlation": 0.01031801849603653
+        },
+        {
+          "lagS": 3.75,
+          "correlation": -0.00029165850719437003
+        },
+        {
+          "lagS": 4.0,
+          "correlation": 0.004431187640875578
+        },
+        {
+          "lagS": 4.25,
+          "correlation": 0.0012598519679158926
+        },
+        {
+          "lagS": 4.5,
+          "correlation": 0.006493483670055866
+        },
+        {
+          "lagS": 4.75,
+          "correlation": 0.007856837473809719
+        }
+      ],
+      "bestCandidate": {
+        "lagS": 3.5,
+        "correlation": 0.01031801849603653
+      },
+      "state": "UNKNOWN"
+    },
+    {
+      "id": "triumph-i6",
+      "file": "triumph-i6.ogg",
+      "sourceSha256": "c79706d9c9e3981ad6ab4c02b39158fcfd1e03cbd3736a2e1ad090fd3d44b22b",
+      "sourceRate": 11024,
+      "sourceChannels": 1,
+      "declaredDurationS": 11.443577648766327,
+      "license": "CC BY-SA 3.0",
+      "author": "Netlore",
+      "decodedRate": 48000,
+      "decodedChannels": 1,
+      "frames": 549292,
+      "durationS": 11.443583333333333,
+      "finite": true,
+      "rms": 0.19826756763961179,
+      "peak": 0.9816980957984924,
+      "windowRmsMin": 0.1563306349302038,
+      "windowRmsMax": 0.22587545159789454,
+      "windowRmsCv": 0.09605343698514573,
+      "zeroCrossingRate": 0.035538539681152614,
+      "spectralCentroidMedianHz": 1706.2234501756916,
+      "spectralCentroidP10Hz": 1598.6181368432576,
+      "spectralCentroidP90Hz": 1912.1420822221094,
+      "candidateAutocorrelation": [
+        {
+          "lagS": 0.25,
+          "correlation": 0.006601647939532995
+        },
+        {
+          "lagS": 0.5,
+          "correlation": 0.0012711802264675498
+        },
+        {
+          "lagS": 0.75,
+          "correlation": 0.013144089840352535
+        },
+        {
+          "lagS": 1.0,
+          "correlation": -0.008854778483510017
+        },
+        {
+          "lagS": 1.25,
+          "correlation": 0.005109040066599846
+        },
+        {
+          "lagS": 1.5,
+          "correlation": -0.004391288384795189
+        },
+        {
+          "lagS": 1.75,
+          "correlation": -0.023885365575551987
+        },
+        {
+          "lagS": 2.0,
+          "correlation": -0.011543168686330318
+        },
+        {
+          "lagS": 2.25,
+          "correlation": 0.017029402777552605
+        },
+        {
+          "lagS": 2.5,
+          "correlation": -0.002372945426031947
+        },
+        {
+          "lagS": 2.75,
+          "correlation": -0.0003679649962577969
+        },
+        {
+          "lagS": 3.0,
+          "correlation": -0.008166967891156673
+        },
+        {
+          "lagS": 3.25,
+          "correlation": -0.0039030336774885654
+        },
+        {
+          "lagS": 3.5,
+          "correlation": -0.018003011122345924
+        },
+        {
+          "lagS": 3.75,
+          "correlation": -0.013888957910239697
+        },
+        {
+          "lagS": 4.0,
+          "correlation": 0.006903930101543665
+        },
+        {
+          "lagS": 4.25,
+          "correlation": 0.006703544873744249
+        },
+        {
+          "lagS": 4.5,
+          "correlation": 0.023049481213092804
+        },
+        {
+          "lagS": 4.75,
+          "correlation": -0.007496814709156752
+        }
+      ],
+      "bestCandidate": {
+        "lagS": 4.5,
+        "correlation": 0.023049481213092804
+      },
+      "state": "UNKNOWN"
+    },
+    {
+      "id": "volvo-850-t5",
+      "file": "volvo-850-t5.ogg",
+      "sourceSha256": "f8e01b386f394f1ed3550d92d9f44793aeae329891bbf18d84b1acd4c900e651",
+      "sourceRate": 96000,
+      "sourceChannels": 1,
+      "declaredDurationS": 32.60040625,
+      "license": "CC BY-SA 4.0",
+      "author": "Jonas Tittmann",
+      "decodedRate": 48000,
+      "decodedChannels": 1,
+      "frames": 1564820,
+      "durationS": 32.60041666666667,
+      "finite": true,
+      "rms": 0.12729554143794297,
+      "peak": 1.0451717376708984,
+      "windowRmsMin": 0.005428678150925771,
+      "windowRmsMax": 0.21362043700087632,
+      "windowRmsCv": 0.5027010064876444,
+      "zeroCrossingRate": 0.01638975498124703,
+      "spectralCentroidMedianHz": 958.5564496545445,
+      "spectralCentroidP10Hz": 771.6624737026707,
+      "spectralCentroidP90Hz": 1857.9937205148276,
+      "candidateAutocorrelation": [
+        {
+          "lagS": 0.25,
+          "correlation": -0.006993974093347788
+        },
+        {
+          "lagS": 0.5,
+          "correlation": -0.009775757789611816
+        },
+        {
+          "lagS": 0.75,
+          "correlation": 0.005765486042946577
+        },
+        {
+          "lagS": 1.0,
+          "correlation": -0.004782700911164284
+        },
+        {
+          "lagS": 1.25,
+          "correlation": 0.01224883459508419
+        },
+        {
+          "lagS": 1.5,
+          "correlation": 0.00034029988455586135
+        },
+        {
+          "lagS": 1.75,
+          "correlation": -0.01990099623799324
+        },
+        {
+          "lagS": 2.0,
+          "correlation": 0.005463824141770601
+        },
+        {
+          "lagS": 2.25,
+          "correlation": -0.0063942489214241505
+        },
+        {
+          "lagS": 2.5,
+          "correlation": 0.008489277213811874
+        },
+        {
+          "lagS": 2.75,
+          "correlation": 0.0030229929834604263
+        },
+        {
+          "lagS": 3.0,
+          "correlation": -0.015110757201910019
+        },
+        {
+          "lagS": 3.25,
+          "correlation": 0.009451060555875301
+        },
+        {
+          "lagS": 3.5,
+          "correlation": 0.012932549230754375
+        },
+        {
+          "lagS": 3.75,
+          "correlation": 0.0009765647118911147
+        },
+        {
+          "lagS": 4.0,
+          "correlation": -0.0006928665679879487
+        },
+        {
+          "lagS": 4.25,
+          "correlation": 0.006720181554555893
+        },
+        {
+          "lagS": 4.5,
+          "correlation": -0.0024106462951749563
+        },
+        {
+          "lagS": 4.75,
+          "correlation": -0.0017329214606434107
+        }
+      ],
+      "bestCandidate": {
+        "lagS": 3.5,
+        "correlation": 0.012932549230754375
+      },
+      "state": "UNKNOWN"
+    }
+  ]
+}

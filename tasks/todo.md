@@ -4448,3 +4448,19 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 代码仅新增四个 Web 工具/测试文件；未修改默认声库、Android、MATLAB、APK、设备或公网。
 - 证据：`reports/recorded-engine-optimization-20261027/RESULTS.md`、`E:/Tesla_speed/reports/recorded-engine-optimization-20261027-focused-final2.log`、`E:/Tesla_speed/reports/recorded-engine-optimization-20261027-web-final.log`。
 - 下一门：合法多工况录音必须带同步 RPM/load/gear/720° phase 和独立 holdout；否则状态仍为 `INSUFFICIENT_EVIDENCE`。
+
+## 2026-10-27 真实录音研究池与六车型对齐路线
+
+- [x] 取得 5 个公开、许可证可核查的真实发动机录音到受控下载目录。
+- [x] 保存原始文件 SHA、来源页、作者、许可证、时长、格式和 UNKNOWN 状态字段。
+- [x] 完成只读特征分析：RMS/peak、能量包络、谱质心/带宽、调制、自相关和格式稳定性。
+- [x] 写出六车型真实对齐阶段计划、R1/R2/R3 分层、状态合同、三路对照、holdout、设备和人耳门。
+- [ ] 建立六车型 source registry 和缺口表。
+- [ ] 在没有 R1 同步状态数据前，不把任何公开录音接入默认声库或产品候选。
+
+### Review
+
+- 公开录音池：`E:\Claude_allow\Download\vico-real-engine-source-pool-20261027`。
+- 阶段计划：`reports/real-engine-source-pool-20261027/SIX_VEHICLE_ALIGNMENT_PLAN.md`。
+- 分析脚本/结果：`reports/real-engine-source-pool-20261027/analyze_real_engine_pool.py`、`analysis.json`、`ANALYSIS.md`；5/5 文件可解码，所有状态合同字段仍为 `UNKNOWN`。
+- 当前仍缺六车型同步 RPM/load/gear/720-degree phase 和独立 holdout；目标是尽可能接近真实，不把研究素材冒充 OEM 声图。
