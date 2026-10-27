@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-25",
+  "updated_at": "2026-10-27",
   "current_phase": "P2",
-  "current_work_package": "HC-C1 A playback fixes verified; B real engine-sim study completed with mixed AM results and rejected default DSP; acoustic/device gates open",
+  "current_work_package": "HC-C1 A playback fixes; B rejected recorded reconstruction;方案A state contract and three-way offline harness complete; acoustic/device gates open",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -563,5 +563,40 @@
     "original_WAV_gain_main_data": "UNCHANGED",
     "device_road_human": "NOT_EVALUATED",
     "A_CI": "4SUCCESS_exact_f6018a6"
+  },
+  "hc_c1_state_contract_20261027": {
+    "status": "SOFTWARE_HARNESS_COMPLETE_NOT_ACOUSTIC_QUALIFICATION",
+    "authority": "Jovi direct approval of方案A on 2026-10-27",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "base": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "scope": [
+      "recorded-state-contract",
+      "three-way-offline-study",
+      "tests"
+    ],
+    "contract": "vico.recorded.state-contract.v1",
+    "routes": [
+      "RECORDED_PRIMARY",
+      "LEGACY_BANK",
+      "GENERIC_PHYSICS"
+    ],
+    "fixed_trace": "60s_continuous_15_idle_15_accel_15_high_rpm_10_coast_5_idle_no_reset",
+    "fail_closed": "INSUFFICIENT_EVIDENCE_without_license_sync_measured_rpm_load_gear_verified_720_phase_independent_holdout",
+    "tests": {
+      "focused": "8/8",
+      "web": "171/171",
+      "ledger_check": "PASS",
+      "diff_check": "PASS"
+    },
+    "evidence": [
+      "reports/recorded-engine-optimization-20261027-focused-final2.log",
+      "reports/recorded-engine-optimization-20261027-web-final.log",
+      "vico_web/tools/recorded-state-contract.mjs",
+      "vico_web/tools/three-way-offline-study.mjs"
+    ],
+    "product_candidate": false,
+    "default_voice_changed": false,
+    "android_device_human_oem": "NOT_EVALUATED",
+    "next_gate": "supply licensed multi-condition capture with synchronized state trace and holdout; then run real three-way offline render"
   }
 }

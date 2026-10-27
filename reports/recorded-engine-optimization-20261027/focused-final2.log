@@ -1,0 +1,16 @@
+✔ complete measured contract is eligible and preserves source identity (0.6711ms)
+✔ missing measured state fails closed without inventing RPM or load (0.169ms)
+✔ missing license, phase, synchronization, or independent holdout is rejected (0.2485ms)
+✔ overlapping regions and non-monotonic frame boundaries are rejected (0.1377ms)
+✔ fixed trace has one continuous 60-second clock and no reset (0.777ms)
+✔ incomplete source produces a receipt and no fake PCM or product candidate (3.9211ms)
+✔ eligible study requires all three explicit renderers and keeps route identities separate (1.1599ms)
+✔ eligible study writes only real Float32 PCM returned by each route (1835.4791ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1939.1819

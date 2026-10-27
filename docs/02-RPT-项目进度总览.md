@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-25 · 主线：P2 · 工作包：HC-C1 A playback fixes verified; B real engine-sim study completed with mixed AM results and rejected default DSP; acoustic/device gates open
+更新：2026-10-27 · 主线：P2 · 工作包：HC-C1 A playback fixes; B rejected recorded reconstruction;方案A state contract and three-way offline harness complete; acoustic/device gates open
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

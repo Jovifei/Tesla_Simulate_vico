@@ -1,0 +1,60 @@
+node:internal/modules/esm/resolve:271
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\vico_web\tools\recorded-state-contract.mjs' imported from E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\vico_web\test\recorded-state-contract.test.mjs
+    at finalizeResolution (node:internal/modules/esm/resolve:271:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:759:56)
+    at #resolve (node:internal/modules/esm/loader:683:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)
+    at ModuleJob.link (node:internal/modules/esm/module_job:253:17) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/vico_web/tools/recorded-state-contract.mjs'
+}
+
+Node.js v24.18.0
+✖ vico_web\test\recorded-state-contract.test.mjs (48.1328ms)
+node:internal/modules/esm/resolve:271
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\vico_web\tools\three-way-offline-study.mjs' imported from E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\vico_web\test\three-way-offline-study.test.mjs
+    at finalizeResolution (node:internal/modules/esm/resolve:271:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:759:56)
+    at #resolve (node:internal/modules/esm/loader:683:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)
+    at ModuleJob.link (node:internal/modules/esm/module_job:253:17) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/vico_web/tools/three-way-offline-study.mjs'
+}
+
+Node.js v24.18.0
+✖ vico_web\test\three-way-offline-study.test.mjs (41.0696ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53.4007
+
+✖ failing tests:
+
+test at vico_web\test\recorded-state-contract.test.mjs:1:1
+✖ vico_web\test\recorded-state-contract.test.mjs (48.1328ms)
+  'test failed'
+
+test at vico_web\test\three-way-offline-study.test.mjs:1:1
+✖ vico_web\test\three-way-offline-study.test.mjs (41.0696ms)
+  'test failed'

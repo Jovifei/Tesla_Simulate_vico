@@ -4433,3 +4433,18 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - Full exact-HEAD S12: `1322 passed, 118 subtests passed` in `3883.76s`; strict compile, Track-P and diff checks pass.
 - Fresh v2 package verified: manifest `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`.
 - Branch pushed through HEAD `98b0813cd2a42526a30d66d0a93d82ba55219b2d`; GitHub Actions query showed no run for the branch because no PR/authenticated trigger exists. Draft PR creation remains blocked by unavailable GitHub authentication; main was not changed.
+
+## 2026-10-27 方案 A 收口
+
+- [x] 在隔离工作树先写状态合同 RED 测试并复现缺模块失败。
+- [x] 实现 `vico.recorded.state-contract.v1` fail-closed 校验器。
+- [x] 实现固定 60 秒、无 reset 的三路离线对照 harness。
+- [x] 增加真实 Float32 PCM、60 秒长度、有限值和峰值边界。
+- [x] 运行 8/8 聚焦测试、171/171 Web 回归、diff-check 和账本 `--check`。
+- [x] 更新 `docs/project-ledger.json` 及生成进度视图；保留声学/设备/人耳未完成状态。
+
+### Review
+
+- 代码仅新增四个 Web 工具/测试文件；未修改默认声库、Android、MATLAB、APK、设备或公网。
+- 证据：`reports/recorded-engine-optimization-20261027/RESULTS.md`、`E:/Tesla_speed/reports/recorded-engine-optimization-20261027-focused-final2.log`、`E:/Tesla_speed/reports/recorded-engine-optimization-20261027-web-final.log`。
+- 下一门：合法多工况录音必须带同步 RPM/load/gear/720° phase 和独立 holdout；否则状态仍为 `INSUFFICIENT_EVIDENCE`。
