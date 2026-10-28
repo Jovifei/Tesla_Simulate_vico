@@ -4610,3 +4610,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 更新 source receipt 增加 `crossfade_samples=5760` 和 wrap policy。
 - [x] 输入合同测试 8/8；v1.2 Python 合同 35/35；diff-check PASS。
 - [ ] MATLAB runtime 恢复后验证固定帧源 + Texture Function + Frozen Radiation 的 90s 双次仿真。
+
+## 2026-10-28 MATLAB external texture input bridge
+
+- [x] 新增 `s12_v12_prepare_texture_external_input.m`：从受控 F32LE 源生成 48kHz/960-sample/50Hz 研究纹理输入矩阵。
+- [x] 输入绑定源 SHA，使用 120ms wrap crossfade；输出 state/RPM/load/gear/phase 保持 UNKNOWN。
+- [x] 明确不调用 `sim`、不写 WAV、不改产品路径；用途 `RESEARCH_ONLY_NOT_PRODUCT_AUDIO`。
+- [x] 静态测试 8/8；`py_compile`/`git diff --check` PASS。
+- [ ] MATLAB transport 恢复后通过 `SimulationInput` 喂入隔离 candidate，执行 90s x2。

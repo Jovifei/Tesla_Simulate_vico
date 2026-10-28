@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "MATLAB/Simulink texture input uses bounded crossfade wrap and stateful codegen-safe mixer; runtime pending MCP",
+  "current_work_package": "MATLAB external texture frame bridge ready for 90s candidate; runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -766,6 +766,23 @@
     "active_compile": "NOT_RUN",
     "simulation_90s": "NOT_RUN",
     "next": "restore existing-session MATLAB then execute exact plan",
+    "blocker": "MATLAB MCP transport"
+  },
+  "matlab_external_texture_input_20261028": {
+    "status": "MATLAB_EXTERNAL_TEXTURE_INPUT_BRIDGE_READY_RUNTIME_PENDING",
+    "source": "s12_v12_prepare_texture_external_input.m",
+    "contract": "48kHz; 960 samples; 50Hz frame matrix; 120ms crossfade; source SHA",
+    "outputs": [
+      "texture_residual[frameCount,960]",
+      "texture_weight[frameCount,1]",
+      "source_sha256"
+    ],
+    "state": "UNKNOWN",
+    "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
+    "tests": "8/8",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "restore MATLAB transport then SimulationInput candidate run",
     "blocker": "MATLAB MCP transport"
   }
 }
