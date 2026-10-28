@@ -1,8 +1,6 @@
 function [mixed, context, diagnostics] = s12_v12_mix_texture_residual( ...
         prePtr, texture, weight, context)
 %S12_V12_MIX_TEXTURE_RESIDUAL Optional research-only pre-PTR texture layer.
-% The default weight is zero. This layer never infers vehicle state and does
-% not alter the frozen PTR/Radiation adapter or product qualification gates.
 
 if nargin < 4 || isempty(context)
     context = struct("frame_index", 0, "weight_state", 0);
@@ -18,16 +16,11 @@ if ~isnumeric(weight) || ~isscalar(weight) || ~isfinite(weight) || weight < 0 ||
 end
 if ~isstruct(context) || ~isscalar(context) || ~isfield(context, "frame_index") || ...
         ~isnumeric(context.frame_index) || ~isscalar(context.frame_index) || ...
-        ~isfinite(context.frame_index) || context.frame_index < 0
-    error("S12:EngineSoundV12:TextureResidual", "context.frame_index is invalid.");
+        ~isfinite(context.frame_index) || context.frame_index < 0 || ...
+        ~isfield(context, "weight_state") || ~isscalar(context.weight_state) || ...
+        ~isfinite(context.weight_state) || context.weight_state < 0 || context.weight_state > 1
+    error("S12:EngineSoundV12:TextureResidual", "context is invalid.");
 end
-if ~isfield(context, "weight_state") || ~isnumeric(context.weight_state) || ...
-        ~isscalar(context.weight_state) || ~isfinite(context.weight_state) || ...
-        context.weight_state < 0 || context.weight_state > 1
-    error("S12:EngineSoundV12:TextureResidual", "context.weight_state is invalid.");
-end
-
-% Keep the research residual bounded relative to the existing pre-PTR signal.
 textureRms = sqrt(mean(texture .^ 2));
 baseRms = sqrt(mean(prePtr .^ 2));
 if textureRms > eps && baseRms > eps
@@ -43,12 +36,42 @@ if any(~isfinite(mixed), "all") || any(abs(mixed) > 1, "all")
 end
 context.frame_index = context.frame_index + 1;
 context.weight_state = weightState;
-diagnostics = struct( ...
-    "source_class", "PUBLIC_TEXTURE_RESEARCH_ONLY", ...
-    "qualification", "INSUFFICIENT_EVIDENCE", ...
-    "product_candidate", false, ...
-    "weight", double(weight), ...
-    "effective_weight", double(weightState), ...
-    "texture_rms", double(textureRms), ...
-    "base_rms", double(baseRms));
+diagnostics = struct("source_class", "PUBLIC_TEXTURE_RESEARCH_ONLY", ...
+    "qualification", "INSUFFICIENT_EVIDENCE", "product_candidate", false, ...
+    "weight", double(weight), "effective_weight", double(weightState), ...
+    "texture_rms", double(textureRms), "base_rms", double(baseRms));
+end
+
+function [mixed, context, diagnostics] = s12_v12_mix_texture_layers( ...
+        prePtr, bodyTexture, mechanicalTexture, broadbandTexture, weights, context)
+%S12_V12_MIX_TEXTURE_LAYERS Research-only layered residual before frozen PTR.
+if nargin < 6 || isempty(context)
+    context = struct("frame_index", 0, "weight_state", zeros(1, 3));
+end
+textures = [bodyTexture, mechanicalTexture, broadbandTexture];
+if ~isnumeric(prePtr) || ~isequal(size(prePtr), [960, 1]) || ...
+        ~isequal(size(textures), [960, 3]) || any(~isfinite(prePtr), "all") || any(~isfinite(textures), "all") || ...
+        ~isnumeric(weights) || ~isequal(size(weights), [1, 3]) || any(~isfinite(weights)) || any(weights < 0 | weights > 1) || ...
+        ~isfield(context, "weight_state") || ~isequal(size(context.weight_state), [1, 3])
+    error("S12:EngineSoundV12:TextureLayers", "layered texture contract is invalid.");
+end
+baseRms = sqrt(mean(prePtr .^ 2));
+layerRms = sqrt(mean(textures .^ 2, 1));
+for index = 1:3
+    if layerRms(index) > eps && baseRms > eps
+        textures(:, index) = textures(:, index) * min(1, baseRms / layerRms(index));
+    end
+end
+effective = context.weight_state + 0.25 * (double(weights) - context.weight_state);
+if all(weights == 0), effective = zeros(1, 3); end
+mixed = prePtr + textures * effective.';
+if any(~isfinite(mixed), "all") || any(abs(mixed) > 1, "all")
+    error("S12:EngineSoundV12:TextureLayers", "layered mix is outside finite/peak contract.");
+end
+context.frame_index = context.frame_index + 1;
+context.weight_state = effective;
+diagnostics = struct("source_class", "PUBLIC_TEXTURE_LAYERS_RESEARCH_ONLY", ...
+    "qualification", "INSUFFICIENT_EVIDENCE", "product_candidate", false, ...
+    "weights", double(weights), "effective_weights", double(effective), ...
+    "layer_rms", double(layerRms), "base_rms", double(baseRms));
 end

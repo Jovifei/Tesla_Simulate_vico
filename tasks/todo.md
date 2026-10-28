@@ -4634,3 +4634,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 结果标记 `RESEARCH_ONLY_NOT_PRODUCT_AUDIO`、`INSUFFICIENT_EVIDENCE`、`product_candidate=false`；不保存源模型、不 promotion。
 - [x] 静态测试 9/9；diff-check PASS。
 - [ ] MATLAB transport 恢复后执行隔离 candidate 90s x2、PCM/WAV SHA 和 model_check。
+
+## 2026-10-28 Layered texture helper
+
+- [x] 修正 `s12_v12_mix_texture_residual.m` 为合法 MATLAB 主函数 + local functions 结构。
+- [x] 新增 body/exhaust、mechanical/supercharger、broadband/residual 三层研究混合，保持单纹理兼容路径。
+- [x] 每层 `[960,1]`、权重 `[1,3]`、跨 block 平滑；默认 0 仍旧路径旁路。
+- [x] 静态测试 6/6；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB transport 恢复后在隔离 Simulink candidate 接入三层输入并运行 90s x2。
