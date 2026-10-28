@@ -4650,3 +4650,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 更新 Simulink contract v2 和 candidate preparation plan；不改变 Frozen PTR/Radiation。
 - [x] 静态测试 6/6；v1.2 Python 合同 35/35；diff-check PASS。
 - [ ] MATLAB transport 恢复后接线三层输入并运行 90s x2。
+
+## 2026-10-28 Three-layer external texture input
+
+- [x] 外部输入桥增加 `texture_layers[frameCount,960,3]` 和 `texture_layer_weights[frameCount,3]`。
+- [x] 旧单纹理输入只映射到 body/exhaust 层，mechanical/broadband 默认全零，不伪造通道分解。
+- [x] Simulink contract 增加三层 source field，固定三层 MATLAB Function block 输入。
+- [x] 静态测试 9/9；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB transport 恢复后喂入三层输入矩阵并运行 90s x2。
