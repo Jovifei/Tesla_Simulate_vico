@@ -4519,3 +4519,17 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - 结果：`reports/research-three-way-20261028/RESULTS.md`。
 - 研究结论：连续混合路由在公开纹理上保持安全；Honda 最大跳变低于 legacy/generic，Ferrari 与 legacy 接近；不能推导车型真实性。
+
+## 2026-10-28 MATLAB/Simulink 连续纹理 pre-PTR 更新
+
+- [x] 在 v1.2 pre-PTR 路径新增可选 `textureResidual`/`textureWeight`，默认权重 0，旧输出保持兼容。
+- [x] 新增 MATLAB helper `s12_v12_mix_texture_residual.m`：固定 `[960,1]`、有限值、峰值、安全状态上下文和 `INSUFFICIENT_EVIDENCE` 诊断。
+- [x] 新增 MATLAB/Simulink 静态合同测试 2/2；v1.2 Python 合同 35/35。
+- [ ] MATLAB MCP transport 恢复后运行真实 MATLAB test、Cold Reload、Update Diagram、Active Compile 和 Simulink 90 s simulation。
+- [ ] 真实 Simulink 运行通过后，再生成三车/八车连续纹理 A/B；当前不接入默认声库。
+
+### Review
+
+- 当前更新文件：`tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m`、`s12_v12_render_pre_ptr_frame.m`、`s12_v12_render_source_frame.m`、MATLAB/static tests。
+- MATLAB 实际运行证据：NOT_RUN；MCP 返回 `failed to attach to MATLAB session`。
+- 保护项：冻结 PTR/Radiation 数学、默认声库、Android、APK、设备和公网未改。

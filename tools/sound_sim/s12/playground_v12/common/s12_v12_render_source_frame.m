@@ -128,6 +128,9 @@ end
 if ~isstruct(context.identity) || ~isscalar(context.identity)
     error("S12:EngineSoundV12:SourceContext", "identity must be a scalar context struct.");
 end
+if ~isfield(context, "texture_residual")
+    context.texture_residual = struct("frame_index", 0);
+end
 end
 
 function validateDiscreteTransitions(context, state)

@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-28 · 主线：P2 · 工作包：连续混合研究内核与 Honda/Ferrari 三路研究对照完成；产品默认路径保持关闭
+更新：2026-10-28 · 主线：P2 · 工作包：MATLAB v1.2 pre-PTR texture residual updated; real Simulink runtime pending MCP transport
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 
