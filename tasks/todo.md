@@ -4489,8 +4489,33 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 聚焦测试 7/7；研究 Honda F20C 10 秒输出成功，`INSUFFICIENT_EVIDENCE`。
 - [ ] 完整 Web 最终回归和隔离提交收口。
 
+## 2026-10-28 三路研究对照（连续混合后续）
+
+- [ ] 写 research-only 三路比较器 RED 测试：同一 60 秒轨迹、三路身份分离、指标统一、无产品候选。
+- [ ] 实现 `RECORDED_PRIMARY` 连续混合纹理、`LEGACY_BANK` 固定周期、`GENERIC_PHYSICS` 连续谐波对照。
+- [ ] 运行公开 Honda/Ferrari 纹理研究输入，输出 JSON/Markdown 指标；不写 PCM 大文件。
+- [ ] 运行聚焦/完整 Web 回归、账本检查和 diff-check。
+- [ ] 更新结果报告和账本，提交隔离分支；不推送、不合并。
+
+### Review
+
+- 待完成：三路研究比较和最终验证。
+
 ### Review
 
 - 设计：`docs/superpowers/specs/2026-10-28-continuous-hybrid-renderer-design.md`。
 - 结果：`reports/continuous-hybrid-research-20261028/RESULTS.md`。
 - 当前仍不声称任何目标车型 OEM 对齐；下一门是三路同轨迹离线对照和 Jovi 盲听。
+
+### 2026-10-28 三路研究对照收口
+
+- [x] 写 research-only 三路比较器和同轨迹 RED/GREEN 测试。
+- [x] 实现 `RECORDED_PRIMARY`、`LEGACY_BANK`、`GENERIC_PHYSICS` 三路统一指标。
+- [x] 运行 Honda F20C 与 Ferrari 250 GTO 两个公开纹理输入；临时 PCM 已清理，保留 JSON/SHA/报告。
+- [x] 聚焦测试 2/2；完整 Web 回归 180/180；账本检查 PASS。
+- [x] 更新账本和结果报告；不接入默认声库、Android、APK、设备或公网。
+
+### Review
+
+- 结果：`reports/research-three-way-20261028/RESULTS.md`。
+- 研究结论：连续混合路由在公开纹理上保持安全；Honda 最大跳变低于 legacy/generic，Ferrari 与 legacy 接近；不能推导车型真实性。

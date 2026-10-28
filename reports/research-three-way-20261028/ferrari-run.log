@@ -1,0 +1,64 @@
+{
+  "schema": "vico.research-three-way-receipt.v1",
+  "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
+  "stateQualification": "INSUFFICIENT_EVIDENCE",
+  "productCandidate": false,
+  "trace": {
+    "schema": "vico.research-three-way-trace.v1",
+    "sampleRate": 48000,
+    "durationS": 60,
+    "resetCount": 0,
+    "segments": [
+      {
+        "condition": "idle",
+        "durationS": 15
+      },
+      {
+        "condition": "acceleration",
+        "durationS": 15
+      },
+      {
+        "condition": "high-rpm",
+        "durationS": 15
+      },
+      {
+        "condition": "coast",
+        "durationS": 10
+      },
+      {
+        "condition": "idle",
+        "durationS": 5
+      }
+    ]
+  },
+  "textureSha256": "136be51059e37f9157179eb4606be80cee898f2c998c62a7364f767895733993",
+  "routes": [
+    {
+      "id": "recorded-primary",
+      "provenance": "RECORDED_PRIMARY",
+      "frames": 2880000,
+      "rms": 0.13178499220368237,
+      "peak": 0.34846118092536926,
+      "maxSampleJump": 0.0023128092288970947,
+      "pcmSha256": "9b796e3d2adf7630a97d82e375f540dbef69ad8d502faa91a7c42d8792eb9d16"
+    },
+    {
+      "id": "legacy-bank",
+      "provenance": "LEGACY_BANK",
+      "frames": 2880000,
+      "rms": 0.22444608274917077,
+      "peak": 0.40400001406669617,
+      "maxSampleJump": 0.002357718301936984,
+      "pcmSha256": "8ddc935f21608b46a3871946879a176abfddd7572923eb6b0ab6521edf5159a4"
+    },
+    {
+      "id": "generic-physics",
+      "provenance": "GENERIC_PHYSICS",
+      "frames": 2880000,
+      "rms": 0.24236393065723275,
+      "peak": 0.4484136402606964,
+      "maxSampleJump": 0.005320007214322686,
+      "pcmSha256": "7510e993946480cbda280f62b117452738d484c4efd66004d08bde5efd1733c0"
+    }
+  ]
+}

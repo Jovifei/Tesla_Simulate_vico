@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "方案A连续混合研究内核完成；公开真实纹理A/B完成；默认声库与产品接入保持关闭",
+  "current_work_package": "连续混合研究内核与 Honda/Ferrari 三路研究对照完成；产品默认路径保持关闭",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -638,6 +638,28 @@
     "default_voice_changed": false,
     "android_changed": false,
     "next": "three-way same-trajectory offline comparison then blind audition",
+    "blocker": "No synchronized RPM/load/gear/phase or holdout"
+  },
+  "research_three_way_20261028": {
+    "status": "RESEARCH_THREE_WAY_COMPLETE_NOT_PRODUCT",
+    "branch": "local/hellcat-state-contract-20261027",
+    "focused_tests": "2/2",
+    "web_tests": "180/180",
+    "inputs": [
+      "Honda F20C public CC BY 3.0",
+      "Ferrari 250 GTO public CC BY 4.0"
+    ],
+    "routes": [
+      "RECORDED_PRIMARY",
+      "LEGACY_BANK",
+      "GENERIC_PHYSICS"
+    ],
+    "trace": "60s idle/acceleration/high-rpm/coast/idle; resetCount=0",
+    "metrics": "RMS peak maxSampleJump output SHA",
+    "research_only": true,
+    "product_candidate": false,
+    "state_qualification": "INSUFFICIENT_EVIDENCE",
+    "next": "Jovi blind audition or additional generic texture study",
     "blocker": "No synchronized RPM/load/gear/phase or holdout"
   }
 }

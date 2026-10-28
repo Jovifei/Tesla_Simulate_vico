@@ -1,0 +1,10 @@
+✔ research three-way comparator keeps identities separate and never creates a product candidate (850.1505ms)
+✔ research trace has the fixed five-segment timeline (0.1903ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 937.6816
