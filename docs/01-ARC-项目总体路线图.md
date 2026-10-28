@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-28 · 主线：P2 · 工作包：MATLAB v1.2 pre-PTR texture residual updated; real Simulink runtime pending MCP transport
+更新：2026-10-28 · 主线：P2 · 工作包：MATLAB/Simulink v1.2 texture residual contract ready; isolated model runtime pending MCP transport
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

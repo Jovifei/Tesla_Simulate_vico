@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "MATLAB v1.2 pre-PTR texture residual updated; real Simulink runtime pending MCP transport",
+  "current_work_package": "MATLAB/Simulink v1.2 texture residual contract ready; isolated model runtime pending MCP transport",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -679,6 +679,27 @@
     "simulink_90s": "NOT_RUN",
     "product_integrated": false,
     "next": "restore MATLAB transport then run real test/update/compile/sim",
+    "blocker": "MATLAB MCP transport"
+  },
+  "simulink_texture_candidate_20261028": {
+    "status": "SIMULINK_CANDIDATE_CONTRACT_READY_RUNTIME_NOT_RUN",
+    "contract": "s12-v12-texture-residual-simulink-v1",
+    "source_model_candidates": [
+      "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+      "tools/sound_sim/s12/playground_v12/vehicles/ferrari_458_stock/S12_ferrari_458_stock_v12.slx",
+      "tools/sound_sim/s12/playground_v12/vehicles/rx7_fd_1991_stock/S12_rx7_fd_1991_stock_v12.slx"
+    ],
+    "ports": "vehicle [9,1], texture [960,1], weight [1,1], pre-PTR [960,1], PCM [960,2]",
+    "default_weight": 0,
+    "static_tests": "4/4",
+    "python_contract_tests": "35/35",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_model_edit": "NOT_RUN",
+    "update_diagram": "NOT_RUN",
+    "active_compile": "NOT_RUN",
+    "simulation_90s": "NOT_RUN",
+    "product_integrated": false,
+    "next": "restore MATLAB MCP then copy isolated candidate and run model_edit/update/compile/90s repeat",
     "blocker": "MATLAB MCP transport"
   }
 }

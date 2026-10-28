@@ -4533,3 +4533,15 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - 当前更新文件：`tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m`、`s12_v12_render_pre_ptr_frame.m`、`s12_v12_render_source_frame.m`、MATLAB/static tests。
 - MATLAB 实际运行证据：NOT_RUN；MCP 返回 `failed to attach to MATLAB session`。
 - 保护项：冻结 PTR/Radiation 数学、默认声库、Android、APK、设备和公网未改。
+
+## 2026-10-28 MATLAB/Simulink candidate contract
+
+- [x] Add fixed research-only Simulink texture contract: vehicle `[9,1]`, texture `[960,1]`, weight `[1,1]`, pre-PTR `[960,1]`, PCM `[960,2]`.
+- [x] Add isolated candidate preparation function; source model overwrite is rejected; model_edit/update/compile/90s repeat remain runtime gates.
+- [x] Static tests 4/4 and v1.2 Python contracts 35/35 pass.
+- [ ] Restore MATLAB MCP and perform real candidate copy, model_edit, Cold Reload, Update Diagram, Active Compile, 90s Simulink simulation and repeatability.
+
+### Review
+
+- Candidate contract is not a Simulink runtime pass. MCP currently has no attachable MATLAB session and no listener process.
+- Frozen Radiation/PTR, default voice, Android, APK, device and public deployment remain unchanged.
