@@ -4545,3 +4545,15 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - Candidate contract is not a Simulink runtime pass. MCP currently has no attachable MATLAB session and no listener process.
 - Frozen Radiation/PTR, default voice, Android, APK, device and public deployment remain unchanged.
+
+## 2026-10-28 Fixed-frame Simulink MATLAB Function entry
+
+- [x] 新增 `s12_v12_model_texture_step.m`，固定 `[960,1]` pre-PTR/纹理输入输出和 `[0,1]` weight。
+- [x] candidate preparation 明确使用该 MATLAB Function block；默认 weight=0 旁路旧路径。
+- [x] 新增静态合同测试 6/6；v1.2 Python 合同 35/35。
+- [ ] MATLAB transport 恢复后在隔离 candidate 上执行 model_edit、Cold Reload、Update Diagram、Active Compile、90s Simulink 和 repeatability。
+
+### Review
+
+- 当前没有 MATLAB Desktop/MCP listener；实际 MATLAB/Simulink 运行仍 NOT_RUN。
+- 冻结 Radiation/PTR、默认声库、Android、APK、设备、公网未改。
