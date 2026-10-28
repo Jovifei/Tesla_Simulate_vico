@@ -24,10 +24,13 @@ class TextureResidualStaticContract(unittest.TestCase):
     def test_research_texture_preserves_fixed_pre_ptr_shape_and_frozen_boundary(self) -> None:
         route = (COMMON / "s12_v12_render_pre_ptr_frame.m").read_text(encoding="utf-8")
         mixer = (COMMON / "s12_v12_mix_texture_residual.m").read_text(encoding="utf-8")
+        source = (COMMON / "s12_v12_render_source_frame.m").read_text(encoding="utf-8")
         self.assertIn("[frameSamples, 1]", route)
         self.assertIn("[960, 1]", mixer)
         self.assertIn("product_candidate", mixer)
         self.assertIn("prePtrExcitation = s12_v12_mix_bank_excitation", route)
+        self.assertIn('"weight_state", 0', source)
+        self.assertIn("context.texture_residual.weight_state = 0", source)
 
 
 if __name__ == "__main__":

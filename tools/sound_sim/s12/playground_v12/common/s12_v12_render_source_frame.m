@@ -129,7 +129,10 @@ if ~isstruct(context.identity) || ~isscalar(context.identity)
     error("S12:EngineSoundV12:SourceContext", "identity must be a scalar context struct.");
 end
 if ~isfield(context, "texture_residual")
-    context.texture_residual = struct("frame_index", 0);
+    context.texture_residual = struct("frame_index", 0, "weight_state", 0);
+elseif ~isfield(context.texture_residual, "weight_state")
+    % Preserve older contexts while initializing the new smooth mix state.
+    context.texture_residual.weight_state = 0;
 end
 end
 

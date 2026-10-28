@@ -19,6 +19,8 @@ The following MCP operations were attempted against the existing MATLAB session:
 
 All returned `failed to attach to MATLAB session`. A fresh process check found no `matlab.exe`, `MathWorksServiceHost`, or `matlab_mcp_server`, and no listener on the known MATLAB MCP ports. No second MATLAB process was started and no `-batch`/`-nodesktop` command was run.
 
+The same three read-only probes were reattempted after the later source update on 2026-10-28; the attach failure and empty process/listener state were unchanged.
+
 ## Evidence boundary
 
 - Static Python contracts: PASS (`35/35` v1.2 source contracts; `8/8` texture/topology contracts).
