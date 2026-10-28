@@ -2,6 +2,11 @@ function frame = s12_v12_model_texture_step(prePtr, textureResidual, textureWeig
 %S12_V12_MODEL_TEXTURE_STEP Fixed-frame research texture MATLAB Function entry.
 % This block is optional and defaults to the legacy pre-PTR path at weight 0.
 
+persistent context
+if isempty(context) || textureWeight == 0
+    context = struct("frame_index", 0, "weight_state", 0);
+end
+
 if ~isnumeric(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all")
     error("S12:EngineSoundV12:ModelTexture", "prePtr must be one finite [960,1] vector.");
 end
@@ -14,7 +19,8 @@ if ~isnumeric(textureWeight) || ~isscalar(textureWeight) || ~isfinite(textureWei
         textureWeight < 0 || textureWeight > 1
     error("S12:EngineSoundV12:ModelTexture", "textureWeight must be within [0,1].");
 end
-[frame, ~, ~] = s12_v12_mix_texture_residual(prePtr, textureResidual, textureWeight, []);
+[frame, context, ~] = s12_v12_mix_texture_residual( ...
+    prePtr, textureResidual, textureWeight, context);
 if ~isequal(size(frame), [960, 1]) || any(~isfinite(frame), "all") || any(abs(frame) > 1, "all")
     error("S12:EngineSoundV12:ModelTexture", "Texture MATLAB Function output is invalid.");
 end

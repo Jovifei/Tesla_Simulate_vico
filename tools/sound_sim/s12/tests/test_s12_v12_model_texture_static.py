@@ -15,6 +15,8 @@ class ModelTextureStaticContract(unittest.TestCase):
         self.assertIn("[960, 1]", text)
         self.assertIn("textureWeight < 0 || textureWeight > 1", text)
         self.assertIn("s12_v12_mix_texture_residual", text)
+        self.assertIn("persistent context", text)
+        self.assertIn("weight_state", text)
         self.assertIn("any(abs(frame) > 1", text)
         self.assertNotIn("s12_v11", text)
 

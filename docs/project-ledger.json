@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "Hellcat v1.2 Simulink topology audited; isolated texture candidate plan ready; runtime pending MCP",
+  "current_work_package": "MATLAB/Simulink texture residual now stateful and smoothed; runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -700,8 +700,10 @@
     "next": "restore MATLAB MCP then copy isolated candidate and run model_edit/update/compile/90s repeat",
     "blocker": "MATLAB MCP transport",
     "fixed_frame_entry": "s12_v12_model_texture_step.m",
-    "static_tests": "6/6",
-    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH"
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "weight_smoothing": "persistent weight_state; per-frame effective weight = previous + 0.25*(target-previous); target zero resets exact bypass",
+    "stateful_texture_context": true,
+    "static_tests": "6/6"
   },
   "simulink_topology_audit_20261028": {
     "status": "ARCHIVE_TOPOLOGY_AUDITED_CANDIDATE_PLAN_READY_RUNTIME_NOT_RUN",

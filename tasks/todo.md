@@ -4569,3 +4569,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - Archive topology PASS is not a Simulink runtime PASS. Existing model source is unchanged; no `.slx` candidate was created.
 - MATLAB MCP still has no attachable session; no second MATLAB started.
+
+## 2026-10-28 MATLAB texture weight smoothing repair
+
+- [x] 修复研究纹理权重每个 960-sample block 硬切根因。
+- [x] `s12_v12_mix_texture_residual.m` 保存 `weight_state`，按帧渐变到 target weight；target=0 保持 bit-exact 旁路。
+- [x] `s12_v12_model_texture_step.m` 使用 persistent context，跨 Simulink block 保持纹理混合状态。
+- [x] 静态合同 6/6、v1.2 Python 合同 35/35、diff-check PASS。
+- [ ] MATLAB MCP 恢复后执行实际 MATLAB test、model_edit、Update Diagram、Compile 和 90s simulation。

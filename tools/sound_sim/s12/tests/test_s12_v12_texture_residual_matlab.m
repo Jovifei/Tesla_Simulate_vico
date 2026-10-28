@@ -21,6 +21,8 @@ texture = 0.9 * cos((1:960).');
 verifyTrue(testCase, all(isfinite(first)) && all(abs(first) <= 1));
 verifyTrue(testCase, all(isfinite(second)) && all(abs(second) <= 1));
 verifyEqual(testCase, context2.frame_index, 2);
+verifyGreaterThan(testCase, context2.weight_state, 0);
+verifyLessThan(testCase, context2.weight_state, 0.35);
 verifyEqual(testCase, diagnostics.source_class, "PUBLIC_TEXTURE_RESEARCH_ONLY");
 end
 
