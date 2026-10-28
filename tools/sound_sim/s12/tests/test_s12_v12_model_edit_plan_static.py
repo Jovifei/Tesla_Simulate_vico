@@ -1,0 +1,32 @@
+"""Static contract for the exact isolated Simulink texture insertion plan."""
+
+import json
+from pathlib import Path
+import unittest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PLAN = Path(__file__).resolve().parents[4] / "reports" / "simulink-texture-topology-20261028" / "MODEL_EDIT_PLAN.json"
+
+
+class ModelEditPlanStaticContract(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.plan = json.loads(PLAN.read_text(encoding="utf-8"))
+
+    def test_source_isolation_and_runtime_gates(self) -> None:
+        self.assertTrue(self.plan["sourceModelMustRemainUnchanged"])
+        self.assertIn("Active Compile", self.plan["runtimeGates"])
+        self.assertIn("90s Simulation x2", self.plan["runtimeGates"])
+        self.assertIn("PCM/WAV SHA repeatability", self.plan["runtimeGates"])
+
+    def test_plan_disconnects_only_source_to_radiation_and_inserts_mixer(self) -> None:
+        operations = self.plan["operations"]
+        self.assertEqual(operations[3]["op"], "disconnect")
+        self.assertEqual(operations[3]["target"], "blk_11.y1 -> blk_12.u1")
+        self.assertEqual(operations[-1]["target"], "#textureMixer.y1 -> blk_12.u1")
+        self.assertEqual(self.plan["defaultInputContract"]["textureWeight"], 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

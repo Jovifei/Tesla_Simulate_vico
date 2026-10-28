@@ -4592,3 +4592,14 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 非法长度、越界值和负 frame index fail-closed。
 - [x] 相关静态/输入测试 11/11；`py_compile` 和 `git diff --check` PASS。
 - [ ] MATLAB transport 恢复后把固定帧源接入隔离 Simulink candidate 并运行 90 s x2。
+
+## 2026-10-28 Exact model_edit plan
+
+- [x] 固化 Hellcat v1.2 SID 拓扑与精确 source-to-radiation 接线。
+- [x] 新增 `MODEL_EDIT_PLAN.json`：只断开 `blk_11.y1 -> blk_12.u1`，插入 Texture Residual/Weight/MATLAB Function，默认 weight=0，再接回 frozen Radiation。
+- [x] 静态计划/拓扑测试 4/4；v1.2 Python contracts 35/35。
+- [ ] MATLAB transport 恢复后执行计划，完成 Cold Reload/Update/Compile/90s x2。
+
+### Review
+
+- 计划不直接修改 `.slx`，源模型必须保持不变；当前 `model_edit`/Simulink runtime 未运行。

@@ -1,0 +1,68 @@
+{
+  "schema": "s12.v12.texture.simulink.model-edit-plan.v1",
+  "sourceModel": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+  "candidateModel": "reports/simulink-texture-topology-20261028/isolated/S12_hellcat_2022_stock_v12_texture_candidate.slx",
+  "sourceModelMustRemainUnchanged": true,
+  "scope": "root",
+  "confirmedSourceBlocks": {
+    "syntheticSource": "blk_11",
+    "frozenRadiation": "blk_12",
+    "rendererMux": "blk_14",
+    "stereoRenderer": "blk_15",
+    "pcmOutput": "blk_16",
+    "vehicleCycle": "blk_17"
+  },
+  "operations": [
+    {
+      "op": "add_block",
+      "type": "In",
+      "name": "Texture Residual",
+      "ref": "textureResidual",
+      "params": {"Port": "2"},
+      "position": [180, 300, 210, 330]
+    },
+    {
+      "op": "add_block",
+      "type": "In",
+      "name": "Texture Weight",
+      "ref": "textureWeight",
+      "params": {"Port": "3"},
+      "position": [180, 350, 210, 380]
+    },
+    {
+      "op": "add_block",
+      "type": "MATLAB Function",
+      "name": "Texture Mixer",
+      "ref": "textureMixer",
+      "params": {"Function": "s12_v12_model_texture_step(u1,u2,u3)", "OutputDimensions": "[960 1]"},
+      "position": [330, 180, 400, 240]
+    },
+    {
+      "op": "disconnect",
+      "target": "blk_11.y1 -> blk_12.u1"
+    },
+    {
+      "op": "connect",
+      "target": "blk_11.y1 -> #textureMixer.u1"
+    },
+    {
+      "op": "connect",
+      "target": "#textureResidual.y1 -> #textureMixer.u2"
+    },
+    {
+      "op": "connect",
+      "target": "#textureWeight.y1 -> #textureMixer.u3"
+    },
+    {
+      "op": "connect",
+      "target": "#textureMixer.y1 -> blk_12.u1"
+    }
+  ],
+  "defaultInputContract": {
+    "textureResidual": "zeros(960,1)",
+    "textureWeight": 0,
+    "qualification": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO"
+  },
+  "runtimeGates": ["Cold Reload", "Update Diagram", "Active Compile", "model_check", "90s Simulation x2", "PCM/WAV SHA repeatability"],
+  "promotion": "FORBIDDEN_UNTIL_RUNTIME_ACOUSTIC_DEVICE_HUMAN_GATES"
+}
