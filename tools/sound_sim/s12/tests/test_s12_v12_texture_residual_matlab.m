@@ -34,6 +34,12 @@ verifyError(testCase, @() s12_v12_mix_texture_residual(base, base, 1.1, []), ...
     "S12:EngineSoundV12:TextureResidual");
 end
 
+function testModelTextureRejectsNonScalarWeight(testCase)
+base = zeros(960, 1);
+verifyError(testCase, @() s12_v12_model_texture_step(base, base, [0, 0]), ...
+    "S12:EngineSoundV12:ModelTexture");
+end
+
 function testPrePtrRouteAcceptsOptionalResearchTextureAtZeroWeight(testCase)
 root = fileparts(fileparts(mfilename("fullpath")));
 common = fullfile(root, "playground_v12", "common");

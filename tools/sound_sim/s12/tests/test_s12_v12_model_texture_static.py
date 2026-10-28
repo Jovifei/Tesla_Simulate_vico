@@ -16,6 +16,7 @@ class ModelTextureStaticContract(unittest.TestCase):
         self.assertIn("textureWeight < 0 || textureWeight > 1", text)
         self.assertIn("persistent weightState", text)
         self.assertIn("weightState = weightState + 0.25", text)
+        self.assertIn("Zero weight is the explicit run/reset boundary", text)
         self.assertNotIn("persistent context", text)
         self.assertNotIn("isfield(", text)
         self.assertNotIn("diagnostics", text)
