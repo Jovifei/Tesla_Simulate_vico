@@ -4642,3 +4642,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 每层 `[960,1]`、权重 `[1,3]`、跨 block 平滑；默认 0 仍旧路径旁路。
 - [x] 静态测试 6/6；v1.2 Python 合同 35/35；diff-check PASS。
 - [ ] MATLAB transport 恢复后在隔离 Simulink candidate 接入三层输入并运行 90s x2。
+
+## 2026-10-28 Layered Simulink texture block
+
+- [x] 新增 `s12_v12_model_texture_layers_step.m`：body/mechanical/broadband 三路 `[960,1]`，weights `[1,3]`。
+- [x] 三个 persistent scalar weight state 跨 block 平滑；全零权重精确旁路旧路径。
+- [x] 更新 Simulink contract v2 和 candidate preparation plan；不改变 Frozen PTR/Radiation。
+- [x] 静态测试 6/6；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB transport 恢复后接线三层输入并运行 90s x2。

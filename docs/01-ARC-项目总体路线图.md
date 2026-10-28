@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-28 · 主线：P2 · 工作包：MATLAB layered texture helper ready; isolated Simulink runtime pending MCP
+更新：2026-10-28 · 主线：P2 · 工作包：v1.2 layered texture MATLAB Function ready; Simulink runtime pending MCP
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

@@ -11,7 +11,7 @@ COMMON = ROOT / "playground_v12" / "common"
 class TextureSimulinkStaticContract(unittest.TestCase):
     def test_contract_declares_fixed_ports_and_runtime_gates(self) -> None:
         text = (COMMON / "s12_v12_texture_simulink_contract.m").read_text(encoding="utf-8")
-        for token in ("[9, 1]", "[960, 1]", "[1, 1]", "[960, 2]", "default_texture_weight", "requires_active_compile", "requires_90s_simulation"):
+        for token in ("[9, 1]", "[960, 1]", "[1, 3]", "[960, 2]", "default_texture_weight", "requires_active_compile", "requires_90s_simulation"):
             self.assertIn(token, text)
         self.assertIn("RESEARCH_ONLY_NOT_PRODUCT_AUDIO", text)
 
