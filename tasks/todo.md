@@ -4584,3 +4584,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 进程/端口核验：无 MATLAB、MathWorksServiceHost、matlab_mcp_server 和已知 listener；未启动第二个 MATLAB。
 - [x] 写入 `reports/matlab-simulink-runtime-20261028/ATTEMPT.md`，冻结下一次受控执行顺序。
 - [ ] MATLAB transport 恢复后执行真实 candidate model_edit/compile/simulation。
+
+## 2026-10-28 Fixed 20 ms texture frame source
+
+- [x] 新增 `s12_v12_texture_frame_source.py`，把公开 F32LE 研究纹理转换为固定 48 kHz/960-sample `[960,1]` 帧。
+- [x] 每个输入绑定源 SHA；状态/RPM/load/gear/phase 保持 UNKNOWN；用途标为 research-only。
+- [x] 非法长度、越界值和负 frame index fail-closed。
+- [x] 相关静态/输入测试 11/11；`py_compile` 和 `git diff --check` PASS。
+- [ ] MATLAB transport 恢复后把固定帧源接入隔离 Simulink candidate 并运行 90 s x2。

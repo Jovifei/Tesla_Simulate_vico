@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-28 · 主线：P2 · 工作包：MATLAB/Simulink texture residual now stateful and smoothed; runtime pending MCP
+更新：2026-10-28 · 主线：P2 · 工作包：MATLAB/Simulink texture residual codegen-safe, fixed-frame source ready; runtime pending MCP
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 
