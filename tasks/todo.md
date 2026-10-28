@@ -4577,3 +4577,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] `s12_v12_model_texture_step.m` 使用 persistent context，跨 Simulink block 保持纹理混合状态。
 - [x] 静态合同 6/6、v1.2 Python 合同 35/35、diff-check PASS。
 - [ ] MATLAB MCP 恢复后执行实际 MATLAB test、model_edit、Update Diagram、Compile 和 90s simulation。
+
+## 2026-10-28 Runtime gate attempt receipt
+
+- [x] 重新尝试 existing-session `evaluate_matlab_code`、`model_overview`、`run_matlab_file`；全部 fail-fast `failed to attach to MATLAB session`。
+- [x] 进程/端口核验：无 MATLAB、MathWorksServiceHost、matlab_mcp_server 和已知 listener；未启动第二个 MATLAB。
+- [x] 写入 `reports/matlab-simulink-runtime-20261028/ATTEMPT.md`，冻结下一次受控执行顺序。
+- [ ] MATLAB transport 恢复后执行真实 candidate model_edit/compile/simulation。

@@ -703,7 +703,14 @@
     "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
     "weight_smoothing": "persistent weight_state; per-frame effective weight = previous + 0.25*(target-previous); target zero resets exact bypass",
     "stateful_texture_context": true,
-    "static_tests": "6/6"
+    "static_tests": "6/6",
+    "runtime_attempt_report": "reports/matlab-simulink-runtime-20261028/ATTEMPT.md",
+    "attach_attempts": [
+      "evaluate_matlab_code:failed_to_attach",
+      "model_overview:failed_to_attach",
+      "run_matlab_file:failed_to_attach"
+    ],
+    "process_check": "NO_MATLAB_NO_MCP_NO_LISTENER"
   },
   "simulink_topology_audit_20261028": {
     "status": "ARCHIVE_TOPOLOGY_AUDITED_CANDIDATE_PLAN_READY_RUNTIME_NOT_RUN",
