@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "MATLAB/Simulink v1.2 fixed-frame texture Function and pre-PTR contract ready; runtime pending MCP",
+  "current_work_package": "Hellcat v1.2 Simulink topology audited; isolated texture candidate plan ready; runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -702,5 +702,27 @@
     "fixed_frame_entry": "s12_v12_model_texture_step.m",
     "static_tests": "6/6",
     "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH"
+  },
+  "simulink_topology_audit_20261028": {
+    "status": "ARCHIVE_TOPOLOGY_AUDITED_CANDIDATE_PLAN_READY_RUNTIME_NOT_RUN",
+    "model": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+    "archive_status": "PASS",
+    "source_sid": "11",
+    "radiation_sid": "12",
+    "renderer_mux_sid": "14",
+    "stereo_renderer_sid": "15",
+    "pcm_sid": "16",
+    "source_to_radiation": true,
+    "texture_insertion": "copy model; Source -> Texture Mixer [960,1] -> Frozen Radiation; Texture Weight [1,1] default 0",
+    "static_tests": "6/6",
+    "python_contract_tests": "35/35",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "model_edit": "NOT_RUN",
+    "update_diagram": "NOT_RUN",
+    "active_compile": "NOT_RUN",
+    "simulation_90s": "NOT_RUN",
+    "product_integrated": false,
+    "next": "restore MATLAB transport then execute model_edit on isolated candidate",
+    "blocker": "MATLAB MCP transport"
   }
 }

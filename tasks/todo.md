@@ -4557,3 +4557,15 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 
 - 当前没有 MATLAB Desktop/MCP listener；实际 MATLAB/Simulink 运行仍 NOT_RUN。
 - 冻结 Radiation/PTR、默认声库、Android、APK、设备、公网未改。
+
+## 2026-10-28 Hellcat v1.2 Simulink topology audit
+
+- [x] Read-only archive audit confirms SID 11 Hellcat Synthetic Source -> SID 12 Frozen 4D-B Radiation -> SID 14 Renderer Mux -> SID 15 Stereo Renderer -> SID 16 PCM Output; vehicle cycle SID 17 feeds source.
+- [x] Generate `reports/simulink-texture-topology-20261028.json` with exact blocks/lines and isolated texture insertion plan.
+- [x] Add topology/static tests 6/6; v1.2 Python contracts 35/35.
+- [ ] Restore MATLAB MCP and execute `model_edit` on copied candidate: add Texture Residual [960,1], Texture Weight [1,1], Texture Mixer MATLAB Function, then Cold Reload/Update/Compile/90s x2.
+
+### Review
+
+- Archive topology PASS is not a Simulink runtime PASS. Existing model source is unchanged; no `.slx` candidate was created.
+- MATLAB MCP still has no attachable session; no second MATLAB started.
