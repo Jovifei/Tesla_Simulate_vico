@@ -4618,3 +4618,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 明确不调用 `sim`、不写 WAV、不改产品路径；用途 `RESEARCH_ONLY_NOT_PRODUCT_AUDIO`。
 - [x] 静态测试 8/8；`py_compile`/`git diff --check` PASS。
 - [ ] MATLAB transport 恢复后通过 `SimulationInput` 喂入隔离 candidate，执行 90s x2。
+
+## 2026-10-28 State-coupled texture weight schedule
+
+- [x] `s12_v12_prepare_texture_external_input.m` 支持可选 `time_s/load/acceleration` schedule。
+- [x] 纹理 weight 随负载/瞬态目标变化并以 0.25 平滑，怠速低、加速/高负载升高、收油下降。
+- [x] 默认无 schedule/weight=0 仍为旧路径旁路；状态字段继续 UNKNOWN。
+- [x] 静态测试 9/9；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB transport 恢复后执行状态 schedule 驱动的 Simulink 90s x2。

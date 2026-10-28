@@ -1,4 +1,4 @@
-function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight)
+function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight, stateSchedule)
 %S12_V12_PREPARE_TEXTURE_EXTERNAL_INPUT Build fixed-size research input data.
 % The returned matrices are suitable for a copied Simulink candidate only.
 % Source state remains UNKNOWN and no product qualification is granted.
@@ -7,6 +7,7 @@ arguments
     f32lePath (1,1) string
     durationSeconds (1,1) double {mustBeFinite, mustBePositive}
     textureWeight (1,1) double {mustBeFinite, mustBeGreaterThanOrEqual(textureWeight, 0), mustBeLessThanOrEqual(textureWeight)} = 0
+    stateSchedule = struct()
 end
 
 if ~isfile(f32lePath)
@@ -26,6 +27,7 @@ sampleRateHz = 48000;
 frameSamples = 960;
 frameRateHz = sampleRateHz / frameSamples;
 frameCount = round(durationSeconds * frameRateHz);
+weights = buildWeightSchedule(frameCount, textureWeight, stateSchedule);
 crossfadeSamples = round(0.120 * sampleRateHz);
 if numel(source) <= 2 * crossfadeSamples
     error("S12:EngineSoundV12:TextureInput", "Texture source is too short for the fixed crossfade.");
@@ -58,11 +60,37 @@ external = struct( ...
     "duration_seconds", frameCount / frameRateHz, ...
     "frame_count", frameCount, ...
     "texture_residual", textureResidual, ...
-    "texture_weight", repmat(single(textureWeight), frameCount, 1), ...
+    "texture_weight", single(weights), ...
     "source_sha256", sha256Bytes(bytes), ...
     "state_qualification", "INSUFFICIENT_EVIDENCE", ...
     "purpose", "RESEARCH_ONLY_NOT_PRODUCT_AUDIO", ...
     "rpm_load_gear_phase", "UNKNOWN");
+end
+
+function weights = buildWeightSchedule(frameCount, baseWeight, stateSchedule)
+weights = repmat(double(baseWeight), frameCount, 1);
+if isempty(fieldnames(stateSchedule))
+    return;
+end
+required = ["time_s", "load", "acceleration"];
+if ~isstruct(stateSchedule) || ~all(isfield(stateSchedule, required))
+    error("S12:EngineSoundV12:TextureInput", "stateSchedule requires time_s/load/acceleration.");
+end
+time = reshape(double(stateSchedule.time_s), [], 1);
+load = reshape(double(stateSchedule.load), [], 1);
+acceleration = reshape(double(stateSchedule.acceleration), [], 1);
+if numel(time) ~= frameCount || numel(load) ~= frameCount || numel(acceleration) ~= frameCount || ...
+        any(~isfinite(time)) || any(~isfinite(load)) || any(~isfinite(acceleration)) || ...
+        any(load < 0 | load > 1) || any(diff(time) < 0)
+    error("S12:EngineSoundV12:TextureInput", "stateSchedule dimensions or ranges are invalid.");
+end
+% Research-only state coupling: texture follows load and transient effort.
+target = baseWeight * (0.25 + 0.65 * load + 0.10 * min(1, abs(acceleration) / 3));
+weights(1) = target(1);
+for index = 2:frameCount
+    weights(index) = weights(index - 1) + 0.25 * (target(index) - weights(index - 1));
+end
+weights = min(1, max(0, weights));
 end
 
 function bytes = readBytes(path)

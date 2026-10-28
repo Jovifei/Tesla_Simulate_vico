@@ -16,12 +16,20 @@ class TextureExternalInputStaticContract(unittest.TestCase):
         self.assertIn("INSUFFICIENT_EVIDENCE", text)
         self.assertIn("RESEARCH_ONLY_NOT_PRODUCT_AUDIO", text)
         self.assertIn("rpm_load_gear_phase", text)
+        self.assertIn("stateSchedule", text)
+        self.assertIn("buildWeightSchedule", text)
+        self.assertIn("target = baseWeight", text)
 
     def test_bridge_does_not_write_audio_or_start_simulation(self) -> None:
         text = (COMMON / "s12_v12_prepare_texture_external_input.m").read_text(encoding="utf-8").lower()
         self.assertNotIn("sim(", text)
         self.assertNotIn("audiowrite", text)
         self.assertNotIn("open_system", text)
+
+    def test_weight_schedule_contract_is_monotone_with_load_direction(self) -> None:
+        text = (COMMON / "s12_v12_prepare_texture_external_input.m").read_text(encoding="utf-8")
+        self.assertIn("0.25 + 0.65 * load + 0.10", text)
+        self.assertIn("weights(index) = weights(index - 1) + 0.25", text)
 
 
 if __name__ == "__main__":
