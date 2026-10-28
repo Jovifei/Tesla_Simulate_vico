@@ -25,16 +25,15 @@ if ~execute
     return;
 end
 
-modelName = string(extractBefore(string(candidateModel), ".slx"));
-modelName = string(char(modelName));
+candidatePath = string(candidateModel);
+[candidateFolder, candidateFile, ~] = fileparts(candidatePath);
+addpath(candidateFolder);
+modelName = string(candidateFile);
 in = Simulink.SimulationInput(modelName);
 in = in.setModelParameter("StopTime", num2str(externalInput.duration_seconds, 17));
 in = in.setVariable("texture_residual_frames", externalInput.texture_residual);
 in = in.setVariable("texture_weight_frames", externalInput.texture_weight);
 out = sim(in);
-if ~isfield(out, "playground_pcm")
-    error("S12:EngineSoundV12:CandidateRun", "Candidate did not return playground_pcm.");
-end
 pcm = out.playground_pcm;
 if ~isnumeric(pcm) || any(~isfinite(pcm), "all") || any(abs(pcm) > 1, "all")
     error("S12:EngineSoundV12:CandidateRun", "Candidate PCM failed finite/peak contract.");
