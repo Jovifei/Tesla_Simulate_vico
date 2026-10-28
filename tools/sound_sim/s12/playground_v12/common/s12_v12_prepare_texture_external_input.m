@@ -1,4 +1,4 @@
-function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight, stateSchedule)
+function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight, stateSchedule, layerPaths)
 %S12_V12_PREPARE_TEXTURE_EXTERNAL_INPUT Build fixed-size research input data.
 % The returned matrices are suitable for a copied Simulink candidate only.
 % Source state remains UNKNOWN and no product qualification is granted.
@@ -8,6 +8,7 @@ arguments
     durationSeconds (1,1) double {mustBeFinite, mustBePositive}
     textureWeight (1,1) double {mustBeFinite, mustBeGreaterThanOrEqual(textureWeight, 0), mustBeLessThanOrEqual(textureWeight)} = 0
     stateSchedule = struct()
+    layerPaths = strings(1, 0)
 end
 
 if ~isfile(f32lePath)
@@ -57,6 +58,29 @@ end
 textureLayers = zeros(frameCount, frameSamples, 3, "single");
 textureLayers(:, :, 1) = textureResidual;
 layerWeights = [weights, zeros(frameCount, 2, "single")];
+layerSourceSha256 = strings(1, 3);
+layerSourceSha256(1) = sha256Bytes(bytes);
+if ~isempty(layerPaths)
+    if ~isstring(layerPaths) || ~isequal(size(layerPaths), [1, 3])
+        error("S12:EngineSoundV12:TextureInput", "layerPaths must be a 1x3 string row.");
+    end
+    for layerIndex = 2:3
+        if strlength(layerPaths(layerIndex)) == 0
+            continue;
+        end
+        layerBytes = readBytes(layerPaths(layerIndex));
+        if mod(numel(layerBytes), 4) ~= 0
+            error("S12:EngineSoundV12:TextureInput", "Layer F32LE byte length must be divisible by four.");
+        end
+        layerSource = typecast(uint8(layerBytes), "single");
+        layerSource = double(layerSource(:));
+        if isempty(layerSource) || any(~isfinite(layerSource)) || any(abs(layerSource) > 1)
+            error("S12:EngineSoundV12:TextureInput", "Layer texture must be finite and bounded.");
+        end
+        textureLayers(:, :, layerIndex) = buildLayerFrames(layerSource, frameCount, frameSamples, crossfadeSamples);
+        layerSourceSha256(layerIndex) = sha256Bytes(layerBytes);
+    end
+end
 
 external = struct( ...
     "schema", "s12.v12.texture-external-input.v1", ...
@@ -69,10 +93,33 @@ external = struct( ...
     "texture_weight", single(weights), ...
     "texture_layers", textureLayers, ...
     "texture_layer_weights", single(layerWeights), ...
+    "layer_source_sha256", layerSourceSha256, ...
     "source_sha256", sha256Bytes(bytes), ...
     "state_qualification", "INSUFFICIENT_EVIDENCE", ...
     "purpose", "RESEARCH_ONLY_NOT_PRODUCT_AUDIO", ...
     "rpm_load_gear_phase", "UNKNOWN");
+end
+
+function frames = buildLayerFrames(source, frameCount, frameSamples, crossfadeSamples)
+if numel(source) <= 2 * crossfadeSamples
+    error("S12:EngineSoundV12:TextureInput", "Layer texture is too short for the fixed crossfade.");
+end
+frames = zeros(frameCount, frameSamples, "single");
+periodSamples = numel(source) - crossfadeSamples;
+for frameIndex = 0:frameCount - 1
+    startSample = frameIndex * frameSamples;
+    for sampleIndex = 0:frameSamples - 1
+        cursor = mod(startSample + sampleIndex, periodSamples);
+        if cursor < periodSamples - crossfadeSamples
+            value = source(cursor + crossfadeSamples + 1);
+        else
+            blendIndex = cursor - (periodSamples - crossfadeSamples);
+            alpha = (blendIndex + 1) / crossfadeSamples;
+            value = (1 - alpha) * source(periodSamples + blendIndex + 1) + alpha * source(blendIndex + 1);
+        end
+        frames(frameIndex + 1, sampleIndex + 1) = single(value);
+    end
+end
 end
 
 function weights = buildWeightSchedule(frameCount, baseWeight, stateSchedule)

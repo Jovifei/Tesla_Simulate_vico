@@ -15,6 +15,9 @@ class TextureExternalLayersStaticContract(unittest.TestCase):
         self.assertIn("texture_layer_weights", text)
         self.assertIn("layerWeights = [weights, zeros(frameCount, 2", text)
         self.assertIn("textureLayers(:, :, 1) = textureResidual", text)
+        self.assertIn("layerPaths", text)
+        self.assertIn("layer_source_sha256", text)
+        self.assertIn("buildLayerFrames", text)
 
     def test_legacy_single_texture_remains_body_only_by_default(self) -> None:
         text = (COMMON / "s12_v12_prepare_texture_external_input.m").read_text(encoding="utf-8")

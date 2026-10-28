@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "SimulationInput runner supports layered texture frames; Simulink runtime pending MCP",
+  "current_work_package": "MATLAB external bridge supports independently hashed body/mechanical/broadband layers; Simulink runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -784,7 +784,9 @@
     "next": "restore MATLAB transport then SimulationInput candidate run",
     "blocker": "MATLAB MCP transport",
     "state_schedule": "optional time_s/load/acceleration; target=base*(0.25+0.65*load+0.10*abs(accel)/3); weight smoothing 0.25",
-    "tests": "9/9"
+    "optional_layer_paths": "1x3 string row; body path required, mechanical/broadband optional",
+    "layer_sha": true,
+    "tests": "7/7"
   },
   "texture_candidate_runner_20261028": {
     "status": "CONTROLLED_SIMULATIONINPUT_RUNNER_READY_RUNTIME_PENDING",

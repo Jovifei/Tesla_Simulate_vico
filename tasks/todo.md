@@ -4665,3 +4665,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 兼容旧单纹理字段，默认映射 body-only；无三层输入时不改变旧路径。
 - [x] 验证维度、SimulationInput 注入和研究-only状态；静态测试 6/6、v1.2 Python 合同 35/35。
 - [ ] MATLAB transport 恢复后运行三层 candidate 90s x2。
+
+## 2026-10-28 Independent layer texture input bridge
+
+- [x] MATLAB external input helper 支持可选 body/mechanical/broadband 三个 F32LE source path。
+- [x] 每层独立读取、120ms wrap crossfade、SHA-256 receipt；缺少层保持 zero/legacy body-only 兼容。
+- [x] 输出 `texture_layers[frameCount,960,3]` 与 `texture_layer_weights[frameCount,3]`。
+- [x] 静态测试 7/7；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB transport 恢复后执行三层 candidate 90s x2。
