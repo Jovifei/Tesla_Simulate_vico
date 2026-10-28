@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "v1.2 three-layer Simulink texture block and external input ready; runtime pending MCP",
+  "current_work_package": "SimulationInput runner supports layered texture frames; Simulink runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -802,11 +802,16 @@
       "product_candidate=false",
       "no source model save"
     ],
-    "tests": "9/9",
     "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
     "simulink_runtime": "NOT_RUN",
     "next": "restore MATLAB transport then run isolated candidate 90s twice",
-    "blocker": "MATLAB MCP transport"
+    "blocker": "MATLAB MCP transport",
+    "layered_inputs": [
+      "texture_layer_frames[frameCount,960,3]",
+      "texture_layer_weight_frames[frameCount,3]"
+    ],
+    "backward_compatibility": "single texture_residual/texture_weight remains supported as body-only",
+    "tests": "6/6"
   },
   "layered_texture_matlab_20261028": {
     "status": "LAYERED_TEXTURE_HELPER_READY_RUNTIME_PENDING",
