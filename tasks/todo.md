@@ -4603,3 +4603,10 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 ### Review
 
 - 计划不直接修改 `.slx`，源模型必须保持不变；当前 `model_edit`/Simulink runtime 未运行。
+
+## 2026-10-28 Texture source wrap repair
+
+- [x] 固定帧源增加 120 ms raised-cosine wrap crossfade，避免 90s Simulink 纹理循环在源文件尾部硬跳回开头。
+- [x] 更新 source receipt 增加 `crossfade_samples=5760` 和 wrap policy。
+- [x] 输入合同测试 8/8；v1.2 Python 合同 35/35；diff-check PASS。
+- [ ] MATLAB runtime 恢复后验证固定帧源 + Texture Function + Frozen Radiation 的 90s 双次仿真。

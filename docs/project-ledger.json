@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "Hellcat v1.2 exact model_edit plan ready; MATLAB/Simulink runtime pending MCP",
+  "current_work_package": "MATLAB/Simulink texture input uses bounded crossfade wrap and stateful codegen-safe mixer; runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -743,11 +743,13 @@
     "sha_bound": true,
     "state": "UNKNOWN",
     "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
-    "tests": "11/11",
     "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
     "simulink_runtime": "NOT_RUN",
     "next": "restore MATLAB transport and feed fixed texture frames into copied candidate",
-    "blocker": "MATLAB MCP transport"
+    "blocker": "MATLAB MCP transport",
+    "crossfade_samples": 5760,
+    "wrap_policy": "120ms raised-cosine crossfade; no hard wrap",
+    "tests": "8/8"
   },
   "simulink_model_edit_plan_20261028": {
     "status": "MODEL_EDIT_PLAN_READY_RUNTIME_PENDING",

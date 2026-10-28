@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-28 · 主线：P2 · 工作包：Hellcat v1.2 exact model_edit plan ready; MATLAB/Simulink runtime pending MCP
+更新：2026-10-28 · 主线：P2 · 工作包：MATLAB/Simulink texture input uses bounded crossfade wrap and stateful codegen-safe mixer; runtime pending MCP
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

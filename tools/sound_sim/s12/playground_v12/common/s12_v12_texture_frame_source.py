@@ -9,6 +9,7 @@ from pathlib import Path
 
 SAMPLE_RATE = 48_000
 FRAME_SAMPLES = 960
+CROSSFADE_SAMPLES = round(0.12 * SAMPLE_RATE)
 
 
 def read_f32le(path: Path) -> tuple[list[float], str]:
@@ -21,13 +22,27 @@ def read_f32le(path: Path) -> tuple[list[float], str]:
     return values, hashlib.sha256(data).hexdigest()
 
 
-def frame_at(values: list[float], frame_index: int) -> list[float]:
+def _loop_sample(values: list[float], position: int, crossfade_samples: int) -> float:
+    if crossfade_samples < 2 or len(values) <= crossfade_samples * 2:
+        return values[position % len(values)]
+    period = len(values) - crossfade_samples
+    cursor = position % period
+    if cursor < period - crossfade_samples:
+        return values[cursor + crossfade_samples]
+    blend_index = cursor - (period - crossfade_samples)
+    tail = values[period + blend_index]
+    head = values[blend_index]
+    alpha = (blend_index + 1) / crossfade_samples
+    return (1.0 - alpha) * tail + alpha * head
+
+
+def frame_at(values: list[float], frame_index: int, crossfade_samples: int = CROSSFADE_SAMPLES) -> list[float]:
     if frame_index < 0:
         raise ValueError("frame_index must be non-negative")
     if len(values) < FRAME_SAMPLES:
         raise ValueError("texture source is shorter than one fixed frame")
-    start = (frame_index * FRAME_SAMPLES) % len(values)
-    return [values[(start + offset) % len(values)] for offset in range(FRAME_SAMPLES)]
+    start = frame_index * FRAME_SAMPLES
+    return [_loop_sample(values, start + offset, crossfade_samples) for offset in range(FRAME_SAMPLES)]
 
 
 def source_receipt(path: Path, frame_count: int) -> dict:
@@ -41,6 +56,7 @@ def source_receipt(path: Path, frame_count: int) -> dict:
         "sample_rate_hz": SAMPLE_RATE,
         "frame_samples": FRAME_SAMPLES,
         "frame_period_s": FRAME_SAMPLES / SAMPLE_RATE,
+        "crossfade_samples": CROSSFADE_SAMPLES,
         "frame_count": frame_count,
         "source_frames": len(values),
         "state": "UNKNOWN",

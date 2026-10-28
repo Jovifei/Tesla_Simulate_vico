@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from tools.sound_sim.s12.playground_v12.common.s12_v12_texture_frame_source import (
+    CROSSFADE_SAMPLES,
     FRAME_SAMPLES,
     frame_at,
     read_f32le,
@@ -22,6 +23,14 @@ class TextureFrameSourceTest(unittest.TestCase):
         self.assertEqual(first[0], values[0])
         self.assertEqual(second[0], values[FRAME_SAMPLES])
 
+    def test_long_source_wrap_uses_bounded_crossfade(self) -> None:
+        values = [0.8] * (CROSSFADE_SAMPLES + 2400) + [-0.8] * CROSSFADE_SAMPLES
+        before = frame_at(values, 0)
+        after = frame_at(values, len(values) // FRAME_SAMPLES + 1)
+        self.assertEqual(len(before), FRAME_SAMPLES)
+        self.assertEqual(len(after), FRAME_SAMPLES)
+        self.assertLess(max(abs(after[index] - after[index - 1]) for index in range(1, len(after))), 1.6)
+
     def test_receipt_binds_source_sha_and_unknown_state(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "texture.f32le"
@@ -32,6 +41,7 @@ class TextureFrameSourceTest(unittest.TestCase):
             self.assertEqual(receipt["source_sha256"], digest)
             self.assertEqual(receipt["state"], "UNKNOWN")
             self.assertEqual(receipt["purpose"], "RESEARCH_ONLY_NOT_PRODUCT_AUDIO")
+            self.assertEqual(receipt["crossfade_samples"], CROSSFADE_SAMPLES)
 
     def test_invalid_length_and_bounds_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
