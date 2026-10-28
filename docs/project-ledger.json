@@ -2,7 +2,7 @@
   "project_name": "Tesla_speed / Vico Android 真实声浪",
   "updated_at": "2026-10-28",
   "current_phase": "P2",
-  "current_work_package": "MATLAB texture input now state-coupled and smoothed; Simulink runtime pending MCP",
+  "current_work_package": "Controlled SimulationInput runner ready for v1.2 texture candidate; runtime pending MCP",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -785,5 +785,27 @@
     "blocker": "MATLAB MCP transport",
     "state_schedule": "optional time_s/load/acceleration; target=base*(0.25+0.65*load+0.10*abs(accel)/3); weight smoothing 0.25",
     "tests": "9/9"
+  },
+  "texture_candidate_runner_20261028": {
+    "status": "CONTROLLED_SIMULATIONINPUT_RUNNER_READY_RUNTIME_PENDING",
+    "source": "s12_v12_run_texture_candidate.m",
+    "default_execute": false,
+    "inputs": [
+      "texture_residual_frames",
+      "texture_weight_frames"
+    ],
+    "output": "texture_candidate_result.mat",
+    "guards": [
+      "finite",
+      "peak<=1",
+      "INSUFFICIENT_EVIDENCE",
+      "product_candidate=false",
+      "no source model save"
+    ],
+    "tests": "9/9",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "restore MATLAB transport then run isolated candidate 90s twice",
+    "blocker": "MATLAB MCP transport"
   }
 }

@@ -4626,3 +4626,11 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 默认无 schedule/weight=0 仍为旧路径旁路；状态字段继续 UNKNOWN。
 - [x] 静态测试 9/9；v1.2 Python 合同 35/35；diff-check PASS。
 - [ ] MATLAB transport 恢复后执行状态 schedule 驱动的 Simulink 90s x2。
+
+## 2026-10-28 Controlled SimulationInput candidate runner
+
+- [x] 新增 `s12_v12_run_texture_candidate.m`，默认 `execute=false`。
+- [x] 使用 `Simulink.SimulationInput` 注入 `texture_residual_frames` 和 `texture_weight_frames`；输出必须 finite/peak<=1。
+- [x] 结果标记 `RESEARCH_ONLY_NOT_PRODUCT_AUDIO`、`INSUFFICIENT_EVIDENCE`、`product_candidate=false`；不保存源模型、不 promotion。
+- [x] 静态测试 9/9；diff-check PASS。
+- [ ] MATLAB transport 恢复后执行隔离 candidate 90s x2、PCM/WAV SHA 和 model_check。

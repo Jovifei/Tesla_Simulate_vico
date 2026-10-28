@@ -1,6 +1,6 @@
 # 项目进度总览
 
-更新：2026-10-28 · 主线：P2 · 工作包：MATLAB texture input now state-coupled and smoothed; Simulink runtime pending MCP
+更新：2026-10-28 · 主线：P2 · 工作包：Controlled SimulationInput runner ready for v1.2 texture candidate; runtime pending MCP
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 
