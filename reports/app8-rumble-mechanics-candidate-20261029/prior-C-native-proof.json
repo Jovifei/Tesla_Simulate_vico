@@ -1,0 +1,16 @@
+{
+  "status": "PASS_NATIVE_EXACT_B_C",
+  "proof": "MATLAB loaded actualState from both v7.3 native captures; isequal4500x9 double passed",
+  "B_capture_mat": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\B\\capture.mat",
+  "B_capture_sha256": "bdefffc0f7b6d5071d8f359c6169c5c13ba46ea7294fb4ea788e503121beb919",
+  "C_capture_mat": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\C\\capture.mat",
+  "C_capture_sha256": "6c7736a3ee04c66d4d15d15cad8479803873dda9748104ac3183904d7cfd5d0a",
+  "native_C_controls": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\prior-C-controls.f64le",
+  "native_C_controls_sha256": "03fe20c544da402cf8310846b1d6fe8cc82c93fd8c7f890132cc5a4316e3accb",
+  "shape": [
+    4500,
+    9
+  ],
+  "dtype": "float64-le",
+  "order": "row-major"
+}

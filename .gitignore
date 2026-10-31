@@ -248,3 +248,31 @@ worktrees/**/_agent_tmp/
 outputs/
 audit_packages/
 audit-worktrees/
+
+# APP8 cabin/rumble/MATLAB research evidence: keep the small source, tests and
+# receipts in Git, but never push the multi-GB regenerable bulk below.
+reports/app8-*/runs/
+reports/app8-*/isolated/
+reports/app8-*/isolated-model/
+reports/app8-*/cache/
+reports/app8-*/codegen/
+reports/app8-*/cabin-cache/
+reports/app8-*/cabin-codegen/
+reports/app8-*/**/__pycache__/
+reports/app8-*/**/temp/
+reports/app8-*/*.f64le
+reports/app8-*/**/*.f64le
+reports/app8-*/**/*.pcm
+reports/app8-*/**/candidate.wav
+reports/app8-*/**/capture.mat
+reports/app8-*/**/*.p12
+reports/app8-*/**/*.pem
+reports/app8-*/audition*/
+reports/app8-*/**/*.mat
+reports/app8-*/**/*.wav
+reports/app8-*/**/*.db
+reports/app8-*/**/*.db-journal
+reports/app8-*/**/*.pma
+reports/app8-*/**/*.crx
+reports/app8-*/**/prefdir/
+reports/app8-*/**/*.mlsettings

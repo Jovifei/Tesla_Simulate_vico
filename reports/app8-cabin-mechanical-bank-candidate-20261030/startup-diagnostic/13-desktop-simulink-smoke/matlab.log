@@ -1,0 +1,9 @@
+DIAGNOSTIC_STARTUP_ENTER
+DIAGNOSTIC_ADDPATH_DONE
+MINIMAL_START
+VERSION=26.1.0.3203278 (R2026a)
+SIMULINK_LICENSE=1
+MINIMAL_DONE
+[警告: 模块图 '<a href="matlab:open_system ('startup_probe')">startup_probe</a>' 中的所有模块或者是虚拟模块，或者已被模块简化优化删除，或者是非活动变体，因此没有要仿真的内容。请注意，对于代码生成，模块简化优化会删除所有终止于不参与代码生成的信宿模块的图分支。例如，当 <a href="matlab:configset.internal.open('startup_probe','MatFileLogging');">MAT 文件记录</a>关闭时，To Workspace 模块(还可
+能包括其源)会被删除。] 
+SIMULINK_SMOKE_DONE samples=51

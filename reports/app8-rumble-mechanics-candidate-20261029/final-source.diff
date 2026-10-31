@@ -1,0 +1,206 @@
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
+index 0fbdcee..d95fd98 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
+@@ -1,5 +1,5 @@
+ function [bankExcitation, context, diagnostics] = s12_v12_render_source_frame( ...
+-        state, sourceProfile, context, sampleRateHz, frameSamples, identityProfileId)
++        state, sourceProfile, context, sampleRateHz, frameSamples, identityProfileId, researchOptions)
+ %S12_V12_RENDER_SOURCE_FRAME Render synthetic vehicle excitation before PTR.
+ % Causality is fixed: combustion/layers/transients/afterfire -> bankExcitation
+ % -> fixed pre-PTR bank mixer -> frozen PTR/Radiation -> renderer. This function
+@@ -8,12 +8,16 @@ function [bankExcitation, context, diagnostics] = s12_v12_render_source_frame( .
+ if nargin < 6
+     identityProfileId = [];
+ end
++if nargin < 7
++    researchOptions = struct("enabled", false);
++end
+ source = s12_v12_validate_source_profile(sourceProfile);
+ identity = s12_v12_resolve_engine_identity_profile(source, identityProfileId);
++researchOptions = validateResearchOptions(researchOptions, identity, source);
+ state = validateState(state);
+ validateFrameContract(sampleRateHz, frameSamples);
+ context = normalizeContext(context);
+-validateDiscreteTransitions(context, state);
++validateDiscreteTransitions(context, state, researchOptions.enabled);
+ 
+ [rpm, context.rpm_control] = smoothControl(context, "rpm_control", state.rpm, frameSamples);
+ [load, context.load_control] = smoothControl(context, "load_control", state.load, frameSamples);
+@@ -42,13 +46,28 @@ mechanical = dualBankLayer(renderMechanicalLayer(source, crankPhase, rpm));
+ flow = dualBankLayer(renderFlowLayer(source, crankPhase, rpm, load));
+ [transient, context.acceleration_envelope] = renderAccelerationTransient( ...
+     source, crankPhase, acceleration, previousAcceleration, context.acceleration_envelope);
+-[gearbox, context.shift_envelope] = renderGearboxTransient( ...
+-    source, crankPhase, state.shift_event, shiftProgress, context.shift_envelope);
++if researchOptions.enabled
++    % The research cut is multiplicative; the legacy gearbox bark/cut is additive.
++    gearbox = zeros(size(crankPhase));
++    context.shift_envelope = 0;
++else
++    [gearbox, context.shift_envelope] = renderGearboxTransient( ...
++        source, crankPhase, state.shift_event, shiftProgress, context.shift_envelope);
++end
+ [afterfire, context.afterfire_envelope] = renderAfterfire( ...
+     source, crankPhase, state.afterfire_kind, afterfireProgress, context.afterfire_envelope);
+-[identityBanks, context.identity, identityDiagnostics] = s12_v12_render_engine_identity_frame( ...
+-    identity, crankPhase, rpm, load, throttle, acceleration, context.identity, ...
+-    sampleRateHz, frameSamples);
++if researchOptions.enabled
++    [identityBanks, context.identity, identityDiagnostics, identityComponents] = ...
++        s12_v12_render_engine_identity_frame(identity, crankPhase, rpm, load, throttle, ...
++        acceleration, context.identity, sampleRateHz, frameSamples);
++    [combustion, orders, induction, mechanical, identityBanks, researchDiagnostics] = ...
++        applyResearchControls(combustion, orders, induction, mechanical, identityComponents, ...
++        rpm, state.shift_event, shiftProgress, researchOptions, source, cyclePhase);
++else
++    [identityBanks, context.identity, identityDiagnostics] = s12_v12_render_engine_identity_frame( ...
++        identity, crankPhase, rpm, load, throttle, acceleration, context.identity, ...
++        sampleRateHz, frameSamples);
++end
+ 
+ rawExcitation = combustion + orders + intake + induction + mechanical + flow + ...
+     dualBankLayer(transient) + dualBankLayer(gearbox) + dualBankLayer(afterfire) + identityBanks;
+@@ -76,6 +95,130 @@ diagnostics = struct( ...
+         "induction", energy(induction), "mechanical", energy(mechanical), "flow", energy(flow), ...
+         "transient", energy(transient), "gearbox", energy(gearbox), "afterfire", energy(afterfire), ...
+         "identity", energy(identityBanks)));
++if researchOptions.enabled
++    diagnostics.research = researchDiagnostics;
++end
++end
++
++function options = validateResearchOptions(options, identity, source)
++if ~isstruct(options) || ~isscalar(options) || ~isfield(options, "enabled") || ...
++        ~islogical(options.enabled) || ~isscalar(options.enabled)
++    error("S12:EngineSoundV12:ResearchOptions", "enabled must be a logical scalar.");
++end
++if ~options.enabled
++    return
++end
++required = ["cut_minimum", "whine_scale", "induction_scale", "voicing_rpm_band"];
++% Match the resolver's Hellcat source inference even when an explicit identity
++% is supplied, so another V8 source cannot enter this research path.
++isHellcatSource = source.engine_kind == "piston" && source.cylinders == 8 && ...
++    ~isempty(source.order_surface) && source.order_surface(1).order == 2;
++if identity.profile_id ~= "hellcat_2022_stock" || ~isHellcatSource || ~all(isfield(options, required))
++    error("S12:EngineSoundV12:ResearchOptions", ...
++        "Research controls require the Hellcat identity/source and all option fields.");
++end
++for field = ["cut_minimum", "whine_scale", "induction_scale"]
++    value = options.(field);
++    if ~isnumeric(value) || ~isreal(value) || ~isscalar(value) || ~isfinite(value) || ...
++            value < 0 || value > 1
++        error("S12:EngineSoundV12:ResearchOptions", "%s must be a scalar in [0,1].", field);
++    end
++    options.(field) = double(value);
++end
++band = options.voicing_rpm_band;
++if ~isnumeric(band) || ~isreal(band) || ~isequal(size(band), [1, 2]) || ...
++        any(~isfinite(band)) || band(1) < 0 || band(2) > 12000 || band(1) >= band(2)
++    error("S12:EngineSoundV12:ResearchOptions", ...
++        "voicing_rpm_band must be a strictly increasing finite RPM row vector.");
++end
++options.voicing_rpm_band = double(band);
++fields = ["mechanical_gain", "mechanical_mod_depth"];
++defaults = [1, 0];
++upperBounds = [1.5, 0.45];
++for index = 1:numel(fields)
++    field = fields(index);
++    if ~isfield(options, field)
++        options.(field) = defaults(index);
++    end
++    value = options.(field);
++    if ~isnumeric(value) || ~isreal(value) || ~isscalar(value) || ~isfinite(value) || ...
++            value < defaults(index) || value > upperBounds(index)
++        error("S12:EngineSoundV12:ResearchOptions", ...
++            "%s must be a scalar in [%g,%g].", field, defaults(index), upperBounds(index));
++    end
++    options.(field) = double(value);
++end
++if options.mechanical_gain ~= 1 || options.mechanical_mod_depth ~= 0
++    % Ninety-degree event spacing also guarantees nonoverlapping 40-degree pulses.
++    if ~isequal(sort(source.firing_phases_deg), 0:90:630) || ...
++            nnz(source.bank_map == -1) ~= 4 || nnz(source.bank_map == 1) ~= 4
++        error("S12:EngineSoundV12:ResearchOptions", ...
++            "Mechanical controls require eight 90-degree events and four events per bank.");
++    end
++end
++end
++
++function [combustion, orders, induction, mechanical, identityBanks, diagnostics] = applyResearchControls( ...
++        combustion, orders, induction, mechanical, components, rpm, shiftEvent, shiftProgress, ...
++        options, source, cyclePhase)
++x = max(0, min(1, (rpm - options.voicing_rpm_band(1)) / ...
++    (options.voicing_rpm_band(2) - options.voicing_rpm_band(1))));
++activation = x .^ 2 .* (3 - 2 * x);
++whineScale = 1 - (1 - options.whine_scale) * activation;
++inductionScale = 1 - (1 - options.induction_scale) * activation;
++voicingBefore = struct("identity_whine", energy(components.whine), "induction", energy(induction));
++whine = components.whine .* whineScale;
++induction = induction .* inductionScale;
++voicingAfter = struct("identity_whine", energy(whine), "induction", energy(induction));
++
++if shiftEvent == 0
++    cut = ones(size(shiftProgress));
++else
++    cut = 1 - (1 - options.cut_minimum) * sin(pi * shiftProgress) .^ 2;
++end
++cutBefore = struct("combustion", energy(combustion), "orders", energy(orders), ...
++    "identity_exhaust", energy(components.exhaust), "identity_whine", energy(whine), ...
++    "identity_mechanical", energy(components.mechanical), "mechanical", energy(mechanical));
++combustion = combustion .* cut;
++orders = orders .* cut;
++exhaust = components.exhaust .* cut;
++cutAfter = struct("combustion", energy(combustion), "orders", energy(orders), ...
++    "identity_exhaust", energy(exhaust), "identity_whine", energy(whine), ...
++    "identity_mechanical", energy(components.mechanical), "mechanical", energy(mechanical));
++identityBanks = exhaust + whine + components.mechanical;
++diagnostics = struct("cut_multiplier", cut, "cut_min", min(cut), "cut_max", max(cut), ...
++    "voicing_activation", activation, "whine_scale", whineScale, "induction_scale", inductionScale, ...
++    "cut_energy_before", cutBefore, "cut_energy_after", cutAfter, ...
++    "voicing_energy_before", voicingBefore, "voicing_energy_after", voicingAfter);
++if options.mechanical_gain ~= 1 || options.mechanical_mod_depth ~= 0
++    [mechanical, identityMechanical, diagnostics.mechanics] = applyMechanicalControls( ...
++        mechanical, components.mechanical, source, cyclePhase, options);
++    identityBanks = exhaust + whine + identityMechanical;
++end
++end
++
++function [mechanical, identityMechanical, diagnostics] = applyMechanicalControls( ...
++        mechanical, identityMechanical, source, cyclePhase, options)
++envelope = zeros(numel(cyclePhase), 2);
++theta = cyclePhase * 720 / (2 * pi);
++for bank = 1:2
++    phases = source.firing_phases_deg(source.bank_map == 2 * bank - 3);
++    pulses = zeros(size(cyclePhase));
++    for phase = phases
++        delta = mod(theta - phase + 360, 720) - 360;
++        inside = abs(delta) <= 20;
++        pulses(inside) = pulses(inside) + 0.5 * (1 + cos(pi * delta(inside) / 20));
++    end
++    envelope(:, bank) = (pulses - 1 / 9) / (8 / 9);
++end
++multiplier = options.mechanical_gain * (1 + options.mechanical_mod_depth * envelope);
++diagnostics = struct("cycle_phase_rad", cyclePhase, "envelope", envelope, ...
++    "multiplier", multiplier, "source_before", mechanical, "identity_before", identityMechanical, ...
++    "gain", options.mechanical_gain, "depth", options.mechanical_mod_depth);
++mechanical = mechanical .* multiplier;
++identityMechanical = identityMechanical .* multiplier;
++diagnostics.source_after = mechanical;
++diagnostics.identity_after = identityMechanical;
+ end
+ 
+ function state = validateState(state)
+@@ -136,9 +279,9 @@ elseif ~isfield(context.texture_residual, "weight_state")
+ end
+ end
+ 
+-function validateDiscreteTransitions(context, state)
++function validateDiscreteTransitions(context, state, researchEnabled)
+ settledEnvelope = 1e-4;
+-if context.shift_event_state ~= state.shift_event && context.shift_envelope > settledEnvelope
++if ~researchEnabled && context.shift_event_state ~= state.shift_event && context.shift_envelope > settledEnvelope
+     error("S12:EngineSoundV12:SourceState", ...
+         "shift_event may change only after the preceding transient has settled.");
+ end

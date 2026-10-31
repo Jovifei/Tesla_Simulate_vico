@@ -4673,3 +4673,29 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [x] 输出 `texture_layers[frameCount,960,3]` 与 `texture_layer_weights[frameCount,3]`。
 - [x] 静态测试 7/7；v1.2 Python 合同 35/35；diff-check PASS。
 - [ ] MATLAB transport 恢复后执行三层 candidate 90s x2。
+
+## 2026-10-31 APP8 隔离机械+双 bank 执行复核
+
+- [x] 读取并执行 C2C 修订方案：私有 source/identity 副本、事件模态、双 bank、隔离 formal SLX；原模型/声库/Android/公共源码未改。
+- [x] 修复烟测 profile 字段与 Simulink t=0 全零初始化契约；函数回归 5/5 + 4/4 + 4/4。
+- [x] Formal SLX Cold Reload、Update Diagram、Active Compile、model_check、0.04 s 实际短仿真通过；输出 [960,2,3] finite。
+- [x] 7×90 s B0/N/M/D/MD/MD-repeat/MD-cold 实际 Simulink 数字研究运行通过；PCM/WAV、PCM24、连续性、重复性和独立 Python 文件级复核通过。
+- [ ] 远端 ChatGPT EXECUTED 复核：C2C 本地连接 green，但页面 Unknown error，仍待同一会话返回 REVIEW。
+- [ ] 车内扬声器固定标量等响试听和 Jovi 人耳验收：未运行；不得把数字 PASS 当车内或产品 PASS。
+
+### Review
+
+本阶段状态为 `PASS_DIGITAL_RESEARCH_ONLY_WAITING_REMOTE_REVIEW_AND_HUMAN_CABIN_AUDITION`。独立 MATLAB R2026a `-batch` 启动仍被原生访问冲突阻塞，现有 MCP/Desktop 证据和独立进程证据分开保存。
+
+
+## 2026-10-31 试听入口补交、前轮声路纠正与启动恢复
+
+- [x] 核验当前真实PCM24并提供聊天内可直接播放的12秒原路线/调整对照，修正上一轮错目录；已有文件明确降级为诊断样本。
+- [x] 独立审计批准合同与磁盘SLX、实际工况/基线、日志、PCM和冷进程；撤回前轮“已按方案完成”的结论，保存INVALIDATED与CORRECTION。
+- [x] 修复Tesla_speed本地审阅连接的失效runtime记录，保留其他项目服务；通过实际workspace_info确认并已把纠正任务送到原ChatGPT会话。
+- [ ] 在既定隔离目录实现正确combustion分流、同网络对照、Frozen后机械支路和一次校准，最终保存SLX后重载验证。
+- [ ] 继续根因定位并建立经过验证的独立MATLAB新进程驱动；保留默认batch失败和现有会话证据边界。
+- [ ] 完成最终代码短仿真、批准的7×90秒/35锚点、PCM/WAV/实际分支验证和正确等响试听；任何数值安全失败不得改参数救场。
+- [ ] 持续更新账本、经验和真实Obsidian受管检查点；车内设备和Jovi人耳结果仅由实际试听记录。
+
+Review：当前前轮七条音频仅证明文件级数值安全。B0不是旧native B，机械仍在Frozen前且无校准，保存SLX未包含新拓扑，所谓cold仅同进程重载。详见候选CORRECTION-20261031.md；修复仍属原批准范围，产品状态不提升。

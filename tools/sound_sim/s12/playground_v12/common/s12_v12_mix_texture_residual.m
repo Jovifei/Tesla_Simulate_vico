@@ -5,10 +5,10 @@ function [mixed, context, diagnostics] = s12_v12_mix_texture_residual( ...
 if nargin < 4 || isempty(context)
     context = struct("frame_index", 0, "weight_state", 0);
 end
-if ~isnumeric(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all")
+if ~isnumeric(prePtr) || ~isreal(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all")
     error("S12:EngineSoundV12:TextureResidual", "prePtr must be one finite [960,1] frame.");
 end
-if ~isnumeric(texture) || ~isequal(size(texture), [960, 1]) || any(~isfinite(texture), "all")
+if ~isnumeric(texture) || ~isreal(texture) || ~isequal(size(texture), [960, 1]) || any(~isfinite(texture), "all")
     error("S12:EngineSoundV12:TextureResidual", "texture must be one finite [960,1] frame.");
 end
 if ~isnumeric(weight) || ~isscalar(weight) || ~isfinite(weight) || weight < 0 || weight > 1
@@ -30,9 +30,13 @@ weightState = context.weight_state + 0.25 * (double(weight) - context.weight_sta
 if weight == 0
     weightState = 0;
 end
-mixed = (1 - weightState) * prePtr + weightState * texture;
-if any(~isfinite(mixed), "all") || any(abs(mixed) > 1, "all")
-    error("S12:EngineSoundV12:TextureResidual", "mixed frame is outside the finite PCM contract.");
+if weight == 0
+    mixed = prePtr;
+else
+    mixed = (1 - weightState) * prePtr + weightState * texture;
+end
+if ~isreal(mixed) || any(~isfinite(mixed), "all")
+    error("S12:EngineSoundV12:TextureResidual", "mixed frame must be finite real pre-PTR pressure.");
 end
 context.frame_index = context.frame_index + 1;
 context.weight_state = weightState;

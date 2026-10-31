@@ -1,0 +1,20 @@
+{
+  "status": "NOT_SENDABLE_REGISTERED_REPOSITORY_IDENTITY_REJECTED",
+  "project_id": "tesla-speed",
+  "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+  "branch": "local/hellcat-state-contract-20261027",
+  "head": "7acf3b564ff3d03ffd4be6d9f93a118cd3166d3f",
+  "agent_id": "/root",
+  "run_id": "app8-listening-20261029",
+  "revision": null,
+  "sent": false,
+  "auto_retry": false,
+  "failure": "worktree does not belong to the registered repository",
+  "current": "Approved controlled listening engineering package complete: actual renders and screeningPASS; MATLAB131/Python59+8;604protectedSHA unchanged; C2C DONE; memory updated; ledger views current.",
+  "next": "Jovi audition; full physical/OEM/device qualification remains open. Hub identity binding is unchanged; no automatic retry.",
+  "artifacts": [
+    "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/RESULTS.md",
+    "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/runs/full-20261029-013256/analysis.json"
+  ],
+  "basis": "existing confirmed identity failure retained; no retry"
+}

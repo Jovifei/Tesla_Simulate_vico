@@ -1,0 +1,37 @@
+{
+  "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+  "agent": "/root/rumble_source_impl",
+  "proof_level": "MATLAB source runtime; no models loaded by task",
+  "source": "tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m",
+  "source_sha256_before": "8939BEAC42B4F2CDB65B83C0F7F93DCBC9564AF5A0C8252012219433F63B03B3",
+  "source_sha256_after": "EB09CDB1B2C7ED69B6A544E18453DA49D2186C689A0B52F10437D70CEF02AE0B",
+  "test": "tools/sound_sim/s12/tests/test_s12_v12_rumble_mechanics_source.m",
+  "test_sha256": "D4A7FFB0E290A564B7E9A843D8E9DE54D8C9660A6336C381E754B6082741BBB0",
+  "golden": "source-before-mechanics-golden.mat",
+  "golden_frames": 20,
+  "red": {
+    "passed": 1,
+    "failed": 4,
+    "log": "source-tests-red.log",
+    "reason": "new mechanics diagnostic and validation absent"
+  },
+  "green_attempt_1": {
+    "passed": 2,
+    "failed": 3,
+    "log": "source-tests-green-attempt1.log",
+    "reason": "test raw JSON column phases loop fixed; source unchanged"
+  },
+  "green": {
+    "passed": 13,
+    "failed": 0,
+    "log": "source-tests-green-attempt2.log",
+    "suites": [
+      "test_s12_v12_rumble_mechanics_source",
+      "test_s12_v12_listening_source_matlab"
+    ]
+  },
+  "limitations": [
+    "source-only proof",
+    "no Simulink or acoustic/human acceptance claimed"
+  ]
+}

@@ -1,6 +1,6 @@
 # 项目总体路线图
 
-更新：2026-10-28 · 主线：P2 · 工作包：MATLAB external bridge supports independently hashed body/mechanical/broadband layers; Simulink runtime pending MCP
+更新：2026-10-31 · 主线：P2 · 工作包：隔离车内声路纠正中：前轮七条音频仅诊断试听，原生B/分流/后Frozen机械/校准及真冷进程待完成
 
 本文件由 `scripts/update-project-progress.py` 从 `docs/project-ledger.json` 生成，不直接编辑。
 

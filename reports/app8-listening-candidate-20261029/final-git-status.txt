@@ -1,0 +1,23 @@
+ M reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json
+ M tools/sound_sim/s12/playground_v12/common/inspect_texture_simulink_topology.py
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_model_texture_layers_step.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_external_input.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_simulink_candidate.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_render_engine_identity_frame.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_run_texture_candidate.m
+ M tools/sound_sim/s12/playground_v12/common/s12_v12_texture_simulink_contract.m
+ M tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py
+ M tools/sound_sim/s12/tests/test_s12_v12_model_texture_static.py
+ M tools/sound_sim/s12/tests/test_s12_v12_run_texture_candidate_static.py
+ M tools/sound_sim/s12/tests/test_s12_v12_texture_external_layers_static.py
+ M tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_static.py
+ M tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_topology.py
+?? reports/app8-listening-candidate-20261029/
+?? reports/simulink-texture-topology-20261028/isolated/
+?? tools/sound_sim/s12/tests/test_s12_v12_listening_analysis.py
+?? tools/sound_sim/s12/tests/test_s12_v12_listening_candidate_matlab.m
+?? tools/sound_sim/s12/tests/test_s12_v12_listening_source_matlab.m
+?? tools/sound_sim/s12/tests/test_s12_v12_texture_candidate_matlab.m
+?? tools/sound_sim/s12/tests/test_s12_v12_texture_contract_matlab.m

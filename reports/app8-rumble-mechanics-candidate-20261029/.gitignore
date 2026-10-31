@@ -1,0 +1,9 @@
+runs/
+cache/
+codegen/
+*.log
+*.mat
+baseline.json
+initial-diff.patch
+__pycache__/
+.pytest_cache/

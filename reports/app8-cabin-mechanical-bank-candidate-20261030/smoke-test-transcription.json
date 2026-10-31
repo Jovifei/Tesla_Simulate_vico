@@ -1,0 +1,36 @@
+{
+  "provenance": "manually transcribed from this chat's MCP evaluate_matlab_code tool responses; not an original MATLAB-generated log",
+  "red": {
+    "passed": 0,
+    "failed": 4,
+    "incomplete": 4,
+    "reason": "Smoke wrapper must exist.",
+    "tests": [
+      "frameHasFiniteOutputAndCachesRepeatedPacket",
+      "changedDuplicateIsRejected",
+      "droppedFrameIsRejected",
+      "resetIsDeterministic"
+    ]
+  },
+  "post_implementation": {
+    "passed": 0,
+    "failed": 4,
+    "incomplete": 4,
+    "error_id": "MATLAB:nonExistentField",
+    "message": "Unrecognized field name firing_phases_deg.",
+    "location": "mb_smoke_step.m:38",
+    "tests": [
+      "frameHasFiniteOutputAndCachesRepeatedPacket",
+      "changedDuplicateIsRejected",
+      "droppedFrameIsRejected",
+      "resetIsDeterministic"
+    ]
+  },
+  "empty_diary_files": [
+    "smoke-wrapper-red.log",
+    "smoke-wrapper-green.log"
+  ],
+  "diary_capture_observation": "Both diary files were verified to contain zero bytes; original result text remains in the MCP tool responses.",
+  "cause_read_only": "Raw profile stores source.firing_phases_deg.value; s12_v12_validate_source_profile returns unwrapped firing_phases_deg. The smoke wrapper accesses profile.firing_phases_deg on the raw JSON object.",
+  "status": "STOPPED_ON_UNEXPECTED_TEST_FAILURE"
+}

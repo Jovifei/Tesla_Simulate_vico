@@ -22,10 +22,15 @@ class ModelEditPlanStaticContract(unittest.TestCase):
 
     def test_plan_disconnects_only_source_to_radiation_and_inserts_mixer(self) -> None:
         operations = self.plan["operations"]
-        self.assertEqual(operations[3]["op"], "disconnect")
-        self.assertEqual(operations[3]["target"], "blk_11.y1 -> blk_12.u1")
-        self.assertEqual(operations[-1]["target"], "#textureMixer.y1 -> blk_12.u1")
-        self.assertEqual(self.plan["defaultInputContract"]["textureWeight"], 0)
+        self.assertEqual([op["target"] for op in operations if op["op"] == "disconnect"],
+                         ["blk_11.y1 -> blk_12.u1"])
+        self.assertIn("#textureMixer.y1 -> blk_12.u1",
+                      [op["target"] for op in operations if op["op"] == "connect"])
+        self.assertEqual(self.plan["defaultInputContract"]["textureWeights"], "zeros(1,3)")
+        self.assertEqual(self.plan["schema"], "s12.v12.texture.simulink.model-edit-plan.v2")
+        operations = self.plan["operations"]
+        self.assertTrue(any("textureBroadband" in str(op) for op in operations))
+        self.assertTrue(any("u5" in str(op) for op in operations))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,47 @@
+{
+  "directory_entries": [
+    {
+      "name": "mwhomeartifacts_1.db",
+      "bytes": 53248,
+      "mtime_ns": 1793412136272035000,
+      "is_file": true
+    }
+  ],
+  "open_delete_access_checks": {
+    "file": {
+      "opened": true,
+      "win32_error": 0
+    },
+    "directory": {
+      "opened": true,
+      "win32_error": 0
+    }
+  },
+  "matching_db_file_handles": [
+    {
+      "pid": 204936,
+      "name": "self"
+    }
+  ],
+  "scanned_processes": {
+    "207296": "MathWorksServiceHost.exe",
+    "343988": "MathWorksCrashReporter.exe",
+    "344468": "MathWorksServiceHost-Monitor.exe",
+    "375452": "matlab-mcp-server.exe",
+    "118896": "matlab-mcp-server.exe",
+    "264144": "MATLAB.exe",
+    "300140": "MathWorksCrashReporter.exe",
+    "372256": "MathWorksServiceHost.exe",
+    "380160": "MATLAB.exe",
+    "270276": "matlabwindowhelper.exe",
+    "356964": "matlabwindowhelper.exe",
+    "210904": "matlabwindowhelper.exe",
+    "382608": "matlabwindowhelper.exe",
+    "336096": "matlabwindowhelper.exe",
+    "222924": "matlabwindowhelper.exe",
+    "204936": "self"
+  },
+  "open_process_errors": {},
+  "disk_handles_scanned": 472,
+  "limitations": "Point-in-time best-effort scan of selected MathWorks/MATLAB process names; handles may change immediately; no claim about unselected or protected processes. Delete-access open is not a rename."
+}

@@ -1,0 +1,14 @@
+{
+  "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\temp",
+  "arguments": [
+    "-nojvm",
+    "-batch",
+    "fprintf('MINIMAL_START\\n'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+  ],
+  "executable": "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+  "completed_utc": "2026-10-30T15:40:08.4135390Z",
+  "log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\nojvm-minimal.log",
+  "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\prefs",
+  "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\temp",
+  "exit_code": -1073741819
+}

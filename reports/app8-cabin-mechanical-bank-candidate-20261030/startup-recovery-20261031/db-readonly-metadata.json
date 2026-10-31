@@ -1,0 +1,78 @@
+{
+  "by_type": [
+    [
+      "file",
+      65
+    ],
+    [
+      "folder",
+      25
+    ],
+    [
+      "project",
+      1
+    ]
+  ],
+  "by_pinned_tombstone": [
+    [
+      "false",
+      "false",
+      90
+    ],
+    [
+      "false",
+      "true",
+      1
+    ]
+  ],
+  "column_storage": [
+    [
+      "text",
+      "text",
+      "text",
+      "text",
+      "integer",
+      91
+    ]
+  ],
+  "null_counts": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "extreme_lengths": [
+    [
+      0,
+      175,
+      51,
+      2,
+      1783733292742,
+      1793412136266,
+      1,
+      661
+    ]
+  ],
+  "duplicate_keys": [
+    [
+      0
+    ]
+  ],
+  "distinct_profiles": [
+    [
+      1
+    ]
+  ],
+  "value_json_type_counts": {
+    "dict": 91
+  },
+  "value_json_object_key_shapes": {
+    "": 91
+  },
+  "value_nul_count": 0
+}

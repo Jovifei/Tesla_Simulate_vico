@@ -1,0 +1,42 @@
+{
+  "status": "VERIFIED_NUMERIC_RESEARCH_HUMAN_PENDING",
+  "tests": "24 passed; RED/GREEN logs retained",
+  "native_scope": "8 x 90s driving + 42 x 6s stationary + 7 x 2s short diagnostics",
+  "audition_scope": "10 groups, 69 named and 89 blinded PCM24 WAVs; two duplicates/group",
+  "historical_C": "Prior rejected C, original WAV and native control export verified; no new C simulation",
+  "model_source_contract_edits_by_analysis_agent": false,
+  "files": [
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\analyze_rumble_mechanics.py",
+      "sha256": "079e018388ea6603df70ea273a12dfb17b59f08b7bc6981405ce2c5b826297a7"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\make_audition.py",
+      "sha256": "65b8e0c9f0ffa222bbdfae3aa9790633f45fbd77488fbc1cc989a327f9adfd61"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_rumble_mechanics_analysis.py",
+      "sha256": "5b212e53221277e18d1bb87360dc2666a6b6d07a7b899e3fb08e9c58fe88260b"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\analysis-tests-short-green.log",
+      "sha256": "d5d0ac3705534ee5fe6c33000942cd523abb2dd1715212ba8532d673ce1ba563"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542\\analysis.json",
+      "sha256": "74aebcb38aa0136cd08c949603f9b80a63f1667d91bb318bae8a2e2dd774ae76"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542\\analysis-summary.json",
+      "sha256": "ae7e93d3eeb96a18289900c428c0383782c96ba2552261285dd6c07aa9650f42"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\audition-full-20261029-092429-542\\audition.json",
+      "sha256": "53706e0c24b1babaf598f973366f2370c5ddac1f3a214193b2f02373e57be753"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\audition-full-20261029-092429-542\\audition-verification.json",
+      "sha256": "85bd005b133532c798c0cccc9d0d5e2a847fc6219a4368b228d905d3c07c51ce"
+    }
+  ]
+}

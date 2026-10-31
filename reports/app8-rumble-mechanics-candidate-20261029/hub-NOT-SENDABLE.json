@@ -1,0 +1,13 @@
+{
+  "status": "NOT_SENDABLE_REGISTERED_REPOSITORY_IDENTITY_REJECTED",
+  "project_id": "tesla-speed",
+  "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+  "agent_id": "/root",
+  "run_id": "app8-rumble-mechanics-execution-20261029",
+  "revision": null,
+  "sent": false,
+  "auto_retry": false,
+  "failure": "worktree does not belong to the registered repository",
+  "current": "Approved boundedrumble/mechanics engineering package complete: actual8x90+7short+42anchors,27MATLAB24Python,allnumericgates/nativeFrozen/matchedauditionPASS,C2CDONE,memoryupdated.",
+  "next": "Jovi newcandidate audition; fullphysics/OEM/device remainopen. Noautomaticretry or bindingchange."
+}

@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "basis": "sequential interleaved little-endian doubles versus each native capture frame",
+  "runs": [
+    {
+      "label": "A",
+      "frames": 4500,
+      "exact": true
+    },
+    {
+      "label": "B",
+      "frames": 4500,
+      "exact": true
+    },
+    {
+      "label": "C",
+      "frames": 4500,
+      "exact": true
+    },
+    {
+      "label": "C_repeat",
+      "frames": 4500,
+      "exact": true
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "status": "VERIFIED",
+  "at": "2026-10-29T02:13:05.432525+08:00",
+  "worktree": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027",
+  "source_head": "7acf3b564ff3d03ffd4be6d9f93a118cd3166d3f",
+  "protected_count": 604,
+  "protected_changed": [],
+  "runtime_dependencies": 34,
+  "runtime_dependency_changes": [],
+  "files": [
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\build_listening_candidate.m",
+      "sha256": "b3b4b2684d49d1db14c944265c75a383e33d39b9d042f7d56169a9783b7660a2"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\compile_listening_drive.m",
+      "sha256": "41f48a5bfd0744d12c0e474bcb2b6cea00fb9cbd9a2c84d30390817892ba472e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\run_listening_candidate.m",
+      "sha256": "404cdc5bc1683912c7665e28ec80ac426cbf87b11926f203d6c82914c58bf288"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\s12_v12_model_listening_source_step.m",
+      "sha256": "c9dd9f2c3572b507eb603f445a77e30957e7a8d11f18b17e6aa9a6d0a5e65f90"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\analyze_listening_candidate.py",
+      "sha256": "d6e922e170faf65bf2bfddb2d100ea91d8a3364f57b659bfd8888f5aaedd535d"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\LISTENING_CONTRACT.json",
+      "sha256": "f55a423f711f986171a8d043907bd723f35a46246e0843ae658f41ec6b2ba23c"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\build-receipt.json",
+      "sha256": "23cae035841944645696983d97d9386b2877f5c8e2c4bd08ee9ceeebf66338a6"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\analysis.json",
+      "sha256": "34b18bebfce44f59f2d9680bf0720bab3dbf878753534511466c465f5063ffa9"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\run-summary.json",
+      "sha256": "ac2f99489db23d414718b9a67fdb8e6057292c0d374dfc2f508ebe4f4e450baf"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\audition\\audition-receipt.json",
+      "sha256": "f1e0bc04aa148884d3b6fab2816fb22cbe979ef31a1bd956091c2596cf0c1ae6"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\audition\\level-match-verification.json",
+      "sha256": "9370bd916e42a7fa049581bd029a2ef842bdd2cd0cc93f128e9d33760c227aa3"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_listening_analysis.py",
+      "sha256": "de96fbcbfefc345bc91c054bbaa32ac9808f0c9ab9b5b084da06847e2c635dee"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_listening_candidate_matlab.m",
+      "sha256": "32d746357896124226921016a55a09661ce52881a2169b856b0fa8f8ea723569"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_listening_source_matlab.m",
+      "sha256": "df62b08347db53fe49207fb154f4c4c72e96876d4a660a144c0efc783dbbc06a"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\playground_v12\\common\\s12_v12_render_source_frame.m",
+      "sha256": "8939beac42b4f2cdb65b83c0f7f93dcbc9564af5a0c8252012219433f63b03b3"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\playground_v12\\common\\s12_v12_render_engine_identity_frame.m",
+      "sha256": "0982a849763b69cb631c4cc836f08aeedb5a58c9e93bfd12daa7106017af3d98"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\isolated\\S12_hellcat_2022_stock_v12_listening_candidate.slx",
+      "sha256": "30d0c9b024dc9cd70d39f45544e1518c61fed511b6ba112c278562fac6891db3"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\native-frame-verification.json",
+      "sha256": "f0748913f1dca7cbcf2541c3152502aa5b51e0b723817229ed71f3cd74ad96b4"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\native-frame-verification.log",
+      "sha256": "b121e8c5f43814fa463a59dbac4285c39ca12ef3bd48a084409de641649d5c35"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\analysis-tests.log",
+      "sha256": "88e87fb97890cf86894e1ed1717d6c264aa7264dc4ea152e41406dc6419bd4e0"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\regression-bound.log",
+      "sha256": "429175915dedbb002a02a8a15f459082c9fb758fc6b15e3ec484c54012fe2231"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\final-source.diff",
+      "sha256": "61a621bab9f3ee5eb0041baf3ed7de7ee9a21117af61cd369f7e701007809957"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\source-interface-python-final.log",
+      "sha256": "b5ee6a972d3c420d5cb959c4fcc73649716de1ead704dcca9db8fa7b7263517e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\RESULTS.md",
+      "sha256": "c1c740fb99e5030abc77c74a5ad8c991b3d41dcf55d1cb128b66234ebcac4f14"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\C2C-REVIEW.md",
+      "sha256": "d67e51059c42f12709e0038436ca3bb41d8800c4ec6a0ec9b9e772e758e5eb8a"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\memory-update-receipt.json",
+      "sha256": "e2f4e7e06da68c564c920109c2895e002ebeb308b35e2f0978231cda14429f0e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\hub-NOT-SENDABLE.json",
+      "sha256": "2eaa6b2a2153d1d97c86cd58b683a879c23af2a8cea3e6178206803cd4758369"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\final-pcm-shift-envelopes.json",
+      "sha256": "6c34c218e0de8c61a40768c834635fd8abfb563647a9ec83a6b5acc715f81ae8"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\final-pcm-shift-envelopes.csv",
+      "sha256": "fa6a11e42d69d1145519aeb0a299de62c440dd8c8f5a7fe5c56a5c034f496789"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\final-pcm-shift-envelopes.png",
+      "sha256": "89239c3f95b0763eb9511b6d7e1316a76c6eadee4218b2233a987632667e5b44"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\phase.png",
+      "sha256": "9530dd750f6760ccce4a22b3b4c54b6c2df61c8714c7033a6462841a08599a0e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\order.png",
+      "sha256": "68fe0d6dd0174b37a37a300617c524f34694f4b84e2e21dac8c8d585690ac168"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\shift-envelope.png",
+      "sha256": "a556b9093345805bb61112d069251f904e85aecf4a81c5078449a038ca3381cc"
+    }
+  ],
+  "qualification": "CONTROLLED_LISTENING_RESEARCH_PACKAGE_COMPLETE;JOVI_HUMAN_OEM_DEVICE_OPEN",
+  "final_review": "C2C_DONE;TERRA_MAX_NO_BLOCKER"
+}

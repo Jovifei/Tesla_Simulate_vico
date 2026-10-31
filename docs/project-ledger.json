@@ -1,8 +1,8 @@
 {
   "project_name": "Tesla_speed / Vico Android 真实声浪",
-  "updated_at": "2026-10-28",
+  "updated_at": "2026-10-31",
   "current_phase": "P2",
-  "current_work_package": "MATLAB external bridge supports independently hashed body/mechanical/broadband layers; Simulink runtime pending MCP",
+  "current_work_package": "隔离车内声路纠正中：前轮七条音频仅诊断试听，原生B/分流/后Frozen机械/校准及真冷进程待完成",
   "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
   "phases": [
     {
@@ -850,5 +850,47 @@
     "blocker": "MATLAB MCP transport",
     "external_input": "texture_layers[frameCount,960,3] + texture_layer_weights[frameCount,3]; legacy single texture -> body layer only",
     "tests": "9/9"
+  },
+  "cabin_mechanical_bank_candidate_20261030": {
+    "status": "CORRECTION_IN_PROGRESS_PRIOR_RUN_INVALIDATED_FOR_APPROVED_EXPERIMENT",
+    "scope": "isolated source/identity copies + event/modal + dual-bank candidate; original model/soundbank/Android/public source unchanged",
+    "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+    "candidate_root": "reports/app8-cabin-mechanical-bank-candidate-20261030",
+    "formal_model": "reports/app8-cabin-mechanical-bank-candidate-20261030/isolated-model/S12_hellcat_cabin_formal_candidate.slx",
+    "formal_short": "model_check healthy; cold reload/update/active compile pass; 0.04s real Simulink [960,2,3] finite; peak=0.022595687370885784",
+    "long_run": "runs/formal-long-20261031-005916-982/run-summary.json",
+    "cases": [
+      "B0",
+      "N",
+      "M",
+      "D",
+      "MD",
+      "MD-repeat",
+      "MD-cold"
+    ],
+    "long_contract": "4500 frames; 89.98s last frame; 4,320,000 samples/channel; 48kHz; PCM24 readback; continuity; finite/peak gates",
+    "repeatability": "MD-repeat and MD-cold PCM/WAV SHA exactly match MD",
+    "pcm_sha256": {
+      "B0": "2e809bf2f17e1ea07f9a3e9c1b54027da12d9d09f8cd85f974ce39f66ce2f74d",
+      "N": "472113366d56c871697f75e11b4fc72d9d06a39e836a612922e8119f6a3491f0",
+      "M": "9fbcdb4d00bc9373daa40b85dfc6df0330347cf1842ddcf861fa6ce991475388",
+      "D": "cb7ffc53efe09533b8096763ac646d00ad1b779d19e096d2ded5a49143dd2043",
+      "MD": "2a87de266a2d8546d96e961c4554ff2655b2d6c2a03da65dbbfbaff24903d354"
+    },
+    "startup_blocker": "R2026a independent -batch native access violation in homesessionmanager/recent_artifacts/threadpool; evidence remains from existing MCP/Desktop session",
+    "human_acoustic_status": "NOT_RUN; car-speaker loudness-matched audition and Jovi acceptance remain separate",
+    "remote_review_status": "EXECUTED_SENT; local bridge/doctor green; ChatGPT page returned Unknown error after one retry, awaiting review",
+    "next": "IMPLEMENT_APPROVED_TOPOLOGY_NATIVE_B_CALIBRATION_AND_RUNTIME_GATES",
+    "independent_file_recheck": "runs/formal-long-20261031-005916-982/independent-file-recheck.json: PCM/WAV byte lengths, SHA, WAV metadata, MD repeat/cold identity all PASS",
+    "audition_package": "reports/app8-cabin-mechanical-bank-candidate-20261030/audition-formal-20261031/audition.json",
+    "audition_status": "FIXED_SCALAR_PACKAGE_READY_HUMAN_CABIN_LISTENING_PENDING",
+    "audition_method": "one fixed scalar per raw PCM; target -23 LUFS; true peak <= -1.5 dBTP; no limiter/AGC/EQ",
+    "audition_blind_items": 9,
+    "human": "DIAGNOSTIC_AUDITION_PROVIDED_HUMAN_ACCEPTANCE_PENDING",
+    "qualification": "RESEARCH_ONLY_NOT_PRODUCT",
+    "remote_review": "ITERATION_2_SENT_CORRECTION_REVIEW_RUNNING",
+    "evidence_correction": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\CORRECTION-20261031.md",
+    "prior_run_status": "FILES_DIGITALLY_VALID_PLAN_ACCEPTANCE_WITHDRAWN",
+    "independent_startup": "DEFAULT_BATCH_UNRESOLVED_HOME_RECENT_ARTIFACTS_NATIVE_CRASH"
   }
 }

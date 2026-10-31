@@ -1,0 +1,24 @@
+{
+  "schema": "app8.research_iteration3.dimension_fix.v1",
+  "status": "MODIFICATION_AUTHORIZED_ISOLATED_ONLY",
+  "scope": "Dimension contract diagnosis and isolated builder correction; no long run",
+  "protected": ["original SLX", "source library", "Android", "Frozen", "public common source"],
+  "observed_failures": [
+    {"model":"S12_hellcat_cabin_event_bank_20261031_104325_161", "block":"Combustion_Selector", "error":"IndexOptions configured for 2 dimensions while input is 1-D"},
+    {"model":"S12_hellcat_cabin_event_bank_20261031_112408_106", "block":"Mechanical_Receiver", "error":"output [960x3] incompatible with Post_Frozen_Mechanical_Sum input 2"}
+  ],
+  "required_contract": {
+    "source": "[960 9] double",
+    "combustion_split": "[960 2] double",
+    "other_split": "[960 2] double",
+    "control_split": "[960 5] double",
+    "path_bus": "[960 2] double (pre_frozen, mechanical_input)",
+    "pre_frozen": "[960 1] double",
+    "mechanical_receiver": "[960 1] double",
+    "frozen_output": "[960 1] double",
+    "post_frozen_sum": "[960 1] double",
+    "renderer_mux": "[960 2] double"
+  },
+  "verification": ["static contract", "saved model expression/connection audit", "model update", "active compile", "model_check", "short simulation"],
+  "not_authorized": ["90s long runs", "MD-cold claim", "public source change", "original model change"]
+}

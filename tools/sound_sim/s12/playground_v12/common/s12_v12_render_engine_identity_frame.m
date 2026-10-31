@@ -1,4 +1,4 @@
-function [banks, context, diagnostics] = s12_v12_render_engine_identity_frame( ...
+function [banks, context, diagnostics, components] = s12_v12_render_engine_identity_frame( ...
         identity, crankPhase, rpm, load, throttle, acceleration, context, sampleRateHz, frameSamples)
 %S12_V12_RENDER_ENGINE_IDENTITY_FRAME Render a synthetic pre-PTR engine identity.
 % This renderer owns engine-specific pulse timing, induction mechanics, and
@@ -13,6 +13,7 @@ load = columnSignal(load, "load", frameSamples, 0, 1);
 throttle = columnSignal(throttle, "throttle", frameSamples, 0, 1);
 acceleration = columnSignal(acceleration, "acceleration", frameSamples, -20, 20);
 context = normalizeContext(context);
+wantComponents = nargout > 3;
 
 rpmRatio = min(1, max(0, rpm / identity.rpm_limit));
 loadGain = 0.25 + 0.75 * load;
@@ -22,14 +23,14 @@ bankSkew = identity.firing_character.bank_asymmetry * ...
 switch identity.engine_type
     case "supercharged_cross_plane_v8"
         [banks, layers, context] = renderHellcat( ...
-            identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, context);
+            identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, context, wantComponents);
     case "naturally_aspirated_flat_plane_v8"
         [banks, layers, context] = renderFerrari( ...
-            identity, crankPhase, rpmRatio, loadGain, bankSkew, acceleration, context);
+            identity, crankPhase, rpmRatio, loadGain, bankSkew, acceleration, context, wantComponents);
     case "twin_rotor_turbo"
         [banks, layers, context] = renderRx7( ...
             identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, ...
-            acceleration, context, sampleRateHz);
+            acceleration, context, sampleRateHz, wantComponents);
     otherwise
         error("S12:EngineIdentity:Render", "Engine identity type is unsupported.");
 end
@@ -37,7 +38,12 @@ end
 % RPM changes pulse spacing and spectral balance, not steady source loudness.
 % Keep a load/throttle-dependent identity RMS while retaining each layer's
 % relative spectral and temporal structure.
-[banks, layers] = normalizeIdentityLevel(banks, layers, load, throttle);
+[banks, layers, scale] = normalizeIdentityLevel(banks, layers, load, throttle);
+if wantComponents
+    components = struct("exhaust", scale * layers.component_exhaust, ...
+        "whine", scale * layers.component_whine, ...
+        "mechanical", scale * layers.component_mechanical);
+end
 
 if ~isequal(size(banks), [frameSamples, 2]) || any(~isfinite(banks), "all")
     error("S12:EngineIdentity:Render", ...
@@ -60,7 +66,7 @@ diagnostics = struct( ...
 end
 
 function [banks, layers, context] = renderHellcat( ...
-        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, context)
+        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, context, wantComponents)
 pulseExponent = 1 + 5 * (1 - identity.firing_character.pulse_width);
 crossPlanePulse = max(0, sin(identity.order_profile.primary_order * phase)) .^ pulseExponent;
 crossPlanePulse = crossPlanePulse + 0.55 * max(0, ...
@@ -82,10 +88,15 @@ layers = emptyLayers();
 layers.high_frequency = superchargerWhine;
 layers.supercharger_whine = superchargerWhine;
 layers.v8_exhaust = v8Exhaust;
+if wantComponents
+    layers.component_exhaust = toBanks(v8Exhaust, bankSkew);
+    layers.component_whine = toBanks(superchargerWhine, bankSkew);
+    layers.component_mechanical = toBanks(mechanical, bankSkew);
+end
 end
 
 function [banks, layers, context] = renderFerrari( ...
-        identity, phase, rpmRatio, loadGain, bankSkew, acceleration, context)
+        identity, phase, rpmRatio, loadGain, bankSkew, acceleration, context, wantComponents)
 pulseExponent = 2 + 10 * (1 - identity.firing_character.pulse_width);
 flatPlanePulse = max(0, sin(identity.order_profile.primary_order * phase)) .^ pulseExponent;
 flatPlanePulse = flatPlanePulse - 0.36 * max(0, ...
@@ -105,10 +116,15 @@ banks = toBanks(exhaust + highFrequency + mechanical + transient, bankSkew);
 layers = emptyLayers();
 layers.high_frequency = highFrequency;
 layers.v8_exhaust = exhaust;
+if wantComponents
+    layers.component_exhaust = toBanks(exhaust + highFrequency + transient, bankSkew);
+    layers.component_whine = zeros(size(banks));
+    layers.component_mechanical = toBanks(mechanical, bankSkew);
+end
 end
 
 function [banks, layers, context] = renderRx7( ...
-        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, acceleration, context, sampleRateHz)
+        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, acceleration, context, sampleRateHz, wantComponents)
 % Rotary chamber scheduling uses a continuous chamber phase, not a piston order.
 chamberPhase = identity.order_profile.secondary_order * phase + pi / 6;
 gateExponent = 1 + 4 * (1 - identity.firing_character.pulse_width);
@@ -135,6 +151,11 @@ layers.high_frequency = turbine;
 layers.turbine = turbine;
 layers.rotary_event_count = sum(diff(rotaryGate > 0.35) > 0);
 layers.rotary_gate_variance = var(rotaryGate);
+if wantComponents
+    layers.component_exhaust = toBanks(rotaryExcitation + transient, bankSkew);
+    layers.component_whine = toBanks(turbine, bankSkew);
+    layers.component_mechanical = toBanks(roughness, bankSkew);
+end
 end
 
 function [frame, nextEnvelope] = onsetTransient(profile, phase, acceleration, previous, current)
@@ -156,7 +177,7 @@ layers = struct( ...
     "turbine", 0, "rotary_event_count", 0, "rotary_gate_variance", 0);
 end
 
-function [banks, layers] = normalizeIdentityLevel(banks, layers, load, throttle)
+function [banks, layers, scale] = normalizeIdentityLevel(banks, layers, load, throttle)
 currentRms = sqrt(mean(banks(:) .^ 2));
 if currentRms <= eps
     error("S12:EngineIdentity:Render", "Identity frame has no normalizable energy.");

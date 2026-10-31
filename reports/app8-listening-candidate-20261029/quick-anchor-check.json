@@ -1,0 +1,42 @@
+{
+  "method": "independent same-state per-channel Welch check",
+  "run_root": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029/runs/full-20261029-013256",
+  "anchors": [
+    {
+      "name": "calibration_cruise",
+      "rpm": 2200,
+      "hf_lf_change_db": -0.2128670212473498,
+      "lf_absolute_change_db": 4.884196844461341e-05
+    },
+    {
+      "name": "calibration_load",
+      "rpm": 4500,
+      "hf_lf_change_db": -5.999372929957527,
+      "lf_absolute_change_db": 1.7140552144692099e-06
+    },
+    {
+      "name": "calibration_high",
+      "rpm": 6000,
+      "hf_lf_change_db": -5.917906821125193,
+      "lf_absolute_change_db": -3.85730986621315e-15
+    },
+    {
+      "name": "heldout_mid",
+      "rpm": 3200,
+      "hf_lf_change_db": -5.144901788402699,
+      "lf_absolute_change_db": 0.00017751997645433214
+    },
+    {
+      "name": "heldout_load",
+      "rpm": 5000,
+      "hf_lf_change_db": -5.99874983097337,
+      "lf_absolute_change_db": 0.00023446922436489044
+    },
+    {
+      "name": "heldout_high",
+      "rpm": 5500,
+      "hf_lf_change_db": -5.923199493444291,
+      "lf_absolute_change_db": 0.0003261799495525507
+    }
+  ]
+}

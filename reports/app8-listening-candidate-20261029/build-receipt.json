@@ -1,0 +1,43 @@
+{
+  "status": "BUILT_COMPILED_RESEARCH_ONLY",
+  "source": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\playground_v12\\common\\..\\vehicles\\hellcat_2022_stock\\S12_hellcat_2022_stock_v12.slx",
+  "candidate": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029/isolated/S12_hellcat_2022_stock_v12_listening_candidate.slx",
+  "source_sha256": "71f8b9899688278e908e244649331352d43c46779e6fd93c0903f86785198a9c",
+  "contract_sha256": "f55a423f711f986171a8d043907bd723f35a46246e0843ae658f41ec6b2ba23c",
+  "compiled_state_dimensions": {
+    "Inport": [],
+    "Outport": [
+      2,
+      9,
+      1
+    ],
+    "Enable": [],
+    "Trigger": [],
+    "State": [],
+    "LConn": [],
+    "RConn": [],
+    "Ifaction": [],
+    "Reset": [],
+    "Event": []
+  },
+  "compiled_state_type": {
+    "Inport": [],
+    "Outport": [
+      "double"
+    ],
+    "Enable": [],
+    "Trigger": [],
+    "State": [],
+    "LConn": [],
+    "RConn": [],
+    "Ifaction": [],
+    "Reset": [],
+    "Event": []
+  },
+  "compiled_state_sample_time": [
+    0.02,
+    0
+  ],
+  "candidate_sha256": "30d0c9b024dc9cd70d39f45544e1518c61fed511b6ba112c278562fac6891db3",
+  "model_check": "status: healthy\nvalidation_scope: root\nchecks_run: \n  - unconnected_ports\n  - unconnected_lines\n  - stateflow_lint"
+}

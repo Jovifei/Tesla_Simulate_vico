@@ -1,0 +1,55 @@
+
+--------------------------------------------------------------------------------
+             Access violation detected at 2026-10-31 00:12:37 +0800
+--------------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding           : Disabled - No sandbox or build area path
+  Crash Mode               : continue (default)
+  Default Encoding         : UTF-8
+  Deployed                 : false
+  Graphics Driver          : Uninitialized hardware 
+  Graphics card 1          : Shanghai Best Oray Information Technology Co., Ltd. ( 0x0 ) OrayIddDriver Device Version 17.50.19.949 (2025-6-11)
+  Graphics card 2          : NVIDIA ( 0x10de ) NVIDIA GeForce RTX 4070 SUPER Version 32.0.15.9597 (2026-3-17)
+  MATLAB Architecture      : win64
+  MATLAB Entitlement ID    : 12509936
+  MATLAB Root              : D:\Program Files\MATLAB\R2026a
+  MATLAB Version           : 26.1.0.3203278 (R2026a)
+  OpenGL                   : hardware
+  Operating System         : Microsoft Windows 11 专业版
+  Process ID               : 359192
+  Processor ID             : x86 Family 6 Model 183 Stepping 1, GenuineIntel
+  Session Key              : dwb4h69o36rfu7zvv96gw9ore
+  Window System            : Version 10.0 (Build 22631)
+
+Fault Count: 1
+
+
+Abnormal termination:
+Access violation
+
+Current Thread: 'GTP_0' id 368836
+
+Register State (from fault):
+  RAX = 0000000000000000  RBX = 000002ec65392dc0
+  RCX = bd73aab742f90000  RDX = 0000000000000000
+  RSP = 000000f3ef4fe900  RBP = 000000f3ef4ff8e0
+  RSI = 0000000000000000  RDI = 0000000000000007
+ 
+   R8 = 0000000000000002   R9 = 000000f3ef4fe858
+  R10 = 0000000000000013  R11 = 3f335e8ce7b6cefc
+  R12 = 000002ec559865f0  R13 = 000002ec559865f0
+  R14 = 000000f3ef4fe940  R15 = 00007ffd56a54568
+ 
+  RIP = 00007ffd56a31aa7  EFL = 00010206
+ 
+   CS = 0033   FS = 0053   GS = 002b
+
+Stack Trace (from fault):
+
+** This crash report has been saved to disk as E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candidate-20261030\startup-diagnostic\18-batch-shadow-delay\temp\matlab_crash_dump.359192-1 **
+
+
+
+MATLAB is exiting because of fatal error
+ERROR: MATLAB error Exit Status: 0xc0000005, Access violation

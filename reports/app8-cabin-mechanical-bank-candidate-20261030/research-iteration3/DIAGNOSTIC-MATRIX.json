@@ -1,0 +1,27 @@
+{
+  "schema": "app8.research_iteration3.diagnostic_matrix.v1",
+  "status": "DIMENSION_FAILURE_CONFIRMED;AUDIO_DIAGNOSTICS_PENDING",
+  "read_only_inputs": [
+    "runs/formal-long-20261031-005916-982/*/capture.mat",
+    "audition-formal-20261031/named/whole_tracks/*.wav",
+    "cabin-build-receipt.json",
+    "runs/approved-20261031-*/failure-preflight-*.json"
+  ],
+  "dimension_diagnostics": [
+    {"name":"source_shape", "input":"Hellcat Synthetic Source", "expected":"960x9 double matrix", "must_reject":"8640x1 or 1x8640 vector"},
+    {"name":"split_columns", "expected":["960x2 combustion","960x2 other","960x5 control"]},
+    {"name":"path_bus", "expected":"960x2 [pre_frozen, mechanical_input]"},
+    {"name":"time_route", "expected":"control column 5 / source column 9 or independent Clock", "must_reject":"legacy path column 15"},
+    {"name":"frozen_sum", "expected":"both Sum inputs 960x1 double", "must_reject":"Frozen 960x2 or mechanical 960x3"},
+    {"name":"diagnostics", "expected":"logs/stems outside audio Sum", "must_reject":"diagnostic columns appended to audio signal"}
+  ],
+  "audio_diagnostics": [
+    {"name":"differential_closure", "window":"12-24s", "status":"pending"},
+    {"name":"band_stft_order_phase", "status":"pending"},
+    {"name":"frame_boundary_energy", "status":"pending"},
+    {"name":"pcm_wav_quantization", "status":"pending"}
+  ],
+  "gates": ["static contract", "unique-column marker test", "saved model audit", "Update", "Compile", "model_check", "short native input B0/N/M/D/MD"],
+  "long_run": "BLOCKED_UNTIL_ALL_SHORT_GATES_PASS",
+  "md_cold": "BLOCKED_STARTUP"
+}

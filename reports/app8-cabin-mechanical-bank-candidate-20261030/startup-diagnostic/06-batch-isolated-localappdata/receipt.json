@@ -1,0 +1,27 @@
+{
+  "case": "06-batch-isolated-localappdata",
+  "command": [
+    "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+    "-wait",
+    "-batch",
+    "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+  ],
+  "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+  "pid": 374796,
+  "exit_code": 3221225477,
+  "exit_hex": "0xC0000005",
+  "timed_out": false,
+  "duration_seconds": 6.129,
+  "environment_overrides": {
+    "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\prefdir",
+    "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp",
+    "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp",
+    "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+    "LOCALAPPDATA": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\localappdata"
+  },
+  "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\stdout.log",
+  "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\stderr.log",
+  "crash_dumps": [
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp\\matlab_crash_dump.366584-1"
+  ]
+}

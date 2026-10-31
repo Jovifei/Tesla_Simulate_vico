@@ -1,0 +1,35 @@
+[警告: 以下文件夹是位于 MATLAB 路径中的已卸载包根文件夹:
+C:\Users\Admin\AppData\Roaming\MathWorks\MATLAB Add-Ons\Toolboxes\MATLAB MCP Server Toolbox
+
+请考虑使用 'mpminstall' 来安装包并确保设置正确。] 
+[> 位置：<a href="matlab:matlab.lang.internal.introspective.errorDocCallback('path', 'D:\Program Files\MATLAB\R2026a\toolbox\matlab\general\path.m', 89)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('D:\Program Files\MATLAB\R2026a\toolbox\matlab\general\path.m',89,0)">第 89 行</a>)
+位置: <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('addpath', 'D:\Program Files\MATLAB\R2026a\toolbox\matlab\general\addpath.m', 70)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('D:\Program Files\MATLAB\R2026a\toolbox\matlab\general\addpath.m',70,0)">第 70 行</a>)
+位置: satk_initialize
+位置: satk_initialize
+位置: <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('startup', 'C:\Users\Admin\Documents\MATLAB\startup.m', 5)" style="font-weight:bold">startup</a> (<a href="matlab: opentoline('C:\Users\Admin\Documents\MATLAB\startup.m',5,0)">第 5 行</a>)] 
+
+Simulink Agentic Toolkit - Installation Check
+===============================================
+
+Prerequisites
+  ✓ MATLAB 26.1.0.3203278 (R2026a)
+  ✓ Simulink installed and licensed
+
+MATLAB Environment
+  ✓ All 7 tool entry points on path
+  ✓ Package resolution correct (+sage, +mbd inside SATK)
+
+MCP Server
+  ✓ matlab-mcp-server.exe found: C:\Users\Admin\.matlab\agentic-toolkits\bin\matlab-mcp-server.exe
+
+MCP Connectivity
+  ✓ shareMATLABSession available (MATLAB-side MCP components installed)
+  ✓ MATLAB connector running (port 31518)
+
+===============================================
+Result: PASS
+
+MINIMAL_START
+VERSION=26.1.0.3203278 (R2026a)
+SIMULINK_LICENSE=1
+MINIMAL_DONE

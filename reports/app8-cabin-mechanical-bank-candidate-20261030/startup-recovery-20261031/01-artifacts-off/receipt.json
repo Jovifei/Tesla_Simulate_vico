@@ -1,0 +1,40 @@
+{
+  "case": "01-artifacts-off",
+  "command": [
+    "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+    "-wait",
+    "-batch",
+    "disp('RECOVERY_BEGIN'); pause(30); disp('RECOVERY_PAUSE30_DONE'); m='recovery_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.02','ReturnWorkspaceOutputs','on'); assert(numel(out.tout)>1 && abs(out.tout(end)-0.02)<1e-10); fprintf('RECOVERY_SIM_DONE samples=%d end=%.6f\\n',numel(out.tout),out.tout(end)); close_system(m,0); disp('RECOVERY_MODEL_CLOSED');"
+  ],
+  "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\working",
+  "launcher_pid": 238284,
+  "exit_code": 3221225477,
+  "exit_hex": "0xC0000005",
+  "timed_out": false,
+  "duration_seconds": 5.513,
+  "environment_overrides": {
+    "MW_ARTIFACTS_WS_ENABLED": "0",
+    "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\prefdir",
+    "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\temp",
+    "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\temp"
+  },
+  "markers": {
+    "RECOVERY_STARTUP_OVERRIDE": true,
+    "RECOVERY_BEGIN": true,
+    "RECOVERY_PAUSE30_DONE": false,
+    "RECOVERY_SIM_DONE": false,
+    "RECOVERY_MODEL_CLOSED": false
+  },
+  "natural_exit_zero_all_markers": false,
+  "home_db_after": {
+    "exists": true,
+    "bytes": 53248,
+    "mtime_ns": 1793412136272035000,
+    "sha256": "509069310d17015e45d607e3f86b8cc4dbe1a62e5aa10382e613c09cd1884dc1"
+  },
+  "crash_dumps": [
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\temp\\matlab_crash_dump.315020-1"
+  ],
+  "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\stdout.log",
+  "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031\\01-artifacts-off\\stderr.log"
+}

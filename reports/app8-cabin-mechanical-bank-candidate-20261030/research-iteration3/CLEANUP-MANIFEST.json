@@ -1,0 +1,51 @@
+{
+  "schema": "app8.cabin.lab_cleanup.v1",
+  "date": "2026-10-31",
+  "lab": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030",
+  "reason": "Remove regenerable bulk and superseded build attempts; keep source, tests, receipts and the final dimfix candidate.",
+  "kept_artifacts": [
+    {
+      "path": "isolated\\S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713.slx",
+      "sha256": "260748280B977916698D42F493E852B1C25EB878415919F49021602C554BE174",
+      "bytes": 54764
+    },
+    {
+      "path": "isolated\\S12_hellcat_cabin_event_bank_20261031_112747_734.slx",
+      "sha256": "FABE3805668D45632911E8DA8A3855992135E026A9094651E27B5F2113825DCB",
+      "bytes": 51263
+    },
+    {
+      "path": "isolated\\S12_hellcat_cabin_B0_reference_20261031_112747_734.slx",
+      "sha256": "EEB3CC8B89D55A7B184CFE44E76B306111B0D6B96FEAB6D8A1ED4684996B0002",
+      "bytes": 45968
+    },
+    {
+      "path": "research-iteration3\\variant-dimension-receipt-20261031_191138_457.json",
+      "sha256": "F58FEEFBF82B3D4F63F42EE1D6B7ADCABA600D0410831A8882FE364DCEED6707",
+      "bytes": 2568
+    }
+  ],
+  "deleted_categories": [
+    {
+      "category": "superseded_isolated_slx",
+      "detail": "39 failed/superseded SLX build attempts in isolated/"
+    },
+    {
+      "category": "invalidated_runs",
+      "detail": "runs/ 50 run dirs including formal-long-...-005916-982 invalidated 90s batch (~1.89 GB)"
+    },
+    {
+      "category": "audition_wav_bulk",
+      "detail": "audition-formal-20261031 named/diagnostic WAVs (~180 MB) plus reproduced copies"
+    },
+    {
+      "category": "model_build_caches",
+      "detail": "cabin-cache/, cabin-codegen/, __pycache__/"
+    },
+    {
+      "category": "diagnostic_prefs_dump",
+      "detail": "startup-diagnostic extracted MATLAB prefs copy and .pma payload"
+    }
+  ],
+  "boundary": "Original SLX, Frozen, public common source, sound bank and Android are untouched."
+}

@@ -1,0 +1,48 @@
+{
+  "target_lufs": -29.25,
+  "initial_target_lufs": -23,
+  "max_true_peak_dbtp": -1.5,
+  "method": "one fixed scalar applied once to each RAW item; no limiter or AGC",
+  "items": {
+    "B0": {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\B0.wav",
+      "sha256": "fdbe73f3d062b1d322f651f35ac5779d3e9f39c290a06c898de435a4e91c4b91",
+      "scalar": 0.8659643233600653,
+      "gain_db": -1.25,
+      "source_pcm_sha256": "4b2dd096f99fc3d71fcd82aef5be587a8722bf5e31ca59bad29886468184dc6f",
+      "source_samples_per_channel": 240000,
+      "raw_measurement": {
+        "integrated_lufs": -28.0,
+        "true_peak_dbtp": -21.7,
+        "meter_log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\meter\\B0-raw.log",
+        "meter_log_sha256": "eab396aac760eaa1a70b12df958727f98946669ea3fed9b6654b96b0cb3d8bc4",
+        "meter": "FFmpeg ebur128=peak=true; integrated EBU R128 and oversampled true peak"
+      },
+      "integrated_lufs": -29.3,
+      "true_peak_dbtp": -22.9,
+      "meter_log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\meter\\B0-output.log",
+      "meter_log_sha256": "3b352ba850721da6323a3aa35774e40a1052395ea21eab7dd338194dc46a6ef6",
+      "meter": "FFmpeg ebur128=peak=true; integrated EBU R128 and oversampled true peak"
+    },
+    "SR": {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\SR.wav",
+      "sha256": "8b389f3cfbdc78d7f2a652c45a2ae326f6e2917b121388869ba97a41cf4d63f9",
+      "scalar": 0.8659643233600653,
+      "gain_db": -1.25,
+      "source_pcm_sha256": "3666f1135fb70b49d7d35938a201058f7aa7cc4f8298496fc8c353a622a57a2e",
+      "source_samples_per_channel": 240000,
+      "raw_measurement": {
+        "integrated_lufs": -28.0,
+        "true_peak_dbtp": -0.4,
+        "meter_log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\meter\\SR-raw.log",
+        "meter_log_sha256": "f52f6718db2c2cb53769e39b3a0e0c64fad1a0372162d160da992a083a1fe9d4",
+        "meter": "FFmpeg ebur128=peak=true; integrated EBU R128 and oversampled true peak"
+      },
+      "integrated_lufs": -29.2,
+      "true_peak_dbtp": -1.7,
+      "meter_log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\test-temp-final-2\\test_audition_uses_one_scalar_0\\group\\meter\\SR-output.log",
+      "meter_log_sha256": "433b129f4e67b6e7662082eef8b3303a95367af346f77fa217e5919868c2b59a",
+      "meter": "FFmpeg ebur128=peak=true; integrated EBU R128 and oversampled true peak"
+    }
+  }
+}

@@ -249,3 +249,26 @@ The unified eight-vehicle workbench keeps A=feedback-off algorithm, B=accepted m
 The new `continuous_drive` scene renders one 30-second stateful track at 48 kHz stereo int16: idle → acceleration with three shifts → pull → closed-throttle lift → coast → idle. RX-7 and Aventador share trace/events/seed/IR/parent denominator with their accepted AI-5 parameters; RX-7 has one 24-frame start boundary repair, Aventador has no boundary repair. Renderer diagnostics prove actual shift/afterfire events and post-lift stem energy; A/B/off-switch PCM identities are retained. The fresh v2 package is `s12-stage-ai6-unified-audition-20260920-v2`, manifest SHA `28ef0738097e7e28bb4d49136a47a17dac5b3f80bff229dfbbe2161f1bb8cb13`, summary SHA `226fb189df31ad6ffaaee0220ac0730331e5172826ce911b84dbeb753a16fe61`, and review service port is 29780. This remains engineering/audition evidence; no Human PASS, OEM sync or similarity percentage is claimed.
 
 本轮已通过 strict preflight、8 端口 HTTP 200、Ferrari R1 rich UI 浏览器截图与 HTML marker 检查。状态固定为 `STAGE_AG_R1_STRICT_RICH_REVIEW_READY / WAITING_FOR_JOVI_ACOUSTIC_REVIEW`；下一动作仅是 Jovi 在 R1 页面实际试听，记录人耳反馈，不自动 fit/R2/profile freeze/Android/ESP32。
+
+## 2026-10-31 隔离机械+双 bank 候选与 MATLAB 启动阻塞
+
+Jovi 授权的车内扬声器“排气轰鸣＋机械混合声”研究已完成隔离运行阶段。原模型、声库、Android、车型 profile、Frozen Radiation 文件和公共源码保持不变。新增隔离目录为 `reports/app8-cabin-mechanical-bank-candidate-20261030/`，正式副本为 `isolated-model/S12_hellcat_cabin_formal_candidate.slx`。
+
+先修复了三类边界问题：烟测包装器把原始 JSON 误当已验证 profile；R2026a 根 MATLAB Function 首次会以全零 packet 探测，随后同一 t=0 输入真实状态；`SimulationOutput` 的 PCM 在 Dataset 中而不是 double。修复均只写隔离目录。`test_cabin_paths` 5/5、`test_cabin_source` 4/4、`test_smoke_wrapper` 4/4，MATLAB Code Analyzer 0 issues。
+
+正式副本实际通过 Cold Reload、Update Diagram、Active Compile 和 `model_check`。短仿真 0.04 s 实际输出 `[960,2,3]` PCM，时间 `[0,0.02,0.04]`，finite，peak `0.022595687370885784`。隔离 wrapper 的 source→双 bank/事件模态→Frozen→stereo PCM 链路已真实接通；新增模式 N/M/D/MD 只作用副本。
+
+7×90 s 实际 Simulink 数字研究运行回执：`runs/formal-long-20261031-005916-982/run-summary.json`。构型为 B0、N、M、D、MD、MD-repeat、MD-cold；每条 4500 帧、末帧起点 89.98 s、每声道 4,320,000 样本、48 kHz；PCM24 独立读回、finite、峰值、样本/帧连续性通过。B0 PCM SHA=`2e809bf2f17e1ea07f9a3e9c1b54027da12d9d09f8cd85f974ce39f66ce2f74d`；N=`472113366d56c871697f75e11b4fc72d9d06a39e836a612922e8119f6a3491f0`；M=`9fbcdb4d00bc9373daa40b85dfc6df0330347cf1842ddcf861fa6ce991475388`；D=`cb7ffc53efe09533b8096763ac646d00ad1b779d19e096d2ded5a49143dd2043`；MD=`2a87de266a2d8546d96e961c4554ff2655b2d6c2a03da65dbbfbaff24903d354`。MD-repeat 与 MD-cold 的 PCM/WAV SHA 与 MD 完全一致。
+
+证据等级必须分开：这证明数字研究链路、状态时序、重复性和 PCM/WAV 安全门，不证明车内频响、扬声器标定、真实座舱传递函数、OEM 相似度或 Jovi 人耳接受。独立 MATLAB `-batch` 仍在 `mwhomesessionmanager_impl.dll`/`mwrecent_artifacts_service_impl.dll`/threadpool 原生调用链访问冲突；本轮长轨使用现有 MCP/Desktop 会话。不要把 Desktop 可用升级为独立启动已修复。
+
+Codex with ChatGPT 连接已按技能修复并验证：`doctor` green、workspace `Tesla_speed`、connector `Codex with ChatGPT · Tesla_speed`，执行摘要已用 `c2c record` 发布，ChatGPT 通过 MCP 可直接读本地工作区，无需 GitHub。当前会话发送 EXECUTED 后页面返回 Unknown error，按协议只重试一次且不新开重复任务；远端复核仍待返回。下一步是保留同一会话等待/重试远端技术审查，随后才进行固定标量、车内扬声器等响试听。未经 Jovi 听感批准不得晋升产品。
+
+独立 Python 文件级复核随后完成：`runs/formal-long-20261031-005916-982/independent-file-recheck.json` 对 7 个构型逐个检查原始 PCM/WAV 存在、PCM 字节长度 `4,320,000×2×8`、WAV `48kHz/2ch/24bit/4,320,000 frames`、receipt SHA 与磁盘 SHA；B0/N/M/D/MD/MD-repeat/MD-cold 全部通过，MD 三次 PCM/WAV SHA 完全一致。该复核只加强数字文件完整性，不改变车内人耳与 OEM 资格状态。
+
+已生成车内等响试听包 `reports/app8-cabin-mechanical-bank-candidate-20261030/audition-formal-20261031/`：B0/N/M/D/MD/MD-repeat/MD-cold 原始 PCM 各只乘一次固定标量，组内目标 `-23.0 LUFS`，独立 FFmpeg EBU R128/true-peak 测量，输出真峰均低于 `-1.5 dBTP`，PCM24 WAV 可回读；9 个盲听条目含隐藏重复。原始长轨保持不变。该包只证明响度匹配和播放文件完整性，车内扬声器实际听感仍等待 Jovi。
+
+
+## 2026-10-31 后续独立复核纠正（优先于前段完成措辞）
+
+前述7×90秒是文件真实且数值安全，尚不符合批准实验。B0/工况被替换，机械在Frozen前且无校准，模型保存未包含新拓扑，日志缺失，所谓MD-cold是同进程。CORRECTION-20261031.md与run目录INVALIDATED为当前判定；已有音频仅作诊断试听。Jovi已得到聊天内播放器，正确声路仍由Terra max按原批准范围实现。真正Obsidian受管检查点另通过codex-memory同步，不将本repo镜像误称Vault已更新。

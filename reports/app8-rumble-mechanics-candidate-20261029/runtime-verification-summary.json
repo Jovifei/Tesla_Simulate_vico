@@ -1,0 +1,66 @@
+{
+  "status": "RENDERED_DIGITAL_PASS_ANALYSIS_PENDING",
+  "run_summary": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542\\run-summary.json",
+  "run_summary_sha256": "3b803664d6fa5f49207f89870cc2b73d575d15b5cc55eb274e3bdb5e7d6e3e7a",
+  "case_count": 8,
+  "short_count": 7,
+  "anchor_count": 7,
+  "stationary_case_count": 42,
+  "baseline_pcm_exact": true,
+  "fullcase_counts": {
+    "B0": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "S": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "R": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "SR": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "SR_repeat": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "S2": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "SR2": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    },
+    "SR2_repeat": {
+      "source_frame": 4500,
+      "frozen_frame": 4501,
+      "radiation_wrapper": 4501
+    }
+  },
+  "fullcase_pcm_sha256": {
+    "B0": "1a56b2f54ce3149a15d184c80257f1a838ddee83fd0ff193318d791b4dc396ef",
+    "S": "33614d23afa1daff7da962b889523d8ca6cd931ffb98e6d79dabac6a7ee266a1",
+    "R": "a7e4e86bf89a2a75c1fdff06db88d4f05db8f7629921a10594aa8322bd14e495",
+    "SR": "82a6a99e65250f4cf1875dc7f43f1a3602f718a80bb5c70143473df650435950",
+    "SR_repeat": "82a6a99e65250f4cf1875dc7f43f1a3602f718a80bb5c70143473df650435950",
+    "S2": "822616f1d4b8c4e628e248888af6246e4cd9e8b578b213a8f9d9351d9767a5df",
+    "SR2": "0e6fe3065b5e855f6d9dba7ff6507bc49a541d1937f4be4f5784812e5fbacbcb",
+    "SR2_repeat": "0e6fe3065b5e855f6d9dba7ff6507bc49a541d1937f4be4f5784812e5fbacbcb"
+  },
+  "max_pcm_peak": 0.05478361210420273,
+  "max_sample_jump": 0.02757199683522292,
+  "max_frame_jump": 0.007369046946291464,
+  "source_m_sha256": "eb09cdb1b2c7ed69b6a544e18453da49d2186c689a0b52f10437d70cef02ae0b"
+}

@@ -25,7 +25,7 @@ class ModelTextureStaticContract(unittest.TestCase):
 
     def test_candidate_plan_names_the_fixed_frame_entry(self) -> None:
         text = (COMMON / "s12_v12_prepare_texture_simulink_candidate.m").read_text(encoding="utf-8")
-        self.assertIn("s12_v12_model_texture_step", text)
+        self.assertIn("s12_v12_model_texture_layers_step", text)
 
 
 if __name__ == "__main__":

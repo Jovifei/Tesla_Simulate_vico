@@ -1,0 +1,129 @@
+{
+  "status": "ENGINEERING_PASS_HUMAN_PENDING",
+  "worktree": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027",
+  "accepted_run": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542",
+  "files": [
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\build_rumble_mechanics_candidate.m",
+      "sha256": "c92ca73f7e5f77313a7d6286a8e16509eecb06f1c023094f2bdd5e5357c11392"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\capture_source_golden.m",
+      "sha256": "1cb5ad4a54dcd64d35202ad5c3678122e42506782f7afb4362d3d6817eef5561"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\rumble_pressure_color_frame.m",
+      "sha256": "57b40fa5d031c7a8e99a12be88c718e5b71dcfd5f17d85a2258ee017e7fbec5b"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\run_rumble_mechanics_candidate.m",
+      "sha256": "577f5f381ce908f3f2ba7ee45c7ceab8c2c1e4bd85aaaa527fcbdff5e143ad44"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\s12_v12_model_rumble_mechanics_step.m",
+      "sha256": "0685445694d830fefdbd015e656fb9f7c59d57d9b5f5d6bfed666b92abf13dcb"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\analyze_rumble_mechanics.py",
+      "sha256": "079e018388ea6603df70ea273a12dfb17b59f08b7bc6981405ce2c5b826297a7"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\make_audition.py",
+      "sha256": "65b8e0c9f0ffa222bbdfae3aa9790633f45fbd77488fbc1cc989a327f9adfd61"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\EXPERIMENT_CONTRACT.json",
+      "sha256": "42a0b16a06dbd743ab5b14b29980abd2e4e16acfad7e8fd000146b7ac5e2a8f9"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\AUTHORIZATION.md",
+      "sha256": "b37f9045c035b78f6158a40094cac575bba9c6dc9c25ad79f0e165b81b6b9101"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\final-integrity.json",
+      "sha256": "f16878dd632bbb1d560f22008ccf61cf4f3c79b3cfa2b3bd23819b51db927573"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\native-frame-frozen-verification.json",
+      "sha256": "850cf14d3354bf3b6079bdd72d3ce7013a3c138a1dcc8c6e06f19fc8bb9c6d1e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\PEER-REVIEW.md",
+      "sha256": "fc8595849d1e8d93d8d722595f1d2f804d3000a362d9cf99ebbc7dec820ce6df"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\source-mechanics-verification.json",
+      "sha256": "7947f55b94205f32d3b430345111cb8d47b285eb452a0f768b4ab1a11c363643"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runtime-verification-summary.json",
+      "sha256": "afbee1471e27ed6cfee205aeaa9022e5a59f88825150f0a53271f92346d4c65d"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\analysis-tools-provenance.json",
+      "sha256": "c804b3546091c9a29ab7f8e4d94fe9b6c1c9705d57151b40946e62f2f14a320d"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\parent-audition-check.json",
+      "sha256": "e37d2985dab5371e1862947156bc2e8453f1b18e62a102a034f6f83e16f57fab"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542\\run-summary.json",
+      "sha256": "3b803664d6fa5f49207f89870cc2b73d575d15b5cc55eb274e3bdb5e7d6e3e7a"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\runs\\full-20261029-092429-542\\analysis.json",
+      "sha256": "74aebcb38aa0136cd08c949603f9b80a63f1667d91bb318bae8a2e2dd774ae76"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\audition-full-20261029-092429-542\\audition.json",
+      "sha256": "53706e0c24b1babaf598f973366f2370c5ddac1f3a214193b2f02373e57be753"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\isolated\\S12_hellcat_2022_stock_v12_rumble_mechanics.slx",
+      "sha256": "eeb3cc8b89d55a7b184cfe44e76b306111b0d6b96feab6d8a1ed4684996b0002"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\playground_v12\\common\\s12_v12_render_source_frame.m",
+      "sha256": "eb09cdb1b2c7ed69b6a544e18453da49d2186c689a0b52f10437d70cef02ae0b"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_rumble_mechanics_analysis.py",
+      "sha256": "5b212e53221277e18d1bb87360dc2666a6b6d07a7b899e3fb08e9c58fe88260b"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_rumble_mechanics_runtime.m",
+      "sha256": "2bd1a27a6709071257e6662dfc09a5a5f2a6f7e5fdb644be4f454aa30b9111e9"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\tests\\test_s12_v12_rumble_mechanics_source.m",
+      "sha256": "d4a7ffb0e290a564b7e9a843d8e9de54d8c9660a6336c381e754b6082741bbb0"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\RESULTS.md",
+      "sha256": "7988e0f5d8be2236407f68ceee13c9a450462e818494872e536b0dabf7476f8e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\C2C-REVIEW.md",
+      "sha256": "314d325e7733ba7ff689d256cbdb1f045559873f4aef3aa54128e92665da72a9"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\memory-update-receipt.json",
+      "sha256": "817e572a716436fbe7d0bcb223f63b2d7ab6064fe1aff668722afc3aa9da413c"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\hub-NOT-SENDABLE.json",
+      "sha256": "6e6efd23f31a9a51ee58eb33c0d228868e5949104d98000ce4dd9f847ed0dd02"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\actual-frequency-comparison.png",
+      "sha256": "21f4f731f45b543532c2b62f4e13f28b86a58ccdc01e95545c1d167c2763609e"
+    },
+    {
+      "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-rumble-mechanics-candidate-20261029\\audition-full-20261029-092429-542\\audition-verification.json",
+      "sha256": "85bd005b133532c798c0cccc9d0d5e2a847fc6219a4368b228d905d3c07c51ce"
+    }
+  ],
+  "final_review": "C2C_DONE;SOL_HIGH_PEER_PASS",
+  "qualification": "ENGINEERING_AND_AUDITION_DELIVERY_COMPLETE;JOVI_LISTENING_PENDING"
+}

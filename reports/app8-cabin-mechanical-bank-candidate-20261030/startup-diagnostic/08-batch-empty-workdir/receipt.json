@@ -1,0 +1,27 @@
+{
+  "case": "08-batch-empty-workdir",
+  "command": [
+    "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+    "-wait",
+    "-batch",
+    "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+  ],
+  "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\working",
+  "pid": 350880,
+  "exit_code": 3221225477,
+  "exit_hex": "0xC0000005",
+  "timed_out": false,
+  "duration_seconds": 5.732,
+  "environment_overrides": {
+    "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\prefdir",
+    "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp",
+    "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp",
+    "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+    "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+  },
+  "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\stdout.log",
+  "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\stderr.log",
+  "crash_dumps": [
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp\\matlab_crash_dump.374584-1"
+  ]
+}

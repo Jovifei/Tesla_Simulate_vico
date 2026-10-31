@@ -1,0 +1,14 @@
+{
+  "timestamp_local": "2026-10-31T10:11:40.725523+08:00",
+  "existing_matlab_processes": [
+    {
+      "ProcessId": 264144,
+      "ParentProcessId": 234632
+    },
+    {
+      "ProcessId": 380160,
+      "ParentProcessId": 264144
+    }
+  ],
+  "original_artifacts_var_present": false
+}

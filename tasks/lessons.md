@@ -1393,3 +1393,21 @@ Rules:
 # 2026-09-20 Stage AI-6 blocked-evidence publication lesson
 
 - fail-closed 资格失败不能等同于删除证据：事务发布必须封存 BLOCKED 资格收据、失败场景和诊断文件，再由公开 verify/serve 的 B-ready 门拒绝使用；生成路径不得在收据落盘前调用只接受 PASS 的验证器。
+
+# 2026-10-31 Codex with ChatGPT 本地接力与 MATLAB 长轨回执
+
+- C2C 正确用法是绑定当前 Tesla_speed 工作区的安全连接，让 ChatGPT 通过工作区只读读取代码、差异和已记录执行摘要；Codex 保留本地执行、文件修改和测试所有权，不需要 GitHub 中转。
+- 恢复或更新 C2C 后先跑本机连接检查，再复用已保存的项目会话；不要为一次页面错误重新 INIT、重复发送 EXECUTED、另开会话或重建连接。
+- 发送 EXECUTED 后必须把命令结果写成 `c2c record` 可读摘要，让远端从工作区取证；页面 Unknown error 只能记录为远端审核阻塞，不能升级为 DONE。
+- MATLAB 长任务的工具调用超时不等于仿真失败；先检查磁盘上的 run-summary、case receipt、PCM/WAV SHA 和独立解码，再决定是否重跑。重复启动会造成不必要的长轨和状态污染。
+- 本轮最终数字运行证据来自现有 MCP/Desktop MATLAB 会话；独立 `-batch` 原生崩溃仍单独保留，不能混写成“MATLAB 已完全修复”。
+
+
+## 2026-10-31 可试听交付与证据纠正
+
+- Jovi再次指出没有可听入口：交付音频必须验证真实绝对路径并在聊天内嵌播放器；文件目录或JSON不等于试听入口。
+- 数字安全不能替代实施合同：逐条核对原生输入/B0、combustion分流、Frozen后Sum、一次校准、最终SLX保存、实际tap与冷进程。缺项即降级，不把数字PASS写成方案完成。
+- model_edit后先save_system再close/load；短仿真绑定最终源码/模型SHA，并检查实际分支输出，避免跑回原模型还宣称新路径通过。
+- SignalLoggingName必须与out.get一致；缺少要求日志是失败，不能改成可选或用空Dataset消除错误。
+- 关闭模型不等于MATLAB冷进程，独立启动必须核验新PID与退出；快速2+2也不证明后台服务不会随后崩溃。
+- C2C页面失败按Jovi最新要求刷新续接，内容过长可在原项目新建对话；先验证本地连接身份，不关闭其他项目服务，也不把本地文件夹为空git当远端已审阅。

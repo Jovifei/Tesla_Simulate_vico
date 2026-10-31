@@ -1,0 +1,25 @@
+{
+  "case": "11-batch-addpath-repeat",
+  "command": [
+    "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+    "-wait",
+    "-batch",
+    "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+  ],
+  "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\working",
+  "pid": 376180,
+  "exit_code": 0,
+  "exit_hex": "0x00000000",
+  "timed_out": false,
+  "duration_seconds": 9.968,
+  "environment_overrides": {
+    "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\prefdir",
+    "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\temp",
+    "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\temp",
+    "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+    "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+  },
+  "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\stdout.log",
+  "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\stderr.log",
+  "crash_dumps": []
+}

@@ -1,0 +1,59 @@
+
+Name                  Value
+----                  -----
+name                  base_isolated
+arguments             {-nojvm, -batch, fprintf('MINIMAL_START\n'); assert(2+2==4); fprintf('VERSION=%s\n',version); fpr…
+home_sanitized        False
+exit_code             -1073741819
+started_local         2026-10-31T00:03:56.9806050+08:00
+finished_local        2026-10-31T00:04:04.7537322+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+name                  sanitized_home
+arguments             {-nojvm, -batch, fprintf('MINIMAL_START\n'); assert(2+2==4); fprintf('VERSION=%s\n',version); fpr…
+home_sanitized        True
+exit_code             -1073741819
+started_local         2026-10-31T00:04:04.7778403+08:00
+finished_local        2026-10-31T00:04:10.2951201+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+name                  sanitized_home_nouserjavapath
+arguments             {-nojvm, -nouserjavapath, -batch, fprintf('MINIMAL_START\n'); assert(2+2==4); fprintf('VERSION=%s…
+home_sanitized        True
+exit_code             -1073741819
+started_local         2026-10-31T00:04:10.3045408+08:00
+finished_local        2026-10-31T00:04:15.7284413+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+name                  sanitized_home_softwareopengl
+arguments             {-nojvm, -softwareopengl, -batch, fprintf('MINIMAL_START\n'); assert(2+2==4); fprintf('VERSION=%s…
+home_sanitized        True
+exit_code             -1073741819
+started_local         2026-10-31T00:04:15.7325386+08:00
+finished_local        2026-10-31T00:04:21.1907731+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+name                  sanitized_home_singlethread
+arguments             {-nojvm, -singleCompThread, -batch, fprintf('MINIMAL_START\n'); assert(2+2==4); fprintf('VERSION=…
+home_sanitized        True
+exit_code             -1073741819
+started_local         2026-10-31T00:04:21.1956790+08:00
+finished_local        2026-10-31T00:04:27.9420775+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+name                  sanitized_home_nouserjava_softwareopengl
+arguments             {-nojvm, -nouserjavapath, -softwareopengl, -batch…}
+home_sanitized        True
+exit_code             -1073741819
+started_local         2026-10-31T00:04:27.9472043+08:00
+finished_local        2026-10-31T00:04:33.5355994+08:00
+log                   E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candi…
+log_has_minimal_start False
+log_has_minimal_done  False
+
+

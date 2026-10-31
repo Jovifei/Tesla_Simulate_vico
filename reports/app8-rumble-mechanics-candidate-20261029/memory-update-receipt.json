@@ -1,0 +1,8 @@
+{
+  "status": "MEMORY_UPDATED",
+  "message": "Verified project memory checkpoint applied after a fresh dry-run.",
+  "slots": [
+    "progress",
+    "decisions"
+  ]
+}

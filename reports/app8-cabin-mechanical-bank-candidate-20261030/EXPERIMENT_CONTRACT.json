@@ -1,0 +1,31 @@
+{
+  "schema": "s12.cabin_mechanical_bank.approved.v1",
+  "status": "IMPLEMENTATION_PENDING_RUNTIME_VERIFICATION",
+  "qualification": "SYNTHETIC_DIMENSIONLESS_RESEARCH_ONLY",
+  "sample_rate_hz": 48000,
+  "frame_samples": 960,
+  "frame_period_s": 0.02,
+  "renderer_gain": 0.1,
+  "source_columns": ["combustion_L", "combustion_R", "other_L", "other_R", "cycle_phase", "rpm", "load", "cut", "sample_time"],
+  "research_options": {"enabled": true, "cut_minimum": 0.35, "whine_scale": 1, "induction_scale": 1, "voicing_rpm_band": [2000, 3500], "mechanical_gain": 1, "mechanical_mod_depth": 0},
+  "reference": {
+    "capture_mat": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\B\\capture.mat",
+    "capture_mat_sha256": "bdefffc0f7b6d5071d8f359c6169c5c13ba46ea7294fb4ea788e503121beb919",
+    "pcm_sha256": "1a56b2f54ce3149a15d184c80257f1a838ddee83fd0ff193318d791b4dc396ef",
+    "frames": 4500,
+    "columns": 9,
+    "baseline_contract_sha256": "42a0b16a06dbd743ab5b14b29980abd2e4e16acfad7e8fd000146b7ac5e2a8f9",
+    "baseline_model_sha256": "eeb3cc8b89d55a7b184cfe44e76b306111b0d6b96feab6d8a1ed4684996b0002"
+  },
+  "mechanical": {"event_width_s": 0.0006, "event_phases_deg": [0, 90, 180, 270, 360, 450, 540, 630], "frequencies_hz": [160, 370, 820, 1630], "damping_ratios": [0.18, 0.14, 0.12, 0.1], "modal_input": 0.25, "modal_output": 0.25, "dc_hz": 15},
+  "network": {"admittances": [1, 1, 2], "delays_samples": [48, 72], "losses": [0.99, 0.99], "reflections": [0.3, 0.3], "downstream_reflection": 0},
+  "mechanical_mix": "POST_FROZEN_PRE_RENDERER_SUM",
+  "calibration": {"rpm": 2200, "load": 0.35, "throttle": 0.32, "duration_s": 6, "window_s": [1, 5], "status": "NOT_CALIBRATED"},
+  "cases": {"B0": "ORIGINAL_SOURCE_DC_AVERAGE_FROZEN", "N": "AVERAGED_COMBUSTION_NETWORK_NO_MECHANICAL", "M": "AVERAGED_COMBUSTION_NETWORK_EVENT_MODAL", "D": "INDEPENDENT_COMBUSTION_NETWORK_NO_MECHANICAL", "MD": "INDEPENDENT_COMBUSTION_NETWORK_EVENT_MODAL"},
+  "cold_repeat": "NEW_MATLAB_PROCESS_REQUIRED",
+  "screening": {"pcm_peak_max": 1, "sample_jump_max": 0.25, "frame_jump_max": 0.0269080675, "stop_on_failure": true},
+  "no_gain_rescue": true,
+  "human_acceptance": "NOT_RUN",
+  "device_qualification": "NOT_RUN",
+  "vehicle_qualification": "NOT_RUN"
+}

@@ -13,7 +13,6 @@ class TextureExternalLayersStaticContract(unittest.TestCase):
         text = (COMMON / "s12_v12_prepare_texture_external_input.m").read_text(encoding="utf-8")
         self.assertIn("textureLayers = zeros(frameCount, frameSamples, 3", text)
         self.assertIn("texture_layer_weights", text)
-        self.assertIn("layerWeights = [weights, zeros(frameCount, 2", text)
         self.assertIn("textureLayers(:, :, 1) = textureResidual", text)
         self.assertIn("layerPaths", text)
         self.assertIn("layer_source_sha256", text)

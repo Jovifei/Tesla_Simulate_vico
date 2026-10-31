@@ -1,0 +1,31 @@
+{
+  "case": "16-desktop-smoke-close",
+  "command": [
+    "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+    "-wait",
+    "-desktop",
+    "-logfile",
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\matlab.log",
+    "-r",
+    "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); disp('SIMULINK_CLOSE_BEGIN'); close_system(m,0); disp('SIMULINK_CLOSE_DONE'); exit(0,'force');"
+  ],
+  "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\working",
+  "pid": 369492,
+  "exit_code": 1,
+  "exit_hex": "0x00000001",
+  "timed_out": false,
+  "duration_seconds": 5.146,
+  "environment_overrides": {
+    "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\prefdir",
+    "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp",
+    "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp",
+    "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+    "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+    "USERPROFILE": "C:\\Users\\Admin"
+  },
+  "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\stdout.log",
+  "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\stderr.log",
+  "crash_dumps": [
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp\\matlab_crash_dump.377536-1"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "status": "ALL_VARIANT_DIMENSION_PROBES_PASS",
+  "model": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\isolated\\S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713.slx",
+  "frames": 100,
+  "results": {
+    "B0": {
+      "voice": "B0",
+      "pcm_shape": [
+        960,
+        2,
+        100
+      ],
+      "pcm_peak": 0.024465890919056505
+    },
+    "N": {
+      "voice": "N",
+      "path_shape": [
+        960,
+        2,
+        100
+      ],
+      "mechanical_shape": [
+        960,
+        1,
+        100
+      ],
+      "frozen_shape": [
+        960,
+        1,
+        100
+      ],
+      "sum_shape": [
+        960,
+        1,
+        100
+      ],
+      "mechanical_nonzero": false,
+      "sum_max_error": 0,
+      "pcm_shape": [
+        960,
+        2,
+        100
+      ],
+      "pcm_peak": 0.014522731787577285
+    },
+    "M": {
+      "voice": "M",
+      "path_shape": [
+        960,
+        2,
+        100
+      ],
+      "mechanical_shape": [
+        960,
+        1,
+        100
+      ],
+      "frozen_shape": [
+        960,
+        1,
+        100
+      ],
+      "sum_shape": [
+        960,
+        1,
+        100
+      ],
+      "mechanical_nonzero": true,
+      "sum_max_error": 7.8282784985242437E-18,
+      "pcm_shape": [
+        960,
+        2,
+        100
+      ],
+      "pcm_peak": 0.014523592235012671
+    },
+    "D": {
+      "voice": "D",
+      "path_shape": [
+        960,
+        2,
+        100
+      ],
+      "mechanical_shape": [
+        960,
+        1,
+        100
+      ],
+      "frozen_shape": [
+        960,
+        1,
+        100
+      ],
+      "sum_shape": [
+        960,
+        1,
+        100
+      ],
+      "mechanical_nonzero": false,
+      "sum_max_error": 0,
+      "pcm_shape": [
+        960,
+        2,
+        100
+      ],
+      "pcm_peak": 0.014522731787577285
+    },
+    "MD": {
+      "voice": "MD",
+      "path_shape": [
+        960,
+        2,
+        100
+      ],
+      "mechanical_shape": [
+        960,
+        1,
+        100
+      ],
+      "frozen_shape": [
+        960,
+        1,
+        100
+      ],
+      "sum_shape": [
+        960,
+        1,
+        100
+      ],
+      "mechanical_nonzero": true,
+      "sum_max_error": 7.8282784985242437E-18,
+      "pcm_shape": [
+        960,
+        2,
+        100
+      ],
+      "pcm_peak": 0.014523592235012671
+    }
+  },
+  "matlab_version": "26.1.0.3203278 (R2026a)",
+  "simulink_version": {
+    "Name": "Simulink",
+    "Version": "26.1",
+    "Release": "(R2026a)",
+    "Date": "20-Nov-2025"
+  }
+}

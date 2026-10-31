@@ -1,0 +1,2154 @@
+{
+  "project_name": "Tesla_speed / Vico Android 真实声浪",
+  "updated_at": "2026-10-30T23:21:53+08:00",
+  "current_phase": "P2",
+  "current_work_package": "APP8机械声源与双bank：车内目标和远端隔离实验方案已明确，等待Jovi授权；获批后由Terra max执行真实仿真与等响试听",
+  "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
+  "phases": [
+    {
+      "id": "P1",
+      "title": "工程基础与证据体系",
+      "weight": 10,
+      "dependencies": [],
+      "goal": "建立可追踪、可重复、可交接的工程基础",
+      "steps": [
+        "确认现有 App 与研究工作区边界，保留用户改动",
+        "建立唯一里程碑账本和生成器",
+        "交付绑定源码、测试、产物与验收证据"
+      ],
+      "deliverables": [
+        "路线图、账本、自动生成进度总览",
+        "源码及产物身份记录"
+      ],
+      "acceptance": [
+        "无证据不能标记 DONE",
+        "生成器检查通过，交付同步更新"
+      ],
+      "milestones": [
+        {
+          "id": "P1-M1",
+          "title": "已有基线工程与证据交接",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P1-M2",
+          "title": "统一账本与可重复进度生成",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/project-roadmap-20261002/verification.md"
+          ]
+        }
+      ],
+      "next_action": "验证本次文档体系并持续维护"
+    },
+    {
+      "id": "P2",
+      "title": "连续声浪核心",
+      "weight": 25,
+      "dependencies": [
+        "P1"
+      ],
+      "goal": "解决刺耳、缺少厚重脉动和回火失真；保留连续状态与低频层",
+      "steps": [
+        "保留 AH 基线，完成 C63 新源表示和有限回火模型",
+        "冻结候选与拟合预算，比较持续声、事件及低频保护",
+        "跑实际 Kotlin 四分支、同状态回火开关、630 数字回归与状态矩阵",
+        "失败候选保留证据并由远端制定下一工作包，不通过就不安装"
+      ],
+      "deliverables": [
+        "冻结配置与源码",
+        "声学、事件、数字与状态资格报告"
+      ],
+      "acceptance": [
+        "数字安全、确定性、连续状态均通过",
+        "持续声与回火达到预登记声学门槛，不损害低频层"
+      ],
+      "milestones": [
+        {
+          "id": "P2-M1",
+          "title": "AH 连续算法工程基线",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P2-M2",
+          "title": "新表示 C63 持续声及回火实现",
+          "status": "ACTIVE",
+          "evidence": [
+            "worktrees/n2-reception-20261002/docs/vico-p2-n2-stage-result.md",
+            "reports/recorded-audition-20261026/RESULTS.md",
+            "reports/recorded-sustain-20261027/RESULTS.md"
+          ]
+        },
+        {
+          "id": "P2-M3",
+          "title": "冻结候选完整离线声学与状态资格",
+          "status": "PARTIAL",
+          "evidence": [
+            "worktrees/remote-p2-p3-validation-20261002/docs/vico-frozen-hy1-actual-kotlin-result.md",
+            "reports/app8-execution-20261028/RESULTS.md"
+          ]
+        }
+      ],
+      "next_action": "隔离SLX数字接入子包已实际验证；完成复审后，继续多工况真实来源/独立留出及声学对照，产品接入另按授权执行。"
+    },
+    {
+      "id": "P3",
+      "title": "Android实时运行与交互产品化",
+      "weight": 15,
+      "dependencies": [
+        "P2"
+      ],
+      "goal": "将合格算法真正接入现有 Vico App，统一电脑与手机数字输入输出",
+      "steps": [
+        "仅接入离线合格候选，初始默认关闭新模式",
+        "同 RPM/load 对比采样率、声道、响度和实际 PCM",
+        "优化启用、停止、车型、校准、输出路线与故障反馈",
+        "验证冷启动、长时运行、输入丢失、后台、停止恢复与路线切换"
+      ],
+      "deliverables": [
+        "签名及源码绑定 APK",
+        "同输入 PCM 对比和设备回执",
+        "交互与生命周期报告"
+      ],
+      "acceptance": [
+        "实际安装与实时运行通过，无丢帧/溢出",
+        "完整生命周期及故障回退通过，不能继承旧 APK 证据"
+      ],
+      "milestones": [
+        {
+          "id": "P3-M1",
+          "title": "已有 AH 特定 APK 冷启动及 DEMO 长时证据",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P3-M2",
+          "title": "新算法接入及电脑手机同输入一致性",
+          "status": "ACTIVE",
+          "evidence": [
+            "worktrees/remote-p2-p3-validation-20261002/docs/vico-p3-runtime-hook-result.md"
+          ]
+        },
+        {
+          "id": "P3-M3",
+          "title": "交互、路线与生命周期完整验证",
+          "status": "ACTIVE",
+          "evidence": [
+            "worktrees/remote-p2-p3-validation-20261002/docs/vico-p3-runtime-hook-result.md",
+            "review_packages/input-validation-b4e1ea1-20261003/static-lifecycle-verification.json"
+          ]
+        }
+      ],
+      "next_action": "等待 P2 合格候选；设备连接后绑定新 APK 重测"
+    },
+    {
+      "id": "P4",
+      "title": "六车型连续声音扩展",
+      "weight": 15,
+      "dependencies": [
+        "P2",
+        "P3"
+      ],
+      "goal": "六车型有独立声音特征和资格，不复制 C63 参数冒充车型",
+      "steps": [
+        "完成每车参考来源和许可审计",
+        "独立配置气缸/点火/进排气/机械及事件特征",
+        "逐车测试数字、持续声与回火、手机播放和切换",
+        "保留每车资格矩阵，原声库不代表新算法完成"
+      ],
+      "deliverables": [
+        "六车型独立配置与来源清单",
+        "逐车测试及手机证据"
+      ],
+      "acceptance": [
+        "六车数字、声学、手机资格齐全",
+        "参考来源许可清晰，车型切换连续且安全"
+      ],
+      "milestones": [
+        {
+          "id": "P4-M1",
+          "title": "六车独立连续模型及事件配置",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P4-M2",
+          "title": "六车逐车声学与手机资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "先完成当前Hellcat实录主声源闭环和人耳接受，再逐车扩展；保持各车型身份、素材与资格独立。"
+    },
+    {
+      "id": "P5",
+      "title": "车辆输入与驾驶状态",
+      "weight": 10,
+      "dependencies": [
+        "P3"
+      ],
+      "goal": "手机速度与加速度可靠驱动虚拟 RPM/load；不能把 DEMO 当实车",
+      "steps": [
+        "盘点现有传感器和速度适配器，不重复建设",
+        "定义时间戳、有效性与速度/加速度到状态的映射",
+        "实现停车校准、平滑、换挡、输入丢失及安全降级",
+        "以同一轨迹验证回放与实时输入，保留原始证据"
+      ],
+      "deliverables": [
+        "输入合同与校准说明",
+        "回放/实时对比和失效报告"
+      ],
+      "acceptance": [
+        "轨迹与状态一致，校准可复现",
+        "定位/传感器丢失安全，输入生命周期通过"
+      ],
+      "milestones": [
+        {
+          "id": "P5-M1",
+          "title": "现有输入链路盘点及合同冻结",
+          "status": "PARTIAL",
+          "evidence": []
+        },
+        {
+          "id": "P5-M2",
+          "title": "校准、轨迹一致性与输入失效资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "核对现有实现，完成实输入而非仅模拟资格"
+    },
+    {
+      "id": "P6",
+      "title": "真实设备与驾驶验证",
+      "weight": 10,
+      "dependencies": [
+        "P3",
+        "P4",
+        "P5"
+      ],
+      "goal": "验证手机及车内输出链路与实际驾驶行为",
+      "steps": [
+        "先完成静止状态输出路线和物理录音对照",
+        "绑定车型、APK、手机、音量、蓝牙/扬声器及同输入材料",
+        "由安全驾驶与乘员记录方式执行路线测试",
+        "复核机械轰鸣、回火、延迟和断续，不用音量掩盖缺陷"
+      ],
+      "deliverables": [
+        "物理输出测量",
+        "实车路线与设备记录"
+      ],
+      "acceptance": [
+        "可重复设备与驾驶证据",
+        "路线、安全和实际输出问题闭环；不宣称 OEM 认证"
+      ],
+      "milestones": [
+        {
+          "id": "P6-M1",
+          "title": "手机/车内输出链路同材料测量",
+          "status": "NOT_RUN",
+          "evidence": []
+        },
+        {
+          "id": "P6-M2",
+          "title": "安全实车路线验证及问题闭环",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "离线和设备门通过后组织测试；当前无实车完成证据"
+    },
+    {
+      "id": "P7",
+      "title": "具名试听与产品体验验收",
+      "weight": 10,
+      "dependencies": [
+        "P4",
+        "P6"
+      ],
+      "goal": "Jovi 接受实际交付声音与操作体验，而非用代理分数代签",
+      "steps": [
+        "以版本绑定的同输入材料比较旧版、新版和许可参考",
+        "逐车记录持续声厚度、刺耳感、机械脉动及回火真实感",
+        "记录设备、输出路线、材料编号和拒绝原因",
+        "拒绝则回到所属阶段修复，重新出具验收"
+      ],
+      "deliverables": [
+        "六车具名试听记录",
+        "交互体验验收"
+      ],
+      "acceptance": [
+        "Jovi 明确接受交付版本的六车声音和体验",
+        "拒绝/待试听不能计 DONE；历史80%/40%不作本版分数"
+      ],
+      "milestones": [
+        {
+          "id": "P7-M1",
+          "title": "六车版本绑定试听接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        },
+        {
+          "id": "P7-M2",
+          "title": "实际启用/校准/车型切换体验接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        }
+      ],
+      "next_action": "合格新版安装后请 Jovi 验收，而不是要求验收未改善声音"
+    },
+    {
+      "id": "P8",
+      "title": "可发布交付",
+      "weight": 5,
+      "dependencies": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7"
+      ],
+      "goal": "完成可安装、可追踪、可回退且许可清晰的 Android 发布",
+      "steps": [
+        "核查全部主线退出门和未关闭缺陷",
+        "审计素材/模型许可与隐私权限",
+        "形成签名、版本、源码、配置、APK 身份及升级回退材料",
+        "同步 Git 提交/远端交接（有授权且仓库权限可用时）和使用文档"
+      ],
+      "deliverables": [
+        "发布 APK 与身份清单",
+        "使用/校准/回退说明和最终交接"
+      ],
+      "acceptance": [
+        "工程、声学、设备、实车、人耳及许可门全满足",
+        "提交与发布状态有实际回执，不把本地构建称已发布"
+      ],
+      "milestones": [
+        {
+          "id": "P8-M1",
+          "title": "许可/隐私/发布材料审计",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P8-M2",
+          "title": "最终 APK 与源码提交交付验收",
+          "status": "NOT_STARTED",
+          "evidence": []
+        }
+      ],
+      "next_action": "主线资格与人耳验收完成后执行发布"
+    }
+  ],
+  "blockers": [
+    "Jovi拒绝SR/SR2：无机械轰鸣，电磁感、过于光滑；当前技术路线待独立审计。",
+    "完整物理网络、工况同步实车声图、OEM及设备道路资格仍缺。",
+    "本轮只整理源码与实际模型/运行图像，不继续调参；原模型、声库和Android保持。",
+    "Hub独立工作树身份此前被拒绝，pending保留，不自动改绑定。"
+  ],
+  "optional_tracks": [
+    "AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。",
+    "ESP32/硬件/Simulink：背景研究，不计 Android 主线分母。",
+    "iOS/小程序：后续平台，不计本次完成范围。"
+  ],
+  "vehicles": [
+    {
+      "name": "Hellcat",
+      "continuous": "CONTROLLED_SIMULINK_LISTENING_90S_REPEAT_PASS;FULL_PHYSICS_AND_REAL_MAP_MISSING",
+      "acoustic": "NUMERIC_INTERVENTION_PASS;MECHANICAL_RUMBLE_LISTENING_FAIL",
+      "device": "NOT_RUN_THIS_VERSION",
+      "human": "SR_SR2_REJECTED_ELECTROMAGNETIC_SMOOTH_20261030"
+    },
+    {
+      "name": "Ferrari 458",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "SYNTHETIC_REJECTED;NEW_RECORDED_PENDING"
+    },
+    {
+      "name": "LFA",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "SYNTHETIC_REJECTED;NEW_RECORDED_PENDING"
+    },
+    {
+      "name": "GT-R R35",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "SYNTHETIC_REJECTED;NEW_RECORDED_PENDING"
+    },
+    {
+      "name": "C63 W204",
+      "continuous": "ACTIVE",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "SYNTHETIC_REJECTED;NEW_RECORDED_PENDING"
+    },
+    {
+      "name": "Supra JZA80",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "SYNTHETIC_REJECTED;NEW_RECORDED_PENDING"
+    }
+  ],
+  "reception_evidence": {
+    "date": "2026-10-02",
+    "remote_base": "83d6267a71e05117026836b8720dfbca2621c8f0",
+    "local_fix": "05ad70d55e9eb9605a94eaa1e201e20dd6b699fa",
+    "status": "PARTIAL",
+    "report": "worktrees/remote-p2-p3-validation-20261002/docs/vico-p3-runtime-hook-result.md",
+    "local_hook": "a768edc1e6cf848b71e5b624713702c53b8791e0",
+    "latest": "c455e72ff841dafac2e40cb6e4e85ca0776febd7",
+    "review": "Remote source review received; product qualification not accepted",
+    "device_report": "worktrees/remote-p2-p3-validation-20261002/docs/vico-device-reception-20261002.md",
+    "device_scope": "GM1910_AH_20S_DEBUG_BASELINE_NOT_NEW_SOURCE"
+  },
+  "n2_reception": {
+    "remote_sha": "5330f68be8cf022ab55fc2a0adc03bee81678fec",
+    "review": "PARTIAL_CORE_BUILD_PASS_EXPORT_REFERENCE_PENDING",
+    "build": "PASS",
+    "reference": "NOT_RUN",
+    "objective_evaluations": 0,
+    "unit_source_scale": 13.728409855272066,
+    "latest_remote": "51da86c12686636bc42833466cb6e64c912c9971",
+    "local_tests": 246,
+    "failures": 0,
+    "skipped": 27
+  },
+  "input_timing_repair_reception": {
+    "date_utc": "2026-10-03T11:24:58.004130+00:00",
+    "work_package": "Existing P3 input freshness and lifecycle repair; no new product phase",
+    "status": "PARTIAL",
+    "source_head": "b4e1ea1abb7cce7dc943a67845c781ff83fc9976",
+    "source_worktree": "worktrees/input-validation-b4e1ea1-20261003",
+    "qualification_scope": "Android compile/JVM unit/lint and GM1910 static basic lifecycle only",
+    "evidence": [
+      "review_packages/input-validation-b4e1ea1-20261003/build-verification.json",
+      "review_packages/input-validation-b4e1ea1-20261003/install-verification.json",
+      "review_packages/input-validation-b4e1ea1-20261003/static-lifecycle-verification.json",
+      "review_packages/input-validation-b4e1ea1-20261003/source-manifest.json"
+    ],
+    "digital": {
+      "unit_tests": 282,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 27,
+      "sensor_tests": 21,
+      "sensor_skipped": 0,
+      "lint_errors": 0,
+      "lint_warnings": 6,
+      "assembleDebug": "PASS"
+    },
+    "apk_sha256": "ef4b7619e8497db4d7e4cc25b20ad59e1ffb33013f406d996348c9d08bb73afb",
+    "device": "GM1910_DATA_PRESERVING_UPGRADE_AND_STATIC_BASIC_CHECK_PASS",
+    "vehicle_qualification": "UNCHANGED; no new source/vehicle acoustic qualification",
+    "human": "NOT_RUN",
+    "real_gnss_precision_latency": "NOT_RUN; no valid GNSS speed fix observed",
+    "blockers": [
+      "Real driving/GNSS accuracy and latency remain unverified; no road test authorized",
+      "Hub revision refused the independent clone as outside its registered repository; no event sent"
+    ]
+  },
+  "integration_reception": {
+    "date": "2026-10-03",
+    "scope": "VICO_N2_ONLY",
+    "remote_tip": "b4e1ea1a",
+    "status": "PARTIAL",
+    "tests": "Android285/0fail/29skip; Python120/0fail/4skip; WindowsN2 44/0fail/0skip",
+    "device": "INSTALL_AND_STARTUP_PASS; ACOUSTIC_NOT_RUN; HUMAN_NOT_RUN",
+    "report": "docs/vico-main-integration-20261003.md"
+  },
+  "calibration_diagnostics_reception": {
+    "date_utc": "2026-10-04T03:09:58.581037+00:00",
+    "work_package": "Existing P3 input/calibration diagnostics verification; no new product phase",
+    "status": "STATIC_DEVICE_VERIFICATION_PASS",
+    "source_main": "6e4cf1437972caf383baab3f987de0ebf2db373d",
+    "source_patch_head": "daca63c52f77c06b42fa8592cdeedda2caac823d",
+    "source_tree": "b8f3c8420d6c79236dc3f24ac526f401df439d99",
+    "tracked_files": 5168,
+    "git_blob_bytes": 123622503,
+    "android_tests": 58,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "host_ui_tests": 9,
+    "lint_errors": 0,
+    "lint_warnings": 6,
+    "apk_sha256": "03ebdcf65b77cb0c63bc564bae029387959ae92d7766bc6c77a26519d31a35f5",
+    "device_install": "PASS_EXACT_APK_DATA_PRESERVED",
+    "device_ui_scenarios": "PASS_OBSERVED_0_LT24_24_ACK_REPEAT_BACK_HOME_RETRY",
+    "vehicle_acoustic_human_qualification": "UNCHANGED_NOT_RUN",
+    "blockers": [
+      "GPS real fix/road speed accuracy not observed; acoustic and human qualification remain open",
+      "Hub isolated clone identity rejected; no binding change"
+    ],
+    "evidence": [
+      "review_packages/calibration-main-daca-isolated-r1/source-composition.json",
+      "review_packages/calibration-main-daca-isolated-r1/build-verification.json",
+      "review_packages/calibration-main-daca-isolated-r1/install-readiness.json",
+      "review_packages/calibration-main-daca-isolated-r1/verification.md",
+      "review_packages/calibration-main-daca-isolated-r1/resume-preflight.json",
+      "review_packages/calibration-main-daca-isolated-r1/device-acceptance.md",
+      "review_packages/calibration-main-daca-isolated-r1/device-summary.json",
+      "review_packages/calibration-main-daca-isolated-r1/device-calibration-results-r2.json"
+    ],
+    "user_stationary_upgrade_authorization": "Confirmed by delegated user reply dated 2026-10-04; no current device observation implied",
+    "prior_test_evidence_date": "2026-10-03; inherited local results, not rerun on resume",
+    "zero_sample_800ms_device": "NOT_OBSERVED",
+    "gps_road_accuracy": "NOT_RUN"
+  },
+  "speed_unit_readonly_diagnostic": {
+    "date_utc": "2026-10-04T03:20:15.212575+00:00",
+    "status": "PARTIAL_CURRENT_UI_BLOCKED",
+    "evidence": [
+      "review_packages/calibration-main-daca-isolated-r1/speed-unit-diagnostic.json",
+      "review_packages/calibration-main-daca-isolated-r1/calibration-back-cancel-r2.png"
+    ],
+    "blockers": [
+      "Current background WebView query timeout; direct localStorage value not read"
+    ],
+    "vehicle_qualification": "UNCHANGED"
+  },
+  "static_log_7bf34080_verification": {
+    "date_utc": "2026-10-04T06:12:56.517892+00:00",
+    "work_package": "Existing Android input/device diagnostics verification",
+    "status": "PARTIAL_STATIC_DEVICE_PASS",
+    "source_tree": "c38fdc1a095391293ce99d414307e171342d7db4",
+    "apk_sha256": "232da58988159315c231e9333ac6453a0610aa33245856583e0ac14a632f0f44",
+    "android_tests": 150,
+    "test_failures": 0,
+    "test_skipped": 0,
+    "host_ui_tests": 25,
+    "lint_errors": 0,
+    "lint_warnings": 6,
+    "install": "PASS_DATA_PRESERVED",
+    "logging": "3 COMPLETE parseable sessions; normal export identical; reported drops1/gaps4",
+    "vehicle_qualification": "UNCHANGED; road/acoustic/human NOT_RUN",
+    "blockers": [
+      "Objective vehicle-forward direction absent; real mount confirmation/trusted invalidation not run",
+      "No valid GPS; road correctness and listening acceptance remain open",
+      "Independent clone hub identity rejected; no binding change"
+    ],
+    "evidence": [
+      "review_packages/static-log-7bf34080/acceptance.md",
+      "review_packages/static-log-7bf34080/acceptance-summary.json",
+      "review_packages/static-log-7bf34080/export-verification.json",
+      "review_packages/static-log-7bf34080/handoff-summary.md",
+      "review_packages/static-log-7bf34080/handoff-log-details.json"
+    ],
+    "handoff": {
+      "date_utc": "2026-10-04T06:17:25.348288+00:00",
+      "library_id": "libfile_0a695057a8e48191b09e074bc82bd5ef",
+      "library_save": "SUCCEEDED_LOCAL_XATTR_FAILED",
+      "schema_fields": "COMPLETE",
+      "session_start": "NOT_RECORDED",
+      "export": "MATCH_NORMALIZED_LF_CONTENT_WINDOWS_CRLF_DISK_DIFFERENCE",
+      "privacy": "no coordinates/VIN/accounts/mic; raw logs not uploaded"
+    }
+  },
+  "c7789af_local_build_handoff": {
+    "date_utc": "2026-10-04T14:19:34.989464+00:00",
+    "work_package": "Existing Android sound/input handoff; source and host verification only",
+    "status": "STATIC_DEMO_DEVICE_PASS_REAL_ROAD_ACOUSTIC_PENDING",
+    "source_tree": "094458cf6d70825019abf916c32e816d48ddeba4",
+    "source_commit": "c7789afe8dd287980e7a8fba052b133ca3cc35ac",
+    "apk_sha256": "23eb8764bdd9f9c75b2beb09fc6955f65b1616be6ea3bfc515b1ec9e17747c37",
+    "all_default_unit_tests": {
+      "tests": 420,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 29
+    },
+    "published_ci_scope": {
+      "tests": 160,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "js_pass": 25,
+    "python_pass": 18,
+    "lint_errors": 0,
+    "lint_warnings": 6,
+    "install": "PASS_SAME_SIGNATURE_DATA_PRESERVED",
+    "vehicle_qualification": "UNCHANGED_ROAD_ACOUSTIC_HUMAN_NOT_RUN",
+    "blockers": [
+      "Only700RPM DEMO tested; real road/GPS/mount confirmation and physical listening/acoustic qualification remain open",
+      "Library local metadata unsupported on Windows; screenshot saved successfully",
+      "Hub independent clone identity rejected; no binding change"
+    ],
+    "evidence": [
+      "review_packages/build-c7789af/acceptance.md",
+      "review_packages/build-c7789af/source.json",
+      "review_packages/build-c7789af/build.json",
+      "review_packages/build-c7789af/compatibility.json",
+      "docs/07-debugging/04-vico-local-build-and-transfer-lessons-20261004.md",
+      "review_packages/c7789af-device/acceptance.md",
+      "review_packages/c7789af-device/checks.json",
+      "review_packages/c7789af-device/log-analysis.json"
+    ],
+    "device_followup": {
+      "date_utc": "2026-10-05T00:07:05.032851+00:00",
+      "source_tree": "094458cf6d70825019abf916c32e816d48ddeba4",
+      "apk_sha256": "23eb8764bdd9f9c75b2beb09fc6955f65b1616be6ea3bfc515b1ec9e17747c37",
+      "sessions": 3,
+      "rows": 842,
+      "config_start_order": "PASS_CONFIG_BEFORE_ONE_START_EACH",
+      "stop_saved_export": "PASS_BYTE_EXACT",
+      "queue_dropped": 2,
+      "startup_gap": 0,
+      "old_logs_unchanged": 3,
+      "restored": "GTR_REAL_MPH_VOLUME14",
+      "phone_released": true,
+      "new_real_cruise_strategy": "NOT_INCLUDED_NOT_TESTED",
+      "acoustic_human": "NOT_RUN"
+    }
+  },
+  "955b135_local_build_handoff": {
+    "date_utc": "2026-10-05T01:04:22.083511+00:00",
+    "work_package": "Existing Android REAL drive policy verification",
+    "status": "STATIC_DEVICE_DIGITAL_PASS_WITH_LIMITS",
+    "source_tree": "2d7813e3994c1f939393559b729846a77bc67d3d",
+    "source_commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+    "apk_sha256": "b1e35897754bd4001ff46b8d6c27befed42b9e2ddc72fb4b40057c4d8f6fbea4",
+    "android_default": {
+      "tests": 451,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 29
+    },
+    "published_scope": {
+      "tests": 191,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "js_pass": 25,
+    "python_pass": 5,
+    "lint_errors": 0,
+    "lint_warnings": 6,
+    "install": "PASS_SAME_SIGNATURE_INSTALL_R_EXACT_APK",
+    "vehicle_qualification": "UNCHANGED; road/acoustic/human NOT_RUN",
+    "blockers": [
+      "Fixed 1400 RPM and screen-off/wake not verified",
+      "Road/acoustic/human gates remain open; vehicle qualification unchanged",
+      "Library official Windows materialization unresolved",
+      "Hub clone identity rejected; no binding changes"
+    ],
+    "evidence": [
+      "review_packages/build-955b135/acceptance.md",
+      "review_packages/build-955b135/source.json",
+      "review_packages/build-955b135/build.json",
+      "review_packages/build-955b135/skips.md",
+      "review_packages/build-955b135/compatibility.json",
+      "docs/07-debugging/04-vico-local-build-and-transfer-lessons-20261004.md",
+      "review_packages/955b135-device/acceptance.md",
+      "review_packages/955b135-device/acceptance-summary.json",
+      "review_packages/955b135-device/collection.json",
+      "review_packages/955b135-device/numeric-checks.json"
+    ],
+    "device_followup": {
+      "date_utc": "2026-10-05T01:04:22.083511+00:00",
+      "source_tree": "2d7813e3994c1f939393559b729846a77bc67d3d",
+      "apk_sha256": "b1e35897754bd4001ff46b8d6c27befed42b9e2ddc72fb4b40057c4d8f6fbea4",
+      "apk_bytes": 19906057,
+      "status": "STATIC_DEVICE_DIGITAL_PASS_WITH_LIMITS",
+      "sessions": 4,
+      "rows": 909,
+      "policy": "real_virtual_drive_v1",
+      "old_logs_unchanged": 6,
+      "export_byte_match": true,
+      "restored": {
+        "profile": "gtr_r35",
+        "mode": "REAL",
+        "unit": "mph",
+        "volume": 14,
+        "running": false,
+        "preferences_sha_unchanged": true,
+        "first_install": "2026-07-10 11:43:13"
+      },
+      "phone_released": true,
+      "limits": [
+        "Not fixed 1400 RPM: launch MODEL range 903.9499–2323.9876; UI script read nonexistent rpm field, hence zero snapshots are invalid RPM evidence.",
+        "Background MODEL range 3198–4025: scenario stop did not establish idle during ramp-down; lifecycle stop verified only.",
+        "One background pre_ready_dropped; queue/rejected/unwritten/config_gap all zero.",
+        "Screen off/wake not run because secure keyguard true.",
+        "No road, acoustic, microphone, speaker-latency or human-ear acceptance."
+      ]
+    }
+  },
+  "spectral_boundary_20261006": {
+    "date_utc": "2026-10-06T16:51:52.467715+00:00",
+    "status": "BASELINE_REPRODUCED_SPLICE_MATERIALS_MISSING",
+    "archive_commit": "d555f443ce053e40f0d41787c5cf56d56870147e",
+    "baseline_commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+    "pinned_inputs_match": 58,
+    "original_bank_loops_exact": 16,
+    "baseline_rows_equal_archive": false,
+    "fixed_gain": 3.7075542301539652,
+    "max_original_bank_peak": 0.6672433018684387,
+    "owner_head": "790072204700a8c2fb1f87449197a2b82ce2b4bb",
+    "owner_dirty_entries": 275,
+    "owner_status_sha256": "f671d302f2f86697fd47f3ca4ed5ce24b6a1bc973d815e64a66803a8cd3fefb5",
+    "owner_untouched": true,
+    "limits": [
+      "Owner content not fully fingerprinted: status identity only",
+      "900/1500/4300 rendered PCM byte identity not rerun; only original bank/input bytes verified",
+      "Dynamic noise and five protection gates not rerun",
+      "No new candidate, APK or device work"
+    ],
+    "missing": [
+      "Frozen +/-48-sample minimum-curvature splice generator and candidate identity",
+      "Exact dynamic noise harness, inputs, outputs and original three-gate thresholds",
+      "Five-band protection harness, thresholds, failing-window identities and frozen output hashes",
+      "900/1500/4300 renderer baseline PCM hashes for requested byte comparison"
+    ],
+    "work_package": "Existing C63 boundary repair digital diagnosis",
+    "vehicle_qualification": "UNCHANGED; device/acoustic/human gates remain open",
+    "evidence": [
+      "review_packages/spectral-boundary-20261006/REPORT.md",
+      "review_packages/spectral-boundary-20261006/receipt.json"
+    ]
+  },
+  "partial_recovery_20261006": {
+    "date_utc": "2026-10-06T17:05:11.428706+00:00",
+    "work_package": "Existing C63 boundary repair frozen evidence recovery",
+    "status": "MATERIALIZATION_BLOCKED_DESIGN_ONLY",
+    "evidence": [
+      "review_packages/partial-recovery-20261006/materialization-receipt.json",
+      "review_packages/partial-recovery-20261006/NEW_EXPERIMENT_PROPOSAL.md"
+    ],
+    "blockers": [
+      "Official Library materialization failed twice: Windows xattrs unsupported; final ZIP absent/hash unverified",
+      "Lost old splice gates not recoverable; new dynamic thresholds pending explicit justification/review"
+    ],
+    "vehicle_qualification": "UNCHANGED; no candidate/device/acoustic/human acceptance",
+    "owner_status_unchanged": true
+  },
+  "boundary_contract_20261007": {
+    "date_utc": "2026-10-07T07:37:27.424338+00:00",
+    "fresh_recipe_exit": 0,
+    "original_loops_exact": 16,
+    "same_host_prior_rows_identical": true,
+    "max_bank_peak": 0.6672433018684387,
+    "gain": 3.7075542301539652,
+    "recipe_sha256": "b9ec9153fbd94318b5096b6584ea13b471f7ca6cf70fc9b8525769129b2462a4",
+    "contract_sha256": "9009cb2dec81c4a98af3c964ebfe1c4e23c094530db5300fac60f6714dc8cf45",
+    "status": "BASELINE_REPRODUCED_CONTRACT_PROPOSED_NO_CANDIDATE",
+    "work_package": "Existing C63 loop boundary diagnosis",
+    "vehicle_qualification": "UNCHANGED; no device/acoustic/human acceptance",
+    "evidence": [
+      "review_packages/boundary-contract-20261007/REVIEW.md",
+      "review_packages/boundary-contract-20261007/contract.proposed.json",
+      "review_packages/boundary-contract-20261007/input-identity.json",
+      "review_packages/boundary-contract-20261007/baseline-receipt.json"
+    ],
+    "blockers": [
+      "New dynamic harness/scorer/negative controls not implemented or run",
+      "New seam threshold and loop-band guard adoption pending review"
+    ],
+    "hub_correction": {
+      "revision": 5,
+      "event_id": "e2f5aea9-f983-4787-abfb-9b78c01d6173",
+      "reported_status": "blocked",
+      "readback_verified": true,
+      "original_rejected_event_retained": true
+    }
+  },
+  "boundary_facilities_20261007": {
+    "date_utc": "2026-10-07T08:20:53.406541+00:00",
+    "status": "FACILITY_IMPLEMENTED_TESTED_ADMISSION_BLOCKED",
+    "candidate_budget": 0,
+    "owner_head": "790072204700a8c2fb1f87449197a2b82ce2b4bb",
+    "owner_status_sha256": "f671d302f2f86697fd47f3ca4ed5ce24b6a1bc973d815e64a66803a8cd3fefb5",
+    "pinned_inputs_checked": 58,
+    "fixed_gain": 3.7075542301539652,
+    "commands": [
+      {
+        "command": "python build_harness.py --repo .../build-955b135 --deps .../deps --download-deps",
+        "exit": 0
+      },
+      {
+        "command": "python run_facilities.py",
+        "exit": 1,
+        "reason": "three up-sweep cross-chunk raw/smoothed sidecar bit differences; PCM identical; strict guard intentionally preserved"
+      },
+      {
+        "command": "independent Java repeats via Python repeats.log",
+        "exit": 0
+      },
+      {
+        "command": "python test_scorer.py",
+        "exit": 0,
+        "tests": 24
+      },
+      {
+        "command": "python audit_artifacts.py",
+        "exit": 0,
+        "captures": 27
+      }
+    ],
+    "observer_pristine_parity_scenarios": [
+      "steady",
+      "up",
+      "events",
+      "gap"
+    ],
+    "cross_chunk_pcm_bit_equal": true,
+    "cross_chunk_sidecar_failures": [
+      {
+        "scenario": "up",
+        "chunk": 333,
+        "pcm_bit_equal": true,
+        "side_bit_equal": false,
+        "nonregression": false,
+        "error": "A/B independently observed full sidecar join mismatch"
+      },
+      {
+        "scenario": "up",
+        "chunk": 960,
+        "pcm_bit_equal": true,
+        "side_bit_equal": false,
+        "nonregression": false,
+        "error": "A/B independently observed full sidecar join mismatch"
+      },
+      {
+        "scenario": "up",
+        "chunk": 997,
+        "pcm_bit_equal": true,
+        "side_bit_equal": false,
+        "nonregression": false,
+        "error": "A/B independently observed full sidecar join mismatch"
+      }
+    ],
+    "gap_wall_seconds": 30,
+    "gap_pcm_seconds": 28,
+    "gap_pcm_frames": 1344000,
+    "reset_pre_stats_evaluated_frames": 864000,
+    "post_reset_evaluated_frames": 480000,
+    "independent_repeat_scenarios": [
+      "steady",
+      "up",
+      "gap",
+      "900RPM"
+    ],
+    "low_controls_executed": "900/1500/4300; 4s load .47 only; not full 4/12s four-load coverage",
+    "holdout": "frozen contract only; not executed; candidate budget zero",
+    "independent_reference": "MISSING; all scoring admissions false/BLOCKED",
+    "limitations": [
+      "Not REAL controller/device/source calibration evidence",
+      "3 cross-chunk sidecar mismatches remain; no tolerance added",
+      "Full 4/12s load/holdout and down/reverse coverage not executed",
+      "Events synthetic placements bound to unchanged bank assets, not validated independent source-trigger timing; constructor marker hashes are fixture placeholders, not source proof",
+      "Difference improvement zero baseline NOT_EVALUABLE; A=A nonregression is not improvement",
+      "Prototype sidecar uses 18 Float64 binary columns and corresponding typed schema; observer parity established only for the listed cases"
+    ],
+    "work_package": "Existing C63 loop boundary digital facilities",
+    "vehicle_qualification": "UNCHANGED; device/acoustic/human gates OPEN",
+    "evidence": [
+      "review_packages/boundary-facilities-20261007/REPORT.md",
+      "review_packages/boundary-facilities-20261007/receipt.json",
+      "review_packages/boundary-facilities-20261007/final-source-sha256.json"
+    ],
+    "blockers": [
+      "Not REAL controller/device/source calibration evidence",
+      "3 cross-chunk sidecar mismatches remain; no tolerance added",
+      "Full 4/12s load/holdout and down/reverse coverage not executed",
+      "Events synthetic placements bound to unchanged bank assets, not validated independent source-trigger timing; constructor marker hashes are fixture placeholders, not source proof",
+      "Difference improvement zero baseline NOT_EVALUABLE; A=A nonregression is not improvement",
+      "Prototype sidecar uses 18 Float64 binary columns and corresponding typed schema; observer parity established only for the listed cases"
+    ],
+    "final_source_sha256": {
+      "Harness.kt": "7213fda76e02b709680d43d9c4fb771feb82919cb05a9a9adf6c0fc94b692ee1",
+      "build_harness.py": "c99468baabd0dc6de9300e8a9d4691c191c57143268d666a838d537fa63646dc",
+      "scorer.py": "df06cca1bca6c0d5e35e48f5d6f62294cca5bc2e1c138dcc8607682fdacd0052",
+      "test_scorer.py": "aea90a72d1861743b5ea5efdc12d50524f57deb457323952eab87fc9b5c7b0ff",
+      "run_facilities.py": "d7810cce3609c64ce755bc0d54aa933df923e0b145ec1dd2674647324df07a16",
+      "audit_artifacts.py": "59b45a8805d3922afe2d36e912389ca6b8939fc7a2fc6e4f1ffce803075449e9",
+      "contract.v2.json": "e3894c449dd5bf98875d7cc8aecd67f546e4d9cd10c60f91d46f93f768a0c8f1"
+    },
+    "provenance": "27 capture receipts bind source 58pins, case hash and PCM/side/calls/stats file hashes; wrong frozen/case hash negative controls PASS",
+    "hub": {
+      "revision": 6,
+      "event_id": "e984b9f0-d5ac-4698-a132-924963885108",
+      "status": "blocked",
+      "readback_verified": true
+    }
+  },
+  "boundary_canonical_20261007": {
+    "date_utc": "2026-10-07T08:52:25.193212+00:00",
+    "status": "CANONICAL_REPLAY_VALIDATED_ADMISSION_BLOCKED",
+    "candidate_budget": 0,
+    "source_commit": "955b1355839f4b233e56c9ec9213fb86ae1927a6",
+    "archive_commit": "d555f443ce053e40f0d41787c5cf56d56870147e",
+    "fixed_gain": 3.7075542301539652,
+    "owner_head": "790072204700a8c2fb1f87449197a2b82ce2b4bb",
+    "owner_status_sha256": "f671d302f2f86697fd47f3ca4ed5ce24b6a1bc973d815e64a66803a8cd3fefb5",
+    "owner_status_unchanged": true,
+    "baseline_pairs": 184,
+    "packet_pairs": 15,
+    "captures_audited": 388,
+    "scorer_tests": 29,
+    "windows_scored": 127680,
+    "commands": [
+      {
+        "command": "build_harness.py --repo worktrees/build-955b135 --deps review_packages/boundary-facilities-20261007/deps",
+        "exit": 0
+      },
+      {
+        "command": "run_coverage.py",
+        "exit": 0,
+        "cases": 123
+      },
+      {
+        "command": "run_supplemental.py",
+        "exit": 0,
+        "cases": 61
+      },
+      {
+        "command": "test_canonical_scorer.py",
+        "exit": 0,
+        "tests": 29
+      },
+      {
+        "command": "verify_capture_bits.py",
+        "exit": 0,
+        "independent_pairs": 184,
+        "packet_pairs": 15
+      },
+      {
+        "command": "audit_artifacts.py",
+        "exit": 0,
+        "captures": 388
+      }
+    ],
+    "repair_scope": "canonical per-sample input scheduling only, actual renderer unchanged; variable-controls actual renderer calls size1; outer packet sizes tested; not native endpoint API partition invariance",
+    "v2_native_api_failures": "3 strict cross-chunk joins preserved; first raw difference frame34, first smoothed3016; cursor/PCM same in examined V2 case",
+    "independent_reference": "BLOCKED: frozen legacy source-control recipes discard first second and do not bind same startup/phase/gap/reset/event semantics; not substituted or newly invented",
+    "coverage_limits": [
+      "Gap/reset fixture is explicitly30s; a12s gap with reset at20s is not defined and not silently treated as passing",
+      "Steady/control/holdout and dynamic4/12/30s test matrices frozen in plan files; does not demonstrate arbitrary phase or true REAL controller",
+      "Original fixture event binding fields remain synthetic markers, not independently validated source event timing",
+      "Captured raw fixtures are Float32BE/sideFloat64BE; inherited LE statement corrected in separate schema contract; no waveform math rounding used"
+    ],
+    "review_library": {
+      "library_file_id": "libfile_00e50ad0e99c819187b3dbc69782e90c",
+      "filename": "Vico_Boundary_V2_Review_20261007.zip",
+      "bytes": 23875,
+      "sha256": "ee5ca51fb82522944faffd86e19e308fbcc446457e8a076ac556ec743f3873ca",
+      "audio_included": false,
+      "save_confirmed": true,
+      "local_xattrs": "FAILED_WINDOWS_UNSUPPORTED; identity receipt retained"
+    },
+    "blockers": [
+      "Independent complete transient source reference absent: candidate admission always false",
+      "V2 native endpoint interpolation arithmetic remains partition-dependent; canonical fixture has different explicit scheduling semantics",
+      "Independent review of new threshold/contract and source-event binding required before any candidate"
+    ],
+    "work_package": "Existing C63 loop boundary validation facilities",
+    "vehicle_qualification": "UNCHANGED; no acoustic/device/human qualification",
+    "evidence": [
+      "review_packages/boundary-canonical-20261007/REPORT.md",
+      "review_packages/boundary-canonical-20261007/receipt.json",
+      "review_packages/boundary-canonical-20261007/final-sha256.json",
+      "review_packages/boundary-facilities-20261007/layered-causality.json"
+    ],
+    "canonical_review_library": {
+      "library_file_id": "libfile_19ef9414b824819183cef42e3be2cbfe",
+      "filename": "Vico_Canonical_Facility_Review_20261007.zip",
+      "sha256": "43b8ce98015bdd9569d5f3638591a20665babef4521417e7bf3307fdc08e7b0d",
+      "audio_included": false,
+      "save_confirmed": true,
+      "local_xattrs": "FAILED_WINDOWS_UNSUPPORTED"
+    },
+    "hub": {
+      "revision": 7,
+      "event_id": "17223776-e069-4d5b-8d6e-14f96e78c567",
+      "status": "blocked",
+      "readback_verified": true
+    }
+  },
+  "remote_stage_20261011": {
+    "date": "2026-10-11",
+    "stage": "P2/P3",
+    "status": "ACTIVE",
+    "branch": "codex-remote-stage-20261011-integration",
+    "pr": 38,
+    "received_head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "received_tree": "f0a363f16080d4d3093c8dac11e0f829b5d08667",
+    "local_helper": "Remote v5 mechanical reception plus local hysteresis regression; actual source pushed to PR38 branch",
+    "implementation_remaining": [
+      "other playback entry point review",
+      "input/audio diagnostics",
+      "N3 profile/extractor",
+      "final-head CI and review"
+    ],
+    "device": "NOT_RUN_FOR_CURRENT_HEAD",
+    "human": "NOT_RUN",
+    "report": "review_packages/remote-stage-20261011/remote-reception-status.json",
+    "remote_review": "APPROVED",
+    "ci": {
+      "head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+      "run": 38141358224,
+      "linux": "PASS",
+      "windows": "PASS",
+      "android": "PASS",
+      "stage_y": {
+        "run": 38141358273,
+        "status": "FAILED",
+        "failed_step": "Complete S12 Python regression",
+        "head": "52df7a7b2152f41120ceefd834e94068eb9a35f8"
+      },
+      "stage_af": {
+        "run": 38141358306,
+        "status": "FAILED",
+        "failed_steps": [
+          "Diff and cleanup policy",
+          "Full S12 regression"
+        ],
+        "head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+        "raw_logs": "NOT_AVAILABLE"
+      }
+    },
+    "blocker": "PR38 HEAD 52df7a7b2152f41120ceefd834e94068eb9a35f8: Y run 38141358273 and AF run 38141358306 fail. A Track-P-only patch is prepared and locally tested; the earlier TSV-based AF attribution and workflow patch were retracted after confirming .gitattributes disables whitespace checks on both catalog directories. AF root cause remains unknown because raw logs are unavailable. The authorized branch is absent from the available checkout and the single git fetch to github.com:443 failed; apply to the authorized branch and rerun target CI when available.",
+    "local_tests": {
+      "tests": 454,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 29
+    },
+    "local_python": {
+      "run": 157,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "local_current_compile": "PASS Android482/0fail/29skip; VicoPython157/0fail/4skip; lint/APK PASS",
+    "fetched_head": "d2b3beed4def3dca3ced7cf670e368e199424604",
+    "new_remote_chat": "6acb7aaf-58e8-83ea-8613-99ab43682c0e",
+    "execution_mode": "CHAT_PLAN_REVIEW_LOCAL_EXECUTION_NO_WORK",
+    "implementation_commit": "b5915a9adf7d81d70c942f49f1721b6b48f40a71",
+    "closeout_report": "reports/closeout-20261012/PR38-CLOSEOUT.md"
+  },
+  "n3_foundation_work_package": {
+    "date": "2026-10-11",
+    "status": "PARTIAL",
+    "spec": "review_packages/remote-stage-20261011/n3-foundation-execution-spec.md",
+    "first_gate": "PR38 actual lifecycle source fix and final-head Android CI",
+    "ordered_scope": [
+      "PR38 closure",
+      "connected VehicleSoundProfile compatibility",
+      "bounded artifact-bound acoustic feature extraction"
+    ],
+    "deferred": [
+      "Web Studio",
+      "OBD/CAN and microphone"
+    ],
+    "candidate_count": 0,
+    "current_implementation": "SOFTWARE_IMPLEMENTED_AND_VERIFIED",
+    "blocker": "PR38 HEAD 52df7a7b2152f41120ceefd834e94068eb9a35f8: Y run 38141358273 and AF run 38141358306 fail. A Track-P-only patch is prepared and locally tested; the earlier TSV-based AF attribution and workflow patch were retracted after confirming .gitattributes disables whitespace checks on both catalog directories. AF root cause remains unknown because raw logs are unavailable. The authorized branch is absent from the available checkout and the single git fetch to github.com:443 failed; apply to the authorized branch and rerun target CI when available.",
+    "execution_mode": "CHAT_PLAN_REVIEW_LOCAL_EXECUTION_NO_WORK",
+    "source_commit": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "report": "review_packages/remote-stage-20261011/local-n3-validation.json",
+    "ci": {
+      "head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+      "run": 38141358224,
+      "linux": "PASS",
+      "windows": "PASS",
+      "android": "PASS"
+    },
+    "device": "INSTALL_AND_STARTUP_PASS_ONLY",
+    "pr38_closeout_report": "reports/closeout-20261012/PR38-CLOSEOUT.md"
+  },
+  "phone_audition_20261011": {
+    "status": "PARTIAL",
+    "device": "GM1910",
+    "source_commit": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "install_startup": "PASS",
+    "apk_sha256": "5cbbf6a201f6df60fd835c9fd3b0b66d306fce6513e5f8e79cbdb20e2b4343f8",
+    "data_retained": true,
+    "report": "review_packages/phone-audition-20261011/installation-receipt.json",
+    "audition": "PENDING_HUMAN",
+    "real_road": "NOT_RUN"
+  },
+  "pr38_closeout_20261012": {
+    "date": "2026-10-12",
+    "work_package": "PR38 Track-P / Stage Y / Stage AF closeout",
+    "status": "BLOCKED",
+    "source_head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "source_tree": "f0a363f16080d4d3093c8dac11e0f829b5d08667",
+    "base_sha": "6e4cf1437972caf383baab3f987de0ebf2db373d",
+    "report": "reports/closeout-20261012/PR38-CLOSEOUT.md",
+    "patch": "reports/closeout-20261012/PR38-Track-P-closeout.patch",
+    "patch_sha256": "d00fe661ea8e4881ce9af5c40b21a8fbff3485fab7d975f19e301fccbd024423",
+    "ci": {
+      "n2": {
+        "run": 38141358224,
+        "status": "PASS"
+      },
+      "y": {
+        "run": 38141358273,
+        "status": "FAILED",
+        "failed_step": "Complete S12 Python regression"
+      },
+      "af": {
+        "run": 38141358306,
+        "status": "FAILED",
+        "failed_steps": [
+          "Diff and cleanup policy",
+          "Full S12 regression"
+        ],
+        "raw_logs": "NOT_AVAILABLE"
+      }
+    },
+    "validation": {
+      "track_p_guard_test": "PASS_41_ISOLATED_FIXTURE",
+      "python_compile": "PASS",
+      "android_compat_asset_lock": "PASS_36_EXACT_ROOT_COUNT_AND_SHA",
+      "status_guard_real_git_fixtures": "PASS_MODIFY_DELETE_RENAME_IGNORED_ADDITION",
+      "patch_apply_check": "PASS_CAPTURED_TARGET_BASELINE_FIXTURE",
+      "target_gitattributes_property_check": "PASS_MINUS_TEXT_MINUS_WHITESPACE_BOTH_CATALOG_DIRECTORIES",
+      "af_synthetic_diff_and_cleanup_recheck": "PASS_ISOLATED_ONLY",
+      "af_root_cause": "UNKNOWN_RAW_LOGS_UNAVAILABLE",
+      "target_branch_full_s12": "NOT_RUN",
+      "target_patch_ci": "NOT_RUN"
+    },
+    "blocker": "PR38 HEAD 52df7a7b2152f41120ceefd834e94068eb9a35f8: Y run 38141358273 and AF run 38141358306 fail. A Track-P-only patch is prepared and locally tested; the earlier TSV-based AF attribution and workflow patch were retracted after confirming .gitattributes disables whitespace checks on both catalog directories. AF root cause remains unknown because raw logs are unavailable. The authorized branch is absent from the available checkout and the single git fetch to github.com:443 failed; apply to the authorized branch and rerun target CI when available.",
+    "vehicle_qualification": {
+      "n2_ci": "PASS_RUN_38141358224",
+      "device": "NOT_RUN",
+      "road": "NOT_RUN",
+      "acoustic": "NOT_RUN",
+      "human": "NOT_RUN"
+    },
+    "execution": {
+      "project_root_git_state": "UNVERSIONED",
+      "target_branch_local": false,
+      "available_checkout": "worktrees/build-955b135",
+      "available_checkout_head": "6e4cf1437972caf383baab3f987de0ebf2db373d",
+      "available_checkout_branch": "DETACHED",
+      "preexisting_status_entries": 123,
+      "checkout_modified_by_this_run": false,
+      "read_only_fetch": "FAILED_CONNECT_GITHUB_443",
+      "target_commit_or_push": "NOT_DONE"
+    },
+    "af_review": {
+      "gitattributes_blob": "59a9cdca1bd44019be4a65a628a4d0947316cb34",
+      "catalog_directories_attribute": "-text -whitespace",
+      "check_attr_whitespace": "UNSET_FOR_BOTH_CATALOGS",
+      "prior_tsv_hypothesis": "RETRACTED",
+      "synthetic_diff_check": "PASS_WITH_TARGET_ATTRIBUTES",
+      "raw_job_logs": "UNAVAILABLE_TRANSPORT_CLOSED",
+      "root_cause": "UNKNOWN"
+    },
+    "candidate_patch_changed_files": [
+      "tools/sound_sim/s12/acoustic_identity_v015/scripts/assert_track_p_unchanged.py",
+      "tools/sound_sim/s12/acoustic_identity_v015/tests/test_s12_track_p_guard.py"
+    ]
+  },
+  "pr38_closeout_20261013": {
+    "date": "2026-10-14",
+    "status": "SOFTWARE_DELIVERY_AND_INSTALL_PASS_AUDITION_OPEN",
+    "source_head": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "worktree": "worktrees/remote-stage-20261011-reception",
+    "report": "reports/closeout-20261013/execution-brief.md",
+    "remote_planning": "COMPLETED_CHAT_READ_ONLY",
+    "plan": "reports/closeout-20261013/chat-planning-response.txt",
+    "local_validation": {
+      "trackp_stagew": "PASS_96",
+      "trackp_latest": "PASS_46",
+      "standalone_guard": "PASS_180_FILES_2_SYMBOLS",
+      "af_fixed_base_working_tree_diff": "PASS",
+      "full_s12": "1794_PASS_6_SKIP_232_SUBTESTS_AT_4b44f018",
+      "android_test_lint_assemble": "PASS_BUILD_SUCCESSFUL_2m10s",
+      "guard_and_whitespace": "PASS_54",
+      "af_fixed_base_committed_diff": "PASS",
+      "android": "498_TESTS_0FAIL_0ERROR_29SKIP",
+      "vico_python": "157_PASS_4_SKIP",
+      "preview_actual_target_independent_review": "PASS"
+    },
+    "phone_audition": {
+      "date": "2026-10-13",
+      "feedback": "有改善，但需要继续优化",
+      "status": "IMPROVED_OPTIMIZATION_PENDING",
+      "installed_on": "2026-10-11",
+      "installed_apk_sha256": "5cbbf6a201f6df60fd835c9fd3b0b66d306fce6513e5f8e79cbdb20e2b4343f8"
+    },
+    "gates": {
+      "acoustic": "NOT_EVALUATED",
+      "road": "NOT_RUN",
+      "human_acceptance": "PENDING",
+      "candidate_count": 0,
+      "candidate_budget": 0
+    },
+    "blockers": [
+      "Preview-to-S13 successful takeover must invalidate oldPreview epoch/callback",
+      "Reject nextPreview while prior baseline restore remains pending",
+      "New APK held until same-stage fixes verified; device/road/acoustic/human gates open"
+    ],
+    "checkpoint_sha": "4b44f01844964ca9cf447890bf523657780778fe",
+    "final_code_sha": "89264b3531f679d6949a8c2c663711a466600042",
+    "checkpoint_ci": "ALL_FIVE_PASS_AT_4b44f018",
+    "apk": {
+      "sha256": "7e1822720f0c37eb9d9d68799ff7bd54bc798974dea31c91caacfc46831a57d3",
+      "path": "review_packages/preview-ownership-20261013/app-debug.apk",
+      "certificate_sha256": "9ab144e824abf26a5941819abb06831288c36a8bfe622657e3dc9d88281fc774",
+      "installed": false
+    },
+    "new_tip_ci": "ALL_FIVE_PASS_AT_cd1bab58",
+    "continuation": {
+      "automation_id": "pr38",
+      "status": "ACTIVE",
+      "frequency": "hourly",
+      "notify": "meaningful_changes_only"
+    },
+    "final_ci_evidence": "reports/closeout-20261013/heartbeat-ci-final.json",
+    "remote_review": "SOFTWARE_DELIVERY_APPROVED_ACTUAL_LOCAL_RECEIPTS_AND_FIXED_GITHUB_SOURCE",
+    "connection_recovery": "PASS_SAME_FIXED_ADDRESS_AFTER_RESTART",
+    "remote_review_evidence": "reports/closeout-20261013/chat-final-review-changes-required.txt",
+    "preview_ownership": "TWO_P2_ENTRY_FIXES_LOCAL_19_PASS_INDEPENDENT_REVIEW_APPROVED",
+    "apk_sha256": "8d81a7e44c519ea425279135d42c6c5eedb7b83d4fb6e54f4ab6234c8c062cf8",
+    "new_apk_device": "INSTALLED_STARTUP_PASS_20261014",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "tests": {
+      "android": "498_TESTS_0_FAILURES_0_ERRORS_29_SKIPPED",
+      "vico_python": "157_TESTS_0_FAILURES_4_SKIPPED",
+      "activity_entry_jvm": "19_PASS_JDK21_SOURCE_EXTRACTED_CONTROLLED_PORTS_RED_3_EXPECTED_FAILURES",
+      "lint_assembleDebug": "PASS"
+    },
+    "baseline_hosted_ci": "ALL_FIVE_PASS_AT_89264b3531f679d6949a8c2c663711a466600042",
+    "remaining": "现场设备签名和数据预检→exact APK owner confirmation→低音量静止演示/重复启停/后台恢复/日志导出",
+    "code_sha": "cd1bab58cd14b3c99520e6a2d5af6370c5327e55",
+    "current_work_package": "固定cd1bab58 APK8d81已保留数据安装GM1910并冷启动；等待Jovi试听",
+    "blocker": "当前APK人耳试听、道路与独立声学尚未验收",
+    "evidence": [
+      "reports/closeout-20261013/preview-s13-followup/final-ci.json",
+      "reports/closeout-20261013/preview-s13-followup/local-receipt.json",
+      "reports/closeout-20261013/preview-s13-followup/chat-final-review-approved.txt",
+      "reports/closeout-20261013/preview-s13-followup/chat-final-receipt-approved.txt",
+      "reports/device-install-20261014/receipt.json"
+    ],
+    "ci_monitor": "CLOSED_SOFTWARE_CI_REASON_COMPLETE",
+    "qualification": {
+      "human": "CHANGES_REQUIRED_PERIODIC_VIBRATION_CURRENT_INSTALLED_APK"
+    },
+    "audition_feedback": "2026-10-14 Jovi: almost all vehicles recurring0.5-0.6sec baseline vibration, particularly sustainedDEMO89mph; needskm/h andsoundoptimization"
+  },
+  "audition_periodicity_20261014": {
+    "date": "2026-10-15",
+    "source_parent": "cd1bab58cd14b3c99520e6a2d5af6370c5327e55",
+    "status": "SEAM_ONLY_SOFTWARE_CI_CLOSED_AUDITION_PENDING",
+    "current": "Canonical H8 boundary slope softening and nativekmh upgrade implemented/tested/built; full.55period target remainsCHANGES_REQUIRED",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "human": "PENDING_NEW_APK_AUDITION",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED",
+    "periodicity": "CHANGES_REQUIRED_910RPM_SLOW_TEXTURE",
+    "APK_SHA256": "b620ef8a38b23724396de32cf5a433cb24f3e12cfc5d40a3c1c25222bf707d36",
+    "evidence": "review_packages/periodicity-seam-kmh-20261015/manifest.json",
+    "remote_plan": "review_packages/periodicity-repair-20261015/remote-v3-seam-plan.txt",
+    "full_technical_report": "review_packages/periodicity-repair-20261015/evengine-full-technical-report.md",
+    "next": "GM1910连接后真实预检/新包确认安装/试听；0.55纹理研究与道路/声学/人耳门槛仍开放",
+    "source_commit": "84963463169a1533cc1fa8d93605b1e2589ca220",
+    "remote_review": "APPROVED_SEAM_ONLY",
+    "new_CI": "ALL_9_SUCCESS_5WORKFLOWS_8496346",
+    "device": "FINAL_FRESH5037_ONLY_EMULATOR5556_NO_GM1910; newAPKnotinstalled",
+    "monitor": "vico-pr38 DELETED_FINITE_CI_COMPLETE",
+    "CI_evidence": "reports/periodicity-repair-20261015/ci-closeout-20261015-044857.json"
+  },
+  "normal_texture_20261015": {
+    "date": "2026-10-15",
+    "status": "LOCAL_LIMITED_AM_DEPTH_SOFTWARE_CI_CLOSED_AUDITION_PENDING",
+    "source_commit": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+    "worktree": "E:/Tesla_speed/worktrees/remote-stage-20261011-reception",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "evidence": [
+      "review_packages/normal-envelope-kmh-20261015/manifest.json",
+      "reports/normal-texture-20261015/envelope-probe/independent-review.md"
+    ],
+    "current": "Fixed causal normaldrymix envelope shaping implemented; actual48+18 traces and same-tree Android build verified",
+    "next": "GM1910 current-device preflight and exacte07dAPK confirmation/audition; complete recurrence androad/acoustic/human remain open",
+    "device": "20261018_READONLY_DEVICE_PREFLIGHT_INCONCLUSIVE_ENUMERATION_RESTRICTED_PORTS_TIMEOUT_USB_AND_VERSION_UNKNOWN",
+    "human": "PENDING",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED",
+    "remote": "Latest Jovi instruction: local plans and executes; model recovery is no longer a dependency",
+    "local_result": "48/48 static and18dynamic,73411266sample-stride100ms windows0fail; C63910targetAMpowerdown36-37percent but exactperiodremains",
+    "source_state": "BASELINE477_REMOTE_CONFIRMED; OCT18_LOCAL_a95_NOT_PUSHED",
+    "APK_SHA256": "e07d5a7f6f9a716dd44cdfbbb1f57405c2e4acc8521a838d7f9efcb1bd862b28",
+    "APK": "E:\\Tesla_speed\\review_packages\\normal-envelope-kmh-20261015\\app-debug.apk",
+    "local_review": "LIMITED_AM_DEPTH_AUDITION",
+    "periodicity": "CHANGES_REQUIRED_EXACT_RECURRENCE_RETAINED",
+    "published_branch": "codex-remote-stage-20261011-integration",
+    "PR": 38,
+    "CI": {
+      "headRevision": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+      "check_count": 9,
+      "counts": {
+        "success": 9
+      },
+      "status": "ALL_9_SUCCESS_5_WORKFLOWS",
+      "evidence": "reports/normal-texture-20261015/envelope-probe/ci-477913e-final-20261015-161213.json",
+      "not_a_replacement_for_local_build": true,
+      "heartbeat_requested_at": "2026-10-15T08:12:13.162Z",
+      "job_detail_log_fetch": "Backend returned Cannot connect to GitHub on follow-up detail reads; no step-count or full-S12 count claimed"
+    },
+    "monitor": "vico-pr38 DELETED_FINITE_CI_COMPLETE_477913e"
+  },
+  "resume_20261018": {
+    "status": "READY_FOR_AUDITION_DEVICE_PREFLIGHT_INCONCLUSIVE_HUMAN_FEEDBACK_PENDING",
+    "evidence": "reports/resume-20261018/receipt.json",
+    "fresh_checks": "Two clean source heads/remotes, Android APK hash, web123localdist hashes,V4 12/12",
+    "device": "Inconclusive: system enumeration denied, visible process absent andreadonly ports timeout; USB/ADB/installedversion UNKNOWN; no service start",
+    "next": "Jovi feedback orGM1910 visible through permitted device access; actualport/version/signature/data preflight before exacte07dAPK install confirmation",
+    "human": "PENDING",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED"
+  },
+  "web_public_release_20261016": {
+    "date": "2026-10-16",
+    "status": "IMPORTED_SOFTWARE_RELEASE_EVIDENCE_NOT_PHYSICAL_ACCEPTANCE",
+    "source_commit": "4b3555bda8faf076e4659cf0296817d513817c82",
+    "parent_audio_commit": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+    "PR": 39,
+    "public_url": "https://tesla-vico.joviluma.com/#/garage",
+    "evidence": "reports/vico-web-0cb610e8/PUBLIC-RELEASE-4b3555b.md",
+    "import_date": "2026-10-18",
+    "importer_role": "local Codex root; source/hash checks fresh, prior tests/public checks inherited",
+    "fresh_dist_hash_checks": 123,
+    "prior_tests": "Node45, Chrome/Edge screenshots/lifecycle andCI38834487497 as recorded20261016; not rerunthisturn",
+    "physical_Tesla": "NOT_RUN",
+    "phone": "NOT_RUN",
+    "speaker": "NOT_EVALUATED",
+    "road": "NOT_RUN",
+    "human": "PENDING",
+    "acoustic": "NOT_EVALUATED",
+    "full_recurrence": "CHANGES_REQUIRED"
+  },
+  "cohort_pulse_20261018": {
+    "date": "2026-10-18",
+    "status": "REJECTED_SAFE_NO_MEANINGFUL_DE_REPETITION",
+    "evidence": "reports/cohort-pulse-20261018/findings.md",
+    "source_parent": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "production_changes": 0,
+    "human": "PENDING",
+    "acoustic": "NOT_EVALUATED",
+    "next": "Review fixed-parameter actual bank result; do not ship if gates fail",
+    "accepted_pulses": [
+      10,
+      17
+    ],
+    "scheduled_per_load": 27,
+    "actual_100ms_windows": 1142402,
+    "window_failures": 0,
+    "exact_period_acf": [
+      0.980416,
+      0.976166
+    ],
+    "new_2p5hz_scheduling_footprint": "RECORDED_NOT_SHIPPED",
+    "all48_executed": false
+  },
+  "normal_allocation_fix_20261018": {
+    "date": "2026-10-18",
+    "status": "LOCAL_QUALIFIED_COMMITTED_REMOTE_PUSH_AUTH_BLOCKED",
+    "source_commit": "a95fb09f50b4596a9562c7706c55f0f64ab0efb0",
+    "remote_head": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+    "branch": "codex-remote-stage-20261011-integration",
+    "PR": 38,
+    "evidence": "reports/normal-render-allocation-20261018/fix/local-delivery-receipt.json",
+    "scope": "One normal live empty eventmapguard; no waveform arithmeticchange",
+    "PCM": "72cases240files880128000bytes bitexact to477",
+    "Android": "498PASS29SKIP0FAIL0ERROR lint0error5warning assembleDebugPASS offline",
+    "APK_SHA256": "209fc8ce0f89f98a9bfad885b52f249571ef494b08588cd5639dd30e726a1630",
+    "APK": "review_packages/normal-allocation-kmh-20261018/app-debug.apk",
+    "signature": "ORIGINAL_DEBUG_CERT_VERIFIED",
+    "new_CI": "NOT_RUN_NEW_HEAD_NOT_REMOTE",
+    "phone_root_cause": "NOT_PROVEN",
+    "device": "PREFLIGHT_INCONCLUSIVE_NOT_INSTALLED",
+    "human": "PENDING",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED",
+    "full_recurrence": "CHANGES_REQUIRED",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "next": "Normal host terminal ordinary PR38push; realdevicepreflight andexact209fc APK confirmation/audition"
+  },
+  "project_directions_20261023": {
+    "record_date": "2026-10-23",
+    "source": "Jovi request in current project cleanup task",
+    "directions": [
+      "Android App",
+      "public Web",
+      "future hardware"
+    ],
+    "progress_boundary": "Existing P1-P8 percentages count Android engineering milestones only; no cross-product total claimed"
+  },
+  "documentation_cleanup_20261023": {
+    "record_date": "2026-10-23",
+    "status": "OWNER_AUTHORIZED_LOCAL_ARCHIVE_PERMANENTLY_DELETED",
+    "archived_text_files": 19,
+    "evidence": [
+      "reports/project-simplification-20261023/archive-manifest.json",
+      "reports/project-simplification-20261023/archive-manifest-additional.json",
+      "reports/project-simplification-20261023/documentation-validation.json",
+      "docs/04-REF-历史归档索引.md",
+      "reports/project-simplification-20261023/stage-package-manifest.json",
+      "reports/project-simplification-20261023/stage-package-move-journal.jsonl",
+      "reports/project-simplification-20261023/fourcar-package-manifest.json",
+      "reports/project-simplification-20261023/fourcar-move-journal.jsonl",
+      "reports/project-simplification-20261023/remaining-s12-manifest.json",
+      "reports/project-simplification-20261023/remaining-s12-code-refs.json",
+      "reports/project-simplification-20261023/remaining-s12-move-journal.jsonl",
+      "reports/project-simplification-20261023/remaining-review-packages.json",
+      "reports/project-simplification-20261023/remaining-review-packages.md",
+      "reports/project-simplification-20261023/scratch-package-manifest.json",
+      "reports/project-simplification-20261023/scratch-code-refs.json",
+      "reports/project-simplification-20261023/scratch-move-journal.jsonl",
+      "reports/project-simplification-20261023/last-53-code-refs.json",
+      "reports/project-simplification-20261023/PURGE-PREFLIGHT.json",
+      "reports/project-simplification-20261023/PURGE-RECEIPT.json",
+      "reports/project-simplification-20261023/PURGE-DELETE-JOURNAL.jsonl"
+    ],
+    "remaining": "Large review packages and worktrees require separate path-by-path decision",
+    "archived_stage_packages": 151,
+    "archived_stage_package_files": 15542,
+    "archived_stage_package_bytes": 36368695368,
+    "remaining_review_package_paths": 105,
+    "remaining_review_package_disposition": {
+      "ledger_reference": 21,
+      "source_code_reference": 36,
+      "undecided": 48
+    },
+    "restorable_from_local_archive": false,
+    "deletion": {
+      "date": "2026-10-23",
+      "target": "archive/2026-10-23",
+      "files": 15568,
+      "logical_bytes": 36369846447,
+      "free_bytes_gained_at_completion": 36226985984,
+      "receipt": "reports/project-simplification-20261023/PURGE-RECEIPT.json"
+    }
+  },
+  "acoustic_audit_20261023": {
+    "date": "2026-10-23",
+    "status": "AUDIT_DELIVERED_COMPREHENSIVE_DIRECTION_APPROVED",
+    "web_commit": "0822de4869b61444f647cb5227886f8b0f89be29",
+    "android_local": "a95fb09f50b4596a9562c7706c55f0f64ab0efb0",
+    "audio_source": "477913e7500bb3ff13c3b72cf5b1a3cac1b28145",
+    "evidence": "reports/acoustic-audit-20261023/声浪真实性审核与路线修正.md",
+    "web_core_tests": "31PASS0FAIL0SKIP",
+    "bank_identity": "114/114 unchanged from4b3555b;120PCMreferences match477;96loops0.36s",
+    "fresh_render_cases": 52,
+    "matlab": {
+      "status": "PASS_INDEPENDENT_MATLAB_PCM_ANALYSIS",
+      "input_SHA_checked": 52,
+      "max_band_power_relative_error": 6.901198516154937e-15,
+      "Simulink_model_run": "NOT_RUN"
+    },
+    "reference_metadata": {
+      "R1": 0,
+      "R2": 8,
+      "R3": 15,
+      "full_external_media_rehash": "NOT_RUN"
+    },
+    "C63_910": {
+      "period_seconds": 0.5538461538461539,
+      "normal_overlap_Pearson": 0.9999976584446645,
+      "target_power_normal_over_legacy": 0.6262202106119149
+    },
+    "phone_root_cause": "NOT_PROVEN_ALL_VEHICLES; digital coherent shortloop mixing verified",
+    "startup": "FULL_CRANK_FIRE_FLARE_SETTLE_NOT_IMPLEMENTED",
+    "product_reference_feedback": "OFFLINE_RESEARCH_EXISTS_PRODUCT_REFERENCE_PCM_COMPARISON_NOT_IMPLEMENTED",
+    "new_vehicle_proposal": [
+      "Porsche911GT3RS992",
+      "LamborghiniAventadorLP700-4"
+    ],
+    "new_vehicle_product_implementation": "NOT_DONE_REFERENCE_AND_FIT_PENDING",
+    "source_candidates_count": 0,
+    "source_candidates_budget": 0,
+    "production_assets_changed": false,
+    "human": "PENDING",
+    "road": "NOT_RUN",
+    "device": "NOT_RUN_THIS_AUDIT",
+    "acoustic_real_vehicle_qualification": "NOT_EVALUATED",
+    "next": "Owner review hybrid reference-driven direction; freeze exact Hellcat identity/target and reference-first startup/periodicity vertical slice"
+  },
+  "hellcat_realism_20261024": {
+    "status": "SOFTWARE_ITERATION_DELIVERED_REALISM_GOAL_OPEN",
+    "date": "2026-10-24",
+    "source_commit": "66132e8e594e244348a51b369a3b779d272666ef",
+    "PR": 40,
+    "evidence": "reports/hellcat-realism-20261023/CURRENT-STATUS.json",
+    "package": "review_packages/hellcat-realism-20261024/manifest.json",
+    "local_Android": "544/515pass/29skip/0fail0error;lint0error6warning;assemblePASS",
+    "local_Node": "111PASS",
+    "CI": "4observedSUCCESS at66132e8",
+    "startup": "PUBLIC_RECORDED_R2_DEMO_ONLY",
+    "reference_comparison": "EXPLICIT_PCM_API; fullalignment/calibration remainsopen",
+    "current_legacy_reference_paths": "23PATH_NOT_FOUND",
+    "recovered_raw_references": 3,
+    "continuous_periodicity": "CHANGES_REQUIRED",
+    "automatic_real_fit_runs": 0,
+    "old_frozen_source_candidate_budget": 0,
+    "new_engineering_trial": 2,
+    "engineering_trial_decision": "REJECTED_NOT_SHIPPED",
+    "new_recorded_startup_assets": 1,
+    "human": "JOVI_REPORTED_STARTUP_MORE_REALISTIC;fullproductPENDING",
+    "device": "APK_NOT_INSTALLED_BY_AGENT",
+    "road": "NOT_RUN",
+    "OEM_acoustic": "NOT_QUALIFIED",
+    "two_new_voices": "NOT_IMPLEMENTED",
+    "supplier": "ONE_OWNER_AUTHORIZED_EMAIL_SENT_NO_PURCHASE;replypending",
+    "handoff": "reports/hellcat-realism-20261023/本轮交接.md",
+    "current_reference_manifest": "reports/hellcat-realism-20261023/current-reference-manifest.json",
+    "reference_metadata_qualification": {
+      "evidence": "reports/hellcat-realism-20261023/recovered-reference-metadata-qualification.json",
+      "recovered_R2": 3,
+      "recovered_R1": 0,
+      "automatic_tuning_eligible": 0,
+      "supra_exact_generation": "UNVERIFIED_AUTHOR_REPORTS_DISTORTION",
+      "ferrari_scenario": "DRIVE_AWAY_EXTERNAL_NOT_STEADY_CABIN"
+    },
+    "supplier_followup": "vico-hellcat;read_only_original_thread;no_additional_mail_or_purchase;ends_on_reply_or_2026-10-31",
+    "continuation_20261024": {
+      "status": "MATERIAL_RECEIVED_FIXED_EXPERIMENT_REJECTED_ALIGNMENT_OPEN",
+      "evidence": "reports/hellcat-continuation-20261024/RESULTS.md",
+      "original_recordings_received": 2,
+      "seconds": 233.2651875,
+      "private_original_sha256": [
+        "0586317241b75bc379ae1a68b84b1710e839f3c240e022ecadcb3f22ef6b53e8",
+        "7fc159cb9f3ab6233954a98dd92f1031f2b40c103e0d0e22ea5a76d19a22b15b"
+      ],
+      "source_distribution": "PRIVATE_ONLY_PENDING_APP_WEB_LICENCE",
+      "real_window_count": 7,
+      "independent_t9_take_count": 1,
+      "weak_windows": 16,
+      "weak_union_regions": 5,
+      "weak_union_seconds": 63,
+      "component_tests": "2PASS_after_RED",
+      "actual_PCM_pairs": 6,
+      "RMS_violating_sliding_positions": 820791,
+      "RMS_total_sliding_positions": 6115206,
+      "trial_decision": "REJECTED_NOT_PRODUCT",
+      "manual_gain_or_seed_search": false,
+      "amplitude_unchanged": false,
+      "automatic_real_fit_runs": 0,
+      "new_product_source": false,
+      "new_APK": false,
+      "current_product_commit": "66132e8e594e244348a51b369a3b779d272666ef",
+      "next": "Actual-recording unit/state review; coordinated source switching; explicit missing RPM/load and product licence gates"
+    }
+  },
+  "hellcat_remote_full_stage_20261025": {
+    "status": "REMOTE_DELIVERED_LOCAL_CHECKS_COMPLETED_REPAIRS_PAUSED_FOR_OWNER",
+    "contract": "review_packages/hellcat-remote-full-stage-20261025/execution-contract.md",
+    "product_base_sha": "66132e8e594e244348a51b369a3b779d272666ef",
+    "remote_role": "AUDIT_FIX_PLAN_IMPLEMENT_TEST_REVIEW_COMMIT",
+    "local_role": "RECEIVE_FIXED_SHA_VERIFY_BUILD_DEVICE",
+    "no_main_merge": true,
+    "raw_restricted_media_to_remote": false,
+    "task_id": "c2c_c925",
+    "dispatch_receipt": "review_packages/hellcat-remote-full-stage-20261025/dispatch-receipt.json",
+    "remote_branch": "codex-hellcat-continuous-stage-20261025",
+    "source_checkpoint": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+    "local_reception_started": true,
+    "PR": 41,
+    "interim_CI": "4observedSUCCESS_at_d10cdde;localNOT_RUN",
+    "followup_automation": "vico-hc-c1_PAUSED_BY_JOVI",
+    "CI_evidence": "review_packages/hellcat-remote-full-stage-20261025/ci-d10cdde-all4-success.json",
+    "local_Node": "129PASS",
+    "local_Android": "551tests/522pass/29skip/0fail0error;test_lint_assemble_exit0",
+    "source_review": "NativeP2_lifecycle_changes_required;WebP2_96k_optin_boundary;not_repaired"
+  },
+  "engine_sim_rea_feasibility_20261025": {
+    "status": "SOURCE_AUDIT_AND_STATIC_TOOL_CHECK_COMPLETE_RUNTIME_AUDIO_NOT_RUN",
+    "goal": "Supplier-independent Hellcat acoustic mechanism feasibility; no default core replacement",
+    "evidence": "reports/engine-sim-rea-20261025/结论与下一步.md",
+    "verification": "reports/engine-sim-rea-20261025/verification-receipt.json",
+    "engine_sim_sha": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+    "rea_source_sha": "ca1b2f8608c52ed721d3576ba5eeb1d66717b08c",
+    "rea_runtime": "6.5.0_verified",
+    "native_decompile": "NOT_RUN_PROVIDER_UNAVAILABLE",
+    "portable_PE_resources": "ACTUAL_PASS",
+    "jdk21": "EXISTING_JBR_VERIFIED_NOT_MISSING",
+    "source_findings": [
+      "per-cylinder exhaust pressure continuously generated, no engine-recording short-loop source",
+      "shared720degree clock and per-cylinder path/delay useful",
+      "no confirmed dedicated Hellcat supercharger voice in this SHA",
+      "Windows desktop solver/DSP not direct Android port"
+    ],
+    "supplier_reply_dependency": "OPTIONAL_ONLY_NOT_BLOCKING_ENGINEERING",
+    "audio_generated": false,
+    "core_changed": false,
+    "next": "Proposed isolated60s fixed-control continuous pressure-source AB; preserve input state and DSP/noise/leveler evidence, no seed search; review before wholesale core migration",
+    "remote_material_delivery": "FILES_LINKED_IN_EXISTING_EXECUTION_CONTRACT_NOT_NEW_CHAT_MESSAGE",
+    "independent_PE_import_inspection": "ACTUAL_STATIC_PASS_33DLL_386SYMBOLS_DSOUND_ORDINALS_HOST_EXPORT_MATCH",
+    "runtime_function_analysis": "NOT_RUN_REA_NATIVE_PROVIDER_UNAVAILABLE",
+    "source_and_binary_runtime_parity": "NOT_PROVEN"
+  },
+  "engine_sim_manual_review_20261025": {
+    "status": "PLANS_AND_PROMPTS_DELIVERED_OWNER_TO_FORWARD_REMOTE_DECIDES",
+    "evidence": "reports/engine-sim-review-prompts-20261025/README.md",
+    "manifest": "reports/engine-sim-review-prompts-20261025/manifest.json",
+    "plans": 2,
+    "prompts": 2,
+    "sent_by_local_agent": false,
+    "simulation_started": false,
+    "default_core_changed": false,
+    "execution_gate": "Jovi forwards for remote audit/decision; do not auto-start engine-sim experiment",
+    "existing_PR41_closeout": "SEPARATE_CONTINUES"
+  },
+  "owner_review_plan_20261025": {
+    "status": "SUPERSEDED_BY_JOVI_AB_APPROVAL",
+    "evidence": "reports/owner-review-plan-20261025/执行方案.md",
+    "manifest": "reports/owner-review-plan-20261025/manifest.json",
+    "reason": "Jovi requested plan before further execution",
+    "A_engineering_fixes": "APPROVED_EXECUTING",
+    "B_engine_sim_offline": "APPROVED_EXECUTING",
+    "C_product_integration": "SEPARATE_REVIEW",
+    "new_prompts_sent": false,
+    "local_repairs": 0,
+    "engine_sim_run": false,
+    "superseded_by": "local_ab_execution_20261025",
+    "initial_pause_preserved_as_history": true
+  },
+  "web_gauge_cluster_20261025": {
+    "status": "WEB_UI_ITERATION_DELIVERED_DEVICE_ACCEPTANCE_PENDING",
+    "date": "2026-10-25",
+    "origin": "DIRECT_OWNER_INSTRUCTION_IN_SESSION (dashboard research + web panel optimization); distinct from owner_review_plan_20261025 items A/B/C which remain paused",
+    "grill_confirmations": "racing-style gauge confirmed; BMW M4 and Ferrari clusters requested by owner; 6-theme switcher agreed; hallmark method+checks agreed; browser-level verification agreed",
+    "worktree": "E:/Tesla_speed/worktrees/ui-cluster-20261025",
+    "branch": "wt/ui-cluster-20261025",
+    "base_commit": "6e4cf1437972caf383baab3f987de0ebf2db373d",
+    "commit": "UNCOMMITTED_IN_WORKTREE_BY_AGENT",
+    "files_changed": [
+      "vico_app/Project/android/app/src/main/assets/cluster.js (NEW: 6-theme SVG gauge engine)",
+      "vico_app/Project/android/app/src/main/assets/screens/dashboard.html",
+      "vico_app/Project/android/app/src/main/assets/screens/library.html",
+      "vico_app/Project/android/app/src/main/assets/screens/settings.html",
+      "vico_app/Project/android/app/src/main/assets/screens/calibration.html",
+      "vico_app/Project/android/app/src/main/assets/bridge.js",
+      "vico_app/tools/python/preview_screens.py (NEW dev-only preview harness)"
+    ],
+    "gauge_themes": "6: race / bmw-m4 / ferrari / tesla-minimal / hud / classic-twin-dial; persisted localStorage vico-cluster-theme; driven by existing __vicoUpdate payload; browser-only demo driver gated by __vicoPreview flag (never active on device)",
+    "logic_fixes": "library.html static 6-card markup replaces JS innerHTML rewrite (no FOUC, no dead 20-card DOM); dark-mode tokens via :root[data-scheme=dark] synced in bridge.js and settings toggle; all element IDs and AndroidBridge calls preserved",
+    "hallmark_checks": "sloplint 174FAIL/4REFLEX/5WARN -> 0/0/0 across 4 screens; hallmark repo cloned read-only to tools/hallmark-upstream (MIT)",
+    "browser_verification": "puppeteer-core + system Chrome: mock driver animates (speed/rpm/gear), 6 theme switches persist, 390px no horizontal overflow (scrollWidth==390), library select works (badgeVisible=1), settings/calibration load clean; screenshots E:/Tesla_speed/run_logs/ui-preview-20261025/",
+    "android_build": "NOT_RUN (HTML-only changes; user chose browser-level verification)",
+    "device": "APK_NOT_TOUCHED_NOT_INSTALLED",
+    "human": "PENDING_JOVI_REVIEW (screenshots + preview server provided)",
+    "blockers": "NONE"
+  },
+  "local_ab_execution_20261025": {
+    "status": "LOCAL_AB_ENGINEERING_AND_STUDY_DELIVERED",
+    "plan": "reports/ab-execution-20261025/PLAN.md",
+    "authority": "Jovi direct approval after pasted review",
+    "A2": "Web_RED2fail_GREEN22pass;Native_rate_RED1fail_GREEN29pass",
+    "A1": "INDEPENDENT_REVIEW_APPROVED_WITH_SCOPE;sticky_cancel_finite_tail",
+    "B": "COMPLETE_DESCRIPTIVE_ONLY_14routes_11tests_24outputchecks;B1INVALID_preserved;defaultDSP_REJECTED",
+    "C": "NOT_INCLUDED",
+    "remote_wait": false,
+    "A_integrated": "PASS_Web133_UI31_N244_wiring3_REALlifecycle_Android529pass29skip_lint0error6warning_assemble",
+    "B_preregistration": "reports/ab-execution-20261025/B-preregistration.json",
+    "B_negative": "B2_original_DSP47709clipped_samples_of7938000;no_tuning",
+    "source_base": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+    "worktree": "E:\\Tesla_speed\\worktrees\\vico-web-0cb610e8",
+    "new_APK_qualified": "A_SOFTWARE_ONLY_NOT_INSTALLED",
+    "A_local_commit": "f6018a6cd7ef9afc1c5c54e3e6ae05a2ac7efea3",
+    "A_remote_push": "CONFIRMED_PR41_no_main",
+    "A_APK_SHA256": "8911314e08fd28dd13c1210d4cf14c3a4aec68227f352b8e3419da99fe98e55f",
+    "B_evidence": "reports/ab-execution-20261025/B-invalid-reverse-dyno.json",
+    "A_CI": "4SUCCESS_exact_f6018a6",
+    "B_coarse_validity": "all_signed_omega_negative;active_lit_step_aggregates;MAPmax<=100424Pa;not_per_cylinder_firing_or_OEM_calibration",
+    "B_repro": "independently_exported_rebuilt_smoke_pressure_audio_state_dyno_validity_bit_exact",
+    "remote_head": "149ab01e3e6fb4b9df7b9aef60df9fbb5365fc8b",
+    "new_head_CI": "2SUCCESS_2IN_PROGRESS_exact149ab01",
+    "B_report": "reports/ab-execution-20261025/执行结果与下一阶段边界.md",
+    "B_result": "high_benefit_low_not_uniform_window_dependent;not_OEM;no_product_promotion",
+    "manifest": "reports/ab-execution-20261025/manifest.json"
+  },
+  "hellcat_continuous_repair_20261025": {
+    "status": "SYNTHETIC_TIMBRE_REJECTED_BY_OWNER_NOT_DEPLOYED",
+    "base": "149ab01e3e6fb4b9df7b9aef60df9fbb5365fc8b",
+    "plan": "reports/hellcat-continuous-repair-20261025/PLAN.md",
+    "scope": "Hellcat_normal_only_actual_Web_APK_audition;C_gate_authorized_for_this_bounded_stage",
+    "no_clipped_DSP": true,
+    "old_assets_and_rollback_preserved": true,
+    "public_base": "0822de4869b61444f647cb5227886f8b0f89be29",
+    "device_install": "NOT_INCLUDED",
+    "human_OEM": "PENDING",
+    "user_feedback": "startup_real_recording_good;all_sustained_synthetic_vehicles_unacceptable",
+    "modal_software": "143NodePASS;Android550pass29skip;528kFloatparity;not_human_sound_approval",
+    "modal_APK": "dcda365ac497846882ccda710007f4872237a8a970049ba46764f13cd0945f04_NOT_RECOMMENDED_AS_SOUND_FIX",
+    "public_unchanged": true,
+    "next": "Useexistinglicensedrealrecording_for_directaudibleAB_and_research_pervehicle_idle_loadaccel_coast_coverage",
+    "startup_source": "personal_recording_CC_BY_SA4_NOT_MANUFACTURER_OFFICIAL"
+  },
+  "hellcat_recorded_route_20261025": {
+    "status": "RECORDED_TIMBRE_DIRECTION_ACCEPTED_SOURCE_COVERAGE_OPEN",
+    "owner_reply": "实录持续段明显更接近目标",
+    "acceptance_receipt": "reports/hellcat-recorded-route-20261025/OWNER-REAL-SOURCE-ACCEPTANCE.json",
+    "audible_comparison": "http://127.0.0.1:4174/",
+    "startup_personal_CC_BY_SA_NOT_OFFICIAL": true,
+    "loop_or_RPM_load_fit": "NOT_PERFORMED",
+    "full_map": "MISSING_LICENSED_VERIFIED_ONLOAD_OFFLOAD_AND_STATE",
+    "recorded_source_main": "AUTHORIZED_EXISTING_COMPREHENSIVE_ROUTE",
+    "modal": "HUMAN_REJECTED_NO_DEPLOY",
+    "phone_publicroad_fullacoustic": "PENDING",
+    "latest_reference_url": "http://127.0.0.1:4181/#/reference",
+    "latest_reference_commit": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "latest_reference_receipt": "reports/recorded-sustain-20261027/delivery-receipt.json",
+    "main_recorded_voice": "NOT_IMPLEMENTED_WITH_VERIFIED_OPERATING_COVERAGE",
+    "recorded_sustain": "REFERENCE_ONLY_60S_NATURAL_RATE_120MS_CROSSFADE_NOT_FULL_MAP"
+  },
+  "historical_blockers_snapshots": [
+    {
+      "superseded_for_current_package_at": "2026-10-26T15:50:43.045148+00:00",
+      "reason": "Retain earlier version-specific evidence; old PR38/CI/device/MFA assertions are not current observations for the isolated recorded-reference tree.",
+      "prior_updated_at": "2026-10-25T09:41:34.898952+00:00",
+      "blockers": [
+        "当前手机默认仍为原六车型声库；HY1 未接入/安装，声音目标 NOT_DONE。",
+        "HY1 单次拟合已冻结：事件校准改善8.1%未达20%；中频最大+1.468dB超过1dB保护门。不能直接安装或再次拟合救分。",
+        "完整实际 Kotlin 离线资格未结束；新 APK、真机生命周期、物理输出、实车及具名试听均待执行。",
+        "Cloud整阶段任务提交仍被账户MFA拦截；已改用音浪新聊天GitHub读写执行接力，未改安全设置。",
+        "GM1910已在既有调试服务核实连接，Debug升级/冷热启动/20秒AH基线诊断通过；新声源、实车、物理输出与人耳资格仍未完成。",
+        "冻结HY1实际90组Kotlin数字检查通过，但中频+1.468dB及事件8.13%改善失败，不能启用；完整630/held-out仍未完成。",
+        "PR #37真实FIR/Event/基线链与二进制、事务恢复已接收修复，246tests/0失败/27跳过和APK通过；完整导出、真实参考/预算/630-case工具继续远端实现，objective=0，未启用N2。",
+        "PR38 HEAD 52df7a7b2152f41120ceefd834e94068eb9a35f8: Y run 38141358273 and AF run 38141358306 fail. A Track-P-only patch is prepared and locally tested; the earlier TSV-based AF attribution and workflow patch were retracted after confirming .gitattributes disables whitespace checks on both catalog directories. AF root cause remains unknown because raw logs are unavailable. The authorized branch is absent from the available checkout and the single git fetch to github.com:443 failed; apply to the authorized branch and rerun target CI when available."
+      ]
+    }
+  ],
+  "recorded_audition_20261026": {
+    "status": "LOCAL_REFERENCE_PLAYBACK_DELIVERED_FULL_SOUND_FIX_OPEN",
+    "worktree": "E:\\Tesla_speed\\worktrees\\hellcat-recorded-route-20261025",
+    "branch": "local/hellcat-recorded-route-20261025",
+    "commit": "c3f6b07550c54957cc6234af2dab42a2df600ddc",
+    "receipt": "reports/recorded-audition-20261026/credits-delivery-receipt.json",
+    "report": "reports/recorded-audition-20261026/RESULTS.md",
+    "url": "http://127.0.0.1:4180/#/reference",
+    "manifest_sha256": "edde6e51af736ce890f0dc096d0e04d4c5d8bf79f8cb26ba73d1a18c55e075c8",
+    "local_web": "151PASS_0FAIL_0SKIP",
+    "browser": "11PASS_0PAGEERROR_HEADLESS_AUDIOCONTEXT_NOT_HUMAN",
+    "audio_identity": "117WAV_BYTE_IDENTICAL_8REFERENCE_SHA_MATCH_140MANIFEST_ENTRIES",
+    "ablation": "12X30S_ACTUAL_AT130d64d_INPUT_AND_OUTPUT_HASH_REVERIFIED_CORE_UNCHANGED_ATc3f6b07",
+    "causal_conclusion": "SHORT_LOOP_REPEAT_SURVIVES_SEAM_AND_ENVELOPE_OFF;NOT_EVERY_DEVICE_SYMPTOM_CAUSE_PROVEN",
+    "peer_report_review": "reports/recorded-audition-20261026/peer-report/review-response.md",
+    "source_verification": "10ACTUAL_HTTP_RESPONSES_7SUCCESS_3FORBIDDEN_AND3WEB_RUN_7QUERY_1OPEN_TIMEOUT;NO_NEW_QUALIFIED_AUDIO",
+    "source_search_receipt": "reports/recorded-audition-20261026/source-search-verified-batch.json",
+    "prior_unmatched_search_claims": "WITHDRAWN_NOT_USED",
+    "MATLAB": "NOT_STARTED;4MCP_TRANSPORT_DEFINITIONS_READ_ONLY_STRUCTURE_CHECK;CONFIG_UNCHANGED",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "Android_build_install": "NOT_RUN_THIS_WEB_SCOPE",
+    "public_deployment_push_merge": false,
+    "full_texture": "NOT_FIXED",
+    "acoustic": "NOT_ACCEPTED",
+    "human": "NEW_BUILD_PENDING",
+    "hub": "TRUE_WORKTREE_IDENTITY_REJECTED_NOT_SENT_NO_RETRY"
+  },
+  "recorded_sustain_20261027": {
+    "status": "LOCAL_SUSTAIN_AUDITION_DELIVERED;FULL_MAP_AND_HUMAN_PENDING",
+    "worktree": "E:\\Tesla_speed\\worktrees\\hellcat-recorded-route-20261025",
+    "branch": "local/hellcat-recorded-route-20261025",
+    "commit": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "url": "http://127.0.0.1:4181/#/reference",
+    "manifest_sha256": "e3dae3c9e83a418d4ad613ec21b0e3ead7b7136891fce3de6acb07c4b5bfa54c",
+    "report": "reports/recorded-sustain-20261027/RESULTS.md",
+    "receipt": "reports/recorded-sustain-20261027/delivery-receipt.json",
+    "web_tests": "163PASS_0FAIL_0SKIP",
+    "browser": "13PASS_0PAGEERROR_ACTUAL60S_NATIVE_END;HEADLESS_NOT_HUMAN",
+    "original_audio": "117WAV_BYTE_IDENTICAL",
+    "actual_capture": "3X60S_KERNEL_CAPTURE;HELLCAT_ONLY_PROMOTED_REFERENCE",
+    "source_seconds": "2.0_to_6.548041667",
+    "source_gain": 1,
+    "repeat_seconds": 4.428041666666667,
+    "full_period_removed": false,
+    "negative": "SRT_OVERLAP_ENERGY_DIPS_EXCLUDED_FROM_SUSTAIN_UI;HELLCAT_NEGATIVE_DIP_RETAINED",
+    "independent_review": "ALLOW_REFERENCE_ONLY_SOURCE_SCOPE",
+    "human": "PENDING",
+    "Android_device_road": "NOT_RUN_THIS_SCOPE",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "MATLAB": "NOT_RUN_CONFIG_UNCHANGED",
+    "push_merge_deploy": false,
+    "hub": "PRIOR_IDENTITY_REJECTION;NO_RECOVERY_EVIDENCE;NOT_SENT_NO_RETRY"
+  },
+  "recorded_engine_design_20261027": {
+    "status": "DESIGN_REVIEW_COMPLETE;A_B_SOURCE_SCOPE_AWAITING_JOVI_APPROVAL",
+    "source_worktree": "E:\\Tesla_speed\\worktrees\\hellcat-recorded-route-20261025",
+    "source_commit": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "plan": "tasks/plans/2026-10-27-recorded-engine-realism.md",
+    "design": "reports/recorded-engine-design-20261027/方案.md",
+    "parent_executed_web": {
+      "pass": 163,
+      "fail": 0,
+      "skip": 0,
+      "log": "reports/recorded-engine-design-20261027/web-tests-2d30c47.log"
+    },
+    "parent_executed_probe": {
+      "scope": "SYNTHETIC_IN_MEMORY_REAL_SESSION_NOT_DEVICE",
+      "cases": 12,
+      "legal_regions_rejected": 4,
+      "device_rate_with_failure": 44100,
+      "receipt": "reports/recorded-engine-design-20261027/frame-boundary-probe.json"
+    },
+    "c2c": {
+      "state": "PLAN",
+      "workspace_verified": true,
+      "scope": "DESIGN_ONLY_NO_IMPLEMENTATION",
+      "receipt": "reports/recorded-engine-design-20261027/C2C-REVIEW.md",
+      "root_isRepo": false,
+      "local_nested_git_checked": true
+    },
+    "proposed_A_files": [
+      "vico_web/src/recorded-reference.mjs",
+      "vico_web/test/reference-audition-session.test.mjs"
+    ],
+    "proposed_B_files": [
+      "vico_web/tools/recorded-source-study.mjs",
+      "vico_web/test/recorded-source-study.test.mjs"
+    ],
+    "code_modified": false,
+    "audio_modified": false,
+    "new_browser_audio_test": false,
+    "Android_build_install": false,
+    "acoustic_human_vehicle_promotion": false,
+    "core_default_public_unchanged": true,
+    "protected_gate": "NO_RELABELING_OF_REAL_AUDIO_AS_SYNTHETIC;NO_SYNC_PHASE_HOLDOUT_BYPASS",
+    "hub": "REVISION_CONNECTION_REFUSED;LOCAL_NON_SENDABLE_PENDING;NO_RETRY"
+  },
+  "recorded_engine_execution_20261027": {
+    "status": "A_SOFTWARE_FIX_VERIFIED;B_EXPERIMENT_COMPLETED_NO_QUALIFIED_CANDIDATE;C2C_REVIEW_DONE",
+    "base_commit": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "worktree": "E:\\Tesla_speed\\worktrees\\hellcat-recorded-route-20261025",
+    "source_uncommitted": true,
+    "file_sha256": {
+      "vico_web/src/recorded-reference.mjs": "2dc0486d9760010ef0e0d7f576e9e9ef95b3ffb906227e18d87c23d08cb7f8ce",
+      "vico_web/test/reference-audition-session.test.mjs": "0412fffe4825714835f7ef1d1eb7e815030eb6cf47293ee448a5fe2d4ab98478",
+      "vico_web/tools/recorded-source-study.mjs": "7b4acdc2f41f44083ecb705b03176bb650677f17593d22c311bb744cfdb51e5e",
+      "vico_web/test/recorded-source-study.test.mjs": "542ecd253ae3e5f2036244607bd815976430c412882a3d26de47b8feeb5dc35c"
+    },
+    "report": "reports/recorded-engine-execution-20261027/RESULTS.md",
+    "experiment": "reports/recorded-engine-execution-20261027/experiment.json",
+    "measurements": "reports/recorded-engine-execution-20261027/measurements.json",
+    "rejections": "reports/recorded-engine-execution-20261027/rejection-diagnostics.json",
+    "parent_web_tests": "204_PASS_0_FAIL_0_SKIP",
+    "candidate_outcomes": "MATCHED_AND_PERIODIC_INSUFFICIENT_EVIDENCE",
+    "baseline": "120S_FINITE_ZERO_CLIPPING;4.428S_EXACT_REPEAT;ALIGNED_10MS_MINUS2.790DB;SLIDING_10MS_MINUS3.530DB",
+    "source_and_default_banks_unchanged": true,
+    "android_device_human_road": "NOT_RUN_NOT_ACCEPTED",
+    "qualification_promoted": false,
+    "hub": "REVISION_CONNECTION_REFUSED_LOCAL_NON_SENDABLE_PENDING",
+    "parent_chrome": "NATIVE_CHROMIUM_44100_DECODE_PLAY_STOP_PASS_HEADLESS_NOT_DEVICE",
+    "parent_python": "PROVENANCE_9_PASS;SLIDING_ENERGY_3_PASS",
+    "final_receipt": "reports/recorded-engine-execution-final-20261027/study-receipt.json",
+    "remote_review": "reports/recorded-engine-execution-20261027/C2C-REVIEW.md",
+    "block_invariance": "NOT_RUN_NO_STATEFUL_INCREMENTAL_PROCESSOR"
+  },
+  "app8_relay_20261028": {
+    "status": "RELAY_COMPLETE_EXECUTION_DELIVERED_LATER",
+    "source_worktree": "worktrees/hellcat-state-contract-20261027",
+    "source_head": "7acf3b564ff3d03ffd4be6d9f93a118cd3166d3f",
+    "dirty_paths": [
+      "reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json",
+      "tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py"
+    ],
+    "checks": {
+      "static": {
+        "total": 21,
+        "passed": 19,
+        "failed": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "matlab_existing_function_tests": {
+        "total": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      "simulink_model_runtime": "NOT_RUN",
+      "vehicle_human_device": "UNCHANGED_NOT_ACCEPTED",
+      "matlab_layer_synthetic_probes": {
+        "total": 4,
+        "passed": 4,
+        "scope": "FUNCTION_ONLY_NOT_SIMULINK"
+      },
+      "matlab_external_input_probe": {
+        "status": "FAILED_BEFORE_MISSING_FILE_GUARD",
+        "identifier": "MATLAB:minrhs",
+        "exit_code": 1,
+        "source_change": false
+      },
+      "source_diff_check": "PASS"
+    },
+    "evidence": [
+      "reports/app8-relay-20261028/HANDOFF.md",
+      "reports/app8-relay-20261028/evidence.json",
+      "reports/app8-relay-20261028/static-validation.log",
+      "reports/app8-relay-20261028/matlab-function-tests.log",
+      "reports/app8-relay-20261028/matlab-layer-input-probe.log",
+      "reports/app8-relay-20261028/C2C-PLAN.md"
+    ],
+    "planning_status": "APPROVED_AND_EXECUTED",
+    "qualification": "UNCHANGED_NO_NEW_VEHICLE_ACOUSTIC_DEVICE_HUMAN_ACCEPTANCE",
+    "c2c_task": "c2c_8d27",
+    "c2c_review": "PLAN_RECEIVED_SOURCE_GROUNDED_PARENT_REVIEWED; NO_CODE_AUTHORIZATION",
+    "superseded_by": "app8_execution_20261028"
+  },
+  "app8_execution_20261028": {
+    "status": "COMPLETE_APPROVED_RESEARCH_DIGITAL_INTEGRATION",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "head": "7acf3b564ff3d03ffd4be6d9f93a118cd3166d3f",
+    "source_state": "UNCOMMITTED_APPROVED_CHANGES_WITH_PRESERVED_INITIAL_DIRTY",
+    "model_sha256": "1d3bf06dfdb22e7d2a3b2b0ff0abf84015624e7e3cfd1f7d6f20c3d78960d32c",
+    "source_model_sha256": "71f8b9899688278e908e244649331352d43c46779e6fd93c0903f86785198a9c",
+    "matlab": {
+      "tests": 110,
+      "passed": 110,
+      "failed": 0,
+      "incomplete": 0
+    },
+    "python": {
+      "tests": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "actual_simulation": "SOURCE_90S;ZERO_90S;NONZERO_90S_X2_SAME_SESSION",
+    "frames": 4500,
+    "samples_per_channel": 4320000,
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "last_frame_time": 89.98,
+    "peak": 0.07456933138247944,
+    "pcm_sha256": "9b455d259feb4dce2540abfd24fe2daba79d8dc4778b57ea6b985553bb58ef40",
+    "wav_sha256": "5a1e066e475c9cdb84ab7a463069265c6828f48db70f4e649a9e85b8796abb9e",
+    "zero_pcm_exact": true,
+    "repeat_pcm_exact": true,
+    "repeat_wav_exact": true,
+    "transition_pressure_numerical_exact": true,
+    "independent_audio_readback": "PASS",
+    "native_frame_readback": "PASS_4_RUNS_X4500_FRAMES",
+    "protected_original_files": 594,
+    "protected_sha": "UNCHANGED",
+    "qualification": "RESEARCH_DIGITAL_ONLY;ACOUSTIC_DEVICE_HUMAN_UNCHANGED",
+    "scope_extension": "Jovi explicitly approved legacy s12_v12_mix_texture_residual.m pressure contract fix",
+    "evidence": [
+      "reports/app8-execution-20261028/RESULTS.md",
+      "reports/app8-execution-20261028/full-latest.json",
+      "reports/app8-execution-20261028/short-latest.json",
+      "reports/app8-execution-20261028/independent-audio-verification.json",
+      "reports/app8-execution-20261028/frame-order-verification.json",
+      "reports/app8-execution-20261028/implementation-final.json",
+      "reports/app8-execution-20261028/hub-NOT-SENDABLE.json",
+      "reports/app8-execution-20261028/C2C-REVIEW.md",
+      "reports/app8-execution-20261028/memory-update-receipt.json"
+    ],
+    "review": "C2C_DONE;TERRA_MAX_NO_BLOCKING_DEFECT",
+    "memory": "MEMORY_UPDATED_PROGRESS_AND_DECISIONS"
+  },
+  "app8_listening_20261029": {
+    "status": "COMPLETE_APPROVED_CONTROLLED_LISTENING_ENGINEERING_PACKAGE",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "head": "7acf3b564ff3d03ffd4be6d9f93a118cd3166d3f",
+    "source_state": "UNCOMMITTED_APPROVED_CHANGES",
+    "approval": "Jovi explicitly approved C2C-OPTIMIZATION-PLAN.md; two existing source helpers plus isolated lab/tests/model",
+    "actual_simulation": "A90+B90+C90+C_REPEAT90_SAME_SESSION;12_STATIONARY_6S",
+    "accepted_run": "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/runs/full-20261029-013256",
+    "frames_per_90s": 4500,
+    "samples_per_channel": 4320000,
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "upshift_seconds": [
+      11,
+      20,
+      30
+    ],
+    "downshift_seconds": [
+      58
+    ],
+    "combustion_excitation_min": 0.3500000144,
+    "phase_max_error_rad": 1.9747094937017098e-07,
+    "stationary_lf_pass": "6/6_MAX_ABS_CHANGE_0.000326_DB",
+    "stationary_hf_lf_pass": "4/4_ELIGIBLE_REDUCTION_5.918_TO_5.999_DB",
+    "drive_windows_pass": "3/3_WORST_REDUCTION_5.999277_DB",
+    "drive_aggregate_hf_lf_change_db": -5.999657894145175,
+    "matlab": {
+      "total": 131,
+      "passed": 131,
+      "failed": 0,
+      "incomplete": 0
+    },
+    "python": {
+      "analysis_passed": 59,
+      "source_contract_passed": 8
+    },
+    "repeat_pcm_sha256": "b77d372ddc23336e9d94437854f53548ae4b626a4ea553a5b47297072c4be610",
+    "repeat_wav_sha256": "f3d3ae39cf511b4413958ad70a4a6ae557ada80dfe7c1129219c87035cb5d279",
+    "repeat_pcm_exact": true,
+    "repeat_wav_exact": true,
+    "default_pcm_exact": true,
+    "candidate_slx_sha256": "30d0c9b024dc9cd70d39f45544e1518c61fed511b6ba112c278562fac6891db3",
+    "protected_count": 604,
+    "protected_sha": "UNCHANGED",
+    "audition_method": "PER_CASE_SINGLE_FIXED_SCALAR_-23_LUFS;RAW_RENDERER_GAIN_0.1_UNCHANGED",
+    "review": "C2C_DONE;TERRA_MAX_NO_BLOCKING_DEFECT",
+    "c2c_task": "c2c_a1d7",
+    "qualification": "CONTROLLED_ENGINEERING_SCREENING_PASS;JOVI_REJECTED_SOUND;OEM_DEVICE_NOT_ACCEPTED",
+    "evidence": [
+      "reports/app8-acoustic-review-20261028/RESULTS.md",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/delivery-manifest.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/runs/full-20261029-013256/analysis.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/regression-bound.log",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/C2C-REVIEW.md",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/native-frame-verification.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/runs/full-20261029-013256/final-pcm-shift-envelopes.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-listening-candidate-20261029/memory-update-receipt.json"
+    ],
+    "invalidated_run": "full-20261029-011621_RETAINED_EXCLUDED",
+    "native_frame_readback": "PASS_4_RUNS_X4500_FRAMES",
+    "memory": "MEMORY_UPDATED_PROGRESS_AND_DECISIONS",
+    "hub": "NOT_SENDABLE_IDENTITY_REJECTED_NO_RETRY",
+    "human_feedback": "2026-10-29: Jovi says new sound worse than previous, weak bass rumble and no mechanical character",
+    "human": "REJECTED_BY_JOVI_20261029"
+  },
+  "app8_rumble_mechanics_research_20261029": {
+    "status": "APPROVED_AND_EXECUTED;C2C_DONE;HUMAN_NEW_PENDING",
+    "date": "2026-10-29",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "feedback": "New listening candidate sounds worse than prior; insufficient LF rumble and mechanical feel.",
+    "scope": "READ_ONLY_ANALYSIS_AND_PLAN; no new source/model/test changes before explicit authorization",
+    "protected": "ORIGINAL_SLX_SOUND_LIBRARY_ANDROID_UNCHANGED",
+    "requested_review": "CODEX_WITH_CHATGPT",
+    "post_approval_execution": "GPT_6_1_SOL_HIGH_PER_NEW_JOVI_INSTRUCTION",
+    "evidence": [
+      "reports/app8-rumble-mechanics-research-20261029/USER-FEEDBACK.md",
+      "reports/app8-rumble-mechanics-research-20261029/RESEARCH-SUMMARY.md",
+      "reports/app8-rumble-mechanics-research-20261029/AUDIO-analysis.json",
+      "reports/app8-rumble-mechanics-research-20261029/AUDIO-VERIFICATION.json",
+      "reports/app8-rumble-mechanics-research-20261029/SOURCE-DIAGNOSIS.md",
+      "reports/app8-rumble-mechanics-research-20261029/RADIATION-DIAGNOSIS.md",
+      "reports/app8-rumble-mechanics-research-20261029/C2C-MINIMAL-PLAN.md",
+      "reports/app8-rumble-mechanics-research-20261029/baseline-integrity.json",
+      "reports/app8-rumble-mechanics-research-20261029/AUDIO-frequency-comparison.png",
+      "reports/app8-rumble-mechanics-research-20261029/PLAN-REVIEW.md",
+      "reports/app8-rumble-mechanics-research-20261029/memory-update-receipt.json"
+    ],
+    "qualification": "HUMAN_REJECTED;RESEARCH_NOT_DONE",
+    "c2c_task": "c2c_bd57",
+    "c2c_status": "EXECUTING",
+    "review": "GPT_6_1_TERRA_MAX_INDEPENDENT_REVIEW_FINDINGS_INCORPORATED",
+    "memory": "MEMORY_UPDATED_FEEDBACK_AND_DECISIONS",
+    "authorization": "Jovi explicit approval2026-10-29, original model/bank/Android preserved"
+  },
+  "app8_rumble_mechanics_execution_20261029": {
+    "status": "COMPLETE_APPROVED_ENGINEERING_EXECUTION_AND_MATCHED_AUDITION_DELIVERY",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "approved_plan": "reports/app8-rumble-mechanics-research-20261029/C2C-MINIMAL-PLAN.md",
+    "agent_model": "GPT-6.1 sol high",
+    "simulation": "8X90S_AND_7_SHORT_AND_42_ANCHORS_DIGITAL_PASS",
+    "human": "SR_AND_SR2_REJECTED_BY_JOVI_20261030",
+    "evidence": [
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/AUTHORIZATION.md",
+      "reports/app8-rumble-mechanics-research-20261029/EXECUTION-RESULTS.md",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/native-frame-frozen-verification.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/runs/full-20261029-092429-542/analysis.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/audition-full-20261029-092429-542/audition-verification.json",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/PEER-REVIEW.md",
+      "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/C2C-REVIEW.md"
+    ],
+    "native_frame_verification": "ALL8X4500_NATIVE_FRAME_AND_SEQUENTIAL_FROZEN_PASS_MAX_ERROR_0",
+    "tests": {
+      "matlab_passed": 27,
+      "matlab_failed": 0,
+      "matlab_incomplete": 0,
+      "python_passed": 24,
+      "python_failed": 0
+    },
+    "accepted_run": "worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/runs/full-20261029-092429-542",
+    "absolute_lf_R_min_db": 4.3716659141753045,
+    "absolute_lf_R_max_db": 5.510719838929052,
+    "SR2_lf_min_db": 4.382725387063546,
+    "SR2_lf_max_db": 7.651919485630634,
+    "SR2_mid_min_db": 1.7249227510705456,
+    "mechanical_AM_S": 0.032969338652631804,
+    "mechanical_AM_S2": 0.09890893388765722,
+    "repeats": "SR_AND_SR2_PCM_WAV_EXACT",
+    "B0_pcm_sha256": "1a56b2f54ce3149a15d184c80257f1a838ddee83fd0ff193318d791b4dc396ef",
+    "SR2_pcm_sha256": "0e6fe3065b5e855f6d9dba7ff6507bc49a541d1937f4be4f5784812e5fbacbcb",
+    "SR2_wav_sha256": "b5df011381373205fe0c949212af5462f278566dbca9b78cc8882a2b0c3c0f94",
+    "peak": 0.05478361210420273,
+    "protected_files": 604,
+    "protected_status": "UNCHANGED",
+    "audition": {
+      "named": 69,
+      "blind": 89,
+      "groups": 10,
+      "LUFS": -23.0,
+      "max_error_LU": 0.0,
+      "max_dBTP": -4.6
+    },
+    "review": "C2C_DONE;SOL_HIGH_PEER_CODE_AND_ACTUAL_DATA_PASS",
+    "memory": "MEMORY_UPDATED_PROGRESS_AND_DECISIONS",
+    "hub": "NOT_SENDABLE_IDENTITY_REJECTED_NO_RETRY",
+    "human_feedback": "Both lack mechanical rumble; electromagnetic and overly smooth",
+    "qualification": "NUMERIC_ENGINEERING_PASS;HUMAN_REJECTED_BOTH_SR_SR2"
+  },
+  "app8_route_audit_20261030": {
+    "status": "READ_ONLY_AUDIT_AND_REMOTE_REVIEW_COMPLETE;EXPERIENCE_RECORD_ADDED",
+    "scope": "CURRENT_SOURCE_RUNTIME_EVIDENCE_SCREENSHOTS_AND_REMOTE_ROUTE_REVIEW;NO_SYNTHESIS_CHANGES",
+    "feedback": "Both SR/SR2 lack rumble, electromagnetic and smooth",
+    "evidence": [
+      "reports/app8-route-audit-20261030/REPORT.md",
+      "reports/app8-route-audit-20261030/REMOTE-REVIEW.md",
+      "docs/sound-simulation/08-DBG-声浪问题处理与路线经验.md",
+      "reports/app8-route-audit-20261030-review.zip",
+      "reports/app8-route-audit-20261030/hub-root-NOT-SENDABLE.json"
+    ],
+    "human": "REJECTED_BOTH_SR_SR2",
+    "remote_review": "c2c_7c36_DONE_TECHNICAL_AUDIT_ONLY_7_IMAGES_REVIEWED_NO_DIRECT_AUDIO",
+    "current_voice_goal": "OPEN_MECHANICAL_RUMBLE_AND_HUMAN_ACCEPTANCE_NOT_MET",
+    "next": "DEFINE_REFERENCE_AND_TARGET_LISTENING_POSITION;PREPARE_CONCRETE_SCOPE_FOR_USER_AUTHORIZATION",
+    "hub": "ROOT_REVISION_CONNECTION_REFUSED_NO_REPORT_SENT",
+    "memory": "PROJECT_PROGRESS_DECISIONS_WORKFLOW_CHECKPOINT_AND_EXPERIENCE_DOC_MIRROR_UPDATED"
+  },
+  "app8_mechanical_bank_research_20261030": {
+    "status": "PARTIAL_BLOCKED_MATLAB_STARTUP_NO_SIMULATION",
+    "scope": "READ_ONLY_MECHANICAL_SOURCE_DUAL_BANK_REFERENCES_AND_APPROVAL_PLAN;NO_NEW_SIMULATION",
+    "target_listening_position": "JOVI_CONFIRMED_IN_CAR_SPEAKER_MIXED_EXHAUST_RUMBLE_AND_MECHANICAL_CHARACTER",
+    "human": "SR_AND_SR2_REJECTED;NEW_CANDIDATE_NOT_GENERATED",
+    "next": "RESTORE_AND_VERIFY_INDEPENDENT_MATLAB_STARTUP_BEFORE_ANY_SLX_OR_SIMULATION;PRESERVE_DRAFT_AND_CRASH_EVIDENCE",
+    "approved_executor_after_permission": "GPT-6.1 Terra max",
+    "evidence": [
+      "reports/app8-mechanical-bank-research-20261030/RESEARCH-BRIEF.md",
+      "reports/app8-mechanical-bank-research-20261030/LOCAL-FINDINGS.md",
+      "reports/app8-mechanical-bank-research-20261030/REFERENCE-SHORTLIST.md",
+      "reports/app8-mechanical-bank-research-20261030/REMOTE-PLAN-INITIAL.md",
+      "reports/app8-mechanical-bank-research-20261030/C2C-APPROVAL-PLAN.md",
+      "reports/app8-mechanical-bank-research-20261030/hub-NOT-SENDABLE.json"
+    ],
+    "remote_plan": "c2c_5b2c_PLAN_RECEIVED_REVISED_CABIN_PRIVATE_COPIES_AWAITING_USER",
+    "reference": "PUBLIC_METADATA_AND_STREAMING_CANDIDATES_ONLY_NO_MATCHED_LICENSED_CALIBRATION_DATA",
+    "hub": "ROOT_REVISION_CONNECTION_REFUSED_NO_REPORT_SENT",
+    "execution": "PRIVATE_SOURCE_AND_UNIT_DRAFT_ONLY;MATLAB_MCP_5_PLUS_4_FUNCTION_TESTS_REPORTED_PASS;INDEPENDENT_BATCH_AND_NOJVM_MINIMAL_CRASH_0XC0000005;NO_SLX_NO_SIMULATION_NO_PCM_WAV_NO_AUDITION",
+    "protected_integrity": "7942_FILES_9129302830_BYTES_INITIAL_FINAL_SHA256_MATCH"
+  }
+}

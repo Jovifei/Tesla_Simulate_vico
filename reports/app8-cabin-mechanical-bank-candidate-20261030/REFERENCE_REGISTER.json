@@ -1,0 +1,9 @@
+{
+  "schema": "s12.cabin_mechanical_bank.references.v1",
+  "design": "E:/Tesla_speed/reports/app8-mechanical-bank-research-20261030/C2C-APPROVAL-PLAN.md",
+  "baseline_contract": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/reports/app8-rumble-mechanics-candidate-20261029/EXPERIMENT_CONTRACT.json",
+  "external_audio_acquired": false,
+  "measured_vehicle_transfer_function": false,
+  "real_vehicle_acoustic_calibration": false,
+  "all_parameters": "dimensionless synthetic hypotheses; no OEM claim"
+}

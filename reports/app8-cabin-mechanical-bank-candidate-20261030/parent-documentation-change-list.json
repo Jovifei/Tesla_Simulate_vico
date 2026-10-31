@@ -1,0 +1,34 @@
+[
+  {
+    "path": "E:\\Tesla_speed\\tasks\\todo.md",
+    "before_sha256": "e55348b66ab03baafcc74a4ddf53294f89fdbf173a05a196cc02234cfea4dab9"
+  },
+  {
+    "path": "E:\\Tesla_speed\\tasks\\lessons.md",
+    "before_sha256": "0cd9eda071302a14cdd984655e1237415d7e53e413288999b4de57ee44e9db9b"
+  },
+  {
+    "path": "E:\\Tesla_speed\\docs\\project-ledger.json",
+    "before_sha256": "898206ad51017f502e26c100955dc14c11a250493a1f56b7306fabd1df08107a"
+  },
+  {
+    "path": "E:\\Tesla_speed\\docs\\sound-simulation\\08-DBG-声浪问题处理与路线经验.md",
+    "before_sha256": "decc15fb0eefa0146df9fa8da8cf0602c1ff31258dbb8887d76836b45c92c0f4"
+  },
+  {
+    "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tasks\\todo.md",
+    "before_sha256": "18abee843738cf549efa95a9ed1635d9134fdba3a87ce4657465f24bf6e6f8cc"
+  },
+  {
+    "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tasks\\lessons.md",
+    "before_sha256": "7a36bb42f62f7dc10e55a60da899012e79739ebce5630685d3910f6f4144ffd5"
+  },
+  {
+    "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\docs\\project-ledger.json",
+    "before_sha256": "d546f36d4c132192ac9c5acb03f49734b07832ee20a19832a4dd052e79995624"
+  },
+  {
+    "path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\docs\\knowledge\\obsidian\\S12\\Engine-Audio-Ecosystem\\Project-Long-Term-Memory.md",
+    "before_sha256": "5c86a345e7261be19c02aa406ceead1417eccf4b43cb1f7f0697cd3350f0ab77"
+  }
+]

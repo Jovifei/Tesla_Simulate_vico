@@ -1,0 +1,17 @@
+{
+  "project_id": "tesla-speed",
+  "memory_id": "tesla-speed",
+  "project_root": "E:\\Tesla_speed",
+  "profile": "home",
+  "target": "vault",
+  "operations": [
+    {
+      "slot": "progress",
+      "content": "## 2026-10-31 车内机械声与双 bank：前轮证据纠正、继续实施\n\nJovi已授权原隔离方案，由GPT-6.1 Terra max执行。前轮formal-long确有七套90秒音频，文件级解码/finite/峰值/连续性成立，但没有执行批准的native B输入、正确B0、同网络combustion消融、Frozen后机械混合、一次校准和真正冷进程；保存SLX也未包含新拓扑。因此撤回批准实验完成措辞，保留原音频与INVALIDATED记录，仅提供诊断试听。\n\n本轮已核验并字节一致复制到唯一授权目录，聊天内给出了12秒原路线与调整对照。真实PCM24解码后与原始PCM乘单一标量最大误差5.96e-8，实际-23LUFS；这仅证明试听文件有效，机械差值原本极弱，人耳与车内设备没有通过记录。\n\nMATLAB新进程仍在Home/recent-artifacts原生服务崩溃；空startup、等待和官方Python Engine -desktop也未解决，现有Desktop/MCP可以响应。继续测试正常GUI延后附着路径，保护现有会话、用户原prefs和Home数据库。新source/path/receiver、一次校准与保存后重载的构建器已在授权目录实现，实际运行待启动探针释放资源；不能继承前轮短仿真或七文件PASS。\n\nCodex with ChatGPT已修复Tesla_speed自身的失效runtime记录并实际核验正确workspace_info，未影响另一个项目的健康服务。原ChatGPT会话已接到iteration2纠正消息并正在通过连接器核对本地源码。根目录非Git，必须读取worktrees/hellcat-state-contract-20261027精确路径，不能把空git_diff当代码没改。\n\n当前证据入口：E:/Tesla_speed/worktrees/hellcat-state-contract-20261027/reports/app8-cabin-mechanical-bank-candidate-20261030/CORRECTION-20261031.md；原批准方案E:/Tesla_speed/reports/app8-mechanical-bank-research-20261030/C2C-APPROVAL-PLAN.md；数字/声学/车内设备/人耳/OEM资格分别保持，原模型、声库、Android、Frozen和公共源码保护。"
+    },
+    {
+      "slot": "workflow",
+      "content": "## 2026-10-31 可听交付与Simulink证据门\n\n音频交付必须校验实际绝对路径并在聊天嵌播放器，JSON与目录不能代替入口。数值安全只能证明波形文件合法；批准实验还必须逐项核对工况原生double、基线算法身份、分量路由、Frozen后Sum、一次校准和最终SLX真实拓扑。model_edit后显式保存再重载；短仿真绑定最终文件SHA并捕获真实分支，防止未保存修改被close_system丢弃。日志名须与out.get一致，缺tap必须失败，不能用空Dataset消除错误。\n\n冷启动必须新MATLAB PID并核验等待、真实短模型与退出；关模型和快速2+2均不能替代。C2C页面出错按Jovi最新指示可刷新续接，内容过长在同项目新建对话并做HANDOFF；先本地连接身份检查，已证实死亡的runtime可备份清理后恢复本项目，不杀其他项目服务。"
+    }
+  ]
+}

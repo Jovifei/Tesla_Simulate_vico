@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "protected_count": 604,
+  "protected_drift": [],
+  "previous_candidate_and_helper_files_unchanged": 7,
+  "sole_changed_existing_common_m": [
+    "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\tools\\sound_sim\\s12\\playground_v12\\common\\s12_v12_render_source_frame.m"
+  ],
+  "runtime_dependencies_unchanged": 38,
+  "source_before": "8939beac42b4f2cdb65b83c0f7f93dcbc9564af5a0c8252012219433f63b03b3",
+  "source_after": "eb09cdb1b2c7ed69b6a544e18453da49d2186c689a0b52f10437d70cef02ae0b",
+  "model_sha256": "eeb3cc8b89d55a7b184cfe44e76b306111b0d6b96feab6d8a1ed4684996b0002"
+}

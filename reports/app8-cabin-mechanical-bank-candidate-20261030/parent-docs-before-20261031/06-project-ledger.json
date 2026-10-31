@@ -1,0 +1,890 @@
+{
+  "project_name": "Tesla_speed / Vico Android 真实声浪",
+  "updated_at": "2026-10-31",
+  "current_phase": "P2",
+  "current_work_package": "隔离机械+双bank候选已完成短Simulink与7x90s数字研究运行；等待远端ChatGPT复核与Jovi车内等响试听，独立MATLAB批处理启动仍阻塞",
+  "scope": "现有 Android Vico App，六车型，速度/加速度驱动连续声浪。工程进度不等于声音相似度。",
+  "phases": [
+    {
+      "id": "P1",
+      "title": "工程基础与证据体系",
+      "weight": 10,
+      "dependencies": [],
+      "goal": "建立可追踪、可重复、可交接的工程基础",
+      "steps": [
+        "确认现有 App 与研究工作区边界，保留用户改动",
+        "建立唯一里程碑账本和生成器",
+        "交付绑定源码、测试、产物与验收证据"
+      ],
+      "deliverables": [
+        "路线图、账本、自动生成进度总览",
+        "源码及产物身份记录"
+      ],
+      "acceptance": [
+        "无证据不能标记 DONE",
+        "生成器检查通过，交付同步更新"
+      ],
+      "milestones": [
+        {
+          "id": "P1-M1",
+          "title": "已有基线工程与证据交接",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P1-M2",
+          "title": "统一账本与可重复进度生成",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/project-roadmap-20261002/verification.md"
+          ]
+        }
+      ],
+      "next_action": "验证本次文档体系并持续维护"
+    },
+    {
+      "id": "P2",
+      "title": "连续声浪核心",
+      "weight": 25,
+      "dependencies": [
+        "P1"
+      ],
+      "goal": "解决刺耳、缺少厚重脉动和回火失真；保留连续状态与低频层",
+      "steps": [
+        "保留 AH 基线，完成 C63 新源表示和有限回火模型",
+        "冻结候选与拟合预算，比较持续声、事件及低频保护",
+        "跑实际 Kotlin 四分支、同状态回火开关、630 数字回归与状态矩阵",
+        "失败候选保留证据并由远端制定下一工作包，不通过就不安装"
+      ],
+      "deliverables": [
+        "冻结配置与源码",
+        "声学、事件、数字与状态资格报告"
+      ],
+      "acceptance": [
+        "数字安全、确定性、连续状态均通过",
+        "持续声与回火达到预登记声学门槛，不损害低频层"
+      ],
+      "milestones": [
+        {
+          "id": "P2-M1",
+          "title": "AH 连续算法工程基线",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P2-M2",
+          "title": "新表示 C63 持续声及回火实现",
+          "status": "ACTIVE",
+          "evidence": []
+        },
+        {
+          "id": "P2-M3",
+          "title": "冻结候选完整离线声学与状态资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "完成 S18/HY1 实际 Kotlin 资格；校准已出现失败门，不允许直接交付"
+    },
+    {
+      "id": "P3",
+      "title": "Android实时运行与交互产品化",
+      "weight": 15,
+      "dependencies": [
+        "P2"
+      ],
+      "goal": "将合格算法真正接入现有 Vico App，统一电脑与手机数字输入输出",
+      "steps": [
+        "仅接入离线合格候选，初始默认关闭新模式",
+        "同 RPM/load 对比采样率、声道、响度和实际 PCM",
+        "优化启用、停止、车型、校准、输出路线与故障反馈",
+        "验证冷启动、长时运行、输入丢失、后台、停止恢复与路线切换"
+      ],
+      "deliverables": [
+        "签名及源码绑定 APK",
+        "同输入 PCM 对比和设备回执",
+        "交互与生命周期报告"
+      ],
+      "acceptance": [
+        "实际安装与实时运行通过，无丢帧/溢出",
+        "完整生命周期及故障回退通过，不能继承旧 APK 证据"
+      ],
+      "milestones": [
+        {
+          "id": "P3-M1",
+          "title": "已有 AH 特定 APK 冷启动及 DEMO 长时证据",
+          "status": "DONE",
+          "evidence": [
+            "review_packages/s15-ah-20261002/final-handoff.md"
+          ]
+        },
+        {
+          "id": "P3-M2",
+          "title": "新算法接入及电脑手机同输入一致性",
+          "status": "ACTIVE",
+          "evidence": [
+            "docs/vico-p3-runtime-hook-result.md"
+          ]
+        },
+        {
+          "id": "P3-M3",
+          "title": "交互、路线与生命周期完整验证",
+          "status": "ACTIVE",
+          "evidence": [
+            "docs/vico-p3-runtime-hook-result.md"
+          ]
+        }
+      ],
+      "next_action": "等待 P2 合格候选；设备连接后绑定新 APK 重测"
+    },
+    {
+      "id": "P4",
+      "title": "六车型连续声音扩展",
+      "weight": 15,
+      "dependencies": [
+        "P2",
+        "P3"
+      ],
+      "goal": "六车型有独立声音特征和资格，不复制 C63 参数冒充车型",
+      "steps": [
+        "完成每车参考来源和许可审计",
+        "独立配置气缸/点火/进排气/机械及事件特征",
+        "逐车测试数字、持续声与回火、手机播放和切换",
+        "保留每车资格矩阵，原声库不代表新算法完成"
+      ],
+      "deliverables": [
+        "六车型独立配置与来源清单",
+        "逐车测试及手机证据"
+      ],
+      "acceptance": [
+        "六车数字、声学、手机资格齐全",
+        "参考来源许可清晰，车型切换连续且安全"
+      ],
+      "milestones": [
+        {
+          "id": "P4-M1",
+          "title": "六车独立连续模型及事件配置",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P4-M2",
+          "title": "六车逐车声学与手机资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "先完成 C63 原型闭环，再扩展其他五车"
+    },
+    {
+      "id": "P5",
+      "title": "车辆输入与驾驶状态",
+      "weight": 10,
+      "dependencies": [
+        "P3"
+      ],
+      "goal": "手机速度与加速度可靠驱动虚拟 RPM/load；不能把 DEMO 当实车",
+      "steps": [
+        "盘点现有传感器和速度适配器，不重复建设",
+        "定义时间戳、有效性与速度/加速度到状态的映射",
+        "实现停车校准、平滑、换挡、输入丢失及安全降级",
+        "以同一轨迹验证回放与实时输入，保留原始证据"
+      ],
+      "deliverables": [
+        "输入合同与校准说明",
+        "回放/实时对比和失效报告"
+      ],
+      "acceptance": [
+        "轨迹与状态一致，校准可复现",
+        "定位/传感器丢失安全，输入生命周期通过"
+      ],
+      "milestones": [
+        {
+          "id": "P5-M1",
+          "title": "现有输入链路盘点及合同冻结",
+          "status": "PARTIAL",
+          "evidence": []
+        },
+        {
+          "id": "P5-M2",
+          "title": "校准、轨迹一致性与输入失效资格",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "核对现有实现，完成实输入而非仅模拟资格"
+    },
+    {
+      "id": "P6",
+      "title": "真实设备与驾驶验证",
+      "weight": 10,
+      "dependencies": [
+        "P3",
+        "P4",
+        "P5"
+      ],
+      "goal": "验证手机及车内输出链路与实际驾驶行为",
+      "steps": [
+        "先完成静止状态输出路线和物理录音对照",
+        "绑定车型、APK、手机、音量、蓝牙/扬声器及同输入材料",
+        "由安全驾驶与乘员记录方式执行路线测试",
+        "复核机械轰鸣、回火、延迟和断续，不用音量掩盖缺陷"
+      ],
+      "deliverables": [
+        "物理输出测量",
+        "实车路线与设备记录"
+      ],
+      "acceptance": [
+        "可重复设备与驾驶证据",
+        "路线、安全和实际输出问题闭环；不宣称 OEM 认证"
+      ],
+      "milestones": [
+        {
+          "id": "P6-M1",
+          "title": "手机/车内输出链路同材料测量",
+          "status": "NOT_RUN",
+          "evidence": []
+        },
+        {
+          "id": "P6-M2",
+          "title": "安全实车路线验证及问题闭环",
+          "status": "NOT_RUN",
+          "evidence": []
+        }
+      ],
+      "next_action": "离线和设备门通过后组织测试；当前无实车完成证据"
+    },
+    {
+      "id": "P7",
+      "title": "具名试听与产品体验验收",
+      "weight": 10,
+      "dependencies": [
+        "P4",
+        "P6"
+      ],
+      "goal": "Jovi 接受实际交付声音与操作体验，而非用代理分数代签",
+      "steps": [
+        "以版本绑定的同输入材料比较旧版、新版和许可参考",
+        "逐车记录持续声厚度、刺耳感、机械脉动及回火真实感",
+        "记录设备、输出路线、材料编号和拒绝原因",
+        "拒绝则回到所属阶段修复，重新出具验收"
+      ],
+      "deliverables": [
+        "六车具名试听记录",
+        "交互体验验收"
+      ],
+      "acceptance": [
+        "Jovi 明确接受交付版本的六车声音和体验",
+        "拒绝/待试听不能计 DONE；历史80%/40%不作本版分数"
+      ],
+      "milestones": [
+        {
+          "id": "P7-M1",
+          "title": "六车版本绑定试听接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        },
+        {
+          "id": "P7-M2",
+          "title": "实际启用/校准/车型切换体验接受",
+          "status": "PENDING_HUMAN",
+          "evidence": []
+        }
+      ],
+      "next_action": "合格新版安装后请 Jovi 验收，而不是要求验收未改善声音"
+    },
+    {
+      "id": "P8",
+      "title": "可发布交付",
+      "weight": 5,
+      "dependencies": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7"
+      ],
+      "goal": "完成可安装、可追踪、可回退且许可清晰的 Android 发布",
+      "steps": [
+        "核查全部主线退出门和未关闭缺陷",
+        "审计素材/模型许可与隐私权限",
+        "形成签名、版本、源码、配置、APK 身份及升级回退材料",
+        "同步 Git 提交/远端交接（有授权且仓库权限可用时）和使用文档"
+      ],
+      "deliverables": [
+        "发布 APK 与身份清单",
+        "使用/校准/回退说明和最终交接"
+      ],
+      "acceptance": [
+        "工程、声学、设备、实车、人耳及许可门全满足",
+        "提交与发布状态有实际回执，不把本地构建称已发布"
+      ],
+      "milestones": [
+        {
+          "id": "P8-M1",
+          "title": "许可/隐私/发布材料审计",
+          "status": "NOT_STARTED",
+          "evidence": []
+        },
+        {
+          "id": "P8-M2",
+          "title": "最终 APK 与源码提交交付验收",
+          "status": "NOT_STARTED",
+          "evidence": []
+        }
+      ],
+      "next_action": "主线资格与人耳验收完成后执行发布"
+    }
+  ],
+  "blockers": [
+    "当前手机默认仍为原六车型声库；HY1 未接入/安装，声音目标 NOT_DONE。",
+    "HY1 单次拟合已冻结：事件校准改善8.1%未达20%；中频最大+1.468dB超过1dB保护门。不能直接安装或再次拟合救分。",
+    "完整实际 Kotlin 离线资格未结束；新 APK、真机生命周期、物理输出、实车及具名试听均待执行。",
+    "本轮adb devices无手机；安装、设备生命周期、实车与具名试听未执行。",
+    "Cloud整阶段任务提交仍被账户MFA拦截；已改用音浪新聊天GitHub读写执行接力，未改安全设置。",
+    "PR #35已落实默认关闭的真实AudioEngine PCM调用点，本地220 tests、0失败、25跳过、APK构建通过并远端回审；持续声新源和实际声学仍未完成。"
+  ],
+  "optional_tracks": [
+    "AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。",
+    "ESP32/硬件/Simulink：背景研究，不计 Android 主线分母。",
+    "iOS/小程序：后续平台，不计本次完成范围。"
+  ],
+  "vehicles": [
+    {
+      "name": "Hellcat",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "Ferrari 458",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "LFA",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "GT-R R35",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "C63 W204",
+      "continuous": "ACTIVE",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    },
+    {
+      "name": "Supra JZA80",
+      "continuous": "NOT_STARTED",
+      "acoustic": "NOT_RUN",
+      "device": "NOT_RUN",
+      "human": "PENDING_HUMAN"
+    }
+  ],
+  "reception_evidence": {
+    "date": "2026-10-02",
+    "remote_base": "83d6267a71e05117026836b8720dfbca2621c8f0",
+    "local_fix": "05ad70d55e9eb9605a94eaa1e201e20dd6b699fa",
+    "status": "PARTIAL",
+    "report": "docs/vico-p3-runtime-hook-result.md",
+    "local_hook": "a768edc1e6cf848b71e5b624713702c53b8791e0",
+    "latest": "c937c3ad1e8ca3f59a52fdc6356186417560a9a2",
+    "review": "Remote source review received; product qualification not accepted"
+  },
+  "integration_reception": {
+    "date": "2026-10-03",
+    "scope": "VICO_N2_ONLY",
+    "remote_tip": "b4e1ea1a",
+    "status": "PARTIAL",
+    "tests": "Android285/0fail/29skip; Python120/0fail/4skip; WindowsN2 44/0fail/0skip",
+    "device": "INSTALL_AND_STARTUP_PASS; ACOUSTIC_NOT_RUN; HUMAN_NOT_RUN",
+    "report": "docs/vico-main-integration-20261003.md"
+  },
+  "controller_session_reception_20261011": {
+    "status": "PARTIAL",
+    "remote_proposal": "5e4daeea27ccf20c2cde6da56ccd672e446fa841",
+    "report": "docs/vico-controller-session-reception-20261011.md",
+    "tests": "Android454/0fail/0error/29skip; Python157/0fail/0error/4skip; lifecycle mutation RED then GREEN",
+    "device": "NOT_RUN",
+    "acoustic": "NOT_RUN",
+    "human": "PENDING_HUMAN",
+    "remaining": "Review other playback entry points; diagnostics; N3 profile/extractor; final-head CI"
+  },
+  "n3_foundation_work_package": {
+    "date": "2026-10-11",
+    "status": "PARTIAL",
+    "execution_mode": "CHAT_PLAN_REVIEW_LOCAL_EXECUTION",
+    "software": "IMPLEMENTED_AND_VERIFIED",
+    "report": "docs/vico-n3-foundation-local-20261011.md",
+    "tests": "Android482/0fail/0error/29skip; VicoPython157/0fail/4skip; legacyPython84/0fail; lint/APK PASS",
+    "remote_review": "APPROVED",
+    "candidate_count": 0,
+    "device": "NOT_RUN",
+    "real_road": "NOT_RUN",
+    "independent_acoustic": "NOT_EVALUATED",
+    "human": "PENDING_HUMAN",
+    "remaining": [
+      "Final commit CI receipt",
+      "Device AudioTrack/route verification",
+      "Independent reference/real-road/human gates",
+      "Time-aligned harmonic/order comparison",
+      "Later Web/OBD/microphone stages"
+    ]
+  },
+  "pr38_closeout_20261013": {
+    "date": "2026-10-13",
+    "status": "LOCAL_QA_PASS_NEW_FIXED_COMMIT_REVIEW_PENDING",
+    "source_parent": "52df7a7b2152f41120ceefd834e94068eb9a35f8",
+    "report": "docs/vico-pr38-closeout-20261013.md",
+    "tests": {
+      "trackp_stagew": "96_PASS",
+      "final_guard_and_whitespace": "54_PASS",
+      "trackp_independent_review": "46_PASS",
+      "android": "498_TESTS_0_FAILURES_0_ERRORS_29_SKIPPED",
+      "lint_assembleDebug": "PASS",
+      "full_s12": "1794_PASS_6_SKIP_232_SUBTESTS_AT_4b44f018",
+      "vico_python": "157_TESTS_0_FAILURES_4_SKIPPED",
+      "activity_entry_jvm": "19_PASS_JDK21_SOURCE_EXTRACTED_CONTROLLED_PORTS_RED_3_EXPECTED_FAILURES"
+    },
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "qualification": {
+      "road": "NOT_RUN",
+      "acoustic": "NOT_EVALUATED",
+      "human": "IMPROVED_OPTIMIZATION_PENDING"
+    },
+    "audition_feedback": "Jovi: 有改善，但需要继续优化; existing APK installed 2026-10-11",
+    "preview_ownership": "TWO_P2_ENTRY_FIXES_LOCAL_19_PASS_INDEPENDENT_REVIEW_APPROVED",
+    "apk_sha256": "8d81a7e44c519ea425279135d42c6c5eedb7b83d4fb6e54f4ab6234c8c062cf8",
+    "new_apk_device": "NOT_INSTALLED",
+    "baseline_hosted_ci": "ALL_FIVE_PASS_AT_89264b3531f679d6949a8c2c663711a466600042",
+    "remote_review": "TWO_P2_FIXED_NEW_SHA_REVIEW_PENDING",
+    "remaining": "New fixed SHA hosted CI and ChatGPT read-only review; exact APK phone confirmation; device/road/acoustic/human gates open"
+  },
+  "audition_periodicity_20261014": {
+    "date": "2026-10-15",
+    "source_parent": "cd1bab58cd14b3c99520e6a2d5af6370c5327e55",
+    "status": "SEAM_ONLY_LOCAL_QA_PASS_REMOTE_REVIEW_PENDING",
+    "current": "Canonical H8 boundary slope softening and nativekmh upgrade implemented/tested/built; full.55period target remainsCHANGES_REQUIRED",
+    "candidate_count": 0,
+    "candidate_budget": 0,
+    "human": "PENDING_NEW_APK_AUDITION",
+    "road": "NOT_RUN",
+    "acoustic": "NOT_EVALUATED",
+    "periodicity": "CHANGES_REQUIRED_910RPM_SLOW_TEXTURE",
+    "APK_SHA256": "b620ef8a38b23724396de32cf5a433cb24f3e12cfc5d40a3c1c25222bf707d36",
+    "evidence": "review_packages/vico-normal-seam-kmh-20261015/verification.json",
+    "remote_plan": "review_packages/periodicity-repair-20261015/remote-v3-seam-plan.txt",
+    "full_technical_report": "review_packages/periodicity-repair-20261015/evengine-full-technical-report.md",
+    "next": "Remote code/evidence review, fixedPR38SHA/localAPK handoff; freshGM1910preflight andexactAPKconfirm beforeinstall; continue slow-texture diagnosis without mislabeling seamqualification"
+  },
+  "hc_c1_local_AB_20261025": {
+    "status": "A_SOFTWARE_VERIFIED_B_DESCRIPTIVE_MIXED_RESULT",
+    "base": "7f5c35016bec159effa635e6f76cba15e4cdb86b",
+    "PR": "https://github.com/Jovifei/Tesla_Simulate_vico/pull/41",
+    "authority": "Jovi direct approval after pasted AB review; no remote wait",
+    "android": {
+      "total": 558,
+      "pass": 529,
+      "skip": 29,
+      "fail": 0,
+      "error": 0,
+      "lint_errors": 0,
+      "lint_warnings": 6,
+      "assembleDebug": "PASS"
+    },
+    "web": {
+      "node_pass": 133,
+      "fail": 0,
+      "native_ui_js_pass": 31,
+      "six_car_build_files": 130,
+      "longtake_trial": "4cases_NUMERIC_ONLY"
+    },
+    "python_jvm": {
+      "windows_n2_pass": 44,
+      "session_start_wiring_pass": 3,
+      "REAL_policy_lifecycle": "PASS"
+    },
+    "apk": {
+      "sha256": "8911314e08fd28dd13c1210d4cf14c3a4aec68227f352b8e3419da99fe98e55f",
+      "signing": "existing_debug_v2",
+      "installed": false
+    },
+    "B": {
+      "status": "MECHANISM_EVIDENCE_ONLY_NOT_PRODUCT_OR_HELLCAT",
+      "B1": "INVALID_REVERSE_DYNO_PRESERVED",
+      "B2_seconds": 180,
+      "physics_frames": 1800000,
+      "audio_frames": 7938000,
+      "V0_frames": 8640000,
+      "analysis_routes": 14,
+      "analysis_unit_tests": 11,
+      "analysis_source": "tools/engine_sim_offline",
+      "captured_engine": "generic_crossplane_LS_NOT_HELLCAT",
+      "default_DSP_clips": [
+        15955,
+        8806,
+        7016,
+        15932
+      ],
+      "default_DSP_gate": "FAIL_CLIPPING",
+      "ten_ms_relative_slow_power_E0_vs_E2": {
+        "low": 1.0621172484964443,
+        "high": 0.37904444866650067
+      },
+      "twenty_ms_relative_slow_power_change_percent": {
+        "low": 11.96,
+        "high": -21.18
+      },
+      "reconstruction_smoke": "bit_exact_pressure_audio_state_dyno_validity",
+      "new_product_voice_promoted": false,
+      "owner_scope_C": "SEPARATE_REVIEW"
+    },
+    "C": "SEPARATE_REVIEW_NOT_IMPLEMENTED",
+    "acoustic_periodicity": "NOT_RESOLVED_BY_A",
+    "original_WAV_gain_main_data": "UNCHANGED",
+    "device_road_human": "NOT_EVALUATED",
+    "A_CI": "4SUCCESS_exact_f6018a6"
+  },
+  "hc_c1_state_contract_20261027": {
+    "status": "SOFTWARE_HARNESS_COMPLETE_NOT_ACOUSTIC_QUALIFICATION",
+    "authority": "Jovi direct approval of方案A on 2026-10-27",
+    "worktree": "worktrees/hellcat-state-contract-20261027",
+    "base": "2d30c47ee9fccb12fc66e404e42b1bd7f1197ace",
+    "scope": [
+      "recorded-state-contract",
+      "three-way-offline-study",
+      "tests"
+    ],
+    "contract": "vico.recorded.state-contract.v1",
+    "routes": [
+      "RECORDED_PRIMARY",
+      "LEGACY_BANK",
+      "GENERIC_PHYSICS"
+    ],
+    "fixed_trace": "60s_continuous_15_idle_15_accel_15_high_rpm_10_coast_5_idle_no_reset",
+    "fail_closed": "INSUFFICIENT_EVIDENCE_without_license_sync_measured_rpm_load_gear_verified_720_phase_independent_holdout",
+    "tests": {
+      "focused": "8/8",
+      "web": "171/171",
+      "ledger_check": "PASS",
+      "diff_check": "PASS"
+    },
+    "evidence": [
+      "reports/recorded-engine-optimization-20261027-focused-final2.log",
+      "reports/recorded-engine-optimization-20261027-web-final.log",
+      "vico_web/tools/recorded-state-contract.mjs",
+      "vico_web/tools/three-way-offline-study.mjs"
+    ],
+    "product_candidate": false,
+    "default_voice_changed": false,
+    "android_device_human_oem": "NOT_EVALUATED",
+    "next_gate": "supply licensed multi-condition capture with synchronized state trace and holdout; then run real three-way offline render"
+  },
+  "real_engine_source_pool_20261027": {
+    "status": "ACQUIRED_RESEARCH_ONLY",
+    "directory": "E:\\Claude_allow\\Download\\vico-real-engine-source-pool-20261027",
+    "manifest": "E:\\Claude_allow\\Download\\vico-real-engine-source-pool-20261027\\manifest.json",
+    "report": "reports/real-engine-source-pool-20261027/README.md",
+    "plan": "reports/realism-roadmap-20261027/PLAN.md",
+    "files": 5,
+    "licenses": [
+      "CC BY 3.0",
+      "CC BY-SA 4.0",
+      "CC BY 4.0",
+      "CC BY-SA 4.0",
+      "CC BY-SA 3.0"
+    ],
+    "state": "RPM_LOAD_GEAR_PHASE_MIC_UNKNOWN",
+    "git_tracked": false,
+    "product_integrated": false,
+    "next": "read-only feature analysis then six-vehicle source registry",
+    "blocker": "REFERENCE_TARGET_MISSING"
+  },
+  "continuous_hybrid_renderer_20261028": {
+    "status": "RESEARCH_KERNEL_COMPLETE_NOT_PRODUCT_INTEGRATED",
+    "branch": "local/hellcat-state-contract-20261027",
+    "commit": "PENDING",
+    "scope": [
+      "continuous texture reader",
+      "smooth envelope",
+      "bounded event envelope",
+      "research harness"
+    ],
+    "focused_tests": "7/7",
+    "web_tests": "178/178",
+    "research_input": "Honda F20C public CC BY 3.0",
+    "research_output": "10s F32LE; peak 0.2837267518; max jump 0.0292004198",
+    "product_candidate": false,
+    "state_qualification": "INSUFFICIENT_EVIDENCE",
+    "default_voice_changed": false,
+    "android_changed": false,
+    "next": "three-way same-trajectory offline comparison then blind audition",
+    "blocker": "No synchronized RPM/load/gear/phase or holdout"
+  },
+  "research_three_way_20261028": {
+    "status": "RESEARCH_THREE_WAY_COMPLETE_NOT_PRODUCT",
+    "branch": "local/hellcat-state-contract-20261027",
+    "focused_tests": "2/2",
+    "web_tests": "180/180",
+    "inputs": [
+      "Honda F20C public CC BY 3.0",
+      "Ferrari 250 GTO public CC BY 4.0"
+    ],
+    "routes": [
+      "RECORDED_PRIMARY",
+      "LEGACY_BANK",
+      "GENERIC_PHYSICS"
+    ],
+    "trace": "60s idle/acceleration/high-rpm/coast/idle; resetCount=0",
+    "metrics": "RMS peak maxSampleJump output SHA",
+    "research_only": true,
+    "product_candidate": false,
+    "state_qualification": "INSUFFICIENT_EVIDENCE",
+    "next": "Jovi blind audition or additional generic texture study",
+    "blocker": "No synchronized RPM/load/gear/phase or holdout"
+  },
+  "matlab_simulink_texture_layer_20261028": {
+    "status": "MATLAB_SOURCE_UPDATED_SIMULINK_RUNTIME_PENDING",
+    "scope": "v1.2 pre-PTR optional research texture residual",
+    "files": [
+      "tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m",
+      "tools/sound_sim/s12/playground_v12/common/s12_v12_render_pre_ptr_frame.m",
+      "tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m"
+    ],
+    "default_weight": 0,
+    "fixed_contract": "[960,1] pre-PTR before frozen Radiation",
+    "static_tests": "2/2",
+    "python_contract_tests": "35/35",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_compile": "NOT_RUN",
+    "simulink_90s": "NOT_RUN",
+    "product_integrated": false,
+    "next": "restore MATLAB transport then run real test/update/compile/sim",
+    "blocker": "MATLAB MCP transport"
+  },
+  "simulink_texture_candidate_20261028": {
+    "status": "SIMULINK_CANDIDATE_CONTRACT_READY_RUNTIME_NOT_RUN",
+    "contract": "s12-v12-texture-residual-simulink-v1",
+    "source_model_candidates": [
+      "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+      "tools/sound_sim/s12/playground_v12/vehicles/ferrari_458_stock/S12_ferrari_458_stock_v12.slx",
+      "tools/sound_sim/s12/playground_v12/vehicles/rx7_fd_1991_stock/S12_rx7_fd_1991_stock_v12.slx"
+    ],
+    "ports": "vehicle [9,1], texture [960,1], weight [1,1], pre-PTR [960,1], PCM [960,2]",
+    "default_weight": 0,
+    "python_contract_tests": "35/35",
+    "simulink_model_edit": "NOT_RUN",
+    "update_diagram": "NOT_RUN",
+    "active_compile": "NOT_RUN",
+    "simulation_90s": "NOT_RUN",
+    "product_integrated": false,
+    "next": "restore MATLAB MCP then copy isolated candidate and run model_edit/update/compile/90s repeat",
+    "blocker": "MATLAB MCP transport",
+    "fixed_frame_entry": "s12_v12_model_texture_step.m",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "weight_smoothing": "persistent weight_state; per-frame effective weight = previous + 0.25*(target-previous); target zero resets exact bypass",
+    "stateful_texture_context": true,
+    "static_tests": "6/6",
+    "runtime_attempt_report": "reports/matlab-simulink-runtime-20261028/ATTEMPT.md",
+    "attach_attempts": [
+      "evaluate_matlab_code:failed_to_attach",
+      "model_overview:failed_to_attach",
+      "run_matlab_file:failed_to_attach"
+    ],
+    "process_check": "NO_MATLAB_NO_MCP_NO_LISTENER"
+  },
+  "simulink_topology_audit_20261028": {
+    "status": "ARCHIVE_TOPOLOGY_AUDITED_CANDIDATE_PLAN_READY_RUNTIME_NOT_RUN",
+    "model": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+    "archive_status": "PASS",
+    "source_sid": "11",
+    "radiation_sid": "12",
+    "renderer_mux_sid": "14",
+    "stereo_renderer_sid": "15",
+    "pcm_sid": "16",
+    "source_to_radiation": true,
+    "texture_insertion": "copy model; Source -> Texture Mixer [960,1] -> Frozen Radiation; Texture Weight [1,1] default 0",
+    "static_tests": "6/6",
+    "python_contract_tests": "35/35",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "model_edit": "NOT_RUN",
+    "update_diagram": "NOT_RUN",
+    "active_compile": "NOT_RUN",
+    "simulation_90s": "NOT_RUN",
+    "product_integrated": false,
+    "next": "restore MATLAB transport then execute model_edit on isolated candidate",
+    "blocker": "MATLAB MCP transport"
+  },
+  "texture_frame_source_20261028": {
+    "status": "FIXED_FRAME_TEXTURE_INPUT_READY_RUNTIME_PENDING",
+    "source": "s12_v12_texture_frame_source.py",
+    "sample_rate_hz": 48000,
+    "frame_samples": 960,
+    "frame_period_s": 0.02,
+    "sha_bound": true,
+    "state": "UNKNOWN",
+    "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "restore MATLAB transport and feed fixed texture frames into copied candidate",
+    "blocker": "MATLAB MCP transport",
+    "crossfade_samples": 5760,
+    "wrap_policy": "120ms raised-cosine crossfade; no hard wrap",
+    "tests": "8/8"
+  },
+  "simulink_model_edit_plan_20261028": {
+    "status": "MODEL_EDIT_PLAN_READY_RUNTIME_PENDING",
+    "plan": "reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json",
+    "topology_audit": "reports/simulink-texture-topology-20261028.json",
+    "source_model_unchanged": true,
+    "operations": "disconnect blk_11.y1->blk_12.u1; add Texture Residual [960,1], Texture Weight [1,1], Texture Mixer s12_v12_model_texture_step; reconnect Mixer->blk_12.u1",
+    "default_weight": 0,
+    "static_tests": "4/4 plan+topology",
+    "python_contract_tests": "35/35",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "model_edit": "NOT_RUN",
+    "update_diagram": "NOT_RUN",
+    "active_compile": "NOT_RUN",
+    "simulation_90s": "NOT_RUN",
+    "next": "restore existing-session MATLAB then execute exact plan",
+    "blocker": "MATLAB MCP transport"
+  },
+  "matlab_external_texture_input_20261028": {
+    "status": "MATLAB_EXTERNAL_TEXTURE_INPUT_BRIDGE_READY_RUNTIME_PENDING",
+    "source": "s12_v12_prepare_texture_external_input.m",
+    "contract": "48kHz; 960 samples; 50Hz frame matrix; 120ms crossfade; source SHA",
+    "outputs": [
+      "texture_residual[frameCount,960]",
+      "texture_weight[frameCount,1]",
+      "source_sha256"
+    ],
+    "state": "UNKNOWN",
+    "purpose": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "restore MATLAB transport then SimulationInput candidate run",
+    "blocker": "MATLAB MCP transport",
+    "state_schedule": "optional time_s/load/acceleration; target=base*(0.25+0.65*load+0.10*abs(accel)/3); weight smoothing 0.25",
+    "optional_layer_paths": "1x3 string row; body path required, mechanical/broadband optional",
+    "layer_sha": true,
+    "tests": "7/7"
+  },
+  "texture_candidate_runner_20261028": {
+    "status": "CONTROLLED_SIMULATIONINPUT_RUNNER_READY_RUNTIME_PENDING",
+    "source": "s12_v12_run_texture_candidate.m",
+    "default_execute": false,
+    "inputs": [
+      "texture_residual_frames",
+      "texture_weight_frames"
+    ],
+    "output": "texture_candidate_result.mat",
+    "guards": [
+      "finite",
+      "peak<=1",
+      "INSUFFICIENT_EVIDENCE",
+      "product_candidate=false",
+      "no source model save"
+    ],
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "restore MATLAB transport then run isolated candidate 90s twice",
+    "blocker": "MATLAB MCP transport",
+    "layered_inputs": [
+      "texture_layer_frames[frameCount,960,3]",
+      "texture_layer_weight_frames[frameCount,3]"
+    ],
+    "backward_compatibility": "single texture_residual/texture_weight remains supported as body-only",
+    "tests": "6/6"
+  },
+  "layered_texture_matlab_20261028": {
+    "status": "LAYERED_TEXTURE_HELPER_READY_RUNTIME_PENDING",
+    "layers": [
+      "body/exhaust",
+      "mechanical/supercharger",
+      "broadband/residual"
+    ],
+    "default_single_texture_path_preserved": true,
+    "weights": "[1,3] per-layer state-smoothed",
+    "fixed_frame": "[960,1] each layer",
+    "qualification": "INSUFFICIENT_EVIDENCE",
+    "tests": "6/6",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "wire layered sources into isolated candidate after runtime transport restored",
+    "blocker": "MATLAB MCP transport"
+  },
+  "layered_simulink_block_20261028": {
+    "status": "LAYERED_SIMULINK_BLOCK_READY_RUNTIME_PENDING",
+    "block": "s12_v12_model_texture_layers_step.m",
+    "inputs": [
+      "prePtr[960,1]",
+      "body[960,1]",
+      "mechanical[960,1]",
+      "broadband[960,1]",
+      "weights[1,3]"
+    ],
+    "weight_state": "3 scalar persistent states; smooth factor 0.25; all-zero exact bypass",
+    "contract_version": "s12-v12-texture-residual-simulink-v2",
+    "matlab_runtime": "NOT_RUN_MCP_FAILED_TO_ATTACH",
+    "simulink_runtime": "NOT_RUN",
+    "next": "wire three texture inputs into copied candidate and run 90s x2",
+    "blocker": "MATLAB MCP transport",
+    "external_input": "texture_layers[frameCount,960,3] + texture_layer_weights[frameCount,3]; legacy single texture -> body layer only",
+    "tests": "9/9"
+  },
+  "cabin_mechanical_bank_candidate_20261030": {
+    "status": "PASS_DIGITAL_RESEARCH_ONLY_WAITING_REMOTE_REVIEW_AND_HUMAN_CABIN_AUDITION",
+    "scope": "isolated source/identity copies + event/modal + dual-bank candidate; original model/soundbank/Android/public source unchanged",
+    "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+    "candidate_root": "reports/app8-cabin-mechanical-bank-candidate-20261030",
+    "formal_model": "reports/app8-cabin-mechanical-bank-candidate-20261030/isolated-model/S12_hellcat_cabin_formal_candidate.slx",
+    "formal_short": "model_check healthy; cold reload/update/active compile pass; 0.04s real Simulink [960,2,3] finite; peak=0.022595687370885784",
+    "long_run": "runs/formal-long-20261031-005916-982/run-summary.json",
+    "cases": [
+      "B0",
+      "N",
+      "M",
+      "D",
+      "MD",
+      "MD-repeat",
+      "MD-cold"
+    ],
+    "long_contract": "4500 frames; 89.98s last frame; 4,320,000 samples/channel; 48kHz; PCM24 readback; continuity; finite/peak gates",
+    "repeatability": "MD-repeat and MD-cold PCM/WAV SHA exactly match MD",
+    "pcm_sha256": {
+      "B0": "2e809bf2f17e1ea07f9a3e9c1b54027da12d9d09f8cd85f974ce39f66ce2f74d",
+      "N": "472113366d56c871697f75e11b4fc72d9d06a39e836a612922e8119f6a3491f0",
+      "M": "9fbcdb4d00bc9373daa40b85dfc6df0330347cf1842ddcf861fa6ce991475388",
+      "D": "cb7ffc53efe09533b8096763ac646d00ad1b779d19e096d2ded5a49143dd2043",
+      "MD": "2a87de266a2d8546d96e961c4554ff2655b2d6c2a03da65dbbfbaff24903d354"
+    },
+    "startup_blocker": "R2026a independent -batch native access violation in homesessionmanager/recent_artifacts/threadpool; evidence remains from existing MCP/Desktop session",
+    "human_acoustic_status": "NOT_RUN; car-speaker loudness-matched audition and Jovi acceptance remain separate",
+    "remote_review_status": "EXECUTED_SENT; local bridge/doctor green; ChatGPT page returned Unknown error after one retry, awaiting review",
+    "next": "Retry same ChatGPT review session without duplicate INIT; then prepare fixed-scalar in-car audition only after review; no product promotion",
+    "independent_file_recheck": "runs/formal-long-20261031-005916-982/independent-file-recheck.json: PCM/WAV byte lengths, SHA, WAV metadata, MD repeat/cold identity all PASS",
+    "audition_package": "reports/app8-cabin-mechanical-bank-candidate-20261030/audition-formal-20261031/audition.json",
+    "audition_status": "FIXED_SCALAR_PACKAGE_READY_HUMAN_CABIN_LISTENING_PENDING",
+    "audition_method": "one fixed scalar per raw PCM; target -23 LUFS; true peak <= -1.5 dBTP; no limiter/AGC/EQ",
+    "audition_blind_items": 9
+  }
+}

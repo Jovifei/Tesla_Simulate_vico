@@ -20,7 +20,7 @@ class TextureSimulinkStaticContract(unittest.TestCase):
         self.assertIn("sourceModel == outputModel", text)
         self.assertIn("model_edit", text)
         self.assertIn("INSUFFICIENT_EVIDENCE_UNTIL_RUNTIME_AND_ACOUSTIC_GATES", text)
-        self.assertIn("copy source model to isolated candidate", text)
+        self.assertIn("execute (1,1) logical = false", text)
 
 
 if __name__ == "__main__":

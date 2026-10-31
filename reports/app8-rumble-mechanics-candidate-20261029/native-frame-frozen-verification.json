@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "scope": "ALL8_DRIVE_NATIVE_FRAMES_BINARY_EXPORTS_AND_SEQUENTIAL_FROZEN",
+  "runs": [
+    {
+      "label": "B0",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "S",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "R",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "SR",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "SR_repeat",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "S2",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "SR2",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    },
+    {
+      "label": "SR2_repeat",
+      "frames": 4500,
+      "exact": true,
+      "sequential_frozen_max_error": 0
+    }
+  ]
+}

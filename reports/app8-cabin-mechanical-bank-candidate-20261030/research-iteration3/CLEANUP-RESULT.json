@@ -1,0 +1,13 @@
+{
+  "schema": "app8.cabin.lab_cleanup.result.v1",
+  "date": "2026-10-31",
+  "lab": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030",
+  "removed_slx": 39,
+  "removed_dirs": [
+    "runs",
+    "cabin-cache",
+    "cabin-codegen",
+    "__pycache__"
+  ],
+  "removed_audition_wav": 9
+}

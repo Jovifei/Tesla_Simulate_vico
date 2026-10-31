@@ -1,0 +1,15 @@
+{
+  "timestamp_local": "2026-10-31T10:17:01.192900+08:00",
+  "existing_matlab_processes": [
+    {
+      "ProcessId": 264144,
+      "ParentProcessId": 234632
+    },
+    {
+      "ProcessId": 380160,
+      "ParentProcessId": 264144
+    }
+  ],
+  "original_artifacts_var_present": false,
+  "original_mcp_discovery_sha256": "dab6e56ff7db1714e31515d3aada99de6df790de1cff518baae1654720fea317"
+}

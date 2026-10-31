@@ -1,0 +1,9 @@
+{
+  "status": "MEMORY_UPDATED",
+  "message": "Verified project memory checkpoint applied after a fresh dry-run.",
+  "slots": [
+    "progress",
+    "decisions"
+  ],
+  "basis": "installed no-argument wrapper; fresh dry-run, mapping and atomic apply checks"
+}

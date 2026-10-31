@@ -1,0 +1,10 @@
+{
+  "status": "NOT_SENDABLE",
+  "project": "tesla-speed",
+  "attempted_at": "2026-10-31",
+  "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+  "command": "bound_report.py revision/template --project tesla-speed --worktree E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+  "error": "worktree does not belong to the registered repository",
+  "policy": "Kept pending; no alternate worktree identity or owner apply used.",
+  "evidence": "Formal short and 7x90s run-summary remain in this candidate directory."
+}

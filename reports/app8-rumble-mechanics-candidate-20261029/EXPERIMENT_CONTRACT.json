@@ -1,0 +1,395 @@
+{
+  "schema": "s12.rumble_mechanics.research.v1",
+  "parameter_status": "RESEARCH_ASSUMPTIONS_NOT_OEM_CALIBRATION",
+  "profile_id": "hellcat_2022_stock",
+  "duration_seconds": 90,
+  "sample_rate_hz": 48000,
+  "frame_samples": 960,
+  "frame_time_s": 0.02,
+  "renderer_gain": 0.1,
+  "idle_rpm": 750,
+  "wheel_radius_m": 0.34,
+  "final_drive": 3.1,
+  "gear_ratios": [
+    3.8,
+    2.5,
+    1.7,
+    1.15
+  ],
+  "speed_knots_s": [
+    0,
+    2,
+    11.8,
+    20.8,
+    30.8,
+    38,
+    50,
+    60,
+    65,
+    75,
+    82,
+    90
+  ],
+  "speed_knots_mps": [
+    0,
+    0,
+    14,
+    23,
+    33,
+    33,
+    38,
+    26,
+    26,
+    35,
+    35,
+    0
+  ],
+  "events": [
+    {
+      "start_s": 11,
+      "duration_s": 0.24,
+      "from_gear": 1,
+      "to_gear": 2
+    },
+    {
+      "start_s": 20,
+      "duration_s": 0.24,
+      "from_gear": 2,
+      "to_gear": 3
+    },
+    {
+      "start_s": 30,
+      "duration_s": 0.24,
+      "from_gear": 3,
+      "to_gear": 4
+    },
+    {
+      "start_s": 58,
+      "duration_s": 0.3,
+      "from_gear": 4,
+      "to_gear": 3
+    }
+  ],
+  "research_options": {
+    "enabled": true,
+    "cut_minimum": 0.35,
+    "whine_scale": 1,
+    "induction_scale": 1,
+    "voicing_rpm_band": [
+      2000,
+      3500
+    ]
+  },
+  "stationary_seconds": 6,
+  "stationary_analysis_s": [
+    1,
+    5
+  ],
+  "anchors": [
+    {
+      "name": "calibration_cruise",
+      "role": "calibration",
+      "rpm": 2200,
+      "load": 0.35,
+      "throttle": 0.32
+    },
+    {
+      "name": "calibration_load",
+      "role": "calibration",
+      "rpm": 4500,
+      "load": 0.85,
+      "throttle": 0.9
+    },
+    {
+      "name": "calibration_high",
+      "role": "calibration",
+      "rpm": 6000,
+      "load": 0.95,
+      "throttle": 0.95
+    },
+    {
+      "name": "heldout_mid",
+      "role": "heldout_virtual_state",
+      "rpm": 3200,
+      "load": 0.65,
+      "throttle": 0.7
+    },
+    {
+      "name": "heldout_load",
+      "role": "heldout_virtual_state",
+      "rpm": 5000,
+      "load": 0.8,
+      "throttle": 0.85
+    },
+    {
+      "name": "heldout_high",
+      "role": "heldout_virtual_state",
+      "rpm": 5500,
+      "load": 0.9,
+      "throttle": 0.9
+    },
+    {
+      "name": "idle",
+      "role": "idle_research_anchor",
+      "rpm": 750,
+      "load": 0.12,
+      "throttle": 0.06
+    }
+  ],
+  "screening": {
+    "welch_window_seconds": 1,
+    "welch_overlap_fraction": 0.5,
+    "maximum_sample_jump": 0.25,
+    "frame_jump_increase_over_reference_max": 0.02,
+    "final_pcm_peak_max": 1,
+    "pcm24_max_error": 1.1920928955078125e-07,
+    "order_samples_per_revolution": 4096,
+    "order_analysis_samples_per_revolution": 256,
+    "order_window_revolutions": 8,
+    "bands_hz": [
+      [
+        20,
+        80
+      ],
+      [
+        80,
+        250
+      ],
+      [
+        250,
+        500
+      ],
+      [
+        500,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        5000
+      ]
+    ],
+    "orders_to_report": [
+      0.5,
+      1,
+      1.5,
+      2,
+      4,
+      5,
+      7,
+      8,
+      11,
+      22,
+      44
+    ],
+    "R_lf_20_250_min_db": 3,
+    "SR_mid_250_1000_min_db": -1,
+    "SR_lf_20_250_max_db": 8,
+    "stop_on_gate_failure": true,
+    "continuity_reference_A_frame_jump": 0.006908067530679638
+  },
+  "tuning_policy": "ONE_FIXED_TRIAL_NO_SWEEP_NO_GLOBAL_GAIN_RESCUE",
+  "recorded_pcm_pressure_injection": false,
+  "engineering_tones_in_listening_output": false,
+  "profile_assets_modified": false,
+  "full_vehicle_physics_or_human_acceptance": false,
+  "cases": {
+    "B0": {
+      "mechanical_gain": 1,
+      "mechanical_mod_depth": 0,
+      "rumble_k": 0
+    },
+    "S": {
+      "mechanical_gain": 1.25,
+      "mechanical_mod_depth": 0.15,
+      "rumble_k": 0
+    },
+    "R": {
+      "mechanical_gain": 1,
+      "mechanical_mod_depth": 0,
+      "rumble_k": 1
+    },
+    "SR": {
+      "mechanical_gain": 1.25,
+      "mechanical_mod_depth": 0.15,
+      "rumble_k": 1
+    },
+    "S2": {
+      "mechanical_gain": 1.5,
+      "mechanical_mod_depth": 0.45,
+      "rumble_k": 0
+    },
+    "SR2": {
+      "mechanical_gain": 1.5,
+      "mechanical_mod_depth": 0.45,
+      "rumble_k": 1
+    },
+    "S_gain": {
+      "mechanical_gain": 1.25,
+      "mechanical_mod_depth": 0,
+      "rumble_k": 0
+    },
+    "S_timing": {
+      "mechanical_gain": 1,
+      "mechanical_mod_depth": 0.15,
+      "rumble_k": 0
+    },
+    "S2_gain": {
+      "mechanical_gain": 1.5,
+      "mechanical_mod_depth": 0,
+      "rumble_k": 0
+    },
+    "S2_timing": {
+      "mechanical_gain": 1,
+      "mechanical_mod_depth": 0.45,
+      "rumble_k": 0
+    }
+  },
+  "full_cases": [
+    "B0",
+    "S",
+    "R",
+    "SR",
+    "SR_repeat",
+    "S2",
+    "SR2",
+    "SR2_repeat"
+  ],
+  "stationary_cases": [
+    "B0",
+    "S",
+    "R",
+    "SR",
+    "S2",
+    "SR2"
+  ],
+  "short_cases": [
+    "B0",
+    "S_gain",
+    "S_timing",
+    "S",
+    "S2_gain",
+    "S2_timing",
+    "S2"
+  ],
+  "short_seconds": 2,
+  "short_state": {
+    "rpm": 2200,
+    "load": 0.35,
+    "throttle": 0.32
+  },
+  "mechanical_event": {
+    "cycle_crank_degrees": 720,
+    "event_full_width_degrees": 40,
+    "bank_event_count": 4,
+    "mean_subtracted": 0.1111111111111111,
+    "normalization": 0.8888888888888888,
+    "q_min": -0.125,
+    "q_max": 1,
+    "phase_offsets_crank_degrees": [
+      0,
+      90,
+      180,
+      270,
+      360,
+      450,
+      540,
+      630
+    ]
+  },
+  "rumble_filter": {
+    "a": 0.9973854300793629,
+    "b": 0.9716127758430366,
+    "k": 1,
+    "sample_rate_hz": 48000,
+    "initial_state": [
+      0,
+      0,
+      0
+    ],
+    "k_zero_exact_bypass": true,
+    "steady_discard_seconds": 2,
+    "sine_amplitude_tolerance_db": 0.01,
+    "sine_phase_tolerance_deg": 0.1
+  },
+  "drive_analysis_windows_s": [
+    [
+      15.08,
+      17.94
+    ],
+    [
+      23.66,
+      28.42
+    ],
+    [
+      68.12,
+      72.36
+    ]
+  ],
+  "reference": {
+    "capture_mat": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-listening-candidate-20261029\\runs\\full-20261029-013256\\B\\capture.mat",
+    "capture_mat_sha256": "bdefffc0f7b6d5071d8f359c6169c5c13ba46ea7294fb4ea788e503121beb919",
+    "pcm_sha256": "1a56b2f54ce3149a15d184c80257f1a838ddee83fd0ff193318d791b4dc396ef",
+    "controls_source": "native actualState double, never CSV",
+    "frames": 4500,
+    "columns": 9
+  },
+  "audition": {
+    "initial_target_lufs": -23,
+    "max_true_peak_dbtp": -1.5,
+    "max_loudness_error_lu": 0.2,
+    "one_scalar_per_file_or_excerpt": true,
+    "excerpts": [
+      {
+        "name": "acceleration",
+        "start_s": 0,
+        "end_s": 30
+      },
+      {
+        "name": "upshift_1",
+        "start_s": 10,
+        "end_s": 13
+      },
+      {
+        "name": "upshift_2",
+        "start_s": 19,
+        "end_s": 22
+      },
+      {
+        "name": "upshift_3",
+        "start_s": 29,
+        "end_s": 32
+      },
+      {
+        "name": "downshift",
+        "start_s": 57,
+        "end_s": 61
+      },
+      {
+        "name": "high_load_1",
+        "start_s": 15.08,
+        "end_s": 17.94
+      },
+      {
+        "name": "high_load_2",
+        "start_s": 23.66,
+        "end_s": 28.42
+      },
+      {
+        "name": "high_load_3",
+        "start_s": 68.12,
+        "end_s": 72.36
+      },
+      {
+        "name": "idle",
+        "anchor": "idle",
+        "start_s": 1,
+        "end_s": 5
+      }
+    ]
+  },
+  "capture_short_mechanics": true
+}

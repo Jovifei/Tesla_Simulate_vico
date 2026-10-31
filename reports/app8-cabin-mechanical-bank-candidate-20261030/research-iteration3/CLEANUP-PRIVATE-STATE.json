@@ -1,0 +1,27 @@
+{
+  "schema": "app8.cabin.lab_private_state_cleanup.v1",
+  "date": "2026-10-31",
+  "removed_dirs": [],
+  "removed_credential_files": 0,
+  "removed_temp_dirs": [
+    "\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\temp",
+    "\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\temp",
+    "\\startup-diagnostic\\06-batch-isolated-localappdata\\temp",
+    "\\startup-diagnostic\\05-batch-isolated-appdata\\temp",
+    "\\startup-diagnostic\\13-desktop-simulink-smoke\\temp",
+    "\\startup-recovery-20261031\\03-engine-desktop\\temp",
+    "\\startup-diagnostic\\09-batch-startup-addpath\\temp",
+    "\\startup-diagnostic\\11-batch-addpath-repeat\\temp",
+    "\\startup-diagnostic\\12-batch-simulink-smoke\\temp",
+    "\\startup-diagnostic\\07-batch-shadow-startup\\temp",
+    "\\startup-recovery-20261031\\01-artifacts-off\\temp",
+    "\\startup-diagnostic\\08-batch-empty-workdir\\temp",
+    "\\startup-diagnostic\\16-desktop-smoke-close\\temp",
+    "\\startup-diagnostic\\17-batch-addpath-delay\\temp",
+    "\\startup-diagnostic\\10-batch-startup-init\\temp",
+    "\\startup-diagnostic\\18-batch-shadow-delay\\temp",
+    "\\startup-diagnostic\\19-nojvm-shadow-delay\\temp",
+    "\\startup-recovery-20261031\\05-gui-share\\temp"
+  ],
+  "note": "Copied MATLAB user-profile and credential artifacts are local-only and must never be pushed."
+}

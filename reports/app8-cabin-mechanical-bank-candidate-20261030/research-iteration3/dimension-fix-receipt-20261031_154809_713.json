@@ -1,0 +1,463 @@
+{
+  "status": "DIMENSION_FIX_COMPILE_SHORT_SIM_PASS",
+  "source_model": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\isolated\\S12_hellcat_cabin_event_bank_20261031_112747_734.slx",
+  "target_model": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\isolated\\S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713.slx",
+  "target_model_sha256": "260748280b977916698d42f493e852b1c25eb878415919f49021602c554be174",
+  "source_model_sha256": "fabe3805668d45632911e8da8a3855992135e026a9094651e27b5f2113825dcb",
+  "saved_receiver_expression": "mb_mechanical_mono_step(u, 'N', 1)",
+  "saved_normalizer_expression": "mb_column_frame(u)",
+  "compiled_ports": [
+    {
+      "name": "Hellcat Synthetic Source",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Hellcat Synthetic Source",
+      "dimensions": {
+        "Inport": [
+          2,
+          9,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          9
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Combustion_Split",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Combustion_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Other_Split",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Other_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Control_Split",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Control_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          5
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Combustion_Network_And_Event",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Combustion_Network_And_Event",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Pre_Frozen_Split",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Pre_Frozen_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          2
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Mechanical_Split",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Mechanical_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          2
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Mechanical_Receiver",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Mechanical_Receiver",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Frozen_Column_Normalize",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Frozen_Column_Normalize",
+      "dimensions": {
+        "Inport": [
+          1,
+          960
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Post_Frozen_Mechanical_Sum",
+      "path": "S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713/Post_Frozen_Mechanical_Sum",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          1,
+          2,
+          960,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double",
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    }
+  ],
+  "short_frames": 5,
+  "short_state_sha256": "bdefffc0f7b6d5071d8f359c6169c5c13ba46ea7294fb4ea788e503121beb919",
+  "matlab_version": "26.1.0.3203278 (R2026a)",
+  "simulink_version": {
+    "Name": "Simulink",
+    "Version": "26.1",
+    "Release": "(R2026a)",
+    "Date": "20-Nov-2025"
+  }
+}

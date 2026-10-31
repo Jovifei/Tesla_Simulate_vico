@@ -1,0 +1,752 @@
+{
+  "schema": "matlab-startup-diagnostic-receipt-v1",
+  "generated_local": "2026-10-31T00:14:53.119039+08:00",
+  "agent": "matlab_startup_diagnosis",
+  "working_directory": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+  "scope": "Startup diagnosis; only diagnostic files were intentionally written inside this directory; no source/model/Android or original preferences were deliberately edited.",
+  "status": "BLOCKED_NO_VERIFIED_STANDALONE_SIMULINK_FIX",
+  "fault_observation": "R2026a native access violation; representative complete stacks identify homesessionmanager_impl.dll+00268967 with recent_artifacts_service_impl in the caller chain. Truncated dumps with same RIP do not independently establish the complete stack.",
+  "root_cause_limit": "Deeper internal trigger and responsibility are unknown. The satk_initialize call can expose the timing-sensitive failure but is not established as the root cause: an empty startup and 15-second pause also crash.",
+  "recommendation": "Preserve existing session and evidence; request MathWorks analysis. Do not treat quick batch success or the single desktop simulation marker as a verified standalone repair. Existing-session work is a separate, non-standalone evidence level.",
+  "mcp_existing_session": {
+    "tool": "mcp__matlab__evaluate_matlab_code",
+    "command": "fprintf('PID=%d\\nROOT=%s\\nVERSION=%s\\nDESKTOP=%d\\nPREFDIR=%s\\nTEMPDIR=%s\\nJVM=%d\\nCWD=%s\\n',feature('getpid'),matlabroot,version,desktop('-inuse'),prefdir,tempdir,usejava('jvm'),pwd); fprintf('ENV_MATLAB_PREFDIR=%s\\nENV_TEMP=%s\\nENV_TMP=%s\\nENV_HOME=%s\\nENV_APPDATA=%s\\nENV_LOCALAPPDATA=%s\\n',getenv('MATLAB_PREFDIR'),getenv('TEMP'),getenv('TMP'),getenv('USERPROFILE'),getenv('APPDATA'),getenv('LOCALAPPDATA'));",
+    "tool_result": "success; no process exit code because the existing session remained running",
+    "observed": {
+      "pid": 218096,
+      "version": "26.1.0.3203278 (R2026a)",
+      "desktop": true,
+      "jvm": true,
+      "matlabroot": "D:\\Program Files\\MATLAB\\R2026a",
+      "prefdir": "C:\\Users\\Admin\\AppData\\Roaming\\MathWorks\\MATLAB\\R2026a",
+      "tempdir": "C:\\Users\\Admin\\AppData\\Local\\Temp",
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027"
+    }
+  },
+  "inherited_evidence": {
+    "description": "Previous agent independent -nojvm -batch check; not executed by this agent",
+    "receipt": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\nojvm-minimal-receipt.json",
+    "matlab_exit_code": -1073741819,
+    "log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\nojvm-minimal.log",
+    "crash_copy": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\original-crash-dump.347200-1"
+  },
+  "cases": [
+    {
+      "case": "01-nojvm-batch",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-nojvm",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 368704,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 7.977,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\temp\\matlab_crash_dump.361296-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 01-nojvm-batch --nojvm",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\01-nojvm-batch\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "02-jvm-batch",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 372452,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 10.933,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\temp\\matlab_crash_dump.218964-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 02-jvm-batch",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\02-jvm-batch\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "03-jvm-batch-nofigures",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-noFigureWindows",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 374156,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 10.496,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\temp\\matlab_crash_dump.376556-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 03-jvm-batch-nofigures --no-figures",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\03-jvm-batch-nofigures\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "04-desktop-r",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-desktop",
+        "-logfile",
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\matlab.log",
+        "-r",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); exit(0,'force');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 195176,
+      "exit_code": 0,
+      "exit_hex": "0x00000000",
+      "timed_out": false,
+      "duration_seconds": 34.205,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 04-desktop-r --mode desktop",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\04-desktop-r\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": [],
+        "matlab.log": [
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ]
+      }
+    },
+    {
+      "case": "05-batch-isolated-appdata",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 369592,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 6.009,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\temp",
+        "APPDATA": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\appdata",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\temp\\matlab_crash_dump.372956-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 05-batch-isolated-appdata --isolate-appdata",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\05-batch-isolated-appdata\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "06-batch-isolated-localappdata",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic",
+      "pid": 374796,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 6.129,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\localappdata"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\temp\\matlab_crash_dump.366584-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 06-batch-isolated-localappdata --isolate-localappdata",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\06-batch-isolated-localappdata\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "07-batch-shadow-startup",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\working",
+      "pid": 375576,
+      "exit_code": 0,
+      "exit_hex": "0x00000000",
+      "timed_out": false,
+      "duration_seconds": 6.517,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 07-batch-shadow-startup --shadow-startup",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\07-batch-shadow-startup\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_OVERRIDE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "08-batch-empty-workdir",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\working",
+      "pid": 350880,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 5.732,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\temp\\matlab_crash_dump.374584-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 08-batch-empty-workdir --case-workdir",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\08-batch-empty-workdir\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "09-batch-startup-addpath",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\working",
+      "pid": 374972,
+      "exit_code": 0,
+      "exit_hex": "0x00000000",
+      "timed_out": false,
+      "duration_seconds": 6.301,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 09-batch-startup-addpath --startup-addpath",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\09-batch-startup-addpath\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "10-batch-startup-init",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\working",
+      "pid": 315432,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 4.469,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\temp\\matlab_crash_dump.364188-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 10-batch-startup-init --startup-init",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\10-batch-startup-init\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "DIAGNOSTIC_INIT_ENTER"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "11-batch-addpath-repeat",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\working",
+      "pid": 376180,
+      "exit_code": 0,
+      "exit_hex": "0x00000000",
+      "timed_out": false,
+      "duration_seconds": 9.968,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 11-batch-addpath-repeat --startup-addpath",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\11-batch-addpath-repeat\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "12-batch-simulink-smoke",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); close_system(m,0);"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\working",
+      "pid": 375080,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 7.301,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\temp\\matlab_crash_dump.376644-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 12-batch-simulink-smoke --startup-addpath --simulink-smoke --timeout 60",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\12-batch-simulink-smoke\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "13-desktop-simulink-smoke",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-desktop",
+        "-logfile",
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\matlab.log",
+        "-r",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); close_system(m,0); exit(0,'force');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\working",
+      "pid": 376612,
+      "exit_code": 1,
+      "exit_hex": "0x00000001",
+      "timed_out": true,
+      "duration_seconds": 62.486,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 13-desktop-simulink-smoke --mode desktop --startup-addpath --simulink-smoke --timeout 60",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\13-desktop-simulink-smoke\\receipt.json",
+      "process_exit_interpretation": "forced termination after timeout; not a natural MATLAB exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": [],
+        "matlab.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "MINIMAL_START",
+          "MINIMAL_DONE",
+          "SIMULINK_SMOKE_DONE"
+        ]
+      }
+    },
+    {
+      "case": "14-batch-smoke-isolated-userprofile",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); disp('SIMULINK_CLOSE_BEGIN'); close_system(m,0); disp('SIMULINK_CLOSE_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\working",
+      "pid": 378408,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 7.804,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "C:\\Users\\Admin"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\temp\\matlab_crash_dump.375072-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 14-batch-smoke-isolated-userprofile --shadow-startup --isolate-userprofile --simulink-smoke --timeout 45",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\14-batch-smoke-isolated-userprofile\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_OVERRIDE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      },
+      "limitation": "Harness defect: --isolate-userprofile was accepted but no override was applied; USERPROFILE was original. This is not a user-profile isolation test."
+    },
+    {
+      "case": "15-batch-smoke-isolated-userprofile",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); disp('SIMULINK_CLOSE_BEGIN'); close_system(m,0); disp('SIMULINK_CLOSE_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\working",
+      "pid": 355708,
+      "exit_code": 1,
+      "exit_hex": "0x00000001",
+      "timed_out": false,
+      "duration_seconds": 1.387,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\userprofile"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\stderr.log",
+      "crash_dumps": [],
+      "wrapper_invocation": "python .\\run_case.py --case 15-batch-smoke-isolated-userprofile --shadow-startup --isolate-userprofile --simulink-smoke --timeout 45",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\15-batch-smoke-isolated-userprofile\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": []
+      },
+      "limitation": "USERPROFILE override was applied; MATLAB exited 1 with File system inconsistency before the expression, so this does not test the Home-service fault."
+    },
+    {
+      "case": "16-desktop-smoke-close",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-desktop",
+        "-logfile",
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\matlab.log",
+        "-r",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); m='startup_probe'; new_system(m); add_block('simulink/Sources/Constant',[m '/Constant']); add_block('simulink/Sinks/Terminator',[m '/Terminator']); add_line(m,'Constant/1','Terminator/1'); out=sim(m,'StopTime','0.01','ReturnWorkspaceOutputs','on'); assert(~isempty(out.tout)); fprintf('SIMULINK_SMOKE_DONE samples=%d\\n',numel(out.tout)); disp('SIMULINK_CLOSE_BEGIN'); close_system(m,0); disp('SIMULINK_CLOSE_DONE'); exit(0,'force');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\working",
+      "pid": 369492,
+      "exit_code": 1,
+      "exit_hex": "0x00000001",
+      "timed_out": false,
+      "duration_seconds": 5.146,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "C:\\Users\\Admin"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\temp\\matlab_crash_dump.377536-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 16-desktop-smoke-close --mode desktop --startup-addpath --simulink-smoke --timeout 90",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\16-desktop-smoke-close\\receipt.json",
+      "process_exit_interpretation": "MATLAB launcher/process exit; inspect crash dump for underlying fault",
+      "log_markers": {
+        "stdout.log": [],
+        "stderr.log": [],
+        "matlab.log": []
+      }
+    },
+    {
+      "case": "17-batch-addpath-delay",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); pause(15); disp('DIAGNOSTIC_DELAY_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\working",
+      "pid": 376784,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 6.749,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "C:\\Users\\Admin"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\temp\\matlab_crash_dump.361492-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 17-batch-addpath-delay --startup-addpath --delay 15 --timeout 35",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\17-batch-addpath-delay\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_ENTER",
+          "DIAGNOSTIC_ADDPATH_DONE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "18-batch-shadow-delay",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); pause(15); disp('DIAGNOSTIC_DELAY_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\working",
+      "pid": 378228,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 9.851,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "C:\\Users\\Admin"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\temp\\matlab_crash_dump.359192-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 18-batch-shadow-delay --shadow-startup --delay 15 --timeout 35",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\18-batch-shadow-delay\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_OVERRIDE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    },
+    {
+      "case": "19-nojvm-shadow-delay",
+      "command": [
+        "D:\\Program Files\\MATLAB\\R2026a\\bin\\matlab.exe",
+        "-wait",
+        "-nojvm",
+        "-batch",
+        "disp('MINIMAL_START'); assert(2+2==4); fprintf('VERSION=%s\\n',version); fprintf('SIMULINK_LICENSE=%d\\n',license('test','Simulink')); disp('MINIMAL_DONE'); pause(15); disp('DIAGNOSTIC_DELAY_DONE');"
+      ],
+      "cwd": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\working",
+      "pid": 368652,
+      "exit_code": 3221225477,
+      "exit_hex": "0xC0000005",
+      "timed_out": false,
+      "duration_seconds": 5.669,
+      "environment_overrides": {
+        "MATLAB_PREFDIR": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\prefdir",
+        "TEMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\temp",
+        "TMP": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\temp",
+        "APPDATA": "C:\\Users\\Admin\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\Admin\\AppData\\Local",
+        "USERPROFILE": "C:\\Users\\Admin"
+      },
+      "stdout": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\stdout.log",
+      "stderr": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\stderr.log",
+      "crash_dumps": [
+        "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\temp\\matlab_crash_dump.372020-1"
+      ],
+      "wrapper_invocation": "python .\\run_case.py --case 19-nojvm-shadow-delay --nojvm --shadow-startup --delay 15 --timeout 35",
+      "receipt_path": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-diagnostic\\19-nojvm-shadow-delay\\receipt.json",
+      "process_exit_interpretation": "MATLAB process/launcher exit",
+      "log_markers": {
+        "stdout.log": [
+          "DIAGNOSTIC_STARTUP_OVERRIDE",
+          "MINIMAL_START",
+          "MINIMAL_DONE"
+        ],
+        "stderr.log": []
+      }
+    }
+  ],
+  "sources": [
+    "https://www.mathworks.com/help/matlab/ref/matlabwindows.html",
+    "https://www.mathworks.com/matlabcentral/answers/97167-why-will-matlab-not-start-up-properly-on-my-windows-based-system"
+  ],
+  "notes": [
+    "Existing process working is not evidence standalone startup is fixed.",
+    "The 13 desktop timeout exit reflects the watchdog termination, not a natural exit.",
+    "The 14 isolation test had a harness defect; see per-case limitation.",
+    "SQLite PRAGMA integrity_check on the existing mwhome database returned ok; this alone cannot prove its contents or interaction are healthy.",
+    "MATLAB -batch disables setting changes; APPDATA and LOCALAPPDATA environment overrides alone may not redirect Windows known-folder resolution."
+  ]
+}

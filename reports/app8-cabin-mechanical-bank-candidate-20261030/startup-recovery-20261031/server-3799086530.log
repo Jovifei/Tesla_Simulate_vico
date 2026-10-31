@@ -1,0 +1,7 @@
+{"time":"2026-10-31T10:20:38.9512821+08:00","level":"INFO","msg":"Initiating application startup","version":"github.com/matlab/matlab-mcp-server v0.11.2"}
+{"time":"2026-10-31T10:20:38.9662948+08:00","level":"INFO","msg":"Configuration state","LogLevel":"info","DuplicateLogsToStderr":false,"DisableTelemetry":true,"TelemetryCollectorEndpoint":"","TelemetryCollectionInterval":60000000000,"TelemetryCollectorEndpointInsecure":false,"PreferredLocalMATLABRoot":"","PreferredMATLABStartingDirectory":"","UseSingleMATLABSession":true,"InitializeMATLABOnStartup":false,"MATLABDisplayMode":"desktop","MATLABSessionMode":"existing","MATLABSessionConnectionTimeout":5000000000,"MATLABSessionDiscoveryTimeout":30000000000,"ExtensionFiles":null}
+{"time":"2026-10-31T10:20:38.9662948+08:00","level":"INFO","msg":"Application directory state","log-dir":"E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\startup-recovery-20261031","id":"3799086530"}
+{"time":"2026-10-31T10:20:38.9673398+08:00","level":"ERROR","msg":"Failed to get socket","error":"socket path is too long"}
+{"time":"2026-10-31T10:20:38.9673398+08:00","level":"INFO","msg":"Initiating application shutdown"}
+{"time":"2026-10-31T10:20:38.9673398+08:00","level":"INFO","msg":"Application shutdown complete"}
+{"time":"2026-10-31T10:20:38.967852+08:00","level":"ERROR","msg":"Server failed with unexpected error","error":"socket path is too long"}

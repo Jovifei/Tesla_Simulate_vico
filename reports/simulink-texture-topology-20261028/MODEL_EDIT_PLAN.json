@@ -1,5 +1,5 @@
 {
-  "schema": "s12.v12.texture.simulink.model-edit-plan.v1",
+  "schema": "s12.v12.texture.simulink.model-edit-plan.v2",
   "sourceModel": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
   "candidateModel": "reports/simulink-texture-topology-20261028/isolated/S12_hellcat_2022_stock_v12_texture_candidate.slx",
   "sourceModelMustRemainUnchanged": true,
@@ -16,26 +16,90 @@
     {
       "op": "add_block",
       "type": "In",
-      "name": "Texture Residual",
-      "ref": "textureResidual",
-      "params": {"Port": "2"},
-      "position": [180, 300, 210, 330]
+      "name": "Texture Body",
+      "ref": "textureBody",
+      "params": {
+        "Port": "1",
+        "PortDimensions": "[960 1]",
+        "SampleTime": "0.02",
+        "OutDataTypeStr": "double",
+        "Interpolate": "off"
+      },
+      "position": [
+        180,
+        300,
+        210,
+        330
+      ]
     },
     {
       "op": "add_block",
       "type": "In",
-      "name": "Texture Weight",
-      "ref": "textureWeight",
-      "params": {"Port": "3"},
-      "position": [180, 350, 210, 380]
+      "name": "Texture Mechanical",
+      "ref": "textureMechanical",
+      "params": {
+        "Port": "2",
+        "PortDimensions": "[960 1]",
+        "SampleTime": "0.02",
+        "OutDataTypeStr": "double",
+        "Interpolate": "off"
+      },
+      "position": [
+        180,
+        350,
+        210,
+        380
+      ]
+    },
+    {
+      "op": "add_block",
+      "type": "In",
+      "name": "Texture Broadband",
+      "ref": "textureBroadband",
+      "params": {
+        "Port": "3",
+        "PortDimensions": "[960 1]",
+        "SampleTime": "0.02",
+        "OutDataTypeStr": "double",
+        "Interpolate": "off"
+      },
+      "position": [
+        180,
+        400,
+        210,
+        430
+      ]
+    },
+    {
+      "op": "add_block",
+      "type": "In",
+      "name": "Texture Weights",
+      "ref": "textureWeights",
+      "params": {
+        "Port": "4",
+        "PortDimensions": "[1 3]",
+        "SampleTime": "0.02",
+        "OutDataTypeStr": "double",
+        "Interpolate": "off"
+      },
+      "position": [
+        180,
+        450,
+        210,
+        480
+      ]
     },
     {
       "op": "add_block",
       "type": "MATLAB Function",
-      "name": "Texture Mixer",
+      "name": "Layered Texture Mixer",
       "ref": "textureMixer",
-      "params": {"Function": "s12_v12_model_texture_step(u1,u2,u3)", "OutputDimensions": "[960 1]"},
-      "position": [330, 180, 400, 240]
+      "position": [
+        330,
+        180,
+        400,
+        240
+      ]
     },
     {
       "op": "disconnect",
@@ -47,11 +111,19 @@
     },
     {
       "op": "connect",
-      "target": "#textureResidual.y1 -> #textureMixer.u2"
+      "target": "#textureBody.y1 -> #textureMixer.u2"
     },
     {
       "op": "connect",
-      "target": "#textureWeight.y1 -> #textureMixer.u3"
+      "target": "#textureMechanical.y1 -> #textureMixer.u3"
+    },
+    {
+      "op": "connect",
+      "target": "#textureBroadband.y1 -> #textureMixer.u4"
+    },
+    {
+      "op": "connect",
+      "target": "#textureWeights.y1 -> #textureMixer.u5"
     },
     {
       "op": "connect",
@@ -59,10 +131,31 @@
     }
   ],
   "defaultInputContract": {
-    "textureResidual": "zeros(960,1)",
-    "textureWeight": 0,
+    "textureBody": "zeros(960,1)",
+    "textureMechanical": "zeros(960,1)",
+    "textureBroadband": "zeros(960,1)",
+    "textureWeights": "zeros(1,3)",
     "qualification": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO"
   },
-  "runtimeGates": ["Cold Reload", "Update Diagram", "Active Compile", "model_check", "90s Simulation x2", "PCM/WAV SHA repeatability"],
-  "promotion": "FORBIDDEN_UNTIL_RUNTIME_ACOUSTIC_DEVICE_HUMAN_GATES"
+  "runtimeGates": [
+    "Cold Reload",
+    "Update Diagram",
+    "Active Compile",
+    "model_check",
+    "90s Simulation x2",
+    "PCM/WAV SHA repeatability"
+  ],
+  "promotion": "FORBIDDEN_UNTIL_RUNTIME_ACOUSTIC_DEVICE_HUMAN_GATES",
+  "mixerScript": "function frame = fcn(prePtr, body, mechanical, broadband, weights)\nframe = s12_v12_model_texture_layers_step(prePtr,body,mechanical,broadband,weights);\nend\n",
+  "compiledContract": {
+    "rootInputCount": 4,
+    "mixerInputCount": 5,
+    "frameSamples": 960,
+    "sampleTime": 0.02,
+    "stopTime": 89.98,
+    "outputDimensions": [
+      960,
+      2
+    ]
+  }
 }

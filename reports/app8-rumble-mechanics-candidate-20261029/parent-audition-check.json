@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "named_files": 69,
+  "groups": 10,
+  "max_loudness_error_lu": 0.0,
+  "maximum_true_peak_dbtp": -4.6,
+  "method": "parent rechecks each namedfile SHA and its independent FFmpeg meteringreceipt"
+}

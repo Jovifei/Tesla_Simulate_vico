@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "initial_count": 7942,
+  "final_count": 7942,
+  "initial_bytes": 9129302830,
+  "final_bytes": 9129302830,
+  "changes": {
+    "added": [],
+    "removed": [],
+    "modified": []
+  },
+  "initial_errors": [],
+  "final_errors": [],
+  "scope": "All worktree regular files except isolated candidate and Git pointer."
+}

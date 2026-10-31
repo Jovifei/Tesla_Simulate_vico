@@ -1,0 +1,7 @@
+runs/
+cache/
+codegen/
+*.log
+*.mat
+baseline.json
+initial-diff.patch

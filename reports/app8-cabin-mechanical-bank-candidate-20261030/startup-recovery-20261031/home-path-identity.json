@@ -1,0 +1,27 @@
+{
+  "USERPROFILE": "C:\\Users\\Admin",
+  "HOMEDRIVE": "C:",
+  "HOMEPATH": "\\Users\\Admin",
+  "joined_home": "C:\\Users\\Admin",
+  "objects": {
+    "USERPROFILE": {
+      "opened": true,
+      "final_path": "\\\\?\\C:\\Users\\Admin",
+      "file_id": [
+        3760545783,
+        65536,
+        3720
+      ]
+    },
+    "HOMEDRIVE_HOMEPATH": {
+      "opened": true,
+      "final_path": "\\\\?\\C:\\Users\\Admin",
+      "file_id": [
+        3760545783,
+        65536,
+        3720
+      ]
+    }
+  },
+  "same_file_id": true
+}

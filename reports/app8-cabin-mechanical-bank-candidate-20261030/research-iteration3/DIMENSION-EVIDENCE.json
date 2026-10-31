@@ -1,0 +1,25 @@
+{
+  "schema": "app8.research_iteration3.dimension_fix.evidence.v1",
+  "status": "ROOT_CAUSE_CONFIRMED_REPAIR_IN_PROGRESS",
+  "models": {
+    "failed_selector": "S12_hellcat_cabin_event_bank_20261031_104325_161",
+    "failed_mechanical_receiver": "S12_hellcat_cabin_event_bank_20261031_112408_106",
+    "later_candidate": "S12_hellcat_cabin_event_bank_20261031_112747_734"
+  },
+  "evidence": {
+    "selector_failure": "IndexOptions configured for 2 dimensions while input was treated as 1-D",
+    "mechanical_receiver_failure": "Mechanical_Receiver output [960x3] incompatible with Post_Frozen_Mechanical_Sum input 2",
+    "later_candidate_hidden_mismatch": "compiled Frozen/Sum input still reports [960x2] while receiver reports [960x1]"
+  },
+  "repair_requirements": [
+    "remove ambiguous Selector configuration",
+    "verify source is physically 2-D [960x9], not only 8640 elements",
+    "split source into [960x2], [960x2], [960x5] without a second source call",
+    "path bus is exactly [960x2]",
+    "carry sample time from control column 5 / source column 9 or independent Clock, not legacy path column 15",
+    "pre-Frozen, Frozen boundary, mechanical receiver and post-Frozen Sum are each [960x1]",
+    "diagnostics remain logs/stems and never widen the audio Sum port"
+  ],
+  "validation": ["unique-column marker short test", "saved model audit", "update", "compile", "model_check", "short B0/N/M/D/MD probe"],
+  "cold_start": "BLOCKED_STARTUP_NATIVE_ACCESS_VIOLATION"
+}

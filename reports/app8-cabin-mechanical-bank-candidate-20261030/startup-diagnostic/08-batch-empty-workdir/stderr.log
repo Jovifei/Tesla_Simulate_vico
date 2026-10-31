@@ -1,0 +1,68 @@
+
+--------------------------------------------------------------------------------
+             Access violation detected at 2026-10-31 00:02:17 +0800
+--------------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding           : Disabled - No sandbox or build area path
+  Crash Mode               : continue (default)
+  Default Encoding         : UTF-8
+  Deployed                 : false
+  Graphics Driver          : Uninitialized hardware 
+  Graphics card 1          : Shanghai Best Oray Information Technology Co., Ltd. ( 0x0 ) OrayIddDriver Device Version 17.50.19.949 (2025-6-11)
+  Graphics card 2          : NVIDIA ( 0x10de ) NVIDIA GeForce RTX 4070 SUPER Version 32.0.15.9597 (2026-3-17)
+  Interpreter 0            : Executing request: 68677574696C2F48474170702E637070
+  MATLAB Architecture      : win64
+  MATLAB Entitlement ID    : 12509936
+  MATLAB Root              : D:\Program Files\MATLAB\R2026a
+  MATLAB Version           : 26.1.0.3203278 (R2026a)
+  OpenGL                   : hardware
+  Operating System         : Microsoft Windows 11 专业版
+  Process ID               : 374584
+  Processor ID             : x86 Family 6 Model 183 Stepping 1, GenuineIntel
+  Session Key              : 4j1dqkdp2gj4q8nievt78fsak
+  Window System            : Version 10.0 (Build 22631)
+
+Fault Count: 1
+
+
+Abnormal termination:
+Access violation
+
+Current Thread: 'GTP_0' id 375156
+
+Register State (from fault):
+  RAX = 0000000000000000  RBX = 0000028674dcb330
+  RCX = 4d85791eb62c0000  RDX = 0000000000000000
+  RSP = 000000dc214fe670  RBP = 000000dc214ff650
+  RSI = 0000000000000000  RDI = 0000000000000007
+ 
+   R8 = 0000000000000002   R9 = 000000dc214fe5c8
+  R10 = 0000000000000013  R11 = ed0000218e004091
+  R12 = 000002867ca72110  R13 = 000002867ca72110
+  R14 = 000000dc214fe6b0  R15 = 00007ffd56a54568
+ 
+  RIP = 00007ffd56a31aa7  EFL = 00010206
+ 
+   CS = 0033   FS = 0053   GS = 002b
+
+Stack Trace (from fault):
+[  0] 0x00007ffd56a31aa7 D:\Program Files\MATLAB\R2026a\bin\win64\microservices\mwhome\homesessionmanager_impl\mwhomesessionmanager_impl.dll+00268967
+[  1] 0x00007ffd56a32e85 D:\Program Files\MATLAB\R2026a\bin\win64\microservices\mwhome\homesessionmanager_impl\mwhomesessionmanager_impl.dll+00274053
+[  2] 0x00007ffd56a32157 D:\Program Files\MATLAB\R2026a\bin\win64\microservices\mwhome\homesessionmanager_impl\mwhomesessionmanager_impl.dll+00270679
+[  3] 0x00007ffd56a3c2b9 D:\Program Files\MATLAB\R2026a\bin\win64\microservices\mwhome\homesessionmanager_impl\mwhomesessionmanager_impl.dll+00311993 mwboost::serialization::singleton_module::get_lock+00000201
+[  4] 0x00007ffd57990404 D:\Program Files\MATLAB\R2026a\bin\win64\connector_plugins\recent_artifacts_service_impl\mwrecent_artifacts_service_impl.dll+00328708
+[  5] 0x00007ffd5798ce75 D:\Program Files\MATLAB\R2026a\bin\win64\connector_plugins\recent_artifacts_service_impl\mwrecent_artifacts_service_impl.dll+00314997
+[  6] 0x00007ffe69aa8939 D:\Program Files\MATLAB\R2026a\bin\win64\libmwfoundation_threadpool.dll+00231737 foundation::concurrent::threadpool::ThreadPool::removeConcurrencyLimitFor+00001209
+[  7] 0x00007ffe69aac626 D:\Program Files\MATLAB\R2026a\bin\win64\libmwfoundation_threadpool.dll+00247334 foundation::concurrent::threadpool::ThreadPool::waitForUnique+00002278
+[  8] 0x00007ffe69a8b61e D:\Program Files\MATLAB\R2026a\bin\win64\libmwfoundation_threadpool.dll+00112158 foundation::concurrent::threadpool::ScheduledTaskSubmitter::shutdown+00025134
+[  9] 0x00007ffef70e9333                   C:\Windows\System32\ucrtbase.dll+00168755 recalloc+00000163
+[ 10] 0x00007ffef7ae259d                   C:\Windows\System32\KERNEL32.DLL+00075165 BaseThreadInitThunk+00000029
+[ 11] 0x00007ffef97aaf38                      C:\Windows\SYSTEM32\ntdll.dll+00372536 RtlUserThreadStart+00000040
+
+** This crash report has been saved to disk as E:\Tesla_speed\worktrees\hellcat-state-contract-20261027\reports\app8-cabin-mechanical-bank-candidate-20261030\startup-diagnostic\08-batch-empty-workdir\temp\matlab_crash_dump.374584-1 **
+
+
+
+MATLAB is exiting because of fatal error
+ERROR: MATLAB error Exit Status: 0xc0000005, Access violation

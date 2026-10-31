@@ -1,0 +1,1 @@
+disp('DIAGNOSTIC_STARTUP_ENTER'); toolkitRoot = fullfile(getenv('USERPROFILE'), '.matlab', 'agentic-toolkits', 'simulink'); if isfolder(toolkitRoot), addpath(toolkitRoot); disp('DIAGNOSTIC_ADDPATH_DONE'); end;

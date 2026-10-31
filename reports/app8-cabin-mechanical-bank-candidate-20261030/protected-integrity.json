@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "initial_count": 7942,
+  "final_count": 7942,
+  "initial_bytes": 9129302830,
+  "final_bytes": 9129302830,
+  "initial_errors": [],
+  "final_errors": [],
+  "changes": {
+    "added": [],
+    "removed": [],
+    "modified": []
+  },
+  "comparison_basis": "SHA256 and byte length, all regular worktree files except candidate directory and Git administrative pointer; no symlinks"
+}

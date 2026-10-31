@@ -1,0 +1,46 @@
+{
+  "status": "MEMORY_UPDATED",
+  "message": "Verified project memory checkpoint applied after a fresh dry-run.",
+  "data": {
+    "preview": {
+      "status": "DRY_RUN",
+      "message": "Archive plan validated; no files were written.",
+      "data": {
+        "target": "vault",
+        "project_id": "tesla-speed",
+        "operations": [
+          {
+            "slot": "progress",
+            "path": "E:\\AI_Tools\\Obsidian\\data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\02-当前进度.md",
+            "before_hash": "01314f7db97515422895c2621837372bb0c9e048507ca3520395ff39293a5ef9",
+            "after_hash": "12a5165a23bf7a7e5f6bed3d56321540199071009e6dc940ce86a0b6ad1f624e"
+          },
+          {
+            "slot": "decisions",
+            "path": "E:\\AI_Tools\\Obsidian\\data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\03-关键决策.md",
+            "before_hash": "ba4b175df1b340366d530dcfd5f103a5c18f9fa8e6097d4b27ec03b8a03afaa5",
+            "after_hash": "b6a068a70d0906f2eff2214fa66b67c725eaea900c7e79a85fe28146ab85f190"
+          }
+        ]
+      }
+    },
+    "apply": {
+      "status": "PASS",
+      "message": "Archive operations applied through managed blocks.",
+      "data": {
+        "target": "vault",
+        "project_id": "tesla-speed",
+        "files": [
+          {
+            "path": "E:\\AI_Tools\\Obsidian\\data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\02-当前进度.md",
+            "sha256": "12a5165a23bf7a7e5f6bed3d56321540199071009e6dc940ce86a0b6ad1f624e"
+          },
+          {
+            "path": "E:\\AI_Tools\\Obsidian\\data\\notes-personal\\codex_memory\\03-项目记忆\\tesla-speed\\03-关键决策.md",
+            "sha256": "b6a068a70d0906f2eff2214fa66b67c725eaea900c7e79a85fe28146ab85f190"
+          }
+        ]
+      }
+    }
+  }
+}

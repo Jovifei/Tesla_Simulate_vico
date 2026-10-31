@@ -1,0 +1,1437 @@
+diff --git a/reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json b/reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json
+index c7c8d04..f440545 100644
+--- a/reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json
++++ b/reports/simulink-texture-topology-20261028/MODEL_EDIT_PLAN.json
+@@ -1,68 +1,161 @@
+-{
+-  "schema": "s12.v12.texture.simulink.model-edit-plan.v1",
+-  "sourceModel": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
+-  "candidateModel": "reports/simulink-texture-topology-20261028/isolated/S12_hellcat_2022_stock_v12_texture_candidate.slx",
+-  "sourceModelMustRemainUnchanged": true,
+-  "scope": "root",
+-  "confirmedSourceBlocks": {
+-    "syntheticSource": "blk_11",
+-    "frozenRadiation": "blk_12",
+-    "rendererMux": "blk_14",
+-    "stereoRenderer": "blk_15",
+-    "pcmOutput": "blk_16",
+-    "vehicleCycle": "blk_17"
+-  },
+-  "operations": [
+-    {
+-      "op": "add_block",
+-      "type": "In",
+-      "name": "Texture Residual",
+-      "ref": "textureResidual",
+-      "params": {"Port": "2"},
+-      "position": [180, 300, 210, 330]
+-    },
+-    {
+-      "op": "add_block",
+-      "type": "In",
+-      "name": "Texture Weight",
+-      "ref": "textureWeight",
+-      "params": {"Port": "3"},
+-      "position": [180, 350, 210, 380]
+-    },
+-    {
+-      "op": "add_block",
+-      "type": "MATLAB Function",
+-      "name": "Texture Mixer",
+-      "ref": "textureMixer",
+-      "params": {"Function": "s12_v12_model_texture_step(u1,u2,u3)", "OutputDimensions": "[960 1]"},
+-      "position": [330, 180, 400, 240]
+-    },
+-    {
+-      "op": "disconnect",
+-      "target": "blk_11.y1 -> blk_12.u1"
+-    },
+-    {
+-      "op": "connect",
+-      "target": "blk_11.y1 -> #textureMixer.u1"
+-    },
+-    {
+-      "op": "connect",
+-      "target": "#textureResidual.y1 -> #textureMixer.u2"
+-    },
+-    {
+-      "op": "connect",
+-      "target": "#textureWeight.y1 -> #textureMixer.u3"
+-    },
+-    {
+-      "op": "connect",
+-      "target": "#textureMixer.y1 -> blk_12.u1"
+-    }
+-  ],
+-  "defaultInputContract": {
+-    "textureResidual": "zeros(960,1)",
+-    "textureWeight": 0,
+-    "qualification": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO"
+-  },
+-  "runtimeGates": ["Cold Reload", "Update Diagram", "Active Compile", "model_check", "90s Simulation x2", "PCM/WAV SHA repeatability"],
+-  "promotion": "FORBIDDEN_UNTIL_RUNTIME_ACOUSTIC_DEVICE_HUMAN_GATES"
+-}
++{
++  "schema": "s12.v12.texture.simulink.model-edit-plan.v2",
++  "sourceModel": "tools/sound_sim/s12/playground_v12/vehicles/hellcat_2022_stock/S12_hellcat_2022_stock_v12.slx",
++  "candidateModel": "reports/simulink-texture-topology-20261028/isolated/S12_hellcat_2022_stock_v12_texture_candidate.slx",
++  "sourceModelMustRemainUnchanged": true,
++  "scope": "root",
++  "confirmedSourceBlocks": {
++    "syntheticSource": "blk_11",
++    "frozenRadiation": "blk_12",
++    "rendererMux": "blk_14",
++    "stereoRenderer": "blk_15",
++    "pcmOutput": "blk_16",
++    "vehicleCycle": "blk_17"
++  },
++  "operations": [
++    {
++      "op": "add_block",
++      "type": "In",
++      "name": "Texture Body",
++      "ref": "textureBody",
++      "params": {
++        "Port": "1",
++        "PortDimensions": "[960 1]",
++        "SampleTime": "0.02",
++        "OutDataTypeStr": "double",
++        "Interpolate": "off"
++      },
++      "position": [
++        180,
++        300,
++        210,
++        330
++      ]
++    },
++    {
++      "op": "add_block",
++      "type": "In",
++      "name": "Texture Mechanical",
++      "ref": "textureMechanical",
++      "params": {
++        "Port": "2",
++        "PortDimensions": "[960 1]",
++        "SampleTime": "0.02",
++        "OutDataTypeStr": "double",
++        "Interpolate": "off"
++      },
++      "position": [
++        180,
++        350,
++        210,
++        380
++      ]
++    },
++    {
++      "op": "add_block",
++      "type": "In",
++      "name": "Texture Broadband",
++      "ref": "textureBroadband",
++      "params": {
++        "Port": "3",
++        "PortDimensions": "[960 1]",
++        "SampleTime": "0.02",
++        "OutDataTypeStr": "double",
++        "Interpolate": "off"
++      },
++      "position": [
++        180,
++        400,
++        210,
++        430
++      ]
++    },
++    {
++      "op": "add_block",
++      "type": "In",
++      "name": "Texture Weights",
++      "ref": "textureWeights",
++      "params": {
++        "Port": "4",
++        "PortDimensions": "[1 3]",
++        "SampleTime": "0.02",
++        "OutDataTypeStr": "double",
++        "Interpolate": "off"
++      },
++      "position": [
++        180,
++        450,
++        210,
++        480
++      ]
++    },
++    {
++      "op": "add_block",
++      "type": "MATLAB Function",
++      "name": "Layered Texture Mixer",
++      "ref": "textureMixer",
++      "position": [
++        330,
++        180,
++        400,
++        240
++      ]
++    },
++    {
++      "op": "disconnect",
++      "target": "blk_11.y1 -> blk_12.u1"
++    },
++    {
++      "op": "connect",
++      "target": "blk_11.y1 -> #textureMixer.u1"
++    },
++    {
++      "op": "connect",
++      "target": "#textureBody.y1 -> #textureMixer.u2"
++    },
++    {
++      "op": "connect",
++      "target": "#textureMechanical.y1 -> #textureMixer.u3"
++    },
++    {
++      "op": "connect",
++      "target": "#textureBroadband.y1 -> #textureMixer.u4"
++    },
++    {
++      "op": "connect",
++      "target": "#textureWeights.y1 -> #textureMixer.u5"
++    },
++    {
++      "op": "connect",
++      "target": "#textureMixer.y1 -> blk_12.u1"
++    }
++  ],
++  "defaultInputContract": {
++    "textureBody": "zeros(960,1)",
++    "textureMechanical": "zeros(960,1)",
++    "textureBroadband": "zeros(960,1)",
++    "textureWeights": "zeros(1,3)",
++    "qualification": "RESEARCH_ONLY_NOT_PRODUCT_AUDIO"
++  },
++  "runtimeGates": [
++    "Cold Reload",
++    "Update Diagram",
++    "Active Compile",
++    "model_check",
++    "90s Simulation x2",
++    "PCM/WAV SHA repeatability"
++  ],
++  "promotion": "FORBIDDEN_UNTIL_RUNTIME_ACOUSTIC_DEVICE_HUMAN_GATES",
++  "mixerScript": "function frame = fcn(prePtr, body, mechanical, broadband, weights)\nframe = s12_v12_model_texture_layers_step(prePtr,body,mechanical,broadband,weights);\nend\n",
++  "compiledContract": {
++    "rootInputCount": 4,
++    "mixerInputCount": 5,
++    "frameSamples": 960,
++    "sampleTime": 0.02,
++    "stopTime": 89.98,
++    "outputDimensions": [
++      960,
++      2
++    ]
++  }
++}
+diff --git a/tools/sound_sim/s12/playground_v12/common/inspect_texture_simulink_topology.py b/tools/sound_sim/s12/playground_v12/common/inspect_texture_simulink_topology.py
+index 565e639..d9d68e6 100644
+--- a/tools/sound_sim/s12/playground_v12/common/inspect_texture_simulink_topology.py
++++ b/tools/sound_sim/s12/playground_v12/common/inspect_texture_simulink_topology.py
+@@ -3,8 +3,9 @@
+ from __future__ import annotations
+ 
+ import json
+-import re
++import hashlib
+ import zipfile
++import xml.etree.ElementTree as ET
+ from pathlib import Path
+ 
+ 
+@@ -19,44 +20,73 @@ EXPECTED = {
+ 
+ 
+ def audit(model: Path) -> dict:
++    model = Path(model)
++    plan_path = Path(__file__).resolve().parents[5] / "reports" / "simulink-texture-topology-20261028" / "MODEL_EDIT_PLAN.json"
++    plan = json.loads(plan_path.read_text(encoding="utf-8"))
+     with zipfile.ZipFile(model) as archive:
+-        xml = archive.read("simulink/systems/system_root.xml").decode("utf-8")
+-    blocks = {}
+-    for match in re.finditer(r'<Block BlockType="([^"]+)" Name="([^"]+)" SID="([^"]+)">(.*?)</Block>', xml, re.S):
+-        blocks[match.group(2)] = {"type": match.group(1), "sid": match.group(3)}
++        root = ET.fromstring(archive.read("simulink/systems/system_root.xml"))
++    blocks = {block.get("Name"): {"type": block.get("BlockType"), "sid": block.get("SID"),
++              "parameters": {p.get("Name"): p.text for p in block.findall("P")}}
++              for block in root.findall("Block")}
+     lines = []
+-    for match in re.finditer(r"<Line>(.*?)</Line>", xml, re.S):
+-        body = match.group(1)
+-        source = re.search(r'<P Name="Src">(.*?)</P>', body)
+-        destinations = re.findall(r'<P Name="Dst">(.*?)</P>', body)
+-        if source:
+-            lines.append({"source": source.group(1), "destinations": destinations})
++    for line in root.findall("Line"):
++        source = line.find("P[@Name='Src']")
++        if source is not None:
++            lines.append({"source": source.text, "destinations": [p.text for p in line.findall(".//P[@Name='Dst']")]})
++    edges = {(line["source"], dst) for line in lines for dst in line["destinations"]}
++    def connected(source, target):
++        return (source, target) in edges
+     missing = [name for name in EXPECTED if name not in blocks]
+     expected_sids = {name: blocks.get(name, {}).get("sid") for name in EXPECTED}
+-    source_to_radiation = any(line["source"] == "11#out:1" and any("12#in:1" in dst for dst in line["destinations"]) for line in lines)
+-    radiation_to_mux = any(line["source"] == "12#out:1" and any("14#in:1" in dst for dst in line["destinations"]) for line in lines)
++    source_to_radiation = connected("11#out:1", "12#in:1")
++    radiation_to_mux = connected("12#out:1", "14#in:1")
++    frozen_chain = radiation_to_mux and connected("14#out:1", "15#in:1") and connected("15#out:1", "16#in:1")
++    inports = {name: block for name, block in blocks.items() if block["type"] == "Inport"}
++    # SLX omits the built-in Inport Port=1 default from its serialized P list.
++    for block in inports.values():
++        if "Port" not in block["parameters"]:
++            block["parameters"]["Port"] = "1"
++            block["archiveDefaultParameters"] = ["Port"]
++    additions = [op for op in plan["operations"] if op["op"] == "add_block"]
++    mixer_op = next(op for op in additions if op["ref"] == "textureMixer")
++    mixer = blocks.get(mixer_op["name"])
++    candidate_connections = False
++    input_contract = not inports
++    if mixer:
++        refs = {op["ref"]: blocks.get(op["name"], {}).get("sid") for op in additions}
++        refs.update({key: value.removeprefix("blk_") for key, value in plan["confirmedSourceBlocks"].items()})
++        def endpoint(value):
++            block, port = value.split(".")
++            sid = refs.get(block[1:]) if block.startswith("#") else block.removeprefix("blk_")
++            return f"{sid}#{'out' if port[0] == 'y' else 'in'}:{port[1:]}"
++        candidate_connections = all(connected(*(endpoint(e.strip()) for e in op["target"].split("->")))
++                                    for op in plan["operations"] if op["op"] == "connect")
++        input_ops = [op for op in additions if op["type"] == "In"]
++        input_contract = set(inports) == {op["name"] for op in input_ops} and all(
++            all(inports[op["name"]]["parameters"].get(key) == value for key, value in op["params"].items())
++            for op in input_ops)
++    topology = "candidate" if mixer else "source"
++    passed = not missing and expected_sids == EXPECTED and frozen_chain and input_contract and (
++        candidate_connections and not source_to_radiation if mixer else source_to_radiation)
+     return {
+         "schema": "s12.v12.texture.simulink.topology.audit.v1",
+         "model": str(model),
+-        "status": "PASS" if not missing and source_to_radiation and radiation_to_mux else "FAIL",
++        "status": "PASS" if passed else "FAIL",
++        "evidenceLevel": "SLX_ARCHIVE_ONLY_NOT_COMPILE_OR_SIMULATION",
++        "modelSha256": hashlib.sha256(model.read_bytes()).hexdigest(),
++        "topology": topology,
++        "rootBlocks": blocks,
++        "rootInports": inports,
++        "rootInputContract": input_contract,
++        "sourceThroughMixerToFrozenRadiation": candidate_connections,
++        "frozenOutputChainUnchanged": frozen_chain,
+         "expectedBlocks": EXPECTED,
+         "actualBlocks": expected_sids,
+         "missingBlocks": missing,
+         "sourceToFrozenRadiation": source_to_radiation,
+         "frozenRadiationToRendererMux": radiation_to_mux,
+         "lines": lines,
+-        "textureInsertionPlan": {
+-            "copyModel": True,
+-            "newBlocks": [
+-                {"type": "In", "name": "Texture Residual", "dimensions": "[960,1]"},
+-                {"type": "In", "name": "Texture Weight", "dimensions": "[1,1]"},
+-                {"type": "MATLAB Function", "name": "Texture Mixer", "function": "s12_v12_model_texture_step"},
+-            ],
+-            "replaceConnection": "Hellcat Synthetic Source -> Texture Mixer -> Frozen 4D-B Radiation Adapter",
+-            "defaultWeight": 0,
+-            "sourceModelUnchanged": True,
+-            "requiresRuntime": ["Cold Reload", "Update Diagram", "Active Compile", "90s Simulation x2"],
+-        },
++        "textureInsertionPlan": plan,
+     }
+ 
+ 
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m
+index c283e8b..9f20e47 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_mix_texture_residual.m
+@@ -5,10 +5,10 @@ function [mixed, context, diagnostics] = s12_v12_mix_texture_residual( ...
+ if nargin < 4 || isempty(context)
+     context = struct("frame_index", 0, "weight_state", 0);
+ end
+-if ~isnumeric(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all")
++if ~isnumeric(prePtr) || ~isreal(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all")
+     error("S12:EngineSoundV12:TextureResidual", "prePtr must be one finite [960,1] frame.");
+ end
+-if ~isnumeric(texture) || ~isequal(size(texture), [960, 1]) || any(~isfinite(texture), "all")
++if ~isnumeric(texture) || ~isreal(texture) || ~isequal(size(texture), [960, 1]) || any(~isfinite(texture), "all")
+     error("S12:EngineSoundV12:TextureResidual", "texture must be one finite [960,1] frame.");
+ end
+ if ~isnumeric(weight) || ~isscalar(weight) || ~isfinite(weight) || weight < 0 || weight > 1
+@@ -30,9 +30,13 @@ weightState = context.weight_state + 0.25 * (double(weight) - context.weight_sta
+ if weight == 0
+     weightState = 0;
+ end
+-mixed = (1 - weightState) * prePtr + weightState * texture;
+-if any(~isfinite(mixed), "all") || any(abs(mixed) > 1, "all")
+-    error("S12:EngineSoundV12:TextureResidual", "mixed frame is outside the finite PCM contract.");
++if weight == 0
++    mixed = prePtr;
++else
++    mixed = (1 - weightState) * prePtr + weightState * texture;
++end
++if ~isreal(mixed) || any(~isfinite(mixed), "all")
++    error("S12:EngineSoundV12:TextureResidual", "mixed frame must be finite real pre-PTR pressure.");
+ end
+ context.frame_index = context.frame_index + 1;
+ context.weight_state = weightState;
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_model_texture_layers_step.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_model_texture_layers_step.m
+index c160d17..e2c91c0 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_model_texture_layers_step.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_model_texture_layers_step.m
+@@ -4,20 +4,24 @@ function frame = s12_v12_model_texture_layers_step( ...
+ % Three independent weights are smoothed across frames; all-zero bypass is exact.
+ 
+ persistent weightState
+-if ~isnumeric(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all") || ...
+-        ~isnumeric(bodyTexture) || ~isequal(size(bodyTexture), [960, 1]) || any(~isfinite(bodyTexture), "all") || ...
+-        ~isnumeric(mechanicalTexture) || ~isequal(size(mechanicalTexture), [960, 1]) || any(~isfinite(mechanicalTexture), "all") || ...
+-        ~isnumeric(broadbandTexture) || ~isequal(size(broadbandTexture), [960, 1]) || any(~isfinite(broadbandTexture), "all")
++if ~isnumeric(prePtr) || ~isreal(prePtr) || ~isequal(size(prePtr), [960, 1]) || any(~isfinite(prePtr), "all") || ...
++        ~isnumeric(bodyTexture) || ~isreal(bodyTexture) || ~isequal(size(bodyTexture), [960, 1]) || any(~isfinite(bodyTexture), "all") || ...
++        ~isnumeric(mechanicalTexture) || ~isreal(mechanicalTexture) || ~isequal(size(mechanicalTexture), [960, 1]) || any(~isfinite(mechanicalTexture), "all") || ...
++        ~isnumeric(broadbandTexture) || ~isreal(broadbandTexture) || ~isequal(size(broadbandTexture), [960, 1]) || any(~isfinite(broadbandTexture), "all")
+     error("S12:EngineSoundV12:ModelTextureLayers", "layer inputs must be finite [960,1] vectors.");
+ end
+-if ~isnumeric(weights) || ~isequal(size(weights), [1, 3]) || any(~isfinite(weights)) || any(weights < 0 | weights > 1)
++if ~isnumeric(weights) || ~isreal(weights) || ~isequal(size(weights), [1, 3]) || any(~isfinite(weights)) || any(weights < 0 | weights > 1)
+     error("S12:EngineSoundV12:ModelTextureLayers", "weights must be a bounded [1,3] row.");
+ end
+-if isempty(weightState) || all(weights == 0)
++if all(weights == 0)
++    weightState = zeros(1, 3);
++    frame = prePtr;
++    return;
++end
++if isempty(weightState)
+     weightState = zeros(1, 3);
+ end
+ weightState = weightState + 0.25 * (double(weights) - weightState);
+-if all(weights == 0), weightState = zeros(1, 3); end
+ textures = [bodyTexture, mechanicalTexture, broadbandTexture];
+ baseRms = sqrt(mean(prePtr .^ 2));
+ layerRms = sqrt(mean(textures .^ 2, 1));
+@@ -27,7 +31,7 @@ for index = 1:3
+     end
+ end
+ frame = prePtr + textures * weightState.';
+-if ~isequal(size(frame), [960, 1]) || any(~isfinite(frame), "all") || any(abs(frame) > 1, "all")
+-    error("S12:EngineSoundV12:ModelTextureLayers", "layered output is invalid.");
++if ~isequal(size(frame), [960, 1]) || ~isreal(frame) || any(~isfinite(frame), "all")
++    error("S12:EngineSoundV12:ModelTextureLayers", "layered output must be finite real pre-PTR pressure.");
+ end
+ end
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_external_input.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_external_input.m
+index 495daaf..e2018da 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_external_input.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_external_input.m
+@@ -1,14 +1,39 @@
+-function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight, stateSchedule, layerPaths)
++function external = s12_v12_prepare_texture_external_input(f32lePath, durationSeconds, textureWeight, stateSchedule, layerPaths, layerWeights)
+ %S12_V12_PREPARE_TEXTURE_EXTERNAL_INPUT Build fixed-size research input data.
+ % The returned matrices are suitable for a copied Simulink candidate only.
+ % Source state remains UNKNOWN and no product qualification is granted.
+ 
+-arguments
+-    f32lePath (1,1) string
+-    durationSeconds (1,1) double {mustBeFinite, mustBePositive}
+-    textureWeight (1,1) double {mustBeFinite, mustBeGreaterThanOrEqual(textureWeight, 0), mustBeLessThanOrEqual(textureWeight)} = 0
+-    stateSchedule = struct()
+-    layerPaths = strings(1, 0)
++if nargin < 3, textureWeight = 0; end
++if nargin < 4, stateSchedule = struct(); end
++if nargin < 5, layerPaths = strings(1, 0); end
++if ischar(f32lePath) && isrow(f32lePath)
++    f32lePath = string(f32lePath);
++end
++if ~isstring(f32lePath) || ~isscalar(f32lePath) || ismissing(f32lePath)
++    error("S12:EngineSoundV12:TextureInput", "f32lePath must be a scalar path.");
++end
++if ~isnumeric(durationSeconds) || ~isreal(durationSeconds) || ~isscalar(durationSeconds) || ...
++        ~isfinite(durationSeconds) || durationSeconds <= 0
++    error("S12:EngineSoundV12:TextureInput", "Duration must be a finite positive scalar.");
++end
++frameTotal = double(durationSeconds) * 50;
++if ~isfinite(frameTotal) || round(frameTotal) < 1 || ...
++        abs(frameTotal - round(frameTotal)) > 8 * eps(max(1, frameTotal))
++    error("S12:EngineSoundV12:TextureInput", "Duration must contain a positive integer number of frames.");
++end
++if ~isnumeric(textureWeight) || ~isreal(textureWeight) || ~isscalar(textureWeight) || ...
++        ~isfinite(textureWeight) || textureWeight < 0 || textureWeight > 1
++    error("S12:EngineSoundV12:TextureInput", "textureWeight must be finite and in [0,1].");
++end
++textureWeight = double(textureWeight);
++if nargin < 6, layerWeights = [textureWeight, 0, 0]; end
++if ~isnumeric(layerWeights) || ~isreal(layerWeights) || ~isequal(size(layerWeights), [1, 3]) || ...
++        any(~isfinite(layerWeights)) || any(layerWeights < 0 | layerWeights > 1)
++    error("S12:EngineSoundV12:TextureInput", "layerWeights must be a finite 1x3 row in [0,1].");
++end
++if ~isstring(layerPaths) || (~isequal(size(layerPaths), [1, 0]) && ~isequal(size(layerPaths), [1, 3])) || ...
++        any(ismissing(layerPaths), "all")
++    error("S12:EngineSoundV12:TextureInput", "layerPaths must be an empty or 1x3 string row.");
+ end
+ 
+ if ~isfile(f32lePath)
+@@ -27,44 +52,27 @@ end
+ sampleRateHz = 48000;
+ frameSamples = 960;
+ frameRateHz = sampleRateHz / frameSamples;
+-frameCount = round(durationSeconds * frameRateHz);
++frameCount = round(frameTotal);
+ weights = buildWeightSchedule(frameCount, textureWeight, stateSchedule);
+ crossfadeSamples = round(0.120 * sampleRateHz);
+ if numel(source) <= 2 * crossfadeSamples
+     error("S12:EngineSoundV12:TextureInput", "Texture source is too short for the fixed crossfade.");
+ end
+ 
+-textureResidual = zeros(frameCount, frameSamples, "single");
+-periodSamples = numel(source) - crossfadeSamples;
+-for frameIndex = 0:frameCount - 1
+-    startSample = frameIndex * frameSamples;
+-    for sampleIndex = 0:frameSamples - 1
+-        cursor = mod(startSample + sampleIndex, periodSamples);
+-        if cursor < periodSamples - crossfadeSamples
+-            value = source(cursor + crossfadeSamples + 1);
+-        else
+-            blendIndex = cursor - (periodSamples - crossfadeSamples);
+-            alpha = (blendIndex + 1) / crossfadeSamples;
+-            tail = source(periodSamples + blendIndex + 1);
+-            head = source(blendIndex + 1);
+-            value = (1 - alpha) * tail + alpha * head;
+-        end
+-        textureResidual(frameIndex + 1, sampleIndex + 1) = single(value);
+-    end
+-end
++textureResidual = buildLayerFrames(source, frameCount, frameSamples, crossfadeSamples);
+ 
+ % Keep a fixed three-layer input contract. Without explicit layer files the
+ % legacy single texture is assigned only to the body layer; other layers stay zero.
+ textureLayers = zeros(frameCount, frameSamples, 3, "single");
+ textureLayers(:, :, 1) = textureResidual;
+-layerWeights = [weights, zeros(frameCount, 2, "single")];
++scheduledLayerWeights = zeros(frameCount, 3);
++for layerIndex = 1:3
++    scheduledLayerWeights(:, layerIndex) = buildWeightSchedule(frameCount, double(layerWeights(layerIndex)), stateSchedule);
++end
+ layerSourceSha256 = strings(1, 3);
+ layerSourceSha256(1) = sha256Bytes(bytes);
+ if ~isempty(layerPaths)
+-    if ~isstring(layerPaths) || ~isequal(size(layerPaths), [1, 3])
+-        error("S12:EngineSoundV12:TextureInput", "layerPaths must be a 1x3 string row.");
+-    end
+-    for layerIndex = 2:3
++    for layerIndex = 1:3
+         if strlength(layerPaths(layerIndex)) == 0
+             continue;
+         end
+@@ -81,6 +89,11 @@ if ~isempty(layerPaths)
+         layerSourceSha256(layerIndex) = sha256Bytes(layerBytes);
+     end
+ end
++for layerIndex = 2:3
++    if layerWeights(layerIndex) > 0 && strlength(layerSourceSha256(layerIndex)) == 0
++        error("S12:EngineSoundV12:TextureInput", "Nonzero layer weight requires a texture source.");
++    end
++end
+ 
+ external = struct( ...
+     "schema", "s12.v12.texture-external-input.v1", ...
+@@ -92,7 +105,7 @@ external = struct( ...
+     "texture_residual", textureResidual, ...
+     "texture_weight", single(weights), ...
+     "texture_layers", textureLayers, ...
+-    "texture_layer_weights", single(layerWeights), ...
++    "texture_layer_weights", single(scheduledLayerWeights), ...
+     "layer_source_sha256", layerSourceSha256, ...
+     "source_sha256", sha256Bytes(bytes), ...
+     "state_qualification", "INSUFFICIENT_EVIDENCE", ...
+@@ -124,19 +137,29 @@ end
+ 
+ function weights = buildWeightSchedule(frameCount, baseWeight, stateSchedule)
+ weights = repmat(double(baseWeight), frameCount, 1);
++required = ["time_s", "load", "acceleration"];
++if ~isstruct(stateSchedule) || ~isscalar(stateSchedule)
++    error("S12:EngineSoundV12:TextureInput", "stateSchedule must be a scalar struct.");
++end
+ if isempty(fieldnames(stateSchedule))
+     return;
+ end
+-required = ["time_s", "load", "acceleration"];
+-if ~isstruct(stateSchedule) || ~all(isfield(stateSchedule, required))
++if ~all(isfield(stateSchedule, required))
+     error("S12:EngineSoundV12:TextureInput", "stateSchedule requires time_s/load/acceleration.");
+ end
++for field = required
++    value = stateSchedule.(field);
++    if ~isnumeric(value) || ~isreal(value) || ~isvector(value) || ...
++            numel(value) ~= frameCount || any(~isfinite(value))
++        error("S12:EngineSoundV12:TextureInput", "State fields must be finite real frame vectors.");
++    end
++end
+ time = reshape(double(stateSchedule.time_s), [], 1);
+ load = reshape(double(stateSchedule.load), [], 1);
+ acceleration = reshape(double(stateSchedule.acceleration), [], 1);
+-if numel(time) ~= frameCount || numel(load) ~= frameCount || numel(acceleration) ~= frameCount || ...
+-        any(~isfinite(time)) || any(~isfinite(load)) || any(~isfinite(acceleration)) || ...
+-        any(load < 0 | load > 1) || any(diff(time) < 0)
++expectedTime = (0:frameCount - 1).' * 0.02;
++if any(load < 0 | load > 1) || ...
++        any(abs(time - expectedTime) > 8 * eps(max(1, abs(expectedTime))))
+     error("S12:EngineSoundV12:TextureInput", "stateSchedule dimensions or ranges are invalid.");
+ end
+ % Research-only state coupling: texture follows load and transient effort.
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_simulink_candidate.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_simulink_candidate.m
+index 41178be..167c8ed 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_simulink_candidate.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_prepare_texture_simulink_candidate.m
+@@ -1,33 +1,94 @@
+-function plan = s12_v12_prepare_texture_simulink_candidate(sourceModel, outputModel)
+-%S12_V12_PREPARE_TEXTURE_SIMULINK_CANDIDATE Describe a controlled model copy.
+-% Actual structural edits must run through model_edit in an existing MATLAB
+-% session. This function never overwrites a source model or creates a claim.
+-
++function plan = s12_v12_prepare_texture_simulink_candidate(sourceModel, outputModel, execute)
++%S12_V12_PREPARE_TEXTURE_SIMULINK_CANDIDATE Copy and wire a research-only model.
+ arguments
+     sourceModel (1,1) string
+     outputModel (1,1) string
++    execute (1,1) logical = false
++end
++sourceModel = string(java.io.File(char(sourceModel)).getCanonicalPath());
++outputModel = string(java.io.File(char(outputModel)).getCanonicalPath());
++if sourceModel == outputModel || ~isfile(sourceModel)
++    error("S12:EngineSoundV12:Candidate", "A distinct existing source model is required.");
++end
++common = fileparts(mfilename("fullpath"));
++project = fileparts(fileparts(fileparts(fileparts(fileparts(common)))));
++definition = jsondecode(fileread(fullfile(project,"reports", ...
++    "simulink-texture-topology-20261028","MODEL_EDIT_PLAN.json")));
++plan = struct("status","READY_FOR_EXISTING_SESSION_MODEL_EDIT", ...
++    "source_model",sourceModel,"output_model",outputModel, ...
++    "source_sha256",fileSha(sourceModel),"contract",s12_v12_texture_simulink_contract(), ...
++    "operations",{definition.operations},"mixer_function","s12_v12_model_texture_layers_step", ...
++    "qualification","INSUFFICIENT_EVIDENCE_UNTIL_RUNTIME_AND_ACOUSTIC_GATES");
++if ~execute, return; end
++[folder, model] = fileparts(outputModel);
++[~, source] = fileparts(sourceModel);
++if isfile(outputModel) || bdIsLoaded(model)
++    error("S12:EngineSoundV12:Candidate", "Refusing to overwrite an existing candidate.");
++end
++if ~isfolder(folder), mkdir(folder); end
++addpath(common,fullfile(common,"shared_model"),folder);
++load_system(sourceModel);
++save_system(source,outputModel);
++if bdIsLoaded(model), close_system(model,0); end
++load_system(outputModel);
++if ~isempty(find_system(model,"SearchDepth",1,"BlockType","Inport"))
++    error("S12:EngineSoundV12:Candidate", "Source root input contract changed.");
++end
++ops = definition.operations;
++if isstruct(ops), ops = num2cell(ops); end
++isAdd = cellfun(@(op) string(op.op) == "add_block",ops);
++created = string(model_edit(model,"root",jsonencode(ops(isAdd)),"incremental"));
++requireOk(created);
++refs = ["textureBody","textureMechanical","textureBroadband","textureWeights","textureMixer"];
++ids = strings(size(refs));
++for index = 1:numel(refs)
++    token = regexp(created,refs(index)+":\s+blk_(\d+)","tokens","once");
++    if isempty(token), error("S12:EngineSoundV12:Candidate","Missing created block ID."); end
++    ids(index) = "blk_"+string(token{1});
++end
++mixPath = Simulink.ID.getFullName(model+":"+extractAfter(ids(5),"blk_"));
++root = sfroot;
++charts = root.find("-isa","Stateflow.EMChart","Path",mixPath);
++if numel(charts) ~= 1, error("S12:EngineSoundV12:Candidate","Mixer chart is missing."); end
++% model_edit creates the block; Stateflow's Script API sets its algorithm.
++charts.Script = definition.mixerScript;
++data = charts.find("-isa","Stateflow.Data");
++for index = 1:numel(data)
++    data(index).DataType = "double";
++    if string(data(index).Name) == "weights"
++        data(index).Props.Array.Size = "[1 3]";
++    else
++        data(index).Props.Array.Size = "[960 1]";
++    end
++end
++connections = ops(~isAdd);
++for index = 1:numel(connections)
++    for ref = 1:numel(refs)
++        connections{index}.target = strrep(connections{index}.target,"#"+refs(ref),ids(ref));
++    end
+ end
+-if strlength(sourceModel) == 0 || strlength(outputModel) == 0 || sourceModel == outputModel
+-    error("S12:EngineSoundV12:Candidate", "Source and output model paths must be distinct.");
+-end
+-if ~isfile(sourceModel)
+-    error("S12:EngineSoundV12:Candidate", "Source model is missing.");
+-end
+-contract = s12_v12_texture_simulink_contract();
+-plan = struct( ...
+-    "status", "READY_FOR_EXISTING_SESSION_MODEL_EDIT", ...
+-    "source_model", sourceModel, ...
+-    "output_model", outputModel, ...
+-    "source_sha256", "NOT_COMPUTED_WITHOUT_RUNTIME", ...
+-    "contract", contract, ...
+-    "operations", [ ...
+-        "copy source model to isolated candidate", ...
+-        "add Body/Mechanical/Broadband Texture Inports [960,1]", ...
+-        "add Texture Weights Inport [1,3]", ...
+-        "add Texture Mixer MATLAB Function s12_v12_model_texture_layers_step [960,1]", ...
+-        "connect mixer before Frozen Radiation Adapter", ...
+-        "preserve default weight=0 and old route", ...
+-        "cold reload/update diagram/active compile", ...
+-        "run 90s deterministic simulation twice"], ...
+-    "qualification", "INSUFFICIENT_EVIDENCE_UNTIL_RUNTIME_AND_ACOUSTIC_GATES");
++requireOk(string(model_edit(model,"root",jsonencode(connections),"incremental")));
++save_system(model,outputModel);
++close_system(model,0);
++load_system(outputModel);
++if fileSha(sourceModel) ~= plan.source_sha256
++    error("S12:EngineSoundV12:Candidate","Source model SHA changed.");
++end
++plan.status = "MODEL_CREATED_RESEARCH_ONLY";
++plan.candidate_sha256 = fileSha(outputModel);
++end
++
++function requireOk(response)
++if ~contains(response,"status: ok")
++    error("S12:EngineSoundV12:Candidate","model_edit failed: %s",response);
++end
++end
++
++function value = fileSha(path)
++fid = fopen(path,"rb");
++cleanup = onCleanup(@() fclose(fid));
++bytes = fread(fid,Inf,"*uint8");
++digest = java.security.MessageDigest.getInstance("SHA-256");
++digest.update(bytes);
++value = string(lower(reshape(dec2hex(typecast(digest.digest(),"uint8"),2).',1,[])));
+ end
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_engine_identity_frame.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_engine_identity_frame.m
+index 0e7db7c..fc6b6dc 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_engine_identity_frame.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_engine_identity_frame.m
+@@ -1,4 +1,4 @@
+-function [banks, context, diagnostics] = s12_v12_render_engine_identity_frame( ...
++function [banks, context, diagnostics, components] = s12_v12_render_engine_identity_frame( ...
+         identity, crankPhase, rpm, load, throttle, acceleration, context, sampleRateHz, frameSamples)
+ %S12_V12_RENDER_ENGINE_IDENTITY_FRAME Render a synthetic pre-PTR engine identity.
+ % This renderer owns engine-specific pulse timing, induction mechanics, and
+@@ -13,6 +13,7 @@ load = columnSignal(load, "load", frameSamples, 0, 1);
+ throttle = columnSignal(throttle, "throttle", frameSamples, 0, 1);
+ acceleration = columnSignal(acceleration, "acceleration", frameSamples, -20, 20);
+ context = normalizeContext(context);
++wantComponents = nargout > 3;
+ 
+ rpmRatio = min(1, max(0, rpm / identity.rpm_limit));
+ loadGain = 0.25 + 0.75 * load;
+@@ -22,14 +23,14 @@ bankSkew = identity.firing_character.bank_asymmetry * ...
+ switch identity.engine_type
+     case "supercharged_cross_plane_v8"
+         [banks, layers, context] = renderHellcat( ...
+-            identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, context);
++            identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, context, wantComponents);
+     case "naturally_aspirated_flat_plane_v8"
+         [banks, layers, context] = renderFerrari( ...
+-            identity, crankPhase, rpmRatio, loadGain, bankSkew, acceleration, context);
++            identity, crankPhase, rpmRatio, loadGain, bankSkew, acceleration, context, wantComponents);
+     case "twin_rotor_turbo"
+         [banks, layers, context] = renderRx7( ...
+             identity, crankPhase, rpmRatio, load, throttle, loadGain, bankSkew, ...
+-            acceleration, context, sampleRateHz);
++            acceleration, context, sampleRateHz, wantComponents);
+     otherwise
+         error("S12:EngineIdentity:Render", "Engine identity type is unsupported.");
+ end
+@@ -37,7 +38,12 @@ end
+ % RPM changes pulse spacing and spectral balance, not steady source loudness.
+ % Keep a load/throttle-dependent identity RMS while retaining each layer's
+ % relative spectral and temporal structure.
+-[banks, layers] = normalizeIdentityLevel(banks, layers, load, throttle);
++[banks, layers, scale] = normalizeIdentityLevel(banks, layers, load, throttle);
++if wantComponents
++    components = struct("exhaust", scale * layers.component_exhaust, ...
++        "whine", scale * layers.component_whine, ...
++        "mechanical", scale * layers.component_mechanical);
++end
+ 
+ if ~isequal(size(banks), [frameSamples, 2]) || any(~isfinite(banks), "all")
+     error("S12:EngineIdentity:Render", ...
+@@ -60,7 +66,7 @@ diagnostics = struct( ...
+ end
+ 
+ function [banks, layers, context] = renderHellcat( ...
+-        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, context)
++        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, context, wantComponents)
+ pulseExponent = 1 + 5 * (1 - identity.firing_character.pulse_width);
+ crossPlanePulse = max(0, sin(identity.order_profile.primary_order * phase)) .^ pulseExponent;
+ crossPlanePulse = crossPlanePulse + 0.55 * max(0, ...
+@@ -82,10 +88,15 @@ layers = emptyLayers();
+ layers.high_frequency = superchargerWhine;
+ layers.supercharger_whine = superchargerWhine;
+ layers.v8_exhaust = v8Exhaust;
++if wantComponents
++    layers.component_exhaust = toBanks(v8Exhaust, bankSkew);
++    layers.component_whine = toBanks(superchargerWhine, bankSkew);
++    layers.component_mechanical = toBanks(mechanical, bankSkew);
++end
+ end
+ 
+ function [banks, layers, context] = renderFerrari( ...
+-        identity, phase, rpmRatio, loadGain, bankSkew, acceleration, context)
++        identity, phase, rpmRatio, loadGain, bankSkew, acceleration, context, wantComponents)
+ pulseExponent = 2 + 10 * (1 - identity.firing_character.pulse_width);
+ flatPlanePulse = max(0, sin(identity.order_profile.primary_order * phase)) .^ pulseExponent;
+ flatPlanePulse = flatPlanePulse - 0.36 * max(0, ...
+@@ -105,10 +116,15 @@ banks = toBanks(exhaust + highFrequency + mechanical + transient, bankSkew);
+ layers = emptyLayers();
+ layers.high_frequency = highFrequency;
+ layers.v8_exhaust = exhaust;
++if wantComponents
++    layers.component_exhaust = toBanks(exhaust + highFrequency + transient, bankSkew);
++    layers.component_whine = zeros(size(banks));
++    layers.component_mechanical = toBanks(mechanical, bankSkew);
++end
+ end
+ 
+ function [banks, layers, context] = renderRx7( ...
+-        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, acceleration, context, sampleRateHz)
++        identity, phase, rpmRatio, load, throttle, loadGain, bankSkew, acceleration, context, sampleRateHz, wantComponents)
+ % Rotary chamber scheduling uses a continuous chamber phase, not a piston order.
+ chamberPhase = identity.order_profile.secondary_order * phase + pi / 6;
+ gateExponent = 1 + 4 * (1 - identity.firing_character.pulse_width);
+@@ -135,6 +151,11 @@ layers.high_frequency = turbine;
+ layers.turbine = turbine;
+ layers.rotary_event_count = sum(diff(rotaryGate > 0.35) > 0);
+ layers.rotary_gate_variance = var(rotaryGate);
++if wantComponents
++    layers.component_exhaust = toBanks(rotaryExcitation + transient, bankSkew);
++    layers.component_whine = toBanks(turbine, bankSkew);
++    layers.component_mechanical = toBanks(roughness, bankSkew);
++end
+ end
+ 
+ function [frame, nextEnvelope] = onsetTransient(profile, phase, acceleration, previous, current)
+@@ -156,7 +177,7 @@ layers = struct( ...
+     "turbine", 0, "rotary_event_count", 0, "rotary_gate_variance", 0);
+ end
+ 
+-function [banks, layers] = normalizeIdentityLevel(banks, layers, load, throttle)
++function [banks, layers, scale] = normalizeIdentityLevel(banks, layers, load, throttle)
+ currentRms = sqrt(mean(banks(:) .^ 2));
+ if currentRms <= eps
+     error("S12:EngineIdentity:Render", "Identity frame has no normalizable energy.");
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
+index 0fbdcee..d95fd98 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_render_source_frame.m
+@@ -1,5 +1,5 @@
+ function [bankExcitation, context, diagnostics] = s12_v12_render_source_frame( ...
+-        state, sourceProfile, context, sampleRateHz, frameSamples, identityProfileId)
++        state, sourceProfile, context, sampleRateHz, frameSamples, identityProfileId, researchOptions)
+ %S12_V12_RENDER_SOURCE_FRAME Render synthetic vehicle excitation before PTR.
+ % Causality is fixed: combustion/layers/transients/afterfire -> bankExcitation
+ % -> fixed pre-PTR bank mixer -> frozen PTR/Radiation -> renderer. This function
+@@ -8,12 +8,16 @@ function [bankExcitation, context, diagnostics] = s12_v12_render_source_frame( .
+ if nargin < 6
+     identityProfileId = [];
+ end
++if nargin < 7
++    researchOptions = struct("enabled", false);
++end
+ source = s12_v12_validate_source_profile(sourceProfile);
+ identity = s12_v12_resolve_engine_identity_profile(source, identityProfileId);
++researchOptions = validateResearchOptions(researchOptions, identity, source);
+ state = validateState(state);
+ validateFrameContract(sampleRateHz, frameSamples);
+ context = normalizeContext(context);
+-validateDiscreteTransitions(context, state);
++validateDiscreteTransitions(context, state, researchOptions.enabled);
+ 
+ [rpm, context.rpm_control] = smoothControl(context, "rpm_control", state.rpm, frameSamples);
+ [load, context.load_control] = smoothControl(context, "load_control", state.load, frameSamples);
+@@ -42,13 +46,28 @@ mechanical = dualBankLayer(renderMechanicalLayer(source, crankPhase, rpm));
+ flow = dualBankLayer(renderFlowLayer(source, crankPhase, rpm, load));
+ [transient, context.acceleration_envelope] = renderAccelerationTransient( ...
+     source, crankPhase, acceleration, previousAcceleration, context.acceleration_envelope);
+-[gearbox, context.shift_envelope] = renderGearboxTransient( ...
+-    source, crankPhase, state.shift_event, shiftProgress, context.shift_envelope);
++if researchOptions.enabled
++    % The research cut is multiplicative; the legacy gearbox bark/cut is additive.
++    gearbox = zeros(size(crankPhase));
++    context.shift_envelope = 0;
++else
++    [gearbox, context.shift_envelope] = renderGearboxTransient( ...
++        source, crankPhase, state.shift_event, shiftProgress, context.shift_envelope);
++end
+ [afterfire, context.afterfire_envelope] = renderAfterfire( ...
+     source, crankPhase, state.afterfire_kind, afterfireProgress, context.afterfire_envelope);
+-[identityBanks, context.identity, identityDiagnostics] = s12_v12_render_engine_identity_frame( ...
+-    identity, crankPhase, rpm, load, throttle, acceleration, context.identity, ...
+-    sampleRateHz, frameSamples);
++if researchOptions.enabled
++    [identityBanks, context.identity, identityDiagnostics, identityComponents] = ...
++        s12_v12_render_engine_identity_frame(identity, crankPhase, rpm, load, throttle, ...
++        acceleration, context.identity, sampleRateHz, frameSamples);
++    [combustion, orders, induction, mechanical, identityBanks, researchDiagnostics] = ...
++        applyResearchControls(combustion, orders, induction, mechanical, identityComponents, ...
++        rpm, state.shift_event, shiftProgress, researchOptions, source, cyclePhase);
++else
++    [identityBanks, context.identity, identityDiagnostics] = s12_v12_render_engine_identity_frame( ...
++        identity, crankPhase, rpm, load, throttle, acceleration, context.identity, ...
++        sampleRateHz, frameSamples);
++end
+ 
+ rawExcitation = combustion + orders + intake + induction + mechanical + flow + ...
+     dualBankLayer(transient) + dualBankLayer(gearbox) + dualBankLayer(afterfire) + identityBanks;
+@@ -76,6 +95,130 @@ diagnostics = struct( ...
+         "induction", energy(induction), "mechanical", energy(mechanical), "flow", energy(flow), ...
+         "transient", energy(transient), "gearbox", energy(gearbox), "afterfire", energy(afterfire), ...
+         "identity", energy(identityBanks)));
++if researchOptions.enabled
++    diagnostics.research = researchDiagnostics;
++end
++end
++
++function options = validateResearchOptions(options, identity, source)
++if ~isstruct(options) || ~isscalar(options) || ~isfield(options, "enabled") || ...
++        ~islogical(options.enabled) || ~isscalar(options.enabled)
++    error("S12:EngineSoundV12:ResearchOptions", "enabled must be a logical scalar.");
++end
++if ~options.enabled
++    return
++end
++required = ["cut_minimum", "whine_scale", "induction_scale", "voicing_rpm_band"];
++% Match the resolver's Hellcat source inference even when an explicit identity
++% is supplied, so another V8 source cannot enter this research path.
++isHellcatSource = source.engine_kind == "piston" && source.cylinders == 8 && ...
++    ~isempty(source.order_surface) && source.order_surface(1).order == 2;
++if identity.profile_id ~= "hellcat_2022_stock" || ~isHellcatSource || ~all(isfield(options, required))
++    error("S12:EngineSoundV12:ResearchOptions", ...
++        "Research controls require the Hellcat identity/source and all option fields.");
++end
++for field = ["cut_minimum", "whine_scale", "induction_scale"]
++    value = options.(field);
++    if ~isnumeric(value) || ~isreal(value) || ~isscalar(value) || ~isfinite(value) || ...
++            value < 0 || value > 1
++        error("S12:EngineSoundV12:ResearchOptions", "%s must be a scalar in [0,1].", field);
++    end
++    options.(field) = double(value);
++end
++band = options.voicing_rpm_band;
++if ~isnumeric(band) || ~isreal(band) || ~isequal(size(band), [1, 2]) || ...
++        any(~isfinite(band)) || band(1) < 0 || band(2) > 12000 || band(1) >= band(2)
++    error("S12:EngineSoundV12:ResearchOptions", ...
++        "voicing_rpm_band must be a strictly increasing finite RPM row vector.");
++end
++options.voicing_rpm_band = double(band);
++fields = ["mechanical_gain", "mechanical_mod_depth"];
++defaults = [1, 0];
++upperBounds = [1.5, 0.45];
++for index = 1:numel(fields)
++    field = fields(index);
++    if ~isfield(options, field)
++        options.(field) = defaults(index);
++    end
++    value = options.(field);
++    if ~isnumeric(value) || ~isreal(value) || ~isscalar(value) || ~isfinite(value) || ...
++            value < defaults(index) || value > upperBounds(index)
++        error("S12:EngineSoundV12:ResearchOptions", ...
++            "%s must be a scalar in [%g,%g].", field, defaults(index), upperBounds(index));
++    end
++    options.(field) = double(value);
++end
++if options.mechanical_gain ~= 1 || options.mechanical_mod_depth ~= 0
++    % Ninety-degree event spacing also guarantees nonoverlapping 40-degree pulses.
++    if ~isequal(sort(source.firing_phases_deg), 0:90:630) || ...
++            nnz(source.bank_map == -1) ~= 4 || nnz(source.bank_map == 1) ~= 4
++        error("S12:EngineSoundV12:ResearchOptions", ...
++            "Mechanical controls require eight 90-degree events and four events per bank.");
++    end
++end
++end
++
++function [combustion, orders, induction, mechanical, identityBanks, diagnostics] = applyResearchControls( ...
++        combustion, orders, induction, mechanical, components, rpm, shiftEvent, shiftProgress, ...
++        options, source, cyclePhase)
++x = max(0, min(1, (rpm - options.voicing_rpm_band(1)) / ...
++    (options.voicing_rpm_band(2) - options.voicing_rpm_band(1))));
++activation = x .^ 2 .* (3 - 2 * x);
++whineScale = 1 - (1 - options.whine_scale) * activation;
++inductionScale = 1 - (1 - options.induction_scale) * activation;
++voicingBefore = struct("identity_whine", energy(components.whine), "induction", energy(induction));
++whine = components.whine .* whineScale;
++induction = induction .* inductionScale;
++voicingAfter = struct("identity_whine", energy(whine), "induction", energy(induction));
++
++if shiftEvent == 0
++    cut = ones(size(shiftProgress));
++else
++    cut = 1 - (1 - options.cut_minimum) * sin(pi * shiftProgress) .^ 2;
++end
++cutBefore = struct("combustion", energy(combustion), "orders", energy(orders), ...
++    "identity_exhaust", energy(components.exhaust), "identity_whine", energy(whine), ...
++    "identity_mechanical", energy(components.mechanical), "mechanical", energy(mechanical));
++combustion = combustion .* cut;
++orders = orders .* cut;
++exhaust = components.exhaust .* cut;
++cutAfter = struct("combustion", energy(combustion), "orders", energy(orders), ...
++    "identity_exhaust", energy(exhaust), "identity_whine", energy(whine), ...
++    "identity_mechanical", energy(components.mechanical), "mechanical", energy(mechanical));
++identityBanks = exhaust + whine + components.mechanical;
++diagnostics = struct("cut_multiplier", cut, "cut_min", min(cut), "cut_max", max(cut), ...
++    "voicing_activation", activation, "whine_scale", whineScale, "induction_scale", inductionScale, ...
++    "cut_energy_before", cutBefore, "cut_energy_after", cutAfter, ...
++    "voicing_energy_before", voicingBefore, "voicing_energy_after", voicingAfter);
++if options.mechanical_gain ~= 1 || options.mechanical_mod_depth ~= 0
++    [mechanical, identityMechanical, diagnostics.mechanics] = applyMechanicalControls( ...
++        mechanical, components.mechanical, source, cyclePhase, options);
++    identityBanks = exhaust + whine + identityMechanical;
++end
++end
++
++function [mechanical, identityMechanical, diagnostics] = applyMechanicalControls( ...
++        mechanical, identityMechanical, source, cyclePhase, options)
++envelope = zeros(numel(cyclePhase), 2);
++theta = cyclePhase * 720 / (2 * pi);
++for bank = 1:2
++    phases = source.firing_phases_deg(source.bank_map == 2 * bank - 3);
++    pulses = zeros(size(cyclePhase));
++    for phase = phases
++        delta = mod(theta - phase + 360, 720) - 360;
++        inside = abs(delta) <= 20;
++        pulses(inside) = pulses(inside) + 0.5 * (1 + cos(pi * delta(inside) / 20));
++    end
++    envelope(:, bank) = (pulses - 1 / 9) / (8 / 9);
++end
++multiplier = options.mechanical_gain * (1 + options.mechanical_mod_depth * envelope);
++diagnostics = struct("cycle_phase_rad", cyclePhase, "envelope", envelope, ...
++    "multiplier", multiplier, "source_before", mechanical, "identity_before", identityMechanical, ...
++    "gain", options.mechanical_gain, "depth", options.mechanical_mod_depth);
++mechanical = mechanical .* multiplier;
++identityMechanical = identityMechanical .* multiplier;
++diagnostics.source_after = mechanical;
++diagnostics.identity_after = identityMechanical;
+ end
+ 
+ function state = validateState(state)
+@@ -136,9 +279,9 @@ elseif ~isfield(context.texture_residual, "weight_state")
+ end
+ end
+ 
+-function validateDiscreteTransitions(context, state)
++function validateDiscreteTransitions(context, state, researchEnabled)
+ settledEnvelope = 1e-4;
+-if context.shift_event_state ~= state.shift_event && context.shift_envelope > settledEnvelope
++if ~researchEnabled && context.shift_event_state ~= state.shift_event && context.shift_envelope > settledEnvelope
+     error("S12:EngineSoundV12:SourceState", ...
+         "shift_event may change only after the preceding transient has settled.");
+ end
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_run_texture_candidate.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_run_texture_candidate.m
+index a5e132d..92b3a97 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_run_texture_candidate.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_run_texture_candidate.m
+@@ -1,70 +1,178 @@
+-function result = s12_v12_run_texture_candidate(candidateModel, externalInput, outputRoot, execute)
+-%S12_V12_RUN_TEXTURE_CANDIDATE Controlled candidate SimulationInput runner.
+-% execute=false is the safe default; true requires an existing MATLAB session.
+-
+-if nargin < 4
+-    execute = false;
+-end
+-if ~isstruct(externalInput) || ~isfield(externalInput, "texture_residual") || ...
+-        ~isfield(externalInput, "texture_weight")
+-    error("S12:EngineSoundV12:CandidateRun", "External texture input is incomplete.");
+-end
+-if isfield(externalInput, "texture_layers") && isfield(externalInput, "texture_layer_weights")
+-    textureLayers = externalInput.texture_layers;
+-    textureLayerWeights = externalInput.texture_layer_weights;
+-    if ndims(textureLayers) ~= 3 || size(textureLayers, 3) ~= 3 || ...
+-            ~isequal(size(textureLayerWeights), [size(textureLayers, 1), 3])
+-        error("S12:EngineSoundV12:CandidateRun", "Layered texture input dimensions are invalid.");
++function [result, pcm] = s12_v12_run_texture_candidate(candidateModel, externalInput, outputRoot, execute)
++%S12_V12_RUN_TEXTURE_CANDIDATE Bind real frame inputs and capture stereo PCM.
++if nargin < 4, execute = false; end
++pcm = [];
++required = ["texture_residual","texture_weight","duration_seconds"];
++if ~isstruct(externalInput) || ~isscalar(externalInput) || ~all(isfield(externalInput,required))
++    fail("External texture input is incomplete.");
++end
++legacy = externalInput.texture_residual;
++count = size(legacy,1);
++if count < 1 || count > 4500 || ~isequal(size(legacy),[count,960]) || ~validNumeric(legacy)
++    fail("Legacy texture frame dimensions or samples are invalid.");
++end
++duration = externalInput.duration_seconds;
++if ~validNumeric(duration) || ~isscalar(duration) || abs(duration-count*0.02) > 1e-10 || ...
++        (isfield(externalInput,"frame_count") && ~isequal(externalInput.frame_count,count))
++    fail("Duration must contain exactly the declared whole frames.");
++end
++legacyWeight = externalInput.texture_weight;
++if ~isequal(size(legacyWeight),[count,1]) || ~validNumeric(legacyWeight) || any(legacyWeight < 0 | legacyWeight > 1,"all")
++    fail("Legacy texture weights are invalid.");
++end
++hasLayers = isfield(externalInput,"texture_layers");
++hasWeights = isfield(externalInput,"texture_layer_weights");
++if hasLayers ~= hasWeights, fail("Layered input fields must be supplied together."); end
++if hasLayers
++    layers = externalInput.texture_layers;
++    weights = externalInput.texture_layer_weights;
++else
++    layers = zeros(count,960,3,"single");
++    layers(:,:,1) = legacy;
++    weights = [legacyWeight,zeros(count,2)];
++end
++if ~isequal(size(layers),[count,960,3]) || ~validNumeric(layers) || any(abs(layers)>1,"all") || ...
++        ~isequal(size(weights),[count,3]) || ~validNumeric(weights) || any(weights<0 | weights>1,"all")
++    fail("Layered texture input dimensions, samples or weights are invalid.");
++end
++if (isfield(externalInput,"sample_rate_hz") && externalInput.sample_rate_hz ~= 48000) || ...
++        (isfield(externalInput,"frame_samples") && externalInput.frame_samples ~= 960)
++    fail("Only 48 kHz frames of 960 samples are supported.");
++end
++candidateModel = string(candidateModel);
++outputRoot = string(outputRoot);
++if ~isscalar(candidateModel) || ~isfile(candidateModel), fail("Candidate model is missing."); end
++if ~isscalar(outputRoot) || strlength(outputRoot)==0, fail("Output root is required."); end
++result = struct("status","NOT_EXECUTED","candidate_model",candidateModel, ...
++    "frame_count",count,"layered_input",hasLayers,"state_qualification","INSUFFICIENT_EVIDENCE", ...
++    "purpose","RESEARCH_ONLY_NOT_PRODUCT_AUDIO","product_candidate",false);
++if ~execute, return; end
++if isfolder(outputRoot) || isfile(outputRoot), fail("Refusing to overwrite an existing result."); end
++mkdir(outputRoot);
++[candidateFolder,modelName] = fileparts(candidateModel);
++common = fileparts(mfilename("fullpath"));
++addpath(candidateFolder,common,fullfile(common,"shared_model"));
++load_system(candidateModel);
++cleanup = onCleanup(@() close_system(modelName,0));
++clear s12_v12_model_texture_layers_step
++time = (0:count-1)'*0.02;
++in = Simulink.SimulationInput(modelName);
++in = in.setModelParameter("StopTime",num2str(time(end),17), ...
++    "SolverType","Fixed-step","Solver","FixedStepDiscrete","FixedStep","0.02", ...
++    "SaveOutput","on","OutputSaveName","app8_pcm","SaveFormat","Dataset", ...
++    "SaveTime","on","TimeSaveName","app8_time","SignalLogging","off", ...
++    "ReturnWorkspaceOutputs","on");
++ports = find_system(modelName,"SearchDepth",1,"BlockType","Inport");
++if isempty(ports)
++    if any(weights~=0,"all"), fail("Source baseline cannot consume nonzero texture."); end
++    result.input_mode = "SOURCE_BASELINE_ZERO_WEIGHT";
++elseif numel(ports)==4
++    numbers = cellfun(@(p) str2double(get_param(p,"Port")),ports);
++    [numbers,order] = sort(numbers);
++    ports = ports(order);
++    expected = ["Texture Body","Texture Mechanical","Texture Broadband","Texture Weights"];
++    names = string(get_param(ports,"Name"));
++    if ~isequal(numbers(:)',1:4) || ~isequal(names(:)',expected)
++        fail("Candidate Root Inport mapping differs from its contract.");
+     end
++    dataset = Simulink.SimulationData.Dataset;
++    for index = 1:3
++        samples = reshape(double(layers(:,:,index)).',[960,1,count]);
++        signal = timeseries(samples,time,"IsTimeFirst",false);
++        signal = setinterpmethod(signal,"zoh");
++        dataset = dataset.addElement(signal,expected(index));
++    end
++    signal = timeseries(reshape(double(weights).',[1,3,count]),time,"IsTimeFirst",false);
++    signal = setinterpmethod(signal,"zoh");
++    dataset = dataset.addElement(signal,expected(4));
++    in = in.setExternalInput(dataset);
++    result.input_mode = "FOUR_ROOT_INPORTS_DATASET";
+ else
+-    textureLayers = [];
+-    textureLayerWeights = [];
++    fail("Candidate must expose exactly four texture Root Inports.");
+ end
+-if ~isfile(candidateModel)
+-    error("S12:EngineSoundV12:CandidateRun", "Candidate model is missing.");
++diagnostic = [];
++captureDiagnostics = isfield(externalInput,"capture_diagnostics") && isequal(externalInput.capture_diagnostics,true);
++if captureDiagnostics && numel(ports)==4
++    mixer = find_system(modelName,"SearchDepth",1,"Name","Layered Texture Mixer");
++    probes = {Simulink.ID.getFullName(modelName+":11"),mixer{1},ports{4}};
++    probeNames = ["source_pressure","mixed_pressure","texture_weights"];
++    for index=1:3
++        handles = get_param(probes{index},"PortHandles");
++        set_param(handles.Outport(1),"DataLogging","on","DataLoggingNameMode","Custom","DataLoggingName",probeNames(index));
++    end
++    in = in.setModelParameter("SignalLogging","on","SignalLoggingName","app8_diagnostics");
+ end
+-if strlength(string(outputRoot)) == 0
+-    error("S12:EngineSoundV12:CandidateRun", "Output root is required.");
++out = sim(in);
++if captureDiagnostics, diagnostic=out.get("app8_diagnostics"); end
++captured = out.get("app8_pcm");
++if ~isa(captured,"Simulink.SimulationData.Dataset") || captured.numElements ~= 1
++    fail("Expected one actual matrix PCM output.");
+ end
+-if ~execute
+-    result = struct( ...
+-        "status", "NOT_EXECUTED", ...
+-        "candidate_model", string(candidateModel), ...
+-        "frame_count", size(externalInput.texture_residual, 1), ...
+-        "layered_input", ~isempty(textureLayers), ...
+-        "state_qualification", "INSUFFICIENT_EVIDENCE", ...
+-        "purpose", "RESEARCH_ONLY_NOT_PRODUCT_AUDIO");
+-    return;
++signal = captured.getElement(1).Values;
++frames = signal.Data;
++if numel(signal.Time)~=count || any(abs(signal.Time(:)-time)>1e-10)
++    fail("Captured frame timestamps do not match the declared grid.");
++end
++if isequal(size(frames),[count,960,2]) && signal.IsTimeFirst
++    frames = permute(frames,[2,3,1]);
++end
++if size(frames,1)~=960 || size(frames,2)~=2 || size(frames,3)~=count || ...
++        numel(frames)~=count*960*2 || ~validNumeric(frames)
++    fail("Captured PCM frame/channel dimensions are invalid.");
++end
++pcm = reshape(permute(frames,[1,3,2]),count*960,2);
++if isempty(pcm) || any(abs(pcm)>1,"all") || ~any(pcm~=0,"all")
++    fail("PCM must be nonempty, finite, non-silent and peak bounded.");
++end
++pcmPath = fullfile(outputRoot,"candidate.pcm.f64le");
++wavPath = fullfile(outputRoot,"candidate.wav");
++writePcm(pcmPath,pcm);
++audiowrite(wavPath,pcm,48000,"BitsPerSample",24);
++[readback,rate] = audioread(wavPath);
++info = audioinfo(wavPath);
++quantizationError = max(abs(readback-pcm),[],"all");
++if rate~=48000 || info.BitsPerSample~=24 || ~isequal(size(readback),size(pcm)) || quantizationError > 2^-23+eps
++    fail("WAV readback violates the fixed PCM24 quantization contract.");
++end
++delta = abs(diff(pcm));
++result.status = "SIMULATION_COMPLETED_RESEARCH_ONLY";
++result.pcm_dimensions = size(pcm);
++result.sample_rate_hz = 48000;
++result.duration_seconds = size(pcm,1)/48000;
++result.last_frame_time_s = time(end);
++result.peak = max(abs(pcm),[],"all");
++result.rms = sqrt(mean(pcm.^2,"all"));
++result.maximum_sample_jump = max(delta,[],"all");
++if count>1, result.maximum_frame_jump = max(delta(960:960:end,:),[],"all"); else, result.maximum_frame_jump=0; end
++result.wav_quantization_max_error = quantizationError;
++result.pcm_encoding = "Float64LE interleaved stereo";
++result.wav_encoding = "PCM24 48kHz stereo";
++result.pcm_sha256 = fileSha(pcmPath);
++result.wav_sha256 = fileSha(wavPath);
++result.model_sha256 = fileSha(candidateModel);
++if isfield(externalInput,"layer_source_sha256"), result.layer_source_sha256=externalInput.layer_source_sha256; end
++save(fullfile(outputRoot,"texture_candidate_result.mat"),"result","pcm","frames","diagnostic","-v7.3");
++fid=fopen(fullfile(outputRoot,"receipt.json"),"w","n","UTF-8");
++fprintf(fid,'%s\n',jsonencode(result,PrettyPrint=true)); fclose(fid);
+ end
+ 
+-candidatePath = string(candidateModel);
+-[candidateFolder, candidateFile, ~] = fileparts(candidatePath);
+-addpath(candidateFolder);
+-modelName = string(candidateFile);
+-in = Simulink.SimulationInput(modelName);
+-in = in.setModelParameter("StopTime", num2str(externalInput.duration_seconds, 17));
+-in = in.setVariable("texture_residual_frames", externalInput.texture_residual);
+-in = in.setVariable("texture_weight_frames", externalInput.texture_weight);
+-if ~isempty(textureLayers)
+-    in = in.setVariable("texture_layer_frames", textureLayers);
+-    in = in.setVariable("texture_layer_weight_frames", textureLayerWeights);
++function yes = validNumeric(value)
++yes = isnumeric(value) && isreal(value) && all(isfinite(value),"all");
+ end
+-out = sim(in);
+-pcm = out.playground_pcm;
+-if ~isnumeric(pcm) || any(~isfinite(pcm), "all") || any(abs(pcm) > 1, "all")
+-    error("S12:EngineSoundV12:CandidateRun", "Candidate PCM failed finite/peak contract.");
+-end
+-if ~isfolder(outputRoot)
+-    mkdir(outputRoot);
+-end
+-result = struct( ...
+-    "status", "SIMULATION_COMPLETED_RESEARCH_ONLY", ...
+-    "candidate_model", modelName, ...
+-    "frame_count", size(externalInput.texture_residual, 1), ...
+-    "layered_input", ~isempty(textureLayers), ...
+-    "pcm_dimensions", size(pcm), ...
+-    "state_qualification", "INSUFFICIENT_EVIDENCE", ...
+-    "purpose", "RESEARCH_ONLY_NOT_PRODUCT_AUDIO", ...
+-    "product_candidate", false);
+-save(fullfile(outputRoot, "texture_candidate_result.mat"), "result", "pcm", "-v7");
++
++function fail(message)
++error("S12:EngineSoundV12:CandidateRun","%s",message);
++end
++
++function writePcm(path,pcm)
++fid=fopen(path,"wb","ieee-le");
++if fid<0, fail("Cannot create PCM output."); end
++cleanup=onCleanup(@() fclose(fid));
++fwrite(fid,pcm.',"double");
++end
++
++function value = fileSha(path)
++fid=fopen(path,"rb"); cleanup=onCleanup(@() fclose(fid));
++digest=java.security.MessageDigest.getInstance("SHA-256"); digest.update(fread(fid,Inf,"*uint8"));
++value=string(lower(reshape(dec2hex(typecast(digest.digest(),"uint8"),2).',1,[])));
+ end
+diff --git a/tools/sound_sim/s12/playground_v12/common/s12_v12_texture_simulink_contract.m b/tools/sound_sim/s12/playground_v12/common/s12_v12_texture_simulink_contract.m
+index 8f42313..94a4d7c 100644
+--- a/tools/sound_sim/s12/playground_v12/common/s12_v12_texture_simulink_contract.m
++++ b/tools/sound_sim/s12/playground_v12/common/s12_v12_texture_simulink_contract.m
+@@ -6,12 +6,19 @@ contract.version = "s12-v12-texture-residual-simulink-v2";
+ contract.scope = "RESEARCH_ONLY_NOT_PRODUCT_AUDIO";
+ contract.default_texture_weight = 0;
+ contract.inputs = struct( ...
+-    "vehicle_state", struct("dimensions", [9, 1], "sample_time_s", 0.02), ...
+     "texture_body", struct("dimensions", [960, 1], "sample_time_s", 0.02), ...
+     "texture_mechanical", struct("dimensions", [960, 1], "sample_time_s", 0.02), ...
+     "texture_broadband", struct("dimensions", [960, 1], "sample_time_s", 0.02), ...
+-    "texture_weights", struct("dimensions", [1, 3], "sample_time_s", 0.02), ...
+-    "texture_layer_source", struct("dimensions", [3, 1], "sample_time_s", 0.02));
++    "texture_weights", struct("dimensions", [1, 3], "sample_time_s", 0.02));
++contract.root_input_order = ["texture_body", "texture_mechanical", "texture_broadband", "texture_weights"];
++contract.internal_vehicle_state = struct("dimensions", [9, 1], "sample_time_s", 0.02);
++contract.source_metadata = "layer_source_sha256; not a model input";
++contract.frame_samples = 960;
++contract.sample_rate_hz = 48000;
++contract.frame_time_s = 0.02;
++contract.maximum_frames = 4500;
++contract.last_frame_time_s = 89.98;
++contract.pcm_storage = "frame [960,2]; sample-major stereo Float64LE; WAV PCM24";
+ contract.outputs = struct( ...
+     "pre_ptr", struct("dimensions", [960, 1], "sample_time_s", 0.02), ...
+     "pcm", struct("dimensions", [960, 2], "sample_time_s", 0.02));
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py b/tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py
+index 3baee76..f1859e3 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_model_edit_plan_static.py
+@@ -22,10 +22,15 @@ class ModelEditPlanStaticContract(unittest.TestCase):
+ 
+     def test_plan_disconnects_only_source_to_radiation_and_inserts_mixer(self) -> None:
+         operations = self.plan["operations"]
+-        self.assertEqual(operations[3]["op"], "disconnect")
+-        self.assertEqual(operations[3]["target"], "blk_11.y1 -> blk_12.u1")
+-        self.assertEqual(operations[-1]["target"], "#textureMixer.y1 -> blk_12.u1")
+-        self.assertEqual(self.plan["defaultInputContract"]["textureWeight"], 0)
++        self.assertEqual([op["target"] for op in operations if op["op"] == "disconnect"],
++                         ["blk_11.y1 -> blk_12.u1"])
++        self.assertIn("#textureMixer.y1 -> blk_12.u1",
++                      [op["target"] for op in operations if op["op"] == "connect"])
++        self.assertEqual(self.plan["defaultInputContract"]["textureWeights"], "zeros(1,3)")
++        self.assertEqual(self.plan["schema"], "s12.v12.texture.simulink.model-edit-plan.v2")
++        operations = self.plan["operations"]
++        self.assertTrue(any("textureBroadband" in str(op) for op in operations))
++        self.assertTrue(any("u5" in str(op) for op in operations))
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_model_texture_static.py b/tools/sound_sim/s12/tests/test_s12_v12_model_texture_static.py
+index 47c3047..78cd2d5 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_model_texture_static.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_model_texture_static.py
+@@ -25,7 +25,7 @@ class ModelTextureStaticContract(unittest.TestCase):
+ 
+     def test_candidate_plan_names_the_fixed_frame_entry(self) -> None:
+         text = (COMMON / "s12_v12_prepare_texture_simulink_candidate.m").read_text(encoding="utf-8")
+-        self.assertIn("s12_v12_model_texture_step", text)
++        self.assertIn("s12_v12_model_texture_layers_step", text)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_run_texture_candidate_static.py b/tools/sound_sim/s12/tests/test_s12_v12_run_texture_candidate_static.py
+index 356cc3e..728afcf 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_run_texture_candidate_static.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_run_texture_candidate_static.py
+@@ -13,13 +13,12 @@ class TextureCandidateRunnerStaticContract(unittest.TestCase):
+         text = (COMMON / "s12_v12_run_texture_candidate.m").read_text(encoding="utf-8")
+         self.assertIn("execute = false", text)
+         self.assertIn("Simulink.SimulationInput", text)
+-        self.assertIn("setVariable(\"texture_residual_frames\"", text)
+-        self.assertIn("setVariable(\"texture_weight_frames\"", text)
+-        self.assertIn("texture_layer_frames", text)
+-        self.assertIn("texture_layer_weight_frames", text)
++        self.assertIn("in.setExternalInput(dataset)", text)
++        self.assertIn("dataset.addElement(signal,expected(index))", text)
++        self.assertIn("dataset.addElement(signal,expected(4))", text)
+         self.assertIn("Layered texture input dimensions", text)
+-        self.assertIn("addpath(candidateFolder)", text)
+-        self.assertIn("pcm = out.playground_pcm", text)
++        self.assertIn("addpath(candidateFolder,common", text)
++        self.assertIn('out.get("app8_pcm")', text)
+         self.assertNotIn("isfield(out", text)
+         self.assertIn("INSUFFICIENT_EVIDENCE", text)
+         self.assertIn("RESEARCH_ONLY_NOT_PRODUCT_AUDIO", text)
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_texture_external_layers_static.py b/tools/sound_sim/s12/tests/test_s12_v12_texture_external_layers_static.py
+index dd84c41..244e823 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_texture_external_layers_static.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_texture_external_layers_static.py
+@@ -13,7 +13,6 @@ class TextureExternalLayersStaticContract(unittest.TestCase):
+         text = (COMMON / "s12_v12_prepare_texture_external_input.m").read_text(encoding="utf-8")
+         self.assertIn("textureLayers = zeros(frameCount, frameSamples, 3", text)
+         self.assertIn("texture_layer_weights", text)
+-        self.assertIn("layerWeights = [weights, zeros(frameCount, 2", text)
+         self.assertIn("textureLayers(:, :, 1) = textureResidual", text)
+         self.assertIn("layerPaths", text)
+         self.assertIn("layer_source_sha256", text)
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_static.py b/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_static.py
+index 739d814..554fe8c 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_static.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_static.py
+@@ -20,7 +20,7 @@ class TextureSimulinkStaticContract(unittest.TestCase):
+         self.assertIn("sourceModel == outputModel", text)
+         self.assertIn("model_edit", text)
+         self.assertIn("INSUFFICIENT_EVIDENCE_UNTIL_RUNTIME_AND_ACOUSTIC_GATES", text)
+-        self.assertIn("copy source model to isolated candidate", text)
++        self.assertIn("execute (1,1) logical = false", text)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_topology.py b/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_topology.py
+index 5e21a67..f48e4d3 100644
+--- a/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_topology.py
++++ b/tools/sound_sim/s12/tests/test_s12_v12_texture_simulink_topology.py
+@@ -8,6 +8,7 @@ import unittest
+ ROOT = Path(__file__).resolve().parents[1]
+ MODEL = ROOT / "playground_v12" / "vehicles" / "hellcat_2022_stock" / "S12_hellcat_2022_stock_v12.slx"
+ AUDITOR = ROOT / "playground_v12" / "common" / "inspect_texture_simulink_topology.py"
++CANDIDATE = ROOT.parents[2] / "reports" / "simulink-texture-topology-20261028" / "isolated" / "S12_hellcat_2022_stock_v12_texture_candidate.slx"
+ 
+ 
+ class TextureSimulinkTopologyContract(unittest.TestCase):
+@@ -23,16 +24,30 @@ class TextureSimulinkTopologyContract(unittest.TestCase):
+         self.assertEqual(result["status"], "PASS")
+         self.assertTrue(result["sourceToFrozenRadiation"])
+         self.assertTrue(result["frozenRadiationToRendererMux"])
++        self.assertTrue(result["frozenOutputChainUnchanged"])
++        self.assertEqual(result["topology"], "source")
++        self.assertEqual(result["rootInports"], {})
++        self.assertEqual(len(result["modelSha256"]), 64)
+         self.assertEqual(result["actualBlocks"]["Hellcat Synthetic Source"], "11")
+         self.assertEqual(result["actualBlocks"]["Frozen 4D-B Radiation Adapter"], "12")
+ 
+     def test_texture_plan_is_isolated_and_defaults_to_zero(self) -> None:
+         result = self.module.audit(MODEL)
+         plan = result["textureInsertionPlan"]
+-        self.assertTrue(plan["copyModel"])
+-        self.assertTrue(plan["sourceModelUnchanged"])
+-        self.assertEqual(plan["defaultWeight"], 0)
+-        self.assertIn("Active Compile", plan["requiresRuntime"])
++        self.assertTrue(plan["sourceModelMustRemainUnchanged"])
++        self.assertEqual(plan["defaultInputContract"]["textureWeights"], "zeros(1,3)")
++        self.assertIn("Active Compile", plan["runtimeGates"])
++
++    @unittest.skipUnless(CANDIDATE.is_file(), "Isolated candidate has not been built")
++    def test_actual_candidate_archive_has_all_layer_inputs_and_frozen_output_chain(self) -> None:
++        result = self.module.audit(CANDIDATE)
++        self.assertEqual(result["status"], "PASS")
++        self.assertEqual(result["topology"], "candidate")
++        self.assertFalse(result["sourceToFrozenRadiation"])
++        self.assertTrue(result["sourceThroughMixerToFrozenRadiation"])
++        self.assertTrue(result["rootInputContract"])
++        self.assertTrue(result["frozenOutputChainUnchanged"])
++        self.assertIn("NOT_COMPILE_OR_SIMULATION", result["evidenceLevel"])
+ 
+ 
+ if __name__ == "__main__":

@@ -1,0 +1,12 @@
+{
+  "timestamp_local": "2026-10-31T10:07:19.720791+08:00",
+  "artifact_env_present": false,
+  "artifact_env_value_if_known": null,
+  "home_db": {
+    "exists": true,
+    "bytes": 53248,
+    "mtime_ns": 1793412136272035000,
+    "sha256": "509069310d17015e45d607e3f86b8cc4dbe1a62e5aa10382e613c09cd1884dc1"
+  },
+  "existing_preference_or_home_db_copied_or_edited_by_harness": false
+}
