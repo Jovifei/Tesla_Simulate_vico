@@ -1,7 +1,11 @@
 function summary=run_rumble_mechanics_candidate(contractPath,mode)
 % Actual Simulink experiments using native prior-B packets, never CSV replay.
+% Both arguments are optional when running this lab in place.
+lab0=string(fileparts(mfilename('fullpath')));
+if nargin<1 || strlength(string(contractPath))==0,contractPath=fullfile(lab0,'EXPERIMENT_CONTRACT.json');end
 if nargin<2,mode='smoke';end
 mode=string(mode);if ~ismember(mode,["smoke","full","short"]),error('S12:Rumble:Mode','Invalid run mode.');end
+if ~isfile(contractPath),error('S12:Rumble:Contract','Contract not found: %s',contractPath);end
 lab=string(fileparts(mfilename('fullpath')));project=fileparts(fileparts(lab));
 common=fullfile(project,'tools','sound_sim','s12','playground_v12','common');
 addpath(lab,common,fullfile(common,'shared_model'));
@@ -76,7 +80,17 @@ try
     end
     verifyDependencies(dependencies);summary.status='RENDERED_DIGITAL_PASS_ANALYSIS_PENDING';
     writeJson(run+'/run-summary.json',summary);
-    if mode=="smoke",writeJson(lab+'/runtime-evaluation-proof.json',struct('run_summary',run+'/run-summary.json','run_summary_sha256',sha(run+'/run-summary.json'),'contract_sha256',contractHash,'baseline_pcm_exact',summary.baseline_pcm_exact));end
+    if mode=="smoke"
+        % This is a pointer to the latest successful smoke run, not immutable
+        % evidence. Archive the previous pointer into this run before refreshing.
+        proofPath=lab+'/runtime-evaluation-proof.json';
+        if isfile(proofPath)
+            copyfile(proofPath,run+'/previous-runtime-evaluation-proof.json');
+        end
+        writeJsonFile(proofPath,struct('run_summary',run+'/run-summary.json', ...
+            'run_summary_sha256',sha(run+'/run-summary.json'),'contract_sha256',contractHash, ...
+            'baseline_pcm_exact',summary.baseline_pcm_exact));
+    end
     fprintf('RUMBLE_%s_DIGITAL_PASS %s\n',upper(mode),run);
 catch failure
     summary.status='FAILED';summary.error_id=string(failure.identifier);summary.error=string(failure.message);
@@ -239,6 +253,9 @@ meta=struct('path',path,'sha256',sha(path),'shape',size(data),'order','row-major
 end
 function writeJson(path,value)
 if isfile(path),error('S12:Rumble:OutputExists','Receipt exists.');end
+fid=fopen(path,'w','n','UTF-8');cleanup=onCleanup(@() fclose(fid));fprintf(fid,'%s\n',jsonencode(value,PrettyPrint=true));
+end
+function writeJsonFile(path,value)
 fid=fopen(path,'w','n','UTF-8');cleanup=onCleanup(@() fclose(fid));fprintf(fid,'%s\n',jsonencode(value,PrettyPrint=true));
 end
 function value=sha(path)
