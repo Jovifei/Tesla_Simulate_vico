@@ -894,7 +894,7 @@
     "independent_startup": "DEFAULT_BATCH_UNRESOLVED_HOME_RECENT_ARTIFACTS_NATIVE_CRASH"
   },
   "app8_dimension_fix_20261031": {
-    "status": "ISOLATED_DIMENSION_AND_FRAME_GATE_FIX_VERIFIED_SHORT",
+    "status": "DIGITAL_RUNS_COMPLETE_INCLUDING_TRUE_COLD_START_ANALYSIS_AND_AUDITION_READY",
     "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
     "candidate_root": "reports/app8-cabin-mechanical-bank-candidate-20261030",
     "root_causes": [
@@ -917,7 +917,34 @@
       "reports/app8-cabin-mechanical-bank-candidate-20261030/research-iteration3/variant-dimension-receipt-20261031_191138_457.json"
     ],
     "verified": "MATLAB unit 6/6; B0/N/M/D/MD each 100 frames pass; 3x direct run; model_check healthy; path [960x2x100]; mechanical/Frozen/Sum [960x1x100]; Sum error 0",
-    "not_run": "90s long runs, 35 anchors, MD-cold (independent MATLAB startup still BLOCKED_STARTUP)",
-    "qualification": "ISOLATED_ENGINEERING_SHORT_PASS_NOT_PRODUCT_NOT_ACOUSTIC_PASS"
+    "long_run_root": "reports/app8-cabin-mechanical-bank-candidate-20261030/runs/approved-20261101-111100-063",
+    "long_run_evidence": {
+      "preflight": "15/15 unit tests; calibration k=743.373876072182; contrasts exact",
+      "drive_90s": "B0 N M D MD MD-repeat each 4500 frames / 4,320,000 samples @48k",
+      "b0_native_match": "B0 PCM sha 1a56b2f5...c396ef equals historical native B",
+      "md_repeat_identity": "MD == MD-repeat PCM/WAV sha",
+      "anchors": "7 anchors x 5 voices = 35 passed",
+      "independent_analysis": "49 cases analysed; PCM24 decode, continuity, bands, contrasts pass"
+    },
+    "cold_start": {
+      "status": "PASS_NEW_PROCESS",
+      "matlab_pid": 40672,
+      "full_run_pid": 19420,
+      "launcher": "desktop -r in isolated pref/temp (batch mode remains native-crash blocked)",
+      "exit_code": 0,
+      "md_cold_pcm_equals_md": true,
+      "md_cold_wav_equals_md": true,
+      "cold_receipt": "cold-process/20261101-112339/receipt.json"
+    },
+    "audition": {
+      "package": "runs/approved-20261101-111100-063/audition-approved",
+      "target_lufs": -23,
+      "groups": 10,
+      "measured": "all 7 whole tracks at -23 LUFS, true peak <= -13.2 dBTP",
+      "blind_items": 8,
+      "qualification": "PREVIEW_ONLY_HUMAN_AND_DEVICE_PENDING"
+    },
+    "not_run": "in-car speaker playback and Jovi human acceptance",
+    "qualification": "DIGITAL_AND_ENGINEERING_PASS; HUMAN_DEVICE_VEHICLE_PENDING"
   }
 }

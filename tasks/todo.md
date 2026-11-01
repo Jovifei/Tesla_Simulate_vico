@@ -4699,3 +4699,21 @@ Review: canonical final state is `SYSTEM_ACCEPTANCE_PASSED / READY_FOR_JOVI_UAT 
 - [ ] 持续更新账本、经验和真实Obsidian受管检查点；车内设备和Jovi人耳结果仅由实际试听记录。
 
 Review：当前前轮七条音频仅证明文件级数值安全。B0不是旧native B，机械仍在Frozen前且无校准，保存SLX未包含新拓扑，所谓cold仅同进程重载。详见候选CORRECTION-20261031.md；修复仍属原批准范围，产品状态不提升。
+
+## 2026-11-01 APP8 长轨、冷启动与试听包完成
+
+> 批次 `runs/approved-20261101-111100-063`。上一节遗留的四项在本次全部跑通。
+
+- [x] 把 dimfix 模型绑定为 staged runner 候选（`adopt_dimfix_candidate.m`），真实编译端口 + `model_check` 通过。
+- [x] preflight：15/15 单元测试，校准 k=743.373876072182，N/M 与 D/MD pre-Frozen 精确一致。
+- [x] 6 条 90 秒长轨：B0/N/M/D/MD/MD-repeat，各 4500 帧、4,320,000 样本。
+- [x] B0 PCM SHA 等于历史 native B（`1a56b2f5...c396ef`）；MD 与 MD-repeat 的 PCM/WAV 完全一致。
+- [x] 35 条锚点（7 × 5 版本）全部通过 pre-Frozen / 机械支路对比门。
+- [x] 独立分析 49 项：PCM24 解码、连续性、分带、对比、交互项全部通过。
+- [x] 真正的冷启动：新 MATLAB 进程 PID 40672（长轨 PID 19420），`COLD_DONE`，退出码 0，无崩溃转储；MD-cold 的 PCM/WAV 与 MD 完全一致。
+- [x] 10 组响度匹配试听包 `audition-approved`：目标 −23 LUFS，7 条整轨实测 −23.0 LUFS，真峰 ≤ −13.2 dBTP。
+- [ ] 车内扬声器实际播放与 Jovi 人耳验收。
+
+### Review
+
+数字与工程链路已完整跑通（含新进程冷启动），证明链路正确与可重复；这不等于音色通过。车内设备与 Jovi 人耳接受仍需实测。

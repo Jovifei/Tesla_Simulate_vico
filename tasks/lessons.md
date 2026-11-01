@@ -1438,3 +1438,9 @@ Rules:
 
 - `run_rumble_mechanics_candidate` 报“输入参数的数目不足”，因为签名是 `(contractPath, mode)` 却只给 `mode` 设了默认值。凡是以“直接运行本目录脚本”为交付方式的入口，所有前导参数都必须有默认值，或在缺参时给出清晰报错，不能用 MATLAB 的通用报错。
 - lab 级 `runtime-evaluation-proof.json` 是“指向最近一次成功 smoke 的可变指针”，不是不可变证据。重跑 smoke 时该刷新指针，并把旧指针另存进本次 run 目录，而不是用 `OutputExists` 直接失败。
+
+## 2026-11-01 MATLAB batch 崩溃时，desktop -r 是可验证的冷启动通道
+
+- R2026a `-batch` 在本机稳定 `0xC0000005`（homesessionmanager / recent artifacts），但 `matlab.exe -wait -desktop -logfile ... -r "<script> exit(0,'force');"` 在独立 `MATLAB_PREFDIR`/`TEMP` 下可正常启动、执行、自然退出。
+- 冷启动验收必须同时记录：新 PID（与长轨 PID 不同）、启动标记、目标阶段完成标记、退出码 0、无 crash dump，以及产物与同会话结果逐字节一致。只打印标记不算通过。
+- 本次据此跑通真实 MD-cold：长轨 PID 19420，冷进程 PID 40672，MD 与 MD-cold 的 PCM/WAV SHA 完全一致。注意这修复的是“可用冷启动通道”，`-batch` 本身仍未修复，不能写成 MATLAB 已整体修好。
