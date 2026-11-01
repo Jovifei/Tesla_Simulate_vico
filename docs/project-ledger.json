@@ -892,5 +892,32 @@
     "evidence_correction": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\CORRECTION-20261031.md",
     "prior_run_status": "FILES_DIGITALLY_VALID_PLAN_ACCEPTANCE_WITHDRAWN",
     "independent_startup": "DEFAULT_BATCH_UNRESOLVED_HOME_RECENT_ARTIFACTS_NATIVE_CRASH"
+  },
+  "app8_dimension_fix_20261031": {
+    "status": "ISOLATED_DIMENSION_AND_FRAME_GATE_FIX_VERIFIED_SHORT",
+    "worktree": "E:/Tesla_speed/worktrees/hellcat-state-contract-20261027",
+    "candidate_root": "reports/app8-cabin-mechanical-bank-candidate-20261030",
+    "root_causes": [
+      "Combustion/Pre-Frozen Selector configured for two dimensions while R2026a treated the input as one-dimensional",
+      "Mechanical_Receiver output [960x3] incompatible with the post-Frozen Sum",
+      "Saved model receiver expression disagreed with the runner override",
+      "Frozen model-reference output was a 960-element 1-D vector",
+      "mb_step_gate rejected same-time re-evaluation and t=0 restarts as skipped/reordered frames"
+    ],
+    "fixes": [
+      "explicit MATLAB Function splits, no Selector",
+      "Frozen_Column_Normalize via mb_column_frame.m to [960x1]",
+      "stateless single-column mb_mechanical_mono_step receiver",
+      "mb_step_gate allows same-time re-evaluation and clears state on t=0 restart; still rejects jumps larger than one 20 ms frame"
+    ],
+    "final_model": "reports/app8-cabin-mechanical-bank-candidate-20261030/isolated/S12_hellcat_cabin_event_bank_dimfix_20261031_154809_713.slx",
+    "model_sha256": "260748280b977916698d42f493e852b1c25eb878415919f49021602c554be174",
+    "receipts": [
+      "reports/app8-cabin-mechanical-bank-candidate-20261030/research-iteration3/dimension-fix-receipt-20261031_154809_713.json",
+      "reports/app8-cabin-mechanical-bank-candidate-20261030/research-iteration3/variant-dimension-receipt-20261031_191138_457.json"
+    ],
+    "verified": "MATLAB unit 6/6; B0/N/M/D/MD each 100 frames pass; 3x direct run; model_check healthy; path [960x2x100]; mechanical/Frozen/Sum [960x1x100]; Sum error 0",
+    "not_run": "90s long runs, 35 anchors, MD-cold (independent MATLAB startup still BLOCKED_STARTUP)",
+    "qualification": "ISOLATED_ENGINEERING_SHORT_PASS_NOT_PRODUCT_NOT_ACOUSTIC_PASS"
   }
 }
