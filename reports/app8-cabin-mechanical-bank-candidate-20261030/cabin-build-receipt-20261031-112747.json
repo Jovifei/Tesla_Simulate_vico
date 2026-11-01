@@ -1,0 +1,524 @@
+{
+  "status": "COLD_RELOAD_UPDATE_COMPILE_MODEL_CHECK_PASS",
+  "model": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\isolated\\S12_hellcat_cabin_event_bank_20261031_112747_734.slx",
+  "model_sha256": "fabe3805668d45632911e8da8a3855992135e026a9094651e27b5f2113825dcb",
+  "source_sha256": "eeb3cc8b89d55a7b184cfe44e76b306111b0d6b96feab6d8a1ed4684996b0002",
+  "contract_sha256": "00093672c3f8565900a3be0adcd6fcac6f2b71285d87670fa2aa2798aefa5163",
+  "baseline_copy": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\isolated\\S12_hellcat_cabin_B0_reference_20261031_112747_734.slx",
+  "baseline_copy_sha256": "eeb3cc8b89d55a7b184cfe44e76b306111b0d6b96feab6d8a1ed4684996b0002",
+  "saved_source_expression": "mb_source_step(u)",
+  "saved_blocks": [
+    "Combustion_Split",
+    "Other_Split",
+    "Control_Split",
+    "Pre_Frozen_Split",
+    "Mechanical_Split",
+    "Combustion_Network_And_Event",
+    "Mechanical_Receiver",
+    "Post_Frozen_Mechanical_Sum",
+    "Source_Branch_Join"
+  ],
+  "before_model_read": "status: ok\nmodel: S12_hellcat_cabin_event_bank_20261031_112747_734\nscope: root\ntoken_estimate: 416\nblocks: \n  interface: \n    Inport: \n      - id: blk_18 #u1\n        Name: Listening Vehicle State\n    Outport: \n      - id: blk_16 #y1\n        Name: PCM Output\n  algorithm: \n    - id: blk_12\n      Name: \"Frozen 4D-B Radiation Adapter\"\n      BlockType: ModelReference\n      derived_info: \n        expression: \"Radiated_Pressure = S12_Frozen_Radiation_Adapter_v12(Pre_x2D_PTR_Excitation, Simulation_Time) where Pre_x2D_PTR_Excitation=blk_11.y1, Simulation_Time=blk_9.y1\"\n      ModelFile: S12_Frozen_Radiation_Adapter_v12.slx\n    - id: blk_11\n      Name: Hellcat Synthetic Source\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_18.y1\n    - id: blk_13\n      Name: Renderer Gain\n      BlockType: Constant\n      derived_info: \n        expression: y1 = Value where Value=0.10\n    - id: blk_14\n      Name: Renderer Input Mux\n      BlockType: Mux\n      derived_info: \n        expression: \"y1 = [u1, u2] where u1=blk_12.Radiated_Pressure, u2=blk_13.y1\"\n    - id: blk_9\n      Name: Simulation Time\n      BlockType: Clock\n      derived_info: \n        expression: y1 = Clock()\n    - id: blk_15\n      Name: Stereo Renderer\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_14.y1\nconnections: \n  - id: \"blk_18.y1 -> blk_11.u1\"\n  - id: \"blk_15.y1 -> blk_16.u1\"\n  - id: \"blk_14.y1 -> blk_15.u1\"\n  - id: \"blk_13.y1 -> blk_14.u2\"\n  - id: \"blk_12.Radiated_Pressure -> blk_14.u1\"\n  - id: \"blk_11.y1 -> blk_12.Pre_x2D_PTR_Excitation\"\n  - id: \"blk_9.y1 -> blk_12.Simulation_Time\"\n\nblock_type_descriptions: \n  MATLABFcn: \"Apply MATLAB function or expression to input (deprecated, use MATLAB Function)\"\n  Clock: Output current simulation time",
+  "compiled_ports": [
+    {
+      "name": "source",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Hellcat Synthetic Source",
+      "dimensions": {
+        "Inport": [
+          2,
+          9,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          9
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Combustion_Split",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Combustion_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Other_Split",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Other_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Control_Split",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Control_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          5
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Pre_Frozen_Split",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Pre_Frozen_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          2
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Mechanical_Split",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Mechanical_Split",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          2
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Combustion_Network_And_Event",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Combustion_Network_And_Event",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          9
+        ],
+        "Outport": [
+          2,
+          960,
+          2
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Mechanical_Receiver",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Mechanical_Receiver",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Post_Frozen_Mechanical_Sum",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Post_Frozen_Mechanical_Sum",
+      "dimensions": {
+        "Inport": [
+          1,
+          960,
+          2,
+          960,
+          1
+        ],
+        "Outport": [
+          2,
+          960,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double",
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "Source_Branch_Join",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Source_Branch_Join",
+      "dimensions": {
+        "Inport": [
+          2,
+          960,
+          2,
+          2,
+          960,
+          2,
+          2,
+          960,
+          5
+        ],
+        "Outport": [
+          2,
+          960,
+          9
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [
+          "double",
+          "double",
+          "double"
+        ],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    },
+    {
+      "name": "native_state_inport",
+      "path": "S12_hellcat_cabin_event_bank_20261031_112747_734/Listening Vehicle State",
+      "dimensions": {
+        "Inport": [],
+        "Outport": [
+          2,
+          9,
+          1
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "data_types": {
+        "Inport": [],
+        "Outport": [
+          "double"
+        ],
+        "Enable": [],
+        "Trigger": [],
+        "State": [],
+        "LConn": [],
+        "RConn": [],
+        "Ifaction": [],
+        "Reset": [],
+        "Event": []
+      },
+      "sample_time": [
+        0.02,
+        0
+      ]
+    }
+  ],
+  "after_model_read": "status: ok\nmodel: S12_hellcat_cabin_event_bank_20261031_112747_734\nscope: root\ntoken_estimate: 856\nblocks: \n  interface: \n    Inport: \n      - id: blk_18 #u1\n        Name: Listening Vehicle State\n    Outport: \n      - id: blk_16 #y1\n        Name: PCM Output\n  algorithm: \n    - id: blk_23\n      Name: Combustion_Network_And_Event\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_22.y1\n    - id: blk_19\n      Name: Combustion_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_21\n      Name: Control_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_12\n      Name: \"Frozen 4D-B Radiation Adapter\"\n      BlockType: ModelReference\n      derived_info: \n        expression: \"Radiated_Pressure = S12_Frozen_Radiation_Adapter_v12(Pre_x2D_PTR_Excitation, Simulation_Time) where Pre_x2D_PTR_Excitation=blk_24.y1, Simulation_Time=blk_9.y1\"\n      ModelFile: S12_Frozen_Radiation_Adapter_v12.slx\n    - id: blk_11\n      Name: Hellcat Synthetic Source\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_18.y1\n    - id: blk_26\n      Name: Mechanical_Receiver\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_25.y1\n    - id: blk_25\n      Name: Mechanical_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_23.y1\n    - id: blk_20\n      Name: Other_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_27\n      Name: Post_Frozen_Mechanical_Sum\n      BlockType: Sum\n      derived_info: \n        expression: \"y1 = u1 + u2 where u1=blk_12.Radiated_Pressure, u2=blk_26.y1\"\n    - id: blk_24\n      Name: Pre_Frozen_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_23.y1\n    - id: blk_13\n      Name: Renderer Gain\n      BlockType: Constant\n      derived_info: \n        expression: y1 = Value where Value=0.10\n    - id: blk_14\n      Name: Renderer Input Mux\n      BlockType: Mux\n      derived_info: \n        expression: \"y1 = [u1, u2] where u1=blk_27.y1, u2=blk_13.y1\"\n    - id: blk_9\n      Name: Simulation Time\n      BlockType: Clock\n      derived_info: \n        expression: y1 = Clock()\n    - id: blk_22\n      Name: Source_Branch_Join\n      BlockType: Concatenate\n      derived_info: \n        expression: \"y1 = Concatenate(u1, u2, u3) where u1=blk_19.y1, u2=blk_20.y1, u3=blk_21.y1\"\n    - id: blk_15\n      Name: Stereo Renderer\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_14.y1\nconnections: \n  - id: \"blk_27.y1 -> blk_14.u1\"\n  - id: \"blk_26.y1 -> blk_27.u2\"\n  - id: \"blk_25.y1 -> blk_26.u1\"\n  - id: \"blk_24.y1 -> blk_12.Pre_x2D_PTR_Excitation\"\n  - id: \"blk_23.y1 -> blk_25.u1,blk_24.u1\"\n  - id: \"blk_22.y1 -> blk_23.u1\"\n  - id: \"blk_21.y1 -> blk_22.u3\"\n  - id: \"blk_20.y1 -> blk_22.u2\"\n  - id: \"blk_19.y1 -> blk_22.u1\"\n  - id: \"blk_18.y1 -> blk_11.u1\"\n  - id: \"blk_15.y1 -> blk_16.u1\"\n  - id: \"blk_14.y1 -> blk_15.u1\"\n  - id: \"blk_13.y1 -> blk_14.u2\"\n  - id: \"blk_12.Radiated_Pressure -> blk_27.u1\"\n  - id: \"blk_11.y1 -> blk_19.u1,blk_21.u1,blk_20.u1\"\n  - id: \"blk_9.y1 -> blk_12.Simulation_Time\"\n\nblock_type_descriptions: \n  MATLABFcn: \"Apply MATLAB function or expression to input (deprecated, use MATLAB Function)\"\n  Clock: Output current simulation time\n  Concatenate: Concatenate input signals along specified dimension",
+  "cold_model_read": "status: ok\nmodel: S12_hellcat_cabin_event_bank_20261031_112747_734\nscope: root\ntoken_estimate: 856\nblocks: \n  interface: \n    Inport: \n      - id: blk_18 #u1\n        Name: Listening Vehicle State\n    Outport: \n      - id: blk_16 #y1\n        Name: PCM Output\n  algorithm: \n    - id: blk_23\n      Name: Combustion_Network_And_Event\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_22.y1\n    - id: blk_19\n      Name: Combustion_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_21\n      Name: Control_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_12\n      Name: \"Frozen 4D-B Radiation Adapter\"\n      BlockType: ModelReference\n      derived_info: \n        expression: \"Radiated_Pressure = S12_Frozen_Radiation_Adapter_v12(Pre_x2D_PTR_Excitation, Simulation_Time) where Pre_x2D_PTR_Excitation=blk_24.y1, Simulation_Time=blk_9.y1\"\n      ModelFile: S12_Frozen_Radiation_Adapter_v12.slx\n    - id: blk_11\n      Name: Hellcat Synthetic Source\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_18.y1\n    - id: blk_26\n      Name: Mechanical_Receiver\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_25.y1\n    - id: blk_25\n      Name: Mechanical_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_23.y1\n    - id: blk_20\n      Name: Other_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_11.y1\n    - id: blk_27\n      Name: Post_Frozen_Mechanical_Sum\n      BlockType: Sum\n      derived_info: \n        expression: \"y1 = u1 + u2 where u1=blk_12.Radiated_Pressure, u2=blk_26.y1\"\n    - id: blk_24\n      Name: Pre_Frozen_Split\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_23.y1\n    - id: blk_13\n      Name: Renderer Gain\n      BlockType: Constant\n      derived_info: \n        expression: y1 = Value where Value=0.10\n    - id: blk_14\n      Name: Renderer Input Mux\n      BlockType: Mux\n      derived_info: \n        expression: \"y1 = [u1, u2] where u1=blk_27.y1, u2=blk_13.y1\"\n    - id: blk_9\n      Name: Simulation Time\n      BlockType: Clock\n      derived_info: \n        expression: y1 = Clock()\n    - id: blk_22\n      Name: Source_Branch_Join\n      BlockType: Concatenate\n      derived_info: \n        expression: \"y1 = Concatenate(u1, u2, u3) where u1=blk_19.y1, u2=blk_20.y1, u3=blk_21.y1\"\n    - id: blk_15\n      Name: Stereo Renderer\n      BlockType: MATLABFcn\n      derived_info: \n        expression: y1 = MATLABFcn(u1) where u1=blk_14.y1\nconnections: \n  - id: \"blk_27.y1 -> blk_14.u1\"\n  - id: \"blk_26.y1 -> blk_27.u2\"\n  - id: \"blk_25.y1 -> blk_26.u1\"\n  - id: \"blk_24.y1 -> blk_12.Pre_x2D_PTR_Excitation\"\n  - id: \"blk_23.y1 -> blk_24.u1,blk_25.u1\"\n  - id: \"blk_22.y1 -> blk_23.u1\"\n  - id: \"blk_21.y1 -> blk_22.u3\"\n  - id: \"blk_20.y1 -> blk_22.u2\"\n  - id: \"blk_19.y1 -> blk_22.u1\"\n  - id: \"blk_18.y1 -> blk_11.u1\"\n  - id: \"blk_15.y1 -> blk_16.u1\"\n  - id: \"blk_14.y1 -> blk_15.u1\"\n  - id: \"blk_13.y1 -> blk_14.u2\"\n  - id: \"blk_12.Radiated_Pressure -> blk_27.u1\"\n  - id: \"blk_11.y1 -> blk_21.u1,blk_19.u1,blk_20.u1\"\n  - id: \"blk_9.y1 -> blk_12.Simulation_Time\"\n\nblock_type_descriptions: \n  MATLABFcn: \"Apply MATLAB function or expression to input (deprecated, use MATLAB Function)\"\n  Clock: Output current simulation time\n  Concatenate: Concatenate input signals along specified dimension",
+  "model_check": "status: healthy\nvalidation_scope: root\nchecks_run: \n  - unconnected_ports\n  - unconnected_lines\n  - stateflow_lint",
+  "matlab_version": "26.1.0.3203278 (R2026a)",
+  "simulink_version": {
+    "Name": "Simulink",
+    "Version": "26.1",
+    "Release": "(R2026a)",
+    "Date": "20-Nov-2025"
+  },
+  "post_save_correction": "Mechanical_Receiver now uses mb_mechanical_direct_step(u, mode, k) for explicit 960x1 output; saved and compiled."
+}

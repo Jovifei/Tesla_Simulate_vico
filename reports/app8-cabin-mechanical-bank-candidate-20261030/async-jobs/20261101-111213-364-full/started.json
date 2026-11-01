@@ -1,0 +1,13 @@
+{
+  "status": "RUNNING",
+  "stage": "full",
+  "job_root": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\async-jobs\\20261101-111213-364-full",
+  "run_root": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\runs\\approved-20261101-111100-063",
+  "matlab_pid": 19420,
+  "matlab_version": "26.1.0.3203278 (R2026a)",
+  "started_marker": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\async-jobs\\20261101-111213-364-full\\started.json",
+  "complete_marker": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\async-jobs\\20261101-111213-364-full\\complete.json",
+  "failure_marker": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\async-jobs\\20261101-111213-364-full\\failure.json",
+  "console_log": "E:\\Tesla_speed\\worktrees\\hellcat-state-contract-20261027\\reports\\app8-cabin-mechanical-bank-candidate-20261030\\async-jobs\\20261101-111213-364-full\\console.log",
+  "started_at": "2026-11-01 11:12:18"
+}

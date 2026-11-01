@@ -276,3 +276,8 @@ reports/app8-*/**/*.pma
 reports/app8-*/**/*.crx
 reports/app8-*/**/prefdir/
 reports/app8-*/**/*.mlsettings
+reports/app8-*/cold-process/**/prefdir/
+reports/app8-*/cold-process/**/temp/
+reports/app8-*/cold-process/**/*.pma
+reports/app8-*/cold-process/**/*.p12
+reports/app8-*/cold-process/**/*.pem
