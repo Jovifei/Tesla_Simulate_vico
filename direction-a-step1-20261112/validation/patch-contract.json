@@ -1,0 +1,33 @@
+{
+  "kind": "textual_patch_contract_on_exact_upstream_source_NOT_BUILD",
+  "engine_pin": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+  "source_method": "GitHub connector exact-ref text reads, not host checkout or git archive execution",
+  "files": [
+    {
+      "path": "upstream/include/scs.h",
+      "reason": "Point only the exported copy at the exported solver",
+      "before_sha256": "bfccb6b8a8dfd90c56f3d6e1f01039c80488c2052ddf55e0a21ec15c9bf34d9a",
+      "after_sha256": "7909ea1c34da98e1a7a8f573a86a1bfc289f6d2a74cfb9c8084bfd5082577cab"
+    },
+    {
+      "path": "upstream/src/simulator.cpp",
+      "reason": "Fixed offline clock and release dyno buffer; no physics parameter changes",
+      "before_sha256": "3a014d5dd7e2584250db33605fc51d07d1f7779b811f92c8599d19a654831eb4",
+      "after_sha256": "12c838bd218c219e6c185c69b9d556f9bc15074ad8b147fbc402e3958d9e3645"
+    },
+    {
+      "path": "upstream/src/piston_engine_simulator.cpp",
+      "reason": "Read-only physical capture tap",
+      "before_sha256": "0da7b8fd41e2da0074e19f1ed056e56f24c512c67ac828460355c8549eec38ad",
+      "after_sha256": "62f93e67aa74ddd7c7da4ef6d0023282a5ed3e199d5daf00a47b0f16b3044fcd"
+    },
+    {
+      "path": "upstream/src/synthesizer.cpp",
+      "reason": "Remove unused GUI include; read-only audio tap, exact integer-clamp flag and invalid-value guard; DSP unchanged",
+      "before_sha256": "8ec3421e98b32f811cb3fcc8453ed30de77fef1fe4fc6a2fcb69421175ae34e8",
+      "after_sha256": "de81a6869735d9d408fbce20895d00ae129ac9c45eb03ac0eac8edb667d6a6be"
+    }
+  ],
+  "second_application_rejected": true,
+  "input_material_unchanged": true
+}

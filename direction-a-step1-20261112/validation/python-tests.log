@@ -1,0 +1,31 @@
+Synthetic contract tests, not a C++ build or engine simulation.
+Command: python -B test_package.py
+
+test_bad_csv_timing_and_nonfinite (__main__.CaptureTests.test_bad_csv_timing_and_nonfinite) ... ok
+test_clamp_rounding_edges (__main__.CaptureTests.test_clamp_rounding_edges) ... ok
+test_missing_physical_evidence_fails (__main__.CaptureTests.test_missing_physical_evidence_fails) ... ok
+test_missing_rotation_fails (__main__.CaptureTests.test_missing_rotation_fails) ... ok
+test_nonfinite_json (__main__.CaptureTests.test_nonfinite_json) ... ok
+test_nonfinite_streams (__main__.CaptureTests.test_nonfinite_streams) ... ok
+test_nonpositive_pressure (__main__.CaptureTests.test_nonpositive_pressure) ... ok
+test_physical_summary_cannot_override_stream (__main__.CaptureTests.test_physical_summary_cannot_override_stream) ... ok
+test_python_optimized_still_rejects (__main__.CaptureTests.test_python_optimized_still_rejects) ... ok
+test_signed_reverse_or_stopped_rotation (__main__.CaptureTests.test_signed_reverse_or_stopped_rotation) ... ok
+test_truncated_and_extra_bytes (__main__.CaptureTests.test_truncated_and_extra_bytes) ... ok
+test_valid_synthetic_fixture (__main__.CaptureTests.test_valid_synthetic_fixture) ... ok
+test_wrong_frames (__main__.CaptureTests.test_wrong_frames) ... ok
+test_wrong_pcm_and_clamp_flag (__main__.CaptureTests.test_wrong_pcm_and_clamp_flag) ... ok
+test_actual_solver_mismatch_recorded_without_substitution (__main__.ExportTests.test_actual_solver_mismatch_recorded_without_substitution) ... ok
+test_archive_receipts_dirty_files_ignored_and_sources_unchanged (__main__.ExportTests.test_archive_receipts_dirty_files_ignored_and_sources_unchanged) ... ok
+test_changed_license_stops_and_preserves_receipt (__main__.ExportTests.test_changed_license_stops_and_preserves_receipt) ... ok
+test_existing_output_rejected_without_writes (__main__.ExportTests.test_existing_output_rejected_without_writes) ... ok
+test_output_inside_each_original_rejected (__main__.ExportTests.test_output_inside_each_original_rejected) ... ok
+test_patch_cannot_apply_twice (__main__.ExportTests.test_patch_cannot_apply_twice) ... ok
+test_export_cli_help_leaves_source_directory_unchanged (__main__.GuardTests.test_export_cli_help_leaves_source_directory_unchanged) ... ok
+test_missing_or_duplicate_patch_anchor (__main__.GuardTests.test_missing_or_duplicate_patch_anchor) ... ok
+test_tar_traversal_links_and_unexpected_paths_rejected (__main__.GuardTests.test_tar_traversal_links_and_unexpected_paths_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.151s
+
+OK

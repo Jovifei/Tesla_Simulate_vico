@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "TEMPLATE_NOT_A_HOST_EXPORT_RECEIPT",
+  "engine_pin": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+  "engine_repository": "https://github.com/ange-yaghi/engine-sim",
+  "solver_repository": "https://github.com/ange-yaghi/simple-2d-constraint-solver",
+  "solver_actual_checkout_sha": null,
+  "solver_engine_gitlink_sha": "e009f4ff1c9c4c5874e865e893cdb62e208fb2b3",
+  "solver_matches_engine_gitlink": null,
+  "original_repositories_before": null,
+  "original_repositories_after": null,
+  "original_repositories_unchanged": null,
+  "model": "generic_crossplane_v8_ls_example_NOT_HELLCAT_NO_OEM_CALIBRATION",
+  "DTV": false,
+  "DISCORD_ENABLED": false,
+  "build_validation": "NOT_RUN",
+  "smoke_validation": "NOT_RUN",
+  "note": "prepare_workspace.py creates a fresh receipt with actual checkout SHA, raw archive and per-file hashes, adaptation hashes, and original repository status. This template is not evidence of export or build.",
+  "engine": {
+    "commit": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+    "archive": "archives/engine.tar",
+    "archive_sha256": null,
+    "files_sha256": null,
+    "license_sha256": null
+  },
+  "solver": {
+    "commit": null,
+    "archive": "archives/solver.tar",
+    "archive_sha256": null,
+    "files_sha256": null,
+    "license_sha256": null
+  },
+  "adapter_files_sha256": null,
+  "adaptations": null,
+  "prepared_engine_files_sha256": null,
+  "prepared_solver_files_sha256": null
+}

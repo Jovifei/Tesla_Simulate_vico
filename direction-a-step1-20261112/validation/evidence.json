@@ -1,0 +1,44 @@
+{
+  "created_utc": "2026-11-12T04:24:59.050174+00:00",
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "kernel": "6.18.57",
+    "python": "3.12.14",
+    "git": "git version 2.52.0",
+    "cmake_available": false,
+    "msvc_available": false
+  },
+  "synthetic_contract_tests": {
+    "passed": 23,
+    "exit_code": 0,
+    "log": "python-tests.log"
+  },
+  "python_ast_parse": "PASS",
+  "source_identity_json_parse": "PASS",
+  "exact_engine_pin_patch_contract": "PASS_4_FILES_TEXT_ONLY",
+  "model_parameters_vs_149ab01e": "UNCHANGED",
+  "license_bytes_vs_exact_upstream_pins": "IDENTICAL",
+  "windows_configure": "NOT_RUN_NON_WINDOWS_ENVIRONMENT",
+  "windows_msvc_build": "NOT_RUN_NON_WINDOWS_ENVIRONMENT",
+  "real_engine_smoke": "NOT_RUN",
+  "real_host_export": "NOT_RUN_NO_HOST_ACCESS",
+  "original_host_git_status": "NOT_READ_NO_HOST_ACCESS",
+  "acoustic_or_oem_qualification": "NOT_PERFORMED",
+  "package_files_sha256": {
+    "CMakeLists.txt": "f674e2145a7c8489812a398fdf1e77bc7ce21d277fc87532903c55ec4482547f",
+    "HOST-RUNBOOK.md": "2eb13cac7fafdc7a7f3492b95c70d9c90c73fb2a4a453fe0ba84feebbfb2429c",
+    "LICENSE-engine-sim.txt": "9f64449d4ef2db6b57d6af9d36e5eca5b6de3ece2db14a847ae71d4e0dcbff15",
+    "LICENSE-solver.txt": "62a8b4fc4a7b9e9af9e1b1217c67fda0487386319de0833b2d77a309b3a772f4",
+    "README.md": "fcdb8295920d5f2d2130cd8d6520f07328b29ec0e77f76cb3d902b8142ea5693",
+    "model_builder.cpp": "062235d9fcf8473192c28f3fc81fb29be08f1e0e7b9af2f4f896ce8f55d261ba",
+    "model_builder.h": "0c3511488443b419f7f09b2628bed0f3e534f414e05a75617e747fb7f17840e2",
+    "offline_main.cpp": "a01bf496e758b72ee7d85816a2a027268f8fb9fe01e80124361c8fd4bfb232c8",
+    "offline_taps.h": "ec99c228625259a335bfa9075181fc5aa5ce9e489e23a9b43adec8b514f65f65",
+    "prepare_capture.py": "ef33f974901124e1238cf4048619af6c0fe26d3b5bbc38bacd0a6634bc64386b",
+    "prepare_workspace.py": "7fa97a9177653ff0ff1a1724fc7f45303966bcd9a17347d19795fe1de9b911b9",
+    "source-identity.json": "64eab16f2c6361229e653aa22ac914a7d7e94fe7843eea928d511ae4a7c65491",
+    "test_package.py": "ef348008a8ba8542611366d570ff6320b0cc413d4d7e49fe6e9ebf1ffaafa758",
+    "verify_capture.py": "db378a3bdac0e0c9a60ad1c73f0582f4e306fecb3966afaadb02542f4676518a"
+  }
+}
