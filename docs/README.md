@@ -1,10 +1,12 @@
 # Tesla Simulate Vico Documentation
 
-更新：2026-09-09
+更新：2026-11-15
 
 > 当前主线：**S12 声音真实性 / Stage AD 参考闭环 → Jovi 人耳反馈 → Engineering Profiles → Android App realtime sound**。
 >
 > 当前产品不是 ESP32。ESP32 = `DEFERRED_FUTURE_OPTION`。
+>
+> 2026-11-15 增补：声浪统一执行方案 v1.4 已获业主终审通过（2026-11-15 20:16），见 `04-planning/06-sound-unified-plan-v1.4-final.md`；配套业主需求决定记录见 `02-requirements/02-owner-requirements-decisions-20261114.md`。执行未授权（Step 1 主机冒烟测试除外）。本文件 2026-09-09 正文为历史快照，未改写；新旧关系与索引见文末“文档索引（2026-11-15）”。
 
 ## 先读这些
 
@@ -25,6 +27,8 @@
 15. `06-testing/01-audio-and-runtime-validation-strategy.md` — 软件、声学、人耳、App 的测试层级。
 16. `10-learning/01-s12-reusable-engineering-playbook.md` — 可复用工程方法。
 17. `DOCUMENTATION_AUDIT_2026-09-05.md` — 本轮逐文件审计结果。
+18. `04-planning/06-sound-unified-plan-v1.4-final.md` — 声浪统一执行方案 v1.4 定稿（业主终审通过 2026-11-15 20:16；执行未授权）。
+19. `02-requirements/02-owner-requirements-decisions-20261114.md` — 业主 16 条需求决定记录（需求基线配套记录）。
 
 ## 当前产品最终效果
 
@@ -123,3 +127,201 @@ public media != rights-cleared reference
 historical plan != current product direction
 repository has ESP32 code != ESP32 is current product
 ```
+
+---
+
+## 文档索引（2026-11-15）
+
+本次索引随声浪统一执行方案 v1.4 入仓建立。`docs/` 下共 163 个 Markdown 文档（另有 46 个非 Markdown 证据/数据文件，见末尾说明），逐文件列清如下；“最后更新”取各文件最近一次提交日期（新入仓/本次更新的文件记 2026-11-15）。
+
+### 新增与更新（本次提交）
+
+- 新增 `04-planning/06-sound-unified-plan-v1.4-final.md`：声浪统一执行方案 v1.4 定稿，业主终审通过 2026-11-15 20:16；执行未授权（Step 1 主机冒烟测试除外）。技术内容与工作区定稿一致，仅状态头与第八节改为决议记录。
+- 新增 `02-requirements/02-owner-requirements-decisions-20261114.md`：业主 16 条需求决定记录，仓内此前无等效需求基线文档，故全文入仓。
+- 更新 `02-requirements/00-guide.md`、`04-planning/00-guide.md`：目录索引增列新文档。
+- 更新本索引：顶部增补 v1.4 通过提示，“先读这些”增列两项，并新增本文档索引附录。
+- 未动：`docs/` 之外的代码/配置/资产/音频；账本生成的 `01-ARC-*` / `02-RPT-*`（勿直接编辑）。
+- 注意：仓库 `.gitignore` 对 `docs/` 用白名单式忽略（仅索引/指南等少数文件未忽略），本次两个新文件与既有 161 个已跟踪文档一样以 force-add 入仓；`.gitignore` 本身未动。
+
+### 已删除记录
+
+本次删除 0 个文件。逐文件判定：无任何现有文件的内容被 v1.4 定稿完全取代；`docs/GUIDE.md` §5 亦规定历史报告/计划快照不删除。旧文档全部保留，状态见下表。
+
+### 待业主定事项
+
+1. v1.4 第四节末两处细微口径差异未裁定：① `model_status` 是否一并废止；② `MODEL_INCOMPLETE` 入口是否放宽至从 `SPEC_UNVERIFIED` 转入。定稿保留原表述，待业主定。
+2. 本索引上方 2026-09-09 正文（S12 时期主线/状态描述）为历史快照，未改写；是否刷新为 v1.4 双线主线表述，待业主定。
+3. S12 时期现行文档（`01-architecture` / `02-requirements/01-*` / `03-protocols` / `04-planning/02–05` / `06-testing/01-*` 等）与 v1.4 定稿的新旧关系，待业主定。
+4. 待核验事项（定稿第八节第 3 项）：911 GT3 RS 发动机代码、Ram ISB 精确型号标识及传动配置。
+
+### 全部文档清单
+
+| 文档 | 用途 | 状态 | 最后更新 |
+|---|---|---|---|
+| `00-reference/00-guide.md` | 00-reference 目录索引 | 现行（索引） | 2026-09-05 |
+| `00-reference/01-authority-and-evidence-precedence.md` | 权威/证据规则 | 现行 | 2026-09-05 |
+| `01-ARC-项目总体路线图.md` | 账本生成文档（勿直接编辑，见文件头） | 生成文档 | 2026-10-02 |
+| `01-architecture/00-guide.md` | 01-architecture 目录索引 | 现行（索引） | 2026-09-05 |
+| `01-architecture/01-project-system-architecture.md` | 系统架构 | 现行（S12 时期） | 2026-09-05 |
+| `02-RPT-项目进度总览.md` | 账本生成文档（勿直接编辑，见文件头） | 生成文档 | 2026-10-02 |
+| `02-requirements/00-guide.md` | 02-requirements 目录索引 | 现行（索引） | 2026-11-15 |
+| `02-requirements/01-current-product-and-audio-requirements.md` | 产品/声音需求 | 现行（S12 时期） | 2026-09-05 |
+| `02-requirements/02-owner-requirements-decisions-20261114.md` | 业主 16 条需求决定记录（需求基线配套记录） | 现行（业主决定记录） | 2026-11-15 |
+| `03-protocols/00-guide.md` | 03-protocols 目录索引 | 现行（索引） | 2026-09-05 |
+| `03-protocols/01-reference-and-human-evidence-protocol.md` | Reference/证据协议 | 现行（S12 时期） | 2026-09-05 |
+| `04-planning/00-guide.md` | 04-planning 目录索引 | 现行（索引） | 2026-11-15 |
+| `04-planning/01-firmware-roadmap.md` | 固件路线图 | 已延期（DEFERRED_FUTURE） | 2026-09-04 |
+| `04-planning/02-project-master-roadmap.md` | 路线/实施计划 | 现行（S12 时期） | 2026-09-05 |
+| `04-planning/03-current-app-product-direction.md` | 路线/实施计划 | 现行（S12 时期） | 2026-09-05 |
+| `04-planning/04-android-app-runtime-implementation-plan.md` | 路线/实施计划 | 现行（S12 时期） | 2026-09-04 |
+| `04-planning/05-s12-reference-closed-loop-optimization.md` | 路线/实施计划 | 现行（S12 时期） | 2026-09-05 |
+| `04-planning/06-sound-unified-plan-v1.4-final.md` | 声浪统一执行方案 v1.4 定稿（命名、状态词汇、M4/RX-7 基线、响度、C2C 范围、第二批变体） | 现行（业主终审通过 2026-11-15 20:16；执行未授权） | 2026-11-15 |
+| `04-planning/history/05-s12-reference-closed-loop-optimization-20260904.md` | 规划历史版本 | 历史快照 | 2026-09-05 |
+| `05-execution/00-guide.md` | 05-execution 目录索引 | 现行（索引） | 2026-09-05 |
+| `05-execution/02-stage-ad-local-codex-execution-prompt.md` | Stage 执行 runbook/交接 | 历史快照 | 2026-09-05 |
+| `05-execution/04-stage-af-local-ai-handoff.md` | Stage 执行 runbook/交接 | 历史快照 | 2026-09-09 |
+| `05-execution/history/02-stage-ad-local-codex-execution-prompt-20260904.md` | Stage 执行 runbook/交接 | 历史快照 | 2026-09-05 |
+| `06-testing/00-guide.md` | 06-testing 目录索引 | 现行（索引） | 2026-09-05 |
+| `06-testing/01-audio-and-runtime-validation-strategy.md` | 验收/证据策略 | 现行（S12 时期） | 2026-09-05 |
+| `07-debugging/00-guide.md` | 07-debugging 目录索引 | 现行（索引） | 2026-09-06 |
+| `07-debugging/01-known-failures-and-do-not-repeat.md` | 已知故障/踩坑记录 | 现行（S12 时期） | 2026-09-05 |
+| `07-debugging/02-acoustic-tuning-pitfalls-and-breakthroughs.md` | 已知故障/踩坑记录 | 现行（S12 时期） | 2026-09-06 |
+| `07-debugging/02-s12-review-server-refresh.md` | 已知故障/踩坑记录 | 现行（S12 时期） | 2026-09-06 |
+| `08-reports/00-guide.md` | 08-reports 目录索引 | 现行（索引） | 2026-09-07 |
+| `08-reports/01-s12-stage-k-eight-vehicle-round2.md` | Stage/日期快照报告 | 历史快照 | 2026-08-21 |
+| `08-reports/02-s12-workspace-cleanup-20260830.md` | Stage/日期快照报告 | 历史快照 | 2026-08-30 |
+| `08-reports/03-s12-stage-y-closed-loop-remediation.md` | Stage/日期快照报告 | 历史快照 | 2026-08-31 |
+| `08-reports/03-s12-stage-y-wip-checkpoint-20260831.md` | Stage/日期快照报告 | 历史快照 | 2026-08-31 |
+| `08-reports/04-s12-stage-y-hybrid-calibration-tooling.md` | Stage/日期快照报告 | 历史快照 | 2026-08-31 |
+| `08-reports/05-s12-stage-y-local-codex-handoff.md` | Stage/日期快照报告 | 历史快照 | 2026-08-30 |
+| `08-reports/06-s12-stage-y-open-source-integration.md` | Stage/日期快照报告 | 历史快照 | 2026-09-01 |
+| `08-reports/07-s12-stage-y-final-closure.md` | Stage/日期快照报告 | 历史快照 | 2026-09-01 |
+| `08-reports/08-s12-stage-z-open-source-absorption.md` | Stage/日期快照报告 | 历史快照 | 2026-09-01 |
+| `08-reports/09-s12-stage-aa-acoustic-quality-closure.md` | Stage/日期快照报告 | 历史快照 | 2026-09-02 |
+| `08-reports/10-project-status-20260904.md` | Stage/日期快照报告 | 历史快照 | 2026-09-04 |
+| `08-reports/11-project-status-20260905.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/12-stage-af-main-baseline-and-cleanup.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/13-main-branch-reconciliation-20260906.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/14-stage-af-numerical-fixes-and-review-server-20260906.md` | Stage/日期快照报告 | 历史快照 | 2026-09-06 |
+| `08-reports/15-repository-simplification-20260907.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/16-stage-af-r-evidence-integrity-20260907.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/17-stage-af-r2-pre-fit-qualification-20260907.md` | Stage/日期快照报告 | 历史快照 | 2026-09-07 |
+| `08-reports/17-stage-ag-vehicle-identity-implementation-20260908.md` | Stage/日期快照报告 | 历史快照 | 2026-09-08 |
+| `08-reports/18-stage-ag-r1-reference-remediation-20260908.md` | Stage/日期快照报告 | 历史快照 | 2026-09-08 |
+| `08-reports/19-stage-ag-r1-strict-rich-review-routing-20260909.md` | Stage/日期快照报告 | 历史快照 | 2026-09-09 |
+| `08-reports/20-stage-ah-source-drone-afterfire-20260909.md` | Stage/日期快照报告 | 历史快照 | 2026-09-09 |
+| `08-reports/31-stage-ai-measured-feedback-20260916.md` | Stage/日期快照报告 | 历史快照 | 2026-09-16 |
+| `08-reports/32-stage-ai4a-rx7-truepeak-diagnostics-20260917.md` | Stage/日期快照报告 | 历史快照 | 2026-09-17 |
+| `08-reports/33-stage-ai4a-rx7-truepeak-results-20260918.md` | Stage/日期快照报告 | 历史快照 | 2026-09-18 |
+| `08-reports/34-stage-ai4b-rx7-boundary-repair-20260918.md` | Stage/日期快照报告 | 历史快照 | 2026-09-18 |
+| `08-reports/35-stage-ai4b-project-audit-20260919.md` | Stage/日期快照报告 | 历史快照 | 2026-09-19 |
+| `08-reports/36-stage-ai5-multirate-peak-gate-20260919.md` | Stage/日期快照报告 | 历史快照 | 2026-09-19 |
+| `08-reports/36-stage-ai6-unified-audition-20260920.md` | Stage/日期快照报告 | 历史快照 | 2026-09-21 |
+| `09-backlog/00-guide.md` | 09-backlog 目录索引 | 现行（索引） | 2026-09-05 |
+| `09-backlog/01-firmware-backlog.md` | 待办/deferred 项 | 现行（S12 时期） | 2026-09-04 |
+| `09-backlog/02-project-master-backlog.md` | 待办/deferred 项 | 现行（S12 时期） | 2026-09-05 |
+| `10-learning/00-guide.md` | 10-learning 目录索引 | 现行（索引） | 2026-09-05 |
+| `10-learning/01-s12-reusable-engineering-playbook.md` | 可复用方法/学习路线 | 现行（S12 时期） | 2026-09-18 |
+| `10-learning/02-engine-acoustic-physical-simulation-playbook.md` | 可复用方法/学习路线 | 现行（S12 时期） | 2026-09-06 |
+| `DOCUMENTATION_AUDIT_2026-09-05.md` | 逐文件审计账本（2026-09-05） | 历史快照 | 2026-09-05 |
+| `GUIDE.md` | 文档指南：权威层级、文档类别、证据规则 | 现行 | 2026-09-09 |
+| `README.md` | 文档索引（本文件） | 现行 | 2026-11-15 |
+| `README_STAGE_AF.md` | Stage AF 说明 | 历史快照 | 2026-09-07 |
+| `architecture/S12_Event_Domain_Source_Architecture_v1.md` | 架构记录 | 历史快照 | 2026-08-25 |
+| `architecture/S12_Stage_W_Selected_Architecture.md` | 架构记录 | 历史快照 | 2026-08-28 |
+| `knowledge/01-physics-acoustic-engine-methodology.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-09 |
+| `knowledge/02-stage-af-current-handoff.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-09 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/00-MOC.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-05 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/01-Stage-V-Independent-Audit.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/02-Architecture-Comparison.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/03-License-Matrix.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/04-Source-To-S12-Traceability.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-27 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/05-Stage-W-Logs.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-29 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/06-Bakeoff-And-Migration-V3.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-07 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/07-Stage-X-Remote-Reconciliation.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/08-Engineering-Selection-Contract.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/09-Hellcat-R2-Engineering-Selection.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/10-Ferrari-RX7-Diagnostic-Migration.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/11-R1-Formal-Gate-Readiness.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/12-Stage-X-Final-Status.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/13-Workspace-Cleanup-20260830.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/14-Stage-Y-Closed-Loop-Remediation.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/15-Stage-Y-Hybrid-Calibration-Tooling.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-30 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/15-Stage-Y-Status.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-01 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/16-Stage-Z-Status.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-01 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/17-Stage-AA-Status.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-01 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/AA-C3-Gain-Provenance-v2.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/AA-C3-Gain-Provenance.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Blower-Source-vs-Audible-Path.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Broad-Pre-PTR-vs-Source-Causal-Gain.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Commercial-Public-Workflow-References.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Counterfactual-Residual-vs-True-Source-Stem.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Decision-History-And-Negative-Knowledge.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-06 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Dynamic-Event-Aligned-Metrics.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Hellcat-Human-V3-Feedback.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/LF-Persistence-Metric-Failure.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-DasEtwas-Enginesound.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-ENSIM4.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-Engine-Sim.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-FiveM-License-Boundary.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-Granular-ESP32-Boundaries.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-Ignis.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-07 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-Markeasting-Engine-Audio.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-07 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-PTR-Model.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Open-Source-VehicleNoiseSynthesizer.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Papers-PTR-EONE-DDSP.md` | 长期记忆/知识节点 | 历史快照 | 2026-08-26 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Historical-Memory-Through-2026-09-04.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-05 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Project-Long-Term-Memory.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-20 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Research-Sources-And-Adoption-History.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-04 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AA-Post-Merge-Truth.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Final-Status.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Negative-Knowledge.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-PreHuman-Hardening.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `knowledge/obsidian/S12/Engine-Audio-Ecosystem/Stage-AB-Round2-ADR.md` | 长期记忆/知识节点 | 历史快照 | 2026-09-02 |
+| `research/engine-audio-ecosystem/README.md` | 来源/许可证/方法采用证据 | 研究证据 | 2026-09-05 |
+| `research/engine-audio-ecosystem/license_matrix.md` | 来源/许可证/方法采用证据 | 研究证据 | 2026-08-26 |
+| `research/engine-audio-ecosystem/stage_ad_closed_loop_sources.md` | 来源/许可证/方法采用证据 | 研究证据 | 2026-09-04 |
+| `research/engine-audio-ecosystem/stage_af_sources.md` | 来源/许可证/方法采用证据 | 研究证据 | 2026-09-06 |
+| `research/engine-audio-ecosystem/stage_ag_vehicle_identity_sources.md` | 来源/许可证/方法采用证据 | 研究证据 | 2026-09-08 |
+| `superpowers/README.md` | 历史设计/计划快照 | 历史快照 | 2026-09-05 |
+| `superpowers/plans/2026-08-23-s12-professional-comparison-dashboard-r2-diagnostic-tuning.md` | 历史设计/计划快照 | 历史快照 | 2026-08-23 |
+| `superpowers/plans/2026-08-23-s12-r1-pilot-acquisition-r2-feedback-closure.md` | 历史设计/计划快照 | 历史快照 | 2026-08-23 |
+| `superpowers/plans/2026-08-23-s12-rx7-topic-aware-r2.md` | 历史设计/计划快照 | 历史快照 | 2026-08-23 |
+| `superpowers/plans/2026-08-28-s12-stage-w-v26-checkpointed-recovery.md` | 历史设计/计划快照 | 历史快照 | 2026-08-28 |
+| `superpowers/plans/2026-08-28-s12-stage-w-v27-external-staging.md` | 历史设计/计划快照 | 历史快照 | 2026-08-28 |
+| `superpowers/plans/2026-08-30-s12-stage-y-source-layers.md` | 历史设计/计划快照 | 历史快照 | 2026-08-31 |
+| `superpowers/specs/2026-08-23-s12-rx7-topic-aware-r2-design.md` | 历史设计/计划快照 | 历史快照 | 2026-08-23 |
+| `superpowers/specs/2026-08-28-s12-stage-w-v26-resume-design.md` | 历史设计/计划快照 | 历史快照 | 2026-08-28 |
+| `superpowers/specs/2026-08-28-s12-stage-w-v27-staged-publication-design.md` | 历史设计/计划快照 | 历史快照 | 2026-08-28 |
+| `superpowers/specs/2026-08-30-s12-stage-y-source-layers-design.md` | 历史设计/计划快照 | 历史快照 | 2026-08-31 |
+| `third_party_acoustic_tools.md` | 第三方声学工具记录 | 历史快照 | 2026-08-21 |
+| `vico-cloud-stage-handoff.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-cloud-stage-result.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-device-gate-order-fix.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-device-reception-20261002.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-frozen-hy1-actual-kotlin-result.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-input-timing-repair-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-local-reception-verification.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-main-integration-20261003.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-ci-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-evidence-gate-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-historical-continuity-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-historical-state-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-local-event-atomic-reception.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-n2-local-nested-atomic-reception.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-n2-local-profile-reception.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-n2-render-metrics-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-n2-stem-export-validation.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-p2-n2-binary-artifact-freeze.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p2-n2-calibration-freeze.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p2-n2-implementation-preregistration.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p2-n2-source-design-preregistration.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p2-n2-stage-result.md` | 交接/验证记录 | 历史快照 | 2026-10-03 |
+| `vico-p2-p3-execution-plan.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p2-p3-remote-audit.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-p3-runtime-hook-result.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+| `vico-publication-verification.md` | 交接/验证记录 | 历史快照 | 2026-10-02 |
+
+### 非 Markdown 文件（46 个，全部保留）
+
+`docs/.gitattributes`（1）、`docs/project-ledger.json`（1）、`docs/06-testing/n2-cloud-*` 证据包（39：日志/TSV/JSON）、`docs/research/engine-audio-ecosystem/*.json`（5）。均为证据/数据文件，本次未动。
