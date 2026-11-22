@@ -1,0 +1,345 @@
+{
+  "task_id": "v14-local-handoff-20261122",
+  "scope": "M1 real Simulink execution with synthetic fixtures and noncalibrated two-point stem diagnostics",
+  "source_base": "953d22041836a55fc50c6347045b8982bdfdc1ca",
+  "research_base": "faac65cf240988b657990cb6436b1271e7bebe30",
+  "research_commit": "4acff4d7866f0bf607122d35211c7c05b8fb797d",
+  "runtime_dependency_tree_comparison": "tools/sound_sim, vico_app/Project/android and vico_web are identical between the two bases",
+  "test_runs": [
+    {
+      "name": "m1-build",
+      "argv": [
+        "D:/Program Files/MATLAB/R2026a/bin/matlab.exe",
+        "-wait",
+        "-logfile",
+        "$Artifact/m1-build-matlab.log",
+        "-batch",
+        "addpath('$Lab'); run_m1_isolation('$Artifact','run_c',true)"
+      ],
+      "exit": 0,
+      "log_sha256": "48d1043e1ea8457eb41f98fc7b4d7bfbd55e5d435e3a3f547299e56772dd202b"
+    },
+    {
+      "name": "m1-cold",
+      "argv": [
+        "D:/Program Files/MATLAB/R2026a/bin/matlab.exe",
+        "-wait",
+        "-logfile",
+        "$Artifact/m1-cold-matlab.log",
+        "-batch",
+        "addpath('$Lab'); run_m1_isolation('$Artifact','run_d',false)"
+      ],
+      "exit": 0,
+      "log_sha256": "d5199a8d423b2998b666f94fd5f9213102a7150c95b67e0ef01e9a71044ebe33"
+    },
+    {
+      "name": "diagnostic-v1",
+      "argv": [
+        "D:/Program Files/MATLAB/R2026a/bin/matlab.exe",
+        "-wait",
+        "-logfile",
+        "$Artifact/diagnostic-v1-matlab.log",
+        "-batch",
+        "addpath('$Lab'); run_synthetic_diagnostic('$Artifact')"
+      ],
+      "exit": 0,
+      "log_sha256": "bb907d50113817b50df55b9cf61360e59aef79371c0d39da694a008ef664262a"
+    },
+    {
+      "name": "v1-analysis",
+      "argv": [
+        "D:/Python/Python3.14/python.exe",
+        "-B",
+        "$Lab/analyze_synthetic_diagnostic.py",
+        "$Artifact/synthetic_diagnostic"
+      ],
+      "exit": 0,
+      "log_sha256": "196cde2a2414aea8e3c4e9a8f1a0c2ff634f94e76cf55b2a659a81ad6343d4a8"
+    },
+    {
+      "name": "diagnostic-v2",
+      "argv": [
+        "D:/Program Files/MATLAB/R2026a/bin/matlab.exe",
+        "-wait",
+        "-logfile",
+        "$Artifact/diagnostic-v2-matlab.log",
+        "-batch",
+        "addpath('$Lab'); run_synthetic_diagnostic_v2('$Artifact')"
+      ],
+      "exit": 0,
+      "log_sha256": "3269cf9fc5d7788776b306142dac077af098f95146101278991f785608da9614"
+    },
+    {
+      "name": "v2-analysis",
+      "argv": [
+        "D:/Python/Python3.14/python.exe",
+        "-B",
+        "$Lab/analyze_synthetic_diagnostic.py",
+        "$Artifact/synthetic_diagnostic_v2"
+      ],
+      "exit": 0,
+      "log_sha256": "64b5f075add6d948ff47a8fad6f1ec0be5b37954bba2dbfc85f8e008c80f9862"
+    },
+    {
+      "name": "v1-v2-guard",
+      "argv": [
+        "D:/Python/Python3.14/python.exe",
+        "-B",
+        "$Lab/compare_synthetic_v1_v2.py",
+        "$Artifact"
+      ],
+      "exit": 0,
+      "log_sha256": "5f8829af6a2397256bd98a089be51c11e4d472e6815e086cb38a15c192624f3f"
+    },
+    {
+      "name": "stems-verification",
+      "argv": [
+        "D:/Python/Python3.14/python.exe",
+        "-B",
+        "$Lab/verify_rendered_stems.py",
+        "$Artifact/synthetic_diagnostic_v2",
+        "E:/Tesla_speed/experiments/v14-local-handoff-20261122/hellcat/synthetic_diagnostic_v2/receipt.json"
+      ],
+      "exit": 0,
+      "log_sha256": "63b299fc9f95a6f025223707693af46474e86929ba09fa27d5a17bab056d68cb"
+    }
+  ],
+  "tested_files_sha256": {
+    "analyze_synthetic_diagnostic.py": "4cade909e644f54e8e92a887953cccc3ed2a080292e907dae88cf26e8f6012a2",
+    "app8_m1_independent_radiation_step.m": "bbe6a214b3f9677186b04b8a4d138395493bf1aacb67fd2e52f2847a203e394b",
+    "app8_synthetic_cylinder_frame.m": "c8f2af38c5473a5b2112d1db767080a30431030362fabba41249d873967b3675",
+    "app8_synthetic_cylinder_v2_frame.m": "606be68a3757067469a9933d63295d86f804e24c5919a37a5327ca5f6e86ff42",
+    "compare_synthetic_v1_v2.py": "e79de2917f537dcc74314a8558c8b92c778605325dc5d0b168bfcb6e1884b64e",
+    "M1-PLAN.md": "1fdb16b528de4200907f19231161676d00344a213dad7df12810354b52623bd3",
+    "RESULTS.md": "6dde68fd8d960a634e3e368af7fe0264e29f3b002f867224e4f85d190eddac66",
+    "run_m1_isolation.m": "dce60bebe10af74a7cd3bf9676ee522596e2bf78f1f86eed64ebcfd2fc7a6f0f",
+    "run_synthetic_diagnostic_v2.m": "1064af7ca0ab1a0c9ba0a26c821aa51fd84f930e39008a8c52bab537f4f0b3b5",
+    "run_synthetic_diagnostic.m": "d7c3df2010aa0be359e235b88343b1d2eb9733ca7f41eb01d626836cf0e6ea68",
+    "SYNTHETIC-DIAGNOSTIC-V2.json": "fcd313ae540025e6e81709448590e1c856c7fff3429905e6f6987ea25112c2c0",
+    "SYNTHETIC-DIAGNOSTIC.json": "bf46886a8cd96b361e4cd4d0bc7db8bb6fdfee97101fc860472784e2f3871b79",
+    "verify_rendered_stems.py": "1399320daaf1e8432341489fb01cfa677d218d2a20b325a9b4b9bdcf1621cd7a"
+  },
+  "matlab_version": "26.1.0.3203278 (R2026a)",
+  "m1": {
+    "status": "PASS_FRESH_PROCESS_IDENTICAL",
+    "qualification": "SYNTHETIC_MODEL_FIXTURES",
+    "run_c_receipt_sha256": "0dd9f7e15bdbf684a76ff7ec22cf8d8d8a0720c90c84e94e690a068c6855a6e4",
+    "run_d_receipt_sha256": "cc22a0b79c8851b6d37b881842aae7f6b73b30f4be00bb3148b4729bd499d85a",
+    "process_ids": [
+      53644,
+      8108
+    ],
+    "tests": [
+      "actual_input_binding_exact",
+      "single_original_matches_kernel",
+      "single_private_matches_kernel",
+      "simultaneous_parity",
+      "swapped_parity",
+      "reset_repeat_parity",
+      "negative_detected"
+    ],
+    "negative_control_max_error": 0.6556874763178249,
+    "identical_sha256_values": {
+      "fixture_a_sha256": "816ffa15998df946ac35c1e46a2206c7699333f25eb374dbe9e9f96dfe463b8f",
+      "fixture_b_sha256": "88c1a117ad24607ac020e2329dd9bd28d46c72507603ff5086454af06a25996e",
+      "positive_a_sha256": "eaf336f5ba5042be64a76cc1a4a2270f0e404152937850b4ba87fc922222a3b5",
+      "positive_b_sha256": "e19c53aabce265950f30454f2df4844cea33160d64e679ecd66c572c2a2c2898",
+      "negative_a_sha256": "7e36bec0af80ff78cd2cba3643b862a6c0e3ec56e52acabe92b246dcd6ad4816",
+      "negative_b_sha256": "7e36bec0af80ff78cd2cba3643b862a6c0e3ec56e52acabe92b246dcd6ad4816",
+      "runner_sha256": "dce60bebe10af74a7cd3bf9676ee522596e2bf78f1f86eed64ebcfd2fc7a6f0f",
+      "private_wrapper_sha256": "bbe6a214b3f9677186b04b8a4d138395493bf1aacb67fd2e52f2847a203e394b",
+      "generated_model_sha256": [
+        "a7cb128b1ba19333af0b9a5b005f352535ced3bbb478a54a7a3ae5b027173c1a",
+        "c09d334f9f6afc5cfdbddf572fc78f9c5c449dc23b0d3e8f60fc9b9d55c79848",
+        "d0cf8df804b99d54a54d09f406dd991f50877b69e7fb8481595f7936ab30084f",
+        "258f61d8cf341b5143df93465cc24c7bc5709515f7fe6871a7ed39c0785ecb1b",
+        "dee2a3a152a8bc46b99180d86efb5eea629df9303e5766fa7bc6ea30ea83f3d1",
+        "801f47aa43cc92b3698b751f85e7eb38ed7e5d6c566750ba6c53f65dd539e6aa"
+      ],
+      "protected_sha256_before": [
+        "6079affc48fb9de2cd89e5853967718269427bbb75ddda688879f9c5d81cb644",
+        "a72dc4458b8a22d44b698c23b607e59eba2ac0bc4396854f563acdc52cb419bf",
+        "45aac7ea0112d9f9b7d615b09169ec93188f7268ca9f1e178db1d83dc0ebb613",
+        "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f"
+      ],
+      "protected_sha256_after": [
+        "6079affc48fb9de2cd89e5853967718269427bbb75ddda688879f9c5d81cb644",
+        "a72dc4458b8a22d44b698c23b607e59eba2ac0bc4396854f563acdc52cb419bf",
+        "45aac7ea0112d9f9b7d615b09169ec93188f7268ca9f1e178db1d83dc0ebb613",
+        "0f4b2ca494cd44f79d05968513759578d04e6ab38b1ee37f7621158abb0d2d6f"
+      ]
+    },
+    "exit_codes": [
+      0,
+      0
+    ]
+  },
+  "v1_v2_guard": {
+    "status": "PASS",
+    "qualification": "SYNTHETIC_DIAGNOSTIC_NO_ACOUSTIC_ACCEPTANCE",
+    "guard": "1-3s RMS and 20-80Hz power do not increase for any stem or condition",
+    "v1_analysis_sha256": "2e01c796f2dd567faf565da3ca55f3c6ed0dbc01355d4988268d36314856755f",
+    "v2_analysis_sha256": "cca6c906da0820290820063ed71a4764b4fd82ffc974a47c7c0c70e88227a92a",
+    "conditions": [
+      {
+        "rpm": 750,
+        "load": 0.16,
+        "stems": {
+          "source": {
+            "rms_delta_db": -5.818603548559825,
+            "20_80_delta_db": -6.627328141882636,
+            "v1_order_8_over_4_db": -65.20141059782188,
+            "v2_order_8_over_4_db": -4.845881742331123,
+            "v1_order_to_residual_db": 23.726753045374394,
+            "v2_order_to_residual_db": 31.961673838043104,
+            "v1_peak_dbfs": -24.491495111452508,
+            "v2_peak_dbfs": -28.10938674421312,
+            "clip_count": 0,
+            "guard_passed": true
+          },
+          "frozen": {
+            "rms_delta_db": -0.8312993123553554,
+            "20_80_delta_db": -6.554770396914989,
+            "v1_order_8_over_4_db": -59.18448374171261,
+            "v2_order_8_over_4_db": 1.1710529389163753,
+            "v1_order_to_residual_db": 28.932721158163446,
+            "v2_order_to_residual_db": 32.62944348939064,
+            "v1_peak_dbfs": -26.522858826101285,
+            "v2_peak_dbfs": -40.77019614099975,
+            "clip_count": 0,
+            "guard_passed": true
+          },
+          "combined": {
+            "rms_delta_db": -5.776207283727075,
+            "20_80_delta_db": -6.626917892205157,
+            "v1_order_8_over_4_db": -65.12868665283108,
+            "v2_order_8_over_4_db": -4.7731574629112785,
+            "v1_order_to_residual_db": 23.743890067575435,
+            "v2_order_to_residual_db": 31.970697506272657,
+            "v1_peak_dbfs": -45.4768246918526,
+            "v2_peak_dbfs": -53.89398331009033,
+            "clip_count": 0,
+            "guard_passed": true
+          }
+        }
+      },
+      {
+        "rpm": 1200,
+        "load": 0.16,
+        "stems": {
+          "source": {
+            "rms_delta_db": -5.81860326305873,
+            "20_80_delta_db": -9.056091453938464,
+            "v1_order_8_over_4_db": -65.20142775970115,
+            "v2_order_8_over_4_db": -4.845880322537035,
+            "v1_order_to_residual_db": 290.50537762503615,
+            "v2_order_to_residual_db": 285.9726053733876,
+            "v1_peak_dbfs": -24.491552738141404,
+            "v2_peak_dbfs": -28.10938674421312,
+            "clip_count": 0,
+            "guard_passed": true
+          },
+          "frozen": {
+            "rms_delta_db": -0.8513248426324083,
+            "20_80_delta_db": -7.064385746671249,
+            "v1_order_8_over_4_db": -59.19020249769941,
+            "v2_order_8_over_4_db": 1.165344939465001,
+            "v1_order_to_residual_db": 274.8405487072849,
+            "v2_order_to_residual_db": 274.4227402512168,
+            "v1_peak_dbfs": -26.522858826101285,
+            "v2_peak_dbfs": -40.77019614099975,
+            "clip_count": 0,
+            "guard_passed": true
+          },
+          "combined": {
+            "rms_delta_db": -5.720410483207722,
+            "20_80_delta_db": -9.03389538870195,
+            "v1_order_8_over_4_db": -65.02427730216539,
+            "v2_order_8_over_4_db": -4.668729865001495,
+            "v1_order_to_residual_db": 289.4392045964614,
+            "v2_order_to_residual_db": 285.05206199714075,
+            "v1_peak_dbfs": -45.52474600556088,
+            "v2_peak_dbfs": -53.604148810876964,
+            "clip_count": 0,
+            "guard_passed": true
+          }
+        }
+      }
+    ]
+  },
+  "v2_stems": {
+    "status": "PASS_RENDERED_STEMS_AND_RELOCATION",
+    "qualification": "SYNTHETIC_DIAGNOSTIC_NO_ACOUSTIC_ACCEPTANCE",
+    "current_receipt_sha256": "634a8c6aa10e7ab85b3e74f5266476629956a7d0766ebfeea637c76f3ed4c65f",
+    "prior_receipt_sha256": "71b45e74838aa32a04a454c38cde4b4b512b708cbec6595ed8edfb035bed2692",
+    "sample_rate_hz": 48000,
+    "channels": 1,
+    "wav_subtype": "PCM_24",
+    "combined_semantics": "0.5 * (source renderer output + Frozen renderer output)",
+    "conditions": [
+      {
+        "rpm": 750,
+        "load": 0.16,
+        "stems": {
+          "source": {
+            "wav_sha256": "596e1044c0cde489b9a7b041bd5b19a24b52de49854472c392a08e1c114d7f08",
+            "rendered_f32_sha256": "f09fb7b98a6080bbf176af4ebec201fcc31bdcd404935194360300b1eb2dce26",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.00393125,
+            "clip_count": 0
+          },
+          "frozen_cabin": {
+            "wav_sha256": "24e0ab02da56c39bd3ec7bd067a52227d18abcaaf7251f85435738c8b182bf95",
+            "rendered_f32_sha256": "87180d3f5c6abf520396ec2796ddd8ccae08187809de1fd67b85d3f2b0465305",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.0009151455936263087,
+            "clip_count": 0
+          },
+          "combined": {
+            "wav_sha256": "d5ebe3b35b9f4581f689a6acca1487b5dbc4b4c17b8bd91d0fd125158456b12e",
+            "rendered_f32_sha256": "e6161551ab10d824b3e1b8bcfb8c71f34dae24751bf082fab9750a799310784b",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.002019764964403913,
+            "clip_count": 0
+          }
+        }
+      },
+      {
+        "rpm": 1200,
+        "load": 0.16,
+        "stems": {
+          "source": {
+            "wav_sha256": "8e38c097fc80d65e3c805189d0561f31061c247ea1ce622f6eb1f14d43117680",
+            "rendered_f32_sha256": "65a786af37b2d5df5fc4888ae47a87154bbe42481ea9855b61931493e42ac6ea",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.00393125,
+            "clip_count": 0
+          },
+          "frozen_cabin": {
+            "wav_sha256": "3dfc4499a0f9b18ba86e3544b3adb1befad6d3eba29c239e216746648904587f",
+            "rendered_f32_sha256": "6079a2d7661cc77052a5693304c45583eb51a910823448dc4fe10c56e5e5a087",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.0009151455936263087,
+            "clip_count": 0
+          },
+          "combined": {
+            "wav_sha256": "2563677eb95f30b1f4a6ff33a8c2abae0fde3e1a4ef9314a645cfb80d6da350f",
+            "rendered_f32_sha256": "14df54951e7d4fcc87de41dfdf97f52284366bb57b913d64b1eee7a0ad9a81ab",
+            "renderer_scalar": 0.1,
+            "sample_peak": 0.0020882984178910574,
+            "clip_count": 0
+          }
+        }
+      }
+    ]
+  },
+  "formal_M2": "BLOCKED_MISSING_T1_T4_PINSET_AND_QUALIFIED_REFERENCE",
+  "not_run": [
+    "formal T1/T2/T3/T4/C0",
+    "calibrated -16 LUFS evaluation",
+    "listening",
+    "external speaker",
+    "static cabin",
+    "dynamic vehicle"
+  ]
+}
