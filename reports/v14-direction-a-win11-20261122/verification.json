@@ -1,0 +1,34 @@
+{
+  "status": "BASIC_OFFLINE_SANITY_ONLY_NOT_ACOUSTIC_OR_OEM_QUALIFICATION",
+  "physics_frames": 20000,
+  "audio_frames": 88200,
+  "all_streams_finite": true,
+  "absolute_pressures_positive": true,
+  "signed_rotation_all_negative": true,
+  "min_omega_rad_s": -95.29497528076172,
+  "max_omega_rad_s": -95.29497528076172,
+  "clip_count": 592,
+  "final_peak": 1.0,
+  "map_max_pa": 35392.48707522,
+  "tables": {
+    "state.csv": {
+      "rows": 200,
+      "first_t_s": 0.01,
+      "last_t_s": 2
+    },
+    "dyno.csv": {
+      "rows": 200,
+      "first_t_s": 0.01,
+      "last_t_s": 2
+    }
+  },
+  "sha256": {
+    "capture.json": "50a6de0b6a2da6056f11fbcdbce96d7fb731d5cb3f6e2a1fed736e69509b162b",
+    "physical-validity.json": "e4cbe4ee393d38381bcb963fec3d78194ca1c94a1d330626ece4a0ea08571078",
+    "pressure-input.f32le": "57f481b8594bdfcb70955ae58bc66032784b079c3d353987fc7a38d4dda21d55",
+    "signed-omega.f32le": "aa4523f0db45e8f633ee8f3c96f27c8b4f226672433f6aaaf63ad45ec536662a",
+    "audio-taps.f32le": "d6cc5c0498b316cdf5ed4ba3fcbe5895e1db59664a0f8aa4f20705e0053fa088",
+    "state.csv": "730be10733567ae66dd42d9d0e8f616f1e7d9a930c5ad4d5fdab8e21ed7b1d67",
+    "dyno.csv": "eedefbcb2477e5eeb69422aa765c99360cf862b37ff870ca16db8d9ea6fedab3"
+  }
+}

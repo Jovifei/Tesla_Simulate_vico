@@ -1,0 +1,28 @@
+{
+  "scope": "self-contained copy with only explicitly listed candidate and evidence files",
+  "historical_fixture_sha256": "da5c40a2e3619955bf3cc8c886ccb07eb9060f54666e82a6c3693347752c1459",
+  "guarded_sha256": "a71a852e53885a8af50cf53e8d5b9160a9744c488bcab5db5355f5478d976c62",
+  "test_command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-B",
+    "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\portable-guard-review-20261123-final3\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\test_fail_fast.py",
+    "--run-id",
+    "portable-r3"
+  ],
+  "exit": 0,
+  "mock_cases": 10,
+  "junction_status": "PASS_REPARSE_REJECTED",
+  "mock_result_sha256": "59a5117bf492a5e4dd128b8329da1dbd31d7863ab8536346ba3ea8adfda65ef5",
+  "stdout_sha256": "6cdcec452a8d96dcd42783c48b6dc8e7fbaf5b9a93c88a437c1b5d16e84e5205",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_hashes": {
+    "test_fail_fast.py": "9aada8e68fbcda53c84816dc3238a263a8fea25b1572a189f9c6449cb7dd033e",
+    "mock_driver.ps1": "af7c7ae0801ca47e7e7cf8f286b6f18a9e8a39d213cdcf326d45e942bf4fd20e",
+    "mock_stage.ps1": "39f69aac0a7eadcc45455c340244b1ac6d17f9cbf711632cc8ef7b4a313da537",
+    "mock_paths.ps1": "2d8761cf3c8449cd616152b5f6dbc7ebee913492b26f98d8bf271502fdc5f5bc",
+    "historical-step1-runbook.fixture.txt": "da5c40a2e3619955bf3cc8c886ccb07eb9060f54666e82a6c3693347752c1459",
+    "step1-runbook-guarded.ps1": "a71a852e53885a8af50cf53e8d5b9160a9744c488bcab5db5355f5478d976c62",
+    "historical-to-candidate.diff": "c73071f230a9d5c8d1bb2a972929a358252eefda4723b424ab289006b2f9b895",
+    ".gitattributes": "d9e196de172c6accdd9fdce90cb02e003418a01a20da1b6418b227e8104f9d2a"
+  }
+}

@@ -1,0 +1,10 @@
+# The provenance receipt and mock results bind these exact bytes.
+.gitattributes -text
+historical-step1-runbook.fixture.txt -text whitespace=cr-at-eol,-blank-at-eof
+step1-runbook-guarded.ps1 -text whitespace=cr-at-eol,-blank-at-eof
+historical-to-candidate.diff -text whitespace=cr-at-eol
+mock_driver.ps1 -text
+mock_stage.ps1 -text
+mock_paths.ps1 -text
+test_fail_fast.py -text
+mock-runs/**/mock-result.json -text whitespace=cr-at-eol
