@@ -1,0 +1,27 @@
+{
+  "schema": "app8.v14.hellcat.synthetic-diagnostic.v1",
+  "qualification": "SYNTHETIC_DIAGNOSTIC_NOT_FORMAL_M2",
+  "conditions": [
+    {"rpm": 750, "load": 0.16},
+    {"rpm": 1200, "load": 0.16}
+  ],
+  "sample_rate_hz": 48000,
+  "frame_samples": 960,
+  "frame_count": 150,
+  "measurement_window_s": [1, 3],
+  "source": "Dimensionless fixed half-wave cosine cylinder pulses, existing synthetic firing and bank map, no random noise",
+  "source_gain": 1,
+  "pulse_exponent": 16,
+  "bank_weights": [0.55, 0.45],
+  "load_envelope": "0.25 + 0.75 * load",
+  "direct_weight": 0.5,
+  "frozen_weight": 0.5,
+  "renderer_gain": 0.1,
+  "peak_max": 1.0,
+  "sample_jump_max": 0.25,
+  "frame_jump_max": 0.0269080675,
+  "calibration": "NONE",
+  "eq_or_agc": "NONE",
+  "formal_T1_T4_C0": "NOT_RUN",
+  "listening_device_vehicle_acceptance": "NOT_RUN"
+}
