@@ -16,7 +16,11 @@ class AudioInputGate {
         val usable = stateTimeS.isFinite() && when (source) {
             DriveInputSource.REAL -> control.usable && control.modelContinuityRevision >= 0L && control.validUntilElapsedNanos > 0L &&
                 nowElapsedNanos >= 0L && nowElapsedNanos <= control.validUntilElapsedNanos
-            DriveInputSource.DEMO, DriveInputSource.PREVIEW, DriveInputSource.QUALIFICATION -> control.usable
+            DriveInputSource.SYNTHETIC_AUDITION -> control.usable && control.validUntilElapsedNanos > 0L &&
+                nowElapsedNanos >= 0L && nowElapsedNanos <= control.validUntilElapsedNanos
+            DriveInputSource.DEMO -> control.usable && (control.validUntilElapsedNanos <= 0L ||
+                nowElapsedNanos >= 0L && nowElapsedNanos <= control.validUntilElapsedNanos)
+            DriveInputSource.PREVIEW, DriveInputSource.QUALIFICATION -> control.usable
             DriveInputSource.UNSPECIFIED, null -> false
         }
         val identityChanged = previousSource != source || previousEpoch != control?.epoch ||

@@ -87,10 +87,11 @@ export class Owner {
   cancel(){this.abort?.abort();this.id++;}
 }
 export class AudioSession {
-  constructor(base,onChange=()=>{}) { this.base=base; this.onChange=onChange;this.owner=new Owner();this.ctx=null;this.node=null;this.stage='idle';this.last=null;this.timer=null;this.volume=.2;this.pendingInput={source:'demo',scenario:'stop'}; }
+  constructor(base,onChange=()=>{},releaseGate=null) { this.base=base; this.onChange=onChange;this.releaseGate=releaseGate;this.owner=new Owner();this.ctx=null;this.node=null;this.stage='idle';this.last=null;this.timer=null;this.volume=.2;this.pendingInput={source:'demo',scenario:'stop'}; }
   report(stage,detail=''){this.stage=stage;this.onChange({stage,detail,stats:this.last});}
   async start(entry,mode,input,{recordedCandidate=null}={}){
     if(!MODES.includes(mode))throw new Error('Unknown audio mode');
+    if(this.releaseGate && !this.releaseGate(entry)){await this.stop(true);this.report('error','车型声音包尚未通过审核');return;}
     const token=this.owner.next(); this.release(); this.last=null;this.pendingInput=input;
     let ctx;
     try {

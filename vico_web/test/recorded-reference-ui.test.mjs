@@ -41,6 +41,7 @@ async function boot({fetchImpl=async()=>new Response(pcm),references=[reference]
   const context=vm.createContext({document,window:{addEventListener(type,handler){windowEvents[type]=handler;},AudioContext:Context},
     location,navigator:{},ReferenceAuditionSession:Session,AudioSession:class{setInput(){}stop(){return Promise.resolve();}},
     loadCatalog:async()=>({vehicles:[],sourceCommit:'abc'}),loadRecordedReferenceCatalog:async()=>({references}),
+    loadV14Registry:async()=>null,permittedPackage:()=>false,REGISTRY_SHA256:null,checkedFetch:()=>{},
     GpsSpeedInput:class{},URL,performance:{now:()=>0},setTimeout,Blob,console,isSecureContext:true,crypto:globalThis.crypto,fetch:fetchImpl});
   await vm.runInContext(`(async()=>{${source}})()`,context);
   const card=get('reference-list').children[0];

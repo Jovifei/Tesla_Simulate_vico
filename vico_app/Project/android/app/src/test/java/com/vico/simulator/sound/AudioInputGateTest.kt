@@ -30,6 +30,15 @@ class AudioInputGateTest {
         assertFalse(gate.evaluate(control, 1.0, Long.MAX_VALUE).usable)
     }
 
+    @Test fun timedDemoFrameExpiresWithoutAnotherProducerUpdate() {
+        val gate = AudioInputGate()
+        val demo = DriveInputControl(DriveInputSource.DEMO, 1L, 100L, true, true)
+        assertTrue(gate.evaluate(demo, 1.0, 100L).usable)
+        val expired = gate.evaluate(demo, 1.0, 101L)
+        assertFalse(expired.usable)
+        assertTrue(expired.clearTransients)
+    }
+
     @Test fun recoverySuppressesWholeInitialSnapshotThenAcceptsFreshState() {
         val gate = AudioInputGate()
         assertFalse(gate.evaluate(real(), 1.0, 1L).allowEvents)

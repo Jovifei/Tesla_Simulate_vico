@@ -46,3 +46,32 @@ test('W7 refined originals retain legible figures and keep units above lower she
   assert.match(svg,/data-cluster-shell="true"/);
  }
 });
+
+
+test('compact lower metadata stays safely inside hood with aligned load and redline',()=>{
+ const b=bootDisplay({width:390});
+ const cars=[
+  ['c63_w204_v6',7200],['hellcat_v6',6200],['ferrari_458',9000],
+  ['lfa',9000],['gtr_r35',7000],['supra_jza80',7200]
+ ];
+ for(const [id,redline] of cars){
+  b.api.prepare({id,redlineRpm:redline});
+  const svg=b.get('r4-svg');
+  assert.equal(svg.getAttribute('viewBox'),'0 0 400 400');
+  const loadGroup=svg.querySelectorAll('.r5-load')[0];
+  const redGroup=svg.querySelectorAll('.r5-redline')[0];
+  assert.ok(loadGroup && redGroup,id+' lower metadata present');
+  const y=elements=>elements.map(node=>Number(node.getAttribute('y')));
+  const loadYs=y(loadGroup.querySelectorAll('.r5-meta'));
+  const redYs=y(redGroup.querySelectorAll('.r5-meta'));
+  assert.equal(loadYs.length,3,id+' load name/value/percent');
+  assert.equal(redYs.length,3,id+' redline name/value/unit');
+  assert.ok(loadYs.every(n=>Number.isFinite(n)&&n<=381&&n>=375),id+' load labels touch hood: '+loadYs);
+  assert.ok(redYs.every(n=>Number.isFinite(n)&&n<=381&&n>=375),id+' redline labels touch hood: '+redYs);
+  assert.ok(Math.abs(loadYs[0]-redYs[0])<=6,id+' load/redline baseline separation');
+  const barY=Number(b.get('load-bar').getAttribute('y'));
+  assert.ok(barY>=355&&barY<=360,id+' compact bar must not overlap gear label: '+barY);
+  assert.equal(b.get('redline-rpm').textContent,String(redline),id);
+  assert.ok(svg.querySelectorAll('[data-rpm-step]').length>0,id+' complete RPM display preserved');
+ }
+});
