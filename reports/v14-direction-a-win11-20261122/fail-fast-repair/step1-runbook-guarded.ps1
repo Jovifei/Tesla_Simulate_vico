@@ -1,0 +1,84 @@
+$ErrorActionPreference = 'Stop'
+$Package = $TaskFixedPackage
+$ProductRepo = $TaskFixedProduct
+$EngineRepo = $TaskFixedEngine
+$SolverRepo = Join-Path $EngineRepo 'dependencies\submodules\simple-2d-constraint-solver'
+$Out = 'E:\Tesla_speed\experiments\direction-a-step1-20261112'
+if (Test-Path $Out) { throw 'Experiment directory already exists; preserve it and stop.' }
+$Python = (Get-Command python -ErrorAction Stop).Source
+& $Python -c 'import sys; assert sys.version_info >= (3,10); print(sys.version)'
+if ($LASTEXITCODE -ne 0) { throw 'Python 3.10+ required' }
+git --version
+cmake --version
+if ($LASTEXITCODE -ne 0) { throw 'CMake is not available' }
+
+# Acceptance checkpoint 1: both original repositories, read-only, before export.
+git --no-optional-locks -C $ProductRepo status --short
+if ($LASTEXITCODE -ne 0) { throw 'Invalid product Git root' }
+git --no-optional-locks -C $EngineRepo status --short
+if ($LASTEXITCODE -ne 0) { throw 'Invalid engine Git root' }
+$ProductBefore = (git --no-optional-locks -C $ProductRepo status --porcelain=v1 --untracked-files=all | Out-String)
+$EngineBefore = (git --no-optional-locks -C $EngineRepo status --porcelain=v1 --untracked-files=all | Out-String)
+$ProductHeadBefore = git -C $ProductRepo rev-parse HEAD
+$EngineHeadBefore = git -C $EngineRepo rev-parse HEAD
+git -C $EngineRepo cat-file -e '85f7c3b959a908ed5232ede4f1a4ac7eafe6b630^{commit}'
+if ($LASTEXITCODE -ne 0) { throw 'Pinned engine object is absent; do not fetch or substitute silently' }
+$ActualSolver = git -C $SolverRepo rev-parse HEAD
+if ($LASTEXITCODE -ne 0) { throw 'Existing solver checkout is absent; stop for owner/Muse review' }
+Write-Host "Actual solver checkout SHA: $ActualSolver"
+
+try {
+    $PrepareLog = & $Python "$Package\prepare_workspace.py" `
+        --engine-repo $EngineRepo --product-repo $ProductRepo `
+        --solver-repo $SolverRepo --out $Out 2>&1
+    $PrepareExit = $LASTEXITCODE
+    $PrepareLog | Write-Output
+    if (Test-Path $Out) { $PrepareLog | Set-Content "$Out\prepare.log" }
+    if ($PrepareExit -ne 0) { throw 'Export failed. Preserve the partial directory and receipt.' }
+    $Identity = Get-Content "$Out\source-identity.json" -Raw | ConvertFrom-Json
+    if ($Identity.status -ne 'EXPORTED_NOT_BUILT' -or !$Identity.solver_matches_engine_gitlink) {
+        throw 'Actual solver differs from the engine gitlink or export is incomplete. Compatibility review required; do not build yet.'
+    }
+    if (!$Identity.original_repositories_unchanged) { throw 'Original repository state changed' }
+    New-Item -ItemType Directory "$Out\host-evidence" | Out-Null
+    $PSVersionTable | Out-String | Set-Content "$Out\host-evidence\powershell.txt"
+    Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, OSArchitecture | ConvertTo-Json | Set-Content "$Out\host-evidence\os.json"
+    & $Python --version 2>&1 | Set-Content "$Out\host-evidence\python.txt"
+    git --version | Set-Content "$Out\host-evidence\git.txt"
+    cmake --version | Set-Content "$Out\host-evidence\cmake.txt"
+
+    cmake -S $Out -B "$Out\build" -G 'Visual Studio 17 2022' -A x64 `
+        -DDTV=OFF -DDISCORD_ENABLED=OFF 2>&1 | Tee-Object "$Out\host-evidence\configure.log"
+    $TaskStage.configure = $LASTEXITCODE
+    if ($TaskStage.configure -ne 0) { throw 'CMake configure failed; not a build pass' }
+    cmake --build "$Out\build" --config Release --target engine_offline --parallel 4 `
+        2>&1 | Tee-Object "$Out\host-evidence\build-release.log"
+    $TaskStage.build = $LASTEXITCODE
+    if ($TaskStage.build -ne 0) { throw 'MSVC build failed; no smoke pass' }
+    $Exe = "$Out\build\Release\engine_offline.exe"
+    Get-FileHash $Exe -Algorithm SHA256 | Format-List | Out-String | Set-Content "$Out\host-evidence\executable-sha256.txt"
+    & $Exe "$Out\smoke-2s" smoke 2 2>&1 | Tee-Object "$Out\host-evidence\smoke.log"
+    $TaskStage.smoke = $LASTEXITCODE
+    if ($TaskStage.smoke -ne 0) { throw 'C++ smoke failed; preserve all partial output' }
+    & $Python "$Out\verify_capture.py" "$Out\smoke-2s" --out "$Out\host-evidence\verification.json" `
+        2>&1 | Tee-Object "$Out\host-evidence\verify.log"
+    $TaskStage.verify = $LASTEXITCODE
+    if ($TaskStage.verify -ne 0) { throw 'Capture data verification failed' }
+    # Expected: 20,000 physics frames, 88,200 audio frames, 70,000 total steps;
+    # pressure 1,440,000 bytes, signed omega 80,000 bytes, audio 2,116,800 bytes.
+    Write-Host 'Basic offline sanity only. Not OEM, acoustic, S12, or product acceptance.'
+}
+finally {
+    # Acceptance checkpoint 2: both original repositories, even after any failure.
+    git --no-optional-locks -C $ProductRepo status --short
+    git --no-optional-locks -C $EngineRepo status --short
+    $ProductAfter = (git --no-optional-locks -C $ProductRepo status --porcelain=v1 --untracked-files=all | Out-String)
+    $EngineAfter = (git --no-optional-locks -C $EngineRepo status --porcelain=v1 --untracked-files=all | Out-String)
+    $Unchanged = ($ProductBefore -ceq $ProductAfter) -and ($EngineBefore -ceq $EngineAfter) -and `
+        ($ProductHeadBefore -eq (git -C $ProductRepo rev-parse HEAD)) -and `
+        ($EngineHeadBefore -eq (git -C $EngineRepo rev-parse HEAD))
+    $StatusReceipt = @{ product_before=$ProductBefore; product_after=$ProductAfter; engine_before=$EngineBefore; engine_after=$EngineAfter; original_repositories_unchanged=$Unchanged }
+    if (Test-Path $Out) { $StatusReceipt | ConvertTo-Json | Set-Content "$Out\original-repositories-final-status.json" }
+    if (!$Unchanged) { throw 'Original repository status/HEAD changed. Stop acceptance and investigate; do not reset or clean.' }
+}
+

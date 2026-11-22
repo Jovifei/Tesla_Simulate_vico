@@ -1,0 +1,1234 @@
+{
+  "status": "PASS_MOCK_FAILURE_GUARDS",
+  "scope": "Historical four-stage block with native commands replaced by mock child processes",
+  "historical_sha256": "da5c40a2e3619955bf3cc8c886ccb07eb9060f54666e82a6c3693347752c1459",
+  "guarded_sha256": "a71a852e53885a8af50cf53e8d5b9160a9744c488bcab5db5355f5478d976c62",
+  "host_runbook_sha256": "2eb13cac7fafdc7a7f3492b95c70d9c90c73fb2a4a453fe0ba84feebbfb2429c",
+  "harness_source_sha256": {
+    "test_fail_fast.py": "9aada8e68fbcda53c84816dc3238a263a8fea25b1572a189f9c6449cb7dd033e",
+    "mock_driver.ps1": "af7c7ae0801ca47e7e7cf8f286b6f18a9e8a39d213cdcf326d45e942bf4fd20e",
+    "mock_stage.ps1": "39f69aac0a7eadcc45455c340244b1ac6d17f9cbf711632cc8ef7b4a313da537",
+    "mock_paths.ps1": "2d8761cf3c8449cd616152b5f6dbc7ebee913492b26f98d8bf271502fdc5f5bc",
+    "historical-step1-runbook.fixture.txt": "da5c40a2e3619955bf3cc8c886ccb07eb9060f54666e82a6c3693347752c1459",
+    "step1-runbook-guarded.ps1": "a71a852e53885a8af50cf53e8d5b9160a9744c488bcab5db5355f5478d976c62",
+    "historical-to-candidate.diff": "c73071f230a9d5c8d1bb2a972929a358252eefda4723b424ab289006b2f9b895",
+    ".gitattributes": "d9e196de172c6accdd9fdce90cb02e003418a01a20da1b6418b227e8104f9d2a"
+  },
+  "historical_line_numbers": {
+    "configure": 52,
+    "build": 55,
+    "smoke": 59,
+    "verify": 62
+  },
+  "success_receipt_semantics": "mock-only simulation of the historical outer runner's success decision",
+  "cases": [
+    {
+      "fixture": "configure",
+      "mode": "old",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "old",
+        "-FailStage",
+        "configure",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\configure\\old"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 31,
+        "build": 0,
+        "smoke": 0,
+        "verify": 0
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "stale_artifact_reads": [
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": true
+        }
+      ],
+      "stale_pass_fixture_still_present": false,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": true,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "0181a0ed2854e3b1259f2d33659b4ae091ca4325a0fa67dc68c66cb2409b429e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "e65110b1eae4341253fcf69a499b42bb0b3b33ba588f974c3e1512ba7e0161ba",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 31
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": true
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 0
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "old",
+        "failed_stage": "configure",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 31,
+          "build": 0,
+          "smoke": 0,
+          "verify": 0
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=31\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=0\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "configure",
+      "mode": "fixed",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "fixed",
+        "-FailStage",
+        "configure",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\configure\\fixed"
+      ],
+      "wrapper_process_exit": 1,
+      "native_exit_codes": {
+        "configure": 31
+      },
+      "steps_started": [
+        "configure"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": true,
+      "mock_success_receipt_created": false,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "b503d088d5c74408d8340877c83de0a3903702003defc12a9be57e4ca54f79db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "e722aa24702dc89ea891491780941449d37d53644bd0c44d0f4cabcaf6fccb46",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 31
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "fixed",
+        "failed_stage": "configure",
+        "status": "FAILED",
+        "process_exit": 1,
+        "observed_native_exit_codes": {
+          "configure": 31,
+          "build": null,
+          "smoke": null,
+          "verify": null
+        },
+        "reason": "CMake configure failed; not a build pass",
+        "success_receipt_exists": false
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=31\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "build",
+      "mode": "old",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "old",
+        "-FailStage",
+        "build",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\build\\old"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 32,
+        "smoke": 0,
+        "verify": 0
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [
+        "smoke",
+        "verify"
+      ],
+      "stale_artifact_reads": [
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": true
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": true
+        }
+      ],
+      "stale_pass_fixture_still_present": false,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": true,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "e26b49ad2c61e1cc239da56744d6b9f875b065116ac631e6b0cd54c7204e1872",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "ac8408ee6e702a1e4b6ab0a696eb876604b96f6bac02d1af7cb6ffee0d49bf3b",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 32
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": true
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": true
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 0
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "old",
+        "failed_stage": "build",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 32,
+          "smoke": 0,
+          "verify": 0
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=32\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=0\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "build",
+      "mode": "fixed",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "fixed",
+        "-FailStage",
+        "build",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\build\\fixed"
+      ],
+      "wrapper_process_exit": 1,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 32
+      },
+      "steps_started": [
+        "configure",
+        "build"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": true,
+      "mock_success_receipt_created": false,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "00db93981ab53a4b61e2767776275e15d7f0c4e64f93f8dba0f9b4060af62482",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "0874065cffdeb03f034a9685dd6bddb67fc21cd5264ec2b0b61dcbc07f8a0c6c",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 32
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "fixed",
+        "failed_stage": "build",
+        "status": "FAILED",
+        "process_exit": 1,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 32,
+          "smoke": null,
+          "verify": null
+        },
+        "reason": "MSVC build failed; no smoke pass",
+        "success_receipt_exists": false
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=32\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "smoke",
+      "mode": "old",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "old",
+        "-FailStage",
+        "smoke",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\smoke\\old"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 33,
+        "verify": 0
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [
+        "verify"
+      ],
+      "stale_artifact_reads": [
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": true
+        }
+      ],
+      "stale_pass_fixture_still_present": false,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": true,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "736cd269eec61e5e4e1fa6e5adc3e4c9cdcc4fda44cd3f1c5d2ed2ddf5509612",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "22e3c2a1e51354be29409eebaaceb78e43e85657b0f5f560a578673da5fccef4",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 33
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": true
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 0
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "old",
+        "failed_stage": "smoke",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 33,
+          "verify": 0
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=33\r\nMOCK_ONLY stage=verify exit=0\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "smoke",
+      "mode": "fixed",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "fixed",
+        "-FailStage",
+        "smoke",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\smoke\\fixed"
+      ],
+      "wrapper_process_exit": 1,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 33
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": true,
+      "mock_success_receipt_created": false,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "825ca7cbc5ef328ed8ed1dbe433dc24169277711178a30acddb922092381d3d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "674a557da76bb12c16e99c61c624abf8712c19abca515d3b8441a43033243efc",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 33
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "fixed",
+        "failed_stage": "smoke",
+        "status": "FAILED",
+        "process_exit": 1,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 33,
+          "verify": null
+        },
+        "reason": "C++ smoke failed; preserve all partial output",
+        "success_receipt_exists": false
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=33\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "verify",
+      "mode": "old",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "old",
+        "-FailStage",
+        "verify",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\verify\\old"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 0,
+        "verify": 34
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": true,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": true,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "746ecfa048a3dbd78addfb0015271fbd9e17f79f83285491cb2c3efbc485e776",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "5b79b0e168b332a3a2267869a2a27a29ab38221bf3ba59dbaa74ea6e78447678",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 34
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "old",
+        "failed_stage": "verify",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 0,
+          "verify": 34
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=34\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "verify",
+      "mode": "fixed",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "fixed",
+        "-FailStage",
+        "verify",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\verify\\fixed"
+      ],
+      "wrapper_process_exit": 1,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 0,
+        "verify": 34
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": true,
+      "mock_success_receipt_created": false,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "b0b32dd9029924ab8f2e4ad11e09e6053abf9932ceadcb7c7ade4f0aef003bc7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "5b79b0e168b332a3a2267869a2a27a29ab38221bf3ba59dbaa74ea6e78447678",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 34
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "fixed",
+        "failed_stage": "verify",
+        "status": "FAILED",
+        "process_exit": 1,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 0,
+          "verify": 34
+        },
+        "reason": "Capture data verification failed",
+        "success_receipt_exists": false
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=34\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "none",
+      "mode": "old",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "old",
+        "-FailStage",
+        "none",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\none\\old"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 0,
+        "verify": 0
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": false,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "399091266d481a7671be561769b49239301f10e31679761aa73a8a8e864fe6ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "38f0bf820cea676ec1aeb33bf3db5131aa84cfed71e3557931ace565d52dd735",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 0
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "old",
+        "failed_stage": "none",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 0,
+          "verify": 0
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=0\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    },
+    {
+      "fixture": "none",
+      "mode": "fixed",
+      "command": [
+        "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+        "-Mode",
+        "fixed",
+        "-FailStage",
+        "none",
+        "-CaseRoot",
+        "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\none\\fixed"
+      ],
+      "wrapper_process_exit": 0,
+      "native_exit_codes": {
+        "configure": 0,
+        "build": 0,
+        "smoke": 0,
+        "verify": 0
+      },
+      "steps_started": [
+        "configure",
+        "build",
+        "smoke",
+        "verify"
+      ],
+      "steps_after_failure": [],
+      "stale_artifact_reads": [],
+      "stale_pass_fixture_still_present": false,
+      "mock_success_receipt_created": true,
+      "success_claim_despite_failure": false,
+      "initial_fake_artifact_sha256": {
+        "configure": "f01bac14a0e6748bb62c384ec2783dfafb33d073110736310e5f1c0a8eab85da",
+        "build": "2aa7b36bd2e719db94a5cf82ccc6a17957f7276d926f483d4d8068929102a0f3",
+        "smoke": "85d50a1317dbe2a49bbba93ddbb83f77d9dfca5ce52cb03e1d55e7023cbf06a5",
+        "verify": "eb30bfc8085013e47d0d220418f3ca8b2b0052b0cbfe0b58ce6596cd5e43e09c"
+      },
+      "stdout_sha256": "399091266d481a7671be561769b49239301f10e31679761aa73a8a8e864fe6ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "events_sha256": "38f0bf820cea676ec1aeb33bf3db5131aa84cfed71e3557931ace565d52dd735",
+      "events": [
+        {
+          "event": "stage_start",
+          "stage": "configure"
+        },
+        {
+          "event": "stage_exit",
+          "stage": "configure",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "build"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "build",
+          "artifact": "configure",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "build",
+          "exit": 0
+        },
+        {
+          "event": "artifact_hash_read",
+          "stage": "before_smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_start",
+          "stage": "smoke"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "smoke",
+          "artifact": "build",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "smoke",
+          "exit": 0
+        },
+        {
+          "event": "stage_start",
+          "stage": "verify"
+        },
+        {
+          "event": "artifact_read",
+          "stage": "verify",
+          "artifact": "smoke",
+          "stale": false
+        },
+        {
+          "event": "stage_exit",
+          "stage": "verify",
+          "exit": 0
+        }
+      ],
+      "wrapper_observation": {
+        "mock_only": true,
+        "mode": "fixed",
+        "failed_stage": "none",
+        "status": "RUNBOOK_COMPLETED",
+        "process_exit": 0,
+        "observed_native_exit_codes": {
+          "configure": 0,
+          "build": 0,
+          "smoke": 0,
+          "verify": 0
+        },
+        "reason": null,
+        "success_receipt_exists": true
+      },
+      "stdout": "MOCK_ONLY stage=configure exit=0\r\nMOCK_ONLY stage=build exit=0\r\nMOCK_ONLY stage=smoke exit=0\r\nMOCK_ONLY stage=verify exit=0\r\nBasic offline sanity only. Not OEM, acoustic, S12, or product acceptance.\r\n",
+      "stderr": ""
+    }
+  ],
+  "path_safety": {
+    "status": "PASS_REPARSE_REJECTED",
+    "creation_command": [
+      "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      "New-Item -ItemType Junction -Path $env:MOCK_JUNCTION_PATH -Target $env:MOCK_JUNCTION_TARGET -ErrorAction Stop | Out-Null"
+    ],
+    "creation_exit": 0,
+    "checks": {
+      "driver": {
+        "command": [
+          "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+          "-NoProfile",
+          "-NonInteractive",
+          "-File",
+          "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_driver.ps1",
+          "-Mode",
+          "old",
+          "-FailStage",
+          "none",
+          "-CaseRoot",
+          "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\junction-test\\link\\case"
+        ],
+        "process_exit": 1,
+        "stderr": "Exception: E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_paths.ps1:13\r\nLine |\r\n  13 |              throw 'Mock path contains a missing directory or reparse  …\r\n     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Mock path contains a missing directory or reparse point.\r\n",
+        "target_files_created": 0
+      },
+      "stage": {
+        "command": [
+          "C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.EXE",
+          "-NoProfile",
+          "-NonInteractive",
+          "-File",
+          "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_stage.ps1",
+          "-Stage",
+          "configure",
+          "-FailStage",
+          "none",
+          "-CaseRoot",
+          "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock-runs\\review-20261123-v3\\junction-test\\link\\case"
+        ],
+        "process_exit": 1,
+        "stderr": "Exception: E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\mock_paths.ps1:13\r\nLine |\r\n  13 |              throw 'Mock path contains a missing directory or reparse  …\r\n     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Mock path contains a missing directory or reparse point.\r\n",
+        "target_files_created": 0
+      }
+    }
+  },
+  "not_run": [
+    "engine-sim",
+    "Windows native smoke",
+    "audio analysis",
+    "audio rendering",
+    "audio playback"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "duplicate run ID must not overwrite prior result",
+  "command": [
+    "D:\\Python\\Python3.14\\python.exe",
+    "-B",
+    "E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\test_fail_fast.py",
+    "--run-id",
+    "review-20261123-v3"
+  ],
+  "process_exit": 1,
+  "stderr_tail": "st-repair\\test_fail_fast.py\", line 225, in <module>\r\n    main()\r\n    ~~~~^^\r\n  File \"E:\\Tesla_speed\\worktrees\\v14-a-step1-win11-20261122\\reports\\v14-direction-a-win11-20261122\\fail-fast-repair\\test_fail_fast.py\", line 193, in main\r\n    root.mkdir(parents=True, exist_ok=False)\r\n    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"D:\\Python\\Python3.14\\Lib\\pathlib\\__init__.py\", line 1011, in mkdir\r\n    os.mkdir(self, mode)\r\n    ~~~~~~~~^^^^^^^^^^^^\r\nFileExistsError: [WinError 183] 当文件已存在时，无法创建该文件。: 'E:\\\\Tesla_speed\\\\worktrees\\\\v14-a-step1-win11-20261122\\\\reports\\\\v14-direction-a-win11-20261122\\\\fail-fast-repair\\\\mock-runs\\\\review-20261123-v3'\r\n",
+  "before_sha256": "9c66f34be578293665952f2dcfe8fbb90d48b2103c0ac1e9e45b28c4f31acea2",
+  "after_sha256": "9c66f34be578293665952f2dcfe8fbb90d48b2103c0ac1e9e45b28c4f31acea2",
+  "unchanged": true
+}

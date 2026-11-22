@@ -1,0 +1,3 @@
+The first invocation of test_fail_fast.py exited 1 before any mock cases ran.
+It assumed a single newline convention, but the historical source contains mixed LF and CRLF.
+The source derivation now preserves each original line's actual newline and adds only four guards.
