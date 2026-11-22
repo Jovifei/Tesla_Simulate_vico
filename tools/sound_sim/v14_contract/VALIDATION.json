@@ -1,0 +1,90 @@
+{
+  "task_id": "v14-local-handoff-20261122",
+  "base_sha": "8df352adf715705ba98536c77c8d94c5ac9424f4",
+  "python": "3.14.2",
+  "check_status": "PASS_FOCUSED_SYNTHETIC_AND_REGISTRY",
+  "checks": [
+    {
+      "check": "unittest",
+      "command": [
+        "python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools\\sound_sim\\v14_contract",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log_sha256": "71c4e98bb00f9070da15dff5a14f05e2a6ad2c38cf65c8f86b5d617ac5a1d2d9"
+    },
+    {
+      "check": "schema",
+      "command": [
+        "python.exe",
+        "-B",
+        "-c",
+        "import json, pathlib, jsonschema; p=pathlib.Path(\"tools/sound_sim/v14_contract\"); files=[json.loads(f.read_text(encoding=\"utf-8\")) for f in sorted(p.glob(\"*.schema.json\"))]; assert len(files)==2; [jsonschema.Draft202012Validator.check_schema(s) for s in files]; jsonschema.Draft202012Validator(files[1]).validate(json.loads((p/\"vehicle-registry.json\").read_text(encoding=\"utf-8\"))); print(\"two meta-schemas and registry PASS\")"
+      ],
+      "exit": 0,
+      "log_sha256": "df96e353b1b36c761315bbfac733c11f97cd9f178cdaa26dcb15b574a094a74c"
+    },
+    {
+      "check": "registry",
+      "command": [
+        "python.exe",
+        "-B",
+        "tools\\sound_sim\\v14_contract\\contract.py",
+        "check-registry"
+      ],
+      "exit": 0,
+      "log_sha256": "1883fae852acf36de4a7097b20deaaa17aa29adeed757c050d28667c5f4e47af"
+    },
+    {
+      "check": "frozen",
+      "command": [
+        "python.exe",
+        "-B",
+        "tools\\sound_sim\\v14_contract\\contract.py",
+        "check-frozen"
+      ],
+      "exit": 2,
+      "log_sha256": "8b7ff9e2aefb3f48ef6c2d5e48b085b7bebf953f351afbf0b5e7d6cf2eed2c6a"
+    },
+    {
+      "check": "matrix",
+      "command": [
+        "python.exe",
+        "-B",
+        "tools\\sound_sim\\v14_contract\\contract.py",
+        "matrix"
+      ],
+      "exit": 0,
+      "log_sha256": "ce50c2b92a3985dd0f019c882c94d57d135210bd04201ad6a0eeebaf8b5ae8b5"
+    }
+  ],
+  "source_sha256": {
+    "contract.py": "4b2c37c24806386df7ba27d81f2da9d989841c1ebeacee7b02ddd47d943e4a21",
+    "README.md": "9c12c11f0f34f9903d81a86e4f942269c080b17b9e4e2b53e7869714365c0bf2",
+    "recipe.schema.json": "f30594adfc8b9680692eead182ede1d984ad1fc727d9025f91b9e752082d23b7",
+    "test_contract.py": "9e53b86f55f1f96b72cc1b268ffe9514fbd4a9dd36df09236e68ad2bbd84bad6",
+    "vehicle-registry.json": "ff5d9a31199f102dd3267857b98086b174002aa7f5ce990d335ef4b61622d3f5",
+    "vehicle-registry.schema.json": "79c7404d6c32bed0ada217ffe0b2180a521ccbccdd67de5e1f3af19a334a1666"
+  },
+  "official_T1_T4": "BLOCKED_MISSING_AUTHORITY",
+  "matrix": {
+    "T1_T4_NOT_RUN": 40,
+    "C0_NOT_RUN": 10,
+    "H_PLANNED_OUTSIDE": 10
+  },
+  "qualification": {
+    "acoustic": "NOT_RUN",
+    "owner_audition": "NOT_RUN",
+    "device": "NOT_RUN",
+    "static_cabin": "NOT_RUN",
+    "dynamic_vehicle": "NOT_RUN"
+  }
+}
