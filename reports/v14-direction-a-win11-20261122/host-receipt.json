@@ -1,0 +1,195 @@
+{
+  "task_id": "v14-local-handoff-20261122",
+  "package_commit": "9ca635f754476503d2bbd1e0c5ad6ab1c4d18bc6",
+  "package_git_blob_verified_files": 17,
+  "package_archive_sha256": "60d5c0f4d2fe18d3fae8b28fb37ce193fd1a281f01a9ccef20e6d262ca3f4a0e",
+  "package_files_sha256": {
+    "CMakeLists.txt": "f674e2145a7c8489812a398fdf1e77bc7ce21d277fc87532903c55ec4482547f",
+    "HOST-RUNBOOK.md": "2eb13cac7fafdc7a7f3492b95c70d9c90c73fb2a4a453fe0ba84feebbfb2429c",
+    "LICENSE-engine-sim.txt": "9f64449d4ef2db6b57d6af9d36e5eca5b6de3ece2db14a847ae71d4e0dcbff15",
+    "LICENSE-solver.txt": "62a8b4fc4a7b9e9af9e1b1217c67fda0487386319de0833b2d77a309b3a772f4",
+    "README.md": "fcdb8295920d5f2d2130cd8d6520f07328b29ec0e77f76cb3d902b8142ea5693",
+    "model_builder.cpp": "062235d9fcf8473192c28f3fc81fb29be08f1e0e7b9af2f4f896ce8f55d261ba",
+    "model_builder.h": "0c3511488443b419f7f09b2628bed0f3e534f414e05a75617e747fb7f17840e2",
+    "offline_main.cpp": "a01bf496e758b72ee7d85816a2a027268f8fb9fe01e80124361c8fd4bfb232c8",
+    "offline_taps.h": "ec99c228625259a335bfa9075181fc5aa5ce9e489e23a9b43adec8b514f65f65",
+    "prepare_capture.py": "ef33f974901124e1238cf4048619af6c0fe26d3b5bbc38bacd0a6634bc64386b",
+    "prepare_workspace.py": "7fa97a9177653ff0ff1a1724fc7f45303966bcd9a17347d19795fe1de9b911b9",
+    "source-identity.json": "64eab16f2c6361229e653aa22ac914a7d7e94fe7843eea928d511ae4a7c65491",
+    "test_package.py": "ef348008a8ba8542611366d570ff6320b0cc413d4d7e49fe6e9ebf1ffaafa758",
+    "validation/evidence.json": "4be73a90a1b0b87c91b34ccf3e3d0d2fc35ad0ac21d95fe99dbb544a3e9c9b04",
+    "validation/patch-contract.json": "c0d61be7e2b9f6ab7f2c49ac2d199790637faf6a48811b4b9ce9e8a38d56fd1a",
+    "validation/python-tests.log": "211a999ee0ccf69846866675a963c53d71e3b804ae7da5e8c28484ba83e41661",
+    "verify_capture.py": "db378a3bdac0e0c9a60ad1c73f0582f4e306fecb3966afaadb02542f4676518a"
+  },
+  "engine_pin": "85f7c3b959a908ed5232ede4f1a4ac7eafe6b630",
+  "solver_actual_checkout_sha": "e009f4ff1c9c4c5874e865e893cdb62e208fb2b3",
+  "solver_engine_gitlink_sha": "e009f4ff1c9c4c5874e865e893cdb62e208fb2b3",
+  "solver_matches_gitlink": true,
+  "host": {
+    "os": "Windows 11 Pro x64 10.0.22631",
+    "python": "3.14.2",
+    "git": "2.52.0.windows.1",
+    "cmake": "3.31.6-msvc6",
+    "generator": "Visual Studio 17 2022",
+    "platform": "x64",
+    "msvc": "19.44.35228.0",
+    "windows_sdk": "10.0.26100.0",
+    "config": "Release",
+    "DTV": false,
+    "DISCORD_ENABLED": false,
+    "started_at": "2026-11-22T21:40:56.9145732+08:00",
+    "finished_at": "2026-11-22T21:41:19.3633286+08:00"
+  },
+  "commands": [
+    {
+      "command": "python $Package/prepare_workspace.py --engine-repo $EngineRepo --product-repo $ProductRepo --solver-repo $SolverRepo --out $Out",
+      "exit": 0,
+      "evidence": "Original PrepareExit guard did not throw and verified export was loaded. The raw wrapper summary omitted this exit."
+    },
+    {
+      "command": "cmake -S $Out -B $Out/build -G \"Visual Studio 17 2022\" -A x64 -DDTV=OFF -DDISCORD_ENABLED=OFF",
+      "exit": 0
+    },
+    {
+      "command": "cmake --build $Out/build --config Release --target engine_offline --parallel 4",
+      "exit": 0
+    },
+    {
+      "command": "$Out/build/Release/engine_offline.exe $Out/smoke-2s smoke 2",
+      "exit": 0
+    },
+    {
+      "command": "python $Out/verify_capture.py $Out/smoke-2s --out $Out/host-evidence/verification.json",
+      "exit": 0
+    },
+    {
+      "command": "python -B $Out/verify_capture.py $Out/smoke-2s --out $Task/step1-independent-verification.json",
+      "exit": 0
+    },
+    {
+      "command": "python -B -m unittest discover -s $Package -p test_package.py -v",
+      "exit": 0,
+      "synthetic_fixture_passed": 23
+    }
+  ],
+  "wrapper_deviation": "Exit recording omitted four immediate configure/build/smoke/verify stop checks. All four exits were 0. Original export, identity, solver and repository guards executed. Independent capture verification matched. Verbatim HOST-RUNBOOK execution was not established.",
+  "source_identity_receipt": {
+    "bytes": 2700260,
+    "sha256": "ffc6ec6b0796bb3b867e428d2279b8ddd062c86e74e80e6b60ad1581535b8dc4"
+  },
+  "original_repositories_final_status_receipt": {
+    "bytes": 2721059,
+    "sha256": "bf8f9a5e1d5518ed85ec83f9d96af4b5231f11ace46924899ef761a2ddebba55"
+  },
+  "original_repository_status_and_head_unchanged": true,
+  "windows_native_capture": "PASS_BASIC_OFFLINE_SANITY",
+  "capture": {
+    "model": "generic_crossplane_v8_ls_example_NOT_HELLCAT",
+    "scene": "smoke",
+    "duration_s": 2,
+    "warmup_s": 5,
+    "seed": 24817,
+    "physics_fs": 10000,
+    "audio_fs": 44100,
+    "physics_frames": 20000,
+    "all_steps": 70000,
+    "audio_frames": 88200,
+    "wall_s": 2.8476864,
+    "min_rpm": 910,
+    "max_rpm": 910,
+    "final_peak": 1,
+    "clip_count": 592,
+    "dsp": {
+      "volume": 1,
+      "jitter": 0.5,
+      "air_noise": 1,
+      "derivative_mix": 0.00999999977648258,
+      "leveler_target": 30000,
+      "ir": "analytic_identity"
+    },
+    "qualification": "OFFLINE_SYNTHETIC_MECHANISM_ONLY"
+  },
+  "executable": {
+    "bytes": 188928,
+    "sha256": "cabd9388a75823a9a486df18132b8c923e9547f75c6d549155b11dfaa58543a3"
+  },
+  "capture_artifacts": {
+    "capture.json": {
+      "bytes": 478,
+      "sha256": "50a6de0b6a2da6056f11fbcdbce96d7fb731d5cb3f6e2a1fed736e69509b162b"
+    },
+    "physical-validity.json": {
+      "bytes": 179,
+      "sha256": "e4cbe4ee393d38381bcb963fec3d78194ca1c94a1d330626ece4a0ea08571078"
+    },
+    "pressure-input.f32le": {
+      "bytes": 1440000,
+      "sha256": "57f481b8594bdfcb70955ae58bc66032784b079c3d353987fc7a38d4dda21d55"
+    },
+    "signed-omega.f32le": {
+      "bytes": 80000,
+      "sha256": "aa4523f0db45e8f633ee8f3c96f27c8b4f226672433f6aaaf63ad45ec536662a"
+    },
+    "audio-taps.f32le": {
+      "bytes": 2116800,
+      "sha256": "d6cc5c0498b316cdf5ed4ba3fcbe5895e1db59664a0f8aa4f20705e0053fa088"
+    },
+    "state.csv": {
+      "bytes": 14807,
+      "sha256": "730be10733567ae66dd42d9d0e8f616f1e7d9a930c5ad4d5fdab8e21ed7b1d67"
+    },
+    "dyno.csv": {
+      "bytes": 4380,
+      "sha256": "eedefbcb2477e5eeb69422aa765c99360cf862b37ff870ca16db8d9ea6fedab3"
+    }
+  },
+  "host_logs": {
+    "configure.log": {
+      "bytes": 602,
+      "sha256": "4a22bd71b25b9acba55fdd8b1f1c95466851ba89f9dcec082e7efc031e967ea0"
+    },
+    "build-release.log": {
+      "bytes": 2533,
+      "sha256": "40ded4e39550fbbc4662211ac6708e999bfa0d47ecacf76dd42cacbbef7ff668"
+    },
+    "smoke.log": {
+      "bytes": 96,
+      "sha256": "9bf2de7674aabda9020b1c41382bb6eff5aed472367650c8205e7917c8648ac0"
+    },
+    "verify.log": {
+      "bytes": 94,
+      "sha256": "7fcf52f5a6020c431614ae07f366482f90fd6d4c75d7e70738c7f7dddf6e3bb4"
+    }
+  },
+  "additional_local_logs": {
+    "step1-host-transcript.log": {
+      "bytes": 10830,
+      "sha256": "8cd19466329b22eebb94f3273c70bddfa6a10d39929f2226cb8f2aa235429633"
+    },
+    "step1-runbook-executed.ps1": {
+      "bytes": 5313,
+      "sha256": "da5c40a2e3619955bf3cc8c886ccb07eb9060f54666e82a6c3693347752c1459"
+    },
+    "step1-exit-receipt.json": {
+      "bytes": 2453,
+      "sha256": "d689d6f3bb4a4178668a958c69a1254507c64d279555ebcfb57e833de52e027c"
+    },
+    "step1-package-tests.log": {
+      "bytes": 2640,
+      "sha256": "21dec8a3136cc62ccdf790b38da6ec195446551f43297628d0f604e1f4116853"
+    },
+    "step1-independent-verification.json": {
+      "bytes": 1281,
+      "sha256": "3c16e7315813b59dbd2fdd389299e64cdfb66c3bc13b1a7112ae95f186f9aa31"
+    }
+  },
+  "not_run": [
+    "hellcat_qualification",
+    "acoustic_qualification",
+    "owner_audition",
+    "device",
+    "static_cabin",
+    "dynamic_vehicle"
+  ]
+}
