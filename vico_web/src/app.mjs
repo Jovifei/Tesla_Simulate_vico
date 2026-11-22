@@ -1,9 +1,11 @@
-import {AudioSession,loadCatalog,loadRecordedReferenceCatalog} from './session.mjs';
+import {AudioSession,loadCatalog,loadRecordedReferenceCatalog,checkedFetch} from './session.mjs';
 import {GpsSpeedInput} from './core.mjs';
 import {ReferenceAuditionSession} from './recorded-reference.mjs';
+import {permittedPackage,loadV14Registry} from './v14-registry.mjs';
+import {REGISTRY_SHA256} from './v14-projection.mjs';
 const $=id=>document.getElementById(id),base=new URL('../',import.meta.url);
 let catalog,selected,input={source:'demo',scenario:'stop'},gpsWatch=null,gpsGeneration=0,selectionGeneration=0,view='garage',mode='demo',pedalHeld=false,pedalPointer=null,transitioning=false,stopDrain=Promise.resolve();
-let referenceCatalog;
+let referenceCatalog,releaseRegistry=null;
 let referenceSession,referenceVolume=.2;
 const referenceStatuses=new Map();
 function referenceUpdate(event){
@@ -16,7 +18,8 @@ function referenceUpdate(event){
   $('reference-session-status').textContent=message;
 }
 let runSequence=0,currentRun=null,diagnosticRun=null,currentStage='idle';
-const session=new AudioSession(base,update);
+const eligible=entry=>Boolean(entry && permittedPackage(releaseRegistry,entry.id,entry.bankSha256));
+const session=new AudioSession(base,update,eligible);
 const names={idle:'尚未启动',loading:'资源校验中',running:'正在播放',stopping:'正在停止',error:'已停止 / 异常'};
 function diagnosticReceipt(){
   const run=diagnosticRun||currentRun;
@@ -25,12 +28,18 @@ function diagnosticReceipt(){
     algorithm:run?.algorithm||null,runId:run?.runId||null,stats:diagnosticRun?.stats||null};
 }
 function renderDiagnostics(){$('diagnostics').textContent=JSON.stringify(diagnosticReceipt(),null,2);}
+function controlReadback(s){
+  const usable=Boolean(s?.inputUsable),pct=x=>Number.isFinite(x)&&x>=0&&x<=1?`${Math.round(x*100)}%`:'—';
+  const throttle=usable?pct(s.throttle):'—',rpm=usable&&Number.isFinite(s.rpm)&&s.rpm>=0?`${Math.round(s.rpm)} rpm`:'—';
+  const load=usable?pct(s.load):'—',gear=usable&&Number.isSafeInteger(s.gear)?String(s.gear):'—';
+  $('control-readback').textContent=`模型控制读回 · 油门 ${throttle} · 转速 ${rpm} · 负载 ${load} · 挡位 ${gear}`;
+}
 function update(e){
   if(view!=='drive')return;
   window.VicoCockpit?.update(e.stats, e.stage==='running'&&!transitioning);
   currentStage=e.stage;
   $('play-status').textContent=e.stage==='running'&&e.stats?.startup?.stage==='playing'?'发动机启动中':names[e.stage]||e.stage;
-  $('start').disabled=transitioning||!selected||['loading','running','stopping'].includes(e.stage);
+  $('start').disabled=transitioning||!eligible(selected)||['loading','running','stopping'].includes(e.stage);
   $('algorithm').disabled=transitioning||['loading','running','stopping'].includes(e.stage);
   if(e.detail){$('message').textContent=e.detail;$('message').classList.toggle('error',e.stage==='error');}
   if(e.stats&&currentRun&&e.stats.bankIdentity?.bankSha256===currentRun.bankSha256)
@@ -40,7 +49,7 @@ function update(e){
     resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');
     $('signal').textContent={idle:'声音已停止',loading:'声库校验中',stopping:'正在停止声音',error:'声音已停止 · 异常'}[e.stage]||'尚未运行';
   }
-  if(e.stats&&e.stage==='running'&&!transitioning){const s=e.stats;$('speed').textContent=s.inputUsable?String(Math.round(s.speedKmh)).padStart(3,'0'):'—';$('rpm').textContent=s.inputUsable?Math.round(s.rpm).toLocaleString('en-US'):'—';$('gear').textContent=s.inputUsable?s.gear:'—';$('load').textContent=s.inputUsable?Math.round(s.load*100):'—';
+  if(e.stats&&e.stage==='running'&&!transitioning){const s=e.stats;controlReadback(s);$('speed').textContent=s.inputUsable&&Number.isFinite(s.speedKmh)?String(Math.round(s.speedKmh)).padStart(3,'0'):'—';$('rpm').textContent=s.inputUsable&&Number.isFinite(s.rpm)?Math.round(s.rpm).toLocaleString('en-US'):'—';$('gear').textContent=s.inputUsable&&Number.isSafeInteger(s.gear)?s.gear:'—';$('load').textContent=s.inputUsable&&Number.isFinite(s.load)?Math.round(s.load*100):'—';
     // Dial geometry and redline normalization are owned by VicoCockpit.update above.
     $('signal').textContent=!s.inputUsable?'输入无效或失效 · 内容静音':s.startup?.stage==='playing'?'发动机启动中 · 随后进入怠速':'音频线程运行 · 输入有效';$('sample-rate').textContent=`${s.contextSampleRate} Hz`;
     if(mode==='gps'&&!s.inputUsable)$('gps-status').textContent='定位已过期或失效；内容静音';
@@ -50,10 +59,10 @@ function update(e){
 function chooseInput(next){if(next.source==='gps'&&next.valid)next.receivedAt=performance.now();input=next;session.setInput(input);$('mode-tag').textContent=next.source==='gps'?'WEB GPS · 实验估算':next.source==='manual'?'MANUAL · 虚拟速度':'DEMO · 非真实车辆数据';}
 function stopGps(){gpsGeneration++;const wasGps=input.source==='gps'||mode==='gps';if(input.source==='gps'){input={source:'gps',valid:false};session.setInput(input);}if(gpsWatch!==null)navigator.geolocation.clearWatch(gpsWatch);gpsWatch=null;if(wasGps)$('gps-status').textContent='定位已停止；再次使用需主动授权';}
 function scenario(key){if(mode!=='demo'||view!=='drive')return;stopGps();chooseInput({source:'demo',scenario:key});document.querySelectorAll('[data-scenario]').forEach(b=>b.classList.toggle('active',b.dataset.scenario===key));}
-function resetDigits(){$('speed').textContent=mode==='gps'?'—':'000';$('rpm').textContent='0';$('gear').textContent='N';$('load').textContent='0';}
+function resetDigits(){const gps=mode==='gps';$('speed').textContent=gps?'—':'000';$('rpm').textContent=gps?'—':'0';$('gear').textContent=gps?'—':'N';$('load').textContent=gps?'—':'0';controlReadback(null);}
 function showView(next){view=next;document.body?.classList.toggle('cockpit',next==='drive');$('garage').hidden=next!=='garage';$('drive').hidden=next!=='drive';$('reference').hidden=next!=='reference';}
 function stopAll(){referenceSession?.stop();const generation=++selectionGeneration;transitioning=true;currentRun=null;const pointer=pedalPointer;pedalHeld=false;pedalPointer=null;$('pedal').setAttribute('aria-pressed','false');if(typeof pointer==='number'&&$('pedal').hasPointerCapture?.(pointer))$('pedal').releasePointerCapture(pointer);stopGps();resetDigits();$('rpm-arc').setAttribute('stroke-dashoffset','100');update({stage:'stopping',detail:'正在停止旧会话…'});const closing=session.stop(true);stopDrain=Promise.all([stopDrain,closing]).then(()=>{if(generation===selectionGeneration){transitioning=false;update({stage:'idle',detail:'声音已停止，请点击开始'});}});return stopDrain;}
-async function select(entry){const stopped=stopAll(),generation=selectionGeneration;await stopped;if(generation!==selectionGeneration)return;selected=entry;showView('drive');window.VicoCockpit?.prepare(entry);$('settings').hidden=true;$('diagnostic-panel').hidden=true;$('settings-toggle').setAttribute('aria-expanded','false');$('vehicle-name').textContent=entry.name;$('redline-rpm').textContent=entry.redlineRpm.toLocaleString('en-US');document.querySelectorAll('.vehicle-card').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===entry.id)));update({stage:'idle',detail:`已选择 ${entry.name}，点击开始校验声库并播放`});}
+async function select(entry){const stopped=stopAll(),generation=selectionGeneration;await stopped;if(generation!==selectionGeneration)return;if(!eligible(entry)){selected=null;showView('garage');$('garage-error').textContent='车型声音包尚未通过审核';return;}selected=entry;showView('drive');window.VicoCockpit?.prepare(entry);$('settings').hidden=true;$('diagnostic-panel').hidden=true;$('settings-toggle').setAttribute('aria-expanded','false');$('vehicle-name').textContent=entry.name;$('redline-rpm').textContent=entry.redlineRpm.toLocaleString('en-US');document.querySelectorAll('.vehicle-card').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===entry.id)));update({stage:'idle',detail:`已选择 ${entry.name}，点击开始校验声库并播放`});}
 function navigate(hash){if(location.hash===hash)return route();location.hash=hash;}
 function renderReferenceList(){
   $('reference-list').replaceChildren();
@@ -98,7 +107,7 @@ function route(){
   stopAll();showView('garage');
   if(location.hash&&location.hash!=='#/garage'){$('vehicles').setAttribute('aria-description','未知车型，已返回车库');$('garage-error').textContent='未知车型链接，请从下方六款车型重新选择。';}else $('garage-error').textContent='';
 }
-async function switchMode(next){if(mode===next)return;const stopped=stopAll(),generation=selectionGeneration;mode=next;resetDigits();$('demo-controls').hidden=next!=='demo';$('manual-controls').hidden=next!=='manual';$('pedal').hidden=next!=='demo';$('gps-controls').hidden=next!=='gps';document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.id==='mode-'+next)));chooseInput(next==='demo'?{source:'demo',scenario:'stop'}:next==='manual'?{source:'manual',speedKmh:Number($('target').value)}:{source:'gps',valid:false});if(next==='gps')$('gps-status').textContent='尚未授权定位；内容静音';await stopped;if(generation!==selectionGeneration)return;update({stage:'idle',detail:'输入模式已切换，请点击开始；GPS 需另行授权'});}
+async function switchMode(next){if(mode===next)return;const stopped=stopAll(),generation=selectionGeneration;mode=next;resetDigits();$('mode-description').textContent={demo:'试听演示：使用虚拟速度和模型控制值，不读取车辆。',manual:'试听手动：按目标速度生成模型控制值，不读取车辆。',gps:'驾驶实验：仅使用设备 GPS 速度估算模型值；不是车辆总线数据。'}[next];$('demo-controls').hidden=next!=='demo';$('manual-controls').hidden=next!=='manual';$('pedal').hidden=next!=='demo';$('gps-controls').hidden=next!=='gps';document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.id==='mode-'+next)));chooseInput(next==='demo'?{source:'demo',scenario:'stop'}:next==='manual'?{source:'manual',speedKmh:Number($('target').value)}:{source:'gps',valid:false});if(next==='gps')$('gps-status').textContent='尚未授权定位；内容静音';await stopped;if(generation!==selectionGeneration)return;update({stage:'idle',detail:next==='gps'?'输入模式已切换；请先主动授权定位，再点击开始':'输入模式已切换，请点击开始'});}
 $('start').addEventListener('click',()=>{if(view==='drive'&&selected&&!transitioning){currentRun={runId:++runSequence,vehicleId:selected.id,vehicleName:selected.name,bankSha256:selected.bankSha256,algorithm:$('algorithm').value};diagnosticRun=null;renderDiagnostics();session.start(selected,currentRun.algorithm,input);}});
 $('stop').addEventListener('click',stopAll);
 $('back-garage').addEventListener('click',()=>{stopAll();showView('garage');navigate('#/garage');});
@@ -150,17 +159,21 @@ const safetyStop=()=>stopAll();
 document.addEventListener('visibilitychange',()=>{if(document.hidden)safetyStop();});window.addEventListener('pagehide',safetyStop);
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){safetyStop();$('settings').hidden=true;$('diagnostic-panel').hidden=true;$('settings-toggle').setAttribute('aria-expanded','false');}});
 try{
-  [catalog,referenceCatalog]=await Promise.all([loadCatalog(base),loadRecordedReferenceCatalog(base)]);
+  [catalog,referenceCatalog,releaseRegistry]=await Promise.all([loadCatalog(base),loadRecordedReferenceCatalog(base),loadV14Registry(base,REGISTRY_SHA256,checkedFetch)]);
   $('build-id').textContent=`WEB ${(catalog.webCommit||'unknown').slice(0,8)} / CORE ${catalog.sourceCommit.slice(0,8)}`;
   renderReferenceList();
   $('vehicles').replaceChildren();
   $('reference-link').addEventListener('click',()=>navigate('#/reference'));
-  for(const [i,entry] of catalog.vehicles.entries()){
-    const b=document.createElement('button');b.className='vehicle-card';b.dataset.key=entry.id;b.setAttribute('aria-pressed','false');
+  const cards=releaseRegistry?.vehicles?.map(v=>({vehicle:v,entry:catalog.vehicles.find(e=>e.id===v.legacy_key)}))
+    ?? catalog.vehicles.map(entry=>({vehicle:null,entry}));
+  $('release-status').textContent=releaseRegistry?'车型仅在声音包和人工试听通过后开放。':'资格资料不可用，所有车型暂不可播放。';
+  for(const [i,card] of cards.entries()){
+    const entry=card.entry||{id:card.vehicle.vehicle_id,name:card.vehicle.display_name,kind:'声音车型'};
+    const b=document.createElement('button');b.className='vehicle-card';b.dataset.key=entry.id;b.setAttribute('aria-pressed','false');b.disabled=!eligible(entry);if(b.disabled)b.title='声音包尚未通过审核';
     const kind=document.createElement('span');kind.className='kind';kind.textContent=`${entry.kind} / 0${i+1}`;
     const line=document.createElement('span');line.className='car-line';line.textContent=({c63_w204_v6:'C63',hellcat_v6:'HEMI',ferrari_458:'458',lfa:'LFA',gtr_r35:'R35',supra_jza80:'A80'})[entry.id]||entry.kind;line.setAttribute('aria-hidden','true');
     const name=document.createElement('span');name.className='title';name.textContent=entry.name;
-    const meta=document.createElement('span');meta.className='meta';meta.textContent=`${entry.idleRpm} — ${entry.redlineRpm} rpm`;
+    const meta=document.createElement('span');meta.className='meta';meta.textContent=b.disabled?'暂未开放':`${entry.idleRpm} — ${entry.redlineRpm} rpm`;
     b.append(kind,line,name,meta);b.addEventListener('click',()=>navigate('#/drive/'+entry.id));$('vehicles').append(b);
   }
   showView('garage');await route();

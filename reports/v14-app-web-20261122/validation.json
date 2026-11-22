@@ -1,0 +1,136 @@
+{
+  "task_id": "v14-local-handoff-20261122",
+  "base_sha": "953d22041836a55fc50c6347045b8982bdfdc1ca",
+  "registry_sha256": "ff5d9a31199f102dd3267857b98086b174002aa7f5ce990d335ef4b61622d3f5",
+  "m0_reference_sha": "40b7b0d0f2e68d833c03dd90ffc317ebae3dbb7c",
+  "verified_source_sha256": {
+    "vico_app/Project/android/app/src/main/assets/screens/dashboard.html": "ad4f67cf851cf578d1cd5c1ca94edc8559ea12c886bd4767e02d51018fafa672",
+    "vico_app/Project/android/app/src/main/assets/screens/library.html": "ae935b85c71d4afc9434a064f290182bc9991c9e6aaf0610ba72972b16f321a3",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/MainActivity.kt": "ff4b664a47391292503e1c5b9e6a79c7ffc9f9d5ecfcf80eecaae56475393496",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioEngine.kt": "9de8e0adc6babfeba7b513377eb48f4ccd16b107a2bc73f8574b58e0548a4230",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/AudioInputGate.kt": "939c584486bf2d02d1e9ca9514de65376f165110fde81bdeaaca442c6501d978",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/SoundModel.kt": "41022a5b2f8aeb24cac606baeaaf08d0ddd2368877db5a6fef92cab6c2ac8208",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/web/VicoBridge.kt": "1b0a7316978d27f829410699b80fceb64dd878631ca9ba4788a6ded194bdd3db",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/AudioInputGateTest.kt": "4a17318de90626122efe997e746a1bd1a6f96876174b64238d77a840f6e1ac23",
+    "vico_app/tools/js/test_input_quality_ui.cjs": "0e043635805df15006566f646fd6d774e1a7e5cf0cee033fe9476badd5573107",
+    "vico_web/index.html": "bbc0376aa86b3f71407e658ff920621deae89c27994f585ec7174366b2720072",
+    "vico_web/src/app.mjs": "b91378814027fe2aec4caf61100902e595065015a73f06c62e3c8ebbd2019e05",
+    "vico_web/src/core.mjs": "c65eb66291a4e510eceeccb0394195b11af31b84accee39e93df3c5e105df21a",
+    "vico_web/src/factory-display.js": "c6fb1f4eab9eb026791a852f5c44afeeb46afcc18731f2690fc713db0e160296",
+    "vico_web/src/session.mjs": "6b988fec47fc3c46051eda7eca6e9aa2cad9c207f27fdb4b75cc4813e8a67631",
+    "vico_web/test/cockpit_app.test.mjs": "e39e23ec57705561bac82580c8e6478ebc6178ac8f3937afec32baf28a9a13cc",
+    "vico_web/test/core.test.mjs": "d59cc9596ccb64b92367e59f9f864719d1c2bec06bb65416f293036f84469abb",
+    "vico_web/test/factory-display.test.mjs": "72c224d15d18a0431bf49e8dba388f6e95506706011bec4066e0f4e6ff720b42",
+    "vico_web/test/recorded-reference-ui.test.mjs": "989f9a4285d407a7b374fcbf662d397c98db149744a2e968b2fee67074520366",
+    "vico_web/test/ui.test.mjs": "a7df04e678ff0a18e762e0aba3d0262b343fa23c073230b84afd7ee14a0b3102",
+    "vico_web/test/worklet.test.mjs": "c858a8b326c408f4f64823bd5e7db56df170f63eb2a36570e8d448806ecab4f5",
+    "vico_web/tools/browser_w7_instruments.py": "ba02c5f45f4f98a8cd0f290a1026dd4aa1ec161fbc7d5619c54ec1c33205291d",
+    "vico_web/tools/build.mjs": "4fd030a8c1022672ac2da9539307a442ae8411053b0f712b1d932d202ec30243",
+    "vico_app/Project/android/app/src/main/assets/v14-vehicle-registry.json": "ff5d9a31199f102dd3267857b98086b174002aa7f5ce990d335ef4b61622d3f5",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/sound/V14SyntheticController.kt": "8448c3dd8ef0be932debb0918a6a551edafe0bdef16675a0f4aecabb48a8b768",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/vehicle/V14Projection.kt": "1d7fba866760cc24b91fcdfb54f3240351eaa5ef464a5a657a49b794bef5811d",
+    "vico_app/Project/android/app/src/main/java/com/vico/simulator/vehicle/V14ReleaseGate.kt": "2b93bccf0224e840e4ea12d7597afa3ce73d6a1ef0efe1f8a72a7789459bb5fe",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/sound/V14SyntheticControllerTest.kt": "482b45d64adc62797216ff480a14b352181ba6ebcda0262dffb5f1d91eada0ff",
+    "vico_app/Project/android/app/src/test/java/com/vico/simulator/vehicle/V14ReleaseGateTest.kt": "3d8195671efd70160df0cd9fb786dfc85e128ef848d31b471ef8845f87ae7b49",
+    "vico_app/tools/js/test_v14_dashboard.cjs": "1e0ab14b80c3418b4081a1dbd41a7588e4009912b6f20a3fa3b0d777e0cef8ed",
+    "vico_web/src/v14-projection.mjs": "de21a38eb7e2f7c37f84920d56da8fa0f466c98b014bc7ddcb4562c8f4535be5",
+    "vico_web/src/v14-registry.mjs": "f79c2ee9ecb2c9fbf5607007aa91d572ab03f9c536c3e819ead7719329333540",
+    "vico_web/test/android-v14-library.test.mjs": "250de5540fcec37ddb3e8f54d0245093ae8dca75194d1f2861133d44358d3c37",
+    "vico_web/test/v14-registry.test.mjs": "8cbe5a10d996529920ed00923064d0f185bff5279391a55a56dd22f662d15ace",
+    "vico_web/tools/project-v14-registry.mjs": "8e3a56dd6550d62cd6640a920d7df7fc1da2476169ac2684d150ea24c3086289",
+    "vico_web/v14-vehicle-registry.json": "ff5d9a31199f102dd3267857b98086b174002aa7f5ce990d335ef4b61622d3f5"
+  },
+  "android": {
+    "gradle_tests": {
+      "tests": 74,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suites": 8,
+      "lint_debug": "PASS",
+      "assemble_debug": "PASS",
+      "offline": true
+    },
+    "node_scripts": {
+      "count": 5,
+      "status": "PASS",
+      "scope": "Node DOM fixtures, not Android WebView"
+    },
+    "apk_sha256": "8b32ad80e8897afb11acda592d2b8064345db0c72ce6157d42fdb2630ccc53b1",
+    "log_sha256": {
+      "android-modes-synthetic-final-v2.log": "f76fb05b61b625ef50f13fd38183b833c614d0ec676b951c8625eace00e4fa9c",
+      "final-test_v14_dashboard.cjs.log": "f8f329522153dba1c37b6da13722c488a307dd7ca74db658bb96691867c92e07",
+      "final-test_input_quality_ui.cjs.log": "a5da901059ab6ce55a71e7c7047efb6e1ce92569b4222238101c4f4c9fae34af",
+      "final-test_mounting_ui.cjs.log": "52b1085c978d5710e01217c6ea0ff7e84f547e6c0e3e03eb18c059f5324c147d",
+      "final-test_telemetry_ui.cjs.log": "6a5d55818fb05bfb47840e673da2587c2e2461eb8611fa5c5302e4503cc420b1",
+      "final-test_calibration_ui.cjs.log": "9046f12bc71e436530c68db7b8735cf2dae57d266a5dca56f028c932d2d93507"
+    },
+    "source_receipt_sha256": "b498ba637a21d31679f9dd0ec75290b4b5a8982ff29fd6a6c542c1d0f6c15624",
+    "limitations": [
+      "Release gate remains locked; no trusted package/owner evidence binding.",
+      "QA controller is not exposed to ordinary UI; synthetic controls do not assert vehicle telemetry or gear meaning.",
+      "Throttle and gear do not prove acoustic influence in existing bank renderer.",
+      "UI and model values are simulated or inferred from phone sensors."
+    ]
+  },
+  "web": {
+    "tests": {
+      "command": "node --test test/*.test.mjs",
+      "exit": 0,
+      "pass": 188,
+      "fail": 0,
+      "log": "node-tests-final2.log"
+    },
+    "build": {
+      "command": "node tools/build.mjs --out E:/Tesla_speed/experiments/v14-local-handoff-20261122/ui/web-followup/build-final --repo E:/Tesla_speed/worktrees/v14-app-web-20261122",
+      "exit": 0,
+      "log": "build-final.log"
+    },
+    "browser": {
+      "command": "python browser_smoke.py",
+      "exit": 0,
+      "log": "browser-smoke-final.log",
+      "receipt": "browser-smoke-final.json",
+      "screenshot": "garage-final-390.png"
+    },
+    "build_manifest_sha256": "04bc655baa367fa2f5bda264e869c8d8a6b3e3ca5b98b5358542258fbf61e004",
+    "source_receipt_sha256": "8a7a50b95fef7680ba0a9f76ab286230355051e43d3f791dd9422519662903d3",
+    "browser_result": {
+      "scope": "LOCAL_SYNTHETIC_WORKLET_AND_LOCKED_UI_NOT_DEVICE_OR_HUMAN",
+      "errors": [],
+      "garage": {
+        "cards": 9,
+        "locked": 9,
+        "scrollWidth": 390,
+        "viewport": 390,
+        "modeText": "试听模式：参考录音驾驶模式：选择车型和输入主动开始停车调试 / 乘客操作"
+      },
+      "referenceVisible": true,
+      "worklet": {
+        "contextState": "running",
+        "peak": 0.09698537737131119,
+        "muted": true,
+        "controls": [
+          0.4,
+          2300,
+          0.5,
+          2
+        ],
+        "error": null
+      },
+      "deepLinkBlocked": true
+    },
+    "browser_result_sha256": "2cfcc81e5b0d7232180a521f39c86a1795e6c937c68753d87d7a2e566bea1896"
+  },
+  "not_run": [
+    "Android hardware",
+    "actual Android WebView bridge",
+    "qualified package playback",
+    "audible native QA session",
+    "formal S12 review page",
+    "owner audition",
+    "external speakers",
+    "static cabin",
+    "dynamic road test"
+  ]
+}

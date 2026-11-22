@@ -3,6 +3,7 @@ package com.vico.simulator.web
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.vico.simulator.MainActivity
+import com.vico.simulator.vehicle.V14ReleaseGate
 
 /**
  * JS <-> Kotlin 桥。HTML 侧 (bridge.js) 调用 window.AndroidBridge.*。
@@ -10,6 +11,14 @@ import com.vico.simulator.MainActivity
  * 显示单位仅操作线程安全的 SharedPreferences，同步返回以避免页面切换竞态。
  */
 class VicoBridge(private val activity: MainActivity, private val webView: WebView) {
+    @JavascriptInterface
+    fun getV14RegistryJson(): String = try {
+        val bytes = activity.assets.open("v14-vehicle-registry.json").use { it.readBytes() }
+        V14ReleaseGate.checkedRegistry(bytes) ?: "{}"
+    } catch (_: Exception) { "{}" }
+
+    @JavascriptInterface
+    fun isV14VehicleAvailable(key: String): Boolean = V14ReleaseGate.canPlay(key)
 
     // ---- 导航 (原有) ----
     @JavascriptInterface

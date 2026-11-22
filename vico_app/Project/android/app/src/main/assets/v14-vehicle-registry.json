@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0",
+  "vehicles": [
+    {
+      "vehicle_id": "c63_w204",
+      "display_name": "Mercedes-Benz C63 W204",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "c63_w204_v6",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "c63_w204_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "gtr_r35",
+      "display_name": "Nissan GT-R R35",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "gtr_r35",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "gtr_r35_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "lfa",
+      "display_name": "Lexus LFA",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "lfa",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "lfa_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "ferrari_458",
+      "display_name": "Ferrari 458 Italia",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "ferrari_458",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "ferrari_458_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "rx7_fd",
+      "display_name": "Mazda RX-7 FD3S",
+      "catalog_status": "TARGET_LOCKED",
+      "readiness_status": "MODEL_INCOMPLETE",
+      "template_id": "classic_rotary",
+      "legacy_key": null,
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "rx7_fd_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "supra_jza80",
+      "display_name": "Toyota Supra JZA80",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "supra_jza80",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "supra_jza80_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "aventador_lp700",
+      "display_name": "Lamborghini Aventador LP700",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": null,
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "aventador_lp700_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "hellcat_inherited_stage_l",
+      "display_name": "Dodge Hellcat",
+      "catalog_status": null,
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": null,
+      "legacy_key": "hellcat_v6",
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "hellcat_inherited_stage_l_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        },
+        {
+          "route_id": "c2c",
+          "package_id": "hellcat_inherited_stage_l_c2c",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    },
+    {
+      "vehicle_id": "m4_f82_s55_stock",
+      "display_name": "BMW M4 F82 S55 6MT",
+      "catalog_status": "TARGET_LOCKED",
+      "readiness_status": "SPEC_UNVERIFIED",
+      "template_id": "inline6",
+      "legacy_key": null,
+      "sound_packages": [
+        {
+          "route_id": "direction_a",
+          "package_id": "m4_f82_s55_stock_direction_a",
+          "package_sha256": null,
+          "owner_audition": {
+            "status": "NOT_RUN",
+            "route_id": null,
+            "package_id": null,
+            "package_sha256": null,
+            "evidence_ref": null
+          }
+        }
+      ]
+    }
+  ]
+}

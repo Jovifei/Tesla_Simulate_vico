@@ -506,29 +506,32 @@
 </nav>
 
 <script>
-    // Current product catalog: keep the UI in lockstep with the native six-vehicle gate.
+    // Display only the fingerprint-checked M0 registry returned by the native bridge.
     (function installCurrentVehicleCatalog(){
-        var vehicles = [
-          {key:'hellcat_v6', name:'Dodge Challenger SRT Hellcat', spec:'6.2L 机械增压 V8 · 低频脉冲 · 厚重回火', detail:'S12 声库 · 48 kHz mono float'},
-          {key:'ferrari_458', name:'Ferrari 458 Italia', spec:'4.5L 平曲轴 V8 · 高转尖叫 · 金属回火', detail:'S12 声库 · 48 kHz mono float'},
-          {key:'lfa', name:'Lexus LFA', spec:'4.8L V10 · 5/10/15 阶次 · ASG 换挡', detail:'S12 声库 · 48 kHz mono float'},
-          {key:'gtr_r35', name:'Nissan GT-R R35', spec:'3.8L 双涡轮 V6 · 双涡轮啸叫 · BOV 回火', detail:'S12 声库 · 48 kHz mono float'},
-          {key:'c63_w204_v6', name:'Mercedes-Benz C63 W204', spec:'6.2L 自吸 V8 · 断续撕裂 · 金属回火', detail:'S12 声库 · 48 kHz mono float'},
-          {key:'supra_jza80', name:'Toyota Supra JZA80', spec:'2JZ-GTE 直六双涡轮 · 厚重进气 · 回火', detail:'S12 声库 · 48 kHz mono float'}
-        ];
+        var vehicles = [];
+        try {
+          var registry = JSON.parse(window.AndroidBridge.getV14RegistryJson());
+          if (registry.schema_version === '1.0' && Array.isArray(registry.vehicles)) vehicles = registry.vehicles;
+        } catch (_) {}
         var grid = document.getElementById('modern-vehicle-grid');
         if (!grid) return;
-        grid.innerHTML = vehicles.map(function(v){
-          return '<div class="vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs" data-vehicle-key="'+v.key+'">' +
-            '<div class="flex items-center justify-between"><div class="flex items-center gap-xs"><div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color:#E6F0FF;"><span class="material-symbols-outlined text-sm" style="color:#0058bc;">sports_motorsports</span></div><div class="font-body-md font-medium">'+v.name+'</div></div><span class="badge-active items-center gap-base px-xs py-base rounded-full font-label-md text-label-md" style="background-color:#E6F0FF;color:#0058bc;"><span class="material-symbols-outlined" style="font-size:12px;">check_circle</span>已选择</span></div>' +
-            '<p class="font-label-md text-label-md text-on-surface-variant">'+v.spec+'</p>' +
-            '<div class="flex items-center gap-xs font-label-md text-label-md text-secondary border-t border-[#E9ECEF] pt-xs"><span class="material-symbols-outlined text-sm">tune</span><span>'+v.detail+'</span></div>' +
-            '<div class="flex gap-xs mt-base"><button class="flex-1 bg-primary text-on-primary font-label-md py-xs rounded-DEFAULT hover:opacity-90 active:scale-95 transition-all" onclick="window.AndroidBridge && window.AndroidBridge.setVehicle(\''+v.key+'\'); setActive(\''+v.key+'\');">选择</button><button class="flex-1 border border-[#E9ECEF] text-on-surface bg-white font-label-md py-xs rounded-DEFAULT hover:bg-surface-container" onclick="window.AndroidBridge && window.AndroidBridge.previewVehicle(\''+v.key+'\');">试听</button></div>' +
-          '</div>';
-        }).join('');
+        grid.replaceChildren();
+        vehicles.forEach(function(v){
+          if (!v || typeof v.display_name !== 'string') return;
+          var key = typeof v.legacy_key === 'string' ? v.legacy_key : '';
+          var allowed = !!key && window.AndroidBridge.isV14VehicleAvailable(key);
+          var card = document.createElement('div');card.className='vehicle-card bg-surface-container-lowest card-border rounded-DEFAULT p-sm flex flex-col gap-xs';card.dataset.vehicleKey=key;
+          var name = document.createElement('div');name.className='font-body-md font-medium';name.textContent=v.display_name;
+          var status = document.createElement('p');status.textContent=allowed?'已开放':'声音包尚未通过审核';
+          var choose=document.createElement('button');choose.textContent='选择';choose.disabled=!allowed;
+          choose.addEventListener('click',function(){window.AndroidBridge.setVehicle(key);});
+          var preview=document.createElement('button');preview.textContent='试听';preview.disabled=!allowed;
+          preview.addEventListener('click',function(){window.AndroidBridge.previewVehicle(key);});
+          card.append(name,status,choose,preview);grid.append(card);
+        });
         var title = document.querySelector('h1');
         var subtitle = title && title.parentElement ? title.parentElement.querySelector('p') : null;
-        if (subtitle) subtitle.textContent = '选择车型声浪（6 款）';
+        if (subtitle) subtitle.textContent = vehicles.length ? '通过审核后可选择和试听' : '车型资格资料不可用，暂不可播放';
         document.querySelectorAll('h2').forEach(function(h){
           if ((h.textContent || '').trim() === '经典声浪') {
             var section = h.closest('section');
@@ -537,7 +540,7 @@
             h.textContent = '当前车型';
           }
         });
-        window.__vicoCurrentVehicleKeys = vehicles.map(function(v){ return v.key; });
+        window.__vicoCurrentVehicleKeys = vehicles.map(function(v){ return v.legacy_key; }).filter(Boolean);
     })();
 
     let activeKey = '';

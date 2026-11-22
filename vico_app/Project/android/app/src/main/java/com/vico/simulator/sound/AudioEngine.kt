@@ -274,6 +274,7 @@ class AudioEngine(context: Context) {
     }
 
     fun stop(reason: String = "USER_STOP") {
+        v14SyntheticController.cancel()
         model.requestCoordinatedVoiceCancellation()
         qualificationRoute.clear()
         if (referenceSession != null) referenceCancelReason = reason
@@ -366,6 +367,7 @@ class AudioEngine(context: Context) {
     @Synchronized
     fun setVehicle(vehicleKey: String): Boolean {
         if (isPlaybackBusy()) return false
+        v14SyntheticController.cancel()
         qualificationRoute.clear()
         if (digitalCapture?.isFinished == false) {
             lastAudioError = "Finish or cancel digital capture before changing vehicle"
@@ -388,7 +390,13 @@ class AudioEngine(context: Context) {
         current = state
     }
 
+    // No bridge or product UI exposes this QA-only path.
+    internal val v14SyntheticController = V14SyntheticController { state ->
+        if (state == null) current = null else pushState(state)
+    }
+
     fun release() {
+        v14SyntheticController.cancel()
         model.requestCoordinatedVoiceCancellation()
         if (referenceSession != null) referenceCancelReason = "ACTIVITY_DESTROY"
         running = false

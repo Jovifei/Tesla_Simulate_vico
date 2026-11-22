@@ -59,7 +59,7 @@
   for(let n=0;n<=rpmMax;n+=1000){const a=180+180*n/rpmMax,p=pt(cx,cy,r-31,a);out+=txt(fmt(p[0]),fmt(p[1]+6),n/1000,18,'r5-scale','middle',`data-scale="${n}"`);}
   return out+'</g>';
  }
- function load(x,y,width=180){return `<g class="r5-load"><rect x="${x}" y="${y}" width="${width}" height="4" rx="2" class="r5-load-base"/><rect id="load-bar" x="${x}" y="${y}" width="0" height="4" rx="2" class="r5-load-fill" data-width="${width}"/>${txt(x,y+28,'虚拟负载',mobile?12:16,'r5-meta','start')}${txt(x+width-17,y+28,'0',mobile?13:17,'r5-meta','end','id="load"')}${txt(x+width,y+28,'%',mobile?12:16,'r5-meta','end')}</g>`;}
+ function load(x,y,width=180,labelOffset=28){return `<g class="r5-load"><rect x="${x}" y="${y}" width="${width}" height="4" rx="2" class="r5-load-base"/><rect id="load-bar" x="${x}" y="${y}" width="0" height="4" rx="2" class="r5-load-fill" data-width="${width}"/>${txt(x,y+labelOffset,'虚拟负载',mobile?12:16,'r5-meta','start')}${txt(x+width-17,y+labelOffset,'0',mobile?13:17,'r5-meta','end','id="load"')}${txt(x+width,y+labelOffset,'%',mobile?12:16,'r5-meta','end')}</g>`;}
  function redline(x,y){const baseline=mobile?y:Math.min(y,330);return `<g class="r5-redline">${txt(x,baseline,'REDLINE',mobile?10:14,'r5-meta','end')}${txt(x+12,baseline,entry.redlineRpm,mobile?12:17,'r5-meta','start','id="redline-rpm"')}${txt(x+(mobile?58:79),baseline,'rpm',mobile?10:14,'r5-meta','start')}</g>`;}
  function footerLabel(x,y,s){return txt(x,y,s,16,'r5-caption');}
  function original(style){
@@ -77,7 +77,7 @@
   return '';
  }
  function digital(){return `${bar(80,49,1040,17)}${value('speed',600,246,174,'km/h',316)}${value('gear',1020,228,109,'虚拟挡位',285)}${value('rpm',200,226,66,'RPM',277)}${load(72,299,235)}${redline(990,348)}<path d="M386 105 V297 M812 105 V297" class="r5-line"/>`;}
- function compact(){return `${bar(29,48,342,14)}${value('speed',200,193,111,'km/h',243)}${value('gear',91,310,66,'虚拟挡位',348)}${value('rpm',285,303,40,'RPM',339)}${load(23,365,150)}${redline(262,389)}`;}
+ function compact(){return `${bar(29,48,342,14)}${value('speed',200,193,111,'km/h',243)}${value('gear',91,310,66,'虚拟挡位',348)}${value('rpm',285,303,40,'RPM',339)}${load(23,359,150,22)}${redline(262,381)}`;}
  function resolve(id,desired=preference){return desired==='auto'?(Object.hasOwn(AUTO,id)?AUTO[id]:'mercedes'):(OPTIONS.includes(desired)?desired:'mercedes');}
  function render(){
   activeStyle=resolve(entry.id);rpmMax=Math.max(activeStyle==='honda'?10000:0,Math.floor(entry.redlineRpm/1000)*1000+1000);speedMax=SPEED_MAX[activeStyle]||320;descriptors=[];

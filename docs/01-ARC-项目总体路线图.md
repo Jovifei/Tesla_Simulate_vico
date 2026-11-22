@@ -270,6 +270,7 @@ Jovi 接受实际交付声音与操作体验，而非用代理分数代签
 
 ## 可选路线（不计主线进度）
 
+- APP8 v1.4 candidate (2026-11-22), [Android / Web evidence](../reports/v14-app-web-20261122/README.md). Nine planned targets locked.
 - AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。
 - ESP32/硬件/Simulink：背景研究，不计 Android 主线分母。
 - iOS/小程序：后续平台，不计本次完成范围。

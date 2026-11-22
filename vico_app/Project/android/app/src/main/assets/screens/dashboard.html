@@ -274,10 +274,20 @@
 </section>
 <!-- Section 3: Simulation Controls -->
 <section class="bg-white rounded-DEFAULT card-border p-md flex flex-col gap-md">
-<h2 class="font-headline-md text-headline-md">演示模式</h2>
+<h2 class="font-headline-md text-headline-md">声音模式</h2>
+<div role="group" aria-label="声音模式" class="flex gap-sm">
+<button type="button" id="v14-mode-audition" aria-pressed="false">试听模式</button>
+<button type="button" id="v14-mode-drive" aria-pressed="false">驾驶模式</button>
+</div>
+<p class="text-xs text-secondary">试听使用模拟工况；驾驶模式使用手机传感器估算，无法读取车辆实际油门、转速或挡位。</p>
+<p id="v14-input-status" role="status">输入状态未知</p>
+<div class="grid grid-cols-2 gap-xs" aria-label="声音控制输入">
+<div>油门（模拟/估算）：<span id="v14-throttle">—</span></div><div>转速（模型）：<span id="v14-rpm">—</span></div>
+<div>负荷（模型）：<span id="v14-load">—</span></div><div>挡位（模型）：<span id="v14-gear">—</span></div>
+</div>
 <div class="flex items-center justify-between">
-<div class="font-body-md">无传感器调试（模拟驾驶）</div>
-<button class="w-12 h-6 bg-surface-variant rounded-full relative transition-colors duration-200 focus:outline-none" id="demo-toggle">
+<div class="font-body-md">模拟工况</div>
+<button hidden class="w-12 h-6 bg-surface-variant rounded-full relative transition-colors duration-200 focus:outline-none" id="demo-toggle">
 <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200"></span>
 </button>
 </div>
@@ -363,14 +373,15 @@
             if(liveSpeed) liveSpeed.textContent = display.speed;
             var su = document.getElementById('speed-unit'); if (su) su.textContent = display.unit;
             if(liveAccel) liveAccel.textContent = display.accel;
-            if(liveRpm) liveRpm.textContent = s.rpm;
-            if(cur) cur.textContent = s.vehicle ? (s.vehicle + ' · ' + (s.gear||1) + ' 挡' + (s.normalBankVariantActive && s.normalBankVariant==='c63_low_rpm_preroll_v1' ? ' · C63低转候选' : '')) : '';
+            renderV14Input(s.v14Input);
+            if(liveRpm) liveRpm.textContent = s.v14Input?.status==='VALID' ? s.v14Input.rpm : '—';
+            if(cur) cur.textContent = s.vehicle || '';
             if(ds) ds.textContent = display.standardSpeed;
             var dq=document.getElementById('debug-quality'); if(dq)dq.textContent=display.quality;
             var age=document.getElementById('debug-age'); if(age)age.textContent=display.age;
             var shown=document.getElementById('debug-display'); if(shown)shown.textContent=display.speed+' '+display.unit;
             if(da) da.textContent = typeof s.ay === "number" ? s.ay.toFixed(2) : "—";
-            if(dr) dr.textContent = s.rpm;
+            if(dr) dr.textContent = s.v14Input?.status==='VALID' ? s.v14Input.rpm : '—';
             if(dc) dc.textContent = s.calibrated;
             if(warn) {warn.textContent=display.warning;warn.classList.toggle('hidden', !display.warning);}
             if(gpsIcon){
@@ -390,9 +401,22 @@
         // === 启停 ===
         var startBtn = document.getElementById('start-stop-btn');
         var isRunning = false;
+        var releaseBlocked = true;
+        var inputExpiryTimer = null;
+        function renderV14Input(input){
+          var status=input && input.status || 'MISSING', valid=status==='VALID';
+          var labels={BLOCKED:'声音包尚未通过审核',STOPPED:'已停止',MISSING:'等待输入',STALE:'输入已失效',VALID:input?.origin==='SYNTHETIC_MODEL'?'模拟输入':'手机估算输入'};
+          var statusEl=document.getElementById('v14-input-status');if(statusEl)statusEl.textContent=labels[status]||'输入不可用';
+          ['throttle','rpm','load','gear'].forEach(function(k){var el=document.getElementById('v14-'+k);if(el)el.textContent=valid && Number.isFinite(input[k]) ? String(input[k]) : '—';});
+          releaseBlocked=status==='BLOCKED'||status==='MISSING'||status==='STALE';
+          clearTimeout(inputExpiryTimer);
+          if(valid)inputExpiryTimer=setTimeout(function(){renderV14Input({status:'STALE'});var rpm=document.getElementById('live-rpm');if(rpm)rpm.textContent='—';},2500);
+          renderRunning();
+        }
         function renderRunning(){
           if(!startBtn) return;
           startBtn.textContent = isRunning ? '停止声浪' : '启用声浪';
+          startBtn.disabled = !isRunning && releaseBlocked;
           startBtn.classList.toggle('bg-error', isRunning);
           startBtn.classList.toggle('bg-primary', !isRunning);
         }
@@ -447,15 +471,15 @@
           demoToggle.classList.toggle('bg-primary',demoOn);
           demoToggle.classList.toggle('bg-surface-variant',!demoOn);
           if(knob) knob.classList.toggle('translate-x-6',demoOn);
+          document.getElementById('v14-mode-audition')?.setAttribute('aria-pressed',String(demoOn));
+          document.getElementById('v14-mode-drive')?.setAttribute('aria-pressed',String(!demoOn));
+          document.getElementById('demo-scenarios').hidden=!demoOn;
         }
         if(demoToggle) demoToggle.addEventListener('click', function(){
-          demoOn=!demoOn;
-          var knob=demoToggle.querySelector('span');
-          demoToggle.classList.toggle('bg-primary',demoOn);
-          demoToggle.classList.toggle('bg-surface-variant',!demoOn);
-          if(knob) knob.classList.toggle('translate-x-6',demoOn);
-          window.AndroidBridge.setDemoMode(demoOn);
+          window.AndroidBridge.setDemoMode(!demoOn);
         });
+        document.getElementById('v14-mode-audition')?.addEventListener('click',function(){renderV14Input({status:'MISSING'});window.AndroidBridge.setDemoMode(true);});
+        document.getElementById('v14-mode-drive')?.addEventListener('click',function(){renderV14Input({status:'MISSING'});window.AndroidBridge.setDemoMode(false);});
         document.querySelectorAll('#demo-scenarios button').forEach(function(b){
           b.addEventListener('click', function(){
             if(!demoOn){ demoToggle.click(); }

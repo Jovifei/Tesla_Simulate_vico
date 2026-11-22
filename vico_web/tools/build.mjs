@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {SOURCE_SHA,decodeF32Wav,validateSpec,PEAK_CONTRACT} from '../src/core.mjs';
 import {validateRecordedReference} from '../src/recorded-reference.mjs';
+import {REGISTRY_SHA256} from '../src/v14-projection.mjs';
 export const WEB=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 export const VEHICLES=Object.freeze([
   ['c63_w204_v6','Mercedes-Benz C63 W204','V8'],['hellcat_v6','Dodge Challenger SRT Hellcat','V8'],
@@ -129,6 +130,11 @@ export async function buildSite({out,readBlob,web=WEB,webCommit='TEST_FIXTURE',t
   }
   for(const name of ['index.html','style.css','favicon.svg'])await write(name,await fs.readFile(path.join(web,name)));
   await fs.cp(path.join(web,'src'),path.join(out,'src'),{recursive:true,errorOnExist:true,force:false});
+  if(REGISTRY_SHA256){
+    const registry=await fs.readFile(path.join(web,'v14-vehicle-registry.json'));
+    if(sha(registry)!==REGISTRY_SHA256)throw new Error('M0 registry projection fingerprint mismatch');
+    await write('v14-vehicle-registry.json',registry);
+  }
   const referenceCatalog={schema:'vico.recorded.reference.catalog.v1',scope:'REFERENCE_ONLY',automaticLoop:false,
     qualification:'SOURCE_TIMBRE_DIRECTION_ONLY_NOT_PRODUCT_OR_OEM',
     references:references.map(({reference,sha256,bytes})=>({...reference,file:`assets/recorded-references/${path.basename(reference.file)}`,sha256,bytes}))};

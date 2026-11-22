@@ -169,7 +169,7 @@ export class Powertrain {
     if (this.rpm>=s.afterfire_minimum_rpm&&throttle>=.25) this.armed=true;
     const after=this.rpm>=s.afterfire_minimum_rpm&&(shifted||this.lastThrottle-throttle>.24||accel<-1.2&&this.armed);
     if (after) this.armed=false; this.lastThrottle=throttle;
-    return {timeS,rpm:this.rpm,load:clamp(throttle*gain,0,1),shiftGain:gain,gear:this.gear,shiftTrigger:shifted,afterfireTrigger:after,muted:speed>=148};
+    return {timeS,rpm:this.rpm,throttle,load:clamp(throttle*gain,0,1),shiftGain:gain,gear:this.gear,shiftTrigger:shifted,afterfireTrigger:after,muted:speed>=148};
   }
 }
 
@@ -203,15 +203,24 @@ export class LiveEngine {
     this.outputPeak=0;this.outputExcess=0;this.outputNonfinite=0;
     this.startupTotal=start?.samples.length||0;this.startupFade=Math.max(1,Math.round(this.rate*(start?.fadeInMs??5)/1000));this.startupHandoff=Math.max(1,Math.round(this.rate*(start?.handoffMs??150)/1000));
     this.frame=0; this.running=true; this.runGain=0; this.contentGain=0; this.source='demo'; this.scenario='stop'; this.target=0;
-    this.heartbeatFrame=0; this.gpsUntil=-1; this.gpsSpeed=0; this.gpsAccel=0; this.speed=0; this.state=null; this.usable=false; this.wasUsable=false;
+    this.heartbeatFrame=0; this.gpsUntil=-1; this.gpsSpeed=0; this.gpsAccel=0; this.speed=0; this.state=null; this.usable=false; this.wasUsable=false;this.fixtureControls=null;
   }
   command(m) {
     if (m.type==='heartbeat') this.heartbeatFrame=this.frame;
     else if (m.type==='stop') {this.running=false;this.cancelStartup();if(this.recorded)this.renderer.clearEvents();}
     else if (m.type==='input') {
-      if (!['demo','manual','gps'].includes(m.source)) throw new Error('Invalid source');
+      if (!['demo','manual','gps','v14_fixture'].includes(m.source)) throw new Error('Invalid source');
+      let fixture=null;
+      if(m.source==='v14_fixture') {
+        const {throttle,rpm,load,gear}=m;
+        if(m.scope!=='SYNTHETIC_ONLY'||!Number.isFinite(throttle)||throttle<0||throttle>1||
+           !Number.isFinite(rpm)||rpm<0||!Number.isFinite(load)||load<0||load>1||!Number.isSafeInteger(gear))
+          throw new Error('Invalid synthetic four-input frame');
+        fixture={throttle,rpm,load,gear};
+      }
       if (this.source!==m.source) { this.renderer.clearEvents(); this.power.reset(); this.gpsUntil=-1; this.recorded?.cancel(); }
       this.source=m.source;
+      if(fixture){this.fixtureControls=fixture;this.cancelStartup();}
       if(m.source==='gps'||m.source==='manual'&&m.speedKmh>0)this.cancelStartup();
       if (m.source==='demo') { if (!['launch','cruise','overspeed','decel','stop'].includes(m.scenario)) throw new Error('Invalid scenario'); this.scenario=m.scenario; }
       if (m.source==='manual') this.target=clamp(finite(m.speedKmh,'target speed'),0,144);
@@ -226,10 +235,13 @@ export class LiveEngine {
     this.usable=this.running && this.frame-this.heartbeatFrame<=this.rate*.75 && (this.source!=='gps'||this.frame<this.gpsUntil);
     if(!this.usable)this.cancelStartup();
     if(this.starting){this.speed=0;this.motion.speed=0;this.motion.accel=0;}
+    else if (this.source==='v14_fixture') this.speed=0;
     else if (this.source!=='gps') { this.motion.step(.02,this.source==='manual'?'manual':this.scenario,this.target); this.speed=this.motion.speed; }
     else this.speed=this.gpsSpeed;
     const accel=this.source==='gps'?this.gpsAccel:this.motion.accel;
-    this.state=this.power.update(this.frame/this.rate,this.speed,accel,clamp(accel/3,0,1));
+    this.state=this.source==='v14_fixture'
+      ? {timeS:this.frame/this.rate,...this.fixtureControls,shiftGain:1,shiftTrigger:false,afterfireTrigger:false,muted:false}
+      : this.power.update(this.frame/this.rate,this.speed,accel,clamp(accel/3,0,1));
     if (this.source==='gps'||!this.usable||!this.wasUsable) { this.state.shiftTrigger=false; this.state.afterfireTrigger=false; }
     if (this.wasUsable&&!this.usable) this.renderer.clearEvents(); this.wasUsable=this.usable;
     this.state.muted=false;
@@ -271,7 +283,7 @@ export class LiveEngine {
     return output;
   }
   get stopped() { return !this.running && this.runGain===0; }
-  snapshot() { return {...this.renderer.stats(),...(this.recorded?{coordinatedVoice:this.recorded.stats()}:{}),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear||1,load:this.state?.load||0,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate,startup:this.ignition.snapshot(),outputPreClipPeak:this.outputPeak,outputAboveContractFrames:this.outputExcess,outputNonfinite:this.outputNonfinite,outputDomain:'LIVE_START_AND_CONTINUOUS_POST_GATE_PRE_RESAMPLER_PRE_MASTER'}; }
+  snapshot() { return {...this.renderer.stats(),...(this.recorded?{coordinatedVoice:this.recorded.stats()}:{}),speedKmh:this.speed,rpm:this.state?.rpm||0,gear:this.state?.gear??1,load:this.state?.load||0,throttle:this.state?.throttle??null,source:this.source==='gps'?'WEB_GPS_ESTIMATED':this.source.toUpperCase(),inputUsable:this.usable,modelTimeS:this.frame/this.rate,sourceSampleRate:this.rate,startup:this.ignition.snapshot(),outputPreClipPeak:this.outputPeak,outputAboveContractFrames:this.outputExcess,outputNonfinite:this.outputNonfinite,outputDomain:'LIVE_START_AND_CONTINUOUS_POST_GATE_PRE_RESAMPLER_PRE_MASTER'}; }
 }
 
 export class StreamingResampler {

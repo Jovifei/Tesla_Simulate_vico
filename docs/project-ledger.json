@@ -351,6 +351,7 @@
     "PR #35已落实默认关闭的真实AudioEngine PCM调用点，本地220 tests、0失败、25跳过、APK构建通过并远端回审；持续声新源和实际声学仍未完成。"
   ],
   "optional_tracks": [
+    "APP8 v1.4 candidate (2026-11-22), [Android / Web evidence](../reports/v14-app-web-20261122/README.md). Nine planned targets locked.",
     "AI 音频/DDSP/RAVE/神经残差：研究备选，未决定替换当前路线。",
     "ESP32/硬件/Simulink：背景研究，不计 Android 主线分母。",
     "iOS/小程序：后续平台，不计本次完成范围。"
@@ -946,5 +947,26 @@
     },
     "not_run": "in-car speaker playback and Jovi human acceptance",
     "qualification": "DIGITAL_AND_ENGINEERING_PASS; HUMAN_DEVICE_VEHICLE_PENDING"
+  },
+  "v14_local_handoff_20261122": {
+    "date": "2026-11-22",
+    "task_id": "v14-local-handoff-20261122",
+    "work_package": "APP8 v1.4 Android/Web isolated draft",
+    "status": "PARTIAL",
+    "evidence": [
+      "reports/v14-app-web-20261122/README.md",
+      "reports/v14-app-web-20261122/validation.json"
+    ],
+    "vehicle_qualification": "Nine planned targets locked",
+    "digital_verification": "Android 74 focused JVM tests and 5 HTML fixtures, lint, Debug APK. Web 188 tests and muted local browser worklet fixture.",
+    "blockers": [
+      "Verified runtime package and named owner signoff are missing",
+      "T1-T4 freeze manifest and real drivetrain mapping are missing"
+    ],
+    "acoustic": "NOT_RUN",
+    "human_audition": "NOT_RUN",
+    "device": "NOT_RUN",
+    "static_cabin": "NOT_RUN",
+    "dynamic_vehicle": "NOT_RUN"
   }
 }

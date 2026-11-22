@@ -20,7 +20,7 @@ data class DrivePoint(
     val brake: Boolean = false,
 )
 
-enum class DriveInputSource { UNSPECIFIED, REAL, DEMO, PREVIEW, QUALIFICATION }
+enum class DriveInputSource { UNSPECIFIED, REAL, DEMO, PREVIEW, QUALIFICATION, SYNTHETIC_AUDITION }
 
 /** Explicit live control contract. Nullable only on old standalone reference fixtures. */
 data class DriveInputControl(

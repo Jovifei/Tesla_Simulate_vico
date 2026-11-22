@@ -43,6 +43,7 @@ import com.vico.simulator.sound.S14CompletedCapture
 import com.vico.simulator.sound.S14OutputConditions
 import com.vico.simulator.state.VehicleSelectionState
 import com.vico.simulator.vehicle.CurrentVehicleCatalog
+import com.vico.simulator.vehicle.V14ReleaseGate
 import com.vico.simulator.web.VicoBridge
 import java.io.File
 import org.json.JSONObject
@@ -435,6 +436,7 @@ class MainActivity : AppCompatActivity() {
             append("\"accel\":\"").append(String.format(Locale.US, "%.2f", vehicleAccel)).append("\",")
             append("\"rpm\":").append(state.rpm.toInt()).append(',')
             append("\"gear\":").append(state.gear).append(',')
+            append("\"v14Input\":").append(v14InputJson(state, diagnostics, consumedNanos)).append(',')
             append("\"shiftGain\":").append(String.format(Locale.US, "%.3f", state.shiftGain)).append(',')
             append("\"freq\":\"").append(String.format(Locale.US, "%.1f", state.frequencyHz)).append("\",")
             append("\"gpsOk\":").append(gpsOk).append(',')
@@ -475,7 +477,10 @@ class MainActivity : AppCompatActivity() {
         if (diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO) {
             inputContinuity.advance("DEMO/${diagnostics.inputSession}", true, Long.MAX_VALUE, nowNanos)
             val source = if (s15SmokeInProgress) DriveInputSource.QUALIFICATION else DriveInputSource.DEMO
-            return audioEngine.mapSyntheticPoint(point, source, frameId, nowNanos)
+            val state = audioEngine.mapSyntheticPoint(point, source, frameId, nowNanos)
+            if (source != DriveInputSource.DEMO) return state
+            val deadline = if (nowNanos > Long.MAX_VALUE - 2_000_000_000L) Long.MAX_VALUE else nowNanos + 2_000_000_000L
+            return state.copy(inputControl = state.inputControl?.copy(validUntilElapsedNanos = deadline))
         }
         val quality = inputQualityPolicy.assess(diagnostics, nowNanos, mountingFrameConfirmed)
         val epoch = inputContinuity.advance("REAL/${diagnostics.inputSession}", quality.controlUsable,
@@ -493,6 +498,7 @@ class MainActivity : AppCompatActivity() {
     // ---- bridge handlers (UI thread) ----
     fun startAudio() {
         if(activityDestroyed || !calibrationResumed)return
+        if(!V14ReleaseGate.canPlay(vehicleState.selectedKey)){toast("声音包尚未通过审核");return}
         if(audioRunning)return
         if(audioEngine.isPlaybackBusy()){toast("音频仍在停止，请稍候再启用声浪");return}
         if(s15Preparing){toast("候选尚在准备；完成后再启用声浪");return}
@@ -984,6 +990,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setVehicle(key: String) {
+        if(!V14ReleaseGate.canPlay(key)){toast("声音包尚未通过审核");return}
         s15PreparationEpoch++;s15Preparing=false
         if (s13ReviewActive) {
             toast("请先停止基准回放再切换车型")
@@ -1002,6 +1009,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun previewVehicle(key: String) {
+        if(!V14ReleaseGate.canPlay(key)){toast("声音包尚未通过审核");return}
         if (previewRestore != null) {
             toast("上一车型试听正在恢复，请稍候再试听")
             return
@@ -1118,6 +1126,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setDemoMode(on: Boolean) {
+        if (sensorProvider.isDemoMode() == on) return
+        if (s13ReviewActive || s14.busy) { toast("请先停止当前评审"); pushUiState(); return }
+        if (audioRunning || audioEngine.isPlaybackBusy()) stopAudio("MODE_CHANGE")
         sensorProvider.setDemoMode(on)
         pushUiState()
         toast(if (on) "演示模式开启" else "演示模式关闭")
@@ -1471,6 +1482,7 @@ class MainActivity : AppCompatActivity() {
         append("\"accel\":\"").append(String.format(Locale.US, "%.2f", input.accelMps2)).append("\",")
         append("\"rpm\":0,")
         append("\"gear\":").append(lastGear).append(',')
+        append("\"v14Input\":").append(v14InputJson(null, input.diagnostics, android.os.SystemClock.elapsedRealtimeNanos())).append(',')
         append("\"freq\":\"0.0\",")
         append("\"gpsOk\":").append(input.gpsOk).append(',')
         append("\"vehicle\":\"").append(selectedVehicleName).append("\",")
@@ -1506,6 +1518,24 @@ class MainActivity : AppCompatActivity() {
         append("\"gy\":").append(input.gy).append(',')
         append("\"gz\":").append(input.gz)
         append('}')
+    }
+
+    private fun v14InputJson(state: SoundState?, diagnostics: InputDiagnostics, nowNanos: Long): String {
+        val status = when {
+            !V14ReleaseGate.canPlay(vehicleState.selectedKey) -> "BLOCKED"
+            !audioRunning -> "STOPPED"
+            state == null -> "MISSING"
+            !state.rpm.isFinite() || !state.throttle.isFinite() || !state.load.isFinite() -> "MISSING"
+            diagnostics.sourceMode != InputDiagnostics.SourceMode.DEMO &&
+                !inputQualityPolicy.assess(diagnostics, nowNanos, mountingFrameConfirmed).controlUsable -> "STALE"
+            else -> "VALID"
+        }
+        val result = JSONObject().put("status", status)
+        if (status == "VALID" && state != null) {
+            result.put("origin", if (diagnostics.sourceMode == InputDiagnostics.SourceMode.DEMO) "SYNTHETIC_MODEL" else "ESTIMATED_MODEL")
+                .put("throttle", state.throttle).put("rpm", state.rpm).put("load", state.load).put("gear", state.gear)
+        }
+        return result.toString()
     }
 
     private fun refreshOutputDevices() {
