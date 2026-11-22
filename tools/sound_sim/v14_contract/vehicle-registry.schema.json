@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tesla-speed:v14:vehicle-registry:1.0",
+  "type": "object", "additionalProperties": false, "required": ["schema_version", "vehicles"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "vehicles": {"type": "array", "items": {"$ref": "#/$defs/vehicle"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "nullableId": {"anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "nullableSha": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "audition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "route_id", "package_id", "package_sha256", "evidence_ref"],
+      "properties": {"status": {"enum": ["NOT_RUN", "PASS", "FAIL"]}, "route_id": {"$ref": "#/$defs/nullableId"}, "package_id": {"$ref": "#/$defs/nullableId"}, "package_sha256": {"$ref": "#/$defs/nullableSha"}, "evidence_ref": {"type": ["string", "null"]}}
+    },
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["route_id", "package_id", "package_sha256", "owner_audition"],
+      "properties": {"route_id": {"$ref": "#/$defs/id"}, "package_id": {"$ref": "#/$defs/id"}, "package_sha256": {"$ref": "#/$defs/nullableSha"}, "owner_audition": {"$ref": "#/$defs/audition"}}
+    },
+    "vehicle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["vehicle_id", "display_name", "catalog_status", "readiness_status", "template_id", "legacy_key", "sound_packages"],
+      "properties": {
+        "vehicle_id": {"$ref": "#/$defs/id"}, "display_name": {"type": "string", "minLength": 1},
+        "catalog_status": {"enum": ["TEMPLATE_RESERVED", "TARGET_LOCKED", null]},
+        "readiness_status": {"enum": ["SPEC_UNVERIFIED", "SPEC_VERIFIED", "MODEL_INCOMPLETE", "MODEL_VALIDATED", "ACOUSTIC_CALIBRATED", null]},
+        "template_id": {"$ref": "#/$defs/nullableId"}, "legacy_key": {"$ref": "#/$defs/nullableId"},
+        "sound_packages": {"type": "array", "items": {"$ref": "#/$defs/package"}}
+      },
+      "allOf": [{"if": {"properties": {"catalog_status": {"const": "TARGET_LOCKED"}}}, "then": {"properties": {"readiness_status": {"type": "string"}, "template_id": {"$ref": "#/$defs/id"}}}}]
+    }
+  }
+}

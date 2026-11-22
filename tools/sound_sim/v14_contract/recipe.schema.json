@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tesla-speed:v14:explicit-recipe:1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["scenario_id", "start_mode", "points"],
+  "properties": {
+    "scenario_id": {"type": "string", "pattern": "^(C0(_[a-z0-9_]+)?|H_[a-z0-9_]+)$"},
+    "start_mode": {"enum": ["START_COLD", "HOT"]},
+    "points": {
+      "type": "array", "minItems": 2,
+      "items": {"type": "object", "additionalProperties": false,
+        "required": ["time_s", "rpm", "load", "throttle", "gear"],
+        "properties": {"time_s": {"type": "number", "minimum": 0}, "rpm": {"type": "number", "minimum": 0}, "load": {"type": "number", "minimum": 0, "maximum": 1}, "throttle": {"type": "number", "minimum": 0, "maximum": 1}, "gear": {"type": "integer"}}
+      }
+    }
+  }
+}
